@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2-learner-knowledge-evidence.schema.json",
+  "title": "Physics Core2 Learner Knowledge Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "evidence_id",
+    "release_class",
+    "source_ref",
+    "calibration_policy_ref",
+    "learner_knowledge_percent",
+    "capability_knowledge",
+    "resolved_core2a_support_profile",
+    "resolved_core2a_max_demand_level",
+    "resolved_core2b_max_demand_level",
+    "evidence_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^PHY-CORE2-KNOWLEDGE-"
+    },
+    "release_class": {
+      "enum": [
+        "PRODUCTION",
+        "TEST_ONLY"
+      ]
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "calibration_policy_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "learner_knowledge_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "capability_knowledge": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability_ref",
+          "percent",
+          "observation_refs"
+        ],
+        "properties": {
+          "capability_ref": {
+            "type": "string",
+            "minLength": 2
+          },
+          "percent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "observation_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 3
+            }
+          }
+        }
+      }
+    },
+    "resolved_core2a_support_profile": {
+      "enum": [
+        "FOUNDATION_GUIDED",
+        "STANDARD_GUIDED",
+        "REDUCED_SUPPORT",
+        "ADVANCED_APPLIED"
+      ]
+    },
+    "resolved_core2a_max_demand_level": {
+      "enum": [
+        "P0_DIRECT",
+        "P1_CONTROLLED_VARIATION",
+        "P2_REPRESENTATION_TRANSFER",
+        "P3_INVERSE_TARGET",
+        "P4_HIDDEN_STRUCTURE",
+        "P5_METHOD_DISCRIMINATION",
+        "P6_FAMILY_DISCRIMINATION",
+        "P7_MULTI_STEP_SYNTHESIS",
+        "P8_MIXED_COMPETITIVE"
+      ]
+    },
+    "resolved_core2b_max_demand_level": {
+      "enum": [
+        "P0_DIRECT",
+        "P1_CONTROLLED_VARIATION",
+        "P2_REPRESENTATION_TRANSFER",
+        "P3_INVERSE_TARGET",
+        "P4_HIDDEN_STRUCTURE",
+        "P5_METHOD_DISCRIMINATION",
+        "P6_FAMILY_DISCRIMINATION",
+        "P7_MULTI_STEP_SYNTHESIS",
+        "P8_MIXED_COMPETITIVE"
+      ]
+    },
+    "evidence_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "": "physics-core2-learner-knowledge-evidence.schema.json"
+}

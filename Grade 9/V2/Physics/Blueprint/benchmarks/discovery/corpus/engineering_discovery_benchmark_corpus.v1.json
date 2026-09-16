@@ -1,0 +1,1880 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "corpus_id": "PHY-ENG-DISC-BENCH-CORPUS-V1",
+  "query_count": 167,
+  "queries": [
+    {
+      "query_id": "PHY-BENCH-Q001",
+      "query_category": "EXACT_NAME",
+      "query_text": "Scalars, Vectors, Magnitude, and Direction",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-BASICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q002",
+      "query_category": "EXACT_NAME",
+      "query_text": "Vector Addition, Subtraction, and the Resultant",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-ADD-SUB"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q003",
+      "query_category": "EXACT_NAME",
+      "query_text": "Resolution of Vectors into Orthogonal Components",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-COMPONENTS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q004",
+      "query_category": "EXACT_NAME",
+      "query_text": "Force as an Interaction between Bodies",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-INTERACTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q005",
+      "query_category": "EXACT_NAME",
+      "query_text": "Free-Body Diagrams and System Isolation",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FBD"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q006",
+      "query_category": "EXACT_NAME",
+      "query_text": "Newton's First Law and Equilibrium",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FIRST-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q007",
+      "query_category": "EXACT_NAME",
+      "query_text": "Newton's Second Law of Motion",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q008",
+      "query_category": "EXACT_NAME",
+      "query_text": "Newton's Third Law of Motion",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-THIRD-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q009",
+      "query_category": "EXACT_NAME",
+      "query_text": "Normal Contact Force and Surface Constraints",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-NORMAL"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q010",
+      "query_category": "EXACT_NAME",
+      "query_text": "Tension in Light Strings and Pulley Systems",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-TENSION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q011",
+      "query_category": "EXACT_NAME",
+      "query_text": "Static and Kinetic Friction",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FRICTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q012",
+      "query_category": "EXACT_NAME",
+      "query_text": "Connected Systems and Acceleration Constraints",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-CONNECTED"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q013",
+      "query_category": "EXACT_NAME",
+      "query_text": "1D Motion: Displacement, Velocity & Constant Acceleration Equations",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-1D-MOTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q014",
+      "query_category": "EXACT_NAME",
+      "query_text": "Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement)",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-MOTION-GRAPHS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q015",
+      "query_category": "EXACT_NAME",
+      "query_text": "Uniform Circular Motion: Centripetal Acceleration & Radial Direction",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-UNIFORM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q016",
+      "query_category": "EXACT_NAME",
+      "query_text": "Newton's Three Laws: Inertia, F=ma & Action-Reaction",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-NEWTON-LAWS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q017",
+      "query_category": "EXACT_NAME",
+      "query_text": "Momentum, Impulse & Conservation of Linear Momentum",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-MOMENTUM-IMPULSE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q018",
+      "query_category": "EXACT_NAME",
+      "query_text": "Universal Law of Gravitation: Inverse-Square Law & Field g",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-UNIVERSAL-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q019",
+      "query_category": "EXACT_NAME",
+      "query_text": "Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-FREE-FALL"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q020",
+      "query_category": "EXACT_NAME",
+      "query_text": "Buoyancy, Archimedes' Principle & Floatation Equilibrium",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q021",
+      "query_category": "EXACT_NAME",
+      "query_text": "Work Definition, Kinetic Energy & Work-Energy Theorem",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q022",
+      "query_category": "EXACT_NAME",
+      "query_text": "Conservation of Mechanical Energy & Rate of Work (Power)",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q023",
+      "query_category": "EXACT_NAME",
+      "query_text": "Sound: Longitudinal Compression Waves, Speed & Echo",
+      "acceptable_candidate_refs": [
+        "PHY-SOUND-LONGITUDINAL-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q024",
+      "query_category": "EXACT_NAME",
+      "query_text": "Light Reflection: Spherical Mirrors, Mirror Formula & Sign Convention",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q025",
+      "query_category": "EXACT_NAME",
+      "query_text": "Light Refraction: Snell's Law, Lens Formula & Lens Power",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q026",
+      "query_category": "EXACT_NAME",
+      "query_text": "Human Eye Optics, Accommodation & Vision Defect Corrections",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-HUMAN-EYE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q027",
+      "query_category": "EXACT_NAME",
+      "query_text": "Dispersion of Light, Prism Spectrum & Rayleigh Scattering",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-DISPERSION-SCATTERING"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q028",
+      "query_category": "EXACT_NAME",
+      "query_text": "Electric Current, Potential Difference & Ohm's Law",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-CURRENT-OHM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q029",
+      "query_category": "EXACT_NAME",
+      "query_text": "Joule's Law of Heating, Electric Power & Circuit Safety",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-POWER-JOULE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q030",
+      "query_category": "EXACT_NAME",
+      "query_text": "Magnetic Field, Right-Hand Rule & Lorentz Force on Wire",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-FIELD-LORENTZ"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q031",
+      "query_category": "EXACT_NAME",
+      "query_text": "Electromagnetic Induction: Faraday's Laws & Lenz's Law",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-INDUCTION-FARADAY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q032",
+      "query_category": "EXACT_NAME",
+      "query_text": "2D Projectile Motion: Component Independence, Range & Trajectory",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-2D-PROJECTILE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q033",
+      "query_category": "EXACT_NAME",
+      "query_text": "Circular Motion Dynamics: Centripetal Force & Banking of Roads",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q034",
+      "query_category": "EXACT_NAME",
+      "query_text": "Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-RELATIVE-2D"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q035",
+      "query_category": "EXACT_NAME",
+      "query_text": "Work Done by Variable Forces, Conservative Fields & Potential Energy",
+      "acceptable_candidate_refs": [
+        "PHY-WEP-VARIABLE-FORCE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q036",
+      "query_category": "EXACT_NAME",
+      "query_text": "Centre of Mass: Discrete & Continuous Systems, Motion of COM",
+      "acceptable_candidate_refs": [
+        "PHY-SYS-CENTRE-MASS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q037",
+      "query_category": "EXACT_NAME",
+      "query_text": "Rotational Dynamics: Torque, Moment of Inertia & Parallel/Perpendicular Axes",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q038",
+      "query_category": "EXACT_NAME",
+      "query_text": "Angular Momentum Conservation & Pure Rolling Motion",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q039",
+      "query_category": "EXACT_NAME",
+      "query_text": "Kepler's Laws, Orbital Mechanics & Escape Velocity",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-PLANETARY-ORBITS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q040",
+      "query_category": "EXACT_NAME",
+      "query_text": "Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus",
+      "acceptable_candidate_refs": [
+        "PHY-SOLID-ELASTICITY-HOOKE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q041",
+      "query_category": "EXACT_NAME",
+      "query_text": "Fluid Dynamics: Continuity Equation & Bernoulli's Principle",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q042",
+      "query_category": "EXACT_NAME",
+      "query_text": "Thermodynamics: First Law, Carnot Cycle & Second Law Statements",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q043",
+      "query_category": "EXACT_NAME",
+      "query_text": "Simple Harmonic Motion: Kinematics, Energy Oscillations & Restoring Force",
+      "acceptable_candidate_refs": [
+        "PHY-OSC-SHM-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q044",
+      "query_category": "TECHNICAL_FORMAL",
+      "query_text": "mutual contact interaction between two colliding particles",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-INTERACTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q045",
+      "query_category": "TECHNICAL_FORMAL",
+      "query_text": "slope of position time graph represents velocity and area of v-t gives displacement",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-MOTION-GRAPHS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q046",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v = u + at acceleration equation",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-1D-MOTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q047",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "s = ut + 1/2 a t^2 displacement time",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-1D-MOTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q048",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v^2 - u^2 = 2as kinematic relation",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-1D-MOTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q049",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "a_c = v^2 / r centripetal radial acceleration",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-UNIFORM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q050",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F = ma newtons second law",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-NEWTON-LAWS",
+        "PHY-NLM-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q051",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F = dp/dt rate of momentum",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-MOMENTUM-IMPULSE",
+        "PHY-NLM-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q052",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F = G m1 m2 / r^2 universal gravitation",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-UNIVERSAL-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q053",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "g = GM / R^2 acceleration due to gravity",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-UNIVERSAL-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q054",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F_b = rho V g archimedes upthrust",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q055",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "W = F s cos theta work formula",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q056",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "K = 1/2 m v^2 kinetic energy",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q057",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "K_i + U_i = K_f + U_f mechanical energy conservation",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q058",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "P = W / t power watt",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW",
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q059",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v = f lambda sound wave speed",
+      "acceptable_candidate_refs": [
+        "PHY-SOUND-LONGITUDINAL-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q060",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "1/f = 1/v + 1/u mirror formula",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q061",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "m = -v/u spherical mirror magnification",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q062",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "n1 sin i = n2 sin r snells law",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q063",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "1/f = 1/v - 1/u lens formula",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q064",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "P = 1/f dioptres lens power",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q065",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "V = I R ohms law resistance",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-CURRENT-OHM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q066",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "H = I^2 R t joules heating",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-POWER-JOULE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q067",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "P = V I electric power",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-POWER-JOULE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q068",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F = q(v x B) lorentz magnetic force",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-FIELD-LORENTZ"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q069",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "e = - dPhi/dt faradays induced emf",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-INDUCTION-FARADAY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q070",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "R = u^2 sin 2theta / g horizontal range projectile",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-2D-PROJECTILE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q071",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v = sqrt(r g tan theta) banking speed",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q072",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v_rel = v_A - v_B relative velocity",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-RELATIVE-2D"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q073",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "F = - dU/dx conservative force gradient",
+      "acceptable_candidate_refs": [
+        "PHY-WEP-VARIABLE-FORCE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q074",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "r_com = sum m_i r_i / M center of mass",
+      "acceptable_candidate_refs": [
+        "PHY-SYS-CENTRE-MASS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q075",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "tau = I alpha torque angular acceleration",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q076",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "I = I_cm + M d^2 parallel axis theorem",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q077",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "L = I omega angular momentum",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q078",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v_cm = R omega pure rolling condition",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q079",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "v_esc = sqrt(2GM/R) escape velocity",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-PLANETARY-ORBITS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q080",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "stress = Y strain youngs modulus hooke",
+      "acceptable_candidate_refs": [
+        "PHY-SOLID-ELASTICITY-HOOKE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q081",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "P + 1/2 rho v^2 + rho g h = const bernoulli",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q082",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "A1 v1 = A2 v2 equation of continuity",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q083",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "Delta U = Q - W first law of thermodynamics",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q084",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "eta = 1 - T2/T1 carnot engine efficiency",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q085",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "T = 2 pi sqrt(m/k) simple harmonic spring mass",
+      "acceptable_candidate_refs": [
+        "PHY-OSC-SHM-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q086",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "a = - omega^2 x SHM acceleration",
+      "acceptable_candidate_refs": [
+        "PHY-OSC-SHM-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q087",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "f_s <= mu_s N limiting friction",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FRICTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q088",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "R = sqrt(A^2 + B^2 + 2AB cos theta) vector resultant",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-ADD-SUB"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q089",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "Ax = A cos theta Ay = A sin theta components",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-COMPONENTS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q090",
+      "query_category": "NOTATION_EQUATION",
+      "query_text": "T - mg = ma pulley string tension",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-TENSION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q091",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "gati ke niyam newton ke niyam",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-NEWTON-LAWS",
+        "PHY-NLM-FIRST-LAW",
+        "PHY-NLM-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q092",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "karya urja aur shakti physics",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q093",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "yaantrik urja sanrakshan ka niyam",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q094",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "gurutwakarshan ka saarvabhoumik niyam",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-UNIVERSAL-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q095",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "prakash ka pravartan aur goliya darpan",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q096",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "prakash ka apavartan aur lens sutra",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q097",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "drishti dosh aur manav netra",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-HUMAN-EYE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q098",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "varn vikshepan rainbow indradhanush",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-DISPERSION-SCATTERING"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q099",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "vidyut dhara ohm ka niyam vidyut paripath",
+      "acceptable_candidate_refs": [
+        "PHY-ELEC-CURRENT-OHM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q100",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "chumbakiya kshetra aur lorentz bal",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-FIELD-LORENTZ"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q101",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "vidyut chumbakiya preran faraday ke niyam",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-INDUCTION-FARADAY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q102",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "prakshepya gati unchai aur range",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-2D-PROJECTILE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q103",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "sadis rashi aur adis rashi sadis ghatak",
+      "acceptable_candidate_refs": [
+        "PHY-VEC-BASICS",
+        "PHY-VEC-COMPONENTS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q104",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "mukt vastu aarekh fbd",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FBD"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q105",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "gharshan bal static kinetic friction",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FRICTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q106",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "dravyaman kendra center of mass",
+      "acceptable_candidate_refs": [
+        "PHY-SYS-CENTRE-MASS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q107",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "ghoornan gati jadaatva aaghoorn torque",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q108",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "koneeya sanveg sanrakshan rolling motion",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q109",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "bernoulli prameya continuity samikaran",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q110",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "ushmagatiki ka pehla aur doosra niyam",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q111",
+      "query_category": "REGIONAL_VERNACULAR",
+      "query_text": "saral aavart gati shm pendulum",
+      "acceptable_candidate_refs": [
+        "PHY-OSC-SHM-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q112",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "FBD mechanics",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FBD"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q113",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "NLM laws of motion",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-NEWTON-LAWS",
+        "PHY-NLM-FIRST-LAW",
+        "PHY-NLM-SECOND-LAW",
+        "PHY-NLM-THIRD-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q114",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "WEP theorem",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER",
+        "PHY-WEP-VARIABLE-FORCE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q115",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "COM coordinates",
+      "acceptable_candidate_refs": [
+        "PHY-SYS-CENTRE-MASS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q116",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "SHM oscillations",
+      "acceptable_candidate_refs": [
+        "PHY-OSC-SHM-WAVES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q117",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "UCM circular motion",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-UNIFORM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q118",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "EMI induced emf",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-INDUCTION-FARADAY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q119",
+      "query_category": "COMMON_ABBREVIATION",
+      "query_text": "TIR total internal reflection dispersion",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-DISPERSION-SCATTERING"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q120",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "river boat problem shortest crossing time",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-RELATIVE-2D"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q121",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "rain man problem umbrella tilt angle",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-RELATIVE-2D"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q122",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "atwoods machine pulley tension acceleration",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-TENSION",
+        "PHY-NLM-CONNECTED"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q123",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "block on block two block friction problem",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-FRICTION",
+        "PHY-NLM-CONNECTED"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q124",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "vertical circular motion critical top velocity sqrt 5gr",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q125",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "pure rolling without slipping on rough incline",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q126",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "toppling condition of cube sliding vs tipping",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-ANGULAR-MOMENTUM",
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q127",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "torricelli efflux speed hole in tank",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q128",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "conical pendulum banking angle",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q129",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "terminal velocity stokes viscous drag",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q130",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "escape velocity from earth surface",
+      "acceptable_candidate_refs": [
+        "PHY-GRAV-PLANETARY-ORBITS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q131",
+      "query_category": "COMPETITION_SLANG",
+      "query_text": "carnot engine pv cycle efficiency",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q132",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "does normal force always equal mg",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-NORMAL"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q133",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "is centrifugal force a real reaction force to centripetal",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS",
+        "PHY-KIN-CIRCULAR-UNIFORM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q134",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "is mechanical energy always conserved in all systems",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q135",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "does an object with zero velocity have zero acceleration",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-1D-MOTION",
+        "PHY-GRAV-FREE-FALL"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q136",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "action and reaction cancel each other out so nothing moves",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-THIRD-LAW",
+        "PHY-FORCE-NEWTON-LAWS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q137",
+      "query_category": "MISCONCEPTION_QUERY",
+      "query_text": "work done carrying heavy suitcase walking horizontally",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q138",
+      "query_category": "CROSS_TOPIC_AMBIGUOUS",
+      "query_text": "newton laws",
+      "acceptable_candidate_refs": [
+        "PHY-FORCE-NEWTON-LAWS",
+        "PHY-NLM-FIRST-LAW",
+        "PHY-NLM-SECOND-LAW",
+        "PHY-NLM-THIRD-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "AMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q139",
+      "query_category": "CROSS_TOPIC_AMBIGUOUS",
+      "query_text": "conservation law in physics",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW",
+        "PHY-FORCE-MOMENTUM-IMPULSE",
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "AMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q140",
+      "query_category": "CROSS_TOPIC_AMBIGUOUS",
+      "query_text": "circular motion",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-UNIFORM",
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "AMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q141",
+      "query_category": "CROSS_TOPIC_AMBIGUOUS",
+      "query_text": "fluid mechanics principles",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES",
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "AMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q142",
+      "query_category": "OUT_OF_DOMAIN_CLEAN",
+      "query_text": "photosynthesis light dependent reaction in chloroplasts",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "NO_VALID_TARGET",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q143",
+      "query_category": "OUT_OF_DOMAIN_CLEAN",
+      "query_text": "mitosis and meiosis stages in eukaryotic cell division",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "NO_VALID_TARGET",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q144",
+      "query_category": "OUT_OF_DOMAIN_CLEAN",
+      "query_text": "periodic table electron configuration transition metals",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "NO_VALID_TARGET",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q145",
+      "query_category": "OUT_OF_DOMAIN_CLEAN",
+      "query_text": "french revolution storming of the bastille 1789",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "NO_VALID_TARGET",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q146",
+      "query_category": "HINT_ASSISTED",
+      "query_text": "conservation",
+      "acceptable_candidate_refs": [
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": [
+        "mechanical energy",
+        "isolated system",
+        "potential energy"
+      ]
+    },
+    {
+      "query_id": "PHY-BENCH-Q147",
+      "query_category": "HINT_ASSISTED",
+      "query_text": "reflection",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": [
+        "spherical mirrors",
+        "concave mirror",
+        "focal length"
+      ]
+    },
+    {
+      "query_id": "PHY-BENCH-Q148",
+      "query_category": "HINT_ASSISTED",
+      "query_text": "laws of motion",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-SECOND-LAW",
+        "PHY-FORCE-NEWTON-LAWS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": [
+        "F = ma",
+        "acceleration",
+        "Grade 11 mechanics"
+      ]
+    },
+    {
+      "query_id": "PHY-BENCH-Q149",
+      "query_category": "COMPOSITE_MULTI_TOPIC",
+      "query_text": "work done by friction and work energy theorem",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER",
+        "PHY-NLM-FRICTION",
+        "PHY-WEP-VARIABLE-FORCE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q150",
+      "query_category": "COMPOSITE_MULTI_TOPIC",
+      "query_text": "projectile motion with air drag and fluid resistance",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-2D-PROJECTILE",
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q151",
+      "query_category": "PARTIAL_SUBSTRING",
+      "query_text": "refract",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q152",
+      "query_category": "PARTIAL_SUBSTRING",
+      "query_text": "buoyan",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q153",
+      "query_category": "PARTIAL_SUBSTRING",
+      "query_text": "farad",
+      "acceptable_candidate_refs": [
+        "PHY-MAG-INDUCTION-FARADAY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q154",
+      "query_category": "SYLLABUS_CODE",
+      "query_text": "PHY-ROT-RIGID-BODY",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q155",
+      "query_category": "SYLLABUS_CODE",
+      "query_text": "PHY-OPTICS-REFLECTION-MIRRORS",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q156",
+      "query_category": "SYLLABUS_CODE",
+      "query_text": "PHY-THERMO-FIRST-SECOND-LAW",
+      "acceptable_candidate_refs": [
+        "PHY-THERMO-FIRST-SECOND-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q157",
+      "query_category": "EXAM_PREPARATION_INTENT",
+      "query_text": "cbse class 9 work and energy board questions",
+      "acceptable_candidate_refs": [
+        "PHY-WORK-ENERGY-POWER",
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q158",
+      "query_category": "EXAM_PREPARATION_INTENT",
+      "query_text": "iit jee rotational mechanics advanced previous year questions",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY",
+        "PHY-ROT-ANGULAR-MOMENTUM"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q159",
+      "query_category": "TEACHING_DIAGNOSTIC",
+      "query_text": "diagnostic assessment on newtons third law action reaction pairs",
+      "acceptable_candidate_refs": [
+        "PHY-NLM-THIRD-LAW",
+        "PHY-FORCE-NEWTON-LAWS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q160",
+      "query_category": "TEACHING_DIAGNOSTIC",
+      "query_text": "identifying sign convention mistakes in mirror formula",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-REFLECTION-MIRRORS"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q161",
+      "query_category": "ADVANCED_DERIVATION",
+      "query_text": "derivation of bernoulli equation from work energy theorem for fluid element",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q162",
+      "query_category": "ADVANCED_DERIVATION",
+      "query_text": "derivation of parallel axis theorem for moment of inertia",
+      "acceptable_candidate_refs": [
+        "PHY-ROT-RIGID-BODY"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q163",
+      "query_category": "LEARNER_COLLOQUIAL",
+      "query_text": "why do things float in water",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q164",
+      "query_category": "LEARNER_COLLOQUIAL",
+      "query_text": "why is the sky blue during the day",
+      "acceptable_candidate_refs": [
+        "PHY-OPTICS-DISPERSION-SCATTERING"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q165",
+      "query_category": "LEARNER_COLLOQUIAL",
+      "query_text": "why do cars skid on sharp turns",
+      "acceptable_candidate_refs": [
+        "PHY-KIN-CIRCULAR-DYNAMICS",
+        "PHY-NLM-FRICTION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q166",
+      "query_category": "TECHNICAL_FORMAL",
+      "query_text": "conservative vector fields and spatial gradient of scalar potential function",
+      "acceptable_candidate_refs": [
+        "PHY-WEP-VARIABLE-FORCE"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    },
+    {
+      "query_id": "PHY-BENCH-Q167",
+      "query_category": "TECHNICAL_FORMAL",
+      "query_text": "continuity equation for incompressible non viscous laminar fluid flow",
+      "acceptable_candidate_refs": [
+        "PHY-FLUID-BERNOULLI-EQUATION"
+      ],
+      "explicitly_unacceptable_candidate_refs": [],
+      "ambiguity": "UNAMBIGUOUS",
+      "hints": []
+    }
+  ]
+}

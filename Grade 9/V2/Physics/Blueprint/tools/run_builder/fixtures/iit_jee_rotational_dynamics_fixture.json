@@ -1,0 +1,14 @@
+{
+  "subtopic_request": "Rigid Body Rotation, Moment of Inertia, and Torque Dynamics",
+  "current_grade": 11,
+  "exact_gate_id": "PHY-ROT-RIGID-BODY",
+  "target_program_or_exam": "IIT-JEE Advanced",
+  "learning_purpose": "COMPETITIVE_EXAM",
+  "requested_engineering_depth": "STANDARD",
+  "core1_difficulty_control": "DERIVE",
+  "web_research_allowed": true,
+  "pedagogy_research_mode": "DEFAULT",
+  "run_mode": "GENERATION",
+  "mutation_mode": "READ_ONLY",
+  "owner_scope_notes": "Curated Grade 11 IIT-JEE fixture for Rotational Rigid Body Dynamics."
+}

@@ -1,0 +1,4555 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "manifest_class": "DERIVED_ARCHITECTURE_OBSERVATION",
+  "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "component_count": 155,
+  "relation_count": 263,
+  "components": {
+    "schema:architecture-blueprint.schema.json": {
+      "component_id": "schema:architecture-blueprint.schema.json",
+      "name": "architecture-blueprint.schema.json",
+      "path": "contracts/architecture-blueprint.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Architecture Blueprint",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:b-layer-runtime-boundary.schema.json": {
+      "component_id": "schema:b-layer-runtime-boundary.schema.json",
+      "name": "b-layer-runtime-boundary.schema.json",
+      "path": "contracts/b-layer-runtime-boundary.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics B-layer Runtime Boundary",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:content-custody-coverage-unit.schema.json": {
+      "component_id": "schema:content-custody-coverage-unit.schema.json",
+      "name": "content-custody-coverage-unit.schema.json",
+      "path": "contracts/content-custody-coverage-unit.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Content Custody & Coverage Unit",
+      "authority_domain": "PRODUCT_GOVERNANCE",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_ccu.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "schema:core-differentiation-adaptation-unit.schema.json": {
+      "component_id": "schema:core-differentiation-adaptation-unit.schema.json",
+      "name": "core-differentiation-adaptation-unit.schema.json",
+      "path": "contracts/core-differentiation-adaptation-unit.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core Differentiation and Adaptation Unit",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "schema:core1a-stage-run.schema.json": {
+      "component_id": "schema:core1a-stage-run.schema.json",
+      "name": "core1a-stage-run.schema.json",
+      "path": "contracts/core1a-stage-run.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core1A Assimilation Stage Run",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_core1a_stage_run.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_core1a_stage_machine.py"
+      ],
+      "documentation_refs": []
+    },
+    "schema:evidence-state.schema.json": {
+      "component_id": "schema:evidence-state.schema.json",
+      "name": "evidence-state.schema.json",
+      "path": "contracts/evidence-state.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Evidence State",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_topic_blueprint.py"
+      ],
+      "consumer_refs": [
+        "engine:run_golden_fixtures.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:independent-validation-session.schema.json": {
+      "component_id": "schema:independent-validation-session.schema.json",
+      "name": "independent-validation-session.schema.json",
+      "path": "contracts/independent-validation-session.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Independent Validation Session",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:independent_validation.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_independence.py"
+      ],
+      "documentation_refs": []
+    },
+    "schema:join-packet.schema.json": {
+      "component_id": "schema:join-packet.schema.json",
+      "name": "join-packet.schema.json",
+      "path": "contracts/join-packet.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core1 x Core2 Join Packet",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_join.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_join.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:learner-adaptation-unit.schema.json": {
+      "component_id": "schema:learner-adaptation-unit.schema.json",
+      "name": "learner-adaptation-unit.schema.json",
+      "path": "contracts/learner-adaptation-unit.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Learner Adaptation Unit",
+      "authority_domain": "LAU_LEARNER_ADAPTATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "schema:learner-purpose-control-state.schema.json": {
+      "component_id": "schema:learner-purpose-control-state.schema.json",
+      "name": "learner-purpose-control-state.schema.json",
+      "path": "contracts/learner-purpose-control-state.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Learner and Purpose Control State",
+      "authority_domain": "PEDAGOGICAL_CONTRACTS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:resolve_control_state.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_control_state.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:m2d-composition-plan.schema.json": {
+      "component_id": "schema:m2d-composition-plan.schema.json",
+      "name": "m2d-composition-plan.schema.json",
+      "path": "contracts/m2d-composition-plan.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Motion in a Plane Composition Plan",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_m2d_composition_plan.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:PEDAGOGY_AND_CALIBRATION.md"
+      ]
+    },
+    "schema:m2d-manuscript-release-binding.schema.json": {
+      "component_id": "schema:m2d-manuscript-release-binding.schema.json",
+      "name": "m2d-manuscript-release-binding.schema.json",
+      "path": "contracts/m2d-manuscript-release-binding.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Motion in a Plane Manuscript Release Binding",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_m2d_composition_plan.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:m2d-render-readiness.schema.json": {
+      "component_id": "schema:m2d-render-readiness.schema.json",
+      "name": "m2d-render-readiness.schema.json",
+      "path": "contracts/m2d-render-readiness.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Motion in a Plane Render Readiness",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_m2d_render_readiness.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:packet-envelope.schema.json": {
+      "component_id": "schema:packet-envelope.schema.json",
+      "name": "packet-envelope.schema.json",
+      "path": "contracts/packet-envelope.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Blueprint Packet Envelope",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_routing.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:physics-canonical-domain-registry.schema.json": {
+      "component_id": "schema:physics-canonical-domain-registry.schema.json",
+      "name": "physics-canonical-domain-registry.schema.json",
+      "path": "contracts/physics-canonical-domain-registry.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Canonical Domain Registry",
+      "authority_domain": "CANONICAL_DOMAIN_REGISTRY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_canonical_domain_registry.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-core1a-family-authoring-assets.schema.json": {
+      "component_id": "schema:physics-core1a-family-authoring-assets.schema.json",
+      "name": "physics-core1a-family-authoring-assets.schema.json",
+      "path": "contracts/physics-core1a-family-authoring-assets.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core1A problem-family authoring candidate projection",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-core2-learner-knowledge-evidence.schema.json": {
+      "component_id": "schema:physics-core2-learner-knowledge-evidence.schema.json",
+      "name": "physics-core2-learner-knowledge-evidence.schema.json",
+      "path": "contracts/physics-core2-learner-knowledge-evidence.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core2 Learner Knowledge Evidence",
+      "authority_domain": "LAU_LEARNER_ADAPTATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-core2-owner-waiver.schema.json": {
+      "component_id": "schema:physics-core2-owner-waiver.schema.json",
+      "name": "physics-core2-owner-waiver.schema.json",
+      "path": "contracts/physics-core2-owner-waiver.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Core2 Owner Waiver",
+      "authority_domain": "LAU_LEARNER_ADAPTATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineered-domain-admission.schema.json": {
+      "component_id": "schema:physics-engineered-domain-admission.schema.json",
+      "name": "physics-engineered-domain-admission.schema.json",
+      "path": "contracts/physics-engineered-domain-admission.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "2.0.0",
+      "title": "Physics Engineered Canonical Domain Admission",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_engineered_domain_admission.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-binding.schema.json": {
+      "component_id": "schema:physics-engineering-binding.schema.json",
+      "name": "physics-engineering-binding.schema.json",
+      "path": "contracts/physics-engineering-binding.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringBinding",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "validator_refs": [
+        "engine:validate_physics_engineering_binding.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-closure-receipt.schema.json": {
+      "component_id": "schema:physics-engineering-closure-receipt.schema.json",
+      "name": "physics-engineering-closure-receipt.schema.json",
+      "path": "contracts/physics-engineering-closure-receipt.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringClosureReceipt",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-discovery-receipt.schema.json": {
+      "component_id": "schema:physics-engineering-discovery-receipt.schema.json",
+      "name": "physics-engineering-discovery-receipt.schema.json",
+      "path": "contracts/physics-engineering-discovery-receipt.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.1.0",
+      "title": "PhysicsEngineeringDiscoveryReceipt",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_discovery.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:physics-engineering-discovery-request.schema.json": {
+      "component_id": "schema:physics-engineering-discovery-request.schema.json",
+      "name": "physics-engineering-discovery-request.schema.json",
+      "path": "contracts/physics-engineering-discovery-request.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringDiscoveryRequest",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_discovery.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:physics-engineering-discovery-selection.schema.json": {
+      "component_id": "schema:physics-engineering-discovery-selection.schema.json",
+      "name": "physics-engineering-discovery-selection.schema.json",
+      "path": "contracts/physics-engineering-discovery-selection.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringDiscoverySelection",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_discovery.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:physics-engineering-discovery-vocabulary.schema.json": {
+      "component_id": "schema:physics-engineering-discovery-vocabulary.schema.json",
+      "name": "physics-engineering-discovery-vocabulary.schema.json",
+      "path": "contracts/physics-engineering-discovery-vocabulary.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringDiscoveryVocabulary",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_discovery.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:physics-engineering-domain-projection-v2.schema.json": {
+      "component_id": "schema:physics-engineering-domain-projection-v2.schema.json",
+      "name": "physics-engineering-domain-projection-v2.schema.json",
+      "path": "contracts/physics-engineering-domain-projection-v2.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "2.0.0",
+      "title": "Physics Engineering to Canonical Domain Projection Receipt v2",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_engineering_domain_projection_binding_v2.py"
+      ],
+      "consumer_refs": [
+        "engine:project_engineering_to_domain_registry_v2.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-domain-projection.schema.json": {
+      "component_id": "schema:physics-engineering-domain-projection.schema.json",
+      "name": "physics-engineering-domain-projection.schema.json",
+      "path": "contracts/physics-engineering-domain-projection.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Engineering to Canonical Domain Projection Receipt",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_engineering_domain_projection_binding.py"
+      ],
+      "consumer_refs": [
+        "engine:project_engineering_to_domain_registry.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-manifest.schema.json": {
+      "component_id": "schema:physics-engineering-manifest.schema.json",
+      "name": "physics-engineering-manifest.schema.json",
+      "path": "contracts/physics-engineering-manifest.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringManifest",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:physics-engineering-request.schema.json": {
+      "component_id": "schema:physics-engineering-request.schema.json",
+      "name": "physics-engineering-request.schema.json",
+      "path": "contracts/physics-engineering-request.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsEngineeringRequest",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_discovery.py",
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
+      ]
+    },
+    "schema:physics-engineering-visibility-manifest.schema.json": {
+      "component_id": "schema:physics-engineering-visibility-manifest.schema.json",
+      "name": "physics-engineering-visibility-manifest.schema.json",
+      "path": "contracts/physics-engineering-visibility-manifest.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Engineering Product Visibility Manifest",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_engineering_visibility_manifest.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:ENGINEERING_AUTHORITY.md"
+      ]
+    },
+    "schema:physics-technical-engineering-gate.schema.json": {
+      "component_id": "schema:physics-technical-engineering-gate.schema.json",
+      "name": "physics-technical-engineering-gate.schema.json",
+      "path": "contracts/physics-technical-engineering-gate.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "PhysicsTechnicalEngineeringGateRegistry",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "validator_refs": [
+        "engine:validate_engineering_gates.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md",
+        "doc:README.md"
+      ]
+    },
+    "schema:publication-ir.schema.json": {
+      "component_id": "schema:publication-ir.schema.json",
+      "name": "publication-ir.schema.json",
+      "path": "contracts/publication-ir.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Publication Intermediate Representation",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [
+        "engine:compile_publication_ir.py"
+      ],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_publication_ir.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:render-custody.schema.json": {
+      "component_id": "schema:render-custody.schema.json",
+      "name": "render-custody.schema.json",
+      "path": "contracts/render-custody.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Blueprint Render Custody",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:build_render_process_golden.py",
+        "engine:preflight_rendered_pdf.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:render-preflight-report.schema.json": {
+      "component_id": "schema:render-preflight-report.schema.json",
+      "name": "render-preflight-report.schema.json",
+      "path": "contracts/render-preflight-report.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Blueprint Render Preflight Report",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:build_render_process_golden.py",
+        "engine:preflight_rendered_pdf.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:role-bindings.schema.json": {
+      "component_id": "schema:role-bindings.schema.json",
+      "name": "role-bindings.schema.json",
+      "path": "contracts/role-bindings.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Blueprint Role Bindings",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "schema:routing-decision.schema.json": {
+      "component_id": "schema:routing-decision.schema.json",
+      "name": "routing-decision.schema.json",
+      "path": "contracts/routing-decision.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Routing Decision",
+      "authority_domain": "CORE0_ROUTING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:run_golden_fixtures.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "schema:study-differentiation-unit.schema.json": {
+      "component_id": "schema:study-differentiation-unit.schema.json",
+      "name": "study-differentiation-unit.schema.json",
+      "path": "contracts/study-differentiation-unit.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Study Differentiation Unit",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "schema:technical-teaching-unit-v2.schema.json": {
+      "component_id": "schema:technical-teaching-unit-v2.schema.json",
+      "name": "technical-teaching-unit-v2.schema.json",
+      "path": "contracts/technical-teaching-unit-v2.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "2.0.0",
+      "title": "Physics Technical Teaching Unit v2",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V6.md"
+      ]
+    },
+    "schema:technical-teaching-unit-v3.schema.json": {
+      "component_id": "schema:technical-teaching-unit-v3.schema.json",
+      "name": "technical-teaching-unit-v3.schema.json",
+      "path": "contracts/technical-teaching-unit-v3.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "3.0.0",
+      "title": "Physics Technical Teaching Unit v3",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "schema:technical-teaching-unit.schema.json": {
+      "component_id": "schema:technical-teaching-unit.schema.json",
+      "name": "technical-teaching-unit.schema.json",
+      "path": "contracts/technical-teaching-unit.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Technical Teaching Unit",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:PEDAGOGY_AND_CALIBRATION.md"
+      ]
+    },
+    "schema:topic-blueprint.schema.json": {
+      "component_id": "schema:topic-blueprint.schema.json",
+      "name": "topic-blueprint.schema.json",
+      "path": "contracts/topic-blueprint.schema.json",
+      "component_type": "SCHEMA",
+      "schema_version": "1.0.0",
+      "title": "Physics Topic Blueprint",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [
+        "engine:validate_topic_blueprint.py"
+      ],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:architecture.v1.json": {
+      "component_id": "policy:architecture.v1.json",
+      "name": "architecture.v1.json",
+      "path": "policy/architecture.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "architecture.v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_b_layer_boundary.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "policy:b-layer-runtime-boundary.v1.json": {
+      "component_id": "policy:b-layer-runtime-boundary.v1.json",
+      "name": "b-layer-runtime-boundary.v1.json",
+      "path": "policy/b-layer-runtime-boundary.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-B-LAYER-RUNTIME-BOUNDARY-v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_b_layer_boundary.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "policy:content-custody-coverage-unit.v1.json": {
+      "component_id": "policy:content-custody-coverage-unit.v1.json",
+      "name": "content-custody-coverage-unit.v1.json",
+      "path": "policy/content-custody-coverage-unit.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "content-custody-coverage-unit.v1",
+      "authority_domain": "PRODUCT_GOVERNANCE",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_ccu.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "policy:core-governance-cdau.v1.json": {
+      "component_id": "policy:core-governance-cdau.v1.json",
+      "name": "core-governance-cdau.v1.json",
+      "path": "policy/core-governance-cdau.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "core-governance-cdau.v1",
+      "authority_domain": "PRODUCT_GOVERNANCE",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "policy:core-governance-cdau.v2.json": {
+      "component_id": "policy:core-governance-cdau.v2.json",
+      "name": "core-governance-cdau.v2.json",
+      "path": "policy/core-governance-cdau.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "core-governance-cdau.v2",
+      "authority_domain": "PRODUCT_GOVERNANCE",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "policy:core1a-stage-machine.v1.json": {
+      "component_id": "policy:core1a-stage-machine.v1.json",
+      "name": "core1a-stage-machine.v1.json",
+      "path": "policy/core1a-stage-machine.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-CORE1A-STAGE-MACHINE-v1",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_core1a_stage_run.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "policy:core1ab-bucket-authoring.v2.json": {
+      "component_id": "policy:core1ab-bucket-authoring.v2.json",
+      "name": "core1ab-bucket-authoring.v2.json",
+      "path": "policy/core1ab-bucket-authoring.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "PHY-CORE1AB-BUCKET-AUTHORING-V2",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V3.md",
+        "doc:SELF_HELP_ARCHITECTURE_V4.md",
+        "doc:SELF_HELP_ARCHITECTURE_V5.md"
+      ]
+    },
+    "policy:core1ab-bucket-authoring.v3.json": {
+      "component_id": "policy:core1ab-bucket-authoring.v3.json",
+      "name": "core1ab-bucket-authoring.v3.json",
+      "path": "policy/core1ab-bucket-authoring.v3.json",
+      "component_type": "POLICY",
+      "schema_version": "3.0.0",
+      "title": "PHY-CORE1AB-BUCKET-AUTHORING-V3",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:core1ab-bucket-depth.v1.json": {
+      "component_id": "policy:core1ab-bucket-depth.v1.json",
+      "name": "core1ab-bucket-depth.v1.json",
+      "path": "policy/core1ab-bucket-depth.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-CORE1AB-BUCKET-DEPTH-V1",
+      "authority_domain": "SDU_STUDY_DIFFERENTIATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V2.md"
+      ]
+    },
+    "policy:core2ab-knowledge-routing.v1.json": {
+      "component_id": "policy:core2ab-knowledge-routing.v1.json",
+      "name": "core2ab-knowledge-routing.v1.json",
+      "path": "policy/core2ab-knowledge-routing.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-CORE2AB-KNOWLEDGE-ROUTING-V1",
+      "authority_domain": "CORE0_ROUTING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V2.md",
+        "doc:SELF_HELP_ARCHITECTURE_V3.md",
+        "doc:SELF_HELP_ARCHITECTURE_V4.md",
+        "doc:SELF_HELP_ARCHITECTURE_V5.md"
+      ]
+    },
+    "policy:first-role-routing.v1.json": {
+      "component_id": "policy:first-role-routing.v1.json",
+      "name": "first-role-routing.v1.json",
+      "path": "policy/first-role-routing.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-FIRST-ROLE-v1",
+      "authority_domain": "CORE0_ROUTING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:governor.py",
+        "engine:run_golden_fixtures.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:independent-validation.v1.json": {
+      "component_id": "policy:independent-validation.v1.json",
+      "name": "independent-validation.v1.json",
+      "path": "policy/independent-validation.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-INDEPENDENT-VALIDATION-v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "policy:join-policy.v1.json": {
+      "component_id": "policy:join-policy.v1.json",
+      "name": "join-policy.v1.json",
+      "path": "policy/join-policy.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-JOIN-v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "policy:learner-adaptation-unit.v1.json": {
+      "component_id": "policy:learner-adaptation-unit.v1.json",
+      "name": "learner-adaptation-unit.v1.json",
+      "path": "policy/learner-adaptation-unit.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "learner-adaptation-unit.v1",
+      "authority_domain": "LAU_LEARNER_ADAPTATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "policy:learner-adaptation-unit.v2.json": {
+      "component_id": "policy:learner-adaptation-unit.v2.json",
+      "name": "learner-adaptation-unit.v2.json",
+      "path": "policy/learner-adaptation-unit.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "learner-adaptation-unit.v2",
+      "authority_domain": "LAU_LEARNER_ADAPTATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "policy:m2d-composition-release.v1.json": {
+      "component_id": "policy:m2d-composition-release.v1.json",
+      "name": "m2d-composition-release.v1.json",
+      "path": "policy/m2d-composition-release.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-BP-M2D-COMPOSITION-RELEASE-v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_m2d_composition_plan.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:m2d-representation-requirements.v1.json": {
+      "component_id": "policy:m2d-representation-requirements.v1.json",
+      "name": "m2d-representation-requirements.v1.json",
+      "path": "policy/m2d-representation-requirements.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-BP-M2D-REPRESENTATION-REQUIREMENTS-v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_m2d_composition_plan.py",
+        "engine:compile_m2d_render_readiness.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:pdf-layout-integrity.v1.json": {
+      "component_id": "policy:pdf-layout-integrity.v1.json",
+      "name": "pdf-layout-integrity.v1.json",
+      "path": "policy/pdf-layout-integrity.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-PDF-LAYOUT-INTEGRITY-V1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V4.md"
+      ]
+    },
+    "policy:pdf-layout-integrity.v2.json": {
+      "component_id": "policy:pdf-layout-integrity.v2.json",
+      "name": "pdf-layout-integrity.v2.json",
+      "path": "policy/pdf-layout-integrity.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "PHY-PDF-LAYOUT-INTEGRITY-V2",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V5.md",
+        "doc:SELF_HELP_ARCHITECTURE_V6.md"
+      ]
+    },
+    "policy:physics-canonical-domain-registry-policy.json": {
+      "component_id": "policy:physics-canonical-domain-registry-policy.json",
+      "name": "physics-canonical-domain-registry-policy.json",
+      "path": "policies/physics-canonical-domain-registry-policy.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-CANONICAL-DOMAIN-REGISTRY-v1",
+      "authority_domain": "CANONICAL_DOMAIN_REGISTRY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_canonical_domain_registry.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:physics-engineering-depth-policy.v1.json": {
+      "component_id": "policy:physics-engineering-depth-policy.v1.json",
+      "name": "physics-engineering-depth-policy.v1.json",
+      "path": "policies/physics-engineering-depth-policy.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-ENGINEERING-DEPTH-V1",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:ENGINEERING_AUTHORITY.md"
+      ]
+    },
+    "policy:physics-engineering-discovery-vocabulary.v1.json": {
+      "component_id": "policy:physics-engineering-discovery-vocabulary.v1.json",
+      "name": "physics-engineering-discovery-vocabulary.v1.json",
+      "path": "policies/physics-engineering-discovery-vocabulary.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_physics_engineering_discovery.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
+      ]
+    },
+    "policy:physics-engineering-extension-catalog.v1.json": {
+      "component_id": "policy:physics-engineering-extension-catalog.v1.json",
+      "name": "physics-engineering-extension-catalog.v1.json",
+      "path": "policies/physics-engineering-extension-catalog.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "REG-PHY-TECH-GATE-EXTENSIONS-V1",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:engineering_registry_composition.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:physics-engineering-gate-invariants.v1.json": {
+      "component_id": "policy:physics-engineering-gate-invariants.v1.json",
+      "name": "physics-engineering-gate-invariants.v1.json",
+      "path": "policies/physics-engineering-gate-invariants.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "physics-engineering-gate-invariants.v1",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:compile_physics_engineering_workbench.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:physics-representation-semantic-quality.v1.json": {
+      "component_id": "policy:physics-representation-semantic-quality.v1.json",
+      "name": "physics-representation-semantic-quality.v1.json",
+      "path": "policy/physics-representation-semantic-quality.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-REPRESENTATION-SEMANTIC-QUALITY-V1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V5.md",
+        "doc:SELF_HELP_ARCHITECTURE_V6.md"
+      ]
+    },
+    "policy:physics-technical-engineering-gates.v1.json": {
+      "component_id": "policy:physics-technical-engineering-gates.v1.json",
+      "name": "physics-technical-engineering-gates.v1.json",
+      "path": "policies/physics-technical-engineering-gates.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:build_engineering_gate_registry.py",
+        "engine:compile_engineering_visibility_manifest.py",
+        "engine:compile_physics_engineering_discovery.py",
+        "engine:compile_physics_engineering_workbench.py",
+        "engine:engineering_registry_composition.py",
+        "engine:validate_engineering_gates.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md",
+        "doc:README.md"
+      ]
+    },
+    "policy:publication-boundary.v1.json": {
+      "component_id": "policy:publication-boundary.v1.json",
+      "name": "publication-boundary.v1.json",
+      "path": "policy/publication-boundary.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-PUBLICATION-BOUNDARY-v1",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:build_render_process_golden.py",
+        "engine:compile_publication_ir.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:purpose-contracts.v1.json": {
+      "component_id": "policy:purpose-contracts.v1.json",
+      "name": "purpose-contracts.v1.json",
+      "path": "policy/purpose-contracts.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-PURPOSE-CONTRACTS-v1",
+      "authority_domain": "PEDAGOGICAL_CONTRACTS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:resolve_control_state.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:question-badge-metadata.v1.json": {
+      "component_id": "policy:question-badge-metadata.v1.json",
+      "name": "question-badge-metadata.v1.json",
+      "path": "policy/question-badge-metadata.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "question-badge-metadata.v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_ccu.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "policy:render-preflight.v1.json": {
+      "component_id": "policy:render-preflight.v1.json",
+      "name": "render-preflight.v1.json",
+      "path": "policy/render-preflight.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-BP-RENDER-PREFLIGHT-v1",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:build_render_process_golden.py",
+        "engine:preflight_rendered_pdf.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:role-bindings.v1.json": {
+      "component_id": "policy:role-bindings.v1.json",
+      "name": "role-bindings.v1.json",
+      "path": "policy/role-bindings.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "role-bindings.v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [
+        "engine:validate_b_layer_boundary.py"
+      ],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:self-help-core-publication.v1.json": {
+      "component_id": "policy:self-help-core-publication.v1.json",
+      "name": "self-help-core-publication.v1.json",
+      "path": "policy/self-help-core-publication.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V1",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "policy:self-help-core-publication.v2.json": {
+      "component_id": "policy:self-help-core-publication.v2.json",
+      "name": "self-help-core-publication.v2.json",
+      "path": "policy/self-help-core-publication.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V2",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V2.md"
+      ]
+    },
+    "policy:self-help-core-publication.v3.json": {
+      "component_id": "policy:self-help-core-publication.v3.json",
+      "name": "self-help-core-publication.v3.json",
+      "path": "policy/self-help-core-publication.v3.json",
+      "component_type": "POLICY",
+      "schema_version": "3.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V3",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V3.md"
+      ]
+    },
+    "policy:self-help-core-publication.v4.json": {
+      "component_id": "policy:self-help-core-publication.v4.json",
+      "name": "self-help-core-publication.v4.json",
+      "path": "policy/self-help-core-publication.v4.json",
+      "component_type": "POLICY",
+      "schema_version": "4.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V4",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V4.md"
+      ]
+    },
+    "policy:self-help-core-publication.v5.json": {
+      "component_id": "policy:self-help-core-publication.v5.json",
+      "name": "self-help-core-publication.v5.json",
+      "path": "policy/self-help-core-publication.v5.json",
+      "component_type": "POLICY",
+      "schema_version": "5.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V5",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V5.md"
+      ]
+    },
+    "policy:self-help-core-publication.v6.json": {
+      "component_id": "policy:self-help-core-publication.v6.json",
+      "name": "self-help-core-publication.v6.json",
+      "path": "policy/self-help-core-publication.v6.json",
+      "component_type": "POLICY",
+      "schema_version": "6.0.0",
+      "title": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V6",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V6.md"
+      ]
+    },
+    "policy:study-differentiation-unit.v1.json": {
+      "component_id": "policy:study-differentiation-unit.v1.json",
+      "name": "study-differentiation-unit.v1.json",
+      "path": "policy/study-differentiation-unit.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "study-differentiation-unit.v1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "policy:study-differentiation-unit.v2.json": {
+      "component_id": "policy:study-differentiation-unit.v2.json",
+      "name": "study-differentiation-unit.v2.json",
+      "path": "policy/study-differentiation-unit.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "study-differentiation-unit.v2",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "policy:technical-density-and-figure-contract.v1.json": {
+      "component_id": "policy:technical-density-and-figure-contract.v1.json",
+      "name": "technical-density-and-figure-contract.v1.json",
+      "path": "policy/technical-density-and-figure-contract.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-TECHNICAL-DENSITY-FIGURE-CONTRACT-V1",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V4.md"
+      ]
+    },
+    "policy:technical-teaching-unit.v1.json": {
+      "component_id": "policy:technical-teaching-unit.v1.json",
+      "name": "technical-teaching-unit.v1.json",
+      "path": "policy/technical-teaching-unit.v1.json",
+      "component_type": "POLICY",
+      "schema_version": "1.0.0",
+      "title": "PHY-TECHNICAL-TEACHING-UNIT-V1",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V5.md"
+      ]
+    },
+    "policy:technical-teaching-unit.v2.json": {
+      "component_id": "policy:technical-teaching-unit.v2.json",
+      "name": "technical-teaching-unit.v2.json",
+      "path": "policy/technical-teaching-unit.v2.json",
+      "component_type": "POLICY",
+      "schema_version": "2.0.0",
+      "title": "PHY-TECHNICAL-TEACHING-UNIT-V2",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:SELF_HELP_ARCHITECTURE_V6.md"
+      ]
+    },
+    "policy:technical-teaching-unit.v3.json": {
+      "component_id": "policy:technical-teaching-unit.v3.json",
+      "name": "technical-teaching-unit.v3.json",
+      "path": "policy/technical-teaching-unit.v3.json",
+      "component_type": "POLICY",
+      "schema_version": "3.0.0",
+      "title": "technical-teaching-unit.v3",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "engine:blueprint_common.py": {
+      "component_id": "engine:blueprint_common.py",
+      "name": "blueprint_common.py",
+      "path": "engine/blueprint_common.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Blueprint Common",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:build_engineering_gate_registry.py": {
+      "component_id": "engine:build_engineering_gate_registry.py",
+      "name": "build_engineering_gate_registry.py",
+      "path": "engine/build_engineering_gate_registry.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Build Engineering Gate Registry",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:build_render_process_golden.py": {
+      "component_id": "engine:build_render_process_golden.py",
+      "name": "build_render_process_golden.py",
+      "path": "engine/build_render_process_golden.py",
+      "component_type": "RENDERER",
+      "schema_version": "N/A",
+      "title": "Build Render Process Golden",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:compile_core1a_stage_run.py": {
+      "component_id": "engine:compile_core1a_stage_run.py",
+      "name": "compile_core1a_stage_run.py",
+      "path": "engine/compile_core1a_stage_run.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Core1A Stage Run",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_core1a_stage_machine.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:compile_engineering_visibility_manifest.py": {
+      "component_id": "engine:compile_engineering_visibility_manifest.py",
+      "name": "compile_engineering_visibility_manifest.py",
+      "path": "engine/compile_engineering_visibility_manifest.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Engineering Visibility Manifest",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_visibility_manifest.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:compile_join.py": {
+      "component_id": "engine:compile_join.py",
+      "name": "compile_join.py",
+      "path": "engine/compile_join.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Join",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_core1a_stage_machine.py",
+        "test:test_blueprint_join.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "engine:compile_m2d_composition_plan.py": {
+      "component_id": "engine:compile_m2d_composition_plan.py",
+      "name": "compile_m2d_composition_plan.py",
+      "path": "engine/compile_m2d_composition_plan.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile M2D Composition Plan",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:compile_m2d_render_readiness.py": {
+      "component_id": "engine:compile_m2d_render_readiness.py",
+      "name": "compile_m2d_render_readiness.py",
+      "path": "engine/compile_m2d_render_readiness.py",
+      "component_type": "RENDERER",
+      "schema_version": "N/A",
+      "title": "Compile M2D Render Readiness",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:PEDAGOGY_AND_CALIBRATION.md"
+      ]
+    },
+    "engine:compile_physics_engineering_discovery.py": {
+      "component_id": "engine:compile_physics_engineering_discovery.py",
+      "name": "compile_physics_engineering_discovery.py",
+      "path": "engine/compile_physics_engineering_discovery.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Physics Engineering Discovery",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:ENGINEERING_AUTHORITY.md"
+      ]
+    },
+    "engine:compile_physics_engineering_workbench.py": {
+      "component_id": "engine:compile_physics_engineering_workbench.py",
+      "name": "compile_physics_engineering_workbench.py",
+      "path": "engine/compile_physics_engineering_workbench.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Physics Engineering Workbench",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineered_domain_admission.py",
+        "test:test_engineering_domain_projection.py",
+        "test:test_engineering_domain_projection_binding.py",
+        "test:test_engineering_domain_projection_v2.py",
+        "test:test_engineering_visibility_manifest.py",
+        "test:test_physics_engineering_binding.py",
+        "test:test_physics_engineering_workbench.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:compile_publication_ir.py": {
+      "component_id": "engine:compile_publication_ir.py",
+      "name": "compile_publication_ir.py",
+      "path": "engine/compile_publication_ir.py",
+      "component_type": "COMPILER",
+      "schema_version": "N/A",
+      "title": "Compile Publication Ir",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_publication_ir.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "engine:engineering_product_custody.py": {
+      "component_id": "engine:engineering_product_custody.py",
+      "name": "engineering_product_custody.py",
+      "path": "engine/engineering_product_custody.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Engineering Product Custody",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:engineering_registry_composition.py": {
+      "component_id": "engine:engineering_registry_composition.py",
+      "name": "engineering_registry_composition.py",
+      "path": "engine/engineering_registry_composition.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Engineering Registry Composition",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:governor.py": {
+      "component_id": "engine:governor.py",
+      "name": "governor.py",
+      "path": "engine/governor.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Governor",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_independence.py",
+        "test:test_blueprint_routing.py"
+      ],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "engine:independent_validation.py": {
+      "component_id": "engine:independent_validation.py",
+      "name": "independent_validation.py",
+      "path": "engine/independent_validation.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Independent Validation",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_independence.py"
+      ],
+      "documentation_refs": [
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "engine:preflight_rendered_pdf.py": {
+      "component_id": "engine:preflight_rendered_pdf.py",
+      "name": "preflight_rendered_pdf.py",
+      "path": "engine/preflight_rendered_pdf.py",
+      "component_type": "RENDERER",
+      "schema_version": "N/A",
+      "title": "Preflight Rendered Pdf",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "engine:project_engineering_to_domain_registry.py": {
+      "component_id": "engine:project_engineering_to_domain_registry.py",
+      "name": "project_engineering_to_domain_registry.py",
+      "path": "engine/project_engineering_to_domain_registry.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Project Engineering To Domain Registry",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_domain_projection.py",
+        "test:test_engineering_domain_projection_binding.py",
+        "test:test_engineering_domain_projection_v2.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:project_engineering_to_domain_registry_v2.py": {
+      "component_id": "engine:project_engineering_to_domain_registry_v2.py",
+      "name": "project_engineering_to_domain_registry_v2.py",
+      "path": "engine/project_engineering_to_domain_registry_v2.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Project Engineering To Domain Registry V2",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_domain_projection_v2.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:resolve_control_state.py": {
+      "component_id": "engine:resolve_control_state.py",
+      "name": "resolve_control_state.py",
+      "path": "engine/resolve_control_state.py",
+      "component_type": "EXECUTABLE_MODULE",
+      "schema_version": "N/A",
+      "title": "Resolve Control State",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_control_state.py",
+        "test:test_blueprint_core1a_stage_machine.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:run_golden_fixtures.py": {
+      "component_id": "engine:run_golden_fixtures.py",
+      "name": "run_golden_fixtures.py",
+      "path": "engine/run_golden_fixtures.py",
+      "component_type": "RUNNER",
+      "schema_version": "N/A",
+      "title": "Run Golden Fixtures",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "engine:validate_b_layer_boundary.py": {
+      "component_id": "engine:validate_b_layer_boundary.py",
+      "name": "validate_b_layer_boundary.py",
+      "path": "engine/validate_b_layer_boundary.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate B Layer Boundary",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_b_layer_boundary.py"
+      ],
+      "documentation_refs": [
+        "doc:PEDAGOGY_AND_CALIBRATION.md",
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "engine:validate_canonical_domain_registry.py": {
+      "component_id": "engine:validate_canonical_domain_registry.py",
+      "name": "validate_canonical_domain_registry.py",
+      "path": "engine/validate_canonical_domain_registry.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Canonical Domain Registry",
+      "authority_domain": "CANONICAL_DOMAIN_REGISTRY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_domain_projection.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_ccu.py": {
+      "component_id": "engine:validate_ccu.py",
+      "name": "validate_ccu.py",
+      "path": "engine/validate_ccu.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Ccu",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_ccu_v8.py"
+      ],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "engine:validate_engineered_domain_admission.py": {
+      "component_id": "engine:validate_engineered_domain_admission.py",
+      "name": "validate_engineered_domain_admission.py",
+      "path": "engine/validate_engineered_domain_admission.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Engineered Domain Admission",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineered_domain_admission.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_engineering_domain_projection_binding.py": {
+      "component_id": "engine:validate_engineering_domain_projection_binding.py",
+      "name": "validate_engineering_domain_projection_binding.py",
+      "path": "engine/validate_engineering_domain_projection_binding.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Engineering Domain Projection Binding",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_domain_projection_binding.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_engineering_domain_projection_binding_v2.py": {
+      "component_id": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "name": "validate_engineering_domain_projection_binding_v2.py",
+      "path": "engine/validate_engineering_domain_projection_binding_v2.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Engineering Domain Projection Binding V2",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_engineering_domain_projection_v2.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_engineering_gates.py": {
+      "component_id": "engine:validate_engineering_gates.py",
+      "name": "validate_engineering_gates.py",
+      "path": "engine/validate_engineering_gates.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Engineering Gates",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_physics_engineering_gates.py"
+      ],
+      "documentation_refs": [
+        "doc:ENGINEERING_AUTHORITY.md",
+        "doc:README.md"
+      ]
+    },
+    "engine:validate_physics_engineering_binding.py": {
+      "component_id": "engine:validate_physics_engineering_binding.py",
+      "name": "validate_physics_engineering_binding.py",
+      "path": "engine/validate_physics_engineering_binding.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Physics Engineering Binding",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_physics_engineering_binding.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_subtopic_intelligence_library.py": {
+      "component_id": "engine:validate_subtopic_intelligence_library.py",
+      "name": "validate_subtopic_intelligence_library.py",
+      "path": "engine/validate_subtopic_intelligence_library.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Subtopic Intelligence Library",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_subtopic_intelligence_library.py"
+      ],
+      "documentation_refs": []
+    },
+    "engine:validate_technical_teaching_unit.py": {
+      "component_id": "engine:validate_technical_teaching_unit.py",
+      "name": "validate_technical_teaching_unit.py",
+      "path": "engine/validate_technical_teaching_unit.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Technical Teaching Unit",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_ttu_v2.py"
+      ],
+      "documentation_refs": [
+        "doc:PEDAGOGY_AND_CALIBRATION.md"
+      ]
+    },
+    "engine:validate_topic_blueprint.py": {
+      "component_id": "engine:validate_topic_blueprint.py",
+      "name": "validate_topic_blueprint.py",
+      "path": "engine/validate_topic_blueprint.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Topic Blueprint",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_blueprint_topic_pilot.py"
+      ],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_b_layer_boundary.py": {
+      "component_id": "test:test_blueprint_b_layer_boundary.py",
+      "name": "test_blueprint_b_layer_boundary.py",
+      "path": "tests/test_blueprint_b_layer_boundary.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint B Layer Boundary",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:PEDAGOGY_AND_CALIBRATION.md",
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "test:test_blueprint_ccu_v8.py": {
+      "component_id": "test:test_blueprint_ccu_v8.py",
+      "name": "test_blueprint_ccu_v8.py",
+      "path": "tests/test_blueprint_ccu_v8.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Ccu V8",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md",
+        "doc:SELF_HELP_ARCHITECTURE_V8.md"
+      ]
+    },
+    "test:test_blueprint_cdau_sdu_lau_ttu_v7.py": {
+      "component_id": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "name": "test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "path": "tests/test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Cdau Sdu Lau Ttu V7",
+      "authority_domain": "SDU_STUDY_DIFFERENTIATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:PEDAGOGY_AND_CALIBRATION.md",
+        "doc:SELF_HELP_ARCHITECTURE_V7.md"
+      ]
+    },
+    "test:test_blueprint_control_state.py": {
+      "component_id": "test:test_blueprint_control_state.py",
+      "name": "test_blueprint_control_state.py",
+      "path": "tests/test_blueprint_control_state.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Control State",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_core1a_stage_machine.py": {
+      "component_id": "test:test_blueprint_core1a_stage_machine.py",
+      "name": "test_blueprint_core1a_stage_machine.py",
+      "path": "tests/test_blueprint_core1a_stage_machine.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Core1A Stage Machine",
+      "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_independence.py": {
+      "component_id": "test:test_blueprint_independence.py",
+      "name": "test_blueprint_independence.py",
+      "path": "tests/test_blueprint_independence.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Independence",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_join.py": {
+      "component_id": "test:test_blueprint_join.py",
+      "name": "test_blueprint_join.py",
+      "path": "tests/test_blueprint_join.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Join",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_m2d_composition_gate.py": {
+      "component_id": "test:test_blueprint_m2d_composition_gate.py",
+      "name": "test_blueprint_m2d_composition_gate.py",
+      "path": "tests/test_blueprint_m2d_composition_gate.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint M2D Composition Gate",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_m2d_render_readiness.py": {
+      "component_id": "test:test_blueprint_m2d_render_readiness.py",
+      "name": "test_blueprint_m2d_render_readiness.py",
+      "path": "tests/test_blueprint_m2d_render_readiness.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint M2D Render Readiness",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_publication_ir.py": {
+      "component_id": "test:test_blueprint_publication_ir.py",
+      "name": "test_blueprint_publication_ir.py",
+      "path": "tests/test_blueprint_publication_ir.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Publication Ir",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:PRODUCT_GOVERNANCE_GATE.md"
+      ]
+    },
+    "test:test_blueprint_render_preflight.py": {
+      "component_id": "test:test_blueprint_render_preflight.py",
+      "name": "test_blueprint_render_preflight.py",
+      "path": "tests/test_blueprint_render_preflight.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Render Preflight",
+      "authority_domain": "PUBLICATION_RENDERING",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_routing.py": {
+      "component_id": "test:test_blueprint_routing.py",
+      "name": "test_blueprint_routing.py",
+      "path": "tests/test_blueprint_routing.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Routing",
+      "authority_domain": "CORE0_ROUTING",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_sba23_v7_realization.py": {
+      "component_id": "test:test_blueprint_sba23_v7_realization.py",
+      "name": "test_blueprint_sba23_v7_realization.py",
+      "path": "tests/test_blueprint_sba23_v7_realization.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Sba23 V7 Realization",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_self_help_core_grammar.py": {
+      "component_id": "test:test_blueprint_self_help_core_grammar.py",
+      "name": "test_blueprint_self_help_core_grammar.py",
+      "path": "tests/test_blueprint_self_help_core_grammar.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Self Help Core Grammar",
+      "authority_domain": "PEDAGOGICAL_CONTRACTS",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_topic_pilot.py": {
+      "component_id": "test:test_blueprint_topic_pilot.py",
+      "name": "test_blueprint_topic_pilot.py",
+      "path": "tests/test_blueprint_topic_pilot.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Topic Pilot",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_blueprint_ttu_v2.py": {
+      "component_id": "test:test_blueprint_ttu_v2.py",
+      "name": "test_blueprint_ttu_v2.py",
+      "path": "tests/test_blueprint_ttu_v2.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Blueprint Ttu V2",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_engineered_domain_admission.py": {
+      "component_id": "test:test_engineered_domain_admission.py",
+      "name": "test_engineered_domain_admission.py",
+      "path": "tests/test_engineered_domain_admission.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineered Domain Admission",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_engineering_domain_projection.py": {
+      "component_id": "test:test_engineering_domain_projection.py",
+      "name": "test_engineering_domain_projection.py",
+      "path": "tests/test_engineering_domain_projection.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineering Domain Projection",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_engineering_domain_projection_binding.py": {
+      "component_id": "test:test_engineering_domain_projection_binding.py",
+      "name": "test_engineering_domain_projection_binding.py",
+      "path": "tests/test_engineering_domain_projection_binding.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineering Domain Projection Binding",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_engineering_domain_projection_v2.py": {
+      "component_id": "test:test_engineering_domain_projection_v2.py",
+      "name": "test_engineering_domain_projection_v2.py",
+      "path": "tests/test_engineering_domain_projection_v2.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineering Domain Projection V2",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_engineering_visibility_manifest.py": {
+      "component_id": "test:test_engineering_visibility_manifest.py",
+      "name": "test_engineering_visibility_manifest.py",
+      "path": "tests/test_engineering_visibility_manifest.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineering Visibility Manifest",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_physics_engineering_binding.py": {
+      "component_id": "test:test_physics_engineering_binding.py",
+      "name": "test_physics_engineering_binding.py",
+      "path": "tests/test_physics_engineering_binding.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Physics Engineering Binding",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_physics_engineering_gates.py": {
+      "component_id": "test:test_physics_engineering_gates.py",
+      "name": "test_physics_engineering_gates.py",
+      "path": "tests/test_physics_engineering_gates.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Physics Engineering Gates",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:ENGINEERING_AUTHORITY.md",
+        "doc:README.md"
+      ]
+    },
+    "test:test_physics_engineering_workbench.py": {
+      "component_id": "test:test_physics_engineering_workbench.py",
+      "name": "test_physics_engineering_workbench.py",
+      "path": "tests/test_physics_engineering_workbench.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Physics Engineering Workbench",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_subtopic_intelligence_library.py": {
+      "component_id": "test:test_subtopic_intelligence_library.py",
+      "name": "test_subtopic_intelligence_library.py",
+      "path": "tests/test_subtopic_intelligence_library.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Subtopic Intelligence Library",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:CANONICAL_ARCHITECTURE.md": {
+      "component_id": "doc:CANONICAL_ARCHITECTURE.md",
+      "name": "CANONICAL_ARCHITECTURE.md",
+      "path": "CANONICAL_ARCHITECTURE.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Canonical Architecture",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md",
+        "doc:PEDAGOGY_AND_CALIBRATION.md",
+        "doc:PRODUCT_GOVERNANCE_GATE.md",
+        "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
+      ]
+    },
+    "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md": {
+      "component_id": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "name": "CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "path": "CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Core Architecture Drift Audit",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md"
+      ]
+    },
+    "doc:ENGINEERING_AUTHORITY.md": {
+      "component_id": "doc:ENGINEERING_AUTHORITY.md",
+      "name": "ENGINEERING_AUTHORITY.md",
+      "path": "ENGINEERING_AUTHORITY.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Engineering Authority",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "doc:PEDAGOGY_AND_CALIBRATION.md": {
+      "component_id": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "name": "PEDAGOGY_AND_CALIBRATION.md",
+      "path": "PEDAGOGY_AND_CALIBRATION.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Pedagogy And Calibration",
+      "authority_domain": "PEDAGOGY_RESEARCH",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "doc:PHYSICS_TECHNICAL_ENGINEERING_GATES.md": {
+      "component_id": "doc:PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "name": "PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "path": "PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Physics Technical Engineering Gates",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
+      ]
+    },
+    "doc:PRODUCT_GOVERNANCE_GATE.md": {
+      "component_id": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "name": "PRODUCT_GOVERNANCE_GATE.md",
+      "path": "PRODUCT_GOVERNANCE_GATE.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Product Governance Gate",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "doc:README.md": {
+      "component_id": "doc:README.md",
+      "name": "README.md",
+      "path": "README.md",
+      "component_type": "INFORMATIONAL_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Readme",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V2.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V2.md",
+      "name": "SELF_HELP_ARCHITECTURE_V2.md",
+      "path": "SELF_HELP_ARCHITECTURE_V2.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V2",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V3.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V3.md",
+      "name": "SELF_HELP_ARCHITECTURE_V3.md",
+      "path": "SELF_HELP_ARCHITECTURE_V3.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V3",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V4.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "name": "SELF_HELP_ARCHITECTURE_V4.md",
+      "path": "SELF_HELP_ARCHITECTURE_V4.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V4",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V5.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "name": "SELF_HELP_ARCHITECTURE_V5.md",
+      "path": "SELF_HELP_ARCHITECTURE_V5.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V5",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V6.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "name": "SELF_HELP_ARCHITECTURE_V6.md",
+      "path": "SELF_HELP_ARCHITECTURE_V6.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V6",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V7.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "name": "SELF_HELP_ARCHITECTURE_V7.md",
+      "path": "SELF_HELP_ARCHITECTURE_V7.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V7",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "doc:SELF_HELP_ARCHITECTURE_V8.md": {
+      "component_id": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "name": "SELF_HELP_ARCHITECTURE_V8.md",
+      "path": "SELF_HELP_ARCHITECTURE_V8.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Self Help Architecture V8",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md"
+      ]
+    },
+    "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md": {
+      "component_id": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "name": "SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "path": "SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Subtopic Intelligence Intake Specification",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+      ]
+    }
+  },
+  "relations": [
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:ENGINEERING_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:ENGINEERING_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:SELF_HELP_ARCHITECTURE_V2.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_join.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_publication_ir.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:governor.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:architecture.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:b-layer-runtime-boundary.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:core-governance-cdau.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:core1a-stage-machine.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:independent-validation.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:join-policy.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:learner-adaptation-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:physics-engineering-discovery-vocabulary.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:physics-representation-semantic-quality.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:study-differentiation-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:architecture-blueprint.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:content-custody-coverage-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:core-differentiation-adaptation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:evidence-state.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:join-packet.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:learner-adaptation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:learner-purpose-control-state.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:m2d-composition-plan.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:m2d-manuscript-release-binding.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:m2d-render-readiness.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:packet-envelope.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-engineering-discovery-receipt.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-engineering-discovery-request.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-engineering-discovery-selection.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-engineering-discovery-vocabulary.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-engineering-request.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:physics-technical-engineering-gate.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:publication-ir.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:render-custody.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:render-preflight-report.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:routing-decision.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:study-differentiation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:technical-teaching-unit-v2.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:technical-teaching-unit-v3.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "schema:technical-teaching-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "engine:compile_physics_engineering_discovery.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "engine:validate_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "policy:physics-engineering-depth-policy.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "policy:physics-engineering-discovery-vocabulary.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "schema:physics-engineering-request.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "schema:physics-engineering-visibility-manifest.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "schema:physics-technical-engineering-gate.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "test:test_physics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "engine:compile_m2d_render_readiness.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "engine:validate_b_layer_boundary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "engine:validate_technical_teaching_unit.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "schema:m2d-composition-plan.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "schema:technical-teaching-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "test:test_blueprint_b_layer_boundary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "target": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "engine:compile_publication_ir.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "engine:governor.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "engine:independent_validation.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "engine:run_golden_fixtures.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "engine:validate_b_layer_boundary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "test:test_blueprint_b_layer_boundary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "target": "test:test_blueprint_publication_ir.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "doc:PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_ccu.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:content-custody-coverage-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:core-governance-cdau.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:learner-adaptation-unit.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:question-badge-metadata.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:study-differentiation-unit.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:technical-teaching-unit.v3.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "schema:content-custody-coverage-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "schema:physics-technical-engineering-gate.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_blueprint_ccu_v8.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_physics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V2.md",
+      "target": "policy:core1ab-bucket-depth.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V2.md",
+      "target": "policy:core2ab-knowledge-routing.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V2.md",
+      "target": "policy:self-help-core-publication.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V3.md",
+      "target": "policy:core1ab-bucket-authoring.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V3.md",
+      "target": "policy:core2ab-knowledge-routing.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V3.md",
+      "target": "policy:self-help-core-publication.v3.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "target": "policy:core1ab-bucket-authoring.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "target": "policy:core2ab-knowledge-routing.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "target": "policy:pdf-layout-integrity.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "target": "policy:self-help-core-publication.v4.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V4.md",
+      "target": "policy:technical-density-and-figure-contract.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:core1ab-bucket-authoring.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:core2ab-knowledge-routing.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:pdf-layout-integrity.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:physics-representation-semantic-quality.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:self-help-core-publication.v5.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V5.md",
+      "target": "policy:technical-teaching-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "target": "policy:pdf-layout-integrity.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "target": "policy:physics-representation-semantic-quality.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "target": "policy:self-help-core-publication.v6.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "target": "policy:technical-teaching-unit.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V6.md",
+      "target": "schema:technical-teaching-unit-v2.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "policy:core-governance-cdau.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "policy:learner-adaptation-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "policy:study-differentiation-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "policy:technical-teaching-unit.v3.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "schema:core-differentiation-adaptation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "schema:learner-adaptation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "schema:study-differentiation-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "schema:technical-teaching-unit-v3.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V7.md",
+      "target": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "engine:validate_ccu.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:content-custody-coverage-unit.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:core-governance-cdau.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:learner-adaptation-unit.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:question-badge-metadata.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:study-differentiation-unit.v2.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "policy:technical-teaching-unit.v3.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "schema:content-custody-coverage-unit.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_HELP_ARCHITECTURE_V8.md",
+      "target": "test:test_blueprint_ccu_v8.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_engineering_gate_registry.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_render_process_golden.py",
+      "target": "schema:render-custody.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_render_process_golden.py",
+      "target": "schema:render-preflight-report.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_render_process_golden.py",
+      "target": "policy:publication-boundary.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_render_process_golden.py",
+      "target": "policy:render-preflight.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_core1a_stage_run.py",
+      "target": "policy:core1a-stage-machine.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_core1a_stage_run.py",
+      "target": "schema:core1a-stage-run.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:validate_physics_engineering_binding.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "schema:physics-engineering-visibility-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_join.py",
+      "target": "schema:join-packet.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_composition_plan.py",
+      "target": "policy:m2d-composition-release.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_composition_plan.py",
+      "target": "policy:m2d-representation-requirements.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_composition_plan.py",
+      "target": "schema:m2d-composition-plan.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_composition_plan.py",
+      "target": "schema:m2d-manuscript-release-binding.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_render_readiness.py",
+      "target": "schema:m2d-render-readiness.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_m2d_render_readiness.py",
+      "target": "policy:m2d-representation-requirements.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "policy:physics-engineering-discovery-vocabulary.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "schema:physics-engineering-discovery-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "schema:physics-engineering-discovery-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "schema:physics-engineering-discovery-selection.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "schema:physics-engineering-discovery-vocabulary.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_discovery.py",
+      "target": "schema:physics-engineering-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "policy:physics-engineering-depth-policy.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "policy:physics-engineering-gate-invariants.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "engine:validate_engineering_gates.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "schema:physics-engineering-binding.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "schema:physics-engineering-closure-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "schema:physics-engineering-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "schema:physics-engineering-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_physics_engineering_workbench.py",
+      "target": "schema:physics-technical-engineering-gate.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_publication_ir.py",
+      "target": "policy:publication-boundary.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_publication_ir.py",
+      "target": "schema:publication-ir.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "engine:validate_engineered_domain_admission.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:engineering_registry_composition.py",
+      "target": "policy:physics-engineering-extension-catalog.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:engineering_registry_composition.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:governor.py",
+      "target": "policy:first-role-routing.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:independent_validation.py",
+      "target": "schema:independent-validation-session.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:preflight_rendered_pdf.py",
+      "target": "schema:render-custody.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:preflight_rendered_pdf.py",
+      "target": "schema:render-preflight-report.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:preflight_rendered_pdf.py",
+      "target": "policy:render-preflight.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "schema:physics-engineering-domain-projection.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "schema:physics-engineering-domain-projection-v2.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:resolve_control_state.py",
+      "target": "schema:learner-purpose-control-state.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:resolve_control_state.py",
+      "target": "policy:purpose-contracts.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_golden_fixtures.py",
+      "target": "schema:evidence-state.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_golden_fixtures.py",
+      "target": "schema:routing-decision.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_golden_fixtures.py",
+      "target": "policy:first-role-routing.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_golden_fixtures.py",
+      "target": "engine:governor.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_b_layer_boundary.py",
+      "target": "policy:architecture.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_b_layer_boundary.py",
+      "target": "policy:b-layer-runtime-boundary.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_b_layer_boundary.py",
+      "target": "policy:role-bindings.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_canonical_domain_registry.py",
+      "target": "policy:physics-canonical-domain-registry-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_canonical_domain_registry.py",
+      "target": "schema:physics-canonical-domain-registry.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_ccu.py",
+      "target": "policy:content-custody-coverage-unit.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_ccu.py",
+      "target": "policy:question-badge-metadata.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_ccu.py",
+      "target": "schema:content-custody-coverage-unit.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:validate_physics_engineering_binding.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "schema:physics-engineered-domain-admission.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "schema:physics-engineering-domain-projection.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "schema:physics-engineering-domain-projection-v2.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_gates.py",
+      "target": "policy:physics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_gates.py",
+      "target": "schema:physics-technical-engineering-gate.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_physics_engineering_binding.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_physics_engineering_binding.py",
+      "target": "schema:physics-engineering-binding.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_topic_blueprint.py",
+      "target": "engine:governor.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_topic_blueprint.py",
+      "target": "schema:evidence-state.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_topic_blueprint.py",
+      "target": "schema:topic-blueprint.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_b_layer_boundary.py",
+      "target": "engine:validate_b_layer_boundary.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_ccu_v8.py",
+      "target": "engine:validate_ccu.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "target": "schema:core-differentiation-adaptation-unit.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "target": "schema:learner-adaptation-unit.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "target": "schema:study-differentiation-unit.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_cdau_sdu_lau_ttu_v7.py",
+      "target": "schema:technical-teaching-unit-v3.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_control_state.py",
+      "target": "schema:learner-purpose-control-state.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_control_state.py",
+      "target": "engine:resolve_control_state.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_core1a_stage_machine.py",
+      "target": "schema:core1a-stage-run.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_core1a_stage_machine.py",
+      "target": "engine:compile_core1a_stage_run.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_core1a_stage_machine.py",
+      "target": "engine:compile_join.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_core1a_stage_machine.py",
+      "target": "engine:resolve_control_state.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_independence.py",
+      "target": "schema:independent-validation-session.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_independence.py",
+      "target": "engine:governor.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_independence.py",
+      "target": "engine:independent_validation.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_join.py",
+      "target": "schema:join-packet.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_join.py",
+      "target": "engine:compile_join.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_publication_ir.py",
+      "target": "schema:publication-ir.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_publication_ir.py",
+      "target": "engine:compile_publication_ir.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_routing.py",
+      "target": "schema:packet-envelope.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_routing.py",
+      "target": "engine:governor.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_topic_pilot.py",
+      "target": "engine:validate_topic_blueprint.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_ttu_v2.py",
+      "target": "engine:validate_technical_teaching_unit.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineered_domain_admission.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineered_domain_admission.py",
+      "target": "engine:validate_engineered_domain_admission.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:validate_engineering_domain_projection_binding.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:project_engineering_to_domain_registry_v2.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_visibility_manifest.py",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_visibility_manifest.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_binding.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_binding.py",
+      "target": "engine:validate_physics_engineering_binding.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_gates.py",
+      "target": "engine:validate_engineering_gates.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_workbench.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_subtopic_intelligence_library.py",
+      "target": "engine:validate_subtopic_intelligence_library.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    }
+  ],
+  "gap_reports": {
+    "schemas_without_validator": [
+      "schema:architecture-blueprint.schema.json",
+      "schema:b-layer-runtime-boundary.schema.json",
+      "schema:core-differentiation-adaptation-unit.schema.json",
+      "schema:core1a-stage-run.schema.json",
+      "schema:independent-validation-session.schema.json",
+      "schema:join-packet.schema.json",
+      "schema:learner-adaptation-unit.schema.json",
+      "schema:learner-purpose-control-state.schema.json",
+      "schema:m2d-composition-plan.schema.json",
+      "schema:m2d-manuscript-release-binding.schema.json",
+      "schema:m2d-render-readiness.schema.json",
+      "schema:packet-envelope.schema.json",
+      "schema:physics-core1a-family-authoring-assets.schema.json",
+      "schema:physics-core2-learner-knowledge-evidence.schema.json",
+      "schema:physics-core2-owner-waiver.schema.json",
+      "schema:physics-engineering-closure-receipt.schema.json",
+      "schema:physics-engineering-discovery-receipt.schema.json",
+      "schema:physics-engineering-discovery-request.schema.json",
+      "schema:physics-engineering-discovery-selection.schema.json",
+      "schema:physics-engineering-discovery-vocabulary.schema.json",
+      "schema:physics-engineering-manifest.schema.json",
+      "schema:physics-engineering-request.schema.json",
+      "schema:physics-engineering-visibility-manifest.schema.json",
+      "schema:publication-ir.schema.json",
+      "schema:render-custody.schema.json",
+      "schema:render-preflight-report.schema.json",
+      "schema:role-bindings.schema.json",
+      "schema:routing-decision.schema.json",
+      "schema:study-differentiation-unit.schema.json",
+      "schema:technical-teaching-unit-v2.schema.json",
+      "schema:technical-teaching-unit-v3.schema.json",
+      "schema:technical-teaching-unit.schema.json"
+    ],
+    "validators_without_tests": [],
+    "policies_without_consumer": [
+      "policy:core-governance-cdau.v1.json",
+      "policy:core-governance-cdau.v2.json",
+      "policy:core1ab-bucket-authoring.v2.json",
+      "policy:core1ab-bucket-authoring.v3.json",
+      "policy:core1ab-bucket-depth.v1.json",
+      "policy:core2ab-knowledge-routing.v1.json",
+      "policy:independent-validation.v1.json",
+      "policy:join-policy.v1.json",
+      "policy:learner-adaptation-unit.v1.json",
+      "policy:learner-adaptation-unit.v2.json",
+      "policy:pdf-layout-integrity.v1.json",
+      "policy:pdf-layout-integrity.v2.json",
+      "policy:physics-representation-semantic-quality.v1.json",
+      "policy:self-help-core-publication.v1.json",
+      "policy:self-help-core-publication.v2.json",
+      "policy:self-help-core-publication.v3.json",
+      "policy:self-help-core-publication.v4.json",
+      "policy:self-help-core-publication.v5.json",
+      "policy:self-help-core-publication.v6.json",
+      "policy:study-differentiation-unit.v1.json",
+      "policy:study-differentiation-unit.v2.json",
+      "policy:technical-density-and-figure-contract.v1.json",
+      "policy:technical-teaching-unit.v1.json",
+      "policy:technical-teaching-unit.v2.json",
+      "policy:technical-teaching-unit.v3.json"
+    ],
+    "orphan_schemas": [
+      "schema:architecture-blueprint.schema.json",
+      "schema:b-layer-runtime-boundary.schema.json",
+      "schema:core-differentiation-adaptation-unit.schema.json",
+      "schema:learner-adaptation-unit.schema.json",
+      "schema:packet-envelope.schema.json",
+      "schema:physics-core1a-family-authoring-assets.schema.json",
+      "schema:physics-core2-learner-knowledge-evidence.schema.json",
+      "schema:physics-core2-owner-waiver.schema.json",
+      "schema:role-bindings.schema.json",
+      "schema:study-differentiation-unit.schema.json",
+      "schema:technical-teaching-unit-v2.schema.json",
+      "schema:technical-teaching-unit-v3.schema.json",
+      "schema:technical-teaching-unit.schema.json"
+    ]
+  },
+  "manifest_digest": "sha256:190d4ac0cdf7a7928b015404abd49b8b7b5bbf0e82eeec61e0362c3d7c7360e2"
+}

@@ -1,0 +1,97 @@
+{
+  "policy_id": "PHY-CANONICAL-DOMAIN-REGISTRY-v1",
+  "subject": "PHYSICS",
+  "admission_requires": {
+    "ground_truth_refs": true,
+    "claim_level_validation": true,
+    "join_binding": true,
+    "stable_asset_identity": true
+  },
+  "authority_by_asset_type": {
+    "CONCEPT": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "MODEL": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "EQUATION": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "DERIVATION": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "CAPABILITY": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "LEARNING_ATOM": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "REPRESENTATION": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "MISCONCEPTION": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "PROBLEM_FAMILY": [
+      "CORE2_ASSESSMENT",
+      "DUAL_VALIDATED"
+    ],
+    "SOURCE_QUESTION": [
+      "SOURCE_FROZEN"
+    ],
+    "CANONICAL_SOLUTION": [
+      "INDEPENDENT_VERIFICATION",
+      "DUAL_VALIDATED"
+    ],
+    "EXAMPLE": [
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ],
+    "VERIFICATION_RULE": [
+      "INDEPENDENT_VERIFICATION",
+      "CORE1_SEMANTIC",
+      "DUAL_VALIDATED"
+    ]
+  },
+  "authority_binding_rules": {
+    "CORE1_SEMANTIC": {
+      "requires_core1_refs": true,
+      "requires_core2_refs": false
+    },
+    "CORE2_ASSESSMENT": {
+      "requires_core1_refs": false,
+      "requires_core2_refs": true
+    },
+    "DUAL_VALIDATED": {
+      "requires_core1_refs": true,
+      "requires_core2_refs": true
+    },
+    "SOURCE_FROZEN": {
+      "requires_core1_refs": false,
+      "requires_core2_refs": true
+    },
+    "INDEPENDENT_VERIFICATION": {
+      "requires_core1_refs": false,
+      "requires_core2_refs": false
+    }
+  },
+  "forbidden_runtime_fields": [
+    "learner_knowledge_percent",
+    "knowledge_pct",
+    "support_mode",
+    "product_mode",
+    "resolved_core2a_support_profile",
+    "resolved_core2a_max_demand_level",
+    "resolved_core2b_max_demand_level",
+    "owner_override",
+    "owner_waiver"
+  ]
+}

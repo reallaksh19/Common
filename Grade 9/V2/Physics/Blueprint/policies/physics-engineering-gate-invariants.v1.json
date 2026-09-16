@@ -1,0 +1,794 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "profile_id": "PHY-ENGINEERING-GATE-INVARIANTS-V1",
+  "gate_invariants": [
+    {
+      "gate_id": "PHY-VEC-BASICS",
+      "required_concept_ids": [
+        "CON-VEC-SCALAR-DEF",
+        "CON-VEC-VECTOR-DEF"
+      ],
+      "required_equation_ids": [
+        "EQ-VEC-MAG-NONNEG"
+      ],
+      "required_representation_ids": [
+        "REP-VEC-DIRECTED-SEGMENT"
+      ],
+      "required_misconception_ids": [
+        "MISC-VEC-CURRENT"
+      ],
+      "required_prerequisite_ids": [
+        "MATH-GEO-EUCLIDEAN-2D",
+        "MATH-TRIG-RIGHT-TRIANGLE"
+      ]
+    },
+    {
+      "gate_id": "PHY-VEC-ADD-SUB",
+      "required_concept_ids": [
+        "CON-VEC-RESULTANT",
+        "CON-VEC-TRIANGLE-LAW"
+      ],
+      "required_equation_ids": [
+        "EQ-VEC-PARALLELOGRAM-MAG"
+      ],
+      "required_representation_ids": [
+        "REP-VEC-HEAD-TO-TAIL"
+      ],
+      "required_misconception_ids": [
+        "MISC-VEC-SCALAR-SUM"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-BASICS"
+      ]
+    },
+    {
+      "gate_id": "PHY-VEC-COMPONENTS",
+      "required_concept_ids": [
+        "CON-VEC-COMPONENT-RESOLUTION",
+        "CON-VEC-UNIT-VECTORS"
+      ],
+      "required_equation_ids": [
+        "EQ-VEC-COMP-X"
+      ],
+      "required_representation_ids": [
+        "REP-VEC-COMPONENT-TRIANGLE"
+      ],
+      "required_misconception_ids": [
+        "MISC-VEC-COS-ALWAYS-X"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-BASICS",
+        "PHY-VEC-ADD-SUB"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-INTERACTION",
+      "required_concept_ids": [
+        "CON-NLM-FORCE-DEF",
+        "CON-NLM-INTERACTION-PAIR"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-FNET"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-INTERACTION-TABLE"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-FORCE-OF-MOTION"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-BASICS"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-FBD",
+      "required_concept_ids": [
+        "CON-NLM-SYSTEM-ISOLATION",
+        "CON-NLM-FBD-DEFINITION"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-FBD-SUM"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-FREE-BODY-DIAGRAM"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-FBD-MA-FORCE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-BASICS",
+        "PHY-NLM-INTERACTION"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-FIRST-LAW",
+      "required_concept_ids": [
+        "CON-NLM-FIRST-LAW-STMT",
+        "CON-NLM-INERTIAL-FRAME"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-EQUIL-COMP"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-EQUILIBRIUM-POLYGON"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-REST-NO-FORCE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-FBD",
+        "PHY-VEC-COMPONENTS"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-SECOND-LAW",
+      "required_concept_ids": [
+        "CON-NLM-MOMENTUM-DEF",
+        "CON-NLM-SECOND-LAW-RATE"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-NEWTON2-COMP-X"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-AXIS-RESOLVED-FBD"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-A-DIR-VEL"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-COMPONENTS",
+        "PHY-NLM-FBD"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-THIRD-LAW",
+      "required_concept_ids": [
+        "CON-NLM-THIRD-LAW-STMT",
+        "CON-NLM-PAIR-DIFFERENT-BODIES"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-NEWTON3-PAIR"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-INTERACTION-PAIR-FBD"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-NORMAL-WEIGHT-PAIR"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-INTERACTION",
+        "PHY-NLM-FBD"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-NORMAL",
+      "required_concept_ids": [
+        "CON-NLM-NORMAL-DEF",
+        "CON-NLM-NORMAL-CONSTRAINT"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-NORMAL-SOLVE"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-NORMAL-SURFACE-DIAGRAM"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-N-EQUALS-MG"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-FBD",
+        "PHY-NLM-SECOND-LAW"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-TENSION",
+      "required_concept_ids": [
+        "CON-NLM-TENSION-DEF",
+        "CON-NLM-TENSION-PULL-ONLY"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-ATWOOD-ACCEL"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-STRING-PULLEY-SYSTEM"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-TENSION-EQUALS-WEIGHT"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-FBD",
+        "PHY-NLM-SECOND-LAW"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-FRICTION",
+      "required_concept_ids": [
+        "CON-NLM-FRICTION-ORIGIN",
+        "CON-NLM-STATIC-INEQUALITY"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-STATIC-INEQUALITY"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-FRICTION-VS-APPLIED-GRAPH"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-FRICTION-ALWAYS-MU-N"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-FBD",
+        "PHY-NLM-NORMAL"
+      ]
+    },
+    {
+      "gate_id": "PHY-NLM-CONNECTED",
+      "required_concept_ids": [
+        "CON-NLM-SYSTEM-AS-WHOLE",
+        "CON-NLM-INTERNAL-FORCE-CANCELLATION"
+      ],
+      "required_equation_ids": [
+        "EQ-NLM-WHOLE-SYSTEM"
+      ],
+      "required_representation_ids": [
+        "REP-NLM-COMPOSITE-BOUNDARY-DIAGRAM"
+      ],
+      "required_misconception_ids": [
+        "MISC-NLM-PULLEY-EQUAL-A"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-FBD",
+        "PHY-NLM-SECOND-LAW"
+      ]
+    },
+    {
+      "gate_id": "PHY-KIN-1D-MOTION",
+      "required_concept_ids": [
+        "CON-PHYS-1D-KINEMATIC-EQS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-KINEMATICS-V"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-KIN-1D-AXIS"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-VARIABLE-ACCEL-KIN"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-KIN-MOTION-GRAPHS",
+      "required_concept_ids": [
+        "CON-PHYS-GRAPH-SLOPE-AREA"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-VT-AREA-DISPLACEMENT"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-VT-GRAPH"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-GRAPH-NEGATIVE-AREA"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-KIN-1D-MOTION"
+      ]
+    },
+    {
+      "gate_id": "PHY-KIN-CIRCULAR-UNIFORM",
+      "required_concept_ids": [
+        "CON-PHYS-CENTRIPETAL-ACCEL-DIRECTION"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-CENTRIPETAL-ACCEL"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-CIRCULAR-VECTOR"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-CIRCULAR-ZERO-ACCEL"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-KIN-1D-MOTION"
+      ]
+    },
+    {
+      "gate_id": "PHY-FORCE-NEWTON-LAWS",
+      "required_concept_ids": [
+        "CON-PHYS-NEWTON-THREE-LAWS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-NEWTON-SECOND"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-NEWTON-FBD"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-FORCE-OF-MOTION"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-FORCE-MOMENTUM-IMPULSE",
+      "required_concept_ids": [
+        "CON-PHYS-MOMENTUM-CONSERVATION"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-MOMENTUM-CONSERVE"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-COLLISION-VECTOR"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-SCALAR-MOMENTUM"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-FORCE-NEWTON-LAWS"
+      ]
+    },
+    {
+      "gate_id": "PHY-GRAV-UNIVERSAL-LAW",
+      "required_concept_ids": [
+        "CON-PHYS-GRAVITATION-UNIVERSAL"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-NEWTON-GRAVITATION"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-GRAVITATION-FORCE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-G-VS-G"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-GRAV-FREE-FALL",
+      "required_concept_ids": [
+        "CON-PHYS-FREE-FALL-SYMMETRY"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-FREE-FALL-HEIGHT"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-FREE-FALL-TRAJECTORY"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-ZERO-ACCEL-APEX"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-KIN-1D-MOTION",
+        "PHY-GRAV-UNIVERSAL-LAW"
+      ]
+    },
+    {
+      "gate_id": "PHY-FLUID-BUOYANCY-ARCHIMEDES",
+      "required_concept_ids": [
+        "CON-PHYS-ARCHIMEDES-PRINCIPLE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-ARCHIMEDES-BUOYANCY"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-BUOYANCY-FBD"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-BUOYANCY-BODY-DENSITY"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-WORK-ENERGY-POWER",
+      "required_concept_ids": [
+        "CON-PHYS-WORK-DEFINITION-SCALAR"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-WORK-SCALAR"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-WORK-VECTOR-ANGLE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-PERPENDICULAR-WORK"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-FORCE-NEWTON-LAWS"
+      ]
+    },
+    {
+      "gate_id": "PHY-ENERGY-CONSERVATION-LAW",
+      "required_concept_ids": [
+        "CON-PHYS-MECHANICAL-ENERGY-CONSERVE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-ENERGY-CONSERVATION"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-ENERGY-PIE-CHART"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-ENERGY-FRICTION-CONSERVE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-WORK-ENERGY-POWER"
+      ]
+    },
+    {
+      "gate_id": "PHY-SOUND-LONGITUDINAL-WAVES",
+      "required_concept_ids": [
+        "CON-PHYS-SOUND-LONGITUDINAL"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-WAVE-SPEED"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-SOUND-WAVE-PLOT"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-SOUND-VACUUM"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-OPTICS-REFLECTION-MIRRORS",
+      "required_concept_ids": [
+        "CON-PHYS-MIRROR-FORMULA-SIGNS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-MIRROR-FORMULA"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-MIRROR-RAY"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-MIRROR-SIGN-CONFUSION"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-OPTICS-REFRACTION-LENSES",
+      "required_concept_ids": [
+        "CON-PHYS-SNELL-LENS-FORMULA"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-LENS-FORMULA"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-LENS-RAY"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-LENS-FORMULA-SIGN"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-OPTICS-HUMAN-EYE",
+      "required_concept_ids": [
+        "CON-PHYS-EYE-DEFECT-CORRECTION"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-CORRECTIVE-POWER"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-DEFECTIVE-EYE-RAY"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-MYOPIA-CONVEX"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ]
+    },
+    {
+      "gate_id": "PHY-OPTICS-DISPERSION-SCATTERING",
+      "required_concept_ids": [
+        "CON-PHYS-DISPERSION-SCATTERING"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-RAYLEIGH-SCATTERING"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-PRISM-DISPERSION"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-RED-BENDS-MORE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-OPTICS-REFRACTION-LENSES"
+      ]
+    },
+    {
+      "gate_id": "PHY-ELEC-CURRENT-OHM",
+      "required_concept_ids": [
+        "CON-PHYS-OHMS-LAW-RESISTANCE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-OHMS-LAW"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-CIRCUIT-DIAGRAM"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-PARALLEL-SUM"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-ELEC-POWER-JOULE",
+      "required_concept_ids": [
+        "CON-PHYS-JOULE-HEATING-POWER"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-JOULE-HEATING"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-HEATING-SCHEMATIC"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-POWER-FORMULA-MISMATCH"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-ELEC-CURRENT-OHM"
+      ]
+    },
+    {
+      "gate_id": "PHY-MAG-FIELD-LORENTZ",
+      "required_concept_ids": [
+        "CON-PHYS-MAGNETIC-FORCE-LORENTZ"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-LORENTZ-WIRE"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-FLEMING-LEFT-HAND"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-PARALLEL-MAGNETIC-FORCE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-ELEC-CURRENT-OHM"
+      ]
+    },
+    {
+      "gate_id": "PHY-MAG-INDUCTION-FARADAY",
+      "required_concept_ids": [
+        "CON-PHYS-FARADAY-LENZ-LAWS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-FARADAYS-LAW"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-LENZ-MAGNET-COIL"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-STATIC-FLUX-INDUCTION"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-MAG-FIELD-LORENTZ"
+      ]
+    },
+    {
+      "gate_id": "PHY-KIN-2D-PROJECTILE",
+      "required_concept_ids": [
+        "CON-PHYS-PROJECTILE-INDEPENDENCE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-PROJECTILE-RANGE"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-PROJECTILE-PARABOLA"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-PROJECTILE-GRAVITY-HORIZONTAL"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-COMPONENTS",
+        "PHY-KIN-1D-MOTION"
+      ]
+    },
+    {
+      "gate_id": "PHY-KIN-CIRCULAR-DYNAMICS",
+      "required_concept_ids": [
+        "CON-PHYS-BANKING-OF-ROADS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-BANKING-ANGLE"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-BANKING-FBD"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-CENTRIFUGAL-INERTIAL"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-COMPONENTS",
+        "PHY-KIN-CIRCULAR-UNIFORM"
+      ]
+    },
+    {
+      "gate_id": "PHY-KIN-RELATIVE-2D",
+      "required_concept_ids": [
+        "CON-PHYS-RELATIVE-VELOCITY-2D"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-RELATIVE-VELOCITY"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-RIVER-BOAT-VECTOR"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-RIVER-CROSSING-DRIFT"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-ADD-SUB",
+        "PHY-KIN-1D-MOTION"
+      ]
+    },
+    {
+      "gate_id": "PHY-WEP-VARIABLE-FORCE",
+      "required_concept_ids": [
+        "CON-PHYS-VARIABLE-WORK-INTEGRAL"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-SPRING-WORK"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-FX-INTEGRAL-PLOT"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-SPRING-WORK-LINEAR"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-SECOND-LAW",
+        "PHY-WORK-ENERGY-POWER"
+      ]
+    },
+    {
+      "gate_id": "PHY-SYS-CENTRE-MASS",
+      "required_concept_ids": [
+        "CON-PHYS-CENTRE-OF-MASS-MOTION"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-COM-MOTION"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-COM-EXPLOSION"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-COM-EXPLOSION-DEFLECTION"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-VEC-COMPONENTS",
+        "PHY-NLM-SECOND-LAW"
+      ]
+    },
+    {
+      "gate_id": "PHY-ROT-RIGID-BODY",
+      "required_concept_ids": [
+        "CON-PHYS-TORQUE-INERTIA-ALPHA"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-TORQUE-INERTIA"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-PARALLEL-AXIS-SCHEMATIC"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-PARALLEL-AXIS-NON-COM"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-SYS-CENTRE-MASS"
+      ]
+    },
+    {
+      "gate_id": "PHY-ROT-ANGULAR-MOMENTUM",
+      "required_concept_ids": [
+        "CON-PHYS-ANGULAR-MOMENTUM-ROLLING"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-PURE-ROLLING"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-ROLLING-VELOCITY-FIELD"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-ROLLING-WORK-FRICTION"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-ROT-RIGID-BODY"
+      ]
+    },
+    {
+      "gate_id": "PHY-GRAV-PLANETARY-ORBITS",
+      "required_concept_ids": [
+        "CON-PHYS-KEPLER-ORBITAL-ESCAPE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-ESCAPE-VELOCITY"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-ORBITAL-ELLIPSE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-ESCAPE-MASS-DEPENDENCE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-GRAV-UNIVERSAL-LAW",
+        "PHY-KIN-CIRCULAR-DYNAMICS"
+      ]
+    },
+    {
+      "gate_id": "PHY-SOLID-ELASTICITY-HOOKE",
+      "required_concept_ids": [
+        "CON-PHYS-STRESS-STRAIN-MODULUS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-YOUNGS-MODULUS"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-STRESS-STRAIN-CURVE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-MODULUS-WIRE-SIZE"
+      ],
+      "required_prerequisite_ids": []
+    },
+    {
+      "gate_id": "PHY-FLUID-BERNOULLI-EQUATION",
+      "required_concept_ids": [
+        "CON-PHYS-BERNOULLI-CONTINUITY"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-BERNOULLI"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-VENTURI-STREAMLINE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-HIGH-SPEED-HIGH-PRESSURE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-FLUID-BUOYANCY-ARCHIMEDES",
+        "PHY-WORK-ENERGY-POWER"
+      ]
+    },
+    {
+      "gate_id": "PHY-THERMO-FIRST-SECOND-LAW",
+      "required_concept_ids": [
+        "CON-PHYS-THERMO-FIRST-SECOND-LAWS"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-CARNOT-EFFICIENCY"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-PV-CARNOT-CYCLE"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-CARNOT-CELSIUS"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-WORK-ENERGY-POWER"
+      ]
+    },
+    {
+      "gate_id": "PHY-OSC-SHM-WAVES",
+      "required_concept_ids": [
+        "CON-PHYS-SHM-RESTORING-FORCE"
+      ],
+      "required_equation_ids": [
+        "EQ-PHYS-SHM-ACCEL"
+      ],
+      "required_representation_ids": [
+        "REP-PHYS-SHM-ENERGY-PLOT"
+      ],
+      "required_misconception_ids": [
+        "MISC-PHYS-SHM-MAX-VELOCITY-AMPLITUDE"
+      ],
+      "required_prerequisite_ids": [
+        "PHY-NLM-SECOND-LAW",
+        "PHY-SOUND-LONGITUDINAL-WAVES"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "subtopic_request": "Bernoulli Principle, Continuity Equation, and Torricelli Law",
+  "current_grade": 11,
+  "exact_gate_id": "PHY-FLUID-BERNOULLI-EQUATION",
+  "target_program_or_exam": "National Standard Examination in Physics (NSEP) / INPhO",
+  "learning_purpose": "OLYMPIAD_FOUNDATION",
+  "requested_engineering_depth": "RESEARCH",
+  "core1_difficulty_control": "DERIVE",
+  "web_research_allowed": true,
+  "pedagogy_research_mode": "DEFAULT",
+  "run_mode": "GENERATION",
+  "mutation_mode": "READ_ONLY",
+  "owner_scope_notes": "Curated Grade 11 NSEP Olympiad fixture for Fluid Dynamics and Bernoulli Equation."
+}

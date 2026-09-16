@@ -1,0 +1,14 @@
+{
+  "subtopic_request": "Spherical Mirrors, Mirror Formula & Cartesian Sign Convention",
+  "current_grade": 10,
+  "exact_gate_id": "PHY-OPTICS-REFLECTION-MIRRORS",
+  "target_program_or_exam": "CBSE_BOARD_EXAM",
+  "learning_purpose": "CBSE_EXAM",
+  "requested_engineering_depth": "STANDARD",
+  "core1_difficulty_control": "DERIVE",
+  "web_research_allowed": false,
+  "pedagogy_research_mode": "DEFAULT",
+  "run_mode": "GENERATION",
+  "mutation_mode": "READ_ONLY",
+  "owner_scope_notes": "Curated Grade 10 CBSE Board Exam preset for Optics Reflection."
+}

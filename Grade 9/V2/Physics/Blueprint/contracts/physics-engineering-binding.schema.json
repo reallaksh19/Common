@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-binding.schema.json",
+  "title": "PhysicsEngineeringBinding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "binding_id",
+    "request_digest",
+    "manifest_digest",
+    "closure_receipt_id",
+    "closure_receipt_digest",
+    "registry_digest",
+    "validator_contract_digest",
+    "scope_refs",
+    "direct_gate_ids",
+    "transitive_gate_ids",
+    "downstream_consumer"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "binding_id": {
+      "type": "string",
+      "pattern": "^PHY-ENG-BIND-[A-Z0-9_-]+$"
+    },
+    "request_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "manifest_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "closure_receipt_id": {
+      "type": "string",
+      "pattern": "^PHY-ENG-CLOSURE-[A-Z0-9_-]+$"
+    },
+    "closure_receipt_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "registry_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "validator_contract_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "direct_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "transitive_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "downstream_consumer": {
+      "enum": [
+        "CANONICAL_DOMAIN_REGISTRY",
+        "CDAU",
+        "SDU",
+        "LAU",
+        "TTU",
+        "PUBLICATION_PILOT"
+      ]
+    }
+  },
+  "": "physics-engineering-binding.schema.json"
+}

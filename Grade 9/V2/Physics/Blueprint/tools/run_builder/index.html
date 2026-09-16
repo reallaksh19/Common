@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhysicsBlueprint Run Builder - Configuration Compiler</title>
+  <link rel="stylesheet" href="run_builder.css">
+</head>
+<body>
+  <header>
+    <div class="header-title">
+      <h1>PhysicsBlueprint Run Builder</h1>
+      <span class="header-badge">Configuration Compiler (Non-Authoritative)</span>
+    </div>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <button id="loadCbseWorkEnergyBtn" class="tab-btn" style="border-color:#10b981; color:#10b981;">CBSE Work & Energy (Gr 9)</button>
+      <button id="loadCbseOpticsBtn" class="tab-btn" style="border-color:#06b6d4; color:#06b6d4;">CBSE Optics (Gr 10)</button>
+      <button id="loadJeeRotBtn" class="tab-btn" style="border-color:#a855f7; color:#a855f7;">IIT-JEE Rotation (Gr 11)</button>
+      <button id="loadOlympiadFluidBtn" class="tab-btn" style="border-color:#f59e0b; color:#f59e0b;">NSEP Olympiad Fluid (Gr 11)</button>
+      <button id="copyCliBtn" class="tab-btn" style="border-color:#94a3b8; color:#f8fafc;">Copy CLI Command</button>
+      <button id="exportConfigBtn" class="tab-btn" style="border-color:#3b82f6; color:#3b82f6;">Export Config JSON</button>
+      <a href="../index.html" class="tab-btn" style="text-decoration:none; border-color:#94a3b8; color:#94a3b8;">? Portal</a>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- Left Configuration Form -->
+    <aside class="left-panel">
+      <form id="configForm" onsubmit="return false;">
+        <!-- Subject & Topic -->
+        <div class="form-section">
+          <div class="section-title">1. Subject & Subtopic Request</div>
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" value="PHYSICS" readonly>
+          </div>
+          <div class="form-group">
+            <label for="subtopic_request">Subtopic Request (Free-Text)</label>
+            <input type="text" id="subtopic_request" placeholder="e.g. Work and Energy" value="Work, Kinetic Energy, and Conservation of Mechanical Energy">
+            <small style="color:var(--text-secondary); font-size:0.75rem;">Remains non-authoritative until explicit exact-ID selection.</small>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="current_grade">Current Grade</label>
+              <input type="number" id="current_grade" min="9" max="11" value="9">
+            </div>
+            <div class="form-group">
+              <label for="learning_purpose">Learning Purpose</label>
+              <select id="learning_purpose">
+                <option value="CBSE_EXAM">CBSE_EXAM</option>
+                <option value="COMPETITIVE_EXAM">COMPETITIVE_EXAM</option>
+                <option value="OLYMPIAD_FOUNDATION">OLYMPIAD_FOUNDATION</option>
+                <option value="CONCEPT_REMEDIATION">CONCEPT_REMEDIATION</option>
+                <option value="ACCELERATED_STUDY">ACCELERATED_STUDY</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exact_gate_id">Exact Gate Selection (Optional)</label>
+            <input type="text" id="exact_gate_id" placeholder="e.g. PHY-WORK-ENERGY-POWER" value="PHY-WORK-ENERGY-POWER">
+          </div>
+          <div class="form-group">
+            <label for="target_program_or_exam">Target Program / Exam</label>
+            <input type="text" id="target_program_or_exam" value="CBSE_BOARD_EXAM">
+          </div>
+        </div>
+
+        <!-- Learner Knowledge Calibration (LAU) -->
+        <div class="form-section">
+          <div class="section-title">2. Learner Knowledge Calibration (LAU)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="learner_knowledge_mode">Knowledge Mode</label>
+              <select id="learner_knowledge_mode">
+                <option value="UNKNOWN">UNKNOWN</option>
+                <option value="KNOWN_PERCENT">KNOWN_PERCENT</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="learner_knowledge_percent">Knowledge Percent (0..100)</label>
+              <input type="number" id="learner_knowledge_percent" min="0" max="100" value="" disabled>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="knowledge_source_ref">Knowledge Source Reference</label>
+            <input type="text" id="knowledge_source_ref" value="" disabled>
+          </div>
+          <div class="form-group">
+            <label for="knowledge_calibration_policy_ref">Calibration Policy Reference</label>
+            <input type="text" id="knowledge_calibration_policy_ref" value="" disabled>
+            <small style="color:var(--text-secondary); font-size:0.75rem;">Required when percentage is present; percentage alone does not condition support.</small>
+          </div>
+        </div>
+
+        <!-- Engineering & Study Depth (SDU) -->
+        <div class="form-section">
+          <div class="section-title">3. Engineering & Study Depth (SDU)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="requested_engineering_depth">Engineering Depth</label>
+              <select id="requested_engineering_depth">
+                <option value="STANDARD">STANDARD</option>
+                <option value="RESEARCH">RESEARCH</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="core1_difficulty_control">Core1 Difficulty Control</label>
+              <select id="core1_difficulty_control">
+                <option value="DERIVE">DERIVE (SDU)</option>
+                <option value="OWNER_OVERRIDE">OWNER_OVERRIDE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="owner_difficulty_override">Owner Difficulty Override Badge</label>
+            <select id="owner_difficulty_override" disabled>
+              <option value="">None (Derive badge)</option>
+              <option value="EASY">EASY</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="HARD">HARD</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Pedagogy Research & Environment -->
+        <div class="form-section">
+          <div class="section-title">4. Research, Repository & Run Context</div>
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="web_research_allowed">
+            <label for="web_research_allowed" style="cursor:pointer; color:var(--text-primary);">Allow Pedagogy-Enrichment Web Research</label>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pedagogy_research_mode">Research Mode</label>
+              <select id="pedagogy_research_mode">
+                <option value="DEFAULT">DEFAULT</option>
+                <option value="MANDATORY">MANDATORY</option>
+                <option value="EXCLUDED">EXCLUDED</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="run_mode">Run Mode</label>
+              <select id="run_mode">
+                <option value="GENERATION">GENERATION</option>
+                <option value="STRESS_TEST">STRESS_TEST</option>
+                <option value="LIBRARY_AUDIT">LIBRARY_AUDIT</option>
+                <option value="RESEARCH_AUDIT">RESEARCH_AUDIT</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="repository">Repository</label>
+              <input type="text" id="repository" value="reallaksh19/Common">
+            </div>
+            <div class="form-group">
+              <label for="branch_or_ref">Branch / Ref</label>
+              <input type="text" id="branch_or_ref" value="v2-physics-gates-gr9-11">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="mutation_mode">Mutation Mode</label>
+            <select id="mutation_mode">
+              <option value="READ_ONLY">READ_ONLY</option>
+              <option value="TEST_MUTATIONS_ALLOWED">TEST_MUTATIONS_ALLOWED</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="local_question_bank_ref">Local Question Bank Ref (Optional)</label>
+            <input type="text" id="local_question_bank_ref" placeholder="e.g. QB-PHY-G9-CBSE">
+          </div>
+          <div class="form-group">
+            <label for="owner_scope_notes">Owner Scope Notes (Optional)</label>
+            <textarea id="owner_scope_notes" rows="2" placeholder="Specific physical modeling constraints or directives..."></textarea>
+          </div>
+        </div>
+      </form>
+    </aside>
+
+    <!-- Right Live Output Panel -->
+    <main class="right-panel">
+      <div class="panel-header">
+        <button class="tab-btn active" data-view="prompt">PROMPT</button>
+        <button class="tab-btn" data-view="manifest">RUN MANIFEST</button>
+        <button class="tab-btn" data-view="validation">VALIDATION</button>
+        <button class="tab-btn" data-view="dependencies">DEPENDENCIES</button>
+      </div>
+      <div class="panel-content">
+        <!-- Prompt Output -->
+        <div id="view-prompt" class="output-view active">
+          <pre id="promptOutput" class="code-block"></pre>
+        </div>
+
+        <!-- Manifest Output -->
+        <div id="view-manifest" class="output-view">
+          <pre id="manifestOutput" class="code-block"></pre>
+        </div>
+
+        <!-- Validation Output -->
+        <div id="view-validation" class="output-view">
+          <div id="validationOutput"></div>
+        </div>
+
+        <!-- Dependencies Output -->
+        <div id="view-dependencies" class="output-view">
+          <div id="dependenciesOutput"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="run_builder.js"></script>
+</body>
+</html>

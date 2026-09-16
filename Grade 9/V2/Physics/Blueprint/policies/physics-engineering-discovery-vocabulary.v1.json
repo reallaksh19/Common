@@ -1,0 +1,1757 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "catalog_id": "PHY-ENG-DISC-VOCAB-V1",
+  "authority": "NON_AUTHORITATIVE_DISCOVERY_VOCABULARY",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "registry_id": "PHY-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+  "entries": [
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-VEC-BASICS",
+      "terms": [
+        {
+          "phrase": "Scalars, Vectors, Magnitude, and Direction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy vec basics",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "scalars and vectors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "vector magnitude and direction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "scalar vs vector quantities",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "direction cosines",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "unit vector notation i j k",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "position vector",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "adis aur sadis rashi",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "zero vector null vector",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-VEC-ADD-SUB",
+      "terms": [
+        {
+          "phrase": "Vector Addition, Subtraction, and the Resultant",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy vec add sub",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "triangle law of vector addition",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "parallelogram law of vectors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "polygon law of vectors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "vector subtraction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "resultant magnitude R = sqrt(A^2 + B^2 + 2AB cos theta)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "angle of resultant tan alpha",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "vector jod aur ghatana",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-VEC-COMPONENTS",
+      "terms": [
+        {
+          "phrase": "Resolution of Vectors into Orthogonal Components",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy vec components",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "resolution of vectors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "orthogonal components Ax i + Ay j",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "rectangular components in 2D and 3D",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "splitting force into components",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "A cos theta and A sin theta",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "sadis ke ghatak",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-INTERACTION",
+      "terms": [
+        {
+          "phrase": "Force as an Interaction between Bodies",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm interaction",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "force as an interaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "contact and non contact forces",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "action reaction pair interaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "internal vs external forces",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "mutual interaction between two bodies",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-FBD",
+      "terms": [
+        {
+          "phrase": "Free-Body Diagrams and System Isolation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm fbd",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "free body diagram",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "FBD drawing rules",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "system boundary isolation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "isolation of individual bodies in mechanics",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "identifying all forces acting on body",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "mukt vastu aarekh",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-FIRST-LAW",
+      "terms": [
+        {
+          "phrase": "Newton's First Law and Equilibrium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm first law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "newtons first law of motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "law of inertia",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "static and dynamic equilibrium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "sum of forces equals zero",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "inertial reference frame",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "jadaatva ka niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-SECOND-LAW",
+      "terms": [
+        {
+          "phrase": "Newton's Second Law of Motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm second law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "newtons second law of motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "F = ma",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "rate of change of linear momentum",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "F = dp/dt",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "force mass acceleration relation",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "gati ka doosra niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-THIRD-LAW",
+      "terms": [
+        {
+          "phrase": "Newton's Third Law of Motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm third law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "newtons third law of motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "action and reaction forces",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "equal and opposite reaction",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "action reaction act on different bodies",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "F_AB = - F_BA",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "kriya pratikriya niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-NORMAL",
+      "terms": [
+        {
+          "phrase": "Normal Contact Force and Surface Constraints",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm normal",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "normal contact force",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "normal reaction N",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "perpendicular surface constraint",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "apparent weight in lift elevator",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "normal force does not always equal mg",
+          "term_class": "MISCONCEPTION_ALIAS"
+        },
+        {
+          "phrase": "lambwat bal",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-TENSION",
+      "terms": [
+        {
+          "phrase": "Tension in Light Strings and Pulley Systems",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm tension",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "tension in light string",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "ideal massless inextensible string",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pulley systems and atwoods machine",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "tension pulls away from body",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "string tension T",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "tanaav bal",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-FRICTION",
+      "terms": [
+        {
+          "phrase": "Static and Kinetic Friction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm friction",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "static friction and kinetic friction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "limiting friction f_s_max = mu_s N",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "kinetic friction f_k = mu_k N",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "angle of friction and angle of repose",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "friction opposes relative impending motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "gharshan bal",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "why do cars skid on sharp turns",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "skidding on turn friction",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-NLM-CONNECTED",
+      "terms": [
+        {
+          "phrase": "Connected Systems and Acceleration Constraints",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy nlm connected",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "connected bodies and acceleration constraints",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "block on block friction systems",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "movable pulley constraint relations",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "wedge block constraint",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "sum of T dot a equals zero",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "jude hue pind",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-1D-MOTION",
+      "terms": [
+        {
+          "phrase": "1D Motion: Displacement, Velocity & Constant Acceleration Equations",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin 1d motion",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "rectilinear 1D motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "distance and displacement",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "speed and velocity",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "equations of uniformly accelerated motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "v = u + at",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "s = ut + 1/2 at^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "v^2 - u^2 = 2as",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "ek vimeeya gati",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "s = ut + 1/2 a t^2 displacement time",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "s = ut + 1/2 a t^2",
+          "term_class": "NOTATION_NAME"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-MOTION-GRAPHS",
+      "terms": [
+        {
+          "phrase": "Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement)",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin motion graphs",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "position time graph x-t",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "velocity time graph v-t",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "slope of displacement time graph represents velocity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "area under velocity time graph represents displacement",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "acceleration time graph a-t",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "gati ke graph",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-CIRCULAR-UNIFORM",
+      "terms": [
+        {
+          "phrase": "Uniform Circular Motion: Centripetal Acceleration & Radial Direction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin circular uniform",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "uniform circular motion UCM",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "constant speed variable velocity in circle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "centripetal acceleration a_c = v^2 / r",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "angular speed omega = v / r",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "time period and frequency in circular motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "samrup vrittiya gati",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-FORCE-NEWTON-LAWS",
+      "terms": [
+        {
+          "phrase": "Newton's Three Laws: Inertia, F=ma & Action-Reaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy force newton laws",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "laws of motion grade 9 cbse",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "balanced and unbalanced forces",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "inertia of rest motion and direction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "momentum p = mv",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "definition of one newton force",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bal aur gati ke niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-FORCE-MOMENTUM-IMPULSE",
+      "terms": [
+        {
+          "phrase": "Momentum, Impulse & Conservation of Linear Momentum",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy force momentum impulse",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "linear momentum p = mv",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "impulse J = F Delta t = Delta p",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "conservation of linear momentum",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "recoil of gun rifle",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "rocket propulsion momentum principle",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "sanveg sanrakshan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-GRAV-UNIVERSAL-LAW",
+      "terms": [
+        {
+          "phrase": "Universal Law of Gravitation: Inverse-Square Law & Field g",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy grav universal law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "universal law of gravitation newton",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "inverse square law F = G m1 m2 / r^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "universal gravitational constant G",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "acceleration due to gravity g = GM / R^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "mass vs weight distinction",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "gurutwakarshan ka saarvabhoumik niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-GRAV-FREE-FALL",
+      "terms": [
+        {
+          "phrase": "Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy grav free fall",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "free fall under gravity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "motion under constant downward acceleration g",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "maximum height H = u^2 / 2g",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "time of flight T = 2u / g",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "trajectory symmetry in vertical throw",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "mukt patan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-FLUID-BUOYANCY-ARCHIMEDES",
+      "terms": [
+        {
+          "phrase": "Buoyancy, Archimedes' Principle & Floatation Equilibrium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy fluid buoyancy archimedes",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "thrust and pressure in fluids",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "buoyant force upthrust F_b = rho V g",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "archimedes principle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "laws of floatation equilibrium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "relative density specific gravity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "utplawan bal aur archimedes siddhant",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "why do things float in water",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "floating in water",
+          "term_class": "LEARNER_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-WORK-ENERGY-POWER",
+      "terms": [
+        {
+          "phrase": "Work Definition, Kinetic Energy & Work-Energy Theorem",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy work energy power",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "work done by constant force W = F s cos theta",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "positive negative and zero work",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "kinetic energy K = 1/2 m v^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "work energy theorem W_net = Delta K",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "rate of doing work power P = W / t",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "karya urja aur shakti",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "P = W / t power watt",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "WEP theorem",
+          "term_class": "COMMON_ABBREVIATION"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-ENERGY-CONSERVATION-LAW",
+      "terms": [
+        {
+          "phrase": "Conservation of Mechanical Energy & Rate of Work (Power)",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy energy conservation law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "law of conservation of energy",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "conservation of mechanical energy K + U = constant",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "gravitational potential energy U = mgh",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "energy accounting with non conservative work W_nc",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "transformation of energy in freely falling body",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "yaantrik urja sanrakshan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-SOUND-LONGITUDINAL-WAVES",
+      "terms": [
+        {
+          "phrase": "Sound: Longitudinal Compression Waves, Speed & Echo",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy sound longitudinal waves",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "sound wave propagation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "longitudinal mechanical waves",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "compression and rarefaction in air",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "wave speed v = nu lambda frequency wavelength",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "echo reflection of sound and SONAR",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "dhwani tarang",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-OPTICS-REFLECTION-MIRRORS",
+      "terms": [
+        {
+          "phrase": "Light Reflection: Spherical Mirrors, Mirror Formula & Sign Convention",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy optics reflection mirrors",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "reflection of light spherical mirrors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "concave and convex mirrors ray diagrams",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "mirror formula 1/f = 1/v + 1/u",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "linear magnification m = -v/u = h_i/h_o",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "new cartesian sign convention",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "goliya darpan pravartan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-OPTICS-REFRACTION-LENSES",
+      "terms": [
+        {
+          "phrase": "Light Refraction: Snell's Law, Lens Formula & Lens Power",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy optics refraction lenses",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "refraction of light at plane and curved surfaces",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "snells law of refraction sin i / sin r = n2/n1",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "refractive index and optical density",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "lens formula 1/f = 1/v - 1/u",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "power of lens P = 1/f in dioptres",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "apavartan aur lens sutra",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-OPTICS-HUMAN-EYE",
+      "terms": [
+        {
+          "phrase": "Human Eye Optics, Accommodation & Vision Defect Corrections",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy optics human eye",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "human eye structure and vision",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "power of accommodation ciliary muscles",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "myopia near sightedness concave lens correction",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "hypermetropia far sightedness convex lens correction",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "presbyopia and astigmatism",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "manav netra drishti dosh",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-OPTICS-DISPERSION-SCATTERING",
+      "terms": [
+        {
+          "phrase": "Dispersion of Light, Prism Spectrum & Rayleigh Scattering",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy optics dispersion scattering",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "dispersion of white light through glass prism",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "formation of rainbow total internal reflection",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "atmospheric refraction twinkling of stars",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "rayleigh scattering blue color of sky",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "tyndall effect in colloidal solutions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "varn vikshepan aur prakirnan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-ELEC-CURRENT-OHM",
+      "terms": [
+        {
+          "phrase": "Electric Current, Potential Difference & Ohm's Law",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy elec current ohm",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "electric current I = Q/t and potential difference V = W/Q",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "ohms law V = I R",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "resistance and factors affecting resistivity rho = R A / l",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "series and parallel combinations of resistors",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "circuit diagrams ammeter voltmeter connections",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "vidyut dhara aur ohm ka niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-ELEC-POWER-JOULE",
+      "terms": [
+        {
+          "phrase": "Joule's Law of Heating, Electric Power & Circuit Safety",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy elec power joule",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "heating effect of electric current",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "joules law of heating H = I^2 R t",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "electric power P = V I = I^2 R = V^2 / R",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "commercial unit of energy kilowatt hour kWh",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "fuse wire and domestic circuit safety",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "vidyut shakti aur joule ka tapan niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-MAG-FIELD-LORENTZ",
+      "terms": [
+        {
+          "phrase": "Magnetic Field, Right-Hand Rule & Lorentz Force on Wire",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy mag field lorentz",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "magnetic field and field lines oersted experiment",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "right hand thumb rule for straight wire and solenoid",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "force on current carrying conductor in magnetic field",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "flemings left hand rule",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "lorentz force F = I (L x B) or q(v x B)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "chumbakiya kshetra aur lorentz bal",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-MAG-INDUCTION-FARADAY",
+      "terms": [
+        {
+          "phrase": "Electromagnetic Induction: Faraday's Laws & Lenz's Law",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy mag induction faraday",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "electromagnetic induction EMI",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "faradays laws of induction induced emf",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "lenzs law and direction of induced current",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "flemings right hand rule for generator",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "magnetic flux Phi = B A cos theta",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "vidyut chumbakiya preran",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-2D-PROJECTILE",
+      "terms": [
+        {
+          "phrase": "2D Projectile Motion: Component Independence, Range & Trajectory",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin 2d projectile",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "2D projectile motion horizontal and vertical independence",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "trajectory equation y = x tan theta - g x^2 / (2 u^2 cos^2 theta)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "time of flight T = 2 u sin theta / g",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "maximum height H = u^2 sin^2 theta / (2g)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "horizontal range R = u^2 sin 2theta / g",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "projectile on an inclined plane",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "prakshepya gati",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-CIRCULAR-DYNAMICS",
+      "terms": [
+        {
+          "phrase": "Circular Motion Dynamics: Centripetal Force & Banking of Roads",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin circular dynamics",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "dynamics of circular motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "centripetal force F_c = m v^2 / r",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "banking of roads optimum speed v = sqrt(r g tan theta)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "motion in vertical circle critical velocity sqrt(5gr)",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "conical pendulum tension and period",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "centrifugal force as pseudo force in rotating frame",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "sadak ki banking",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "why do cars skid on sharp turns",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "skidding of cars on circular turn",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-KIN-RELATIVE-2D",
+      "terms": [
+        {
+          "phrase": "Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy kin relative 2d",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "relative velocity in two dimensions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "river boat problem shortest path and shortest time",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "rain man problem umbrella angle",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "relative acceleration and collision condition",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "v_AB = v_A - v_B vector relative motion",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "saapekshik veg",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-WEP-VARIABLE-FORCE",
+      "terms": [
+        {
+          "phrase": "Work Done by Variable Forces, Conservative Fields & Potential Energy",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy wep variable force",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "work done by variable force integral F dot dr",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "conservative and non conservative force fields",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "potential energy gradient F = - dU/dx",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "stable unstable and neutral equilibrium points",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "spring potential energy U = 1/2 k x^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "parivarti bal dwara karya",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-SYS-CENTRE-MASS",
+      "terms": [
+        {
+          "phrase": "Centre of Mass: Discrete & Continuous Systems, Motion of COM",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy sys centre mass",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "centre of mass COM coordinates",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "COM of discrete particles r_com = sum m_i r_i / M",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "COM of continuous bodies rod ring disc semicircular plate",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "velocity and acceleration of COM",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "motion of center of mass under zero external force",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "dravyaman kendra",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "r_com = sum m_i r_i / M center of mass",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "r_com = sum m_i r_i / M",
+          "term_class": "NOTATION_NAME"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-ROT-RIGID-BODY",
+      "terms": [
+        {
+          "phrase": "Rotational Dynamics: Torque, Moment of Inertia & Parallel/Perpendicular Axes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy rot rigid body",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "rigid body rotation about fixed axis",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "moment of inertia I = sum m_i r_i^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "parallel axis theorem I = I_cm + M d^2",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "perpendicular axis theorem I_z = I_x + I_y",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "torque tau = r x F = I alpha",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "rotational kinetic energy K_rot = 1/2 I omega^2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "ghoornan gati jadaatva aaghoorn",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "tau = I alpha torque angular acceleration",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "rotational mechanics advanced",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "iit jee rotational mechanics",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-ROT-ANGULAR-MOMENTUM",
+      "terms": [
+        {
+          "phrase": "Angular Momentum Conservation & Pure Rolling Motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy rot angular momentum",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "angular momentum L = r x p = I omega",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "conservation of angular momentum dL/dt = tau_ext",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pure rolling motion v_cm = R omega condition",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "rolling on rough inclined plane acceleration",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "toppling vs sliding of rectangular blocks",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "koneeya sanveg sanrakshan",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-GRAV-PLANETARY-ORBITS",
+      "terms": [
+        {
+          "phrase": "Kepler's Laws, Orbital Mechanics & Escape Velocity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy grav planetary orbits",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "keplers laws of planetary motion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "law of orbits law of areas and law of periods T^2 proportional to a^3",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "gravitational potential V = -GM/r and self energy",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "orbital velocity v_o = sqrt(GM/r)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "escape velocity v_e = sqrt(2GM/R)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "geostationary and polar satellites",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "graho ki gati ke kepler niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-SOLID-ELASTICITY-HOOKE",
+      "terms": [
+        {
+          "phrase": "Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy solid elasticity hooke",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "elastic behavior of solids stress and strain",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hookes law stress = modulus times strain",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "youngs modulus bulk modulus and shear modulus",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "stress strain curve yield point and breaking point",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "elastic potential energy in stretched wire U = 1/2 stress strain volume",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "pratyasthata aur hooke ka niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-FLUID-BERNOULLI-EQUATION",
+      "terms": [
+        {
+          "phrase": "Fluid Dynamics: Continuity Equation & Bernoulli's Principle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy fluid bernoulli equation",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "fluid dynamics streamline and turbulent flow",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "continuity equation A1 v1 = A2 v2",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "bernoullis principle P + 1/2 rho v^2 + rho g h = const",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "torricellis law velocity of efflux v = sqrt(2gh)",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "venturimeter flow rate measurement",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "viscosity stokes law and terminal velocity",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "bernoulli prameya",
+          "term_class": "REGIONAL_VARIANT"
+        },
+        {
+          "phrase": "torricelli efflux speed hole in tank",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "efflux speed hole in tank",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-THERMO-FIRST-SECOND-LAW",
+      "terms": [
+        {
+          "phrase": "Thermodynamics: First Law, Carnot Cycle & Second Law Statements",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy thermo first second law",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "zeroth law of thermodynamics temperature concept",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "first law of thermodynamics Delta U = Q - W",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "isothermal adiabatic isobaric and isochoric processes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "work done in adiabatic process W = (P1 V1 - P2 V2) / (gamma - 1)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "second law of thermodynamics kelvin planck and clausius",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "carnot engine efficiency eta = 1 - T2/T1",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "ushmagatiki ka pehla aur doosra niyam",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "PHY-OSC-SHM-WAVES",
+      "terms": [
+        {
+          "phrase": "Simple Harmonic Motion: Kinematics, Energy Oscillations & Restoring Force",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "phy osc shm waves",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "simple harmonic motion SHM",
+          "term_class": "COMMON_ABBREVIATION"
+        },
+        {
+          "phrase": "restoring force and displacement equation F = -k x",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "differential equation d^2x/dt^2 + omega^2 x = 0",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "time period of spring mass system T = 2 pi sqrt(m/k)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "time period of simple pendulum T = 2 pi sqrt(l/g)",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "energy oscillations kinetic and potential exchange",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "saral aavart gati",
+          "term_class": "REGIONAL_VARIANT"
+        }
+      ]
+    }
+  ]
+}

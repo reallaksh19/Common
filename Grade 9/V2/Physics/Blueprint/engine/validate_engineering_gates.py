@@ -86,6 +86,32 @@ def validate_global_invariants(registry: dict) -> None:
                     f"Subtopic {gate['subtopic_id']} has unresolved prerequisite {prereq}"
                 )
 
+    _validate_dependency_cycles(registry)
+
+
+def _validate_dependency_cycles(registry: dict) -> None:
+    gates = {gate["subtopic_id"]: gate for gate in registry["subtopic_gates"]}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def walk(gate_id: str) -> None:
+        if gate_id in visited:
+            return
+        if gate_id in visiting:
+            raise EngineeringGateValidationError(
+                "ENG_GATE_DEPENDENCY_CYCLE",
+                f"Dependency cycle detected involving {gate_id}",
+            )
+        visiting.add(gate_id)
+        for prereq in gates.get(gate_id, {}).get("prerequisite_ids", []):
+            if isinstance(prereq, str) and prereq.startswith("PHY-"):
+                walk(prereq)
+        visiting.remove(gate_id)
+        visited.add(gate_id)
+
+    for gate_id in gates:
+        walk(gate_id)
+
 
 def validate_subtopic_invariants(gate: dict) -> None:
     sub_id = gate["subtopic_id"]

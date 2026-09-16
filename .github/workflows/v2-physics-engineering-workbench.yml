@@ -1,0 +1,85 @@
+name: V2 Physics Engineering Workbench
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Blueprint/**'
+      - '.github/workflows/v2-physics-engineering-workbench.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  physics-engineering-workbench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate authoritative Physics Engineering Gate registry
+        shell: bash
+        run: |
+          mkdir -p /tmp/physics-engineering-workbench
+          set -o pipefail
+          python 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates.py' 2>&1 \
+            | tee /tmp/physics-engineering-workbench/validator.log
+      - name: Upload Engineering validator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-validator-diagnostics
+          path: /tmp/physics-engineering-workbench/validator.log
+          if-no-files-found: error
+      - name: Run Physics Engineering Gate falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates.py'
+      - name: Validate governed Engineering discovery vocabulary
+        run: python 'Grade 9/V2/Physics/Blueprint/engine/validate_physics_engineering_discovery_vocabulary.py'
+      - name: Run non-authoritative Engineering discovery falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery.py'
+      - name: Run registry-driven Engineering Workbench falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench.py'
+      - name: Run runtime custody binding falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_binding.py'
+      - name: Run generic Engineering-gated domain admission falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineered_domain_admission.py'
+      - name: Run Engineering domain projection falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection.py'
+      - name: Run Engineering domain projection v2 falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection_v2.py'
+      - name: Run Engineering domain projection binding falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection_binding.py'
+      - name: Run Engineering visibility manifest falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_visibility_manifest.py'
+      - name: Run Engineering registry composition falsifiers
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_registry_composition.py'
+      - name: Verify Architecture Observation Manifest is up to date
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/architecture_explorer/generate_architecture_manifest.py' --check
+      - name: Validate Run Builder fixtures
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/run_builder/compile_run.py' --validate-fixtures
+      - name: Run Run Builder test suite
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/run_builder/tests/test_run_builder.py'
+      - name: Run Architecture Explorer test suite
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/architecture_explorer/tests/test_architecture_explorer.py'
+      - name: Run Engineering Discovery benchmark and quantitative recall tests
+        run: python 'Grade 9/V2/Physics/Blueprint/benchmarks/discovery/tests/test_engineering_discovery_benchmark.py'
+      - name: Run Discovery Explorer UI tests
+        run: python 'Grade 9/V2/Physics/Blueprint/benchmarks/discovery/tests/test_discovery_explorer.py'
+      - name: Validate Subtopic Intelligence Library intake specifications
+        run: python 'Grade 9/V2/Physics/Blueprint/engine/validate_subtopic_intelligence_library.py'
+      - name: Run Subtopic Intelligence Library test suite
+        run: python 'Grade 9/V2/Physics/Blueprint/tests/test_subtopic_intelligence_library.py'
+      - name: Compile registry-wide Blueprint authorization proof
+        run: |
+          mkdir -p /tmp/physics-engineering-workbench
+          python 'Grade 9/V2/Physics/Blueprint/engine/compile_physics_engineering_workbench.py' \
+            --registry-proof-out /tmp/physics-engineering-workbench/registry-proof.json
+      - name: Upload Workbench proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-workbench-proof
+          path: /tmp/physics-engineering-workbench/
+          if-no-files-found: error

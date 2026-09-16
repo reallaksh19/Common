@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-domain-projection.schema.json",
+  "title": "Physics Engineering to Canonical Domain Projection Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "projection_id",
+    "domain_registry_ref",
+    "engineering_registry_id",
+    "engineering_registry_digest",
+    "crosswalk_ref",
+    "base_asset_count",
+    "projected_asset_count",
+    "direct_gate_ids",
+    "transitive_gate_ids",
+    "asset_projections",
+    "projection_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "projection_id": {
+      "type": "string",
+      "pattern": "^PHY-ENG-DOMAIN-PROJ-[A-F0-9]{16}$"
+    },
+    "domain_registry_ref": {
+      "type": "string",
+      "pattern": "^PHY-REG-"
+    },
+    "engineering_registry_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "engineering_registry_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "crosswalk_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "base_asset_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "projected_asset_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "direct_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^PHY-"
+      }
+    },
+    "transitive_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^PHY-"
+      }
+    },
+    "asset_projections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asset_id",
+          "subtopic_id",
+          "engineering_gate_id",
+          "engineering_gate_role",
+          "engineering_source_kind",
+          "engineering_source_ref",
+          "capability_refs",
+          "core2_refs",
+          "asset_digest"
+        ],
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^REG-PHY-"
+          },
+          "subtopic_id": {
+            "type": "string",
+            "minLength": 3
+          },
+          "engineering_gate_id": {
+            "type": "string",
+            "pattern": "^PHY-"
+          },
+          "engineering_gate_role": {
+            "enum": [
+              "DIRECT",
+              "PREREQUISITE_CLOSURE"
+            ]
+          },
+          "engineering_source_kind": {
+            "enum": [
+              "TECHNICAL_CORE",
+              "MODEL_CONDITIONS",
+              "MANDATORY_EQUATION",
+              "REPRESENTATION",
+              "REASONING_STEP",
+              "REQUIRED_TRANSFORMATION",
+              "MISCONCEPTION",
+              "MANDATORY_VERIFICATION",
+              "PROBLEM_FAMILY"
+            ]
+          },
+          "engineering_source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capability_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          "core2_refs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "asset_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "projection_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "": "physics-engineering-domain-projection.schema.json"
+}

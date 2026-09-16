@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2-owner-waiver.schema.json",
+  "title": "Physics Core2 Owner Waiver",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "waiver_id",
+    "release_class",
+    "owner_ref",
+    "reason",
+    "selected_core2a_support_profile",
+    "selected_core2a_max_demand_level",
+    "selected_core2b_max_demand_level",
+    "waiver_digest"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "waiver_id": {
+      "type": "string",
+      "pattern": "^PHY-CORE2-WAIVER-"
+    },
+    "release_class": {
+      "enum": [
+        "OWNER_DECLARED",
+        "TEST_ONLY"
+      ]
+    },
+    "owner_ref": {
+      "type": "string",
+      "minLength": 3
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 12
+    },
+    "selected_core2a_support_profile": {
+      "enum": [
+        "FOUNDATION_GUIDED",
+        "STANDARD_GUIDED",
+        "REDUCED_SUPPORT",
+        "ADVANCED_APPLIED"
+      ]
+    },
+    "selected_core2a_max_demand_level": {
+      "enum": [
+        "P0_DIRECT",
+        "P1_CONTROLLED_VARIATION",
+        "P2_REPRESENTATION_TRANSFER",
+        "P3_INVERSE_TARGET",
+        "P4_HIDDEN_STRUCTURE",
+        "P5_METHOD_DISCRIMINATION",
+        "P6_FAMILY_DISCRIMINATION",
+        "P7_MULTI_STEP_SYNTHESIS",
+        "P8_MIXED_COMPETITIVE"
+      ]
+    },
+    "selected_core2b_max_demand_level": {
+      "enum": [
+        "P0_DIRECT",
+        "P1_CONTROLLED_VARIATION",
+        "P2_REPRESENTATION_TRANSFER",
+        "P3_INVERSE_TARGET",
+        "P4_HIDDEN_STRUCTURE",
+        "P5_METHOD_DISCRIMINATION",
+        "P6_FAMILY_DISCRIMINATION",
+        "P7_MULTI_STEP_SYNTHESIS",
+        "P8_MIXED_COMPETITIVE"
+      ]
+    },
+    "waiver_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "": "physics-core2-owner-waiver.schema.json"
+}

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-request.schema.json",
+  "title": "PhysicsEngineeringRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "request_id",
+    "scope_kind",
+    "scope_refs",
+    "engineering_depth",
+    "learning_purpose"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "PHYSICS"
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^PHY-ENG-REQ-[A-Z0-9_-]+$"
+    },
+    "scope_kind": {
+      "enum": [
+        "ENGINEERING_GATE",
+        "BUCKET"
+      ]
+    },
+    "scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "engineering_depth": {
+      "enum": [
+        "FOUNDATION",
+        "STANDARD",
+        "RESEARCH"
+      ]
+    },
+    "learning_purpose": {
+      "enum": [
+        "FIRST_STUDY",
+        "CONSOLIDATION",
+        "REVISION",
+        "COMPETITIVE_EXAM",
+        "CBSE_EXAM",
+        "OLYMPIAD_FOUNDATION",
+        "CONCEPT_REMEDIATION",
+        "ACCELERATED_STUDY"
+      ]
+    },
+    "owner_decision_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 3
+    }
+  }
+}

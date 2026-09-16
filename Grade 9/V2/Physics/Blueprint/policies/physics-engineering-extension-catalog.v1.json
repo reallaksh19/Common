@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "catalog_id": "REG-PHY-TECH-GATE-EXTENSIONS-V1",
+  "base_registry_ref": "policies/physics-technical-engineering-gates.v1.json",
+  "extensions": [],
+  "base_registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+  "base_registry_id": "PHY-G9-11-TECHNICAL-ENGINEERING-GATES-v1"
+}
