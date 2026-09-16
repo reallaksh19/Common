@@ -60,11 +60,55 @@
     "execution_route": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "execution_authorized", "required_authority", "label_inference", "reason"],
+      "required": [
+        "status",
+        "execution_authorized",
+        "authorization_scope",
+        "route_id",
+        "route_registry",
+        "input_bindings",
+        "label_inference",
+        "reason"
+      ],
       "properties": {
-        "status": {"const": "HELD_NO_REPOSITORY_ROUTE"},
-        "execution_authorized": {"const": false},
-        "required_authority": {"const": "REPOSITORY_OWNED_TASK_TO_ASSESSMENT_INPUT_ROUTE"},
+        "status": {"enum": ["HELD_NO_ROUTE_REQUESTED", "HELD_ROUTE_UNRESOLVED", "RESOLVED_REPOSITORY_ROUTE"]},
+        "execution_authorized": {"type": "boolean"},
+        "authorization_scope": {"const": "P-A_INPUT_SELECTION_ONLY"},
+        "route_id": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._:-]*$"}
+          ]
+        },
+        "route_registry": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["registry_id", "path", "sha256"],
+              "properties": {
+                "registry_id": {"type": "string", "minLength": 1},
+                "path": {"type": "string", "minLength": 1},
+                "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+              }
+            }
+          ]
+        },
+        "input_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "required", "path", "sha256"],
+            "properties": {
+              "role": {"enum": ["QUESTION_SET", "DECLARED_TOPIC_SCOPE", "ATTEMPT_SET"]},
+              "required": {"type": "boolean"},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+            }
+          }
+        },
         "label_inference": {"const": "PROHIBITED"},
         "reason": {"type": "string", "minLength": 1}
       }
