@@ -9,7 +9,12 @@ on:
       - 'Grade 9/V2/Physics/Representation/**'
       - 'Grade 9/V2/Physics/Core2A/**'
       - 'Grade 9/V2/Physics/Core2B/**'
+      - 'Grade 9/V2/Shared/AgentTasks/**'
+      - 'Grade 9/V2/Shared/LearningEngineering/**'
+      - 'Grade 9/V2/Shared/EngineeringGate/**'
       - 'Grade 9/V2/Shared/CrossDomain/**'
+      - 'Grade 9/V2/**/GENERATION_AUTHORITY_MANIFEST.json'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
       - '.github/workflows/v2-physics-blueprint.yml'
   workflow_dispatch:
 
@@ -23,6 +28,23 @@ jobs:
           python-version: '3.12'
       - name: Install dependencies
         run: pip install jsonschema reportlab pymupdf
+      - name: Validate Shared AgentTasks execution kernel
+        run: |
+          python -m py_compile 'Grade 9/V2/Shared/AgentTasks/engine/'*.py
+          python -m unittest 'Grade 9/V2/Shared/AgentTasks/tests/test_execution_kernel.py' -v
+      - name: Compile generic AgentTasks packet and Engineering preflight
+        run: |
+          python 'Grade 9/V2/Shared/AgentTasks/engine/compile_execution_packet.py' \
+            --task 'Grade 9/V2/Shared/AgentTasks/fixtures/valid/physics-subtopic-engineering.task.json' \
+            --output /tmp/execution-packet.json \
+            --preflight-output /tmp/engineering-preflight.md
+          python - <<'PY'
+          import json
+          packet = json.load(open('/tmp/execution-packet.json', encoding='utf-8'))
+          assert packet['engineering_preflight']['engineering_state'] == 'NOT_EVALUATED'
+          assert packet['engineering_preflight']['publication_authorization'] == 'NOT_IMPLIED'
+          assert packet['packet_digest'].startswith('sha256:')
+          PY
       - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Validate canonical Physics Technical Engineering Gates v2
