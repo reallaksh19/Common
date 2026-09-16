@@ -47,6 +47,7 @@ def build(manifest:dict)->dict[str,dict]:
         "last_checkpoint":{"id":"NONE","path":None},
         "predecessor_join":{"id":None,"path":None},
         "predecessor_replan":{"id":None,"path":None},
+        "takeover_admissions":[],
         "progress":{"overall_percent":0,"phase_percent":0,"ep_percent":0,"basis_revision":"PB-0001"},
         "status_planes":{
             "execution":{"state":"WAITING","can_continue":False,"material_authority":"NONE","next_action":init["next_action"]},
@@ -55,7 +56,7 @@ def build(manifest:dict)->dict[str,dict]:
             "stop":{"active":False,"category":"NONE","reason":"","basis":[]}
         },
         "projection":{"required":False,"state":"NOT_REQUIRED","operation_id":None,"target":None,"roadmap_revision":road["revision"],"execution_ref":"NONE","receipt":None,"basis":[]},
-        "relay_readiness":{"repository_ready":False,"projection_ready":True,"handover_ready":False,"reasons":["Relay initialization is incomplete; no executable frontier/EP exists."]},
+        "relay_readiness":{"baton_ready":False,"projection_ready":True,"handover_ready":False,"reasons":["Relay initialization is incomplete; no executable frontier/EP exists."]},
         "chat_context_required":False
     }
     profile={
