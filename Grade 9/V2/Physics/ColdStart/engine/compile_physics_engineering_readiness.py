@@ -192,7 +192,6 @@ def compile_physics_engineering_readiness(
     engineering = compile_closure(request, manifest)
     domain = compile_domain_prerequisite_closure(engineering)
     envelope = build_envelope(request, manifest, engineering, domain)
-    require_consumer(envelope, REQUIRED_CONSUMER)
 
     result: dict[str, Any] = {
         "schema_version": "1.0.0",
@@ -220,6 +219,12 @@ def compile_physics_engineering_readiness(
     result["readiness_digest"] = digest_prefixed({k: v for k, v in result.items() if k != "readiness_digest"})
     validate_json(result, READINESS_SCHEMA, "ENGINEERING_SCOPE_READINESS_SCHEMA_INVALID")
     return result
+
+
+def require_problem_semantics(readiness: dict[str, Any]) -> None:
+    """Enforce the global Engineering Gate permission only at the consumption boundary."""
+    validate_json(readiness, READINESS_SCHEMA, "ENGINEERING_SCOPE_READINESS_SCHEMA_INVALID")
+    require_consumer(readiness["readiness_envelope"], REQUIRED_CONSUMER)
 
 
 def main() -> None:
