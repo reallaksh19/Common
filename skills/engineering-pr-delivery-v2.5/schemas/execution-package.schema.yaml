@@ -29,10 +29,118 @@ properties:
   roadmap_source:
     type: object
     required: [roadmap_id, roadmap_revision, objective, phase, work_package]
+  repository_discovery:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, action, question, expected_outputs, receipt_required, on_failure]
+      properties:
+        id: {type: string, pattern: '^DSTEP-'}
+        action: {enum: [LOCATE, TRACE, VERIFY, COMPARE, INSPECT, RESOLVE, VERIFY_GIT]}
+        target: {type: string}
+        targets: {type: array, items: {type: string}, minItems: 1}
+        question: {type: string, minLength: 1}
+        expected_outputs: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        receipt_required: {type: boolean}
+        on_failure: {type: string, minLength: 1}
+  inputs:
+    type: array
+    items:
+      type: object
+      required: [id, name, description, authority, source, type, units, editable, applicability, resolution, consumers, validation, stale_if]
+      properties:
+        id: {type: string, minLength: 1}
+        name: {type: string, minLength: 1}
+        description: {type: string, minLength: 1}
+        authority: {type: string, minLength: 1}
+        source: {type: string, minLength: 1}
+        type: {type: string, minLength: 1}
+        editable: {type: boolean}
+        applicability: {enum: [CURRENT_STEP_REQUIRED, CURRENT_EP_REQUIRED, FUTURE_STEP, INFORMATIONAL]}
+        resolution: {enum: [READY, OWNER_EDITABLE_READY, DEFERRED_NOT_CURRENTLY_REQUIRED, MISSING_BLOCKING, INVALID, STALE]}
+        consumers: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        validation: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        stale_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+  benchmarks:
+    type: array
+    items:
+      type: object
+      required: [id, name, purpose, source, oracle_class, payload, expected, tolerance, independence, applicability, resolution, verifies, stale_if]
+      properties:
+        id: {type: string, minLength: 1}
+        name: {type: string, minLength: 1}
+        purpose: {type: string, minLength: 1}
+        source: {type: string, minLength: 1}
+        oracle_class: {enum: [ANALYTICAL, REFERENCE_DATA, INDEPENDENT_IMPLEMENTATION, FROZEN_GOLDEN, EXTERNAL_STANDARD, MANUAL_RECONSTRUCTION, OBSERVATIONAL]}
+        independence: {type: string, minLength: 1}
+        applicability: {enum: [CURRENT_STEP_REQUIRED, CURRENT_EP_REQUIRED, FUTURE_STEP, INFORMATIONAL]}
+        resolution: {enum: [READY, OWNER_EDITABLE_READY, DEFERRED_NOT_CURRENTLY_REQUIRED, MISSING_BLOCKING, INVALID, STALE]}
+        verifies: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        stale_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
   scope:
     type: object
-    required: [allowed, prohibited]
+    required: [allowed, allowed_reads, protected, prohibited, owner_reserved]
+    properties:
+      allowed: {type: array}
+      allowed_reads: {type: array}
+      protected: {type: array}
+      prohibited: {type: array}
+      owner_reserved: {type: array}
+  anti_drift:
+    type: object
+    required: [do_not, stale_if]
+    properties:
+      do_not:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [id, restriction, reason]
+      stale_if:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [id, condition, effect, rationale]
+          properties:
+            effect: {enum: [STALE, STOP, OWNER_REVIEW, RECONCILE]}
+  implementation_plan:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, objective, targets, reads, writes, inputs, acceptance, tests, expected_state, stop_conditions]
+      properties:
+        targets: {type: array, minItems: 1}
+        reads: {type: array}
+        writes: {type: array}
+        inputs: {type: array}
+        acceptance: {type: array, minItems: 1}
+        tests: {type: array, minItems: 1}
+        stop_conditions: {type: array, minItems: 1}
   acceptance:
     type: array
     minItems: 1
+  report_contract:
+    type: object
+    required: [sections, payloads]
+    properties:
+      sections: {type: array, minItems: 1}
+      payloads:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [id, section, sources, required_fields]
+          properties:
+            sources: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+            required_fields: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+  successor_relay:
+    type: object
+    required: [required, duties, required_outputs]
+    properties:
+      required: {const: true}
+      duties: {type: array, minItems: 1}
+      required_outputs: {type: array, minItems: 1}
 additionalProperties: true
