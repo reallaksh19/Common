@@ -12,6 +12,20 @@ properties:
       material_ref: {type: string, minLength: 1}
   validation_results:
     type: array
+  quality_review:
+    type: [object, 'null']
+    properties:
+      id: {type: string, pattern: '^QRV-'}
+      path: {type: string, minLength: 1}
+      digest: {type: string, minLength: 1}
+    required: [id, path, digest]
+  quality_findings:
+    type: array
+    items:
+      type: object
+      required: [id]
+      properties:
+        id: {type: string, pattern: '^QF-'}
   successor:
     type: object
     required: [mode, frontier_work_package, ep_id, parallel_plan, lanes]
