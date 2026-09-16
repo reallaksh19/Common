@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, identity, git_basis, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
+required: [schema_version, identity, git_basis, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, next_work, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
 properties:
   schema_version: {const: relay-v2.5}
   identity:
@@ -81,44 +81,36 @@ properties:
   scope:
     type: object
     required: [allowed, allowed_reads, protected, prohibited, owner_reserved]
-    properties:
-      allowed: {type: array}
-      allowed_reads: {type: array}
-      protected: {type: array}
-      prohibited: {type: array}
-      owner_reserved: {type: array}
   anti_drift:
     type: object
     required: [do_not, stale_if]
-    properties:
-      do_not:
-        type: array
-        minItems: 1
-        items:
-          type: object
-          required: [id, restriction, reason]
-      stale_if:
-        type: array
-        minItems: 1
-        items:
-          type: object
-          required: [id, condition, effect, rationale]
-          properties:
-            effect: {enum: [STALE, STOP, OWNER_REVIEW, RECONCILE]}
   implementation_plan:
     type: array
     minItems: 1
     items:
       type: object
       required: [id, objective, targets, reads, writes, inputs, acceptance, tests, expected_state, stop_conditions]
-      properties:
-        targets: {type: array, minItems: 1}
-        reads: {type: array}
-        writes: {type: array}
-        inputs: {type: array}
-        acceptance: {type: array, minItems: 1}
-        tests: {type: array, minItems: 1}
-        stop_conditions: {type: array, minItems: 1}
+  next_work:
+    type: object
+    required: [phase_transition, steps]
+    properties:
+      phase_transition: {type: boolean}
+      steps:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [order, action, targets, inputs, tests, benchmarks, acceptance, expected_result, stop_if]
+          properties:
+            order: {type: integer, minimum: 1}
+            action: {type: string, minLength: 1}
+            targets: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+            inputs: {type: array, items: {type: string, minLength: 1}}
+            tests: {type: array, items: {type: string, minLength: 1}}
+            benchmarks: {type: array, items: {type: string, minLength: 1}}
+            acceptance: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+            expected_result: {type: string, minLength: 1}
+            stop_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
   qualification_boundary:
     type: object
     required: [required]
@@ -127,10 +119,7 @@ properties:
       trigger: {enum: [PHASE_CHANGED, MATERIAL_QUALIFICATION_BOUNDARY_CHANGED]}
       from_phase: {type: string}
       to_phase: {type: string}
-      changed_dimensions:
-        type: array
-        items:
-          enum: [PRODUCTION_PATH, ENGINEERING_AUTHORITY, NUMERICAL_METHOD, PROTECTED_INVARIANT, INPUT_AUTHORITY, VERIFICATION_ORACLE]
+      changed_dimensions: {type: array}
       basis: {type: array}
       question_set:
         type: object
@@ -138,23 +127,10 @@ properties:
         properties:
           id: {type: string, pattern: '^QSET-'}
           path: {type: string, minLength: 1}
-  acceptance:
-    type: array
-    minItems: 1
+  acceptance: {type: array, minItems: 1}
   report_contract:
     type: object
     required: [sections, payloads]
-    properties:
-      sections: {type: array, minItems: 1}
-      payloads:
-        type: array
-        minItems: 1
-        items:
-          type: object
-          required: [id, section, sources, required_fields]
-          properties:
-            sources: {type: array, items: {type: string, minLength: 1}, minItems: 1}
-            required_fields: {type: array, items: {type: string, minLength: 1}, minItems: 1}
   successor_relay:
     type: object
     required: [required, duties, required_outputs]
