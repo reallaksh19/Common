@@ -49,7 +49,9 @@ class IssueProjectionAndSupersessionStressTests(unittest.TestCase):
 
     def test_closed_parent_cannot_hide_open_child(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);g=deep_graph();g["nodes"][0]["github_state"]="CLOSED";dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",g);self.assertTrue(any("child still GitHub OPEN" in x for x in projection_tree(root)[0]))
+            root=Path(td);g=deep_graph();g["nodes"][0]["github_state"]="CLOSED";dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",g);errors=projection_tree(root)[0]
+            self.assertTrue(errors,"closed aggregate parent over non-closed child must be rejected")
+            self.assertTrue(any("closed aggregate issue ISSUE-ROOT" in x and "direct child" in x and "CLOSED" in x for x in errors),errors)
 
     def test_multi_generation_supersession_preserves_unresolved_items(self):
         with tempfile.TemporaryDirectory() as td:
