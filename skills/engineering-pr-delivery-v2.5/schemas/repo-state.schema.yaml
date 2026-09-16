@@ -40,10 +40,11 @@ properties:
     properties:
       execution:
         type: object
-        required: [state, can_continue, next_action]
+        required: [state, can_continue, material_authority, next_action]
         properties:
           state: {enum: [IDLE, READY, ACTIVE, WAITING, COMPLETE]}
           can_continue: {type: boolean}
+          material_authority: {enum: [WRITE, READ_ONLY, NONE]}
           next_action: {type: string, minLength: 1}
       quality:
         type: object
