@@ -9,10 +9,11 @@ def validate_ep_data(root:Path,ep:dict,label="EP"):
     e=[];w=[];e+=require(ep,REQ,label)
     if ep.get("schema_version")!="relay-v2.5":e.append(f"{label}: schema_version must be relay-v2.5")
     e+=[f"{label}{x[1:]}" if x.startswith("$") else f"{label}: {x}" for x in scan_context_phrases(ep)]
-    identity=ep.get("identity") or {};e+=require(identity,["ep_id","branch","execution_state","previous_checkpoint"],f"{label}.identity")
+    identity=ep.get("identity") or {};e+=require(identity,["ep_id","branch","base_ref","execution_state","previous_checkpoint"],f"{label}.identity")
     git_basis=ep.get("git_basis") or {};e+=require(git_basis,["expected_branch","material_ref","base_branch","base_observed_ref","drift_policy","drift_receipt"],f"{label}.git_basis")
     if git_basis.get("drift_policy")!="RECHECK_BEFORE_WRITE":e.append(f"{label}.git_basis.drift_policy must be RECHECK_BEFORE_WRITE")
     if git_basis.get("expected_branch") and identity.get("branch") and git_basis.get("expected_branch")!=identity.get("branch"):e.append(f"{label}.git_basis.expected_branch must match identity.branch")
+    if git_basis.get("material_ref") and identity.get("base_ref") and str(git_basis.get("material_ref"))!=str(identity.get("base_ref")):e.append(f"{label}.git_basis.material_ref must match identity.base_ref")
     e+=require(ep.get("roadmap_source") or {},["roadmap_id","roadmap_revision","objective","phase","work_package"],f"{label}.roadmap_source")
     e+=require(ep.get("scope") or {},["allowed","prohibited"],f"{label}.scope")
     if not ep.get("repository_discovery"):e.append(f"{label}.repository_discovery must contain at least one concrete step")
