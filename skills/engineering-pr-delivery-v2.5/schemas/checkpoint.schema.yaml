@@ -1,8 +1,14 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, checkpoint_id, ep_id, roadmap_basis, implementation_result, acceptance_results, validation_results, quality_findings, discoveries, roadmap_reconciliation]
+required: [schema_version, checkpoint_id, ep_id, roadmap_basis, implementation_result, acceptance_results, validation_results, quality_findings, discoveries, roadmap_reconciliation, successor]
 properties:
   schema_version: {const: relay-v2.5}
   checkpoint_id: {type: string}
   ep_id: {type: string}
+  successor:
+    type: object
+    required: [mode, frontier_work_package, ep_id, parallel_plan, lanes]
+    properties:
+      mode: {enum: [SERIAL, PARALLEL, NONE]}
+      lanes: {type: array}
 additionalProperties: true
