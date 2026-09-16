@@ -784,7 +784,385 @@ FAMILY-POLY-04 (JEE Advanced):
 
 ---
 
-## 9. Intake Validation Checklist for Future Subtopics
+## 9. Foundation Packet: Circle Theorems, Cyclic Quadrilaterals & Tangents (`MATH-GEO-CIRCLES`)
+
+### 9.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-GEO-CIRCLES`
+- **Engineering Gate Binding**: `MATH-GEO-CIRCLES` (Digest-bound closure receipt)
+- **Learner Title**: Circle Theorems, Inscribed Angles, Cyclic Quadrilaterals & Tangent-Secant Invariants
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Radius Invariant**: A circle $\mathcal{C}(O, r)$ requires radius $r > 0$. Points with $r = 0$ represent degenerate point-circles; $r < 0$ is undefined in Euclidean metric.
+  2. **Non-Collinearity of Cyclic Vertices**: A cyclic quadrilateral $ABCD$ requires no three vertices to be collinear; vertices must lie in sequential cyclic order along the circumference.
+  3. **Tangent Orthogonality Invariant**: At the point of contact $T$, the tangent line $l$ is strictly perpendicular to the radius $OT$: $l \perp OT$.
+  4. **Power of a Point Invariant**: For any point $P$ and circle $\mathcal{C}(O, r)$, the power of $P$ is $\operatorname{Pow}(P) = d^2 - r^2 = PA \cdot PB$ for any secant line through $P$ intersecting the circle at $A$ and $B$. If $P$ is outside the circle and $PT$ is tangent, $PT^2 = PA \cdot PB$.
+
+### 9.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-CIRC-01` (`CONCEPT`): Circle as locus of points equidistant from a fixed center. Chord, arc, subtended angle, and tangent defined under Euclidean metric.
+- `ATOM-CIRC-02` (`INVARIANT`): Central-to-Inscribed Angle Theorem: The angle subtended by an arc at the center is double the angle subtended by it at any point on the remaining part of the circle: $\angle AOB = 2 \angle APB$.
+- `ATOM-CIRC-03` (`RELATION`): Cyclic Quadrilateral Theorem: A quadrilateral is concyclic if and only if opposite angles are supplementary ($\angle A + \angle C = 180^\circ$ and $\angle B + \angle D = 180^\circ$), or exterior angle equals opposite interior angle. Ptolemy's Theorem: $AC \cdot BD = AB \cdot CD + BC \cdot AD$.
+- `ATOM-CIRC-04` (`PROCEDURE`): Alternate Segment Theorem: The angle between a tangent and a chord through the point of contact is equal to the angle subtended by the chord in the alternate segment.
+- `ATOM-CIRC-05` (`STRATEGY`): Auxiliary radial and chord constructions:
+  - Joining the center $O$ to the point of contact of tangents to form congruent right-angled triangles ($\triangle OPT_1 \cong \triangle OPT_2$ by RHS).
+  - Constructing common tangents or radical axes for intersecting or touching circles.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Angle at center double"* | $\angle AOB = 2 \angle APB$ for $P$ on opposite arc | Central dilation of angle measure relative to circumferential locus. |
+| *"Opposite angles 180"* | $ABCD$ concyclic $\iff \angle A + \angle C = \pi$ | Subtended arcs partition entire circumference ($2\pi$). |
+| *"Tangent is perpendicular"* | $l \perp OT \implies OP^2 = r^2 + PT^2$ | Pythagorean relationship from point of contact orthogonality. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Inscribed Angle Doubling on Opposite Arc**:
+   - *Flawed Action*: Concluding $\angle AOB = 2\angle APB$ when $P$ lies on the *minor* arc subtended by chord $AB$.
+   - *Correct Diagnostic Cue*: The inscribed angle theorem strictly relates the subtended central angle to points on the *remaining* (opposite) arc. If $P$ is on the minor arc, $\angle APB = 180^\circ - \frac{1}{2}\angle AOB = \frac{1}{2}\operatorname{reflex}\angle AOB$.
+2. **Misconception: Assuming Any Quadrilateral is Cyclic**:
+   - *Flawed Action*: Applying cyclic opposite angle relations ($\angle B + \angle D = 180^\circ$) to general parallelograms or rhombuses.
+   - *Correct Diagnostic Cue*: A quadrilateral is cyclic only if $\angle A + \angle C = 180^\circ$. A parallelogram is cyclic if and only if it is a rectangle.
+3. **Misconception: Confusing Secant Segment Lengths**:
+   - *Flawed Action*: In the secant product $PA \cdot PB$, calculating $PA \cdot AB$.
+   - *Correct Diagnostic Cue*: The Power of a Point identity strictly multiplies the distances from the external point $P$ to the two intersection points: $PA$ and $PB$, NOT the chord length $AB$.
+
+### 9.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-CIRC-01: Incomplete Alternate Segment Theorem Proof Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Theorem: The angle between a tangent and a chord through the point of contact
+         is equal to the angle subtended by the chord in the alternate segment.
+Given: Tangent XY touches circle at P. Chord PQ subtends ∠PRQ in the alternate segment.
+To Prove: ∠QPY = ∠PRQ
+
+Construction:
+  1. Draw diameter PM through center O.
+  2. Join MQ.
+
+Proof Steps:
+Step 1: Since PM is a diameter, angle in semicircle is:
+        ∠PQM = [ ___ ]°
+Step 2: In right-angled ΔPQM:
+        ∠QPM + ∠PMQ = 180° - 90° = [ ___ ]°   ... (1)
+Step 3: Since PM ⊥ tangent XY at point of contact P:
+        ∠MPY = [ ___ ]°
+Step 4: Express ∠MPY as sum of adjacent angles:
+        ∠QPM + ∠QPY = [ ___ ]°               ... (2)
+Step 5: Equating (1) and (2):
+        ∠QPM + ∠PMQ = ∠QPM + ∠QPY  ==>  ∠QPY = ∠[ ___ ]
+Step 6: Circle Invariant:
+        ∠PMQ and ∠PRQ are subtended by the same chord [ ___ ] in the same segment.
+        Therefore: ∠PMQ = ∠[ ___ ]
+Conclusion: ∠QPY = ∠PRQ  (Hence Proved)
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: 90°
+Step 2: 90°
+Step 3: 90°
+Step 4: 90°
+Step 5: PMQ
+Step 6: Same chord PQ; PRQ
+Conclusion: ∠QPY = ∠PRQ
+```
+
+#### TTU-CIRC-02: Power of a Point & Tangent Length Geometric Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-4, 6], y ∈ [-4, 4], clip_to_viewport = true
+Figure: Circle centered at origin with radius r = 3. Point P = (5, 0).
+Target Condition: Find length of tangent PT, and given secant PAB passing through center, verify PT² = PA · PB.
+
+[INCOMPLETE GEOMETRIC TTU]
+Step 1: Distance from P to center O: OP = [ ___ ].
+Step 2: In right ΔOPT (since OT ⊥ PT):
+        PT² = OP² - OT² = [ ___ ]² - [ ___ ]² = [ ___ ] - [ ___ ] = [ ___ ]
+        Length of tangent PT = √[ ___ ] = [ ___ ].
+
+Step 3: Secant PAB passes through center O:
+        Intersection points along line OP:
+        Near intersection A has distance: PA = OP - r = 5 - [ ___ ] = [ ___ ]
+        Far intersection B has distance:  PB = OP + r = 5 + [ ___ ] = [ ___ ]
+
+Step 4: Verify Power of a Point identity:
+        PA · PB = [ ___ ] · [ ___ ] = [ ___ ]
+        Does PT² = PA · PB? [ YES / NO ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: 5
+Step 2: 5² - 3² = 25 - 9 = 16; PT = √16 = 4
+Step 3: 5 - 3 = 2; 5 + 3 = 8
+Step 4: 2 · 8 = 16. PT² (16) = PA · PB (16) ==> YES.
+```
+
+### 9.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-CIRC-01 (Foundation / CBSE):
+  Tangent perpendicularity proofs, lengths of tangents from external point, cyclic quadrilateral angle deductions, and angle in semicircle.
+FAMILY-CIRC-02 (Olympiad / IOQM):
+  Ptolemy's Theorem, Simson line, Miquel's theorem, radical axis of coaxal circles, and spiral homothety.
+FAMILY-CIRC-03 (JEE Main):
+  Tangents and normals in Cartesian form xx₁ + yy₁ = r², condition of tangency c² = a²(1+m²), chord of contact T = 0, length of chord 2√(r²-d²).
+FAMILY-CIRC-04 (JEE Advanced):
+  Family of circles S + λL = 0 and S + λS' = 0, common chord, director circle, and orthogonal intersection condition 2g₁g₂ + 2f₁f₂ = c₁ + c₂.
+```
+
+---
+
+## 10. Foundation Packet: Arithmetic Progressions & Series Summations (`MATH-SEQ-AP`)
+
+### 10.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-SEQ-AP`
+- **Engineering Gate Binding**: `MATH-SEQ-AP` (Digest-bound closure receipt)
+- **Learner Title**: Arithmetic Progressions, Linear Recurrences & Finite Series Summations
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Discrete Index Invariant**: The term index $n$ must belong to the positive integers: $n \in \mathbb{Z}^+ = \{1, 2, 3, \dots\}$. Fractional or negative term indices (e.g. $a_{3.5}$ or $a_{-2}$) are undefined in standard progression theory.
+  2. **Common Difference Invariant**: A sequence $(a_n)$ is an AP if and only if $a_{n+1} - a_n = d$ is a constant independent of $n$ for all $n \ge 1$.
+  3. **Non-Degenerate AP Condition**: If $d = 0$, the progression is a constant sequence ($a, a, a, \dots$). If $d \neq 0$, the sequence is strictly monotonic.
+
+### 10.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-AP-01` (`CONCEPT`): Arithmetic Progression as a linear discrete function $f(n) = a + (n-1)d = dn + (a-d)$ over domain $\mathbb{Z}^+$. The common difference $d$ corresponds to the discrete slope.
+- `ATOM-AP-02` (`INVARIANT`): General Term Formula: $a_n = a + (n-1)d$. Term from the end: $a_n' = l - (n-1)d$ where $l$ is the last term.
+- `ATOM-AP-03` (`PROCEDURE`): Gauss Summation Identity: $S_n = \frac{n}{2}[2a + (n-1)d] = \frac{n}{2}(a + l)$. Symmetric pairing: $a_k + a_{n-k+1} = a_1 + a_n$ for all $1 \le k \le n$.
+- `ATOM-AP-04` (`RELATION`): Term-Sum Inversion: $a_n = S_n - S_{n-1}$ for $n \ge 2$, with $a_1 = S_1$. If $S_n = An^2 + Bn$, the sequence is an AP with common difference $d = 2A$ and first term $a = A + B$.
+- `ATOM-AP-05` (`STRATEGY`): Symmetric Variable Selection for Word Problems:
+  - 3 terms in AP: $(a - d), a, (a + d)$ with sum $= 3a$.
+  - 4 terms in AP: $(a - 3d), (a - d), (a + d), (a + 3d)$ with common difference $2d$ and sum $= 4a$.
+  - 5 terms in AP: $(a - 2d), (a - d), a, (a + d), (a + 2d)$ with sum $= 5a$.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Equal steps"* | $a_{n+1} - a_n = d \iff$ linear recurrence $a_{n+1} = a_n + d$ | Discrete constant difference across consecutive elements. |
+| *"Average times number of terms"* | $S_n = n \cdot \left(\frac{a + l}{2}\right) = n \cdot a_{\text{mid}}$ | Symmetry of terms about arithmetic center. |
+| *"Arithmetic Mean"* | $A = \frac{a + b}{2} \iff a, A, b$ are in AP | Middle term of 3-term progression. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Off-by-One in Term Index**:
+   - *Flawed Action*: Writing $a_n = a + nd$.
+   - *Correct Diagnostic Cue*: For the first term ($n = 1$), the difference $d$ has not been added yet ($a_1 = a + (1-1)d = a$). Adding $nd$ shifts every term forward by one position ($a + nd = a_{n+1}$).
+2. **Misconception: Quadratic Term vs Quadratic Sum Confusion**:
+   - *Flawed Action*: Concluding $a_n = 3n^2 + 2n$ is an AP because it contains $n$.
+   - *Correct Diagnostic Cue*: An AP has a *linear* general term $a_n = dn + c$. A *quadratic* polynomial in $n$ describes the *sum* $S_n = An^2 + Bn$, NOT the individual term $a_n$.
+3. **Misconception: Double Counting in Difference for Even Term Selections**:
+   - *Flawed Action*: Choosing 4 terms as $(a - 3d), (a - d), (a + d), (a + 3d)$ and setting common difference equal to $d$.
+   - *Correct Diagnostic Cue*: The step size between $(a - d)$ and $(a + d)$ is $(a + d) - (a - d) = 2d$. Therefore, the common difference is $2d$, NOT $d$.
+
+### 10.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-AP-01: Incomplete Gaussian Pair-Summation Derivation Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Derive the sum formula Sn = n/2 · [2a + (n-1)d] using Gauss's reverse summation method.
+
+Step 1: Write sum in ascending order:
+        Sn = a + (a + d) + (a + 2d) + ... + [l - d] + l       ... (1)
+Step 2: Write sum in reversed descending order:
+        Sn = l + (l - d) + [ _____ ] + ... + (a + d) + a       ... (2)
+Step 3: Add equations (1) and (2) term-by-term:
+        Sn + Sn = (a + l) + [(a + d) + (l - d)] + ... + (l + a)
+        2Sn = (a + l) + (a + [ ___ ]) + ... + (a + l)
+
+Step 4: Count number of identical paired terms:
+        There are [ ___ ] terms, each equal to (a + l).
+        2Sn = [ ___ ] · (a + l)  ==>  Sn = ([ ___ ] / 2) · (a + l)
+
+Step 5: Substitute the last term formula l = a + ([ ___ ] - 1)d:
+        Sn = (n / 2) · [a + (a + (n - 1)d)]
+        Sn = (n / 2) · [ [ ___ ]a + (n - 1)d ]   (Hence Derived)
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 2: (l - 2d)
+Step 3: l
+Step 4: n terms; n · (a + l); (n / 2)
+Step 5: n; 2a
+```
+
+#### TTU-AP-02: Quadratic Sum-to-Term Decompilation Model (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Given the sum of first n terms of a sequence is Sn = 3n² + 5n.
+      Prove that it is an AP, and find the first term a and common difference d.
+
+Step 1: Find the first term a:
+        a = a₁ = S₁ = 3(1)² + 5(1) = 3 + 5 = [ ___ ]
+
+Step 2: Find the sum of first two terms S₂:
+        S₂ = 3(2)² + 5(2) = 3(4) + 10 = [ ___ ] + 10 = [ ___ ]
+
+Step 3: Find the second term a₂:
+        a₂ = S₂ - S₁ = [ ___ ] - [ ___ ] = [ ___ ]
+
+Step 4: Calculate the candidate common difference d:
+        d = a₂ - a₁ = [ ___ ] - [ ___ ] = [ ___ ]
+
+Step 5: General proof using Sn - S_{n-1}:
+        an = Sn - S_{n-1}
+           = (3n² + 5n) - [ 3(n - 1)² + 5(n - 1) ]
+           = (3n² + 5n) - [ 3(n² - 2n + 1) + 5n - 5 ]
+           = (3n² + 5n) - [ 3n² - 6n + 3 + 5n - 5 ]
+           = (3n² + 5n) - [ 3n² - n - 2 ]
+           = [ ___ ]n + [ ___ ]
+
+Step 6: Since an is a linear polynomial in n, the sequence is an AP:
+        Common difference = coefficient of n = [ ___ ]
+        First term = a₁ = 6(1) + 2 = [ ___ ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: 8
+Step 2: 12; 22
+Step 3: 22 - 8 = 14
+Step 4: 14 - 8 = 6
+Step 5: 6n + 2
+Step 6: 6; 8
+```
+
+### 10.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-AP-01 (Foundation / CBSE):
+  Finding n-th term, sum of n terms, checking if a number belongs to an AP (n ∈ ℤ+), savings/installment word problems.
+FAMILY-AP-02 (Olympiad / IOQM):
+  APs with integer constraints, Green-Tao theorem context (primes in AP), partitioning sets into APs, and nonlinear Diophantine systems with AP terms.
+FAMILY-AP-03 (JEE Main):
+  Ratio of sums of two APs S_n / S_n' = (7n+1)/(4n+27) mapping to ratio of m-th terms by substitution n = 2m - 1, arithmetic-geometric progressions sum n rⁿ.
+FAMILY-AP-04 (JEE Advanced):
+  Telescoping series involving reciprocals of AP products sum 1/(a_k a_{k+1}), AP properties in logarithms (log a, log b, log c in AP <=> a, b, c in GP), and multidimensional grid lattices.
+```
+
+---
+
+## 11. Foundation Packet: Cartesian Coordinate Geometry & Planar Invariants (`MATH-GEO-COORDINATES`)
+
+### 11.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-GEO-COORDINATES`
+- **Engineering Gate Binding**: `MATH-GEO-COORDINATES` (Digest-bound closure receipt)
+- **Learner Title**: Cartesian Coordinate Geometry, Section Formulas & Planar Area Invariants
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Cartesian Metric Invariant**: The Euclidean distance between $P_1(x_1, y_1)$ and $P_2(x_2, y_2)$ is $d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2} \ge 0$. Distance is zero if and only if $P_1 \equiv P_2$.
+  2. **Section Formula Denominator Constraint**: The section ratio $m : n$ must satisfy $m + n \neq 0$ for internal division ($m, n > 0$) and external division ($m/n \neq -1$).
+  3. **Non-Degenerate Area Invariant**: Three points $A, B, C$ form a triangle if and only if the shoelace determinant is non-zero: $\Delta = \frac{1}{2} |x_1(y_2 - y_3) + x_2(y_3 - y_1) + x_3(y_1 - y_2)| > 0$. If $\Delta = 0$, the points are strictly collinear.
+
+### 11.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-COORD-01` (`CONCEPT`): Cartesian coordinates as an isometric bijection between Euclidean plane $\mathbb{E}^2$ and $\mathbb{R}^2$. Abscissa $x$ as signed orthogonal distance from $y$-axis; ordinate $y$ as signed orthogonal distance from $x$-axis.
+- `ATOM-COORD-02` (`INVARIANT`): Distance Formula as Pythagorean projection: $d^2 = (\Delta x)^2 + (\Delta y)^2$.
+- `ATOM-COORD-03` (`PROCEDURE`): Section Formula: Coordinates of point $P$ dividing segment $AB$ in ratio $m : n$:
+  - Internal division: $P\left(\frac{m x_2 + n x_1}{m + n}, \frac{m y_2 + n y_1}{m + n}\right)$.
+  - Centroid of triangle $\triangle ABC$: $G\left(\frac{x_1 + x_2 + x_3}{3}, \frac{y_1 + y_2 + y_3}{3}\right)$, dividing each median in ratio $2 : 1$.
+- `ATOM-COORD-04` (`RELATION`): Shoelace Area Formula: $\operatorname{Area}(\triangle ABC) = \frac{1}{2} |x_1 y_2 + x_2 y_3 + x_3 y_1 - (x_2 y_1 + x_3 y_2 + x_1 y_3)| = \frac{1}{2} \left| \det \begin{pmatrix} x_1 & y_1 & 1 \\ x_2 & y_2 & 1 \\ x_3 & y_3 & 1 \end{pmatrix} \right|$.
+- `ATOM-COORD-05` (`STRATEGY`): Collinearity & Ratio Discovery: Using ratio $k : 1$ to determine unknown division ratios and verifying $k > 0$ (internal) vs $k < 0$ (external).
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Ratio m to n"* | Convex combination $\mathbf{p} = \frac{n}{m+n}\mathbf{a} + \frac{m}{m+n}\mathbf{b}$ | Affine barycentric coordinates along 1D line segment. |
+| *"Centroid"* | Center of mass $\mathbf{g} = \frac{\mathbf{a} + \mathbf{b} + \mathbf{c}}{3}$ | Intersection of medians; median balance point. |
+| *"Shoelace formula"* | $\frac{1}{2} \sum (x_i y_{i+1} - x_{i+1} y_i)$ | Closed contour integral of differential 1-form $x dy$ in $\mathbb{R}^2$. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Inverting Point Order in Section Formula**:
+   - *Flawed Action*: In dividing segment from $A$ to $B$ in ratio $m : n$, writing $\frac{m x_1 + n x_2}{m + n}$.
+   - *Correct Diagnostic Cue*: The ratio multiplier cross-multiplies to the *opposite* point: ratio $m$ attached to $A$ multiplies $B$'s coordinates ($x_2$), and ratio $n$ attached to $B$ multiplies $A$'s coordinates ($x_1$): $x = \frac{m x_2 + n x_1}{m + n}$.
+2. **Misconception: Omitting Absolute Value in Area Calculation**:
+   - *Flawed Action*: Calculating the determinant as $-15$ and reporting area as $-7.5$.
+   - *Correct Diagnostic Cue*: Geometric area is strictly non-negative. The determinant computes signed area depending on clockwise vs counterclockwise orientation. The physical area requires the absolute value: $\text{Area} = \frac{1}{2}|-15| = 7.5$.
+3. **Misconception: External Division Denominator Sign Error**:
+   - *Flawed Action*: Writing external division coordinates as $\frac{m x_2 + n x_1}{m - n}$.
+   - *Correct Diagnostic Cue*: For external division in ratio $m:n$, treat ratio as $m : (-n)$. The formula is $x = \frac{m x_2 - n x_1}{m - n}$. Both numerator and denominator must carry the minus sign.
+
+### 11.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-COORD-01: Incomplete Section Formula Ratio Discovery Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: In what ratio does the point P(2, -5) divide the line segment joining
+      A(-3, 5) and B(4, -9)?
+
+Step 1: Assume point P divides segment AB in the ratio k : 1.
+        Coordinates of A: (x₁, y₁) = (-3, 5)
+        Coordinates of B: (x₂, y₂) = (4, -9)
+
+Step 2: Apply section formula for x-coordinate:
+        x_P = (k · x₂ + 1 · x₁) / (k + 1)
+        2   = (k · [ ___ ] + 1 · [ ___ ]) / (k + 1)
+        2   = ([ ___ ]k - [ ___ ]) / (k + 1)
+
+Step 3: Cross multiply and solve for k:
+        2(k + 1) = 4k - 3
+        2k + 2   = 4k - 3
+        2k       = [ ___ ]  ==>  k = [ ___ ] / [ ___ ]
+
+Step 4: Verify with y-coordinate:
+        y_P = (k · y₂ + 1 · y₁) / (k + 1)
+            = ((5/2) · (-9) + 5) / ((5/2) + 1)
+            = (-45/2 + 10/2) / (7/2)
+            = (-35/2) / (7/2) = -35 / 7 = [ ___ ]
+        Does this match y_P = -5? [ YES / NO ]
+
+Conclusion: The segment is divided in the ratio [ ___ ] : [ ___ ] internally.
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 2: 4; -3; 4; 3
+Step 3: 5; 5 / 2
+Step 4: -5; YES
+Conclusion: 5 : 2
+```
+
+#### TTU-COORD-02: Shoelace Determinant Planar Area Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-2, 6], y ∈ [-2, 8], clip_to_viewport = true
+Points: A(1, 2), B(4, 6), C(3, 8).
+Target Condition: Compute Area(ΔABC) and verify non-collinearity.
+
+[INCOMPLETE GEOMETRIC TTU]
+Step 1: Write Shoelace Formula layout:
+        Δ = 1/2 | x₁(y₂ - y₃) + x₂(y₃ - y₁) + x₃(y₁ - y₂) |
+
+Step 2: Substitute coordinates:
+        Δ = 1/2 | 1·(6 - 8) + 4·(8 - 2) + 3·(2 - 6) |
+        Δ = 1/2 | 1·([ ___ ]) + 4·([ ___ ]) + 3·([ ___ ]) |
+        Δ = 1/2 | [ ___ ] + [ ___ ] + [ ___ ] |
+        Δ = 1/2 | [ ___ ] |
+
+Step 3: Compute final area:
+        Area(ΔABC) = 1/2 · [ ___ ] = [ ___ ] sq units.
+
+Step 4: Collinearity check:
+        Since Area ≠ 0, are the points A, B, C collinear? [ YES / NO ]
+
+[COMPLETION DERIVATION KEY]
+Step 2: -2; 6; -4; -2; 24; -12; 10
+Step 3: 10; 5
+Step 4: NO (non-collinear).
+```
+
+### 11.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-COORD-01 (Foundation / CBSE):
+  Distance between points, finding coordinates of equidistant points on axes, section formula internal division, finding ratios, collinearity proofs.
+FAMILY-COORD-02 (Olympiad / IOQM):
+  Pick's Theorem (A = I + B/2 - 1) for lattice polygons, area coordinates (barycentric coordinates), and collinearity via Menelaus in coordinates.
+FAMILY-COORD-03 (JEE Main):
+  Locus problems, shift of origin (X = x-h, Y = y-k), condition for lines to form equilateral triangle, distance between parallel lines.
+FAMILY-COORD-04 (JEE Advanced):
+  Concurrence of lines via 3x3 determinant, rotation of axes through angle θ, reflection of point across arbitrary line ax+by+c=0, and harmonic conjugates.
+```
+
+---
+
+## 12. Intake Validation Checklist for Future Subtopics
 
 To admit any new mathematics subtopic into the library, it must pass this 6-point intake gate:
 
@@ -794,5 +1172,6 @@ To admit any new mathematics subtopic into the library, it must pass this 6-poin
 4. **Reconstructable TTU Pair**: At least one complete Concept TTU and one reconstructive Problem TTU with explicit completion keys must be authored in Layer 3.
 5. **Exam Family Mapping**: Clear mapping to at least 2 distinct competitive examination families (e.g. CBSE + JEE Main, or IOQM + JEE Advanced) must be provided in Layer 4.
 6. **Zero Topic Hardcoding**: All metadata, terms, and rules must live in JSON data files; zero topic-specific branch logic may be added to Python engine code.
+
 
 
