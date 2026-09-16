@@ -92,6 +92,13 @@ class BlueprintAgentTaskIntakeTests(unittest.TestCase):
         with self.assertRaisesRegex(BlueprintAgentTaskIntakeError, "E_BLUEPRINT_EXECUTION_PACKET_STALE"):
             consume_execution_packet(packet, current_head=stale_head)
 
+    def test_bound_authority_digest_drift_fails_closed(self):
+        packet = compile_packet(load_task())
+        packet["authority_bindings"][0]["sha256"] = "sha256:" + "0" * 64
+        packet["packet_digest"] = digest({k: v for k, v in packet.items() if k != "packet_digest"})
+        with self.assertRaisesRegex(BlueprintAgentTaskIntakeError, "E_BLUEPRINT_BOUND_AUTHORITY_DRIFT"):
+            consume_execution_packet(packet)
+
     def test_physics_blueprint_rejects_other_subject_even_with_recomputed_digest(self):
         packet = compile_packet(load_task())
         packet["task"]["subject"] = "CHEMISTRY"
