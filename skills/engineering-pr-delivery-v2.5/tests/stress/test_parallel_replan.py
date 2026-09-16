@@ -89,7 +89,7 @@ def parallel_replan_repo(root:Path):
     dump(root/"agents/relay/execution-packages/EP-B1.yaml",ep1);dump(root/"agents/relay/execution-packages/EP-B2.yaml",ep2)
 
     new_plan={
-        "schema_version":"relay-v2.5","id":"PLAN-P2","previous_replan":"REPLAN-P2",
+        "schema_version":"relay-v2.5","id":"PLAN-P2","previous_replan":"REPLAN-P2","previous_replan_path":"agents/relay/parallel/REPLAN-P2.yaml",
         "owner_approval":{"approved":True,"authority":"OWNER","source":"OWNER-DECISION-2","approval_token":"APPROVE PARALLEL PLAN-P2"},
         "ascii_topology":"REPLAN\n +-- B1\n +-- B2\n  \\ /\n INTEGRATE-2",
         "lanes":[
@@ -164,6 +164,6 @@ class ParallelReplanStressTests(unittest.TestCase):
 
     def test_new_parallel_plan_and_lanes_must_bind_replan(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);_,plan,ep1,_=parallel_replan_repo(root);plan.pop("previous_replan");dump(root/"agents/relay/parallel/PLAN-P2.yaml",plan);self.assertTrue(any("previous_replan" in x for x in parallel_plan(root)[0]));ep1["identity"].pop("previous_replan");dump(root/"agents/relay/execution-packages/EP-B1.yaml",ep1);self.assertTrue(any("previous_replan" in x for x in parallel_replan(root)[0]))
+            root=Path(td);_,plan,ep1,_=parallel_replan_repo(root);plan.pop("previous_replan");plan.pop("previous_replan_path");dump(root/"agents/relay/parallel/PLAN-P2.yaml",plan);self.assertTrue(any("previous_replan" in x for x in parallel_plan(root)[0]));ep1["identity"].pop("previous_replan");dump(root/"agents/relay/execution-packages/EP-B1.yaml",ep1);self.assertTrue(any("previous_replan" in x for x in parallel_replan(root)[0]))
 
 if __name__=="__main__":unittest.main()
