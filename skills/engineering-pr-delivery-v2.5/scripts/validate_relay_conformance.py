@@ -36,8 +36,11 @@ from validate_github_generation_history import validate as github_generation_his
 from validate_drift_receipt import validate as drift
 from validate_takeover_certification import validate as takeover
 from validate_baton_readiness import validate as baton_readiness
+from validate_blueprints import validate as blueprints
+from validate_quality_router import validate as quality_router
+from validate_quality_review import validate as quality_review
 
-ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("report_projection",report_projection),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("github_projection",github_projection),("github_generation_history",github_generation_history),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("report_projection",report_projection),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("github_projection",github_projection),("github_generation_history",github_generation_history),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover),("quality_blueprints",blueprints),("quality_router",quality_router),("quality_review",quality_review)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions_compat",questions)]
 
 def validate(root:Path):
