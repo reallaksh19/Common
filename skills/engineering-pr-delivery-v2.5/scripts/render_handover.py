@@ -18,8 +18,7 @@ def render(root:Path):
             for wp in ph.get("work_packages",[]) or []:
                 lines.append(f"    - {mark(wp.get('state'))} {wp.get('id')} — {wp.get('title','')} — **{pct(wp.get('percent'))}**{' ← CURRENT' if wp.get('current') else ''}")
                 for step in wp.get("steps",[]) or []:
-                    st="COMPLETE" if step.get("percent")==100 else "ACTIVE" if (step.get("percent") or 0)>0 else "PLANNED"
-                    lines.append(f"      - {mark(st)} {step.get('id')} — {step.get('objective','')} — **{pct(step.get('percent'))}**")
+                    ss="COMPLETE" if step.get("percent")==100 else "ACTIVE" if (step.get("percent") or 0)>0 else "PLANNED";lines.append(f"      - {mark(ss)} {step.get('id')} — {step.get('objective','')} — **{pct(step.get('percent'))}**")
                     for ac in step.get("acceptance",[]) or []:lines.append(f"        - {mark(ac.get('status'))} {ac.get('id')} — {ac.get('description','')} — **{pct(ac.get('percent'))}** — {label(ac.get('status'))}")
     lines += ["","## Current execution",f"- State: **{label(ex.get('state'))}**; can continue: **{'YES' if ex.get('can_continue') else 'NO'}**; material authority: **{label(ex.get('material_authority'))}**",f"- Evidence: **{label(ev.get('state'))}** — {ev.get('summary','')}","","## Exact next work"]
     nw=r.get("next_work") or {}
@@ -34,9 +33,16 @@ def render(root:Path):
             lines.append(f"- {lane.get('lane_id')} / {lane.get('ep_id')} on `{lane.get('branch')}`")
             for step in (lane.get("next_work") or {}).get("steps",[]) or []:lines.append(f"  {step.get('order')}. {step.get('action')} → {step.get('expected_result')}")
     else:lines.append("- No active material next-work contract; do not invent work.")
-    if ev.get("not_run"):
-        lines += ["","## Evidence not run"]+[f"- {x.get('id')}: {x.get('reason')} ({x.get('cause')})" for x in ev.get("not_run")]
-    lines += ["","## Relay readiness",f"- Baton ready: **{'YES' if ready.get('baton_ready') else 'NO'}**",f"- Projection ready: **{'YES' if ready.get('projection_ready') else 'NO'}**",f"- Handover ready: **{'YES' if ready.get('handover_ready') else 'NO'}**",f"- Conversation context required: **{'NO' if s.get('chat_context_required') is False else 'YES'}**"]
+    if s.get("relay_state")=="PARALLEL":
+        plan=load_yaml(root/(s.get("execution_policy") or {})["parallel_plan"]);lines += ["",f"## Parallel plan {plan.get('id')}"]
+        for lane in plan.get("lanes",[]) or []:lines.append(f"- {lane.get('id')}: `{lane.get('work_package')}` → `{lane.get('ep_id')}` on `{lane.get('branch')}`")
+        lines.append(f"- Integration: `{(plan.get('integration') or {}).get('work_package')}`")
+    if (s.get("predecessor_join") or {}).get("path"):
+        j=load_yaml(root/s["predecessor_join"]["path"]);lines += ["",f"## Parallel convergence {j.get('id')}"]+[f"- {x.get('lane_id')}: checkpoint `{x.get('checkpoint_id')}`" for x in j.get("lane_checkpoints",[]) or []]
+    if (s.get("predecessor_replan") or {}).get("path"):
+        rp=load_yaml(root/s["predecessor_replan"]["path"]);lines += ["",f"## Parallel replan {rp.get('id')}"]+[f"- {x.get('lane_id')}: `{x.get('work_package')}` — **{label(x.get('disposition'))}**" for x in rp.get("lane_dispositions",[]) or []]
+    if ev.get("not_run"):lines += ["","## Evidence not run"]+[f"- {x.get('id')}: {x.get('reason')} ({x.get('cause')})" for x in ev.get("not_run")]
+    lines += ["","## Relay readiness",f"- Complete baton available for a zero-context replacement? **{'YES' if ready.get('baton_ready') else 'NO'}**",f"- Required projection synchronized? **{'YES' if ready.get('projection_ready') else 'NO'}**",f"- Full custody handover ready? **{'YES' if ready.get('handover_ready') else 'NO'}**",f"- Conversation context required? **{'NO' if s.get('chat_context_required') is False else 'YES'}**"]
     return "\n".join(lines)+"\n"
 def main():
     ap=argparse.ArgumentParser();ap.add_argument("repo_root",nargs="?",default=".");ap.add_argument("--output");a=ap.parse_args();text=render(Path(a.repo_root).resolve());Path(a.output).write_text(text,encoding="utf-8") if a.output else print(text,end="")
