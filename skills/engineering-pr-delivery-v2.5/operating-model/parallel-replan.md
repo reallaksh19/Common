@@ -22,7 +22,33 @@ CARRIED     — lane remains unresolved but its old route/topology is replaced.
 INVALIDATED — lane cannot safely continue under the predecessor plan.
 ```
 
-`CARRIED` and `INVALIDATED` lanes retain structured unresolved acceptance and evidence, including exact evidence status/basis, and name the work package receiving that custody. A transfer may not upgrade, drop, or rewrite unresolved evidence.
+## Exact transfer partition
+
+`CARRIED` and `INVALIDATED` lanes retain their complete structured `unresolved_acceptance` and `evidence` inventories, including exact state/status and durable basis.
+
+They then declare one or more `transfers`:
+
+```yaml
+unresolved_acceptance: [<complete unresolved inventory>]
+evidence: [<complete evidence inventory>]
+transfers:
+  - work_package: WP-R1
+    unresolved_acceptance: [<subset>]
+    evidence: [<subset>]
+  - work_package: WP-R2
+    unresolved_acceptance: [<remaining subset>]
+    evidence: [<remaining subset>]
+```
+
+The transfer sets are a partition, not a summary. Across all transfer targets for that predecessor lane:
+
+- every unresolved acceptance item must appear exactly once;
+- every evidence item must appear exactly once;
+- evidence status, basis and NOT_RUN reason must remain unchanged;
+- duplicate transfer targets are invalid;
+- every target must be in the recomputed executable frontier.
+
+This allows a failed lane to split into multiple replacement work packages without losing or duplicating custody. It also allows several predecessor lanes to converge into one successor work package; that successor EP inherits the exact aggregate of all transfers addressed to it.
 
 ## Recompute before choosing the route
 
@@ -48,10 +74,12 @@ A serial replacement EP uses:
 identity.previous_replan: <REPLAN-ID>
 replan_inheritance:
   from_replan: <REPLAN-ID>
-  unresolved_acceptance: ...
-  evidence: ...
+  unresolved_acceptance: <exact aggregate addressed to this WP>
+  evidence: <exact aggregate addressed to this WP>
 ```
 
-A successor parallel plan uses `previous_replan: <REPLAN-ID>`, and every successor lane EP also references that replan. Transferred acceptance/evidence must match the replan receipt exactly.
+A successor parallel plan uses `previous_replan: <REPLAN-ID>`, and every successor lane EP also references that replan. Each lane inherits the exact aggregate addressed to its work package. A new frontier lane that received no predecessor transfer still references the replan and has empty inherited acceptance/evidence.
+
+The active `REPO_STATE.execution_policy.parallel_plan` is the only parallel topology eligible for route resolution. Old predecessor-plan branches/worktrees do not resolve an executable lane unless the new approved plan explicitly reuses that route and the new EP passes its live Git/material-basis checks.
 
 After a successor EP/lane produces its next normal checkpoint, ordinary checkpoint custody resumes and the replan becomes immutable history.
