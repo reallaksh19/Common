@@ -52,6 +52,8 @@ def build(manifest:dict)->dict[str,dict]:
             "evidence":{"state":"NA","summary":"Relay bootstrap created; no executable engineering evidence exists yet.","not_run":[]},
             "stop":{"active":False,"category":"NONE","reason":"","basis":[]}
         },
+        "projection":{"required":False,"state":"NOT_REQUIRED","roadmap_revision":road["revision"],"execution_ref":"NONE","basis":[]},
+        "relay_readiness":{"repository_ready":False,"projection_ready":True,"handover_ready":False,"reasons":["Relay initialization is incomplete; no executable frontier/EP exists."]},
         "chat_context_required":False
     }
     profile={
