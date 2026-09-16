@@ -1,0 +1,36 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, quality_review_id, ep, roadmap_revision, material_ref, reviewer, router_snapshot, procedure_results, findings, overall_state, execution_effect, owner_report, successor_handover]
+properties:
+  schema_version: {const: relay-v2.5-quality-review}
+  quality_review_id: {type: string, pattern: '^QRV-'}
+  ep:
+    type: object
+    required: [id, path, contract_digest]
+  roadmap_revision: {type: string, minLength: 1}
+  material_ref: {type: string, minLength: 1}
+  reviewer:
+    type: object
+    required: [type, identity]
+    properties:
+      type: {enum: [AGENT, OWNER, DETERMINISTIC_VALIDATOR]}
+      identity: {type: string, minLength: 1}
+  router_snapshot:
+    type: object
+    required: [applicable, not_applicable]
+  procedure_results: {type: array}
+  findings: {type: array}
+  overall_state: {enum: [CLEAR, NEEDS_ATTENTION, OWNER_REVIEW_REQUIRED]}
+  execution_effect:
+    type: object
+    required: [blocks_execution, blocking_findings]
+    properties:
+      blocks_execution: {type: boolean}
+      blocking_findings: {type: array}
+  owner_report:
+    type: object
+    required: [summary, visible_risks, decisions_required]
+  successor_handover:
+    type: object
+    required: [unresolved_findings, follow_up]
+additionalProperties: true
