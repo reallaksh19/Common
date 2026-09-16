@@ -35,7 +35,7 @@ This is a real composition and artifact-evidence consumer. It accepts externally
 | Blueprint rules | Implemented observation | Remaining limit |
 |---|---|---|
 | SRC-01 / COV-01 | Exact source-file digests, complete declared atom accounting, required Core/object-kind coverage, exported object closure | Source extraction and meaningful realization require independent review; an ID link is not a semantic proof |
-| SEM-01 | Frozen MathML identity, meanings/symbols/conditions required, source-bound supported numerical evaluator inputs | Free prose, derivation validity and general equations need academic review |
+| SEM-01 | Original MathML retained; tracked transformations permitted as review drafts; meanings/symbols/conditions and source-bound supported numerical evaluator inputs required | Free prose, derivation validity and general equations need academic review |
 | ANS-01 / ANS-02 | Declared questions, original numbers/stems/subparts/options/conditions, answer bodies and steps; actual numeric result spans compared | Embedded prose prompts and explanatory correctness need review; only four scalar evaluator families supported |
 | FIG-01 / FIG-02 | Source-bound values/units, compatible per-object atom refs, quantitative vector scale, graph range/domain, exact exported SVG identity | Scientific choice of model/frame/variable mapping and final-size visual suitability need review |
 | REUSE-01 / TRANSFER-01 | All declared question pairs compared for source identity/declared family; suspicious fresh-transfer claims exposed | Family labels can be wrong; full semantic, lexical and diagram-family adjudication remains pending |
@@ -49,7 +49,7 @@ The new command does not accept raw scanned figures as if they had been understo
 
 ## Numerical and publication limits
 
-Supported numeric result families are `SPEED_FROM_COMPONENTS`, `CONSTANT_ACCELERATION_VELOCITY`, `CONSTANT_ACCELERATION_INITIAL_VELOCITY` and `CONSTANT_ACCELERATION_EVENT_TIME`. Values use the existing SI conventions and 1e-9 relative/absolute candidate comparison. Equivalent numeric formatting is accepted. Unit conversion and symbolic-equivalence inference are not added here. Other families are explicitly held, even if another kit supports them.
+Supported numeric result families are `SPEED_FROM_COMPONENTS`, `CONSTANT_ACCELERATION_VELOCITY`, `CONSTANT_ACCELERATION_INITIAL_VELOCITY` and `CONSTANT_ACCELERATION_EVENT_TIME`. Values use the existing SI conventions and 1e-9 relative/absolute candidate comparison. Equivalent numeric formatting is accepted. Automatic unit conversion and symbolic-equivalence inference are not added here; recorded equation adaptations can be scientifically reviewed. Other numerical families can appear as marked review drafts with oracle NONE; their scientific learner-ready acceptance remains held. The host checks transcription only for these candidates.
 
 The scalar result field is compared against the existing subject evaluator; this is not an independent proof of every sentence of the solution. Tests include separate arithmetic/sign/geometry expectations, but they do not grant subject-wide numerical qualification. The original-source/model selection must still be reviewed.
 
@@ -58,3 +58,7 @@ The expected basis digest must come from the accepted work packet or another tru
 ## Next integration stage
 
 Connect accepted subtopic authoring packets and gate baselines to this publication input format, with no parallel hand-maintained lesson source. Implement independent academic evidence acceptance, complete example-exposure analysis and transitive extension invalidation in the real state owner. Then run full-medium inspection and qualify additional scientific families. Do not claim that this bounded publication layer completes the full architecture.
+
+## Research flexibility update
+
+Read [research freedom and minimum criteria](../Blueprint/V3B-Research-and-Minimum-Criteria.md). Exploration is not gated by an approved baseline. Candidate mathematical adaptations and unsupported numerical methods can proceed in review drafts with explicit pending scientific acceptance. A/B hints have no fixed count. Original-source fidelity, required coverage, answer closure and existing qualified numerical checks remain enforced. Similarity flags trigger triage; they are not automatic duplication convictions. Full research-promotion scheduling and authoring-state invalidation remain pending integration, rather than constraints on what agents may search.

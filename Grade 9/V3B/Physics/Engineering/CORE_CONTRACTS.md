@@ -1,5 +1,7 @@
 # Six-Core authoring and evidence contract
 
+Apply the [research and minimum-criteria policy](../Blueprint/V3B-Research-and-Minimum-Criteria.md). Provisional research/drafting is allowed; accepted-source custody, scientific correctness, coverage and self-help closure remain mandatory. A/B support has no universal hint-count quota.
+
 Mandatory realization detail: [V3B production blueprint](../Blueprint/V3B-Production-Blueprint.md). Apply its depth, per-Core action, full-answer, exposure and bound-publication requirements alongside this contract. Structural proof checks do not implement the complete acceptance suite.
 
 Core1 basic notes and Core2 frozen questions/hints remain existing input products. This extension governs detailed Core1A/1B/2A/2B realizations without modifying either.
@@ -45,7 +47,7 @@ Compare exact identity, lexical shingles and containment, diagram structure, pro
 
 Initial triage: five-word Jaccard >=0.65 candidate, >=0.80 review, >=0.90 high review; containment >=0.80 review for passages of >=50 words. Exact nonempty matches are reviewed even when short. Equations are classified separately; short technical phrases need human judgment. Low similarity does not prove conceptual novelty.
 
-Before calibrated use: two independent labels, boundary cases, disagreement adjudication, held-out evaluation split by family/topic to prevent leakage, precision/recall/false-block reporting, and versioned approval. All current scores remain uncalibrated. An unresolved review holds release; a score is not itself a duplication conviction.
+Before calibrated use: two independent labels, boundary cases, disagreement adjudication, held-out evaluation split by family/topic to prevent leakage, precision/recall/false-block reporting, and versioned approval. All current scores remain uncalibrated. A consequential unresolved scientific or learning defect holds the affected learner-ready acceptance. A similarity score or advisory alone does not; record its triage and rationale.
 
 ## Useful badges and hidden metadata
 
@@ -65,4 +67,5 @@ Keep internally: original question ID, gate/baseline versions, source digest, re
 8. Owner release.
 
 The current pure checker is a structural acceptance prerequisite. It always reports release_authorized=false. External reviewer authority and file digest verification need a trusted execution host. The old four-Core runtime is not silently certified by running this checker.
+
 

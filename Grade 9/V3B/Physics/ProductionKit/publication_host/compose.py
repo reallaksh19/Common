@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 from v3b.contracts import digest
 from .figures import figure
-from .science import equation_mathml, numeric_expectation
+from .science import equation_mathml, equation_review, numeric_expectation
 
 STYLE = """
 *{box-sizing:border-box}body{margin:0;color:#172c42;background:#f1f5f8;font:18px/1.6 Georgia,serif}
@@ -23,7 +23,7 @@ details{margin:12px 0}summary{cursor:pointer;font-size:15px}.numeric{font-weight
 table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #bbcad2;padding:8px;text-align:left}
 @media(max-width:600px){main{padding:20px}body{font-size:17px}h1{font-size:1.6rem}}
 @media print{@page{size:A4;margin:15mm}body{background:white;font-size:11pt}main{max-width:none;padding:0}
-nav,.notice{display:none}.answer-section{break-before:page}figure,math{break-inside:avoid}img{max-height:85mm}}
+nav{display:none}.answer-section{break-before:page}figure,math{break-inside:avoid}img{max-height:85mm}}
 """
 
 
@@ -35,7 +35,7 @@ def document(title, body):
 
 
 def compose(ctx):
-    files, bindings, numeric, figures = {}, {}, {}, {}
+    files, bindings, numeric, figures, reviews = {}, {}, {}, {}, {}
     for product in ctx["plan"]["products"]:
         core = product["core"]
         body = '<nav><a href="OWNER_BOARD.html">Publication status</a> · <a href="#answers">Answers and hints</a></nav>'
@@ -46,7 +46,7 @@ def compose(ctx):
             bucket = ctx["buckets"][unit["bucket_id"]]
             body += f'<h2>{escape(unit["title"])}</h2><p class="badge">Intrinsic concept difficulty: {bucket["badge"]}</p>'
             for block in unit["blocks"]:
-                markup, answer = _block(ctx, block, files, numeric, figures)
+                markup, answer = _block(ctx, block, files, numeric, figures, reviews)
                 wrapped = f'<section data-object-id="{escape(block["id"], quote=True)}">{markup}</section>'
                 bindings[block["id"]] = dict(core=core, content_digest=digest(block),
                                             artifact=core + '.html', kind=block["kind"])
@@ -60,15 +60,22 @@ def compose(ctx):
         body += ''.join(answers) + '</section>'
         files[core + '.html'] = document(ctx["plan"]["title"] + ' · ' + core, body)
     return files, {"objects": bindings, "numeric_answers": numeric, "figures": figures,
+                   "scientific_review_requirements": reviews,
                    "reuse_candidates": reuse_candidates(ctx)}
 
 
-def _block(ctx, block, files, numeric, figures):
+def _block(ctx, block, files, numeric, figures, reviews):
     kind = block["kind"]
     if kind == "TEXT":
         return '<p>' + escape(block["text"]).replace('\n', '<br>') + '</p>', ''
     if kind == "EQUATION":
         body = equation_mathml(ctx, block) + '<p>' + escape(block["meaning"]) + '</p>'
+        review = equation_review(ctx, block)
+        if review is not None:
+            reviews[block['id']] = review
+            body += '<p class="notice">Equation adaptation awaiting scientific review.</p>'
+            body += '<p>' + escape(block['transformation']['reason']) + '</p>'
+            body += _list(block['transformation']['steps'])
         body += _list(block["symbols"]) + '<p>Applies when:</p>' + _list(block["conditions"])
         return body, ''
     if kind == "FIGURE":
@@ -84,14 +91,16 @@ def _block(ctx, block, files, numeric, figures):
     expected = numeric_expectation(ctx, block)
     if expected is not None:
         numeric[block["id"]] = expected
-    return _question(ctx, block)
+        if expected['status'] == 'SCIENTIFIC_REVIEW_REQUIRED':
+            reviews[block['id']] = expected
+    return _question(ctx, block, expected)
 
 
 def _list(items):
     return '<ol>' + ''.join('<li>' + escape(x) + '</li>' for x in items) + '</ol>'
 
 
-def _question(ctx, block):
+def _question(ctx, block, numeric_assessment):
     qid = escape(block["id"], quote=True)
     source = ctx["sources"][block["source_id"]]
     source_link = 'inputs/sources/' + quote(source["ref"]["path"], safe='/')
@@ -107,8 +116,12 @@ def _question(ctx, block):
     answer = block["answer"]
     reveal = f'<article class="answer" id="answer-{qid}" data-answer-id="{qid}">'
     reveal += f'<h3>Question {escape(block["original_number"])}</h3>'
-    for level, hint in enumerate(block["hints"], 1):
+    for level, hint in enumerate(block.get("hints", []), 1):
         reveal += f'<details><summary>Hint {level}</summary><p>{escape(hint)}</p></details>'
+    if block.get('guidance'):
+        reveal += '<p>Guidance:</p>' + _list(block['guidance'])
+    if numeric_assessment and numeric_assessment['status'] == 'SCIENTIFIC_REVIEW_REQUIRED':
+        reveal += '<p class="notice">Numerical answer awaiting scientific review; not automatically verified.</p>'
     reveal += '<p>' + escape(answer["summary"]) + '</p>'
     if "numeric" in answer:
         n = answer["numeric"]
@@ -154,7 +167,8 @@ def report_for(ctx, evidence, basis):
             "gates": {
                 "Source bytes and declared inventory": "CHECKED; extraction accuracy needs independent review",
                 "Required object and declared-question closure": "CHECKED; embedded prose prompts need academic review",
-                "Published numerical answers": "CHECKED for supported scalar evaluator families only",
+                "Published numerical answers": "Supported families: oracle checked; other numeric candidates: transcription only, scientific review required",
+                "Scientific adaptations awaiting review": str(len(evidence['scientific_review_requirements'])) + " — draft permitted; learner-ready acceptance held",
                 "Figure data and artifact binding": "CHECKED for vector/graph families; scientific visual review NOT_RUN",
                 "Core purpose and difficult inference depth": "NOT_RUN — independent academic review required",
                 "Reuse and transfer": "All declared question pairs screened; semantic adjudication NOT_RUN",

@@ -5,7 +5,7 @@ import re
 from xml.etree import ElementTree as ET
 
 from validator import recompute
-from v3b.contracts import require
+from v3b.contracts import digest, require, strings, text
 
 RESULT_UNITS = {
     "SPEED_FROM_COMPONENTS": "m/s", "CONSTANT_ACCELERATION_VELOCITY": "m/s",
@@ -31,11 +31,11 @@ def numeric_expectation(ctx, block):
     rule = source.get("verification")
     candidate = block["answer"].get("numeric")
     if rule is None:
-        require(candidate is None, "NUMERIC_EVALUATOR_REQUIRED", block["id"])
-        return None
+        return None if candidate is None else unverified_candidate(candidate, "NUMERIC_EVALUATOR_MISSING")
     kind = rule["validator_id"]
-    require(kind in RESULT_UNITS, "PUBLICATION_EVALUATOR_UNSUPPORTED", kind)
     require(isinstance(candidate, dict), "NUMERIC_CANDIDATE_REQUIRED", block["id"])
+    if kind not in RESULT_UNITS:
+        return unverified_candidate(candidate, "NUMERIC_EVALUATOR_UNSUPPORTED")
     case = {"validator_id": kind, "units": {}}
     for key in ("model", "axis_convention"):
         if key in rule:
@@ -49,24 +49,36 @@ def numeric_expectation(ctx, block):
     value = recompute(case)
     compare_candidate(candidate["value"], candidate["unit"], value, RESULT_UNITS[kind])
     return {"value": value, "unit": RESULT_UNITS[kind], "case": case,
+            "status": "VERIFIED_BY_SUPPORTED_EVALUATOR",
             "oracle": "EXISTING_PHYSICS_VALIDATOR_SOURCE_BOUND"}
 
 
-def compare_candidate(value, unit, expected, expected_unit):
+def finite_candidate(value):
     if isinstance(value, str):
         require(bool(re.fullmatch(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?", value.strip())),
                 "PUBLISHED_NUMBER_INVALID")
         value = float(value)
     require(type(value) in {int, float} and math.isfinite(value), "NUMERIC_CANDIDATE_INVALID")
+    return value
+
+
+def unverified_candidate(candidate, code):
+    require(isinstance(candidate, dict), "NUMERIC_CANDIDATE_REQUIRED")
+    value = finite_candidate(candidate.get("value"))
+    unit = text(candidate.get("unit"), "ANSWER_UNIT_REQUIRED")
+    return {"status": "SCIENTIFIC_REVIEW_REQUIRED", "code": code, "value": value, "unit": unit,
+            "oracle": "NONE", "blocking_scope": "LEARNER_READY_ONLY"}
+
+
+def compare_candidate(value, unit, expected, expected_unit):
+    value = finite_candidate(value)
     require(unit == expected_unit, "ANSWER_UNIT_MISMATCH")
     require(math.isclose(value, expected, rel_tol=1e-9, abs_tol=1e-9), "PUBLISHED_ANSWER_MISMATCH")
 
 
 def equation_mathml(ctx, block):
     mathml = block["mathml"]
-    source_values = [ctx["atoms"][a]["value"] for a in block["source_atom_ids"]
-                     if ctx["atoms"][a].get("kind") == "EQUATION"]
-    require(mathml in source_values, "EQUATION_SOURCE_MISMATCH", block["id"])
+    equation_review(ctx, block)
     require("<!" not in mathml, "MATHML_DECLARATION_FORBIDDEN")
     root = ET.fromstring(mathml)
     require(root.tag.split("}")[-1] == "math", "MATHML_ROOT_REQUIRED")
@@ -74,3 +86,19 @@ def equation_mathml(ctx, block):
         require(node.tag.split("}")[-1] in MATH_TAGS, "MATHML_TAG_UNSUPPORTED")
         require(set(node.attrib) <= {"display", "mathvariant"}, "MATHML_ATTRIBUTE_UNSUPPORTED")
     return mathml
+
+
+def equation_review(ctx, block):
+    sources = {a: ctx["atoms"][a] for a in block["source_atom_ids"]
+               if ctx["atoms"][a].get("kind") == "EQUATION"}
+    if block["mathml"] in [a["value"] for a in sources.values()]:
+        return None
+    change = block.get("transformation")
+    require(isinstance(change, dict), "EQUATION_SOURCE_MISMATCH", block["id"])
+    origin = change.get("source_atom_id")
+    require(origin in sources, "EQUATION_TRANSFORMATION_SOURCE_INVALID")
+    text(change.get("reason"), "EQUATION_TRANSFORMATION_REASON_REQUIRED")
+    strings(change.get("steps"), "EQUATION_TRANSFORMATION_STEPS_REQUIRED")
+    return {"status": "SCIENTIFIC_REVIEW_REQUIRED", "code": "EQUATION_TRANSFORMATION",
+            "source_atom_id": origin, "source_digest": digest(sources[origin]),
+            "candidate_digest": digest(block), "blocking_scope": "LEARNER_READY_ONLY"}

@@ -39,7 +39,7 @@ Supported scalar verification is declared on the frozen source question:
 }
 ```
 
-The referenced atoms carry numerical values and units. Constant-acceleration families also require their model and axis convention in this source verification record. The authored answer supplies the candidate `numeric: {value, unit}`; the evaluator's expected result is not copied from that candidate. Unqualified evaluators block publication rather than silently falling back to a PASS.
+The referenced atoms carry numerical values and units. Constant-acceleration families also require their model and axis convention in this source verification record. The authored answer supplies the candidate `numeric: {value, unit}`; the evaluator's expected result is not copied from that candidate. Absent or unsupported evaluators permit a visibly marked review draft with oracle NONE. Only the transcription is checked; learner-ready scientific acceptance remains pending. Existing supported evaluators still reject wrong results.
 
 ## Content blocks
 
@@ -48,8 +48,8 @@ Every block has `id`, `kind`, `source_atom_ids` and `obligation_ids`.
 | Kind | Additional fields |
 |---|---|
 | TEXT | Nonempty `text` |
-| EQUATION | `mathml`, matching a frozen EQUATION atom's value; `meaning`, nonempty `symbols` and `conditions` lists. Restricted native MathML tags; no scripts or arbitrary markup |
-| QUESTION | Source ID/question ID, exact original fields, `family`, `learner_action`, `exposure_role`, three hints, complete answer summary/steps/check and all subpart answers; optional source-verified numeric candidate |
+| EQUATION | `mathml`, either matching a frozen EQUATION atom or accompanied by a source-linked `transformation` record; `meaning`, nonempty `symbols` and `conditions` lists. Restricted native MathML tags; no scripts or arbitrary markup |
+| QUESTION | Source ID/question ID, exact original fields, `family`, `learner_action`, `exposure_role`, optional hints/guidance, complete answer summary/steps/check and all subpart answers; optional numeric candidate whose verification status is explicit |
 | FIGURE | `scene`; optional `placement: ANSWER` plus a question ID in the same unit, so a model drawing can remain after the attempt |
 
 Vector scenes specify kind VECTOR, x/y atom IDs, unit, symbol, frame, x/y labels and caption. They render at equal coordinate scales with a bold vector symbol and an arrow from the origin. Zero vectors have a point instead of an invented direction. Canvas size follows the geometry within readable limits.
@@ -81,3 +81,13 @@ python -m unittest discover \
   -s 'Grade 9/V3B/Physics/ProductionKit/tests' \
   -p 'test_publication_host.py' -v
 ```
+
+## Research-friendly adaptations
+
+A changed equation form uses `transformation: {source_atom_id, reason, steps}`. The referenced original must be an assigned EQUATION atom; meaning, symbols and conditions remain required on the equation block. The original is retained. The transformed form and its reasoning are rendered with an explicit pending-review notice. This records a candidate derivation; it does not prove semantic equivalence or accept an author-supplied APPROVED label.
+
+Hints may be omitted, empty, short or extended according to the task. Optional `guidance` is a nonempty list when supplied. Complete answer summary/steps/check and required subpart answers still apply. A full explanation may itself provide the appropriate help; academic review assesses sufficiency. Frozen Core2 ladders are not changed by this A/B publication rule.
+
+`numeric_answers_compared` counts supported-oracle comparisons only. `unverified_numeric_transcriptions_checked` counts draft candidates checked only against their authored representation. `scientific_reviews_pending` counts recorded equation/numeric adaptations; it does not count every remaining academic obligation. Scientific notices remain visible in print CSS.
+
+The earlier V3B-Publication-Proof.zip is a historical packet with its original runtime. Current behaviour is exercised by both test_publication_host.py and test_research_flexibility.py; run discovery with `-p 'test_*.py'`. See the research policy for exploratory work that precedes this structured publication command.

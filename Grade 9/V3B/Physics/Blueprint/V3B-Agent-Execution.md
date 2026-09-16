@@ -1,5 +1,7 @@
 # V3B generic Physics agent execution and relay
 
+Research rule: use [research freedom and minimum criteria](V3B-Research-and-Minimum-Criteria.md). Search and explore with a provisional gate outline; promote useful findings through a documented dependency delta. Do not wait for a fully accepted baseline to investigate or draft. Use flexible support and mark scientific uncertainties.
+
 Publication execution: after preparing accepted baseline/source and authored product inputs, use the [Physics publication command](../ProductionKit/V3B-Publication-Input.md). It emits actual HTML/SVG and verifies their bytes and supported numerical answers. Do not infer academic approval from this bounded host.
 
 Use this work order for any Physics topic. Fill the parameters from owner instructions and source evidence; do not infer owner authorization or measured knowledge. Read [the production blueprint](V3B-Production-Blueprint.md) and [acceptance contract](V3B-Acceptance-and-Regression.md) first.
@@ -12,7 +14,7 @@ Use this work order for any Physics topic. Fill the parameters from owner instru
 >
 > Preserve frozen Core1/Core2 and source identity. Work only in the authorized V3B folder. Resolve contradictions visibly. If a required input is missing, identify the affected gate and continue independent useful work; never invent evidence to turn it green.
 >
-> Before prose, deliver the reconciled source inventory, scientific/prerequisite graph, required inference/representation obligations, gate proposal and cross-Core allocation/exposure plan. Show the owner board with separate evidence columns. Hold only work dependent on an unresolved gate.
+> Begin research and provisional prose from a scope/gate outline. Before accepted production, deliver the reconciled source inventory, scientific/prerequisite graph, required inference/representation obligations, gate proposal and cross-Core allocation/exposure plan. Show the owner board with separate evidence columns. Hold only work dependent on an unresolved gate.
 >
 > Author in 1–3-subtopic packets. Apply intrinsic difficulty to 1A/1B, and purpose plus knowledge/waiver controls to 2A/2B. Produce the actual explanations, scientific figures, prompts, graduated hints and complete answers required by each Core. Inventory every embedded prompt and retry. Do not substitute page counts, headings, coverage IDs or answer anchors for substantive content.
 >

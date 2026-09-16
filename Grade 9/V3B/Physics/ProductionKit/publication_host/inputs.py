@@ -148,8 +148,11 @@ def _question(ctx, block):
     require(len(answer.get("subparts", [])) == len(original.get("subparts", [])), "SUBPART_ANSWER_MISSING")
     for part in answer.get("subparts", []):
         text(part, "SUBPART_ANSWER_EMPTY")
-    require(len(block.get("hints", [])) == 3, "HINT_LADDER_REQUIRED")
-    strings(block["hints"], "HINT_BODY_EMPTY")
+    strings(block.get("hints", []), "HINT_BODY_EMPTY", allow_empty=True)
+    if "guidance" in block:
+        strings(block["guidance"], "GUIDANCE_BODY_EMPTY")
+    # A complete explanation/check is the minimum support. Hints and guides
+    # supplement it according to task purpose; their count is not a quality proxy.
     text(block.get("family"), "EXAMPLE_FAMILY_REQUIRED")
     text(block.get("learner_action"), "LEARNER_ACTION_REQUIRED")
     require(block.get("exposure_role") in {"NEW_TRANSFER", "PRACTICE", "RECONSTRUCTION_ANCHOR",

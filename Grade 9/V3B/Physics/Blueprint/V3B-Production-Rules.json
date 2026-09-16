@@ -1,6 +1,6 @@
 {
   "policy_id": "PHYSICS-V3B-PRODUCTION",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "status": "NORMATIVE_SPECIFICATION",
   "artifact_kind": "RULE_CATALOGUE_NOT_EXECUTABLE_VALIDATOR_OR_SCHEMA",
   "blueprint_ref": "V3B-Production-Blueprint.md",
@@ -239,5 +239,29 @@
     "catalogue_validation_authorizes_release": false,
     "runtime_enforcement": "PREVIEW_HOST_ALWAYS_FALSE; FULL_RELEASE_INTEGRATION_PENDING"
   },
-  "runtime_coverage_ref": "../ProductionKit/V3B-Runtime-Map.md"
+  "runtime_coverage_ref": "../ProductionKit/V3B-Runtime-Map.md",
+  "research_policy_ref": "V3B-Research-and-Minimum-Criteria.md",
+  "working_states": [
+    "EXPLORATORY",
+    "REVIEW_DRAFT",
+    "LEARNER_READY"
+  ],
+  "minimum_criteria": [
+    "MIN-1_SCIENTIFIC_CORRECTNESS",
+    "MIN-2_REQUIRED_COVERAGE",
+    "MIN-3_SELF_HELP_CLOSURE",
+    "MIN-4_CORE_AND_LEARNER_FIT",
+    "MIN-5_USABLE_PUBLICATION",
+    "MIN-6_TRACEABLE_ACCEPTED_STATE"
+  ],
+  "stage_controls": {
+    "research_requires_accepted_baseline": false,
+    "per_search_approval_required": false,
+    "advisory_alone_blocks_release": false,
+    "scientific_review_required_blocks": "LEARNER_READY_ONLY",
+    "known_wrong_numeric_result": "BLOCKING_DEFECT",
+    "unsupported_numeric_evaluator": "MARKED_REVIEW_DRAFT_ALLOWED",
+    "equation_transformation": "SOURCE_LINKED_WORKING_AND_SCIENTIFIC_REVIEW",
+    "ab_hint_count": "PURPOSE_APPROPRIATE_NOT_FIXED"
+  }
 }

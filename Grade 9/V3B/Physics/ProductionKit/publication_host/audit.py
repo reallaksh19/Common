@@ -88,7 +88,12 @@ def verify_publication(root: Path, expected_basis: str):
             "OWNER_BOARD_CHANGED")
     return {"status": "PASS", "scope": "SOURCE_BYTES_OBJECT_CLOSURE_NUMERIC_OUTPUT_COMPOSITION_AND_DIGESTS",
             "basis_digest": expected_basis, "products": [p["core"] for p in plan["products"]],
-            "numeric_answers_compared": len(all_numbers), "release_authorized": False,
+            "numeric_answers_compared": sum(r['status'] == 'VERIFIED_BY_SUPPORTED_EVALUATOR'
+                                             for r in evidence['numeric_answers'].values()),
+            "unverified_numeric_transcriptions_checked": sum(r['status'] == 'SCIENTIFIC_REVIEW_REQUIRED'
+                                                              for r in evidence['numeric_answers'].values()),
+            "scientific_reviews_pending": len(evidence['scientific_review_requirements']),
+            "release_authorized": False,
             "academic_review": "NOT_RUN", "visual_review": "NOT_RUN"}
 
 

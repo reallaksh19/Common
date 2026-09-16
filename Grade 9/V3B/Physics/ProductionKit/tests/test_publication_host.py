@@ -18,7 +18,7 @@ from publication_host.audit import publication_basis
 from publication_fixture import make_fixture, write_json
 
 
-class PublicationHostTests(unittest.TestCase):
+class PublicationHarness(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
@@ -65,6 +65,8 @@ class PublicationHostTests(unittest.TestCase):
         self.assertEqual(response[1]['status'], 'BLOCKED')
         self.assertEqual(response[1]['code'], code, response)
 
+
+class PublicationHostTests(PublicationHarness):
     def test_actual_four_product_cli_and_readback(self):
         code, report = self.publish()
         self.assertEqual(code, 0, report)
@@ -251,11 +253,19 @@ class PublicationHostTests(unittest.TestCase):
         write_json(self.out / 'manifest.json', manifest)
         self.assert_blocked(self.verify(), 'MANIFEST_ARTIFACT_MISSING')
 
-    def test_unknown_scientific_family_is_held(self):
+    def test_unknown_scientific_family_allows_flagged_draft_not_verified_answer(self):
         source = json.loads((self.root / 'sources/source.json').read_text())
         source['questions'][0]['verification']['validator_id'] = 'UNQUALIFIED_FAMILY'
         self.rebind_source(source)
-        self.assert_blocked(self.publish(), 'PUBLICATION_EVALUATOR_UNSUPPORTED')
+        code, output = self.publish()
+        self.assertEqual(code, 0, output)
+        self.assertEqual(output['numeric_answers_compared'], 1)
+        self.assertEqual(output['unverified_numeric_transcriptions_checked'], 1)
+        self.assertEqual(output['scientific_reviews_pending'], 1)
+        self.assertFalse(output['release_authorized'])
+        report = json.loads((self.out / 'evidence.json').read_text())
+        self.assertEqual(report['numeric_answers']['CORE1A-Q']['oracle'], 'NONE')
+        self.assertIn('not automatically verified', (self.out / 'CORE1A.html').read_text())
 
     def test_original_condition_and_options_cannot_be_silently_lost(self):
         source = json.loads((self.root / 'sources/source.json').read_text())

@@ -1,5 +1,7 @@
 # V3B Physics production blueprint: evidence in the learner product
 
+Apply [research freedom and minimum criteria](V3B-Research-and-Minimum-Criteria.md): investigation and provisional drafts may proceed before baseline acceptance. Strict correctness/source/answer checks govern accepted learner content; advisory scores and formatting choices do not prohibit research.
+
 Version: 1.0.0. Status: normative authoring contract; full runtime enforcement pending.
 
 This revision governs every new Physics topic and regenerated A/B product. It strengthens the existing six-Core contracts; it does not redesign frozen Core1/Core2 or change their source bytes. The owner’s six-Core definitions take precedence over legacy four-Core runtime names. Motion is one regression corpus, not the architecture or a privileged implementation branch.
@@ -10,7 +12,7 @@ Read with [execution and relay](V3B-Agent-Execution.md), [acceptance and regress
 
 1. **Establish source authority.** Preserve source files, original question numbers, every subpart, figures, options, units and conditions. Independently reconcile extracted atoms against the original. Record ambiguity and errata without silently correcting frozen questions. An author-generated inventory is provisional until checked against source evidence.
 2. **Build the scientific model and learning obligation graph.** Define concepts, prerequisite edges, quantities, assumptions, representations, equations and critical reasoning transitions. A question bank alone may reveal missing prerequisites; those become derived obligations with derivation provenance, not invented source quotations.
-3. **Allocate teaching and exposure across Cores.** Before prose generation, give each obligation a primary teaching location, each Core its necessary local support, and each example an exposure role. Plan differences in learner action, not just different headings.
+3. **Allocate teaching and exposure across Cores.** Before accepting production prose, give each obligation a primary teaching location, each Core its necessary local support, and each example an exposure role. Plan differences in learner action, not just different headings.
 4. **Author bounded subtopic units.** Work in packets of 1–3 buckets; recursively split a difficult bucket at coherent conceptual boundaries. Produce actual teaching, prompts, hints, answers and bound figures. No packet is complete because its ID count is complete.
 5. **Validate content, then render.** Check mathematical/scientific assertions against the model and source. Render from accepted content objects. Extract/check the final artifacts as well: a correct source model does not prove the visible answer is correct.
 6. **Review academic quality and publication quality separately.** Check reasoning depth, purpose, transfer, learner fit where applicable, figure semantics and final-size pages. Expose evidence and unresolved findings on the owner board.

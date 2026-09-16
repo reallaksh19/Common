@@ -1,6 +1,8 @@
 # Physics owner board — V3B
 
-Current executable addition: [V3B Physics publication host](../ProductionKit/V3B-Runtime-Map.md). It now produces four A/B HTML products, source-bound vector/graph SVG, actual-answer checks and a per-publication owner board. Download the [portable proof archive](../ProductionKit/evidence/V3B-Publication-Proof.zip) and open OWNER_BOARD.html. These are integration specimens, not complete learner books. Academic/full-page browser review and full authoring-state integration remain open.
+Research-friendly update: [minimum criteria and issue severity](../Blueprint/V3B-Research-and-Minimum-Criteria.md). The publisher now permits documented equation adaptations and unevaluated numerical answers in clearly marked review drafts, with flexible hints/guidance. These remain unapproved scientific candidates; existing numerical errors, missing answers and source corruption still fail.
+
+Current executable addition: [V3B Physics publication host](../ProductionKit/V3B-Runtime-Map.md). It now produces four A/B HTML products, source-bound vector/graph SVG, actual-answer checks and a per-publication owner board. Download the [earlier publication proof archive (historical runtime)](../ProductionKit/evidence/V3B-Publication-Proof.zip) and open OWNER_BOARD.html. These are integration specimens, not complete learner books. Academic/full-page browser review and full authoring-state integration remain open.
 
 ## Current architecture revision
 

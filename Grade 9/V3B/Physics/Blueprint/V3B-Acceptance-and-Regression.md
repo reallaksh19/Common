@@ -1,5 +1,7 @@
 # V3B acceptance and regression contract
 
+Severity and stage refinement: [research freedom and minimum criteria](V3B-Research-and-Minimum-Criteria.md) distinguishes exploratory work, review drafts and learner-ready acceptance. Advisory flags are not automatically required PASS gates. Consequential scientific uncertainty permits marked drafts but must be resolved for learner-ready use.
+
 Implementation update: the [Physics publication host](../ProductionKit/V3B-Runtime-Map.md) now enforces a bounded subset against real exported HTML/SVG and source bytes. Its test results are separate from this full acceptance specification. Full six-Core authoring/release integration remains pending.
 
 This is a topic-independent specification of evidence required for acceptance, not a report that these tests have executed. The [rule catalogue](V3B-Production-Rules.json) assigns stable IDs. Existing JavaScript proof checks remain prerequisites within their documented scope; they do not implement this complete suite. The older four-Core Python runtime is not certified by this revision.
@@ -13,7 +15,8 @@ Each result binds rule/version, topic/bucket/Core, source/model/baseline/policy 
 Conceptual release algorithm:
 
 ```text
-required = obligations(selected_products, accepted_baseline, medium, learner_mode)
+required = applicable_minimum_acceptance(selected_products, accepted_baseline, medium, learner_mode)
+advisories = findings_requiring_triage_but_not_automatic_rejection
 for each requirement:
     resolve current source -> model -> content -> publication dependencies
     reject missing, stale, inapplicable or unsupported evidence
@@ -62,7 +65,7 @@ Use the reviewed Motion snapshot `dc885f969abbfe2d2455aa22edb68adb52c91343` as o
 
 Before claiming topic-independent runtime reliability, qualify at least these structurally different families: vector/component reasoning; scalar conservation or thermal relationships with units and sign conventions; graph/piecewise interpretation; and a predominantly conceptual/drawing explanation. These are test families, not a requirement to publish new books or a claim that all are Grade 9 syllabus content. Choose owner-approved grade-appropriate bindings or explicitly separate advanced fixtures. Use an unseen binding for each implemented family to test that passing did not depend on memorized question IDs.
 
-Gate creation precedes lesson generation. A family without a qualified evaluator remains scientifically reviewable but cannot claim automated answer/figure verification. A successful motion example cannot certify thermodynamics or optics. A research extension needs a qualified depth-specific reviewer as well as expanded obligations.
+Gate creation precedes lesson generation. A family without a qualified evaluator remains researchable and draftable, and may be accepted through qualified scientific review; it cannot claim automated answer/figure verification. A successful motion example cannot certify thermodynamics or optics. A research extension needs a qualified depth-specific reviewer as well as expanded obligations.
 
 ## Implementation ledger at this revision
 
