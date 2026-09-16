@@ -31,9 +31,9 @@ predecessor_join:
 predecessor_replan:
   id: null
   path: null
-# Candidate-specific admissions are route-scoped. Empty means the baton may be
-# complete, but no candidate has yet been independently certified on a route.
 takeover_admissions: []
+# Compatibility/location mirrors only. PROGRESS.yaml is authoritative and
+# validate_progress.py requires these values to agree with the derived source rows.
 progress:
   overall_percent: 0
   phase_percent: 0
@@ -44,7 +44,8 @@ status_planes:
     state: READY
     can_continue: true
     material_authority: WRITE
-    next_action: "<exact next action>"
+    # Machine hint only; the EP next_work.steps[] contract is the detailed successor plan.
+    next_action: "<short operational hint>"
   quality:
     state: CLEAR
     findings: []
