@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, ValidationError
@@ -10,6 +11,7 @@ from jsonschema import Draft202012Validator, ValidationError
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
+from compile_engineering_closure import compile_closure  # noqa: E402
 from compile_seven_core_stress_test import compile_stress_test  # noqa: E402
 
 
@@ -48,6 +50,7 @@ def test_relative_motion_stress_receipt_is_machine_derived():
     assert receipt["downstream"]["CDAU"] == "NOT_INSTANTIATED"
     assert receipt["downstream"]["SDU"] == "NOT_ISSUED"
     assert receipt["downstream"]["LAU"] == "NOT_ISSUED"
+    assert receipt["downstream"]["PUBLICATION"] == "NOT_AUTHORIZED"
     assert receipt["architecture_violations"] == []
 
 
@@ -63,6 +66,24 @@ def test_external_math_is_held_and_emits_provider_demands():
     assert all(row["provider_subject"] == "MATHEMATICS" for row in demands.values())
     assert all(row["status"] == "OPEN_HELD" for row in demands.values())
     assert all(row["demand_digest"].startswith("sha256:") for row in demands.values())
+
+
+def test_engineering_depth_research_is_additive_and_fail_closed():
+    base_request = load("fixtures/engineering-workbench/relative-motion-request.v1.json")
+    manifest = load("fixtures/engineering-workbench/relative-motion-manifest.v3.json")
+    standard = compile_closure(base_request, manifest)
+
+    research_request = deepcopy(base_request)
+    research_request["engineering_depth"] = "RESEARCH"
+    research = compile_closure(research_request, manifest)
+
+    assert standard["closure_status"] == "READY"
+    assert research["closure_status"] == "BLOCKED"
+    assert standard["gate_states"] == research["gate_states"]
+    assert standard["direct_gate_ids"] == research["direct_gate_ids"]
+    assert standard["transitive_gate_ids"] == research["transitive_gate_ids"]
+    blocker_codes = {row["code"] for row in research["blockers"]}
+    assert blocker_codes == {"E_ENG_RESEARCH_DOSSIER_REQUIRED", "E_ENG_CLAIM_LEDGER_REQUIRED"}
 
 
 def test_no_surrogate_pass_labels_exist():
