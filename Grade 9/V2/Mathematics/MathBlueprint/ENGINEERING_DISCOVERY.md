@@ -106,9 +106,11 @@ publication_authorization = NOT_IMPLIED
 
 Its schema has `additionalProperties = false`, so vocabulary entries cannot smuggle Engineering readiness, mathematical truth, depth admission or publication authority into discovery.
 
-The catalog is digest-bound to the exact current Engineering registry. Validation fails closed when:
+The catalog binds to the stable Engineering registry identity and to exact existing gate/bucket targets. It deliberately does **not** bind to the entire current registry digest. That would create unnecessary maintenance coupling: adding or revising an unrelated Engineering gate should not require editing a vocabulary file that does not mention it.
 
-- the registry ID or digest is stale;
+Validation fails closed when:
+
+- the registry identity is wrong;
 - a target gate or bucket does not exist;
 - the same target is declared twice;
 - two phrases normalize to the same term for one target; or
@@ -116,7 +118,7 @@ The catalog is digest-bound to the exact current Engineering registry. Validatio
 
 The catalog is intentionally sparse. Every current gate and linked bucket is indexed automatically from canonical registry data; curated vocabulary only improves discoverability where natural terminology differs from canonical labels.
 
-## 4. Deterministic generated index
+## 4. Deterministic generated index and exact receipt custody
 
 The compiler constructs a deterministic non-authoritative index from:
 
@@ -127,7 +129,7 @@ current canonical Engineering registry
 
 Every index row carries an exact gate/bucket identity, learner-facing label, linked gate identities, a digest of current indexed Engineering text and any curated vocabulary terms.
 
-The generated index is not stored as mathematical authority. Its digest is stored in every discovery receipt together with:
+The generated index is not stored as mathematical authority. Every discovery receipt binds the exact state actually used:
 
 ```text
 registry_digest
@@ -135,7 +137,16 @@ vocabulary_catalog_digest
 discovery_index_digest
 ```
 
-Promotion recomputes discovery against the current registry and current vocabulary. Registry drift, vocabulary drift, index drift or receipt mutation makes the receipt stale/forged.
+This is the strict boundary. The catalog may survive an unrelated registry change, but a previously issued discovery receipt may not. Promotion recomputes discovery against the current registry and current vocabulary. Registry drift, vocabulary drift, index drift or receipt mutation makes the receipt stale/forged.
+
+That gives the intended balance:
+
+```text
+loose catalog maintenance coupling
++ exact per-discovery custody
++ exact selection
++ unchanged authoritative resolver
+```
 
 ## 5. Discovery may be approximate
 
@@ -223,6 +234,7 @@ selection requires exact candidate identity
 selection is bound to exact discovery digest
 registry drift stales discovery selection
 vocabulary drift stales discovery selection
+unrelated registry changes do not require a vocabulary-catalog edit
 unknown vocabulary targets fail closed
 duplicate normalized target terms fail closed
 vocabulary cannot carry readiness/authorization payloads
@@ -252,4 +264,4 @@ publication authorization inferred from discovery
 
 The final invariant is:
 
-> **Use permissive tools and governed vocabulary to find candidates; use exact identities and current Engineering authority to authorize them.**
+> **Use permissive tools and governed vocabulary to find candidates; bind what the user saw exactly; use exact identities and current Engineering authority to authorize them.**
