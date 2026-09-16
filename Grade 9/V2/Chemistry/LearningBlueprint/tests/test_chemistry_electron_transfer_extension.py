@@ -72,9 +72,13 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
         packet = packet_for(gate, "tests/in-memory-electron-transfer-extension-audit.json")
         intent = compile_core_representation_intent("CORE1A", packet)
         self.assertEqual(intent["policy_extension_refs"], [INTENT_EXTENSION["extension_id"]])
-        self.assertEqual(intent["intents"][0]["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
-        self.assertEqual(intent["intents"][0]["source_representation_ref"], engineering_rep["representation_id"])
-        self.assertEqual(intent["intents"][0]["capability_ref"], "CAP-TRACK-OXIDATION-STATE")
+        target = next(
+            row for row in intent["intents"]
+            if row["source_representation_ref"] == engineering_rep["representation_id"]
+        )
+        self.assertEqual(target["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
+        self.assertEqual(target["source_representation_ref"], engineering_rep["representation_id"])
+        self.assertEqual(target["capability_ref"], "CAP-TRACK-OXIDATION-STATE")
 
         realized = [row["intent_id"] for row in intent["intents"]]
         bundle, bindings = compile_core_representation_bundle(
@@ -84,10 +88,18 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
             realized,
             bundle_id="CHEM-REP-BUNDLE-ELECTRON-TRANSFER-TEST",
         )
+        realized_target = next(
+            row for row in bundle["representations"]
+            if row["intent_ref"] == target["intent_id"]
+        )
+        target_binding = next(
+            row for row in bindings
+            if row["intent_ref"] == target["intent_id"]
+        )
         self.assertIn(EXTENSION["extension_id"], bundle["primitive_registry_extension_refs"])
         self.assertIn(INTENT_EXTENSION["extension_id"], bundle["representation_intent_extension_refs"])
-        self.assertEqual(bundle["representations"][0]["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
-        self.assertEqual(bindings[0]["engineering_representation_refs"], [engineering_rep["representation_id"]])
+        self.assertEqual(realized_target["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
+        self.assertEqual(target_binding["engineering_representation_refs"], [engineering_rep["representation_id"]])
         self.assertFalse(bundle["summary"]["adapter_primitive_selection_allowed"])
         self.assertFalse(bundle["summary"]["adapter_scientific_semantics_allowed"])
 
