@@ -27,7 +27,7 @@ class LifecycleTransactionStressTests(unittest.TestCase):
     def test_active_hard_stop_cannot_claim_execution_can_continue(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
-            state={"relay_state":"ACTIVE","status_planes":{"execution":{"state":"WAITING","can_continue":True,"next_action":"Wait for owner decision."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"PARTIAL","summary":"Evidence retained","not_run":[]},"stop":{"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Owner intent must be resolved.","basis":["ODR-PROPOSAL-1"]}}}
+            state={"relay_state":"ACTIVE","status_planes":{"execution":{"state":"WAITING","can_continue":True,"material_authority":"READ_ONLY","next_action":"Wait for owner decision."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"PARTIAL","summary":"Evidence retained","not_run":[]},"stop":{"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Owner intent must be resolved.","basis":["ODR-PROPOSAL-1"]}}}
             dump(root/"agents/relay/REPO_STATE.yaml",state)
             self.assertTrue(any("can_continue=false" in x for x in state_planes(root)[0]))
 
@@ -37,7 +37,7 @@ class LifecycleTransactionStressTests(unittest.TestCase):
             roadmap={"schema_version":"relay-v2.5","roadmap":{"id":"RM-X","revision":"RM-2","title":"Synthetic roadmap","revision_record":"agents/relay/roadmap/revisions/RM-2.yaml"},"objectives":[{"id":"OBJ-1","state":"ACTIVE","definition":"DEFINED","phases":[{"id":"PHASE-1","state":"ACTIVE","definition":"DETAILED","work_packages":[{"id":"WP-1","state":"COMPLETE","definition":"DETAILED","execution_status":"TERMINAL","depends_on":[]},{"id":"WP-2","state":"ACTIVE","definition":"DETAILED","execution_status":"ACTIVE","depends_on":["WP-1"]}]}]}]}
             state={"roadmap":{"path":"agents/relay/roadmap/OVERALL_ROADMAP.yaml"}}
             progress={"progress_basis":{"id":"PB-2","roadmap_revision":"RM-2"}}
-            odr={"status":"APPLIED"}
+            odr={"schema_version":"relay-v2.5","id":"ODR-1","decision":{"authority":"OWNER","kind":"INTENT_MUTATION","statement":"Add the next approved roadmap scope.","source":"owner-message:synthetic"},"effects":{"requirement_disposition":"NOT_APPLICABLE","grants_material_write_authority":False,"pending_items":[]},"impact":{"class":["PHASE"]},"affected":{"objectives":[],"phases":["PHASE-1"],"work_packages":["WP-2"],"execution_packages":[],"issues":[]},"required_reconciliation":["recompute frontier"],"status":"APPLIED"}
             revision={"revision":{"from_revision":"RM-1","to_revision":"RM-2","classification":"OWNER_INTENT_MUTATION","trigger":{"type":"OWNER_DECISION","path":"agents/relay/roadmap/owner-decisions/ODR-1.yaml"}},"changes":{"added":["WP-2"],"removed":[],"changed":["PHASE-1"],"unaffected":["WP-1"]},"progress_basis_change":{"old_basis":"PB-1","new_basis":"PB-2","old_total_weight":100,"new_total_weight":140},"frontier_after":["WP-2"]}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",roadmap);dump(root/"agents/relay/roadmap/PROGRESS.yaml",progress);dump(root/"agents/relay/roadmap/owner-decisions/ODR-1.yaml",odr);dump(root/"agents/relay/roadmap/revisions/RM-2.yaml",revision)
             self.assertEqual([],roadmap_transaction(root)[0])
