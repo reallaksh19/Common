@@ -2,8 +2,13 @@ schema_version: relay-v2.5
 id: ODR-0001
 decision:
   authority: OWNER
+  kind: INTENT_MUTATION
   statement: "<exact Owner decision>"
   source: "<durable source/reference>"
+effects:
+  requirement_disposition: NOT_APPLICABLE
+  grants_material_write_authority: false
+  pending_items: []
 impact:
   class: [LOCAL]
 affected:
