@@ -464,6 +464,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const exportConfigBtn = document.getElementById("exportConfigBtn");
+  if (exportConfigBtn) {
+    exportConfigBtn.addEventListener("click", () => {
+      const cfg = getFormConfig();
+      const blob = new Blob([JSON.stringify(cfg, null, 2) + "\n"], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "run_config.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
   toggleKnowledgeInputs();
   toggleDifficultyInputs();
   updateLiveOutputs();

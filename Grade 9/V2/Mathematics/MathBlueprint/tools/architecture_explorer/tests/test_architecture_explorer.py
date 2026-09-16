@@ -99,6 +99,44 @@ class ArchitectureExplorerTests(unittest.TestCase):
         for word in forbidden:
             self.assertNotIn(word, source.lower())
 
+    def test_check_mode_passes_when_manifest_is_up_to_date(self):
+        from generate_architecture_manifest import main
+        old_argv = sys.argv
+        try:
+            sys.argv = ["generate_architecture_manifest.py", "--check"]
+            # Must exit cleanly (return None) without SystemExit
+            main()
+        finally:
+            sys.argv = old_argv
+
+    def test_check_mode_raises_system_exit_when_manifest_is_tampered(self):
+        from generate_architecture_manifest import main
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_manifest = Path(tmpdir) / "architecture_observation_manifest.json"
+            tmp_manifest.write_text(json.dumps({"manifest_digest": "sha256:forged_digest_000000000"}), encoding="utf-8")
+            old_argv = sys.argv
+            try:
+                sys.argv = ["generate_architecture_manifest.py", "--check", "--out", str(tmp_manifest)]
+                with self.assertRaises(SystemExit) as ctx:
+                    main()
+                self.assertIn("OUT OF DATE", str(ctx.exception))
+            finally:
+                sys.argv = old_argv
+
+    def test_check_mode_raises_system_exit_when_manifest_file_missing(self):
+        from generate_architecture_manifest import main
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_manifest = Path(tmpdir) / "non_existent_manifest.json"
+            old_argv = sys.argv
+            try:
+                sys.argv = ["generate_architecture_manifest.py", "--check", "--out", str(tmp_manifest)]
+                with self.assertRaises(SystemExit) as ctx:
+                    main()
+                self.assertIn("not found", str(ctx.exception))
+            finally:
+                sys.argv = old_argv
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

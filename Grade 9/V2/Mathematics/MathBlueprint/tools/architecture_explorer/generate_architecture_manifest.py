@@ -278,7 +278,7 @@ def scan_components(root: Path = BLUEPRINT_ROOT) -> dict[str, Any]:
                 comp["documentation_refs"].append(doc_id)
                 relations.append({"source": doc_id, "target": comp_id, "relation_type": "REFERENCES", "confidence": "DERIVED"})
 
-    # 7. Deduplicate refs
+    # 7. Deduplicate refs and sort relations
     for comp in components.values():
         comp["producer_refs"] = sorted(set(comp["producer_refs"]))
         comp["validator_refs"] = sorted(set(comp["validator_refs"]))
@@ -286,6 +286,8 @@ def scan_components(root: Path = BLUEPRINT_ROOT) -> dict[str, Any]:
         comp["policy_refs"] = sorted(set(comp["policy_refs"]))
         comp["test_refs"] = sorted(set(comp["test_refs"]))
         comp["documentation_refs"] = sorted(set(comp["documentation_refs"]))
+
+    relations.sort(key=lambda r: (r["source"], r["relation_type"], r["target"]))
 
     # 8. Identify gaps
     schemas_without_validator = [
@@ -332,10 +334,27 @@ def scan_components(root: Path = BLUEPRINT_ROOT) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate Blueprint Architecture Observation Manifest")
     parser.add_argument("--out", default=str(Path(__file__).parent / "architecture_observation_manifest.json"))
+    parser.add_argument("--check", action="store_true", help="Check that the existing manifest on disk is up to date")
     args = parser.parse_args()
 
     manifest = scan_components()
     out_path = Path(args.out)
+
+    if args.check:
+        if not out_path.exists():
+            raise SystemExit(f"Architecture manifest not found at {out_path}. Run without --check to generate.")
+        existing = json.loads(out_path.read_text(encoding="utf-8"))
+        if existing.get("manifest_digest") != manifest.get("manifest_digest"):
+            raise SystemExit(
+                f"Architecture observation manifest is OUT OF DATE.\n"
+                f"Existing digest: {existing.get('manifest_digest')}\n"
+                f"Current digest:  {manifest.get('manifest_digest')}\n"
+                f"Run 'python generate_architecture_manifest.py' to regenerate."
+            )
+        print(f"Architecture observation manifest verified: UP TO DATE (digest: {manifest['manifest_digest']})")
+        print(f"Components: {manifest['component_count']}, relations: {manifest['relation_count']}")
+        return
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print(f"Observation manifest generated at {out_path}")

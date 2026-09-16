@@ -334,12 +334,52 @@ Preserve exact authority boundaries:
     return prompt.strip()
 
 
+def validate_all_fixtures(fixtures_dir: Path | None = None) -> list[dict[str, Any]]:
+    fixtures_dir = fixtures_dir or (Path(__file__).parent / "fixtures")
+    results = []
+    for path in sorted(fixtures_dir.glob("*.json")):
+        try:
+            config = json.loads(path.read_text(encoding="utf-8"))
+            manifest = compile_manifest(config)
+            status = manifest["validation"]["status"]
+            error_count = manifest["validation"]["error_count"]
+            results.append({
+                "fixture": path.name,
+                "status": status,
+                "error_count": error_count,
+                "digest": manifest.get("manifest_digest"),
+            })
+        except Exception as e:
+            results.append({
+                "fixture": path.name,
+                "status": "ERROR",
+                "error_count": 1,
+                "message": str(e),
+            })
+    return results
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="MathBlueprint Run Builder CLI Compiler")
-    parser.add_argument("--config", required=True, help="Path to input configuration JSON")
+    parser.add_argument("--config", help="Path to input configuration JSON")
     parser.add_argument("--out-manifest", help="Path to write compiled run manifest JSON")
     parser.add_argument("--out-prompt", help="Path to write compiled agent prompt markdown")
+    parser.add_argument("--validate-fixtures", action="store_true", help="Validate all fixtures in fixtures/")
     args = parser.parse_args()
+
+    if args.validate_fixtures:
+        results = validate_all_fixtures()
+        all_valid = all(r["status"] == "VALID" for r in results)
+        print(f"Validated {len(results)} fixtures in tools/run_builder/fixtures/:")
+        for r in results:
+            print(f"  [{r['status']}] {r['fixture']} (digest: {r.get('digest', 'N/A')[:20]}...)")
+        if not all_valid:
+            raise SystemExit("Fixture validation FAILED: some fixtures are invalid.")
+        print("All fixtures are VALID.")
+        return
+
+    if not args.config:
+        parser.error("--config is required when not running --validate-fixtures")
 
     config = json.loads(Path(args.config).read_text(encoding="utf-8"))
     manifest = compile_manifest(config)

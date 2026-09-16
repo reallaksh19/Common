@@ -146,6 +146,15 @@ class RunBuilderTests(unittest.TestCase):
         self.assertEqual(manifest["engineering"]["requested_depth"], "STANDARD")
         self.assertIn("CBSE Board Examination", prompt)
 
+    def test_validate_all_fixtures_passes_all_curated_fixtures(self):
+        from compile_run import validate_all_fixtures
+        results = validate_all_fixtures()
+        self.assertGreaterEqual(len(results), 3)
+        for r in results:
+            self.assertEqual(r["status"], "VALID")
+            self.assertEqual(r["error_count"], 0)
+            self.assertTrue(r["digest"].startswith("sha256:"))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

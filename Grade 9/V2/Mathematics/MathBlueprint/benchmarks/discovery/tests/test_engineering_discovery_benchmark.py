@@ -221,6 +221,19 @@ class EngineeringDiscoveryBenchmarkTests(unittest.TestCase):
         self.assertEqual(receipt["candidates"][0]["scope_ref"], synthetic_gate_id)
         self.assertIn("VOCABULARY_EXACT", receipt["candidates"][0]["match_basis"])
 
+    def test_benchmark_quantitative_recall_thresholds(self):
+        """Validates quantitative benchmark targets across all 80 queries in the curated corpus."""
+        output = run_benchmark(CORPUS)
+        metrics = output["metrics"]
+        self.assertGreaterEqual(metrics["TOTAL_QUERIES"], 80)
+        self.assertGreaterEqual(metrics["TOP_1_RECALL"], 0.95, "Top-1 recall must be at least 95%")
+        self.assertEqual(metrics["TOP_3_RECALL"], 1.0, "Top-3 recall must be 100%")
+        self.assertEqual(metrics["TOP_5_RECALL"], 1.0, "Top-5 recall must be 100%")
+        self.assertEqual(metrics["MISS_RATE"], 0.0, "Miss rate must be 0%")
+        self.assertEqual(metrics["NO_VALID_TARGET_BEHAVIOR_SAFE"], True, "No-valid-target safety must pass")
+        self.assertEqual(len(output["gap_records"]), 0, "No vocabulary gaps should exist in curated corpus")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+

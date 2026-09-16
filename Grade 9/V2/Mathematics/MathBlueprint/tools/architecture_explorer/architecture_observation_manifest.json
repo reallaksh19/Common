@@ -2985,1306 +2985,10 @@
   },
   "relations": [
     {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "schema:math-stage-governance-receipt.schema.json",
-      "relation_type": "CONSUMES",
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "relation_type": "REFERENCES",
       "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "policy:math-cross-core-similarity-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "engine:emit_stage_governance.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:assemble_product_governance_from_receipts.py",
-      "target": "engine:validate_product_governance.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:blueprint_common.py",
-      "target": "schema:math-learning-run-blueprint.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:blueprint_common.py",
-      "target": "schema:math-ground-truth-manifest.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-cross-validation.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-learner-capability-state.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-assimilation-demand-build-spec.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-assimilation-demand.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "policy:math-assimilation-join-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "engine:run_dual_intelligence.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:build_ground_truth_manifest.py",
-      "target": "schema:math-ground-truth-build-spec.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:build_ground_truth_manifest.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:build_mathematics_engineering_gate_registry.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-plan-build-spec.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-demand.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-plan.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
-      "target": "policy:math-assimilation-compiler-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_bound_product_page_blueprint.py",
-      "target": "policy:math-technical-composition-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_bound_product_page_blueprint.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_bound_product_page_blueprint.py",
-      "target": "engine:validate_content_complete_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_engineering_visibility_manifest.py",
-      "target": "schema:math-engineering-visibility-manifest.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_engineering_visibility_manifest.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_engineering_visibility_manifest.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_engineering_visibility_manifest.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_engineering_visibility_manifest.py",
-      "target": "engine:validate_mathematics_engineering_binding.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_governed_product_page_blueprint.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_governed_product_page_blueprint.py",
-      "target": "engine:materialize_intrinsic_depth.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_governed_product_page_blueprint.py",
-      "target": "engine:validate_content_complete_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_governed_product_page_blueprint.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-request.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-vocabulary.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-selection.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-receipt.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-request.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-binding.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-request.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-manifest.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-closure-receipt.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "policy:mathematics-engineering-depth-policy.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "schema:math-learner-publication-bundle.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:compile_engineering_visibility_manifest.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:compile_governed_product_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:materialize_intrinsic_depth.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:validate_pedagogy_research_manifest.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_publication_bundle.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "schema:math-core2-learner-knowledge-evidence.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "schema:math-core2-owner-waiver.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "engine:validate_pedagogy_research_manifest.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:emit_stage_governance.py",
-      "target": "schema:math-stage-governance-receipt.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:engineering_product_custody.py",
-      "target": "schema:math-stage-governance-receipt.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:engineering_product_custody.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:engineering_product_custody.py",
-      "target": "engine:emit_stage_governance.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:engineering_product_custody.py",
-      "target": "engine:validate_engineered_domain_admission.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:init_math_learning_run.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:materialize_intrinsic_depth.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:producer_governance.py",
-      "target": "engine:emit_stage_governance.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry.py",
-      "target": "schema:math-engineering-domain-projection.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry_v2.py",
-      "target": "schema:math-engineering-domain-projection-v2.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry_v2.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:project_engineering_to_domain_registry_v2.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:release_product_governance.py",
-      "target": "engine:assemble_product_governance_from_receipts.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:release_product_governance.py",
-      "target": "engine:engineering_product_custody.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:release_product_governance.py",
-      "target": "engine:validate_product_governance.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:render_content_complete_blueprint_pdf.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:render_content_complete_blueprint_pdf.py",
-      "target": "engine:validate_content_complete_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:render_publication_bundle_pdf.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:render_publication_bundle_pdf.py",
-      "target": "engine:render_content_complete_blueprint_pdf.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:render_publication_bundle_pdf.py",
-      "target": "engine:validate_publication_bundle.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-owner-override-ledger.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-routing-build-spec.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-routing-plan.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:route_math_learning_run.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden_entry.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden_entry.py",
-      "target": "engine:compile_sdu_lau_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden_entry.py",
-      "target": "engine:project_engineering_to_domain_registry_v2.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_bound_producer_release_golden_entry.py",
-      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-specialist-package.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-dual-intelligence-session.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-specialist-work-order.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-cross-validation.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-agent-context-manifest.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "policy:math-dual-intelligence-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_engineering_bound_producer_release_golden.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_engineering_bound_producer_release_golden.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_engineering_bound_producer_release_golden.py",
-      "target": "engine:validate_assessment_engineering_crosswalk.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:run_engineering_bound_producer_release_golden.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_assessment_engineering_crosswalk.py",
-      "target": "schema:math-assessment-engineering-crosswalk.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_assessment_engineering_crosswalk.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_assessment_engineering_crosswalk.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_assessment_engineering_crosswalk.py",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_assessment_engineering_crosswalk.py",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_b_layer_integration.py",
-      "target": "schema:math-b-layer-integration.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_b_layer_integration.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_canonical_domain_registry.py",
-      "target": "schema:math-canonical-domain-registry.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_canonical_domain_registry.py",
-      "target": "policy:math-canonical-domain-registry-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_content_complete_page_blueprint.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_content_complete_page_blueprint.py",
-      "target": "engine:validate_learner_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineered_domain_admission.py",
-      "target": "schema:mathematics-engineered-domain-admission.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_engineered_domain_admission.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineered_domain_admission.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineered_domain_admission.py",
-      "target": "engine:validate_mathematics_engineering_binding.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding.py",
-      "target": "schema:math-engineering-domain-projection.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "target": "schema:math-engineering-domain-projection-v2.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_learner_page_blueprint.py",
-      "target": "schema:math-learner-page-blueprint.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_learner_page_blueprint.py",
-      "target": "policy:math-technical-composition-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_learner_page_blueprint.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_binding.py",
-      "target": "schema:mathematics-engineering-binding.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_binding.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
-      "target": "engine:compile_mathematics_engineering_discovery.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_gates.py",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_gates.py",
-      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_mathematics_engineering_gates.py",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_pedagogy_research_manifest.py",
-      "target": "schema:math-pedagogy-research-manifest.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_pedagogy_research_manifest.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_pedagogy_research_manifest.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_product_governance.py",
-      "target": "schema:math-core-coverage-ledger.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_product_governance.py",
-      "target": "schema:math-product-governance-audit.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_product_governance.py",
-      "target": "schema:math-cross-core-similarity-audit.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_product_governance.py",
-      "target": "policy:math-cross-core-similarity-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "schema:math-learner-publication-bundle.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "engine:compile_engineering_visibility_manifest.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "engine:validate_content_complete_page_blueprint.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "engine:validate_pedagogy_research_manifest.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_publication_bundle.py",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_self_teaching_contract.py",
-      "target": "schema:math-self-teaching-contract.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_self_teaching_contract.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "engine:validate_self_teaching_generation_spec.py",
-      "target": "schema:math-self-teaching-generation-spec.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_self_teaching_generation_spec.py",
-      "target": "policy:math-self-teaching-policy.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_self_teaching_generation_spec.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "IMPORTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_adaptive_router.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_adaptive_router.py",
-      "target": "engine:route_math_learning_run.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assessment_engineering_crosswalk.py",
-      "target": "engine:validate_assessment_engineering_crosswalk.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assimilation_compiler.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assimilation_compiler.py",
-      "target": "engine:compile_assimilation_plan.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assimilation_join.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assimilation_join.py",
-      "target": "engine:run_dual_intelligence.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_assimilation_join.py",
-      "target": "engine:build_assimilation_demand.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_b_layer_integration.py",
-      "target": "engine:validate_b_layer_integration.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_foundation.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_foundation.py",
-      "target": "engine:build_ground_truth_manifest.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_foundation.py",
-      "target": "engine:init_math_learning_run.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-learning-run-blueprint.schema.json",
-      "relation_type": "EXERCISES_SCHEMA",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-ground-truth-manifest.schema.json",
-      "relation_type": "EXERCISES_SCHEMA",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "test:test_blueprint_topic_independence.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_topic_independence.py",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_blueprint_topic_independence.py",
-      "target": "engine:validate_assessment_engineering_crosswalk.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_dual_intelligence.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_dual_intelligence.py",
-      "target": "engine:run_dual_intelligence.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineered_domain_admission.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineered_domain_admission.py",
-      "target": "engine:validate_engineered_domain_admission.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_binding.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_binding.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_binding.py",
-      "target": "engine:validate_engineering_domain_projection_binding.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_binding.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_v2.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_v2.py",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_v2.py",
-      "target": "engine:project_engineering_to_domain_registry_v2.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_domain_projection_v2.py",
-      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_registry_composition.py",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_registry_composition.py",
-      "target": "engine:validate_assessment_engineering_crosswalk.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_registry_composition.py",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_visibility_manifest.py",
-      "target": "engine:compile_engineering_visibility_manifest.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_engineering_visibility_manifest.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_intrinsic_depth_blueprint_validation.py",
-      "target": "engine:materialize_intrinsic_depth.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_intrinsic_depth_blueprint_validation.py",
-      "target": "engine:validate_content_complete_page_blueprint.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_intrinsic_depth_materializer.py",
-      "target": "engine:materialize_intrinsic_depth.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_binding.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_binding.py",
-      "target": "engine:validate_mathematics_engineering_binding.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_discovery.py",
-      "target": "engine:compile_mathematics_engineering_discovery.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_discovery.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_gates.py",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_mathematics_engineering_workbench.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_pedagogy_research_manifest.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_pedagogy_research_manifest.py",
-      "target": "engine:validate_pedagogy_research_manifest.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_publication_bundle.py",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_publication_bundle.py",
-      "target": "engine:compile_publication_bundle.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_publication_bundle.py",
-      "target": "engine:materialize_intrinsic_depth.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_publication_bundle.py",
-      "target": "engine:validate_publication_bundle.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_registry_short_source_refs.py",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_stage_receipt_release.py",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_stage_receipt_release.py",
-      "target": "engine:emit_stage_governance.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_stage_receipt_release.py",
-      "target": "engine:engineering_product_custody.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
-    },
-    {
-      "source": "test:test_stage_receipt_release.py",
-      "target": "engine:release_product_governance.py",
-      "relation_type": "TESTS",
-      "confidence": "EXPLICIT"
     },
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
@@ -4293,8 +2997,386 @@
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:CANONICAL_ENGINEERING_DOMAIN_ASSETS.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
       "target": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:ENGINEERING_DISCOVERY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:ENGINEERING_WORKBENCH.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:GENERATION_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:PRODUCT_GOVERNANCE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:README.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:SELF_TEACHING.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "doc:TECHNICAL_COMPOSITION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:build_assimilation_demand.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:build_ground_truth_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_assimilation_plan.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_mathematics_engineering_discovery.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_publication_bundle.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:compile_sdu_lau_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:emit_stage_governance.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:engineering_product_custody.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:init_math_learning_run.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:project_engineering_to_domain_registry_v2.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:release_product_governance.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:render_publication_bundle_pdf.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:route_math_learning_run.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:run_dual_intelligence.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_assessment_engineering_crosswalk.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_b_layer_integration.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_engineered_domain_admission.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_engineering_domain_projection_binding.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_learner_page_blueprint.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_mathematics_engineering_binding.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_product_governance.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_publication_bundle.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_self_teaching_contract.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-assessment-engineering-crosswalk.mixed-grade9.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-assimilation-compiler-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-assimilation-join-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-b-layer-integration-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-canonical-domain-registry-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-cross-core-similarity-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-dual-intelligence-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-evidence-routing-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-evidence-state-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-self-teaching-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:math-technical-composition-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-engineering-depth-policy.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-technical-engineering-gates.v1.euclid-extension.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -4576,318 +3658,6 @@
     },
     {
       "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-assessment-engineering-crosswalk.mixed-grade9.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-assimilation-compiler-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-assimilation-join-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-b-layer-integration-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-canonical-domain-registry-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-cross-core-similarity-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-dual-intelligence-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-evidence-routing-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-evidence-state-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-self-teaching-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:math-technical-composition-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-engineering-depth-policy.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-technical-engineering-gates.v1.euclid-extension.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:blueprint_common.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:build_assimilation_demand.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:build_ground_truth_manifest.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_assimilation_plan.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_engineering_visibility_manifest.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_mathematics_engineering_discovery.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_publication_bundle.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:compile_sdu_lau_generation_spec.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:emit_stage_governance.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:engineering_product_custody.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:init_math_learning_run.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:project_engineering_to_domain_registry.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:project_engineering_to_domain_registry_v2.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:release_product_governance.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:render_publication_bundle_pdf.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:route_math_learning_run.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:run_dual_intelligence.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_assessment_engineering_crosswalk.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_b_layer_integration.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_canonical_domain_registry.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_engineered_domain_admission.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_engineering_domain_projection_binding.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_learner_page_blueprint.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_mathematics_engineering_binding.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_pedagogy_research_manifest.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_product_governance.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_publication_bundle.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_self_teaching_contract.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
       "target": "test:test_engineering_domain_projection.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -4899,74 +3669,26 @@
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "source": "doc:ENGINEERING_DISCOVERY.md",
+      "target": "engine:compile_mathematics_engineering_discovery.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:CANONICAL_ENGINEERING_DOMAIN_ASSETS.md",
+      "source": "doc:ENGINEERING_DISCOVERY.md",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "source": "doc:ENGINEERING_DISCOVERY.md",
+      "target": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:ENGINEERING_DISCOVERY.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:ENGINEERING_WORKBENCH.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:GENERATION_CALIBRATION.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:PRODUCT_GOVERNANCE.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:README.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:SELF_TEACHING.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-      "target": "doc:TECHNICAL_COMPOSITION.md",
+      "source": "doc:ENGINEERING_DISCOVERY.md",
+      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -4995,26 +3717,20 @@
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:ENGINEERING_DISCOVERY.md",
-      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
+      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "target": "doc:ENGINEERING_DISCOVERY.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:ENGINEERING_DISCOVERY.md",
+      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
       "target": "engine:compile_mathematics_engineering_discovery.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:ENGINEERING_DISCOVERY.md",
-      "target": "engine:compile_mathematics_engineering_workbench.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_DISCOVERY.md",
-      "target": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
+      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "target": "engine:engineering_registry_composition.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5055,56 +3771,8 @@
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-      "target": "engine:compile_mathematics_engineering_discovery.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "source": "doc:ENGINEERING_WORKBENCH.md",
       "target": "doc:ENGINEERING_DISCOVERY.md",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "schema:math-engineering-visibility-manifest.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "schema:mathematics-engineering-binding.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "policy:mathematics-engineering-depth-policy.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5134,25 +3802,37 @@
     },
     {
       "source": "doc:ENGINEERING_WORKBENCH.md",
-      "target": "doc:ENGINEERING_DISCOVERY.md",
+      "target": "policy:mathematics-engineering-depth-policy.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:GENERATION_CALIBRATION.md",
-      "target": "schema:math-pedagogy-research-manifest.schema.json",
+      "source": "doc:ENGINEERING_WORKBENCH.md",
+      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:GENERATION_CALIBRATION.md",
-      "target": "schema:math-self-teaching-generation-spec.schema.json",
+      "source": "doc:ENGINEERING_WORKBENCH.md",
+      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:GENERATION_CALIBRATION.md",
-      "target": "policy:math-self-teaching-policy.json",
+      "source": "doc:ENGINEERING_WORKBENCH.md",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_WORKBENCH.md",
+      "target": "schema:math-engineering-visibility-manifest.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_WORKBENCH.md",
+      "target": "schema:mathematics-engineering-binding.schema.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5169,8 +3849,32 @@
       "confidence": "DERIVED"
     },
     {
+      "source": "doc:GENERATION_CALIBRATION.md",
+      "target": "policy:math-self-teaching-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:GENERATION_CALIBRATION.md",
+      "target": "schema:math-pedagogy-research-manifest.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:GENERATION_CALIBRATION.md",
+      "target": "schema:math-self-teaching-generation-spec.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
       "source": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
+      "target": "engine:validate_mathematics_engineering_gates.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5212,13 +3916,7 @@
     },
     {
       "source": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
-      "target": "engine:engineering_registry_composition.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
-      "target": "engine:validate_mathematics_engineering_gates.py",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5231,102 +3929,6 @@
     {
       "source": "doc:PRODUCT_GOVERNANCE.md",
       "target": "engine:validate_product_governance.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "schema:math-learner-page-blueprint.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "schema:math-self-teaching-contract.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "schema:math-self-teaching-generation-spec.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "policy:math-self-teaching-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "policy:math-technical-composition-policy.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "engine:build_mathematics_engineering_gate_registry.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "engine:validate_learner_page_blueprint.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "engine:validate_mathematics_engineering_gates.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "engine:validate_self_teaching_contract.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "engine:validate_self_teaching_generation_spec.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "test:test_mathematics_engineering_gates.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "test:test_self_teaching_contract.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "test:test_self_teaching_generation_spec.py",
-      "relation_type": "REFERENCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "doc:README.md",
-      "target": "test:test_technical_composition.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5367,20 +3969,104 @@
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:SELF_TEACHING.md",
-      "target": "doc:GENERATION_CALIBRATION.md",
+      "source": "doc:README.md",
+      "target": "engine:build_mathematics_engineering_gate_registry.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:TECHNICAL_COMPOSITION.md",
+      "source": "doc:README.md",
+      "target": "engine:validate_learner_page_blueprint.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_self_teaching_contract.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:math-self-teaching-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:math-technical-composition-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "schema:math-learner-page-blueprint.schema.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
-      "source": "doc:TECHNICAL_COMPOSITION.md",
-      "target": "policy:math-technical-composition-policy.json",
+      "source": "doc:README.md",
+      "target": "schema:math-self-teaching-contract.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "schema:math-self-teaching-generation-spec.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_mathematics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_self_teaching_contract.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_technical_composition.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SELF_TEACHING.md",
+      "target": "doc:GENERATION_CALIBRATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5392,9 +4078,1323 @@
     },
     {
       "source": "doc:TECHNICAL_COMPOSITION.md",
+      "target": "policy:math-technical-composition-policy.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:TECHNICAL_COMPOSITION.md",
+      "target": "schema:math-learner-page-blueprint.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:TECHNICAL_COMPOSITION.md",
       "target": "test:test_technical_composition.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "schema:math-stage-governance-receipt.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "policy:math-cross-core-similarity-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "engine:emit_stage_governance.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:assemble_product_governance_from_receipts.py",
+      "target": "engine:validate_product_governance.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:blueprint_common.py",
+      "target": "schema:math-ground-truth-manifest.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:blueprint_common.py",
+      "target": "schema:math-learning-run-blueprint.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "policy:math-assimilation-join-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "engine:run_dual_intelligence.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "schema:math-assimilation-demand-build-spec.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "schema:math-assimilation-demand.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "schema:math-cross-validation.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "schema:math-learner-capability-state.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_ground_truth_manifest.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:build_ground_truth_manifest.py",
+      "target": "schema:math-ground-truth-build-spec.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_mathematics_engineering_gate_registry.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "policy:math-assimilation-compiler-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "schema:math-assimilation-demand.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "schema:math-assimilation-plan-build-spec.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "schema:math-assimilation-plan.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_bound_product_page_blueprint.py",
+      "target": "policy:math-technical-composition-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_bound_product_page_blueprint.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_bound_product_page_blueprint.py",
+      "target": "engine:validate_content_complete_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "engine:validate_mathematics_engineering_binding.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_engineering_visibility_manifest.py",
+      "target": "schema:math-engineering-visibility-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_governed_product_page_blueprint.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_governed_product_page_blueprint.py",
+      "target": "engine:materialize_intrinsic_depth.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_governed_product_page_blueprint.py",
+      "target": "engine:validate_content_complete_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_governed_product_page_blueprint.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "policy:mathematics-engineering-discovery-vocabulary.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-discovery-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-discovery-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-discovery-selection.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-discovery-vocabulary.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "policy:mathematics-engineering-depth-policy.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-binding.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-closure-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-request.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:compile_governed_product_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:materialize_intrinsic_depth.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_publication_bundle.py",
+      "target": "schema:math-learner-publication-bundle.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_sdu_lau_generation_spec.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_sdu_lau_generation_spec.py",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_sdu_lau_generation_spec.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_sdu_lau_generation_spec.py",
+      "target": "schema:math-core2-learner-knowledge-evidence.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_sdu_lau_generation_spec.py",
+      "target": "schema:math-core2-owner-waiver.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:emit_stage_governance.py",
+      "target": "schema:math-stage-governance-receipt.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "schema:math-stage-governance-receipt.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "engine:emit_stage_governance.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:engineering_product_custody.py",
+      "target": "engine:validate_engineered_domain_admission.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:engineering_registry_composition.py",
+      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:engineering_registry_composition.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:init_math_learning_run.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:materialize_intrinsic_depth.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:producer_governance.py",
+      "target": "engine:emit_stage_governance.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "schema:math-engineering-domain-projection.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry_v2.py",
+      "target": "schema:math-engineering-domain-projection-v2.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:release_product_governance.py",
+      "target": "engine:assemble_product_governance_from_receipts.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:release_product_governance.py",
+      "target": "engine:engineering_product_custody.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:release_product_governance.py",
+      "target": "engine:validate_product_governance.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:render_content_complete_blueprint_pdf.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:render_content_complete_blueprint_pdf.py",
+      "target": "engine:validate_content_complete_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:render_publication_bundle_pdf.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:render_publication_bundle_pdf.py",
+      "target": "engine:render_content_complete_blueprint_pdf.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:render_publication_bundle_pdf.py",
+      "target": "engine:validate_publication_bundle.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:route_math_learning_run.py",
+      "target": "schema:math-owner-override-ledger.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:route_math_learning_run.py",
+      "target": "schema:math-routing-build-spec.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:route_math_learning_run.py",
+      "target": "schema:math-routing-plan.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:route_math_learning_run.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden_entry.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden_entry.py",
+      "target": "engine:compile_sdu_lau_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden_entry.py",
+      "target": "engine:project_engineering_to_domain_registry_v2.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_bound_producer_release_golden_entry.py",
+      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-agent-context-manifest.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-cross-validation.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-dual-intelligence-session.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-specialist-package.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-specialist-work-order.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "policy:math-dual-intelligence-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_engineering_bound_producer_release_golden.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_engineering_bound_producer_release_golden.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_engineering_bound_producer_release_golden.py",
+      "target": "engine:validate_assessment_engineering_crosswalk.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:run_engineering_bound_producer_release_golden.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_assessment_engineering_crosswalk.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_assessment_engineering_crosswalk.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_assessment_engineering_crosswalk.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_assessment_engineering_crosswalk.py",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_assessment_engineering_crosswalk.py",
+      "target": "schema:math-assessment-engineering-crosswalk.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_b_layer_integration.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_b_layer_integration.py",
+      "target": "schema:math-b-layer-integration.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_canonical_domain_registry.py",
+      "target": "policy:math-canonical-domain-registry-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_canonical_domain_registry.py",
+      "target": "schema:math-canonical-domain-registry.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_content_complete_page_blueprint.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_content_complete_page_blueprint.py",
+      "target": "engine:validate_learner_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "engine:validate_mathematics_engineering_binding.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineered_domain_admission.py",
+      "target": "schema:mathematics-engineered-domain-admission.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding.py",
+      "target": "schema:math-engineering-domain-projection.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "target": "schema:math-engineering-domain-projection-v2.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_learner_page_blueprint.py",
+      "target": "policy:math-technical-composition-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_learner_page_blueprint.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_learner_page_blueprint.py",
+      "target": "schema:math-learner-page-blueprint.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_binding.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_binding.py",
+      "target": "schema:mathematics-engineering-binding.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
+      "target": "engine:compile_mathematics_engineering_discovery.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_discovery_vocabulary.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_gates.py",
+      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_gates.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_mathematics_engineering_gates.py",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_pedagogy_research_manifest.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_pedagogy_research_manifest.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_pedagogy_research_manifest.py",
+      "target": "schema:math-pedagogy-research-manifest.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_product_governance.py",
+      "target": "policy:math-cross-core-similarity-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_product_governance.py",
+      "target": "schema:math-core-coverage-ledger.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_product_governance.py",
+      "target": "schema:math-cross-core-similarity-audit.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_product_governance.py",
+      "target": "schema:math-product-governance-audit.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "engine:validate_content_complete_page_blueprint.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_publication_bundle.py",
+      "target": "schema:math-learner-publication-bundle.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_self_teaching_contract.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_self_teaching_contract.py",
+      "target": "schema:math-self-teaching-contract.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_self_teaching_generation_spec.py",
+      "target": "policy:math-self-teaching-policy.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_self_teaching_generation_spec.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_self_teaching_generation_spec.py",
+      "target": "schema:math-self-teaching-generation-spec.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_adaptive_router.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_adaptive_router.py",
+      "target": "engine:route_math_learning_run.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assessment_engineering_crosswalk.py",
+      "target": "engine:validate_assessment_engineering_crosswalk.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assimilation_compiler.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assimilation_compiler.py",
+      "target": "engine:compile_assimilation_plan.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assimilation_join.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assimilation_join.py",
+      "target": "engine:build_assimilation_demand.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_assimilation_join.py",
+      "target": "engine:run_dual_intelligence.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_b_layer_integration.py",
+      "target": "engine:validate_b_layer_integration.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_foundation.py",
+      "target": "schema:math-ground-truth-manifest.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_foundation.py",
+      "target": "schema:math-learning-run-blueprint.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "test:test_blueprint_foundation.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_foundation.py",
+      "target": "engine:build_ground_truth_manifest.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_foundation.py",
+      "target": "engine:init_math_learning_run.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_topic_independence.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_topic_independence.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_blueprint_topic_independence.py",
+      "target": "engine:validate_assessment_engineering_crosswalk.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_dual_intelligence.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_dual_intelligence.py",
+      "target": "engine:run_dual_intelligence.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineered_domain_admission.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineered_domain_admission.py",
+      "target": "engine:validate_engineered_domain_admission.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_binding.py",
+      "target": "engine:validate_engineering_domain_projection_binding.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:project_engineering_to_domain_registry_v2.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_domain_projection_v2.py",
+      "target": "engine:validate_engineering_domain_projection_binding_v2.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_registry_composition.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_registry_composition.py",
+      "target": "engine:validate_assessment_engineering_crosswalk.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_registry_composition.py",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_visibility_manifest.py",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_visibility_manifest.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_intrinsic_depth_blueprint_validation.py",
+      "target": "engine:materialize_intrinsic_depth.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_intrinsic_depth_blueprint_validation.py",
+      "target": "engine:validate_content_complete_page_blueprint.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_intrinsic_depth_materializer.py",
+      "target": "engine:materialize_intrinsic_depth.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_binding.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_binding.py",
+      "target": "engine:validate_mathematics_engineering_binding.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_discovery.py",
+      "target": "engine:compile_mathematics_engineering_discovery.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_discovery.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_gates.py",
+      "target": "engine:validate_mathematics_engineering_gates.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_mathematics_engineering_workbench.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_pedagogy_research_manifest.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_pedagogy_research_manifest.py",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_publication_bundle.py",
+      "target": "engine:blueprint_common.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_publication_bundle.py",
+      "target": "engine:compile_publication_bundle.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_publication_bundle.py",
+      "target": "engine:materialize_intrinsic_depth.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_publication_bundle.py",
+      "target": "engine:validate_publication_bundle.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_registry_short_source_refs.py",
+      "target": "engine:validate_canonical_domain_registry.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_stage_receipt_release.py",
+      "target": "engine:compile_mathematics_engineering_workbench.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_stage_receipt_release.py",
+      "target": "engine:emit_stage_governance.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_stage_receipt_release.py",
+      "target": "engine:engineering_product_custody.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_stage_receipt_release.py",
+      "target": "engine:release_product_governance.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
     }
   ],
   "gap_reports": {
@@ -5451,5 +5451,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:c3ce8a168730bf999d854b5b91f8111297e50c65d1a27670f6a8f824d611b5a4"
+  "manifest_digest": "sha256:a9121cb91c5dcbb9a372241698b28474f63e6ae5fb32b73de74335466ca49b6f"
 }
