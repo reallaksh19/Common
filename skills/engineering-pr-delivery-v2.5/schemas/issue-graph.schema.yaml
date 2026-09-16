@@ -11,7 +11,13 @@ properties:
       required: [state, github_state]
       properties:
         state: {enum: [OPEN, ACTIVE, COMPLETE, SUPERSEDED, CANCELLED]}
-        github_state: {enum: [OPEN, CLOSED]}
+        github_state: {enum: [ABSENT, OPEN, CLOSED, UNKNOWN]}
+        github:
+          type: object
+          properties:
+            issue_number: {type: [integer, 'null']}
+            issue_id: {type: [integer, string, 'null']}
+            url: {type: [string, 'null']}
         child_rollup:
           type: object
           required: [graph_revision, direct_children, derived_state, all_children_terminal]
