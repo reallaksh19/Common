@@ -7,6 +7,8 @@ from test_core import good
 from test_parallel_bootstrap import parallel_repo
 from validate_projection_convergence import validate as projection
 from validate_drift_receipt import validate as drift
+from validate_owner_decision import validate_file as owner_decision
+from validate_state_planes import validate as state_planes
 from resolve_execution_route import resolve
 from validate_checkpoint import validate_file as checkpoint
 
@@ -39,14 +41,33 @@ class BlackBoxRegressionTests(unittest.TestCase):
             self.assertEqual("EP-A",result["ep_id"]);self.assertEqual("LANE-A",result["lane_id"])
             with self.assertRaises(ValueError):resolve(root,branch="agent/unknown",worktree="unknown")
 
-    def test_disjoint_drift_receipt_can_preserve_ep_but_overlap_invalidates_it(self):
+    def test_disjoint_drift_receipt_can_preserve_ep_but_overlap_removes_write_authority(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);_,ep,_,_=good(root)
-            receipt={"schema_version":"relay-v2.5-drift","from_base":"base-1","to_base":"base-2","classification":"DISJOINT","changed_paths":["docs/unrelated.md"],"affected_scope":[],"rationale":"Observed base drift changes only an unrelated domain."}
+            root=Path(td);_,ep,_,s=good(root)
+            receipt={"schema_version":"relay-v2.5-drift","from_base":"base-1","to_base":"base-2","classification":"DISJOINT","changed_paths":["docs/unrelated.md"],"affected_scope":[],"rationale":"Observed base drift changes only an unrelated domain.","qualification":{"basis":[],"confirmation":"NOT_REQUIRED","confirmation_basis":[]}}
             dump(root/"agents/relay/drift/DRIFT-1.yaml",receipt);ep["git_basis"]["drift_receipt"]="agents/relay/drift/DRIFT-1.yaml";dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertEqual([],drift(root)[0])
-            receipt["classification"]="OVERLAPPING";receipt["affected_scope"]=["src/a.py"];dump(root/"agents/relay/drift/DRIFT-1.yaml",receipt)
-            self.assertTrue(any("must be reconciled" in x for x in drift(root)[0]))
+            receipt["classification"]="OVERLAPPING";receipt["affected_scope"]=["src/a.py"];receipt["qualification"]={"basis":[],"confirmation":"REQUIRED","confirmation_basis":[]};dump(root/"agents/relay/drift/DRIFT-1.yaml",receipt)
+            self.assertTrue(any("material_authority WRITE is invalid" in x for x in drift(root)[0]))
+            s["status_planes"]["execution"]["material_authority"]="READ_ONLY";dump(root/"agents/relay/REPO_STATE.yaml",s)
+            self.assertEqual([],drift(root)[0])
+
+    def test_qualified_boundary_drift_requires_confirmation_before_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,s=good(root)
+            receipt={"schema_version":"relay-v2.5-drift","from_base":"base-1","to_base":"base-2","classification":"WITHIN_QUALIFIED_BOUNDARY","changed_paths":["src/adjacent.py"],"affected_scope":["adjacent subsystem"],"rationale":"Material drift does not change the bounded production trace, invariants, or verification contract.","qualification":{"basis":["QSCOPE-1"],"confirmation":"DEFERRED_PENDING","confirmation_basis":["ODR-DEF-1"]}}
+            dump(root/"agents/relay/drift/DRIFT-2.yaml",receipt);ep["git_basis"]["drift_receipt"]="agents/relay/drift/DRIFT-2.yaml";dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("material_authority must be READ_ONLY" in x for x in drift(root)[0]))
+            s["status_planes"]["execution"].update({"material_authority":"READ_ONLY","can_continue":True,"next_action":"Perform read-only reconciliation while confirmation remains pending."});dump(root/"agents/relay/REPO_STATE.yaml",s)
+            self.assertEqual([],drift(root)[0]);self.assertEqual([],state_planes(root)[0])
+
+    def test_owner_deferral_does_not_satisfy_requirement_or_grant_write_authority(self):
+        with tempfile.TemporaryDirectory() as td:
+            path=Path(td)/"ODR.yaml"
+            odr={"schema_version":"relay-v2.5","id":"ODR-DEF-1","decision":{"authority":"OWNER","kind":"DEFERRAL","statement":"Defer independent confirmation to a later relay leg.","source":"owner-message:synthetic"},"effects":{"requirement_disposition":"PENDING_NOT_SATISFIED","grants_material_write_authority":False,"pending_items":["CONFIRM-1"]},"impact":{"class":["LOCAL"]},"affected":{"objectives":[],"phases":[],"work_packages":[],"execution_packages":[],"issues":[]},"required_reconciliation":[],"status":"APPLIED"}
+            dump(path,odr);self.assertEqual([],owner_decision(path)[0])
+            odr["effects"]["requirement_disposition"]="SATISFIED";odr["effects"]["grants_material_write_authority"]=True;dump(path,odr)
+            errors=owner_decision(path)[0];self.assertTrue(any("PENDING_NOT_SATISFIED" in x for x in errors));self.assertTrue(any("must not grant" in x for x in errors))
 
     def test_checkpoint_pass_evidence_must_match_exact_material_basis(self):
         with tempfile.TemporaryDirectory() as td:
