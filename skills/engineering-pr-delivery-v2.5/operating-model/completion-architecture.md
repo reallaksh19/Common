@@ -268,7 +268,7 @@ OBSERVATIONAL
 
 ### Repository discovery
 
-Discovery becomes executable and receipt-producing. A discovery step identifies an action, target, question, expected outputs, whether a receipt is required, and stop/reconciliation conditions.
+Discovery becomes executable and receipt-producing. A discovery **instruction** uses a `DSTEP-xxxx` ID and identifies an action, target, question, expected outputs, whether a receipt is required, and stop/reconciliation conditions.
 
 Typical actions:
 
@@ -281,7 +281,7 @@ INSPECT
 RESOLVE
 ```
 
-The successor produces a `DISC-xxxx` Discovery Receipt. `DR-xxxx` is reserved from use here to avoid confusion with Drift Receipts.
+The successor produces a separate `DISC-xxxx` Discovery Receipt. `DSTEP-*` therefore means a forward discovery instruction while `DISC-*` means the candidate's backward evidence. `DR-*` is not used for discovery because Drift Receipts already occupy the drift namespace conceptually.
 
 ### Scope and anti-drift
 
@@ -369,9 +369,10 @@ A report records its generation basis and must reconcile to source objects. If i
 ## Target object namespaces
 
 ```text
+DSTEP-xxxx  EP discovery instruction
+DISC-xxxx   Discovery Receipt
 TC-xxxx     Takeover Certification
 QUAL-xxxx   Qualification Receipt
-DISC-xxxx   Discovery Receipt
 QRV-xxxx    Quality Review
 CP-xxxx     Checkpoint
 ODR-xxxx    Owner Decision Record
