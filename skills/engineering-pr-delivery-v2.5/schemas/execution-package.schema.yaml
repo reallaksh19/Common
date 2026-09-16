@@ -127,6 +127,43 @@ properties:
         properties:
           id: {type: string, pattern: '^QSET-'}
           path: {type: string, minLength: 1}
+  quality:
+    type: object
+    required: [applicable, not_applicable, review_contract, findings_policy, ordinary_findings_are_hard_stops]
+    properties:
+      applicable:
+        type: array
+        items:
+          type: object
+          required: [blueprint, reason, review_focus]
+          properties:
+            blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+            reason: {type: string, minLength: 1}
+            review_focus: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+      not_applicable:
+        type: array
+        items:
+          type: object
+          required: [blueprint, reason]
+          properties:
+            blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+            reason: {type: string, minLength: 1}
+            review_focus: {type: array, items: {type: string, minLength: 1}}
+      review_contract:
+        type: object
+        required: [required, required_before_checkpoint, receipt_namespace, required_outputs]
+        properties:
+          required: {const: true}
+          required_before_checkpoint: {const: true}
+          receipt_namespace: {const: 'QRV-'}
+          required_outputs:
+            type: array
+            minItems: 4
+            maxItems: 4
+            uniqueItems: true
+            items: {enum: [procedure_results, findings, owner_report, successor_handover]}
+      findings_policy: {type: string, minLength: 1}
+      ordinary_findings_are_hard_stops: {const: false}
   acceptance: {type: array, minItems: 1}
   report_contract:
     type: object
