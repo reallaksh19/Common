@@ -421,3 +421,6 @@ JEE Advanced (11)          Multi-concept synthesis & bounds   Core2B LAU (Open-e
 
 Through this formal separation, MathBlueprint guarantees that theoretical clarity is never diluted by diagnostic scores, while exam-specific problem solving is rigorously calibrated.
 
+For the exhaustive, subtopic-by-subtopic micro-to-nano pedagogical analysis across all 15 foundation topics spanning CBSE step-marking rubrics and IIT-JEE examiner trap matrices, see the canonical research reference:
+- [`references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md`](references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md)
+
