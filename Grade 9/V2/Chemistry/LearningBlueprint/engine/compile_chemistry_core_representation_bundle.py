@@ -3,9 +3,10 @@
 
 Scientific representation semantics are compiled upstream from Engineering authority.
 Primitive/capability selection is compiled upstream from the C-H page-intent authority.
+Structured primitive runtime facts are resolved from source-bound C-H fact authority.
 This compiler accepts only a validated representation-intent packet and a set of intent
 references selected for realization. It does not accept adapter-authored primitive IDs,
-capabilities, or scientific semantic payloads.
+capabilities, scientific semantic payloads, or primitive runtime fact payloads.
 """
 from __future__ import annotations
 
@@ -28,6 +29,11 @@ from build_chemistry_representations import (  # noqa: E402
 from compile_chemistry_representation_intent import (  # noqa: E402
     compile_representation_intent,
     validate_representation_intent,
+)
+from compile_chemistry_representation_runtime_facts import (  # noqa: E402
+    ChemistryRepresentationRuntimeFactsError,
+    compile_runtime_fact_authority,
+    resolve_runtime_fact_parameters,
 )
 
 PRIMITIVE_REGISTRY_REL = "../Representation/registry/chemistry-teaching-primitive-registry.json"
@@ -223,14 +229,29 @@ def compile_core_representation_bundle(
     if missing:
         fail("CHEM_CORE_REP_REQUIRED_INTENT_MISSING", ",".join(missing))
 
+    try:
+        runtime_fact_authority = compile_runtime_fact_authority()
+    except ChemistryRepresentationRuntimeFactsError as exc:
+        fail(exc.code, exc.message)
+
     compiled: list[dict[str, Any]] = []
     bindings: list[dict[str, Any]] = []
+    runtime_fact_count = 0
     for intent_id in realized:
         row = intents[intent_id]
         primitive_id = row["primitive_id"]
         primitive = next((item for item in registry["primitives"] if item["primitive_id"] == primitive_id), None)
         if primitive is None:
             fail("CHEM_CORE_REP_PRIMITIVE_UNKNOWN", primitive_id)
+        try:
+            runtime_fact = resolve_runtime_fact_parameters(
+                row,
+                obligation_packet,
+                primitive,
+                runtime_fact_authority,
+            )
+        except ChemistryRepresentationRuntimeFactsError as exc:
+            fail(exc.code, exc.message)
         scientific = copy.deepcopy(row["scientific_semantics"])
         renderer_constraints = sorted(
             set(list(row["primitive_authority"]["renderer_constraints"]) + ["NOTATION_CONTRACT:" + notation["contract_id"]])
@@ -250,6 +271,13 @@ def compile_core_representation_bundle(
             "renderer_constraints": renderer_constraints,
             "decorative": False,
         }
+        if runtime_fact is not None:
+            spec["runtime_fact_ref"] = runtime_fact["fact_packet_ref"]
+            spec["runtime_fact_digest"] = runtime_fact["fact_packet_digest"]
+            spec["runtime_fact_kind"] = runtime_fact["fact_kind"]
+            spec["runtime_fact_source_equation_refs"] = runtime_fact["source_equation_refs"]
+            spec["runtime_parameters"] = runtime_fact["parameters"]
+            runtime_fact_count += 1
         compiled.append(spec)
         bindings.append({
             "representation_ref": spec["representation_id"],
@@ -269,6 +297,7 @@ def compile_core_representation_bundle(
         "primitive_registry_ref": registry["registry_id"],
         "primitive_registry_extension_refs": extension_refs,
         "representation_intent_extension_refs": list(intent_packet.get("policy_extension_refs", [])),
+        "runtime_fact_extension_refs": list(runtime_fact_authority["extension_refs"]),
         "page_intent_profile_ref": profile["profile_id"],
         "notation_contract_ref": notation["contract_id"],
         "representations": compiled,
@@ -278,8 +307,10 @@ def compile_core_representation_bundle(
             "required_intent_count": len(required),
             "representation_extension_count": len(extension_refs),
             "representation_intent_extension_count": len(intent_packet.get("policy_extension_refs", [])),
+            "runtime_fact_count": runtime_fact_count,
             "adapter_primitive_selection_allowed": False,
             "adapter_scientific_semantics_allowed": False,
+            "adapter_runtime_facts_allowed": False,
             "renderer_selection_allowed": False,
         },
         "bundle_digest": "",
