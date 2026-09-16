@@ -391,3 +391,30 @@ DEPRECATED / RETIRED UPON CONSOLIDATION:
 1. **Phase 1 (Current)**: Observability, run configuration tooling, discovery quality benchmarking, and drift auditing. (Zero production code edits).
 2. **Phase 2 (Owner Decision & Core Spec Consolidation)**: Consolidate normative documents under `CANONICAL_ARCHITECTURE.md`; retire redundant V1 single-track docs.
 3. **Phase 3 (Subtopic Intelligence Library Intake)**: Ingest mathematics subtopic knowledge packets using the validated SDU/LAU pipelines.
+
+---
+
+## 17. Academician Pedagogical Alignment Matrix (Grades 9–11 Competitive Exams)
+
+As an expert academician preparing secondary and senior-secondary students for premier mathematical competitions (IIT-JEE Main & Advanced, IOQM, RMO), conceptual assimilation requires an uncompromising match between mathematical rigor and cognitive progression:
+
+```text
+COMPETITIVE LEVEL          CORE EMPHASIS                      GOVERNED BLUEPRINT CONSTRUCT
+-----------------          -------------                      ----------------------------
+CBSE / ICSE Board (9-10)   Deductive proofs & mechanics       Core1A SDU (Declarative Self-Teaching)
+IOQM / Olympiad (9-11)     Synthetic geometry & Number Theory Core1B SDU + TTU Incomplete Proofs
+JEE Main (11)              Alg. Manipulation & Calculus       Core2A LAU (Expert Solution Anatomy)
+JEE Advanced (11)          Multi-concept synthesis & bounds   Core2B LAU (Open-ended Transfer Tutoring)
+```
+
+### Detailed Exam Rigor Mapping
+
+| Exam Domain | Key Mathematical Milestones | Common Learner Failure Modes | MathBlueprint Pedagogical Invariant |
+|---|---|---|---|
+| **Board Foundations** (CBSE/ICSE) | Euclidean proofs, linear systems consistency ($a_1/a_2$), factor theorem. | Sign errors, premature division by variable, confusing lines with line segments. | Core1A SDU locks exact algebraic steps; prohibits skipped reasoning steps; enforces $|x| = \sqrt{x^2}$. |
+| **IOQM / Olympiad** | Basic Proportionality Theorem (Thales), cyclic quadrilaterals, Euclid's lemma, Vieta relations. | Memorizing formulas without synthetic proof; failing to spot auxiliary constructions. | Reconstructable TTUs present incomplete geometric figures and proof scaffolds requiring active learner reconstruction. |
+| **JEE Main** | Quadratic discriminant trichotomy, common roots, standard conics ($y^2 = 4ax$), standard limits. | Applying formulas outside valid parameter intervals; forgetting leading coefficient $a \neq 0$. | Engineering Gates enforce non-negotiable preconditions upstream of task generation. |
+| **JEE Advanced** | Location of roots, complex polar/Euler forms, composite function derivatives, Bayes' theorem. | Inability to transfer across concepts (e.g. geometric locus with complex variables). | Core2B LAU transfer demand enforces structural variation without altering frozen source questions. |
+
+Through this formal separation, MathBlueprint guarantees that theoretical clarity is never diluted by diagnostic scores, while exam-specific problem solving is rigorously calibrated.
+

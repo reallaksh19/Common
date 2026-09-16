@@ -126,6 +126,26 @@ class RunBuilderTests(unittest.TestCase):
         for pattern in forbidden:
             self.assertNotIn(pattern, js_source)
 
+    def test_ioqm_olympiad_geometry_fixture_compiles_successfully(self):
+        fixture_path = TOOL_DIR / "fixtures" / "ioqm_olympiad_geometry_fixture.json"
+        cfg = json.loads(fixture_path.read_text(encoding="utf-8"))
+        manifest = compile_manifest(cfg)
+        prompt = compile_prompt(cfg)
+        self.assertEqual(manifest["validation"]["status"], "VALID")
+        self.assertEqual(manifest["learner"]["knowledge_mode"], "UNKNOWN")
+        self.assertEqual(manifest["core1_control"]["owner_difficulty_override"], "HARD")
+        self.assertIn("IOQM / Regional Mathematical Olympiad", prompt)
+
+    def test_cbse_linear_equations_fixture_compiles_successfully(self):
+        fixture_path = TOOL_DIR / "fixtures" / "cbse_linear_equations_fixture.json"
+        cfg = json.loads(fixture_path.read_text(encoding="utf-8"))
+        manifest = compile_manifest(cfg)
+        prompt = compile_prompt(cfg)
+        self.assertEqual(manifest["validation"]["status"], "VALID")
+        self.assertEqual(manifest["learner"]["knowledge_percent"], 85)
+        self.assertEqual(manifest["engineering"]["requested_depth"], "STANDARD")
+        self.assertIn("CBSE Board Examination", prompt)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

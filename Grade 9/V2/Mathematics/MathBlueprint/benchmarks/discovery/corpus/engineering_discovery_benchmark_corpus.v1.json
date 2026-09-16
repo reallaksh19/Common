@@ -656,6 +656,156 @@
       "ambiguity": "AMBIGUOUS",
       "source": "CURATED_TEST",
       "notes": "Mixes circle and triangle theorems"
+    },
+    {
+      "query_id": "Q66",
+      "query_text": "Limits of Functions: Indeterminate Forms & Standard Limits",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CALC-LIMITS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for limits gate"
+    },
+    {
+      "query_id": "Q67",
+      "query_text": "L'Hopital's Rule for 0/0 limits",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-CALC-LIMITS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "IIT-JEE competition technique for indeterminate limits"
+    },
+    {
+      "query_id": "Q68",
+      "query_text": "Derivatives: First Principles, Product, Quotient & Chain Rules",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CALC-DERIVATIVES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for derivatives gate"
+    },
+    {
+      "query_id": "Q69",
+      "query_text": "differentiation by chain rule",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-CALC-DERIVATIVES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard calculus technique query"
+    },
+    {
+      "query_id": "Q70",
+      "query_text": "Conic Sections: Parabola, Standard Forms & Latus Rectum",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CONIC-PARABOLA"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for parabola gate"
+    },
+    {
+      "query_id": "Q71",
+      "query_text": "latus rectum of parabola",
+      "query_category": "TECHNICAL_IDENTIFIERS",
+      "acceptable_candidate_refs": ["MATH-CONIC-PARABOLA"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard conic geometric focal length query"
+    },
+    {
+      "query_id": "Q72",
+      "query_text": "Complex Numbers: Argand Plane, Modulus, Argument & Polar Form",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-ALG-COMPLEX-NUMBERS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-LINES-ANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for complex numbers gate"
+    },
+    {
+      "query_id": "Q73",
+      "query_text": "Euler form and De Moivre theorem",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-ALG-COMPLEX-NUMBERS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "IIT-JEE Advanced polar & exponential complex representation"
+    },
+    {
+      "query_id": "Q74",
+      "query_text": "Compound Angle Identities & Double/Half Angle Formulas",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-TRIG-COMPOUND-ANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for compound angle gate"
+    },
+    {
+      "query_id": "Q75",
+      "query_text": "double angle formulas",
+      "query_category": "TECHNICAL_IDENTIFIERS",
+      "acceptable_candidate_refs": ["MATH-TRIG-COMPOUND-ANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Trigonometric double angle query"
+    },
+    {
+      "query_id": "Q76",
+      "query_text": "Permutations & Combinations: Fundamental Counting, nPr & nCr",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-PERM-COMB"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-MENS-SURFACES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for combinatorics gate"
+    },
+    {
+      "query_id": "Q77",
+      "query_text": "nPr and nCr combinations",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-PERM-COMB"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-TRIG-RATIOS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard combinatorics notation query"
+    },
+    {
+      "query_id": "Q78",
+      "query_text": "Binomial Theorem for Positive Integral Index & General Terms",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-ALG-BINOMIAL-THEOREM"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-EUCLID-DIVISION"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for binomial theorem gate"
+    },
+    {
+      "query_id": "Q79",
+      "query_text": "Geometric Progressions, Infinite GP & Special Sums (Sigma n^2, n^3)",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-SEQ-GP-SPECIAL"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for GP gate"
+    },
+    {
+      "query_id": "Q80",
+      "query_text": "Axiomatic Probability, Conditional Probability & Bayes' Theorem",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-PROB-EVENTS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for probability events gate"
     }
   ]
 }

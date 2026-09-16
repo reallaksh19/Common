@@ -9,12 +9,34 @@ async function loadManifest() {
     manifestData = await response.json();
     initApp();
   } catch (error) {
-    console.warn("Fetch failed, attempting fallback to embedded data:", error);
+    console.warn("Fetch failed, attempting fallback to file picker:", error);
     document.getElementById("contentPanel").innerHTML = `
       <div class="gap-alert-card">
-        <div class="gap-alert-title">Manifest Not Loaded</div>
-        <p>Could not load <code>architecture_observation_manifest.json</code>. If viewing via file:// protocol, please serve via a local HTTP server (e.g., <code>python -m http.server</code>) or regenerate manifest.</p>
+        <div class="gap-alert-title">Manifest Auto-Load Blocked by Browser Local File Policy</div>
+        <p>Browsers restrict <code>fetch()</code> over the <code>file://</code> protocol. To view the architecture explorer:</p>
+        <p>1. <strong>Direct File Selection:</strong> Choose <code>architecture_observation_manifest.json</code> from this directory:</p>
+        <div style="margin: 0.75rem 0;">
+          <input type="file" id="manifestFileInput" accept=".json" style="background:var(--bg-card); color:var(--text-primary); padding:0.4rem; border:1px solid var(--border-color); border-radius:4px;">
+        </div>
+        <p>2. <strong>Or Local Server:</strong> Run <code>python -m http.server</code> in this directory and browse to <code>http://localhost:8000</code>.</p>
       </div>`;
+    const fileInput = document.getElementById("manifestFileInput");
+    if (fileInput) {
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            manifestData = JSON.parse(evt.target.result);
+            initApp();
+          } catch (err) {
+            alert("Error parsing JSON manifest: " + err.message);
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
   }
 }
 

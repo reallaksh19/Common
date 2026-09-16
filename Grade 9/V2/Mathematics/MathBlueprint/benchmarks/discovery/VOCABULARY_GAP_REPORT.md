@@ -11,10 +11,10 @@
 | **Top-3 Recall** | 100.0% | Percentage of queries where acceptable gate is in top 3 |
 | **Top-5 Recall** | 100.0% | Percentage of queries where acceptable gate is in top 5 |
 | **Miss Rate** | 0.0% | Percentage of queries with zero acceptable candidates |
-| **Noise Rate** | 5.0% | Ratio of explicitly unacceptable candidate occurrences |
+| **Noise Rate** | 5.4% | Ratio of explicitly unacceptable candidate occurrences |
 | **Ambiguity Preservation** | 95.0% | Proportion of valid candidates preserved for ambiguous queries |
 | **No-Valid-Target Safety** | PASS | Strict refusal to auto-authorize out-of-domain queries |
-| **Vocabulary Contribution** | 95.2% | Queries where vocabulary terms boosted match score |
+| **Vocabulary Contribution** | 98.7% | Queries where vocabulary terms boosted match score |
 | **Determinism** | PASS | Exact reproducible candidate order and scores |
 
 ## 2. Identified Vocabulary Gaps & Recommendations

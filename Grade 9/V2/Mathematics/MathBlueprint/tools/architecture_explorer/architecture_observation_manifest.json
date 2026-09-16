@@ -3022,25 +3022,19 @@
     },
     {
       "source": "engine:blueprint_common.py",
-      "target": "schema:math-ground-truth-manifest.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:blueprint_common.py",
       "target": "schema:math-learning-run-blueprint.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
     {
-      "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-assimilation-demand-build-spec.schema.json",
-      "relation_type": "PRODUCES",
+      "source": "engine:blueprint_common.py",
+      "target": "schema:math-ground-truth-manifest.schema.json",
+      "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-assimilation-demand.schema.json",
+      "target": "schema:math-cross-validation.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3052,7 +3046,13 @@
     },
     {
       "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-cross-validation.schema.json",
+      "target": "schema:math-assimilation-demand-build-spec.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:build_assimilation_demand.py",
+      "target": "schema:math-assimilation-demand.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3094,13 +3094,13 @@
     },
     {
       "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-demand.schema.json",
+      "target": "schema:math-assimilation-plan-build-spec.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-plan-build-spec.schema.json",
+      "target": "schema:math-assimilation-demand.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3196,13 +3196,7 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-request.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-receipt.schema.json",
+      "target": "schema:mathematics-engineering-request.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3220,7 +3214,13 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-request.schema.json",
+      "target": "schema:mathematics-engineering-discovery-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-discovery-request.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3238,24 +3238,6 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-manifest.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-closure-receipt.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
       "target": "schema:mathematics-engineering-binding.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
@@ -3268,6 +3250,30 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-closure-receipt.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "CONSUMES_POLICY",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
       "target": "policy:mathematics-engineering-gate-invariants.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
@@ -3275,12 +3281,6 @@
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
       "target": "policy:mathematics-engineering-depth-policy.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
@@ -3340,13 +3340,13 @@
     },
     {
       "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "schema:math-core2-owner-waiver.schema.json",
+      "target": "schema:math-core2-learner-knowledge-evidence.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:compile_sdu_lau_generation_spec.py",
-      "target": "schema:math-core2-learner-knowledge-evidence.schema.json",
+      "target": "schema:math-core2-owner-waiver.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3400,13 +3400,13 @@
     },
     {
       "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
@@ -3514,13 +3514,13 @@
     },
     {
       "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-routing-build-spec.schema.json",
+      "target": "schema:math-owner-override-ledger.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-owner-override-ledger.schema.json",
+      "target": "schema:math-routing-build-spec.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
@@ -3574,18 +3574,6 @@
     },
     {
       "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-specialist-work-order.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-agent-context-manifest.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
       "target": "schema:math-specialist-package.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
@@ -3598,7 +3586,19 @@
     },
     {
       "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-specialist-work-order.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
       "target": "schema:math-cross-validation.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-agent-context-manifest.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
@@ -3856,12 +3856,6 @@
     },
     {
       "source": "engine:validate_product_governance.py",
-      "target": "schema:math-cross-core-similarity-audit.schema.json",
-      "relation_type": "VALIDATES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:validate_product_governance.py",
       "target": "schema:math-core-coverage-ledger.schema.json",
       "relation_type": "VALIDATES",
       "confidence": "DERIVED"
@@ -3869,6 +3863,12 @@
     {
       "source": "engine:validate_product_governance.py",
       "target": "schema:math-product-governance-audit.schema.json",
+      "relation_type": "VALIDATES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:validate_product_governance.py",
+      "target": "schema:math-cross-core-similarity-audit.schema.json",
       "relation_type": "VALIDATES",
       "confidence": "DERIVED"
     },
@@ -4018,13 +4018,13 @@
     },
     {
       "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-ground-truth-manifest.schema.json",
+      "target": "schema:math-learning-run-blueprint.schema.json",
       "relation_type": "EXERCISES_SCHEMA",
       "confidence": "DERIVED"
     },
     {
       "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-learning-run-blueprint.schema.json",
+      "target": "schema:math-ground-truth-manifest.schema.json",
       "relation_type": "EXERCISES_SCHEMA",
       "confidence": "DERIVED"
     },
@@ -5451,5 +5451,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:b10e3c26fb1c824993e331d8eb1a6895327b98c0860f506a601fc5d5671846e0"
+  "manifest_digest": "sha256:c3ce8a168730bf999d854b5b91f8111297e50c65d1a27670f6a8f824d611b5a4"
 }

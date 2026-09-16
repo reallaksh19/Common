@@ -5,17 +5,17 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "metrics": {
-    "TOTAL_QUERIES": 65,
-    "VALID_TARGET_QUERIES": 62,
+    "TOTAL_QUERIES": 80,
+    "VALID_TARGET_QUERIES": 77,
     "NO_TARGET_QUERIES": 3,
     "TOP_1_RECALL": 1.0,
     "TOP_3_RECALL": 1.0,
     "TOP_5_RECALL": 1.0,
     "MISS_RATE": 0.0,
-    "NOISE_RATE": 0.0503,
+    "NOISE_RATE": 0.0541,
     "AMBIGUITY_PRESERVATION_RATE": 0.95,
     "NO_VALID_TARGET_BEHAVIOR_SAFE": true,
-    "VOCABULARY_CONTRIBUTION_RATE": 0.9516,
+    "VOCABULARY_CONTRIBUTION_RATE": 0.987,
     "DETERMINISM": true
   },
   "results": [
@@ -48,11 +48,11 @@
       ],
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
-        "MATH-TRIG-RATIOS",
         "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-TRIG-RATIOS",
         "MATH-NUM-EUCLID-DIVISION",
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-TRIANGLES"
+        "MATH-PROB-EVENTS",
+        "MATH-TRIG-COMPOUND-ANGLES"
       ],
       "hit_ranks": [
         1
@@ -130,9 +130,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-ALG-POLYNOMIALS",
         "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
         "MATH-GEO-LINES-ANGLES",
-        "MATH-REL-FUNCTIONS",
-        "MATH-ALG-POLY-ZEROS-GRAPH"
+        "MATH-REL-FUNCTIONS"
       ],
       "hit_ranks": [
         1
@@ -170,9 +170,9 @@
         "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
         "MATH-GEO-TRIANGLES",
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-QUADRILATERALS"
+        "MATH-CALC-LIMITS"
       ],
       "hit_ranks": [
         1
@@ -208,8 +208,8 @@
       ],
       "observed_candidates": [
         "MATH-GEO-COORDINATES",
-        "MATH-3D-INTRO",
         "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-3D-INTRO",
         "MATH-LINES-2D",
         "MATH-CONIC-CIRCLE",
         "MATH-GEO-PYTHAGORAS"
@@ -393,8 +393,8 @@
         "MATH-LIN-EQUATIONS",
         "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-EQUATIONS",
-        "MATH-SEQ-AP",
-        "MATH-LIN-INEQUALITIES"
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-SEQ-AP"
       ],
       "hit_ranks": [
         1
@@ -542,11 +542,11 @@
       ],
       "observed_candidates": [
         "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-ALG-POLYNOMIALS",
         "MATH-QUAD-EQUATIONS",
-        "MATH-GEO-LINES-ANGLES",
-        "MATH-SEQ-GP-SPECIAL",
-        "MATH-ALG-BINOMIAL-THEOREM"
+        "MATH-GEO-LINES-ANGLES"
       ],
       "hit_ranks": [
         1
@@ -563,10 +563,10 @@
       "observed_candidates": [
         "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-NUM-EUCLID-DIVISION",
-        "MATH-GEO-CIRCLES",
         "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS"
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-CIRCLES"
       ],
       "hit_ranks": [
         1
@@ -620,7 +620,8 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-QUAD-EQUATIONS"
+        "MATH-QUAD-EQUATIONS",
+        "MATH-CONIC-PARABOLA"
       ],
       "hit_ranks": [
         1
@@ -636,11 +637,11 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-LIN-EQUATIONS",
         "MATH-TRIG-RATIOS",
         "MATH-NUM-RADICALS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-CONIC-ELLIPSE"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -676,11 +677,11 @@
       ],
       "observed_candidates": [
         "MATH-TRIG-RATIOS",
-        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-TRIG-EQUATIONS",
-        "MATH-TRIG-EXTENDED-DOMAIN",
-        "MATH-GEO-CIRCLES-AREA"
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-GP-SPECIAL"
       ],
       "hit_ranks": [
         1
@@ -756,11 +757,11 @@
       ],
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-TRIANGLES",
         "MATH-GEO-CIRCLES",
-        "MATH-NUM-EUCLID-DIVISION",
-        "MATH-GEO-QUADRILATERALS"
+        "MATH-CALC-LIMITS"
       ],
       "hit_ranks": [
         1
@@ -832,8 +833,8 @@
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-TRIG-RATIOS",
         "MATH-NUM-EUCLID-DIVISION",
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-TRIANGLES"
+        "MATH-PROB-EVENTS",
+        "MATH-TRIG-COMPOUND-ANGLES"
       ],
       "hit_ranks": [
         1
@@ -932,10 +933,10 @@
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
         "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
         "MATH-REL-FUNCTIONS",
         "MATH-GEO-LINES-ANGLES",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -1011,8 +1012,8 @@
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-RATIOS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
         "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
         "MATH-NUM-RADICALS",
         "MATH-ALG-BINOMIAL-THEOREM"
       ],
@@ -1071,8 +1072,8 @@
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
         "MATH-QUAD-EQUATIONS",
-        "MATH-SEQ-AP",
         "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-SEQ-AP",
         "MATH-ALG-POLY-ZEROS-GRAPH",
         "MATH-SEQ-GP-SPECIAL"
       ],
@@ -1275,12 +1276,308 @@
         "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-CONIC-CIRCLE",
-        "MATH-GEO-LINES-ANGLES",
-        "MATH-GEO-PYTHAGORAS"
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-GEO-LINES-ANGLES"
       ],
       "hit_ranks": [
         1,
         2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q66",
+      "query_text": "Limits of Functions: Indeterminate Forms & Standard Limits",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CALC-LIMITS"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-LIMITS",
+        "MATH-CONIC-PARABOLA",
+        "MATH-LINES-2D",
+        "MATH-REL-FUNCTIONS",
+        "MATH-TRIG-EXTENDED-DOMAIN",
+        "MATH-STAT-VARIANCE-SD"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q67",
+      "query_text": "L'Hopital's Rule for 0/0 limits",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-CALC-LIMITS"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-LIMITS",
+        "MATH-CALC-DERIVATIVES",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-3D-INTRO",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-STAT-CUMFREQ"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q68",
+      "query_text": "Derivatives: First Principles, Product, Quotient & Chain Rules",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CALC-DERIVATIVES"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-DERIVATIVES",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-3D-INTRO",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-CALC-LIMITS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q69",
+      "query_text": "differentiation by chain rule",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-CALC-DERIVATIVES"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-DERIVATIVES",
+        "MATH-CALC-LIMITS",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-3D-INTRO",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q70",
+      "query_text": "Conic Sections: Parabola, Standard Forms & Latus Rectum",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CONIC-PARABOLA"
+      ],
+      "observed_candidates": [
+        "MATH-CONIC-PARABOLA",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CALC-LIMITS",
+        "MATH-LINES-2D"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q71",
+      "query_text": "latus rectum of parabola",
+      "category": "TECHNICAL_IDENTIFIERS",
+      "expected": [
+        "MATH-CONIC-PARABOLA"
+      ],
+      "observed_candidates": [
+        "MATH-CONIC-PARABOLA",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q72",
+      "query_text": "Complex Numbers: Argand Plane, Modulus, Argument & Polar Form",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-LINES-2D",
+        "MATH-NUM-RADICALS",
+        "MATH-GEO-COORDINATES",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q73",
+      "query_text": "Euler form and De Moivre theorem",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-CIRCLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q74",
+      "query_text": "Compound Angle Identities & Double/Half Angle Formulas",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-RATIOS",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q75",
+      "query_text": "double angle formulas",
+      "category": "TECHNICAL_IDENTIFIERS",
+      "expected": [
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
+        "MATH-3D-INTRO",
+        "MATH-GEO-COORDINATES",
+        "MATH-GEO-LINES-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q76",
+      "query_text": "Permutations & Combinations: Fundamental Counting, nPr & nCr",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-PERM-COMB"
+      ],
+      "observed_candidates": [
+        "MATH-PERM-COMB",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-CIRCLES-AREA",
+        "MATH-TRIG-RATIOS",
+        "MATH-MENS-SURFACES",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q77",
+      "query_text": "nPr and nCr combinations",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-PERM-COMB"
+      ],
+      "observed_candidates": [
+        "MATH-PERM-COMB",
+        "MATH-GEO-CIRCLES-AREA",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q78",
+      "query_text": "Binomial Theorem for Positive Integral Index & General Terms",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-TRIANGLES",
+        "MATH-SEQ-AP"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q79",
+      "query_text": "Geometric Progressions, Infinite GP & Special Sums (Sigma n^2, n^3)",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-SEQ-GP-SPECIAL"
+      ],
+      "observed_candidates": [
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-SEQ-AP",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-MENS-SURFACES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q80",
+      "query_text": "Axiomatic Probability, Conditional Probability & Bayes' Theorem",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-PROB-EVENTS"
+      ],
+      "observed_candidates": [
+        "MATH-PROB-EVENTS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-STAT-PROBABILITY",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "hit_ranks": [
+        1
       ],
       "has_hit": true
     }

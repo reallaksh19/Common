@@ -365,12 +365,104 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLiveOutputs();
   });
 
-  document.getElementById("loadFixtureBtn").addEventListener("click", () => {
-    fetch("fixtures/theory_of_equations_jee_fixture.json")
-      .then(res => res.json())
-      .then(data => loadFixtureData(data))
-      .catch(err => console.warn("Could not load fixture file, using defaults:", err));
-  });
+  const JEE_PRESET = {
+    subject: "MATHEMATICS",
+    subtopic_request: "Theory of Equations",
+    current_grade: 9,
+    target_program_or_exam: "IIT-JEE preparation",
+    learning_purpose: "COMPETITIVE_EXAM",
+    learner_knowledge_mode: "KNOWN_PERCENT",
+    learner_knowledge_percent: 70,
+    knowledge_source_ref: "OWNER_SUPPLIED_DIAGNOSTIC",
+    knowledge_calibration_policy_ref: "POL-MATH-KNOW-CALIB-V1",
+    requested_engineering_depth: "RESEARCH",
+    core1_difficulty_control: "DERIVE",
+    owner_difficulty_override: null,
+    pedagogy_research_mode: "DEFAULT",
+    web_research_allowed: true,
+    local_question_bank_ref: "LOCAL_FIXTURE_QBANK_G9_JEE",
+    owner_scope_notes: "IIT-JEE Theory of Equations Fixture. Non-authoritative.",
+    repository: "reallaksh19/Common",
+    branch_or_ref: "v2-math-core1a-textbook-quality",
+    run_mode: "STRESS_TEST",
+    mutation_mode: "READ_ONLY"
+  };
+
+  const IOQM_PRESET = {
+    subject: "MATHEMATICS",
+    subtopic_request: "Euclidean Triangles & Circle Theorems",
+    current_grade: 10,
+    target_program_or_exam: "IOQM / Regional Mathematical Olympiad",
+    learning_purpose: "COMPETITIVE_EXAM",
+    learner_knowledge_mode: "UNKNOWN",
+    learner_knowledge_percent: null,
+    knowledge_source_ref: "",
+    knowledge_calibration_policy_ref: "",
+    requested_engineering_depth: "RESEARCH",
+    core1_difficulty_control: "OWNER_OVERRIDE",
+    owner_difficulty_override: "HARD",
+    pedagogy_research_mode: "DEFAULT",
+    web_research_allowed: true,
+    local_question_bank_ref: "LOCAL_FIXTURE_QBANK_G10_IOQM",
+    owner_scope_notes: "IOQM Olympiad Euclidean Geometry Fixture. Non-authoritative.",
+    repository: "reallaksh19/Common",
+    branch_or_ref: "v2-math-core1a-textbook-quality",
+    run_mode: "STRESS_TEST",
+    mutation_mode: "READ_ONLY"
+  };
+
+  const CBSE_PRESET = {
+    subject: "MATHEMATICS",
+    subtopic_request: "Pair of Linear Equations in Two Variables",
+    current_grade: 10,
+    target_program_or_exam: "CBSE Board Examination",
+    learning_purpose: "CONSOLIDATION",
+    learner_knowledge_mode: "KNOWN_PERCENT",
+    learner_knowledge_percent: 85,
+    knowledge_source_ref: "CBSE_PERIODIC_TEST_2",
+    knowledge_calibration_policy_ref: "POL-MATH-KNOW-CALIB-V1",
+    requested_engineering_depth: "STANDARD",
+    core1_difficulty_control: "DERIVE",
+    owner_difficulty_override: null,
+    pedagogy_research_mode: "DEFAULT",
+    web_research_allowed: false,
+    local_question_bank_ref: "LOCAL_FIXTURE_QBANK_G10_CBSE",
+    owner_scope_notes: "CBSE Board Examination Standard Fixture. Non-authoritative.",
+    repository: "reallaksh19/Common",
+    branch_or_ref: "v2-math-core1a-textbook-quality",
+    run_mode: "STRESS_TEST",
+    mutation_mode: "READ_ONLY"
+  };
+
+  const bindPresetBtn = (btnId, fixturePath, fallbackPreset) => {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      fetch(fixturePath)
+        .then(res => res.json())
+        .then(data => loadFixtureData(data))
+        .catch(() => loadFixtureData(fallbackPreset));
+    });
+  };
+
+  bindPresetBtn("loadJeeFixtureBtn", "fixtures/theory_of_equations_jee_fixture.json", JEE_PRESET);
+  bindPresetBtn("loadIoqmFixtureBtn", "fixtures/ioqm_olympiad_geometry_fixture.json", IOQM_PRESET);
+  bindPresetBtn("loadCbseFixtureBtn", "fixtures/cbse_linear_equations_fixture.json", CBSE_PRESET);
+
+  const copyCliBtn = document.getElementById("copyCliBtn");
+  if (copyCliBtn) {
+    copyCliBtn.addEventListener("click", () => {
+      const cfg = getFormConfig();
+      const cmd = `python "Grade 9/V2/Mathematics/MathBlueprint/tools/run_builder/compile_run.py" --config "Grade 9/V2/Mathematics/MathBlueprint/tools/run_builder/fixtures/theory_of_equations_jee_fixture.json"`;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const oldText = copyCliBtn.textContent;
+        copyCliBtn.textContent = "Copied to Clipboard!";
+        setTimeout(() => { copyCliBtn.textContent = oldText; }, 2000);
+      }).catch(() => {
+        prompt("Copy CLI command:", cmd);
+      });
+    });
+  }
 
   toggleKnowledgeInputs();
   toggleDifficultyInputs();
