@@ -117,6 +117,49 @@ def _surface_strings(value: Any, parent_key: str = "") -> list[str]:
     return out
 
 
+def _core1a_section_lineage(manuscript: dict[str, Any]) -> dict[str, Any]:
+    """Close Core1A section identity against its declared learning-atom denominator.
+
+    The manuscript's existing ordered arrays are an explicit realization contract:
+    ``learning_atoms[n]`` supplies semantic identity for ``teaching_sections[n]``.
+    Capability references remain authorization metadata and may be broader than one
+    learner-facing section, so they cannot substitute for this atom-level lineage.
+    """
+    total_atoms = 0
+    total_sections = 0
+    for bucket_index, bucket in enumerate(manuscript.get("buckets", []), 1):
+        if not isinstance(bucket, dict):
+            fail("CHEM_CORE_AUTH_CORE1A_BUCKET_INVALID", str(bucket_index))
+        atoms = bucket.get("learning_atoms")
+        sections = bucket.get("teaching_sections")
+        if not isinstance(atoms, list) or not atoms:
+            fail("CHEM_CORE_AUTH_CORE1A_LEARNING_ATOMS_REQUIRED", str(bucket_index))
+        if not isinstance(sections, list) or not sections:
+            fail("CHEM_CORE_AUTH_CORE1A_TEACHING_SECTIONS_REQUIRED", str(bucket_index))
+        atom_ids = [str(row.get("atom_id", "")).strip() for row in atoms if isinstance(row, dict)]
+        if len(atom_ids) != len(atoms) or any(not value for value in atom_ids):
+            fail("CHEM_CORE_AUTH_CORE1A_LEARNING_ATOM_ID_INVALID", str(bucket_index))
+        if len(atom_ids) != len(set(atom_ids)):
+            fail("CHEM_CORE_AUTH_CORE1A_LEARNING_ATOM_DUPLICATE", str(bucket_index))
+        if len(sections) != len(atoms):
+            fail(
+                "CHEM_CORE_AUTH_CORE1A_SECTION_ATOM_COUNT_MISMATCH",
+                f"bucket={bucket_index}:sections={len(sections)}:atoms={len(atoms)}",
+            )
+        if any(not isinstance(section, dict) for section in sections):
+            fail("CHEM_CORE_AUTH_CORE1A_TEACHING_SECTION_INVALID", str(bucket_index))
+        total_atoms += len(atoms)
+        total_sections += len(sections)
+    if total_atoms < 1 or total_sections != total_atoms:
+        fail("CHEM_CORE_AUTH_CORE1A_SECTION_LINEAGE_EMPTY")
+    return {
+        "status": "PASS",
+        "lineage_mode": "ORDERED_LEARNING_ATOM",
+        "learning_atom_count": total_atoms,
+        "teaching_section_count": total_sections,
+    }
+
+
 def _mode_validation(product_mode: str, payload: dict[str, Any]) -> dict[str, Any]:
     if product_mode == "CORE1A":
         manuscript = payload.get("manuscript")
@@ -125,11 +168,13 @@ def _mode_validation(product_mode: str, payload: dict[str, Any]) -> dict[str, An
             fail("CHEM_CORE_AUTH_CORE1A_MANUSCRIPT_REQUIRED")
         if not isinstance(representations, dict) or not representations.get("bundle_id"):
             fail("CHEM_CORE_AUTH_REPRESENTATION_BUNDLE_REQUIRED")
+        lineage = _core1a_section_lineage(manuscript)
         return {
             "status": "PASS",
             "adapter": "CORE1A_MANUSCRIPT",
             "bucket_count": len(manuscript["buckets"]),
             "representation_bundle_ref": representations["bundle_id"],
+            "section_lineage": lineage,
         }
     if product_mode == "CORE2A":
         source = payload.get("source_plan")
@@ -232,9 +277,6 @@ def _representation_closure(
         and product_mode in row["authorized_modes"]
     ]
     direct_rows = [row for row in authorized_rows if row["direct"]]
-    # Prerequisite closure authorizes use when explicitly bound, but never makes
-    # prerequisite representations automatic product content. Only direct-gate
-    # representations can be mandatory for this one-direct-gate artifact.
     authorized_assets = {str(row["asset_ref"]) for row in authorized_rows}
     required_assets = {
         str(row["asset_ref"]) for row in direct_rows
