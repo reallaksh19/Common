@@ -156,6 +156,7 @@ def compile_physics_engineering_readiness(
             for gate_id in row["engineering_gate_ids"]
         }
     )
+    gate_requirement_state = "REQUIRED_AND_READY" if direct_gate_ids else "NOT_REQUIRED_FOR_THIS_SCOPE"
 
     suffix = scope_model["scope_model_digest"][:16].upper()
     request = {
@@ -206,6 +207,7 @@ def compile_physics_engineering_readiness(
         "binding_registry_digest": binding_registry["registry_digest"],
         "required_capability_refs": required_caps,
         "capability_routes": routes,
+        "technical_gate_requirement_state": gate_requirement_state,
         "engineering_request": request,
         "engineering_manifest": manifest,
         "engineering_closure": engineering,
