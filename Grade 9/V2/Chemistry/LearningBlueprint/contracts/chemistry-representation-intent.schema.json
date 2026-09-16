@@ -7,7 +7,7 @@
   "required": [
     "schema_version", "intent_packet_id", "subject", "product_mode",
     "obligation_packet_id", "obligation_packet_digest", "semantic_projection_id",
-    "semantic_projection_digest", "policy_ref", "policy_digest",
+    "semantic_projection_digest", "policy_ref", "policy_digest", "policy_extension_refs",
     "primitive_registry_ref", "page_intent_profile_ref", "intents", "counts",
     "status", "intent_packet_digest"
   ],
@@ -22,6 +22,7 @@
     "semantic_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "policy_ref": {"type": "string"},
     "policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "primitive_registry_ref": {"type": "string"},
     "page_intent_profile_ref": {"type": "string"},
     "intents": {
