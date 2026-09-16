@@ -33,6 +33,8 @@ def test_v10_contract_schemas_are_valid():
         "contracts/seven-core-stress-test-request.schema.json",
         "contracts/seven-core-stress-test-receipt.schema.json",
         "contracts/join-packet.schema.json",
+        "contracts/physics-curriculum-scope-binding-registry.schema.json",
+        "contracts/physics-blueprint-authority-projection.schema.json",
     ]
     shared_names = [
         "contracts/domain-prerequisite-authority.schema.json",
@@ -48,6 +50,15 @@ def test_v10_contract_schemas_are_valid():
         Draft202012Validator.check_schema(load_shared(rel))
     for rel in shared_gate_names:
         Draft202012Validator.check_schema(load_shared_gate(rel))
+
+
+def test_v10_physics_curriculum_binding_is_exact_and_fail_closed():
+    registry = load("registry/physics-curriculum-scope-bindings.v1.json")
+    schema = load("contracts/physics-curriculum-scope-binding-registry.schema.json")
+    Draft202012Validator(schema).validate(registry)
+    assert registry["selector_semantics"] == "EXACT_GRADE_CURRICULUM_SCOPE_AND_GATE_SET"
+    ids = [row["binding_id"] for row in registry["bindings"]]
+    assert len(ids) == len(set(ids))
 
 
 def test_v10_cross_domain_transport_is_shared_not_physics_shadowed():
@@ -100,7 +111,7 @@ def test_v10_domain_provider_registry_routes_math_without_self_certifying_it():
 def test_v10_state_semantics_forbid_surrogate_passes():
     policy = load("policy/stress-test-state-semantics.v1.json")
     assert set(policy["states"]) == {
-        "PASS", "READY", "HELD", "BLOCKED", "NOT_INSTANTIATED", "NOT_APPLICABLE", "NOT_RUN", "NOT_ISSUED",
+        "PASS", "READY", "HELD", "BLOCKED", "NOT_AUTHORIZED", "NOT_INSTANTIATED", "NOT_APPLICABLE", "NOT_RUN", "NOT_ISSUED",
     }
     assert set(policy["forbidden_surrogate_pass_labels"]) == {
         "PASS_BY_NONFABRICATION", "PASS_FAIL_CLOSED_DIFFERENTIATION",
@@ -108,6 +119,7 @@ def test_v10_state_semantics_forbid_surrogate_passes():
     assert policy["rules"]["topic_route_may_not_be_reused_for_narrower_scope_without_scoped_evidence"] is True
     assert policy["rules"]["technical_gate_difficulty_is_not_an_sdu_receipt"] is True
     assert policy["rules"]["stress_test_fail_requires_architecture_violation_not_merely_missing_authority"] is True
+    assert policy["rules"]["not_authorized_cannot_be_promoted_by_blueprint"] is True
 
 
 def test_v10_normative_architecture_exists_and_declares_canonicality():
@@ -130,6 +142,7 @@ def test_v10_engineering_kernel_defers_consumer_authority_to_global_gate():
     assert readiness_mirror["x-authority-ref"] == "Grade 9/V2/Shared/EngineeringGate/contracts/engineering-readiness-envelope.schema.json"
     assert (ROOT / "engine" / "compile_engineering_readiness.py").exists()
     assert (ROOT / "engine" / "compile_all_engineering_readiness.py").exists()
+    assert (ROOT / "engine" / "compile_physics_blueprint_authority.py").exists()
 
 
 def main():
