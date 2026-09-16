@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 from pathlib import Path
+from relaylib import load_yaml,print_result
 from validate_repo_state import validate as repo_state
 from validate_roadmap import validate as roadmap
 from validate_execution_frontier import validate as frontier
@@ -18,29 +19,17 @@ from validate_supersession import validate as supersession
 from validate_roadmap_transaction import validate as roadmap_transaction
 from validate_state_planes import validate as state_planes
 from validate_checkpoint_linkage import validate as checkpoint_linkage
-from relaylib import print_result
-CHECKS=[
-    ("repo_state",repo_state),
-    ("roadmap",roadmap),
-    ("frontier",frontier),
-    ("ep_self_contained",ep),
-    ("ep_acceptance",acceptance),
-    ("ep_staleness",staleness),
-    ("report_contract",report_contract),
-    ("progress",progress),
-    ("execution_policy",execution),
-    ("state_planes",state_planes),
-    ("checkpoint_linkage",checkpoint_linkage),
-    ("phase_questions",questions),
-    ("issue_graph",issue_graph),
-    ("issue_closure",issue_closure),
-    ("supersession",supersession),
-    ("roadmap_transaction",roadmap_transaction),
-]
+
+ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("state_planes",state_planes),("checkpoint_linkage",checkpoint_linkage),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
     e=[];w=[]
-    for name,check in CHECKS:
+    try:s=load_yaml(root/"agents/relay/REPO_STATE.yaml")
+    except Exception as exc:return [f"repo_state: {exc}"],w
+    checks=list(ALWAYS)
+    if (s.get("active_ep") or {}).get("state")!="NONE":checks[3:3]=ACTIVE_EP_ONLY
+    for name,check in checks:
         try:ce,cw=check(root)
         except Exception as exc:ce,cw=[str(exc)],[]
         e.extend(f"{name}: {x}" for x in ce);w.extend(f"{name}: {x}" for x in cw)
