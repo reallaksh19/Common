@@ -1,0 +1,8 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, checkpoint_id, ep_id, roadmap_basis, implementation_result, acceptance_results, validation_results, quality_findings, discoveries, roadmap_reconciliation]
+properties:
+  schema_version: {const: relay-v2.5}
+  checkpoint_id: {type: string}
+  ep_id: {type: string}
+additionalProperties: true

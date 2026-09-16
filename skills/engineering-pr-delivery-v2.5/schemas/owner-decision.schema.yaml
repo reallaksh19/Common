@@ -1,0 +1,12 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, decision, impact, affected, required_reconciliation, status]
+properties:
+  schema_version: {const: relay-v2.5}
+  decision:
+    type: object
+    required: [authority, statement]
+    properties:
+      authority: {const: OWNER}
+  status: {enum: [CAPTURED, APPLIED, SUPERSEDED]}
+additionalProperties: true

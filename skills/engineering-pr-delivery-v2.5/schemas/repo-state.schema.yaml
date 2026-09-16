@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, progress, chat_context_required]
+properties:
+  schema_version: {const: relay-v2.5}
+  roadmap:
+    type: object
+    required: [id, revision, path]
+  current_position:
+    type: object
+    required: [objective, phase, work_package]
+  execution_policy:
+    type: object
+    required: [mode]
+    properties:
+      mode: {enum: [SERIAL, OWNER_APPROVED_PARALLEL]}
+  active_ep:
+    type: object
+    required: [id, path, state]
+  chat_context_required: {const: false}
+additionalProperties: true

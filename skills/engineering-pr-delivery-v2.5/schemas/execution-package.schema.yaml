@@ -1,0 +1,18 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, identity, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
+properties:
+  schema_version: {const: relay-v2.5}
+  identity:
+    type: object
+    required: [ep_id, branch, execution_state]
+  roadmap_source:
+    type: object
+    required: [roadmap_id, roadmap_revision, objective, phase, work_package]
+  scope:
+    type: object
+    required: [allowed, prohibited]
+  acceptance:
+    type: array
+    minItems: 1
+additionalProperties: true

@@ -1,0 +1,3 @@
+# Engineering numerics blueprint
+
+When formulas, loads, geometry, units, materials, limits or solver results matter: identify governing oracle/units; capture concrete inputs; independently reconstruct representative results where feasible; include falsifiers for sign/unit/axis/scaling/boundary errors; separate UI/workflow from numerical-authority changes; preserve valid benchmark outputs unless roadmap authorizes numerical change; treat unsafe or authority-inconsistent results as true stop conditions; record assumptions and validity range.

@@ -1,0 +1,14 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, owner_approval, ascii_topology, lanes, integration, risks, stop_conditions]
+properties:
+  schema_version: {const: relay-v2.5}
+  owner_approval:
+    type: object
+    required: [approved, authority]
+    properties:
+      approved: {const: true}
+      authority: {const: OWNER}
+  ascii_topology: {type: string, minLength: 10}
+  lanes: {type: array, minItems: 2}
+additionalProperties: true

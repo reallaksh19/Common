@@ -1,0 +1,12 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, progress_basis, overall]
+properties:
+  schema_version: {const: relay-v2.5}
+  progress_basis:
+    type: object
+    required: [id, roadmap_revision]
+  overall:
+    type: object
+    required: [earned_weight, total_weight, percent]
+additionalProperties: true
