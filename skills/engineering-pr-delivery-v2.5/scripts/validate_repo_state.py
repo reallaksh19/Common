@@ -5,6 +5,7 @@ from pathlib import Path
 from relaylib import load_yaml,print_result,require
 
 RELAY_STATES={"INITIALIZING","ACTIVE","PARALLEL","IDLE","TERMINAL"}
+NONE_IDS={None,"","NONE"}
 
 def validate(repo_root:Path):
     errors=[]; warnings=[]
@@ -20,6 +21,12 @@ def validate(repo_root:Path):
     current=state.get("current_position") or {};errors+=require(current,["objective","phase","work_package"],"REPO_STATE.current_position")
     active=state.get("active_ep") or {}; errors+=require(active,["id","path","state"],"REPO_STATE.active_ep")
     last=state.get("last_checkpoint") or {}; errors+=require(last,["id","path"],"REPO_STATE.last_checkpoint")
+    join=state.get("predecessor_join") or {};join_id=join.get("id");join_path=join.get("path")
+    if bool(join_id)!=bool(join_path):errors.append("REPO_STATE.predecessor_join requires both id and path or neither")
+    if join_id:
+        if relay_state!="ACTIVE":errors.append("predecessor_join is valid only for ACTIVE integration work")
+        if last.get("id") not in NONE_IDS or last.get("path") not in {None,""}:errors.append("predecessor_join and singular last_checkpoint cannot both be active")
+        if not (repo_root/join_path).exists():errors.append(f"REPO_STATE.predecessor_join.path does not exist: {join_path}")
     projection=state.get("projection") or {};errors+=require(projection,["required","state","roadmap_revision","execution_ref","basis"],"REPO_STATE.projection")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["repository_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
