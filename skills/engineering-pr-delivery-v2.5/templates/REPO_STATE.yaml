@@ -27,6 +27,9 @@ last_checkpoint:
 predecessor_join:
   id: null
   path: null
+predecessor_replan:
+  id: null
+  path: null
 progress:
   overall_percent: 0
   phase_percent: 0
