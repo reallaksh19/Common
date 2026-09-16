@@ -31,6 +31,9 @@ predecessor_join:
 predecessor_replan:
   id: null
   path: null
+# Candidate-specific admissions are route-scoped. Empty means the baton may be
+# complete, but no candidate has yet been independently certified on a route.
+takeover_admissions: []
 progress:
   overall_percent: 0
   phase_percent: 0
@@ -57,20 +60,16 @@ status_planes:
 projection:
   required: true
   state: PENDING
-  # Top-level operation always represents the newest desired repository projection.
   operation_id: "<stable operation id for newest desired generation>"
   target: "<durable external projection target>"
   roadmap_revision: "<current RM-xxxx>"
   execution_ref: "<current EP-id / PLAN-id / NONE>"
   receipt: null
   basis: []
-  # Required for STALE when the external surface still reflects an older generation.
   observed: null
-  # Any intermediate desired generation that lost authority is retained here and
-  # chained through superseded_by to the current operation. Never retry these IDs.
   superseded_operations: []
 relay_readiness:
-  repository_ready: true
+  baton_ready: true
   projection_ready: false
   handover_ready: false
   reasons:
