@@ -1,0 +1,42 @@
+name: V2 Shared AgentTasks T1
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Shared/AgentTasks/**'
+      - 'Grade 9/V2/Shared/LearningEngineering/**'
+      - 'Grade 9/V2/Shared/EngineeringGate/**'
+      - 'Grade 9/V2/Shared/CrossDomain/**'
+      - 'Grade 9/V2/**/GENERATION_AUTHORITY_MANIFEST.json'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-shared-agent-tasks.yml'
+  workflow_dispatch:
+
+jobs:
+  execution-kernel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install schema validator
+        run: python -m pip install --disable-pip-version-check jsonschema
+      - name: Compile-check execution engines
+        run: python -m py_compile 'Grade 9/V2/Shared/AgentTasks/engine/'*.py
+      - name: Run execution-kernel falsifiers
+        run: python -m unittest 'Grade 9/V2/Shared/AgentTasks/tests/test_execution_kernel.py' -v
+      - name: Compile current governed-case packet and preflight
+        run: |
+          python 'Grade 9/V2/Shared/AgentTasks/engine/compile_execution_packet.py' \
+            --task 'Grade 9/V2/Shared/AgentTasks/fixtures/valid/physics-subtopic-engineering.task.json' \
+            --output /tmp/execution-packet.json \
+            --preflight-output /tmp/engineering-preflight.md
+          python - <<'PY'
+          import json
+          packet = json.load(open('/tmp/execution-packet.json', encoding='utf-8'))
+          assert packet['engineering_preflight']['engineering_state'] == 'NOT_EVALUATED'
+          assert packet['engineering_preflight']['publication_authorization'] == 'NOT_IMPLIED'
+          assert packet['packet_digest'].startswith('sha256:')
+          print(packet['packet_digest'])
+          PY
