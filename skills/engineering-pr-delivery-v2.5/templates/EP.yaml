@@ -130,6 +130,15 @@ implementation_plan:
     expected_state: "<observable intermediate/final state after this step>"
     stop_conditions:
       - "Stop/reconcile if required authority, input, benchmark, protected invariant, or route basis is invalid."
+qualification_boundary:
+  required: false
+  # When required=true, trigger is PHASE_CHANGED or MATERIAL_QUALIFICATION_BOUNDARY_CHANGED.
+  trigger: null
+  from_phase: null
+  to_phase: null
+  changed_dimensions: []
+  basis: []
+  question_set: null
 quality:
   blueprints: [coding, testing]
   findings_policy: Quality findings do not become hard stops unless acceptance, safety or authority requires it.
@@ -169,60 +178,21 @@ report_contract:
     - Roadmap changes
     - Exact next actions
     - Successor EP
-    - Phase-transition Q1-Q5 when applicable
+    - Qualification Q1-Q5 when applicable
   payloads:
-    - id: RPT-STATE
-      section: Executive state
-      sources: [REPO_STATE]
-      required_fields: [relay_state, current_position, execution_state, material_authority, stop]
-    - id: RPT-PROGRESS
-      section: Overall / phase / EP progress
-      sources: [PROGRESS, OVERALL_ROADMAP, EP]
-      required_fields: [progress_basis, overall, phase, work_package, acceptance]
-    - id: RPT-WORK
-      section: Work completed
-      sources: [EP, CP]
-      required_fields: [completed_steps, implementation_result]
-    - id: RPT-FILES
-      section: Files changed
-      sources: [CP]
-      required_fields: [files_changed]
-    - id: RPT-AC
-      section: Acceptance matrix
-      sources: [EP, CP]
-      required_fields: [criterion, status, basis]
-    - id: RPT-EVIDENCE
-      section: Tests and evidence
-      sources: [EP, CP, REPO_STATE]
-      required_fields: [validation_id, obligation_class, status, basis_ref, not_run_reason]
-    - id: RPT-QUALITY
-      section: Quality findings
-      sources: [EP, CP, REPO_STATE]
-      required_fields: [blueprints, findings, disposition]
-    - id: RPT-LIMITS
-      section: Known limitations
-      sources: [EP, CP, REPO_STATE]
-      required_fields: [limitations, evidence_gaps, deferred_items]
-    - id: RPT-OWNER
-      section: Owner decisions required
-      sources: [ODR, REPO_STATE]
-      required_fields: [decision_required, pending_items, authority_effect]
-    - id: RPT-ISSUES
-      section: GitHub issue changes
-      sources: [ISSUE_GRAPH, REPO_STATE]
-      required_fields: [operations, relationships, projection_state]
-    - id: RPT-ROADMAP
-      section: Roadmap changes
-      sources: [OVERALL_ROADMAP, ROADMAP_REVISION, PROGRESS]
-      required_fields: [revision, topology_or_status_change, frontier_after, progress_basis_effect]
-    - id: RPT-NEXT
-      section: Exact next actions
-      sources: [OVERALL_ROADMAP, REPO_STATE, EP]
-      required_fields: [ordered_actions, targets, inputs, tests, acceptance, stop_conditions]
-    - id: RPT-SUCCESSOR
-      section: Successor EP
-      sources: [CP, OVERALL_ROADMAP, REPO_STATE]
-      required_fields: [successor_mode, next_frontier, ep_or_terminal_disposition]
+    - {id: RPT-STATE, section: Executive state, sources: [REPO_STATE], required_fields: [relay_state, current_position, execution_state, material_authority, stop]}
+    - {id: RPT-PROGRESS, section: Overall / phase / EP progress, sources: [PROGRESS, OVERALL_ROADMAP, EP], required_fields: [progress_basis, overall, phase, work_package, acceptance]}
+    - {id: RPT-WORK, section: Work completed, sources: [EP, CP], required_fields: [completed_steps, implementation_result]}
+    - {id: RPT-FILES, section: Files changed, sources: [CP], required_fields: [files_changed]}
+    - {id: RPT-AC, section: Acceptance matrix, sources: [EP, CP], required_fields: [criterion, status, basis]}
+    - {id: RPT-EVIDENCE, section: Tests and evidence, sources: [EP, CP, REPO_STATE], required_fields: [validation_id, obligation_class, status, basis_ref, not_run_reason]}
+    - {id: RPT-QUALITY, section: Quality findings, sources: [EP, CP, REPO_STATE], required_fields: [blueprints, findings, disposition]}
+    - {id: RPT-LIMITS, section: Known limitations, sources: [EP, CP, REPO_STATE], required_fields: [limitations, evidence_gaps, deferred_items]}
+    - {id: RPT-OWNER, section: Owner decisions required, sources: [ODR, REPO_STATE], required_fields: [decision_required, pending_items, authority_effect]}
+    - {id: RPT-ISSUES, section: GitHub issue changes, sources: [ISSUE_GRAPH, REPO_STATE], required_fields: [operations, relationships, projection_state]}
+    - {id: RPT-ROADMAP, section: Roadmap changes, sources: [OVERALL_ROADMAP, ROADMAP_REVISION, PROGRESS], required_fields: [revision, topology_or_status_change, frontier_after, progress_basis_effect]}
+    - {id: RPT-NEXT, section: Exact next actions, sources: [OVERALL_ROADMAP, REPO_STATE, EP], required_fields: [ordered_actions, targets, inputs, tests, acceptance, stop_conditions]}
+    - {id: RPT-SUCCESSOR, section: Successor EP, sources: [CP, OVERALL_ROADMAP, REPO_STATE], required_fields: [successor_mode, next_frontier, ep_or_terminal_disposition]}
 checkpoint_contract:
   required: true
 successor_relay:
