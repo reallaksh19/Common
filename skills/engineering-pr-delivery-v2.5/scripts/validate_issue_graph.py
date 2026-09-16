@@ -4,6 +4,8 @@ import argparse
 from pathlib import Path
 from relaylib import index_roadmap,load_yaml,print_result
 REL={"PARENT_OF","DEPENDS_ON","BLOCKS","SUPERSEDES","REVISION_OF","RELATES_TO","INTEGRATED_BY","DUPLICATES"}
+WORK_STATES={"OPEN","ACTIVE","COMPLETE","SUPERSEDED","CANCELLED"}
+GITHUB_STATES={"OPEN","CLOSED"}
 
 def key(node):return str(node.get("id",node.get("issue","")))
 def validate(root:Path):
@@ -15,6 +17,8 @@ def validate(root:Path):
         if not k:e.append("issue graph node requires id or issue");continue
         if k in nodes:e.append(f"duplicate issue graph node {k}")
         nodes[k]=n
+        if n.get("state") not in WORK_STATES:e.append(f"issue node {k} state invalid: {n.get('state')}")
+        if n.get("github_state") not in GITHUB_STATES:e.append(f"issue node {k} github_state invalid: {n.get('github_state')}")
         rn=n.get("roadmap_node")
         if rn and rn not in wps:e.append(f"issue node {k} references missing roadmap work package {rn}")
     for rel in g.get("relationships",[]) or []:
