@@ -37,6 +37,8 @@ If one lane becomes invalid before convergence, the active parallel topology is 
 
 For `CARRIED` and `INVALIDATED` lanes, `unresolved_acceptance` and `evidence` are the complete source inventory and `transfers[]` is an exact partition of that inventory across successor frontier work packages. The validator rejects dropped items, duplicates, status/basis mutation, duplicate transfer targets, and targets outside the recomputed frontier. If several predecessor transfers converge on one successor work package, that EP/lane must inherit their exact aggregate. If one predecessor lane splits across several successor WPs, each new EP/lane inherits only its exact addressed subset. Replacement EPs/plans bind the receipt through `previous_replan`.
 
+Replacement parallel plans also persist `previous_replan_path`. `validate_parallel_replan.py` walks the complete historical `PLAN -> REPLAN -> PLAN -> ...` lineage backward and requires every cited receipt to exist, every receipt ID/path pair to agree, and each historical replan's successor route to point forward to the exact plan that cites it. Missing historical receipts, rewired forward links, and cycles are invalid.
+
 After replan, route resolution reads only the current `REPO_STATE.execution_policy.parallel_plan`; stale predecessor-plan branches/worktrees resolve no executable lane unless the new approved plan explicitly reuses that route and the new EP independently passes live Git/material-basis checks.
 
 Safe initialization and migration helpers:
