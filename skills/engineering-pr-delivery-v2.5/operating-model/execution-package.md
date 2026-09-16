@@ -59,7 +59,14 @@ Only an unresolved condition applicable to the currently authorized slice can re
 
 ## Discovery
 
-Discovery is executable, not narrative. A discovery step names an action, target, question, expected outputs, receipt requirement and reconciliation/stop condition. The candidate records results in a `DISC-xxxx` Discovery Receipt during takeover certification.
+Discovery is executable, not narrative. A forward discovery instruction uses a `DSTEP-xxxx` ID and names an action, target, question, expected outputs, receipt requirement and reconciliation/stop condition. The incoming candidate records the resulting evidence in a separate `DISC-xxxx` Discovery Receipt during takeover certification.
+
+```text
+DSTEP-* = forward discovery instruction in the EP
+DISC-*  = backward discovery evidence produced by the candidate
+```
+
+The current kernel EP template still contains legacy `DISC-*` step examples. WP-01 owns that template/schema/validator migration; WP-00 records the namespace decision without partially implementing the semantic EP.
 
 ## Scope and authority
 
