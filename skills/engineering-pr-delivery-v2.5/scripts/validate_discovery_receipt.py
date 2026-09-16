@@ -11,12 +11,9 @@ def _text(value:Any)->bool:return isinstance(value,str) and bool(value.strip())
 
 
 def _compare_basis(receipt:dict,expected:dict,label:str)->list[str]:
-    e=[];basis=receipt.get("basis") or {};route=receipt.get("route") or {}
+    e=[];basis=receipt.get("basis") or {}
     for key in ("roadmap_id","roadmap_revision","relay_protocol_basis_ref","material_ref","ep_contract_digest","repo_profile_digest"):
         if str(basis.get(key))!=str(expected.get(key)):e.append(f"{label}.basis.{key} does not match current route basis")
-    for key in ("route_key","mode","execution_ref","ep_id","ep_path","plan_id","plan_path","lane_id"):
-        if str(route.get(key))!=str(expected.get(key) if key!="mode" else receipt.get("route",{}).get("mode")):
-            pass
     exp_baton=expected.get("predecessor_baton") or {};got_baton=basis.get("predecessor_baton") or {}
     for key in ("type","id","path","digest"):
         if str(got_baton.get(key))!=str(exp_baton.get(key)):e.append(f"{label}.basis.predecessor_baton.{key} does not match current predecessor baton")
@@ -45,7 +42,9 @@ def validate_file(root:Path,path:Path,state:dict|None=None,expected_route:dict|N
     for key,val in expected_route_fields.items():
         if str(rdata.get(key))!=str(val):e.append(f"{label}.route.{key} does not match current route")
     e+=_compare_basis(receipt,expected,label)
-    ep=load_yaml(root/str(route.get("ep_path")));all_ids={str(x.get("id")) for x in ep.get("repository_discovery",[]) or [] if isinstance(x,dict) and x.get("id")};required=set(required_discovery_steps(ep))
+    ep=load_yaml(root/str(route.get("ep_path")))
+    instructions={str(x.get("id")):x for x in ep.get("repository_discovery",[]) or [] if isinstance(x,dict) and x.get("id")}
+    all_ids=set(instructions);required=set(required_discovery_steps(ep))
     steps=receipt.get("steps")
     if not isinstance(steps,list):e.append(f"{label}.steps must be a list");steps=[]
     seen=set();passed=set()
@@ -63,15 +62,19 @@ def validate_file(root:Path,path:Path,state:dict|None=None,expected_route:dict|N
         basis=item.get("basis")
         if not isinstance(basis,list) or not basis or not all(_text(x) for x in basis):e.append(f"{sl}.basis must contain durable non-empty basis entries")
         outputs=item.get("outputs")
+        output_names=[]
         if not isinstance(outputs,list) or not outputs:e.append(f"{sl}.outputs must contain observed outputs")
         else:
             for j,out in enumerate(outputs):
                 ol=f"{sl}.outputs[{j}]"
                 if not isinstance(out,dict):e.append(f"{ol} must be a mapping");continue
-                if not _text(out.get("name")):e.append(f"{ol}.name must be explicit")
+                name=str(out.get("name") or "");output_names.append(name)
+                if not _text(name):e.append(f"{ol}.name must be explicit")
                 if "value" not in out or out.get("value") in (None,""):e.append(f"{ol}.value must record the observed result")
                 ob=out.get("basis")
                 if not isinstance(ob,list) or not ob or not all(_text(x) for x in ob):e.append(f"{ol}.basis must contain durable evidence")
+        instruction=instructions.get(sid) or {};expected_outputs=[str(x) for x in instruction.get("expected_outputs",[]) or []]
+        if sid in instructions and sorted(output_names)!=sorted(expected_outputs):e.append(f"{sl}.outputs must exactly cover instruction expected_outputs {expected_outputs}")
     missing=sorted(required-passed)
     if missing:e.append(f"{label} missing PASS results for required discovery steps: {missing}")
     result=receipt.get("result")
