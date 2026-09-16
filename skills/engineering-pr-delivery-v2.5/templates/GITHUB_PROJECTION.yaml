@@ -15,6 +15,7 @@ operations:
     kind: CREATE
     state: PREPARED
     idempotency_key: "relay:GHGEN-0001:GHOP-0001"
+    depends_on: []
     subject:
       issue_node: ISSUE-001
       related_nodes: []
@@ -32,6 +33,7 @@ operations:
       attempt_count: 0
       last_attempt_basis: []
       receipt: null
+      last_error: null
     verification:
       status: NOT_RUN
       observed_issue_number: null
@@ -43,7 +45,9 @@ operations:
       issue_graph_effects:
         - node: ISSUE-001
           set_github_state: OPEN
+          set_issue_number: OBSERVED
+          set_issue_id: OBSERVED
       complete_when:
         - issue identity verified
-        - marker verified
+        - relay-operation marker verified
         - desired GitHub state verified
