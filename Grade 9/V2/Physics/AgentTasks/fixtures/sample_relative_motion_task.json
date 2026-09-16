@@ -1,0 +1,31 @@
+{
+  "prompt_id": "SEP-PHY-RELMOTION-v1",
+  "prompt_template_id": "SEP-07",
+  "prompt_template_version": "1.0.0",
+  "task_instance_id": "task-relmotion-001",
+  "repository": "reallaksh19/Common",
+  "target_branch": "v2-physics-gates-gr9-11",
+  "baseline_pr": 383,
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Motion",
+  "subtopic": "Relative Motion",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "write_mode": "IMPLEMENT",
+  "expected_scope": [
+    "1D Relative Velocity",
+    "2D Relative Velocity in Plane",
+    "Frame of Reference Transformations"
+  ],
+  "explicit_exclusions": [
+    "Relativistic velocity addition (Lorentz transformations)",
+    "Curved spacetime"
+  ],
+  "subject_profile_version": "1.0.0",
+  "schema_registry_version": "1.0.0"
+}
