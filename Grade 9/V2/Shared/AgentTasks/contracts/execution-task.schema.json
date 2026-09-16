@@ -47,6 +47,11 @@
     },
     "topic": {"type": "string", "minLength": 1},
     "subtopic": {"type": "string", "minLength": 1},
+    "execution_route_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]*$",
+      "description": "Optional opaque route request. It has no subject semantics in AgentTasks; the current subject authority must resolve it by exact ID or hold execution."
+    },
     "engineering_depth": {
       "type": "string",
       "enum": ["FOUNDATION", "STANDARD", "RESEARCH"],
