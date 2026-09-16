@@ -1,0 +1,730 @@
+{
+  "pilot_id": "PILOT-PHYSICS-THERMODYNAMICS-RESEARCH-PROTOTYPE-v1",
+  "roadmap_pilot_ref": "PILOT-PHYSICS-THERMODYNAMICS-RESEARCH",
+  "runtime_authority": false,
+  "prototype_only": true,
+  "promotion_state": "HELD",
+  "engineering_depth": "RESEARCH",
+  "learner_state_authority": false,
+  "hold_reasons": [
+    "NO_GRADE_11_SUBJECT_GENERATION_AUTHORITY",
+    "SKP_TO_ENGINEERING_PROMOTION_PATH_INACTIVE",
+    "RESEARCH_OVERLAY_SCHEMA_PLANNED",
+    "GRADE_11_TARGET_POPULATION_CONCEPTION_EVIDENCE_INSUFFICIENT",
+    "CROSS_DOMAIN_IDENTIFIER_ROUTING_UNRESOLVED"
+  ],
+  "identity": {
+    "schema_version": "0.1.0",
+    "skp_id": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+    "subject": "PHYSICS",
+    "canonical_name": "Thermodynamics — research-depth discovery and reconciliation pilot",
+    "aliases": ["Physics Thermodynamics RESEARCH pilot"],
+    "package_semver": "0.1.0",
+    "predecessor_refs": [],
+    "supersession_state": "PILOT_CURRENT",
+    "supersedes_ref": null,
+    "identity_rationale": "A bounded non-runtime diversity pilot for current Grade XI thermodynamics scope, evidence depth, prerequisites, applicability conditions and research-overlay invariance."
+  },
+  "scope": {
+    "schema_version": "0.1.0",
+    "scope_id": "SKP-SCOPE-PHYSICS-THERMODYNAMICS",
+    "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+    "includes": [
+      {
+        "scope_item_id": "SCOPE-PHY-THERMO-CBSE-CORE",
+        "statement": "Current CBSE Grade XI Thermodynamics core: thermal equilibrium and temperature, zeroth law, heat, work, internal energy, first and second laws, thermodynamic state variables and equation of state, and isothermal, adiabatic, reversible, irreversible and cyclic processes.",
+        "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27"]
+      },
+      {
+        "scope_item_id": "SCOPE-PHY-THERMO-MODEL-VALIDITY",
+        "statement": "Research-depth engineering of the core includes explicit system boundary, sign convention, state-versus-process distinctions and applicability conditions needed to prevent invalid equation use.",
+        "evidence_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2025-CONTEXT"]
+      },
+      {
+        "scope_item_id": "SCOPE-PHY-THERMO-RESEARCH-EVIDENCE",
+        "statement": "Research-depth evidence may add population-limited learner-difficulty findings and advanced explanatory checks without mutating the confirmed curriculum core.",
+        "evidence_refs": ["SRC-PRPER-2024-FIRST-LAW", "SRC-PRPER-2024-ENTROPY"]
+      }
+    ],
+    "excludes": [
+      {
+        "scope_item_id": "SCOPE-PHY-THERMO-NO-SILENT-ENTROPY-CURRICULUM",
+        "statement": "Entropy formalism is not promoted as an explicit current CBSE Grade XI Thermodynamics requirement by this pilot; it remains research/advanced context unless separately authorized.",
+        "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-THERMO-KINETICS"]
+      },
+      {
+        "scope_item_id": "SCOPE-PHY-THERMO-NO-SILENT-CARNOT-CURRICULUM",
+        "statement": "Carnot cycles, heat-engine efficiency, enthalpy and Gibbs free energy are not silently promoted into the current CBSE Grade XI Physics Thermodynamics core by research sources or adjacent disciplines.",
+        "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-THERMO-KINETICS"]
+      }
+    ],
+    "adjacent_refs": ["CBSE-XI-THERMAL-PROPERTIES", "CBSE-XI-KINETIC-THEORY", "MATH-GRAPH-AREA-INTERPRETATION"],
+    "unresolved_boundaries": [
+      {
+        "boundary_id": "BOUNDARY-PHY-THERMO-MATH-PROVIDER-GRADE",
+        "detail": "The shared CrossDomain provider registry routes Mathematics through the existing Grade 9 provider root, while this pilot targets Grade XI; no Grade XI provider-owned readiness receipt exists here.",
+        "state": "UNRESOLVED"
+      }
+    ]
+  },
+  "curriculum_bindings": [
+    {
+      "schema_version": "0.1.0",
+      "binding_id": "CURR-PHY-THERMO-CBSE-2026-27",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "curriculum_authority": "CBSE Physics Code 042 curriculum",
+      "jurisdiction": "CBSE India",
+      "grade": "11",
+      "curriculum_version": "2026-27",
+      "unit_ref": "UNIT-VIII-CHAPTER-11-THERMODYNAMICS",
+      "classification": "CURRICULUM_REQUIRED",
+      "explicitness": "EXPLICIT",
+      "scope_refs": ["SCOPE-PHY-THERMO-CBSE-CORE"],
+      "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27"],
+      "rationale": "The official current CBSE Physics curriculum explicitly names Unit VIII / Chapter 11 Thermodynamics and enumerates the included laws, state-variable/equation-of-state language and process types.",
+      "exclusions": ["External assessment coverage and university thermodynamics sources cannot add curriculum-required topics."],
+      "binding_state": "CONFIRMED"
+    }
+  ],
+  "capabilities": [
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-EQUILIBRIUM",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Reason with thermal equilibrium and the zeroth law",
+      "disciplinary_meaning": "Identify thermal-equilibrium relations and use the zeroth law to connect equilibrium with a consistent temperature concept without importing unrelated microscopic assumptions.",
+      "learner_success_statement": "Can identify when bodies are in mutual thermal equilibrium and explain what the zeroth law permits one to infer about temperature.",
+      "scope_refs": ["SCOPE-PHY-THERMO-CBSE-CORE"],
+      "observability": {"state": "DIRECT", "evidence_types": ["EQUILIBRIUM_CLASSIFICATION", "ZEROTH_LAW_EXPLANATION"]},
+      "granularity_rationale": "The curriculum explicitly separates thermal equilibrium/temperature and the zeroth law as core thermodynamic ideas.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-THERMO-KINETICS"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-ENERGY-ACCOUNTING",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Apply the first law with an explicit system and sign convention",
+      "disciplinary_meaning": "Account for change in internal energy from heat transfer and work after declaring the thermodynamic system and a consistent work-sign convention.",
+      "learner_success_statement": "Can define the system, identify heat and work transfers, state the sign convention, apply the first law and interpret the resulting change in internal energy.",
+      "scope_refs": ["SCOPE-PHY-THERMO-CBSE-CORE", "SCOPE-PHY-THERMO-MODEL-VALIDITY"],
+      "observability": {"state": "DIRECT", "evidence_types": ["SYSTEM_BOUNDARY_DECLARATION", "FIRST_LAW_ACCOUNTING", "SIGN_INTERPRETATION"]},
+      "granularity_rationale": "Heat, work, internal energy and the first law form one tightly coupled accounting capability whose validity depends on system and sign semantics.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2024-FIRST-LAW"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-PROCESS-CLASSIFICATION",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Classify thermodynamic states and processes",
+      "disciplinary_meaning": "Distinguish state variables from transfer/path quantities and apply the defining constraints of isothermal, adiabatic, cyclic, reversible and irreversible processes without treating labels as sufficient proof.",
+      "learner_success_statement": "Can identify relevant state variables, classify a process from its declared constraints and state which thermodynamic quantities are constrained or not constrained by that classification.",
+      "scope_refs": ["SCOPE-PHY-THERMO-CBSE-CORE", "SCOPE-PHY-THERMO-MODEL-VALIDITY"],
+      "observability": {"state": "DIRECT", "evidence_types": ["STATE_PATH_DISTINCTION", "PROCESS_CONSTRAINT_CLASSIFICATION", "MODEL_APPLICABILITY_CHECK"]},
+      "granularity_rationale": "The current curriculum explicitly names thermodynamic state variables/equation of state and five process classes; research evidence shows context-sensitive state/path confusion.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-PRPER-2025-CONTEXT", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-SECOND-LAW-DIRECTION",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Use the second law to constrain process direction and reversibility",
+      "disciplinary_meaning": "Use second-law reasoning to distinguish idealized reversible behavior from irreversible behavior and reject process descriptions that rely on first-law conservation alone.",
+      "learner_success_statement": "Can explain why energy conservation by itself does not determine thermodynamic direction and can distinguish reversible from irreversible process descriptions at the curriculum level.",
+      "scope_refs": ["SCOPE-PHY-THERMO-CBSE-CORE", "SCOPE-PHY-THERMO-RESEARCH-EVIDENCE"],
+      "observability": {"state": "INDIRECT", "evidence_types": ["REVERSIBILITY_REASONING", "SECOND_LAW_PLAUSIBILITY_CHECK"]},
+      "granularity_rationale": "The second law and reversible/irreversible distinction are explicit curriculum requirements but deeper entropy formalism is deliberately separated as research context.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-THERMO-KINETICS", "SRC-PRPER-2024-ENTROPY"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-WORK-BRIDGE",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Connect mechanical work to thermodynamic work",
+      "disciplinary_meaning": "Carry the energy-transfer meaning of work from mechanics into a system-boundary description while recognizing that thermodynamic sign conventions must be declared explicitly.",
+      "learner_success_statement": "Can relate mechanical work to energy transfer across a thermodynamic boundary and avoid equating work with a stored state variable.",
+      "scope_refs": ["SCOPE-PHY-THERMO-MODEL-VALIDITY"],
+      "observability": {"state": "INDIRECT", "evidence_types": ["WORK_TRANSFER_EXPLANATION"]},
+      "granularity_rationale": "Work and energy precede thermodynamics in the same Grade XI curriculum and provide a structural bridge into first-law reasoning.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-THERMO-TEMPERATURE-BRIDGE",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Connect thermal-properties temperature concepts to thermodynamics",
+      "disciplinary_meaning": "Use prior temperature and heat concepts as prerequisites without treating heat as a substance or as a state variable of the system.",
+      "learner_success_statement": "Can use temperature and heat-transfer language consistently when entering thermodynamic equilibrium and energy-accounting problems.",
+      "scope_refs": ["SCOPE-PHY-THERMO-MODEL-VALIDITY"],
+      "observability": {"state": "INDIRECT", "evidence_types": ["TEMPERATURE_HEAT_DISTINCTION"]},
+      "granularity_rationale": "Thermal Properties of Matter immediately precedes Thermodynamics in the current Grade XI Physics curriculum and supplies necessary vocabulary and phenomena.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    }
+  ],
+  "prerequisite_edges": [
+    {
+      "schema_version": "0.1.0",
+      "edge_id": "EDGE-PHY-THERMO-WORK-TO-FIRST-LAW",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "prerequisite_ref": "CAP-PHY-THERMO-WORK-BRIDGE",
+      "target_ref": "CAP-PHY-THERMO-ENERGY-ACCOUNTING",
+      "edge_type": "CURRICULUM_PREREQUISITE",
+      "rationale": "First-law work terms require an energy-transfer interpretation of work that is structurally inherited from the earlier Work, Energy and Power unit.",
+      "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "hardness": "SOFT",
+      "missing_behavior": "DIAGNOSTIC_CHECK",
+      "bridge_ref": null,
+      "provider_owner": null,
+      "progression_status": "NOT_A_PROGRESSION",
+      "progression_evidence_refs": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "edge_id": "EDGE-PHY-THERMO-TEMP-TO-EQUILIBRIUM",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "prerequisite_ref": "CAP-PHY-THERMO-TEMPERATURE-BRIDGE",
+      "target_ref": "CAP-PHY-THERMO-EQUILIBRIUM",
+      "edge_type": "CURRICULUM_PREREQUISITE",
+      "rationale": "The current sequence places thermal properties, including heat and temperature, immediately before thermodynamics; equilibrium reasoning uses those prior concepts.",
+      "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27"],
+      "hardness": "SOFT",
+      "missing_behavior": "DIAGNOSTIC_CHECK",
+      "bridge_ref": null,
+      "provider_owner": null,
+      "progression_status": "NOT_A_PROGRESSION",
+      "progression_evidence_refs": []
+    },
+    {
+      "schema_version": "0.1.0",
+      "edge_id": "EDGE-PHY-THERMO-MATH-PV-AREA",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "prerequisite_ref": "CAP-MATH-GRAPH-AREA-UNRESOLVED",
+      "target_ref": "CAP-PHY-THERMO-PROCESS-CLASSIFICATION",
+      "edge_type": "EXTERNAL_DOMAIN_PREREQUISITE",
+      "rationale": "A pressure-volume representation can require interpreting signed area or an integral as work; this pilot does not self-certify the Mathematics capability or its Grade XI readiness.",
+      "evidence_refs": ["SRC-PRPER-2025-CONTEXT", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "hardness": "CONTEXTUAL",
+      "missing_behavior": "UNRESOLVED",
+      "bridge_ref": null,
+      "provider_owner": {
+        "subject": "MATHEMATICS",
+        "authority_ref": "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md"
+      },
+      "progression_status": "NOT_A_PROGRESSION",
+      "progression_evidence_refs": []
+    }
+  ],
+  "source_plan": {
+    "schema_version": "0.1.0",
+    "source_plan_id": "SOURCE-PLAN-PHY-THERMODYNAMICS-RESEARCH",
+    "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+    "engineering_depth": "RESEARCH",
+    "obligations": [
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-CURRICULUM",
+        "source_intent": "CURRICULUM_AUTHORITY",
+        "target_refs": ["CURR-PHY-THERMO-CBSE-2026-27", "SCOPE-PHY-THERMO-CBSE-CORE"],
+        "required": true,
+        "selection_policy": "Use the exact current official CBSE Physics curriculum version for Grade XI scope; external exams and advanced references cannot replace it.",
+        "corroboration_policy": "SINGLE_APPROPRIATE_AUTHORITY",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-SUBJECT",
+        "source_intent": "SUBJECT_TRUTH",
+        "target_refs": ["REL-PHY-THERMO-FIRST-LAW", "REL-PHY-THERMO-CYCLE-STATE", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION"],
+        "required": true,
+        "selection_policy": "Use authoritative disciplinary references with explicit system, state, work/heat and applicability semantics; preserve sign-convention differences explicitly.",
+        "corroboration_policy": "RISK_BASED_CORROBORATION",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-DERIVATION",
+        "source_intent": "DERIVATION_REFERENCE",
+        "target_refs": ["REL-PHY-THERMO-FIRST-LAW", "REP-PHY-THERMO-PV-GRAPH"],
+        "required": true,
+        "selection_policy": "Retain the exact sign convention, boundary assumptions and process assumptions attached to any formal relation or graphical work interpretation.",
+        "corroboration_policy": "RESEARCH_LEDGER_REQUIRED",
+        "unresolved_behavior": "ALLOW_WITH_EXPLICIT_UNRESOLVED"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-MISCONCEPTION",
+        "source_intent": "MISCONCEPTION_EVIDENCE",
+        "target_refs": ["LC-PHY-THERMO-ADIABATIC-ZERO-DU", "LC-PHY-THERMO-ENTROPY-CONSERVATION"],
+        "required": true,
+        "selection_policy": "Use peer-reviewed evidence with population and task context; do not promote university-population findings as canonical Grade XI misconceptions.",
+        "corroboration_policy": "RESEARCH_LEDGER_REQUIRED",
+        "unresolved_behavior": "RESEARCH_ONLY"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-ASSESSMENT",
+        "source_intent": "EXTERNAL_ASSESSMENT",
+        "target_refs": ["DISCOVERY-PHY-THERMO-JEE-MAIN-2026"],
+        "required": false,
+        "selection_policy": "Use the exact official NTA JEE Main syllabus only as external assessment evidence; it must not rewrite CBSE curriculum truth.",
+        "corroboration_policy": "SINGLE_APPROPRIATE_AUTHORITY",
+        "unresolved_behavior": "CANDIDATE_ONLY"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-THERMO-RESEARCH-EXTENSION",
+        "source_intent": "RESEARCH_EXTENSION",
+        "target_refs": ["CLAIM-PHY-THERMO-RESEARCH-ENTROPY", "CLAIM-PHY-THERMO-RESEARCH-PV-AREA"],
+        "required": true,
+        "selection_policy": "Research-only claims remain additive to a frozen base-claim snapshot and require explicit source and applicability records.",
+        "corroboration_policy": "RESEARCH_LEDGER_REQUIRED",
+        "unresolved_behavior": "RESEARCH_ONLY"
+      }
+    ]
+  },
+  "source_ledger": [
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-CBSE-PHYSICS-2026-27",
+      "title": "CBSE Physics (Code No. 042) Class XI curriculum 2026-27",
+      "creator_or_organization": "Central Board of Secondary Education",
+      "publication_year": 2026,
+      "source_type": "OFFICIAL_CURRICULUM",
+      "source_locator": "https://cbseacademic.nic.in/web_material/CurriculumMain27/SecPart2/Physics_SecP2_2026-27.pdf",
+      "provenance_scope": "WEB",
+      "version_identity": "CBSE-2026-27-PHYSICS-042-CLASS-XI",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "CURRICULUM_AUTHORITY",
+          "target_refs": ["CURR-PHY-THERMO-CBSE-2026-27", "SCOPE-PHY-THERMO-CBSE-CORE"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This is the official current CBSE Physics curriculum and explicitly enumerates Unit VIII / Chapter 11 Thermodynamics for Class XI 2026-27.",
+          "limitations": ["Curriculum wording establishes scope, not detailed derivations or empirical learner-conception claims."],
+          "population_context": "CBSE Class XI, academic year 2026-27",
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "REFERENCE_ONLY",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-NTA-JEE-MAIN-2026",
+      "title": "JEE Main 2026 Paper 1 syllabus",
+      "creator_or_organization": "National Testing Agency",
+      "publication_year": 2025,
+      "source_type": "PRIMARY_STANDARD",
+      "source_locator": "https://jeemain.nta.nic.in/document/syllabus-2026/",
+      "provenance_scope": "WEB",
+      "version_identity": "JEE-MAIN-2026-SYLLABUS-PAPER-1",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "EXTERNAL_ASSESSMENT",
+          "target_refs": ["DISCOVERY-PHY-THERMO-JEE-MAIN-2026"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This is the official NTA JEE Main 2026 syllabus and directly records external assessment coverage of thermodynamics concepts.",
+          "limitations": ["JEE Main assessment coverage does not define or supersede CBSE curriculum truth."],
+          "population_context": "JEE Main 2026 candidates",
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "REFERENCE_ONLY",
+      "overall_disposition": "PARTIALLY_PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-MIT-UNIFIED-FIRST-LAW",
+      "title": "MIT Unified Engineering Thermodynamics — First Law of Thermodynamics",
+      "creator_or_organization": "Massachusetts Institute of Technology",
+      "publication_year": null,
+      "source_type": "PROFESSIONAL_REFERENCE",
+      "source_locator": "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_4.htm",
+      "provenance_scope": "WEB",
+      "version_identity": "MIT-UNIFIED-THERMO-CH4",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "SUBJECT_TRUTH",
+          "target_refs": ["REL-PHY-THERMO-FIRST-LAW", "REL-PHY-THERMO-CYCLE-STATE", "CONCEPT-PHY-THERMO-INTERNAL-ENERGY"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "MIT's thermodynamics reference explicitly distinguishes internal energy as a state property and states the first-law energy balance with a declared work-by-system convention.",
+          "limitations": ["University engineering treatment exceeds Grade XI depth and does not define CBSE scope."],
+          "population_context": "University engineering thermodynamics",
+          "corroboration_state": "CORROBORATED"
+        },
+        {
+          "source_intent": "DERIVATION_REFERENCE",
+          "target_refs": ["REL-PHY-THERMO-FIRST-LAW", "REP-PHY-THERMO-PV-GRAPH"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "The source states the first-law relation and connects thermodynamic work to process descriptions with explicit conventions and model conditions.",
+          "limitations": ["Any pressure-volume work relation must retain its boundary/quasi-static assumptions rather than becoming a universal formula."],
+          "population_context": "University engineering thermodynamics",
+          "corroboration_state": "CORROBORATED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "OPEN_OR_PUBLIC_DOMAIN",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-MIT-THERMO-KINETICS",
+      "title": "MIT OpenCourseWare Thermodynamics and Kinetics lecture sequence",
+      "creator_or_organization": "Massachusetts Institute of Technology",
+      "publication_year": 2008,
+      "source_type": "PROFESSIONAL_REFERENCE",
+      "source_locator": "https://ocw.mit.edu/courses/5-60-thermodynamics-kinetics-spring-2008/pages/lecture-notes/",
+      "provenance_scope": "WEB",
+      "version_identity": "MIT-5.60-SPRING-2008",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "ADVANCED_EXPLANATION",
+          "target_refs": ["CAP-PHY-THERMO-SECOND-LAW-DIRECTION", "CLAIM-PHY-THERMO-RESEARCH-ENTROPY"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "The MIT sequence explicitly separates state/zeroth law, work/heat/first law, adiabatic changes, second law, entropy and irreversibility, making advanced dependencies auditable.",
+          "limitations": ["Undergraduate chemistry/physics treatment is not Grade XI curriculum authority and includes topics beyond current CBSE scope."],
+          "population_context": "Undergraduate physical chemistry",
+          "corroboration_state": "CORROBORATED"
+        },
+        {
+          "source_intent": "RESEARCH_EXTENSION",
+          "target_refs": ["CLAIM-PHY-THERMO-RESEARCH-ENTROPY"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "The source provides an authoritative advanced explanation of entropy and irreversibility while remaining explicitly outside the base curriculum claim set.",
+          "limitations": ["Research-extension promotion cannot mutate the frozen STANDARD base claim snapshot."],
+          "population_context": "Undergraduate physical chemistry",
+          "corroboration_state": "CORROBORATED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "OPEN_OR_PUBLIC_DOMAIN",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PRPER-2024-FIRST-LAW",
+      "title": "Investigating introductory and advanced students' difficulties with change in internal energy, work, and heat transfer using a validated instrument",
+      "creator_or_organization": "Physical Review Physics Education Research",
+      "publication_year": 2024,
+      "source_type": "PEER_REVIEWED_RESEARCH",
+      "source_locator": "https://doi.org/10.1103/PhysRevPhysEducRes.20.010115",
+      "provenance_scope": "WEB",
+      "version_identity": "DOI:10.1103/PhysRevPhysEducRes.20.010115",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "MISCONCEPTION_EVIDENCE",
+          "target_refs": ["LC-PHY-THERMO-ADIABATIC-ZERO-DU", "CAP-PHY-THERMO-ENERGY-ACCOUNTING"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "Peer-reviewed study uses a validated thermodynamics instrument across more than 1000 students in 12 introductory and advanced physics classes and documents difficulties with internal energy, work and heat transfer.",
+          "limitations": ["Population is U.S. higher-education physics, not CBSE Grade XI; the pilot therefore treats the observed reasoning as transfer-limited evidence, not a canonical Grade XI misconception."],
+          "population_context": "More than 1000 students across 12 introductory and advanced physics classes at four U.S. public higher-education institutions",
+          "corroboration_state": "CORROBORATED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "REFERENCE_ONLY",
+      "overall_disposition": "PARTIALLY_PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PRPER-2025-CONTEXT",
+      "title": "Investigating the impact of problem properties on introductory and advanced student responses to introductory thermodynamics conceptual problems",
+      "creator_or_organization": "Physical Review Physics Education Research",
+      "publication_year": 2025,
+      "source_type": "PEER_REVIEWED_RESEARCH",
+      "source_locator": "https://doi.org/10.1103/PhysRevPhysEducRes.21.010127",
+      "provenance_scope": "WEB",
+      "version_identity": "DOI:10.1103/PhysRevPhysEducRes.21.010127",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "MISCONCEPTION_EVIDENCE",
+          "target_refs": ["CAP-PHY-THERMO-PROCESS-CLASSIFICATION", "CLAIM-PHY-THERMO-RESEARCH-PV-AREA"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "Peer-reviewed research directly studies problem-context dependence for state variables, path-dependent heat/work and signed pressure-volume area interpretation using a validated survey.",
+          "limitations": ["Population is introductory and advanced university physics; findings must not be generalized automatically to Grade XI learners."],
+          "population_context": "Introductory and advanced university physics students after traditional lecture-based thermodynamics instruction",
+          "corroboration_state": "CORROBORATED"
+        },
+        {
+          "source_intent": "REPRESENTATION_REFERENCE",
+          "target_refs": ["REP-PHY-THERMO-PV-GRAPH"],
+          "authority_disposition": "CANDIDATE",
+          "selection_reason": "The study explicitly tests signed pressure-volume area interpretation and therefore provides representation-specific difficulty evidence rather than general representation authority.",
+          "limitations": ["Evidence supports a candidate representation obligation, not a universal mandate that every learner artifact use a pressure-volume graph."],
+          "population_context": "Introductory and advanced university physics students",
+          "corroboration_state": "REQUIRED_OPEN"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "REFERENCE_ONLY",
+      "overall_disposition": "PARTIALLY_PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PRPER-2024-ENTROPY",
+      "title": "Investigating introductory and advanced students' difficulties with entropy and the second law of thermodynamics using a validated instrument",
+      "creator_or_organization": "Physical Review Physics Education Research",
+      "publication_year": 2024,
+      "source_type": "PEER_REVIEWED_RESEARCH",
+      "source_locator": "https://doi.org/10.1103/PhysRevPhysEducRes.20.020110",
+      "provenance_scope": "WEB",
+      "version_identity": "DOI:10.1103/PhysRevPhysEducRes.20.020110",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "MISCONCEPTION_EVIDENCE",
+          "target_refs": ["LC-PHY-THERMO-ENTROPY-CONSERVATION", "CAP-PHY-THERMO-SECOND-LAW-DIRECTION"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "Peer-reviewed validated-instrument research reports a widespread tendency among introductory students to reason as though entropy were conserved.",
+          "limitations": ["Population is U.S. higher education, not CBSE Grade XI; entropy formalism is also not promoted here as an explicit current CBSE core requirement."],
+          "population_context": "More than 1000 students across introductory and advanced physics classes at four U.S. public higher-education institutions",
+          "corroboration_state": "CORROBORATED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "REFERENCE_ONLY",
+      "overall_disposition": "PARTIALLY_PROMOTED"
+    }
+  ],
+  "concepts": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "concept_id": "CONCEPT-PHY-THERMO-SYSTEM-STATE",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Thermodynamic system and state",
+      "concept_kind": "STATE",
+      "disciplinary_meaning": "A thermodynamic description is attached to a declared system and its state; state properties are distinguished from energy transferred during a process.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "subject_extension_refs": [],
+      "source_object_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "concept_id": "CONCEPT-PHY-THERMO-INTERNAL-ENERGY",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Internal energy as a state property",
+      "concept_kind": "PROPERTY",
+      "disciplinary_meaning": "Internal energy is a property of the thermodynamic state; heat transfer and work are process transfers that can change it rather than stored state variables called heat or work.",
+      "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2025-CONTEXT"],
+      "subject_extension_refs": [],
+      "source_object_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "concept_id": "CONCEPT-PHY-THERMO-PROCESS",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Thermodynamic process and constraints",
+      "concept_kind": "PROCESS",
+      "disciplinary_meaning": "A thermodynamic process connects states under declared constraints; labels such as isothermal, adiabatic, cyclic, reversible and irreversible carry different physical conditions and consequences.",
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-THERMO-KINETICS"],
+      "subject_extension_refs": [],
+      "source_object_ref": null
+    }
+  ],
+  "relations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "relation_id": "REL-PHY-THERMO-FIRST-LAW",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "First-law energy balance with work-by-system convention",
+      "relation_kind": "CONSERVATION",
+      "formal_expression": "Delta U = Q_in - W_by",
+      "meaning": "For the declared convention, change in internal energy equals heat transferred into the system minus work done by the system; changing convention requires changing the algebra consistently.",
+      "concept_refs": ["CONCEPT-PHY-THERMO-SYSTEM-STATE", "CONCEPT-PHY-THERMO-INTERNAL-ENERGY", "CONCEPT-PHY-THERMO-PROCESS"],
+      "capability_refs": ["CAP-PHY-THERMO-ENERGY-ACCOUNTING"],
+      "applicability_conditions": [
+        {"condition_id": "COND-PHY-THERMO-SYSTEM-BOUNDARY", "statement": "The thermodynamic system and boundary are declared.", "evidence_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"], "state": "REQUIRED"},
+        {"condition_id": "COND-PHY-THERMO-WORK-SIGN", "statement": "Positive W_by denotes work done by the system and the same convention is used throughout the calculation.", "evidence_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"], "state": "REQUIRED"}
+      ],
+      "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-CBSE-PHYSICS-2026-27"],
+      "subject_extension_refs": [],
+      "source_relation_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "relation_id": "REL-PHY-THERMO-CYCLE-STATE",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "State-property closure over a cycle",
+      "relation_kind": "EQUALITY",
+      "formal_expression": "cycle returns to initial state => Delta U_cycle = 0",
+      "meaning": "Because internal energy is a state property, its net change is zero when a cyclic process returns the system to the same state; heat and work over the cycle need not individually vanish.",
+      "concept_refs": ["CONCEPT-PHY-THERMO-INTERNAL-ENERGY", "CONCEPT-PHY-THERMO-PROCESS"],
+      "capability_refs": ["CAP-PHY-THERMO-PROCESS-CLASSIFICATION", "CAP-PHY-THERMO-ENERGY-ACCOUNTING"],
+      "applicability_conditions": [
+        {"condition_id": "COND-PHY-THERMO-CYCLE-CLOSURE", "statement": "The final thermodynamic state is the same as the initial state.", "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"], "state": "REQUIRED"}
+      ],
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "subject_extension_refs": [],
+      "source_relation_ref": null
+    }
+  ],
+  "representations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-PHY-THERMO-SYSTEM-BOUNDARY",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "System-boundary energy-transfer diagram",
+      "representation_kind": "DIAGRAM",
+      "purpose": "Make the chosen system explicit and separate energy transfer by heat and work from the internal-energy state property.",
+      "encodes_refs": ["CONCEPT-PHY-THERMO-SYSTEM-STATE", "CONCEPT-PHY-THERMO-INTERNAL-ENERGY", "REL-PHY-THERMO-FIRST-LAW"],
+      "decision_state": "CANDIDATE_ONLY",
+      "decision_basis_refs": [],
+      "translation_invariants": ["system identity must remain unchanged", "heat and work arrows denote transfers, not stored state variables"],
+      "translation_edges": [],
+      "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2024-FIRST-LAW"],
+      "source_representation_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-PHY-THERMO-PV-GRAPH",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "Pressure-volume process graph",
+      "representation_kind": "GRAPH",
+      "purpose": "Represent thermodynamic states and process paths and support research-depth reasoning about path dependence and mechanical work where the model permits it.",
+      "encodes_refs": ["CONCEPT-PHY-THERMO-PROCESS", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION"],
+      "decision_state": "CANDIDATE_ONLY",
+      "decision_basis_refs": [],
+      "translation_invariants": ["axis quantities and direction must remain explicit", "process path must not be replaced by endpoint information alone"],
+      "translation_edges": [
+        {
+          "target_representation_ref": "REP-PHY-THERMO-FIRST-LAW-SYMBOLIC",
+          "preserved_information": ["initial and final state context", "declared process constraints"],
+          "potential_loss": ["path geometry and signed-area information can be lost in a purely symbolic balance"],
+          "capability_refs": ["CAP-PHY-THERMO-ENERGY-ACCOUNTING", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION"],
+          "evidence_refs": ["SRC-PRPER-2025-CONTEXT", "SRC-MIT-UNIFIED-FIRST-LAW"]
+        }
+      ],
+      "source_refs": ["SRC-PRPER-2025-CONTEXT", "SRC-MIT-UNIFIED-FIRST-LAW"],
+      "source_representation_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-PHY-THERMO-FIRST-LAW-SYMBOLIC",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "First-law symbolic balance",
+      "representation_kind": "EQUATION",
+      "purpose": "Encode the energy balance only after the system and sign convention are declared.",
+      "encodes_refs": ["REL-PHY-THERMO-FIRST-LAW"],
+      "decision_state": "CANDIDATE_ONLY",
+      "decision_basis_refs": [],
+      "translation_invariants": ["work sign convention must remain explicit", "Delta U remains a state change while Q and W remain transfers"],
+      "translation_edges": [],
+      "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"],
+      "source_representation_ref": null
+    }
+  ],
+  "reasoning_sequences": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "sequence_id": "REASON-PHY-THERMO-FIRST-LAW-PROCESS",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "capability_refs": ["CAP-PHY-THERMO-ENERGY-ACCOUNTING", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION", "CAP-PHY-THERMO-SECOND-LAW-DIRECTION"],
+      "steps": [
+        {"step_id": "STEP-PHY-THERMO-DEFINE-SYSTEM", "semantic_role": "MODEL_SELECTION", "semantic_job": "Declare the system, boundary and initial/final states before assigning heat or work terms.", "semantic_job_state": "PRESENT", "subject_transition": {"kind": "SYSTEM_BOUNDARY", "statement": "From verbal situation to a declared thermodynamic system."}, "relation_refs": [], "representation_refs": ["REP-PHY-THERMO-SYSTEM-BOUNDARY"], "fragility": "MEDIUM", "fragility_rationale": "System ambiguity changes the meaning of every transfer term.", "source_step_ref": null},
+        {"step_id": "STEP-PHY-THERMO-DECLARE-SIGN", "semantic_role": "CONVENTION_CONTROL", "semantic_job": "Declare the work-sign convention before writing the first-law balance.", "semantic_job_state": "PRESENT", "subject_transition": {"kind": "SIGN_CONVENTION", "statement": "Bind verbal work direction to the chosen algebraic sign convention."}, "relation_refs": ["REL-PHY-THERMO-FIRST-LAW"], "representation_refs": ["REP-PHY-THERMO-FIRST-LAW-SYMBOLIC"], "fragility": "HIGH", "fragility_rationale": "Different references use different work sign conventions, so an undeclared sign can reverse the physical interpretation.", "source_step_ref": null},
+        {"step_id": "STEP-PHY-THERMO-CLASSIFY-PROCESS", "semantic_role": "CONSTRAINT_EXTRACTION", "semantic_job": "Identify only the constraints actually licensed by the process description and distinguish state properties from path-dependent transfers.", "semantic_job_state": "PRESENT", "subject_transition": {"kind": "PROCESS_CLASSIFICATION", "statement": "From process label or graph to explicit physical constraints."}, "relation_refs": ["REL-PHY-THERMO-CYCLE-STATE"], "representation_refs": ["REP-PHY-THERMO-PV-GRAPH"], "fragility": "HIGH", "fragility_rationale": "Validated university studies show strong context dependence in state/path and process reasoning; the Grade XI transfer remains a research hypothesis.", "source_step_ref": null},
+        {"step_id": "STEP-PHY-THERMO-APPLY-FIRST-LAW", "semantic_role": "ENERGY_ACCOUNTING", "semantic_job": "Apply the first law with only the justified heat, work and state-change information.", "semantic_job_state": "PRESENT", "subject_transition": {"kind": "CONSERVATION_ACCOUNTING", "statement": "From physical transfers and constraints to an energy balance."}, "relation_refs": ["REL-PHY-THERMO-FIRST-LAW", "REL-PHY-THERMO-CYCLE-STATE"], "representation_refs": ["REP-PHY-THERMO-SYSTEM-BOUNDARY", "REP-PHY-THERMO-FIRST-LAW-SYMBOLIC"], "fragility": "HIGH", "fragility_rationale": "Research documents cases where students treat no heat transfer as no internal-energy change and omit work entirely.", "source_step_ref": null},
+        {"step_id": "STEP-PHY-THERMO-CHECK-DIRECTION", "semantic_role": "SECOND_LAW_CHECK", "semantic_job": "Use second-law and reversibility reasoning as a plausibility constraint rather than assuming energy conservation determines process direction.", "semantic_job_state": "PRESENT", "subject_transition": {"kind": "PLAUSIBILITY", "statement": "From energy-consistent result to thermodynamic directionality check."}, "relation_refs": [], "representation_refs": [], "fragility": "HIGH", "fragility_rationale": "Entropy/second-law studies show productive and unproductive reasoning can diverge even when first-law accounting is correct.", "source_step_ref": null}
+      ],
+      "learner_support_authority": false,
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2024-FIRST-LAW", "SRC-PRPER-2025-CONTEXT", "SRC-PRPER-2024-ENTROPY"],
+      "source_route_ref": null
+    }
+  ],
+  "verification_routes": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "verification_route_id": "VERIFY-PHY-THERMO-CORE",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "target_refs": ["CAP-PHY-THERMO-ENERGY-ACCOUNTING", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION", "REL-PHY-THERMO-FIRST-LAW", "REL-PHY-THERMO-CYCLE-STATE", "REASON-PHY-THERMO-FIRST-LAW-PROCESS", "FAMILY-PHY-THERMO-FIRST-LAW-PROCESS"],
+      "checks": [
+        {"check_id": "CHECK-PHY-THERMO-SYSTEM", "check_kind": "MODEL_APPLICABILITY", "statement": "Verify that the chosen system boundary is explicit and unchanged before interpreting heat, work or internal-energy terms.", "acceptance_condition": "All transfer directions and state quantities refer to the same declared system.", "subject_target": "thermodynamic system", "source_check_type": null, "relation_refs": ["REL-PHY-THERMO-FIRST-LAW"], "independent_of_primary_route": true, "independence_rationale": "Boundary identity is checked against the physical model rather than by reproducing the algebra.", "evidence_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"], "source_check_ref": null},
+        {"check_id": "CHECK-PHY-THERMO-ENERGY", "check_kind": "CONSERVATION", "statement": "Verify that the first-law energy balance is consistent with the declared sign convention and transfer directions.", "acceptance_condition": "Delta U equals heat into the system minus work by the system under the declared convention.", "subject_target": "first law", "source_check_type": null, "relation_refs": ["REL-PHY-THERMO-FIRST-LAW"], "independent_of_primary_route": false, "independence_rationale": "This is a direct conservation recheck of the governing balance, not an alternate derivation.", "evidence_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"], "source_check_ref": null},
+        {"check_id": "CHECK-PHY-THERMO-CYCLE", "check_kind": "BOUNDARY_CASE", "statement": "For a claimed cycle, verify that returning to the same state gives zero net change in internal energy.", "acceptance_condition": "A closed state cycle has Delta U_cycle equal to zero while heat and work may remain nonzero and balance each other.", "subject_target": "cyclic process", "source_check_type": null, "relation_refs": ["REL-PHY-THERMO-CYCLE-STATE", "REL-PHY-THERMO-FIRST-LAW"], "independent_of_primary_route": true, "independence_rationale": "State closure supplies a separate endpoint check on the energy accounting.", "evidence_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW"], "source_check_ref": null},
+        {"check_id": "CHECK-PHY-THERMO-PV-REP", "check_kind": "REPRESENTATION_CONSISTENCY", "statement": "Verify that a pressure-volume graph preserves axis meaning, path direction and any signed-area interpretation used in reasoning.", "acceptance_condition": "The graphical interpretation does not discard path information or reverse the declared work direction.", "subject_target": "pressure-volume representation", "source_check_type": null, "relation_refs": [], "independent_of_primary_route": true, "independence_rationale": "The graph is checked semantically rather than by comparing with the final numeric answer.", "evidence_refs": ["SRC-PRPER-2025-CONTEXT", "SRC-MIT-UNIFIED-FIRST-LAW"], "source_check_ref": null}
+      ],
+      "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2025-CONTEXT", "SRC-CBSE-PHYSICS-2026-27"],
+      "source_route_ref": null
+    }
+  ],
+  "problem_families": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "problem_family_id": "FAMILY-PHY-THERMO-FIRST-LAW-PROCESS",
+      "skp_ref": "SKP-PHYSICS-THERMODYNAMICS-PILOT",
+      "title": "System-boundary first-law and process reasoning",
+      "structural_signature": "A declared thermodynamic system undergoes a specified or represented process; the solver must identify valid process constraints, distinguish state change from heat/work transfer, apply energy accounting, and check physical direction or cycle closure.",
+      "capability_refs": ["CAP-PHY-THERMO-ENERGY-ACCOUNTING", "CAP-PHY-THERMO-PROCESS-CLASSIFICATION", "CAP-PHY-THERMO-SECOND-LAW-DIRECTION"],
+      "concept_refs": ["CONCEPT-PHY-THERMO-SYSTEM-STATE", "CONCEPT-PHY-THERMO-INTERNAL-ENERGY", "CONCEPT-PHY-THERMO-PROCESS"],
+      "relation_refs": ["REL-PHY-THERMO-FIRST-LAW", "REL-PHY-THERMO-CYCLE-STATE"],
+      "reasoning_sequence_refs": ["REASON-PHY-THERMO-FIRST-LAW-PROCESS"],
+      "representation_refs": ["REP-PHY-THERMO-SYSTEM-BOUNDARY", "REP-PHY-THERMO-PV-GRAPH", "REP-PHY-THERMO-FIRST-LAW-SYMBOLIC"],
+      "verification_route_refs": ["VERIFY-PHY-THERMO-CORE"],
+      "allowed_variations": [
+        {"dimension": "process_type", "allowed_changes": ["isothermal", "adiabatic", "cyclic", "reversible", "irreversible"], "invariant": "Only explicitly licensed process constraints may be used."},
+        {"dimension": "representation", "allowed_changes": ["verbal", "system-boundary diagram", "pressure-volume graph", "symbolic balance"], "invariant": "System identity, state/path distinction and sign convention remain explicit."}
+      ],
+      "transfer_boundaries": {
+        "near_transfer": ["change numerical values or process labels while retaining the same system-boundary and first-law structure"],
+        "far_transfer": ["compare multiple paths between the same states or reason about an unfamiliar cyclic process"],
+        "must_remain_invariant": ["system boundary", "state-versus-transfer distinction", "declared sign convention", "model applicability conditions"]
+      },
+      "surface_cues_not_authority": true,
+      "source_refs": ["SRC-CBSE-PHYSICS-2026-27", "SRC-MIT-UNIFIED-FIRST-LAW", "SRC-NTA-JEE-MAIN-2026", "SRC-PRPER-2025-CONTEXT"],
+      "source_family_ref": null
+    }
+  ],
+  "base_claim_snapshot": [
+    {"claim_id": "CLAIM-PHY-THERMO-BASE-SCOPE", "depth": "STANDARD", "statement": "The current CBSE Grade XI Thermodynamics core explicitly includes thermal equilibrium/temperature, zeroth law, heat, work, internal energy, first and second laws, thermodynamic state variable/equation of state, and isothermal, adiabatic, reversible, irreversible and cyclic processes.", "source_refs": ["SRC-CBSE-PHYSICS-2026-27"], "disposition": "SUPPORTED"},
+    {"claim_id": "CLAIM-PHY-THERMO-BASE-FIRST-LAW", "depth": "STANDARD", "statement": "Under the declared work-by-system convention used by this pilot, the first-law balance is Delta U = Q_in - W_by.", "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW"], "disposition": "SUPPORTED_WITH_DECLARED_CONVENTION"},
+    {"claim_id": "CLAIM-PHY-THERMO-BASE-STATE-PATH", "depth": "STANDARD", "statement": "Internal energy is treated as a state property while heat transfer and work describe process transfers; process constraints determine which terms or changes may be inferred.", "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2025-CONTEXT"], "disposition": "SUPPORTED"}
+  ],
+  "research_extension_claims": [
+    {"claim_id": "CLAIM-PHY-THERMO-RESEARCH-ENTROPY", "depth": "RESEARCH", "statement": "Entropy-based formulations provide a deeper account of irreversibility and second-law directionality, but this pilot does not promote entropy formalism as an explicit current CBSE Grade XI Thermodynamics requirement.", "source_refs": ["SRC-MIT-THERMO-KINETICS", "SRC-PRPER-2024-ENTROPY", "SRC-CBSE-PHYSICS-2026-27"], "disposition": "RESEARCH_ONLY", "mutates_base_claims": false},
+    {"claim_id": "CLAIM-PHY-THERMO-RESEARCH-PV-AREA", "depth": "RESEARCH", "statement": "Pressure-volume graph area can encode thermodynamic work under appropriate model/process conditions; representation-specific evidence shows that signed-area interpretation is a distinct reasoning demand.", "source_refs": ["SRC-MIT-UNIFIED-FIRST-LAW", "SRC-PRPER-2025-CONTEXT"], "disposition": "RESEARCH_ONLY", "mutates_base_claims": false}
+  ],
+  "learner_conception_candidates": [
+    {"candidate_id": "LC-PHY-THERMO-ADIABATIC-ZERO-DU", "classification": "COMMON_ERROR_CANDIDATE", "statement": "Treating an adiabatic process as implying zero change in internal energy because there is no heat transfer, while ignoring work.", "source_refs": ["SRC-PRPER-2024-FIRST-LAW"], "population_transfer_state": "TRANSFER_LIMITED", "canonical_grade11_authorized": false},
+    {"candidate_id": "LC-PHY-THERMO-ENTROPY-CONSERVATION", "classification": "UNVERIFIED_HYPOTHESIS_FOR_GRADE11", "statement": "Reasoning as though entropy were conserved, with every entropy increase requiring an equal decrease elsewhere.", "source_refs": ["SRC-PRPER-2024-ENTROPY"], "population_transfer_state": "TRANSFER_LIMITED", "canonical_grade11_authorized": false}
+  ],
+  "discovery_reconciliation": [
+    {"record_id": "DISCOVERY-PHY-THERMO-CBSE-CORE", "disposition": "CREATE_NEW", "target": "Grade XI Physics thermodynamics base package", "source_refs": ["SRC-CBSE-PHYSICS-2026-27"], "promotion_effect": "HELD_NON_RUNTIME_PILOT"},
+    {"record_id": "DISCOVERY-PHY-THERMO-JEE-MAIN-2026", "disposition": "ASSESSMENT_ONLY", "target": "External assessment coverage", "source_refs": ["SRC-NTA-JEE-MAIN-2026"], "promotion_effect": "DOES_NOT_MUTATE_CURRICULUM"},
+    {"record_id": "DISCOVERY-PHY-THERMO-LEARNER-EVIDENCE", "disposition": "PEDAGOGY_ONLY", "target": "Learner-conception and fragility candidates", "source_refs": ["SRC-PRPER-2024-FIRST-LAW", "SRC-PRPER-2025-CONTEXT", "SRC-PRPER-2024-ENTROPY"], "promotion_effect": "TARGET_POPULATION_GENERALIZATION_PROHIBITED"},
+    {"record_id": "DISCOVERY-PHY-THERMO-ENTROPY-DEPTH", "disposition": "RESEARCH_ONLY", "target": "Entropy and irreversibility depth", "source_refs": ["SRC-MIT-THERMO-KINETICS", "SRC-PRPER-2024-ENTROPY"], "promotion_effect": "ADDITIVE_ONLY"}
+  ],
+  "architecture_findings": [
+    {"finding_id": "ARCH-PHY-THERMO-GRADE-SCOPE", "state": "CONFIRMED_GAP", "detail": "The current Physics generation manifest explicitly declares Grade 9 while the current official Thermodynamics curriculum target is Grade XI; AgentTasks must expose and hold this mismatch rather than treating subject identity alone as sufficient authority."},
+    {"finding_id": "ARCH-PHY-THERMO-CROSSDOMAIN-ID", "state": "UNRESOLVED", "detail": "The SKP prerequisite contract uses CAP-* capability IDs while the current CrossDomain provider registry routes subject prerequisites by prefixes such as MATH-; a future adapter/identifier policy is required before provider-ready closure can be claimed for this external Mathematics prerequisite."},
+    {"finding_id": "ARCH-PHY-THERMO-RESEARCH-OVERLAY", "state": "EXPECTED_HOLD", "detail": "The roadmap research_overlay module remains PLANNED, so research claims are recorded as pilot-only additive claim records and cannot become a production overlay."}
+  ],
+  "open_questions": [
+    "What is the governed Grade XI Physics generation authority and runtime entrypoint before this package could move beyond discovery/reconciliation?",
+    "What provider-owned Grade XI Mathematics capability identity should represent pressure-volume graph area/integration when that demand is actually required?",
+    "Which Grade XI or closely matched school-population studies are strong enough to promote learner-conception classes beyond transfer-limited candidates?",
+    "What exact research-overlay contract will bind a frozen base digest and enforce explicit conflict/supersession semantics?"
+  ]
+}
