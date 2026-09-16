@@ -12,8 +12,8 @@ CHEM_ROOT = LP_ROOT.parent
 BP_ROOT = CHEM_ROOT / "LearningBlueprint"
 sys.path.insert(0, str(LP_ROOT / "engine"))
 
-from chemistry_review_candidate_preflight import review_candidate_checks  # noqa: E402
-from chemistry_review_writer import ReviewWriter  # noqa: E402
+from chemistry_review_candidate_preflight import ROLE_NAV_LABELS, review_candidate_checks  # noqa: E402
+from chemistry_review_writer import ROLE_LABELS, ReviewWriter  # noqa: E402
 from preflight_chemistry_core_product import representation_physical_closure  # noqa: E402
 from render_chemistry_a_content_first import _begin_attempt_support_episode, _render_attempt_support  # noqa: E402
 
@@ -61,11 +61,13 @@ def two_page_metrics_with_illegal_cover_continuation():
             {"page": 2, "label": "continuation", "role": "COVER"},
         ],
         "draw_ops": [
+            {"page": 1, "kind": "NAV_HEADER", "x0": 0, "y0": 812, "x1": 595, "y1": 842, "text": "ATTEMPT"},
             {"page": 1, "kind": "QUESTION_PANEL", "x0": 42, "y0": 300, "x1": 553, "y1": 740},
             {"page": 1, "kind": "WORKSPACE_PANEL", "x0": 42, "y0": 120, "x1": 553, "y1": 285},
             {"page": 1, "kind": "CLUE_PANEL", "x0": 42, "y0": 80, "x1": 553, "y1": 110},
             {"page": 1, "kind": "ANSWER_PANEL", "x0": 42, "y0": 60, "x1": 553, "y1": 78},
             {"page": 1, "kind": "VERIFICATION_PANEL", "x0": 42, "y0": 45, "x1": 553, "y1": 58},
+            {"page": 2, "kind": "NAV_HEADER", "x0": 0, "y0": 812, "x1": 595, "y1": 842, "text": "START HERE"},
             {"page": 2, "kind": "ACTION_PANEL", "x0": 42, "y0": 680, "x1": 553, "y1": 740},
         ],
     }
@@ -85,6 +87,53 @@ class ChemistryPhysicalRealizationFalsePassTests(unittest.TestCase):
         self.assertEqual(page2["minimum_active_height_ratio"], V5["page_architecture"]["content_page_min_active_area_ratio"])
         self.assertIn("CHEM_REVIEW_COVER_ROLE_AFTER_FIRST_PAGE", page2["failures"])
         self.assertTrue(any("CHEM_REVIEW_UNJUSTIFIED_EMPTY_PAGE_AREA" in value for value in page2["failures"]))
+
+    def test_page_role_nav_mismatch_fails_closed(self):
+        metrics = two_page_metrics_with_illegal_cover_continuation()
+        metrics["page_labels"][0]["role"] = "SOLUTION"
+        result = review_candidate_checks(metrics, V5, PRODUCT_CONTROL, REVIEW, "CORE1B")
+        page1 = next(row for row in result["page_checks"] if row["page"] == 1)
+        self.assertTrue(any(
+            value.startswith("CHEM_REVIEW_PAGE_ROLE_NAV_MISMATCH")
+            for value in page1["failures"]
+        ))
+
+    def test_renderer_and_preflight_role_nav_contracts_cannot_drift(self):
+        self.assertEqual(ROLE_LABELS, ROLE_NAV_LABELS)
+
+    def test_role_transition_is_physical_not_metadata_only(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "role-transition.pdf"
+            writer = ReviewWriter(path, "Generic role transition test", RENDER_POLICY)
+            self.assertEqual(writer.page, 1)
+            writer.set_page_role("QUESTION_EPISODE")
+            self.assertEqual(writer.page, 1)
+            self.assertEqual(writer.current_role, "QUESTION_EPISODE")
+            first_nav = next(
+                row for row in writer.draw_ops
+                if row["page"] == 1 and row["kind"] == "NAV_HEADER"
+            )
+            self.assertEqual(first_nav["text"], "ATTEMPT")
+            self.assertEqual(writer.page_labels[0]["role"], "QUESTION_EPISODE")
+
+            writer.heading("Generic attempt", level=2, ref="ATTEMPT-1")
+            writer.question_text("Use the governed evidence to determine the result.", ref="ATTEMPT-1")
+            writer.set_page_role("SOLUTION")
+            self.assertEqual(writer.page, 2)
+            self.assertEqual(writer.page_labels[0]["role"], "QUESTION_EPISODE")
+            self.assertEqual(writer.page_labels[1]["role"], "SOLUTION")
+            second_nav = next(
+                row for row in writer.draw_ops
+                if row["page"] == 2 and row["kind"] == "NAV_HEADER"
+            )
+            self.assertEqual(second_nav["text"], "CHECK")
+            writer.answer_panel("CHECK", "Compare against the governed result.", ref="ATTEMPT-1")
+            writer.finish()
+
+            doc = pymupdf.open(path)
+            self.assertIn("ATTEMPT", doc[0].get_text())
+            self.assertIn("CHECK", doc[1].get_text())
+            doc.close()
 
     def test_authority_used_representation_must_be_physically_drawn(self):
         authority = {
