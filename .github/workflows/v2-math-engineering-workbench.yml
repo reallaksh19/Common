@@ -48,6 +48,18 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_binding.py'
       - name: Run generic Engineering-gated domain admission falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_engineered_domain_admission.py'
+      - name: Verify Architecture Observation Manifest is up to date
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tools/architecture_explorer/generate_architecture_manifest.py' --check
+      - name: Validate Run Builder fixtures
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tools/run_builder/compile_run.py' --validate-fixtures
+      - name: Run Run Builder test suite
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tools/run_builder/tests/test_run_builder.py'
+      - name: Run Architecture Explorer test suite
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tools/architecture_explorer/tests/test_architecture_explorer.py'
+      - name: Run Engineering Discovery benchmark and quantitative recall tests
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/benchmarks/discovery/tests/test_engineering_discovery_benchmark.py'
+      - name: Run Discovery Explorer UI tests
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/benchmarks/discovery/tests/test_discovery_explorer.py'
       - name: Compile registry-wide Blueprint authorization proof
         run: |
           mkdir -p /tmp/math-engineering-workbench
