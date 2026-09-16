@@ -130,8 +130,29 @@ qualification_boundary:
   basis: []
   question_set: null
 quality:
-  blueprints: [coding, testing]
-  findings_policy: Quality findings do not become hard stops unless acceptance, safety or authority requires it.
+  applicable:
+    - blueprint: coding
+      reason: "Production or relay implementation code changes in this EP."
+      review_focus: [state ownership, failure semantics, maintainability]
+    - blueprint: testing
+      reason: "Material behavior in this EP requires executable verification."
+      review_focus: [acceptance coverage, failure paths, independent evidence]
+  not_applicable:
+    - {blueprint: software-design, reason: "No architecture/state-ownership design change is assumed by this template; reclassify if applicable."}
+    - {blueprint: ui-ux, reason: "No user-interface or journey change is assumed by this template; reclassify if applicable."}
+    - {blueprint: engineering-numerics, reason: "No numerical engineering authority is assumed by this template; reclassify if applicable."}
+    - {blueprint: code-review, reason: "Independent code review is not assumed by this template; reclassify when the slice requires it."}
+    - {blueprint: accessibility, reason: "No accessibility-affecting UI is assumed by this template; reclassify if applicable."}
+    - {blueprint: performance, reason: "No performance-sensitive behavior is assumed by this template; reclassify if applicable."}
+    - {blueprint: migration, reason: "No persisted/schema/protocol migration is assumed by this template; reclassify if applicable."}
+    - {blueprint: github-delivery, reason: "No GitHub projection mutation is assumed by this template; reclassify if applicable."}
+  review_contract:
+    required: true
+    required_before_checkpoint: true
+    receipt_namespace: QRV-
+    required_outputs: [procedure_results, findings, owner_report, successor_handover]
+  findings_policy: "Quality findings remain quality state unless they map to an existing acceptance, authority, protected-invariant, or safety hard-stop condition."
+  ordinary_findings_are_hard_stops: false
 acceptance:
   - {id: AC-01, description: "<observable acceptance>", weight: 100, verification: [TEST-01, BENCH-01]}
 validation:
@@ -147,7 +168,7 @@ report_contract:
     - {id: RPT-FILES, section: Files changed, sources: [CP], required_fields: [files_changed]}
     - {id: RPT-AC, section: Acceptance matrix, sources: [EP, PROGRESS, CP], required_fields: [criterion, status, percent, basis]}
     - {id: RPT-EVIDENCE, section: Tests and evidence, sources: [EP, CP, REPO_STATE], required_fields: [validation_id, obligation_class, status, basis_ref, not_run_reason]}
-    - {id: RPT-QUALITY, section: Quality findings, sources: [EP, CP, REPO_STATE], required_fields: [blueprints, findings, disposition]}
+    - {id: RPT-QUALITY, section: Quality findings, sources: [EP, QRV, CP, REPO_STATE], required_fields: [quality_review, procedures, findings, disposition, execution_effect]}
     - {id: RPT-LIMITS, section: Known limitations, sources: [EP, CP, REPO_STATE], required_fields: [limitations, evidence_gaps, deferred_items]}
     - {id: RPT-OWNER, section: Owner decisions required, sources: [ODR, REPO_STATE], required_fields: [decision_required, pending_items, authority_effect]}
     - {id: RPT-ISSUES, section: GitHub issue changes, sources: [ISSUE_GRAPH, REPO_STATE], required_fields: [operations, relationships, projection_state]}
