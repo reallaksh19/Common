@@ -40,7 +40,22 @@ properties:
       lane_id: {type: [string, 'null']}
   basis:
     type: object
-    required: [roadmap_id, roadmap_revision, relay_protocol_basis_ref, material_ref, predecessor_baton]
+    required: [roadmap_id, roadmap_revision, relay_protocol_basis_ref, material_ref, ep_contract_digest, repo_profile_digest, predecessor_baton]
+    properties:
+      roadmap_id: {type: string, minLength: 1}
+      roadmap_revision: {type: string, minLength: 1}
+      relay_protocol_basis_ref: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      ep_contract_digest: {type: string, pattern: '^sha256:'}
+      repo_profile_digest: {type: string, pattern: '^sha256:'}
+      predecessor_baton:
+        type: object
+        required: [type, id, path, digest]
+        properties:
+          type: {enum: [NONE, CHECKPOINT, JOIN, REPLAN]}
+          id: {type: string, minLength: 1}
+          path: {type: [string, 'null']}
+          digest: {type: [string, 'null']}
   discovery_receipt:
     type: object
     required: [id, path]
@@ -58,8 +73,13 @@ properties:
   checks:
     type: object
     required: [baton_semantics, repository_discovery, route_grounding, input_oracle_readiness, scope_understood, report_successor_contract]
-    additionalProperties:
-      enum: [PASS, FAIL]
+    properties:
+      baton_semantics: {enum: [PASS, FAIL]}
+      repository_discovery: {enum: [PASS, FAIL]}
+      route_grounding: {enum: [PASS, FAIL]}
+      input_oracle_readiness: {enum: [PASS, FAIL]}
+      scope_understood: {enum: [PASS, FAIL]}
+      report_successor_contract: {enum: [PASS, FAIL]}
   result: {enum: [PASS, FAIL]}
   conversation_context_used: {const: false}
 additionalProperties: true
