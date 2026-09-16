@@ -25,7 +25,8 @@ install_runtime_fact_parameter_bridge()
 
 from compile_chemistry_core_authority import digest as semantic_digest  # noqa: E402
 from compile_chemistry_core_product_custody import digest_without  # noqa: E402
-from render_chemistry_a_content_first import render_core1a_content_first, render_core2a_content_first  # noqa: E402
+from render_chemistry_core1a_review import render_core1a_content_first  # noqa: E402
+from render_chemistry_a_content_first import render_core2a_content_first  # noqa: E402
 from render_chemistry_static_b_product import render_static_b_product  # noqa: E402
 from preflight_chemistry_core_product import run_core_product_preflight  # noqa: E402
 
