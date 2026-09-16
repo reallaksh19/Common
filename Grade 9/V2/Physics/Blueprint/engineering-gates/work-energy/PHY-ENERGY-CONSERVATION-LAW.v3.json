@@ -1,0 +1,283 @@
+{
+  "subtopic_id": "PHY-ENERGY-CONSERVATION-LAW",
+  "title": "Energy accounting and conditional conservation of mechanical energy",
+  "domain": "Work and Energy",
+  "scope_state": "ACTIVE",
+  "authority_basis": [
+    {
+      "claim_class": "SOURCE_DEFINED",
+      "source_ref": "provenance/curriculum/PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1.json#scope_assertions/0",
+      "claim_scope": "Current Grade 9 curriculum requires mechanical energy, PE-KE conversion in free fall, and the law of conservation of energy."
+    },
+    {
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "source_ref": "provenance/curriculum/PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1.json#scope_assertions/0",
+      "claim_scope": "Technical Engineering distinguishes total energy conservation from conditional mechanical-energy conservation by making the chosen system, non-conservative transfer, dissipation, and model conditions explicit."
+    }
+  ],
+  "prerequisites": ["PHY-WORK-ENERGY-POWER", "PHY-NLM-FRICTION"],
+  "linked_buckets": [],
+  "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "required_invariants": [
+    "INV-WEP-SYSTEM-BOUNDARY-EXPLICIT",
+    "INV-WEP-TOTAL-ENERGY-NOT-MECHANICAL-ENERGY",
+    "INV-WEP-MECHANICAL-ENERGY-K-PLUS-U",
+    "INV-WEP-MECH-CONSERVATION-CONDITIONAL",
+    "INV-WEP-DISSIPATION-MUST-BE-ACCOUNTED",
+    "INV-WEP-SAME-REFERENCE-ACROSS-STATES"
+  ],
+  "concepts": [
+    {
+      "concept_id": "CON-WEP-SYSTEM-BOUNDARY",
+      "statement": "Energy accounting begins by declaring the physical system; changing the system boundary can change whether an interaction is represented as external work or as a change in an internal energy store.",
+      "why_required": "The same physical event can be represented consistently in different ways only when the system boundary is explicit.",
+      "failure_if_omitted": "Work terms and potential-energy changes can be double-counted, omitted, or silently moved across the boundary.",
+      "authority_ref": 1
+    },
+    {
+      "concept_id": "CON-WEP-MECHANICAL-ENERGY",
+      "statement": "Mechanical energy in the governed Grade 9 model is the sum of kinetic energy and the included potential-energy store, E_mech = K + U.",
+      "why_required": "It defines the quantity whose constancy is often—but not always—available as a simplifying model.",
+      "failure_if_omitted": "Conservation language can be used without specifying which energy stores are being summed.",
+      "authority_ref": 0
+    },
+    {
+      "concept_id": "CON-WEP-ENERGY-ACCOUNTING",
+      "statement": "Energy conservation requires accounting for energy transfers and store changes across the chosen system rather than assuming one selected form of energy remains constant.",
+      "why_required": "It preserves conservation when mechanical energy changes because energy is transferred or transformed into other forms.",
+      "failure_if_omitted": "Frictional or other dissipative cases can be described as destroying energy or can be solved by invalidly holding K+U constant.",
+      "authority_ref": 1
+    },
+    {
+      "concept_id": "CON-WEP-MECHANICAL-CONSERVATION-CONDITION",
+      "statement": "K + U is constant between two states only when the chosen mechanical-energy model has no net non-conservative work or unaccounted dissipative transfer across the relevant interval.",
+      "why_required": "The law of conservation of energy does not imply unconditional conservation of mechanical energy.",
+      "failure_if_omitted": "A memorised K_i+U_i=K_f+U_f equation can be applied even when friction or another transfer changes mechanical energy.",
+      "authority_ref": 1
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "EQ-WEP-MECHANICAL-ENERGY",
+      "expression": "E_mech = K + U",
+      "symbols": [
+        {"symbol":"E_mech","name":"mechanical energy","physical_quantity":"ENERGY","domain":"REAL","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_SYSTEM_AND_STATE","sign_role":"SUM_OF_INCLUDED_STORES"},
+        {"symbol":"K","name":"kinetic energy","physical_quantity":"ENERGY","domain":"REAL_NONNEGATIVE","unit_dimension":"M L^2 T^-2","reference_frame_role":"DECLARED_MOTION_FRAME","sign_role":"NONNEGATIVE"},
+        {"symbol":"U","name":"included potential energy","physical_quantity":"ENERGY","domain":"REAL_REFERENCE_DEPENDENT","unit_dimension":"M L^2 T^-2","reference_frame_role":"DECLARED_SYSTEM_AND_ZERO_REFERENCE","sign_role":"REFERENCE_DEPENDENT"}
+      ],
+      "conditions": ["K and U refer to the same chosen system and state", "The same potential-energy convention is used across compared states"],
+      "obligations": ["EXPLAIN", "INTERPRET", "REPRESENT", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-MECHANICAL-ENERGY-CHANGE",
+      "expression": "Delta(K + U) = W_nonconservative",
+      "symbols": [
+        {"symbol":"Delta(K + U)","name":"change in mechanical energy","physical_quantity":"ENERGY_CHANGE","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_SYSTEM_INITIAL_TO_FINAL","sign_role":"FINAL_MINUS_INITIAL"},
+        {"symbol":"W_nonconservative","name":"net work by included non-conservative external interactions in the chosen model","physical_quantity":"ENERGY_TRANSFER","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_SYSTEM_AND_INTERVAL","sign_role":"SIGNED_TRANSFER_TO_MECHANICAL_ENERGY"}
+      ],
+      "conditions": ["Potential-energy terms represent the conservative interactions included in the chosen system/model", "Non-conservative work is defined consistently with the chosen system boundary", "All terms refer to the same initial-to-final interval"],
+      "obligations": ["EXPLAIN", "INTERPRET", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-MECHANICAL-CONSERVATION",
+      "expression": "K_i + U_i = K_f + U_f",
+      "symbols": [
+        {"symbol":"K_i","name":"initial kinetic energy","physical_quantity":"ENERGY","domain":"REAL_NONNEGATIVE","unit_dimension":"M L^2 T^-2","reference_frame_role":"INITIAL_STATE","sign_role":"NONNEGATIVE"},
+        {"symbol":"U_i","name":"initial potential energy","physical_quantity":"ENERGY","domain":"REAL_REFERENCE_DEPENDENT","unit_dimension":"M L^2 T^-2","reference_frame_role":"INITIAL_STATE_COMMON_REFERENCE","sign_role":"REFERENCE_DEPENDENT"},
+        {"symbol":"K_f","name":"final kinetic energy","physical_quantity":"ENERGY","domain":"REAL_NONNEGATIVE","unit_dimension":"M L^2 T^-2","reference_frame_role":"FINAL_STATE","sign_role":"NONNEGATIVE"},
+        {"symbol":"U_f","name":"final potential energy","physical_quantity":"ENERGY","domain":"REAL_REFERENCE_DEPENDENT","unit_dimension":"M L^2 T^-2","reference_frame_role":"FINAL_STATE_COMMON_REFERENCE","sign_role":"REFERENCE_DEPENDENT"}
+      ],
+      "conditions": ["W_nonconservative = 0 for the chosen mechanical-energy model over the interval", "No relevant dissipative transfer is omitted", "Initial and final states use the same potential-energy reference and motion frame"],
+      "obligations": ["EXPLAIN", "INTERPRET", "APPLY", "INVERT", "VERIFY"]
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "COND-WEP-SYSTEM-BOUNDARY-DECLARED",
+      "condition": "The object/system boundary and the interactions represented inside versus across that boundary are declared before choosing the energy equation.",
+      "physical_reason": "Boundary choice determines whether an interaction appears as external work or as a change in an included energy store.",
+      "required_for_relations": ["EQ-WEP-MECHANICAL-ENERGY", "EQ-WEP-MECHANICAL-ENERGY-CHANGE", "EQ-WEP-MECHANICAL-CONSERVATION"],
+      "failure_consequence": "Work and potential-energy terms can be double-counted or omitted while appearing algebraically plausible.",
+      "alternative_model_required": "REBUILD_ENERGY_ACCOUNT_WITH_EXPLICIT_SYSTEM_BOUNDARY"
+    },
+    {
+      "condition_id": "COND-WEP-MECHANICAL-CONSERVATION-ONLY",
+      "condition": "Use K_i + U_i = K_f + U_f only when net non-conservative work is zero and no relevant dissipative energy transfer is omitted for the chosen interval.",
+      "physical_reason": "Total energy conservation is broader than conservation of the selected mechanical-energy stores.",
+      "required_for_relations": ["EQ-WEP-MECHANICAL-CONSERVATION"],
+      "failure_consequence": "Mechanical energy is incorrectly kept constant in frictional or otherwise dissipative cases.",
+      "alternative_model_required": "USE_MECHANICAL_ENERGY_CHANGE_WITH_NONCONSERVATIVE_TRANSFER_OR_EXPANDED_ENERGY_ACCOUNT"
+    },
+    {
+      "condition_id": "COND-WEP-DISSIPATION-ACCOUNTED",
+      "condition": "When friction or another dissipative interaction is non-negligible, its energy transfer or resulting non-mechanical store change must be represented rather than silently discarded.",
+      "physical_reason": "Dissipation changes mechanical energy without violating total energy conservation.",
+      "required_for_relations": ["EQ-WEP-MECHANICAL-ENERGY-CHANGE"],
+      "failure_consequence": "The model can falsely report missing or destroyed energy.",
+      "alternative_model_required": "EXPANDED_ENERGY_ACCOUNT_WITH_DISSIPATIVE_TRANSFER"
+    }
+  ],
+  "representations": [
+    {
+      "representation_id": "REP-WEP-SYSTEM-ENERGY-BOUNDARY",
+      "representation_type": "SYSTEM_BOUNDARY_ENERGY_DIAGRAM",
+      "semantic_geometry": "A boundary encloses the chosen object/system, labels included energy stores, and marks work or other energy transfers that cross the boundary over the interval.",
+      "mandatory_elements": ["chosen system boundary", "initial state", "final state", "included energy stores", "energy-transfer arrows where applicable"],
+      "mandatory_labels": ["system", "K", "U", "transfer/work"],
+      "forbidden_omissions": ["system boundary", "state identity", "dissipative transfer when non-negligible"],
+      "must_not_imply": ["mechanical energy is always conserved", "friction destroys energy", "a boundary choice changes the physical prediction when the accounting is complete"],
+      "relation_bindings": ["EQ-WEP-MECHANICAL-ENERGY", "EQ-WEP-MECHANICAL-ENERGY-CHANGE", "EQ-WEP-MECHANICAL-CONSERVATION"],
+      "concept_bindings": ["CON-WEP-SYSTEM-BOUNDARY", "CON-WEP-ENERGY-ACCOUNTING", "CON-WEP-MECHANICAL-CONSERVATION-CONDITION"],
+      "verification_method": "Check that every retained energy store and every crossing transfer belongs to the declared system and that the same physical event gives compatible predictions under an alternative valid boundary choice.",
+      "primitive_registry_refs": []
+    },
+    {
+      "representation_id": "REP-WEP-ENERGY-STATE-BARS",
+      "representation_type": "ENERGY_STATE_BAR_MODEL",
+      "semantic_geometry": "Initial and final bars show relative amounts of K and U, with an explicit transfer/dissipation channel when mechanical energy changes.",
+      "mandatory_elements": ["initial K", "initial U", "final K", "final U", "transfer or dissipation channel when required"],
+      "mandatory_labels": ["K_i", "U_i", "K_f", "U_f"],
+      "forbidden_omissions": ["state distinction", "transfer/dissipation when K+U is not constant"],
+      "must_not_imply": ["bar height is an empirically calibrated learner measure", "K+U must have equal initial/final totals when non-conservative work is present"],
+      "relation_bindings": ["EQ-WEP-MECHANICAL-ENERGY-CHANGE", "EQ-WEP-MECHANICAL-CONSERVATION"],
+      "concept_bindings": ["CON-WEP-MECHANICAL-ENERGY", "CON-WEP-ENERGY-ACCOUNTING"],
+      "verification_method": "Translate the bars back to the symbolic energy relation and verify the same change/transfer balance and limiting cases.",
+      "primitive_registry_refs": []
+    }
+  ],
+  "reasoning_sequence": [
+    {
+      "step_id": "RS-WEP-CONS-SELECT-SYSTEM",
+      "sequence": 1,
+      "expert_action": "Choose and state the physical system and the initial/final states before writing any conservation equation.",
+      "depends_on": [],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-WEP-SYSTEM-BOUNDARY"],
+      "required_relations": [],
+      "failure_if_skipped": "The same interaction can be represented simultaneously as external work and potential energy or omitted entirely."
+    },
+    {
+      "step_id": "RS-WEP-CONS-INVENTORY",
+      "sequence": 2,
+      "expert_action": "Inventory the relevant K/U stores and identify energy transfers, including non-conservative or dissipative interactions, across the chosen interval.",
+      "depends_on": ["RS-WEP-CONS-SELECT-SYSTEM"],
+      "inferential_jump": "MEDIUM",
+      "required_concepts": ["CON-WEP-MECHANICAL-ENERGY", "CON-WEP-ENERGY-ACCOUNTING"],
+      "required_relations": ["EQ-WEP-MECHANICAL-ENERGY"],
+      "failure_if_skipped": "Mechanical energy can be assumed constant before checking whether a transfer changes it."
+    },
+    {
+      "step_id": "RS-WEP-CONS-CHOOSE-BALANCE",
+      "sequence": 3,
+      "expert_action": "Use the mechanical-energy change relation when non-conservative transfer is present; simplify to K_i+U_i=K_f+U_f only when its conservation condition is established.",
+      "depends_on": ["RS-WEP-CONS-INVENTORY"],
+      "inferential_jump": "HIGH_FRAGILITY",
+      "required_concepts": ["CON-WEP-MECHANICAL-CONSERVATION-CONDITION", "CON-WEP-ENERGY-ACCOUNTING"],
+      "required_relations": ["EQ-WEP-MECHANICAL-ENERGY-CHANGE", "EQ-WEP-MECHANICAL-CONSERVATION"],
+      "failure_if_skipped": "The law of conservation of energy is reduced to an unconditional mechanical-energy equation."
+    },
+    {
+      "step_id": "RS-WEP-CONS-SOLVE-VERIFY",
+      "sequence": 4,
+      "expert_action": "Solve the state relation and verify units, common references, sign of transfers, limiting cases, and consistency with the declared boundary.",
+      "depends_on": ["RS-WEP-CONS-CHOOSE-BALANCE"],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-WEP-SYSTEM-BOUNDARY", "CON-WEP-MECHANICAL-CONSERVATION-CONDITION"],
+      "required_relations": ["EQ-WEP-MECHANICAL-ENERGY-CHANGE", "EQ-WEP-MECHANICAL-CONSERVATION"],
+      "failure_if_skipped": "A numerically plausible result can retain a hidden reference, sign, or dissipation error."
+    }
+  ],
+  "required_transformations": [
+    {
+      "transformation_id": "TR-WEP-PHYSICAL-SCENARIO-TO-ENERGY-BOUNDARY",
+      "from_mode": "PHYSICAL_SCENARIO",
+      "to_mode": "SYSTEM_BOUNDARY_ENERGY_ACCOUNT",
+      "target_core_roles": ["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION", "CORE1B_GENERATIVE_RECONSTRUCTION"],
+      "description": "Translate the scenario into an explicit system boundary, initial/final states, energy stores, and crossing transfers."
+    },
+    {
+      "transformation_id": "TR-WEP-ACCOUNT-TO-CONDITIONAL-CONSERVATION",
+      "from_mode": "SYSTEM_BOUNDARY_ENERGY_ACCOUNT",
+      "to_mode": "CONDITIONAL_MECHANICAL_ENERGY_RELATION",
+      "target_core_roles": ["CORE2A_DECLARATIVE_WORKED_PROBLEM", "CORE2B_GENERATIVE_TRANSFER"],
+      "description": "Select the general mechanical-energy change relation and simplify to mechanical-energy conservation only when non-conservative transfer closes to zero."
+    }
+  ],
+  "misconceptions": [
+    {
+      "misconception_id": "MIS-WEP-TOTAL-EQUALS-MECHANICAL-CONSERVATION",
+      "incorrect_model": "Because energy is conserved, K + U must be constant in every mechanical situation.",
+      "why_plausible": "The broad conservation law is often remembered as one convenient mechanical-energy equation without its applicability conditions.",
+      "trigger_contexts": ["rough surface", "sliding with friction", "applied non-conservative force", "free fall versus resisted motion"],
+      "required_counterexample": "A sliding object slowed by kinetic friction loses mechanical energy while the broader energy account includes energy transferred to non-mechanical stores.",
+      "required_representation_repair": "Use a system-boundary energy diagram or energy-state bars with an explicit dissipative transfer channel.",
+      "required_technical_repair": "Use Delta(K+U)=W_nonconservative or an expanded energy account; set W_nonconservative to zero only when justified.",
+      "verification": "Compare otherwise identical frictionless and frictional cases; only the frictionless mechanical-energy model should retain constant K+U."
+    },
+    {
+      "misconception_id": "MIS-WEP-FRICTION-DESTROYS-ENERGY",
+      "incorrect_model": "A decrease in mechanical energy due to friction means energy has been destroyed.",
+      "why_plausible": "Only K and U are tracked while thermal/internal or environmental transfers are omitted from the representation.",
+      "trigger_contexts": ["rough incline", "sliding block", "braking"],
+      "required_counterexample": "The decrease in K+U can be matched by energy transferred to other stores while total energy remains conserved.",
+      "required_representation_repair": "Expand the energy account beyond K and U or mark the transfer crossing the chosen boundary.",
+      "required_technical_repair": "Distinguish conservation of total energy from conservation of the selected mechanical-energy stores.",
+      "verification": "Check that the expanded account balances even when mechanical energy decreases."
+    }
+  ],
+  "verifications": ["UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "MODEL_VALIDITY", "ENERGY_ACCOUNTING", "REFERENCE_CONSISTENCY"],
+  "problem_families": [
+    {
+      "family_id": "PF-WEP-FREE-FALL-ENERGY-CONVERSION",
+      "name": "Potential-to-kinetic energy conversion in free fall",
+      "recognition_cues": ["raised object", "free fall", "initial/final height", "speed from energy", "negligible air resistance"],
+      "hidden_invariants": ["INV-WEP-SYSTEM-BOUNDARY-EXPLICIT", "INV-WEP-MECH-CONSERVATION-CONDITIONAL", "INV-WEP-SAME-REFERENCE-ACROSS-STATES"],
+      "first_technical_move": "Declare the object-Earth energy model and verify negligible non-conservative transfer before equating initial and final mechanical energy.",
+      "required_representation": "REP-WEP-ENERGY-STATE-BARS",
+      "typical_unknowns": ["speed", "height", "energy conversion"],
+      "fatal_errors": ["using inconsistent height zeros", "assuming K+U constant with non-negligible resistance", "mixing different system boundaries"],
+      "required_capabilities": ["DECLARE_ENERGY_SYSTEM", "INVENTORY_K_U", "TEST_CONSERVATION_CONDITION", "SOLVE_ENERGY_STATE", "VERIFY_REFERENCE_CONSISTENCY"],
+      "transfer_dimensions": ["REPRESENTATION_CHANGE", "MODEL_DISCRIMINATION", "REVERSED_TARGET", "MULTI_STEP_BRIDGE"]
+    },
+    {
+      "family_id": "PF-WEP-FRICTION-DISSIPATION",
+      "name": "Mechanical-energy change with friction or other non-conservative work",
+      "recognition_cues": ["rough surface", "friction force", "sliding", "mechanical energy decreases", "external applied work"],
+      "hidden_invariants": ["INV-WEP-TOTAL-ENERGY-NOT-MECHANICAL-ENERGY", "INV-WEP-DISSIPATION-MUST-BE-ACCOUNTED", "INV-WEP-MECH-CONSERVATION-CONDITIONAL"],
+      "first_technical_move": "Declare the system and determine whether frictional/non-conservative interaction is internal to the expanded energy account or appears as work/transfer across its boundary.",
+      "required_representation": "REP-WEP-SYSTEM-ENERGY-BOUNDARY",
+      "typical_unknowns": ["mechanical-energy change", "friction work", "final speed", "transferred energy"],
+      "fatal_errors": ["setting K_i+U_i=K_f+U_f despite nonzero non-conservative work", "claiming energy is destroyed", "double-counting frictional work and the same internal-energy increase"],
+      "required_capabilities": ["DECLARE_ENERGY_SYSTEM", "IDENTIFY_NONCONSERVATIVE_TRANSFER", "USE_MECHANICAL_ENERGY_CHANGE", "VERIFY_ENERGY_ACCOUNT"],
+      "transfer_dimensions": ["MODEL_DISCRIMINATION", "REPRESENTATION_CHANGE", "SIGN_DIRECTION_REVERSAL", "SYNTHESIS"]
+    }
+  ],
+  "difficulty_engineering": {
+    "maturity": "ENGINEERING",
+    "provisional_badge": "MEDIUM",
+    "dimensions": {
+      "prerequisite_depth": 2,
+      "element_interactivity": 3,
+      "inferential_jump_severity": 2,
+      "representation_translation": 2,
+      "model_discrimination": 3,
+      "sign_or_frame_sensitivity": 2,
+      "multi_step_dependency": 2,
+      "abstraction": 2,
+      "misconception_density": 2,
+      "synthesis": 2
+    }
+  },
+  "falsification_cases": [
+    {
+      "test_id": "PHY-V3-FAIL-WEP-CONS-01",
+      "authoring_defect": "Remove the conditional-conservation invariant so K+U can be treated as constant in frictional cases.",
+      "expected_failure_code": "PHY_GATE_REQUIRED_INVARIANT_MISSING"
+    },
+    {
+      "test_id": "PHY-V3-FAIL-WEP-CONS-02",
+      "authoring_defect": "Remove the explicit system-boundary requirement from the conservation model.",
+      "expected_failure_code": "PHY_GATE_REQUIRED_INVARIANT_MISSING"
+    }
+  ]
+}
