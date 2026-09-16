@@ -1,0 +1,48 @@
+{
+  "registry_id": "SHARED-AGENT-TASK-AUTHORITY-ROUTING-v1",
+  "schema_version": "1.0.0",
+  "routing_only": true,
+  "authority_classes": [
+    {
+      "authority_class": "LEARNING_ENGINEERING_ARCHITECTURE",
+      "path": "Grade 9/V2/Shared/LearningEngineering/V2_LEARNING_ENGINEERING_ARCHITECTURE.md"
+    },
+    {
+      "authority_class": "SKP_SCHEMA_ROADMAP",
+      "path": "Grade 9/V2/Shared/LearningEngineering/SKP_SCHEMA_ROADMAP.md"
+    },
+    {
+      "authority_class": "SKP_SCHEMA_REGISTRY",
+      "path": "Grade 9/V2/Shared/LearningEngineering/registry/skp-schema-roadmap.v1.json"
+    },
+    {
+      "authority_class": "SOURCE_GOVERNANCE",
+      "path": "Grade 9/V2/Shared/LearningEngineering/SOURCE_GOVERNANCE.md"
+    },
+    {
+      "authority_class": "ENGINEERING_GATE_POLICY",
+      "path": "Grade 9/V2/Shared/EngineeringGate/policy/readiness-policy.v1.json"
+    },
+    {
+      "authority_class": "ENGINEERING_GATE_EVALUATOR",
+      "path": "Grade 9/V2/Shared/EngineeringGate/engine/evaluate_readiness.py"
+    },
+    {
+      "authority_class": "CROSS_DOMAIN_PROTOCOL",
+      "path": "Grade 9/V2/Shared/CrossDomain/PROTOCOL.md"
+    },
+    {
+      "authority_class": "CROSS_DOMAIN_PROVIDER_REGISTRY",
+      "path": "Grade 9/V2/Shared/CrossDomain/registry/domain-provider-registry.v1.json"
+    }
+  ],
+  "dynamic_authorities": [
+    {
+      "authority_class": "SUBJECT_GENERATION_AUTHORITY",
+      "resolver": "SKP_SCHEMA_REGISTRY_SUBJECT_ADAPTER",
+      "source_authority_class": "SKP_SCHEMA_REGISTRY",
+      "subject_field": "subject_adapters[].subject",
+      "path_field": "subject_adapters[].current_authority_manifest_ref"
+    }
+  ]
+}
