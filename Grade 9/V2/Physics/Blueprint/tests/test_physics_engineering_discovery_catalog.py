@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import runpy
 import sys
 from pathlib import Path
 
@@ -155,6 +156,9 @@ def main() -> None:
     bad = copy.deepcopy(catalog)
     bad["stress_test_policy"]["may_promote_source_custody"] = True
     expect_code(bad, "E_ENG_DISCOVERY_SCHEMA")
+
+    integration = runpy.run_path(str(ROOT / "tests" / "test_pr402_observability_integration.py"))
+    integration["main"]()
 
     print("Physics engineering discovery reconciliation: PASS")
     print(result)
