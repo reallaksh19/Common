@@ -1,0 +1,70 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C2_NORMATIVE_ROOT_CONSOLIDATED",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "stage": "C2_NORMATIVE_ROOT_CONSOLIDATION",
+  "source_audit": {
+    "path": "design/mathematics-architecture-documentation-drift-audit.json",
+    "status": "C0_AUDIT_COMPLETE",
+    "authority": "NONE",
+    "owner_decision_required_count": 0
+  },
+  "normative_updates": [
+    "CANONICAL_ARCHITECTURE.md",
+    "DUAL_TRACK_PRODUCT_MODEL.md"
+  ],
+  "finding_dispositions": [
+    {
+      "finding_id": "C0-F001",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md"],
+      "note": "The canonical authority topology now places exact Engineering technical authorization, depth evaluation, prerequisite closure and custody upstream of Core1/Core2 semantic and assessment reconstruction."
+    },
+    {
+      "finding_id": "C0-F002",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"],
+      "note": "Both normative documents now distinguish research permission from obligation: EASY research is optional, while MEDIUM and HARD retain targeted/deep required research."
+    },
+    {
+      "finding_id": "C0-F003",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"],
+      "note": "The governed publication path now terminates in the release-bound semantic learner publication bundle and bundle-only renderer semantics; LearnerPageBlueprint is explicitly only an internal realization contract where used."
+    },
+    {
+      "finding_id": "C0-F004",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md"],
+      "note": "The canonical root now represents approximate/alias discovery as an explicitly non-authoritative candidate layer requiring separate exact-ID selection before Engineering authority."
+    },
+    {
+      "finding_id": "C0-F005",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"],
+      "note": "The root and dual-track specification now describe claim-level pedagogy promotion with decisions, evidence stance, confidence, contradiction handling and promoted generation custody rather than source-list shorthand."
+    },
+    {
+      "finding_id": "C0-F006",
+      "disposition": "RESOLVED_DOCUMENTATION",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"],
+      "note": "Derived Engineering visibility is now placed after released product authority and before semantic publication, with publication authorization explicitly not implied."
+    },
+    {
+      "finding_id": "C0-F007",
+      "disposition": "PRESERVED_DOCUMENTED_ONLY",
+      "normative_paths": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"],
+      "note": "Optional EASY research remains current policy and validator-supported, but both normative documents explicitly state that the canonical SDU/LAU compiler does not yet auto-materialize EASY research bindings."
+    }
+  ],
+  "tracked_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "compiler_path": "engine/compile_sdu_lau_generation_spec.py",
+    "migration_required": true,
+    "must_not_claim_executable": true
+  },
+  "owner_decision_required_count": 0,
+  "next_stage": "C3_GENERATED_REFERENCES_READY"
+}
