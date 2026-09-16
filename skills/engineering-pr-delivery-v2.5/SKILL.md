@@ -61,11 +61,15 @@ C. OWNER_INTENT_MUTATION
 ```
 Agents may apply factual A updates, may propose B structural changes, and require explicit Owner authority through an ODR for C changes. Every material revision reconciles dependencies, stale EPs, issue projection, progress basis and frontier.
 
+A revision is not reconciled merely because it names a new frontier or progress basis. `frontier_after` must equal the frontier computed from the resulting roadmap. If the progress denominator changes, the revision must create a new Progress Basis ID bound to the new roadmap revision.
+
 ## Serial execution
-Default is `SERIAL`: exactly one material executable frontier node and one active material EP. Read-only exploration may be broad. Parallel material work requires an Owner-approved plan containing an ASCII topology, lane write domains, shared reads, integration owner/EP, collision risks and stop conditions.
+Default is `SERIAL`: while material work is active, exactly one material executable frontier node and one active material EP exist. Read-only exploration may be broad. A terminal/idle repository may have an empty frontier with `active_ep.state: NONE`. Parallel material work requires an Owner-approved plan containing an ASCII topology, lane write domains, shared reads, integration owner/EP, collision risks and stop conditions.
 
 ## EP contract
 Every EP contains: identity, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope.allowed, scope.prohibited, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract and successor_relay.
+
+`identity.previous_checkpoint` ties the EP to the durable baton that produced it. The first EP uses `NONE`.
 
 An EP fails if a new agent needs chat to resolve a material instruction. Every acceptance criterion maps to verification.
 
@@ -77,7 +81,7 @@ QUALITY   — maintainability/design/UX findings
 EVIDENCE  — what was actually run/proven/not run
 STOP      — true hard-stop condition only
 ```
-Do not use one overloaded `BLOCKED` state. `NOT_RUN` is evidence truth and is not a hard stop by itself. A hard stop must name an allowed category, reason and durable basis. Read `operating-model/state-planes.md`.
+Do not use one overloaded `BLOCKED` state. `NOT_RUN` is evidence truth and is not a hard stop by itself. A hard stop must name an allowed category, reason and durable basis, and must set execution `can_continue: false`. Read `operating-model/state-planes.md`.
 
 Validation truth is `PASS | FAIL | NOT_RUN | NA`; test obligation is `MUST_PASS | SHOULD_RUN | INFORMATIONAL`.
 
@@ -99,13 +103,15 @@ Q3 Boundaries and invariants
 Q4 Verification
 Q5 First safe implementation slice
 ```
-Questions anchor to incoming roadmap nodes, AC IDs, TEST IDs, INPUT IDs and production domains. Historical-domain reuse is invalid when it does not test the next phase.
+Each question declares a fixed focus and one or more durable anchors from the incoming EP (phase/work-package IDs, AC IDs, TEST IDs, INPUT IDs or STEP IDs). Historical-domain reuse, unknown anchors, or a `to_phase` that differs from the incoming EP is invalid.
 
 ## Relay durability
 Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP/scope/inputs/acceptance must exist. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor EP → successor validation → cold-start PASS → REPO_STATE transfer. Code completion alone is not relay completion.
 
+For a continuing relay, `REPO_STATE.last_checkpoint`, that checkpoint's `successor`, `REPO_STATE.current_position/active_ep`, and the active EP's `identity.previous_checkpoint` must form one consistent baton link. A repository that routes these to different work is relay-broken. For a terminal relay, the final checkpoint has no successor and `active_ep.state: NONE` with an empty frontier.
+
 ## Human handover
-Always show overall roadmap %, current phase %/checklist, current EP %/checklist, plain-language execution/quality/evidence/stop status, exact next actions, next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, successor readiness, and `conversation context required: NO`.
+Always show overall roadmap %, current phase %/checklist, current EP %/checklist when active, plain-language execution/quality/evidence/stop status, exact next actions, next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, successor readiness, and `conversation context required: NO`. Terminal handover explicitly says there is no active material EP.
 
 ## Validation entrypoint
 ```bash
