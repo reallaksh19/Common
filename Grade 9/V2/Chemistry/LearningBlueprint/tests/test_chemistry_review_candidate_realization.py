@@ -38,10 +38,12 @@ def designed_core1b_metrics():
             {"page": 2, "label": "reconstruct", "role": "TTU_RECONSTRUCTION"},
         ],
         "draw_ops": [
+            {"page": 1, "kind": "NAV_HEADER", "x0": 0, "y0": 812, "x1": 595, "y1": 842, "text": "ATTEMPT"},
             {"page": 1, "kind": "QUESTION_PANEL", "x0": 42, "y0": 590, "x1": 553, "y1": 740},
             {"page": 1, "kind": "ACTION_PANEL", "x0": 42, "y0": 490, "x1": 553, "y1": 575},
             {"page": 1, "kind": "WORKSPACE_PANEL", "x0": 42, "y0": 220, "x1": 553, "y1": 475},
             {"page": 1, "kind": "TEXT", "x0": 56, "y0": 610, "x1": 500, "y1": 630},
+            {"page": 2, "kind": "NAV_HEADER", "x0": 0, "y0": 812, "x1": 595, "y1": 842, "text": "RECONSTRUCT"},
             {"page": 2, "kind": "CLUE_PANEL", "x0": 42, "y0": 560, "x1": 553, "y1": 740},
             {"page": 2, "kind": "ANSWER_PANEL", "x0": 42, "y0": 370, "x1": 553, "y1": 545},
             {"page": 2, "kind": "VERIFICATION_PANEL", "x0": 42, "y0": 240, "x1": 553, "y1": 355},
