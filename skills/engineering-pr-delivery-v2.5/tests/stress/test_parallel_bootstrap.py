@@ -38,7 +38,14 @@ class ParallelBootstrapStressTests(unittest.TestCase):
     def test_bootstrap_creates_initializing_non_executable_state(self):
         manifest={"schema_version":"relay-v2.5-bootstrap","repository":{"name":"synthetic","remote":"owner/synthetic","repository_type":"application","default_branch":"main"},"relay_protocol":{"basis_ref":"abc"},"roadmap":{"id":"RM-B","revision":"RM-0001","title":"Bootstrap"},"initial_position":{"objective":{"id":"OBJ-1","title":"Objective"},"phase":{"id":"PHASE-1","title":"Phase"},"work_package":{"id":"WP-1","title":"Discovery"}},"initialization":{"next_action":"Reconcile owner intent and define the first executable package.","notes":[]}}
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);files=bootstrap_build(manifest);self.assertEqual("INITIALIZING",files["agents/relay/REPO_STATE.yaml"]["relay_state"]);self.assertEqual("NONE",files["agents/relay/REPO_STATE.yaml"]["active_ep"]["state"]);bootstrap_apply(root,files);self.assertEqual([],cold_start(root)[0]);with self.assertRaises(FileExistsError):bootstrap_apply(root,files)
+            root=Path(td)
+            files=bootstrap_build(manifest)
+            self.assertEqual("INITIALIZING",files["agents/relay/REPO_STATE.yaml"]["relay_state"])
+            self.assertEqual("NONE",files["agents/relay/REPO_STATE.yaml"]["active_ep"]["state"])
+            bootstrap_apply(root,files)
+            self.assertEqual([],cold_start(root)[0])
+            with self.assertRaises(FileExistsError):
+                bootstrap_apply(root,files)
     def test_v2_inventory_and_reconciliation_do_not_auto_create_ep(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);p=root/"agents/chains/CHAIN-1/endpoints/EP-OLD.md";p.parent.mkdir(parents=True);p.write_text("legacy",encoding="utf-8");a=root/"agents/chains/CHAIN-1/ACTIVE.md";a.write_text("active",encoding="utf-8")
