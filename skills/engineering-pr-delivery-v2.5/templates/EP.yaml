@@ -23,36 +23,113 @@ roadmap_source:
   work_package: WP-001
   generated_from_frontier: true
 outcome:
-  user_visible: []
-  engineering: []
+  user_visible:
+    - "<observable user-facing result or NA rationale>"
+  engineering:
+    - "<engineering result/invariant>"
 context_capsule:
-  product_goal: ""
-  roadmap_position: ""
-  why_this_work_exists: ""
-  current_architecture: ""
+  product_goal: "<product goal>"
+  roadmap_position: "<objective / phase / work package position>"
+  why_this_work_exists: "<why this WP exists now>"
+  current_architecture: "<architecture relevant to this slice>"
   prior_owner_decisions: []
-  current_implementation_state: ""
+  current_implementation_state: "<material implementation state>"
   known_problems: []
   deliberate_non_goals: []
   terminology: {}
 repository_discovery:
-  - id: DISC-01
+  - id: DSTEP-01
     action: VERIFY
     target: agents/relay/REPO_STATE.yaml
-    purpose: Confirm this EP remains active.
-  - id: DISC-02
+    question: "Does repository state still route to this EP on the declared roadmap revision?"
+    expected_outputs:
+      - active EP id and path
+      - roadmap id and revision
+      - current work package
+    receipt_required: true
+    on_failure: "Reconcile repository custody before material execution."
+  - id: DSTEP-02
     action: VERIFY_GIT
     target: live checkout
-    purpose: Resolve the execution route and re-check base drift before material writes.
-inputs: []
-benchmarks: []
+    question: "Does the checked-out branch/material/base state still satisfy this EP git_basis?"
+    expected_outputs:
+      - checked-out branch
+      - current HEAD
+      - material-ref ancestry result
+      - base drift result
+    receipt_required: true
+    on_failure: "Drop material WRITE authority and reconcile route/drift before execution."
+inputs:
+  - id: INPUT-01
+    name: "<input name>"
+    description: "<what this input controls>"
+    authority: "<owner / roadmap / spec / external authority>"
+    source: "<durable source>"
+    value: "<current value or remove this key and provide resolution_method>"
+    resolution_method: "<how to resolve from source when value is not embedded>"
+    type: "<type>"
+    units: NA
+    editable: false
+    applicability: CURRENT_EP_REQUIRED
+    resolution: READY
+    consumers: [STEP-01]
+    validation:
+      - "<how authority/value is checked>"
+    stale_if:
+      - "<condition that invalidates this input>"
+benchmarks:
+  - id: BENCH-01
+    name: "<benchmark/oracle name>"
+    purpose: "<what independent fact this verifies>"
+    source: "<durable source>"
+    oracle_class: REFERENCE_DATA
+    payload: "<data / command / reference / reconstruction>"
+    expected: "<expected result>"
+    tolerance: null
+    independence: "<why this oracle is independent enough>"
+    applicability: CURRENT_EP_REQUIRED
+    resolution: READY
+    verifies: [AC-01, TEST-01]
+    stale_if:
+      - "<condition that invalidates this oracle>"
 scope:
-  allowed: []
-  prohibited: []
+  allowed:
+    - path: "<write path/domain>"
+      reason: "<why this EP may change it>"
+  allowed_reads:
+    - path: "<read path/domain>"
+      reason: "<why this EP needs it>"
+  protected:
+    - invariant: "<protected invariant>"
+      reason: "<why it must remain unchanged>"
+  prohibited:
+    - domain: "<prohibited domain>"
+      reason: "<why this EP may not change it>"
+  owner_reserved:
+    - decision: "<Owner-reserved behavior/scope decision>"
+      reason: "<why explicit Owner authority is required>"
 anti_drift:
-  do_not: []
-  stale_if: []
-implementation_plan: []
+  do_not:
+    - id: ADR-01
+      restriction: "Do not implement work outside the current roadmap WP."
+      reason: "Preserve one-WP-per-EP authority."
+  stale_if:
+    - id: STALE-01
+      condition: "The roadmap revision changes this WP's scope, dependencies, acceptance, or protected invariants."
+      effect: STALE
+      rationale: "The forward contract no longer matches its governing roadmap basis."
+implementation_plan:
+  - id: STEP-01
+    objective: "<bounded implementation objective>"
+    targets: ["<concrete target>"]
+    reads: ["<required read/source>"]
+    writes: ["<authorized write target>"]
+    inputs: [INPUT-01]
+    acceptance: [AC-01]
+    tests: [TEST-01]
+    expected_state: "<observable intermediate/final state after this step>"
+    stop_conditions:
+      - "Stop/reconcile if required authority, input, benchmark, protected invariant, or route basis is invalid."
 quality:
   blueprints: [coding, testing]
   findings_policy: Quality findings do not become hard stops unless acceptance, safety or authority requires it.
@@ -60,7 +137,7 @@ acceptance:
   - id: AC-01
     description: "<observable acceptance>"
     weight: 100
-    verification: [TEST-01]
+    verification: [TEST-01, BENCH-01]
 validation:
   - id: TEST-01
     class: MUST_PASS
@@ -93,6 +170,59 @@ report_contract:
     - Exact next actions
     - Successor EP
     - Phase-transition Q1-Q5 when applicable
+  payloads:
+    - id: RPT-STATE
+      section: Executive state
+      sources: [REPO_STATE]
+      required_fields: [relay_state, current_position, execution_state, material_authority, stop]
+    - id: RPT-PROGRESS
+      section: Overall / phase / EP progress
+      sources: [PROGRESS, OVERALL_ROADMAP, EP]
+      required_fields: [progress_basis, overall, phase, work_package, acceptance]
+    - id: RPT-WORK
+      section: Work completed
+      sources: [EP, CP]
+      required_fields: [completed_steps, implementation_result]
+    - id: RPT-FILES
+      section: Files changed
+      sources: [CP]
+      required_fields: [files_changed]
+    - id: RPT-AC
+      section: Acceptance matrix
+      sources: [EP, CP]
+      required_fields: [criterion, status, basis]
+    - id: RPT-EVIDENCE
+      section: Tests and evidence
+      sources: [EP, CP, REPO_STATE]
+      required_fields: [validation_id, obligation_class, status, basis_ref, not_run_reason]
+    - id: RPT-QUALITY
+      section: Quality findings
+      sources: [EP, CP, REPO_STATE]
+      required_fields: [blueprints, findings, disposition]
+    - id: RPT-LIMITS
+      section: Known limitations
+      sources: [EP, CP, REPO_STATE]
+      required_fields: [limitations, evidence_gaps, deferred_items]
+    - id: RPT-OWNER
+      section: Owner decisions required
+      sources: [ODR, REPO_STATE]
+      required_fields: [decision_required, pending_items, authority_effect]
+    - id: RPT-ISSUES
+      section: GitHub issue changes
+      sources: [ISSUE_GRAPH, REPO_STATE]
+      required_fields: [operations, relationships, projection_state]
+    - id: RPT-ROADMAP
+      section: Roadmap changes
+      sources: [OVERALL_ROADMAP, ROADMAP_REVISION, PROGRESS]
+      required_fields: [revision, topology_or_status_change, frontier_after, progress_basis_effect]
+    - id: RPT-NEXT
+      section: Exact next actions
+      sources: [OVERALL_ROADMAP, REPO_STATE, EP]
+      required_fields: [ordered_actions, targets, inputs, tests, acceptance, stop_conditions]
+    - id: RPT-SUCCESSOR
+      section: Successor EP
+      sources: [CP, OVERALL_ROADMAP, REPO_STATE]
+      required_fields: [successor_mode, next_frontier, ep_or_terminal_disposition]
 checkpoint_contract:
   required: true
 successor_relay:
@@ -107,3 +237,9 @@ successor_relay:
     - validate successor EP
     - run cold-start check
     - update REPO_STATE
+  required_outputs:
+    - checkpoint
+    - progress_reconciliation
+    - issue_projection_disposition
+    - next_frontier
+    - successor_ep_or_terminal_disposition
