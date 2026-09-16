@@ -19,5 +19,8 @@ roadmap_reconciliation:
   owner_decisions_required: []
 remaining_work: []
 successor:
-  frontier_work_package: null
-  ep_id: null
+  mode: SERIAL
+  frontier_work_package: "<next-WP-or-null>"
+  ep_id: "<next-EP-or-null>"
+  parallel_plan: null
+  lanes: []
