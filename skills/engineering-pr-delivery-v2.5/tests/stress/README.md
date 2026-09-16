@@ -6,6 +6,8 @@ Current stress coverage includes:
 
 - infrastructure `NOT_RUN` without automatic hard stop;
 - overloaded blocker-state rejection;
+- independent material authority (`WRITE | READ_ONLY | NONE`) from execution continuation;
+- Owner deferral preserving `PENDING_NOT_SATISFIED` and not granting write authority;
 - topology-derived executable frontier;
 - progress denominator changes without erasing earned work;
 - context-dependent instruction rejection;
@@ -17,13 +19,17 @@ Current stress coverage includes:
 - hard-stop/execution consistency;
 - terminal/idle relay with empty frontier and no active EP;
 - Owner-approved parallel routing, lane isolation and deferred integration;
+- lane checkpoint `JOIN` semantics and multi-parent Parallel Join Receipt;
+- integration EP creation only after every lane checkpoint converges and integration becomes the sole frontier;
 - bootstrap/migration truth preservation;
 - lifecycle-aware status/handover rendering;
 - required external projection pending/stale without confusing repository recovery with full handover readiness;
+- crash-safe projection publication with stable `operation_id` and `PUBLISHED_UNCONFIRMED` recovery;
 - in-sync projection binding to the current roadmap revision and current execution reference;
 - serial/parallel EP selection from checked-out branch/worktree with ambiguity rejected;
-- base drift requiring an explicit `DISJOINT` receipt before an existing EP remains executable;
-- overlapping/unknown base drift invalidating the EP until reconciliation;
+- base drift classified as `DISJOINT | WITHIN_QUALIFIED_BOUNDARY | OVERLAPPING | UNKNOWN`;
+- qualified-boundary drift retaining read-only recovery while confirmation remains pending;
+- overlapping/unknown drift withholding material-write authority until reconciliation;
 - checkpoint PASS/FAIL/NOT_RUN evidence bound to the exact material reference it observed.
 
 Real repositories may be inspected read-only to discover additional failure modes. Every discovered mode must be reduced to a repository-neutral synthetic regression here before changing Common protocol logic. No downstream-project names or semantics belong in these fixtures.
