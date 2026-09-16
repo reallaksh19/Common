@@ -18,7 +18,7 @@ class LifecycleTransactionStressTests(unittest.TestCase):
             root=Path(td)
             state={"relay_state":"ACTIVE","active_ep":{"id":"EP-2","path":"agents/relay/execution-packages/EP-2.yaml","state":"ACTIVE"},"last_checkpoint":{"id":"CP-1","path":"agents/relay/checkpoints/CP-1.yaml"},"current_position":{"work_package":"WP-2"}}
             ep={"identity":{"previous_checkpoint":"CP-1"}}
-            cp={"schema_version":"relay-v2.5","checkpoint_id":"CP-1","ep_id":"EP-1","roadmap_basis":{"roadmap_id":"RM-X","revision":"RM-1"},"implementation_result":{},"acceptance_results":[],"validation_results":[],"quality_findings":[],"discoveries":[],"roadmap_reconciliation":{"result":"STATUS_UPDATE"},"successor":{"mode":"SERIAL","frontier_work_package":"WP-2","ep_id":"EP-2","parallel_plan":None,"lanes":[]}}
+            cp={"schema_version":"relay-v2.5","checkpoint_id":"CP-1","ep_id":"EP-1","roadmap_basis":{"roadmap_id":"RM-X","revision":"RM-1"},"execution_basis":{"material_ref":"abc"},"implementation_result":{},"acceptance_results":[],"validation_results":[],"quality_findings":[],"discoveries":[],"roadmap_reconciliation":{"result":"STATUS_UPDATE"},"successor":{"mode":"SERIAL","frontier_work_package":"WP-2","ep_id":"EP-2","parallel_plan":None,"lanes":[]}}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/execution-packages/EP-2.yaml",ep);dump(root/"agents/relay/checkpoints/CP-1.yaml",cp)
             self.assertEqual([],checkpoint_linkage(root)[0])
             cp["successor"]["ep_id"]="EP-WRONG";dump(root/"agents/relay/checkpoints/CP-1.yaml",cp)
