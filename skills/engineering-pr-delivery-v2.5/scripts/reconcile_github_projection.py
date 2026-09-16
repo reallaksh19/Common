@@ -46,12 +46,10 @@ def _apply_effects(graph:dict,op:dict,obs:dict):
         if effect.get("set_issue_id")=="OBSERVED":effect["set_issue_id"]=rb.get("issue_id")
         if "set_issue_number" in effect and effect.get("set_issue_number") is not None:gh["issue_number"]=effect["set_issue_number"]
         if "set_issue_id" in effect and effect.get("set_issue_id") is not None:gh["issue_id"]=effect["set_issue_id"]
-    # CREATE always captures verified external identity even if the template omitted the locator effect.
     if op.get("kind")=="CREATE" and node_id in nodes:
         node=nodes[node_id];node["github_state"]="OPEN";gh=node.setdefault("github",{})
         if rb.get("issue_number") is not None:gh["issue_number"]=rb.get("issue_number")
         if rb.get("issue_id") is not None:gh["issue_id"]=rb.get("issue_id")
-    # Keep aggregate child snapshots current without turning the projection snapshot into roadmap authority.
     for parent in nodes.values():
         roll=parent.get("child_rollup") or {}
         for snap in _list(roll.get("direct_children")):
@@ -73,15 +71,17 @@ def reconcile(root:Path,observation_path:Path,apply:bool=False)->dict:
     if errors:return {"status":"ERROR","errors":errors}
 
     plan=copy.deepcopy(plan);graph=copy.deepcopy(graph);state=copy.deepcopy(state);op=next(x for x in plan["operations"] if str(x.get("id"))==oid)
-    pub=op.setdefault("publication",{});ver=op.setdefault("verification",{});publication=obs.get("publication") or {};rb=obs.get("readback") or {}
-    if publication.get("attempted") is True:
+    prior_state=op.get("state");pub=op.setdefault("publication",{});ver=op.setdefault("verification",{});publication=obs.get("publication") or {};rb=obs.get("readback") or {}
+    # Normally begin_github_operation.py records the attempt before the write. This fallback
+    # only increments when reconciling a PREPARED operation whose attempt was not recorded.
+    if publication.get("attempted") is True and prior_state=="PREPARED":
         pub["attempt_count"]=int(pub.get("attempt_count") or 0)+1
         pub["last_attempt_basis"]=list(obs.get("candidate_basis") or [])
     if publication.get("receipt") not in {None,""}:pub["receipt"]=publication.get("receipt")
     if publication.get("error") not in {None,""}:pub["last_error"]=publication.get("error")
     result=obs.get("result")
     if result=="VERIFIED":
-        op["state"]="VERIFIED";ver.update({"status":"PASS","observed_issue_number":rb.get("issue_number"),"observed_issue_id":rb.get("issue_id"),"observed_github_state":rb.get("github_state"),"observed_relationships":list(rb.get("relationships") or []),"basis":list(rb.get("basis") or [])})
+        op["state"]="VERIFIED";ver.update({"status":"PASS","observed_issue_number":rb.get("issue_number"),"observed_issue_id":rb.get("issue_id"),"observed_github_state":rb.get("github_state"),"observed_relationships":list(rb.get("relationships") or []),"basis":list(rb.get("basis") or []),"recovered_without_receipt":pub.get("receipt") in {None,""}})
         _apply_effects(graph,op,obs)
     elif result=="UNCONFIRMED":
         op["state"]="PUBLISHED_UNCONFIRMED" if pub.get("receipt") not in {None,""} else "ATTEMPTED_UNCONFIRMED";ver.update({"status":"NOT_RUN","basis":list(rb.get("basis") or [])})
@@ -94,15 +94,13 @@ def reconcile(root:Path,observation_path:Path,apply:bool=False)->dict:
         state["relay_readiness"]["projection_ready"]=True;state["relay_readiness"]["handover_ready"]=bool(state["relay_readiness"].get("baton_ready"))
     elif uncertain:
         plan["generation"]["state"]="PUBLISHED_UNCONFIRMED";with_receipt=next((x for x in uncertain if (x.get("publication") or {}).get("receipt") not in {None,""}),None)
-        if with_receipt:
-            state["projection"].update({"state":"PUBLISHED_UNCONFIRMED","receipt":f"github-operation:{with_receipt['id']}:{(with_receipt.get('publication') or {}).get('receipt')}"})
+        if with_receipt:state["projection"].update({"state":"PUBLISHED_UNCONFIRMED","receipt":f"github-operation:{with_receipt['id']}:{(with_receipt.get('publication') or {}).get('receipt')}"})
         else:state["projection"].update({"state":"PENDING","receipt":None})
         state["relay_readiness"]["projection_ready"]=False;state["relay_readiness"]["handover_ready"]=False
     else:
         plan["generation"]["state"]="PUBLISHING" if any(x.get("state")=="VERIFIED" for x in ops) else "PREPARED";state["projection"].update({"state":"PENDING","receipt":None});state["relay_readiness"]["projection_ready"]=False;state["relay_readiness"]["handover_ready"]=False
     result_doc={"status":"OK","generation_id":gid,"operation_id":oid,"operation_state":op["state"],"generation_state":plan["generation"]["state"],"projection_state":state["projection"]["state"],"applied":apply}
-    if apply:
-        _dump(plan_path,plan);_dump(graph_path,graph);_dump(state_path,state)
+    if apply:_dump(plan_path,plan);_dump(graph_path,graph);_dump(state_path,state)
     return result_doc
 
 def main():
