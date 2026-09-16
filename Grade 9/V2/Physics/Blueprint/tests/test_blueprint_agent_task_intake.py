@@ -33,12 +33,19 @@ def load_task() -> dict:
 
 
 class BlueprintAgentTaskIntakeTests(unittest.TestCase):
-    def test_valid_packet_is_context_only(self):
+    def test_valid_packet_is_context_only_and_execution_route_is_held(self):
         packet = compile_packet(load_task())
         receipt = consume_execution_packet(packet)
 
         self.assertEqual(receipt["status"], "ACCEPTED_AS_DELEGATION_CONTEXT")
         self.assertEqual(receipt["packet_digest"], packet["packet_digest"])
+        self.assertEqual(receipt["execution_route"]["status"], "HELD_NO_REPOSITORY_ROUTE")
+        self.assertFalse(receipt["execution_route"]["execution_authorized"])
+        self.assertEqual(
+            receipt["execution_route"]["required_authority"],
+            "REPOSITORY_OWNED_TASK_TO_ASSESSMENT_INPUT_ROUTE",
+        )
+        self.assertEqual(receipt["execution_route"]["label_inference"], "PROHIBITED")
         self.assertEqual(receipt["authority_boundary"]["scope_selection"], "REPOSITORY_GOVERNED_NOT_PACKET")
         self.assertEqual(receipt["authority_boundary"]["domain_truth"], "REPOSITORY_GOVERNED_NOT_PACKET")
         self.assertEqual(receipt["authority_boundary"]["engineering_readiness"], "RECOMPUTE_FROM_GOVERNED_SCOPE")
@@ -47,7 +54,7 @@ class BlueprintAgentTaskIntakeTests(unittest.TestCase):
         self.assertNotIn("scope_ref", receipt)
         self.assertNotIn("engineering_ready", receipt)
 
-    def test_topic_subtopic_and_learner_variation_do_not_change_authority_boundary(self):
+    def test_topic_subtopic_learner_and_depth_variation_do_not_change_authority_or_route_hold(self):
         task_a = load_task()
         task_b = copy.deepcopy(task_a)
         task_b["task_id"] = "TASK-BLUEPRINT-INTAKE-SYNTHETIC-2"
@@ -61,9 +68,10 @@ class BlueprintAgentTaskIntakeTests(unittest.TestCase):
 
         self.assertNotEqual(receipt_a["packet_digest"], receipt_b["packet_digest"])
         self.assertEqual(receipt_a["authority_boundary"], receipt_b["authority_boundary"])
+        self.assertEqual(receipt_a["execution_route"], receipt_b["execution_route"])
         self.assertEqual(receipt_a["status"], receipt_b["status"])
 
-    def test_target_consumer_is_intent_not_permission(self):
+    def test_requested_consumer_is_intent_not_permission_or_route_authority(self):
         task = load_task()
         task["target_consumers"] = ["PUBLICATION"]
         packet = compile_packet(task)
@@ -72,6 +80,8 @@ class BlueprintAgentTaskIntakeTests(unittest.TestCase):
         self.assertEqual(receipt["execution_intent"]["target_consumers"], ["PUBLICATION"])
         self.assertEqual(packet["engineering_preflight"]["consumer_permissions"]["PUBLICATION"]["status"], "NOT_EVALUATED")
         self.assertEqual(receipt["authority_boundary"]["publication"], "NOT_AUTHORIZED_BY_PACKET")
+        self.assertEqual(receipt["execution_route"]["status"], "HELD_NO_REPOSITORY_ROUTE")
+        self.assertFalse(receipt["execution_route"]["execution_authorized"])
 
     def test_tampered_packet_fails_closed(self):
         packet = compile_packet(load_task())
