@@ -72,6 +72,10 @@ jobs:
         run: python 'Grade 9/V2/Physics/Blueprint/engine/validate_subtopic_intelligence_library.py'
       - name: Run Subtopic Intelligence Library test suite
         run: python 'Grade 9/V2/Physics/Blueprint/tests/test_subtopic_intelligence_library.py'
+      - name: Verify Subtopic Intelligence Library Explorer catalog generation
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/sil_explorer/generate_sil_catalog.py'
+      - name: Run Subtopic Intelligence Library Explorer test suite
+        run: python 'Grade 9/V2/Physics/Blueprint/tools/sil_explorer/tests/test_sil_explorer.py'
       - name: Compile registry-wide Blueprint authorization proof
         run: |
           mkdir -p /tmp/physics-engineering-workbench

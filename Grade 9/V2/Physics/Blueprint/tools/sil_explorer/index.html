@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subtopic Intelligence Library (SIL) Explorer — Physics Blueprint</title>
+  <link rel="stylesheet" href="sil_explorer.css">
+</head>
+<body>
+  <header>
+    <div class="header-title">
+      <h1>
+        <span>📚</span> Physics Subtopic Intelligence Library (SIL) Explorer
+      </h1>
+      <span class="header-badge">4-Layer Pedagogical Architecture (43 Subtopics)</span>
+    </div>
+    <div class="header-actions">
+      <a href="../index.html" class="portal-link">&larr; Observability Portal</a>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="filter-box">
+        <input type="text" id="search-input" class="search-input" placeholder="Search subtopic, gate ID, or domain...">
+        <div id="domain-filters" class="filter-row"></div>
+      </div>
+      <div id="packet-list" class="packet-list"></div>
+    </aside>
+
+    <main id="detail-area" class="detail-area">
+      <div class="empty-state">Loading knowledge packets...</div>
+    </main>
+  </div>
+
+  <script src="sil_catalog_data.js"></script>
+  <script src="sil_explorer.js"></script>
+</body>
+</html>

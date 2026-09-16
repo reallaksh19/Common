@@ -104,6 +104,7 @@ As an expert academician preparing students across Grades 9 to 11 for CBSE Board
 | `PEDAGOGY_AND_CALIBRATION.md` | NORMATIVE | Educational Design | SDU vs LAU separation, A/B layer dual-track, Physical TTUs |
 | `PRODUCT_GOVERNANCE_GATE.md` | NORMATIVE | Release Integrity | 5 release questions, coverage ledger, similarity audit |
 | `SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md` | NORMATIVE | Knowledge Architecture | 4-layer physical intelligence packets, 6-point intake gate |
+| `references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md` | NORMATIVE | Pedagogy Deep Research | Nano-level preconditions, CBSE step rubrics, JEE traps & bypasses, TTU nano-steps |
 | `PHYSICS_TECHNICAL_ENGINEERING_GATES.md` | NORMATIVE | Gate Specifications | 43 technical engineering gates definitions |
 | `SELF_HELP_ARCHITECTURE_V2.md` through `V8.md` | HISTORICAL / EVOLUTIONARY | Architecture Lineage | Precursor specifications reconciled in Canonical Architecture |
 

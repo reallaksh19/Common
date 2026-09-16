@@ -30,8 +30,10 @@ The Physics V2 canonical architecture is organized into a single governing root 
   - [`tools/index.html`](tools/index.html): Unified Observability Workbench Portal
   - [`tools/run_builder/index.html`](tools/run_builder/index.html): PhysicsBlueprint Run Builder
   - [`tools/architecture_explorer/index.html`](tools/architecture_explorer/index.html): Blueprint Architecture Explorer
+  - [`tools/sil_explorer/index.html`](tools/sil_explorer/index.html): Subtopic Intelligence Library (SIL) Explorer
   - [`benchmarks/discovery/index.html`](benchmarks/discovery/index.html): Discovery Benchmark Quality Explorer
   - [`CORE_ARCHITECTURE_DRIFT_AUDIT.md`](CORE_ARCHITECTURE_DRIFT_AUDIT.md): 17-Section Normative Consistency Audit & Academician Matrix
+  - [`references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md`](references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md): Nano-Level Subtopic Intelligence Research (Grade 9–11 CBSE & IIT-JEE / Olympiad Continuum, Singularity Traps, Step-Marking Rigor, and Examiner Trap Matrices)
 
 ---
 
