@@ -14,6 +14,7 @@
     "task_kind",
     "execution_intent",
     "non_authoritative_labels",
+    "execution_route",
     "authority_boundary",
     "receipt_digest"
   ],
@@ -54,6 +55,18 @@
         },
         "topic": {"type": "string", "minLength": 1},
         "subtopic": {"type": "string", "minLength": 1}
+      }
+    },
+    "execution_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "execution_authorized", "required_authority", "label_inference", "reason"],
+      "properties": {
+        "status": {"const": "HELD_NO_REPOSITORY_ROUTE"},
+        "execution_authorized": {"const": false},
+        "required_authority": {"const": "REPOSITORY_OWNED_TASK_TO_ASSESSMENT_INPUT_ROUTE"},
+        "label_inference": {"const": "PROHIBITED"},
+        "reason": {"type": "string", "minLength": 1}
       }
     },
     "authority_boundary": {
