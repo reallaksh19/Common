@@ -7,6 +7,8 @@ revision:
   trigger:
     type: CHECKPOINT
     ref: CP-0001
+# If material execution is active, classify that active WP explicitly as changed,
+# removed, or unaffected. Silence is not evidence that the EP survived the revision.
 changes:
   added: []
   removed: []
