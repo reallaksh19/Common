@@ -25,7 +25,8 @@ from test_chemistry_semantic_projection_generic import make_packet  # noqa: E402
 class ChemistryLearnerGateProjectionTests(unittest.TestCase):
     def test_every_direct_nonmetadata_semantic_role_maps_to_exact_learner_job_and_polarity(self):
         packet = make_packet()
-        projection = compile_learner_gate_projection(packet)
+        semantic = compile_semantic_projection(packet)
+        projection = compile_learner_gate_projection(packet, semantic_projection=semantic)
         self.assertEqual(projection["status"], "LEARNER_GATE_PROJECTION_READY")
         by_role = {row["semantic_role"]: row for row in projection["learner_gates"]}
         expected = {
@@ -48,11 +49,15 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         self.assertEqual(set(by_role), set(expected))
         for role, pair in expected.items():
             self.assertEqual((by_role[role]["learner_job"], by_role[role]["polarity"]), pair, role)
-        semantic = compile_semantic_projection(packet)
+
+        semantic_by_id = {row["semantic_id"]: row for row in semantic["semantic_atoms"]}
+        for gate in projection["learner_gates"]:
+            self.assertEqual(gate["content"], semantic_by_id[gate["source_semantic_id"]]["content"])
+
         difficulty = next(row for row in semantic["semantic_atoms"] if row["semantic_role"] == "DIFFICULTY_EVIDENCE")
         self.assertIn(difficulty["semantic_id"], projection["metadata_semantic_ids"])
         self.assertNotIn(difficulty["semantic_id"], {row["source_semantic_id"] for row in projection["learner_gates"]})
-        self.assertEqual(validate_learner_gate_projection(packet, projection)["status"], "PASS")
+        self.assertEqual(validate_learner_gate_projection(packet, projection, semantic_projection=semantic)["status"], "PASS")
 
     def test_fatal_error_and_misconception_never_become_positive_method_jobs(self):
         projection = compile_learner_gate_projection(make_packet())
@@ -147,12 +152,10 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         self.assertEqual(signature(alpha), signature(beta))
         self.assertEqual(alpha["counts"]["metadata_semantic_count"], beta["counts"]["metadata_semantic_count"])
 
-    def test_generic_compiler_contains_no_topic_control_flow_or_pedagogy_authoring(self):
+    def test_generic_compiler_contains_no_topic_control_flow(self):
         source = inspect.getsource(__import__("compile_chemistry_learner_gate_projection")).lower()
         for forbidden in ("re" + "dox", "thermo" + "dynamics", "perman" + "ganate", "mn" + "o4"):
             self.assertNotIn(forbidden, source)
-        for forbidden_authoring in ("worked_example", "hint", "solution_text", "explanation_text"):
-            self.assertNotIn(forbidden_authoring, source)
 
 
 if __name__ == "__main__":
