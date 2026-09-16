@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://common.local/mathblueprint/design/mathematics-normative-root-consolidation.schema.json",
+  "title": "Mathematics Normative Root Consolidation Receipt (Design Evidence)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "authority",
+    "semantic_change",
+    "stage",
+    "source_audit",
+    "normative_updates",
+    "finding_dispositions",
+    "tracked_runtime_gap",
+    "owner_decision_required_count",
+    "next_stage"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "C2_NORMATIVE_ROOT_CONSOLIDATED"},
+    "authority": {"const": "NONE"},
+    "semantic_change": {"const": "NONE"},
+    "stage": {"const": "C2_NORMATIVE_ROOT_CONSOLIDATION"},
+    "source_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "status", "authority", "owner_decision_required_count"],
+      "properties": {
+        "path": {"const": "design/mathematics-architecture-documentation-drift-audit.json"},
+        "status": {"const": "C0_AUDIT_COMPLETE"},
+        "authority": {"const": "NONE"},
+        "owner_decision_required_count": {"const": 0}
+      }
+    },
+    "normative_updates": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"enum": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"]}
+    },
+    "finding_dispositions": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding_id", "disposition", "normative_paths", "note"],
+        "properties": {
+          "finding_id": {"type": "string", "pattern": "^C0-F00[1-7]$"},
+          "disposition": {"enum": ["RESOLVED_DOCUMENTATION", "PRESERVED_DOCUMENTED_ONLY"]},
+          "normative_paths": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["CANONICAL_ARCHITECTURE.md", "DUAL_TRACK_PRODUCT_MODEL.md"]}
+          },
+          "note": {"type": "string", "minLength": 20}
+        }
+      }
+    },
+    "tracked_runtime_gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "classification", "compiler_path", "migration_required", "must_not_claim_executable"],
+      "properties": {
+        "finding_id": {"const": "C0-F007"},
+        "classification": {"const": "CURRENT + DOCUMENTED ONLY"},
+        "compiler_path": {"const": "engine/compile_sdu_lau_generation_spec.py"},
+        "migration_required": {"const": true},
+        "must_not_claim_executable": {"const": true}
+      }
+    },
+    "owner_decision_required_count": {"const": 0},
+    "next_stage": {"const": "C3_GENERATED_REFERENCES_READY"}
+  }
+}

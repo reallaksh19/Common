@@ -5,8 +5,8 @@
   "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
-  "component_count": 159,
-  "relation_count": 472,
+  "component_count": 163,
+  "relation_count": 487,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -345,7 +345,6 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
       ]
     },
@@ -585,6 +584,7 @@
       "test_refs": [],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:GENERATION_CALIBRATION.md"
       ]
     },
@@ -1616,7 +1616,9 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md"
       ]
     },
     "engine:emit_stage_governance.py": {
@@ -2188,6 +2190,7 @@
       ],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:GENERATION_CALIBRATION.md"
       ]
     },
@@ -2268,6 +2271,7 @@
       "test_refs": [],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:GENERATION_CALIBRATION.md",
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:README.md"
@@ -2301,6 +2305,38 @@
       "schema_version": "N/A",
       "title": "Test Adaptive Router",
       "authority_domain": "CORE0_ROUTING",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_architecture_catalog_candidate.py": {
+      "component_id": "test:test_architecture_catalog_candidate.py",
+      "name": "test_architecture_catalog_candidate.py",
+      "path": "tests/test_architecture_catalog_candidate.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Architecture Catalog Candidate",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_architecture_documentation_drift_audit.py": {
+      "component_id": "test:test_architecture_documentation_drift_audit.py",
+      "name": "test_architecture_documentation_drift_audit.py",
+      "path": "tests/test_architecture_documentation_drift_audit.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Architecture Documentation Drift Audit",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
       "maturity_observation": "TEST_FIXTURE",
       "producer_refs": [],
       "validator_refs": [],
@@ -2415,6 +2451,22 @@
       "schema_version": "N/A",
       "title": "Test Core1A Authoring Asset Boundary",
       "authority_domain": "CORE1_SEMANTICS",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_design_authority_boundary.py": {
+      "component_id": "test:test_design_authority_boundary.py",
+      "name": "test_design_authority_boundary.py",
+      "path": "tests/test_design_authority_boundary.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Design Authority Boundary",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
       "maturity_observation": "TEST_FIXTURE",
       "producer_refs": [],
       "validator_refs": [],
@@ -2640,6 +2692,22 @@
       "test_refs": [],
       "documentation_refs": []
     },
+    "test:test_normative_root_consolidation.py": {
+      "component_id": "test:test_normative_root_consolidation.py",
+      "name": "test_normative_root_consolidation.py",
+      "path": "tests/test_normative_root_consolidation.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Normative Root Consolidation",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
     "test:test_pedagogy_research_manifest.py": {
       "component_id": "test:test_pedagogy_research_manifest.py",
       "name": "test_pedagogy_research_manifest.py",
@@ -2828,6 +2896,7 @@
       "test_refs": [],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:ENGINEERING_AUTHORITY.md",
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:PRODUCT_GOVERNANCE_GATE.md",
@@ -2850,6 +2919,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
       ]
     },
@@ -2931,6 +3001,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:ENGINEERING_AUTHORITY.md",
         "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
@@ -2952,7 +3023,9 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:ENGINEERING_AUTHORITY.md"
       ]
     },
@@ -2971,6 +3044,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:ENGINEERING_AUTHORITY.md"
       ]
@@ -2990,7 +3064,9 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:README.md",
         "doc:SELF_TEACHING.md"
@@ -3011,6 +3087,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:README.md"
       ]
@@ -3054,6 +3131,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:PRODUCT_GOVERNANCE_GATE.md"
       ]
@@ -3113,6 +3191,7 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
+        "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:README.md"
@@ -3161,6 +3240,12 @@
   "relations": [
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:CANONICAL_ENGINEERING_DOMAIN_ASSETS.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
       "target": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -3179,7 +3264,43 @@
     },
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:ENGINEERING_DISCOVERY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:ENGINEERING_WORKBENCH.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:GENERATION_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
       "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:PRODUCT_GOVERNANCE.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -3191,13 +3312,19 @@
     },
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
+      "target": "doc:SELF_TEACHING.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:CANONICAL_ARCHITECTURE.md",
       "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
     {
       "source": "doc:CANONICAL_ARCHITECTURE.md",
-      "target": "schema:math-dual-track-product-model.schema.json",
+      "target": "engine:compile_sdu_lau_generation_spec.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -3893,7 +4020,49 @@
     },
     {
       "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "doc:GENERATION_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
       "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "engine:compile_sdu_lau_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "engine:validate_pedagogy_research_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
+      "target": "schema:math-pedagogy-research-manifest.schema.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -6046,5 +6215,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:3353f27ccefc027bbfee5df2ae565d686cf84b86ddc98256253cb8fc2a3f7f4d"
+  "manifest_digest": "sha256:10541100f9372744a6f7aad7ff46aecb22b855a25a083e12dddf34924300be41"
 }

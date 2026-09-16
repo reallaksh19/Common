@@ -1,12 +1,19 @@
 # Mathematics V2 — Canonical Six-Core Architecture
 
-This document is the canonical target architecture for Mathematics V2. It sits above the existing executable MathBlueprint increments and the dual-track product model. Existing validators/contracts remain implementation assets, but future schema/engine work must converge on this architecture rather than treating earlier one-axis adaptation assumptions as canonical.
+This document is the **normative architecture root** for Mathematics V2. It defines durable authority, identity, orchestration, learner-product and publication boundaries. Field-level rules that change independently remain in subordinate normative specifications and executable schemas, policies, validators and compilers.
 
-The governing invariants remain:
+The architecture is recovered from current governed behavior, not from conversational memory or topic-specific Blueprint logic. Design and audit material under `design/` may explain migration history, but it is non-normative and cannot override this root or executable authority.
+
+The governing invariants are:
 
 ```text
 EXECUTION ORDER MAY VARY.
 AUTHORITY ORDER MAY NOT.
+
+DISCOVERY
+!= TECHNICAL AUTHORITY
+!= PEDAGOGY AUTHORITY
+!= PUBLICATION AUTHORITY
 
 PLANNED PEDAGOGY
 != COMPILED STATIC PRODUCT
@@ -35,104 +42,145 @@ The Mathematics V2 canonical architecture is organized into a single governing r
   - [`benchmarks/discovery/index.html`](benchmarks/discovery/index.html): Discovery Benchmark Quality Explorer
   - [`CORE_ARCHITECTURE_DRIFT_AUDIT.md`](CORE_ARCHITECTURE_DRIFT_AUDIT.md): 17-Section Normative Consistency Audit & Academician Matrix
 
-## 1. Canonical system topology
+## 1. Canonical authority topology
+
+Human-language discovery may precede exact authority, but it never substitutes for it.
 
 ```text
 OWNER CONTROL PLANE
-purpose • policy • difficulty override • routing override • inclusion/exclusion
+purpose • policy • routing/difficulty override • inclusion/exclusion
 learner-% waiver • support override • release/hold
         |
         v
-ORIGINAL GROUND TRUTH
+ORIGINAL GROUND TRUTH / DECLARED SCOPE
 questions • syllabus • authoritative sources • figures • answers • owner scope
         |
-        v
+        +----------------------+
+        |                      |
+        |                NON-AUTHORITATIVE DISCOVERY
+        |                labels • aliases • approximate search • hints
+        |                      |
+        |                      v
+        |                ranked candidate identities
+        |                      |
+        |                EXPLICIT EXACT-ID SELECTION
+        |                      |
+        +----------------------+
+                   |
+                   v
+CANONICAL MATHEMATICS ENGINEERING AUTHORITY
+base registry + digest-bound extensions + governed invariant data
+                   |
+          schema + generic validation
+          exact scope/crosswalk custody where needed
+          FOUNDATION / STANDARD / RESEARCH depth
+          deterministic prerequisite closure
+                   |
+                   v
+ENGINEERING AUTHORIZATION BINDING(S)
+                   |
+                   v
+CANONICAL DOMAIN ADMISSION
+                   |
+                   v
 CORE0 — EVIDENCE + ROUTE
-        |
-        +-----------------------------+
-        |                             |
-        v                             v
-CORE1 FIRST                      CORE2 FIRST
-semantic reconstruction          assessment reconstruction
-        |                             |
-        v                             v
-K-* packets                      D-* packets
-instance ends                    instance ends
-        |                             |
-        v                             v
-fresh CORE2                      fresh CORE1
-independent GT pass              independent GT pass
-        |                             |
-        +-------------+---------------+
-                      v
-              C1 × C2 JOIN / AUDIT
-                      |
-                      v
-            CANONICAL DOMAIN REGISTRY
-concepts • models • equations • derivations • learning atoms
-representations • misconceptions • problem families • frozen questions
-canonical solutions • capabilities • validity • provenance
-                      |
-                      v
-                    CDAU
-       cross-core differentiation + lineage + owner governance
-                      |
-          +-----------+-----------+
-          |                       |
-          v                       v
-         SDU                     LAU
-Study Differentiation       Learner Adaptation
-Core1A / Core1B             Core2A / Core2B
-intrinsic difficulty        knowledge % OR owner override
-NO learner-% depth          × task demand × family × purpose
-          |                       |
-          v                       v
-      CONCEPT TTUs             PROBLEM TTUs
-       +-----+                  +-----+
-       |     |                  |     |
-       v     v                  v     v
-    Core1A Core1B            Core2A Core2B
-    complete reconstructive  complete reconstructive
-       |     |                  |     |
-       +--+--+                  +--+--+
-          |                       |
-          v                       v
-      SELF-HELP CLOSURE       SELF-HELP CLOSURE
-          +-----------+-----------+
-                      v
-              LearnerPageBlueprint
-                      |
-                      v
-                PUBLICATION GATE
-                      |
-                      v
-                LEARNER PRODUCT
-                      |
-                      v
-          optional observed learner evidence
-                      |
-                      v
-        governed learner-intelligence update
-        affecting later Core2A/Core2B only
+                   |
+        +----------+----------+
+        |                     |
+        v                     v
+   CORE1 FIRST            CORE2 FIRST
+semantic reconstruction   assessment reconstruction
+        |                     |
+        v                     v
+ sealed K-* package        sealed D-* package
+        |                     |
+        v                     v
+ fresh CORE2              fresh CORE1
+ independent GT pass      independent GT pass
+        |                     |
+        +----------+----------+
+                   v
+           C1 × C2 JOIN / AUDIT
+                   |
+                   v
+          CANONICAL DOMAIN REGISTRY
+canonical mathematical/assessment assets + scope memberships
+                   |
+                   v
+                 CDAU
+cross-core differentiation • lineage • owner governance
+                   |
+        +----------+----------+
+        |                     |
+        v                     v
+       SDU                   LAU
+Core1A / Core1B         Core2A / Core2B
+intrinsic difficulty    learner evidence/waiver × task demand × purpose
+        |                     |
+        v                     v
+   CONCEPT TTUs           PROBLEM TTUs
+        |                     |
+        v                     v
+ Core1A / Core1B       Core2A / Core2B
+        +----------+----------+
+                   v
+            SELF-HELP CLOSURE
+                   |
+                   v
+            PRODUCT RELEASE GATE
+                   |
+                   v
+DERIVED ENGINEERING VISIBILITY
+non-authoritative explainability view
+publication_authorization = NOT_IMPLIED
+                   |
+                   v
+SEMANTIC LEARNER PUBLICATION BUNDLE
+released product + governed examples + research custody
++ Engineering visibility + learner-facing semantic components
+                   |
+                   v
+          deterministic rendering
+                   |
+                   v
+     rendered-artifact semantic/surface audit
+                   |
+                   v
+            GOVERNED LEARNER PRODUCT
+                   |
+                   v
+      optional observed learner evidence
+                   |
+                   v
+ governed learner-intelligence update
+ affecting later Core2A/Core2B only
 ```
+
+Operational execution may reorder independent work where contracts permit. No execution shortcut may bypass exact Engineering identity, current validation, requested Engineering depth, prerequisite closure or custody before mathematical authority is consumed downstream.
 
 ## 2. Authority hierarchy
 
 Authority domains are explicit and non-interchangeable.
 
-| Authority | Controls |
-|---|---|
-| Ground Truth | what was actually supplied / verified as authoritative evidence |
-| Core1 | subject-semantic structure |
-| Core2 | assessment/question-demand structure and source-question custody |
-| Canonical Domain Registry | validated reusable mathematics and assessment assets |
-| CDAU | cross-core differentiation, lineage, duplicate control and owner-decision provenance |
-| SDU | intrinsic-depth/research/representation decisions for Core1A/Core1B |
-| LAU | learner-fit/support/demand decisions for Core2A/Core2B |
-| TTU | technical completeness of one learning/reconstruction interaction |
-| Owner | final operational controls, never historical/source truth |
+| Domain | Controls | Does not control |
+|---|---|---|
+| Ground Truth / Declared Scope | what was supplied, verified, frozen or explicitly scoped | mathematical validity by itself |
+| Engineering registry + validation | canonical mathematical identities, topic-specific technical content, prerequisites, invariants, provenance, readiness and requested technical depth | pedagogy, learner fit or publication permission |
+| Engineering authorization binding | exact validated gate closure a downstream scope may consume | discovery ranking or fuzzy interpretation |
+| Core0 | evidence routing and bounded relay work | subject truth or teaching depth |
+| Core1 | semantic reconstruction and compact orientation **within already-authorized Engineering scope** | new mathematical authority |
+| Core2 | assessment/question-demand reconstruction and source-question custody **within already-authorized Engineering scope** | new mathematical authority |
+| Canonical Domain Registry | validated reusable mathematical and assessment assets plus scope memberships | independent authorization outside bound upstream custody |
+| CDAU | cross-core differentiation, lineage, duplicate control and owner-decision provenance | learner support |
+| SDU | intrinsic-depth, representation and research obligations for Core1A/Core1B | learner-knowledge adaptation |
+| LAU | learner-fit, support and demand ceilings for Core2A/Core2B | Core1 depth or subject truth |
+| TTU | technical completeness of one learning/reconstruction interaction | new subject scope |
+| Product release gate | cross-core governance and custody needed to release the governed product state | subject truth creation |
+| Engineering visibility | derived explainability view of already-bound Engineering authority | technical or publication authorization |
+| Semantic learner publication bundle | sole governed semantic input to the current bound-release renderer | new mathematics or pedagogy decisions |
+| Owner | final operational controls and explicit waivers/holds | historical/source truth, mathematical truth or observed evidence |
 
-Owner override preserves the system finding:
+Owner override preserves the underlying system finding:
 
 ```text
 SYSTEM FINDING
@@ -140,13 +188,62 @@ SYSTEM FINDING
 = FINAL OPERATIONAL ACTION
 ```
 
-An override may change routing, difficulty badge, research intensity, decomposition, core inclusion, representation choice, learner-% waiver, support band, question-family inclusion or release/hold. It may not rewrite mathematical truth, frozen source wording, source provenance, observed evidence or answer correctness.
+An override may change routing, operational difficulty badge, decomposition, core inclusion, representation choice, learner-% waiver, support band, question-family inclusion or release/hold. It may not rewrite mathematical truth, frozen source wording, source provenance, observed evidence or answer correctness.
 
-## 3. Core0 — evidence router, not an educational core
+## 3. Engineering → Blueprint boundary
 
-Core0 creates bounded relay work and decides which independent specialist should lead first. It does not teach and it does not replace Core1/Core2 intelligence.
+Engineering is upstream technical mathematical authority. Blueprint owns generic orchestration around that authority.
 
-Routing evidence should preserve separate dimensions such as:
+```text
+Engineering owns:
+- mathematical gate identities;
+- topic/subtopic-specific mathematical content;
+- prerequisites;
+- gate-specific invariant data;
+- provenance;
+- technical readiness data.
+
+Blueprint owns:
+- non-authoritative discovery orchestration;
+- exact request resolution;
+- generic depth evaluation;
+- deterministic prerequisite closure;
+- custody/binding;
+- downstream composition and release orchestration.
+```
+
+Production Blueprint/runtime must not create mathematical authority from topic-specific branches, hard-coded extension filenames, remembered aliases, fuzzy/semantic matching, LLM inference, conversation memory or undeclared capability-to-gate mappings.
+
+A genuinely new mathematical capability is introduced through governed Engineering data. Greater rigor for the same capability uses the same gate plus a stronger generic `engineering_depth`. An existing capability newly required by a product/exam changes scope/crosswalk membership rather than mathematical truth.
+
+The normative subsystem boundary is `ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md`.
+
+## 4. Non-authoritative Engineering discovery
+
+Discovery answers “what might the user mean?”; Engineering authorization answers “what may the system consume?”. These are different operations.
+
+Discovery may use natural-language labels, governed aliases, token overlap, approximate lexical similarity, hints, future embeddings, semantic search, model-assisted query expansion or web-assisted search. Those mechanisms may rank candidates only.
+
+A discovery candidate, rank-1 result, vocabulary match, similarity score, model confidence or web result is **not** Engineering authority.
+
+Promotion into authority requires:
+
+```text
+explicit exact identity selection
++ exact discovery-receipt custody when discovery was used
++ unchanged exact Engineering resolver
++ current Engineering validation
++ requested Engineering depth PASS
++ prerequisite closure PASS
+```
+
+The discovery receipt remains non-authoritative and cannot imply publication authorization. The normative discovery specification is `ENGINEERING_DISCOVERY.md`.
+
+## 5. Core0 — evidence router, not an educational core
+
+Core0 creates bounded relay work and decides which independent specialist should lead first. It does not teach and it does not replace Engineering, Core1 or Core2 authority.
+
+Routing evidence preserves independent dimensions such as:
 
 ```text
 scope authority
@@ -166,9 +263,9 @@ strong conflict                         -> BLOCK_CONFLICT
 insufficient evidence                   -> BLOCK_EVIDENCE / OWNER_ADJUDICATION
 ```
 
-Substantive relay bundles contain at most three subtopics. This is a transport limit only; it never limits learning-atom decomposition.
+Substantive relay bundles contain at most three subtopics. This is a transport limit only; it never limits learning-atom decomposition or Engineering closure.
 
-## 4. Independent-agent invariant
+## 6. Independent-agent invariant
 
 Freshness is an epistemic control, not merely a new agent identifier.
 
@@ -190,55 +287,27 @@ PASS 5 — perform role-specific downstream work
 
 Cross-validation never silently mutates sealed specialist packages.
 
-## 5. Relay bundle and subtopic granularity
+## 7. Core1 and Core2 responsibilities
 
-A relay bundle records ground-truth refs, owner context, purpose, one-to-three subtopics, producer role/run, packet refs, validation summary, unknowns, conflicts, proposed splits and next role.
+Core1 and Core2 remain distinct downstream authorities, but neither may bypass upstream Engineering technical authorization.
 
-The distinction is mandatory:
+### Core1
 
-```text
-SUBTOPIC      = relay / publication governance unit
-LEARNING ATOM = smallest cognitive teaching unit
-```
+Core1 is compact semantic reconstruction/basic orientation. Within authorized scope it owns concept structure, model/equation meaning, derivation, prerequisite relationships, constraint/invariant/state representation, validity boundaries, representation affordances and structural contrasts.
 
-An atom should split when the entity/state, governing model, representation, sign/frame convention, constraint/event, symbolic relation, algebraic transformation, interpretation, special case or misconception boundary changes. Stop splitting when the next learner transition requires no more than one permissible inferential jump.
+Core1 may explain and organize authorized mathematics; it may not introduce a new mathematical capability or silently widen Engineering scope.
 
-## 6. Core1
+### Core2
 
-Core1 is compact semantic authority/basic orientation. It owns concept, model, equation, derivation, prerequisite, constraint, invariant, state, validity, concept boundary, representation affordance and structural contrast.
+Core2 preserves frozen source-question identity and authored hint custody. It may additionally record problem family, required capabilities, recognition cues, hidden conditions, representation requirements, first non-obvious move, inferential jumps, wrong reasoning chains, task-demand vector, hint contract and transfer envelope.
 
-For an important equation, Core1 should retain the full cognitive anatomy when evidence supports it:
-
-```text
-mathematical question
--> parent model/law
--> assumptions
--> frame/sign choice
--> derivation
--> why transformations are legitimate
--> final relation
--> term meaning
--> mathematical interpretation
--> graphical/geometric interpretation
--> special cases
--> inverse uses
--> validity limits
--> failure cases
-```
-
-Core1 does not inflate into Core1A prose.
-
-## 7. Core2
-
-Core2 preserves frozen source-question identity and authored hint custody. Source stems remain immutable.
-
-Core2 may additionally record problem family, required capabilities, recognition cues, hidden conditions, representation requirements, first non-obvious move, inferential jumps, wrong reasoning chains, task-demand vector, H1/H2/H3 contract and transfer envelope.
-
-When a known semantic node has no questions, the correct state is ZERO_EVIDENCE. Zero questions cannot imply zero conceptual importance, low exam importance or absence of difficulty.
+When a known semantic node has no questions, the correct state is `ZERO_EVIDENCE`. Zero questions cannot imply zero conceptual importance, low exam importance or absence of difficulty.
 
 ## 8. Canonical Domain Registry
 
-After Core1/Core2 independent validation and join, reusable validated objects enter the registry with stable IDs. Typical classes:
+The Canonical Domain Registry composes validated reusable objects from bound Engineering authority, Core1/Core2 reconstruction and exact source custody.
+
+Typical object classes include:
 
 ```text
 CONCEPT
@@ -256,11 +325,13 @@ EXAMPLE
 VERIFICATION_RULE
 ```
 
-Fresh downstream agents consume typed registry objects rather than reconstructing the world from untyped prose. Registry admission never bypasses ground-truth provenance.
+Engineering source identity is canonical mathematical identity for Engineering-derived assets. The same source object is stored canonically once; teaching scope, direct/prerequisite role, local capability use and question/bucket use are represented as separate membership metadata rather than duplicate truth.
+
+Fresh downstream agents consume typed registry objects rather than reconstructing authority from untyped prose. Registry admission never bypasses source provenance or Engineering custody.
+
+The normative asset/custody specification is `CANONICAL_ENGINEERING_DOMAIN_ASSETS.md`.
 
 ## 9. CDAU — cross-core governance umbrella
-
-CDAU remains the umbrella layer. It does not directly choose learner support.
 
 CDAU owns:
 
@@ -277,57 +348,18 @@ self-help requirements
 cross-core release policy
 ```
 
-Learner adaptation is explicitly delegated to LAU; study depth is explicitly delegated to SDU.
+Learner adaptation is delegated to LAU; study depth is delegated to SDU.
 
 ## 10. Canonical core-purpose contracts
 
-### Core1
-
-```text
-Purpose: compact mathematical orientation/basic notes
-Learner action: read / reference / recall
-```
-
-### Core1A
-
-```text
-Purpose: deeply construct the conceptual model
-Learner action: inspect / follow / compare / interpret / study complete reasoning
-Control: SDU intrinsic difficulty
-```
-
-### Core1B
-
-```text
-Purpose: reconstruct and independently use the conceptual model
-Learner action: predict / draw / label / generate / select / explain /
-                derive / diagnose / verify
-Control: same SDU intrinsic difficulty as Core1A
-```
-
-### Core2
-
-```text
-Purpose: preserve frozen source assessment and ladder hints
-Learner action: attempt with governed hints/checks
-```
-
-### Core2A
-
-```text
-Purpose: learn how an expert recognizes and solves a legal problem family
-Learner action: study completed/faded expert reasoning
-Control: LAU learner fit × task demand × purpose
-```
-
-### Core2B
-
-```text
-Purpose: recognize, model and solve new/unfamiliar legal problems with bounded tutoring
-Learner action: attempt / classify / choose representation / choose first move /
-                reason / verify / transfer
-Control: same LAU authority as Core2A
-```
+| Stage | Purpose | Learner action | Governing control |
+|---|---|---|---|
+| Core1 | compact mathematical orientation/basic notes | read / reference / recall | authorized Engineering scope + Core1 semantic reconstruction |
+| Core1A | deeply construct the conceptual model | inspect / follow / compare / interpret / study complete reasoning | SDU intrinsic difficulty |
+| Core1B | reconstruct and independently use the conceptual model | predict / draw / label / generate / select / explain / derive / diagnose / verify | same SDU intrinsic difficulty as Core1A |
+| Core2 | preserve frozen source assessment and governed hint custody | attempt with governed hints/checks | source-question custody + authorized Engineering scope |
+| Core2A | learn how an expert recognizes and solves a legal problem family | study completed/faded expert reasoning | LAU learner fit × task demand × purpose |
+| Core2B | recognize, model and solve new/unfamiliar legal problems with bounded tutoring | attempt / classify / choose representation / choose first move / reason / verify / transfer | same LAU authority as Core2A |
 
 The A/B doctrine is:
 
@@ -340,47 +372,65 @@ B is never A copied with blanks or paragraphs reordered.
 
 ## 11. SDU — Study Differentiation Unit
 
-SDU governs Core1A/Core1B only.
+SDU governs Core1A/Core1B only. It must not inspect or infer learner knowledge percentage.
 
-Inputs:
-
-```text
-subtopic/bucket
-intrinsic difficulty badge EASY | MEDIUM | HARD
-governed mathematics
-research dossier when required
-owner controls
-```
-
-Outputs include depth obligations, representation obligations, sub-subtopic decomposition, Concept TTU plan, research requirements and page ceiling.
-
-Hard rule:
+The current governed difficulty obligations are:
 
 ```text
-SDU MUST NOT inspect or infer learner knowledge percentage.
+EASY   -> <=10-page ceiling; pedagogy research OPTIONAL
+MEDIUM -> <=20-page ceiling; TARGETED research REQUIRED
+HARD   -> <=30-page ceiling; DEEP research REQUIRED
 ```
 
-Page ceilings are capacities, not targets:
+Page budgets are ceilings, not quotas. Closure of mathematical and cognitive obligations is the quality criterion.
+
+Research permission and research obligation are separate. Discovery/search may occur at every difficulty. EASY has no minimum pedagogy-research obligation; if optional research is promoted, its governed brief/decision and evidence custody must be complete. MEDIUM/HARD remain fail-closed on required research.
+
+The exact generation-control rules remain in `GENERATION_CALIBRATION.md` and `SELF_TEACHING.md`.
+
+## 12. Claim-level pedagogy-research promotion
+
+Research discovery is permissive; promotion into generation is strict and claim-specific.
 
 ```text
-EASY   <= 10 pages
-MEDIUM <= 20 pages
-HARD   <= 30 pages
+OPEN DISCOVERY / SEARCH
+        ↓
+RESEARCH DECISION
+(subtopic + depth + coverage + retained sources)
+        ↓
+PEDAGOGY CLAIM
+(one explicit proposition for one support category)
+        ↓
+EVIDENCE LINKS
+SUPPORTS | CONTRADICTS
+        ↓
+CONFIDENCE
+LOW | MODERATE | HIGH
+        ↓
+CONTRADICTION RESOLUTION
+        ↓
+PROMOTED GENERATION BINDING
 ```
 
-A shorter product may be deeper than a longer one. Release is based on closure of mathematical/cognitive obligations, not page consumption.
+There is no universal minimum source-count quota. A source list is not a promoted pedagogy decision. Promoted claims require explicit support, relevant retained-source classification, contradiction handling and release-class-appropriate evidence custody.
 
-### Research dossier
+Pedagogy evidence may improve representation, explanation, decomposition, misconception repair and transfer design. It cannot create curriculum scope, mathematical truth or Engineering authority.
+
+### Current EASY materialization limitation — C0-F007
+
+The governed policy and generation-spec validator permit fully bound optional EASY research. However, the current canonical SDU/LAU compiler path in `compile_sdu_lau_generation_spec.py` materializes research bindings only for non-EASY rows.
+
+Therefore:
 
 ```text
-EASY   -> web research default absent / optional, never prohibited; if used, full custody required
-MEDIUM -> TARGETED research required
-HARD   -> DEEP research required
+OPTIONAL EASY RESEARCH POLICY / VALIDATION      = CURRENT + EXECUTABLE
+OPTIONAL EASY RESEARCH AUTO-MATERIALIZATION
+THROUGH THE CANONICAL SDU/LAU COMPILER          = CURRENT + DOCUMENTED ONLY
 ```
 
-The dossier records semantic validation, learning difficulties, misconception evidence, representation evidence, visual/translation risks, useful/rejected pedagogical candidates and source provenance. Research can improve teaching design; it cannot enlarge curriculum authority.
+Until a separate compiler migration adds and falsifies that materialization path, this root must not describe optional EASY research as automatically compiler-executable.
 
-## 12. LAU — Learner Adaptation Unit
+## 13. LAU — Learner Adaptation Unit
 
 LAU governs Core2A/Core2B only.
 
@@ -401,65 +451,11 @@ B. OWNER_OVERRIDE
    + explicit Core2B transfer ceiling
 ```
 
-No default or inferred pseudo-percentage is legal. Knowledge percentage is a support prior, not a mastery claim and not a replacement for UNKNOWN / DEVELOPING / READY.
+No default or inferred pseudo-percentage is legal. Knowledge percentage is a support prior, not a mastery claim and not a replacement for `UNKNOWN / DEVELOPING / READY`.
 
-LAU combines learner evidence with a multi-dimensional task-demand vector, including at least:
+LAU combines learner evidence with multi-dimensional task demand. Purpose remains independent from learner knowledge: knowledge answers how much support/how far demand may move; purpose answers why the product is being made.
 
-```text
-conceptual demand
-structural distance
-representation change
-cue visibility
-hidden constraint
-method/model discrimination
-sign/direction reversal
-reversed target
-constraint inversion
-algebraic burden
-multi-step bridge
-synthesis
-novelty
-competitive mixing
-```
-
-Support therefore resolves from learner state × task demand, not from knowledge percentage alone.
-
-Human-facing support modes are:
-
-```text
-FOUNDATION_HIGH_SUPPORT
-GUIDED
-STANDARD
-CHALLENGE_MINIMAL
-```
-
-These map to concrete decisions about representation supply, cue visibility, first-move support, hint depth, solution delay, verification prompting, problem ordering and structural distance.
-
-## 13. Purpose is separate from learner knowledge
-
-Learning purpose and product mode must not be collapsed into knowledge percentage.
-
-Canonical learning-purpose semantics remain upstream concerns such as:
-
-```text
-FIRST_STUDY
-CONSOLIDATION
-REVISION
-COMPETITIVE_EXAM
-```
-
-Existing Core2A product modes remain a distinct downstream generation control:
-
-```text
-STARTER
-PRACTICE
-REVISION
-COMPETITION
-```
-
-Knowledge percentage answers "how much support / how far can this item push?" Purpose answers "why is this product being made?"
-
-## 14. Two TTU families
+## 14. TTU families and reconstruction
 
 ### Concept TTU
 
@@ -469,37 +465,7 @@ Used by Core1A/Core1B. Its centre of gravity is conceptual change, object/state 
 
 Used by Core2A/Core2B. Its centre of gravity is recognition, model/method selection, constraints, representation choice, first non-obvious move, reasoning path, wrong route, verification and transfer.
 
-Both families preserve canonical truth and lineage; their learner actions differ.
-
-## 15. Reconstructable TTUs
-
-A reconstructable TTU is a governed technical object with deliberately missing mathematically meaningful structure. Supported forms include:
-
-```text
-incomplete diagrams
-component assemblies
-incomplete graphs
-equation/function skeletons
-event or state lines
-tables/ledgers
-proof/reasoning chains
-representation maps
-construction sequences
-flow/dependency models
-```
-
-Every TTU declares identity/family/stage, mathematics refs, complete-state ref, learner action, given parts, missing parts + semantic roles, target relations, fixed help, completion key, verification rule, fading level, lineage transform and bounded representation geometry where visual.
-
-A fully completed figure/equation/table does not count as reconstructable. Randomly blanking words/numbers does not count either; the omission must represent mathematical structure.
-
-Core exposure modes are fixed:
-
-```text
-Core1A -> MODEL_THEN_RECONSTRUCT
-Core1B -> RECONSTRUCT_BEFORE_CANONICAL
-Core2A -> SETUP_THEN_COMPLETE
-Core2B -> CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS
-```
+A reconstructable TTU deliberately omits mathematically meaningful structure, not random words or numbers. Legal reconstruction may involve diagrams, graphs, equations, event/state lines, tables, proof/reasoning chains, representation maps, construction sequences or dependency models.
 
 Fading within a lineage is normally monotone:
 
@@ -509,223 +475,163 @@ MODELLED -> GUIDED -> FADED -> INDEPENDENT
 
 A support reset in Core2 requires explicit LAU authority; Core1B cannot use learner percentage to reset SDU depth.
 
-## 16. Tutor Dialogue Contract for B layers
+Field-level TTU and A/B interaction rules remain in `DUAL_TRACK_PRODUCT_MODEL.md` and the executable contracts.
 
-B products are reconstruction experiences, not omission templates. A substantial static tutor episode may use the following authored stages when relevant:
+## 15. Self-help closure and differentiation
 
-```text
-P0 ATTEMPT   — no help
-P1 NOTICE    — identify the structural feature
-P2 REPRESENT — construct/select diagram, graph, table, equation or model
-P3 EXPLAIN   — justify the relation/representation
-P4 CONNECT   — connect invariant, condition, event or prior concept
-P5 START     — commit only the first mathematical move
-REVEAL       — canonical state after attempt
-REFLECT      — compare learner route with canonical route
-VERIFY       — independent mathematical check
-```
+Every substantive derivative TTU/episode must provide an eventual route to progressive authored help, canonical reveal, misconception/wrong-route support where relevant, independent verification and repair/next-step guidance.
 
-Not every TTU needs every stage. The sequence is target-driven and statically authored. A fixed misconception branch may be included, but the product cannot claim the learner actually exhibited that misconception.
+Static answer availability is not learner evidence.
 
-## 17. Core2 hint distinction
+CDAU distinguishes legal semantic reuse and declared pedagogical transformation from near/pedagogical duplication. Immutable source stems, canonical definitions/formulas and answer identities may repeat only with explicit lineage; surrounding pedagogy must remain governed by the applicable core-purpose contract.
 
-Core2A hints support understanding of an expert solution path:
+## 16. Product release boundary
 
-```text
-H1 recognition/principle
-H2 representation
-H3 first operation or first move
-```
+Product release is not publication rendering. It first proves governed coverage, differentiation, learner fit, source/answer custody and current Engineering-domain custody.
 
-Core2B hints preserve learner reconstruction:
+All four derivative producer stages must carry matching current Engineering-domain custody. Final release revalidates current Engineering admission. Legacy unbound artifacts may be retained only as regression evidence and may not become publishable by renderer success alone.
+
+The normative release rules remain in `PRODUCT_GOVERNANCE.md`.
+
+## 17. Derived Engineering visibility
+
+A released product may expose Engineering provenance and technical structure through a derived visibility manifest compiled from exact current bound authority.
+
+The visibility layer is explicitly non-authoritative:
 
 ```text
-H1 NOTICE    — what structural feature should control your choice?
-H2 REPRESENT — what representation would expose it?
-H3 START     — write only the first governing relation/move
+authority = NON_AUTHORITATIVE_VIEW_OF_BOUND_ENGINEERING_AUTHORITY
+technical_authorization = ALLOWED
+publication_authorization = NOT_IMPLIED
 ```
 
-H3 must not collapse into a full solution dump.
+It may explain existing gate title, role, depth, prerequisite closure, provenance, structure, verification obligations and misconception/repair information. It may not create gate membership, prerequisite closure, readiness, mathematical scope or publication permission.
 
-## 18. Self-help closure
+## 18. Governed publication boundary
 
-All derivative cores are self-taught. Every substantive TTU/episode must provide an eventual route to:
+The current bound-release publication path is:
 
 ```text
-progressive authored help
-canonical answer/reveal
-misconception/wrong-route support where relevant
-independent verification
-repair or next-step pointer
+PRODUCT RELEASE GATE = PASS
+        ↓
+revalidate / compile derived Engineering visibility
+        ↓
+compile semantic learner publication bundle
+        ↓
+validate exact research + governed-example + visibility custody
+        ↓
+render from bundle semantics only
+        ↓
+render-object / semantic-surface audit
+        ↓
+final learner PDF
 ```
 
-Core1A normally exposes canonical explanation earlier. Core1B/Core2B normally delay reveal until after an attempt. Static answer availability is not learner evidence.
-
-## 19. Cross-core duplication and lineage
-
-CDAU classifies reuse as:
+The publication invariant is:
 
 ```text
-SEMANTIC_REUSE               allowed
-PEDAGOGICAL_TRANSFORMATION   allowed
-FADING_ANCHOR                allowed when declared
-NEAR_DUPLICATE               warning
-PEDAGOGICAL_DUPLICATION      fail
+semantic_source = LEARNER_PUBLICATION_BUNDLE_ONLY
 ```
 
-Immutable source stems, canonical definitions/formulas and answer identities may repeat with explicit lineage. Narrative/expository reuse must be transformed.
+`LearnerPageBlueprint` remains a repository/internal realization contract where used, but it is not the canonical final semantic source for the current governed bound-release renderer.
 
-Example/problem fingerprints should record context, problem family, known quantities, numerical values, target unknown, representation, model sequence, special condition and solution path. Cosmetic context substitution is not a new example.
+Publication may typeset governed semantics. It may not invent mathematics, omissions, learner actions, hints, examples, representations, verification logic, answer custody or filler content.
 
-## 20. Core2A -> Core2B lineage
+## 19. Learner evidence boundary
 
-Legal transfer relations include:
+Learner attempts and performance evidence are post-delivery evidence. A static product cannot infer that a learner attempted, succeeded, failed, mastered or exhibited a misconception merely because an exercise, answer or corrective branch exists.
 
-```text
-FADING_ANCHOR
-same problem, A complete -> B reconstructive
-useful for transition; not transfer evidence
+Observed learner evidence may govern later Core2A/Core2B calibration through the applicable evidence contracts. It does not retroactively alter Core1 mathematical depth or historical/source truth.
 
-STRUCTURAL_SIBLING
-new instance, same family/capabilities, altered surface/givens
-normal transfer mode
+## 20. Implementation classification
 
-FAR_TRANSFER_SIBLING
-changes representation, target, constraint form, method/family combination,
-sign/direction or synthesis demand
-stronger transfer mode
-```
+This table records current architectural status. It is not a substitute for the executable contracts it references.
 
-All remain inside Core2A legality and the LAU ceiling.
-
-## 21. Validation gates
-
-Release passes through explicit gates:
-
-| Gate | Must prove |
+| Capability / boundary | Status |
 |---|---|
-| G0 Evidence | provenance and evidence state are known |
-| G1 Domain | mathematics is valid and within authority |
-| G2 Purpose | interaction belongs in this core |
-| G3 Differentiation | not a disguised duplicate of adjacent core |
-| G4 TTU | technical teaching/reconstruction interaction is complete |
-| G5 Fit | for Core2A/Core2B, learner × task × support decision is justified |
-| G6 Publication | typesetting/layout preserves the governed interaction |
-| G7 Calibration | later observed learner evidence can confirm/revise fit |
+| Non-authoritative Engineering discovery | CURRENT + EXECUTABLE |
+| Explicit exact-ID selection into unchanged exact Engineering resolver | CURRENT + EXECUTABLE |
+| Engineering registry composition, validation, depth and prerequisite closure | CURRENT + EXECUTABLE |
+| Exact AssessmentScope → Engineering custody bridge | CURRENT + EXECUTABLE |
+| Engineering authorization binding and canonical domain admission | CURRENT + EXECUTABLE |
+| Core0 routing + independent Core1/Core2 cross-validation | CURRENT + EXECUTABLE |
+| Canonical Engineering-derived asset identity + separate scope membership | CURRENT + EXECUTABLE |
+| SDU intrinsic-difficulty governance | CURRENT + EXECUTABLE |
+| LAU knowledge-percent-or-owner-waiver governance | CURRENT + EXECUTABLE |
+| Claim-level pedagogy-research promotion | CURRENT + EXECUTABLE |
+| Optional EASY research accepted when fully bound at generation-spec validation boundary | CURRENT + EXECUTABLE |
+| Optional EASY research automatically materialized by canonical SDU/LAU compiler | CURRENT + DOCUMENTED ONLY — C0-F007 |
+| Four-producer release/cross-core governance | CURRENT + EXECUTABLE |
+| Derived Engineering visibility | CURRENT + EXECUTABLE |
+| Semantic learner publication bundle + bundle-only renderer semantics | CURRENT + EXECUTABLE |
+| Generated architecture-reference tables from a production Architecture Catalog | ROADMAP — Stage C3 |
+| Generic cross-subject Subject Adapter interface | ROADMAP — Stage C4 |
+| Subtopic Intelligence Library production contracts | ROADMAP — Stage C5+ |
 
-G5 does not use learner percentage for Core1A/Core1B.
+A documented-only capability may not be described as executable until its governed migration, validator/falsifier coverage and release evidence exist.
 
-A B-TTU is complete only when it has a semantic/problem target, canonical expert state, meaningful learner transformation, observable learner product, bounded help, canonical reveal, independent verification and repair/next-step route.
+## 21. Normative subordinate specifications
 
-## 22. Publication state machine
-
-A subtopic may advance through:
-
-```text
-DISCOVERED
--> ROUTED
--> CORE_GROUNDED
--> C1_C2_VALIDATED
--> REGISTRY_READY
--> CDAU_READY
--> SDU_READY / LAU_READY
--> TTU_READY
--> A/B_REALIZED
--> SELF_HELP_VALIDATED
--> PUBLICATION_VALIDATED
--> RELEASED
-```
-
-Side states remain explicit, including BLOCKED_EVIDENCE, DISPUTED, OUT_OF_SCOPE, OWNER_HELD, INSERT_PREREQUISITE, QUARANTINED and STALE.
-
-## 23. Packet namespaces
-
-The target packet namespace is:
+This root intentionally does not duplicate every schema field or policy rule. The principal subordinate normative documents are:
 
 ```text
-GT-*   original ground-truth manifests
-RT-*   routing decisions
-K-*    Core1 semantic packets
-D-*    Core2 assessment packets
-V-*    validation
-J-*    C1 × C2 join
-REG-*  canonical registry assets
-CD-*   CDAU governance
-SD-*   SDU decisions
-LA-*   LAU decisions
-CT-*   Concept TTU
-PT-*   Problem TTU
-A1-*   Core1A realization
-B1-*   Core1B realization
-A2-*   Core2A realization
-B2-*   Core2B realization
-T-*    learner/taught evidence
-OVR-*  owner overrides
-PUB-*  publication audit
-```
-
-Substantive packets carry stable identity, schema version, producer role/run, subtopic, ground-truth refs, upstream refs, claims, confidence/validation state, owner-override refs and content hash.
-
-## 24. Publication boundary
-
-Publication consumes governed learner products; it does not decide pedagogy. It may not invent mathematics, omissions, learner actions, hints, examples, representations, verification logic, answer custody or page-filling whitespace.
-
-Publication compiles:
-
-```text
-validated Core realization + TTUs + lineage + provenance
--> LearnerPageBlueprint
--> deterministic typesetting
--> rendered-artifact semantic/surface audit
--> final PDF
-```
-
-Learner attempts and performance evidence remain post-delivery inputs outside static A/B compilation.
-
-## 25. Implementation status and migration rule
-
-This document freezes the target architecture. Existing executable increments remain valid where they do not conflict with it. In particular:
-
-```text
-GroundTruthManifest / routing / independence firewall / join
-Core1A Assimilation Compiler
-Core1A/Core1B intrinsic depth governance
-Core2A/Core2B knowledge-or-owner calibration
-technical composition + reconstructable TTUs
+ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md
+ENGINEERING_WORKBENCH.md
+ENGINEERING_DISCOVERY.md
+MATHEMATICS_TECHNICAL_ENGINEERING_GATES.md
+CANONICAL_ENGINEERING_DOMAIN_ASSETS.md
+GENERATION_CALIBRATION.md
+SELF_TEACHING.md
 DUAL_TRACK_PRODUCT_MODEL.md
-math-dual-track-product-model.schema.json
+PRODUCT_GOVERNANCE.md
 ```
 
-The next implementation work should translate this target into typed registry, CDAU, SDU, LAU, Concept-TTU and Problem-TTU contracts incrementally rather than introducing one schema for every conceptual packet.
+Executable authority is additionally carried by the governed contracts, policies, validators, compilers and release gates referenced by those specifications.
 
-No downstream implementation may reintroduce these rejected assumptions:
+If a subordinate explanatory statement conflicts with a current executable contract, the executable contract governs until an explicit migration resolves the inconsistency. If an authority-semantic change is desired, it requires a governed migration; it is not achieved by editing prose alone.
+
+## 22. Migration and extension rule
+
+Architecture evolution must distinguish documentation consolidation from semantic/runtime change.
+
+A semantic migration must identify:
 
 ```text
-learner knowledge % controls Core1A/Core1B depth
-page allowance implies target page count
-B = A with blanks
-Core2B may exceed Core2A legal authority
-owner override rewrites historical/source truth
-static workbook use proves mastery
-renderer authors missing mathematics or reconstruction structure
+changed governed contract or policy
+authority owner/domain
+producer/compiler impact
+validator impact
+fail-closed falsifiers
+custody/version effect
+release-class effect
+compatibility/deprecation effect
+owner decision when authority semantics change
 ```
 
-## 26. Central doctrine
+Topic growth must continue to occur through governed Engineering/domain data and exact scope membership, not topic-specific Blueprint branches.
 
-> Ground truth determines what is supported.
+## 23. Central doctrine
+
+> Ground truth determines what was supplied, frozen, observed or explicitly scoped.
 >
-> Core1 determines semantic authority.
+> Non-authoritative discovery may help locate candidate Engineering identities, but never authorizes mathematics.
 >
-> Core2 determines assessment authority.
+> Engineering determines technical mathematical authority through exact identity, current validation, requested depth and prerequisite closure.
 >
-> CDAU keeps the six products differentiated, traceable and non-duplicative.
+> Core1 determines semantic reconstruction **within already-authorized mathematical scope**.
 >
-> SDU determines how deeply an intrinsically difficult subtopic is taught and reconstructed in Core1A/Core1B.
+> Core2 determines assessment/question-demand reconstruction and source-question custody **within already-authorized mathematical scope**.
 >
-> LAU determines what question demand and support are appropriate for Core2A/Core2B from learner evidence or explicit owner waiver.
+> The Canonical Domain Registry stores canonical objects once and represents teaching use through separate memberships.
 >
-> A represents the canonical completed state.
+> CDAU keeps products differentiated, traceable and non-duplicative.
 >
-> B represents the canonical reconstruction experience.
+> SDU determines intrinsic Core1A/Core1B depth; LAU determines Core2A/Core2B learner fit and demand.
 >
-> TTU ensures that neither state is pedagogically fake.
+> Research discovery is permissive; claim-level promotion is evidence-custodied and cannot create mathematical authority.
+>
+> A represents the canonical completed state; B represents the canonical reconstruction experience.
+>
+> Derived Engineering visibility explains existing authority but never creates technical or publication authority.
+>
+> Governed publication consumes the released semantic learner publication bundle and renders it without inventing pedagogy or mathematics.

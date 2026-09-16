@@ -1,0 +1,322 @@
+{
+  "schema_version": "0.1.0",
+  "status": "DESIGN_NON_NORMATIVE_CANDIDATE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "catalog_basis": "REPOSITORY_INVENTORY_ONLY",
+  "independent_audit_status": "PENDING_INDEPENDENT_AUDIT",
+  "core_spec_consolidation_status": "BLOCKED_PENDING_INDEPENDENT_AUDIT",
+  "inventory_snapshot": {
+    "repository": "reallaksh19/Common",
+    "branch": "v2-math-core1a-textbook-quality",
+    "base_head_sha": "31a5c696ea5690a4e4f34731760af900b2d156e7",
+    "captured_from_current_tree": true
+  },
+  "components": [
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-REGISTRY",
+      "name": "Mathematics Engineering registry and composition",
+      "architecture_role": "SUBJECT_AUTHORITY",
+      "primary_authority_class": "AUTHORITATIVE_DATA",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/mathematics-technical-engineering-gate.schema.json",
+        "policies/mathematics-technical-engineering-gates.v1.json",
+        "policies/mathematics-engineering-extension-catalog.v1.json",
+        "engine/engineering_registry_composition.py"
+      ],
+      "responsibility": "Owns governed mathematical gate identities, technical content and registry composition; the catalog only records that repository role."
+    },
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-VALIDATION",
+      "name": "Engineering invariant and depth validation",
+      "architecture_role": "POLICY_AND_VALIDATION",
+      "primary_authority_class": "PRODUCTION_VALIDATOR",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "policies/mathematics-engineering-gate-invariants.v1.json",
+        "policies/mathematics-engineering-depth-policy.v1.json",
+        "engine/validate_mathematics_engineering_gates.py"
+      ],
+      "responsibility": "Applies generic structural invariants and requested Engineering depth to current governed Engineering data."
+    },
+    {
+      "component_id": "MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE",
+      "name": "AssessmentScope to Engineering exact bridge",
+      "architecture_role": "SCOPE_BRIDGE",
+      "primary_authority_class": "GOVERNED_POLICY",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-assessment-engineering-crosswalk.schema.json",
+        "policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json",
+        "policies/math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json",
+        "engine/validate_assessment_engineering_crosswalk.py"
+      ],
+      "responsibility": "Binds declared assessment capabilities to exact Engineering gate identities and fails closed on uncovered or stale scope."
+    },
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-DISCOVERY",
+      "name": "Non-authoritative Engineering discovery and vocabulary",
+      "architecture_role": "NON_AUTHORITATIVE_DISCOVERY",
+      "primary_authority_class": "DERIVED_NON_AUTHORITATIVE_VIEW",
+      "runtime_authority_effect": "DERIVED_NON_AUTHORITATIVE",
+      "publication_authority_effect": "NOT_IMPLIED",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/mathematics-engineering-discovery-request.schema.json",
+        "contracts/mathematics-engineering-discovery-receipt.schema.json",
+        "contracts/mathematics-engineering-discovery-selection.schema.json",
+        "contracts/mathematics-engineering-discovery-vocabulary.schema.json",
+        "policies/mathematics-engineering-discovery-vocabulary.v1.json",
+        "engine/compile_mathematics_engineering_discovery.py",
+        "engine/validate_mathematics_engineering_discovery_vocabulary.py"
+      ],
+      "responsibility": "Ranks candidate exact Engineering identities from human-facing search terms without evaluating or implying technical authorization."
+    },
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-WORKBENCH",
+      "name": "Exact Engineering Workbench authorization and closure",
+      "architecture_role": "EXACT_AUTHORIZATION",
+      "primary_authority_class": "PRODUCTION_COMPILER",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/mathematics-engineering-request.schema.json",
+        "contracts/mathematics-engineering-manifest.schema.json",
+        "contracts/mathematics-engineering-closure-receipt.schema.json",
+        "engine/compile_mathematics_engineering_workbench.py"
+      ],
+      "responsibility": "Resolves exact declared scope, validates current Engineering state and computes deterministic prerequisite closure before authorization."
+    },
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-CUSTODY",
+      "name": "Runtime Engineering binding and product custody",
+      "architecture_role": "RUNTIME_CUSTODY",
+      "primary_authority_class": "SCHEMA_CONTRACT",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/mathematics-engineering-binding.schema.json",
+        "engine/validate_mathematics_engineering_binding.py",
+        "engine/engineering_product_custody.py"
+      ],
+      "responsibility": "Revalidates current Engineering authority at runtime and carries digest-bound custody into downstream product processing."
+    },
+    {
+      "component_id": "MATH-ARCH-DOMAIN-PROJECTION",
+      "name": "Canonical Domain Registry and Engineering projection",
+      "architecture_role": "DOMAIN_PROJECTION",
+      "primary_authority_class": "PRODUCTION_COMPILER",
+      "runtime_authority_effect": "EXECUTABLE_ORCHESTRATION_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-canonical-domain-registry.schema.json",
+        "contracts/math-engineering-domain-projection-v2.schema.json",
+        "policies/math-canonical-domain-registry-policy.json",
+        "engine/project_engineering_to_domain_registry_v2.py",
+        "engine/validate_engineering_domain_projection_binding_v2.py"
+      ],
+      "responsibility": "Projects already-authorized Engineering assets into canonical product-domain assets while preserving source identity and custody."
+    },
+    {
+      "component_id": "MATH-ARCH-ROUTING-ASSIMILATION",
+      "name": "Routing, dual intelligence and assimilation orchestration",
+      "architecture_role": "ORCHESTRATION",
+      "primary_authority_class": "PRODUCTION_COMPILER",
+      "runtime_authority_effect": "EXECUTABLE_ORCHESTRATION_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-routing-plan.schema.json",
+        "contracts/math-dual-intelligence-session.schema.json",
+        "contracts/math-assimilation-plan.schema.json",
+        "policies/math-evidence-routing-policy.json",
+        "policies/math-dual-intelligence-policy.json",
+        "engine/route_math_learning_run.py",
+        "engine/run_dual_intelligence.py",
+        "engine/build_assimilation_demand.py",
+        "engine/compile_assimilation_plan.py"
+      ],
+      "responsibility": "Orchestrates evidence routing and independent intelligence/assimilation stages without becoming subject-matter authority."
+    },
+    {
+      "component_id": "MATH-ARCH-SELF-TEACHING-CALIBRATION",
+      "name": "Self-teaching depth and SDU/LAU calibration",
+      "architecture_role": "CALIBRATION",
+      "primary_authority_class": "GOVERNED_POLICY",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-self-teaching-contract.schema.json",
+        "contracts/math-self-teaching-generation-spec.schema.json",
+        "policies/math-self-teaching-policy.json",
+        "engine/compile_sdu_lau_generation_spec.py",
+        "engine/validate_self_teaching_generation_spec.py"
+      ],
+      "responsibility": "Governs intrinsic teaching depth, difficulty consequences and learner-fit calibration under explicit evidence or waiver rules."
+    },
+    {
+      "component_id": "MATH-ARCH-PEDAGOGY-RESEARCH",
+      "name": "Claim-level pedagogy research promotion",
+      "architecture_role": "PEDAGOGY_EVIDENCE",
+      "primary_authority_class": "SCHEMA_CONTRACT",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-pedagogy-research-manifest.schema.json",
+        "engine/validate_pedagogy_research_manifest.py"
+      ],
+      "responsibility": "Controls promotion of external pedagogy evidence into generation bindings while keeping research separate from mathematical authority."
+    },
+    {
+      "component_id": "MATH-ARCH-PRODUCER-GOVERNANCE",
+      "name": "Core producer governance interface",
+      "architecture_role": "PRODUCER",
+      "primary_authority_class": "PRODUCER",
+      "runtime_authority_effect": "EXECUTABLE_ORCHESTRATION_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-core1a-authoring-assets.schema.json",
+        "contracts/math-b-layer-integration.schema.json",
+        "engine/producer_governance.py",
+        "engine/validate_b_layer_integration.py"
+      ],
+      "responsibility": "Defines and validates governance interfaces used by staged Core producers; it consumes upstream authority rather than inventing mathematical truth."
+    },
+    {
+      "component_id": "MATH-ARCH-STAGE-RELEASE",
+      "name": "Stage receipts, cross-core governance and product release",
+      "architecture_role": "RELEASE_GATE",
+      "primary_authority_class": "RELEASE_GATE",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "RELEASE_GATED_PUBLICATION_BOUNDARY",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-stage-governance-receipt.schema.json",
+        "contracts/math-product-governance-audit.schema.json",
+        "engine/emit_stage_governance.py",
+        "engine/assemble_product_governance_from_receipts.py",
+        "engine/release_product_governance.py",
+        "engine/validate_product_governance.py"
+      ],
+      "responsibility": "Binds staged producer receipts, revalidates release governance and gates transition from governed product state toward publication."
+    },
+    {
+      "component_id": "MATH-ARCH-ENGINEERING-VISIBILITY",
+      "name": "Derived Engineering product visibility",
+      "architecture_role": "DERIVED_VISIBILITY",
+      "primary_authority_class": "DERIVED_NON_AUTHORITATIVE_VIEW",
+      "runtime_authority_effect": "DERIVED_NON_AUTHORITATIVE",
+      "publication_authority_effect": "NOT_IMPLIED",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-engineering-visibility-manifest.schema.json",
+        "engine/compile_engineering_visibility_manifest.py"
+      ],
+      "responsibility": "Derives learner/author explainability from already-bound Engineering authority without becoming technical or publication authority itself."
+    },
+    {
+      "component_id": "MATH-ARCH-PUBLICATION",
+      "name": "Semantic learner publication bundle and renderer boundary",
+      "architecture_role": "PUBLICATION_BOUNDARY",
+      "primary_authority_class": "PUBLICATION_BOUNDARY",
+      "runtime_authority_effect": "CURRENT_EXECUTABLE_AUTHORITY",
+      "publication_authority_effect": "RELEASE_GATED_PUBLICATION_BOUNDARY",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "contracts/math-learner-publication-bundle.schema.json",
+        "engine/compile_publication_bundle.py",
+        "engine/validate_publication_bundle.py",
+        "engine/render_publication_bundle_pdf.py",
+        "engine/run_bound_blueprint_publication.py"
+      ],
+      "responsibility": "Compiles and renders the governed learner publication from released semantic bundle content and verifies the publication boundary."
+    },
+    {
+      "component_id": "MATH-ARCH-TOPIC-INDEPENDENCE-GUARD",
+      "name": "Engineering-to-Blueprint topic independence guard",
+      "architecture_role": "CI_GUARD",
+      "primary_authority_class": "CI_GUARD",
+      "runtime_authority_effect": "EXECUTABLE_ORCHESTRATION_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "tests/test_blueprint_topic_independence.py"
+      ],
+      "responsibility": "Falsifies leakage of topic-specific Engineering identities into generic Blueprint runtime/orchestration code."
+    },
+    {
+      "component_id": "MATH-ARCH-DESIGN-NON-AUTHORITY-GUARD",
+      "name": "Design workspace non-authority guard",
+      "architecture_role": "CI_GUARD",
+      "primary_authority_class": "CI_GUARD",
+      "runtime_authority_effect": "EXECUTABLE_ORCHESTRATION_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "tests/test_design_authority_boundary.py"
+      ],
+      "responsibility": "Prevents production engine, contracts and policies from consuming design-workspace prose or files as authority."
+    },
+    {
+      "component_id": "MATH-ARCH-DESIGN-WORKSPACE",
+      "name": "Architecture consolidation design workspace",
+      "architecture_role": "DESIGN_WORKSPACE",
+      "primary_authority_class": "DESIGN_ONLY",
+      "runtime_authority_effect": "NONE_DESIGN_ONLY",
+      "publication_authority_effect": "NONE",
+      "catalog_basis": "REPOSITORY_DERIVED",
+      "audit_status": "PENDING_INDEPENDENT_AUDIT",
+      "semantic_change": "NONE",
+      "evidence_paths": [
+        "design/README.md",
+        "design/STEM_CORE_SPEC_CONSOLIDATION_ROADMAP.md"
+      ],
+      "responsibility": "Holds non-normative architecture proposals pending review, independent audit and explicit governed promotion."
+    }
+  ]
+}
