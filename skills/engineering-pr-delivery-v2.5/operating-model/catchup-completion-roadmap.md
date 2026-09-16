@@ -19,10 +19,13 @@ CP-R001  WP-00 Kernel baseline / object matrix      COMPLETE
 CP-R002  WP-01 Semantic Execution Package           COMPLETE
    |
    v
-WP-02    Baton readiness + Takeover Certification   CURRENT FRONTIER
+CP-R003  WP-02 Baton readiness / Takeover Cert      COMPLETE
+   |
+   v
+WP-03    Strong phase / material qualification      CURRENT FRONTIER
 ```
 
-WP-01 has delivered semantic EP validation, DSTEP discovery instructions, typed current-slice inputs/oracles, strong scope/anti-drift/implementation/report contracts, REPO_PROFILE admission, and relay-protocol binding. WP-02 must now prove independent candidate takeover without weakening those contracts.
+WP-01 made the forward baton semantic. WP-02 then separated candidate-independent `BATON_READY` from route/candidate-specific `TAKEOVER_CERTIFIED`, added `DISC-*` and `TC-*` evidence, and made `MATERIAL_WRITE_READY` a live-derived gate. WP-03 now owns evaluated engineering qualification.
 
 ## Progress Basis
 
@@ -30,8 +33,8 @@ WP-01 has delivered semantic EP validation, DSTEP discovery instructions, typed 
 | --- | ---: | --- |
 | WP-00 Kernel baseline / object matrix | 5 | COMPLETE — CP-R001 |
 | WP-01 Semantic Execution Package | 18 | COMPLETE — CP-R002 |
-| WP-02 Baton readiness + Takeover Certification | 18 | CURRENT FRONTIER |
-| WP-03 Strong phase/boundary qualification | 12 | WAITING |
+| WP-02 Baton readiness + Takeover Certification | 18 | COMPLETE — CP-R003 |
+| WP-03 Strong phase/boundary qualification | 12 | CURRENT FRONTIER |
 | WP-04 Full progress / handover / next-work contract | 12 | WAITING |
 | WP-05 GitHub Program Projection operations | 8 | WAITING |
 | WP-06 Quality Procedure Library | 10 | WAITING |
@@ -42,7 +45,18 @@ WP-01 has delivered semantic EP validation, DSTEP discovery instructions, typed 
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-After CP-R002 is validated on the final exact head, earned completion is **23/100 = 23%**. Progress remains acceptance/checkpoint-derived; weights define the denominator, not manually typed completion claims.
+After CP-R003 passes corrected exact-head CI, earned completion is **41/100 = 41%**. Progress remains acceptance/checkpoint-derived; weights define the denominator, not manually typed completion claims.
+
+## CI evidence rule
+
+The workflow must execute both explicit test surfaces:
+
+```text
+python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests -p 'test*.py' -v
+python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress -p 'test*.py' -v
+```
+
+Historical interpretation is corrected in `ci-evidence-correction.md`. Compiling stress modules is not equivalent to executing the synthetic stress suite.
 
 ## Dependency topology
 
@@ -53,13 +67,10 @@ WP-00 Kernel baseline          COMPLETE
 WP-01 Semantic EP              COMPLETE
    |
    v
-WP-02 Baton readiness + Takeover Certification
+WP-02 Baton readiness / TC     COMPLETE
    |
    v
-ZERO-CONTEXT TAKEOVER PROOF
-   |
-   v
-WP-03 Strong qualification
+WP-03 Strong qualification     CURRENT
    |
    v
 WP-04 Progress / Handover
@@ -120,92 +131,32 @@ Delivered:
 - enforced `relay_protocol.version/basis_ref` binding;
 - repository-neutral negative regressions proving hollow EPs fail.
 
-WP-01 intentionally does not create candidate certification. That is the current WP-02 frontier.
+---
+
+## WP-02 — Baton readiness + Takeover Certification — COMPLETE
+
+Checkpoint: `completion-checkpoints/CP-R003.yaml`.
+
+Delivered:
+
+- candidate-independent `BATON_READY` derived from repository baton semantics rather than lifecycle;
+- route-scoped `DISC-*` candidate Discovery Receipts covering required `DSTEP-*` outputs;
+- route/candidate-scoped `TC-*` Takeover Certification with explicit candidate, preparer and evaluator identity;
+- prohibition of candidate self-preparation/self-certification;
+- certification binding to roadmap/material basis plus semantic EP, `REPO_PROFILE` and predecessor-baton digests;
+- exact route-scoped admissions for serial and approved parallel lanes;
+- `PROJECTION_READY` kept independent from baton/candidate state;
+- `HANDOVER_READY = BATON_READY AND PROJECTION_READY`;
+- live-derived `MATERIAL_WRITE_READY`, which requires current candidate certification plus live route/Git context, write authority and no active hard stop;
+- zero-context synthetic takeover proof;
+- qualification-required routes cannot use TC to bypass missing `QUAL-*` evidence;
+- corrected CI explicitly executes both root units and `tests/stress/`.
+
+`TAKEOVER_CERTIFIED` and `MATERIAL_WRITE_READY` are route/candidate scoped, not misleading repository-global booleans.
 
 ---
 
-## WP-02 — Baton readiness + Takeover Certification — CURRENT FRONTIER
-
-### Outcome
-
-Separate three questions that the old kernel partially conflates:
-
-```text
-1. Did the outgoing agent leave a complete repository baton?
-2. Did this incoming candidate independently prove takeover?
-3. Is this candidate allowed to write engineering state right now?
-```
-
-### Predicates
-
-Implement:
-
-```text
-BATON_READY
-TAKEOVER_CERTIFIED
-PROJECTION_READY
-HANDOVER_READY
-MATERIAL_WRITE_READY
-```
-
-Target semantics:
-
-```text
-BATON_READY = semantic repository baton proof
-HANDOVER_READY = BATON_READY AND PROJECTION_READY
-TAKEOVER_CERTIFIED = current candidate has valid DISC/QUAL/TC basis
-MATERIAL_WRITE_READY = TAKEOVER_CERTIFIED + live route/git/write authority + no hard stop
-```
-
-Lifecycle alone must never imply `BATON_READY`.
-
-### Candidate Discovery Receipt
-
-Add durable `DISC-*` candidate evidence bound to:
-
-- candidate identity;
-- EP/parallel lane or integration route;
-- roadmap revision;
-- predecessor baton;
-- exact material/Git basis;
-- executed `DSTEP-*` instructions and observed outputs.
-
-### Takeover Certification
-
-Add durable `TC-*` certification with:
-
-```text
-candidate
-prepared_by
-evaluated_by
-basis
-DISC result
-QUAL result when required
-verdict
-staleness/invalidation conditions
-```
-
-Self-certification is not allowed. Deterministic validators may certify objective facts; non-mechanical engineering-comprehension claims require a durable independent evaluation basis.
-
-### Invalidation
-
-Certification becomes stale when a relevant change occurs in:
-
-- roadmap/current WP contract;
-- EP or parallel route;
-- predecessor checkpoint/join/replan baton;
-- branch/material/base basis;
-- current-required input or benchmark/oracle contract;
-- allowed/protected/prohibited/Owner-reserved scope;
-- qualification basis.
-
-### Mandatory proof before WP-03
-
-Run an actual repository-neutral zero-context takeover against a semantically rich EP. A fresh candidate must discover and reconstruct the current slice from repository state alone and receive current certification. Do not start WP-03 until this passes.
-
----
-
-## WP-03 — Strong phase / material-boundary qualification
+## WP-03 — Strong phase / material-boundary qualification — CURRENT FRONTIER
 
 ### Outcome
 
@@ -229,7 +180,36 @@ QUESTION_SET
  -> Takeover Certification reconciliation
 ```
 
-Q1–Q5 prove production trace, engineering reconstruction where applicable, boundary/falsifier understanding, independent verification, and exact first safe slice.
+### Required engineering content
+
+Q1–Q5 must prove:
+
+```text
+Q1  actual production path / source trace
+Q2  concrete engineering reconstruction where applicable
+Q3  boundary/authority mutation plus falsifier
+Q4  independent verification / benchmark reasoning
+Q5  exact first safe implementation slice plus predicted verification result
+```
+
+A question pack is not enough. The candidate answers must be durably evaluated.
+
+### Required binding
+
+`QUAL-*` evidence must bind to:
+
+- candidate identity;
+- exact incoming EP/route;
+- roadmap revision and work package;
+- relevant material/engineering basis;
+- the question-set identity and technical-boundary trigger;
+- independent evaluator/deterministic oracle basis where applicable.
+
+A relevant change to the engineering qualification boundary invalidates or requires replacement of the qualification evidence.
+
+### TC integration
+
+When qualification is required, `TC-*` may become PASS only after the referenced `QUAL-*` receipt is current and PASS. Qualification does not itself grant material write authority; live `MATERIAL_WRITE_READY` remains the final write gate.
 
 ---
 
@@ -339,21 +319,21 @@ PR #396 remains draft until the exact head proves all of the following:
 ```text
 [x] Hollow EP fails semantic validation.
 [x] Rich standalone EP passes.
-[ ] BATON_READY cannot be inferred from lifecycle.
-[ ] Candidate takeover requires current independent certification.
-[ ] Missing/stale TC prevents MATERIAL_WRITE_READY.
+[x] BATON_READY cannot be inferred from lifecycle.
+[x] Candidate takeover requires current independent certification.
+[x] Missing/stale TC prevents MATERIAL_WRITE_READY.
 [ ] Required qualification has an evaluated QUAL receipt.
 [ ] Owner handover contains full roadmap/WP/task/AC progress.
 [ ] Detailed ordered next work is rendered.
 [x] EP exact return report contract is source/reconciliation aware.
 [ ] Generated report is reconciled to source objects.
-[ ] GitHub parent/child/supersession/closure operations are defined.
+[ ] GitHub parent/child/supersession/closure operations are operationally defined.
 [ ] Quality procedures produce scoped QRV artifacts.
 [ ] Owner communication is plain-language by default.
 [ ] Representative lifecycle cold-start/certification matrix passes.
 [ ] Agent A -> B -> C zero-chat relay passes.
 [ ] Schema/template/validator/renderer/docs audit is clean.
 [ ] Final generic CI passes on exact release-candidate head.
-[x] V2 remains untouched through WP-01.
-[x] No downstream-specific logic exists through WP-01.
+[x] V2 remains untouched through WP-02.
+[x] No downstream-specific logic exists through WP-02.
 ```
