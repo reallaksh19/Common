@@ -1,0 +1,21 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, parallel_plan, roadmap_revision, lane_checkpoints, integration, state]
+properties:
+  schema_version: {const: relay-v2.5}
+  id: {type: string, minLength: 1}
+  parallel_plan:
+    type: object
+    required: [id, path]
+  roadmap_revision: {type: string, minLength: 1}
+  lane_checkpoints:
+    type: array
+    minItems: 2
+    items:
+      type: object
+      required: [lane_id, work_package, checkpoint_id, checkpoint_path]
+  integration:
+    type: object
+    required: [work_package, ep_id, ep_path]
+  state: {enum: [READY, CONSUMED, SUPERSEDED]}
+additionalProperties: true
