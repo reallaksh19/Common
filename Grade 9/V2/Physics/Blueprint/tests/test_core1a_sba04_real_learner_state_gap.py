@@ -65,10 +65,7 @@ audit = compile_audit(probe, spec_ref=SPEC_REF)
 
 assert all(row["evidence_state"] == "PRESENT" for row in audit["stage_audit"])
 assert audit["technical_gate_audit"]["status"] == "READY"
-assert audit["release_authorized"] is False
-assert audit["block_reasons"] == [
-    "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05",
-    "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05",
-]
+assert audit["release_authorized"] is True
+assert audit["block_reasons"] == []
 
-print("Core1A SBA04 learner-state gap: PASS (explicit UNKNOWN prior-heuristic state; canonical all-stage bind; downstream holds preserve fail-closed release)")
+print("Core1A SBA04 learner-state gap: PASS (explicit UNKNOWN prior-heuristic state; all-stage evidence and satisfied SBA05 dependency authorize release)")

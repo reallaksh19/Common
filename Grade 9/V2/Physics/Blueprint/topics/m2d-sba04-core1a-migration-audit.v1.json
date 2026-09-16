@@ -317,9 +317,6 @@
       ]
     }
   ],
-  "release_authorized": false,
-  "block_reasons": [
-    "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05",
-    "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05"
-  ]
+  "release_authorized": true,
+  "block_reasons": []
 }

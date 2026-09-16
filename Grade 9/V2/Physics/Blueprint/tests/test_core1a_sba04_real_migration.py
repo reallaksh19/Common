@@ -61,11 +61,11 @@ def stage_state(audit, stage):
 assert SPEC["stage_evidence_refs"] == CANONICAL_STAGE_EVIDENCE
 assert compile_audit(SPEC, spec_ref=SPEC_REF) == AUDIT
 
-# Positive: every pre-manuscript stage is now evidence-backed, Engineering is READY, but explicit SBA05 transfer holds keep release closed.
+# Positive: every pre-manuscript stage is evidence-backed, Engineering is READY, and the completed SBA05 bridge has released Q14/Q27.
 result = validate(AUDIT)
 assert result["status"] == "PASS"
 assert result["legacy_claim"] == "COMPLETE"
-assert result["release_authorized"] is False
+assert result["release_authorized"] is True
 assert result["technical_gate_status"] == "READY"
 assert result["engineering_registry_ref"] == "GENERATED:physics-technical-engineering-gates.v3"
 assert result["engineering_gate_count"] == 11
@@ -73,11 +73,8 @@ assert result["engineering_registry_digest"].startswith("sha256:")
 assert result["engineering_closure_digest"].startswith("sha256:")
 assert result["incomplete_stages"] == []
 assert all(row["evidence_state"] == "PRESENT" for row in AUDIT["stage_audit"])
-assert result["held_questions"] == ["Q14", "Q27"]
-assert AUDIT["block_reasons"] == [
-    "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05",
-    "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05",
-]
+assert result["held_questions"] == []
+assert AUDIT["block_reasons"] == []
 assert len(result["high_fragility_step_refs"]) == 8
 assert result["learning_atom_ids"] == [f"M2D-SBA-04{x}" for x in "ABCDEFG"]
 assert result["transfer_routine_ids"] == [f"M2D-SBA-04-R{x}" for x in range(1, 5)]
@@ -87,10 +84,10 @@ bad = copy.deepcopy(AUDIT)
 bad["legacy_claim"]["accepted_as_v9_release_evidence"] = True
 must_fail(bad, "E_MIGRATION_SCHEMA")
 
-# Falsifier 2: release cannot open while explicit downstream transfer holds remain.
+# Falsifier 2: canonical release authority may not be manually forced closed once governed blockers are gone.
 bad = copy.deepcopy(AUDIT)
-bad["release_authorized"] = True
-must_fail(bad, "E_MIGRATION_FALSE_RELEASE")
+bad["release_authorized"] = False
+must_fail(bad, "E_MIGRATION_RELEASE_DRIFT")
 
 # Falsifier 3: learning-atom coverage must exactly match the selected repository profile.
 bad = copy.deepcopy(AUDIT)
@@ -205,4 +202,4 @@ for rel in (
 ):
     runpy.run_path(str(ROOT / rel), run_name="__main__")
 
-print("Core1A real-bucket migration: PASS (canonical real SBA04 stage evidence bound; generic compiler; downstream SBA05 holds preserve fail-closed release)")
+print("Core1A real-bucket migration: PASS (canonical real SBA04 evidence + completed SBA05 cross-bucket bridge authorize release)")

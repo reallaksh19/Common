@@ -56,11 +56,10 @@ assert closure_receipt["proof"]["unresolved_jump_refs"] == []
 assert closure_receipt["proof"]["unresolved_required_jump_count"] == 0
 assert stage_state(audit, "1A11_UNRESOLVED_JUMP_AUDIT") == "PRESENT"
 
-# In this isolation probe 1A0 is deliberately omitted and downstream holds remain explicit.
+# In this isolation probe 1A0 is deliberately omitted; Q14/Q27 are already operationally released by the completed SBA05 bridge.
 assert stage_state(audit, "1A0_LEARNER_STATE_GAP") == "LEGACY_ONLY"
 assert audit["release_authorized"] is False
-assert "LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP" in audit["block_reasons"]
-assert "DOWNSTREAM_TRANSFER_HOLD:Q14:requires=M2D-SBA-05" in audit["block_reasons"]
-assert "DOWNSTREAM_TRANSFER_HOLD:Q27:requires=M2D-SBA-05" in audit["block_reasons"]
+assert audit["block_reasons"] == ["LEGACY_ONLY_STAGE_EVIDENCE:1A0_LEARNER_STATE_GAP"]
+assert facts["held_questions"] == []
 
-print("Core1A SBA04 unresolved-jump audit: PASS (live 8/8 closure exact; isolation omits 1A0 and downstream holds still block release)")
+print("Core1A SBA04 unresolved-jump audit: PASS (live 8/8 closure exact; isolation remains closed only because 1A0 is omitted)")

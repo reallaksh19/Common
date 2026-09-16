@@ -14,9 +14,9 @@
     {"question_id":"Q01","status":"RELEASED","routine_id":"M2D-SBA-04-R2","release_prerequisite_buckets":[]},
     {"question_id":"Q11","status":"RELEASED","routine_id":"M2D-SBA-04-R1","release_prerequisite_buckets":[]},
     {"question_id":"Q13","status":"RELEASED","routine_id":"M2D-SBA-04-R2","release_prerequisite_buckets":[]},
-    {"question_id":"Q14","status":"HELD","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":["M2D-SBA-05"]},
+    {"question_id":"Q14","status":"RELEASED","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":[]},
     {"question_id":"Q17","status":"RELEASED","routine_id":"M2D-SBA-04-R1","release_prerequisite_buckets":[]},
-    {"question_id":"Q27","status":"HELD","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":["M2D-SBA-05"]},
+    {"question_id":"Q27","status":"RELEASED","routine_id":"M2D-SBA-04-R4","release_prerequisite_buckets":[]},
     {"question_id":"Q40","status":"RELEASED","routine_id":"M2D-SBA-04-R3","release_prerequisite_buckets":[]}
   ],
   "question_load": {"count": 7, "class": "HIGH", "minimum_transfer_families": 3},
@@ -25,11 +25,11 @@
     {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"PASS","evidence":["Velocity-event, apex, perpendicular and speed-at-height demands audited."]},
     {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D3, 20% foundation path with high support."]},
     {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Seven learning atoms cover velocity vector, flight stages, direction, speed, symmetry, perpendicular event and height-speed reasoning."]},
-    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["All H1/H2/H3 rungs traced; Q14/Q27 explicitly held for SBA-05."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["All H1/H2/H3 rungs traced; the former Q14/Q27 SBA-05 dependency is satisfied by the completed SBA05 cross-bucket routine R8."]},
     {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["Four transfer routines split direction, perpendicular, speed-at-height and apex/minimum-speed families."]},
     {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["Concept section followed by family-specific step routines, independent practice, hints and readiness."]},
     {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["22-page transfer-revised PDF rendered and visually checked."]},
-    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Released families have 4-part readiness gates; cross-bucket family remains held."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["All seven primary questions are released; Q14/Q27 cross-bucket readiness is closed by completed SBA05 routine R8 while the pedagogical dependency remains recorded in the profile/routine registries."]},
     {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PASS","evidence":["Core1A and P-G to P-L Physics CI passed."]}
   ],
   "learning_atoms": ["M2D-SBA-04A","M2D-SBA-04B","M2D-SBA-04C","M2D-SBA-04D","M2D-SBA-04E","M2D-SBA-04F","M2D-SBA-04G"],
@@ -47,6 +47,6 @@
     "expected_pdf_name":"M2D-SBA-04-follow-velocity-through-flight-20pct-transfer-revised.pdf",
     "expected_montage_name":"M2D-SBA-04-transfer-revised-montage.jpg",
     "next_active_bucket":"M2D-SBA-05",
-    "notes":["Q14 and Q27 stay unreleased until same-height relations are completed in SBA-05."]
+    "notes":["Q14 and Q27 are released after the same-height dependency is satisfied by completed SBA05 cross-bucket routine R8; dependency provenance remains in the SBA04/SBA05 teaching registries."]
   }
 }
