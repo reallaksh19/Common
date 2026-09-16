@@ -7,16 +7,21 @@ from relaylib import index_roadmap,load_yaml
 def mark(state):return "[x]" if state=="COMPLETE" else "[~]" if state=="ACTIVE" else "[ ]"
 def label(value):return str(value or "UNKNOWN").replace("_"," ").title()
 def render(root:Path):
-    s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,phases,_=index_roadmap(r);cur=s["current_position"];phase=phases[cur["phase"]][1];planes=s.get("status_planes") or {};ex=planes.get("execution") or {};q=planes.get("quality") or {};ev=planes.get("evidence") or {};st=planes.get("stop") or {};active=s.get("active_ep") or {};relay_state=s.get("relay_state");projection=s.get("projection") or {};ready=s.get("relay_readiness") or {}
-    ep=None;plan=None
+    s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,phases,_=index_roadmap(r);cur=s["current_position"];phase=phases[cur["phase"]][1];planes=s.get("status_planes") or {};ex=planes.get("execution") or {};q=planes.get("quality") or {};ev=planes.get("evidence") or {};st=planes.get("stop") or {};active=s.get("active_ep") or {};relay_state=s.get("relay_state");projection=s.get("projection") or {};ready=s.get("relay_readiness") or {};join_ref=s.get("predecessor_join") or {}
+    ep=None;plan=None;join=None
     if relay_state=="ACTIVE":ep=load_yaml(root/active["path"])
     elif relay_state=="PARALLEL":plan=load_yaml(root/(s.get("execution_policy") or {})["parallel_plan"])
+    if join_ref.get("path"):join=load_yaml(root/join_ref["path"])
     current_ep=(f"{active.get('id')} — {s['progress']['ep_percent']}%" if relay_state=="ACTIVE" else "PARALLEL ROUTER" if relay_state=="PARALLEL" else "NONE")
-    lines=["# Engineering relay","",f"Relay lifecycle: **{label(relay_state)}**",f"Overall roadmap: **{s['progress']['overall_percent']}%**",f"Current phase: **{cur['phase']} — {phase.get('title','')} — {s['progress']['phase_percent']}%**",f"Current work package: **{cur['work_package']}**",f"Current EP: **{current_ep}**","","## Status",f"- Execution: **{label(ex.get('state'))}**; can continue: **{'YES' if ex.get('can_continue') else 'NO'}**",f"- Quality: **{label(q.get('state'))}**",f"- Evidence: **{label(ev.get('state'))}** — {ev.get('summary','')}",f"- Hard stop: **{'NONE' if not st.get('active') else label(st.get('category'))}**",f"- Projection: **{label(projection.get('state'))}**; required: **{'YES' if projection.get('required') else 'NO'}**",f"- Exact next action: {ex.get('next_action','')}","","## Overall roadmap"]
+    lines=["# Engineering relay","",f"Relay lifecycle: **{label(relay_state)}**",f"Overall roadmap: **{s['progress']['overall_percent']}%**",f"Current phase: **{cur['phase']} — {phase.get('title','')} — {s['progress']['phase_percent']}%**",f"Current work package: **{cur['work_package']}**",f"Current EP: **{current_ep}**","","## Status",f"- Execution: **{label(ex.get('state'))}**; can continue: **{'YES' if ex.get('can_continue') else 'NO'}**; material authority: **{label(ex.get('material_authority'))}**",f"- Quality: **{label(q.get('state'))}**",f"- Evidence: **{label(ev.get('state'))}** — {ev.get('summary','')}",f"- Hard stop: **{'NONE' if not st.get('active') else label(st.get('category'))}**",f"- Projection: **{label(projection.get('state'))}**; required: **{'YES' if projection.get('required') else 'NO'}**",f"- Exact next action: {ex.get('next_action','')}","","## Overall roadmap"]
     for obj in r.get("objectives",[]) or []:
         lines.append(f"- {obj.get('title')} ({obj.get('state')})")
         for ph in obj.get("phases",[]) or []:lines.append(f"  - {mark(ph.get('state'))} {ph.get('id')} — {ph.get('title')}")
     if ep is not None:
+        if join is not None:
+            lines+=["",f"## Parallel convergence {join.get('id')}"]
+            for item in join.get("lane_checkpoints",[]) or []:lines.append(f"- {item.get('lane_id')}: `{item.get('work_package')}` → checkpoint `{item.get('checkpoint_id')}`")
+            lines.append(f"- Integration frontier: `{(join.get('integration') or {}).get('work_package')}` → `{(join.get('integration') or {}).get('ep_id')}`")
         lines+=["","## Current EP acceptance"]
         for ac in ep.get("acceptance",[]) or []:lines.append(f"- [ ] {ac.get('id')} — {ac.get('description')}")
     elif plan is not None:
