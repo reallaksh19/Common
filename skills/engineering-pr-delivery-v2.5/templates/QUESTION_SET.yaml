@@ -1,8 +1,14 @@
 schema_version: relay-v2.5-question-set
 id: QSET-0001
 route:
+  route_key: "SERIAL:EP-0001"
+  mode: SERIAL
+  execution_ref: EP-0001
   ep_id: EP-0001
   ep_path: agents/relay/execution-packages/EP-0001.yaml
+  plan_id: null
+  plan_path: null
+  lane_id: null
   roadmap_revision: RM-0001
   work_package: WP-001
   ep_contract_digest: "<sha256>"
