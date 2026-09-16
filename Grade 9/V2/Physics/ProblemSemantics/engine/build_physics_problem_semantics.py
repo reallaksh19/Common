@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
-import argparse, copy
+import argparse, copy, sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+
 import physics_problem_semantics_core as _core
-from physics_problem_semantics_core import *  # noqa: F401,F403
+from physics_problem_semantics_core import *  # noqa: F401,F403,E402
 
 
 def _consume_scope_bundle(precomputed_scope, scope_authority, scope_bindings):
