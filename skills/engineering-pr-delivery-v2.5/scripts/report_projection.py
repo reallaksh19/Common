@@ -96,7 +96,7 @@ def build(root:Path)->dict:
         projection["checkpoint"]={
             "id":cp.get("checkpoint_id"),"implementation_result":cp.get("implementation_result") or {},
             "acceptance_results":cp.get("acceptance_results") or [],"validation_results":cp.get("validation_results") or [],
-            "quality_review":({"id":qrv.get("quality_review_id"),"overall_state":qrv.get("overall_state"),"execution_effect":qrv.get("execution_effect") or {},"findings":qrv.get("findings") or [],"owner_report":qrv.get("owner_report") or {},"successor_handover":qrv.get("successor_handover") or {}} if qrv else None),
+            "quality_review":({"id":qrv.get("quality_review_id"),"overall_state":qrv.get("overall_state"),"execution_effect":qrv.get("execution_effect") or {},"procedure_results":qrv.get("procedure_results") or [],"findings":qrv.get("findings") or [],"owner_report":qrv.get("owner_report") or {},"successor_handover":qrv.get("successor_handover") or {}} if qrv else None),
             "quality_findings":cp.get("quality_findings") or [],"known_limitations":cp.get("known_limitations") or [],
             "remaining_work":cp.get("remaining_work") or [],"roadmap_reconciliation":cp.get("roadmap_reconciliation") or {},
         }
