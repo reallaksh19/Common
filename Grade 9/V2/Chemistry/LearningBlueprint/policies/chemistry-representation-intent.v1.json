@@ -3,46 +3,86 @@
   "schema_version": "1.0.0",
   "subject": "CHEMISTRY",
   "authority_class": "ENGINEERING_TO_C_H_REPRESENTATION_INTENT",
+  "engineering_type_schema_ref": "contracts/chemistry-technical-engineering-gate.schema.json",
   "principles": [
     "ENGINEERING_OWNS_SCIENTIFIC_REPRESENTATION_SEMANTICS",
     "C_H_OWNS_PRIMITIVE_AND_PAGE_INTENT_AUTHORITY",
     "ADAPTERS_MAY_REFERENCE_BUT_NOT_AUTHOR_REPRESENTATION_SEMANTICS",
     "ADAPTERS_MAY_NOT_SELECT_PRIMITIVES",
     "TOPIC_NAMES_MAY_NOT_BRANCH_REPRESENTATION_SELECTION",
-    "UNMAPPED_REPRESENTATION_TYPES_FAIL_CLOSED"
+    "ENGINEERING_REPRESENTATION_TYPE_COVERAGE_MUST_BE_EXACT",
+    "UNSUPPORTED_C_H_TYPES_ARE_EXPLICITLY_BLOCKED",
+    "BLOCKED_TYPES_MAY_BE_RESOLVED_ONLY_BY_ADDITIVE_AUTHORITY_EXTENSION"
   ],
   "representation_type_rules": {
-    "JOHNSTONE_TRIPLET_DIAGRAM": {
-      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
-      "primitive_id": "MACRO_PARTICLE_SYMBOLIC_BRIDGE"
-    },
     "LEWIS_DOT_STRUCTURE": {
+      "status": "RESOLVED",
       "capability_ref": "CAP-PARSE-ION-CHARGE",
       "primitive_id": "FORMULA_ANATOMY_VIEW"
     },
-    "CRISS_CROSS_SCHEMATIC": {
-      "capability_ref": "CAP-READ-FORMULA",
-      "primitive_id": "FORMULA_ANATOMY_VIEW"
-    },
     "ATOM_INVENTORY_TABLE": {
+      "status": "RESOLVED",
       "capability_ref": "CAP-CHECK-ATOM-CONSERVATION",
       "primitive_id": "CONSERVATION_LEDGER"
     },
-    "SPECIES_IDENTITY_MAP": {
-      "capability_ref": "CAP-TRACK-REACTING-SPECIES",
-      "primitive_id": "REACTION_BEFORE_AFTER_MAP"
+    "BCA_MOLE_TABLE": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "No current C-H primitive faithfully represents before-change-after mole accounting."
     },
-    "OXIDATION_STATE_LANE": {
-      "capability_ref": "CAP-TRACK-OXIDATION-STATE",
-      "primitive_id": "OXIDATION_STATE_LANE"
+    "JOHNSTONE_TRIPLET_DIAGRAM": {
+      "status": "RESOLVED",
+      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "primitive_id": "MACRO_PARTICLE_SYMBOLIC_BRIDGE"
     },
-    "AGENT_ROLE_MAP": {
-      "capability_ref": "CAP-ATTACH-SPECIES-ROLE",
-      "primitive_id": "SPECIES_ROLE_MAP"
+    "PHASE_EQUATION_SCHEMATIC": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "No current C-H primitive faithfully realizes a phase-equation schematic as declared Engineering meaning."
     },
-    "ELECTRON_LEDGER": {
-      "capability_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
-      "primitive_id": "FORMULA_EQUATION_CHECK_STRIP"
+    "REACTION_ENERGY_PROFILE": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed reaction-energy-profile primitive is required before learner realization."
+    },
+    "ELECTRON_TRANSFER_DIAGRAM": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed electron-transfer primitive is required; a generic formula strip is not equivalent."
+    },
+    "PARTICULATE_BOX_MODEL": {
+      "status": "RESOLVED",
+      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "primitive_id": "PARTICLE_MODEL_VIEW"
+    },
+    "CRISS_CROSS_SCHEMATIC": {
+      "status": "RESOLVED",
+      "capability_ref": "CAP-READ-FORMULA",
+      "primitive_id": "FORMULA_ANATOMY_VIEW"
+    },
+    "TITRATION_OR_NEUTRALIZATION_CURVE": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed titration/neutralization curve primitive is required before learner realization."
+    },
+    "ORBITAL_ENERGY_DIAGRAM": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed orbital-energy primitive is required before learner realization."
+    },
+    "MOLECULAR_GEOMETRY_VSEPR": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed molecular-geometry/VSEPR primitive is required before learner realization."
+    },
+    "EQUILIBRIUM_CONCENTRATION_TABLE": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed equilibrium concentration-table primitive is required before learner realization."
+    },
+    "THERMODYNAMIC_CYCLE_BORN_HABER": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed thermodynamic-cycle primitive is required before learner realization."
+    },
+    "ORGANIC_REACTION_MECHANISM": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed reaction-mechanism primitive is required before learner realization."
+    },
+    "PERIODIC_TREND_CONTOUR": {
+      "status": "BLOCKED_C_H_PRIMITIVE_REQUIRED",
+      "reason": "A governed periodic-trend contour primitive is required before learner realization."
     }
   },
   "selection_rule": "EXACT_REPRESENTATION_TYPE_TO_GOVERNED_CAPABILITY_AND_PRIMITIVE",
