@@ -1,0 +1,123 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R006
+work_package:
+  id: WP-05
+  title: GitHub Program Projection operations
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R005
+  implementation_through_ref: "f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Add immutable GHGEN-* GitHub projection generations bound to current roadmap, execution route and issue-graph revision.
+    - Add ordered GHOP-* operations for CREATE, LINK, UPDATE, PUBLISH_HANDOVER, SUPERSEDE, REVISE, CLOSE and REOPEN.
+    - Persist ATTEMPTED_UNCONFIRMED before any external mutation so crash recovery never assumes a missing connector response means no write occurred.
+    - Add durable GITHUB_OBSERVATION readback and semantic reconciliation before ISSUE_GRAPH or projection readiness changes.
+    - Add stable operation markers and idempotency keys so uncertain CREATE operations are reconciled before retry.
+    - Add READBACK_RECOVERY evidence for verified external state when a connector receipt was lost.
+    - Extend issue external-presence state to ABSENT, OPEN, CLOSED and UNKNOWN with locator consistency rules.
+    - Add generation supersession with immutable history and no retry authority for obsolete operations.
+    - Distinguish supersession before publication, after attempted/unconfirmed mutation, and after publication/unconfirmed receipt.
+    - Keep publication sequential within one generation; unresolved uncertain operations must reconcile before later operations publish.
+    - Reconcile verified CREATE/CLOSE/REOPEN and relationship effects into ISSUE_GRAPH only after readback.
+    - Require native relationship capability/readback before claiming GitHub parent/sub-issue or similar relationship convergence.
+    - Integrate GitHub projection/generation validation into aggregate relay conformance.
+    - Add repository-neutral GitHub operation stress regressions and repair the closed-parent regression to assert invariant semantics rather than diagnostic wording.
+  explicitly_not_performed:
+    - Downstream GitHub issue adoption or mutation.
+    - Treating GitHub as roadmap, lifecycle or engineering authority.
+    - Treating Markdown/body links as verified native parent/sub-issue relationships.
+    - QRV quality procedure implementation; owned by WP-06.
+    - Plain-language Owner communication split; owned by WP-07.
+    - Owner change-intake projection; owned by WP-08.
+    - End-to-end A -> B -> C release certification; owned by WP-09.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-05-github-program-projection.md"
+  operating_model: "skills/engineering-pr-delivery-v2.5/operating-model/github-program-projection.md"
+  issue_projection_model: "skills/engineering-pr-delivery-v2.5/operating-model/issue-projection.md"
+  projection_convergence_model: "skills/engineering-pr-delivery-v2.5/operating-model/projection-convergence.md"
+  generation_template: "skills/engineering-pr-delivery-v2.5/templates/GITHUB_PROJECTION.yaml"
+  observation_template: "skills/engineering-pr-delivery-v2.5/templates/GITHUB_OBSERVATION.yaml"
+  generation_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_github_projection.py"
+  generation_history_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_github_generation_history.py"
+  operation_begin: "skills/engineering-pr-delivery-v2.5/scripts/begin_github_operation.py"
+  operation_router: "skills/engineering-pr-delivery-v2.5/scripts/github_projection_next.py"
+  reconciler: "skills/engineering-pr-delivery-v2.5/scripts/reconcile_github_projection.py"
+  generation_activator: "skills/engineering-pr-delivery-v2.5/scripts/activate_github_generation.py"
+  issue_graph_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_issue_graph.py"
+  regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_github_projection_operations.py"
+
+acceptance:
+  - id: AC-05-01
+    status: PASS
+    statement: CREATE, LINK and PUBLISH_HANDOVER can converge through durable operation identity and verified readback without requiring a connector response to survive the write call.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_create_link_handover_converges_without_connector_receipt"]
+  - id: AC-05-02
+    status: PASS
+    statement: An uncertain CREATE is durably attempted before the external write and must reconcile before retry, preventing duplicate issue creation after crash/timeout.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_uncertain_create_must_reconcile_before_retry"]
+  - id: AC-05-03
+    status: PASS
+    statement: Operation dependencies and stable relay-operation markers prevent out-of-order or ambiguous publication.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_dependency_and_marker_contract_prevent_out_of_order_or_ambiguous_publish"]
+  - id: AC-05-04
+    status: PASS
+    statement: SUPERSEDE, REVISE and UPDATE cannot invent external relationships not present in repository issue truth.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_supersede_revise_and_update_require_repository_relationship_truth"]
+  - id: AC-05-05
+    status: PASS
+    statement: CLOSE requires terminal repository truth and REOPEN requires reactivated work before external state mutation is authorized.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_close_requires_terminal_repository_truth_and_reopen_requires_reactivated_work"]
+  - id: AC-05-06
+    status: PASS
+    statement: An uncertain old generation can be superseded without fabricating a publication receipt, and obsolete operations lose retry authority.
+    basis: ["tests/stress/test_github_projection_operations.py::GitHubProjectionOperationStressTests.test_uncertain_generation_can_be_superseded_without_fabricating_receipt"]
+  - id: AC-05-07
+    status: PASS
+    statement: Closed aggregate issue projection cannot hide a direct child whose verified GitHub projection is not CLOSED; the regression asserts the invariant rather than exact diagnostic prose.
+    basis: ["tests/stress/test_issue_projection_supersession.py::IssueProjectionAndSupersessionStressTests.test_closed_parent_cannot_hide_open_child"]
+  - id: AC-05-08
+    status: PASS
+    statement: Pre-checkpoint implementation passes compile, root units and the dedicated repository-neutral synthetic stress suite.
+    basis: ["workflow:35140358167", "head:f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b", "stress_count:111"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 65
+  earned_by_this_checkpoint: 8
+  earned_after_this_checkpoint: 73
+  percent_after_this_checkpoint: 73
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35140358167
+  pre_checkpoint_green_ref: "f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-05 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the exact head containing CP-R006 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-06
+  title: Quality Procedure Library
+  planned_execution_package: EP-R007
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Add explicit quality blueprint applicability routing so only relevant procedures run and every not-applicable blueprint has a reason.
+    - Expand each quality blueprint with WHEN TO APPLY, REQUIRED INPUTS, PROCEDURE, CHECKLIST, ANTI-PATTERNS, REQUIRED ARTIFACTS, VERIFICATION, FINDING CLASSIFICATION, TRUE HARD STOP CONDITIONS, OWNER REPORT and SUCCESSOR HANDOVER.
+    - Add first-class QRV-* Quality Review evidence that separates quality findings from evidence state and true hard stops.
+    - Preserve the existing execution/quality/evidence/stop plane separation and avoid recreating blocker-heavy engineering flows.
+    - Add repository-neutral regressions before progressing to WP-07.
