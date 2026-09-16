@@ -6,7 +6,7 @@ description: Roadmap-first engineering relay for durable multi-agent delivery. T
 # Engineering PR Delivery v2.5 — engineering relay with a dynamic overall roadmap
 
 ## Governing objective
-A replacement agent entering the repository with no conversational history must be able to locate the authoritative overall roadmap, determine the current roadmap position/frontier, execute the authorized work, validate it, checkpoint reality, reconcile the roadmap, recompute the frontier, and leave a validated successor relay. Conversation is acceleration, never custody.
+A replacement agent entering the repository with no conversational history must be able to locate the authoritative overall roadmap, determine the current roadmap position/frontier, resolve the authorized execution route from the live checkout, execute the authorized work, validate it against an exact material basis, checkpoint reality, reconcile the roadmap, recompute the frontier, and leave a validated successor relay. Conversation is acceleration, never custody.
 
 ## Repository-agnostic core
 The Common implementation is portable policy, not downstream-project code. Generic skill logic, schemas, templates and validators must not encode downstream repository names, issue numbers, branch names, product domains, formulas or application-specific workflow semantics. Real repositories are black-box validation/stress targets. When a stress target exposes a weakness, repair the generic invariant/validator and add a synthetic reproduction; do not special-case that repository. Read `operating-model/repository-agnosticism.md`.
@@ -17,9 +17,11 @@ explicit Owner intent / Owner Decision Record
 → OVERALL_ROADMAP.yaml
 → executable frontier
 → current serial EP or Owner-approved parallel router
+→ live Git route/basis confirmation
 → implementation
 → checkpoint/evidence
 → roadmap reconciliation
+→ required projection convergence
 ```
 GitHub Issues are a coordination projection. They do not replace roadmap or repository authority.
 
@@ -37,10 +39,11 @@ agents/relay/
   execution-packages/**
   checkpoints/**
   parallel/**
+  drift/**
   reports/**
   generated/**
 ```
-`REPO_STATE.yaml` is the deterministic bootstrap locator: which roadmap, lifecycle state, current position, execution policy, and what—if anything—can execute now.
+`REPO_STATE.yaml` is the deterministic bootstrap locator: which roadmap, lifecycle state, current position, execution policy, projection state, readiness state, and what—if anything—can execute now.
 
 ## Relay lifecycle
 `REPO_STATE.relay_state` is exactly one of:
@@ -62,6 +65,8 @@ TERMINAL     — roadmap work is complete; no material successor exists
 - Progress Basis: revisioned denominator/numerator basis for calculated progress.
 - Issue Graph: GitHub relationship projection.
 - Parallel Plan: Owner-approved router for a multi-node frontier, including lane EPs, isolation and integration semantics.
+- Drift Receipt: explicit classification of base-branch movement against the current EP scope.
+- Projection state: whether required external coordination surfaces reflect the current roadmap/execution reference.
 
 EP and CP are different objects and must never substitute for each other.
 
@@ -89,11 +94,30 @@ Parallel material work requires explicit Owner approval of a named plan with an 
 Any overlapping write domains require a specific Owner-approved shared-write exception naming the lane pair, overlap domain and reason. Otherwise overlap is invalid. The integration WP must depend on every lane WP and must remain non-executable until lane completion makes it the recomputed frontier. The integration EP is created only then (`WHEN_FRONTIER`). Ambiguous branch/worktree routing means no material execution.
 
 ## EP contract
-Every EP contains: identity, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope.allowed, scope.prohibited, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract and successor_relay.
+Every EP contains: identity, `git_basis`, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope.allowed, scope.prohibited, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract and successor_relay.
 
 `identity.previous_checkpoint` ties the EP to the durable baton that produced it. The first EP uses `NONE`. Every serial EP and every parallel lane EP must be executable without chat context. Every acceptance criterion maps to verification.
 
-## Checkpoint successor contract
+## Live Git routing and base drift
+Before material writes, run the route/basis checks documented in `operating-model/git-observation.md`.
+
+Every executable EP declares:
+```text
+git_basis.expected_branch
+git_basis.material_ref
+git_basis.base_branch
+git_basis.base_observed_ref
+git_basis.drift_policy = RECHECK_BEFORE_WRITE
+git_basis.drift_receipt
+```
+
+`resolve_execution_route.py` resolves the serial EP or exactly one parallel lane from the checked-out branch/worktree. Mismatch or ambiguity means no material execution.
+
+`inspect_git_context.py` checks expected branch, verifies that `material_ref` remains an ancestor of current HEAD, and compares the live base branch to `base_observed_ref`. If the base moved, the command reports changed paths and requires a durable drift receipt; it never auto-classifies the drift safe.
+
+A drift receipt is exactly one of `DISJOINT | OVERLAPPING | UNKNOWN`. Only an explicitly reasoned `DISJOINT` receipt preserves the existing EP. `OVERLAPPING` or `UNKNOWN` requires roadmap/EP reconciliation. Commit count or “one commit behind” is never sufficient evidence of safety.
+
+## Checkpoint successor and evidence contract
 Every checkpoint declares `successor.mode`:
 ```text
 SERIAL   — one frontier work package and one successor EP
@@ -101,6 +125,8 @@ PARALLEL — one approved parallel plan plus exact lane {WP, EP} receipts
 NONE     — no material successor (idle/initializing/terminal custody)
 ```
 Checkpoint mode, REPO_STATE lifecycle, current position/router and successor EP/lane checkpoint references must agree.
+
+Every checkpoint also declares `execution_basis.material_ref`. Each executable `PASS`, `FAIL`, or `NOT_RUN` validation result is bound to that exact material reference. Evidence observed on another head may be retained as history, but it cannot silently qualify the current checkpoint. `NOT_RUN` also carries an explicit reason.
 
 ## Separate state planes
 `REPO_STATE.yaml` carries four independent status planes:
@@ -115,6 +141,19 @@ Do not use one overloaded `BLOCKED` state. `NOT_RUN` is evidence truth and is no
 Validation truth is `PASS | FAIL | NOT_RUN | NA`; test obligation is `MUST_PASS | SHOULD_RUN | INFORMATIONAL`.
 
 Hard stops are reserved for true inability to proceed safely: `OWNER_DECISION_REQUIRED`, `ESSENTIAL_INPUT_MISSING`, `AUTHORITY_VIOLATION`, `PROTECTED_INVARIANT_FAILURE`, `WRITE_COLLISION`, `SUPERSEDED_EP`, `ROADMAP_CONFLICT`, `REPOSITORY_STATE_CONFLICT`, `UNSAFE_ENGINEERING_RESULT`.
+
+## Projection convergence and handover readiness
+Repository recovery and external projection synchronization are different predicates. Read `operating-model/projection-convergence.md`.
+
+`REPO_STATE.projection` records whether an external coordination projection is required and its state: `NOT_REQUIRED | IN_SYNC | PENDING | STALE`. An `IN_SYNC` projection binds to the current roadmap revision and current execution reference (serial EP, parallel plan, or `NONE`) and carries durable publication basis.
+
+`REPO_STATE.relay_readiness` separates:
+```text
+repository_ready — repository alone is sufficient for a replacement agent
+projection_ready — every required external projection is synchronized
+handover_ready   — repository_ready AND projection_ready
+```
+A pending/stale projection does not rewrite engineering truth and is not automatically an engineering hard stop. It does prevent claiming complete custody handover. Release qualification is separate from relay handover readiness.
 
 ## Progress
 Calculated only:
@@ -135,12 +174,12 @@ Q5 First safe implementation slice
 Each question declares a fixed focus and one or more durable anchors from the incoming EP (phase/work-package IDs, AC IDs, TEST IDs, INPUT IDs or STEP IDs). Historical-domain reuse, unknown anchors, or a `to_phase` that differs from the incoming EP is invalid.
 
 ## Relay durability
-Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP-or-plan/scope/inputs/acceptance must exist. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor serial EP or approved parallel plan → successor validation → cold-start PASS → REPO_STATE transfer. Code completion alone is not relay completion.
+Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP-or-plan/scope/inputs/acceptance must exist and the live execution route/Git basis must be reconciled. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor serial EP or approved parallel plan → successor validation → cold-start PASS → required projection convergence → REPO_STATE readiness update. Code completion alone is not relay completion.
 
 For a continuing serial relay, `REPO_STATE.last_checkpoint`, that checkpoint's `SERIAL` successor, `REPO_STATE.current_position/active_ep`, and the active EP's `identity.previous_checkpoint` form one consistent baton link. For a parallel fork, the checkpoint's `PARALLEL` successor, active plan lane receipts and every lane EP `previous_checkpoint` must agree. For a terminal/idle relay, the final checkpoint uses `successor.mode: NONE`.
 
 ## Safe bootstrap and migration
-Bootstrap must not invent executable work. Use a reviewed `BOOTSTRAP_MANIFEST.yaml`; `bootstrap_relay.py` is dry-run by default and `--apply` refuses to overwrite an existing relay. It creates `relay_state: INITIALIZING`, an empty executable frontier and no EP.
+Bootstrap must not invent executable work. Use a reviewed `BOOTSTRAP_MANIFEST.yaml`; `bootstrap_relay.py` is dry-run by default and `--apply` refuses to overwrite an existing relay. It creates `relay_state: INITIALIZING`, an empty executable frontier, no EP, and `repository_ready: false`.
 
 V2 migration is evidence-first:
 ```text
@@ -155,12 +194,16 @@ inventory_v2_relay.py
 A V2 endpoint is never automatically promoted to a V2.5 EP and narrative progress is never copied as calculated progress.
 
 ## Human handover
-Always show relay lifecycle, overall roadmap %, current phase %, current serial EP or parallel lane list, plain-language execution/quality/evidence/stop status, exact next actions, integration/next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, successor readiness, and `conversation context required: NO`. Initializing/idle/terminal handovers explicitly say there is no active material EP.
+Always show relay lifecycle, overall roadmap %, current phase %, current serial EP or parallel lane list, plain-language execution/quality/evidence/stop status, projection status, repository-recovery readiness, projection readiness, full handover readiness, exact next actions, integration/next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, and `conversation context required: NO`. Initializing/idle/terminal handovers explicitly say there is no active material EP.
 
 ## Validation and lifecycle entrypoints
 ```bash
 python skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/cold_start_check.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_route.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_projection_convergence.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_drift_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/stress_test_relay.py <repo-root> [<repo-root> ...]
 python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest> <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/inventory_v2_relay.py <repo-root>
