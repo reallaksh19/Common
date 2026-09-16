@@ -30,7 +30,8 @@
     "transfer_evidence_policy": "Grade 9/V2/Physics/CoverageClosure/registry/physics-transfer-evidence-policy.json",
     "treatment_policy": "Grade 9/V2/Physics/StudySynthesis/policies/physics-treatment-policy.json",
     "verification_route_registry": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-verification-route-registry.json",
-    "engineering_scope_bindings": "Grade 9/V2/Physics/ColdStart/registry/physics-engineering-scope-bindings.v1.json"
+    "engineering_scope_bindings": "Grade 9/V2/Physics/ColdStart/registry/physics-engineering-scope-bindings.v1.json",
+    "agent_task_execution_routes": "Grade 9/V2/Physics/Blueprint/registry/physics-agent-task-execution-routes.v1.json"
   },
   "derived_not_runtime_inputs": [
     "PhysicsAssessmentScopeModel",
@@ -75,7 +76,7 @@
       "MACHINE_AUTHORITY_CHECK"
     ]
   },
-  "manifest_digest": "b8b581cd23850d198de0d0e62c0c688671fc779b65d3ddfb321b3568c659f478",
+  "manifest_digest": "1e6d3451e13c702c7bc3703a1876f45f2c37da76b7897e4191c7bab67dfc5401",
   "manifest_id": "PHY-GENERATION-AUTHORITY-v1",
   "phase_order": [
     "P-A AssessmentIntake",
