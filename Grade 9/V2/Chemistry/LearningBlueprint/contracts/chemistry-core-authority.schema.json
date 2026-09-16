@@ -5,25 +5,12 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema_version",
-    "authority_id",
-    "subject",
-    "product_mode",
-    "subtopic_id",
-    "obligation_packet_id",
-    "obligation_packet_digest",
-    "semantic_projection_id",
-    "semantic_projection_digest",
-    "semantic_closure",
-    "payload_ref",
-    "payload_digest",
-    "scope_units",
-    "realized_obligation_ids",
-    "representation_closure",
-    "learner_surface_strings",
-    "validation_evidence",
-    "status",
-    "authority_digest"
+    "schema_version", "authority_id", "subject", "product_mode", "subtopic_id",
+    "obligation_packet_id", "obligation_packet_digest", "semantic_projection_id",
+    "semantic_projection_digest", "semantic_closure", "learner_gate_projection_id",
+    "learner_gate_projection_digest", "learner_gate_closure", "payload_ref", "payload_digest",
+    "scope_units", "realized_obligation_ids", "representation_closure", "learner_surface_strings",
+    "validation_evidence", "status", "authority_digest"
   ],
   "properties": {
     "schema_version": {"const": "1.0.0"},
@@ -36,45 +23,38 @@
     "semantic_projection_id": {"type": "string", "pattern": "^CHEM-BP-SEM-[A-Z0-9-]+$"},
     "semantic_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "semantic_closure": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "status",
-        "authorized_semantic_ids",
-        "required_semantic_ids",
-        "realized_semantic_ids",
-        "realized_source_obligation_ids",
-        "semantic_atom_count"
-      ],
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "authorized_semantic_ids", "required_semantic_ids", "realized_semantic_ids", "realized_source_obligation_ids", "semantic_atom_count"],
       "properties": {
         "status": {"const": "PASS"},
-        "authorized_semantic_ids": {
-          "type": "array", "uniqueItems": true,
-          "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
-        },
-        "required_semantic_ids": {
-          "type": "array", "uniqueItems": true,
-          "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
-        },
-        "realized_semantic_ids": {
-          "type": "array", "uniqueItems": true,
-          "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
-        },
-        "realized_source_obligation_ids": {
-          "type": "array", "uniqueItems": true,
-          "items": {"type": "string", "pattern": "^CHEM-OBL-[A-Z0-9-]+$"}
-        },
+        "authorized_semantic_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}},
+        "required_semantic_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}},
+        "realized_semantic_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}},
+        "realized_source_obligation_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-OBL-[A-Z0-9-]+$"}},
         "semantic_atom_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "learner_gate_projection_id": {"type": "string", "pattern": "^CHEM-BP-LG-[A-Z0-9-]+$"},
+    "learner_gate_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "learner_gate_closure": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "authorized_learner_gate_ids", "required_learner_gate_ids", "realized_learner_gate_ids", "context_semantic_ids", "metadata_semantic_ids", "learner_gate_count"],
+      "properties": {
+        "status": {"const": "PASS"},
+        "authorized_learner_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}},
+        "required_learner_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}},
+        "realized_learner_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}},
+        "context_semantic_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}},
+        "metadata_semantic_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}},
+        "learner_gate_count": {"type": "integer", "minimum": 0}
       }
     },
     "payload_ref": {"type": "string", "minLength": 1},
     "payload_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "scope_units": {
-      "type": "array",
-      "minItems": 1,
+      "type": "array", "minItems": 1,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
+        "type": "object", "additionalProperties": false,
         "required": ["scope_unit_id", "scope_unit_kind"],
         "properties": {
           "scope_unit_id": {"type": "string", "minLength": 1},
@@ -82,50 +62,17 @@
         }
       }
     },
-    "realized_obligation_ids": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {"type": "string"}
-    },
+    "realized_obligation_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
     "representation_closure": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "status",
-        "authorized_engineering_representation_refs",
-        "required_engineering_representation_refs",
-        "realized_engineering_representation_refs",
-        "defined_representation_refs",
-        "used_representation_refs",
-        "binding_count"
-      ],
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "authorized_engineering_representation_refs", "required_engineering_representation_refs", "realized_engineering_representation_refs", "defined_representation_refs", "used_representation_refs", "binding_count"],
       "properties": {
         "status": {"const": "PASS"},
-        "authorized_engineering_representation_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string"}
-        },
-        "required_engineering_representation_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string"}
-        },
-        "realized_engineering_representation_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string"}
-        },
-        "defined_representation_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string"}
-        },
-        "used_representation_refs": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {"type": "string"}
-        },
+        "authorized_engineering_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "required_engineering_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "realized_engineering_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "defined_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "used_representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
         "binding_count": {"type": "integer", "minimum": 0}
       }
     },
