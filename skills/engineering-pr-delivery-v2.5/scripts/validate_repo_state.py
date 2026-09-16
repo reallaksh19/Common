@@ -27,7 +27,7 @@ def validate(repo_root:Path):
         if relay_state!="ACTIVE":errors.append("predecessor_join is valid only for ACTIVE integration work")
         if last.get("id") not in NONE_IDS or last.get("path") not in {None,""}:errors.append("predecessor_join and singular last_checkpoint cannot both be active")
         if not (repo_root/join_path).exists():errors.append(f"REPO_STATE.predecessor_join.path does not exist: {join_path}")
-    projection=state.get("projection") or {};errors+=require(projection,["required","state","roadmap_revision","execution_ref","basis"],"REPO_STATE.projection")
+    projection=state.get("projection") or {};errors+=require(projection,["required","state","operation_id","target","roadmap_revision","execution_ref","receipt","basis"],"REPO_STATE.projection")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["repository_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
     if mode not in {"SERIAL","OWNER_APPROVED_PARALLEL"}: errors.append("REPO_STATE.execution_policy.mode must be SERIAL or OWNER_APPROVED_PARALLEL")
