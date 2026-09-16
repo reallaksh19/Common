@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import compute_frontier,index_roadmap,iter_work_packages,load_yaml,print_result
+from validate_roadmap_continuity import validate as validate_continuity
 
 def validate(root:Path):
     e=[];w=[]
@@ -42,7 +43,8 @@ def validate(root:Path):
         identity=ep.get("identity") or {};source=ep.get("roadmap_source") or {}
         if identity.get("ep_id")!=active.get("id"):e.append("active EP id does not match EP.identity.ep_id")
         if source.get("roadmap_id")!=(s.get("roadmap") or {}).get("id"):e.append("active EP roadmap_id does not match REPO_STATE")
-        if source.get("roadmap_revision")!=(s.get("roadmap") or {}).get("revision"):e.append("active EP roadmap revision does not match REPO_STATE")
+        if source.get("roadmap_revision")!=(s.get("roadmap") or {}).get("revision"):
+            ce,cw=validate_continuity(root);e.extend(ce);w.extend(cw)
         swp=source.get("work_package")
         if swp not in idx:e.append(f"active EP references missing roadmap work package {swp}")
         else:
