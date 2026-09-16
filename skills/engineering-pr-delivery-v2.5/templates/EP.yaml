@@ -6,6 +6,8 @@ identity:
   execution_state: EXECUTABLE
   previous_checkpoint: NONE
   previous_join: null
+  previous_replan: null
+replan_inheritance: null
 git_basis:
   expected_branch: "<branch>"
   material_ref: "<material commit/ref>"
