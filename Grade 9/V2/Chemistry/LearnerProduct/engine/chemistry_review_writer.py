@@ -115,10 +115,49 @@ class ReviewWriter:
         if font is not None:
             self.minimum_font = min(self.minimum_font, float(font))
 
+    def _redraw_nav_header(self, role: str) -> None:
+        """Replace the physical nav label only while the page is still pristine."""
+        band_h = 30.0
+        right = ROLE_LABELS.get(role, public_text(role).upper())
+        self.c.setFillColor(INK)
+        self.c.rect(0, PAGE_H - band_h, PAGE_W, band_h, fill=1, stroke=0)
+        self.c.setFillColor(white)
+        self.c.setFont(BOLD, self.small)
+        self.c.drawString(self.margin, PAGE_H - 20.0, "CHEMISTRY")
+        self.c.drawRightString(PAGE_W - self.margin, PAGE_H - 20.0, right)
+        headers = [
+            row for row in self.draw_ops
+            if row.get("page") == self.page and row.get("kind") == "NAV_HEADER"
+        ]
+        if len(headers) != 1:
+            raise ValueError("CHEM_REVIEW_NAV_HEADER_TRACE_INVALID")
+        headers[0]["text"] = right
+
     def set_page_role(self, role: str) -> None:
-        self.current_role = role
-        if self.page_labels:
-            self.page_labels[-1]["role"] = role
+        """Set a physical page role without permitting metadata-only role mutation.
+
+        A pristine page may be assigned its intended role before semantic content is
+        drawn; its nav header is redrawn in place. Once semantic content exists, a
+        role transition starts a new physical page so visible navigation, render trace
+        and page-role metadata cannot diverge.
+        """
+        role = str(role or "").strip()
+        if not role:
+            raise ValueError("CHEM_REVIEW_PAGE_ROLE_REQUIRED")
+        if role == self.current_role:
+            return
+        semantic_ops = [
+            row for row in self.draw_ops
+            if row.get("page") == self.page
+            and row.get("kind") not in {"NAV_HEADER", "FOOTER"}
+        ]
+        if not semantic_ops:
+            self.current_role = role
+            if self.page_labels:
+                self.page_labels[-1]["role"] = role
+            self._redraw_nav_header(role)
+            return
+        self.new_page("role transition", role=role)
 
     def _draw_continuation_header(self, context: str, ref=None) -> None:
         value = public_text(context)
