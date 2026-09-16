@@ -9,9 +9,11 @@ WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
 WP-01 Semantic Execution Package                    DELIVERED — CP-R002
 WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
 WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
-WP-04 Full progress / handover / next-work          DELIVERED — CP-R005; exact-head CI pending
-WP-05 GitHub Program Projection operations          CONDITIONAL NEXT FRONTIER
+WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
+WP-05 GitHub Program Projection operations          CURRENT FRONTIER
 ```
+
+CP-R005 checkpoint/status verification passed corrected workflow **35104895179** on `9531e4e0a98a84c3f61313837ce1fdd4284d95a6`.
 
 Conversation is acceleration, never custody.
 
@@ -87,25 +89,13 @@ Executable EPs are semantically validated for serial work and approved parallel 
 
 ## Delivered WP-03 — strong engineering qualification
 
-Fresh qualification is required for `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`. The durable transaction is:
-
-```text
-EP.qualification_boundary
- -> QSET-* prepared by outgoing agent
- -> candidate Q1-Q5 answers with zero chat custody
- -> independent/deterministic evaluation
- -> QUAL-* PASS/FAIL
- -> TC-* cites exact QUAL id/path/digest
- -> TAKEOVER_CERTIFIED
-```
-
-Q1 traces production/state authority, Q2 reconstructs the engineering problem with concrete values when quantitative, Q3 proves mutation/invariant/falsifier understanding, Q4 uses an independent oracle, and Q5 names the exact first safe change and predicted verification. Candidate-authored criteria/self-evaluation fail and changed QUAL evidence invalidates an issued TC.
+Fresh qualification is required for `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`. The durable transaction is `EP.qualification_boundary -> QSET-* -> candidate answers -> independent/deterministic evaluation -> QUAL-* -> TC-*`. Q1 traces production/state authority, Q2 reconstructs the engineering problem with concrete values when quantitative, Q3 proves mutation/invariant/falsifier understanding, Q4 uses an independent oracle, and Q5 names the exact first safe change and predicted verification. Candidate-authored criteria/self-evaluation fail and changed QUAL evidence invalidates an issued TC.
 
 ## Delivered WP-04 — source-derived progress, handover and next work
 
 ### Progress authority
 
-The hierarchy is now:
+The hierarchy is:
 
 ```text
 Acceptance Criterion
@@ -137,7 +127,7 @@ expected result
 stop/reconciliation conditions
 ```
 
-The execution state-plane `next_action` remains a short machine hint; it is not the successor work package.
+The execution state-plane `next_action` remains a short machine hint; it is not the successor work contract.
 
 ### Structured report projection
 
@@ -151,9 +141,9 @@ The handover renders Objective -> Phase -> WP -> Step -> AC percentages/status/b
 
 WP-07 still owns the separate plain-language Owner communication layer; WP-04 establishes truthful complete content first.
 
-## Conditional next WP-05 — GitHub Program Projection operations
+## Current WP-05 — GitHub Program Projection operations
 
-GitHub remains an external coordination projection. WP-05 will operationalize:
+GitHub remains an external coordination projection. WP-05 operationalizes:
 
 ```text
 CREATE | LINK | UPDATE | PUBLISH_HANDOVER | SUPERSEDE | REVISE | CLOSE | REOPEN
@@ -164,13 +154,13 @@ Operations must be prepared durably, published with stable generation identity, 
 ## Remaining target layers
 
 ```text
-WP-05  GitHub Program Projection operations
-WP-06  Quality Procedure Library + QRV-* evidence
-WP-07  Human Communication / Owner projection
-WP-08  Owner Change Intake over ODR/roadmap transactions
-WP-09  End-to-end lifecycle and A -> B -> C zero-chat certification
-WP-10  schema/template/validator/renderer/docs self-consistency audit
-WP-11  PR readiness; never automatic merge
+WP-05  GitHub Program Projection operations         CURRENT
+WP-06  Quality Procedure Library + QRV-* evidence   WAITING
+WP-07  Human Communication / Owner projection       WAITING
+WP-08  Owner Change Intake over ODR transactions    WAITING
+WP-09  End-to-end A -> B -> C certification         WAITING
+WP-10  self-consistency audit                       WAITING
+WP-11  PR readiness; never automatic merge          WAITING
 ```
 
 ## Object namespaces
@@ -190,13 +180,7 @@ Existing plan/join/replan/drift namespaces remain unchanged.
 
 ## Defining release proof
 
-WP-09 remains:
-
-```text
-AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C
-```
-
-Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, progress, staleness and exact next work from repository state alone and obtain current independent certification. If prior conversation is materially required, V2.5 fails.
+WP-09 remains `AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C`. Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, progress, staleness and exact next work from repository state alone and obtain current independent certification. If prior conversation is materially required, V2.5 fails.
 
 ## Validation evidence discipline
 
@@ -209,8 +193,8 @@ baseline                         COMPLETE — CP-R001
 semantic EP                      COMPLETE — CP-R002
 baton readiness / TC             COMPLETE — CP-R003
 strong qualification             COMPLETE — CP-R004
-full progress/handover           COMPLETE — CP-R005; exact-head CI pending
-GitHub operations                NEXT after CP-R005 CI
+full progress/handover           COMPLETE — CP-R005
+GitHub operations                CURRENT — WP-05
 quality procedures               WAITING
 human communication / intake     WAITING
 end-to-end certification         WAITING
