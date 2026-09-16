@@ -7,6 +7,25 @@ Branch: `draft/core-relay-architecture-review-20260913`
 Handover basis: `2a0d7604671f46e58bbbbf73ff96eaa0c06ac652`  
 Merge status: **NOT AUTHORIZED — keep the PR draft**
 
+## Status update (commit `ce8a6cb1eb4bffc5e96f51fc823eb5fe76414e4b`)
+
+**The "Exact next activity" below has now been executed once.** See
+[`Physics/StressTests/runs/relative-motion-g9-V3B/RUN-REPORT.md`](../../Physics/StressTests/runs/relative-motion-g9-V3B/RUN-REPORT.md)
+for the full account. Summary: real Core1A/1B/2A/2B HTML was produced via the existing
+`publication_host` pipeline (not hand-written), all 7 placed numeric answers were verified against the
+existing Physics evaluator, 7 stress probes were executed against isolated input copies and all matched
+the architecture's documented invariants, and the output was visually inspected in a real headless
+Chromium browser for the first time (prior runs reported this `NOT_RUN`). A Vector-Representation
+prerequisite bucket (MEDIUM) was added to the microtopic library, independently re-validated (schema,
+reference resolution, acyclicity) rather than trusted from memory.
+
+This is **one slice, not full completion** of the required sequence below: Core2 remains `HELD` (no
+frozen question corpus), question counts are below the editable targets (4/8, 3/6), no independent
+academic/pedagogical review has occurred, and cold-agent recovery has not been executed. The
+"Implementation still pending after the vertical slice" priority list and "Stop and owner-review points"
+below are unchanged and still govern. Mathematics/Chemistry adaptation remains deferred pending owner
+review of this Physics result, per the owner's explicit sequencing instruction.
+
 ## Mission and owner rules
 
 Prove a production-quality, reusable Physics architecture before adapting it to Mathematics or Chemistry. The system must support any subtopic, variable research depth and known or unknown learner knowledge while keeping an ordinary production agent from silently omitting concepts, equations, examples, answers, source identity or diagram semantics.
