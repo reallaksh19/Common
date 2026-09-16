@@ -12,7 +12,7 @@ from typing import Any
 
 HERE = Path(__file__).resolve()
 AGENT_TASKS_ROOT = HERE.parent.parent
-AUTHORITY_ROUTING_REL = Path("Grade 9/V2/Shared/AgentTasks/registry/authority-routing.v1.json")
+AUTHORITY_ROUTING = AGENT_TASKS_ROOT / "registry" / "authority-routing.v1.json"
 
 
 class AuthorityResolutionError(Exception):
@@ -31,6 +31,7 @@ def _repo_root(start: Path | None = None) -> Path:
     for candidate in [start, *start.parents]:
         if (candidate / ".git").exists():
             return candidate
+    # Repository archive/tests may not carry .git; preserve the known relative V2 layout.
     return HERE.parents[5]
 
 
@@ -66,39 +67,18 @@ def file_digest(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _safe_repo_file(repo_root: Path, relative_path: str, code: str) -> Path:
-    rel = Path(relative_path)
-    if rel.is_absolute() or ".." in rel.parts:
-        raise AuthorityResolutionError(code, f"path must remain inside repository: {relative_path}")
-    path = repo_root / rel
-    if not path.is_file():
-        raise AuthorityResolutionError(code, f"repository file not found: {relative_path}")
-    return path
-
-
 def _bind_file(repo_root: Path, authority_class: str, relative_path: str) -> dict[str, str]:
-    path = _safe_repo_file(repo_root, relative_path, "E_AGENT_AUTHORITY_MISSING")
+    path = repo_root / relative_path
+    if not path.is_file():
+        raise AuthorityResolutionError(
+            "E_AGENT_AUTHORITY_MISSING",
+            f"{authority_class} does not resolve to a file: {relative_path}",
+        )
     return {
         "authority_class": authority_class,
         "path": relative_path,
         "sha256": file_digest(path),
     }
-
-
-def _bind_governed_inputs(repo_root: Path, task: dict[str, Any]) -> list[dict[str, str]]:
-    rows = task.get("governed_inputs", [])
-    roles = [row["role"] for row in rows]
-    paths = [row["path"] for row in rows]
-    if len(roles) != len(set(roles)):
-        raise AuthorityResolutionError("E_AGENT_GOVERNED_INPUT_ROLE_DUPLICATE", "governed input roles must be unique")
-    if len(paths) != len(set(paths)):
-        raise AuthorityResolutionError("E_AGENT_GOVERNED_INPUT_PATH_DUPLICATE", "governed input paths must be unique")
-
-    bound = []
-    for row in rows:
-        path = _safe_repo_file(repo_root, row["path"], "E_AGENT_GOVERNED_INPUT_MISSING")
-        bound.append({"role": row["role"], "path": row["path"], "sha256": file_digest(path)})
-    return sorted(bound, key=lambda row: row["role"])
 
 
 def _subject_adapter(roadmap: dict[str, Any], subject: str) -> dict[str, Any]:
@@ -122,7 +102,7 @@ def resolve_authority(
     working_tree_state: str | None = None,
 ) -> dict[str, Any]:
     repo_root = (repo_root or _repo_root()).resolve()
-    routing = _load_json(repo_root / AUTHORITY_ROUTING_REL)
+    routing = _load_json(repo_root / AUTHORITY_ROUTING.relative_to(_repo_root())) if repo_root != _repo_root() else _load_json(AUTHORITY_ROUTING)
 
     head = head_sha or git_head(repo_root)
     if not re.fullmatch(r"[0-9a-f]{40}", head):
@@ -153,7 +133,6 @@ def resolve_authority(
             adapter["current_authority_manifest_ref"],
         )
     )
-    governed_input_bindings = _bind_governed_inputs(repo_root, task)
 
     counts = Counter(str(row.get("status", "UNKNOWN")) for row in roadmap.get("modules", []))
     learning_state = {
@@ -190,7 +169,7 @@ def resolve_authority(
         "publication_authorization": "NOT_IMPLIED",
         "blockers": blockers,
         "next_action": (
-            "Read the exact bound authorities and governed inputs, perform only the delegated task, and use the current subject Engineering path. "
+            "Read the exact bound authorities, perform only the delegated task, and use the current subject Engineering path. "
             "Only a governed downstream evaluator may produce Engineering readiness or consumer authorization."
         ),
     }
@@ -203,7 +182,6 @@ def resolve_authority(
             "working_tree_state": working_tree_state or (git_working_tree_state(repo_root) if head_sha is None else "UNKNOWN"),
         },
         "authority_bindings": sorted(bindings, key=lambda row: row["authority_class"]),
-        "governed_input_bindings": governed_input_bindings,
         "learning_engineering_state": learning_state,
         "engineering_preflight": preflight,
     }
@@ -230,12 +208,6 @@ def render_preflight(resolved: dict[str, Any], task: dict[str, Any]) -> str:
     ]
     for row in resolved["authority_bindings"]:
         lines.append(f"- **{row['authority_class']}:** `{row['path']}` — `{row['sha256']}`")
-    lines.extend(["", "## Governed task inputs", ""])
-    if resolved["governed_input_bindings"]:
-        for row in resolved["governed_input_bindings"]:
-            lines.append(f"- **{row['role']}:** `{row['path']}` — `{row['sha256']}`")
-    else:
-        lines.append("- None bound.")
     lines.extend(["", "## Consumer permissions", ""])
     if preflight["consumer_permissions"]:
         for consumer, row in preflight["consumer_permissions"].items():
