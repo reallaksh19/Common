@@ -1,30 +1,28 @@
-# Engineering relay report
+# Engineering relay report — generated projection
 
-## Executive state
+Do not hand-author this file as repository truth.
 
-## Overall / phase / EP progress
+Generate structured source-derived report data with:
 
-## Work completed
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/render_report_projection.py <repo-root>
+```
 
-## Files changed
+Human status/handover views are rendered from the same authority objects. If generated text disagrees with `OVERALL_ROADMAP.yaml`, `PROGRESS.yaml`, the current EP/plan, checkpoints, `ISSUE_GRAPH.yaml`, or `REPO_STATE.yaml`, the generated report is stale and must be regenerated; it never overrides those source objects.
 
-## Acceptance matrix
+Required report domains remain:
 
-## Tests and evidence
-
-## Quality findings
-
-## Known limitations
-
-## Owner decisions required
-
-## GitHub issue changes
-
-## Roadmap changes
-
-## Exact next actions
-
-## Successor EP
-
-## Phase-transition Q1-Q5
-Omit only when no phase transition occurred.
+- Executive state
+- Overall / phase / WP / step / acceptance progress
+- Work completed
+- Files changed
+- Acceptance matrix
+- Tests and evidence
+- Quality findings
+- Known limitations
+- Owner decisions required
+- GitHub issue changes
+- Roadmap changes
+- Exact ordered next work
+- Successor EP / terminal disposition
+- Qualification evidence when applicable
