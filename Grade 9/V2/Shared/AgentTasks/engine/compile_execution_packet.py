@@ -132,6 +132,21 @@ def validate_packet(packet: dict[str, Any]) -> None:
             f"missing authority bindings: {', '.join(missing)}",
         )
 
+    subject_authority = [
+        row for row in packet["authority_bindings"]
+        if row["authority_class"] == "SUBJECT_GENERATION_AUTHORITY"
+    ]
+    if len(subject_authority) != 1:
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_SUBJECT_AUTHORITY_UNRESOLVED",
+            f"expected one SUBJECT_GENERATION_AUTHORITY binding; found {len(subject_authority)}",
+        )
+    if subject_authority[0]["path"] != subject_adapter["current_authority_manifest_ref"]:
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_SUBJECT_AUTHORITY_MISMATCH",
+            "subject authority binding does not match current subject-adapter authority ref",
+        )
+
     preflight = packet["engineering_preflight"]
     if preflight["engineering_state"] != "NOT_EVALUATED":
         raise PacketCompilationError(
