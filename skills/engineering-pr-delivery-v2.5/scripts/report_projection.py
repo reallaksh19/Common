@@ -2,18 +2,51 @@ from __future__ import annotations
 from pathlib import Path
 from relaylib import load_yaml
 from progress_projection import snapshot as progress_snapshot
-from takeoverlib import yaml_digest
+from takeoverlib import digest_mapping,yaml_digest
+
 
 def _maybe(root:Path,path):
     if not path:return None
     p=root/str(path)
     return load_yaml(p) if p.exists() else None
 
+
+def _owner_decisions(root:Path)->list[dict]:
+    base=root/"agents/relay/roadmap/owner-decisions"
+    if not base.exists():return []
+    out=[]
+    for path in sorted(list(base.glob("*.yaml"))+list(base.glob("*.yml"))):
+        try:odr=load_yaml(path)
+        except Exception:continue
+        decision=odr.get("decision") or {};effects=odr.get("effects") or {}
+        out.append({
+            "id":odr.get("id"),"path":str(path.relative_to(root)),"status":odr.get("status"),
+            "kind":decision.get("kind"),"statement":decision.get("statement"),"source":decision.get("source"),
+            "requirement_disposition":effects.get("requirement_disposition"),
+            "grants_material_write_authority":effects.get("grants_material_write_authority"),
+            "pending_items":effects.get("pending_items") or [],
+        })
+    return out
+
+
+def _active_contract(ep:dict|None)->dict|None:
+    if not ep:return None
+    context=ep.get("context_capsule") or {}
+    return {
+        "outcome":ep.get("outcome") or {},
+        "scope":ep.get("scope") or {},
+        "known_problems":context.get("known_problems") or [],
+        "deliberate_non_goals":context.get("deliberate_non_goals") or [],
+        "quality_router":ep.get("quality") or {},
+    }
+
+
 def build(root:Path)->dict:
     state_path=root/"agents/relay/REPO_STATE.yaml";state=load_yaml(state_path)
-    roadmap_path=root/state["roadmap"]["path"];progress_path=root/"agents/relay/roadmap/PROGRESS.yaml";issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
+    roadmap_path=root/state["roadmap"]["path"];roadmap=load_yaml(roadmap_path);progress_path=root/"agents/relay/roadmap/PROGRESS.yaml";issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
     active=state.get("active_ep") or {};ep=_maybe(root,active.get("path"));cp=_maybe(root,(state.get("last_checkpoint") or {}).get("path"));issues=load_yaml(issue_path) if issue_path.exists() else {"nodes":[],"relationships":[]}
     qptr=(cp or {}).get("quality_review") or {};qpath=qptr.get("path");qrv=_maybe(root,qpath)
+    owner_decisions=_owner_decisions(root)
     projection={
         "schema_version":"relay-v2.5-report-projection",
         "generated_from":{
@@ -23,6 +56,7 @@ def build(root:Path)->dict:
             "roadmap_digest":yaml_digest(roadmap_path),
             "progress_digest":yaml_digest(progress_path),
             "issue_graph_digest":yaml_digest(issue_path) if issue_path.exists() else None,
+            "owner_decisions_digest":digest_mapping(owner_decisions),
             "ep_id":active.get("id"),
             "ep_digest":yaml_digest(root/active["path"]) if active.get("path") and (root/active["path"]).exists() else None,
             "checkpoint_id":(state.get("last_checkpoint") or {}).get("id"),
@@ -30,6 +64,7 @@ def build(root:Path)->dict:
             "quality_review_id":qptr.get("id"),
             "quality_review_digest":yaml_digest(root/qpath) if qpath and (root/qpath).exists() else None,
         },
+        "roadmap_summary":{"id":(roadmap.get("roadmap") or {}).get("id"),"revision":(roadmap.get("roadmap") or {}).get("revision"),"title":(roadmap.get("roadmap") or {}).get("title")},
         "relay_state":state.get("relay_state"),
         "current_position":state.get("current_position") or {},
         "progress":progress_snapshot(root),
@@ -40,6 +75,8 @@ def build(root:Path)->dict:
         "projection":state.get("projection") or {},
         "relay_readiness":state.get("relay_readiness") or {},
         "takeover_admissions":state.get("takeover_admissions") or [],
+        "active_contract":_active_contract(ep),
+        "owner_decisions":owner_decisions,
         "next_work":(ep.get("next_work") if ep else None),
         "acceptance":[],
         "parallel_lanes":[],
@@ -54,8 +91,14 @@ def build(root:Path)->dict:
         plan_path=(state.get("execution_policy") or {}).get("parallel_plan");plan=_maybe(root,plan_path)
         for lane in (plan or {}).get("lanes",[]) or []:
             lep=_maybe(root,lane.get("ep_path")) or {}
-            projection["parallel_lanes"].append({"lane_id":lane.get("id"),"work_package":lane.get("work_package"),"ep_id":lane.get("ep_id"),"branch":lane.get("branch"),"next_work":lep.get("next_work") or {}})
+            projection["parallel_lanes"].append({"lane_id":lane.get("id"),"work_package":lane.get("work_package"),"ep_id":lane.get("ep_id"),"branch":lane.get("branch"),"next_work":lep.get("next_work") or {},"contract":_active_contract(lep)})
     if cp:
-        projection["checkpoint"]={"id":cp.get("checkpoint_id"),"implementation_result":cp.get("implementation_result") or {},"acceptance_results":cp.get("acceptance_results") or [],"validation_results":cp.get("validation_results") or [],"quality_review":({"id":qrv.get("quality_review_id"),"overall_state":qrv.get("overall_state"),"execution_effect":qrv.get("execution_effect") or {},"findings":qrv.get("findings") or [],"owner_report":qrv.get("owner_report") or {},"successor_handover":qrv.get("successor_handover") or {}} if qrv else None),"quality_findings":cp.get("quality_findings") or []}
+        projection["checkpoint"]={
+            "id":cp.get("checkpoint_id"),"implementation_result":cp.get("implementation_result") or {},
+            "acceptance_results":cp.get("acceptance_results") or [],"validation_results":cp.get("validation_results") or [],
+            "quality_review":({"id":qrv.get("quality_review_id"),"overall_state":qrv.get("overall_state"),"execution_effect":qrv.get("execution_effect") or {},"findings":qrv.get("findings") or [],"owner_report":qrv.get("owner_report") or {},"successor_handover":qrv.get("successor_handover") or {}} if qrv else None),
+            "quality_findings":cp.get("quality_findings") or [],"known_limitations":cp.get("known_limitations") or [],
+            "remaining_work":cp.get("remaining_work") or [],"roadmap_reconciliation":cp.get("roadmap_reconciliation") or {},
+        }
     else:projection["checkpoint"]=None
     return projection
