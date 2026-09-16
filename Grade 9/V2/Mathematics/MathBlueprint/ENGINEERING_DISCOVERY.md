@@ -6,7 +6,7 @@ The architectural rule is:
 
 > **Discovery may be permissive. Authority may not be.**
 
-A learner, author, teacher, assessment tool, search tool or model may use natural-language wording, approximate text, aliases, hints or external research to find plausible Engineering candidates. None of those mechanisms creates Engineering authority.
+A learner, author, teacher, assessment tool, search tool or model may use natural-language wording, approximate text, governed aliases, hints or external research to find plausible Engineering candidates. None of those mechanisms creates Engineering authority.
 
 ## 1. Authority flow
 
@@ -14,6 +14,10 @@ A learner, author, teacher, assessment tool, search tool or model may use natura
 natural-language need / search / alias / hint / external research
         ↓
 NON-AUTHORITATIVE ENGINEERING DISCOVERY
+        ↓
+canonical registry text + governed discovery vocabulary
+        ↓
+deterministic generated discovery index
         ↓
 ranked candidate identities
         ↓
@@ -34,7 +38,7 @@ Engineering authorization or BLOCK
 
 The discovery layer may help a user find an identity. It may not decide that an identity is authoritative.
 
-## 2. Contracts
+## 2. Contracts and governed data
 
 Discovery request:
 
@@ -48,9 +52,21 @@ Explicit selection:
 
 `contracts/mathematics-engineering-discovery-selection.schema.json`
 
+Discovery vocabulary schema:
+
+`contracts/mathematics-engineering-discovery-vocabulary.schema.json`
+
+Governed discovery vocabulary:
+
+`policies/mathematics-engineering-discovery-vocabulary.v1.json`
+
 Compiler:
 
 `engine/compile_mathematics_engineering_discovery.py`
+
+Vocabulary validator:
+
+`engine/validate_mathematics_engineering_discovery_vocabulary.py`
 
 The discovery receipt is schema-locked to:
 
@@ -63,11 +79,67 @@ automatic_selection = false
 requires_explicit_exact_selection = true
 ```
 
-These values are not labels of convenience. They are the formal boundary preventing ranking from becoming authorization.
+These values are the formal boundary preventing ranking from becoming authorization.
 
-## 3. Discovery may be approximate
+## 3. Governed discovery vocabulary
 
-The current compiler performs deterministic approximate lexical discovery over current Engineering registry data and optional user-provided hints. It can use:
+Topic-specific aliases belong in governed data, never in topic branches in Blueprint Python.
+
+The vocabulary catalog may contain only discovery metadata:
+
+```text
+exact existing target scope kind
+exact existing target scope ref
+phrase
+term class
+```
+
+Supported term classes are learner aliases, competition terms, technical terms, notation names, common abbreviations and regional variants.
+
+The catalog explicitly carries:
+
+```text
+authority = NON_AUTHORITATIVE_DISCOVERY_VOCABULARY
+technical_authorization = NOT_EVALUATED
+publication_authorization = NOT_IMPLIED
+```
+
+Its schema has `additionalProperties = false`, so vocabulary entries cannot smuggle Engineering readiness, mathematical truth, depth admission or publication authority into discovery.
+
+The catalog is digest-bound to the exact current Engineering registry. Validation fails closed when:
+
+- the registry ID or digest is stale;
+- a target gate or bucket does not exist;
+- the same target is declared twice;
+- two phrases normalize to the same term for one target; or
+- the catalog violates its non-authoritative schema.
+
+The catalog is intentionally sparse. Every current gate and linked bucket is indexed automatically from canonical registry data; curated vocabulary only improves discoverability where natural terminology differs from canonical labels.
+
+## 4. Deterministic generated index
+
+The compiler constructs a deterministic non-authoritative index from:
+
+```text
+current canonical Engineering registry
++ current governed discovery vocabulary
+```
+
+Every index row carries an exact gate/bucket identity, learner-facing label, linked gate identities, a digest of current indexed Engineering text and any curated vocabulary terms.
+
+The generated index is not stored as mathematical authority. Its digest is stored in every discovery receipt together with:
+
+```text
+registry_digest
+vocabulary_catalog_digest
+discovery_index_digest
+```
+
+Promotion recomputes discovery against the current registry and current vocabulary. Registry drift, vocabulary drift, index drift or receipt mutation makes the receipt stale/forged.
+
+## 5. Discovery may be approximate
+
+The current compiler performs deterministic approximate lexical discovery over current Engineering registry data, governed discovery vocabulary and optional user-provided hints. It can use:
 
 - exact candidate identity;
 - exact or partial learner-facing label;
@@ -75,22 +147,21 @@ The current compiler performs deterministic approximate lexical discovery over c
 - learner-label token overlap;
 - current Engineering content-token overlap;
 - approximate label similarity;
+- exact, phrase, token and approximate vocabulary matches;
 - user-provided search hints; and
 - linked-gate text when discovering a bucket.
 
-Future discovery implementations may add richer aliases, embeddings, semantic search, web-assisted query expansion or model-generated candidate hints, provided they preserve the same non-authoritative boundary.
+Future implementations may add embeddings, semantic search, web-assisted query expansion or model-generated candidate hints, provided they remain candidate-finding only and the resulting receipt remains bound to the exact governed discovery inputs used.
 
-Topic-specific aliases, if introduced, belong in governed discovery data rather than topic branches in Blueprint Python.
-
-## 4. Discovery is intentionally permissive
+## 6. Discovery is intentionally permissive
 
 Discovery does **not** perform technical admission. It may surface a candidate whose current Engineering state is incomplete, held, out of scope for a particular source, or insufficient for the requested depth.
 
 The receipt may display declared readiness/source-scope metadata for usability, but those fields are explanatory only.
 
-This is deliberate. Search should help a user find what exists; authorization should decide whether it may be consumed.
+Search should help a user find what exists; authorization should decide whether it may be consumed.
 
-## 5. Exact selection is mandatory
+## 7. Exact selection is mandatory
 
 A ranked candidate is not automatically selected.
 
@@ -108,9 +179,9 @@ explicit_selection_acknowledgement = EXACT_IDENTITY_CONFIRMED
 
 The selected exact identities must exist in the exact digest-bound candidate set. A stale, modified or unrelated discovery receipt fails closed.
 
-The selection compiler then emits the existing standard Mathematics Engineering request format. It does not authorize the request.
+The selection compiler emits the existing standard Mathematics Engineering request format. It does not authorize the request.
 
-## 6. Existing exact resolver remains authoritative
+## 8. Existing exact resolver remains authoritative
 
 `compile_mathematics_engineering_workbench.py::resolve_manifest()` remains unchanged as the authoritative resolver.
 
@@ -119,13 +190,14 @@ It accepts only:
 1. exact Engineering Gate identity; or
 2. exact `linked_buckets` membership.
 
-Natural-language labels, approximate matches, semantic similarity, aliases, model output, web search output and conversation memory still fail if supplied directly as authoritative scope refs.
+Natural-language labels, approximate matches, governed aliases, semantic similarity, model output, web search output and conversation memory still fail if supplied directly as authoritative scope refs.
 
 Therefore:
 
 ```text
 discovery candidate ≠ Engineering authority
 rank 1 ≠ Engineering authority
+vocabulary match ≠ Engineering authority
 high similarity ≠ Engineering authority
 model confidence ≠ Engineering authority
 web evidence ≠ Engineering authority
@@ -138,46 +210,41 @@ explicit exact identity
 = technical authorization may proceed
 ```
 
-## 7. Staleness and custody
-
-Every discovery receipt binds:
-
-- exact discovery request digest;
-- exact current Engineering registry ID;
-- exact current Engineering registry digest;
-- deterministic ranked candidate set.
-
-Promotion recomputes discovery from the request and current registry. If the registry changes, labels change, candidates change, or the receipt is altered, promotion fails as stale/forged.
-
-This custody is intentionally separate from Engineering authorization custody. Discovery custody proves what the user saw and selected; Engineering custody proves what was technically authorized.
-
-## 8. Falsification requirements
+## 9. Falsification requirements
 
 CI must prove at least these properties:
 
 ```text
 discovery output is explicitly non-authoritative
 approximate discovery does not weaken exact authoritative resolution
+governed aliases improve candidate discovery but cannot authorize directly
 no rank is auto-selected
 selection requires exact candidate identity
 selection is bound to exact discovery digest
 registry drift stales discovery selection
+vocabulary drift stales discovery selection
+unknown vocabulary targets fail closed
+duplicate normalized target terms fail closed
+vocabulary cannot carry readiness/authorization payloads
 held candidates may be discoverable but remain blocked by Engineering authority
 bucket discovery still requires exact bucket identity before authoritative resolution
 generic Blueprint topic-independence remains intact
 ```
 
-## 9. Non-regression rule
+The dedicated Engineering workflow validates the vocabulary and executes these discovery falsifiers before registry-wide Blueprint authorization proof.
+
+## 10. Non-regression rule
 
 A future discovery change is invalid if it allows any of the following:
 
 ```text
 rank-1 auto-authorization
 similarity-threshold authorization
+vocabulary-term authorization
 LLM/model-confidence authorization
 web-search-result authorization
 alias-to-gate authorization without explicit exact selection
-promotion from a stale discovery receipt
+promotion from a stale registry/vocabulary/index receipt
 promotion of an identity outside the bound candidate set
 discovery metadata overriding current Engineering readiness
 publication authorization inferred from discovery
@@ -185,4 +252,4 @@ publication authorization inferred from discovery
 
 The final invariant is:
 
-> **Use permissive tools to find candidates; use exact identities and current Engineering authority to authorize them.**
+> **Use permissive tools and governed vocabulary to find candidates; use exact identities and current Engineering authority to authorize them.**
