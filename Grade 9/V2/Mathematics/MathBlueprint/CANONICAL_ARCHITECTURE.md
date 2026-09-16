@@ -371,7 +371,7 @@ A shorter product may be deeper than a longer one. Release is based on closure o
 ### Research dossier
 
 ```text
-EASY   -> no pedagogy-enrichment web research by default
+EASY   -> web research default absent / optional, never prohibited; if used, full custody required
 MEDIUM -> TARGETED research required
 HARD   -> DEEP research required
 ```

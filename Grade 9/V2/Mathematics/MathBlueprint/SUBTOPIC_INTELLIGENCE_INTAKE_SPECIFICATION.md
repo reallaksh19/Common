@@ -546,7 +546,245 @@ FAMILY-NUM-04 (JEE Advanced):
 
 ---
 
-## 7. Intake Validation Checklist for Future Subtopics
+## 7. Foundation Packet: Trigonometric Ratios & Pythagorean Identities (`MATH-TRIG-RATIOS`)
+
+### 7.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-TRIG-RATIOS`
+- **Engineering Gate Binding**: `MATH-TRIG-RATIOS` (Digest-bound closure receipt)
+- **Learner Title**: Trigonometric Ratios, Pythagorean Identities & Complementary Angle Transformations
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Tangent & Secant Domain Invariant**: $\tan\theta = \frac{\sin\theta}{\cos\theta}$ and $\sec\theta = \frac{1}{\cos\theta}$ require $\cos\theta \neq 0 \iff \theta \neq (2k+1)\frac{\pi}{2}$ for all $k \in \mathbb{Z}$.
+  2. **Cotangent & Cosecant Domain Invariant**: $\cot\theta = \frac{\cos\theta}{\sin\theta}$ and $\csc\theta = \frac{1}{\sin\theta}$ require $\sin\theta \neq 0 \iff \theta \neq k\pi$ for all $k \in \mathbb{Z}$.
+  3. **Pythagorean Bounded Metric Invariant**: For all real angles $\theta \in \mathbb{R}$, $\sin^2\theta + \cos^2\theta \equiv 1$. Consequently, $|\sin\theta| \le 1$ and $|\cos\theta| \le 1$.
+
+### 7.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-TRIG-01` (`CONCEPT`): Trigonometric ratios as dimensionless scaling invariants of right-angled triangles under central dilation: $\sin\theta = \frac{\text{opp}}{\text{hyp}}, \cos\theta = \frac{\text{adj}}{\text{hyp}}, \tan\theta = \frac{\text{opp}}{\text{adj}}$.
+- `ATOM-TRIG-02` (`INVARIANT`): Fundamental Pythagorean identity trichotomy:
+  - $\sin^2\theta + \cos^2\theta = 1$
+  - $\sec^2\theta - \tan^2\theta = 1 \iff (\sec\theta - \tan\theta)(\sec\theta + \tan\theta) = 1$
+  - $\csc^2\theta - \cot^2\theta = 1 \iff (\csc\theta - \cot\theta)(\csc\theta + \cot\theta) = 1$
+- `ATOM-TRIG-03` (`RELATION`): Complementary angle co-function identities: $\sin(90^\circ - \theta) = \cos\theta, \cos(90^\circ - \theta) = \sin\theta, \tan(90^\circ - \theta) = \cot\theta$.
+- `ATOM-TRIG-04` (`PROCEDURE`): Reciprocal difference-of-squares reduction: Given $\sec\theta + \tan\theta = p$, immediately deduce $\sec\theta - \tan\theta = 1/p$, isolating $\sec\theta = \frac{p+1/p}{2}$ and $\tan\theta = \frac{p-1/p}{2}$.
+- `ATOM-TRIG-05` (`STRATEGY`): Structural algebraic substitutions: converting rational trigonometric expressions into fundamental $(\sin\theta, \cos\theta)$ or utilizing $s = \sin\theta + \cos\theta, p = \sin\theta\cos\theta = \frac{s^2-1}{2}$.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"SOH-CAH-TOA"* | Unit circle projection $(x, y) = (\cos\theta, \sin\theta)$ | Dimensionless projection of directed ray on unit circle. |
+| *"Sec plus tan gives reciprocal"* | $(\sec\theta - \tan\theta) = \frac{1}{\sec\theta + \tan\theta}$ | Difference-of-squares consequence of $\sec^2\theta - \tan^2\theta = 1$. |
+| *"Angle of elevation / depression"* | Alternate interior angles $\theta_1 = \theta_2$ across horizontal sight lines | Establishing right triangles with horizontal baseline. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Distributing Trigonometric Operators Over Addition**:
+   - *Flawed Action*: Writing $\sin(A + B) = \sin A + \sin B$, or $\sqrt{\sin^2 A + \cos^2 B} = \sin A + \cos B$.
+   - *Correct Diagnostic Cue*: Trigonometric functions are non-linear transcendental mappings: $\sin(A + B) = \sin A \cos B + \cos A \sin B \neq \sin A + \sin B$.
+2. **Misconception: Unconditional Validity of Tangent Identities**:
+   - *Flawed Action*: Asserting $\sec^2\theta - \tan^2\theta = 1$ holds for all real $\theta$.
+   - *Correct Diagnostic Cue*: $\sec\theta$ and $\tan\theta$ are undefined at $\theta = \frac{\pi}{2} + k\pi$. The identity holds strictly on the domain of definition $\theta \neq (2k+1)\frac{\pi}{2}$.
+3. **Misconception: Unbounded Solutions for Sin and Cos**:
+   - *Flawed Action*: Accepting algebraic solutions $\sin\theta = 2$ or $\cos\theta = -1.5$ from quadratic factorizations.
+   - *Correct Diagnostic Cue*: For all real $\theta$, projections on the unit circle are bounded: $|\sin\theta| \le 1$ and $|\cos\theta| \le 1$. Values outside $[-1, 1]$ must be discarded.
+
+### 7.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-TRIG-01: Incomplete Reciprocal Conjugate Reduction Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Given sec θ + tan θ = 5, find the exact values of sin θ, cos θ, and tan θ.
+
+Step 1: Write fundamental Pythagorean identity connecting sec θ and tan θ:
+        sec² θ - tan² θ = [ ___ ]
+Step 2: Factor as difference of squares:
+        (sec θ + tan θ)(sec θ - tan θ) = [ ___ ]
+Step 3: Substitute known value sec θ + tan θ = 5:
+        5 · (sec θ - tan θ) = 1  ==>  sec θ - tan θ = [ ___ ]   ... (1)
+        We also have:                 sec θ + tan θ = 5       ... (2)
+
+Step 4: Add equations (1) and (2):
+        2 sec θ = 5 + [ ___ ] = [ ___ ] / 5
+        sec θ = [ ___ ] / [ ___ ]
+        Therefore: cos θ = 1 / sec θ = [ ___ ] / [ ___ ]
+
+Step 5: Subtract equation (1) from equation (2):
+        2 tan θ = 5 - [ ___ ] = [ ___ ] / 5
+        tan θ = [ ___ ] / [ ___ ]
+
+Step 6: Compute sin θ:
+        sin θ = tan θ · cos θ = ([ ___ ] / [ ___ ]) · ([ ___ ] / [ ___ ]) = [ ___ ] / [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: 1
+Step 2: 1
+Step 3: 1/5
+Step 4: 1/5; 26/5; 26/10 = 13/5; cos θ = 5/13
+Step 5: 1/5; 24/5; 24/10 = 12/5
+Step 6: (12/5) · (5/13) = 12/13
+```
+
+#### TTU-TRIG-02: Geometric Unit-Circle Angle Representation & Identity Verification Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-1.5, 1.5], y ∈ [-1.5, 1.5], clip_to_viewport = true
+Figure: Unit circle x² + y² = 1 with acute ray at angle θ in Quadrant I.
+Target Condition: Derive 1 + tan² θ = sec² θ using right triangle geometry on the unit circle.
+
+[INCOMPLETE GEOMETRIC TTU]
+Step 1: Ray intersects unit circle at point P with coordinates:
+        P = ([ ___ ], [ ___ ])
+Step 2: Right triangle OAP has base OA = cos θ, altitude AP = sin θ, hypotenuse OP = [ ___ ].
+Step 3: Divide Pythagorean equation (OA)² + (AP)² = (OP)² by (OA)² = cos² θ:
+        (cos² θ / cos² θ) + (sin² θ / [ ___ ]) = ([ ___ ] / cos² θ)
+        [ ___ ] + tan² θ = sec² θ
+
+Step 4: Domain validity condition:
+        Division by cos² θ requires cos θ ≠ [ ___ ]  ==>  θ ≠ [ ___ ]°
+
+[COMPLETION DERIVATION KEY]
+Step 1: (cos θ, sin θ)
+Step 2: 1
+Step 3: cos² θ; 1; 1
+Step 4: 0; 90° (or π/2)
+```
+
+### 7.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-TRIG-01 (Foundation / CBSE):
+  Right-triangle ratio evaluations, standard angle evaluation tables, heights and distances (angles of elevation and depression).
+FAMILY-TRIG-02 (Olympiad / IOQM):
+  Non-trivial trigonometric equations, product telescoping cos(π/7)cos(2π/7)cos(4π/7) = -1/8, and Chebyshev polynomial representations.
+FAMILY-TRIG-03 (JEE Main):
+  Compound and multiple angle expansions (sin 2θ, cos 2θ, tan 3θ), conditional identities in ΔABC (A+B+C=π), and maximum/minimum values of a cos θ + b sin θ + c.
+FAMILY-TRIG-04 (JEE Advanced):
+  Inverse trigonometric relations with principal branch constraints, trigonometric series summation via C+iS method, and complex roots on the unit circle.
+```
+
+---
+
+## 8. Foundation Packet: Polynomial Rings, Factor Theorem & Newton Sums (`MATH-ALG-POLYNOMIALS`)
+
+### 8.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-ALG-POLYNOMIALS`
+- **Engineering Gate Binding**: `MATH-ALG-POLYNOMIALS` (Digest-bound closure receipt)
+- **Learner Title**: Polynomial Rings, Remainder & Factor Theorems, and Newton Sum Recurrences
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Non-Negative Integer Exponent Invariant**: A polynomial $P(x) = \sum_{k=0}^n a_k x^k$ requires all exponents $k \in \mathbb{N}_0 = \{0, 1, 2, \dots\}$. Expressions with fractional or negative exponents (e.g. $\sqrt{x}, 1/x$) are non-polynomials.
+  2. **Division Algorithm Degree Invariant**: For polynomials $P(x)$ and non-zero $D(x)$, there exist unique polynomials $Q(x)$ and $R(x)$ such that $P(x) = D(x)Q(x) + R(x)$ where either $R(x) \equiv 0$ or $\deg(R) < \deg(D)$.
+  3. **Factor Theorem Exact Equivalence**: A polynomial $P(x)$ has $(x - c)$ as a linear factor if and only if $P(c) = 0$.
+
+### 8.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-POLY-01` (`CONCEPT`): Polynomial as an element of ring $K[x]$, characterized by finite degree $\deg(P) = n \ge 0$ with leading coefficient $a_n \neq 0$.
+- `ATOM-POLY-02` (`INVARIANT`): Remainder Theorem: When $P(x)$ is divided by linear divisor $(x - c)$, the remainder is the scalar evaluation $R = P(c)$. If divided by $(ax - b)$, remainder is $P(b/a)$.
+- `ATOM-POLY-03` (`RELATION`): Factor Theorem: $(x - c) \mid P(x) \iff P(c) = 0$. For integer polynomials, any rational root $p/q$ in lowest terms satisfies $p \mid a_0$ and $q \mid a_n$ (Rational Root Theorem).
+- `ATOM-POLY-04` (`PROCEDURE`): Synthetic division algorithm: Horner's method for rapid evaluation and quotient polynomial computation.
+- `ATOM-POLY-05` (`STRATEGY`): Newton's Sum Recurrence: For polynomial $P(x) = a_n x^n + \dots + a_0$ with roots $\alpha_1, \dots, \alpha_n$, the power sums $S_k = \sum_{i=1}^n \alpha_i^k$ satisfy $a_n S_k + a_{n-1} S_{k-1} + \dots = 0$.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Zero of a polynomial"* | $P(\alpha) = 0 \iff (x - \alpha) \mid P(x)$ | Value of $x$ making the polynomial vanish; root of $P(x) = 0$. |
+| *"Remainder on division"* | $P(x) \equiv R(x) \pmod{D(x)}$ where $\deg(R) < \deg(D)$ | Polynomial congruence modulo $D(x)$. |
+| *"Symmetric root power sum"* | $S_k = \alpha^k + \beta^k + \gamma^k$ satisfying Newton recurrence | Invariant reduction from power sums to elementary symmetric polynomials. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Remainder Degree Equal to or Greater Than Divisor**:
+   - *Flawed Action*: Dividing by quadratic divisor $(x^2 - 1)$ and assuming remainder is a constant $c$.
+   - *Correct Diagnostic Cue*: When dividing by divisor of degree $m$, the remainder is a general polynomial of degree at most $m-1$. For quadratic divisor, remainder must be authored as $R(x) = Ax + B$.
+2. **Misconception: Treating Non-Polynomial Expressions as Polynomials**:
+   - *Flawed Action*: Stating $f(x) = x^2 + 2\sqrt{x} + 1$ is a quadratic polynomial.
+   - *Correct Diagnostic Cue*: Terms with non-integer exponents ($\sqrt{x} = x^{1/2}$) violate the axiomatic definition of a polynomial ring $K[x]$.
+3. **Misconception: Sign Inversion in Divisor Evaluation**:
+   - *Flawed Action*: In finding remainder when $P(x)$ is divided by $(x + 2)$, calculating $P(2)$.
+   - *Correct Diagnostic Cue*: Division by $(x - c)$ evaluates at $x = c$. For $(x + 2) = (x - (-2))$, the remainder is $P(-2)$.
+
+### 8.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-POLY-01: Incomplete Quadratic Remainder Reconstruction Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: A polynomial P(x) leaves remainder 3 when divided by (x - 1), and remainder 7 when divided by (x - 3).
+      Find the remainder when P(x) is divided by (x - 1)(x - 3).
+
+Step 1: Identify degree of divisor: Divisor D(x) = (x - 1)(x - 3) has degree [ ___ ].
+Step 2: Express general remainder form: Since deg(D) = 2, remainder R(x) has form:
+        R(x) = [ ___ ]x + [ ___ ]
+Step 3: Write division algorithm equation:
+        P(x) = (x - 1)(x - 3) · Q(x) + (Ax + B)
+
+Step 4: Use Remainder Theorem conditions:
+        P(1) = 3  ==>  (0) · Q(1) + (A(1) + B) = 3  ==>   A + B = [ ___ ]   ... (1)
+        P(3) = 7  ==>  (0) · Q(3) + (A(3) + B) = 7  ==>  3A + B = [ ___ ]   ... (2)
+
+Step 5: Solve linear system for A and B:
+        Subtract (1) from (2):
+        (3A - A) + (B - B) = 7 - [ ___ ]
+        2A = [ ___ ]  ==>  A = [ ___ ]
+        Substitute A into (1):
+        [ ___ ] + B = 3  ==>  B = [ ___ ]
+
+Conclusion: The remainder is R(x) = [ ___ ]x + [ ___ ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: 2
+Step 2: Ax + B
+Step 4: A + B = 3; 3A + B = 7
+Step 5: 3; 4; A = 2; 2 + B = 3 ==> B = 1
+Conclusion: R(x) = 2x + 1
+```
+
+#### TTU-POLY-02: Newton Sum Power-Recurrence Model (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Let α and β be roots of x² - 5x + 3 = 0.
+      Let S_n = αⁿ + βⁿ. Find S_1, S_2, S_3, and derive S_n - 5·S_{n-1} + 3·S_{n-2} = 0.
+
+Step 1: Vieta's formulas:
+        α + β = [ ___ ],   α · β = [ ___ ]
+Step 2: Base values:
+        S_0 = α⁰ + β⁰ = 1 + 1 = [ ___ ]
+        S_1 = α + β = [ ___ ]
+Step 3: Newton sum recurrence for x² - 5x + 3 = 0:
+        Multiply α² - 5α + 3 = 0 by αⁿ⁻²:  αⁿ - 5αⁿ⁻¹ + 3αⁿ⁻² = 0
+        Multiply β² - 5β + 3 = 0 by βⁿ⁻²:  βⁿ - 5βⁿ⁻¹ + 3βⁿ⁻² = 0
+        Adding the two: S_n - 5·S_{n-1} + 3·S_{n-2} = [ ___ ]
+
+Step 4: Compute S_2:
+        S_2 - 5·S_1 + 3·S_0 = 0  ==>  S_2 = 5·([ ___ ]) - 3·([ ___ ]) = [ ___ ] - [ ___ ] = [ ___ ]
+Step 5: Compute S_3:
+        S_3 - 5·S_2 + 3·S_1 = 0  ==>  S_3 = 5·([ ___ ]) - 3·([ ___ ]) = [ ___ ] - [ ___ ] = [ ___ ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: α + β = 5, αβ = 3
+Step 2: S_0 = 2, S_1 = 5
+Step 3: 0 (Newton's recurrence: S_n = 5 S_{n-1} - 3 S_{n-2})
+Step 4: S_2 = 5(5) - 3(2) = 25 - 6 = 19
+Step 5: S_3 = 5(19) - 3(5) = 95 - 15 = 80
+```
+
+### 8.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-POLY-01 (Foundation / CBSE):
+  Zeros of linear and quadratic polynomials, factor theorem proofs, verification of relationship between zeros and coefficients.
+FAMILY-POLY-02 (Olympiad / IOQM):
+  Integer-valued polynomials, Lagrange interpolation, Vieta's jumping on polynomial Diophantine equations, and Eisenstein's criterion for irreducibility.
+FAMILY-POLY-03 (JEE Main):
+  Remainder with composite divisors (x-1)(x-2), common zeros between two polynomials, equations reducible to polynomials via reciprocal substitution x + 1/x = t.
+FAMILY-POLY-04 (JEE Advanced):
+  Roots of unity polynomials sum_{k=0}^{n-1} x^k = 0, maximum number of real roots via Descartes' Rule of Signs, and Taylor expansion of polynomials about x = a.
+```
+
+---
+
+## 9. Intake Validation Checklist for Future Subtopics
 
 To admit any new mathematics subtopic into the library, it must pass this 6-point intake gate:
 
@@ -556,4 +794,5 @@ To admit any new mathematics subtopic into the library, it must pass this 6-poin
 4. **Reconstructable TTU Pair**: At least one complete Concept TTU and one reconstructive Problem TTU with explicit completion keys must be authored in Layer 3.
 5. **Exam Family Mapping**: Clear mapping to at least 2 distinct competitive examination families (e.g. CBSE + JEE Main, or IOQM + JEE Advanced) must be provided in Layer 4.
 6. **Zero Topic Hardcoding**: All metadata, terms, and rules must live in JSON data files; zero topic-specific branch logic may be added to Python engine code.
+
 
