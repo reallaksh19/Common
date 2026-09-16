@@ -24,12 +24,14 @@ This prevents a closed GitHub issue from being mistaken for completed engineerin
 The parent/child graph must be a DAG and every child has at most one direct parent. Each parent rollup contains the exact set of **direct** children with their current work state and GitHub state. The validator recomputes the parent projection from those children:
 
 ```text
-any direct child ACTIVE  -> derived_state ACTIVE
+any direct child ACTIVE    -> derived_state ACTIVE
 else any direct child OPEN -> derived_state OPEN
 else all direct children terminal -> derived_state COMPLETE
 ```
 
-A non-superseded/non-cancelled aggregate parent's work state must equal that derived state. A closed aggregate issue may not hide a direct child that is still GitHub OPEN. Because aggregate children are validated the same way, this rule propagates recursively through deep trees.
+A non-superseded/non-cancelled aggregate parent's work state must equal that derived state. A closed aggregate issue may not hide a direct child that is still GitHub OPEN. Because aggregate children are validated against their own direct children first, the same rule recursively covers arbitrarily deep parent/child trees.
+
+The direct-child snapshot is revision-bound so a parent cannot claim current rollup state using an older child set. Multiple parents, cycles, stale snapshots, omitted direct children and invented children are invalid.
 
 A rollup is never authoritative engineering state. If the roadmap and issue rollup disagree, reconcile the projection to the roadmap rather than changing roadmap intent to make the issue tree look consistent.
 
@@ -46,7 +48,7 @@ A GitHub issue may become `github_state: CLOSED` only when its work lifecycle is
 
 `evidence_terminal: true` never means all evidence passed. A retained `FAIL` or `NOT_RUN` may be terminal only when its limitation/transfer disposition is explicit. `FAIL` or `NOT_RUN` cannot be relabeled `SATISFIED` merely to close an issue.
 
-For aggregate parents, child projection must also be reconciled before closure: a parent cannot close while a direct child remains GitHub OPEN.
+For aggregate parents, child projection must also be reconciled before closure: a parent cannot close while a direct child remains GitHub OPEN. Recursive validation prevents a deep ancestor from becoming apparently terminal while a descendant remains active/open underneath a stale intermediate rollup.
 
 ## Supersession
 
@@ -61,7 +63,7 @@ A successor may itself later be superseded. For an intermediate A -> B -> C chai
 1. appear unchanged in B's outgoing supersession receipt to C; or
 2. appear in `B.supersession_resolution` with an explicit terminal disposition (`RESOLVED | CANCELLED_BY_OWNER | NOT_APPLICABLE`) and durable basis.
 
-An inherited item may not be both carried and resolved, and it may not disappear silently. New unresolved B-specific items may be added to B's outgoing transfer normally.
+An inherited item may not be both carried and resolved, may not disappear silently, and a resolution receipt may not claim an ID that was never inherited. New unresolved B-specific items may be added to B's outgoing transfer normally.
 
 A superseded issue may remain `github_state: OPEN` while projection closure is pending; that is external projection lag, not renewed engineering authority. When it is closed, its closure receipt must identify the successor and the `SUPERSEDES` relationship.
 
