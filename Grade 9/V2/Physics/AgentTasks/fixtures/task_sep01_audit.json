@@ -1,0 +1,30 @@
+{
+  "prompt_id": "SEP-01-PHY-AUDIT-v1",
+  "prompt_template_id": "SEP-01",
+  "prompt_template_version": "1.0.0",
+  "task_instance_id": "task-sep01-phy-audit-001",
+  "repository": "reallaksh19/Common",
+  "target_branch": "v2-physics-agent-tasks-standalone-prompts-v1",
+  "baseline_pr": 383,
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "PhysicsArchitecture",
+  "subtopic": "ColdDiscoveryAudit",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": false,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "write_mode": "ANALYZE_ONLY",
+  "expected_scope": [
+    "Grade 9 V2 Physics Architecture",
+    "AssessmentIntake, AssessmentReview, AssessmentScope, Blueprint, Canonical, Core1A, Publication",
+    "Technical Engineering Gate Registry (43 subtopics)"
+  ],
+  "explicit_exclusions": [
+    "No writes to canonical data or engines"
+  ],
+  "subject_profile_version": "1.0.0",
+  "schema_registry_version": "1.0.0"
+}
