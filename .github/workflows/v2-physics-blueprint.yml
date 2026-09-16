@@ -45,6 +45,10 @@ jobs:
           assert packet['engineering_preflight']['publication_authorization'] == 'NOT_IMPLIED'
           assert packet['packet_digest'].startswith('sha256:')
           PY
+      - name: Validate Blueprint delegation-context intake boundary
+        run: |
+          python -m py_compile 'Grade 9/V2/Physics/Blueprint/engine/consume_agent_task_packet.py'
+          python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_agent_task_intake.py'
       - name: Validate blueprint contracts and role bindings
         run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
       - name: Validate canonical Physics Technical Engineering Gates v2
