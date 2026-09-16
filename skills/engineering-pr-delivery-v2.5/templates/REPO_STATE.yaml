@@ -53,8 +53,11 @@ status_planes:
 projection:
   required: true
   state: PENDING
+  operation_id: "<stable projection operation id>"
+  target: "<durable external projection target>"
   roadmap_revision: "<RM-xxxx>"
   execution_ref: "<EP-id / PLAN-id / NONE>"
+  receipt: null
   basis: []
 relay_readiness:
   repository_ready: true
