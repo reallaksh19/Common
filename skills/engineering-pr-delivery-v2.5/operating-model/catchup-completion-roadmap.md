@@ -17,11 +17,13 @@ CP-R003  WP-02 Baton readiness / Takeover Cert      COMPLETE
    |
 CP-R004  WP-03 Strong qualification                 COMPLETE
    |
-CP-R005  WP-04 Progress / handover / next-work      COMPLETE — exact-head CI pending
+CP-R005  WP-04 Progress / handover / next-work      COMPLETE
    |
    v
-WP-05    GitHub Program Projection operations       NEXT FRONTIER AFTER CP-R005 CI PASS
+WP-05    GitHub Program Projection operations       CURRENT FRONTIER
 ```
+
+CP-R005 checkpoint/status verification passed corrected workflow **35104895179** on head `9531e4e0a98a84c3f61313837ce1fdd4284d95a6`, with compile, root units, and the dedicated synthetic stress suite all passing.
 
 ## Progress Basis
 
@@ -31,8 +33,8 @@ WP-05    GitHub Program Projection operations       NEXT FRONTIER AFTER CP-R005 
 | WP-01 Semantic Execution Package | 18 | COMPLETE — CP-R002 |
 | WP-02 Baton readiness + Takeover Certification | 18 | COMPLETE — CP-R003 |
 | WP-03 Strong phase/boundary qualification | 12 | COMPLETE — CP-R004 |
-| WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005; final CI pending |
-| WP-05 GitHub Program Projection operations | 8 | NEXT FRONTIER AFTER CP-R005 CI PASS |
+| WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
+| WP-05 GitHub Program Projection operations | 8 | CURRENT FRONTIER |
 | WP-06 Quality Procedure Library | 10 | WAITING |
 | WP-07 Human Communication | 6 | WAITING |
 | WP-08 Owner Change Intake | 3 | WAITING |
@@ -41,7 +43,7 @@ WP-05    GitHub Program Projection operations       NEXT FRONTIER AFTER CP-R005 
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Checkpointed completion after CP-R005 exact-head CI: 65%.** Progress is acceptance/checkpoint-derived.
+**Earned completion: 65%.** Progress is acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -88,7 +90,7 @@ PROGRESS.yaml
 
 `PROGRESS.yaml` is progress authority. `REPO_STATE.progress` percentages are checked mirrors only. Missing roadmap/current-EP progress rows fail conformance.
 
-Every executable EP now carries structured ordered `next_work.steps[]` with action, targets, inputs, tests, benchmarks/oracles, acceptance, expected result and stop/reconciliation conditions. The scalar execution `next_action` is only a short machine hint.
+Every executable EP carries structured ordered `next_work.steps[]` with action, targets, inputs, tests, benchmarks/oracles, acceptance, expected result and stop/reconciliation conditions. The scalar execution `next_action` is only a short machine hint.
 
 `report_projection.py` derives one structured report from repository authority objects and records source digests. `validate_report_projection.py` participates in aggregate conformance. Generated report/YAML/Markdown cannot override roadmap, progress, EP/plan, checkpoint, issue or repository truth.
 
@@ -96,17 +98,21 @@ Every executable EP now carries structured ordered `next_work.steps[]` with acti
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating executable work. Parallel convergence creates integration EP/step/acceptance progress rows before cold start.
 
-WP-04 pre-checkpoint evidence:
+WP-04 evidence:
 
 ```text
-head     fabcb280167fbc1a8d95d120d4e88d242e1cd211
-workflow 35104423581 — PASS
-stress   105 repository-neutral synthetic tests
+pre-checkpoint head/run
+  fabcb280167fbc1a8d95d120d4e88d242e1cd211
+  35104423581 — PASS
+
+CP-R005 checkpoint/status head/run
+  9531e4e0a98a84c3f61313837ce1fdd4284d95a6
+  35104895179 — PASS
+
+stress surface: 105 repository-neutral synthetic tests
 ```
 
-Formal CP-R005 validity still requires PASS on the exact checkpoint/program-state head.
-
-## WP-05 — GitHub Program Projection operations — conditional next frontier
+## WP-05 — GitHub Program Projection operations — CURRENT FRONTIER
 
 WP-05 operationalizes GitHub as an external coordination projection, never roadmap authority.
 
@@ -130,28 +136,26 @@ No real downstream GitHub adoption belongs in WP-05 implementation; prove generi
 ## Remaining dependency topology
 
 ```text
-WP-05 GitHub Ops
+WP-05 GitHub Ops                 CURRENT
    |
    +---------------------------+
-   |                           |
-   v                           v
-             WP-06 Quality Procedures
-   |                           |
-   +-------------+-------------+
-                 v
-        WP-07 Human Communication
-                 |
-                 v
-        WP-08 Owner Change Intake
-                 |
-                 v
-     WP-09 End-to-end Certification
-                 |
-                 v
-       WP-10 Self-consistency Audit
-                 |
-                 v
-          WP-11 PR Readiness
+                               v
+                       WP-06 Quality Procedures
+                               |
+                               v
+                      WP-07 Human Communication
+                               |
+                               v
+                      WP-08 Owner Change Intake
+                               |
+                               v
+                   WP-09 End-to-end Certification
+                               |
+                               v
+                     WP-10 Self-consistency Audit
+                               |
+                               v
+                        WP-11 PR Readiness
 ```
 
 Serial execution remains default. Defined future work is not executable work.
