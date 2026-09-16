@@ -30,9 +30,7 @@
       "finding_kind": "STALE_TOPOLOGY",
       "classification": "STALE",
       "severity": "HIGH",
-      "affected_paths": [
-        "CANONICAL_ARCHITECTURE.md"
-      ],
+      "affected_paths": ["CANONICAL_ARCHITECTURE.md"],
       "evidence": [
         {
           "path": "CANONICAL_ARCHITECTURE.md",
@@ -61,13 +59,11 @@
     },
     {
       "finding_id": "C0-F002",
-      "title": "Dual-track EASY research rule conflicts with current executable policy",
+      "title": "Dual-track EASY research rule conflicts with current governed policy",
       "finding_kind": "POLICY_CONFLICT",
       "classification": "STALE",
       "severity": "HIGH",
-      "affected_paths": [
-        "DUAL_TRACK_PRODUCT_MODEL.md"
-      ],
+      "affected_paths": ["DUAL_TRACK_PRODUCT_MODEL.md"],
       "evidence": [
         {
           "path": "DUAL_TRACK_PRODUCT_MODEL.md",
@@ -85,13 +81,18 @@
           "observation": "The current pedagogy contract repeats that EASY web research is optional and explicitly separates research permission from research obligation."
         },
         {
-          "path": "engine/compile_sdu_lau_generation_spec.py",
+          "path": "engine/validate_self_teaching_generation_spec.py",
           "evidence_kind": "EXECUTABLE",
-          "observation": "The current compiler binds mandatory research for non-EASY buckets while allowing the generation contract to carry fully governed optional research for EASY through the shared research validation path."
+          "observation": "The generation-spec validator treats OPTIONAL research as legal only when research refs and the brief ref are present or absent together."
+        },
+        {
+          "path": "tests/test_self_teaching_generation_spec.py",
+          "evidence_kind": "CI_EVIDENCE",
+          "observation": "The test suite explicitly proves that EASY permits optional bound pedagogy research and rejects a half-bound EASY research state."
         }
       ],
-      "current_doctrine": "Pedagogy-research discovery is permitted at every difficulty. EASY has no minimum research obligation, but optional promoted research is legal only when its decision, claims and evidence custody are complete; MEDIUM and HARD retain targeted/deep obligations.",
-      "c2_action": "Remove the stale EASY research prohibition from the dual-track doctrine and use the current permission-versus-obligation rule consistently across the consolidated root and subordinate documentation.",
+      "current_doctrine": "Pedagogy-research discovery is permitted at every difficulty. EASY has no minimum research obligation, but optional promoted research is legal only when its brief and evidence binding are complete; MEDIUM and HARD retain targeted/deep obligations.",
+      "c2_action": "Remove the stale EASY research prohibition from the dual-track doctrine and use the current permission-versus-obligation rule consistently, while separately exposing the compiler materialization gap recorded by C0-F007.",
       "owner_decision_required": false
     },
     {
@@ -100,9 +101,7 @@
       "finding_kind": "PUBLICATION_TOPOLOGY_LAG",
       "classification": "STALE",
       "severity": "MEDIUM",
-      "affected_paths": [
-        "CANONICAL_ARCHITECTURE.md"
-      ],
+      "affected_paths": ["CANONICAL_ARCHITECTURE.md"],
       "evidence": [
         {
           "path": "CANONICAL_ARCHITECTURE.md",
@@ -135,9 +134,7 @@
       "finding_kind": "ROOT_OMISSION",
       "classification": "CURRENT + EXECUTABLE",
       "severity": "MEDIUM",
-      "affected_paths": [
-        "CANONICAL_ARCHITECTURE.md"
-      ],
+      "affected_paths": ["CANONICAL_ARCHITECTURE.md"],
       "evidence": [
         {
           "path": "ENGINEERING_DISCOVERY.md",
@@ -165,9 +162,7 @@
       "finding_kind": "ROOT_OMISSION",
       "classification": "CURRENT + EXECUTABLE",
       "severity": "MEDIUM",
-      "affected_paths": [
-        "CANONICAL_ARCHITECTURE.md"
-      ],
+      "affected_paths": ["CANONICAL_ARCHITECTURE.md"],
       "evidence": [
         {
           "path": "GENERATION_CALIBRATION.md",
@@ -195,9 +190,7 @@
       "finding_kind": "ROOT_OMISSION",
       "classification": "CURRENT + EXECUTABLE",
       "severity": "MEDIUM",
-      "affected_paths": [
-        "CANONICAL_ARCHITECTURE.md"
-      ],
+      "affected_paths": ["CANONICAL_ARCHITECTURE.md"],
       "evidence": [
         {
           "path": "PRODUCT_GOVERNANCE.md",
@@ -218,6 +211,47 @@
       "current_doctrine": "Engineering visibility is a digest-bound explainability projection of already-authorized Engineering state. It may appear in publication, but it is never a technical or publication authorization path.",
       "c2_action": "Add derived visibility between released product authority and semantic publication, and explicitly label it non-authoritative with publication authorization not implied.",
       "owner_decision_required": false
+    },
+    {
+      "finding_id": "C0-F007",
+      "title": "Canonical compiler does not materialize optional EASY research bindings",
+      "finding_kind": "IMPLEMENTATION_GAP",
+      "classification": "CURRENT + DOCUMENTED ONLY",
+      "severity": "MEDIUM",
+      "affected_paths": [
+        "engine/compile_sdu_lau_generation_spec.py",
+        "engine/validate_self_teaching_generation_spec.py"
+      ],
+      "evidence": [
+        {
+          "path": "GENERATION_CALIBRATION.md",
+          "evidence_kind": "NORMATIVE_DOCUMENT",
+          "observation": "The current policy says optional EASY research may be promoted when its brief and evidence references are fully bound."
+        },
+        {
+          "path": "engine/validate_self_teaching_generation_spec.py",
+          "evidence_kind": "EXECUTABLE",
+          "observation": "The generation-spec validator supports EASY optional research and fails only when refs and brief are half-bound."
+        },
+        {
+          "path": "tests/test_self_teaching_generation_spec.py",
+          "evidence_kind": "CI_EVIDENCE",
+          "observation": "Validator tests prove a manually bound EASY row is legal and a half-bound row is illegal."
+        },
+        {
+          "path": "engine/compile_sdu_lau_generation_spec.py",
+          "evidence_kind": "EXECUTABLE",
+          "observation": "The canonical _bind_research implementation selects only non-EASY rows and writes decision/reference bindings only to those rows, so an EASY decision supplied in a manifest is not materialized into the compiled EASY bucket."
+        },
+        {
+          "path": "engine/validate_pedagogy_research_manifest.py",
+          "evidence_kind": "EXECUTABLE",
+          "observation": "Generation research-binding validation iterates non-EASY buckets for promoted source retention, while an all-EASY spec merely validates the manifest and returns."
+        }
+      ],
+      "current_doctrine": "Optional EASY research is the current governed policy and is valid at the generation-spec validation boundary, but the canonical SDU/LAU compiler path does not yet materialize that optional binding automatically; this capability must not be described as fully compiler-executable until repaired and falsified.",
+      "c2_action": "Classify optional EASY research materialization as CURRENT + DOCUMENTED ONLY in the consolidated executable-reference table and schedule a separate governed compiler migration with a falsifier before upgrading it to CURRENT + EXECUTABLE.",
+      "owner_decision_required": false
     }
   ],
   "confirmed_current_doctrine": [
@@ -225,75 +259,49 @@
       "doctrine_id": "C0-D001",
       "statement": "Execution order may vary, but authority order remains exact and fail-closed; approximate discovery cannot replace exact subject authorization.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-        "engine/compile_mathematics_engineering_workbench.py"
-      ]
+      "evidence_paths": ["ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md", "engine/compile_mathematics_engineering_workbench.py"]
     },
     {
       "doctrine_id": "C0-D002",
       "statement": "Topic-specific mathematical truth belongs to governed Engineering data, while generic Blueprint code owns orchestration, closure, custody and downstream composition.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-        "tests/test_blueprint_topic_independence.py"
-      ]
+      "evidence_paths": ["ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md", "tests/test_blueprint_topic_independence.py"]
     },
     {
       "doctrine_id": "C0-D003",
       "statement": "Core1 semantic reconstruction and Core2 assessment/source-question roles remain distinct downstream responsibilities, but neither may bypass upstream Engineering technical authority.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "contracts/math-canonical-domain-registry.schema.json",
-        "ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md"
-      ]
+      "evidence_paths": ["contracts/math-canonical-domain-registry.schema.json", "ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md"]
     },
     {
       "doctrine_id": "C0-D004",
       "statement": "Engineering source identity is stored canonically once; teaching scope, direct/prerequisite role and local capability/question use are separate membership metadata.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "CANONICAL_ENGINEERING_DOMAIN_ASSETS.md",
-        "contracts/math-engineering-domain-projection-v2.schema.json"
-      ]
+      "evidence_paths": ["CANONICAL_ENGINEERING_DOMAIN_ASSETS.md", "contracts/math-engineering-domain-projection-v2.schema.json"]
     },
     {
       "doctrine_id": "C0-D005",
       "statement": "SDU controls Core1A/Core1B depth from intrinsic Engineering-backed difficulty and never learner percentage; LAU controls Core2A/Core2B learner fit from governed evidence or explicit owner waiver.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "GENERATION_CALIBRATION.md",
-        "engine/compile_sdu_lau_generation_spec.py"
-      ]
+      "evidence_paths": ["GENERATION_CALIBRATION.md", "engine/compile_sdu_lau_generation_spec.py"]
     },
     {
       "doctrine_id": "C0-D006",
-      "statement": "Research permission and research obligation are separate: EASY research is optional but must be fully governed when promoted; MEDIUM and HARD retain mandatory targeted/deep research.",
+      "statement": "The generation-spec validation contract implements the permission-versus-obligation rule: EASY research may be absent or fully bound, while MEDIUM/HARD require governed research; compiler materialization for optional EASY remains separately classified by C0-F007.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "GENERATION_CALIBRATION.md",
-        "SELF_TEACHING.md",
-        "engine/validate_pedagogy_research_manifest.py"
-      ]
+      "evidence_paths": ["GENERATION_CALIBRATION.md", "engine/validate_self_teaching_generation_spec.py", "tests/test_self_teaching_generation_spec.py"]
     },
     {
       "doctrine_id": "C0-D007",
       "statement": "Product release revalidates current custody before publication, and governed publication consumes a semantic learner publication bundle rather than inventing missing mathematical or pedagogical semantics in the renderer.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "PRODUCT_GOVERNANCE.md",
-        "contracts/math-learner-publication-bundle.schema.json",
-        "engine/run_bound_blueprint_publication.py"
-      ]
+      "evidence_paths": ["PRODUCT_GOVERNANCE.md", "contracts/math-learner-publication-bundle.schema.json", "engine/run_bound_blueprint_publication.py"]
     },
     {
       "doctrine_id": "C0-D008",
       "statement": "Engineering visibility is derived explainability only: it is bound to exact current Engineering custody and explicitly cannot imply publication authorization.",
       "classification": "CURRENT + EXECUTABLE",
-      "evidence_paths": [
-        "PRODUCT_GOVERNANCE.md",
-        "contracts/math-engineering-visibility-manifest.schema.json"
-      ]
+      "evidence_paths": ["PRODUCT_GOVERNANCE.md", "contracts/math-engineering-visibility-manifest.schema.json"]
     }
   ],
   "c1_catalog_comparison": {
@@ -306,7 +314,8 @@
     "comparison_result": "CONSISTENT_WITH_RECONCILIATION_NOTES",
     "notes": [
       "The C1 component decomposition is consistent with the independently derived executable architecture at responsibility level; no C1 component needs removal before C2.",
-      "C2 must nevertheless reconcile the layered meaning of Core1 semantic authority with upstream Engineering technical authority rather than treating the C1 catalog as a replacement authority model.",
+      "C2 must reconcile the layered meaning of Core1 semantic authority with upstream Engineering technical authority rather than treating the C1 catalog as a replacement authority model.",
+      "The C1 CALIBRATION component is structurally real, but C0-F007 means one optional EASY research materialization path is documented/validator-supported rather than fully implemented by the canonical compiler.",
       "The C1 inventory_snapshot base_head_sha predates the audited repository snapshot; this is harmless for a non-authoritative candidate but demonstrates why C3 generated references should use explicit immutable source-snapshot custody rather than a moving-current-tree claim."
     ]
   },
@@ -317,7 +326,7 @@
     "required_remediations": [
       "Insert the exact Engineering technical-authority chain upstream of Core/domain/product authority in the consolidated root.",
       "Preserve Core1 semantic and Core2 assessment roles as layered downstream authority, not as a replacement for Engineering technical authority.",
-      "Correct the stale EASY research prohibition to optional-but-governed research.",
+      "Correct the stale EASY research prohibition to optional-but-governed research, while marking canonical compiler materialization for optional EASY research as documented-only until a separate executable migration closes C0-F007.",
       "Make the semantic learner publication bundle the canonical bound publication input while documenting any retained LearnerPageBlueprint role accurately.",
       "Add non-authoritative Engineering discovery, claim-level pedagogy promotion and derived Engineering visibility to the consolidated architecture boundary.",
       "Keep design/audit/catalog artifacts non-authoritative and do not make production runtime consume design files."
