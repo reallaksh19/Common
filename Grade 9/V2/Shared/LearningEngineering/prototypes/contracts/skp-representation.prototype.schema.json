@@ -16,6 +16,7 @@
     "encodes_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "decision_state": {"enum": ["CANDIDATE_ONLY", "SELECTED_PRIMARY", "SELECTED_SECONDARY", "REJECTED"]},
     "decision_basis_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "translation_invariants": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
     "translation_edges": {
       "type": "array",
       "items": {

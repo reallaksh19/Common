@@ -21,7 +21,10 @@
         "properties": {
           "check_id": {"type": "string", "pattern": "^CHECK-[A-Z0-9][A-Z0-9_-]*$"},
           "check_kind": {"enum": ["DIMENSIONAL_CONSISTENCY", "LOGICAL_VALIDITY", "BOUNDARY_CASE", "COUNTEREXAMPLE", "CONSERVATION", "ALTERNATE_DERIVATION", "MODEL_APPLICABILITY", "REPRESENTATION_CONSISTENCY", "NUMERICAL_RECONSTRUCTION", "PHYSICAL_PLAUSIBILITY", "OTHER"]},
-          "statement": {"type": "string", "minLength": 5},
+          "statement": {"type": "string", "minLength": 3},
+          "acceptance_condition": {"anyOf": [{"type": "string", "minLength": 3}, {"type": "null"}]},
+          "subject_target": {"anyOf": [{"type": "string", "minLength": 2}, {"type": "null"}]},
+          "source_check_type": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
           "relation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REL-[A-Z0-9][A-Z0-9_-]*$"}},
           "independent_of_primary_route": {"type": "boolean"},
           "independence_rationale": {"type": "string", "minLength": 5},

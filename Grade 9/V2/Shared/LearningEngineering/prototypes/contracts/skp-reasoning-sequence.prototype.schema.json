@@ -21,7 +21,22 @@
         "properties": {
           "step_id": {"type": "string", "pattern": "^STEP-[A-Z0-9][A-Z0-9_-]*$"},
           "semantic_role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]*$"},
-          "semantic_job": {"type": "string", "minLength": 5},
+          "semantic_job": {"anyOf": [{"type": "string", "minLength": 5}, {"type": "null"}]},
+          "semantic_job_state": {"enum": ["PRESENT", "UNRESOLVED"]},
+          "subject_transition": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "statement"],
+                "properties": {
+                  "kind": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]*$"},
+                  "statement": {"type": "string", "minLength": 3}
+                }
+              },
+              {"type": "null"}
+            ]
+          },
           "relation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REL-[A-Z0-9][A-Z0-9_-]*$"}},
           "representation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REP-[A-Z0-9][A-Z0-9_-]*$"}},
           "fragility": {"enum": ["LOW", "MEDIUM", "HIGH", "UNRESOLVED"]},
@@ -32,6 +47,14 @@
           {
             "if": {"properties": {"fragility": {"const": "HIGH"}}},
             "then": {"properties": {"fragility_rationale": {"minLength": 10}}}
+          },
+          {
+            "if": {"required": ["semantic_job_state"], "properties": {"semantic_job_state": {"const": "PRESENT"}}},
+            "then": {"properties": {"semantic_job": {"type": "string", "minLength": 5}}}
+          },
+          {
+            "if": {"required": ["semantic_job_state"], "properties": {"semantic_job_state": {"const": "UNRESOLVED"}}},
+            "then": {"properties": {"semantic_job": {"type": "null"}}}
           }
         ]
       }
