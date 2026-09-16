@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -49,6 +50,31 @@ def _git_head(repo_root: Path = REPO) -> str:
     return proc.stdout.strip()
 
 
+def _safe_repo_file(repo_root: Path, relative_path: str) -> Path:
+    rel = Path(relative_path)
+    if rel.is_absolute() or ".." in rel.parts:
+        fail("E_BLUEPRINT_BOUND_AUTHORITY_PATH_INVALID", relative_path)
+    path = repo_root / rel
+    if not path.is_file():
+        fail("E_BLUEPRINT_BOUND_AUTHORITY_MISSING", relative_path)
+    return path
+
+
+def _file_digest(path: Path) -> str:
+    return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _verify_bound_authorities(packet: dict[str, Any], repo_root: Path) -> None:
+    for binding in packet["authority_bindings"]:
+        path = _safe_repo_file(repo_root, binding["path"])
+        actual = _file_digest(path)
+        if actual != binding["sha256"]:
+            fail(
+                "E_BLUEPRINT_BOUND_AUTHORITY_DRIFT",
+                f"{binding['authority_class']} expected {binding['sha256']} but current file is {actual}",
+            )
+
+
 def _validate_receipt(receipt: dict[str, Any]) -> None:
     schema = json.loads(RECEIPT_SCHEMA.read_text(encoding="utf-8"))
     try:
@@ -64,6 +90,7 @@ def consume_execution_packet(
     packet: dict[str, Any],
     *,
     current_head: str | None = None,
+    repo_root: Path | None = None,
 ) -> dict[str, Any]:
     """Accept delegation context without accepting scope, truth, readiness, or release authority."""
     try:
@@ -81,13 +108,15 @@ def consume_execution_packet(
             f"Physics Blueprint cannot consume subject {task['subject']}",
         )
 
-    actual_head = current_head or _git_head()
+    repo_root = (repo_root or REPO).resolve()
+    actual_head = current_head or _git_head(repo_root)
     packet_head = packet["repository_state"]["resolved_head"]
     if packet_head != actual_head:
         fail(
             "E_BLUEPRINT_EXECUTION_PACKET_STALE",
             f"packet binds {packet_head} but Blueprint checkout is {actual_head}",
         )
+    _verify_bound_authorities(packet, repo_root)
 
     # These assertions are deliberately redundant with the Shared packet schema.
     # They make the Blueprint consumer boundary explicit and fail closed if that
