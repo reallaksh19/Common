@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, relay_state, repository, relay_protocol, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, projection, relay_readiness, chat_context_required]
+required: [schema_version, relay_state, repository, relay_protocol, roadmap, current_position, execution_policy, active_ep, last_checkpoint, takeover_admissions, progress, status_planes, projection, relay_readiness, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
   relay_state: {enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]}
@@ -53,6 +53,30 @@ properties:
     properties:
       id: {type: [string, 'null']}
       path: {type: [string, 'null']}
+  takeover_admissions:
+    type: array
+    items:
+      type: object
+      required: [route_key, candidate, discovery_receipt, certification]
+      properties:
+        route_key: {type: string, minLength: 1}
+        candidate:
+          type: object
+          required: [agent_instance_id]
+          properties:
+            agent_instance_id: {type: string, minLength: 1}
+        discovery_receipt:
+          type: object
+          required: [id, path]
+          properties:
+            id: {type: string, pattern: '^DISC-'}
+            path: {type: string, minLength: 1}
+        certification:
+          type: object
+          required: [id, path]
+          properties:
+            id: {type: string, pattern: '^TC-'}
+            path: {type: string, minLength: 1}
   status_planes:
     type: object
     required: [execution, quality, evidence, stop]
@@ -123,9 +147,9 @@ properties:
             basis: {type: array}
   relay_readiness:
     type: object
-    required: [repository_ready, projection_ready, handover_ready, reasons]
+    required: [baton_ready, projection_ready, handover_ready, reasons]
     properties:
-      repository_ready: {type: boolean}
+      baton_ready: {type: boolean}
       projection_ready: {type: boolean}
       handover_ready: {type: boolean}
       reasons: {type: array}
