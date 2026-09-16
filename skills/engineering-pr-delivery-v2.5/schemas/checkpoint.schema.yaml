@@ -16,6 +16,7 @@ properties:
     type: object
     required: [mode, frontier_work_package, ep_id, parallel_plan, lanes]
     properties:
-      mode: {enum: [SERIAL, PARALLEL, NONE]}
+      mode: {enum: [SERIAL, PARALLEL, JOIN, NONE]}
+      lane_id: {type: [string, 'null']}
       lanes: {type: array}
 additionalProperties: true
