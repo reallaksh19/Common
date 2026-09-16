@@ -7,7 +7,8 @@
   "required": [
     "schema_version", "authority_id", "subject", "product_mode", "subtopic_id",
     "obligation_packet_id", "obligation_packet_digest", "semantic_projection_id",
-    "semantic_projection_digest", "semantic_closure", "payload_ref", "payload_digest",
+    "semantic_projection_digest", "semantic_closure", "learner_gate_projection_id",
+    "learner_gate_projection_digest", "learner_gate_closure", "payload_ref", "payload_digest",
     "scope_units", "realized_obligation_ids", "learner_surface_strings", "validation_evidence",
     "status", "authority_digest"
   ],
@@ -51,6 +52,45 @@
           "items": {"type": "string", "pattern": "^CHEM-OBL-[A-Z0-9-]+$"}
         },
         "semantic_atom_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "learner_gate_projection_id": {"type": "string", "pattern": "^CHEM-BP-LG-[A-Z0-9-]+$"},
+    "learner_gate_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "learner_gate_closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "authorized_learner_gate_ids",
+        "required_learner_gate_ids",
+        "realized_learner_gate_ids",
+        "context_semantic_ids",
+        "metadata_semantic_ids",
+        "learner_gate_count"
+      ],
+      "properties": {
+        "status": {"const": "PASS"},
+        "authorized_learner_gate_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}
+        },
+        "required_learner_gate_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}
+        },
+        "realized_learner_gate_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"}
+        },
+        "context_semantic_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
+        },
+        "metadata_semantic_ids": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
+        },
+        "learner_gate_count": {"type": "integer", "minimum": 0}
       }
     },
     "payload_ref": {"type": "string", "minLength": 1},

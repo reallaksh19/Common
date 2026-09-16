@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-learner-gate-projection.schema.json",
+  "title": "Chemistry Learner Gate Projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "projection_id",
+    "subject",
+    "semantic_projection_id",
+    "semantic_projection_digest",
+    "policy_ref",
+    "policy_digest",
+    "learner_gates",
+    "context_semantic_ids",
+    "metadata_semantic_ids",
+    "counts",
+    "status",
+    "projection_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "projection_id": {"type": "string", "pattern": "^CHEM-BP-LG-[A-Z0-9-]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "semantic_projection_id": {"type": "string", "pattern": "^CHEM-BP-SEM-[A-Z0-9-]+$"},
+    "semantic_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy_ref": {"const": "policies/chemistry-learner-gate-projection.v1.json"},
+    "policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "learner_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "learner_gate_id",
+          "source_semantic_id",
+          "source_gate_id",
+          "source_obligation_id",
+          "source_asset_ref",
+          "semantic_role",
+          "learner_job",
+          "polarity",
+          "content",
+          "authorized_modes",
+          "required_realization_modes",
+          "source_authority_tier",
+          "source_payload_digest"
+        ],
+        "properties": {
+          "learner_gate_id": {"type": "string", "pattern": "^CHEM-LG-[A-Z0-9]+$"},
+          "source_semantic_id": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"},
+          "source_gate_id": {"type": "string", "minLength": 1},
+          "source_obligation_id": {"type": "string", "pattern": "^CHEM-OBL-[A-Z0-9-]+$"},
+          "source_asset_ref": {"type": "string", "minLength": 1},
+          "semantic_role": {
+            "enum": [
+              "CONCEPT_RULE",
+              "EQUATION_MODEL",
+              "VALIDITY_BOUNDARY",
+              "REPRESENTATION_REQUIREMENT",
+              "VERIFICATION",
+              "BOUNDARY_CONSEQUENCE",
+              "REASONING_MOVE",
+              "TRANSFORMATION_REQUIREMENT",
+              "MISCONCEPTION",
+              "COUNTEREXAMPLE",
+              "MISCONCEPTION_REPAIR",
+              "RECOGNITION_SIGNAL",
+              "METHOD_STEP",
+              "ERROR_TO_AVOID",
+              "TARGET_UNKNOWN"
+            ]
+          },
+          "learner_job": {
+            "enum": [
+              "STATE_OR_EXPLAIN_RULE",
+              "USE_EQUATION_MODEL",
+              "CHECK_VALIDITY_BOUNDARY",
+              "READ_OR_CONSTRUCT_REPRESENTATION",
+              "VERIFY_RESULT",
+              "EXPLAIN_BOUNDARY_CONSEQUENCE",
+              "EXECUTE_REASONING_MOVE",
+              "PERFORM_TRANSFORMATION",
+              "REJECT_MISCONCEPTION",
+              "USE_COUNTEREXAMPLE",
+              "APPLY_MISCONCEPTION_REPAIR",
+              "RECOGNIZE_PROBLEM_FAMILY",
+              "EXECUTE_METHOD_STEP",
+              "AVOID_FATAL_ERROR",
+              "IDENTIFY_TARGET_UNKNOWN"
+            ]
+          },
+          "polarity": {"enum": ["POSITIVE", "NEGATIVE", "CONTEXT"]},
+          "content": {"type": "string", "minLength": 1},
+          "authorized_modes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]}
+          },
+          "required_realization_modes": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]}
+          },
+          "source_authority_tier": {"type": "string", "minLength": 1},
+          "source_payload_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "context_semantic_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
+    },
+    "metadata_semantic_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^CHEM-SEM-[A-Z0-9]+$"}
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_semantic_atom_count",
+        "learner_gate_count",
+        "context_semantic_count",
+        "metadata_semantic_count",
+        "learner_job_counts",
+        "polarity_counts"
+      ],
+      "properties": {
+        "source_semantic_atom_count": {"type": "integer", "minimum": 1},
+        "learner_gate_count": {"type": "integer", "minimum": 1},
+        "context_semantic_count": {"type": "integer", "minimum": 0},
+        "metadata_semantic_count": {"type": "integer", "minimum": 0},
+        "learner_job_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "polarity_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "status": {"const": "LEARNER_GATE_PROJECTION_READY"},
+    "projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
