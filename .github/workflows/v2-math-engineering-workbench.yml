@@ -64,6 +64,8 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_subtopic_intelligence_library.py'
       - name: Run Subtopic Intelligence Library test suite
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_subtopic_intelligence_library.py'
+      - name: Run Subtopic Intelligence Library Explorer tests
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tools/sil_explorer/tests/test_sil_explorer.py'
       - name: Compile registry-wide Blueprint authorization proof
         run: |
           mkdir -p /tmp/math-engineering-workbench

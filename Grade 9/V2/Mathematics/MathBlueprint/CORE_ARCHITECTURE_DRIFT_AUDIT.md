@@ -262,6 +262,7 @@ math-learner-publication-bundle       compile_publication_bundle.py             
 
 ### Finding DRIFT-03
 - **Classification**: `NORMATIVE_CONTRADICTION`
+- **Status**: `RESOLVED` (Documented V1 as `LEGACY_TRANSITIONAL` and formalized V2 as canonical normative projection)
 - **Subject**: Engineering Domain Projection Schema Versions
 - **Source A**: `contracts/math-engineering-domain-projection.schema.json` (v1.0.0) used by `project_engineering_to_domain_registry.py`.
 - **Source B**: `contracts/math-engineering-domain-projection-v2.schema.json` (v2.0.0) used by `project_engineering_to_domain_registry_v2.py`.
@@ -269,7 +270,7 @@ math-learner-publication-bundle       compile_publication_bundle.py             
 - **Why they differ**: V2 was introduced to add richer capability and equation mappings without deleting V1.
 - **Operational Consequence**: Two parallel projection paths exist in `engine/`.
 - **Severity**: `MEDIUM`
-- **Recommended Action**: Document V1 as `LEGACY_TRANSITIONAL` and formalize V2 as normative.
+- **Resolution**: Marked `math-engineering-domain-projection.schema.json` and `project_engineering_to_domain_registry.py` with `LEGACY_TRANSITIONAL` metadata; formalized `math-engineering-domain-projection-v2.schema.json` and `project_engineering_to_domain_registry_v2.py` as canonical production projection pipeline in `ENGINEERING_AUTHORITY.md`.
 
 ---
 

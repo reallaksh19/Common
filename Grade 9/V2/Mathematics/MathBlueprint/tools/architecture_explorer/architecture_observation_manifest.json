@@ -6,7 +6,7 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "component_count": 159,
-  "relation_count": 467,
+  "relation_count": 472,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -359,6 +359,7 @@
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
+        "engine:project_engineering_to_domain_registry.py",
         "engine:project_engineering_to_domain_registry_v2.py"
       ],
       "validator_refs": [
@@ -368,7 +369,8 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
       ]
     },
     "schema:math-engineering-domain-projection.schema.json": {
@@ -390,7 +392,8 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
       ]
     },
     "schema:math-engineering-visibility-manifest.schema.json": {
@@ -1755,7 +1758,8 @@
         "test:test_engineering_domain_projection_v2.py"
       ],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
       ]
     },
     "engine:project_engineering_to_domain_registry_v2.py": {
@@ -1775,7 +1779,8 @@
         "test:test_engineering_domain_projection_v2.py"
       ],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:ENGINEERING_AUTHORITY.md"
       ]
     },
     "engine:release_product_governance.py": {
@@ -3930,6 +3935,18 @@
     },
     {
       "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "engine:project_engineering_to_domain_registry.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "engine:project_engineering_to_domain_registry_v2.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
       "target": "engine:validate_mathematics_engineering_gates.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -3949,6 +3966,18 @@
     {
       "source": "doc:ENGINEERING_AUTHORITY.md",
       "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "schema:math-engineering-domain-projection-v2.schema.json",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:ENGINEERING_AUTHORITY.md",
+      "target": "schema:math-engineering-domain-projection.schema.json",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5106,6 +5135,12 @@
     },
     {
       "source": "engine:project_engineering_to_domain_registry.py",
+      "target": "schema:math-engineering-domain-projection-v2.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:project_engineering_to_domain_registry.py",
       "target": "schema:math-engineering-domain-projection.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
@@ -6011,5 +6046,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:9f3ad41a22898211a654dd23c92482a3609b82b3c53f6c33723acd6814b6d2db"
+  "manifest_digest": "sha256:3353f27ccefc027bbfee5df2ae565d686cf84b86ddc98256253cb8fc2a3f7f4d"
 }

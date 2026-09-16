@@ -123,6 +123,9 @@ Once an exact Engineering Gate ID is explicitly selected, the authoritative Work
 
 | Component | Executable File | Purpose |
 |---|---|---|
+| **Domain Projection V2 (Normative)** | `contracts/math-engineering-domain-projection-v2.schema.json` | Canonical Engineering to CDR projection v2 |
+| **Domain Projector V2** | `engine/project_engineering_to_domain_registry_v2.py` | Canonical domain projection compiler v2 |
+| **Domain Projection V1 (Legacy)** | `contracts/math-engineering-domain-projection.schema.json` | Legacy transitional projection v1 schema |
 | **Gate Schema** | `contracts/mathematics-technical-engineering-gate.schema.json` | Normative gate contract |
 | **Discovery Schemas** | `contracts/mathematics-engineering-discovery-*.schema.json` | Request, receipt, and selection schemas |
 | **Workbench Schemas** | `contracts/mathematics-engineering-*.schema.json` | Manifest, binding, and closure receipt schemas |
@@ -134,3 +137,18 @@ Once an exact Engineering Gate ID is explicitly selected, the authoritative Work
 | **Falsification Battery** | `tests/test_mathematics_engineering_gates.py` | 29 data-derived mutation falsifiers |
 | **Discovery Benchmark** | `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py` | 80-query 100% recall stress suite |
 | **Topic Independence** | `tests/test_blueprint_topic_independence.py` | Guard ensuring 0 topic strings in engine |
+
+---
+
+## 6. Canonical Domain Projection Lifecycle (V2 Production Standard)
+
+The transition of validated Engineering Gate preconditions into rich Canonical Domain Registry (CDR) assets is governed by **Domain Projection V2**:
+
+- **Canonical Specification**: `math-engineering-domain-projection-v2.schema.json`
+- **Authoritative Compiler**: `engine/project_engineering_to_domain_registry_v2.py`
+- **Transitional Backward Compatibility**: The earlier V1 projection (`math-engineering-domain-projection.schema.json` and `engine/project_engineering_to_domain_registry.py`) is preserved with `LEGACY_TRANSITIONAL` metadata. All future downstream production pipelines must consume V2 projection receipts.
+- **Invariants**:
+  1. Projection is exact-ID only; it walks the prerequisite closure in the authoritative Engineering graph and binds directly to `scope_memberships`.
+  2. Projected assets receive deterministic asset digests with full provenance referencing `engineering_gate_id`, `primary_subtopic_id`, and `capability_refs`.
+  3. No topic-specific strings or fuzzy matching are permitted during projection.
+

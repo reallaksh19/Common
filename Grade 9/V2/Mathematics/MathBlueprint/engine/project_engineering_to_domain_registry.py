@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Project validated Mathematics Engineering authority into Canonical Domain assets.
 
+LEGACY_TRANSITIONAL:
+Canonical production projection is project_engineering_to_domain_registry_v2.py
+using math-engineering-domain-projection-v2.schema.json.
+This V1 engine is preserved for backward compatibility.
+
 The projector is exact-ID only. It consumes the canonical AssessmentScope->Engineering
 resolution, walks prerequisite closure in the authoritative Engineering graph, and
 adds rich typed assets to an already same-run Canonical Domain Registry. It never

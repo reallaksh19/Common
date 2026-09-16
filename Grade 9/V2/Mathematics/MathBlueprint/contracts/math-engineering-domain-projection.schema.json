@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "math-engineering-domain-projection.schema.json",
+  "$comment": "LEGACY_TRANSITIONAL: Superseded by math-engineering-domain-projection-v2.schema.json. Preserved for backward compatibility.",
   "title": "Mathematics Engineering to Canonical Domain Projection Receipt",
   "type": "object",
   "additionalProperties": false,
