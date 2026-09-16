@@ -11,6 +11,25 @@ from typing import Any
 
 A4_H = 841.89
 
+# Must remain physically consistent with the shared ReviewWriter navigation contract.
+# A dedicated renderer-level falsifier compares this map with ReviewWriter.ROLE_LABELS so
+# drift between preflight and composition fails in CI rather than silently passing.
+ROLE_NAV_LABELS = {
+    "COVER": "START HERE",
+    "ROUTE_OR_MAP": "ROUTE",
+    "CONCEPT_EXPLANATION": "LEARN",
+    "RULE_OR_DERIVATION": "BUILD THE RULE",
+    "REPRESENTATION": "REPRESENT",
+    "TTU_RECONSTRUCTION": "RECONSTRUCT",
+    "WORKED_EXAMPLE": "WATCH ONE",
+    "MISCONCEPTION_OR_BOUNDARY": "CHECK THE BOUNDARY",
+    "PRACTICE": "PRACTISE",
+    "QUESTION_EPISODE": "ATTEMPT",
+    "WORKSPACE": "WORKSPACE",
+    "SOLUTION": "CHECK",
+    "SUMMARY_OR_HANDOUT": "REVIEW",
+}
+
 
 def review_candidate_checks(
     metrics: dict[str, Any],
@@ -57,7 +76,9 @@ def review_candidate_checks(
         if role not in standard_roles:
             failures.append(f"CHEM_REVIEW_PAGE_ROLE_INVALID:{page_no}:{role or 'MISSING'}")
 
-        ops = [op for op in by_page.get(page_no, []) if op.get("kind") not in {"FOOTER", "NAV_HEADER"}]
+        page_ops = by_page.get(page_no, [])
+        nav_headers = [op for op in page_ops if op.get("kind") == "NAV_HEADER"]
+        ops = [op for op in page_ops if op.get("kind") not in {"FOOTER", "NAV_HEADER"}]
         spans: list[tuple[float, float]] = []
         text_area = 0.0
         major = []
@@ -83,6 +104,16 @@ def review_candidate_checks(
         is_workspace = role == "WORKSPACE"
         threshold = workspace_min if is_workspace else content_min
         page_failures: list[str] = []
+
+        if len(nav_headers) != 1:
+            page_failures.append("CHEM_REVIEW_NAV_HEADER_TRACE_INVALID")
+        elif role in ROLE_NAV_LABELS:
+            rendered_nav = str(nav_headers[0].get("text") or "")
+            expected_nav = ROLE_NAV_LABELS[role]
+            if rendered_nav != expected_nav:
+                page_failures.append(
+                    f"CHEM_REVIEW_PAGE_ROLE_NAV_MISMATCH:{rendered_nav or 'MISSING'}!={expected_nav}"
+                )
 
         if page_no > 1 and role == "COVER":
             page_failures.append("CHEM_REVIEW_COVER_ROLE_AFTER_FIRST_PAGE")
