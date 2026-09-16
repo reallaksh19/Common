@@ -1,9 +1,15 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, relay_state, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, projection, relay_readiness, chat_context_required]
+required: [schema_version, relay_state, repository, relay_protocol, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, projection, relay_readiness, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
   relay_state: {enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]}
+  relay_protocol:
+    type: object
+    required: [version, basis_ref]
+    properties:
+      version: {const: '2.5'}
+      basis_ref: {type: string, minLength: 1}
   roadmap:
     type: object
     required: [id, revision, path]
