@@ -4,6 +4,19 @@ These tests are synthetic. They must not encode names, IDs, branches, formulas, 
 
 Current stress coverage includes:
 
+- rich semantic serial EP admission;
+- rich semantic parallel-lane EP admission;
+- semantically empty current-required input rejection;
+- unresolved current-required input rejection while EP claims executable state;
+- semantically empty required benchmark/oracle rejection;
+- `DSTEP-*` forward discovery enforcement with `DISC-*` reserved for candidate evidence;
+- vague discovery instruction rejection when question/expected outputs are absent;
+- empty executable write-scope rejection;
+- unstructured/empty anti-drift rejection;
+- vague implementation-step rejection when targets/mappings/expected state are absent;
+- report headings without source/reconciliation payload rejection;
+- missing `REPO_PROFILE.yaml` admission rejection;
+- placeholder/unbound `relay_protocol.basis_ref` rejection;
 - infrastructure `NOT_RUN` without automatic hard stop;
 - overloaded blocker-state rejection;
 - independent material authority (`WRITE | READ_ONLY | NONE`) from execution continuation;
