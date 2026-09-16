@@ -7,7 +7,7 @@ from relaylib import index_roadmap,load_yaml
 def mark(state):return "[x]" if state=="COMPLETE" else "[~]" if state=="ACTIVE" else "[ ]"
 def label(value):return str(value or "UNKNOWN").replace("_"," ").title()
 def render(root:Path):
-    s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,phases,_=index_roadmap(r);cur=s["current_position"];phase=phases[cur["phase"]][1];planes=s.get("status_planes") or {};ex=planes.get("execution") or {};q=planes.get("quality") or {};ev=planes.get("evidence") or {};st=planes.get("stop") or {};active=s.get("active_ep") or {};relay_state=s.get("relay_state");projection=s.get("projection") or {};ready=s.get("relay_readiness") or {};join_ref=s.get("predecessor_join") or {};replan_ref=s.get("predecessor_replan") or {}
+    s=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=load_yaml(root/s["roadmap"]["path"]);_,phases,_=index_roadmap(r);cur=s["current_position"];phase=phases[cur["phase"]][1];planes=s.get("status_planes") or {};ex=planes.get("execution") or {};q=planes.get("quality") or {};ev=planes.get("evidence") or {};st=planes.get("stop") or {};active=s.get("active_ep") or {};relay_state=s.get("relay_state");projection=s.get("projection") or {};ready=s.get("relay_readiness") or {};join_ref=s.get("predecessor_join") or {};replan_ref=s.get("predecessor_replan") or {};admissions=s.get("takeover_admissions") or []
     ep=None;plan=None;join=None;replan=None;continuity=None
     if relay_state=="ACTIVE":ep=load_yaml(root/active["path"])
     elif relay_state=="PARALLEL":plan=load_yaml(root/(s.get("execution_policy") or {})["parallel_plan"])
@@ -50,7 +50,9 @@ def render(root:Path):
         lines+=["","## Current EP","- No active material EP. Follow the lifecycle/status next action rather than inventing work."]
     if q.get("findings"):lines+=["","## Quality findings",*[f"- {x}" for x in q.get("findings")]]
     if ev.get("not_run"):lines+=["","## Evidence not run",*[f"- {x.get('id')}: {x.get('reason')} ({x.get('cause')})" for x in ev.get("not_run")]]
-    lines+=["","## Relay readiness",f"- Repository recovery ready? **{'YES' if ready.get('repository_ready') else 'NO'}**",f"- Required projection synchronized? **{'YES' if ready.get('projection_ready') else 'NO'}**",f"- Full custody handover ready? **{'YES' if ready.get('handover_ready') else 'NO'}**",f"- Conversation context required? **{'NO' if s.get('chat_context_required') is False else 'YES'}**"]
+    lines+=["","## Relay readiness",f"- Complete baton available for a zero-context replacement? **{'YES' if ready.get('baton_ready') else 'NO'}**",f"- Required projection synchronized? **{'YES' if ready.get('projection_ready') else 'NO'}**",f"- Full custody handover ready? **{'YES' if ready.get('handover_ready') else 'NO'}**",f"- Certified candidate routes: **{len(admissions)}**",f"- Material write readiness: **derived live per candidate/route; not persisted**",f"- Conversation context required? **{'NO' if s.get('chat_context_required') is False else 'YES'}**"]
+    for item in admissions:
+        if isinstance(item,dict):lines.append(f"- `{item.get('route_key')}` certified for `{(item.get('candidate') or {}).get('agent_instance_id')}` via `{(item.get('certification') or {}).get('id')}`")
     if ready.get("reasons"):lines.extend(f"- Readiness note: {x}" for x in ready.get("reasons"))
     if relay_state=="PARALLEL":lines.append("- Material lane selection must match the approved branch/worktree routing; ambiguity means no material execution.")
     return "\n".join(lines)+"\n"
