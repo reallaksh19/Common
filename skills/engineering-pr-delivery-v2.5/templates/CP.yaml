@@ -4,6 +4,8 @@ ep_id: EP-0001
 roadmap_basis:
   roadmap_id: "<roadmap-id>"
   revision: RM-0001
+execution_basis:
+  material_ref: "<exact material commit/ref validated by this checkpoint>"
 implementation_result:
   completed_steps: []
   files_changed: []
