@@ -504,9 +504,10 @@
           "verification_status": "CHECKED_BY_AUTHOR"
         }
       },
-      "research_contribution": "Graphical vector operations are source-supported; PhET is a candidate exploration route, not executed evidence.",
+      "research_contribution": "Graphical vector operations are source-supported; PhET is a candidate exploration route, not executed evidence. The reverse-then-add construction (GC-1/GC-2) reuses MIC-GRAPHICAL-SUBTRACTION (BUCKET-VECTOR-REPRESENTATION, V3B-Vector-Representation-Library-Seed.json) rather than re-deriving vector subtraction here; this is the added prerequisite edge below.",
       "prerequisite_refs": [
-        "MIC-COMMON-INTERVAL"
+        "MIC-COMMON-INTERVAL",
+        "MIC-GRAPHICAL-SUBTRACTION"
       ],
       "lineage": []
     }
@@ -1018,7 +1019,8 @@
         }
       ],
       "prerequisite_refs": [
-        "CAP-SIGNED-PAIR"
+        "CAP-SIGNED-PAIR",
+        "BUCKET-VECTOR-REPRESENTATION"
       ]
     }
   ]
