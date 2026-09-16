@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/grade9/physics/agent-tasks/execution-task.schema.json",
+  "title": "StandaloneExecutionTask",
+  "description": "Governing schema for StandaloneExecutionPrompt editable input and parameter payloads.",
+  "type": "object",
+  "required": [
+    "prompt_id",
+    "prompt_template_id",
+    "prompt_template_version",
+    "task_instance_id",
+    "repository",
+    "target_branch",
+    "subject",
+    "grade",
+    "curriculum",
+    "curriculum_version",
+    "topic",
+    "subtopic",
+    "engineering_depth",
+    "learner_state",
+    "web_research_allowed",
+    "local_question_banks",
+    "write_mode"
+  ],
+  "properties": {
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^SEP-[A-Za-z0-9_.-]+$",
+      "description": "Unique identifier for this prompt instance."
+    },
+    "prompt_template_id": {
+      "type": "string",
+      "pattern": "^SEP-[0-9]{2}$",
+      "description": "Identifier of the base prompt template (SEP-01 through SEP-25)."
+    },
+    "prompt_template_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semver of the prompt template."
+    },
+    "task_instance_id": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Unique execution instance ID."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Canonical GitHub repository name, e.g. reallaksh19/Common"
+    },
+    "target_branch": {
+      "type": "string",
+      "description": "Git target branch or 'DISCOVER_FROM_REPOSITORY'."
+    },
+    "baseline_pr": {
+      "type": ["integer", "null"],
+      "description": "Optional baseline pull request number."
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["PHYSICS", "MATHEMATICS", "CHEMISTRY"],
+      "description": "Target academic discipline."
+    },
+    "grade": {
+      "type": "integer",
+      "minimum": 9,
+      "maximum": 12,
+      "description": "Target student grade level (9 through 12)."
+    },
+    "curriculum": {
+      "type": "string",
+      "enum": ["CBSE", "ICSE", "IIT_JEE", "IOQM", "NEET", "OLYMPIAD", "STATE_BOARD"],
+      "description": "Curriculum or competitive exam framework."
+    },
+    "curriculum_version": {
+      "type": "string",
+      "description": "Governing curriculum academic year, e.g. 2026-27."
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Broad disciplinary topic (e.g. Motion, Thermodynamics, Algebra)."
+    },
+    "subtopic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Specific atomic subtopic (e.g. Relative Motion, Redox Reactions)."
+    },
+    "engineering_depth": {
+      "type": "string",
+      "enum": ["FOUNDATION", "STANDARD", "RESEARCH"],
+      "description": "Depth tier: FOUNDATION (CBSE Board), STANDARD (JEE Main), RESEARCH (JEE Advanced/Olympiad)."
+    },
+    "learner_state": {
+      "type": "string",
+      "enum": ["UNKNOWN", "NOVICE", "MISCONCEPTION_ACTIVE", "INTERMEDIATE", "ADVANCED"],
+      "description": "Cognitive diagnostic state of the learner."
+    },
+    "web_research_allowed": {
+      "type": "boolean",
+      "description": "Whether the agent is permitted to consult external web sources."
+    },
+    "local_question_banks": {
+      "type": ["string", "array"],
+      "items": {
+        "type": "string"
+      },
+      "description": "Path to local assessment corpora or 'DISCOVER_FROM_REPOSITORY'."
+    },
+    "write_mode": {
+      "type": "string",
+      "enum": ["ANALYZE_ONLY", "IMPLEMENT"],
+      "description": "Execution mode: read-only audit/analysis or file-writing implementation."
+    },
+    "expected_scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional hints outlining candidate scope boundaries."
+    },
+    "explicit_exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Mandatory out-of-scope concepts to prevent scope creep."
+    },
+    "subject_profile_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the subject profile used during compilation."
+    },
+    "schema_registry_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the schema registry referenced."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,141 @@
+{
+  "subtopic_id": "PHY-KIN-RELATIVE-MOTION",
+  "version": "1.0.0",
+  "title": "Relative Motion: 1D Collinear & 2D Vector Frame Transformations",
+  "discipline": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "governing_depth": "STANDARD",
+  "authority_tier": "STANDARD-PHYSICS-DERIVED",
+  "maturity": "ENGINEERING",
+  "technical_readiness": "READY",
+  "cbse_ref": {
+    "grade": 9,
+    "chapter": "Motion",
+    "section": "Describing Motion & Uniform/Non-uniform Motion"
+  },
+  "jee_tier": "JEE_MAINS",
+  "prerequisite_closure": {
+    "edges": [
+      {
+        "prerequisite_id": "PHY-KIN-1D-MOTION",
+        "title": "1D Motion Equations (v = u + at, s = ut + 0.5at^2)",
+        "edge_type": "HARD",
+        "domain": "PHYSICS"
+      },
+      {
+        "prerequisite_id": "PHY-VEC-COMPONENTS",
+        "title": "Resolution of 2D Vectors into Orthogonal Components",
+        "edge_type": "HARD",
+        "domain": "PHYSICS"
+      },
+      {
+        "prerequisite_id": "MTH-TRIG-RATIOS",
+        "title": "Trigonometric Ratios in Right Triangles",
+        "edge_type": "BRIDGEABLE",
+        "domain": "MATHEMATICS"
+      }
+    ],
+    "is_acyclic": true
+  },
+  "capabilities": [
+    {
+      "capability_id": "CAP-PHY-REL-01",
+      "statement": "Calculate 1D relative displacement, relative velocity, and collision/overtaking times for two collinear bodies.",
+      "level": "APPLY",
+      "tier": "FOUNDATION",
+      "equations": ["v_AB = v_A - v_B", "t_meet = Delta_x_rel / v_rel"]
+    },
+    {
+      "capability_id": "CAP-PHY-REL-02",
+      "statement": "Interpret relative kinematic graphs: determine relative velocity from x_rel-t slope and relative displacement from v_rel-t Riemann area.",
+      "level": "ANALYZE",
+      "tier": "FOUNDATION",
+      "equations": ["v_rel(t) = d(x_rel)/dt", "Delta_x_rel = integral v_rel(t) dt"]
+    },
+    {
+      "capability_id": "CAP-PHY-REL-03",
+      "statement": "Formulate 2D relative velocity vectors using Cartesian components and calculate relative speed and orientation angle.",
+      "level": "APPLY",
+      "tier": "STANDARD",
+      "equations": ["vec_v_AB = vec_v_A - vec_v_B", "v_rel = sqrt((v_Ax - v_Bx)^2 + (v_Ay - v_By)^2)"]
+    },
+    {
+      "capability_id": "CAP-PHY-REL-04",
+      "statement": "Solve canonical River-Swimmer problems: calculate minimum transit time and minimum drift crossing angles.",
+      "level": "SYNTHESIZE",
+      "tier": "STANDARD",
+      "equations": ["t_min = d / v_swimmer", "drift = (v_river - v_swimmer * sin(theta)) * t"]
+    },
+    {
+      "capability_id": "CAP-PHY-REL-05",
+      "statement": "Solve canonical Rain-Umbrella problems: calculate apparent rain velocity vector relative to moving observer and umbrella hold angle.",
+      "level": "SYNTHESIZE",
+      "tier": "STANDARD",
+      "equations": ["vec_v_RM = vec_v_R - vec_v_M", "tan(theta_umbrella) = v_M / v_R"]
+    }
+  ],
+  "representations": [
+    {
+      "representation_type": "VECTOR_POLYGON_DIAGRAM",
+      "description": "Closed vector subtraction triangle showing vec_v_A, vec_v_B, and the resultant relative vector vec_v_AB.",
+      "pre_render_validation_gate": "GATE-03 Vector resultant equality: vec_v_AB + vec_v_B == vec_v_A to 1e-4 tolerance."
+    },
+    {
+      "representation_type": "KINEMATIC_GRAPH_PLOT",
+      "description": "Relative displacement vs time x_rel(t) graph with intercept at initial separation and root at intersection time.",
+      "pre_render_validation_gate": "GATE-02 & GATE-06 Area integral validation: Riemann integral under v_rel(t) matches Delta_x_rel."
+    }
+  ],
+  "problem_families": [
+    {
+      "family_id": "FAM-REL-TRAINS-COLLINEAR",
+      "archetype": "Two parallel trains moving in same or opposite directions with constant velocities or constant accelerations.",
+      "tier": "FOUNDATION",
+      "limiting_case": "If speeds are equal in same direction, relative velocity is zero and separation remains invariant."
+    },
+    {
+      "family_id": "FAM-REL-RIVER-SWIMMER",
+      "archetype": "Crossing flowing water of width d; finding condition for zero drift (v_swimmer >= v_river) versus minimum drift (v_swimmer < v_river).",
+      "tier": "STANDARD",
+      "limiting_case": "If river speed v_river = 0, transit time is simply d/v_swimmer and drift is zero."
+    },
+    {
+      "family_id": "FAM-REL-RAIN-UMBRELLA",
+      "archetype": "Vertically falling rain observed by running person; determination of tilt angle from vertical to avoid wetting.",
+      "tier": "STANDARD",
+      "limiting_case": "If person stops (v_man = 0), umbrella angle theta = 0 (held vertically upward)."
+    }
+  ],
+  "misconceptions": [
+    {
+      "id": "MISC-REL-01",
+      "statement": "Assuming speed of approach is always the scalar sum |v_A| + |v_B| regardless of direction of motion.",
+      "refutation": "Relative speed is magnitude of vector difference: |vec_v_A - vec_v_B|. For same-direction motion, speed of approach is |v_A - v_B|.",
+      "literature_ref": "McDermott, L. C., et al. (1984). Student difficulties in kinematics."
+    },
+    {
+      "id": "MISC-REL-02",
+      "statement": "Believing that aiming directly across perpendicular to the riverbank takes the swimmer straight across with zero drift.",
+      "refutation": "Water flow imparts downstream drift; to reach directly opposite bank, swimmer must aim upstream at sin(theta) = v_river / v_swimmer.",
+      "literature_ref": "Halloun, I. A., & Hestenes, D. (1985). Common sense concepts about motion."
+    }
+  ],
+  "mandatory_falsifiers": [
+    {
+      "falsifier_id": "FALS-GALILEAN-INVERSION",
+      "assertion": "v_AB == -v_BA for all velocity pairs.",
+      "status": "VERIFIED"
+    },
+    {
+      "falsifier_id": "FALS-STATIONARY-OBSERVER-LIMIT",
+      "assertion": "lim(v_B -> 0) v_AB == v_A.",
+      "status": "VERIFIED"
+    },
+    {
+      "falsifier_id": "FALS-AREA-INTEGRAL-COHERENCE",
+      "assertion": "Riemann area under v_rel(t) equals net relative displacement Delta x_rel.",
+      "status": "VERIFIED"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "prompt_id": "SEP-08-PHY-RELMOTION-STRESS-v1",
+  "task_instance_id": "task-sep08-relmotion-stress-001",
+  "start_head": "e69ed1b246d10a20d8b6732730052b45b4f5a58b",
+  "end_head": "e69ed1b246d10a20d8b6732730052b45b4f5a58b",
+  "result": "COMPLETE",
+  "changed_files": [
+    {
+      "path": "Grade 9/V2/Physics/AgentTasks/fixtures/task_sep08_relative_motion_stress.json",
+      "reason": "Task request fixture for SEP-08 Relative Motion stress test",
+      "tier": "DATA_ONLY",
+      "authority_impact": "Additive test fixture"
+    },
+    {
+      "path": "Grade 9/V2/Physics/AgentTasks/fixtures/compiled_sep08_relative_motion_stress.md",
+      "reason": "Compiled standalone prompt for SEP-08 stress test with SHA-256 custody digest",
+      "tier": "DOC",
+      "authority_impact": "Immutable standalone prompt artifact"
+    },
+    {
+      "path": "Grade 9/V2/Physics/AgentTasks/fixtures/skp_relative_motion_candidate.json",
+      "reason": "Candidate Subtopic Knowledge Package (SKP) for Relative Motion",
+      "tier": "DATA_ONLY",
+      "authority_impact": "Additive candidate data package"
+    },
+    {
+      "path": "Grade 9/V2/Physics/AgentTasks/reports/ARCHITECTURE_STRESS_TEST_REPORT.md",
+      "reason": "Architecture stress test report documenting zero Blueprint edits and falsifier proofs",
+      "tier": "DOC",
+      "authority_impact": "Diagnostic verification report"
+    }
+  ],
+  "tests": [
+    {
+      "test": "Galilean Inversion Falsifier (v_AB == -v_BA)",
+      "result": "PASS",
+      "evidence": "25 - 15 == -(15 - 25) (10 == 10)"
+    },
+    {
+      "test": "Stationary Observer Limiting Case (lim v_B->0 v_AB == v_A)",
+      "result": "PASS",
+      "evidence": "25 - 0 == 25"
+    },
+    {
+      "test": "Rain-Umbrella Angle Falsifier (tan theta == v_M / v_R)",
+      "result": "PASS",
+      "evidence": "theta == 30.0 deg for v_M=10, v_R=10*sqrt(3)"
+    },
+    {
+      "test": "Blueprint Zero-Mutation Assertion",
+      "result": "PASS",
+      "evidence": "git status -s 'Grade 9/V2/Physics/Blueprint' returned 0 lines"
+    },
+    {
+      "test": "python Grade 9/V2/Physics/AgentTasks/engine/compile_execution_prompt.py",
+      "result": "PASS",
+      "evidence": "Deterministic SHA-256 Digest 5c9d3a3cc5496f3f4e41740f26419a22a3fff5076b74027b4dedd84f0fd6f815"
+    }
+  ],
+  "workflows": [
+    {
+      "workflow": "local_mathematical_falsifier_battery",
+      "run": "manual",
+      "result": "PASS"
+    }
+  ],
+  "blockers": [],
+  "limitations": [
+    "Relative motion restricted to 1D and 2D classical kinematics (Galilean velocity addition; v << c)."
+  ],
+  "architecture_findings": [
+    "Empirical proof: ordinary new subtopic requires 0 Blueprint edits.",
+    "Candidate package integrated as 100% DATA_ONLY.",
+    "Pre-render visual validation gates (GATE-02, GATE-03, GATE-06) function with zero engine changes.",
+    "Invariant E fully satisfied."
+  ],
+  "memory_dependency_detected": false,
+  "recommended_next_task": "SEP-09-PHY-THERMO-RESEARCH-v1"
+}

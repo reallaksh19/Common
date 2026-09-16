@@ -1,0 +1,34 @@
+{
+  "prompt_id": "SEP-08-PHY-RELMOTION-STRESS-v1",
+  "prompt_template_id": "SEP-08",
+  "prompt_template_version": "1.0.0",
+  "task_instance_id": "task-sep08-relmotion-stress-001",
+  "repository": "reallaksh19/Common",
+  "target_branch": "v2-physics-agent-tasks-standalone-prompts-v1",
+  "baseline_pr": 394,
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Motion",
+  "subtopic": "Relative Motion",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": false,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "write_mode": "IMPLEMENT",
+  "expected_scope": [
+    "1D Relative Motion: collinear velocity addition and subtraction",
+    "2D Relative Motion: river-swimmer shortest path and shortest time",
+    "2D Relative Motion: rain-umbrella apparent velocity and tilt angle",
+    "Reference Frame Transformations: Galilean kinematic invariance",
+    "Relative Kinematic Graphs: x_rel-t slope and v_rel-t area integral"
+  ],
+  "explicit_exclusions": [
+    "Lorentz transformations / Relativistic velocity addition",
+    "Accelerated non-inertial frames with Coriolis force (Grade 11 advanced)",
+    "General relativity"
+  ],
+  "subject_profile_version": "1.0.0",
+  "schema_registry_version": "1.0.0"
+}

@@ -1,0 +1,53 @@
+{
+  "subject": "MATHEMATICS",
+  "version": "1.0.0",
+  "description": "Disciplinary ontology, representations, and validation invariants for Grade 9-11 Mathematics (CBSE, JEE Main, JEE Advanced, IOQM).",
+  "extension_concepts": [
+    "MATHEMATICAL_DEFINITION",
+    "MATHEMATICAL_OBJECT",
+    "AXIOM_POSTULATE",
+    "FORMAL_THEOREM",
+    "PROOF_DEPENDENCY_EDGE",
+    "GEOMETRIC_CONSTRUCTION",
+    "COUNTEREXAMPLE",
+    "CANONICAL_PROCEDURE",
+    "PROOF_FAMILY",
+    "EXISTENCE_UNIQUENESS_CONDITION"
+  ],
+  "allowed_representations": [
+    "COORDINATE_GEOMETRY_PLOT",
+    "NUMBER_LINE_INTERVAL",
+    "POLYGON_CONSTRUCTION",
+    "FUNCTION_GRAPH_TRANSFORMATION",
+    "VENN_EULER_DIAGRAM",
+    "TRIGONOMETRIC_UNIT_CIRCLE",
+    "ALGEBRAIC_SIGN_CHART"
+  ],
+  "curriculum_tiers": {
+    "FOUNDATION": {
+      "name": "CBSE_BOARD",
+      "target": "Axiomatic Euclidean geometry, algebraic identities, quadratic formula, basic coordinate geometry, trigonometric ratios, arithmetic progressions."
+    },
+    "STANDARD": {
+      "name": "JEE_MAINS",
+      "target": "Analytical geometry of conics, complex numbers representation, polynomial roots relations, sequences and series summation, binomial theorem, trigonometric equations."
+    },
+    "RESEARCH": {
+      "name": "JEE_ADVANCED_IOQM",
+      "target": "Rigorous olympiad/advanced proofs, extremal principle, invariant theory, combinatorial configurations, functional equations, diophantine equations, transformation matrices."
+    }
+  },
+  "epistemological_rules": [
+    "Strictly distinguish axiomatic definitions from derived theorems; circular proof dependencies are forbidden.",
+    "Counterexamples must explicitly state domain violations (e.g. division by zero, non-invertible domains).",
+    "Every geometric or analytical assertion must state validity domains (e.g. x in R, x > 0, non-degenerate triangle).",
+    "Never substitute heuristic numerical verification for formal deductive proof."
+  ],
+  "mandatory_falsifiers": [
+    "ACYCLIC_PROOF_CLOSURE_CHECK",
+    "DOMAIN_SINGULARITY_FALSIFICATION",
+    "DEGENERATE_CASE_CHECK",
+    "COUNTEREXAMPLE_SOUNDNESS_TEST",
+    "ALGEBRAIC_IDENTITY_COHERENCE"
+  ]
+}

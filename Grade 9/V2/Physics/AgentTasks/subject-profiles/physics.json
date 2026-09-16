@@ -1,0 +1,55 @@
+{
+  "subject": "PHYSICS",
+  "version": "1.0.0",
+  "description": "Disciplinary ontology, representations, and validation invariants for Grade 9-11 Physics (CBSE, JEE Main, JEE Advanced).",
+  "extension_concepts": [
+    "PHYSICAL_MODEL",
+    "REFERENCE_FRAME",
+    "PHYSICAL_QUANTITY",
+    "DIMENSIONAL_FORMULA",
+    "FUNDAMENTAL_LAW",
+    "GOVERNING_EQUATION",
+    "BOUNDARY_CONDITION",
+    "LIMITING_CASE",
+    "EXPERIMENTAL_VERIFICATION",
+    "IDEALIZATION_ASSUMPTION"
+  ],
+  "allowed_representations": [
+    "KINEMATIC_GRAPH_PLOT",
+    "FREE_BODY_DIAGRAM",
+    "VECTOR_POLYGON_DIAGRAM",
+    "RAY_OPTICS_DIAGRAM",
+    "CIRCUIT_SCHEMATIC",
+    "THERMODYNAMIC_PV_CYCLE",
+    "WAVE_OSCILLATION_PLOT",
+    "FIELD_LINE_EQUIPOTENTIAL_MAP"
+  ],
+  "curriculum_tiers": {
+    "FOUNDATION": {
+      "name": "CBSE_BOARD",
+      "target": "Conceptual clarity, standard 1D/2D kinematics, Newton's laws, conservation, direct formula applications, board definitions."
+    },
+    "STANDARD": {
+      "name": "JEE_MAINS",
+      "target": "Multi-step analytical mechanics, coordinate frame transformations, relative velocity in 2D, projectile on inclined plane, friction transitions, work-energy theorem."
+    },
+    "RESEARCH": {
+      "name": "JEE_ADVANCED_OLYMPIAD",
+      "target": "Non-inertial reference frames and fictitious forces, variable mass systems, constrained motion, continuous distributions, extreme limiting-case falsifications, coupled differential equations."
+    }
+  },
+  "epistemological_rules": [
+    "Distinguish observer-dependent kinematic quantities (displacement, velocity) from frame-invariant physical laws.",
+    "Enforce dimensional homogeneity: terms added or equated must have identical dimensional powers [M^a L^b T^c I^d].",
+    "Every kinematic model must explicitly declare its inertial or non-inertial reference frame.",
+    "Non-inertial models must explicitly include pseudo-forces (-m*a_frame) with explicit observer declaration.",
+    "Limiting cases (e.g. mass m2 >> m1, velocity v -> 0, angle theta -> 0 or 90 deg) must be mathematically falsified."
+  ],
+  "mandatory_falsifiers": [
+    "DIMENSIONAL_CONSISTENCY_CHECK",
+    "LIMITING_CASE_FALSIFICATION",
+    "CONSERVATION_LAW_SANITY_CHECK",
+    "FRAME_TRANSFORMATION_INVARIANCE",
+    "SIGN_CONVENTION_COHERENCE"
+  ]
+}

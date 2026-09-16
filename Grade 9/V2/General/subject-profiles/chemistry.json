@@ -1,0 +1,54 @@
+{
+  "subject": "CHEMISTRY",
+  "version": "1.0.0",
+  "description": "Disciplinary ontology, Johnstone triad representations, and validation invariants for Grade 9-11 Chemistry (CBSE, JEE Main, JEE Advanced).",
+  "extension_concepts": [
+    "MACROSCOPIC_OBSERVATION",
+    "SUBMICROSCOPIC_MODEL",
+    "SYMBOLIC_FORMULATION",
+    "CHEMICAL_SPECIES",
+    "REACTION_CONDITION",
+    "STOICHIOMETRIC_RELATION",
+    "MASS_CHARGE_CONSERVATION",
+    "OXIDATION_NUMBER_STATE",
+    "THERMODYNAMIC_POTENTIAL",
+    "PHASE_EQUILIBRIUM"
+  ],
+  "allowed_representations": [
+    "ORBITAL_ENERGY_DIAGRAM",
+    "MOLECULAR_GEOMETRY_VSEPR",
+    "EQUILIBRIUM_CONCENTRATION_TABLE",
+    "THERMODYNAMIC_CYCLE_BORN_HABER",
+    "ORGANIC_REACTION_MECHANISM",
+    "PERIODIC_TREND_CONTOUR",
+    "LEWIS_DOT_STRUCTURE",
+    "REDOX_HALF_REACTION_LANE"
+  ],
+  "curriculum_tiers": {
+    "FOUNDATION": {
+      "name": "CBSE_BOARD",
+      "target": "Atomic structure (Dalton, Thomson, Rutherford, Bohr), valency, chemical bonding (ionic/covalent), balancing equations, periodic table groups, states of matter."
+    },
+    "STANDARD": {
+      "name": "JEE_MAINS",
+      "target": "Stoichiometry and mole concept, redox balancing (ion-electron and oxidation number methods), chemical equilibrium and Le Chatelier principle, thermochemistry cycles, VSEPR shapes."
+    },
+    "RESEARCH": {
+      "name": "JEE_ADVANCED",
+      "target": "Molecular orbital theory diagrams, complex redox disproportionation mechanisms, non-ideal gas equations, multi-step thermodynamics cycles, kinetics rate laws and transition state theory."
+    }
+  },
+  "epistemological_rules": [
+    "Enforce Johnstone's Triad: every chemical concept must bridge macroscopic observables, submicroscopic particulate models, and symbolic representations.",
+    "Mass and charge conservation: all nuclear atom counts and net algebraic charges must balance across reaction arrows.",
+    "Oxidation numbers must adhere strictly to IUPAC rules; fractional states must be grounded in structural resonance or non-equivalent atom environments.",
+    "Electron configurations must strictly satisfy Aufbau principle, Hund's rule, and Pauli exclusion principle (maximum 2*n^2 capacity per shell)."
+  ],
+  "mandatory_falsifiers": [
+    "MASS_ATOM_CONSERVATION_AUDIT",
+    "NET_CHARGE_BALANCE_CHECK",
+    "OXIDATION_NUMBER_SUM_RULE",
+    "BOHR_SHELL_CAPACITY_LIMIT",
+    "OCTET_EXPANSION_VALENCY_CHECK"
+  ]
+}
