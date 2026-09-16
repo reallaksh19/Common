@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-representation-intent.schema.json",
+  "title": "Chemistry Governed Representation Intent Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "intent_packet_id", "subject", "product_mode",
+    "obligation_packet_id", "obligation_packet_digest", "semantic_projection_id",
+    "semantic_projection_digest", "policy_ref", "policy_digest", "policy_extension_refs",
+    "primitive_registry_ref", "page_intent_profile_ref", "intents", "counts",
+    "status", "intent_packet_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "intent_packet_id": {"type": "string", "pattern": "^CHEM-REP-INT-[A-Z0-9-]+$"},
+    "subject": {"const": "CHEMISTRY"},
+    "product_mode": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "obligation_packet_id": {"type": "string"},
+    "obligation_packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "semantic_projection_id": {"type": "string"},
+    "semantic_projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy_ref": {"type": "string"},
+    "policy_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "policy_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "primitive_registry_ref": {"type": "string"},
+    "page_intent_profile_ref": {"type": "string"},
+    "intents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "intent_id", "source_gate_id", "source_obligation_id", "source_representation_ref",
+          "direct", "required_realization", "representation_type", "capability_ref", "primitive_id",
+          "selection_authority", "scientific_semantics", "primitive_authority"
+        ],
+        "properties": {
+          "intent_id": {"type": "string", "pattern": "^CHEM-REP-INTENT-[A-Z0-9]+$"},
+          "source_gate_id": {"type": "string", "minLength": 1},
+          "source_obligation_id": {"type": "string", "minLength": 1},
+          "source_representation_ref": {"type": "string", "minLength": 1},
+          "direct": {"type": "boolean"},
+          "required_realization": {"type": "boolean"},
+          "representation_type": {"type": "string", "minLength": 1},
+          "capability_ref": {"type": "string", "minLength": 1},
+          "primitive_id": {"type": "string", "minLength": 1},
+          "selection_authority": {"const": "ENGINEERING_REPRESENTATION_TYPE_PLUS_C_H_PAGE_INTENT"},
+          "scientific_semantics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name", "chemistry_encoded", "mandatory_labels", "what_cannot_be_omitted",
+              "common_incorrect_version", "verification_method", "semantic_atom_refs", "semantic_roles"
+            ],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "chemistry_encoded": {"type": "string", "minLength": 1},
+              "mandatory_labels": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+              "what_cannot_be_omitted": {"type": "string", "minLength": 1},
+              "common_incorrect_version": {"type": "string", "minLength": 1},
+              "verification_method": {"type": "string", "minLength": 1},
+              "semantic_atom_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+              "semantic_roles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}}
+            }
+          },
+          "primitive_authority": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["instructional_job", "attention_target", "translation_obligation", "learner_action", "renderer_constraints"],
+            "properties": {
+              "instructional_job": {"type": "string", "minLength": 1},
+              "attention_target": {"type": "string", "minLength": 1},
+              "translation_obligation": {"type": "string", "minLength": 1},
+              "learner_action": {"type": "string", "minLength": 1},
+              "renderer_constraints": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            }
+          }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorized_representation_count", "required_representation_count", "intent_count"],
+      "properties": {
+        "authorized_representation_count": {"type": "integer", "minimum": 0},
+        "required_representation_count": {"type": "integer", "minimum": 0},
+        "intent_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "status": {"const": "REPRESENTATION_INTENT_READY"},
+    "intent_packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
