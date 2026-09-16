@@ -34,7 +34,9 @@ def test_v10_contract_schemas_are_valid():
         "contracts/seven-core-stress-test-receipt.schema.json",
         "contracts/join-packet.schema.json",
         "contracts/physics-curriculum-scope-binding-registry.schema.json",
+        "contracts/physics-curriculum-authority-record.schema.json",
         "contracts/physics-blueprint-authority-projection.schema.json",
+        "contracts/physics-architecture-observation.schema.json",
     ]
     shared_names = [
         "contracts/domain-prerequisite-authority.schema.json",
@@ -59,6 +61,20 @@ def test_v10_physics_curriculum_binding_is_exact_and_fail_closed():
     assert registry["selector_semantics"] == "EXACT_GRADE_CURRICULUM_SCOPE_AND_GATE_SET"
     ids = [row["binding_id"] for row in registry["bindings"]]
     assert len(ids) == len(set(ids))
+
+
+def test_v10_curriculum_authority_record_is_semantic_and_non_authorizing():
+    record = load("provenance/curriculum/PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1.json")
+    schema = load("contracts/physics-curriculum-authority-record.schema.json")
+    Draft202012Validator(schema).validate(record)
+    assert record["authority_class"] == "CURRICULUM_AUTHORITY_RECORD"
+    assert record["subject"] == "PHYSICS" and record["grade"] == 9 and record["curriculum"] == "CBSE"
+    assert {row["source_role"] for row in record["evidence_sources"]} >= {"CONTENT_SYLLABUS", "CURRICULUM_INDEX"}
+    assert record["engineering_authorization"] == "NOT_EVALUATED"
+    assert record["publication_authorization"] == "NOT_IMPLIED"
+    scope = record["scope_assertions"][0]
+    assert set(scope["supported_gate_ids"]) == {"PHY-WORK-ENERGY-POWER", "PHY-ENERGY-CONSERVATION-LAW"}
+    assert "VARIABLE_FORCE_WORK_LINE_INTEGRAL" not in set(scope["supported_claims"])
 
 
 def test_v10_cross_domain_transport_is_shared_not_physics_shadowed():
