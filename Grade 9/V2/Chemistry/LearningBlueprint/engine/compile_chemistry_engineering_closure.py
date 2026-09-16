@@ -77,7 +77,29 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
 
     gate_map = {g["subtopic_id"]: g for g in registry["subtopic_gates"]}
     direct = list(manifest["required_gate_ids"])
+    optional = list(manifest["optional_gate_ids"])
+    out_of_scope = list(manifest["out_of_scope_gate_ids"])
     direct_set = set(direct)
+    optional_set = set(optional)
+    out_of_scope_set = set(out_of_scope)
+
+    overlaps = {
+        "required_optional": sorted(direct_set & optional_set),
+        "required_out_of_scope": sorted(direct_set & out_of_scope_set),
+        "optional_out_of_scope": sorted(optional_set & out_of_scope_set),
+    }
+    nonempty_overlaps = {key: values for key, values in overlaps.items() if values}
+    if nonempty_overlaps:
+        fail("CHEM_ENG_GATE_SCOPE_SET_OVERLAP", json.dumps(nonempty_overlaps, sort_keys=True))
+
+    for label, gate_ids in (("optional", optional), ("out_of_scope", out_of_scope)):
+        missing_declared = sorted(gid for gid in gate_ids if gid not in gate_map)
+        if missing_declared:
+            fail(
+                "CHEM_ENG_DECLARED_GATE_MISSING",
+                f"{label}:" + ",".join(missing_declared),
+            )
+
     seen: set[str] = set()
     visiting: list[str] = []
     ordered: list[str] = []
@@ -86,6 +108,10 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
     def walk(gid: str):
         if gid in seen:
             return
+        if gid in out_of_scope_set:
+            fail("CHEM_ENG_REQUIRED_DEPENDENCY_OUT_OF_SCOPE", gid)
+        if gid in optional_set and gid not in direct_set:
+            fail("CHEM_ENG_OPTIONAL_GATE_REQUIRED_BY_CLOSURE", gid)
         if gid in visiting:
             i = visiting.index(gid)
             fail("CHEM_ENG_DEPENDENCY_CYCLE", " -> ".join(visiting[i:] + [gid]))
@@ -182,6 +208,8 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
         "registry_digest": registry_digest,
         "source_audit_states": source_audit_states,
         "direct_gate_ids": direct,
+        "optional_gate_ids": optional,
+        "out_of_scope_gate_ids": out_of_scope,
         "closure_gate_ids": ordered,
         "gate_states": gate_states,
         "external_dependency_states": external_states,
@@ -204,12 +232,16 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
         "source_audit_states": source_audit_states,
         "closure_digest": digest(payload),
         "direct_gate_ids": direct,
+        "optional_gate_ids": optional,
+        "out_of_scope_gate_ids": out_of_scope,
         "closure_gate_ids": ordered,
         "gate_states": gate_states,
         "external_dependency_states": external_states,
         "blockers": blockers,
         "counts": {
             "direct_gate_count": len(direct),
+            "optional_gate_count": len(optional),
+            "out_of_scope_gate_count": len(out_of_scope),
             "closure_gate_count": len(ordered),
             "ready_gate_count": ready_count,
             "blocked_gate_count": blocked_count,
