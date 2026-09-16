@@ -8,7 +8,10 @@ from validate_relay_conformance import validate as relay
 def validate(root:Path):
     e,w=relay(root)
     if e:return e,w
-    s=load_yaml(root/"agents/relay/REPO_STATE.yaml");ep=load_yaml(root/s["active_ep"]["path"]);c=ep.get("context_capsule") or {}
+    s=load_yaml(root/"agents/relay/REPO_STATE.yaml")
+    if s.get("chat_context_required") is not False:e.append("cold start: repository declares chat context required")
+    if (s.get("active_ep") or {}).get("state")=="NONE":return e,w
+    ep=load_yaml(root/s["active_ep"]["path"]);c=ep.get("context_capsule") or {}
     for key in ("product_goal","roadmap_position","why_this_work_exists","current_architecture","current_implementation_state"):
         if not str(c.get(key,"")).strip():e.append(f"cold start: context_capsule.{key} must be non-empty")
     out=ep.get("outcome") or {}
@@ -16,7 +19,6 @@ def validate(root:Path):
     if not (ep.get("scope") or {}).get("allowed"):e.append("cold start: scope.allowed is empty; executable change domain is unclear")
     if not ep.get("implementation_plan"):e.append("cold start: implementation_plan is empty")
     if not (ep.get("report_contract") or {}).get("sections"):e.append("cold start: exact report sections are missing")
-    if s.get("chat_context_required") is not False:e.append("cold start: repository declares chat context required")
     return e,w
 
 def main():
