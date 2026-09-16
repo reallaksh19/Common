@@ -234,7 +234,10 @@ def _learner_gate_closure(
         semantic_id for semantic_id in projection["metadata_semantic_ids"]
         if product_mode in semantic_by_id[semantic_id]["authorized_modes"]
     )
-    if set(context_ids) & set(realized_ids):
+    realized_source_semantic_ids = {
+        row["source_semantic_id"] for row in realized_gates
+    }
+    if set(context_ids) & realized_source_semantic_ids:
         fail("CHEM_CORE_AUTH_CONTEXT_PROMOTED_TO_LEARNER_GATE")
 
     closure = {
