@@ -1,0 +1,46 @@
+from __future__ import annotations
+import sys,tempfile,unittest
+from pathlib import Path
+import yaml
+HERE=Path(__file__).resolve();sys.path.insert(0,str(HERE.parents[2]/"scripts"))
+from bootstrap_relay import build as bootstrap_build,apply as bootstrap_apply
+from cold_start_check import validate as cold_start
+from inventory_v2_relay import build_inventory
+from prepare_v2_migration import build as migration_build
+from validate_parallel_plan import validate as parallel_plan
+
+REPORT=["Executive state","Overall / phase / EP progress","Work completed","Files changed","Acceptance matrix","Tests and evidence","Quality findings","Known limitations","Owner decisions required","GitHub issue changes","Roadmap changes","Exact next actions","Successor EP"]
+def dump(path,data):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(yaml.safe_dump(data,sort_keys=False),encoding="utf-8")
+
+def ep(ep_id,branch,wp,path):
+    return {"schema_version":"relay-v2.5","identity":{"ep_id":ep_id,"branch":branch,"base_ref":"abc","execution_state":"ACTIVE","previous_checkpoint":"NONE"},"roadmap_source":{"roadmap_id":"RM-P","roadmap_revision":"RM-1","objective":"OBJ","phase":"PHASE","work_package":wp,"generated_from_frontier":True},"outcome":{"engineering":[f"Complete {wp}"]},"context_capsule":{"product_goal":"Deliver independent parallel slices","roadmap_position":wp,"why_this_work_exists":"Owner-approved parallel frontier","current_architecture":"Synthetic modular service","prior_owner_decisions":[],"current_implementation_state":"Baseline exists","known_problems":[],"deliberate_non_goals":[],"terminology":{}},"repository_discovery":[{"id":"D1","action":"VERIFY","target":"agents/relay/REPO_STATE.yaml","purpose":"confirm routing"}],"inputs":[{"id":"INPUT-1","name":"policy","source":"roadmap","editable":False}],"benchmarks":[],"scope":{"allowed":[{"path":path,"reason":"exclusive lane"}],"prohibited":[{"domain":"other lanes","reason":"parallel isolation"}]},"anti_drift":{"do_not":["write another lane"],"stale_if":["roadmap changes"]},"implementation_plan":[{"id":"STEP-1","action":f"Implement {wp}"}],"quality":{"blueprints":["coding","testing"]},"acceptance":[{"id":"AC-1","description":"Lane result complete","weight":100,"verification":["TEST-1"]}],"validation":[{"id":"TEST-1","class":"MUST_PASS","method":"synthetic","proves":["AC-1"]}],"failure_and_stop_conditions":{"hard_stop_categories":["WRITE_COLLISION"]},"report_contract":{"sections":REPORT},"checkpoint_contract":{"required":True},"successor_relay":{"required":True,"duties":["compute next executable frontier","run cold-start check","update REPO_STATE"]}}
+
+def parallel_repo(root):
+    roadmap={"schema_version":"relay-v2.5","roadmap":{"id":"RM-P","revision":"RM-1","title":"Parallel synthetic"},"objectives":[{"id":"OBJ","title":"Objective","state":"ACTIVE","definition":"DEFINED","phases":[{"id":"PHASE","title":"Phase","state":"ACTIVE","definition":"DETAILED","work_packages":[{"id":"WP-A","title":"A","state":"ACTIVE","definition":"DETAILED","execution_status":"ACTIVE","depends_on":[]},{"id":"WP-B","title":"B","state":"ACTIVE","definition":"DETAILED","execution_status":"ACTIVE","depends_on":[]},{"id":"WP-I","title":"Integrate","state":"PLANNED","definition":"DETAILED","execution_status":"WAITING","depends_on":["WP-A","WP-B"]}]}]}]}
+    plan={"schema_version":"relay-v2.5","id":"PLAN-P1","owner_approval":{"approved":True,"authority":"OWNER","source":"OWNER-DECISION-1","approval_token":"APPROVE PARALLEL PLAN-P1"},"ascii_topology":"ROADMAP\n +-- A\n +-- B\n  \\ /\n INTEGRATE","lanes":[{"id":"LANE-A","state":"ACTIVE","work_package":"WP-A","ep_id":"EP-A","ep_path":"agents/relay/execution-packages/EP-A.yaml","branch":"agent/lane-a","worktree":"wt-a","write_domains":["src/a"],"shared_read_domains":["src/shared"]},{"id":"LANE-B","state":"ACTIVE","work_package":"WP-B","ep_id":"EP-B","ep_path":"agents/relay/execution-packages/EP-B.yaml","branch":"agent/lane-b","worktree":"wt-b","write_domains":["src/b"],"shared_read_domains":["src/shared"]}],"shared_write_exceptions":[],"integration":{"owner":"OWNER","work_package":"WP-I","planned_ep_id":"EP-I","creation_policy":"WHEN_FRONTIER","depends_on_lanes":["LANE-A","LANE-B"]},"risks":[{"id":"R1","description":"integration conflict"}],"stop_conditions":[{"id":"S1","condition":"lane leaves write domain"}]}
+    state={"schema_version":"relay-v2.5","relay_state":"PARALLEL","repository":{"name":"synthetic"},"roadmap":{"id":"RM-P","revision":"RM-1","path":"agents/relay/roadmap/OVERALL_ROADMAP.yaml"},"current_position":{"objective":"OBJ","phase":"PHASE","work_package":"PARALLEL","work_packages":["WP-A","WP-B"]},"execution_policy":{"mode":"OWNER_APPROVED_PARALLEL","parallel_plan":"agents/relay/parallel/PLAN-P1.yaml"},"active_ep":{"id":"PARALLEL_ROUTER","path":None,"state":"ROUTER"},"last_checkpoint":{"id":"NONE","path":None},"progress":{"overall_percent":0,"phase_percent":0,"ep_percent":0,"basis_revision":"PB-1"},"status_planes":{"execution":{"state":"ACTIVE","can_continue":True,"next_action":"Execute only the lane matching the checked-out routing context."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"PARTIAL","summary":"Parallel work active","not_run":[]},"stop":{"active":False,"category":"NONE","reason":"","basis":[]}},"chat_context_required":False}
+    progress={"schema_version":"relay-v2.5","progress_basis":{"id":"PB-1","roadmap_revision":"RM-1"},"overall":{"earned_weight":0,"total_weight":200,"percent":0},"objectives":[],"phases":[],"work_packages":[],"execution_packages":[]}
+    dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",roadmap);dump(root/"agents/relay/roadmap/PROGRESS.yaml",progress);dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",{"schema_version":"relay-v2.5","nodes":[],"relationships":[]});dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/parallel/PLAN-P1.yaml",plan);dump(root/"agents/relay/execution-packages/EP-A.yaml",ep("EP-A","agent/lane-a","WP-A","src/a"));dump(root/"agents/relay/execution-packages/EP-B.yaml",ep("EP-B","agent/lane-b","WP-B","src/b"));return roadmap,plan,state
+
+class ParallelBootstrapStressTests(unittest.TestCase):
+    def test_valid_parallel_router_is_cold_startable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);parallel_repo(root);self.assertEqual([],parallel_plan(root)[0]);self.assertEqual([],cold_start(root)[0])
+    def test_duplicate_branch_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,plan,_=parallel_repo(root);plan["lanes"][1]["branch"]="agent/lane-a";dump(root/"agents/relay/parallel/PLAN-P1.yaml",plan);self.assertTrue(any("unique branch" in x for x in parallel_plan(root)[0]))
+    def test_write_overlap_requires_owner_approved_exception(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,plan,_=parallel_repo(root);plan["lanes"][1]["write_domains"]=["src/a/nested"];dump(root/"agents/relay/parallel/PLAN-P1.yaml",plan);self.assertTrue(any("write-domain overlap" in x for x in parallel_plan(root)[0]))
+    def test_integration_must_depend_on_every_lane(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);roadmap,_,_=parallel_repo(root);roadmap["objectives"][0]["phases"][0]["work_packages"][2]["depends_on"]=["WP-A"];dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",roadmap);self.assertTrue(any("depend on every" in x for x in parallel_plan(root)[0]))
+    def test_bootstrap_creates_initializing_non_executable_state(self):
+        manifest={"schema_version":"relay-v2.5-bootstrap","repository":{"name":"synthetic","remote":"owner/synthetic","repository_type":"application","default_branch":"main"},"relay_protocol":{"basis_ref":"abc"},"roadmap":{"id":"RM-B","revision":"RM-0001","title":"Bootstrap"},"initial_position":{"objective":{"id":"OBJ-1","title":"Objective"},"phase":{"id":"PHASE-1","title":"Phase"},"work_package":{"id":"WP-1","title":"Discovery"}},"initialization":{"next_action":"Reconcile owner intent and define the first executable package.","notes":[]}}
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);files=bootstrap_build(manifest);self.assertEqual("INITIALIZING",files["agents/relay/REPO_STATE.yaml"]["relay_state"]);self.assertEqual("NONE",files["agents/relay/REPO_STATE.yaml"]["active_ep"]["state"]);bootstrap_apply(root,files);self.assertEqual([],cold_start(root)[0]);with self.assertRaises(FileExistsError):bootstrap_apply(root,files)
+    def test_v2_inventory_and_reconciliation_do_not_auto_create_ep(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);p=root/"agents/chains/CHAIN-1/endpoints/EP-OLD.md";p.parent.mkdir(parents=True);p.write_text("legacy",encoding="utf-8");a=root/"agents/chains/CHAIN-1/ACTIVE.md";a.write_text("active",encoding="utf-8")
+            inventory=build_inventory(root);self.assertEqual(1,inventory["counts"]["endpoints"]);recon=migration_build(inventory,"inventory.yaml");self.assertEqual("NEEDS_RECONCILIATION",recon["status"]);self.assertIsNone(recon["first_v25_ep"]["ep_id"])
+if __name__=="__main__":unittest.main()
