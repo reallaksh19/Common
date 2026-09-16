@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """P-K contract validation: authority manifest, run reports, comparison, two-product package."""
-import json, sys, tempfile, warnings
+import json, runpy, sys, tempfile, warnings
 from pathlib import Path
 
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -26,6 +26,8 @@ NAMES = [
     "physics-cold-start-run-report.schema.json",
     "physics-cold-start-comparison.schema.json",
     "physics-generation-authority-manifest.schema.json",
+    "physics-engineering-scope-binding.schema.json",
+    "physics-cold-start-engineering-readiness.schema.json",
 ]
 STORE = {n: load(C / n) for n in NAMES}
 REGISTRY = Registry().with_resources(
@@ -68,6 +70,9 @@ with tempfile.TemporaryDirectory() as td:
     assert all(comparison["invariants"].values())
     assert no_attempt["summary"]["closure_state"] == "CLOSED"
     assert with_attempts["summary"]["closure_state"] == "CLOSED"
+
+# P-C.5 is a mandatory cold-start contract surface: prove scope-driven Engineering readiness and its falsifiers.
+runpy.run_path(str(ROOT / "tests" / "test_physics_engineering_readiness.py"), run_name="__main__")
 
 print(
     "PHY P-K contract validation: PASS "
