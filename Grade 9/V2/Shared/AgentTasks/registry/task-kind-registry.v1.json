@@ -1,0 +1,79 @@
+{
+  "registry_id": "SHARED-AGENT-TASK-KINDS-v1",
+  "schema_version": "1.0.0",
+  "routing_only": true,
+  "task_kinds": [
+    {
+      "task_kind": "ARCHITECTURE_AUDIT",
+      "promotion_policy": "NO_PROMOTION",
+      "allowed_change_classes": ["DOC", "TEST"],
+      "required_authority_classes": [
+        "LEARNING_ENGINEERING_ARCHITECTURE",
+        "SKP_SCHEMA_ROADMAP",
+        "SKP_SCHEMA_REGISTRY",
+        "SOURCE_GOVERNANCE",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_EVALUATOR",
+        "CROSS_DOMAIN_PROTOCOL",
+        "CROSS_DOMAIN_PROVIDER_REGISTRY",
+        "SUBJECT_GENERATION_AUTHORITY"
+      ],
+      "required_outputs": ["ENGINEERING_PREFLIGHT", "EXECUTION_REPORT"],
+      "blueprint_change_policy": "PROHIBITED_REQUIRES_NEW_INVARIANT_TASK"
+    },
+    {
+      "task_kind": "SUBTOPIC_ENGINEERING",
+      "promotion_policy": "DEFER_TO_BOUND_AUTHORITY",
+      "allowed_change_classes": ["DATA_ONLY", "CONTRACT_OR_SCHEMA", "GENERIC_ENGINE", "SUBJECT_ADAPTER", "TEST", "DOC", "MIGRATION"],
+      "required_authority_classes": [
+        "LEARNING_ENGINEERING_ARCHITECTURE",
+        "SKP_SCHEMA_ROADMAP",
+        "SKP_SCHEMA_REGISTRY",
+        "SOURCE_GOVERNANCE",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_EVALUATOR",
+        "CROSS_DOMAIN_PROTOCOL",
+        "CROSS_DOMAIN_PROVIDER_REGISTRY",
+        "SUBJECT_GENERATION_AUTHORITY"
+      ],
+      "required_outputs": ["ENGINEERING_PREFLIGHT", "EXECUTION_REPORT"],
+      "blueprint_change_policy": "PROHIBITED_REQUIRES_NEW_INVARIANT_TASK"
+    },
+    {
+      "task_kind": "RESEARCH_OVERLAY",
+      "promotion_policy": "DEFER_TO_BOUND_AUTHORITY",
+      "allowed_change_classes": ["DATA_ONLY", "CONTRACT_OR_SCHEMA", "SUBJECT_ADAPTER", "TEST", "DOC", "MIGRATION"],
+      "required_authority_classes": [
+        "LEARNING_ENGINEERING_ARCHITECTURE",
+        "SKP_SCHEMA_ROADMAP",
+        "SKP_SCHEMA_REGISTRY",
+        "SOURCE_GOVERNANCE",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_EVALUATOR",
+        "CROSS_DOMAIN_PROTOCOL",
+        "CROSS_DOMAIN_PROVIDER_REGISTRY",
+        "SUBJECT_GENERATION_AUTHORITY"
+      ],
+      "required_outputs": ["ENGINEERING_PREFLIGHT", "EXECUTION_REPORT"],
+      "blueprint_change_policy": "PROHIBITED_REQUIRES_NEW_INVARIANT_TASK"
+    },
+    {
+      "task_kind": "ARCHITECTURE_FALSIFICATION",
+      "promotion_policy": "NO_PROMOTION",
+      "allowed_change_classes": ["TEST", "DOC"],
+      "required_authority_classes": [
+        "LEARNING_ENGINEERING_ARCHITECTURE",
+        "SKP_SCHEMA_ROADMAP",
+        "SKP_SCHEMA_REGISTRY",
+        "SOURCE_GOVERNANCE",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_EVALUATOR",
+        "CROSS_DOMAIN_PROTOCOL",
+        "CROSS_DOMAIN_PROVIDER_REGISTRY",
+        "SUBJECT_GENERATION_AUTHORITY"
+      ],
+      "required_outputs": ["ENGINEERING_PREFLIGHT", "EXECUTION_REPORT"],
+      "blueprint_change_policy": "PROHIBITED_REQUIRES_NEW_INVARIANT_TASK"
+    }
+  ]
+}
