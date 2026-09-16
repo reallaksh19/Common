@@ -1,0 +1,14 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, status, source_inventory, owner_intent, roadmap_mapping, current_position, durable_inputs, benchmarks, history_to_preserve, unresolved_work, first_v25_ep]
+properties:
+  schema_version: {const: relay-v2.5-migration-reconciliation}
+  status: {enum: [NEEDS_RECONCILIATION, RECONCILED]}
+  owner_intent: {type: object}
+  roadmap_mapping: {type: object}
+  current_position: {type: object}
+  durable_inputs: {type: array}
+  benchmarks: {type: array}
+  unresolved_work: {type: array}
+  first_v25_ep: {type: object}
+additionalProperties: true
