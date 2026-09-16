@@ -4,9 +4,11 @@ import argparse
 from pathlib import Path
 from relaylib import load_yaml,print_result
 from validate_repo_state import validate as repo_state
+from validate_repo_profile import validate as repo_profile
 from validate_roadmap import validate as roadmap
 from validate_execution_frontier import validate as frontier
 from validate_ep_self_contained import validate as ep
+from validate_ep_semantics import validate as ep_semantics
 from validate_ep_acceptance_mapping import validate as acceptance
 from validate_ep_staleness import validate as staleness
 from validate_report_contract import validate as report_contract
@@ -28,15 +30,15 @@ from validate_checkpoint_linkage import validate as checkpoint_linkage
 from validate_projection_convergence import validate as projection
 from validate_drift_receipt import validate as drift
 
-ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
-ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
     e=[];w=[]
     try:s=load_yaml(root/"agents/relay/REPO_STATE.yaml")
     except Exception as exc:return [f"repo_state: {exc}"],w
     checks=list(ALWAYS)
-    if s.get("relay_state")=="ACTIVE":checks[3:3]=ACTIVE_EP_ONLY
+    if s.get("relay_state")=="ACTIVE":checks.extend(ACTIVE_EP_ONLY)
     for name,check in checks:
         try:ce,cw=check(root)
         except Exception as exc:ce,cw=[str(exc)],[]
