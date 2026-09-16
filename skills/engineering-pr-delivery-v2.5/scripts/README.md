@@ -33,7 +33,11 @@ Required external projection publication is idempotent: persist a stable `operat
 
 Parallel lane checkpoints use successor mode `JOIN`. `validate_parallel_join.py` verifies the multi-parent baton: every approved lane checkpoint is present, every lane WP is complete, the integration WP is the sole computed frontier, and the integration EP binds the join receipt through `identity.previous_join`.
 
-If one lane becomes invalid before convergence, the active parallel topology is frozen for material writes. `validate_parallel_replan.py` verifies the `PARALLEL_REPLAN` transaction: every old lane receives a `COMPLETE | CARRIED | INVALIDATED` disposition, completed lane checkpoints remain durable, unresolved acceptance/evidence transfers without status/basis loss, the roadmap frontier is recomputed, and the successor route is deterministically `NONE`, `SERIAL`, or a newly Owner-approved `PARALLEL` plan. Replacement EPs/plans bind the receipt through `previous_replan`.
+If one lane becomes invalid before convergence, the active parallel topology is frozen for material writes. `validate_parallel_replan.py` verifies the `PARALLEL_REPLAN` transaction: every old lane receives a `COMPLETE | CARRIED | INVALIDATED` disposition, completed lane checkpoints remain durable, the roadmap frontier is recomputed, and the successor route is deterministically `NONE`, `SERIAL`, or a newly Owner-approved `PARALLEL` plan.
+
+For `CARRIED` and `INVALIDATED` lanes, `unresolved_acceptance` and `evidence` are the complete source inventory and `transfers[]` is an exact partition of that inventory across successor frontier work packages. The validator rejects dropped items, duplicates, status/basis mutation, duplicate transfer targets, and targets outside the recomputed frontier. If several predecessor transfers converge on one successor work package, that EP/lane must inherit their exact aggregate. If one predecessor lane splits across several successor WPs, each new EP/lane inherits only its exact addressed subset. Replacement EPs/plans bind the receipt through `previous_replan`.
+
+After replan, route resolution reads only the current `REPO_STATE.execution_policy.parallel_plan`; stale predecessor-plan branches/worktrees resolve no executable lane unless the new approved plan explicitly reuses that route and the new EP independently passes live Git/material-basis checks.
 
 Safe initialization and migration helpers:
 
