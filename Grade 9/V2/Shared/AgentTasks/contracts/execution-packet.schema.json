@@ -72,7 +72,21 @@
             "subject": {"type": "string"},
             "status": {"type": "string"},
             "runtime_authority": {"type": "boolean"},
-            "current_authority_manifest_ref": {"type": "string"}
+            "current_authority_manifest_ref": {"type": "string"},
+            "generation_authority_scope": {
+              "type": "object",
+              "required": ["task_grade", "declared_grades", "grade_state"],
+              "properties": {
+                "task_grade": {"type": "integer", "minimum": 1},
+                "declared_grades": {
+                  "type": "array",
+                  "items": {"type": "integer", "minimum": 1},
+                  "uniqueItems": true
+                },
+                "grade_state": {"enum": ["MATCH", "MISMATCH", "UNDECLARED"]}
+              },
+              "additionalProperties": false
+            }
           },
           "additionalProperties": false
         }
