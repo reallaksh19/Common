@@ -44,7 +44,7 @@ agents/relay/
   reports/**
   generated/**
 ```
-`REPO_STATE.yaml` is the deterministic bootstrap locator: which roadmap, lifecycle state, current position, execution policy, projection state, readiness state, predecessor baton/join, and what—if anything—can execute now.
+`REPO_STATE.yaml` is the deterministic bootstrap locator: which roadmap, lifecycle state, current position, execution policy, projection state, readiness state, predecessor checkpoint/join/replan baton, and what—if anything—can execute now.
 
 ## Relay lifecycle
 `REPO_STATE.relay_state` is exactly one of:
@@ -67,6 +67,7 @@ TERMINAL     — roadmap work is complete; no material successor exists
 - Issue Graph: GitHub relationship projection.
 - Parallel Plan: Owner-approved router for a multi-node frontier, including lane EPs, isolation and integration semantics.
 - Parallel Join Receipt: multi-parent baton that proves all approved lane checkpoints converged before integration.
+- Parallel Replan Receipt: transaction that retires an invalid parallel topology while retaining completed siblings and transferring unresolved lane custody into a recomputed successor route.
 - Drift Receipt: explicit classification of base-branch movement against the current EP scope and qualification boundary.
 - Projection state: idempotent publication/convergence state for required external coordination surfaces.
 
@@ -104,12 +105,14 @@ Any overlapping write domains require a specific Owner-approved shared-write exc
 
 A completed lane checkpoint uses `successor.mode: JOIN`; it does not claim the integration EP directly. Once every approved lane checkpoint exists and every lane WP is complete, a `PARALLEL_JOIN` receipt must cover all lanes exactly once and prove the integration WP is the sole recomputed frontier. Only then may the integration EP execute as normal `ACTIVE` + `SERIAL` work with `identity.previous_join` pointing to the join receipt. After the integration EP produces its checkpoint, ordinary single-checkpoint serial custody resumes.
 
+If any lane becomes stale, invalid, unauthorized, superseded, or otherwise unable to continue under the approved topology, the old parallel plan loses material-write authority as a whole. Do not let unaffected lanes silently continue under a stale plan. Create a `PARALLEL_REPLAN` receipt as defined in `operating-model/parallel-replan.md`: every predecessor lane is `COMPLETE | CARRIED | INVALIDATED`, completed sibling checkpoints are retained, unresolved acceptance/evidence transfers with exact status/basis, the roadmap frontier is recomputed, and the successor route is selected from frontier cardinality (`NONE`, one serial EP, or a newly Owner-approved parallel plan). The direct successor route references the receipt through `previous_replan`.
+
 Ambiguous branch/worktree routing means no material execution.
 
 ## EP contract
 Every EP contains: identity, `git_basis`, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope.allowed, scope.prohibited, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract and successor_relay.
 
-`identity.previous_checkpoint` ties ordinary serial/lane execution to the durable checkpoint baton. The first EP uses `NONE`. An integration EP following a fork uses `identity.previous_join` and leaves `previous_checkpoint: NONE`. Every serial EP and every parallel lane EP must be executable without chat context. Every acceptance criterion maps to verification.
+Exactly one durable predecessor baton may be active for an EP: `identity.previous_checkpoint`, `identity.previous_join`, or `identity.previous_replan`. The first EP uses `previous_checkpoint: NONE`. An integration EP following a fork uses `previous_join`; a replacement EP produced by a parallel replan uses `previous_replan` plus `replan_inheritance`, which retains the transferred unresolved acceptance/evidence exactly. Every serial EP and every parallel lane EP must be executable without chat context. Every acceptance criterion maps to verification.
 
 ## Live Git routing and base drift
 Before material writes, run the route/basis checks documented in `operating-model/git-observation.md`.
@@ -210,12 +213,12 @@ Q5 First safe implementation slice
 Each question declares a fixed focus and one or more durable anchors from the incoming EP (phase/work-package IDs, AC IDs, TEST IDs, INPUT IDs or STEP IDs). Historical-domain reuse, unknown anchors, or a `to_phase` that differs from the incoming EP is invalid.
 
 ## Relay durability
-Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP-or-plan/scope/inputs/acceptance must exist and the live execution route/Git basis plus material authority must be reconciled. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor serial EP or approved parallel route/join → successor validation → cold-start PASS → required projection convergence → REPO_STATE readiness update. Code completion alone is not relay completion.
+Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP-or-plan/scope/inputs/acceptance must exist and the live execution route/Git basis plus material authority must be reconciled. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor serial EP, approved parallel route, join, or replan → successor validation → cold-start PASS → required projection convergence → REPO_STATE readiness update. Code completion alone is not relay completion.
 
-For a continuing serial relay, `REPO_STATE.last_checkpoint`, that checkpoint's `SERIAL` successor, `REPO_STATE.current_position/active_ep`, and the active EP's `identity.previous_checkpoint` form one consistent baton link. For a fork, the predecessor checkpoint's `PARALLEL` successor, active plan lane receipts and every lane EP `previous_checkpoint` agree. For convergence, all lane CPs use `JOIN`, the `PARALLEL_JOIN` receipt covers every lane, `REPO_STATE.predecessor_join` names that receipt, and the integration EP uses `previous_join`. For a terminal/idle relay, the final checkpoint uses `successor.mode: NONE`.
+For a continuing serial relay, `REPO_STATE.last_checkpoint`, that checkpoint's `SERIAL` successor, `REPO_STATE.current_position/active_ep`, and the active EP's `identity.previous_checkpoint` form one consistent baton link. For a fork, the predecessor checkpoint's `PARALLEL` successor, active plan lane receipts and every lane EP `previous_checkpoint` agree. For convergence, all lane CPs use `JOIN`, the `PARALLEL_JOIN` receipt covers every lane, `REPO_STATE.predecessor_join` names that receipt, and the integration EP uses `previous_join`. For partial-plan invalidation, `REPO_STATE.predecessor_replan` names the `PARALLEL_REPLAN` receipt and the direct successor EP/plan uses `previous_replan`. These predecessor batons are mutually exclusive. For a terminal/idle relay, the final checkpoint uses `successor.mode: NONE` unless the no-work state is the direct result of a replan transaction.
 
 ## Safe bootstrap and migration
-Bootstrap must not invent executable work. Use a reviewed `BOOTSTRAP_MANIFEST.yaml`; `bootstrap_relay.py` is dry-run by default and `--apply` refuses to overwrite an existing relay. It creates `relay_state: INITIALIZING`, an empty executable frontier, no EP, `material_authority: NONE`, and `repository_ready: false`.
+Bootstrap must not invent executable work. Use a reviewed `BOOTSTRAP_MANIFEST.yaml`; `bootstrap_relay.py` is dry-run by default and `--apply` refuses to overwrite an existing relay. It creates `relay_state: INITIALIZING`, an empty executable frontier, no EP, empty join/replan predecessors, `material_authority: NONE`, and `repository_ready: false`.
 
 V2 migration is evidence-first:
 ```text
@@ -230,7 +233,7 @@ inventory_v2_relay.py
 A V2 endpoint is never automatically promoted to a V2.5 EP and narrative progress is never copied as calculated progress.
 
 ## Human handover
-Always show relay lifecycle, overall roadmap %, current phase %, current serial EP or parallel lane list, material authority, plain-language execution/quality/evidence/stop status, projection publication/convergence state, repository-recovery readiness, projection readiness, full handover readiness, exact next actions, parallel join/integration where applicable, phase-transition YES/NO, new Q1-Q5 when required, and `conversation context required: NO`. Initializing/idle/terminal handovers explicitly say there is no active material EP.
+Always show relay lifecycle, overall roadmap %, current phase %, current serial EP or parallel lane list, material authority, plain-language execution/quality/evidence/stop status, projection publication/convergence state, repository-recovery readiness, projection readiness, full handover readiness, exact next actions, parallel join/integration or replan disposition where applicable, phase-transition YES/NO, new Q1-Q5 when required, and `conversation context required: NO`. Initializing/idle/terminal handovers explicitly say there is no active material EP.
 
 ## Validation and lifecycle entrypoints
 ```bash
@@ -241,6 +244,7 @@ python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-
 python skills/engineering-pr-delivery-v2.5/scripts/validate_projection_convergence.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_drift_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_join.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_replan.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/stress_test_relay.py <repo-root> [<repo-root> ...]
 python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest> <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/inventory_v2_relay.py <repo-root>
