@@ -1162,7 +1162,371 @@ FAMILY-COORD-04 (JEE Advanced):
 
 ---
 
-## 12. Intake Validation Checklist for Future Subtopics
+## 12. Foundation Packet: Conic Sections & Parabolic Geometry (`MATH-CONIC-PARABOLA`)
+
+### 12.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-CONIC-PARABOLA`
+- **Engineering Gate Binding**: `MATH-CONIC-PARABOLA` (Digest-bound closure receipt)
+- **Learner Title**: Conic Sections, Parabola Focus-Directrix Invariant & Tangency Geometry
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Eccentricity Invariant**: A conic section is a parabola if and only if eccentricity $e = \frac{SP}{PM} \equiv 1$ strictly, where $S$ is the focus and $PM$ is the perpendicular distance from point $P$ to the directrix line $L$.
+  2. **Non-Incident Focus Precondition**: The focus $S$ must not lie on the directrix line $L$. If $S \in L$, the locus degenerates into a single straight line through $S$ perpendicular to $L$.
+  3. **Focal Parameter Invariant**: The focal length $a > 0$ strictly. The distance between focus and directrix is $2a$. Latus rectum length is $4a$.
+
+### 12.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-PARAB-01` (`CONCEPT`): Parabola as the geometric locus of a point moving such that its distance from a fixed point (focus $S$) equals its perpendicular distance from a fixed straight line (directrix $L$).
+- `ATOM-PARAB-02` (`INVARIANT`): Standard Four-Form Canonical Coordinates:
+  - $y^2 = 4ax$: Opens right, focus $(a, 0)$, directrix $x = -a$, vertex $(0, 0)$.
+  - $y^2 = -4ax$: Opens left, focus $(-a, 0)$, directrix $x = a$.
+  - $x^2 = 4ay$: Opens up, focus $(0, a)$, directrix $y = -a$.
+  - $x^2 = -4ay$: Opens down, focus $(0, -a)$, directrix $y = a$.
+- `ATOM-PARAB-03` (`RELATION`): Parametric representation: Point $P(t) = (at^2, 2at)$. Tangent line at $t$: $ty = x + at^2$. Focal chord endpoint parameter invariant: If $t_1, t_2$ are endpoints of a focal chord, then $t_1 t_2 = -1$.
+- `ATOM-PARAB-04` (`PROCEDURE`): Tangency Condition: A line $y = mx + c$ touches the parabola $y^2 = 4ax$ if and only if $c = \frac{a}{m}$ (for $m \neq 0$). The point of contact is $\left(\frac{a}{m^2}, \frac{2a}{m}\right)$.
+- `ATOM-PARAB-05` (`STRATEGY`): Optical Reflection Invariant: Any ray parallel to the principal axis of symmetry reflects off the parabolic mirror directly through the focus $S$.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"SP equals PM"* | $SP = PM \iff \sqrt{(x-a)^2 + y^2} = |x+a|$ | Equidistance locus yielding canonical Cartesian equation $y^2 = 4ax$. |
+| *"Focal chord product"* | $t_1 t_2 = -1$ | Harmonic segment property of chords passing through $(a, 0)$. |
+| *"Perpendicular tangents intersect on directrix"* | $m_1 m_2 = -1 \implies x = -a$ | Director circle of parabola is its directrix $x = -a$. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Inverting Axis Orientation in Standard Forms**:
+   - *Flawed Action*: Writing focus of $x^2 = 8y$ as $(2, 0)$.
+   - *Correct Diagnostic Cue*: In $x^2 = 4ay$, the axis of symmetry is vertical ($y$-axis). The focus lies on the $y$-axis at $(0, a) = (0, 2)$, NOT on the $x$-axis.
+2. **Misconception: Applying $c = a/m$ to Vertical Parabolas**:
+   - *Flawed Action*: Stating line $y = mx + c$ touches $x^2 = 4ay$ when $c = a/m$.
+   - *Correct Diagnostic Cue*: The condition $c = a/m$ holds strictly for horizontal parabola $y^2 = 4ax$. For vertical parabola $x^2 = 4ay$, the tangency condition is $c = -am^2$.
+3. **Misconception: Latus Rectum as Arbitrary Focal Segment**:
+   - *Flawed Action*: Measuring the length of an inclined focal chord as $4a$.
+   - *Correct Diagnostic Cue*: The latus rectum is specifically the focal chord *perpendicular* to the axis of symmetry. Any inclined focal chord has length $a(t + 1/t)^2 \ge 4a$.
+
+### 12.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-PARAB-01: Incomplete Focus-Directrix Standard Form Derivation Frame (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Derive the standard equation of parabola y² = 4ax using focus S(a, 0) and directrix x = -a.
+
+Step 1: Let P(x, y) be any point on the parabola.
+        Distance to focus S(a, 0):
+        SP = √[ (x - [ ___ ])² + (y - [ ___ ])² ]
+
+Step 2: Distance to directrix line x + a = 0:
+        PM = | x + [ ___ ] | / √[ 1² + 0² ] = | x + [ ___ ] |
+
+Step 3: Equating SP = PM by definition of parabola (eccentricity e = 1):
+        √[ (x - a)² + y² ] = | x + a |
+
+Step 4: Squaring both sides:
+        (x - a)² + y² = (x + a)²
+        [ x² - [ ___ ]ax + a² ] + y² = [ x² + [ ___ ]ax + a² ]
+
+Step 5: Cancel common terms x² and a² from both sides:
+        -2ax + y² = 2ax
+        y² = 2ax + [ ___ ]ax
+        y² = [ ___ ]ax   (Hence Derived)
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: a; 0
+Step 2: a; a
+Step 4: 2; 2
+Step 5: 2; 4
+```
+
+#### TTU-PARAB-02: Focal Chord Harmonic Mean Geometric Model (Core2A $\to$ Core2B)
+```text
+[BOUNDED VIEWPORT SPECIFICATION]
+Viewport: x ∈ [-3, 8], y ∈ [-6, 6], clip_to_viewport = true
+Parabola: y² = 4x  (a = 1). Focal chord PQ passes through focus S(1, 0).
+Target Condition: If endpoint P has parameter t = 2, find coordinates of Q and length of PQ.
+
+[INCOMPLETE GEOMETRIC TTU]
+Step 1: Endpoint P coordinates: P(t) = (at², 2at) = (1·2², 2·1·2) = ([ ___ ], [ ___ ]).
+Step 2: Focal chord parameter property:
+        t₁ · t₂ = [ ___ ]  ==>  2 · t₂ = -1  ==>  t₂ = [ ___ ] / [ ___ ]
+
+Step 3: Endpoint Q coordinates:
+        x_Q = a · t₂² = 1 · (-1/2)² = [ ___ ] / [ ___ ]
+        y_Q = 2a · t₂ = 2(1)(-1/2) = [ ___ ]
+        Q = ([ ___ ], [ ___ ])
+
+Step 4: Length of focal chord formula:
+        Length PQ = a(t + 1/t)² = 1 · (2 - [ ___ ])² = ( [ ___ ] / 2 )² = [ ___ ] / [ ___ ]
+
+[COMPLETION DERIVATION KEY]
+Step 1: (4, 4)
+Step 2: -1; -1 / 2
+Step 3: 1 / 4; -1; (1/4, -1)
+Step 4: 1/2; 5; 25 / 4 (6.25)
+```
+
+### 12.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-PARAB-01 (Foundation / CBSE):
+  Vertex, focus, axis, directrix equation, and latus rectum length extraction for standard parabolas.
+FAMILY-PARAB-02 (Olympiad / IOQM):
+  Archimedean quadrature of parabola segment (area = 4/3 of inscribed triangle), Poncelet's porism, and focal inequalities.
+FAMILY-PARAB-03 (JEE Main):
+  Tangent and normal equations (y = mx - 2am - am³), point of intersection of perpendicular tangents on directrix, common tangents to parabola and circle.
+FAMILY-PARAB-04 (JEE Advanced):
+  Co-normal points (sum of slopes = 0), circle through feet of three co-normals passing through vertex, and locus of centroids of normal triangles.
+```
+
+---
+
+## 13. Foundation Packet: Calculus Foundations, Limits & Indeterminate Forms (`MATH-CALC-LIMITS`)
+
+### 13.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-CALC-LIMITS`
+- **Engineering Gate Binding**: `MATH-CALC-LIMITS` (Digest-bound closure receipt)
+- **Learner Title**: Calculus Foundations, Limits of Functions & Indeterminate Form Resolution
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Deleted Punctured Neighborhood Precondition**: The limit $\lim_{x \to a} f(x)$ evaluates behavior in a punctured neighborhood $0 < |x - a| < \delta$. The value $f(a)$ at the exact point is entirely irrelevant to the existence or value of the limit.
+  2. **Left-Right Hand Limit Equality Invariant**: $\lim_{x \to a} f(x) = L \iff \lim_{x \to a^-} f(x) = \lim_{x \to a^+} f(x) = L$ where $L \in \mathbb{R}$ is finite.
+  3. **Radian Measure Precondition in Trigonometric Limits**: The fundamental trigonometric limit $\lim_{\theta \to 0} \frac{\sin\theta}{\theta} = 1$ is valid if and only if $\theta$ is measured in **radians**. If $\theta$ is in degrees, the limit is $\frac{\pi}{180}$.
+
+### 13.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-LIM-01` (`CONCEPT`): Limit as local convergence: For every $\varepsilon > 0$ there exists $\delta > 0$ such that $0 < |x - a| < \delta \implies |f(x) - L| < \varepsilon$.
+- `ATOM-LIM-02` (`INVARIANT`): Fundamental Algebraic Standard Limit: $\lim_{x \to a} \frac{x^n - a^n}{x - a} = n a^{n-1}$ for all $n \in \mathbb{Q}$ ($a > 0$).
+- `ATOM-LIM-03` (`RELATION`): Sandwich / Squeeze Theorem: If $g(x) \le f(x) \le h(x)$ in a punctured neighborhood of $a$, and $\lim_{x \to a} g(x) = \lim_{x \to a} h(x) = L$, then $\lim_{x \to a} f(x) = L$.
+- `ATOM-LIM-04` (`PROCEDURE`): Resolution of Indeterminate Form $1^\infty$: $\lim_{x \to a} [f(x)]^{g(x)} = e^{\lim_{x \to a} [f(x) - 1] \cdot g(x)}$ where $\lim f(x) = 1$ and $\lim g(x) = \infty$.
+- `ATOM-LIM-05` (`STRATEGY`): Taylor / Maclaurin series expansion dominance: replacing $\sin x = x - \frac{x^3}{6} + \mathcal{O}(x^5)$, $e^x = 1 + x + \frac{x^2}{2} + \mathcal{O}(x^3)$, $\ln(1+x) = x - \frac{x^2}{2} + \mathcal{O}(x^3)$ to rapidly cancel vanishing lower-order differentials.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Approaches but never reaches"* | $0 < |x - a| < \delta$ | Evaluation in punctured open interval excluding center point. |
+| *"Zero over zero"* | Indeterminate form $\frac{0}{0}$ | Competing vanishing infinitesimals requiring algebraic or series resolution. |
+| *"One to power infinity"* | $1^\infty \implies e^{\lim (f-1)g}$ | Competing rates of exponential growth vs algebraic decay yielding Euler's constant. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Evaluating $f(a)$ Instead of Limit**:
+   - *Flawed Action*: Stating $\lim_{x \to 0} \frac{\sin x}{x}$ is undefined because $\frac{\sin 0}{0} = \frac{0}{0}$.
+   - *Correct Diagnostic Cue*: A limit evaluates the approach in a punctured neighborhood $x \neq 0$. Cancellation of vanishing factors is mathematically rigorous because $x \neq 0$.
+2. **Misconception: Treating $1^\infty$ as Trivial 1**:
+   - *Flawed Action*: Concluding $\lim_{x \to 0} (1 + x)^{1/x} = 1$ because "1 to any power is 1".
+   - *Correct Diagnostic Cue*: The base $(1+x)$ is not identical to constant 1; it is a dynamic quantity approaching 1 at a rate competing with the exponent approaching $\infty$. This tension resolves to Euler's number $e$.
+3. **Misconception: Degree Angle in Trigonometric Limits**:
+   - *Flawed Action*: Computing $\lim_{x \to 0} \frac{\sin x^\circ}{x} = 1$.
+   - *Correct Diagnostic Cue*: The derivative and limit proofs rely on arc length on the unit circle equaling radian angle $\theta$. In degrees, $x^\circ = \frac{\pi x}{180}$ radians, so the limit is $\frac{\pi}{180}$.
+
+### 13.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-LIM-01: Incomplete Rationalization & Algebraic Factorization Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Evaluate lim_{x -> 0} [ √(1 + x) - √(1 - x) ] / x.
+
+Step 1: Check form at x = 0:
+        Numerator: √(1 + 0) - √(1 - 0) = 1 - 1 = [ ___ ]
+        Denominator: [ ___ ]
+        Form is: [ 0/0 / ∞/∞ / 1^∞ ]
+
+Step 2: Multiply numerator and denominator by conjugate:
+        Conjugate of [ √(1+x) - √(1-x) ] is [ √(1+x) + √(1-x) ]
+        Expression = [ (√(1+x) - √(1-x))(√(1+x) + √(1-x)) ] / [ x · (√(1+x) + √(1-x)) ]
+
+Step 3: Simplify numerator using (a - b)(a + b) = a² - b²:
+        Numerator = (1 + x) - (1 - x) = 1 + x - 1 + x = [ ___ ]x
+
+Step 4: Cancel common non-zero factor x (since x -> 0 implies x ≠ 0):
+        Expression = [ ___ ] / [ √(1+x) + √(1-x) ]
+
+Step 5: Evaluate limit by direct substitution:
+        Limit = [ ___ ] / [ √(1+0) + √(1-0) ] = [ ___ ] / (1 + 1) = [ ___ ] / 2 = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: 0; 0; 0/0
+Step 3: 2
+Step 4: 2
+Step 5: 2; 2; 2; 1
+```
+
+#### TTU-LIM-02: Indeterminate Form $1^\infty$ Exponential Decompilation Model (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Evaluate L = lim_{x -> 0} (cos x)^{1/x²}.
+
+Step 1: Check form at x = 0:
+        Base: cos(0) = [ ___ ]
+        Exponent: 1/0² = [ ___ ]
+        Indeterminate form: [ 0/0 / 1^∞ / ∞^0 ]
+
+Step 2: Apply 1^∞ theorem: lim [f(x)]^g(x) = e^{ lim [f(x) - 1] · g(x) }:
+        L = e^K, where K = lim_{x -> 0} [ cos x - [ ___ ] ] · (1 / x²)
+
+Step 3: Express K using half-angle trigonometric identity:
+        1 - cos x = 2 sin²(x/2)  ==>  cos x - 1 = -[ ___ ] sin²(x/2)
+        K = lim_{x -> 0} [ -2 sin²(x/2) ] / x²
+
+Step 4: Regroup into standard limit form [ sin(u) / u ]:
+        K = -2 · lim_{x -> 0} [ sin(x/2) / (x/2) ]² · ( (x/2)² / x² )
+        K = -2 · [ [ ___ ] ]² · ( [ ___ ] / 4 ) = -2 · 1 · (1/4) = -[ ___ ] / [ ___ ]
+
+Step 5: Compute final limit L = e^K:
+        L = e^[ _____ ] = 1 / √e
+
+[COMPLETION DERIVATION KEY]
+Step 1: 1; ∞; 1^∞
+Step 2: 1
+Step 3: 2
+Step 4: 1; 1; 1; 2 (-1/2)
+Step 5: -1/2
+```
+
+### 13.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-LIM-01 (Foundation / CBSE):
+  Basic algebraic limits via factorization and rationalization, standard limits (x^n-a^n)/(x-a) and sin(x)/x, left/right hand limit tests for continuity.
+FAMILY-LIM-02 (Olympiad / IOQM):
+  Cesàro-Stolz theorem for sequence limits, bounding sums via Riemann integration lim sum 1/n f(r/n), and functional equation limits.
+FAMILY-LIM-03 (JEE Main):
+  Trigonometric limits with compound angles, exponential and logarithmic limits lim (e^x-1)/x = 1, evaluation of 1^∞ forms, L'Hôpital's Rule iterations.
+FAMILY-LIM-04 (JEE Advanced):
+  Limits involving greatest integer functions floor(x), fractional part {x}, series expansions with non-canceling higher-order differentials, and asymptotic order analysis.
+```
+
+---
+
+## 14. Foundation Packet: Combinatorics, Permutations & Counting Invariants (`MATH-PERM-COMB`)
+
+### 14.1 Layer 1: Mathematical Core & Non-Negotiable Preconditions
+
+- **Canonical Subtopic ID**: `MATH-PERM-COMB`
+- **Engineering Gate Binding**: `MATH-PERM-COMB` (Digest-bound closure receipt)
+- **Learner Title**: Combinatorics, Fundamental Counting Principles, Permutations & Combinations
+- **Grade Span**: Grade 9 (Foundation) &bull; Grade 10 (Board/Olympiad) &bull; Grade 11 (JEE Main/Advanced)
+- **Non-Negotiable Preconditions**:
+  1. **Strict Discrete Domain Invariant**: $n, r \in \mathbb{N}_0$ with $0 \le r \le n$. Factorial $n! = \prod_{k=1}^n k$ with the axiomatic definition $0! \equiv 1$ (the unique number of ways to order an empty set $\emptyset$).
+  2. **Disjoint Case Mutual Exclusivity (Addition Principle)**: If events $A_1, \dots, A_k$ are pairwise mutually exclusive ($A_i \cap A_j = \emptyset$ for $i \neq j$), the total number of ways to perform any one event is $\sum |A_i|$.
+  3. **Order Sensitivity Trichotomy**:
+     - *Permutations* ($nPr$): Order of selection is distinct and significant ($\{A, B\} \neq \{B, A\}$).
+     - *Combinations* ($nCr$): Order of selection is irrelevant; subsets are unordered ($\{A, B\} \equiv \{B, A\}$).
+
+### 14.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-COMB-01` (`CONCEPT`): Fundamental Principle of Counting (FPC):
+  - Multiplication rule: If operation 1 has $m$ outcomes and operation 2 has $n$ independent outcomes, the composite sequential operation has $m \times n$ outcomes.
+  - Addition rule: If operation can be done via mutually exclusive pathways, total outcomes is $m + n$.
+- `ATOM-COMB-02` (`INVARIANT`): Pascal's Combination Recurrence: $\binom{n}{r} + \binom{n}{r-1} = \binom{n+1}{r}$ for all $1 \le r \le n$. Symmetric property: $\binom{n}{r} = \binom{n}{n-r}$.
+- `ATOM-COMB-03` (`PROCEDURE`): Stars and Bars Multiset Partition Theorem: The number of non-negative integer solutions to $x_1 + x_2 + \dots + x_k = n$ ($x_i \ge 0$) is $\binom{n + k - 1}{k - 1}$. For strictly positive integer solutions ($x_i \ge 1$), it is $\binom{n - 1}{k - 1}$.
+- `ATOM-COMB-04` (`RELATION`): Circular Permutation Reduction: The number of distinct circular arrangements of $n$ distinct objects is $(n-1)!$. If clockwise and counter-clockwise arrangements are indistinguishable (e.g. necklaces/garlands), it is $\frac{(n-1)!}{2}$.
+- `ATOM-COMB-05` (`STRATEGY`): Grouping / String and Gap Methods:
+  - *String method* (objects must be together): Bundle required items into a single mega-element and multiply by internal permutations.
+  - *Gap method* (no two objects may be together): Arrange remaining items first, then place constrained items into the available inter-item gaps.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Arrange in a line"* | $n!$ or $nPr = \frac{n!}{(n-r)!}$ | Ordered bijective injection from $\{1,\dots,r\} \to S$. |
+| *"Select a committee"* | $\binom{n}{r} = \frac{n!}{r!(n-r)!}$ | Unordered subset selection of cardinality $r$. |
+| *"Distribute identical items to distinct boxes"* | $\binom{n+k-1}{k-1}$ | Weak composition / multiset partition via Stars and Bars. |
+
+#### C. Misconception Contrasts
+1. **Misconception: Confusing Addition and Multiplication Rules**:
+   - *Flawed Action*: If a task requires choosing a shirt (3 colors) AND a tie (4 colors), calculating $3 + 4 = 7$.
+   - *Correct Diagnostic Cue*: When actions occur *in conjunction* (successively/jointly), the outcomes multiply: $3 \times 4 = 12$. Addition applies only to *alternative, mutually exclusive* choices (either a shirt OR a tie).
+2. **Misconception: Overcounting via Independent Sequential Selections**:
+   - *Flawed Action*: Selecting 4 people from 10 including at least 1 woman (from 4 women) by picking 1 woman ($\binom{4}{1}$) and then any 3 from the remaining 9 ($\binom{9}{3}$).
+   - *Correct Diagnostic Cue*: Sequential picking labels the chosen elements as "the first woman" and "subsequent people", creating artificial ordering among women and drastically overcounting. Use complementary counting: Total $-$ No Women $= \binom{10}{4} - \binom{6}{4}$.
+3. **Misconception: Dividing by 2 for General Circular Arrangements**:
+   - *Flawed Action*: Dividing by 2 when seating people around a round table.
+   - *Correct Diagnostic Cue*: People have distinct left and right orientations; rotating a table does not flip left and right. Only unoriented physical loops that can be flipped over in 3D (like beads on a necklace) divide by 2: $\frac{(n-1)!}{2}$.
+
+### 14.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-COMB-01: Incomplete Complementary Counting & Gap Method Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: In how many ways can 5 boys and 4 girls be seated in a row such that no two girls are together?
+
+Step 1: Identify method: Constrained items (girls) cannot be adjacent ==> Use [ Gap Method / String Method ].
+Step 2: Arrange the unconstrained items (5 boys) first:
+        Number of ways to seat 5 boys in a row: 5! = [ ___ ]
+
+Step 3: Count available gaps created by 5 boys:
+        _ B1 _ B2 _ B3 _ B4 _ B5 _
+        Number of available gaps = 5 + 1 = [ ___ ] gaps.
+
+Step 4: Select and arrange 4 girls in the available gaps:
+        Number of ways to choose 4 gaps out of 6 and arrange 4 girls:
+        P(6, 4) = 6! / (6 - 4)! = 6! / [ ___ ]! = (6 · 5 · 4 · 3 · 2 · 1) / 2 = [ ___ ]
+
+Step 5: Apply Fundamental Multiplication Principle:
+        Total arrangements = (ways to arrange boys) · (ways to place girls in gaps)
+                           = [ ___ ] · [ ___ ] = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Gap Method
+Step 2: 120
+Step 3: 6
+Step 4: 2; 360
+Step 5: 120; 360; 43200
+```
+
+#### TTU-COMB-02: Stars and Bars Multiset Partitioning Model (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Task: Find the number of non-negative integer solutions to x₁ + x₂ + x₃ + x₄ = 12.
+      Also find the number of strictly positive integer solutions.
+
+Case A: Non-negative integer solutions (x_i ≥ 0):
+Step 1: Identify items n and categories k:
+        n (stars) = [ ___ ],   k (variables) = [ ___ ]
+Step 2: Apply Stars and Bars Theorem 1:
+        Total solutions = C(n + k - 1, k - 1)
+                        = C(12 + 4 - 1, 4 - 1)
+                        = C([ ___ ], [ ___ ])
+Step 3: Calculate numerical value:
+        C(15, 3) = (15 · 14 · 13) / (3 · 2 · 1) = (5 · 7 · 13) = [ ___ ]
+
+Case B: Strictly positive integer solutions (x_i ≥ 1):
+Step 4: Apply Stars and Bars Theorem 2:
+        Total solutions = C(n - 1, k - 1)
+                        = C(12 - 1, 4 - 1)
+                        = C([ ___ ], [ ___ ])
+Step 5: Calculate numerical value:
+        C(11, 3) = (11 · 10 · 9) / (3 · 2 · 1) = (11 · 5 · 3) = [ ___ ]
+
+[COMPLETION DERIVATION KEY]
+Case A:
+Step 1: 12; 4
+Step 2: 15; 3
+Step 3: 455
+Case B:
+Step 4: 11; 3
+Step 5: 165
+```
+
+### 14.4 Layer 4: Problem Families & Transfer Scaffolds
+
+```text
+FAMILY-COMB-01 (Foundation / CBSE):
+  Basic factorial arithmetic, evaluation of nPr and nCr, word arrangements with repeats (e.g. MATHEMATICS), formation of numbers from digits.
+FAMILY-COMB-02 (Olympiad / IOQM):
+  Principle of Inclusion-Exclusion (PIE), derangements D_n, double counting proofs, Catalan numbers C_n = 1/(n+1) C(2n, n), Pigeonhole Principle.
+FAMILY-COMB-03 (JEE Main):
+  Multiset distribution of identical objects (stars and bars), grouping into heaps (dividing by p!), rank of word in dictionary, sum of digits formed.
+FAMILY-COMB-04 (JEE Advanced):
+  Generating functions for integer partitions, Burnside's Lemma for rotational symmetries, grid walk lattice paths avoiding boundary y = x.
+```
+
+---
+
+## 15. Intake Validation Checklist for Future Subtopics
 
 To admit any new mathematics subtopic into the library, it must pass this 6-point intake gate:
 
@@ -1172,6 +1536,7 @@ To admit any new mathematics subtopic into the library, it must pass this 6-poin
 4. **Reconstructable TTU Pair**: At least one complete Concept TTU and one reconstructive Problem TTU with explicit completion keys must be authored in Layer 3.
 5. **Exam Family Mapping**: Clear mapping to at least 2 distinct competitive examination families (e.g. CBSE + JEE Main, or IOQM + JEE Advanced) must be provided in Layer 4.
 6. **Zero Topic Hardcoding**: All metadata, terms, and rules must live in JSON data files; zero topic-specific branch logic may be added to Python engine code.
+
 
 
 

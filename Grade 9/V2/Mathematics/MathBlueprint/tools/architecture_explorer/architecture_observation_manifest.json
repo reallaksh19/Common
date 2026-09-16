@@ -5,8 +5,8 @@
   "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
-  "component_count": 157,
-  "relation_count": 455,
+  "component_count": 159,
+  "relation_count": 456,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -2263,6 +2263,24 @@
         "doc:README.md"
       ]
     },
+    "engine:validate_subtopic_intelligence_library.py": {
+      "component_id": "engine:validate_subtopic_intelligence_library.py",
+      "name": "validate_subtopic_intelligence_library.py",
+      "path": "engine/validate_subtopic_intelligence_library.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Subtopic Intelligence Library",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [
+        "test:test_subtopic_intelligence_library.py"
+      ],
+      "documentation_refs": []
+    },
     "test:test_adaptive_router.py": {
       "component_id": "test:test_adaptive_router.py",
       "name": "test_adaptive_router.py",
@@ -2736,6 +2754,22 @@
       "schema_version": "N/A",
       "title": "Test Stage Receipt Release",
       "authority_domain": "PRODUCT_GOVERNANCE",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_subtopic_intelligence_library.py": {
+      "component_id": "test:test_subtopic_intelligence_library.py",
+      "name": "test_subtopic_intelligence_library.py",
+      "path": "tests/test_subtopic_intelligence_library.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Subtopic Intelligence Library",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
       "maturity_observation": "TEST_FIXTURE",
       "producer_refs": [],
       "validator_refs": [],
@@ -5836,6 +5870,12 @@
       "target": "engine:release_product_governance.py",
       "relation_type": "TESTS",
       "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_subtopic_intelligence_library.py",
+      "target": "engine:validate_subtopic_intelligence_library.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
     }
   ],
   "gap_reports": {
@@ -5892,5 +5932,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:d29eb1d43993c626699d73474546ddb7b470a1a0c2ff5df5f662726ef704da39"
+  "manifest_digest": "sha256:fe35713f5c8b0864496460da5d778725f6bdb83b588ca8f24ef2668eec154cbd"
 }
