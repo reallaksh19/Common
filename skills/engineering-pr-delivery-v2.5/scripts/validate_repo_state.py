@@ -21,12 +21,21 @@ def validate(repo_root:Path):
     current=state.get("current_position") or {};errors+=require(current,["objective","phase","work_package"],"REPO_STATE.current_position")
     active=state.get("active_ep") or {}; errors+=require(active,["id","path","state"],"REPO_STATE.active_ep")
     last=state.get("last_checkpoint") or {}; errors+=require(last,["id","path"],"REPO_STATE.last_checkpoint")
+
     join=state.get("predecessor_join") or {};join_id=join.get("id");join_path=join.get("path")
     if bool(join_id)!=bool(join_path):errors.append("REPO_STATE.predecessor_join requires both id and path or neither")
+    replan=state.get("predecessor_replan") or {};replan_id=replan.get("id");replan_path=replan.get("path")
+    if bool(replan_id)!=bool(replan_path):errors.append("REPO_STATE.predecessor_replan requires both id and path or neither")
+    if join_id and replan_id:errors.append("predecessor_join and predecessor_replan are mutually exclusive")
     if join_id:
         if relay_state!="ACTIVE":errors.append("predecessor_join is valid only for ACTIVE integration work")
         if last.get("id") not in NONE_IDS or last.get("path") not in {None,""}:errors.append("predecessor_join and singular last_checkpoint cannot both be active")
         if not (repo_root/join_path).exists():errors.append(f"REPO_STATE.predecessor_join.path does not exist: {join_path}")
+    if replan_id:
+        if relay_state=="INITIALIZING":errors.append("predecessor_replan is invalid during INITIALIZING")
+        if last.get("id") not in NONE_IDS or last.get("path") not in {None,""}:errors.append("predecessor_replan and singular last_checkpoint cannot both be active")
+        if not (repo_root/replan_path).exists():errors.append(f"REPO_STATE.predecessor_replan.path does not exist: {replan_path}")
+
     projection=state.get("projection") or {};errors+=require(projection,["required","state","operation_id","target","roadmap_revision","execution_ref","receipt","basis"],"REPO_STATE.projection")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["repository_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
