@@ -10,6 +10,7 @@ TESTS = ROOT / "tests"
 sys.path.insert(0, str(ENGINE))
 sys.path.insert(0, str(TESTS))
 
+from compile_chemistry_core_authority import compile_core_authority  # noqa: E402
 from compile_chemistry_learner_gate_projection import (  # noqa: E402
     ChemistryLearnerGateProjectionError,
     compile_learner_gate_projection,
@@ -17,6 +18,7 @@ from compile_chemistry_learner_gate_projection import (  # noqa: E402
     validate_learner_gate_projection,
 )
 from compile_chemistry_semantic_projection import compile_semantic_projection  # noqa: E402
+from test_chemistry_four_core_compilation import payloads  # noqa: E402
 from test_chemistry_semantic_projection_generic import make_packet  # noqa: E402
 
 
@@ -78,6 +80,19 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         self.assertNotIn(prereq_atom["semantic_id"], {row["source_semantic_id"] for row in projection["learner_gates"]})
         self.assertEqual(projection["counts"]["context_semantic_count"], 1)
 
+        realized = [row["obligation_id"] for row in packet["obligations"] if "CORE1A" in row["authorized_modes"]]
+        authority = compile_core_authority(
+            "CORE1A",
+            "SYNTHETIC",
+            payloads()["CORE1A"],
+            packet,
+            realized,
+            authority_id="CHEM-CORE-AUTH-LEARNER-GATE-CONTEXT-TEST",
+            payload_ref="tests/learner-gate-context.json",
+        )
+        self.assertIn(prereq_atom["semantic_id"], authority["learner_gate_closure"]["context_semantic_ids"])
+        self.assertEqual(authority["learner_gate_closure"]["status"], "PASS")
+
     def test_authorized_and_required_modes_are_copied_not_expanded(self):
         packet = make_packet()
         concept = next(row for row in packet["obligations"] if row["kind"] == "CONCEPT")
@@ -88,6 +103,26 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         gate = next(row for row in projection["learner_gates"] if row["source_obligation_id"] == concept["obligation_id"])
         self.assertEqual(gate["authorized_modes"], ["CORE1A", "CORE2A"])
         self.assertEqual(gate["required_realization_modes"], ["CORE1A"])
+
+    def test_core_authority_records_required_and_realized_learner_gate_closure(self):
+        packet = make_packet()
+        projection = compile_learner_gate_projection(packet)
+        realized = [row["obligation_id"] for row in packet["obligations"] if "CORE1A" in row["authorized_modes"]]
+        authority = compile_core_authority(
+            "CORE1A",
+            "SYNTHETIC",
+            payloads()["CORE1A"],
+            packet,
+            realized,
+            authority_id="CHEM-CORE-AUTH-LEARNER-GATE-TEST",
+            payload_ref="tests/learner-gate.json",
+        )
+        closure = authority["learner_gate_closure"]
+        self.assertEqual(closure["status"], "PASS")
+        self.assertEqual(authority["learner_gate_projection_id"], projection["projection_id"])
+        self.assertEqual(closure["authorized_learner_gate_ids"], sorted(row["learner_gate_id"] for row in projection["learner_gates"]))
+        self.assertEqual(closure["required_learner_gate_ids"], closure["realized_learner_gate_ids"])
+        self.assertTrue(closure["metadata_semantic_ids"])
 
     def test_downstream_learner_job_reclassification_fails_canonical_recompile(self):
         packet = make_packet()
