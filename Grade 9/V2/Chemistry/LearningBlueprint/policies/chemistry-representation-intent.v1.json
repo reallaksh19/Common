@@ -1,0 +1,50 @@
+{
+  "policy_id": "CHEM-ENGINEERING-REPRESENTATION-INTENT-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "ENGINEERING_TO_C_H_REPRESENTATION_INTENT",
+  "principles": [
+    "ENGINEERING_OWNS_SCIENTIFIC_REPRESENTATION_SEMANTICS",
+    "C_H_OWNS_PRIMITIVE_AND_PAGE_INTENT_AUTHORITY",
+    "ADAPTERS_MAY_REFERENCE_BUT_NOT_AUTHOR_REPRESENTATION_SEMANTICS",
+    "ADAPTERS_MAY_NOT_SELECT_PRIMITIVES",
+    "TOPIC_NAMES_MAY_NOT_BRANCH_REPRESENTATION_SELECTION",
+    "UNMAPPED_REPRESENTATION_TYPES_FAIL_CLOSED"
+  ],
+  "representation_type_rules": {
+    "JOHNSTONE_TRIPLET_DIAGRAM": {
+      "capability_ref": "CAP-TRANSLATE-PARTICLE-SYMBOL",
+      "primitive_id": "MACRO_PARTICLE_SYMBOLIC_BRIDGE"
+    },
+    "LEWIS_DOT_STRUCTURE": {
+      "capability_ref": "CAP-PARSE-ION-CHARGE",
+      "primitive_id": "FORMULA_ANATOMY_VIEW"
+    },
+    "CRISS_CROSS_SCHEMATIC": {
+      "capability_ref": "CAP-READ-FORMULA",
+      "primitive_id": "FORMULA_ANATOMY_VIEW"
+    },
+    "ATOM_INVENTORY_TABLE": {
+      "capability_ref": "CAP-CHECK-ATOM-CONSERVATION",
+      "primitive_id": "CONSERVATION_LEDGER"
+    },
+    "SPECIES_IDENTITY_MAP": {
+      "capability_ref": "CAP-TRACK-REACTING-SPECIES",
+      "primitive_id": "REACTION_BEFORE_AFTER_MAP"
+    },
+    "OXIDATION_STATE_LANE": {
+      "capability_ref": "CAP-TRACK-OXIDATION-STATE",
+      "primitive_id": "OXIDATION_STATE_LANE"
+    },
+    "AGENT_ROLE_MAP": {
+      "capability_ref": "CAP-ATTACH-SPECIES-ROLE",
+      "primitive_id": "SPECIES_ROLE_MAP"
+    },
+    "ELECTRON_LEDGER": {
+      "capability_ref": "CAP-VERIFY-CHEMICAL-REPRESENTATION",
+      "primitive_id": "FORMULA_EQUATION_CHECK_STRIP"
+    }
+  },
+  "selection_rule": "EXACT_REPRESENTATION_TYPE_TO_GOVERNED_CAPABILITY_AND_PRIMITIVE",
+  "status": "ACTIVE"
+}
