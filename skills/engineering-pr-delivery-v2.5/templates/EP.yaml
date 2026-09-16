@@ -4,6 +4,7 @@ identity:
   branch: "<branch>"
   base_ref: "<commit-or-drift-rule>"
   execution_state: EXECUTABLE
+  previous_checkpoint: NONE
 roadmap_source:
   roadmap_id: "<roadmap-id>"
   roadmap_revision: RM-0001
