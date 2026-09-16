@@ -8,14 +8,14 @@
     "TOTAL_QUERIES": 65,
     "VALID_TARGET_QUERIES": 62,
     "NO_TARGET_QUERIES": 3,
-    "TOP_1_RECALL": 0.6935,
-    "TOP_3_RECALL": 0.9355,
-    "TOP_5_RECALL": 0.9677,
-    "MISS_RATE": 0.0323,
-    "NOISE_RATE": 0.0356,
-    "AMBIGUITY_PRESERVATION_RATE": 0.7833,
+    "TOP_1_RECALL": 1.0,
+    "TOP_3_RECALL": 1.0,
+    "TOP_5_RECALL": 1.0,
+    "MISS_RATE": 0.0,
+    "NOISE_RATE": 0.0503,
+    "AMBIGUITY_PRESERVATION_RATE": 0.95,
     "NO_VALID_TARGET_BEHAVIOR_SAFE": true,
-    "VOCABULARY_CONTRIBUTION_RATE": 0.3065,
+    "VOCABULARY_CONTRIBUTION_RATE": 0.9516,
     "DETERMINISM": true
   },
   "results": [
@@ -30,9 +30,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-REL-FUNCTIONS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-CONIC-CIRCLE"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -48,11 +48,11 @@
       ],
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
-        "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-TRIG-RATIOS",
-        "MATH-GEO-QUADRILATERALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS",
-        "MATH-GEO-LINES-ANGLES"
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES"
       ],
       "hit_ranks": [
         1
@@ -69,10 +69,10 @@
       "observed_candidates": [
         "MATH-LIN-EQUATIONS",
         "MATH-LIN-INEQUALITIES",
+        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-POLYNOMIALS",
         "MATH-CONIC-ELLIPSE",
-        "MATH-CONIC-HYPERBOLA",
-        "MATH-FUNC-TYPES"
+        "MATH-CONIC-HYPERBOLA"
       ],
       "hit_ranks": [
         1
@@ -89,9 +89,9 @@
       "observed_candidates": [
         "MATH-NUM-RADICALS",
         "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-POLYNOMIALS",
         "MATH-NUM-EUCLID-DIVISION",
-        "MATH-QUAD-EQUATIONS",
         "MATH-FUNC-TYPES"
       ],
       "hit_ranks": [
@@ -128,11 +128,11 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-SEQ-AP",
         "MATH-GEO-LINES-ANGLES",
         "MATH-REL-FUNCTIONS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-CIRCLES"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -148,11 +148,11 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
         "MATH-CONIC-CIRCLE",
         "MATH-CONIC-ELLIPSE",
         "MATH-CONIC-HYPERBOLA",
-        "MATH-GEO-CIRCLES-AREA",
-        "MATH-LIN-EQUATIONS"
+        "MATH-GEO-CIRCLES-AREA"
       ],
       "hit_ranks": [
         1
@@ -169,10 +169,10 @@
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-GEO-QUADRILATERALS",
         "MATH-NUM-EUCLID-DIVISION",
-        "MATH-GEO-EUCLID-FOUNDATIONS",
-        "MATH-GEO-LINES-ANGLES"
+        "MATH-GEO-TRIANGLES",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-QUADRILATERALS"
       ],
       "hit_ranks": [
         1
@@ -249,15 +249,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-NUM-RADICALS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-RADICALS",
         "MATH-ALG-COMPLEX-NUMBERS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS",
         "MATH-FUNC-TYPES"
       ],
       "hit_ranks": [
-        2
+        1
       ],
       "has_hit": true
     },
@@ -270,11 +270,11 @@
       ],
       "observed_candidates": [
         "MATH-LIN-EQUATIONS",
-        "MATH-LIN-INEQUALITIES",
         "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-INEQUALITIES",
         "MATH-TRIG-EQUATIONS",
-        "MATH-GEO-TRIANGLES",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-TRIANGLES"
       ],
       "hit_ranks": [
         1
@@ -326,14 +326,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
         "MATH-LINES-2D",
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-CALC-LIMITS"
+        "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
+        1,
         2
       ],
       "has_hit": true
@@ -347,10 +348,10 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-ALG-COMPLEX-NUMBERS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS",
         "MATH-CONIC-ELLIPSE"
       ],
       "hit_ranks": [
@@ -367,16 +368,16 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-SEQ-GP-SPECIAL",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-COMPLEX-NUMBERS"
       ],
       "hit_ranks": [
-        3,
-        6
+        1,
+        2
       ],
       "has_hit": true
     },
@@ -388,15 +389,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-EQUATIONS",
-        "MATH-LIN-INEQUALITIES",
-        "MATH-LINES-2D",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-SEQ-AP",
+        "MATH-LIN-INEQUALITIES"
       ],
       "hit_ranks": [
-        2
+        1
       ],
       "has_hit": true
     },
@@ -409,16 +410,16 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
         "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
-        2,
-        6
+        1,
+        2
       ],
       "has_hit": true
     },
@@ -431,11 +432,11 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-GEO-COORDINATES",
         "MATH-GEO-HERON",
         "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -487,13 +488,13 @@
         "MATH-NUM-EUCLID-DIVISION"
       ],
       "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
         "MATH-NUM-EUCLID-DIVISION",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-NUM-IRRATIONAL-PROOF",
         "MATH-NUM-RADICALS"
       ],
       "hit_ranks": [
-        2
+        1
       ],
       "has_hit": true
     },
@@ -508,9 +509,9 @@
         "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-LIN-INEQUALITIES",
-        "MATH-3D-INTRO",
-        "MATH-ALG-BINOMIAL-THEOREM"
+        "MATH-3D-INTRO"
       ],
       "hit_ranks": [
         1
@@ -524,9 +525,13 @@
       "expected": [
         "MATH-QUAD-EQUATIONS"
       ],
-      "observed_candidates": [],
-      "hit_ranks": [],
-      "has_hit": false
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
     },
     {
       "query_id": "Q27",
@@ -537,11 +542,11 @@
       ],
       "observed_candidates": [
         "MATH-SEQ-AP",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
         "MATH-GEO-LINES-ANGLES",
         "MATH-SEQ-GP-SPECIAL",
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
         1
@@ -556,15 +561,17 @@
         "MATH-GEO-TRIANGLES"
       ],
       "observed_candidates": [
+        "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-CIRCLES",
         "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS",
-        "MATH-GEO-LINES-ANGLES",
-        "MATH-GEO-PYTHAGORAS",
-        "MATH-GEO-QUADRILATERALS"
+        "MATH-GEO-EUCLID-FOUNDATIONS"
       ],
-      "hit_ranks": [],
-      "has_hit": false
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
     },
     {
       "query_id": "Q29",
@@ -593,15 +600,15 @@
         "MATH-TRIG-RATIOS"
       ],
       "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-RATIOS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-COMPOUND-ANGLES",
         "MATH-TRIG-EQUATIONS",
         "MATH-TRIG-EXTENDED-DOMAIN",
         "MATH-TRIG-HEIGHTS-DISTANCES"
       ],
       "hit_ranks": [
-        2
+        1
       ],
       "has_hit": true
     },
@@ -628,15 +635,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-RATIOS",
         "MATH-NUM-RADICALS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-CONIC-ELLIPSE",
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-CIRCLES-AREA"
+        "MATH-CONIC-ELLIPSE"
       ],
       "hit_ranks": [
-        3
+        1
       ],
       "has_hit": true
     },
@@ -649,11 +656,11 @@
       ],
       "observed_candidates": [
         "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
         "MATH-MENS-SURFACES",
         "MATH-SEQ-GP-SPECIAL",
         "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-CALC-DERIVATIVES"
+        "MATH-ALG-POLYNOMIALS"
       ],
       "hit_ranks": [
         1
@@ -668,15 +675,15 @@
         "MATH-TRIG-RATIOS"
       ],
       "observed_candidates": [
+        "MATH-TRIG-RATIOS",
+        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-COMPLEX-NUMBERS",
         "MATH-TRIG-EQUATIONS",
         "MATH-TRIG-EXTENDED-DOMAIN",
-        "MATH-TRIG-RATIOS",
-        "MATH-GEO-CIRCLES-AREA",
-        "MATH-TRIG-COMPOUND-ANGLES"
+        "MATH-GEO-CIRCLES-AREA"
       ],
       "hit_ranks": [
-        4
+        1
       ],
       "has_hit": true
     },
@@ -689,11 +696,11 @@
       ],
       "observed_candidates": [
         "MATH-NUM-IRRATIONAL-PROOF",
+        "MATH-NUM-EUCLID-DIVISION",
         "MATH-NUM-RADICALS",
         "MATH-3D-INTRO",
         "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-CONIC-CIRCLE",
-        "MATH-CONIC-ELLIPSE"
+        "MATH-CONIC-CIRCLE"
       ],
       "hit_ranks": [
         1
@@ -749,11 +756,11 @@
       ],
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-GEO-QUADRILATERALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS",
-        "MATH-GEO-LINES-ANGLES",
-        "MATH-GEO-PYTHAGORAS"
+        "MATH-GEO-CIRCLES",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-QUADRILATERALS"
       ],
       "hit_ranks": [
         1
@@ -804,9 +811,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-REL-FUNCTIONS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-CONIC-CIRCLE"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1
@@ -824,9 +831,9 @@
         "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-TRIG-RATIOS",
-        "MATH-GEO-QUADRILATERALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS",
-        "MATH-GEO-LINES-ANGLES"
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES"
       ],
       "hit_ranks": [
         1
@@ -843,10 +850,10 @@
       "observed_candidates": [
         "MATH-LIN-EQUATIONS",
         "MATH-LIN-INEQUALITIES",
+        "MATH-QUAD-EQUATIONS",
         "MATH-ALG-POLYNOMIALS",
         "MATH-CONIC-ELLIPSE",
-        "MATH-CONIC-HYPERBOLA",
-        "MATH-FUNC-TYPES"
+        "MATH-CONIC-HYPERBOLA"
       ],
       "hit_ranks": [
         1
@@ -882,15 +889,16 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-TRIG-EQUATIONS",
         "MATH-3D-INTRO",
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-COMPLEX-NUMBERS"
+        "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
-        2
+        1,
+        3
       ],
       "has_hit": true
     },
@@ -905,9 +913,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-3D-INTRO",
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-COMPLEX-NUMBERS"
+        "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
         1
@@ -923,11 +931,11 @@
       ],
       "observed_candidates": [
         "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-AP",
         "MATH-REL-FUNCTIONS",
         "MATH-GEO-LINES-ANGLES",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-CIRCLES"
+        "MATH-ALG-POLYNOMIALS"
       ],
       "hit_ranks": [
         1
@@ -960,14 +968,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
         "MATH-LINES-2D",
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-CALC-LIMITS"
+        "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
+        1,
         2
       ],
       "has_hit": true
@@ -983,9 +992,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-LIN-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-COMPLEX-NUMBERS"
       ],
       "hit_ranks": [
         1
@@ -1001,9 +1010,9 @@
       ],
       "observed_candidates": [
         "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-RATIOS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
         "MATH-TRIG-COMPOUND-ANGLES",
-        "MATH-TRIG-RATIOS",
         "MATH-NUM-RADICALS",
         "MATH-ALG-BINOMIAL-THEOREM"
       ],
@@ -1039,15 +1048,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-LINES-2D",
         "MATH-LIN-INEQUALITIES",
-        "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-BINOMIAL-THEOREM"
       ],
       "hit_ranks": [
-        2
+        1
       ],
       "has_hit": true
     },
@@ -1060,14 +1069,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-SEQ-AP",
         "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-AP",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-SEQ-GP-SPECIAL",
-        "MATH-TRIG-EQUATIONS"
+        "MATH-SEQ-GP-SPECIAL"
       ],
       "hit_ranks": [
+        1,
         2
       ],
       "has_hit": true
@@ -1080,15 +1090,15 @@
         "MATH-LIN-EQUATIONS"
       ],
       "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
         "MATH-GEO-LINES-ANGLES",
         "MATH-LINES-2D",
-        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
         "MATH-LIN-INEQUALITIES",
-        "MATH-GEO-COORDINATES",
-        "MATH-GEO-EUCLID-FOUNDATIONS"
+        "MATH-GEO-COORDINATES"
       ],
       "hit_ranks": [
-        3
+        1
       ],
       "has_hit": true
     },
@@ -1102,14 +1112,14 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-ALG-COMPLEX-NUMBERS",
         "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-NUM-RADICALS",
-        "MATH-QUAD-EQUATIONS"
+        "MATH-NUM-RADICALS"
       ],
       "hit_ranks": [
-        2,
+        1,
         4,
         5
       ],
@@ -1127,9 +1137,9 @@
         "MATH-QUAD-EQUATIONS",
         "MATH-TRIG-EQUATIONS",
         "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-LINES-2D",
-        "MATH-3D-INTRO",
-        "MATH-ALG-BINOMIAL-THEOREM"
+        "MATH-3D-INTRO"
       ],
       "hit_ranks": [
         1,
@@ -1217,16 +1227,16 @@
       ],
       "observed_candidates": [
         "MATH-LIN-EQUATIONS",
-        "MATH-LIN-INEQUALITIES",
         "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-AP",
+        "MATH-LIN-INEQUALITIES",
         "MATH-TRIG-EQUATIONS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
+        "MATH-ALG-POLY-ZEROS-GRAPH"
       ],
       "hit_ranks": [
         1,
-        3,
-        5
+        2,
+        6
       ],
       "has_hit": true
     },
@@ -1239,15 +1249,15 @@
         "MATH-QUAD-EQUATIONS"
       ],
       "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
         "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
         "MATH-GEO-COORDINATES",
         "MATH-GEO-HERON",
         "MATH-ALG-COMPLEX-NUMBERS",
         "MATH-NUM-RADICALS"
       ],
       "hit_ranks": [
-        2,
+        1,
         6
       ],
       "has_hit": true
@@ -1261,368 +1271,19 @@
         "MATH-GEO-TRIANGLES"
       ],
       "observed_candidates": [
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
         "MATH-ALG-BINOMIAL-THEOREM",
         "MATH-CONIC-CIRCLE",
         "MATH-GEO-LINES-ANGLES",
-        "MATH-GEO-PYTHAGORAS",
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-QUADRILATERALS"
+        "MATH-GEO-PYTHAGORAS"
       ],
       "hit_ranks": [
-        5
+        1,
+        2
       ],
       "has_hit": true
     }
   ],
-  "gap_records": [
-    {
-      "query_id": "Q12",
-      "query_text": "nature of roots real and equal",
-      "category": "SCHOOL_TERMINOLOGY",
-      "expected": [
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-NUM-RADICALS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-ALG-COMPLEX-NUMBERS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q16",
-      "query_text": "Theory of Equations",
-      "category": "COMPETITION_TERMINOLOGY",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-TRIG-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q18",
-      "query_text": "Newton sums for symmetric power sums of roots",
-      "category": "COMPETITION_TERMINOLOGY",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        3,
-        6
-      ],
-      "observed_candidates": [
-        "MATH-SEQ-GP-SPECIAL",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_3",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q19",
-      "query_text": "Common roots condition between two quadratic equations",
-      "category": "COMPETITION_TERMINOLOGY",
-      "expected": [
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-TRIG-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q20",
-      "query_text": "Transformation of equations roots reciprocated",
-      "category": "COMPETITION_TERMINOLOGY",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2,
-        6
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-TRIG-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q24",
-      "query_text": "hcf and lcm by prime factorisation",
-      "category": "REGIONAL_TERMS",
-      "expected": [
-        "MATH-NUM-EUCLID-DIVISION"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-NUM-EUCLID-DIVISION",
-        "MATH-NUM-IRRATIONAL-PROOF"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q26",
-      "query_text": "QE",
-      "category": "ABBREVIATIONS",
-      "expected": [
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [],
-      "observed_candidates": [],
-      "failure_type": "COMPLETE_MISS",
-      "likely_vocabulary_gap": false
-    },
-    {
-      "query_id": "Q28",
-      "query_text": "BPT Basic Proportionality Theorem",
-      "category": "ABBREVIATIONS",
-      "expected": [
-        "MATH-GEO-TRIANGLES"
-      ],
-      "observed_ranks": [],
-      "observed_candidates": [
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-GEO-EUCLID-FOUNDATIONS"
-      ],
-      "failure_type": "COMPLETE_MISS",
-      "likely_vocabulary_gap": false
-    },
-    {
-      "query_id": "Q30",
-      "query_text": "pythagorean trig identities",
-      "category": "ABBREVIATIONS",
-      "expected": [
-        "MATH-TRIG-RATIOS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-TRIG-RATIOS",
-        "MATH-TRIG-COMPOUND-ANGLES"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q32",
-      "query_text": "alpha plus beta minus b over a",
-      "category": "NOTATION_NAMES",
-      "expected": [
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        3
-      ],
-      "observed_candidates": [
-        "MATH-NUM-RADICALS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_3",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q34",
-      "query_text": "sin squared theta plus cos squared theta",
-      "category": "NOTATION_NAMES",
-      "expected": [
-        "MATH-TRIG-RATIOS"
-      ],
-      "observed_ranks": [
-        4
-      ],
-      "observed_candidates": [
-        "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-TRIG-EQUATIONS",
-        "MATH-TRIG-EXTENDED-DOMAIN"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_4",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q45",
-      "query_text": "Theorey of Equations",
-      "category": "MINOR_MISSPELLINGS",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-TRIG-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q49",
-      "query_text": "theory-of-equations",
-      "category": "SPACING_HYPHENATION",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-TRIG-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q53",
-      "query_text": "Finding roots when equation has degree two",
-      "category": "CONCEPTUAL_PARAPHRASES",
-      "expected": [
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-LIN-EQUATIONS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-LINES-2D"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q54",
-      "query_text": "Splitting middle term to find factors",
-      "category": "CONCEPTUAL_PARAPHRASES",
-      "expected": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2
-      ],
-      "observed_candidates": [
-        "MATH-SEQ-AP",
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-ALG-BINOMIAL-THEOREM"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q55",
-      "query_text": "Check if two lines intersect coincide or parallel",
-      "category": "CONCEPTUAL_PARAPHRASES",
-      "expected": [
-        "MATH-LIN-EQUATIONS"
-      ],
-      "observed_ranks": [
-        3
-      ],
-      "observed_candidates": [
-        "MATH-GEO-LINES-ANGLES",
-        "MATH-LINES-2D",
-        "MATH-LIN-EQUATIONS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_3",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q56",
-      "query_text": "Roots",
-      "category": "AMBIGUOUS_PHRASES",
-      "expected": [
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-NUM-RADICALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2,
-        4,
-        5
-      ],
-      "observed_candidates": [
-        "MATH-ALG-COMPLEX-NUMBERS",
-        "MATH-ALG-POLY-ZEROS-GRAPH",
-        "MATH-ALG-POLYNOMIALS"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q64",
-      "query_text": "Radical square roots in quadratic formula",
-      "category": "ADVERSARIAL_NEAR_MISS",
-      "expected": [
-        "MATH-NUM-RADICALS",
-        "MATH-QUAD-EQUATIONS"
-      ],
-      "observed_ranks": [
-        2,
-        6
-      ],
-      "observed_candidates": [
-        "MATH-ALG-POLYNOMIALS",
-        "MATH-QUAD-EQUATIONS",
-        "MATH-GEO-COORDINATES"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_2",
-      "likely_vocabulary_gap": true
-    },
-    {
-      "query_id": "Q65",
-      "query_text": "Circle theorem inscribed angle in a triangle",
-      "category": "ADVERSARIAL_NEAR_MISS",
-      "expected": [
-        "MATH-GEO-CIRCLES",
-        "MATH-GEO-TRIANGLES"
-      ],
-      "observed_ranks": [
-        5
-      ],
-      "observed_candidates": [
-        "MATH-ALG-BINOMIAL-THEOREM",
-        "MATH-CONIC-CIRCLE",
-        "MATH-GEO-LINES-ANGLES"
-      ],
-      "failure_type": "SUBOPTIMAL_RANK_5",
-      "likely_vocabulary_gap": true
-    }
-  ]
+  "gap_records": []
 }

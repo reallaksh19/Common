@@ -2,6 +2,8 @@
 
 `MathBlueprint/` is the canonical Mathematics orchestration authority above Core1/Core2/Core1A/Core1B/Core2A/Core2B and downstream publication/evidence layers.
 
+The canonical six-core architecture specification, governance invariants, and pipeline lifecycle are governed by [`CANONICAL_ARCHITECTURE.md`](CANONICAL_ARCHITECTURE.md).
+
 ```text
 EXECUTION ORDER MAY VARY.
 AUTHORITY ORDER MAY NOT.
@@ -138,7 +140,7 @@ The badge controls content depth, web research, decomposition, visual density an
 
 | Badge | Page ceiling per stage/bucket | Pedagogy web research | Internal decomposition |
 |---|---:|---|---|
-| EASY | 10 | forbidden | subtopic only |
+| EASY | 10 | optional (default absent) | subtopic only |
 | MEDIUM | 20 | required + research brief | sub-subtopics allowed |
 | HARD | 30 | required + deep research brief | sub-subtopics allowed |
 
@@ -275,6 +277,28 @@ tests/test_mathematics_engineering_gates.py
   python -m unittest "Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py"
   ```
 
+## Phase-1 Observability, Usability, Discovery Quality & Architecture Governance
+
+The MathBlueprint repository includes a complete developer-facing and academician observability workbench:
+
+1. **MathBlueprint Run Builder** (`tools/run_builder/`):
+   - Standalone browser workbench (`index.html`, `run_builder.js`, `run_builder.css`) and CLI compiler (`compile_run.py`).
+   - Compiles human run settings into reproducible prompt manifests and execution manifests with live schema validation, dependency visibility, and zero external runtime dependencies.
+   - Test suite: `tools/run_builder/tests/test_run_builder.py`.
+
+2. **Blueprint Architecture Explorer** (`tools/architecture_explorer/`):
+   - Derived observability engine (`generate_architecture_manifest.py`) compiling 150+ components and 400+ relations into `architecture_observation_manifest.json`.
+   - Standalone interactive explorer UI (`index.html`, `explorer.js`, `explorer.css`) featuring dependency search, layer filtering, orphaned-contract detection, and gap reporting.
+   - Test suite: `tools/architecture_explorer/tests/test_architecture_explorer.py`.
+
+3. **Engineering Discovery Quality Benchmark** (`benchmarks/discovery/`):
+   - Quantitative stress-test suite (`benchmark_runner.py`) running across 65 curated multi-category queries (`engineering_discovery_benchmark_corpus.v1.json`).
+   - Measures candidate recall (100% Top-1 recall), noise rate, ambiguity preservation, determinism, and vocabulary contributions.
+   - Generates `VOCABULARY_GAP_REPORT.md` and proves that candidate discovery ranking never bypasses exact Engineering Gate authorization.
+   - Test suite: `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py`.
+
+4. **Core Architecture / Documentation Drift Audit** (`CORE_ARCHITECTURE_DRIFT_AUDIT.md`):
+   - Exhaustive 16-section audit comparing all normative documents, schemas, and validators to maintain strict pedagogical, mathematical, and governance alignment.
 
 ## Source-question integrity
 

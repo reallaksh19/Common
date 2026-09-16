@@ -6,7 +6,7 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "component_count": 153,
-  "relation_count": 400,
+  "relation_count": 402,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -771,7 +771,7 @@
       "path": "contracts/mathematics-engineering-binding.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-binding.schema",
+      "title": "MathematicsEngineeringBinding",
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -794,7 +794,7 @@
       "path": "contracts/mathematics-engineering-closure-receipt.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-closure-receipt.schema",
+      "title": "MathematicsEngineeringClosureReceipt",
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -814,7 +814,7 @@
       "path": "contracts/mathematics-engineering-discovery-receipt.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.1.0",
-      "title": "mathematics-engineering-discovery-receipt.schema",
+      "title": "MathematicsEngineeringDiscoveryReceipt",
       "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -835,7 +835,7 @@
       "path": "contracts/mathematics-engineering-discovery-request.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-discovery-request.schema",
+      "title": "MathematicsEngineeringDiscoveryRequest",
       "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -856,7 +856,7 @@
       "path": "contracts/mathematics-engineering-discovery-selection.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-discovery-selection.schema",
+      "title": "MathematicsEngineeringDiscoverySelection",
       "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -877,7 +877,7 @@
       "path": "contracts/mathematics-engineering-discovery-vocabulary.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-discovery-vocabulary.schema",
+      "title": "MathematicsEngineeringDiscoveryVocabulary",
       "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -898,7 +898,7 @@
       "path": "contracts/mathematics-engineering-manifest.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-manifest.schema",
+      "title": "MathematicsEngineeringManifest",
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -918,7 +918,7 @@
       "path": "contracts/mathematics-engineering-request.schema.json",
       "component_type": "SCHEMA",
       "schema_version": "1.0.0",
-      "title": "mathematics-engineering-request.schema",
+      "title": "MathematicsEngineeringRequest",
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
       "maturity_observation": "PRODUCTION",
       "producer_refs": [
@@ -2754,7 +2754,8 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
       ]
     },
     "doc:CANONICAL_ENGINEERING_DOMAIN_ASSETS.md": {
@@ -2789,7 +2790,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "doc:DUAL_TRACK_PRODUCT_MODEL.md": {
       "component_id": "doc:DUAL_TRACK_PRODUCT_MODEL.md",
@@ -3019,19 +3022,19 @@
     },
     {
       "source": "engine:blueprint_common.py",
-      "target": "schema:math-learning-run-blueprint.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:blueprint_common.py",
       "target": "schema:math-ground-truth-manifest.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
     {
+      "source": "engine:blueprint_common.py",
+      "target": "schema:math-learning-run-blueprint.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
       "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-learner-capability-state.schema.json",
+      "target": "schema:math-assimilation-demand-build-spec.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3043,13 +3046,13 @@
     },
     {
       "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-cross-validation.schema.json",
+      "target": "schema:math-learner-capability-state.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:build_assimilation_demand.py",
-      "target": "schema:math-assimilation-demand-build-spec.schema.json",
+      "target": "schema:math-cross-validation.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3091,12 +3094,6 @@
     },
     {
       "source": "engine:compile_assimilation_plan.py",
-      "target": "schema:math-assimilation-plan.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_assimilation_plan.py",
       "target": "schema:math-assimilation-demand.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
@@ -3104,6 +3101,12 @@
     {
       "source": "engine:compile_assimilation_plan.py",
       "target": "schema:math-assimilation-plan-build-spec.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_assimilation_plan.py",
+      "target": "schema:math-assimilation-plan.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3193,13 +3196,7 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-request.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-selection.schema.json",
+      "target": "schema:mathematics-engineering-discovery-request.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3211,13 +3208,19 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-request.schema.json",
+      "target": "schema:mathematics-engineering-discovery-vocabulary.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:compile_mathematics_engineering_discovery.py",
-      "target": "schema:mathematics-engineering-discovery-vocabulary.schema.json",
+      "target": "schema:mathematics-engineering-discovery-selection.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_discovery.py",
+      "target": "schema:mathematics-engineering-request.schema.json",
       "relation_type": "PRODUCES",
       "confidence": "DERIVED"
     },
@@ -3232,6 +3235,18 @@
       "target": "engine:compile_mathematics_engineering_workbench.py",
       "relation_type": "IMPORTS",
       "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-engineering-manifest.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:compile_mathematics_engineering_workbench.py",
+      "target": "schema:mathematics-technical-engineering-gate.schema.json",
+      "relation_type": "PRODUCES",
+      "confidence": "DERIVED"
     },
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
@@ -3253,14 +3268,8 @@
     },
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-technical-engineering-gate.schema.json",
-      "relation_type": "PRODUCES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "schema:mathematics-engineering-manifest.schema.json",
-      "relation_type": "PRODUCES",
+      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
+      "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
     {
@@ -3272,12 +3281,6 @@
     {
       "source": "engine:compile_mathematics_engineering_workbench.py",
       "target": "policy:mathematics-technical-engineering-gates.v1.json",
-      "relation_type": "CONSUMES_POLICY",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:compile_mathematics_engineering_workbench.py",
-      "target": "policy:mathematics-engineering-gate-invariants.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
@@ -3397,13 +3400,13 @@
     },
     {
       "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-technical-engineering-gates.v1.json",
+      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:engineering_registry_composition.py",
-      "target": "policy:mathematics-engineering-extension-catalog.v1.json",
+      "target": "policy:mathematics-technical-engineering-gates.v1.json",
       "relation_type": "CONSUMES_POLICY",
       "confidence": "DERIVED"
     },
@@ -3511,13 +3514,13 @@
     },
     {
       "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-owner-override-ledger.schema.json",
+      "target": "schema:math-routing-build-spec.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
     {
       "source": "engine:route_math_learning_run.py",
-      "target": "schema:math-routing-build-spec.schema.json",
+      "target": "schema:math-owner-override-ledger.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
@@ -3577,13 +3580,7 @@
     },
     {
       "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-dual-intelligence-session.schema.json",
-      "relation_type": "CONSUMES",
-      "confidence": "DERIVED"
-    },
-    {
-      "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-cross-validation.schema.json",
+      "target": "schema:math-agent-context-manifest.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
@@ -3595,7 +3592,13 @@
     },
     {
       "source": "engine:run_dual_intelligence.py",
-      "target": "schema:math-agent-context-manifest.schema.json",
+      "target": "schema:math-dual-intelligence-session.schema.json",
+      "relation_type": "CONSUMES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "engine:run_dual_intelligence.py",
+      "target": "schema:math-cross-validation.schema.json",
       "relation_type": "CONSUMES",
       "confidence": "DERIVED"
     },
@@ -4015,13 +4018,13 @@
     },
     {
       "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-learning-run-blueprint.schema.json",
+      "target": "schema:math-ground-truth-manifest.schema.json",
       "relation_type": "EXERCISES_SCHEMA",
       "confidence": "DERIVED"
     },
     {
       "source": "test:test_blueprint_foundation.py",
-      "target": "schema:math-ground-truth-manifest.schema.json",
+      "target": "schema:math-learning-run-blueprint.schema.json",
       "relation_type": "EXERCISES_SCHEMA",
       "confidence": "DERIVED"
     },
@@ -5329,6 +5332,18 @@
     },
     {
       "source": "doc:README.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "doc:GENERATION_CALIBRATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -5436,5 +5451,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:9b2477f45ec1ca2ed62685560249ff166c37590f2e44666063b0f917d8028488"
+  "manifest_digest": "sha256:b10e3c26fb1c824993e331d8eb1a6895327b98c0860f506a601fc5d5671846e0"
 }

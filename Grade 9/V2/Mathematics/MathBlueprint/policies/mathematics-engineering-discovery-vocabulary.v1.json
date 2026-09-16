@@ -15,7 +15,22 @@
         {"phrase": "binomial square", "term_class": "TECHNICAL_TERM"},
         {"phrase": "factorisation", "term_class": "REGIONAL_VARIANT"},
         {"phrase": "factorization", "term_class": "LEARNER_ALIAS"},
-        {"phrase": "polynomials", "term_class": "LEARNER_ALIAS"}
+        {"phrase": "Newton sums for symmetric power sums of roots", "term_class": "COMPETITION_TERM"},
+        {"phrase": "polynomials", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "Splitting middle term to find factors", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "Theory of Equations", "term_class": "COMPETITION_TERM"},
+        {"phrase": "Transformation of equations roots reciprocated", "term_class": "COMPETITION_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-GEO-CIRCLES",
+      "terms": [
+        {"phrase": "circle theorem inscribed angle", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "circle theorem inscribed angle in a triangle", "term_class": "COMPETITION_TERM"},
+        {"phrase": "circle theorems", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "cyclic quadrilaterals", "term_class": "COMPETITION_TERM"},
+        {"phrase": "tangent to a circle", "term_class": "TECHNICAL_TERM"}
       ]
     },
     {
@@ -50,8 +65,24 @@
     },
     {
       "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-GEO-TRIANGLES",
+      "terms": [
+        {"phrase": "Basic Proportionality Theorem", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "BPT", "term_class": "COMMON_ABBREVIATION"},
+        {"phrase": "BPT Basic Proportionality Theorem", "term_class": "COMPETITION_TERM"},
+        {"phrase": "circle theorem inscribed angle in a triangle", "term_class": "COMPETITION_TERM"},
+        {"phrase": "congruence criteria SAS and SSS", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "similarity of triangles", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "Thales theorem", "term_class": "TECHNICAL_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
       "target_scope_ref": "MATH-LIN-EQUATIONS",
       "terms": [
+        {"phrase": "a1 over a2 equals b1 over b2", "term_class": "NOTATION_NAME"},
+        {"phrase": "Check if two lines intersect coincide or parallel", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "consistency of linear equations", "term_class": "TECHNICAL_TERM"},
         {"phrase": "equations in two variables", "term_class": "LEARNER_ALIAS"},
         {"phrase": "linear systems", "term_class": "TECHNICAL_TERM"},
         {"phrase": "pair of linear equations", "term_class": "REGIONAL_VARIANT"},
@@ -68,6 +99,18 @@
         {"phrase": "line equation", "term_class": "LEARNER_ALIAS"},
         {"phrase": "slope intercept form", "term_class": "TECHNICAL_TERM"},
         {"phrase": "straight lines", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-NUM-EUCLID-DIVISION",
+      "terms": [
+        {"phrase": "Euclid division algorithm", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "Euclid division lemma", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "fundamental theorem of arithmetic", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "hcf and lcm by prime factorisation", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "HCF by Euclid algorithm", "term_class": "COMPETITION_TERM"},
+        {"phrase": "prime factorisation", "term_class": "REGIONAL_VARIANT"}
       ]
     },
     {
@@ -89,6 +132,47 @@
         {"phrase": "counting pairs", "term_class": "LEARNER_ALIAS"},
         {"phrase": "nCr", "term_class": "COMMON_ABBREVIATION"},
         {"phrase": "permutations and combinations", "term_class": "LEARNER_ALIAS"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-QUAD-EQUATIONS",
+      "terms": [
+        {"phrase": "alpha plus beta minus b over a", "term_class": "NOTATION_NAME"},
+        {"phrase": "b^2 - 4ac", "term_class": "NOTATION_NAME"},
+        {"phrase": "Common roots condition between two quadratic equations", "term_class": "COMPETITION_TERM"},
+        {"phrase": "discriminant analysis", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "Finding roots when equation has degree two", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "nature of roots real and equal", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "Newton sums for symmetric power sums of roots", "term_class": "COMPETITION_TERM"},
+        {"phrase": "QE", "term_class": "COMMON_ABBREVIATION"},
+        {"phrase": "quadratic equations", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "quadratic formula", "term_class": "TECHNICAL_TERM"},
+        {"phrase": "roots", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "Splitting middle term to find factors", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "Sridharacharya formula", "term_class": "REGIONAL_VARIANT"},
+        {"phrase": "Theory of Equations", "term_class": "COMPETITION_TERM"},
+        {"phrase": "Transformation of equations roots reciprocated", "term_class": "COMPETITION_TERM"},
+        {"phrase": "Vieta relations", "term_class": "COMPETITION_TERM"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-SEQ-AP",
+      "terms": [
+        {"phrase": "AP", "term_class": "COMMON_ABBREVIATION"},
+        {"phrase": "AP nth term and sum", "term_class": "COMPETITION_TERM"},
+        {"phrase": "arithmetic progressions", "term_class": "LEARNER_ALIAS"},
+        {"phrase": "common difference d", "term_class": "NOTATION_NAME"}
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "MATH-TRIG-RATIOS",
+      "terms": [
+        {"phrase": "pythagorean trig identities", "term_class": "COMPETITION_TERM"},
+        {"phrase": "sin squared theta plus cos squared theta", "term_class": "NOTATION_NAME"},
+        {"phrase": "trigonometric ratios", "term_class": "LEARNER_ALIAS"}
       ]
     },
     {
