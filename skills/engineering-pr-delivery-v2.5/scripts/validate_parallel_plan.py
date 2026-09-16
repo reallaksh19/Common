@@ -18,7 +18,7 @@ def _overlap(a:str,b:str)->bool:
     if not a or not b:return True
     return a==b or a.startswith(b+"/") or b.startswith(a+"/") or a in {"*","."} or b in {"*","."}
 
-def _exception_covers(exceptions:list, lane_a:str,lane_b:str,domain_a:str,domain_b:str)->bool:
+def _exception_covers(exceptions:list,lane_a:str,lane_b:str,domain_a:str,domain_b:str)->bool:
     pair={lane_a,lane_b}
     for item in exceptions or []:
         if not isinstance(item,dict):continue
@@ -38,11 +38,12 @@ def validate(root:Path):
     if not path.exists():return [f"parallel plan does not exist: {ref}"],w
     plan=load_yaml(path);e+=require(plan,["schema_version","id","owner_approval","ascii_topology","lanes","shared_write_exceptions","integration","risks","stop_conditions"],"PARALLEL_PLAN")
     if plan.get("schema_version")!="relay-v2.5":e.append("PARALLEL_PLAN.schema_version must be relay-v2.5")
-    replan_id=(s.get("predecessor_replan") or {}).get("id")
+    replan_ref=s.get("predecessor_replan") or {};replan_id=replan_ref.get("id");replan_path=replan_ref.get("path")
     if replan_id not in NONE_IDS:
         if str(plan.get("previous_replan"))!=str(replan_id):e.append("parallel plan previous_replan must match REPO_STATE.predecessor_replan.id")
-    elif plan.get("previous_replan") not in NONE_IDS:
-        e.append("parallel plan previous_replan requires REPO_STATE.predecessor_replan")
+        if str(plan.get("previous_replan_path"))!=str(replan_path):e.append("parallel plan previous_replan_path must match REPO_STATE.predecessor_replan.path")
+    elif plan.get("previous_replan") not in NONE_IDS or plan.get("previous_replan_path") not in {None,""}:
+        e.append("parallel plan previous_replan/previous_replan_path require REPO_STATE.predecessor_replan")
     approval=plan.get("owner_approval") or {}
     if approval.get("approved") is not True or approval.get("authority")!="OWNER":e.append("parallel plan lacks explicit OWNER approval")
     if not str(approval.get("source","")).strip():e.append("parallel plan owner approval requires durable source")
