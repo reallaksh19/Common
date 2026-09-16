@@ -29,6 +29,10 @@ Current stress coverage includes:
 - transfer duplication, omission and evidence-status mutation rejection;
 - replan into a new Owner-approved parallel topology with every new lane bound to `previous_replan`;
 - superseded parallel-plan branches/worktrees resolving no executable route after replan;
+- multi-generation `PLAN -> REPLAN -> PLAN -> REPLAN` history recovery;
+- missing historical replan receipt rejection;
+- historical replan forward-link mismatch rejection;
+- cyclic replan/plan lineage rejection;
 - one-of checkpoint/join/replan predecessor-baton enforcement;
 - bootstrap/migration truth preservation;
 - lifecycle-aware status/handover rendering, including join and replan custody;
