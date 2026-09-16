@@ -64,12 +64,13 @@ properties:
       path: {type: string, minLength: 1}
   qualification:
     type: object
-    required: [required, status, receipt_id, receipt_path]
+    required: [required, status, receipt_id, receipt_path, receipt_digest]
     properties:
       required: {type: boolean}
       status: {enum: [NOT_REQUIRED, PENDING, PASS]}
       receipt_id: {type: [string, 'null']}
       receipt_path: {type: [string, 'null']}
+      receipt_digest: {type: [string, 'null']}
   checks:
     type: object
     required: [baton_semantics, repository_discovery, route_grounding, input_oracle_readiness, scope_understood, report_successor_contract]
