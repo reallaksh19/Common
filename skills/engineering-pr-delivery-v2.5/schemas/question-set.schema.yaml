@@ -6,12 +6,26 @@ properties:
   id: {type: string, pattern: '^QSET-'}
   route:
     type: object
-    required: [ep_id, ep_path, roadmap_revision, work_package, ep_contract_digest]
+    required: [route_key, mode, execution_ref, ep_id, ep_path, plan_id, plan_path, lane_id, roadmap_revision, work_package, ep_contract_digest]
+    properties:
+      route_key: {type: string, minLength: 1}
+      mode: {enum: [SERIAL, PARALLEL_LANE]}
+      execution_ref: {type: string, minLength: 1}
+      ep_id: {type: string, minLength: 1}
+      ep_path: {type: string, minLength: 1}
+      plan_id: {type: [string, 'null']}
+      plan_path: {type: [string, 'null']}
+      lane_id: {type: [string, 'null']}
+      roadmap_revision: {type: string, minLength: 1}
+      work_package: {type: string, minLength: 1}
+      ep_contract_digest: {type: string, pattern: '^sha256:'}
   boundary:
     type: object
     required: [trigger, from_phase, to_phase, changed_dimensions, basis]
     properties:
       trigger: {enum: [PHASE_CHANGED, MATERIAL_QUALIFICATION_BOUNDARY_CHANGED]}
+      from_phase: {type: string, minLength: 1}
+      to_phase: {type: string, minLength: 1}
       changed_dimensions:
         type: array
         minItems: 1
@@ -22,7 +36,12 @@ properties:
     type: array
     minItems: 5
     maxItems: 5
+    items:
+      type: object
+      required: [id, focus, anchors, prompt, required_output_keys, evidence_required]
   prepared_by:
     type: object
     required: [agent_instance_id]
+    properties:
+      agent_instance_id: {type: string, minLength: 1}
 additionalProperties: true
