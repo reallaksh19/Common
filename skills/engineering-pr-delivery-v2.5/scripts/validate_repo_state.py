@@ -47,6 +47,16 @@ def validate(repo_root:Path):
         if not (repo_root/replan_path).exists():errors.append(f"REPO_STATE.predecessor_replan.path does not exist: {replan_path}")
 
     projection=state.get("projection") or {};errors+=require(projection,["required","state","operation_id","target","roadmap_revision","execution_ref","receipt","basis"],"REPO_STATE.projection")
+    adapter=projection.get("adapter");plan=projection.get("plan")
+    if bool(adapter)!=bool(plan):errors.append("REPO_STATE.projection adapter and plan must be declared together")
+    if adapter not in {None,"", "GITHUB_ISSUES"}:errors.append(f"REPO_STATE.projection.adapter unsupported: {adapter}")
+    if adapter=="GITHUB_ISSUES":
+        if projection.get("required") is not True:errors.append("GITHUB_ISSUES adapter requires projection.required=true")
+        if not str(projection.get("operation_id") or "").startswith("GHGEN-"):errors.append("GITHUB_ISSUES projection.operation_id must use GHGEN-* namespace")
+        if not str(projection.get("target") or "").startswith("github:"):errors.append("GITHUB_ISSUES projection.target must use github:<owner/repo>:... form")
+        if not _explicit(plan):errors.append("GITHUB_ISSUES projection.plan must identify current immutable generation")
+        elif not (repo_root/plan).exists():errors.append(f"REPO_STATE.projection.plan does not exist: {plan}")
+    elif plan not in {None,""}:errors.append("projection.plan is only valid with projection.adapter")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["baton_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     if "repository_ready" in readiness:errors.append("REPO_STATE.relay_readiness.repository_ready is retired; use baton_ready for candidate-independent repository custody")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
