@@ -1,0 +1,300 @@
+{
+  "subtopic_id": "PHY-WORK-ENERGY-POWER",
+  "title": "Constant-force work, kinetic and potential energy, work-energy theorem, and power",
+  "domain": "Work and Energy",
+  "scope_state": "ACTIVE",
+  "authority_basis": [
+    {
+      "claim_class": "SOURCE_DEFINED",
+      "source_ref": "provenance/curriculum/PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1.json#scope_assertions/0",
+      "claim_scope": "Current Grade 9 curriculum requires constant-force work, work-energy theorem, kinetic and raised-object potential energy, energy conversion, and power."
+    },
+    {
+      "claim_class": "STANDARD_PHYSICS_DERIVED",
+      "source_ref": "provenance/curriculum/PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1.json#scope_assertions/0",
+      "claim_scope": "The engineering gate makes the required Grade 9 relations explicit with sign, geometry, unit, reference-level, and validity conditions without importing variable-force calculus."
+    }
+  ],
+  "prerequisites": ["PHY-NLM-SECOND-LAW"],
+  "linked_buckets": [],
+  "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "required_invariants": [
+    "INV-WEP-CONSTANT-FORCE-WORK-GEOMETRY",
+    "INV-WEP-WORK-SIGN-FROM-FORCE-DISPLACEMENT",
+    "INV-WEP-WORK-ENERGY-NET-WORK",
+    "INV-WEP-ENERGY-REFERENCE-DECLARED",
+    "INV-WEP-POWER-RATE"
+  ],
+  "concepts": [
+    {
+      "concept_id": "CON-WEP-WORK-TRANSFER",
+      "statement": "For a constant force acting through a displacement, work is the signed energy transfer associated with the component of force along the displacement.",
+      "why_required": "It prevents treating the mere presence or magnitude of a force as sufficient for positive work.",
+      "failure_if_omitted": "Perpendicular or opposing forces can be assigned positive work and energy changes can receive the wrong sign.",
+      "authority_ref": 1
+    },
+    {
+      "concept_id": "CON-WEP-KINETIC-ENERGY",
+      "statement": "Kinetic energy is the scalar energy associated with an object's motion and depends on mass and the square of speed.",
+      "why_required": "The work-energy theorem relates net work to change in this state quantity.",
+      "failure_if_omitted": "Work can be equated directly with speed or momentum without the required energy relation.",
+      "authority_ref": 0
+    },
+    {
+      "concept_id": "CON-WEP-GRAVITATIONAL-POTENTIAL-REFERENCE",
+      "statement": "Near Earth's surface, gravitational potential energy mgh is defined relative to a declared height reference under an approximately uniform gravitational field.",
+      "why_required": "Potential-energy values depend on the chosen zero even though physically relevant changes remain consistent.",
+      "failure_if_omitted": "Absolute potential-energy values can be compared across inconsistent height references or outside the near-Earth model.",
+      "authority_ref": 1
+    },
+    {
+      "concept_id": "CON-WEP-WORK-ENERGY-THEOREM",
+      "statement": "The net work done on the chosen object over a displacement equals the change in that object's kinetic energy.",
+      "why_required": "It connects force-displacement reasoning with before-and-after motion states.",
+      "failure_if_omitted": "A single force can be mistaken for net work or energy changes can be assigned without accounting for all forces doing work.",
+      "authority_ref": 0
+    },
+    {
+      "concept_id": "CON-WEP-POWER-RATE",
+      "statement": "Average power is the rate at which work is done or energy is transferred over an elapsed time interval.",
+      "why_required": "It distinguishes amount of transferred energy from the rate of transfer.",
+      "failure_if_omitted": "Equal work performed over different times can be incorrectly assigned equal power implications without considering duration.",
+      "authority_ref": 0
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "EQ-WEP-WORK-CONSTANT",
+      "expression": "W = F s cos(theta)",
+      "symbols": [
+        {"symbol":"W","name":"work done by the constant force","physical_quantity":"ENERGY_TRANSFER","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"DISPLACEMENT_EVENT","sign_role":"SIGNED_BY_FORCE_DISPLACEMENT_PROJECTION"},
+        {"symbol":"F","name":"constant force magnitude","physical_quantity":"FORCE","domain":"REAL_NONNEGATIVE","unit_dimension":"M L T^-2","reference_frame_role":"FORCE_ON_CHOSEN_OBJECT","sign_role":"NONNEGATIVE_MAGNITUDE"},
+        {"symbol":"s","name":"displacement magnitude","physical_quantity":"DISPLACEMENT_MAGNITUDE","domain":"REAL_NONNEGATIVE","unit_dimension":"L","reference_frame_role":"SAME_EVENT_DISPLACEMENT","sign_role":"NONNEGATIVE_MAGNITUDE"},
+        {"symbol":"theta","name":"angle from displacement direction to force direction","physical_quantity":"ANGLE","domain":"REAL","unit_dimension":"1","reference_frame_role":"COMMON_GEOMETRIC_FRAME","sign_role":"COSINE_DETERMINES_PROJECTION_SIGN"}
+      ],
+      "conditions": ["The force is constant over the displacement", "Force and displacement refer to the same object and event", "theta is the included angle between force and displacement"],
+      "obligations": ["EXPLAIN", "INTERPRET", "REPRESENT", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-KINETIC-ENERGY",
+      "expression": "K = (1/2) m v^2",
+      "symbols": [
+        {"symbol":"K","name":"kinetic energy","physical_quantity":"ENERGY","domain":"REAL_NONNEGATIVE","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_FRAME_AS_SPEED","sign_role":"NONNEGATIVE"},
+        {"symbol":"m","name":"object mass","physical_quantity":"MASS","domain":"REAL_POSITIVE","unit_dimension":"M","reference_frame_role":"OBJECT_PROPERTY","sign_role":"POSITIVE"},
+        {"symbol":"v","name":"speed in the declared frame","physical_quantity":"SPEED","domain":"REAL_NONNEGATIVE","unit_dimension":"L T^-1","reference_frame_role":"DECLARED_INERTIAL_FRAME","sign_role":"NONNEGATIVE_MAGNITUDE"}
+      ],
+      "conditions": ["The same object mass and declared frame are used for the state being evaluated", "Classical nonrelativistic mechanics"],
+      "obligations": ["EXPLAIN", "DERIVE", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-GRAVITATIONAL-PE-NEAR-EARTH",
+      "expression": "U_g = m g h",
+      "symbols": [
+        {"symbol":"U_g","name":"gravitational potential energy relative to chosen zero","physical_quantity":"ENERGY","domain":"REAL_SIGNED_REFERENCE_DEPENDENT","unit_dimension":"M L^2 T^-2","reference_frame_role":"EARTH_FIXED_HEIGHT_REFERENCE","sign_role":"SIGNED_BY_HEIGHT_REFERENCE"},
+        {"symbol":"m","name":"object mass","physical_quantity":"MASS","domain":"REAL_POSITIVE","unit_dimension":"M","reference_frame_role":"OBJECT_PROPERTY","sign_role":"POSITIVE"},
+        {"symbol":"g","name":"local gravitational field magnitude","physical_quantity":"ACCELERATION","domain":"REAL_POSITIVE","unit_dimension":"L T^-2","reference_frame_role":"NEAR_EARTH_LOCAL_VERTICAL","sign_role":"POSITIVE_MAGNITUDE"},
+        {"symbol":"h","name":"height relative to declared zero","physical_quantity":"POSITION_DIFFERENCE","domain":"REAL_SIGNED","unit_dimension":"L","reference_frame_role":"DECLARED_VERTICAL_REFERENCE","sign_role":"SIGNED_RELATIVE_HEIGHT"}
+      ],
+      "conditions": ["Gravitational field magnitude is approximately uniform over the height range", "A height-zero reference is declared"],
+      "obligations": ["EXPLAIN", "DERIVE", "INTERPRET", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-WORK-ENERGY",
+      "expression": "W_net = Delta K",
+      "symbols": [
+        {"symbol":"W_net","name":"net work on the object","physical_quantity":"ENERGY_TRANSFER","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"ALL_WORK_ON_SAME_OBJECT_EVENT","sign_role":"SIGNED_NET_WORK"},
+        {"symbol":"Delta K","name":"change in kinetic energy","physical_quantity":"ENERGY_CHANGE","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_OBJECT_INITIAL_TO_FINAL_STATE","sign_role":"FINAL_MINUS_INITIAL"}
+      ],
+      "conditions": ["All forces doing work on the chosen object are included in W_net", "Initial and final kinetic energies are evaluated in the same declared frame"],
+      "obligations": ["EXPLAIN", "APPLY", "INVERT", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-WEP-AVERAGE-POWER",
+      "expression": "P_avg = W / Delta t",
+      "symbols": [
+        {"symbol":"P_avg","name":"average power","physical_quantity":"POWER","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-3","reference_frame_role":"ENERGY_TRANSFER_INTERVAL","sign_role":"INHERITS_TRANSFER_SIGN"},
+        {"symbol":"W","name":"work or energy transfer over interval","physical_quantity":"ENERGY_TRANSFER","domain":"REAL_SIGNED","unit_dimension":"M L^2 T^-2","reference_frame_role":"SAME_INTERVAL_TRANSFER","sign_role":"SIGNED_TRANSFER"},
+        {"symbol":"Delta t","name":"elapsed time","physical_quantity":"TIME","domain":"REAL_POSITIVE","unit_dimension":"T","reference_frame_role":"SAME_TRANSFER_INTERVAL","sign_role":"POSITIVE_ELAPSED_TIME"}
+      ],
+      "conditions": ["Delta t is positive and covers the same interval over which W is evaluated"],
+      "obligations": ["EXPLAIN", "APPLY", "VERIFY"]
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "COND-WEP-CONSTANT-FORCE-WORK",
+      "condition": "Use W = F s cos(theta) only when the force is constant over the displacement represented by s.",
+      "physical_reason": "A changing force cannot in general be represented by one constant magnitude and angle over the whole path.",
+      "required_for_relations": ["EQ-WEP-WORK-CONSTANT"],
+      "failure_consequence": "The constant-force expression can return an incorrect work value for a variable-force path.",
+      "alternative_model_required": "VARIABLE_FORCE_WORK_MODEL_OUTSIDE_GRADE9_SCOPE"
+    },
+    {
+      "condition_id": "COND-WEP-NEAR-EARTH-PE",
+      "condition": "Use U_g = mgh only over a height range where local g is adequately uniform and the height reference is declared.",
+      "physical_reason": "The mgh relation is the near-Earth uniform-field form of gravitational potential-energy change.",
+      "required_for_relations": ["EQ-WEP-GRAVITATIONAL-PE-NEAR-EARTH"],
+      "failure_consequence": "Potential-energy values can be applied outside their model or against an unstated zero reference.",
+      "alternative_model_required": "GENERAL_GRAVITATIONAL_POTENTIAL_MODEL"
+    },
+    {
+      "condition_id": "COND-WEP-NET-WORK-CUSTODY",
+      "condition": "Work-energy theorem calculations must use the net work from all forces doing work on the same chosen object over the same displacement.",
+      "physical_reason": "Delta K is determined by net work, not by an arbitrary single force contribution.",
+      "required_for_relations": ["EQ-WEP-WORK-ENERGY"],
+      "failure_consequence": "A force contribution can be mistaken for the object's total kinetic-energy change.",
+      "alternative_model_required": "REBUILD_NET_WORK_ACCOUNT"
+    }
+  ],
+  "representations": [
+    {
+      "representation_id": "REP-WEP-FORCE-DISPLACEMENT",
+      "representation_type": "FORCE_DISPLACEMENT_GEOMETRY",
+      "semantic_geometry": "A common-axis diagram shows the chosen object displacement and the constant force vector with the included angle used to determine the force component along displacement.",
+      "mandatory_elements": ["chosen object", "displacement vector", "constant force vector", "included angle"],
+      "mandatory_labels": ["s", "F", "theta"],
+      "forbidden_omissions": ["displacement direction", "force direction", "included angle or explicit parallel/opposite/perpendicular relation"],
+      "must_not_imply": ["every nonzero force does positive work", "a perpendicular force changes kinetic energy through work", "force magnitude alone determines work"],
+      "relation_bindings": ["EQ-WEP-WORK-CONSTANT", "EQ-WEP-WORK-ENERGY"],
+      "concept_bindings": ["CON-WEP-WORK-TRANSFER", "CON-WEP-WORK-ENERGY-THEOREM"],
+      "verification_method": "Project the force onto displacement and check positive, zero, and negative-work limiting geometries before calculating magnitude.",
+      "primitive_registry_refs": ["PHYSICS_2D:VECTOR_CHAIN", "PHYSICS_2D:AXES"]
+    },
+    {
+      "representation_id": "REP-WEP-INITIAL-FINAL-ENERGY-STATE",
+      "representation_type": "STATE_TABLE",
+      "semantic_geometry": "A before-and-after state table binds speed and height to K and U values using one declared frame and one potential-energy reference.",
+      "mandatory_elements": ["initial state", "final state", "speed", "height reference", "kinetic energy", "potential energy"],
+      "mandatory_labels": ["i", "f", "v", "h", "K", "U_g"],
+      "forbidden_omissions": ["initial/final state distinction", "height-zero reference when U_g is used"],
+      "must_not_imply": ["potential energy has an absolute zero independent of reference", "kinetic energy is frame-independent"],
+      "relation_bindings": ["EQ-WEP-KINETIC-ENERGY", "EQ-WEP-GRAVITATIONAL-PE-NEAR-EARTH"],
+      "concept_bindings": ["CON-WEP-KINETIC-ENERGY", "CON-WEP-GRAVITATIONAL-POTENTIAL-REFERENCE"],
+      "verification_method": "Check units and recompute state energies from the bound mass, speed, local g, and declared height reference.",
+      "primitive_registry_refs": []
+    }
+  ],
+  "reasoning_sequence": [
+    {
+      "step_id": "RS-WEP-CHOOSE-OBJECT-EVENT",
+      "sequence": 1,
+      "expert_action": "Identify the object or system being analysed, the initial/final event states, and the displacement over which work is evaluated.",
+      "depends_on": [],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-WEP-WORK-TRANSFER"],
+      "required_relations": [],
+      "failure_if_skipped": "Forces, displacement, and energy states from different objects or intervals can be mixed."
+    },
+    {
+      "step_id": "RS-WEP-WORK-GEOMETRY",
+      "sequence": 2,
+      "expert_action": "Determine the force-displacement geometry and signed work contribution before using a work expression.",
+      "depends_on": ["RS-WEP-CHOOSE-OBJECT-EVENT"],
+      "inferential_jump": "MEDIUM",
+      "required_concepts": ["CON-WEP-WORK-TRANSFER"],
+      "required_relations": ["EQ-WEP-WORK-CONSTANT"],
+      "failure_if_skipped": "Positive, negative, and zero work can be confused."
+    },
+    {
+      "step_id": "RS-WEP-SELECT-ENERGY-RELATION",
+      "sequence": 3,
+      "expert_action": "Choose kinetic, potential, work-energy, or average-power relation only after its state and model conditions are identified.",
+      "depends_on": ["RS-WEP-WORK-GEOMETRY"],
+      "inferential_jump": "MEDIUM",
+      "required_concepts": ["CON-WEP-KINETIC-ENERGY", "CON-WEP-GRAVITATIONAL-POTENTIAL-REFERENCE", "CON-WEP-WORK-ENERGY-THEOREM", "CON-WEP-POWER-RATE"],
+      "required_relations": ["EQ-WEP-KINETIC-ENERGY", "EQ-WEP-GRAVITATIONAL-PE-NEAR-EARTH", "EQ-WEP-WORK-ENERGY", "EQ-WEP-AVERAGE-POWER"],
+      "failure_if_skipped": "A memorised energy formula can be applied to the wrong state, interval, or physical model."
+    },
+    {
+      "step_id": "RS-WEP-VERIFY",
+      "sequence": 4,
+      "expert_action": "Verify energy/power dimensions, work sign, reference consistency, and limiting geometries before accepting the result.",
+      "depends_on": ["RS-WEP-SELECT-ENERGY-RELATION"],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-WEP-WORK-TRANSFER", "CON-WEP-POWER-RATE"],
+      "required_relations": ["EQ-WEP-WORK-CONSTANT", "EQ-WEP-AVERAGE-POWER"],
+      "failure_if_skipped": "Dimensionally or directionally impossible work and power results can survive calculation."
+    }
+  ],
+  "required_transformations": [
+    {
+      "transformation_id": "TR-WEP-SCENARIO-TO-WORK-GEOMETRY",
+      "from_mode": "PHYSICAL_FORCE_DISPLACEMENT_SCENARIO",
+      "to_mode": "SIGNED_CONSTANT_FORCE_WORK_MODEL",
+      "target_core_roles": ["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION", "CORE1B_GENERATIVE_RECONSTRUCTION"],
+      "description": "Translate a force-and-motion description into an explicit force-displacement geometry before calculating work."
+    },
+    {
+      "transformation_id": "TR-WEP-STATES-TO-ENERGY-RELATION",
+      "from_mode": "INITIAL_FINAL_PHYSICAL_STATES",
+      "to_mode": "ENERGY_OR_POWER_EQUATION",
+      "target_core_roles": ["CORE2A_DECLARATIVE_WORKED_PROBLEM", "CORE2B_GENERATIVE_TRANSFER"],
+      "description": "Translate before/after state data into the applicable kinetic, potential, work-energy, or power relation with model conditions retained."
+    }
+  ],
+  "misconceptions": [
+    {
+      "misconception_id": "MIS-WEP-NONZERO-FORCE-MEANS-POSITIVE-WORK",
+      "incorrect_model": "Any nonzero force acting on a moving object necessarily does positive work.",
+      "why_plausible": "Force magnitude is salient while its direction relative to displacement is ignored.",
+      "trigger_contexts": ["normal force on horizontal motion", "opposing friction", "angled pulling force"],
+      "required_counterexample": "A force perpendicular to displacement has cos(90 degrees)=0 and therefore does zero work in the constant-force model.",
+      "required_representation_repair": "Draw force and displacement in one diagram with the included angle explicit.",
+      "required_technical_repair": "Use the force component along displacement to determine signed work.",
+      "verification": "Check theta=0, 90 degrees, and 180 degrees to obtain positive, zero, and negative work respectively."
+    },
+    {
+      "misconception_id": "MIS-WEP-SINGLE-FORCE-EQUALS-DELTA-K",
+      "incorrect_model": "The work done by whichever force is named in a problem always equals the object's kinetic-energy change.",
+      "why_plausible": "The phrase work-energy theorem can be remembered without the qualifier net work.",
+      "trigger_contexts": ["multiple forces", "friction plus applied force", "gravity plus normal/contact forces"],
+      "required_counterexample": "Two forces can do work of opposite signs so one contribution alone differs from W_net and therefore from Delta K.",
+      "required_representation_repair": "List all forces doing work on the same object and interval before summing their contributions.",
+      "required_technical_repair": "Apply W_net = Delta K only after constructing the complete net-work account.",
+      "verification": "Sum all work contributions and compare the result with K_f-K_i."
+    }
+  ],
+  "verifications": ["UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "MODEL_VALIDITY", "SUBSTITUTE_BACK"],
+  "problem_families": [
+    {
+      "family_id": "PF-WEP-CONSTANT-FORCE-WORK",
+      "name": "Signed work and work-energy under a constant force",
+      "recognition_cues": ["constant applied force", "known displacement", "force angle", "initial and final speed", "net work"],
+      "hidden_invariants": ["INV-WEP-CONSTANT-FORCE-WORK-GEOMETRY", "INV-WEP-WORK-SIGN-FROM-FORCE-DISPLACEMENT", "INV-WEP-WORK-ENERGY-NET-WORK"],
+      "first_technical_move": "Fix the analysed object and draw the force-displacement geometry before evaluating any work contribution.",
+      "required_representation": "REP-WEP-FORCE-DISPLACEMENT",
+      "typical_unknowns": ["work", "speed change", "force", "power"],
+      "fatal_errors": ["using force magnitude without projection", "using one force contribution as net work", "mixing height references", "using variable-force calculus in the Grade 9 gate"],
+      "required_capabilities": ["IDENTIFY_FORCE_DISPLACEMENT_GEOMETRY", "COMPUTE_SIGNED_CONSTANT_FORCE_WORK", "APPLY_NET_WORK_ENERGY", "COMPUTE_STATE_ENERGY", "COMPUTE_AVERAGE_POWER"],
+      "transfer_dimensions": ["REPRESENTATION_CHANGE", "SIGN_DIRECTION_REVERSAL", "REVERSED_TARGET", "MULTI_STEP_BRIDGE"]
+    }
+  ],
+  "difficulty_engineering": {
+    "maturity": "ENGINEERING",
+    "provisional_badge": "MEDIUM",
+    "dimensions": {
+      "prerequisite_depth": 2,
+      "element_interactivity": 2,
+      "inferential_jump_severity": 1,
+      "representation_translation": 2,
+      "model_discrimination": 2,
+      "sign_or_frame_sensitivity": 2,
+      "multi_step_dependency": 2,
+      "abstraction": 2,
+      "misconception_density": 2,
+      "synthesis": 1
+    }
+  },
+  "falsification_cases": [
+    {
+      "test_id": "PHY-V3-FAIL-WEP-WORK-01",
+      "authoring_defect": "Remove the force-displacement sign/geometry invariant so nonzero force magnitude alone can be treated as positive work.",
+      "expected_failure_code": "PHY_GATE_REQUIRED_INVARIANT_MISSING"
+    },
+    {
+      "test_id": "PHY-V3-FAIL-WEP-WORK-02",
+      "authoring_defect": "Remove the constant-force model condition while retaining W = F s cos(theta).",
+      "expected_failure_code": "PHY_GATE_MODEL_CONDITION_BINDING_INVALID"
+    }
+  ]
+}
