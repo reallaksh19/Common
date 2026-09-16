@@ -17,6 +17,7 @@
     "binding_registry_digest",
     "required_capability_refs",
     "capability_routes",
+    "technical_gate_requirement_state",
     "engineering_request",
     "engineering_manifest",
     "engineering_closure",
@@ -52,6 +53,7 @@
         }
       }
     },
+    "technical_gate_requirement_state": {"enum": ["NOT_REQUIRED_FOR_THIS_SCOPE", "REQUIRED_AND_READY"]},
     "engineering_request": {"type": "object"},
     "engineering_manifest": {"type": "object"},
     "engineering_closure": {"type": "object"},
