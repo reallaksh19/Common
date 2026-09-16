@@ -1,22 +1,36 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, chat_context_required]
+required: [schema_version, relay_state, repository, roadmap, current_position, execution_policy, active_ep, last_checkpoint, progress, status_planes, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
+  relay_state: {enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]}
   roadmap:
     type: object
     required: [id, revision, path]
   current_position:
     type: object
     required: [objective, phase, work_package]
+    properties:
+      objective: {type: string}
+      phase: {type: string}
+      work_package: {type: string}
+      work_packages:
+        type: array
+        items: {type: string}
+        uniqueItems: true
   execution_policy:
     type: object
     required: [mode]
     properties:
       mode: {enum: [SERIAL, OWNER_APPROVED_PARALLEL]}
+      parallel_plan: {type: string}
   active_ep:
     type: object
     required: [id, path, state]
+    properties:
+      id: {type: [string, 'null']}
+      path: {type: [string, 'null']}
+      state: {enum: [NONE, EXECUTABLE, ACTIVE, ROUTER]}
   last_checkpoint:
     type: object
     required: [id, path]
