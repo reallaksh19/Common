@@ -1,0 +1,133 @@
+{
+  "$id": "skp-schema-roadmap.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Shared SKP Schema Roadmap",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "roadmap_id",
+    "schema_version",
+    "authority_state",
+    "bulk_population_allowed",
+    "bulk_population_state",
+    "global_invariants",
+    "modules",
+    "subject_adapters",
+    "pilots",
+    "activation_requirements"
+  ],
+  "properties": {
+    "roadmap_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "authority_state": {"const": "NON_RUNTIME_DESIGN_AUTHORITY"},
+    "bulk_population_allowed": {"const": false},
+    "bulk_population_state": {"const": "BLOCKED_UNTIL_DIVERSITY_PILOTS_AND_SCHEMA_ACTIVATION"},
+    "global_invariants": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["invariant_id", "statement"],
+        "properties": {
+          "invariant_id": {"type": "string", "pattern": "^LE-[A-Z0-9_-]+$"},
+          "statement": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 15,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "module_id", "layer", "status", "purpose", "depends_on",
+          "target_contract", "runtime_authority", "activation_requirements"
+        ],
+        "properties": {
+          "module_id": {"type": "string", "pattern": "^SKP-[A-Z0-9_-]+$"},
+          "layer": {"enum": ["SHARED_KERNEL", "INFRASTRUCTURE"]},
+          "status": {"enum": ["PLANNED", "PILOT", "VALIDATED", "ACTIVE", "DEPRECATED", "SUPERSEDED"]},
+          "purpose": {"type": "string", "minLength": 10},
+          "depends_on": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^SKP-[A-Z0-9_-]+$"}
+          },
+          "target_contract": {"type": "string", "minLength": 1},
+          "runtime_authority": {"type": "boolean"},
+          "activation_requirements": {
+            "type": "array",
+            "minItems": 3,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 5}
+          }
+        }
+      }
+    },
+    "subject_adapters": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "subject", "status", "current_authority_manifest_ref",
+          "planned_extension_domains", "pilot_refs", "runtime_authority"
+        ],
+        "properties": {
+          "subject": {"enum": ["PHYSICS", "MATHEMATICS", "CHEMISTRY"]},
+          "status": {"enum": ["PLANNED", "PILOT", "VALIDATED", "ACTIVE"]},
+          "current_authority_manifest_ref": {"type": "string", "minLength": 1},
+          "planned_extension_domains": {
+            "type": "array",
+            "minItems": 3,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 3}
+          },
+          "pilot_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^PILOT-[A-Z0-9_-]+$"}
+          },
+          "runtime_authority": {"type": "boolean"}
+        }
+      }
+    },
+    "pilots": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pilot_id", "subject", "target", "engineering_depth",
+          "status", "stress_dimensions", "bulk_population_gate"
+        ],
+        "properties": {
+          "pilot_id": {"type": "string", "pattern": "^PILOT-[A-Z0-9_-]+$"},
+          "subject": {"enum": ["PHYSICS", "MATHEMATICS", "CHEMISTRY"]},
+          "target": {"type": "string", "minLength": 3},
+          "engineering_depth": {"enum": ["FOUNDATION", "STANDARD", "RESEARCH"]},
+          "status": {"enum": ["PLANNED", "IN_PROGRESS", "COMPLETE", "BLOCKED"]},
+          "stress_dimensions": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 3}
+          },
+          "bulk_population_gate": {"const": true}
+        }
+      }
+    },
+    "activation_requirements": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 5}
+    }
+  }
+}
