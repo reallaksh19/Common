@@ -5,8 +5,8 @@
   "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
-  "component_count": 163,
-  "relation_count": 487,
+  "component_count": 164,
+  "relation_count": 488,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -644,7 +644,9 @@
         "engine:route_math_learning_run.py"
       ],
       "policy_refs": [],
-      "test_refs": [],
+      "test_refs": [
+        "test:test_generated_architecture_references.py"
+      ],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
       ]
@@ -2585,6 +2587,22 @@
       "schema_version": "N/A",
       "title": "Test Engineering Visibility Manifest",
       "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
+    },
+    "test:test_generated_architecture_references.py": {
+      "component_id": "test:test_generated_architecture_references.py",
+      "name": "test_generated_architecture_references.py",
+      "path": "tests/test_generated_architecture_references.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Generated Architecture References",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
       "maturity_observation": "TEST_FIXTURE",
       "producer_refs": [],
       "validator_refs": [],
@@ -6035,6 +6053,12 @@
       "confidence": "EXPLICIT"
     },
     {
+      "source": "test:test_generated_architecture_references.py",
+      "target": "schema:math-routing-plan.schema.json",
+      "relation_type": "EXERCISES_SCHEMA",
+      "confidence": "DERIVED"
+    },
+    {
       "source": "test:test_intrinsic_depth_blueprint_validation.py",
       "target": "engine:materialize_intrinsic_depth.py",
       "relation_type": "TESTS",
@@ -6215,5 +6239,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:10541100f9372744a6f7aad7ff46aecb22b855a25a083e12dddf34924300be41"
+  "manifest_digest": "sha256:047b9b315052caf0230f3dfc336fcb7ebb0e624530a7d2be8251fdf3d76d8a48"
 }
