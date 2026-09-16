@@ -18,7 +18,9 @@ sys.path[:0] = [
 from compile_physics_engineering_readiness import (  # noqa: E402
     PhysicsColdStartEngineeringError,
     compile_physics_engineering_readiness,
+    require_problem_semantics,
 )
+from evaluate_readiness import EngineeringGateError  # noqa: E402
 from reconcile_physics_assessment_scope import reconcile  # noqa: E402
 
 
@@ -66,6 +68,7 @@ assert ready["required_capability_refs"] == sorted(set(scope_model["assessed_cap
 assert ready["technical_gate_requirement_state"] == "NOT_REQUIRED_FOR_THIS_SCOPE"
 assert ready["engineering_manifest"]["required_gate_ids"] == []
 assert ready["engineering_closure"]["counts"]["direct_gate_count"] == 0
+require_problem_semantics(ready)
 assert compile_physics_engineering_readiness(copy.deepcopy(scope_model), copy.deepcopy(AUTH), copy.deepcopy(ENG_BIND)) == ready
 
 # Every canonical P-C capability must have an explicit route; adding a new capability cannot silently inherit memory.
@@ -140,8 +143,10 @@ assert zero["engineering_closure"]["counts"] == {
 }
 assert zero["engineering_closure"]["closure_status"] == "READY"
 assert zero["consumer_status"] == "ALLOWED"
+require_problem_semantics(zero)
 
-# Gated scopes take the same generic path and prove actual v3 technical closure; no separate topic branch.
+# A scope with a real technical gate uses the same generic path. Technical closure can be READY while
+# consumption remains BLOCKED because an external-domain prerequisite has no provider-owned receipt.
 gated_scope = copy.deepcopy(scope_model)
 gated_scope["assessed_capability_refs"] = ["PHY-CAP-PROJECTILE-COMPONENTS"]
 gated_scope["required_prerequisite_capability_refs"] = []
@@ -152,11 +157,20 @@ assert gated["engineering_manifest"]["required_gate_ids"] == ["PHY-M2D-PROJECTIL
 assert gated["engineering_closure"]["counts"]["direct_gate_count"] == 1
 assert gated["engineering_closure"]["counts"]["transitive_gate_count"] >= 1
 assert gated["engineering_closure"]["closure_status"] == "READY"
-assert gated["consumer_status"] == "ALLOWED"
+assert gated["domain_closure"]["closure_status"] == "HELD"
+assert any(row["prerequisite_id"] == "MATH-TRIG-RIGHT" for row in gated["domain_closure"]["prerequisites"])
+assert gated["consumer_status"] == "BLOCKED"
+assert gated["readiness_envelope"]["dimensions"]["external_prerequisites"] == "HELD"
+try:
+    require_problem_semantics(gated)
+except EngineeringGateError as exc:
+    assert exc.code == "E_ENG_GATE_CONSUMER_BLOCKED", exc
+else:
+    raise AssertionError("consumer proceeded despite unresolved external-domain prerequisite")
 
 # Generic adapter code may not recognize case IDs, topic names or question IDs.
 text = (ROOT / "engine" / "compile_physics_engineering_readiness.py").read_text(encoding="utf-8")
 for forbidden in ("M2D-SBA-04", "M2D-SBA-05", "Q14", "Q27", "Relative Motion", "Thermodynamics"):
     assert forbidden not in text, f"CASE_LITERAL_LEAK:{forbidden}"
 
-print("Physics cold-start Engineering readiness: PASS (explicit no-gate scopes + real gated scopes -> global Engineering Gate -> PROBLEM_SEMANTICS)")
+print("Physics cold-start Engineering readiness: PASS (explicit zero-gate scopes + gated external holds remain visible and fail closed at consumption)")
