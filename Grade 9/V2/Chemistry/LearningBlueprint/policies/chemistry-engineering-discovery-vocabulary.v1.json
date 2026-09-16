@@ -1,0 +1,1795 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "catalog_id": "CHEM-ENG-DISC-VOCAB-V1",
+  "authority": "NON_AUTHORITATIVE_DISCOVERY_VOCABULARY",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "registry_id": "CHEM-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+  "entries": [
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-SYM-LITERACY",
+      "terms": [
+        {
+          "phrase": "chemical symbols",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "atomic symbols",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "berzelius notation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "atomic number Z",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "mass number A",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "subscript and superscript notation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "diatomic elements",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "symbol literacy",
+          "term_class": "LEARNER_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ION-VALENCY",
+      "terms": [
+        {
+          "phrase": "valency",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "ions and radicals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "polyatomic ions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "cations and anions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "combining capacity",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "variable valency",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrovalency",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "oxidation number vs valency",
+          "term_class": "MISCONCEPTION_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-FORMULA-CONSTRUCTION",
+      "terms": [
+        {
+          "phrase": "chemical formula",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "criss-cross method",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "electroneutrality rule",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "molecular formula writing",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "formula unit mass",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "ionic compound formulas",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "brackets in chemical formulas",
+          "term_class": "NOTATION_NAME"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQ-BALANCING",
+      "terms": [
+        {
+          "phrase": "balancing chemical equations",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "law of conservation of mass",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hit and trial method",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "algebraic balancing method",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "stoichiometric coefficients",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "atom conservation balance",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "subscripts cannot be changed",
+          "term_class": "MISCONCEPTION_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-STATE-SYMBOLS",
+      "terms": [
+        {
+          "phrase": "physical state symbols",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "solid liquid gas aqueous",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "precipitation reactions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "gas evolution reactions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "downward arrow precipitate",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "upward arrow gas evolution",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "aqueous vs liquid state",
+          "term_class": "MISCONCEPTION_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-REACTION-CONDITIONS",
+      "terms": [
+        {
+          "phrase": "reaction conditions",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "catalysts in reactions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "exothermic and endothermic",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "heat symbol delta",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "photochemical reactions sunlight",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrolytic decomposition conditions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "activation energy barrier",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-REP-TRANSLATION",
+      "terms": [
+        {
+          "phrase": "johnstone triplet",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "particulate symbolic macroscopic",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "submicroscopic representation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "macroscopic chemistry",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "particulate nature of matter",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "chemical representation levels",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "molecular visualization",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-CALC-STOICHIOMETRY",
+      "terms": [
+        {
+          "phrase": "mole concept",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "stoichiometric calculations",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "avogadro number",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "molar mass",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "limiting reagent",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "percentage yield",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "molar volume at STP",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "mass to mole conversions",
+          "term_class": "LEARNER_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ACID-BASE-IONS",
+      "terms": [
+        {
+          "phrase": "acids and bases",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "aqueous ionization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hydronium ion H3O+",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hydroxide ion OH-",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "arrhenius acid base theory",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "net ionic neutralization equation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "dry acid gas does not ionize",
+          "term_class": "MISCONCEPTION_ALIAS"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-REDOX-OXIDATION",
+      "terms": [
+        {
+          "phrase": "redox reactions class 10",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "oxidation and reduction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "gain of oxygen loss of hydrogen",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "loss of electrons oxidation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "oxidizing agent and reducing agent",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "corrosion and rancidity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "disproportionation basics",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-MATTER-STATES",
+      "terms": [
+        {
+          "phrase": "states of matter",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "solid liquid gas",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "kinetic particle theory",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "intermolecular spaces",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "compressibility of gases",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "diffusion in liquids and gases",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "brownian motion",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-MATTER-LATENT-HEAT",
+      "terms": [
+        {
+          "phrase": "latent heat",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "latent heat of fusion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "latent heat of vaporization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "evaporative cooling",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "cooling by evaporation",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "sublimation and deposition",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "heating curves and plateau",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-MIXTURE-SEPARATION",
+      "terms": [
+        {
+          "phrase": "mixtures and compounds",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "homogeneous heterogeneous",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "true solutions colloids suspensions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "tyndall effect",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "brownian movement in colloids",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "filtration crystallization distillation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "chromatography separation",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-RUTHERFORD-BOHR",
+      "terms": [
+        {
+          "phrase": "atomic models",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "rutherford gold foil experiment",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "alpha particle scattering",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "nuclear model of atom",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bohr model of hydrogen atom",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "quantized electron energy shells",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "planetary atomic model limits",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-ISOTOPES-ISOBARS",
+      "terms": [
+        {
+          "phrase": "isotopes and isobars",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "fractional atomic mass",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "isotopes of chlorine and hydrogen",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "radioactive isotopes applications",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "isobars same mass number",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "isotones and isoelectronic",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "mass spectrometry abundance",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-RXN-TYPES-DECOMPOSITION",
+      "terms": [
+        {
+          "phrase": "types of chemical reactions",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "combination reaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "thermal decomposition",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrolytic decomposition of water",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "single displacement reaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "double displacement reaction",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "photolytic decomposition silver chloride",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ACID-PH-INDICATORS",
+      "terms": [
+        {
+          "phrase": "pH scale",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "universal indicator",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "litmus phenolphthalein methyl orange",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "negative log hydronium concentration",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pH of strong vs weak acids",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pH in everyday life",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "autoionization of water Kw",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+      "terms": [
+        {
+          "phrase": "salts and preparation",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "chlor alkali process",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bleaching powder CaOCl2",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "baking soda NaHCO3",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "washing soda Na2CO3 10H2O",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "plaster of paris POP CaSO4 half H2O",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "water of crystallization",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-METALS-REACTIVITY-SERIES",
+      "terms": [
+        {
+          "phrase": "reactivity series of metals",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "activity series",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "amphoteric oxides Al2O3 ZnO",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "metal reaction with water and acids",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "aqua regia noble metals",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "corrosion and prevention galvanization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "displacement of hydrogen by metals",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-IONIC-BOND-PROPERTIES",
+      "terms": [
+        {
+          "phrase": "ionic bond formation",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "electrovalent bonding",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electron transfer lewis dots",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "ionic crystal lattice",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "high melting point of ionic salts",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrical conductivity in molten aqueous",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "brittleness of ionic solids",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-METALS-EXTRACTION-METALLURGY",
+      "terms": [
+        {
+          "phrase": "metallurgy extraction of metals",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "ores and minerals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "calcination and roasting",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "reduction with carbon and aluminium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "thermite process",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrolytic refining of copper",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "anode mud in refining",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-CARBON-COVALENT-BONDING",
+      "terms": [
+        {
+          "phrase": "carbon covalent bonding",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "tetravalency of carbon",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "catenation property",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "allotropes diamond graphite fullerenes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "single double triple covalent bonds",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrical conductivity of graphite",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "hybridization pre-concept in carbon",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-CARBON-HOMOLOGOUS-SERIES",
+      "terms": [
+        {
+          "phrase": "homologous series",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "functional groups in carbon compounds",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "alkanes alkenes alkynes general formula",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "alcohol aldehyde ketone carboxylic acid",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "iupac nomenclature class 10",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "structural isomerism in butane pentane",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "CH2 mass increment in series",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-CARBON-COMBUSTION-SOAPS",
+      "terms": [
+        {
+          "phrase": "carbon chemical properties",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "combustion complete incomplete soot",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "oxidation of ethanol to ethanoic acid",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "esterification and sweet smell",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "saponification soap preparation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "micelle formation cleansing action",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hard water scum with soaps vs detergents",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-STOICH-CONCENTRATION-UNITS",
+      "terms": [
+        {
+          "phrase": "concentration units",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "molarity M mol per litre",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "molality m mol per kg solvent",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "mole fraction x",
+          "term_class": "NOTATION_NAME"
+        },
+        {
+          "phrase": "mass percentage ppm",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "dilution law M1V1 equals M2V2",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "temperature dependence of molarity",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "molality independent of temperature",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-STOICH-EMPIRICAL-FORMULA",
+      "terms": [
+        {
+          "phrase": "empirical formula",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "molecular formula n factor",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "percentage elemental composition",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "combustion analysis CxHyOz",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "simplest whole number ratio",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "vapour density molecular mass relation",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "dumas method kjeldahl method",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+      "terms": [
+        {
+          "phrase": "photoelectric effect",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "planck quantum theory E equals h nu",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "einstein photoelectric equation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "work function threshold frequency",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bohr hydrogen radius and energy",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "rydberg formula spectral series",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "lyman balmer paschen brackett pfund",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+      "terms": [
+        {
+          "phrase": "de broglie matter waves",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "lambda equals h over mv",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "heisenberg uncertainty principle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "delta x delta p greater than h over 4pi",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "dual nature of electron",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electron diffraction davisson germer",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "confinement energy zero point",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-QUANTUM-NUMBERS",
+      "terms": [
+        {
+          "phrase": "quantum numbers n l m s",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "principal azimuthal magnetic spin",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "orbital shapes s p d f",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "radial and angular nodes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "radial probability distribution curves",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "orbital angular momentum formula",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "degenerate orbitals in hydrogen vs multielectron",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ATOM-ELECTRONIC-CONFIG",
+      "terms": [
+        {
+          "phrase": "electronic configuration",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "aufbau building up principle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pauli exclusion principle",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hund rule of maximum multiplicity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "n plus l energy rule",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "chromium and copper anomalous configs",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "exchange energy extra stability of half filled",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-PERIODIC-TABLE-TRENDS",
+      "terms": [
+        {
+          "phrase": "periodic trends",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "effective nuclear charge Zeff",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "slater rules shielding screening constant",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "atomic radii covalent van der waals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "ionic radii isoelectronic species",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "lanthanoid contraction d block contraction",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "group and period size variations",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-PERIODIC-IONIZATION-ENERGY",
+      "terms": [
+        {
+          "phrase": "ionization enthalpy trends",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "first second third ionization energies",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "anomalous IE beryllium boron nitrogen oxygen",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "electron gain enthalpy electron affinity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "chlorine fluorine EA anomaly",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "electronegativity pauling mulliken scale",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "metallic nonmetallic amphoteric character",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+      "terms": [
+        {
+          "phrase": "lewis electron dot structures",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "octet rule and exceptions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "expanded octet hypervalent molecules",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electron deficient species BF3 AlCl3",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "formal charge calculation on atoms",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "odd electron molecules NO NO2",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "resonance structures best contributor",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-DIPOLE-RESONANCE",
+      "terms": [
+        {
+          "phrase": "dipole moments mu equals q times d",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "vector addition of bond dipoles",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "percentage ionic character hannay smyth",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "zero dipole moment CO2 BF3 CCl4",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "polar vs nonpolar molecules",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "resonance energy and hybrid structures",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "canonical structures stability rules",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-VSEPR-GEOMETRY",
+      "terms": [
+        {
+          "phrase": "vsepr theory molecular shapes",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "electron pair repulsion lp lp lp bp bp bp",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "steric number electron geometry",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "linear trigonal planar tetrahedral",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bent trigonal pyramidal see saw t shape",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "trigonal bipyramidal octahedral shapes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bond angle distortions ammonia water SF4",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+      "terms": [
+        {
+          "phrase": "valence bond theory hybridization",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "sigma and pi bond directional overlap",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "sp sp2 sp3 sp3d sp3d2 hybrid orbitals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "d orbital involvement in hybridization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "percentage s character and electronegativity",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "bent rule and apicophilicity in PCl5",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "ethane ethene ethyne hybridization models",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-MOT-DIATOMIC",
+      "terms": [
+        {
+          "phrase": "molecular orbital theory MOT",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "lcao linear combination of atomic orbitals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bonding and antibonding molecular orbitals",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bond order formula Nb minus Na over 2",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "paramagnetism of O2 B2",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "homonuclear diatomics H2 to Ne2 energy ordering",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "sp mixing in B2 C2 N2 orbitals",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-BOND-HYDROGEN-BONDING",
+      "terms": [
+        {
+          "phrase": "hydrogen bonding",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "intermolecular vs intramolecular h bond",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "anomalous high boiling point of water HF NH3",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "open cage ice structure lower density",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "o-nitrophenol vs p-nitrophenol volatility",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "dna double helix base pairing h bonds",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "strength of h bond vs covalent bond",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-THERMO-FIRST-LAW-WORK",
+      "terms": [
+        {
+          "phrase": "thermodynamics first law",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "state functions vs path functions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "internal energy delta U equals q plus w",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pv expansion work minus Pext delta V",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "reversible vs irreversible isothermal work",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "work in indicator pv diagrams",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "iupac sign convention heat and work",
+          "term_class": "NOTATION_NAME"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-THERMO-ENTHALPY-HESS",
+      "terms": [
+        {
+          "phrase": "enthalpy delta H",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "delta H equals delta U plus delta ng RT",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "heat capacity Cp and Cv relations",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hess law of constant heat summation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "standard enthalpy of formation combustion",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "bond dissociation enthalpies estimation",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "calorimetry bomb calorimeter heat measurement",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-THERMO-ENTROPY-SECOND-LAW",
+      "terms": [
+        {
+          "phrase": "entropy and second law",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "delta S equals q rev over T",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "entropy change in physical state transitions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "second law total entropy of universe increases",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "third law residual entropy at absolute zero",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "trouton rule entropy of vaporization",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "statistical entropy S equals k ln W",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-THERMO-GIBBS-SPONTANEITY",
+      "terms": [
+        {
+          "phrase": "gibbs free energy delta G",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "delta G equals delta H minus T delta S",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "spontaneity criteria delta G negative",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "temperature dependence of spontaneity",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "relation between delta G standard and Keq",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "delta G standard equals minus RT ln K",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "coupled nonspontaneous reactions",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQUIL-LAW-MASS-ACTION",
+      "terms": [
+        {
+          "phrase": "chemical equilibrium Kc and Kp",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "law of mass action gulberg waage",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "Kp equals Kc times RT to delta ng",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "reaction quotient Qc and direction of shift",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "homogeneous and heterogeneous equilibrium",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "units of equilibrium constants",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "van t hoff isobar equation temperature shift",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQUIL-LE-CHATELIER",
+      "terms": [
+        {
+          "phrase": "le chatelier principle",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "effect of concentration change on shift",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "effect of temperature endothermic exothermic",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "effect of pressure volume gas reactions",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "effect of inert gas addition constant V vs P",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "catalyst does not alter equilibrium position",
+          "term_class": "MISCONCEPTION_ALIAS"
+        },
+        {
+          "phrase": "industrial haber process optimization",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQUIL-IONIC-PH-OSTWALD",
+      "terms": [
+        {
+          "phrase": "ionic equilibrium weak acids bases",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "ostwald dilution law alpha equals sqrt Ka over c",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "acid dissociation constant Ka and pKa",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "base dissociation constant Kb and pKb",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "pH calculation for weak monoprotic acid",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "polyprotic acids Ka1 Ka2 stepwise ionization",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "salt hydrolysis acidic basic neutral pH",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQUIL-BUFFERS-COMMON-ION",
+      "terms": [
+        {
+          "phrase": "buffer solutions",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "common ion effect suppression of ionization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "acidic buffer and basic buffer action",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "henderson hasselbalch equation pH equals pKa",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "buffer capacity and range",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "blood buffer carbonic acid bicarbonate",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "qualitative group analysis precipitation tests",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+      "terms": [
+        {
+          "phrase": "solubility product Ksp",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "ionic product Qsp vs Ksp precipitation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "solubility s calculation AB AB2 A2B3 salts",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "common ion effect on salt solubility",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "fractional precipitation selective separation",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "complex ion formation increasing solubility",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "pH dependent solubility carbonates hydroxides",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-REDOX-BALANCING-CELLS",
+      "terms": [
+        {
+          "phrase": "redox reactions balancing class 11",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "ion electron half reaction method",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "oxidation number balancing method",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "acidic and basic medium balancing rules",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "daniell galvanic electrochemical cell",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "standard electrode potentials electrochemical series",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "nernst equation EMF foundations",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+      "terms": [
+        {
+          "phrase": "organic nomenclature and isomerism",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "iupac rules polyfunctional priority order",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "structural isomerism chain position functional",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "metamerism and tautomerism keto enol",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "geometrical isomerism cis trans E Z stereoisomers",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "conformational isomerism ethane butane newman sawhorse",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "optical activity chiral centers enantiomers",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+      "terms": [
+        {
+          "phrase": "electronic displacement effects",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "inductive effect plus I minus I groups",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "resonance mesomeric effect plus M minus M",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electromeric effect temporary polarizability",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "hyperconjugation baker nathan effect no bond resonance",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "alpha hydrogen atoms in alkene hyperconjugation",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "acidity and basicity trends benzoic phenols amines",
+          "term_class": "COMPETITION_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+      "terms": [
+        {
+          "phrase": "reaction intermediates stability",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "carbocations carbenium ions hybridization",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "carbocation stability tertiary secondary primary methyl",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "carbocation rearrangements hydride alkyl shift",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "carbanions stability inductive s character",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "carbon free radicals stability and generation",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "electrophiles and nucleophiles classification",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    },
+    {
+      "target_scope_kind": "ENGINEERING_GATE",
+      "target_scope_ref": "CHEM-HYDROCARBONS-ALKENE-ADDITION",
+      "terms": [
+        {
+          "phrase": "alkene reactions electrophilic addition",
+          "term_class": "LEARNER_ALIAS"
+        },
+        {
+          "phrase": "markovnikov rule addition of HX",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "anti markovnikov kharasch peroxide effect HBr",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "halogenation bromination test vicinal dibromides",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "acid catalyzed hydration of alkenes",
+          "term_class": "TECHNICAL_TERM"
+        },
+        {
+          "phrase": "reductive ozonolysis carbonyl cleavage products",
+          "term_class": "COMPETITION_TERM"
+        },
+        {
+          "phrase": "baeyer reagent cold alkaline KMnO4 oxidation",
+          "term_class": "TECHNICAL_TERM"
+        }
+      ]
+    }
+  ]
+}

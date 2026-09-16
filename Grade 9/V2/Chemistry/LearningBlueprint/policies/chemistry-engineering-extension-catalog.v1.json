@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "catalog_id": "CHEM-ENG-EXT-CATALOG-V1",
+  "base_registry_ref": "policies/chemistry-technical-engineering-gates.v1.json",
+  "base_registry_git_blob_sha": "0880f731adb571d145bb6a6be3ce2d8afad9af2c",
+  "extensions": []
+}

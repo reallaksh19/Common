@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-engineered-domain-admission.schema.json",
+  "title": "ChemistryEngineeredDomainAdmission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "admission_receipt_id",
+    "registry_id",
+    "registry_digest",
+    "evaluated_gate_ids",
+    "admitted_gate_ids",
+    "held_gate_ids",
+    "admission_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "subject": {
+      "const": "CHEMISTRY"
+    },
+    "admission_receipt_id": {
+      "type": "string",
+      "pattern": "^CHEM-ENG-ADM-[A-Z0-9_-]+$"
+    },
+    "registry_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "registry_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "evaluated_gate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "admitted_gate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "held_gate_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "admission_status": {
+      "enum": [
+        "ADMITTED",
+        "HELD",
+        "REJECTED"
+      ]
+    }
+  }
+}
