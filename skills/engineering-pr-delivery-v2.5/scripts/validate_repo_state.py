@@ -46,6 +46,7 @@ def validate(repo_root:Path):
         if not policy.get("parallel_plan"):errors.append("relay_state PARALLEL requires execution_policy.parallel_plan")
         if active.get("state")!="ROUTER":errors.append("relay_state PARALLEL requires active_ep.state ROUTER")
         if active.get("path") not in {None,""}:errors.append("parallel router active_ep.path must be null/empty; lane EPs come from parallel plan")
+        if active.get("continuity_receipt") not in NONE_IDS:errors.append("parallel router does not use singular active_ep.continuity_receipt")
         wps=current.get("work_packages") or []
         if not isinstance(wps,list) or len(wps)<2:errors.append("relay_state PARALLEL requires current_position.work_packages with at least two lanes")
         if current.get("work_package")!="PARALLEL":errors.append("relay_state PARALLEL requires current_position.work_package: PARALLEL")
@@ -55,11 +56,13 @@ def validate(repo_root:Path):
         if current.get("work_packages"):errors.append("non-parallel relay state must not declare current_position.work_packages")
 
     if relay_state=="ACTIVE":
-        if active.get("state") in {None,"NONE","ROUTER"}:errors.append("relay_state ACTIVE requires one active executable EP")
+        if active.get("state") in {None,"NONE","ROUTER"}:errors.append("relay_state ACTIVE requires one active EP or reconciliation route")
         elif active.get("path") and not (repo_root/active["path"]).exists():errors.append(f"REPO_STATE.active_ep.path does not exist: {active['path']}")
+        if active.get("state")=="RECONCILING" and active.get("continuity_receipt") in NONE_IDS:errors.append("active_ep.state RECONCILING requires continuity_receipt")
     elif relay_state in {"INITIALIZING","IDLE","TERMINAL"}:
         if active.get("state")!="NONE":errors.append(f"relay_state {relay_state} requires active_ep.state NONE")
         if active.get("path") not in {None,""}:errors.append(f"relay_state {relay_state} requires active_ep.path null/empty")
+        if active.get("continuity_receipt") not in NONE_IDS:errors.append(f"relay_state {relay_state} must not expose active_ep.continuity_receipt")
     return errors,warnings
 
 def main():
