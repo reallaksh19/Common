@@ -43,7 +43,6 @@ manifest = load(PHYS / "GENERATION_AUTHORITY_MANIFEST.json")
 validator("physics-generation-authority-manifest.schema.json").validate(manifest)
 verify_manifest(manifest)
 
-# every artifact the manifest names must actually exist in the repository
 missing = [rel for rel in list(manifest["authorities"].values()) + list(manifest["engines"].values())
            if not (REPO / rel).exists()]
 assert not missing, missing
@@ -70,14 +69,17 @@ with tempfile.TemporaryDirectory() as td:
     assert all(comparison["invariants"].values())
     assert no_attempt["summary"]["closure_state"] == "CLOSED"
     assert with_attempts["summary"]["closure_state"] == "CLOSED"
+    assert no_attempt["assessment_truth"]["engineering_consumer_status"] == "ALLOWED"
+    assert with_attempts["assessment_truth"]["engineering_consumer_status"] == "ALLOWED"
 
-# P-C.5 is a mandatory cold-start contract surface: prove scope-driven Engineering readiness and its falsifiers.
+# P-C.5 policy/adapter falsifiers plus actual cold-start orchestration custody.
 runpy.run_path(str(ROOT / "tests" / "test_physics_engineering_readiness.py"), run_name="__main__")
+runpy.run_path(str(ROOT / "tests" / "test_physics_engineering_orchestration.py"), run_name="__main__")
 
 print(
     "PHY P-K contract validation: PASS "
     f"({len(manifest['authorities'])} declared authorities, {len(manifest['engines'])} engines, "
-    f"two runs over the same assessment with identical scope digest "
-    f"{no_attempt['assessment_truth']['study_scope_digest'][:16]}, "
+    f"P-C.5 Engineering={no_attempt['assessment_truth']['engineering_consumer_status']}, "
+    f"exact P-C digest {no_attempt['assessment_truth']['assessment_scope_digest'][:16]}, "
     f"{no_attempt['summary']['total_vector_ops']} vector operations per run)"
 )

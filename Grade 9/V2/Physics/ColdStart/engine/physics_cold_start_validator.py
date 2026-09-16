@@ -53,13 +53,13 @@ def validate_report(report, manifest, artifacts=None):
     manual = set(audit["manual_precomputed_inputs_used"])
     for banned, code in (
         ("ScopeAuthority", "GENERATION_STARTS_AFTER_SCOPE_WAS_MANUALLY_DERIVED"),
+        ("EngineeringReadiness", "MANUAL_ENGINEERING_READINESS_REQUIRED"),
         ("LearnerStudyModel", "MANUAL_STUDYMODEL_REQUIRED"),
         ("ProblemFamilyMap", "MANUAL_PROBLEM_FAMILY_MAP_REQUIRED"),
         ("PrefilteredEligibleExternalSet", "GENERATION_STARTS_FROM_PREFILTERED_ELIGIBLE_SET"),
     ):
         if banned in manual:
             fail(code)
-    # every runtime read must be an artifact the manifest actually declares
     declared = set(manifest["authorities"].values()) | set(manifest["engines"].values())
     undeclared = [r for r in reads if r not in declared]
     if undeclared:
@@ -76,6 +76,37 @@ def validate_report(report, manifest, artifacts=None):
         if t["resolution"].strip().lower() in {"agent decided", "by judgement", "chosen by the agent"}:
             fail("FINAL_PAGE_DECISION_WITHOUT_AUTHORITY_TRACE", t["decision_class"])
 
+    truth = report["assessment_truth"]
+    custody = report["input_custody"]
+    stages = report["stage_digests"]
+    if truth["engineering_consumer_status"] != "ALLOWED":
+        fail("ENGINEERING_READINESS_NOT_ALLOWED", truth["engineering_consumer_status"])
+    if stages.get("P_C_assessment_scope") != truth["assessment_scope_digest"]:
+        fail("ENGINEERING_SCOPE_CUSTODY_MISMATCH", "P-C stage digest")
+    if stages.get("P_C5_engineering_readiness") != truth["engineering_readiness_digest"]:
+        fail("ENGINEERING_READINESS_CUSTODY_MISMATCH", "P-C.5 stage digest")
+
+    if artifacts is not None:
+        scope = artifacts.get("assessment_scope_model")
+        readiness = artifacts.get("engineering_readiness")
+        semantics = artifacts.get("problem_semantics")
+        if scope is None or readiness is None or semantics is None:
+            fail("ENGINEERING_READINESS_ARTIFACT_MISSING")
+        if scope["scope_model_digest"] != truth["assessment_scope_digest"]:
+            fail("ENGINEERING_SCOPE_CUSTODY_MISMATCH", "scope artifact")
+        if readiness["readiness_digest"] != "sha256:" + truth["engineering_readiness_digest"]:
+            fail("ENGINEERING_READINESS_CUSTODY_MISMATCH", "readiness artifact")
+        if readiness["scope_model_digest"] != scope["scope_model_digest"]:
+            fail("ENGINEERING_SCOPE_CUSTODY_MISMATCH", "readiness scope binding")
+        if readiness["binding_registry_digest"] != custody["engineering_binding_registry_digest"]:
+            fail("ENGINEERING_SCOPE_BINDING_CUSTODY_MISMATCH")
+        if readiness["consumer_status"] != "ALLOWED":
+            fail("ENGINEERING_READINESS_NOT_ALLOWED", readiness["consumer_status"])
+        if readiness["technical_gate_requirement_state"] != truth["engineering_gate_requirement_state"]:
+            fail("ENGINEERING_READINESS_CUSTODY_MISMATCH", "gate requirement state")
+        if semantics["scope_model_ref"] != scope["scope_model_id"]:
+            fail("P_D_CONSUMED_DIFFERENT_SCOPE_AFTER_ENGINEERING_GATE")
+
     pkg = report["two_product_package"]
     if pkg["product_count"] != 2 or len(pkg["products"]) != 2 or pkg["third_product_created"]:
         fail("THIRD_PRODUCT_PDF_CREATED")
@@ -91,7 +122,7 @@ def validate_report(report, manifest, artifacts=None):
         fail("TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED", "core study guide has no vector graphics")
 
     if report["run_mode"] == "NO_ATTEMPT":
-        if report["input_custody"]["attempt_set_digest"] is not None:
+        if custody["attempt_set_digest"] is not None:
             fail("NO_ATTEMPT_RUN_INVENTS_PHYSICS_WEAKNESS", "attempt digest present")
         if artifacts is not None:
             states = [r["learner_state"] for r in artifacts["study_model"]["capability_records"]]
@@ -116,9 +147,11 @@ def validate_comparison(comparison, no_attempt, with_attempts):
     inv = comparison["invariants"]
     scope_keys = [
         "question_set_digest_identical", "declared_topic_scope_digest_identical",
-        "scope_authority_digest_identical", "problem_semantics_identical",
-        "study_scope_digest_identical", "required_capability_set_identical",
-        "required_item_set_identical",
+        "scope_authority_digest_identical", "engineering_binding_registry_digest_identical",
+        "assessment_scope_digest_identical", "engineering_readiness_digest_identical",
+        "engineering_consumer_status_identical", "engineering_gate_requirement_state_identical",
+        "problem_semantics_identical", "study_scope_digest_identical",
+        "required_capability_set_identical", "required_item_set_identical",
     ]
     if not all(inv[k] for k in scope_keys):
         fail("ATTEMPT_RUN_CHANGES_REQUIRED_SCOPE",
