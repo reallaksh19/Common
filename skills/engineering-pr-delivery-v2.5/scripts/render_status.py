@@ -15,6 +15,8 @@ def render(root:Path):
         lines.append(f"Integration: `{(plan.get('integration') or {}).get('work_package')}` after all lanes")
     else:
         lines.append(f"Active EP: `{a.get('id')}` ({a.get('state')})")
+        if a.get("continuity_receipt"):
+            receipt=load_yaml(root/a["continuity_receipt"]);lines.append(f"Roadmap continuity: `{receipt.get('id')}` — **{label(receipt.get('disposition'))}** (`{receipt.get('from_revision')}` → `{receipt.get('to_revision')}`)")
         if join.get("id"):lines.append(f"Parallel join predecessor: `{join.get('id')}`")
     if replan.get("id"):lines.append(f"Parallel replan predecessor: `{replan.get('id')}`")
     lines += [f"Execution state: **{label(ex.get('state'))}** | Can continue: **{'YES' if ex.get('can_continue') else 'NO'}** | Material authority: **{label(ex.get('material_authority'))}**",f"Quality: **{label(q.get('state'))}**",f"Evidence: **{label(ev.get('state'))}** — {ev.get('summary','')}",f"Hard stop: **{hard}**",f"Projection: **{label(projection.get('state'))}** | Required: **{'YES' if projection.get('required') else 'NO'}**",f"Repository recovery ready: **{'YES' if ready.get('repository_ready') else 'NO'}**",f"Projection ready: **{'YES' if ready.get('projection_ready') else 'NO'}**",f"Handover ready: **{'YES' if ready.get('handover_ready') else 'NO'}**",f"Exact next action: {ex.get('next_action','')}","Conversation context required: **NO**",""]
