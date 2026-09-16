@@ -4,9 +4,8 @@
 Scientific representation semantics are compiled upstream from Engineering authority.
 Primitive/capability selection is compiled upstream from the C-H page-intent authority.
 Structured primitive runtime facts are resolved from source-bound C-H fact authority.
-This compiler accepts only a validated representation-intent packet and a set of intent
-references selected for realization. It does not accept adapter-authored primitive IDs,
-capabilities, scientific semantic payloads, or primitive runtime fact payloads.
+A product may nominate an opaque semantic authority/instance ref, but adapters never
+supply primitive IDs, scientific semantic payloads, or primitive runtime parameters.
 """
 from __future__ import annotations
 
@@ -191,6 +190,9 @@ def compile_core_representation_bundle(
     notation_contract: dict[str, Any] | None = None,
     representation_extensions: list[dict[str, Any]] | None = None,
     representation_intent_extensions: list[dict[str, Any]] | None = None,
+    semantic_instance_authorities: dict[str, dict[str, Any]] | None = None,
+    semantic_instance_authority_refs: list[str] | None = None,
+    semantic_instance_refs: list[str] | None = None,
     bundle_id: str,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     if product_mode not in {"CORE1A", "CORE1B", "CORE2A", "CORE2B"}:
@@ -217,6 +219,22 @@ def compile_core_representation_bundle(
     except Exception as exc:
         fail("CHEM_CORE_REP_INTENT_PACKET_INVALID", str(exc))
 
+    authorities = semantic_instance_authorities or {}
+    requested_authority_refs = None if semantic_instance_authority_refs is None else [
+        str(value).strip() for value in semantic_instance_authority_refs if str(value).strip()
+    ]
+    requested_instance_refs = None if semantic_instance_refs is None else [
+        str(value).strip() for value in semantic_instance_refs if str(value).strip()
+    ]
+    if requested_authority_refs is not None and len(requested_authority_refs) != len(set(requested_authority_refs)):
+        fail("CHEM_CORE_REP_SEMANTIC_AUTHORITY_REFS_INVALID")
+    if requested_instance_refs is not None and len(requested_instance_refs) != len(set(requested_instance_refs)):
+        fail("CHEM_CORE_REP_SEMANTIC_INSTANCE_REFS_INVALID")
+    if requested_authority_refs is not None:
+        missing_authorities = sorted(set(requested_authority_refs) - set(authorities))
+        if missing_authorities:
+            fail("CHEM_CORE_REP_SEMANTIC_AUTHORITY_MISSING", ",".join(missing_authorities))
+
     intents = _intent_map(intent_packet)
     realized = [str(value).strip() for value in realized_intent_ids if str(value).strip()]
     if len(realized) != len(realized_intent_ids) or len(realized) != len(set(realized)):
@@ -237,6 +255,7 @@ def compile_core_representation_bundle(
     compiled: list[dict[str, Any]] = []
     bindings: list[dict[str, Any]] = []
     runtime_fact_count = 0
+    semantic_instances: set[str] = set()
     for intent_id in realized:
         row = intents[intent_id]
         primitive_id = row["primitive_id"]
@@ -249,6 +268,9 @@ def compile_core_representation_bundle(
                 obligation_packet,
                 primitive,
                 runtime_fact_authority,
+                semantic_instance_authorities=authorities,
+                semantic_instance_authority_refs=requested_authority_refs,
+                semantic_instance_refs=requested_instance_refs,
             )
         except ChemistryRepresentationRuntimeFactsError as exc:
             fail(exc.code, exc.message)
@@ -271,24 +293,37 @@ def compile_core_representation_bundle(
             "renderer_constraints": renderer_constraints,
             "decorative": False,
         }
-        if runtime_fact is not None:
-            spec["runtime_fact_ref"] = runtime_fact["fact_packet_ref"]
-            spec["runtime_fact_digest"] = runtime_fact["fact_packet_digest"]
-            spec["runtime_fact_kind"] = runtime_fact["fact_kind"]
-            spec["runtime_fact_source_equation_refs"] = runtime_fact["source_equation_refs"]
-            spec["runtime_parameters"] = runtime_fact["parameters"]
-            runtime_fact_count += 1
-        compiled.append(spec)
-        bindings.append({
+        binding = {
             "representation_ref": spec["representation_id"],
             "intent_ref": intent_id,
             "engineering_representation_refs": [row["source_representation_ref"]],
             "source_obligation_id": row["source_obligation_id"],
-        })
+        }
+        if runtime_fact is not None:
+            spec["runtime_fact_ref"] = runtime_fact["fact_packet_ref"]
+            spec["runtime_fact_digest"] = runtime_fact["fact_packet_digest"]
+            spec["runtime_fact_kind"] = runtime_fact["fact_kind"]
+            spec["semantic_instance_ref"] = runtime_fact["semantic_instance_ref"]
+            spec["runtime_fact_source_authority_kind"] = runtime_fact["source_authority_kind"]
+            if runtime_fact.get("source_authority_ref"):
+                spec["runtime_fact_source_authority_ref"] = runtime_fact["source_authority_ref"]
+            if runtime_fact.get("source_equation_refs"):
+                spec["runtime_fact_source_equation_refs"] = runtime_fact["source_equation_refs"]
+            if runtime_fact.get("source_content_object_refs"):
+                spec["runtime_fact_source_content_object_refs"] = runtime_fact["source_content_object_refs"]
+            spec["runtime_parameters"] = runtime_fact["parameters"]
+            binding["semantic_instance_ref"] = runtime_fact["semantic_instance_ref"]
+            binding["runtime_fact_source_authority_kind"] = runtime_fact["source_authority_kind"]
+            if runtime_fact.get("source_authority_ref"):
+                binding["runtime_fact_source_authority_ref"] = runtime_fact["source_authority_ref"]
+            runtime_fact_count += 1
+            semantic_instances.add(runtime_fact["semantic_instance_ref"])
+        compiled.append(spec)
+        bindings.append(binding)
 
     bundle = {
         "bundle_id": bundle_id,
-        "schema_version": "2.0.0",
+        "schema_version": "2.1.0",
         "subject": "CHEMISTRY",
         "product_mode": product_mode,
         "obligation_packet_ref": obligation_packet["packet_id"],
@@ -308,6 +343,7 @@ def compile_core_representation_bundle(
             "representation_extension_count": len(extension_refs),
             "representation_intent_extension_count": len(intent_packet.get("policy_extension_refs", [])),
             "runtime_fact_count": runtime_fact_count,
+            "semantic_instance_count": len(semantic_instances),
             "adapter_primitive_selection_allowed": False,
             "adapter_scientific_semantics_allowed": False,
             "adapter_runtime_facts_allowed": False,
