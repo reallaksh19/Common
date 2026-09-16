@@ -10,11 +10,11 @@ WP-01 Semantic Execution Package                    DELIVERED — CP-R002
 WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
 WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
 WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
-WP-05 GitHub Program Projection operations          DELIVERED — CP-R006, exact-head CI pending
-WP-06 Quality Procedure Library                     NEXT after CP-R006 CI PASS
+WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
+WP-06 Quality Procedure Library                     CURRENT FRONTIER
 ```
 
-WP-05 pre-checkpoint implementation verification passed corrected workflow **35140358167** on `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`.
+CP-R006 checkpoint/status verification passed corrected workflow **35140616177** on `be63257b50e499c195a62a85b8d1b58d990a7327`.
 
 Conversation is acceleration, never custody.
 
@@ -135,11 +135,25 @@ Native parent/sub-issue and other GitHub relationship success may be claimed onl
 
 Aggregate relay conformance validates the current GitHub generation and its history. `PROJECTION_READY` becomes true only after the current generation is fully reconciled.
 
-WP-05 pre-checkpoint evidence: head `f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b`, workflow **35140358167**, compile + root units + 111 stress tests PASS.
+WP-05 evidence:
 
-## Next target — WP-06 Quality Procedure Library
+```text
+pre-checkpoint implementation
+  f63fbf8fbf71a3ad24ce0fd57e4e97a584d8c02b
+  workflow 35140358167 — PASS
 
-After CP-R006 exact-head CI passes, WP-06 is the sole material frontier. It must add applicability-routed procedural blueprints and first-class `QRV-*` Quality Review evidence while preserving the existing separation between quality findings, evidence state and true hard stops.
+CP-R006 checkpoint/status
+  be63257b50e499c195a62a85b8d1b58d990a7327
+  workflow 35140616177 — PASS
+
+stress surface: 111 repository-neutral synthetic tests
+```
+
+## Current WP-06 — Quality Procedure Library
+
+WP-06 is the sole material frontier. It must add applicability-routed procedural blueprints and first-class `QRV-*` Quality Review evidence while preserving the existing separation between quality findings, evidence state and true hard stops.
+
+Each EP explicitly lists applicable and not-applicable blueprints with reasons. Only applicable procedures run.
 
 Each blueprint must contain:
 
@@ -157,12 +171,12 @@ OWNER REPORT
 SUCCESSOR HANDOVER
 ```
 
-Quality must improve engineering rather than recreate blocker-heavy flows.
+A quality review records findings, evidence and recommendation. It blocks execution only when a finding maps to the existing true hard-stop semantics. Maintainability/design/UX concerns can remain `NEEDS_ATTENTION` without becoming fake blockers.
 
 ## Remaining target layers
 
 ```text
-WP-06  Quality Procedure Library + QRV-* evidence   NEXT after CP-R006 CI PASS
+WP-06  Quality Procedure Library + QRV-* evidence   CURRENT
 WP-07  Human Communication / Owner projection       WAITING
 WP-08  Owner Change Intake over ODR transactions    WAITING
 WP-09  End-to-end A -> B -> C certification         WAITING
@@ -203,8 +217,8 @@ semantic EP                      COMPLETE — CP-R002
 baton readiness / TC             COMPLETE — CP-R003
 strong qualification             COMPLETE — CP-R004
 full progress/handover           COMPLETE — CP-R005
-GitHub operations                COMPLETE — CP-R006, exact-head CI pending
-quality procedures               NEXT after CP-R006 CI PASS
+GitHub operations                COMPLETE — CP-R006
+quality procedures               CURRENT — WP-06
 human communication / intake     WAITING
 end-to-end certification         WAITING
 self-consistency audit           WAITING
