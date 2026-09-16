@@ -13,12 +13,15 @@ from jsonschema import Draft202012Validator
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
 REPO = ROOT.parents[3]
+SHARED_GATE = REPO / "Grade 9" / "V2" / "Shared" / "EngineeringGate"
 sys.path.insert(0, str(ROOT / "engine"))
+sys.path.insert(0, str(SHARED_GATE / "engine"))
 
 from compile_domain_prerequisite_closure import compile_domain_prerequisite_closure  # noqa: E402
 from compile_engineering_closure import compile_closure  # noqa: E402
 from compile_join import compile_join  # noqa: E402
 from compile_scoped_evidence import compile_scoped_evidence  # noqa: E402
+from evaluate_readiness import build_envelope  # noqa: E402
 from governor import route_scoped  # noqa: E402
 
 
@@ -74,13 +77,14 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
     authority_refs = list(request["domain_authority_refs"])
     authority_receipts = [load_repo(ref) for ref in authority_refs]
     domain = compile_domain_prerequisite_closure(engineering, authority_receipts, authority_refs)
+    readiness = build_envelope(engineering_request, engineering_manifest, engineering, domain)
     join = compile_join(load(request["join_spec_ref"]), assessment_coverage=scoped["assessment_coverage"])
 
     route_value = routing["final_route"]
-    engineering_ready = engineering["closure_status"] == "READY"
+    engineering_ready = readiness["dimensions"]["technical"] == "READY"
     semantic_present = scoped["evidence"]["sources"]["semantic_source"]["availability"] != "ABSENT"
     curriculum_ready = scoped["curriculum_status"] == "SUPPORTED_BY_REPOSITORY_AUTHORITY"
-    domain_ready = domain["closure_status"] == "READY"
+    domain_ready = readiness["dimensions"]["external_prerequisites"] == "READY"
     control_present = exists_ref(request.get("control_state_ref"))
     core1a_release = exists_ref(request.get("core1a_release_ref"))
     core1b_release = exists_ref(request.get("core1b_release_ref"))
@@ -135,14 +139,27 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
         [] if core2a_pool and core1b_release else ["CORE2A_OR_CORE1B_RELEASE_MISSING"],
     )
 
+    def technical_downstream(consumer: str, locally_instantiated: bool, absent_state: str) -> str:
+        if not locally_instantiated:
+            return absent_state
+        permission = readiness["consumer_permissions"].get(consumer)
+        return "READY" if permission and permission["status"] == "ALLOWED" else "BLOCKED"
+
+    publication_permission = readiness["consumer_permissions"].get("PUBLICATION")
+    publication_state = (
+        "NOT_AUTHORIZED"
+        if publication_permission and publication_permission["status"] == "NOT_AUTHORIZED"
+        else "BLOCKED"
+    )
+
     downstream = {
-        "CCU": "READY" if core1a_release or core2a_pool else "NOT_INSTANTIATED",
-        "CDAU": "READY" if (core1a_release and core1b_release) or core2a_pool else "NOT_INSTANTIATED",
-        "SDU": "READY" if core1a_release else "NOT_ISSUED",
-        "LAU": "READY" if core2a_pool else "NOT_ISSUED",
-        "CONCEPT_TTU": "READY" if core1a_release else "NOT_INSTANTIATED",
-        "PROBLEM_TTU": "READY" if core2a_pool else "NOT_INSTANTIATED",
-        "PUBLICATION": "READY" if core1a_release and curriculum_ready and domain_ready else "BLOCKED",
+        "CCU": technical_downstream("CCU", core1a_release or core2a_pool, "NOT_INSTANTIATED"),
+        "CDAU": technical_downstream("CDAU", (core1a_release and core1b_release) or core2a_pool, "NOT_INSTANTIATED"),
+        "SDU": technical_downstream("SDU", core1a_release, "NOT_ISSUED"),
+        "LAU": technical_downstream("LAU", core2a_pool, "NOT_ISSUED"),
+        "CONCEPT_TTU": technical_downstream("TTU", core1a_release, "NOT_INSTANTIATED"),
+        "PROBLEM_TTU": technical_downstream("TTU", core2a_pool, "NOT_INSTANTIATED"),
+        "PUBLICATION": publication_state,
         "HUMAN_REVIEW": "READY" if exact_product else "NOT_RUN",
     }
 
@@ -155,8 +172,12 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
         violations.append("CORE2A_READY_WITHOUT_CORE2_CUSTODY")
     if cores["CORE2B"]["status"] == "READY_FOR_TRANSFER" and (not core2a_pool or not core1b_release):
         violations.append("CORE2B_READY_WITHOUT_REQUIRED_UPSTREAM")
-    if downstream["PUBLICATION"] == "READY" and not core1a_release:
-        violations.append("PUBLICATION_READY_WITHOUT_CORE1A_RELEASE")
+    if readiness["publication_authorization"] != "NOT_IMPLIED":
+        violations.append("ENGINEERING_GATE_PUBLICATION_AUTHORIZATION_NOT_INDEPENDENT")
+    if publication_permission and publication_permission["status"] != "NOT_AUTHORIZED":
+        violations.append("ENGINEERING_GATE_PUBLICATION_CONSUMER_AUTHORIZED")
+    if downstream["PUBLICATION"] in {"PASS", "READY"}:
+        violations.append("PUBLICATION_AUTHORIZATION_INFERRED")
     if route_value == "CORE2_FIRST" and coverage_state == "VERIFIED_NO_TARGET_DEMAND" and scoped["scope_kind"] != "TOPIC":
         violations.append("TARGET_ROUTE_REUSED_TOPIC_QUESTION_RICHNESS")
 
