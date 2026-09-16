@@ -2,7 +2,7 @@ schema_version: relay-v2.5
 # Required when PARENT_OF relationships exist. Parent rollups bind to this revision.
 graph_revision: IG-0001
 
-# Node lifecycle separates engineering/work state from actual GitHub open/closed state.
+# ISSUE_GRAPH is a coordination projection. OVERALL_ROADMAP remains engineering authority.
 # Aggregate parent example:
 # - id: ISSUE-PARENT
 #   state: ACTIVE
@@ -14,6 +14,11 @@ graph_revision: IG-0001
 #       - {id: ISSUE-CHILD-B, state: ACTIVE, github_state: OPEN}
 #     derived_state: ACTIVE
 #     all_children_terminal: false
+#
+# PARENT_OF is acyclic; each child has at most one direct parent. Parent rollups
+# snapshot direct children only. Deep rollups work recursively because an aggregate
+# child is validated against its own direct children before its parent can be trusted.
+# A closed parent may not hide a direct child that is still GitHub OPEN.
 #
 # Supersession predecessor example:
 # - id: ISSUE-OLD
