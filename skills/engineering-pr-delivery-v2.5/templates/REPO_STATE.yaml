@@ -24,6 +24,9 @@ active_ep:
 last_checkpoint:
   id: NONE
   path: null
+predecessor_join:
+  id: null
+  path: null
 progress:
   overall_percent: 0
   phase_percent: 0
