@@ -1,6 +1,6 @@
 ---
 name: engineering-pr-delivery-v2.5
-description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, issue projection, drift/continuity control, and serial-by-default material execution.
+description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, crash-safe GitHub projection, drift/continuity control, and serial-by-default material execution.
 ---
 
 # Engineering PR Delivery v2.5 — engineering relay with a dynamic overall roadmap
@@ -55,6 +55,8 @@ agents/relay/
   checkpoints/**
   parallel/**
   drift/**
+  projection/
+    generations/**
   reports/**
   generated/**
 ```
@@ -108,6 +110,7 @@ Every serial EP and approved parallel lane EP is a forward work contract for one
 - acceptance and validation contracts;
 - optional `qualification_boundary`;
 - source-bound report payloads;
+- ordered `next_work.steps[]` with targets, inputs, tests/oracles, acceptance, expected result and stop/reconciliation conditions;
 - checkpoint and successor duties.
 
 Exactly one predecessor baton is active: checkpoint, parallel join or parallel replan. EP and CP are different objects and never substitute for each other.
@@ -301,13 +304,53 @@ If any lane becomes stale/invalid/unauthorized before convergence, the old plan 
 
 `ISSUE_GRAPH.yaml` models GitHub coordination relationships including parent/child, dependencies and evidence-preserving supersession. GitHub state is separate from engineering lifecycle state.
 
-`PARENT_OF` is an acyclic single-parent projection tree with revision-bound direct-child rollups. Parent closure cannot hide open child work.
+The issue node records last verified external state:
+
+```text
+github_state = ABSENT | OPEN | CLOSED | UNKNOWN
+```
+
+`ABSENT` is valid before issue creation. `UNKNOWN` requires a prior locator and means the external state must be re-observed. A CREATE attempt does not make the node OPEN.
+
+`PARENT_OF` is an acyclic single-parent projection tree with revision-bound direct-child rollups. Parent closure cannot hide a child whose GitHub projection is not CLOSED.
 
 A → B → C supersession must preserve inherited unresolved acceptance/evidence exactly or record explicit durable resolution. Silent drop, status/basis mutation, branching successors and cycles are invalid.
 
+## GitHub Program Projection
+
+When external GitHub coordination is required, `REPO_STATE.projection` points to one current immutable `GHGEN-*` file. A generation contains stable `GHOP-*` operations:
+
+```text
+CREATE | LINK | UPDATE | PUBLISH_HANDOVER |
+SUPERSEDE | REVISE | CLOSE | REOPEN
+```
+
+The required mutation order is:
+
+```text
+validate current generation
+→ select one dependency-ready GHOP
+→ persist ATTEMPTED_UNCONFIRMED BEFORE external write
+→ perform exactly that GitHub action
+→ read external state back
+→ write GITHUB_OBSERVATION
+→ reconcile verified result into GHOP / ISSUE_GRAPH / REPO_STATE
+→ only then select another GHOP
+```
+
+Never treat a connector response alone as convergence. Verified readback is the reconciliation boundary.
+
+If an external call times out or crashes after the attempt journal was written, do **not** create a fresh operation or retry blindly. Reconcile the same `GHOP-*` using its stable idempotency key, verified locator and/or `<!-- relay-operation:GHOP-* -->` marker. A verified readback may create a repository `READBACK_RECOVERY:*` receipt when the connector receipt itself was lost.
+
+A body hyperlink is not proof of a provider-native parent/sub-issue relationship. When a required native LINK cannot be created or verified by the available integration, leave projection incomplete and report the external capability limitation rather than claiming success.
+
+When repository desired state advances, activate a new `GHGEN-*`. The predecessor generation becomes immutable SUPERSEDED, any old retryable GHOP loses publication authority, and history preserves whether it was superseded before publication, after an uncertain attempt, or after an unconfirmed publication receipt.
+
+Read `operating-model/github-program-projection.md` and `operating-model/issue-projection.md`.
+
 ## Projection convergence
 
-Required external projections use stable operation IDs and states:
+Required external projections use stable generation IDs and states:
 
 ```text
 NOT_REQUIRED
@@ -317,17 +360,19 @@ IN_SYNC
 STALE
 ```
 
-Repository truth may advance while an external surface is stale. Top-level projection fields describe the newest desired generation; `observed` records the older external generation; intermediate desired generations move to immutable superseded history with no retry authority. Publish/reconcile only the newest authorized operation.
+Repository truth may advance while an external surface is stale. Top-level projection fields describe the newest desired generation; `observed` records the older verified external generation; intermediate desired generations move to immutable superseded history with no retry authority. Publish/reconcile only the newest authorized generation.
 
-Projection lag does not rewrite engineering truth or automatically create a hard stop, but it prevents `HANDOVER_READY` when projection is required.
+Projection lag or unavailable external relationship capability does not rewrite engineering truth or automatically create a hard stop, but it prevents `HANDOVER_READY` when the projection is required.
 
-## Progress
+## Progress and source-derived handover
 
 Progress is calculated only:
 
 ```text
-Acceptance Criteria → EP → Work Package → Phase → Objective → Overall Roadmap
+Acceptance Criterion → implementation step → EP → Work Package → Phase → Objective → Overall Roadmap
 ```
+
+`PROGRESS.yaml` is authority. `REPO_STATE` percentages are checked mirrors only. Status, handover and structured report projection derive from repository authority objects rather than generated prose.
 
 Approved scope/denominator changes create a new Progress Basis. Do not preserve a flattering percentage by rewriting completed work.
 
@@ -360,9 +405,9 @@ V2 migration is evidence-first: inventory legacy state, reconcile Owner intent/u
 
 ## Human handover
 
-Generated views must report lifecycle, roadmap position/progress, current EP or lanes, execution/quality/evidence/stop state, baton readiness, projection readiness, full handover readiness, exact next work, predecessor join/replan/continuity where relevant, qualification boundary/receipt when relevant, and `conversation context required: NO`.
+Generated views report source-derived Objective → Phase → WP → Step → AC progress, lifecycle, current EP or lanes, execution/quality/evidence/stop state, baton/projection/handover readiness, ordered exact next work, predecessor join/replan/continuity where relevant, qualification evidence when relevant, and `conversation context required: NO`.
 
-WP-04/WP-07 will further expand complete task/AC checklists and plain-language Owner translation; machine objects remain authoritative.
+WP-07 will translate the same machine truth into plainer Owner-facing language; generated views never become authority.
 
 ## Validation entrypoints
 
@@ -376,6 +421,9 @@ python skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receip
 python skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_projection_convergence.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_github_projection.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_github_generation_history.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/github_projection_next.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_join.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_replan.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest> <repo-root>
