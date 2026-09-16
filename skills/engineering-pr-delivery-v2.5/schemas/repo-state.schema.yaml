@@ -34,6 +34,12 @@ properties:
   last_checkpoint:
     type: object
     required: [id, path]
+  predecessor_join:
+    type: object
+    required: [id, path]
+    properties:
+      id: {type: [string, 'null']}
+      path: {type: [string, 'null']}
   status_planes:
     type: object
     required: [execution, quality, evidence, stop]
