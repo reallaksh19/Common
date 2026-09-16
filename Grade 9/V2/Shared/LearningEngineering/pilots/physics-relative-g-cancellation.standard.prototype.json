@@ -1,0 +1,352 @@
+{
+  "pilot_id": "PILOT-PHYSICS-RELATIVE-MOTION-COMMON-G-PROTOTYPE-v1",
+  "roadmap_pilot_ref": "PILOT-PHYSICS-RELATIVE-MOTION",
+  "runtime_authority": false,
+  "prototype_only": true,
+  "promotion_state": "HELD",
+  "hold_reasons": [
+    "CURRICULUM_AUTHORITY_UNRESOLVED",
+    "REPRESENTATION_DECISION_UNRESOLVED",
+    "REPRESENTATION_TRANSLATION_UNRESOLVED",
+    "REASONING_FRAGILITY_UNRESOLVED"
+  ],
+  "source_bindings": {
+    "assessment_scope": {
+      "path": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
+      "authority_id": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+      "authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+      "capability_ref": "PHY-CAP-RELATIVE-ACCELERATION-SAME-G",
+      "concept_ref": "PHY-GRAVITY-RELATIVE-MOTION"
+    },
+    "problem_family": {
+      "path": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-problem-family-registry.json",
+      "family_ref": "PHY-PF-RELATIVE-G-CANCELLATION",
+      "family_digest": "7b79129d4c31d5eb09e6e32d2a6dbe21795abb81b6e316db2df74cc1003dd097"
+    },
+    "verification_route": {
+      "path": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-verification-route-registry.json",
+      "route_ref": "PHY-PD-VR-RELATIVE-G-CANCELLATION",
+      "route_digest": "31f67ca70bcd7d1d3aa3f97867ae65acea926bf466149f7462ad7f5da497a8de"
+    }
+  },
+  "identity": {
+    "schema_version": "0.1.0",
+    "skp_id": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+    "subject": "PHYSICS",
+    "canonical_name": "Relative acceleration under common gravitational acceleration — pilot projection",
+    "aliases": ["Common-g relative acceleration pilot"],
+    "package_semver": "0.1.0",
+    "predecessor_refs": [],
+    "supersession_state": "PILOT_CURRENT",
+    "supersedes_ref": null,
+    "identity_rationale": "A non-runtime SKP pilot projection over existing Physics assessment-scope and problem-semantics authority."
+  },
+  "scope": {
+    "schema_version": "0.1.0",
+    "scope_id": "SKP-SCOPE-PHYSICS-RELATIVE-G-CANCELLATION",
+    "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+    "includes": [
+      {
+        "scope_item_id": "SCOPE-PHY-RELATIVE-G-CANCELLATION",
+        "statement": "Construct and interpret relative acceleration for two bodies represented in one common frame under the same uniform gravitational field model.",
+        "evidence_refs": ["SRC-PHY-ASSESSMENT-SCOPE", "SRC-PHY-PROBLEM-FAMILY"]
+      }
+    ],
+    "excludes": [
+      {
+        "scope_item_id": "SCOPE-PHY-RELATIVE-G-NONUNIFORM",
+        "statement": "Nonuniform gravitational fields, drag, or other conditions that make the two accelerations differ are outside this pilot slice.",
+        "evidence_refs": ["SRC-PHY-PROBLEM-FAMILY"]
+      }
+    ],
+    "adjacent_refs": ["PHY-MOTION-GRAVITY"],
+    "unresolved_boundaries": []
+  },
+  "curriculum_bindings": [
+    {
+      "schema_version": "0.1.0",
+      "binding_id": "CURR-PHY-RELATIVE-G-UNRESOLVED",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "curriculum_authority": "UNRESOLVED_OFFICIAL_CURRICULUM_AUTHORITY",
+      "jurisdiction": "UNRESOLVED",
+      "grade": "9",
+      "curriculum_version": "UNRESOLVED",
+      "unit_ref": "PHY-MOTION-GRAVITY",
+      "classification": "UNRESOLVED",
+      "explicitness": "UNRESOLVED",
+      "scope_refs": ["SCOPE-PHY-RELATIVE-G-CANCELLATION"],
+      "evidence_refs": ["SRC-PHY-ASSESSMENT-SCOPE"],
+      "rationale": "Repository Physics authority proves the semantic capability and topic binding but this pilot has not yet bound an official curriculum source proving curriculum status.",
+      "exclusions": ["Do not promote the repository topic binding into official curriculum authority."],
+      "binding_state": "UNRESOLVED"
+    }
+  ],
+  "capabilities": [
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-PHY-RELATIVE-ACCELERATION-SAME-G",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "title": "Construct relative acceleration when both bodies share g",
+      "disciplinary_meaning": "Construct relative acceleration from two absolute accelerations expressed in one common frame, using the same-uniform-g model only when its validity conditions hold.",
+      "learner_success_statement": "Can express both bodies in one frame, form the ordered acceleration difference, and interpret cancellation only under the declared common-g conditions.",
+      "scope_refs": ["SCOPE-PHY-RELATIVE-G-CANCELLATION"],
+      "observability": {
+        "state": "DIRECT",
+        "evidence_types": ["MODEL_VALIDITY_CHECK", "RELATIVE_STATE_CONSTRUCTION", "RESULT_INTERPRETATION"]
+      },
+      "granularity_rationale": "The repository already owns this as a distinct assessment-scope capability with a dedicated problem family and verification route.",
+      "source_refs": ["SRC-PHY-ASSESSMENT-SCOPE", "SRC-PHY-PROBLEM-FAMILY"],
+      "subject_extension_refs": ["PHY-CAP-RELATIVE-ACCELERATION-SAME-G"],
+      "status": "PILOT"
+    }
+  ],
+  "source_plan": {
+    "schema_version": "0.1.0",
+    "source_plan_id": "SOURCE-PLAN-PHY-RELATIVE-G-PILOT",
+    "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+    "engineering_depth": "STANDARD",
+    "obligations": [
+      {
+        "obligation_id": "SRC-OBL-PHY-RELATIVE-G-SUBJECT",
+        "source_intent": "SUBJECT_TRUTH",
+        "target_refs": ["CAP-PHY-RELATIVE-ACCELERATION-SAME-G", "CONCEPT-PHY-RELATIVE-MOTION-COMMON-G", "REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE", "FAMILY-PHY-RELATIVE-G-CANCELLATION"],
+        "required": true,
+        "selection_policy": "Use the exact existing Physics assessment-scope and problem-semantics authority bound by IDs and digests.",
+        "corroboration_policy": "SINGLE_APPROPRIATE_AUTHORITY",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      },
+      {
+        "obligation_id": "SRC-OBL-PHY-RELATIVE-G-CURRICULUM",
+        "source_intent": "CURRICULUM_AUTHORITY",
+        "target_refs": ["SCOPE-PHY-RELATIVE-G-CANCELLATION", "CURR-PHY-RELATIVE-G-UNRESOLVED"],
+        "required": true,
+        "selection_policy": "Require an exact official curriculum source before assigning required, derived, bridge, extension, or out-of-scope curriculum status.",
+        "corroboration_policy": "SINGLE_APPROPRIATE_AUTHORITY",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      }
+    ]
+  },
+  "source_ledger": [
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PHY-ASSESSMENT-SCOPE",
+      "title": "Physics assessment scope authority",
+      "creator_or_organization": "Repository Physics authority",
+      "publication_year": null,
+      "source_type": "REPOSITORY_ARTIFACT",
+      "source_locator": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "authority_digest:b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "SUBJECT_TRUTH",
+          "target_refs": ["CAP-PHY-RELATIVE-ACCELERATION-SAME-G", "CONCEPT-PHY-RELATIVE-MOTION-COMMON-G"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This is the active repository authority owning the exact capability and concept identities used by the pilot.",
+          "limitations": ["It is not an official external curriculum source."],
+          "population_context": null,
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "LICENSED_LOCAL_USE",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PHY-PROBLEM-FAMILY",
+      "title": "Physics problem family registry",
+      "creator_or_organization": "Repository Physics authority",
+      "publication_year": null,
+      "source_type": "REPOSITORY_ARTIFACT",
+      "source_locator": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-problem-family-registry.json",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "family_digest:7b79129d4c31d5eb09e6e32d2a6dbe21795abb81b6e316db2df74cc1003dd097",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "SUBJECT_TRUTH",
+          "target_refs": ["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE", "REASON-PHY-RELATIVE-G-CANCELLATION", "REP-PHY-RELATIVE-STATE-DIAGRAM", "FAMILY-PHY-RELATIVE-G-CANCELLATION"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This registry owns the exact family invariants, model-validity conditions, reasoning route, representation requirement, and transfer boundary projected by the pilot.",
+          "limitations": ["Problem-family authority does not by itself establish pedagogical representation priority or curriculum status."],
+          "population_context": null,
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "LICENSED_LOCAL_USE",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PHY-VERIFICATION-ROUTE",
+      "title": "Physics verification route registry",
+      "creator_or_organization": "Repository Physics authority",
+      "publication_year": null,
+      "source_type": "REPOSITORY_ARTIFACT",
+      "source_locator": "Grade 9/V2/Physics/ProblemSemantics/registry/physics-verification-route-registry.json",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "route_digest:31f67ca70bcd7d1d3aa3f97867ae65acea926bf466149f7462ad7f5da497a8de",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "SUBJECT_TRUTH",
+          "target_refs": ["VERIFY-PHY-RELATIVE-G-CANCELLATION"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This registry owns the exact verification route and check identities for the bound relative-motion problem family.",
+          "limitations": ["The source does not claim that these checks are independent alternative derivations."],
+          "population_context": null,
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "LICENSED_LOCAL_USE",
+      "overall_disposition": "PROMOTED"
+    }
+  ],
+  "concepts": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "concept_id": "CONCEPT-PHY-RELATIVE-MOTION-COMMON-G",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "title": "Relative motion under common gravitational acceleration",
+      "concept_kind": "RELATION",
+      "disciplinary_meaning": "Relative acceleration is constructed from the ordered difference of two accelerations represented in one common frame; equal acceleration under the same uniform-g model cancels.",
+      "source_refs": ["SRC-PHY-ASSESSMENT-SCOPE", "SRC-PHY-PROBLEM-FAMILY"],
+      "subject_extension_refs": ["PHY-GRAVITY-RELATIVE-MOTION"],
+      "source_object_ref": "PHY-GRAVITY-RELATIVE-MOTION"
+    }
+  ],
+  "relations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "relation_id": "REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "title": "Relative acceleration difference",
+      "relation_kind": "EQUALITY",
+      "formal_expression": "a_rel = a_A - a_B",
+      "meaning": "Relative acceleration is the ordered difference of the two absolute accelerations after both are expressed in one common frame.",
+      "concept_refs": ["CONCEPT-PHY-RELATIVE-MOTION-COMMON-G"],
+      "capability_refs": ["CAP-PHY-RELATIVE-ACCELERATION-SAME-G"],
+      "applicability_conditions": [
+        {
+          "condition_id": "COND-PHY-COMMON-REFERENCE-FRAME",
+          "statement": "common reference frame",
+          "evidence_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+          "state": "REQUIRED"
+        },
+        {
+          "condition_id": "COND-PHY-SAME-UNIFORM-G",
+          "statement": "same uniform gravitational field",
+          "evidence_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+          "state": "REQUIRED"
+        }
+      ],
+      "source_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+      "subject_extension_refs": ["PHY-MODEL-RELATIVE-MOTION-SAME-G"],
+      "source_relation_ref": "PHY-LAW-RELATIVE-ACCELERATION-DIFFERENCE"
+    }
+  ],
+  "representations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-PHY-RELATIVE-STATE-DIAGRAM",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "title": "Relative state diagram",
+      "representation_kind": "DIAGRAM",
+      "purpose": "Represent both body states in one common frame so the relative-state construction is not mixed across frames.",
+      "encodes_refs": ["CONCEPT-PHY-RELATIVE-MOTION-COMMON-G", "REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],
+      "decision_state": "CANDIDATE_ONLY",
+      "decision_basis_refs": [],
+      "translation_edges": [],
+      "source_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+      "source_representation_ref": "RELATIVE_STATE_DIAGRAM"
+    }
+  ],
+  "reasoning_sequences": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "sequence_id": "REASON-PHY-RELATIVE-G-CANCELLATION",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "capability_refs": ["CAP-PHY-RELATIVE-ACCELERATION-SAME-G"],
+      "steps": [
+        {"step_id":"STEP-PHY-REL-G-01","semantic_role":"READ_PHENOMENON","semantic_job":"identify the two bodies and requested relative quantity","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T01"},
+        {"step_id":"STEP-PHY-REL-G-02","semantic_role":"DEFINE_SYSTEM","semantic_job":"define both body states and the relative-state construction","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T02"},
+        {"step_id":"STEP-PHY-REL-G-03","semantic_role":"CHOOSE_FRAME","semantic_job":"express both bodies in one common frame","relation_refs":[],"representation_refs":["REP-PHY-RELATIVE-STATE-DIAGRAM"],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T03"},
+        {"step_id":"STEP-PHY-REL-G-04","semantic_role":"REPRESENT","semantic_job":"write absolute and relative acceleration states","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T04"},
+        {"step_id":"STEP-PHY-REL-G-05","semantic_role":"EXTRACT_KNOWNS_AND_HIDDEN_FACTS","semantic_job":"record that both bodies experience the same g under the stated model","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T05"},
+        {"step_id":"STEP-PHY-REL-G-06","semantic_role":"SELECT_MODEL","semantic_job":"select common-g relative motion","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T06"},
+        {"step_id":"STEP-PHY-REL-G-07","semantic_role":"CHECK_MODEL_VALIDITY","semantic_job":"confirm common frame and same uniform g","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T07"},
+        {"step_id":"STEP-PHY-REL-G-08","semantic_role":"CHOOSE_RELATION","semantic_job":"form relative acceleration as the difference","relation_refs":["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T08"},
+        {"step_id":"STEP-PHY-REL-G-09","semantic_role":"SOLVE","semantic_job":"cancel equal accelerations algebraically","relation_refs":["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T09"},
+        {"step_id":"STEP-PHY-REL-G-10","semantic_role":"INTERPRET_SIGN_DIRECTION","semantic_job":"interpret the relative sign in the common frame","relation_refs":["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T10"},
+        {"step_id":"STEP-PHY-REL-G-11","semantic_role":"CHECK_UNITS","semantic_job":"check acceleration units","relation_refs":[],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T11"},
+        {"step_id":"STEP-PHY-REL-G-12","semantic_role":"VERIFY_PHYSICAL_PLAUSIBILITY","semantic_job":"check equal common acceleration cancels","relation_refs":["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T12"},
+        {"step_id":"STEP-PHY-REL-G-13","semantic_role":"INTERPRET_RESULT","semantic_job":"state what zero/nonzero relative acceleration means","relation_refs":["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],"representation_refs":[],"fragility":"UNRESOLVED","fragility_rationale":"Source technical route does not provide learner-fragility authority.","source_step_ref":"T13"}
+      ],
+      "learner_support_authority": false,
+      "source_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+      "source_route_ref": "PHY-PF-RELATIVE-G-CANCELLATION"
+    }
+  ],
+  "verification_routes": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "verification_route_id": "VERIFY-PHY-RELATIVE-G-CANCELLATION",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "target_refs": ["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE", "REASON-PHY-RELATIVE-G-CANCELLATION"],
+      "checks": [
+        {
+          "check_id": "CHECK-PHY-RELATIVE-G-CANCELLATION",
+          "check_kind": "PHYSICAL_PLAUSIBILITY",
+          "statement": "Satisfy upstream verification obligation VERIFY_RELATIVE_ACCELERATION_CANCELLATION without changing the physical model.",
+          "relation_refs": ["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],
+          "independent_of_primary_route": false,
+          "independence_rationale": "The source registry defines this as a verification obligation check but does not establish an independent derivation.",
+          "evidence_refs": ["SRC-PHY-VERIFICATION-ROUTE"],
+          "source_check_ref": "PHY-PD-VR-RELATIVE-G-CANCELLATION-C01"
+        },
+        {
+          "check_id": "CHECK-PHY-RELATIVE-G-MODEL-VALIDITY",
+          "check_kind": "MODEL_APPLICABILITY",
+          "statement": "Satisfy upstream verification obligation VERIFY_MODEL_VALIDITY without changing the physical model.",
+          "relation_refs": ["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],
+          "independent_of_primary_route": false,
+          "independence_rationale": "The source registry defines a model-validity checkpoint rather than an independent alternate route.",
+          "evidence_refs": ["SRC-PHY-VERIFICATION-ROUTE"],
+          "source_check_ref": "PHY-PD-VR-RELATIVE-G-CANCELLATION-C02"
+        }
+      ],
+      "source_refs": ["SRC-PHY-VERIFICATION-ROUTE"],
+      "source_route_ref": "PHY-PD-VR-RELATIVE-G-CANCELLATION"
+    }
+  ],
+  "problem_families": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "problem_family_id": "FAMILY-PHY-RELATIVE-G-CANCELLATION",
+      "skp_ref": "SKP-PHYSICS-RELATIVE-G-CANCELLATION-PILOT",
+      "title": "Relative acceleration cancellation under common g",
+      "structural_signature": "Two bodies in the same uniform gravitational field have equal acceleration, so their relative acceleration cancels in a common frame.",
+      "capability_refs": ["CAP-PHY-RELATIVE-ACCELERATION-SAME-G"],
+      "concept_refs": ["CONCEPT-PHY-RELATIVE-MOTION-COMMON-G"],
+      "relation_refs": ["REL-PHY-RELATIVE-ACCELERATION-DIFFERENCE"],
+      "reasoning_sequence_refs": ["REASON-PHY-RELATIVE-G-CANCELLATION"],
+      "representation_refs": ["REP-PHY-RELATIVE-STATE-DIAGRAM"],
+      "verification_route_refs": ["VERIFY-PHY-RELATIVE-G-CANCELLATION"],
+      "allowed_variations": ["different release times after common interval is defined", "different initial velocities"],
+      "transfer_boundaries": ["nonuniform fields or drag can make accelerations differ"],
+      "surface_cues_not_authority": true,
+      "source_refs": ["SRC-PHY-PROBLEM-FAMILY"],
+      "source_family_ref": "PHY-PF-RELATIVE-G-CANCELLATION"
+    }
+  ]
+}

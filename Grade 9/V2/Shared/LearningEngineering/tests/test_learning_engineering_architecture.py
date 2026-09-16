@@ -131,6 +131,10 @@ assert not any(a["status"] == "ACTIVE" for a in roadmap["subject_adapters"])
 # Foundational PILOT contracts are exercised through a synthetic topic-neutral fixture and negative falsifiers.
 runpy.run_path(str(ROOT / "tests" / "test_skp_pilot_kernel.py"), run_name="__main__")
 
+# The next semantic tranche remains prototype-only but must be executable, case-neutral in schema,
+# and able to project exact existing Physics authority without fabricating unresolved curriculum/pedagogy.
+runpy.run_path(str(ROOT / "tests" / "test_skp_semantic_prototype.py"), run_name="__main__")
+
 print(
     "Shared LearningEngineering architecture: PASS "
     f"({len(pilot_modules)} pilot modules / {len(module_ids) - len(pilot_modules)} planned modules, "

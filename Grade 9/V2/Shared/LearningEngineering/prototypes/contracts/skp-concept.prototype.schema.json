@@ -1,0 +1,20 @@
+{
+  "$id": "skp-concept.prototype.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Concept Prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prototype_only", "concept_id", "skp_ref", "title", "concept_kind", "disciplinary_meaning", "source_refs", "subject_extension_refs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "prototype_only": {"const": true},
+    "concept_id": {"type": "string", "pattern": "^CONCEPT-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "title": {"type": "string", "minLength": 3},
+    "concept_kind": {"enum": ["ENTITY", "PROPERTY", "PROCESS", "STATE", "RELATION", "MODEL", "DEFINITION", "THEOREM", "STRUCTURE", "REPRESENTATION_MEANING", "OTHER"]},
+    "disciplinary_meaning": {"type": "string", "minLength": 10},
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+    "subject_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "source_object_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+  }
+}

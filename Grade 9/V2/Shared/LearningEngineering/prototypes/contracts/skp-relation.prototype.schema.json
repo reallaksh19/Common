@@ -1,0 +1,38 @@
+{
+  "$id": "skp-relation.prototype.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Relation Prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prototype_only", "relation_id", "skp_ref", "title", "relation_kind", "formal_expression", "meaning", "concept_refs", "capability_refs", "applicability_conditions", "source_refs", "subject_extension_refs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "prototype_only": {"const": true},
+    "relation_id": {"type": "string", "pattern": "^REL-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "title": {"type": "string", "minLength": 3},
+    "relation_kind": {"enum": ["EQUALITY", "INEQUALITY", "MAPPING", "TRANSFORMATION", "DEPENDENCE", "CONSERVATION", "INFERENCE_RULE", "OTHER"]},
+    "formal_expression": {"type": "string", "minLength": 1},
+    "meaning": {"type": "string", "minLength": 10},
+    "concept_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CONCEPT-[A-Z0-9][A-Z0-9_-]*$"}},
+    "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CAP-[A-Z0-9][A-Z0-9_-]*$"}},
+    "applicability_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["condition_id", "statement", "evidence_refs", "state"],
+        "properties": {
+          "condition_id": {"type": "string", "pattern": "^COND-[A-Z0-9][A-Z0-9_-]*$"},
+          "statement": {"type": "string", "minLength": 5},
+          "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+          "state": {"enum": ["REQUIRED", "CONTEXTUAL", "UNRESOLVED"]}
+        }
+      }
+    },
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+    "subject_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "source_relation_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+  }
+}
