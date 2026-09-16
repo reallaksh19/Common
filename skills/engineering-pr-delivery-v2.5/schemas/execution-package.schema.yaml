@@ -5,7 +5,7 @@ properties:
   schema_version: {const: relay-v2.5}
   identity:
     type: object
-    required: [ep_id, branch, execution_state, previous_checkpoint]
+    required: [ep_id, branch, base_ref, execution_state, previous_checkpoint]
   git_basis:
     type: object
     required: [expected_branch, material_ref, base_branch, base_observed_ref, drift_policy, drift_receipt]
