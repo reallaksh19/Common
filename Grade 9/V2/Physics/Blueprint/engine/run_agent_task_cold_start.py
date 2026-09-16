@@ -70,7 +70,7 @@ def run_packet_cold_start(
     *,
     repo_root: Path | str = REPO,
 ) -> dict[str, Any]:
-    """Traverse the existing Physics cold-start chain from an exact governed route receipt."""
+    """Run the existing Physics P-K production chain from an exact governed P-A input selection."""
     repo_root = Path(repo_root).resolve()
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -167,7 +167,7 @@ def run_packet_cold_start(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Run Physics P-A through P-K from a resolved repository-owned AgentTasks route"
+        description="Run the existing Physics P-K production chain from an exact repository-owned P-A input route"
     )
     parser.add_argument("--packet", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
