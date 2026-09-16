@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-PHYSICS-BLUEPRINT-ROUTE-001",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": {
+    "system": "CBSE",
+    "version": "2026-27"
+  },
+  "topic": "Motion",
+  "subtopic": "Repository-routed assessment set",
+  "execution_route_id": "PHY-PA-ROUTE-001-V1",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": ["PROBLEM_SEMANTICS"],
+  "write_mode": "ANALYZE_ONLY",
+  "expected_scope": [],
+  "explicit_exclusions": []
+}
