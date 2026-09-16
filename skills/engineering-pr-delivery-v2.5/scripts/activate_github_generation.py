@@ -7,7 +7,8 @@ from relaylib import load_yaml
 from validate_projection_convergence import expected_execution_ref
 
 def _dump(path:Path,data:dict):path.parent.mkdir(parents=True,exist_ok=True);path.write_text(yaml.safe_dump(data,sort_keys=False),encoding="utf-8")
-def _has_publication(plan:dict)->bool:return any((x.get("publication") or {}).get("attempt_count",0)>0 or (x.get("publication") or {}).get("receipt") not in {None,""} for x in (plan.get("operations") or []))
+def _has_attempt(plan:dict)->bool:return any((x.get("publication") or {}).get("attempt_count",0)>0 for x in (plan.get("operations") or []))
+def _has_receipt(plan:dict)->bool:return any((x.get("publication") or {}).get("receipt") not in {None,""} for x in (plan.get("operations") or []))
 
 def activate(root:Path,new_plan_rel:str,apply:bool=False)->dict:
     state_path=root/"agents/relay/REPO_STATE.yaml";state=load_yaml(state_path);new_path=root/new_plan_rel
@@ -33,7 +34,9 @@ def activate(root:Path,new_plan_rel:str,apply:bool=False)->dict:
         if old_was_sync:
             projection["observed"]={"operation_id":old_id,"target":projection.get("target"),"roadmap_revision":old_gen.get("roadmap_revision"),"execution_ref":old_gen.get("execution_ref"),"receipt":projection.get("receipt") or f"github-generation:{old_id}","basis":list(projection.get("basis") or [f"generation:{old_id}"])}
         else:
-            disposition="SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED" if _has_publication(old) else "SUPERSEDED_BEFORE_PUBLICATION"
+            if _has_receipt(old):disposition="SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED"
+            elif _has_attempt(old):disposition="SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED"
+            else:disposition="SUPERSEDED_BEFORE_PUBLICATION"
             receipt=projection.get("receipt") if disposition=="SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED" else None
             history=projection.setdefault("superseded_operations",[])
             history.append({"operation_id":old_id,"target":projection.get("target"),"roadmap_revision":old_gen.get("roadmap_revision"),"execution_ref":old_gen.get("execution_ref"),"disposition":disposition,"superseded_by":gid,"receipt":receipt,"basis":[f"generation:{old_id}",f"superseded_by:{gid}"]})
