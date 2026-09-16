@@ -21,7 +21,7 @@ python render_report_projection.py <repo-root>
 
 `PROGRESS.yaml` is authoritative for calculated progress through Objective -> Phase -> Work Package -> EP -> implementation step -> acceptance criterion. `REPO_STATE` percentages are checked mirrors only; status/handover rendering uses `progress_projection.py` rather than trusting those mirrors.
 
-`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph and repository state. It records source digests and never becomes a competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance and structured next-work coverage. `render_report_projection.py` emits that derived object as YAML.
+`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph, quality review and repository state. It records source digests and never becomes a competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance, structured next-work coverage and current checkpoint QRV source binding when a QRV exists.
 
 Every executable EP has `next_work.steps[]`: ordered action, concrete targets, inputs, tests/oracles, acceptance IDs, expected result and stop/reconciliation conditions. The one-line execution `next_action` remains a machine hint only.
 
@@ -46,6 +46,20 @@ Before material writes:
 python resolve_execution_route.py <repo-root>
 python inspect_git_context.py <repo-root>
 ```
+
+## Quality procedures and QRV evidence
+
+```bash
+python validate_blueprints.py <repo-root>
+python validate_quality_router.py <repo-root>
+python validate_quality_review.py <repo-root>
+```
+
+Every executable EP explicitly partitions the built-in quality library into `quality.applicable[]` and `quality.not_applicable[]`. Applicable entries require a concrete reason and review focus; non-applicable entries require a concrete reason. Silent omission is invalid. Only applicable procedures run.
+
+Before checkpoint publication, applicable procedures are recorded in a `QRV-*` Quality Review under `agents/relay/quality/`. QRV is bound to the exact EP contract digest, roadmap revision, material ref and quality-router snapshot. Procedure results are `CLEAR | FINDINGS | NOT_RUN`; NOT_RUN remains quality/evidence truth and is not automatically a stop.
+
+Quality findings use `QF-*` IDs and preserve classification, severity, evidence and disposition. Severity alone never creates a hard stop. A finding may set `blocks_execution: true` only when it maps to an existing true hard-stop category with durable basis. Deferred/unresolved findings transfer exactly through `successor_handover`. Checkpoints point to the QRV by id/path/digest and cannot publish an executable successor while the QRV contains a true blocking finding.
 
 ## GitHub program projection
 
@@ -86,7 +100,7 @@ python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating an EP or acceptance evidence.
 
-Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
+Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
 
 Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report projections and GitHub Issues remain projections, not authority.
 
