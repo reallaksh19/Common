@@ -12,6 +12,7 @@ from validate_ep_semantics import validate as ep_semantics
 from validate_ep_acceptance_mapping import validate as acceptance
 from validate_ep_staleness import validate as staleness
 from validate_report_contract import validate as report_contract
+from validate_report_projection import validate as report_projection
 from validate_progress import validate as progress
 from validate_serial_execution import validate as execution
 from validate_parallel_plan import validate as parallel_plan
@@ -34,7 +35,7 @@ from validate_drift_receipt import validate as drift
 from validate_takeover_certification import validate as takeover
 from validate_baton_readiness import validate as baton_readiness
 
-ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("report_projection",report_projection),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions_compat",questions)]
 
 def validate(root:Path):
