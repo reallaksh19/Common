@@ -1,11 +1,21 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, identity, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
+required: [schema_version, identity, git_basis, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
 properties:
   schema_version: {const: relay-v2.5}
   identity:
     type: object
     required: [ep_id, branch, execution_state, previous_checkpoint]
+  git_basis:
+    type: object
+    required: [expected_branch, material_ref, base_branch, base_observed_ref, drift_policy, drift_receipt]
+    properties:
+      expected_branch: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      base_branch: {type: string, minLength: 1}
+      base_observed_ref: {type: string, minLength: 1}
+      drift_policy: {const: RECHECK_BEFORE_WRITE}
+      drift_receipt: {type: [string, 'null']}
   roadmap_source:
     type: object
     required: [roadmap_id, roadmap_revision, objective, phase, work_package]
