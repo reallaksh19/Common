@@ -6,6 +6,9 @@ properties:
   identity:
     type: object
     required: [ep_id, branch, base_ref, execution_state, previous_checkpoint]
+    properties:
+      previous_checkpoint: {type: [string, 'null']}
+      previous_join: {type: [string, 'null']}
   git_basis:
     type: object
     required: [expected_branch, material_ref, base_branch, base_observed_ref, drift_policy, drift_receipt]
