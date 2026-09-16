@@ -1,0 +1,141 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R005
+work_package:
+  id: WP-04
+  title: Full progress / handover / next-work contract
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R004
+  implementation_through_ref: "2c5299bc3fde71559ec1c8921dddccfcd4476cf4"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Make PROGRESS.yaml authoritative through Objective, Phase, Work Package, EP, Implementation Step and Acceptance Criterion.
+    - Require every roadmap objective/phase/work-package and every active EP/step/acceptance item to be represented in PROGRESS.yaml.
+    - Treat REPO_STATE overall/phase/EP percentages as checked compatibility mirrors rather than human-report authority.
+    - Add source-derived progress_projection.py and consume it from generated status/handover/report projections.
+    - Add semantic EP next_work.steps with ordered action, targets, inputs, tests, benchmarks, acceptance, expected result and stop/reconciliation conditions.
+    - Validate next-work order and reject references outside the current EP contract.
+    - Add report_projection.py with source digests for repository state, roadmap, progress, issue graph, EP and checkpoint.
+    - Add validate_report_projection.py to aggregate conformance.
+    - Add render_report_projection.py as a structured generated projection entrypoint.
+    - Render complete Objective -> Phase -> Work Package -> Step -> Acceptance hierarchy with source-derived percentages/status/basis.
+    - Preserve parallel plan, join and replan custody information while replacing stale progress/next-action authority.
+    - Make bootstrap create complete zero-weight progress hierarchy without inventing executable work.
+    - Reconcile integration EP progress hierarchy during parallel join convergence.
+    - Mark REPORT.md and generated report data as projection only, never repository authority.
+  explicitly_not_performed:
+    - GitHub issue creation/link/update/supersede/close orchestration; owned by WP-05.
+    - Full procedural quality-review library and QRV evidence; owned by WP-06.
+    - Plain-language Owner versus technical communication split; owned by WP-07.
+    - Owner change-intake projection; owned by WP-08.
+    - End-to-end A -> B -> C release certification; owned by WP-09.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-04-progress-handover.md"
+  progress_projection: "skills/engineering-pr-delivery-v2.5/scripts/progress_projection.py"
+  progress_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_progress.py"
+  report_projection: "skills/engineering-pr-delivery-v2.5/scripts/report_projection.py"
+  report_projection_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_report_projection.py"
+  report_projection_renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_report_projection.py"
+  status_renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_status.py"
+  handover_renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_handover.py"
+  ep_template: "skills/engineering-pr-delivery-v2.5/templates/EP.yaml"
+  progress_template: "skills/engineering-pr-delivery-v2.5/templates/PROGRESS.yaml"
+  report_template: "skills/engineering-pr-delivery-v2.5/templates/REPORT.md"
+  report_projection_schema: "skills/engineering-pr-delivery-v2.5/schemas/report-projection.schema.yaml"
+  regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_progress_handover.py"
+
+acceptance:
+  - id: AC-04-01
+    status: PASS
+    statement: Phase and EP progress mirrors cannot diverge from authoritative PROGRESS.yaml while generated handover continues to derive from the source progress rows.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_phase_and_ep_mirrors_must_match_authoritative_progress"]
+  - id: AC-04-02
+    status: PASS
+    statement: Missing roadmap progress rows are rejected instead of disappearing from handover.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_missing_roadmap_progress_row_fails"]
+  - id: AC-04-03
+    status: PASS
+    statement: Handover renders objective, phase, work package, implementation step, acceptance and detailed next work from durable sources.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_handover_renders_objective_phase_wp_step_acceptance_and_next_work"]
+  - id: AC-04-04
+    status: PASS
+    statement: Structured next work cannot reference stale or unknown validation IDs.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_next_work_references_must_be_current_ep_ids"]
+  - id: AC-04-05
+    status: PASS
+    statement: Structured next work has deterministic contiguous execution order.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_next_work_order_must_be_contiguous"]
+  - id: AC-04-06
+    status: PASS
+    statement: Structured report projection changes with its source progress and does not retain stale generated truth.
+    basis: ["tests/stress/test_progress_handover.py::ProgressHandoverStressTests.test_report_projection_is_derived_and_source_bound"]
+  - id: AC-04-07
+    status: PASS
+    statement: Bootstrap remains cold-startable with a complete zero-weight progress hierarchy and no fabricated EP.
+    basis: ["tests/stress/test_parallel_bootstrap.py::ParallelBootstrapStressTests.test_bootstrap_creates_initializing_non_executable_state"]
+  - id: AC-04-08
+    status: PASS
+    statement: Parallel join remains cold-startable after integration progress/step/acceptance reconciliation.
+    basis: ["tests/stress/test_parallel_convergence.py::ParallelConvergenceStressTests.test_parallel_join_becomes_cold_startable_serial_integration"]
+  - id: AC-04-09
+    status: PASS
+    statement: Existing parallel/join/replan custody detail remains visible after source-derived renderer migration.
+    basis: ["tests/stress/test_renderers.py"]
+  - id: AC-04-10
+    status: PASS
+    statement: Documentation-aligned implementation passes compile, root units and the dedicated repository-neutral synthetic stress suite before checkpoint creation.
+    basis: ["workflow:35104423581", "head:fabcb280167fbc1a8d95d120d4e88d242e1cd211", "stress_count:105"]
+
+baseline_findings:
+  resolved_by_wp_04:
+    - BA-008
+    - BA-009
+  partially_resolved:
+    - BA-011
+  carried_forward:
+    - BA-003
+    - BA-011
+    - BA-012
+    - BA-013
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 53
+  earned_by_this_checkpoint: 12
+  earned_after_this_checkpoint: 65
+  percent_after_this_checkpoint: 65
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35104423581
+  pre_checkpoint_green_ref: "fabcb280167fbc1a8d95d120d4e88d242e1cd211"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-04 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the final exact head containing CP-R005 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-05
+  title: GitHub Program Projection operations
+  planned_execution_package: EP-R006
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Define repository-authoritative desired GitHub operations for CREATE, LINK, UPDATE, PUBLISH_HANDOVER, SUPERSEDE, REVISE, CLOSE and REOPEN.
+    - Bind each external operation to stable projection operation identity and durable prepare/publish/reconcile receipts.
+    - Operationalize parent/subissue linking and evidence-preserving supersession without making GitHub roadmap authority.
+    - Make closure/reopen orchestration idempotent and compatible with the existing projection-generation recovery model.
+    - Add repository-neutral synthetic transaction regressions before any real GitHub adoption.
