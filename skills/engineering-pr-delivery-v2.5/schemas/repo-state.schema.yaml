@@ -118,6 +118,8 @@ properties:
       state: {enum: [NOT_REQUIRED, PENDING, PUBLISHED_UNCONFIRMED, IN_SYNC, STALE]}
       operation_id: {type: [string, 'null']}
       target: {type: [string, 'null']}
+      adapter: {enum: [GITHUB_ISSUES, null]}
+      plan: {type: [string, 'null']}
       roadmap_revision: {type: [string, 'null']}
       execution_ref: {type: [string, 'null']}
       receipt: {type: [string, 'null']}
