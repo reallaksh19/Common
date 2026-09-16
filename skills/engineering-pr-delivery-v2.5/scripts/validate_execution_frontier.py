@@ -10,11 +10,15 @@ def validate(root:Path):
     r=load_yaml(root/s["roadmap"]["path"])
     f=compute_frontier(r)
     mode=s["execution_policy"]["mode"]
+    active=s.get("active_ep") or {};active_none=active.get("state")=="NONE"
     if mode=="SERIAL":
-        if len(f)!=1:e.append(f"SERIAL execution requires exactly one executable frontier node; found {f}")
-        cur=(s.get("current_position") or {}).get("work_package")
-        if len(f)==1 and cur!=f[0]:e.append(f"REPO_STATE current work package {cur} != computed frontier {f[0]}")
-    elif mode=="OWNER_APPROVED_PARALLEL" and len(f)<2:
+        if active_none:
+            if f:e.append(f"SERIAL repository with active_ep NONE must have empty executable frontier; found {f}")
+        else:
+            if len(f)!=1:e.append(f"SERIAL execution with active EP requires exactly one executable frontier node; found {f}")
+            cur=(s.get("current_position") or {}).get("work_package")
+            if len(f)==1 and cur!=f[0]:e.append(f"REPO_STATE current work package {cur} != computed frontier {f[0]}")
+    elif mode=="OWNER_APPROVED_PARALLEL" and not active_none and len(f)<2:
         w.append(f"parallel mode has fewer than two executable frontier nodes: {f}")
 
     objectives,phases,idx=index_roadmap(r)
@@ -26,8 +30,7 @@ def validate(root:Path):
         if mode=="SERIAL" and wid not in f and declared in {"EXECUTABLE","ACTIVE"}:
             e.append(f"{wid}: non-frontier node cannot declare {declared} under SERIAL")
 
-    active=s.get("active_ep") or {}
-    if active.get("state")!="NONE":
+    if not active_none:
         ep=load_yaml(root/active["path"])
         identity=ep.get("identity") or {}
         source=ep.get("roadmap_source") or {}
@@ -44,6 +47,8 @@ def validate(root:Path):
             if source.get(key)!=current.get(key):e.append(f"active EP roadmap_source.{key} does not match REPO_STATE current_position")
         if source.get("generated_from_frontier") is not True:e.append("active EP must declare generated_from_frontier: true")
         if mode=="SERIAL" and f and swp!=f[0]:e.append(f"active EP work package {swp} is not current frontier {f[0]}")
+    elif active.get("path") not in {None,""}:
+        e.append("active_ep.path must be null/empty when active_ep.state is NONE")
     return e,w
 
 def main():
