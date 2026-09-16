@@ -3,11 +3,26 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import load_yaml,print_result,require
-REQ=["schema_version","checkpoint_id","ep_id","roadmap_basis","implementation_result","acceptance_results","validation_results","quality_findings","discoveries","roadmap_reconciliation","successor"]
+REQ=["schema_version","checkpoint_id","ep_id","roadmap_basis","execution_basis","implementation_result","acceptance_results","validation_results","quality_findings","discoveries","roadmap_reconciliation","successor"]
+VALIDATION_STATUS={"PASS","FAIL","NOT_RUN","NA"}
 
 def validate_file(path:Path):
     e=[];w=[];cp=load_yaml(path);e+=require(cp,REQ,"CP")
     if cp.get("schema_version")!="relay-v2.5":e.append("CP: schema_version must be relay-v2.5")
+    execution_basis=cp.get("execution_basis") or {};e+=require(execution_basis,["material_ref"],"CP.execution_basis");material_ref=execution_basis.get("material_ref")
+    if not str(material_ref or "").strip():e.append("CP.execution_basis.material_ref must be explicit")
+    seen=set()
+    for i,result in enumerate(cp.get("validation_results",[]) or []):
+        label=f"CP.validation_results[{i}]"
+        if not isinstance(result,dict):e.append(f"{label} must be a mapping");continue
+        e+=require(result,["id","status","basis_ref"],label)
+        rid=result.get("id")
+        if rid in seen:e.append(f"duplicate checkpoint validation result {rid}")
+        seen.add(rid)
+        status=result.get("status")
+        if status not in VALIDATION_STATUS:e.append(f"{label}.status invalid: {status}")
+        if status in {"PASS","FAIL","NOT_RUN"} and str(result.get("basis_ref"))!=str(material_ref):e.append(f"{label}.basis_ref must match checkpoint material_ref")
+        if status=="NOT_RUN" and not str(result.get("reason","")).strip():e.append(f"{label} NOT_RUN requires reason")
     if (cp.get("roadmap_reconciliation") or {}).get("result") not in {"NO_ROADMAP_CHANGE","STATUS_UPDATE","ROADMAP_PROPOSAL","OWNER_DECISION_REQUIRED"}:e.append("CP: invalid roadmap_reconciliation.result")
     successor=cp.get("successor") or {};e+=require(successor,["mode","frontier_work_package","ep_id","parallel_plan","lanes"],"CP.successor")
     mode=successor.get("mode")
