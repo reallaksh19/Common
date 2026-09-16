@@ -7,6 +7,7 @@ from relaylib import compute_frontier,load_yaml,print_result,require
 from validate_checkpoint import validate_file as validate_checkpoint
 
 EVIDENCE_STATUS={"PASS","FAIL","NOT_RUN","NA"}
+NONE_IDS={None,"","NONE"}
 
 
 def _sig(value):
@@ -19,7 +20,7 @@ def _same_items(a,b):
 
 def _unique_ids(items,label,e):
     seen=set()
-    for i,item in enumerate(items or []):
+    for item in items or []:
         if not isinstance(item,dict):continue
         ident=str(item.get("id","")).strip()
         if ident and ident in seen:e.append(f"{label} contains duplicate id {ident}")
@@ -78,12 +79,11 @@ def _validate_transfer_partition(item,label,frontier,e):
 
 
 def _aggregate_target(transfers,target):
-    acc=[];ev=[];sources=[]
-    for lane_id,source_wp,t in transfers:
+    acc=[];ev=[]
+    for _,_,t in transfers:
         if str(t.get("work_package"))!=str(target):continue
         acc.extend(t.get("unresolved_acceptance") or []);ev.extend(t.get("evidence") or [])
-        sources.append({"lane_id":lane_id,"work_package":source_wp})
-    return acc,ev,sources
+    return acc,ev
 
 
 def _check_inheritance(ep,replan_id,expected_acc,expected_ev,label,e):
@@ -95,19 +95,49 @@ def _check_inheritance(ep,replan_id,expected_acc,expected_ev,label,e):
     if not _same_items(inh.get("evidence") or [],expected_ev):e.append(f"{label}: replan inheritance mismatch for evidence")
 
 
+def _validate_history_chain(root:Path,current_replan:dict,e):
+    seen_replans=set();seen_plans=set();replan=current_replan
+    while True:
+        rid=str(replan.get("id","")).strip()
+        if not rid:e.append("parallel replan history contains receipt without id");return
+        if rid in seen_replans:e.append(f"parallel replan history cycle detected at {rid}");return
+        seen_replans.add(rid)
+        pred=replan.get("predecessor_plan") or {};pid=str(pred.get("id","")).strip();ppath=str(pred.get("path","")).strip()
+        if not pid or not ppath:e.append(f"parallel replan history {rid} missing predecessor plan id/path");return
+        if ppath in seen_plans:e.append(f"parallel replan history plan cycle detected at {ppath}");return
+        seen_plans.add(ppath)
+        plan_path=root/ppath
+        if not plan_path.exists():e.append(f"parallel replan history missing predecessor plan: {ppath}");return
+        plan=load_yaml(plan_path)
+        if str(plan.get("id"))!=pid:e.append(f"parallel replan history predecessor plan id mismatch for {rid}")
+        prev_id=plan.get("previous_replan");prev_path=plan.get("previous_replan_path")
+        if prev_id in NONE_IDS and prev_path in {None,""}:return
+        if prev_id in NONE_IDS or prev_path in {None,""}:
+            e.append(f"parallel plan {pid} must retain both previous_replan and previous_replan_path or neither");return
+        hist_path=root/str(prev_path)
+        if not hist_path.exists():e.append(f"parallel replan history missing receipt: {prev_path}");return
+        prior=load_yaml(hist_path)
+        if str(prior.get("id"))!=str(prev_id):e.append(f"parallel plan {pid} previous_replan id/path mismatch")
+        route=prior.get("successor_route") or {}
+        if route.get("mode")!="PARALLEL":e.append(f"historical replan {prev_id} must have PARALLEL successor to plan {pid}")
+        if str(route.get("parallel_plan_id"))!=pid or str(route.get("parallel_plan_path"))!=ppath:e.append(f"historical replan {prev_id} successor route does not point to plan {pid}")
+        replan=prior
+
+
 def validate(root:Path):
-    e=[];w=[];state=load_yaml(root/"agents/relay/REPO_STATE.yaml");ref=(state.get("predecessor_replan") or {}).get("path")
+    e=[];w=[];state=load_yaml(root/"agents/relay/REPO_STATE.yaml");replan_ref=state.get("predecessor_replan") or {};ref=replan_ref.get("path")
     if not ref:return e,w
     path=root/ref
     if not path.exists():return [f"parallel replan receipt does not exist: {ref}"],w
     replan=load_yaml(path);e+=require(replan,["schema_version","id","predecessor_plan","trigger","lane_dispositions","roadmap_reconciliation","successor_route"],"PARALLEL_REPLAN")
     if replan.get("schema_version")!="relay-v2.5-parallel-replan":e.append("PARALLEL_REPLAN.schema_version must be relay-v2.5-parallel-replan")
-    if str((state.get("predecessor_replan") or {}).get("id"))!=str(replan.get("id")):e.append("REPO_STATE.predecessor_replan.id does not match receipt")
+    if str(replan_ref.get("id"))!=str(replan.get("id")):e.append("REPO_STATE.predecessor_replan.id does not match receipt")
     pred=replan.get("predecessor_plan") or {};e+=require(pred,["id","path"],"PARALLEL_REPLAN.predecessor_plan")
     pred_path=root/str(pred.get("path",""))
     if not pred_path.exists():return e+[f"predecessor parallel plan does not exist: {pred.get('path')}"],w
     plan=load_yaml(pred_path)
     if str(plan.get("id"))!=str(pred.get("id")):e.append("predecessor plan id does not match receipt")
+    _validate_history_chain(root,replan,e)
     old_lanes={str(x.get("id")):x for x in plan.get("lanes",[]) or []}
     dispositions=replan.get("lane_dispositions") or []
     if {str(x.get("lane_id")) for x in dispositions}!={*old_lanes}:e.append("parallel replan lane_dispositions must cover every predecessor lane exactly once")
@@ -155,7 +185,7 @@ def validate(root:Path):
         active=state.get("active_ep") or {}
         if str(route.get("ep_id"))!=str(active.get("id")) or str(route.get("ep_path"))!=str(active.get("path")):e.append("SERIAL replan successor route != REPO_STATE active EP")
         if active.get("path") and (root/active["path"]).exists():
-            acc,ev,_=_aggregate_target(all_transfers,wp);_check_inheritance(load_yaml(root/active["path"]),rid,acc,ev,"SERIAL successor EP",e)
+            acc,ev=_aggregate_target(all_transfers,wp);_check_inheritance(load_yaml(root/active["path"]),rid,acc,ev,"SERIAL successor EP",e)
     elif mode=="PARALLEL":
         if state.get("relay_state")!="PARALLEL":e.append("PARALLEL replan successor requires relay_state PARALLEL")
         current_ref=(state.get("execution_policy") or {}).get("parallel_plan")
@@ -164,13 +194,14 @@ def validate(root:Path):
             current=load_yaml(root/current_ref)
             if str(current.get("id"))!=str(route.get("parallel_plan_id")):e.append("PARALLEL replan successor plan id mismatch")
             if str(current.get("previous_replan"))!=rid:e.append("successor parallel plan must reference previous_replan")
+            if str(current.get("previous_replan_path"))!=str(ref):e.append("successor parallel plan must reference previous_replan_path")
             lane_by_wp={str(x.get("work_package")):x for x in current.get("lanes",[]) or []}
             for target in frontier:
                 lane=lane_by_wp.get(str(target))
                 if not lane:continue
                 ep_path=root/str(lane.get("ep_path", ""))
                 if ep_path.exists():
-                    acc,ev,_=_aggregate_target(all_transfers,target);_check_inheritance(load_yaml(ep_path),rid,acc,ev,f"successor lane {lane.get('id')}",e)
+                    acc,ev=_aggregate_target(all_transfers,target);_check_inheritance(load_yaml(ep_path),rid,acc,ev,f"successor lane {lane.get('id')}",e)
     elif mode=="NONE":
         if state.get("relay_state") not in {"IDLE","TERMINAL"}:e.append("NONE replan successor requires IDLE or TERMINAL relay state")
     return e,w
