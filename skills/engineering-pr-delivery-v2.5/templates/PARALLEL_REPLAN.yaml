@@ -19,9 +19,28 @@ lane_dispositions:
     work_package: WP-B
     disposition: INVALIDATED
     basis: ["<drift/failure/owner-decision reference>"]
-    unresolved_acceptance: []
-    evidence: []
-    transfer_to_work_package: WP-B2
+    unresolved_acceptance:
+      - id: AC-B1
+        state: NOT_RUN
+        basis: ["<old EP/acceptance reference>"]
+    evidence:
+      - id: TEST-B1
+        status: NOT_RUN
+        basis_ref: "<old material ref>"
+        reason: "<why not run>"
+    # transfers partition the complete unresolved acceptance/evidence inventory.
+    # Every item above must appear exactly once below with unchanged state/status/basis.
+    transfers:
+      - work_package: WP-B2
+        unresolved_acceptance:
+          - id: AC-B1
+            state: NOT_RUN
+            basis: ["<old EP/acceptance reference>"]
+        evidence:
+          - id: TEST-B1
+            status: NOT_RUN
+            basis_ref: "<old material ref>"
+            reason: "<why not run>"
 roadmap_reconciliation:
   roadmap_revision: RM-0002
   frontier_after: [WP-B2]
