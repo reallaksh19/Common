@@ -46,4 +46,16 @@ status_planes:
     category: NONE
     reason: ""
     basis: []
+projection:
+  required: true
+  state: PENDING
+  roadmap_revision: "<RM-xxxx>"
+  execution_ref: "<EP-id / PLAN-id / NONE>"
+  basis: []
+relay_readiness:
+  repository_ready: true
+  projection_ready: false
+  handover_ready: false
+  reasons:
+    - Required external coordination projection is not yet synchronized.
 chat_context_required: false
