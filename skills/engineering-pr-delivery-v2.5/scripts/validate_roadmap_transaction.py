@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse
 from pathlib import Path
-from relaylib import load_yaml,print_result
+from relaylib import compute_frontier,load_yaml,print_result
 CLASSES={"EXECUTION_DERIVED_STATUS","ENGINEERING_DISCOVERY_PROPOSAL","OWNER_INTENT_MUTATION"}
 
 def validate(root:Path):
@@ -25,8 +25,20 @@ def validate(root:Path):
             p=root/ref
             if not p.exists():e.append(f"referenced ODR does not exist: {ref}")
             elif (load_yaml(p).get("status"))!="APPLIED":e.append(f"referenced ODR is not APPLIED: {ref}")
-    if "progress_basis_change" not in rev:e.append("roadmap revision missing progress_basis_change")
-    if "frontier_after" not in rev:e.append("roadmap revision missing frontier_after")
+    change=rev.get("progress_basis_change")
+    if not isinstance(change,dict):
+        e.append("roadmap revision missing progress_basis_change")
+    else:
+        progress=load_yaml(root/"agents/relay/roadmap/PROGRESS.yaml");basis=progress.get("progress_basis") or {}
+        if str(change.get("new_basis"))!=str(basis.get("id")):e.append("roadmap revision progress_basis_change.new_basis != current PROGRESS basis id")
+        if str(basis.get("roadmap_revision"))!=str(meta.get("revision")):e.append("current PROGRESS basis is not bound to current roadmap revision")
+        old_total,new_total=change.get("old_total_weight"),change.get("new_total_weight")
+        if isinstance(old_total,(int,float)) and isinstance(new_total,(int,float)) and old_total!=new_total and change.get("old_basis")==change.get("new_basis"):
+            e.append("changed progress denominator requires a new progress basis id")
+    if "frontier_after" not in rev:
+        e.append("roadmap revision missing frontier_after")
+    elif sorted(str(x) for x in (rev.get("frontier_after") or []))!=sorted(compute_frontier(r)):
+        e.append("roadmap revision frontier_after does not match computed current frontier")
     return e,w
 
 def main():
