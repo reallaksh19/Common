@@ -283,22 +283,25 @@ The MathBlueprint repository includes a complete developer-facing and academicia
 
 1. **MathBlueprint Run Builder** (`tools/run_builder/`):
    - Standalone browser workbench (`index.html`, `run_builder.js`, `run_builder.css`) and CLI compiler (`compile_run.py`).
-   - Compiles human run settings into reproducible prompt manifests and execution manifests with live schema validation, dependency visibility, and zero external runtime dependencies.
-   - Test suite: `tools/run_builder/tests/test_run_builder.py`.
+   - Compiles human run settings into reproducible prompt manifests and execution manifests with live schema validation, dependency visibility, presets for IIT-JEE, IOQM/Olympiad, and CBSE, and config export.
+   - CLI fixture validation mode: `python compile_run.py --validate-fixtures`.
+   - Test suite: `tools/run_builder/tests/test_run_builder.py` (15/15 tests PASS).
 
 2. **Blueprint Architecture Explorer** (`tools/architecture_explorer/`):
-   - Derived observability engine (`generate_architecture_manifest.py`) compiling 150+ components and 400+ relations into `architecture_observation_manifest.json`.
-   - Standalone interactive explorer UI (`index.html`, `explorer.js`, `explorer.css`) featuring dependency search, layer filtering, orphaned-contract detection, and gap reporting.
-   - Test suite: `tools/architecture_explorer/tests/test_architecture_explorer.py`.
+   - Derived observability engine (`generate_architecture_manifest.py`) compiling 153 components and 402 relations into `architecture_observation_manifest.json`.
+   - Standalone interactive explorer UI (`index.html`, `architecture_explorer.js`, `explorer.css`) featuring dependency search, layer filtering, orphaned-contract detection, and gap reporting with offline fallback.
+   - CI integrity verification mode: `python generate_architecture_manifest.py --check`.
+   - Test suite: `tools/architecture_explorer/tests/test_architecture_explorer.py` (10/10 tests PASS).
 
 3. **Engineering Discovery Quality Benchmark** (`benchmarks/discovery/`):
-   - Quantitative stress-test suite (`benchmark_runner.py`) running across 65 curated multi-category queries (`engineering_discovery_benchmark_corpus.v1.json`).
-   - Measures candidate recall (100% Top-1 recall), noise rate, ambiguity preservation, determinism, and vocabulary contributions.
+   - Quantitative stress-test suite (`benchmark_runner.py`) running across 80 curated multi-category queries (`corpus/engineering_discovery_benchmark_corpus.v1.json`).
+   - Measures candidate recall (100% Top-1 recall, 100% Top-3, 100% Top-5, 0% miss rate), noise rate, ambiguity preservation, determinism, and vocabulary contributions across 23 gates and 132 terms.
    - Generates `VOCABULARY_GAP_REPORT.md` and proves that candidate discovery ranking never bypasses exact Engineering Gate authorization.
-   - Test suite: `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py`.
+   - Test suite: `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py` (9/9 tests PASS).
 
 4. **Core Architecture / Documentation Drift Audit** (`CORE_ARCHITECTURE_DRIFT_AUDIT.md`):
-   - Exhaustive 16-section audit comparing all normative documents, schemas, and validators to maintain strict pedagogical, mathematical, and governance alignment.
+   - Exhaustive 17-section audit comparing all normative documents, schemas, and validators to maintain strict pedagogical, mathematical, and governance alignment.
+   - Section 17 includes the Academician Pedagogical Alignment Matrix bridging cognitive depth, misconception diagnosis, and problem-solving pedagogy for Grades 9–11.
 
 ## Source-question integrity
 
