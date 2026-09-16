@@ -23,6 +23,20 @@ Current stress coverage includes:
 - bootstrap producing a complete zero-weight progress hierarchy without fabricating executable work;
 - parallel join reconciling integration progress before cold start;
 - parallel/join/replan custody detail preserved through WP-04 renderer changes;
+- GitHub issue nodes distinguishing verified `ABSENT | OPEN | CLOSED | UNKNOWN` external state from desired publication state;
+- immutable `GHGEN-*` projection generations with `GHOP-*` operation journals;
+- stable GitHub operation IDs, idempotency keys and `relay-operation:GHOP-*` markers;
+- crash-safe pre-write `ATTEMPTED_UNCONFIRMED` journaling;
+- uncertain CREATE reconciliation before retry and no duplicate create progression;
+- readback recovery after a successful external mutation with no connector receipt;
+- CREATE -> LINK -> PUBLISH_HANDOVER dependency ordering and convergence;
+- repository relationship truth required before GitHub LINK/SUPERSEDE projection;
+- CLOSE requiring terminal repository truth and closure receipt before external close;
+- REOPEN requiring repository reactivation before external reopen;
+- UPDATE/REVISE requiring existing verified/reconcilable GitHub locator;
+- uncertain GitHub generation supersession without fabricated publication receipt;
+- old superseded GitHub generations retaining history but no retry authority;
+- missing/cyclic GitHub generation history rejection;
 - missing `REPO_PROFILE.yaml` and placeholder protocol basis rejection;
 - candidate-independent `BATON_READY` before a replacement exists;
 - zero-context candidate DISC/TC admission and candidate self-certification rejection;
@@ -43,7 +57,7 @@ Current stress coverage includes:
 - hard-stop/execution consistency and terminal/idle recovery;
 - Owner-approved parallel routing, join, partial failure/replan and multi-generation replan history;
 - stale predecessor-plan route rejection;
-- projection generation crash recovery and stale external projection convergence;
+- generic projection-generation crash recovery and stale external projection convergence;
 - live serial/parallel route selection from branch/worktree;
 - four-way base drift classification and qualified-boundary confirmation;
 - checkpoint evidence bound to the exact material reference.
