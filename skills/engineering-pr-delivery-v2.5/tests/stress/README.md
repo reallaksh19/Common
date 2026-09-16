@@ -25,6 +25,10 @@ Current stress coverage includes:
 - partial parallel-lane invalidation freezing the old plan and creating a durable `PARALLEL_REPLAN`;
 - completed sibling lane checkpoint retention during replan;
 - invalidated lane acceptance/evidence transfer to a serial replacement EP without status/basis loss;
+- one invalidated predecessor lane split across multiple replacement frontier packages with exact partition preservation;
+- transfer duplication, omission and evidence-status mutation rejection;
+- replan into a new Owner-approved parallel topology with every new lane bound to `previous_replan`;
+- superseded parallel-plan branches/worktrees resolving no executable route after replan;
 - one-of checkpoint/join/replan predecessor-baton enforcement;
 - bootstrap/migration truth preservation;
 - lifecycle-aware status/handover rendering, including join and replan custody;
