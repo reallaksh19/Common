@@ -1,3 +1,8 @@
 schema_version: relay-v2.5
+
+# SUPERSEDES requires two-sided transfer:
+# - predecessor.supersession_receipt: successor + unresolved_acceptance/inputs/risks/decisions/evidence
+# - successor.supersession_inheritance: predecessor + the same transferred values
+# This makes unresolved-work transfer machine-checkable instead of relying on prose.
 nodes: []
 relationships: []
