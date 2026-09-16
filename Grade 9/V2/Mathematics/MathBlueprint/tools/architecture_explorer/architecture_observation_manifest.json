@@ -5,8 +5,8 @@
   "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
-  "component_count": 156,
-  "relation_count": 450,
+  "component_count": 157,
+  "relation_count": 454,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -2783,7 +2783,8 @@
         "doc:ENGINEERING_AUTHORITY.md",
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:PRODUCT_GOVERNANCE_GATE.md",
-        "doc:README.md"
+        "doc:README.md",
+        "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
     "doc:CANONICAL_ENGINEERING_DOMAIN_ASSETS.md": {
@@ -2862,7 +2863,8 @@
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:ENGINEERING_DISCOVERY.md",
         "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
-        "doc:ENGINEERING_WORKBENCH.md"
+        "doc:ENGINEERING_WORKBENCH.md",
+        "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
     "doc:ENGINEERING_DISCOVERY.md": {
@@ -2983,7 +2985,8 @@
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:GENERATION_CALIBRATION.md",
-        "doc:SELF_TEACHING.md"
+        "doc:SELF_TEACHING.md",
+        "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
     "doc:PRODUCT_GOVERNANCE.md": {
@@ -3022,7 +3025,8 @@
       "documentation_refs": [
         "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-        "doc:PRODUCT_GOVERNANCE.md"
+        "doc:PRODUCT_GOVERNANCE.md",
+        "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
     "doc:README.md": {
@@ -3062,6 +3066,22 @@
         "doc:PEDAGOGY_AND_CALIBRATION.md",
         "doc:README.md"
       ]
+    },
+    "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md": {
+      "component_id": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "name": "SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "path": "SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "component_type": "NORMATIVE_DOCUMENT",
+      "schema_version": "N/A",
+      "title": "Subtopic Intelligence Intake Specification",
+      "authority_domain": "GENERIC_BLUEPRINT_ORCHESTRATION",
+      "maturity_observation": "NORMATIVE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": []
     },
     "doc:TECHNICAL_COMPOSITION.md": {
       "component_id": "doc:TECHNICAL_COMPOSITION.md",
@@ -4460,6 +4480,30 @@
       "confidence": "DERIVED"
     },
     {
+      "source": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "target": "doc:CANONICAL_ARCHITECTURE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "target": "doc:ENGINEERING_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "target": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
       "source": "doc:TECHNICAL_COMPOSITION.md",
       "target": "engine:validate_learner_page_blueprint.py",
       "relation_type": "REFERENCES",
@@ -5840,5 +5884,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:5815aa719551b22787963d93c767823e023c95f7a412efa125a9b9a11f50e332"
+  "manifest_digest": "sha256:d95e4ebf02c7423309abc9b12a7d64a47d39012e592afd79ce0ad249704f58ad"
 }
