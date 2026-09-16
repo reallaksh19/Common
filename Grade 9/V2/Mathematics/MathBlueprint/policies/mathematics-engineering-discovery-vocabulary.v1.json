@@ -6,7 +6,6 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "registry_id": "REG-MATH-TECH-GATE-V1",
-  "registry_digest": "sha256:5b72e4ac9ffbb3165712d9748ebbb2b5058817e6a9b55bd784cad6ed76cdd7bd",
   "entries": [
     {
       "target_scope_kind": "ENGINEERING_GATE",
