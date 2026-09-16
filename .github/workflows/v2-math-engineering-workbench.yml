@@ -50,6 +50,10 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/generate_mathematics_architecture_references.py' --check
       - name: Run C3 generated architecture reference falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_generated_architecture_references.py'
+      - name: Verify C4 subject adapter equivalence receipt is current
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/validate_subject_adapter_interface_candidate.py' --check
+      - name: Run C4 subject adapter interface falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_subject_adapter_interface_candidate.py'
       - name: Validate governed Engineering discovery vocabulary
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_discovery_vocabulary.py'
       - name: Run non-authoritative Engineering discovery falsifiers
