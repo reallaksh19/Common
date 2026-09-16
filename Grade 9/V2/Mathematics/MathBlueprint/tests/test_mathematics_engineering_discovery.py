@@ -57,12 +57,6 @@ def selection_for(receipt: dict, row: dict, suffix: str = "TEST", depth: str = "
     }
 
 
-def vocabulary_for(registry: dict) -> dict:
-    catalog = copy.deepcopy(VOCABULARY)
-    catalog["registry_digest"] = digest(registry)
-    return catalog
-
-
 class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
     def test_discovery_is_ranked_but_non_authoritative(self):
         target = REGISTRY["subtopic_gates"][0]
@@ -146,29 +140,27 @@ class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
         target = REGISTRY["subtopic_gates"][0]
         request = discovery_request(target["learner_title"], "STALE", kinds=["ENGINEERING_GATE"])
         registry_a = copy.deepcopy(REGISTRY)
-        receipt = discover_candidates(request, registry_a, vocabulary_for(registry_a))
+        receipt = discover_candidates(request, registry_a, VOCABULARY)
         selection = selection_for(receipt, receipt["candidates"][0], "STALE")
 
         registry_b = copy.deepcopy(REGISTRY)
         registry_b["subtopic_gates"][0]["learner_title"] += " revised"
         with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
-            promote_explicit_selection(request, receipt, selection, registry_b, vocabulary_for(registry_b))
+            promote_explicit_selection(request, receipt, selection, registry_b, VOCABULARY)
         self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_RECEIPT_STALE_OR_FORGED")
 
     def test_discovery_can_surface_held_candidate_but_authority_still_blocks(self):
         registry = copy.deepcopy(REGISTRY)
         target = registry["subtopic_gates"][0]
         target["provenance"]["source_scope"] = "HELD_SCOPE"
-        vocabulary = vocabulary_for(registry)
-
         request = discovery_request(target["learner_title"], "HELD", kinds=["ENGINEERING_GATE"])
-        receipt = discover_candidates(request, registry, vocabulary)
+        receipt = discover_candidates(request, registry, VOCABULARY)
         row = next(candidate for candidate in receipt["candidates"] if candidate["scope_ref"] == target["subtopic_id"])
         self.assertEqual(row["source_scope"], "HELD_SCOPE")
         self.assertEqual(receipt["technical_authorization"], "NOT_EVALUATED")
 
         selection = selection_for(receipt, row, "HELD")
-        engineering_request = promote_explicit_selection(request, receipt, selection, registry, vocabulary)
+        engineering_request = promote_explicit_selection(request, receipt, selection, registry, VOCABULARY)
         manifest = resolve_manifest(engineering_request, registry)
         closure = compile_closure(engineering_request, manifest, registry)
         self.assertEqual(closure["technical_authorization"], "BLOCKED")
@@ -238,12 +230,21 @@ class MathematicsEngineeringDiscoveryTests(unittest.TestCase):
             validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
         self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_DUPLICATE_TERM")
 
-    def test_catalog_registry_digest_drift_fails_closed(self):
-        catalog = copy.deepcopy(VOCABULARY)
-        catalog["registry_digest"] = "sha256:" + ("0" * 64)
-        with self.assertRaises(MathematicsEngineeringDiscoveryError) as ctx:
-            validate_discovery_vocabulary_catalog(catalog, copy.deepcopy(REGISTRY))
-        self.assertEqual(ctx.exception.code, "MATH_ENG_DISCOVERY_VOCABULARY_REGISTRY_DIGEST_MISMATCH")
+    def test_unrelated_registry_change_does_not_require_catalog_edit(self):
+        registry = copy.deepcopy(REGISTRY)
+        catalog_gate_ids = {
+            entry["target_scope_ref"]
+            for entry in VOCABULARY["entries"]
+            if entry["target_scope_kind"] == "ENGINEERING_GATE"
+        }
+        unrelated = next(gate for gate in registry["subtopic_gates"] if gate["subtopic_id"] not in catalog_gate_ids)
+        unrelated["learner_title"] += " revised"
+        validation = validate_discovery_vocabulary_catalog(copy.deepcopy(VOCABULARY), registry)
+        self.assertEqual(validation["status"], "PASS")
+        request = discovery_request("surds", "LOOSE_COUPLING", kinds=["ENGINEERING_GATE"])
+        receipt = discover_candidates(request, registry, copy.deepcopy(VOCABULARY))
+        self.assertEqual(receipt["vocabulary_catalog_digest"], digest(VOCABULARY))
+        self.assertEqual(receipt["registry_digest"], digest(registry))
 
     def test_vocabulary_mutation_stales_bound_selection(self):
         registry = copy.deepcopy(REGISTRY)
