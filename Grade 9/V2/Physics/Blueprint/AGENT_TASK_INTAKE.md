@@ -1,10 +1,10 @@
 # Physics Blueprint — AgentTasks intake boundary
 
-Status: **BLUEPRINT CONSUMER BOUNDARY / GOVERNED P-A ROUTE SELECTION / NON-AUTHORIZING DOWNSTREAM**
+Status: **BLUEPRINT CONSUMER BOUNDARY / GOVERNED P-A INPUT ROUTING / DOWNSTREAM AUTHORITY PRESERVED**
 
 `Shared/AgentTasks` may hand Physics Blueprint a deterministic execution packet, but that packet is not a source of Physics scope, domain truth, Engineering readiness, learner mastery, consumer authorization, publication authority, or route semantics.
 
-The direction is:
+The authority direction is:
 
 ```text
 human execution intent
@@ -14,8 +14,7 @@ human execution intent
   -> current Physics generation manifest
   -> repository-owned exact route registry
   -> exact QuestionSet + DeclaredTopicScope (+ optional AttemptSet)
-  -> P-A AssessmentIntake
-  -> P-B AssessmentReview
+  -> existing governed assessment/cold-start machinery
   -> P-C AssessmentScope
   -> mandatory P-C.5 Shared EngineeringGate evaluation
   -> P-D and downstream Blueprint chain
@@ -71,7 +70,7 @@ DECLARED_TOPIC_SCOPE    required
 ATTEMPT_SET             optional
 ```
 
-At intake time Blueprint requires the packet HEAD to match the current checkout, re-verifies every packet-bound authority digest, verifies the Physics generation manifest digest, verifies the route-registry schema and digest, requires a clean checkout before resolving a route, and emits SHA-256 bindings for the selected P-A input artifacts.
+At intake time Blueprint requires the packet HEAD to match the current checkout, re-verifies every packet-bound authority digest, verifies the Physics generation manifest digest, verifies the route-registry schema and digest, requires a clean checkout before resolving a route, and emits SHA-256 bindings for the selected assessment-input artifacts.
 
 The authorization scope is deliberately narrow:
 
@@ -108,6 +107,22 @@ execution_route.input_bindings = exact path + SHA-256 bindings
 
 These states separate valid delegation context from route resolution and from every downstream authority decision.
 
+## Routed cold-start seam
+
+`ColdStart/engine/physics_cold_start_runner.py` now accepts optional digest-bound `assessment_input_bindings` for exactly the three assessment-input roles above. When they are absent, legacy manifest-driven behavior is unchanged. When they are present:
+
+- the required `QUESTION_SET` and `DECLARED_TOPIC_SCOPE` must be present and required;
+- `ATTEMPT_SET`, when present, must remain optional;
+- every path must be repository-relative and inside the Physics tree;
+- every file SHA-256 must match the resolved route receipt;
+- the no-attempt run does not read the optional attempt set;
+- the with-attempts run reads that exact bound attempt set;
+- every other P-B/P-C/P-C.5/P-D/downstream authority still comes from the exact Physics generation manifest.
+
+`Blueprint/engine/run_agent_task_cold_start.py` is the thin consumer of this seam. It requires `RESOLVED_REPOSITORY_ROUTE`, passes only the exact route bindings into the existing P-K production runner, executes the existing no-attempt and with-attempt runs, applies the existing cross-run invariants, and emits `blueprint-agent-task-cold-start.schema.json` custody.
+
+The adapter deliberately does not claim that the P-K runner consumes a serialized P-A envelope. P-A compatibility is separately falsified by feeding the same route-bound artifacts through the existing `build_physics_assessment_intake` engine. The production guarantee is therefore precise: the route owns exact assessment-input selection; existing subject machinery owns interpretation and all downstream authority.
+
 ## Fail-closed rules
 
 `engine/consume_agent_task_packet.py` rejects:
@@ -119,11 +134,13 @@ These states separate valid delegation context from route resolution and from ev
 - invalid or digest-drifted subject generation manifests;
 - invalid or digest-drifted route registries;
 - duplicate route IDs, roles or paths;
-- route rows missing required P-A inputs;
+- route rows missing required assessment inputs;
 - route input paths outside the Physics subject tree;
 - route resolution from a dirty checkout;
 - packets whose bound subject is not Physics;
 - any packet that attempts to arrive with Engineering readiness, consumer authorization, or publication authority already asserted.
+
+The cold-start seam additionally rejects malformed route bindings, duplicate/unknown roles, missing required roles, out-of-subject paths, missing files, and any SHA-256 mismatch before using the routed input.
 
 ## Regression ownership
 
@@ -141,14 +158,14 @@ same opaque route ID
         |
         v
 packet intent/custody may change
-resolved P-A input bindings must not change
+resolved assessment-input bindings must not change
 Blueprint downstream authority boundary must not change
 ```
 
-An unknown route ID must remain held even when free-text labels exactly resemble an existing topic. Conversely, the same valid route ID must select the same P-A inputs even when all non-authoritative labels change.
+An unknown route ID remains held even when free-text labels resemble an existing topic. Conversely, the same valid route ID selects the same assessment inputs even when all non-authoritative labels change.
 
-## Current execution boundary
+The end-to-end routed proof additionally compiles a real packet, resolves the current route, runs the existing two-mode P-K chain with those exact bindings, verifies identical assessment scope and Engineering truth across learner-evidence modes, and keeps publication and human-review authorization `NOT_IMPLIED`.
 
-The routed intake is now proven to feed the existing P-A `build_intake` engine with the exact repository-bound `QuestionSet` and `DeclaredTopicScope`, while the `AttemptSet` remains optional. This closes the task-to-P-A **input-selection** authority gap.
+## Remaining limitation
 
-It does not yet make AgentTasks a replacement cold-start runner. Any future packet-triggered P-A→P-L orchestration must consume this receipt, preserve these exact input bindings, and traverse the existing P-A/P-B/P-C/P-C.5/P-D chain without bypasses or manual readiness.
+This closes the task-to-assessment-input routing gap without making AgentTasks a subject authority. It does **not** create the future production SKP→Engineering promotion path: the LearningEngineering roadmap remains non-runtime design authority, bulk population remains blocked, and subject SKP adapters remain non-authorizing until separately promoted.
