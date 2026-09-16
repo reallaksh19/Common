@@ -1,5 +1,8 @@
 # Mathematics V2 — Generation Calibration
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This file is the canonical generation-control boundary for Core1A/Core1B depth and Core2A/Core2B learner calibration.
 
 ## 1. Two independent control systems

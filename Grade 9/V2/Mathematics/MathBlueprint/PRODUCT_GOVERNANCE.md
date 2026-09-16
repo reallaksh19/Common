@@ -1,5 +1,8 @@
 # Mathematics V2 — Product Governance Gate
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`PRODUCT_GOVERNANCE_GATE.md`](PRODUCT_GOVERNANCE_GATE.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This contract sits after the Canonical Domain Registry and before deterministic Publication.
 
 It answers five release questions:

@@ -1,5 +1,8 @@
 # Mathematics V2 — Self-Teaching Pedagogy Contract
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This document governs learner-facing pedagogy for Core1A, Core1B, Core2A and Core2B. It does not change Core1/Core2 authority and it does not move learner-state inference into static products.
 
 ## Governing model

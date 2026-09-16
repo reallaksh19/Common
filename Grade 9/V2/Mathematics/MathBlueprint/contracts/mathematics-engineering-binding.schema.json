@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "mathematics-engineering-binding.schema.json",
+  "title": "MathematicsEngineeringBinding",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version","subject","binding_id","request_digest","manifest_digest","closure_receipt_id","closure_receipt_digest","registry_digest","validator_contract_digest","scope_refs","direct_gate_ids","transitive_gate_ids","downstream_consumer"],

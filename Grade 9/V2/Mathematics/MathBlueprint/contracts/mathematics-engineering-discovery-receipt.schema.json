@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "mathematics-engineering-discovery-receipt.schema.json",
+  "title": "MathematicsEngineeringDiscoveryReceipt",
   "type": "object",
   "additionalProperties": false,
   "required": [

@@ -22,6 +22,26 @@ PLANNED PEDAGOGY
 != LEARNER PERFORMANCE EVIDENCE
 ```
 
+## Consolidated Specification Architecture
+
+The Mathematics V2 canonical architecture is organized into a single governing root specification and three strictly bounded subordinate normative modules:
+
+- **Root Architectural Specification**:
+  - [`CANONICAL_ARCHITECTURE.md`](CANONICAL_ARCHITECTURE.md) (System topology, authority hierarchy, Core0–Core2 lifecycle, join, SDU/LAU, and publication boundary)
+- **Subordinate Normative Modules**:
+  1. [`ENGINEERING_AUTHORITY.md`](ENGINEERING_AUTHORITY.md): Upstream Engineering Gates, Transitive Closure, Non-Authoritative Discovery Boundary, and Exact Custody Binding.
+  2. [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md): Dual-Track Model (SDU vs LAU), Declarative Self-Teaching (A) vs Reconstructive Self-Tutoring (B), Difficulty Badges, and Reconstructable TTUs.
+  3. [`PRODUCT_GOVERNANCE_GATE.md`](PRODUCT_GOVERNANCE_GATE.md): Coverage Ledger, Cross-Core Similarity Auditing, Anti-Gaming Invariants, and Publication Freeze Criteria.
+  4. [`SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md`](SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md): Subtopic Intelligence Library (SIL) 4-Layer Intake Architecture, Verification Gates, and Concrete Subtopic Foundation Packets.
+- **Reference Research Standards**:
+  - [`references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md`](references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md): Nano-Level Subtopic Intelligence Research (Grade 9–11 CBSE & IIT-JEE Continuum, Singularity Traps, Step-Marking Rigor, and Examiner Trap Matrices).
+- **Derived Observability & Tooling**:
+  - [`tools/index.html`](tools/index.html): Unified Observability Workbench Portal
+  - [`tools/run_builder/index.html`](tools/run_builder/index.html): MathBlueprint Run Builder
+  - [`tools/architecture_explorer/index.html`](tools/architecture_explorer/index.html): Blueprint Architecture Explorer
+  - [`benchmarks/discovery/index.html`](benchmarks/discovery/index.html): Discovery Benchmark Quality Explorer
+  - [`CORE_ARCHITECTURE_DRIFT_AUDIT.md`](CORE_ARCHITECTURE_DRIFT_AUDIT.md): 17-Section Normative Consistency Audit & Academician Matrix
+
 ## 1. Canonical authority topology
 
 Human-language discovery may precede exact authority, but it never substitutes for it.

@@ -2,6 +2,8 @@
 
 `MathBlueprint/` is the canonical Mathematics orchestration authority above Core1/Core2/Core1A/Core1B/Core2A/Core2B and downstream publication/evidence layers.
 
+The canonical six-core architecture specification, governance invariants, and pipeline lifecycle are governed by [`CANONICAL_ARCHITECTURE.md`](CANONICAL_ARCHITECTURE.md).
+
 ```text
 EXECUTION ORDER MAY VARY.
 AUTHORITY ORDER MAY NOT.
@@ -13,41 +15,68 @@ PLANNED PEDAGOGY
 != LEARNER PERFORMANCE EVIDENCE
 ```
 
-## Canonical topology
+## Canonical Six-Core Topology
+
+The authoritative, non-negotiable system lifecycle is governed by [`CANONICAL_ARCHITECTURE.md`](CANONICAL_ARCHITECTURE.md):
 
 ```text
-Original evidence
-      ↓
-GroundTruthManifest
-      ↓
-Adaptive Evidence Router
-      ↓
-independent Core1 / Core2 reconstruction
-      ↓
-claim-level cross-validation
-      ↓
-Join / AssimilationDemand
-      ↓
-Core1A Assimilation Compiler
-      ↓
-AssimilationPlan
-      ↓
-Core1A declarative self-teaching
-Core1B open-ended self-tutoring
-
-Core2 legal assessment intelligence
-      ↓
-Core2A declarative solution apprenticeship
-Core2B open-ended transfer tutoring
-      ↓
-technical depth obligations + reconstructable TTUs
-      ↓
-validated LearnerPageBlueprint
-      ↓
-future deterministic Publication
-      ↓
-optional external learner-evidence ingestion
+OWNER CONTROL PLANE
+purpose • policy • difficulty override • routing override • inclusion/exclusion
+learner-% waiver • support override • release/hold
+        |
+        v
+ORIGINAL GROUND TRUTH
+questions • syllabus • authoritative sources • figures • answers • owner scope
+        |
+        v
+CORE0 — EVIDENCE ROUTER (route_math_learning_run.py)
+        |
+        +-----------------------------+
+        |                             |
+        v                             v
+CORE1 SPECIALIST (semantic)     CORE2 SPECIALIST (assessment)
+        |                             |
+        v                             v
+Independent SpecialistPackage   Independent SpecialistPackage
+        |                             |
+        +-------------+---------------+
+                      v
+              C1 × C2 JOIN / AUDIT (run_dual_intelligence.py)
+                      |
+                      v
+            CANONICAL DOMAIN REGISTRY (CDR)
+                      |
+                      v
+                     CDAU (Cross-Core Differentiation & Governance)
+                      |
+        +-------------+---------------+
+        |                             |
+        v                             v
+[SDU: STUDY DIFFERENTIATION]   [LAU: LEARNER ADAPTATION]
+(Core1A / Core1B)              (Core2A / Core2B)
+Intrinsic Difficulty: E/M/H    Learner % OR Owner Waiver
+NO Learner % Influence         x Task Demand (M0 to M8)
+        |                             |
+        v                             v
+[CONCEPT TTU FAMILY]           [PROBLEM TTU FAMILY]
+Core1A Complete Reference      Core2A Worked Problem Apprentice
+Core1B Open Tutor Reconstruct  Core2B Transfer Tutor
+        |                             |
+        +-------------+---------------+
+                      v
+            PRODUCT GOVERNANCE GATE (validate_product_governance.py)
+                      |
+                      v
+         DERIVED ENGINEERING VISIBILITY (compile_engineering_visibility_manifest.py)
+                      |
+                      v
+            DETERMINISTIC PUBLICATION BUNDLE & PDF (compile_publication_bundle.py)
 ```
+
+> [!NOTE]
+> **Transitional Single-Track Assimilation Note**:
+> The earlier single-track assimilation pipeline (`AssimilationDemand` → `AssimilationPlan`) represents a transitional V1 implementation. Production components are converging toward the SDU/LAU dual-track and Six-Core topology governed by [`CANONICAL_ARCHITECTURE.md`](CANONICAL_ARCHITECTURE.md) and subordinate normative modules ([`ENGINEERING_AUTHORITY.md`](ENGINEERING_AUTHORITY.md), [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md), [`PRODUCT_GOVERNANCE_GATE.md`](PRODUCT_GOVERNANCE_GATE.md), [`SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md`](SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md)).
+
 
 ## Intelligence boundaries
 
@@ -138,7 +167,7 @@ The badge controls content depth, web research, decomposition, visual density an
 
 | Badge | Page ceiling per stage/bucket | Pedagogy web research | Internal decomposition |
 |---|---:|---|---|
-| EASY | 10 | forbidden | subtopic only |
+| EASY | 10 | optional (default absent) | subtopic only |
 | MEDIUM | 20 | required + research brief | sub-subtopics allowed |
 | HARD | 30 | required + deep research brief | sub-subtopics allowed |
 
@@ -274,6 +303,40 @@ tests/test_mathematics_engineering_gates.py
   python "Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py"
   python -m unittest "Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py"
   ```
+
+## Observability, Usability, Discovery Quality & Architecture Governance
+
+The MathBlueprint repository includes a complete developer-facing and academician observability workbench:
+
+1. **MathBlueprint Run Builder** (`tools/run_builder/`):
+   - Standalone browser workbench (`index.html`, `run_builder.js`, `run_builder.css`) and CLI compiler (`compile_run.py`).
+   - Compiles human run settings into reproducible prompt manifests and execution manifests with live schema validation, dependency visibility, presets for IIT-JEE, IOQM/Olympiad, and CBSE, and config export.
+   - CLI fixture validation mode: `python compile_run.py --validate-fixtures`.
+   - Test suite: `tools/run_builder/tests/test_run_builder.py` (15/15 tests PASS).
+
+2. **Blueprint Architecture Explorer** (`tools/architecture_explorer/`):
+   - Derived observability engine (`generate_architecture_manifest.py`) compiling 159 components and 456 relations into `architecture_observation_manifest.json`.
+   - Standalone interactive explorer UI (`index.html`, `architecture_explorer.js`, `explorer.css`) featuring dependency search, layer filtering, orphaned-contract detection, and gap reporting with offline fallback.
+   - CI integrity verification mode: `python generate_architecture_manifest.py --check`.
+   - Test suite: `tools/architecture_explorer/tests/test_architecture_explorer.py` (10/10 tests PASS).
+
+3. **Engineering Discovery Quality Benchmark & Explorer** (`benchmarks/discovery/`):
+   - Quantitative stress-test suite (`benchmark_runner.py`) running across 80 curated multi-category queries (`corpus/engineering_discovery_benchmark_corpus.v1.json`).
+   - Interactive 5-view UI (`benchmarks/discovery/index.html`, `discovery_explorer.js`, `discovery_explorer.css`) with overview, query search, live playground, vocabulary catalog, and academician guide.
+   - Measures candidate recall (100% Top-1 recall, 100% Top-3, 100% Top-5, 0% miss rate), noise rate, ambiguity preservation, determinism, and vocabulary contributions across 23 gates and 132 terms.
+   - Generates `VOCABULARY_GAP_REPORT.md` (0 gaps) and proves that candidate discovery ranking never bypasses exact Engineering Gate authorization.
+   - Test suites: `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py` (9/9 tests PASS) and `test_discovery_explorer.py` (4/4 tests PASS).
+
+4. **Unified Observability Workbench Portal & Drift Audit** (`tools/index.html`, `CORE_ARCHITECTURE_DRIFT_AUDIT.md`):
+   - Gateway portal linking Run Builder, Architecture Explorer, Discovery Benchmark, Drift Audit, and Subtopic Intelligence Library with badge verification.
+   - Exhaustive 17-section audit comparing all normative documents, schemas, and validators to maintain strict pedagogical, mathematical, and governance alignment.
+   - Section 17 includes the Academician Pedagogical Alignment Matrix bridging cognitive depth, misconception diagnosis, and problem-solving pedagogy for Grades 9–12.
+
+5. **Subtopic Intelligence Library (SIL)** (`SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md`):
+   - 4-layer pedagogical knowledge intake architecture: Mathematical Core, Learning Atom DAG & Misconception Contrasts, Reconstructable TTUs, and Competitive Exam Problem Families.
+   - 12 foundation packets delivered: Quad Equations, Linear Systems, Triangles, Euclid's Lemma, Trig Ratios, Polynomials, Circles, AP, Coordinate Geometry, Parabola, Limits, and Permutations.
+   - Programmatic 6-point intake verification gate: `engine/validate_subtopic_intelligence_library.py` (12/12 Packets PASS).
+   - Test suite: `tests/test_subtopic_intelligence_library.py` (6/6 tests PASS).
 
 
 ## Source-question integrity

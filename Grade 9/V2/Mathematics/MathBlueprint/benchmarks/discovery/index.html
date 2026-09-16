@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Engineering Discovery Benchmark Explorer - Mathematics V2</title>
+  <link rel="stylesheet" href="discovery_explorer.css">
+</head>
+<body>
+  <header>
+    <div class="header-title">
+      <h1>Engineering Discovery Benchmark Explorer</h1>
+      <span class="header-badge">Adversarial Candidate Recall & Quality</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-view="overview">Benchmark Overview</button>
+      <button class="tab-btn" data-view="queries">80 Benchmark Queries</button>
+      <button class="tab-btn" data-view="playground">Discovery Playground</button>
+      <button class="tab-btn" data-view="vocabulary">Vocabulary Catalog</button>
+      <button class="tab-btn" data-view="academician">Academician Guide</button>
+      <a href="../../tools/index.html" class="tab-btn" style="text-decoration:none; border-color:var(--text-secondary); color:var(--text-secondary);">‹ Portal</a>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="alert-banner">
+      <span style="font-size:1.25rem;">⚠️</span>
+      <div>
+        <strong>CRITICAL GOVERNANCE INVARIANT:</strong> Candidate Discovery Ranking carries <code>AUTHORITY: CANDIDATE_DISCOVERY_ONLY</code>.
+        It strictly <strong>NEVER</strong> confers technical engineering gate authorization (<code>TECHNICAL_AUTHORIZATION: NOT_EVALUATED</code>).
+        Human or machine run builders must explicitly select exact Engineering Gate IDs.
+      </div>
+    </div>
+
+    <!-- CORS File Picker fallback if opened over file:/// -->
+    <div id="localFileNotice" class="card" style="display:none; border-color:var(--accent-amber); background:rgba(245,158,11,0.05);">
+      <div class="card-title" style="color:var(--accent-amber);">Local File Loading Notice</div>
+      <p style="font-size:0.875rem; margin-bottom:12px;">
+        When opening this page directly via <code>file:///</code> protocol, browser CORS policies may block automatic JSON loading.
+        Select your <code>engineering_discovery_benchmark_results.json</code> or corpus file below:
+      </p>
+      <input type="file" id="localFileInput" accept=".json" style="font-size:0.85rem; color:var(--text-primary);">
+    </div>
+
+    <!-- VIEW 1: OVERVIEW -->
+    <section id="overviewView" class="view-panel">
+      <div class="metrics-grid">
+        <div class="metric-card success">
+          <div class="metric-label">Top-1 Recall</div>
+          <div class="metric-value" id="top1RecallVal">100.0%</div>
+          <div class="metric-sub">Expected gate ranked #1</div>
+        </div>
+        <div class="metric-card success">
+          <div class="metric-label">Top-3 Recall</div>
+          <div class="metric-value" id="top3RecallVal">100.0%</div>
+          <div class="metric-sub">Expected gate in top 3</div>
+        </div>
+        <div class="metric-card success">
+          <div class="metric-label">Top-5 Recall</div>
+          <div class="metric-value" id="top5RecallVal">100.0%</div>
+          <div class="metric-sub">Expected gate in top 5</div>
+        </div>
+        <div class="metric-card success">
+          <div class="metric-label">Miss Rate</div>
+          <div class="metric-value" id="missRateVal">0.0%</div>
+          <div class="metric-sub">Zero unmapped queries</div>
+        </div>
+        <div class="metric-card amber">
+          <div class="metric-label">Total Queries</div>
+          <div class="metric-value" id="totalQueriesVal">80</div>
+          <div class="metric-sub">77 Valid + 3 Out-of-Domain</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Controlled Terms</div>
+          <div class="metric-value" id="vocabTermsVal">132</div>
+          <div class="metric-sub">Across 23 Engineering Gates</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Benchmark Scope & Quantitative Results</div>
+        <p style="font-size:0.875rem; color:var(--text-secondary); margin-bottom:16px;">
+          The benchmark quantifies candidate discovery recall against an 80-query stress suite covering Grades 9–11 competition topics
+          (IIT-JEE Main/Advanced, IOQM/RMO Olympiad, and CBSE/ICSE Board).
+        </p>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Target Threshold</th>
+              <th>Observed Metric</th>
+              <th>Compliance State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Top-1 Recall</strong></td>
+              <td>&ge; 90.0%</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">100.0%</td>
+              <td><span class="badge badge-rank1">PASS (EXCEEDS)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Top-3 Recall</strong></td>
+              <td>100.0%</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">100.0%</td>
+              <td><span class="badge badge-rank1">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>Top-5 Recall</strong></td>
+              <td>100.0%</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">100.0%</td>
+              <td><span class="badge badge-rank1">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>Miss Rate</strong></td>
+              <td>0.0%</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">0.0%</td>
+              <td><span class="badge badge-rank1">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>Ambiguity Preservation Rate</strong></td>
+              <td>&ge; 90.0%</td>
+              <td style="color:var(--accent-cyan); font-weight:700;">95.0%</td>
+              <td><span class="badge badge-rank1">PASS</span></td>
+            </tr>
+            <tr>
+              <td><strong>Out-of-Domain Rejection Safety</strong></td>
+              <td>Strict Refusal</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">100% PASS</td>
+              <td><span class="badge badge-rank1">PASS (SAFE)</span></td>
+            </tr>
+            <tr>
+              <td><strong>Determinism</strong></td>
+              <td>Exact Repeatability</td>
+              <td style="color:var(--accent-emerald); font-weight:700;">TRUE</td>
+              <td><span class="badge badge-rank1">PASS</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 2: QUERIES -->
+    <section id="queriesView" class="view-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">
+          <span>80 Curated Benchmark Queries</span>
+          <span id="queryCountDisplay" class="badge badge-category">80 Queries</span>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="querySearchInput" placeholder="Filter by query text, target gate, or Q-ID...">
+          <select id="queryCategoryFilter">
+            <option value="ALL">All Categories</option>
+          </select>
+          <select id="queryRankFilter">
+            <option value="ALL">All Ranks</option>
+            <option value="RANK1">Rank 1 Hits</option>
+            <option value="RANK2_3">Rank 2-3 Hits</option>
+            <option value="MISS">Misses</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="queriesTable">
+            <thead>
+              <tr>
+                <th style="width:60px;">ID</th>
+                <th>Query Text</th>
+                <th>Category</th>
+                <th>Expected Gate(s)</th>
+                <th>Rank</th>
+                <th>Top Observed Candidate</th>
+              </tr>
+            </thead>
+            <tbody id="queriesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PLAYGROUND -->
+    <section id="playgroundView" class="view-panel" style="display:none;">
+      <div class="playground-layout">
+        <div class="card">
+          <div class="card-title">Live Candidate Discovery Playground</div>
+          <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px;">
+            Test any query phrase. The discovery engine evaluates tokens, titles, and vocabulary aliases.
+          </p>
+          <div class="filter-bar" style="margin-bottom:16px;">
+            <input type="text" id="playgroundQueryInput" placeholder="Enter math query (e.g. Vieta relations, common roots, Thales theorem)..." value="Vieta relations and sum of roots">
+            <button id="runPlaygroundBtn" class="tab-btn active">Discover</button>
+          </div>
+          <div class="card-title" style="font-size:0.875rem;">Discovered Candidates</div>
+          <div id="candidatesContainer">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Discovery Receipt JSON</span>
+            <span class="badge" style="background:rgba(239,68,68,0.2); color:var(--accent-rose);">NON-AUTHORITATIVE</span>
+          </div>
+          <pre class="code-box" id="discoveryReceiptJson">// Discovery Receipt will appear here</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: VOCABULARY -->
+    <section id="vocabularyView" class="view-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">
+          <span>Controlled Vocabulary Catalog</span>
+          <span id="vocabStatsBadge" class="badge badge-category">23 Gates &bull; 132 Terms</span>
+        </div>
+        <div class="filter-bar">
+          <input type="text" id="vocabSearchInput" placeholder="Search phrase or gate...">
+          <select id="vocabGateFilter">
+            <option value="ALL">All Engineering Gates</option>
+          </select>
+          <select id="vocabClassFilter">
+            <option value="ALL">All Term Classes</option>
+            <option value="TECHNICAL_TERM">TECHNICAL_TERM</option>
+            <option value="LEARNER_ALIAS">LEARNER_ALIAS</option>
+            <option value="NOTATION">NOTATION</option>
+            <option value="FORMULA_PHRASE">FORMULA_PHRASE</option>
+            <option value="COMMON_MISSPELLING">COMMON_MISSPELLING</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="vocabTable">
+            <thead>
+              <tr>
+                <th>Phrase / Alias</th>
+                <th>Term Class</th>
+                <th>Target Engineering Gate</th>
+                <th>Target Scope Kind</th>
+              </tr>
+            </thead>
+            <tbody id="vocabTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: ACADEMICIAN GUIDE -->
+    <section id="academicianView" class="view-panel" style="display:none;">
+      <div class="card">
+        <div class="card-title">Academician Pedagogical Guide: Discovery vs Engineering Authorization</div>
+        <div style="display:flex; flex-direction:column; gap:16px; font-size:0.875rem; line-height:1.6; color:var(--text-primary);">
+          <div>
+            <h3 style="color:var(--accent-cyan); margin-bottom:6px;">1. Why Candidate Ranking Must Never Grant Technical Authorization</h3>
+            <p style="color:var(--text-secondary);">
+              In competitive examinations (IIT-JEE Main/Advanced, IOQM, RMO), students frequently query loosely: "Roots", "Sign of quadratic", or "Auxiliary lines".
+              If an engine automatically admitted the top-ranked candidate into the proof generator, ambiguous queries would silently resolve to an arbitrary subtopic.
+              Under MathBlueprint, candidate discovery is explicitly non-authoritative (<code>CANDIDATE_DISCOVERY_ONLY</code>) and requires an explicit, confirmed Exact-ID selection.
+            </p>
+          </div>
+          <div>
+            <h3 style="color:var(--accent-emerald); margin-bottom:6px;">2. Ambiguity Preservation for High-Stakes Competitions</h3>
+            <p style="color:var(--text-secondary);">
+              A query like <em>"Roots of equations"</em> spans Quadratic Equations, Theory of Equations, and Complex Numbers.
+              The benchmark enforces an <strong>Ambiguity Preservation Rate &ge; 90%</strong>, ensuring that all mathematically valid candidate interpretations appear in the candidate receipt for human teacher/student discrimination.
+            </p>
+          </div>
+          <div>
+            <h3 style="color:var(--accent-purple); margin-bottom:6px;">3. Controlled Vocabulary as a Cognitive On-Ramp</h3>
+            <p style="color:var(--text-secondary);">
+              Secondary school students use colloquialisms (<em>"middle term split"</em>, <em>"shridharacharya rule"</em>, <em>"cross multiply"</em>).
+              The governed vocabulary acts as a bridge from colloquial learner language to formal structural engineering gates without polluting the mathematical core with informal idioms.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="discovery_explorer.js"></script>
+</body>
+</html>

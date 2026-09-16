@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "mathematics-engineering-manifest.schema.json",
+  "title": "MathematicsEngineeringManifest",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version","subject","manifest_id","request_id","scope_kind","scope_refs","registry_ref","resolution_mode","direct_gate_ids"],

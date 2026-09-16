@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blueprint Architecture Explorer - Mathematics V2</title>
+  <link rel="stylesheet" href="explorer.css">
+</head>
+<body>
+  <header>
+    <div class="header-title">
+      <h1>Blueprint Architecture Explorer</h1>
+      <span class="tagline">Derived Observability Tool</span>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-view="components">Component List</button>
+      <button class="tab-btn" data-view="lifecycle">Schema Lifecycle</button>
+      <button class="tab-btn" data-view="authority">Authority Map</button>
+      <button class="tab-btn" data-view="graph">Subsystem Graph</button>
+      <button class="tab-btn" data-view="gaps">Gaps & Orphans</button>
+      <a href="../index.html" class="tab-btn" style="text-decoration:none; border-color:var(--text-secondary); color:var(--text-secondary);">‹ Portal</a>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <aside class="sidebar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search components, schemas, engines...">
+      </div>
+
+      <div class="filter-group">
+        <label for="filterDomain">Authority Domain</label>
+        <select id="filterDomain">
+          <option value="ALL">All Authority Domains</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterType">Component Type</label>
+        <select id="filterType">
+          <option value="ALL">All Component Types</option>
+        </select>
+      </div>
+
+      <div class="preset-queries">
+        <label style="font-size:0.75rem; text-transform:uppercase; color:var(--text-secondary); font-weight:600;">Sample Queries</label>
+        <button class="preset-btn" data-query="engineering-visibility">What validates Engineering visibility?</button>
+        <button class="preset-btn" data-query="learner-knowledge">What consumes learner knowledge %?</button>
+        <button class="preset-btn" data-query="publication">Which schemas reference publication?</button>
+        <button class="preset-btn" data-query="discovery">What tests exercise discovery?</button>
+        <button class="preset-btn" data-query="sdu">Which engines govern SDU?</button>
+      </div>
+
+      <div class="stats-card">
+        <div class="stat-item">
+          <span class="stat-num" id="statComponents">0</span>
+          <span style="color:var(--text-secondary)">Components</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statSchemas">0</span>
+          <span style="color:var(--text-secondary)">Schemas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statRelations">0</span>
+          <span style="color:var(--text-secondary)">Relations</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="statGaps" style="color:var(--accent-amber)">0</span>
+          <span style="color:var(--text-secondary)">Gaps/Orphans</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="content-panel" id="contentPanel">
+      <!-- Component List View -->
+      <section id="view-components" class="view-section active">
+        <div id="componentGrid" class="component-grid"></div>
+      </section>
+
+      <!-- Lifecycle Table View -->
+      <section id="view-lifecycle" class="view-section">
+        <h2 style="font-size:1.1rem; margin-bottom:12px; color:var(--accent-blue);">Schema $\to$ Producer $\to$ Validator $\to$ Consumer Matrix</h2>
+        <table class="lifecycle-table">
+          <thead>
+            <tr>
+              <th>Schema</th>
+              <th>Producer Engine</th>
+              <th>Validator Engine</th>
+              <th>Consumer Engine</th>
+              <th>Test Suite</th>
+            </tr>
+          </thead>
+          <tbody id="lifecycleTableBody"></tbody>
+        </table>
+      </section>
+
+      <!-- Authority Map View -->
+      <section id="view-authority" class="view-section">
+        <h2 style="font-size:1.1rem; margin-bottom:12px; color:var(--accent-blue);">Components Grouped by Authority Domain</h2>
+        <div id="authorityMapContainer"></div>
+      </section>
+
+      <!-- Dependency Graph View -->
+      <section id="view-graph" class="view-section">
+        <h2 style="font-size:1.1rem; margin-bottom:12px; color:var(--accent-blue);">Canonical Topology & Authority Boundaries</h2>
+        <svg id="graphSvg" class="graph-canvas"></svg>
+      </section>
+
+      <!-- Gaps & Orphans View -->
+      <section id="view-gaps" class="view-section">
+        <h2 style="font-size:1.1rem; margin-bottom:12px; color:var(--accent-rose);">Derived Architecture Gap Analysis</h2>
+        <div id="gapsContainer"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="explorer.js"></script>
+</body>
+</html>

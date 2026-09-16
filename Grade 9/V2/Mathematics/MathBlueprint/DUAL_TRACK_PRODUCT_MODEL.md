@@ -1,5 +1,8 @@
 # Mathematics V2 — Dual-Track Product Model
 
+> **Consolidated Specification Notice**:
+> This document is consolidated under the canonical subordinate module [`PEDAGOGY_AND_CALIBRATION.md`](PEDAGOGY_AND_CALIBRATION.md) as part of Mathematics V2 Specification Consolidation. It is preserved here for contract stability, historical references, and granular analysis.
+
 This normative subordinate contract defines the two learner-product control systems below the current Engineering-authorized Canonical Domain Registry. It does not create mathematical authority: all mathematical identities and topic-specific technical truth consumed here must already be admitted through the exact Engineering authority path defined by `CANONICAL_ARCHITECTURE.md` and `ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md`.
 
 Core1-series study material is governed by **intrinsic mathematical difficulty**. Core2-series question material is governed by **learner adaptation against task demand**.

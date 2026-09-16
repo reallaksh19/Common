@@ -1,0 +1,811 @@
+{
+  "schema_version": "1.0.0",
+  "corpus_id": "MATH-ENG-DISC-BENCH-CORPUS-V1",
+  "subject": "MATHEMATICS",
+  "authority": "TEST_BENCHMARK_ONLY",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "query_count": 65,
+  "queries": [
+    {
+      "query_id": "Q01",
+      "query_text": "Quadratic Equations, Discriminant Analysis & Vieta Relations",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for quadratic gate"
+    },
+    {
+      "query_id": "Q02",
+      "query_text": "Polynomials, Factor Theorem & Algebraic Identities",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for polynomials gate"
+    },
+    {
+      "query_id": "Q03",
+      "query_text": "Linear Systems in Two Variables & Consistency Classification",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for linear systems gate"
+    },
+    {
+      "query_id": "Q04",
+      "query_text": "Real Numbers, Radicals & Conjugate Rationalization",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for radicals"
+    },
+    {
+      "query_id": "Q05",
+      "query_text": "Euclidean Triangles: Congruence & Similarity Criteria",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical title for triangles"
+    },
+    {
+      "query_id": "Q06",
+      "query_text": "Vieta relations and sum of roots",
+      "query_category": "CURATED_ALIAS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Common Vieta phrasing in algebra"
+    },
+    {
+      "query_id": "Q07",
+      "query_text": "discriminant analysis b2 minus 4ac",
+      "query_category": "CURATED_ALIAS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Discriminant formula phrasing"
+    },
+    {
+      "query_id": "Q08",
+      "query_text": "factor theorem and remainder theorem",
+      "query_category": "CURATED_ALIAS",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Classic school/board alias"
+    },
+    {
+      "query_id": "Q09",
+      "query_text": "algebraic identities binomial square",
+      "query_category": "CURATED_ALIAS",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "DERIVED_FROM_VOCABULARY",
+      "notes": "Direct vocabulary entry"
+    },
+    {
+      "query_id": "Q10",
+      "query_text": "cartesian plane distance metric",
+      "query_category": "CURATED_ALIAS",
+      "acceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "DERIVED_FROM_VOCABULARY",
+      "notes": "Coordinate geometry alias"
+    },
+    {
+      "query_id": "Q11",
+      "query_text": "zeros of a quadratic polynomial",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLY-ZEROS-GRAPH"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "NCERT Grade 10 chapter terminology spanning quadratics and poly zeros"
+    },
+    {
+      "query_id": "Q12",
+      "query_text": "nature of roots real and equal",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard CBSE/ICSE prompt"
+    },
+    {
+      "query_id": "Q13",
+      "query_text": "pair of linear equations in two variables",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "DERIVED_FROM_VOCABULARY",
+      "notes": "NCERT chapter title"
+    },
+    {
+      "query_id": "Q14",
+      "query_text": "conjugate rationalization of denominator",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Grade 9 real numbers curriculum"
+    },
+    {
+      "query_id": "Q15",
+      "query_text": "congruence criteria SAS and SSS",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard triangle congruence criteria"
+    },
+    {
+      "query_id": "Q16",
+      "query_text": "Theory of Equations",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Classic Indian JEE coaching topic title for higher degree and quadratic equations"
+    },
+    {
+      "query_id": "Q17",
+      "query_text": "Location of roots with parameter ranges",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Prime JEE Advanced subtopic under quadratics"
+    },
+    {
+      "query_id": "Q18",
+      "query_text": "Newton sums for symmetric power sums of roots",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-LINES-ANGLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Olympiad / JEE Advanced tool for polynomial roots"
+    },
+    {
+      "query_id": "Q19",
+      "query_text": "Common roots condition between two quadratic equations",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-MENS-SURFACES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard competitive exam problem family"
+    },
+    {
+      "query_id": "Q20",
+      "query_text": "Transformation of equations roots reciprocated",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Replacing x with 1/x for reciprocal roots"
+    },
+    {
+      "query_id": "Q21",
+      "query_text": "Sridharacharya formula for quadratic roots",
+      "query_category": "REGIONAL_TERMS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Traditional Indian mathematics term for quadratic formula"
+    },
+    {
+      "query_id": "Q22",
+      "query_text": "sign of quadratic trinomial",
+      "query_category": "REGIONAL_TERMS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLY-ZEROS-GRAPH"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Indian/British textbook phrasing for parabola sign"
+    },
+    {
+      "query_id": "Q23",
+      "query_text": "surds rationalisation",
+      "query_category": "REGIONAL_TERMS",
+      "acceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "British/Indian Commonwealth term for radicals"
+    },
+    {
+      "query_id": "Q24",
+      "query_text": "hcf and lcm by prime factorisation",
+      "query_category": "REGIONAL_TERMS",
+      "acceptable_candidate_refs": ["MATH-NUM-EUCLID-DIVISION"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "British/Indian term for GCD"
+    },
+    {
+      "query_id": "Q25",
+      "query_text": "simultaneous equations in two unknowns",
+      "query_category": "REGIONAL_TERMS",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "UK curriculum terminology"
+    },
+    {
+      "query_id": "Q26",
+      "query_text": "QE",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Abbreviation for Quadratic Equations"
+    },
+    {
+      "query_id": "Q27",
+      "query_text": "AP nth term and sum",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-SEQ-AP"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Abbreviation for Arithmetic Progression"
+    },
+    {
+      "query_id": "Q28",
+      "query_text": "BPT Basic Proportionality Theorem",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Thales Theorem abbreviation in Indian boards"
+    },
+    {
+      "query_id": "Q29",
+      "query_text": "HCF by Euclid algorithm",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-NUM-EUCLID-DIVISION"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Highest Common Factor acronym"
+    },
+    {
+      "query_id": "Q30",
+      "query_text": "pythagorean trig identities",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-TRIG-RATIOS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Trig abbreviation"
+    },
+    {
+      "query_id": "Q31",
+      "query_text": "b^2 - 4ac",
+      "query_category": "NOTATION_NAMES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Discriminant algebraic notation"
+    },
+    {
+      "query_id": "Q32",
+      "query_text": "alpha plus beta minus b over a",
+      "query_category": "NOTATION_NAMES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Spoken Vieta sum formula"
+    },
+    {
+      "query_id": "Q33",
+      "query_text": "a1 over a2 equals b1 over b2",
+      "query_category": "NOTATION_NAMES",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Linear consistency ratio condition"
+    },
+    {
+      "query_id": "Q34",
+      "query_text": "sin squared theta plus cos squared theta",
+      "query_category": "NOTATION_NAMES",
+      "acceptable_candidate_refs": ["MATH-TRIG-RATIOS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Fundamental trigonometric identity"
+    },
+    {
+      "query_id": "Q35",
+      "query_text": "sqrt of prime is irrational",
+      "query_category": "NOTATION_NAMES",
+      "acceptable_candidate_refs": ["MATH-NUM-IRRATIONAL-PROOF"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Irrationality theorem"
+    },
+    {
+      "query_id": "Q36",
+      "query_text": "Vieta relations",
+      "query_category": "PARTIAL_PHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Two-word partial query"
+    },
+    {
+      "query_id": "Q37",
+      "query_text": "discriminant analysis",
+      "query_category": "PARTIAL_PHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Two-word partial query"
+    },
+    {
+      "query_id": "Q38",
+      "query_text": "factor theorem",
+      "query_category": "PARTIAL_PHRASES",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Two-word partial query"
+    },
+    {
+      "query_id": "Q39",
+      "query_text": "cyclic quadrilaterals",
+      "query_category": "PARTIAL_PHRASES",
+      "acceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Geometry partial phrase"
+    },
+    {
+      "query_id": "Q40",
+      "query_text": "conjugate rationalization",
+      "query_category": "PARTIAL_PHRASES",
+      "acceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Number systems partial phrase"
+    },
+    {
+      "query_id": "Q41",
+      "query_text": "Vieta Relations Quadratic Equations Discriminant Analysis",
+      "query_category": "WORD_ORDER_PERMUTATIONS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Scrambled title words"
+    },
+    {
+      "query_id": "Q42",
+      "query_text": "Identities Algebraic Factor Theorem Polynomials",
+      "query_category": "WORD_ORDER_PERMUTATIONS",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Scrambled polynomials words"
+    },
+    {
+      "query_id": "Q43",
+      "query_text": "Two Variables Linear Systems Classification Consistency",
+      "query_category": "WORD_ORDER_PERMUTATIONS",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Scrambled linear words"
+    },
+    {
+      "query_id": "Q44",
+      "query_text": "Similarity Congruence Criteria Triangles Euclidean",
+      "query_category": "WORD_ORDER_PERMUTATIONS",
+      "acceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Scrambled triangles words"
+    },
+    {
+      "query_id": "Q45",
+      "query_text": "Theorey of Equations",
+      "query_category": "MINOR_MISSPELLINGS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-MENS-SURFACES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Typo in 'Theorey'"
+    },
+    {
+      "query_id": "Q46",
+      "query_text": "Quadratik Equations discrimenant",
+      "query_category": "MINOR_MISSPELLINGS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Typos in 'Quadratik' and 'discrimenant'"
+    },
+    {
+      "query_id": "Q47",
+      "query_text": "Veta relations root sum",
+      "query_category": "MINOR_MISSPELLINGS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Typo in 'Veta'"
+    },
+    {
+      "query_id": "Q48",
+      "query_text": "Euclid devision lemma",
+      "query_category": "MINOR_MISSPELLINGS",
+      "acceptable_candidate_refs": ["MATH-NUM-EUCLID-DIVISION"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Typo in 'devision'"
+    },
+    {
+      "query_id": "Q49",
+      "query_text": "theory-of-equations",
+      "query_category": "SPACING_HYPHENATION",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Hyphenated query"
+    },
+    {
+      "query_id": "Q50",
+      "query_text": "quadratic-equations-vieta",
+      "query_category": "SPACING_HYPHENATION",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Hyphenated query"
+    },
+    {
+      "query_id": "Q51",
+      "query_text": "polynomial identities",
+      "query_category": "PLURAL_SINGULAR_VARIATION",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Plural variation"
+    },
+    {
+      "query_id": "Q52",
+      "query_text": "radical conjugate rationalisations",
+      "query_category": "PLURAL_SINGULAR_VARIATION",
+      "acceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Plural variation"
+    },
+    {
+      "query_id": "Q53",
+      "query_text": "Finding roots when equation has degree two",
+      "query_category": "CONCEPTUAL_PARAPHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Conceptual paraphrase of quadratics"
+    },
+    {
+      "query_id": "Q54",
+      "query_text": "Splitting middle term to find factors",
+      "query_category": "CONCEPTUAL_PARAPHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Middle-term split technique used in both"
+    },
+    {
+      "query_id": "Q55",
+      "query_text": "Check if two lines intersect coincide or parallel",
+      "query_category": "CONCEPTUAL_PARAPHRASES",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Paraphrase of linear consistency classification"
+    },
+    {
+      "query_id": "Q56",
+      "query_text": "Roots",
+      "query_category": "AMBIGUOUS_PHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLY-ZEROS-GRAPH", "MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Highly ambiguous single-token query"
+    },
+    {
+      "query_id": "Q57",
+      "query_text": "Equations",
+      "query_category": "AMBIGUOUS_PHRASES",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-LIN-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-MENS-SURFACES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Highly ambiguous single-token query"
+    },
+    {
+      "query_id": "Q58",
+      "query_text": "Polynomials",
+      "query_category": "AMBIGUOUS_PHRASES",
+      "acceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS", "MATH-ALG-POLY-ZEROS-GRAPH"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Ambiguous across algebra gates"
+    },
+    {
+      "query_id": "Q59",
+      "query_text": "Geometry",
+      "query_category": "AMBIGUOUS_PHRASES",
+      "acceptable_candidate_refs": ["MATH-GEO-COORDINATES", "MATH-GEO-TRIANGLES", "MATH-GEO-CIRCLES", "MATH-GEO-LINES-ANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Broad geometry query"
+    },
+    {
+      "query_id": "Q60",
+      "query_text": "Photosynthesis light reaction chloroplast",
+      "query_category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "NO_VALID_TARGET",
+      "source": "CURATED_TEST",
+      "notes": "Biology query out of domain"
+    },
+    {
+      "query_id": "Q61",
+      "query_text": "Thermodynamics Carnot engine entropy",
+      "query_category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "NO_VALID_TARGET",
+      "source": "CURATED_TEST",
+      "notes": "Physics/chemistry query out of domain"
+    },
+    {
+      "query_id": "Q62",
+      "query_text": "Ancient Roman Empire Senate and Julius Caesar",
+      "query_category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "acceptable_candidate_refs": [],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "NO_VALID_TARGET",
+      "source": "CURATED_TEST",
+      "notes": "History query out of domain"
+    },
+    {
+      "query_id": "Q63",
+      "query_text": "Linear equations in two variables quadratic graph",
+      "query_category": "ADVERSARIAL_NEAR_MISS",
+      "acceptable_candidate_refs": ["MATH-LIN-EQUATIONS", "MATH-ALG-POLY-ZEROS-GRAPH", "MATH-QUAD-EQUATIONS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-CIRCLES"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Mixes linear equations with quadratic graph"
+    },
+    {
+      "query_id": "Q64",
+      "query_text": "Radical square roots in quadratic formula",
+      "query_category": "ADVERSARIAL_NEAR_MISS",
+      "acceptable_candidate_refs": ["MATH-QUAD-EQUATIONS", "MATH-NUM-RADICALS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Crosses radicals and quadratics"
+    },
+    {
+      "query_id": "Q65",
+      "query_text": "Circle theorem inscribed angle in a triangle",
+      "query_category": "ADVERSARIAL_NEAR_MISS",
+      "acceptable_candidate_refs": ["MATH-GEO-CIRCLES", "MATH-GEO-TRIANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "AMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Mixes circle and triangle theorems"
+    },
+    {
+      "query_id": "Q66",
+      "query_text": "Limits of Functions: Indeterminate Forms & Standard Limits",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CALC-LIMITS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-TRIANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for limits gate"
+    },
+    {
+      "query_id": "Q67",
+      "query_text": "L'Hopital's Rule for 0/0 limits",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-CALC-LIMITS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "IIT-JEE competition technique for indeterminate limits"
+    },
+    {
+      "query_id": "Q68",
+      "query_text": "Derivatives: First Principles, Product, Quotient & Chain Rules",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CALC-DERIVATIVES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for derivatives gate"
+    },
+    {
+      "query_id": "Q69",
+      "query_text": "differentiation by chain rule",
+      "query_category": "SCHOOL_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-CALC-DERIVATIVES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard calculus technique query"
+    },
+    {
+      "query_id": "Q70",
+      "query_text": "Conic Sections: Parabola, Standard Forms & Latus Rectum",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-CONIC-PARABOLA"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-LIN-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for parabola gate"
+    },
+    {
+      "query_id": "Q71",
+      "query_text": "latus rectum of parabola",
+      "query_category": "TECHNICAL_IDENTIFIERS",
+      "acceptable_candidate_refs": ["MATH-CONIC-PARABOLA"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-RADICALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard conic geometric focal length query"
+    },
+    {
+      "query_id": "Q72",
+      "query_text": "Complex Numbers: Argand Plane, Modulus, Argument & Polar Form",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-ALG-COMPLEX-NUMBERS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-LINES-ANGLES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for complex numbers gate"
+    },
+    {
+      "query_id": "Q73",
+      "query_text": "Euler form and De Moivre theorem",
+      "query_category": "COMPETITION_TERMINOLOGY",
+      "acceptable_candidate_refs": ["MATH-ALG-COMPLEX-NUMBERS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-STAT-PROBABILITY"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "IIT-JEE Advanced polar & exponential complex representation"
+    },
+    {
+      "query_id": "Q74",
+      "query_text": "Compound Angle Identities & Double/Half Angle Formulas",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-TRIG-COMPOUND-ANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for compound angle gate"
+    },
+    {
+      "query_id": "Q75",
+      "query_text": "double angle formulas",
+      "query_category": "TECHNICAL_IDENTIFIERS",
+      "acceptable_candidate_refs": ["MATH-TRIG-COMPOUND-ANGLES"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-GEO-COORDINATES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Trigonometric double angle query"
+    },
+    {
+      "query_id": "Q76",
+      "query_text": "Permutations & Combinations: Fundamental Counting, nPr & nCr",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-PERM-COMB"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-MENS-SURFACES"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for combinatorics gate"
+    },
+    {
+      "query_id": "Q77",
+      "query_text": "nPr and nCr combinations",
+      "query_category": "ABBREVIATIONS",
+      "acceptable_candidate_refs": ["MATH-PERM-COMB"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-TRIG-RATIOS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Standard combinatorics notation query"
+    },
+    {
+      "query_id": "Q78",
+      "query_text": "Binomial Theorem for Positive Integral Index & General Terms",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-ALG-BINOMIAL-THEOREM"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-NUM-EUCLID-DIVISION"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for binomial theorem gate"
+    },
+    {
+      "query_id": "Q79",
+      "query_text": "Geometric Progressions, Infinite GP & Special Sums (Sigma n^2, n^3)",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-SEQ-GP-SPECIAL"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-QUAD-EQUATIONS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for GP gate"
+    },
+    {
+      "query_id": "Q80",
+      "query_text": "Axiomatic Probability, Conditional Probability & Bayes' Theorem",
+      "query_category": "CANONICAL_LEARNER_TITLE",
+      "acceptable_candidate_refs": ["MATH-PROB-EVENTS"],
+      "explicitly_unacceptable_candidate_refs": ["MATH-ALG-POLYNOMIALS"],
+      "ambiguity": "UNAMBIGUOUS",
+      "source": "CURATED_TEST",
+      "notes": "Exact canonical learner title for probability events gate"
+    }
+  ]
+}
