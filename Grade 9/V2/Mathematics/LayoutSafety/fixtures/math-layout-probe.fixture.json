@@ -1,0 +1,410 @@
+{
+  "map_id": "MATH-ROM-LAYOUT-PROBE",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "page_count": 3,
+  "page_width_pt": 595.28,
+  "page_height_pt": 841.89,
+  "printable_margin_pt": 42.0,
+  "objects": [
+    {
+      "object_id": "Q2/panel",
+      "kind": "PANEL",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 0,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 667.89,
+        "w": 511.28,
+        "h": 132.0
+      },
+      "text": "",
+      "typography_role": "PAGE_FURNITURE",
+      "font_size_pt": 8.0,
+      "container_id": null,
+      "content_height_pt": null,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/stem",
+      "kind": "STEM",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 1,
+      "opaque": false,
+      "box": {
+        "x": 48.0,
+        "y": 765.89,
+        "w": 499.28,
+        "h": 26
+      },
+      "text": "Two distinct lines cannot have more than one point in common.",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.5,
+      "container_id": "Q2/panel",
+      "content_height_pt": 26.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/proof-1",
+      "kind": "SUBPART",
+      "question_ref": "Q2",
+      "atomic_ask_ref": "Q2#PROOF-1",
+      "page": 1,
+      "paint_order": 2,
+      "opaque": false,
+      "box": {
+        "x": 60.0,
+        "y": 725.89,
+        "w": 475.28,
+        "h": 30
+      },
+      "text": "Prove the statement using Euclid's axioms.",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.0,
+      "container_id": "Q2/panel",
+      "content_height_pt": 30.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/proof-2",
+      "kind": "SUBPART",
+      "question_ref": "Q2",
+      "atomic_ask_ref": "Q2#PROOF-2",
+      "page": 1,
+      "paint_order": 3,
+      "opaque": false,
+      "box": {
+        "x": 60.0,
+        "y": 681.89,
+        "w": 475.28,
+        "h": 36
+      },
+      "text": "Hence deduce that two distinct lines cannot both pass through two distinct given points.",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.0,
+      "container_id": "Q2/panel",
+      "content_height_pt": 36.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/figure",
+      "kind": "FIGURE",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 4,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 461.89,
+        "w": 240.0,
+        "h": 190.0
+      },
+      "text": "",
+      "typography_role": "PAGE_FURNITURE",
+      "font_size_pt": 8.0,
+      "container_id": null,
+      "content_height_pt": null,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/figure/label-A",
+      "kind": "FIGURE",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 5,
+      "opaque": false,
+      "box": {
+        "x": 56.0,
+        "y": 623.89,
+        "w": 40.0,
+        "h": 12.0
+      },
+      "text": "A",
+      "typography_role": "DIAGRAM_LABEL",
+      "font_size_pt": 9.0,
+      "container_id": "Q2/figure",
+      "content_height_pt": 12.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/figure/label-B",
+      "kind": "FIGURE",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 6,
+      "opaque": false,
+      "box": {
+        "x": 228.0,
+        "y": 483.89,
+        "w": 40.0,
+        "h": 12.0
+      },
+      "text": "B",
+      "typography_role": "DIAGRAM_LABEL",
+      "font_size_pt": 9.0,
+      "container_id": "Q2/figure",
+      "content_height_pt": 12.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/workspace",
+      "kind": "WORKSPACE",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 1,
+      "paint_order": 7,
+      "opaque": false,
+      "box": {
+        "x": 296.0,
+        "y": 241.89,
+        "w": 257.28,
+        "h": 394.0
+      },
+      "text": "Write your proof here",
+      "typography_role": "WORKSPACE",
+      "font_size_pt": 9.5,
+      "container_id": null,
+      "content_height_pt": 394.0,
+      "response_mode": "PROOF"
+    },
+    {
+      "object_id": "Q3/panel",
+      "kind": "PANEL",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 2,
+      "paint_order": 0,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 649.89,
+        "w": 511.28,
+        "h": 150.0
+      },
+      "text": "",
+      "typography_role": "PAGE_FURNITURE",
+      "font_size_pt": 8.0,
+      "container_id": null,
+      "content_height_pt": null,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/stem",
+      "kind": "STEM",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 2,
+      "paint_order": 1,
+      "opaque": false,
+      "box": {
+        "x": 48.0,
+        "y": 767.89,
+        "w": 499.28,
+        "h": 24
+      },
+      "text": "For the polynomial p(x) = x³ + ax² − 5x + 6:",
+      "typography_role": "MATH_INLINE",
+      "font_size_pt": 11.5,
+      "container_id": "Q3/panel",
+      "content_height_pt": 24.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/sub-a",
+      "kind": "SUBPART",
+      "question_ref": "Q3",
+      "atomic_ask_ref": "Q3#SUB-a",
+      "page": 2,
+      "paint_order": 2,
+      "opaque": false,
+      "box": {
+        "x": 60.0,
+        "y": 731.89,
+        "w": 475.28,
+        "h": 28
+      },
+      "text": "(a) Find the value of a for which (x − 1) is a factor of p(x).",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.0,
+      "container_id": "Q3/panel",
+      "content_height_pt": 28.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/sub-b",
+      "kind": "SUBPART",
+      "question_ref": "Q3",
+      "atomic_ask_ref": "Q3#SUB-b",
+      "page": 2,
+      "paint_order": 3,
+      "opaque": false,
+      "box": {
+        "x": 60.0,
+        "y": 697.89,
+        "w": 475.28,
+        "h": 28
+      },
+      "text": "(b) Using that value of a, factorise p(x) completely.",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.0,
+      "container_id": "Q3/panel",
+      "content_height_pt": 28.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/cond",
+      "kind": "SUBPART",
+      "question_ref": "Q3",
+      "atomic_ask_ref": "Q3#COND",
+      "page": 2,
+      "paint_order": 4,
+      "opaque": false,
+      "box": {
+        "x": 60.0,
+        "y": 659.89,
+        "w": 475.28,
+        "h": 32
+      },
+      "text": "State the values of a for which p(x) has no linear factor with integer root.",
+      "typography_role": "QUESTION_BODY",
+      "font_size_pt": 11.0,
+      "container_id": "Q3/panel",
+      "content_height_pt": 32.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/workspace",
+      "kind": "WORKSPACE",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 2,
+      "paint_order": 5,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 301.89,
+        "w": 511.28,
+        "h": 330.0
+      },
+      "text": "Working space",
+      "typography_role": "WORKSPACE",
+      "font_size_pt": 9.5,
+      "container_id": null,
+      "content_height_pt": 318.0,
+      "response_mode": "MULTIPART"
+    },
+    {
+      "object_id": "Q3/source-note",
+      "kind": "PAGE_FURNITURE",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 2,
+      "paint_order": 6,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 279.89,
+        "w": 511.28,
+        "h": 12.0
+      },
+      "text": "WHERE THIS QUESTION CAME FROM",
+      "typography_role": "SOURCE_META",
+      "font_size_pt": 8.0,
+      "container_id": null,
+      "content_height_pt": 12.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/solution",
+      "kind": "SOLUTION",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 3,
+      "paint_order": 0,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 477.89,
+        "w": 511.28,
+        "h": 322.0
+      },
+      "text": "FULL WORKING",
+      "typography_role": "SOLUTION_BODY",
+      "font_size_pt": 10.5,
+      "container_id": null,
+      "content_height_pt": 322.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q2/solution/check",
+      "kind": "VERIFICATION",
+      "question_ref": "Q2",
+      "atomic_ask_ref": null,
+      "page": 3,
+      "paint_order": 1,
+      "opaque": false,
+      "box": {
+        "x": 50.0,
+        "y": 485.89,
+        "w": 495.28,
+        "h": 34.0
+      },
+      "text": "QUICK CHECK",
+      "typography_role": "SOLUTION_BODY",
+      "font_size_pt": 10.0,
+      "container_id": "Q2/solution",
+      "content_height_pt": 34.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/solution",
+      "kind": "SOLUTION",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 3,
+      "paint_order": 2,
+      "opaque": false,
+      "box": {
+        "x": 42.0,
+        "y": 105.89,
+        "w": 511.28,
+        "h": 358.0
+      },
+      "text": "FULL WORKING",
+      "typography_role": "SOLUTION_BODY",
+      "font_size_pt": 10.5,
+      "container_id": null,
+      "content_height_pt": 358.0,
+      "response_mode": null
+    },
+    {
+      "object_id": "Q3/solution/check",
+      "kind": "VERIFICATION",
+      "question_ref": "Q3",
+      "atomic_ask_ref": null,
+      "page": 3,
+      "paint_order": 3,
+      "opaque": false,
+      "box": {
+        "x": 50.0,
+        "y": 113.89,
+        "w": 495.28,
+        "h": 34.0
+      },
+      "text": "QUICK CHECK",
+      "typography_role": "SOLUTION_BODY",
+      "font_size_pt": 10.0,
+      "container_id": "Q3/solution",
+      "content_height_pt": 34.0,
+      "response_mode": null
+    }
+  ]
+}

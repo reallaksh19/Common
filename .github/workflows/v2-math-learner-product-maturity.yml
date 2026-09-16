@@ -1,0 +1,155 @@
+name: V2 Mathematics M-UPGRADE-2 Learner-Product Maturity
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/MathTypesetting/**'
+      - 'Grade 9/V2/Mathematics/LearnerRealization/**'
+      - 'Grade 9/V2/Mathematics/SourceLedger/**'
+      - 'Grade 9/V2/Mathematics/LayoutSafety/**'
+      - 'Grade 9/V2/Mathematics/Core1Reconstruction/**'
+      - 'Grade 9/V2/Mathematics/RepresentationSemantics/**'
+      - 'Grade 9/V2/Mathematics/LearnerProduct/**'
+      - 'Grade 9/V2/Mathematics/Core1A/**'
+      - 'Grade 9/V2/Mathematics/Core2A/**'
+      - '.github/workflows/v2-math-learner-product-maturity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  math-learner-product-maturity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5' 'reportlab>=4.0' 'pymupdf>=1.24'
+
+      - name: Confirm a portable math-capable font is available to the runner
+        run: |
+          fc-list 2>/dev/null | grep -i dejavu | head -3 || true
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf \
+            || sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core
+          test -f /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+
+      - name: Validate contracts
+        run: |
+          python 'Grade 9/V2/Mathematics/MathTypesetting/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/LearnerRealization/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/SourceLedger/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/LayoutSafety/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/Core1Reconstruction/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/RepresentationSemantics/contracts/validate_contracts.py'
+
+      - name: Item 1 — math-expression typesetting falsifiers
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/MathTypesetting/tests' -p 'test_*.py' -v
+
+      - name: Items 2, 5, 8, 9 — learner realization, invariant witnesses, answer custody, learner copy
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/LearnerRealization/tests' -p 'test_*.py' -v
+
+      - name: Item 3 — source/atomic-ask ledger and rendered witness
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/SourceLedger/tests' -p 'test_*.py' -v
+
+      - name: Item 4 — spatial representation semantics
+        run: python 'Grade 9/V2/Mathematics/RepresentationSemantics/tests/test_math_spatial_semantics.py'
+
+      - name: Item 6 — Core1 reconstruction chain and cross-core bridge
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1Reconstruction/tests' -p 'test_*.py' -v
+
+      - name: Item 7 — typography minima and post-layout safety
+        run: python -m unittest discover -s 'Grade 9/V2/Mathematics/LayoutSafety/tests' -p 'test_*.py' -v
+
+      - name: Nothing already working is broken
+        run: |
+          python 'Grade 9/V2/Mathematics/RepresentationSemantics/contracts/validate_contracts.py'
+          python 'Grade 9/V2/Mathematics/RepresentationSemantics/tests/test_math_representation_semantics.py'
+          python 'Grade 9/V2/Mathematics/Core2Transfer/tests/test_math_core2_transfer.py'
+          python 'Grade 9/V2/Mathematics/Publication/tests/test_math_core_product_renderer.py'
+          python 'Grade 9/V2/Mathematics/Core1Authoring/tests/test_math_core1_authoring.py'
+          python -m unittest discover -s 'Grade 9/V2/Mathematics/Core1A/tests' -p 'test_*.py'
+          python 'Grade 9/V2/Mathematics/LearnerProduct/tests/test_learner_product_contract.py'
+
+      - name: Regenerate every committed fixture and require an unchanged tree
+        run: |
+          python 'Grade 9/V2/Mathematics/LearnerRealization/fixtures/build_math_reference_realizations.py'
+          python 'Grade 9/V2/Mathematics/SourceLedger/fixtures/build_math_source_corpus.py'
+          python 'Grade 9/V2/Mathematics/RepresentationSemantics/fixtures/spatial/build_math_spatial_representations.py'
+          python 'Grade 9/V2/Mathematics/Core1Reconstruction/fixtures/build_math_reconstruction_chains.py'
+          python 'Grade 9/V2/Mathematics/LayoutSafety/fixtures/build_math_layout_probe.py'
+          git diff --exit-code -- 'Grade 9/V2/Mathematics'
+
+      - name: Emit the M-UPGRADE-2 audit bundle
+        run: |
+          mkdir -p /tmp/m-upgrade-2
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+
+          MATH = Path('Grade 9/V2/Mathematics').resolve()
+          sys.path[:0] = [
+              str(MATH / 'MathTypesetting' / 'engine'),
+              str(MATH / 'LearnerRealization' / 'engine'),
+              str(MATH / 'SourceLedger' / 'engine'),
+              str(MATH / 'LayoutSafety' / 'engine'),
+              str(MATH / 'Core1Reconstruction' / 'engine'),
+              str(MATH / 'RepresentationSemantics' / 'engine'),
+          ]
+          from learner_realization import audit_realizations, load
+          from build_math_source_ledger import audit_source_completeness
+          from render_attempt_probe import render, page_texts
+          from validate_layout_safety import audit_layout
+          from validate_core1_reconstruction import audit_reconstruction
+          from validate_math_spatial_semantics import audit_spatial
+
+          out = {}
+
+          realizations = load(MATH / 'LearnerRealization/fixtures/math-reference-realizations.fixture.json')
+          out['learner_realization'] = audit_realizations(
+              realizations['realizations'],
+              parameterized_items=realizations['parameterized_items'])
+
+          manifest = load(MATH / 'SourceLedger/fixtures/math-source-corpus.fixture.json')
+          authored = load(MATH / 'SourceLedger/fixtures/math-authored-plan.fixture.json')
+          pdf, object_map = render(manifest, '/tmp/m-upgrade-2/attempt-probe.pdf')
+          out['source_ledger'] = audit_source_completeness(
+              manifest, authored, object_map=object_map, rendered_page_text=page_texts(pdf))
+
+          spatial = load(MATH / 'RepresentationSemantics/fixtures/spatial/math-spatial-representations.fixture.json')
+          out['spatial_semantics'] = audit_spatial(spatial['representations'])
+
+          chains = load(MATH / 'Core1Reconstruction/fixtures/math-reconstruction-chains.fixture.json')
+          index = {r['item_ref']: r for r in realizations['realizations']}
+          index.update({r['item_ref']: r for r in chains['generated_realizations']})
+          out['core1_reconstruction'] = audit_reconstruction(
+              chains['chains'], index, bridge_rows=chains['bridge_rows'],
+              topic_ref='MIXED_GRADE9',
+              theorem_based_lessons=chains['theorem_based_lessons'])
+
+          probe = load(MATH / 'LayoutSafety/fixtures/math-layout-probe.fixture.json')
+          out['layout_safety'] = audit_layout(probe)
+
+          Path('/tmp/m-upgrade-2/audit-bundle.json').write_text(
+              json.dumps(out, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+          print(json.dumps({
+              'learner_realization': out['learner_realization']['status'],
+              'typesetting': out['learner_realization']['typesetting_audit']['status'],
+              'source_ledger': out['source_ledger']['status'],
+              'spatial_semantics': out['spatial_semantics']['status'],
+              'core1_reconstruction': out['core1_reconstruction']['status'],
+              'cross_core_unresolved': out['core1_reconstruction']['cross_core_unresolved'],
+              'layout_safety': out['layout_safety']['status'],
+              'release_meaning': 'PUBLICATION_ENGINEERING only; subject/pedagogy/assessment/visual/expert review PENDING',
+          }, indent=2))
+          PY
+
+      - name: Upload the M-UPGRADE-2 audit bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: math-m-upgrade-2-audits
+          path: /tmp/m-upgrade-2
+          if-no-files-found: error

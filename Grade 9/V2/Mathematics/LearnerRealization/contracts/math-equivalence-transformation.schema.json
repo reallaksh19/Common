@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-equivalence-transformation.schema.json",
+  "title": "Mathematics Equivalence Transformation Witness",
+  "description": "An algebraic transformation step is not an opaque string. It declares what was done, the relation before and after, the invariant that survives the move, and the precondition under which the move is legal. Non-reversible moves (squaring both sides, clearing a denominator that can vanish) must say so and must carry the check that recovers correctness.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transformation_id",
+    "operation",
+    "before_relation",
+    "after_relation",
+    "preserved_invariant",
+    "precondition",
+    "reversible"
+  ],
+  "properties": {
+    "transformation_id": {"type": "string", "pattern": "^T[0-9]+$"},
+    "operation": {
+      "enum": [
+        "ADD_TO_BOTH_SIDES",
+        "SUBTRACT_FROM_BOTH_SIDES",
+        "MULTIPLY_BOTH_SIDES",
+        "DIVIDE_BOTH_SIDES",
+        "SUBSTITUTE",
+        "EXPAND",
+        "FACTOR",
+        "RATIONALISE",
+        "SQUARE_BOTH_SIDES",
+        "TAKE_ROOT",
+        "REARRANGE",
+        "CLEAR_DENOMINATOR",
+        "MULTIPLY_BY_ONE_IN_DISGUISE"
+      ]
+    },
+    "before_relation": {"$ref": "math-expression.schema.json"},
+    "after_relation": {"$ref": "math-expression.schema.json"},
+    "preserved_invariant": {
+      "enum": [
+        "SOLUTION_SET",
+        "VALUE",
+        "SET_MEMBERSHIP",
+        "GEOMETRIC_RELATION",
+        "UNIT_DIMENSION"
+      ]
+    },
+    "precondition": {"type": "string", "minLength": 10},
+    "reversible": {"type": "boolean"},
+    "extraneous_root_check": {"type": ["string", "null"]}
+  }
+}

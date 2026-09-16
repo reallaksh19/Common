@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-realization.schema.json",
+  "title": "Mathematics Learner Mathematical Realization",
+  "description": "The governed layer between a semantic plan (Core1 lesson stage / Core2 reasoning route) and the representation/layout plan. It converts an internal reasoning state into the actual mathematics the learner must see. A worked, guided, faded, independent or transfer instance is realized here or it is not publishable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "realization_id",
+    "schema_version",
+    "subject",
+    "role",
+    "item_ref",
+    "topic_ref",
+    "capability_refs",
+    "problem_family_ref",
+    "statement",
+    "item_anchors",
+    "derivation",
+    "scaffold",
+    "answer_custody",
+    "realization_digest"
+  ],
+  "properties": {
+    "realization_id": {"type": "string", "pattern": "^MATH-LMR-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "role": {
+      "enum": ["WORKED", "GUIDED", "FADED", "INDEPENDENT", "TRANSFER", "SOURCE_SOLUTION"]
+    },
+    "item_ref": {"type": "string", "minLength": 2},
+    "topic_ref": {"type": "string", "minLength": 3},
+    "capability_refs": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-"}
+    },
+    "problem_family_ref": {"type": "string", "pattern": "^MATH-PF-"},
+    "statement": {"$ref": "math-learner-realization.schema.json#/$defs/prose"},
+    "item_anchors": {
+      "type": "array", "minItems": 2, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1},
+      "description": "The question-specific mathematical anchors (actual coefficients, roots, coordinates, angles, dimensions, chosen identity) that make learner support item-grounded rather than reusable metadata."
+    },
+    "derivation": {
+      "type": "array", "minItems": 1,
+      "items": {"$ref": "math-route-state.schema.json"}
+    },
+    "scaffold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["H1", "H2", "H3"],
+      "properties": {
+        "H1": {"$ref": "math-learner-realization.schema.json#/$defs/hint"},
+        "H2": {"$ref": "math-learner-realization.schema.json#/$defs/hint"},
+        "H3": {"$ref": "math-learner-realization.schema.json#/$defs/hint"}
+      },
+      "description": "The recovery ladder projected from the derivation: H1 = governing invariant/structure, H2 = representation/method selection, H3 = first executable mathematical move."
+    },
+    "answer_custody": {"$ref": "math-answer-custody.schema.json"},
+    "source_distance": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source_question_reuse", "basis"],
+          "properties": {
+            "source_question_reuse": {"const": false},
+            "basis": {"type": "string", "minLength": 10}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "realization_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "prose": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["segment", "text"],
+            "properties": {
+              "segment": {"const": "TEXT"},
+              "text": {"type": "string", "minLength": 1}
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["segment", "expression"],
+            "properties": {
+              "segment": {"const": "MATH"},
+              "expression": {"$ref": "math-expression.schema.json"}
+            }
+          }
+        ]
+      }
+    },
+    "hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "derived_from_step_id", "discloses_output"],
+      "properties": {
+        "text": {"type": "string", "minLength": 12},
+        "derived_from_step_id": {"type": "string", "pattern": "^S[0-9]+$"},
+        "discloses_output": {"const": false},
+        "core1_evidence_ref": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "policy_id": "MATH-LEARNER-REALIZATION-POLICY-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Release policy for the governed layer between semantic planning and rendering. Stages, routes, representations and verification are not complete because they are named; they are complete only when they contain falsifiable learner evidence.",
+  "pipeline_position": [
+    "Core1 lesson stage / Core2 reasoning route (semantic plan)",
+    "LEARNER MATHEMATICAL REALIZATION (this phase)",
+    "representation / layout plan",
+    "PDF realization",
+    "post-render semantic / visual QA"
+  ],
+  "substantive_step_requirements": [
+    "input_state present",
+    "output_state present",
+    "output_state structurally different from input_state when the role requires a state change",
+    "operation.rule_or_justification is item-specific, not a generic template phrase",
+    "learner_explanation contains at least one item anchor",
+    "an equivalence_witness whenever the operation is an equivalence-preserving algebraic move"
+  ],
+  "scaffold_policy": {
+    "H1": "governing invariant or structure",
+    "H2": "representation or method selection",
+    "H3": "first executable mathematical move",
+    "must_be_derived_from_a_declared_step": true,
+    "may_disclose_final_output": false,
+    "must_be_item_grounded": true
+  },
+  "item_grounding_policy": {
+    "min_anchors": 2,
+    "anchors_must_appear_in_statement": true,
+    "min_anchored_substantive_steps_ratio": 0.6,
+    "cross_item_adversarial_check": "learner-facing derivation prose must not be transplantable unchanged onto a different item"
+  },
+  "answer_custody_policy": {
+    "every_learner_question_has_an_answer_artifact": true,
+    "quick_check_is_not_an_answer": true,
+    "independent_verification_is_not_an_answer": true,
+    "attempt_surface_stays_answer_neutral": true,
+    "proof_answer_is_a_model_proof_or_marking_criteria": true,
+    "construction_answer_carries_verification_conditions": true,
+    "multiple_valid_answers_carry_an_admissibility_rule": true,
+    "open_response_carries_acceptance_criteria": true,
+    "counterexample_answer_carries_at_least_one_witness": true
+  },
+  "sufficiency_policy": {
+    "parameterized_items_require_a_CHECK_SUFFICIENCY_state": true,
+    "states": ["UNIQUE", "MULTIPLE", "UNDERDETERMINED", "INCONSISTENT"]
+  },
+  "falsifiers": [
+    "WORKED_EXAMPLE_UNINSTANTIATED",
+    "MATH_OPERATION_NAMED_BUT_NOT_DEMONSTRATED",
+    "LEARNER_STEP_WITHOUT_MATHEMATICAL_STATE_TRANSITION",
+    "LEARNER_ROUTE_GENERIC_ACROSS_UNRELATED_ITEMS",
+    "LEARNER_SUPPORT_NOT_GROUNDED_IN_CURRENT_ITEM",
+    "INTERNAL_REASONING_LABEL_EXPOSED_AS_LEARNER_COPY",
+    "INTERNAL_IDENTIFIER_EXPOSED_AS_LEARNER_COPY",
+    "SCAFFOLD_DISCLOSES_SOLUTION",
+    "EQUIVALENCE_TRANSFORMATION_WITHOUT_INVARIANT_WITNESS",
+    "EQUIVALENCE_TRANSFORMATION_PRECONDITION_MISSING",
+    "SOLUTION_SET_NOT_PRESERVED_WITHOUT_CHECK",
+    "PARAMETERIZED_ITEM_WITHOUT_SUFFICIENCY_CHECK",
+    "LEARNER_QUESTION_WITHOUT_ANSWER",
+    "SELF_CHECK_SUBSTITUTED_FOR_ANSWER",
+    "PROOF_PROMPT_WITHOUT_MODEL_PROOF",
+    "CONSTRUCTION_WITHOUT_VERIFICATION_CONDITIONS",
+    "MULTIPLE_VALID_ANSWERS_WITHOUT_ADMISSIBILITY_RULE",
+    "OPEN_RESPONSE_WITHOUT_ACCEPTANCE_CRITERIA",
+    "COUNTEREXAMPLE_WITHOUT_WITNESS",
+    "ANSWER_WITHOUT_VERIFICATION",
+    "ATTEMPT_PAGE_ANSWER_LEAKAGE",
+    "ANSWER_CUSTODY_GATE_FAILED",
+    "LEARNER_REALIZATION_GATE_FAILED"
+  ],
+  "release_meaning": "PUBLICATION_ENGINEERING only. Realizing mathematics well does not promote PCK beyond PROVISIONAL_PROMOTED and does not substitute for the subject, pedagogy, assessment, visual or expert-review gates, all of which remain PENDING."
+}

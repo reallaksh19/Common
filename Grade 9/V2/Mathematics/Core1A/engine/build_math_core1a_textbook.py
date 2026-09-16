@@ -18,6 +18,7 @@ import copy
 import hashlib
 import json
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -33,9 +34,16 @@ from reportlab.platypus import PageBreak, Paragraph, SimpleDocTemplate, Spacer, 
 
 import core1a_family_authoring as family_authoring
 
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "LearnerRealization" / "engine"))
+from learner_copy import banned_tokens, find_leaks, load_policy, load_registry  # noqa: E402
+
 FULL_TREATMENTS = {"ACTIVE_STUDY", "REPAIR_BEFORE", "REPAIR_IN_UNIT"}
 REQUIRED_ROLES = ("WORKED", "GUIDED", "FADED", "INDEPENDENT", "TRANSFER")
-FORBIDDEN_LEARNER_TOKENS = (
+# Core1A's original ban-list. It is kept verbatim and unioned with the shared
+# learner-copy registry below, so adopting the registry can only widen what Core1A
+# already caught, never narrow it.
+LEGACY_FORBIDDEN_LEARNER_TOKENS = (
     "capability_ref",
     "problem_family_ref",
     "release class",
@@ -51,9 +59,13 @@ FORBIDDEN_LEARNER_TOKENS = (
     "publication engineering",
     "{rows}",
 )
+COPY_REGISTRY = load_registry()
+COPY_POLICY = load_policy()
+FORBIDDEN_LEARNER_TOKENS = tuple(sorted(
+    set(LEGACY_FORBIDDEN_LEARNER_TOKENS) | set(banned_tokens(COPY_REGISTRY, COPY_POLICY))
+))
 INTERNAL_CODE_RE = re.compile(r"\b(?:MATH-(?:PF|PCK|C1L|PAP|C1SP)-[A-Z0-9-]+)\b")
 
-ROOT = Path(__file__).resolve().parents[2]
 FONT_NAME = "Core1A-Regular"
 FONT_BOLD = "Core1A-Bold"
 
@@ -368,13 +380,23 @@ def validate_manuscript(book: dict) -> dict:
             if item.get("source_class") == "NEW_AUTHORED_CORE1A":
                 actual_problem_count += 1
 
-    for text in learner_texts(book):
+    texts = learner_texts(book)
+    for text in texts:
         lower = text.lower()
         for token in FORBIDDEN_LEARNER_TOKENS:
             if token in lower:
                 failures.append(f"CORE1A_INTERNAL_JARGON_LEAK:{token}")
         if INTERNAL_CODE_RE.search(text):
             failures.append("CORE1A_INTERNAL_IDENTIFIER_LEAK")
+
+    # M-UPGRADE-2 item 9: an internal *role* label (RECONSTRUCT, CONTRAST, VERIFY, ...)
+    # printed as learner copy is the same defect class as pipeline jargon, and was not
+    # covered by the original substring ban-list.
+    leaks = find_leaks(texts, COPY_REGISTRY, COPY_POLICY)
+    for label in leaks["role_label"]:
+        failures.append(f"CORE1A_INTERNAL_JARGON_LEAK:ROLE_LABEL:{label}")
+    for identifier in leaks["identifier"]:
+        failures.append(f"CORE1A_INTERNAL_IDENTIFIER_LEAK:{identifier}")
 
     if failures:
         fail("CORE1A_QUALITY_GATE_FAILED", "|".join(sorted(set(failures))))

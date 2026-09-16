@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-rendered-object-map.schema.json",
+  "title": "Mathematics Rendered Object Map",
+  "description": "What the renderer actually placed, in page coordinates, with paint order. This is the bridge between pre-render JSON and the learner-visible page: all four options of an MCQ can be present in the data while C and D are covered by the next panel, and that is still an incomplete learner assessment object.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["map_id", "schema_version", "subject", "page_count", "page_width_pt",
+               "page_height_pt", "printable_margin_pt", "objects"],
+  "properties": {
+    "map_id": {"type": "string", "minLength": 3},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "page_count": {"type": "integer", "minimum": 1},
+    "page_width_pt": {"type": "number", "exclusiveMinimum": 0},
+    "page_height_pt": {"type": "number", "exclusiveMinimum": 0},
+    "printable_margin_pt": {"type": "number", "minimum": 0},
+    "objects": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["object_id", "kind", "question_ref", "page", "paint_order", "opaque",
+                     "box", "text", "typography_role", "font_size_pt"],
+        "properties": {
+          "object_id": {"type": "string", "minLength": 2},
+          "kind": {
+            "enum": ["STEM", "GIVEN", "OPTION", "SUBPART", "UNITS", "FIGURE", "WORKSPACE",
+                     "HINT", "SOLUTION", "VERIFICATION", "ANSWER", "PANEL", "HEADING",
+                     "PAGE_FURNITURE"]
+          },
+          "question_ref": {"type": "string", "minLength": 2},
+          "atomic_ask_ref": {"type": ["string", "null"]},
+          "page": {"type": "integer", "minimum": 1},
+          "paint_order": {"type": "integer", "minimum": 0},
+          "opaque": {"type": "boolean"},
+          "box": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["x", "y", "w", "h"],
+            "properties": {
+              "x": {"type": "number"},
+              "y": {"type": "number"},
+              "w": {"type": "number", "exclusiveMinimum": 0},
+              "h": {"type": "number", "exclusiveMinimum": 0}
+            }
+          },
+          "text": {"type": "string"},
+          "typography_role": {"type": "string", "minLength": 3},
+          "font_size_pt": {"type": "number", "exclusiveMinimum": 0},
+          "container_id": {
+            "type": ["string", "null"],
+            "description": "The object that contains this one. Objects sharing a container are siblings and may not intersect; a child may lie inside its container. Added by M-UPGRADE-2 item 7 so collision checking can tell legal containment from an illegal overlap."
+          },
+          "content_height_pt": {
+            "type": ["number", "null"],
+            "exclusiveMinimum": 0,
+            "description": "The height the content actually measures, as distinct from the height the box was given. Measure-then-place, rather than a fixed rectangle chosen because a component is called WORKSPACE."
+          },
+          "response_mode": {
+            "type": ["string", "null"],
+            "description": "For WORKSPACE objects: the response the question actually demands, so workspace follows response mode instead of one generic box template."
+          }
+        }
+      }
+    }
+  }
+}

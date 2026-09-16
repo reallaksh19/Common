@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-answer-custody.schema.json",
+  "title": "Mathematics Answer Custody",
+  "description": "Every learner-facing question resolves to an explicit answer artifact, distinct from a quick check and distinct from independent verification. The attempt surface stays answer-neutral; custody guarantees the answer exists somewhere reachable. Vocabulary is kept aligned with the Physics and Chemistry siblings so a later cross-subject pass has one pattern.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "custody_id",
+    "question_ref",
+    "answer_kind",
+    "placement",
+    "attempt_surface_answer_neutral",
+    "independent_verification"
+  ],
+  "properties": {
+    "custody_id": {"type": "string", "pattern": "^MATH-AC-[0-9a-f]{16}$"},
+    "question_ref": {"type": "string", "minLength": 2},
+    "answer_kind": {
+      "enum": [
+        "NUMERIC",
+        "EXPRESSION",
+        "ORDERED_PAIR",
+        "SET",
+        "MCQ_CHOICE",
+        "PROOF",
+        "CONSTRUCTION",
+        "COUNTEREXAMPLE",
+        "MULTIPLE_VALID",
+        "OPEN_RESPONSE"
+      ]
+    },
+    "final_answer": {
+      "oneOf": [{"$ref": "math-expression.schema.json"}, {"type": "null"}]
+    },
+    "final_answer_prose": {"type": ["string", "null"]},
+    "model_proof_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["statement", "licensed_by"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 8},
+          "licensed_by": {"type": "string", "minLength": 4}
+        }
+      }
+    },
+    "acceptance_rule": {"type": ["string", "null"]},
+    "admissible_answers": {
+      "type": "array",
+      "items": {"$ref": "math-expression.schema.json"}
+    },
+    "construction_verification_conditions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 8}
+    },
+    "counterexample_witness": {
+      "oneOf": [{"$ref": "math-expression.schema.json"}, {"type": "null"}]
+    },
+    "independent_verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "executable", "statement"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "SUBSTITUTE_BACK",
+            "EXPAND_TO_RECOVER_ORIGINAL",
+            "EVALUATE_AT_ROOT",
+            "RECOMPUTE_INVARIANT",
+            "DIMENSIONAL_UNIT_CHECK",
+            "CONSERVATION_CHECK",
+            "PROOF_PROVENANCE_AUDIT",
+            "RECOMBINE_WITH_ORIGINAL_DENOMINATOR",
+            "GEOMETRIC_RECONSTRUCTION"
+          ]
+        },
+        "executable": {"type": "boolean"},
+        "statement": {"type": "string", "minLength": 12},
+        "expected": {
+          "oneOf": [{"$ref": "math-expression.schema.json"}, {"type": "null"}]
+        }
+      }
+    },
+    "quick_check": {"type": ["string", "null"]},
+    "placement": {
+      "enum": ["AFTER_ATTEMPT", "LESSON_END", "ANSWER_APPENDIX", "SOLUTION_PAGE"]
+    },
+    "attempt_surface_answer_neutral": {"const": true},
+    "custody_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

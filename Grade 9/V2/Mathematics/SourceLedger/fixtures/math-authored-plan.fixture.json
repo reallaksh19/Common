@@ -1,0 +1,77 @@
+{
+  "topic_ref": "MIXED_GRADE9_SOURCE_PROBE",
+  "pages": [
+    {
+      "question_ref": "Q1",
+      "atomic_ask_refs": [
+        "Q1#OPT-A",
+        "Q1#OPT-B",
+        "Q1#OPT-C",
+        "Q1#OPT-D",
+        "Q1#JUST"
+      ],
+      "subpart_shape": {
+        "subpart_count": 0,
+        "option_count": 4,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 0
+      },
+      "concept_linked": true,
+      "core1_evidence_linked": true,
+      "solution_complete": true,
+      "verification_complete": true
+    },
+    {
+      "question_ref": "Q2",
+      "atomic_ask_refs": [
+        "Q2#PROOF-1",
+        "Q2#PROOF-2"
+      ],
+      "subpart_shape": {
+        "subpart_count": 0,
+        "option_count": 0,
+        "proof_obligation_count": 2,
+        "parameter_condition_count": 0
+      },
+      "concept_linked": true,
+      "core1_evidence_linked": true,
+      "solution_complete": true,
+      "verification_complete": true
+    },
+    {
+      "question_ref": "Q3",
+      "atomic_ask_refs": [
+        "Q3#SUB-a",
+        "Q3#SUB-b",
+        "Q3#COND"
+      ],
+      "subpart_shape": {
+        "subpart_count": 2,
+        "option_count": 0,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 1
+      },
+      "concept_linked": true,
+      "core1_evidence_linked": true,
+      "solution_complete": true,
+      "verification_complete": true
+    },
+    {
+      "question_ref": "Q4",
+      "atomic_ask_refs": [
+        "Q4#SUB-a",
+        "Q4#UNITS"
+      ],
+      "subpart_shape": {
+        "subpart_count": 1,
+        "option_count": 0,
+        "proof_obligation_count": 0,
+        "parameter_condition_count": 0
+      },
+      "concept_linked": true,
+      "core1_evidence_linked": true,
+      "solution_complete": true,
+      "verification_complete": true
+    }
+  ]
+}
