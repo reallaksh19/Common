@@ -16,10 +16,13 @@ basis:
   roadmap_revision: "<RM-id>"
   relay_protocol_basis_ref: "<pinned Common ref>"
   material_ref: "<EP material ref>"
+  ep_contract_digest: "sha256:<semantic EP digest>"
+  repo_profile_digest: "sha256:<REPO_PROFILE digest>"
   predecessor_baton:
     type: NONE
     id: NONE
     path: null
+    digest: null
 steps:
   - id: DSTEP-0001
     status: PASS
