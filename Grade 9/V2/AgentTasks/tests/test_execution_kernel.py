@@ -262,6 +262,48 @@ class TestExecutionKernel(unittest.TestCase):
         errors = validate_report(held_report)
         self.assertEqual(errors, [], f"Valid HELD report should have 0 errors, got: {errors}")
 
+    def test_16_diversity_stress_relative_motion_held(self):
+        """Relative Motion as unregistered candidate correctly derives HELD across all consumers."""
+        rel_task = load_json(FIXTURES_DIR / "task_physics_relative_motion.json")
+        packet = compile_packet(rel_task, repo_root=self.repo_root)
+        preflight = generate_engineering_preflight(packet, repo_root=self.repo_root)
+
+        self.assertIn("Identity Resolution: UNREGISTERED CANDIDATE (Relative Motion)", preflight)
+        self.assertIn("Gate Readiness:      HELD", preflight)
+        self.assertIn("PROBLEM_SEMANTICS:   HELD", preflight)
+        self.assertIn("CORE_AUTHORING:      HELD", preflight)
+
+    def test_17_diversity_stress_thermodynamics_research(self):
+        """Thermodynamics at RESEARCH depth resolves gate, derives prereqs & reps without case branches."""
+        thermo_task = load_json(FIXTURES_DIR / "sample_thermo_research_task.json")
+        packet = compile_packet(thermo_task, repo_root=self.repo_root)
+        preflight = generate_engineering_preflight(packet, repo_root=self.repo_root)
+
+        self.assertIn("Identity Resolution: REGISTERED (PHY-THERMO-FIRST-SECOND-LAW)", preflight)
+        self.assertIn("Internal Prereqs:    PHY-WORK-ENERGY-POWER", preflight)
+        self.assertIn("REP-PHYS-PV-CARNOT-CYCLE", preflight)
+        self.assertIn("Gate Readiness:      ENGINEERING_GATE_READY", preflight)
+        self.assertIn("PROBLEM_SEMANTICS:   AUTHORIZED", preflight)
+
+    def test_18_diversity_stress_math_modular_arithmetic(self):
+        """Mathematics IOQM modular arithmetic task compiles and binds Math authority."""
+        math_task = load_json(FIXTURES_DIR / "task_math_modular_arithmetic.json")
+        packet = compile_packet(math_task, repo_root=self.repo_root)
+        self.assertEqual(packet["task"]["subject"], "MATHEMATICS")
+        self.assertTrue(any("mathematics" in b["ref_path"].lower() for b in packet["authority_bindings"]))
+        preflight = generate_engineering_preflight(packet, repo_root=self.repo_root)
+        self.assertIn("Task: MATHEMATICS -> Number Theory -> Modular Divisibility and Congruences", preflight)
+
+    def test_19_diversity_stress_chem_redox_balancing(self):
+        """Chemistry CBSE Redox balancing task compiles and binds Chemistry authority."""
+        chem_task = load_json(FIXTURES_DIR / "task_chem_redox_reactions.json")
+        packet = compile_packet(chem_task, repo_root=self.repo_root)
+        self.assertEqual(packet["task"]["subject"], "CHEMISTRY")
+        self.assertTrue(any("chemistry" in b["ref_path"].lower() for b in packet["authority_bindings"]))
+        preflight = generate_engineering_preflight(packet, repo_root=self.repo_root)
+        self.assertIn("Task: CHEMISTRY -> Redox Reactions -> Oxidation Number Method and Ion-Electron Balancing", preflight)
+
 
 if __name__ == "__main__":
     unittest.main()
+

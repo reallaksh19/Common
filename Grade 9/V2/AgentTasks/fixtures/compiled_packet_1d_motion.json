@@ -1,0 +1,177 @@
+{
+  "schema_version": "1.0.0",
+  "packet_id": "PKT-TASK-PHY-KIN-001",
+  "task": {
+    "task_id": "TASK-PHY-KIN-001",
+    "task_kind": "SUBTOPIC_ENGINEERING",
+    "repository": "reallaksh19/Common",
+    "target_ref": "DISCOVER_CURRENT",
+    "subject": "PHYSICS",
+    "grade": 9,
+    "curriculum": "CBSE",
+    "curriculum_version": "2026-27",
+    "topic": "Motion",
+    "subtopic": "1D Motion",
+    "engineering_depth": "STANDARD",
+    "learner_state": "UNKNOWN",
+    "web_research_allowed": true,
+    "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+    "target_consumers": [
+      "PROBLEM_SEMANTICS",
+      "CORE_AUTHORING",
+      "CORE2_TRANSFER",
+      "REPRESENTATION"
+    ],
+    "write_mode": "IMPLEMENT",
+    "scope_hints": [
+      "Displacement, Velocity & Constant Acceleration Equations",
+      "v = u + at, s = ut + 0.5at^2, v^2 = u^2 + 2as"
+    ],
+    "explicit_exclusions": [
+      "Variable acceleration requiring calculus integration",
+      "Relativistic kinematics"
+    ]
+  },
+  "resolved_repository": {
+    "repository": "reallaksh19/Common",
+    "target_ref": "DISCOVER_CURRENT",
+    "resolved_head": "c10eb712970dc111c7897c5f6fef6b21c28758ef",
+    "resolved_base": "50342a1215547d3015a99ee483dcd1f8827c8a39"
+  },
+  "authority_bindings": [
+    {
+      "authority_class": "SUBJECT_MANIFEST",
+      "ref_path": "Grade 9/V2/Physics/GENERATION_AUTHORITY_MANIFEST.json",
+      "digest_sha256": "bead99bd791cd4a5a7c180460b74107b21fa195826f8fd4ebd1ad2c5f79dba30",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "SUBJECT_ENTRYPOINT",
+      "ref_path": "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md",
+      "digest_sha256": "949e47e6f9aa4198992d58afe02b6e88b8bd8a355a7950066e2cdf36321b54ab",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "ENGINEERING_GATE_SPEC",
+      "ref_path": "Grade 9/V2/Physics/Blueprint/PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "digest_sha256": "28b6d8687e314de889f93eb88333b8fbe4e090339ecc6c5f6f22666450db7d45",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "ENGINEERING_GATE_POLICY",
+      "ref_path": "Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v1.json",
+      "digest_sha256": "bc3f51e1771eed15b97191af0e8fd03e317e05cabd10cd47042fbb4e71edd564",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "ENGINEERING_GATE_VALIDATOR",
+      "ref_path": "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates.py",
+      "digest_sha256": "2814ec7a6d288ff5ae3ec48380b2610058d88fa951fa8e56487a1d81ed15b1d0",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "CANONICAL_CAPABILITIES",
+      "ref_path": "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
+      "digest_sha256": "65a9be5219c290081c24f7742e4d9770f39e986819d3922556dbc71660382005",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "SOURCE_PROVENANCE_SCHEMA",
+      "ref_path": "Grade 9/V2/Physics/AssessmentIntake/contracts/assessment-source-provenance.schema.json",
+      "digest_sha256": "72953c9ecd974bb68606ec6a5424655664bdb46c0240a265ba52cbf6ebe0d2c7",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    },
+    {
+      "authority_class": "BLUEPRINT_ARCHITECTURE",
+      "ref_path": "Grade 9/V2/Physics/Blueprint/SELF_HELP_ARCHITECTURE_V8.md",
+      "digest_sha256": "ca88d6e553d66252bba99bc6c462b5ff06996d31a8677bb36fdf422b0977bb94",
+      "maturity": "ACTIVE",
+      "version": "1.0.0"
+    }
+  ],
+  "task_kind_contract": {
+    "task_kind": "SUBTOPIC_ENGINEERING",
+    "required_authority_classes": [
+      "SUBJECT_MANIFEST",
+      "ENGINEERING_GATE_POLICY",
+      "ENGINEERING_GATE_VALIDATOR",
+      "CANONICAL_CAPABILITIES",
+      "SOURCE_PROVENANCE_SCHEMA"
+    ],
+    "allowed_change_classes": [
+      "DATA_ONLY",
+      "TEST",
+      "DOC"
+    ],
+    "required_outputs": [
+      "GOVERNED_SUBTOPIC_PACKAGE",
+      "ENGINEERING_PREFLIGHT"
+    ],
+    "required_validators": [
+      "validate_engineering_gates.py"
+    ],
+    "consumer_targets": [
+      "PROBLEM_SEMANTICS",
+      "CORE_AUTHORING",
+      "CORE2_TRANSFER",
+      "REPRESENTATION"
+    ],
+    "promotion_permitted": true
+  },
+  "research_policy": {
+    "web_research_allowed": true,
+    "discovery_dispositions": [
+      "REUSE_EXISTING",
+      "EXTEND_EXISTING",
+      "CREATE_CHILD",
+      "CREATE_NEW",
+      "CURRICULUM_ONLY",
+      "PEDAGOGY_ONLY",
+      "ASSESSMENT_ONLY",
+      "RESEARCH_OVERLAY_ONLY",
+      "OUT_OF_SCOPE",
+      "CONFLICTING",
+      "UNRESOLVED"
+    ],
+    "promotion_rule": "DISCOVERY_PERMISSION_DOES_NOT_IMPLY_PROMOTION_PERMISSION",
+    "source_governance_ref": "Grade 9/V2/Physics/AssessmentIntake/contracts/assessment-source-provenance.schema.json"
+  },
+  "allowed_change_classes": [
+    "DATA_ONLY",
+    "TEST",
+    "DOC"
+  ],
+  "prohibited_actions": [
+    "BLUEPRINT_CASE_BRANCH",
+    "MANUAL_READINESS_ASSERTION",
+    "SAME_ID_MUTATION",
+    "UNOWNED_EXTERNAL_PREREQUISITE_CERTIFICATION",
+    "SILENT_RESEARCH_BASE_MUTATION",
+    "UNATTRIBUTED_SOURCE_PROMOTION"
+  ],
+  "required_outputs": [
+    "GOVERNED_SUBTOPIC_PACKAGE",
+    "ENGINEERING_PREFLIGHT"
+  ],
+  "required_validators": [
+    "validate_engineering_gates.py"
+  ],
+  "required_tests": [
+    "python -m unittest Grade 9/V2/AgentTasks/tests/test_execution_kernel.py"
+  ],
+  "consumer_targets": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING",
+    "CORE2_TRANSFER",
+    "REPRESENTATION"
+  ],
+  "report_contract_ref": "Grade 9/V2/AgentTasks/contracts/execution-report.schema.json",
+  "compiled_packet_digest": "e27c27f78ae957290622736e648d6a3e7abb356bc794422232ac5e8e86984c57"
+}

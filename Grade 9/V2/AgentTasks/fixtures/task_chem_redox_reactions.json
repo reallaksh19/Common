@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-CHM-REDOX-001",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "CHEMISTRY",
+  "grade": 11,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Redox Reactions",
+  "subtopic": "Oxidation Number Method and Ion-Electron Balancing",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING"
+  ],
+  "write_mode": "IMPLEMENT",
+  "scope_hints": [
+    "Oxidation number assignment rules",
+    "Half-reaction method in acidic and basic media",
+    "Disproportionation reactions"
+  ],
+  "explicit_exclusions": [
+    "Electrochemical cell overpotentials",
+    "Quantum mechanical electron transfer theory"
+  ]
+}

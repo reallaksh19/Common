@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-PHY-RELMOTION-001",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Motion",
+  "subtopic": "Relative Motion",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING"
+  ],
+  "write_mode": "IMPLEMENT",
+  "scope_hints": [
+    "1D Collinear relative velocity",
+    "2D Vector frame transformations"
+  ],
+  "explicit_exclusions": [
+    "Relativistic velocity addition",
+    "General relativity"
+  ]
+}

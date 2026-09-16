@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-MTH-NT-001",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "MATHEMATICS",
+  "grade": 9,
+  "curriculum": "IOQM",
+  "curriculum_version": "2026-27",
+  "topic": "Number Theory",
+  "subtopic": "Modular Divisibility and Congruences",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING"
+  ],
+  "write_mode": "IMPLEMENT",
+  "scope_hints": [
+    "Congruence modulo m definitions and properties",
+    "Divisibility rules in base 10",
+    "Linear congruences ax = b (mod m)"
+  ],
+  "explicit_exclusions": [
+    "Higher reciprocity laws",
+    "Elliptic curve cryptography"
+  ]
+}
