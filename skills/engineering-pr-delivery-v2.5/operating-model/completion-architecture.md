@@ -7,14 +7,13 @@ This document is the normative architecture for completing Engineering Relay V2.
 Current implementation status:
 
 ```text
-WP-00 Kernel baseline / object matrix          DELIVERED — CP-R001
-WP-01 Semantic Execution Package               DELIVERED — CP-R002
-WP-02 Baton readiness + Takeover Certification CURRENT FRONTIER
+WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
+WP-01 Semantic Execution Package                    DELIVERED — CP-R002
+WP-02 Baton readiness + Takeover Certification      IMPLEMENTED — checkpoint pending exact-head CI
+WP-03 Strong phase/boundary qualification           NEXT FRONTIER after CP-R003
 ```
 
-A target object/predicate is not considered implemented until its schema/template/validator/tests and checkpointed evidence exist. The goal is not to add state-machine surface for its own sake; it is to make repository custody semantically sufficient, independently take-overable, operationally useful, and understandable to the Owner.
-
-Conversation is acceleration, never custody.
+A target object/predicate is not considered delivered until its schema/template/validator/tests and checkpointed evidence exist. Conversation is acceleration, never custody.
 
 ## Governing relay
 
@@ -33,22 +32,22 @@ SEMANTIC EP / APPROVED PARALLEL PLAN        [WP-01 delivered]
     +--> DSTEP-* discovery contract          [WP-01 delivered]
     |
     v
-BATON_READY                                  [WP-02]
+BATON_READY                                  [WP-02 implemented]
     |
     v
 INCOMING REPLACEMENT — ZERO CHAT CONTEXT
     |
-    +--> DISC-* Discovery Receipt            [WP-02]
+    +--> DISC-* Discovery Receipt            [WP-02 implemented]
     +--> QUAL-* when required                [WP-03]
     |
     v
-TC-* TAKEOVER CERTIFICATION                  [WP-02]
+TC-* TAKEOVER CERTIFICATION                  [WP-02 implemented]
     |
     v
-TAKEOVER_CERTIFIED                           [WP-02]
+TAKEOVER_CERTIFIED(route, candidate)         [WP-02 implemented]
     |
     v
-MATERIAL_WRITE_READY                         [WP-02]
+MATERIAL_WRITE_READY(route,candidate,live)   [WP-02 runtime gate]
     |
     v
 IMPLEMENTATION
@@ -72,8 +71,10 @@ NEXT EP
 Owner intent / ODR       authoritative intent
 Overall Roadmap          authoritative plan/topology
 EP / Parallel Plan       authorized forward slice
-DSTEP                     forward discovery requirement
-DISC / QUAL / TC          candidate evidence/admission (pending)
+DSTEP-*                   forward discovery requirements
+DISC-*                    candidate discovery evidence
+TC-*                      route/candidate admission evidence
+QUAL-*                    engineering qualification evidence (WP-03)
 Live Git observation      runtime fact
 CP                        backward execution truth
 PROGRESS / ISSUE_GRAPH    reconciled repository state
@@ -86,13 +87,9 @@ No downstream repository is a Common implementation target. Real repositories ma
 
 ## Semantic Execution Package — delivered WP-01
 
-The EP is now semantically validated for serial active work and every Owner-approved parallel lane.
+The EP is semantically validated for serial active work and every Owner-approved parallel lane. It includes typed slice-specific inputs, benchmarks/oracles, executable `DSTEP-*` discovery, bounded scope, structured anti-drift, exact implementation mappings, source-bound report payloads, and durable successor outputs. `REPO_PROFILE.yaml` and the pinned relay protocol basis are admitted into conformance.
 
-### Inputs
-
-Inputs carry stable identity, description, authority, source, value or resolution method, type/units, editability, applicability, resolution, consumers, validation and stale conditions.
-
-Applicability:
+Input applicability:
 
 ```text
 CURRENT_STEP_REQUIRED
@@ -112,85 +109,63 @@ INVALID
 STALE
 ```
 
-An EP claiming `EXECUTABLE | ACTIVE` cannot carry a current-required input in missing/invalid/stale/deferred state.
+Only unresolved requirements relevant to the current slice remove current execution eligibility; future/informational items do not recreate an everything-is-blocked workflow.
 
-### Benchmarks / oracles
+## Readiness and candidate admission — implemented WP-02
 
-Declared benchmarks/oracles carry source, oracle class, payload, expected result, tolerance, independence, applicability/resolution, verification mappings and stale conditions.
-
-Generic oracle classes include:
-
-```text
-ANALYTICAL
-REFERENCE_DATA
-INDEPENDENT_IMPLEMENTATION
-FROZEN_GOLDEN
-EXTERNAL_STANDARD
-MANUAL_RECONSTRUCTION
-OBSERVATIONAL
-```
-
-### Repository discovery
-
-Forward discovery instructions use `DSTEP-*` and carry action, target(s), question, expected outputs, receipt requirement and failure/reconciliation behavior.
-
-```text
-DSTEP-* = forward EP discovery instruction
-DISC-*  = future candidate Discovery Receipt
-```
-
-### Scope / anti-drift / steps
-
-Semantic EP scope distinguishes allowed writes, allowed reads, protected domains/invariants, prohibited changes and Owner-reserved changes.
-
-Anti-drift rules are structured and stable. Implementation steps carry exact targets, reads, writes, input IDs, acceptance IDs, tests, expected state and stop conditions. Vague instructions do not pass.
-
-### Report and successor contract
-
-Every mandatory report heading is paired with source objects and required reconciliation fields. The generated report remains a projection.
-
-The successor contract requires durable outputs including checkpoint, next frontier, and successor-EP-or-terminal disposition.
-
-### Repository admission around the EP
-
-`REPO_PROFILE.yaml` is now required by aggregate conformance. `REPO_STATE.relay_protocol.version/basis_ref` is enforced, including rejection of placeholder/unbound basis refs.
-
-## Five readiness predicates — WP-02 target
-
-V2.5 completion separates baton quality, candidate admission, external projection, custody transfer and live write permission.
+Read `takeover-certification.md` for the complete contract.
 
 ### BATON_READY
 
-Property of repository custody left by the outgoing agent; candidate-independent.
+Repository-wide and candidate-independent:
 
 ```text
 BATON_READY =
     roadmap/frontier valid
 AND current EP/plan semantically complete
-AND predecessor baton valid
+AND predecessor custody valid
+AND repository profile/protocol admitted
 AND discovery contract complete
-AND current-required inputs/oracles complete
+AND current-required input/oracle contracts complete
 AND scope/anti-drift/report/successor contracts complete
-AND repository/profile/protocol basis admitted
-AND conversation not required
+AND conversation context not required
 ```
 
-Lifecycle alone must never prove this predicate.
+A repository may be `BATON_READY` while `takeover_admissions: []`. This is essential: the outgoing agent can leave a complete baton before the future replacement exists.
 
-### TAKEOVER_CERTIFIED
+### TAKEOVER_CERTIFIED(route, candidate)
 
-Candidate-specific proof:
+Route/candidate-specific, never a single repository-wide boolean:
 
 ```text
-TAKEOVER_CERTIFIED =
+TAKEOVER_CERTIFIED(route,candidate) =
     BATON_READY
-AND current candidate has TC PASS
-AND required DISC receipt PASS
-AND required QUAL receipt PASS/NA as applicable
-AND certification matches current roadmap / route / predecessor / material basis
+AND current DISC receipt for route/candidate PASS
+AND current TC receipt for route/candidate PASS
+AND current required QUAL receipt PASS when applicable
+AND DISC/TC basis matches current roadmap / route / EP contract /
+    REPO_PROFILE / predecessor baton / material basis
 ```
 
-The outgoing preparer cannot unilaterally self-certify the incoming candidate.
+Serial route keys are `SERIAL:<EP-id>`. Parallel lane route keys are `PARALLEL_LANE:<PLAN-id>:<LANE-id>:<EP-id>` so different approved lanes may have different certified candidates.
+
+`REPO_STATE.takeover_admissions[]` is only a locator/projection to durable DISC/TC receipts. Validators re-open those files and re-compute the current basis.
+
+### DISC/TC staleness binding
+
+Candidate evidence is bound to:
+
+- roadmap ID/revision;
+- relay protocol basis;
+- route / plan / lane / EP identity;
+- material ref;
+- canonical semantic EP digest;
+- canonical `REPO_PROFILE` digest;
+- predecessor checkpoint/join/replan identity and digest;
+- required DSTEP IDs and expected output names;
+- qualification requirement.
+
+Editing an EP contract in place therefore invalidates old certification even if its EP ID is unchanged.
 
 ### PROJECTION_READY
 
@@ -204,41 +179,36 @@ PROJECTION_READY = required external coordination projections represent current 
 HANDOVER_READY = BATON_READY AND PROJECTION_READY
 ```
 
-This answers whether outgoing custody is complete, not whether an arbitrary future agent may write.
+This is outgoing custody completeness, not candidate write authority.
 
-### MATERIAL_WRITE_READY
+### MATERIAL_WRITE_READY(route,candidate,live_git)
+
+Live-derived and deliberately **not persisted**:
 
 ```text
 MATERIAL_WRITE_READY =
-    TAKEOVER_CERTIFIED
-AND live execution route valid
-AND Git/material basis valid
-AND continuity/drift permits WRITE
+    TAKEOVER_CERTIFIED(route,candidate)
+AND live route resolves exactly that route
+AND live Git/material basis is acceptable
+AND current drift/continuity permits WRITE
 AND material_authority == WRITE
+AND execution.can_continue == true
 AND no active hard stop
 ```
 
-## Candidate discovery / Takeover Certification — WP-02
+`material_authority: WRITE` is therefore necessary but not sufficient. A candidate without current certification, on the wrong branch/worktree, or on stale/unqualified base drift cannot write.
 
-The incoming candidate executes the EP's `DSTEP-*` instructions and records a durable `DISC-*` receipt bound to exact candidate, roadmap, EP/plan route, predecessor baton and material basis.
+The runtime gate is `scripts/material_write_ready.py`.
 
-Takeover Certification must identify:
+## Independent takeover
 
-```yaml
-candidate:
-  agent_instance_id: "..."
-prepared_by:
-  agent_instance_id: "..."
-evaluated_by:
-  type: DETERMINISTIC_VALIDATOR | INDEPENDENT_AGENT | OWNER
-  identity: "..."
-self_certification:
-  allowed: false
-```
+The outgoing preparer creates the semantic EP and discovery/qualification criteria. The incoming candidate performs repository discovery. Takeover Certification records candidate, preparer and evaluator identities and requires `self_certification.allowed: false`.
 
-Certification becomes stale when a relevant roadmap/EP/predecessor/Git/input/oracle/scope/qualification basis changes.
+A candidate may not be its own preparer. An `INDEPENDENT_AGENT` evaluator may not be the candidate. Deterministic evaluation is valid only because the validator itself re-runs the objective semantic/basis checks; a YAML claim naming a validator is not authority.
 
-## Qualification — WP-03
+If the incoming EP requires phase/material qualification, WP-02 explicitly prevents a TC from PASSing until WP-03 provides a valid `QUAL-*` transaction. Takeover admission cannot bypass qualification.
+
+## Qualification — WP-03 next
 
 Fresh qualification is required when:
 
@@ -254,7 +224,7 @@ A material boundary includes significant change in production path, engineering 
 QUESTION_SET -> candidate answers -> independent evaluation -> QUAL-* -> TC reconciliation
 ```
 
-Q1–Q5 target semantics:
+Target Q1–Q5 semantics:
 
 ```text
 Q1 actual production path / source trace
@@ -266,7 +236,7 @@ Q5 exact first safe slice plus predicted verification result
 
 ## Quality — WP-06 target
 
-Quality remains separate from hard-stop/evidence state. Later quality routing will select applicable procedures with reasons and create `QRV-*` Quality Review evidence. A quality finding is not automatically a stop.
+Quality remains separate from hard-stop/evidence state. Later quality routing selects applicable procedures with reasons and creates `QRV-*` Quality Review evidence. A quality finding is not automatically a stop.
 
 ## Reports and human representation — WP-04/WP-07 target
 
@@ -285,9 +255,9 @@ Machine vocabulary may remain precise. The Owner view will explain capabilities,
 ## Object namespaces
 
 ```text
-DSTEP-xxxx  EP discovery instruction          delivered
-DISC-xxxx   Discovery Receipt                 WP-02
-TC-xxxx     Takeover Certification            WP-02
+DSTEP-xxxx  EP discovery instruction          delivered WP-01
+DISC-xxxx   Discovery Receipt                 implemented WP-02
+TC-xxxx     Takeover Certification            implemented WP-02
 QUAL-xxxx   Qualification Receipt             WP-03
 QRV-xxxx    Quality Review                    WP-06
 CP-xxxx     Checkpoint                        delivered kernel
@@ -296,44 +266,25 @@ ODR-xxxx    Owner Decision Record             delivered kernel
 
 Existing plan/join/replan/drift namespaces remain unchanged.
 
-## Defining end-to-end acceptance test
+## Defining end-to-end acceptance
 
-Release-level acceptance is A -> B -> C with chat custody deleted between candidates:
+WP-02 proves the first zero-context candidate can pick up a rich baton without chat and can only obtain live write readiness with current route/certification/Git authority. WP-09 remains the full recursive release test:
 
 ```text
-AGENT A
-  creates CP-A + semantic EP-B
-  exits
-
-CHAT DELETED
-
-AGENT B
-  repository-only discovery
-  DISC/QUAL as required
-  TC-B PASS
-  executes
-  creates CP-B + semantic EP-C
-  exits
-
-CHAT DELETED
-
-AGENT C
-  reconstructs Owner intent, roadmap position, history,
-  current task, inputs, benchmarks/oracles, scope,
-  quality obligations, tests, acceptance, staleness and next work
-  receives TC-C PASS
+AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C
 ```
 
-If Agent C materially requires prior conversation, V2.5 completion fails.
+Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, input authority/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, staleness and exact next work from repository state alone and obtain current independent certification.
+
+If prior conversation is materially required, V2.5 completion fails.
 
 ## Implementation sequence
 
 ```text
-baseline                         COMPLETE
--> semantic EP                   COMPLETE
--> baton readiness / TC          CURRENT
--> zero-context takeover proof
--> strong qualification
+baseline                         COMPLETE — CP-R001
+-> semantic EP                   COMPLETE — CP-R002
+-> baton readiness / TC          IMPLEMENTED — CP-R003 pending final CI
+-> strong qualification          NEXT after CP-R003
 -> full progress/handover
 -> GitHub operations + quality procedures
 -> human communication + Owner change intake
