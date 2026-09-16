@@ -2,7 +2,7 @@
 
 An EP is a forward-looking executable contract derived from exactly one roadmap frontier work package.
 
-The current kernel already requires the major EP categories. The completion architecture strengthens them from structural presence to semantic sufficiency; see `completion-architecture.md` and WP-01 in `catchup-completion-roadmap.md`.
+WP-01 upgrades the kernel from structural/key-presence validation to **semantic sufficiency**. `validate_ep_self_contained.py` still enforces core identity/baton/context invariants; `validate_ep_semantics.py` now enforces the detailed forward contract used by zero-context successors. Serial aggregate conformance runs both. Approved parallel plans run the same semantic validator against every lane EP.
 
 ## One work package per EP
 
@@ -10,32 +10,30 @@ The current kernel already requires the major EP categories. The completion arch
 one executable frontier WP -> one EP
 ```
 
-Defining several future work packages does not make them one EP. Under serial execution, only the current frontier WP receives material execution authority.
+Defining several future work packages does not make them one EP. Under serial execution, only the current frontier WP receives material execution authority. Parallel execution still uses one EP per approved lane work package.
 
-## Semantic sufficiency target
+## Semantic sufficiency
 
-A completed V2.5 EP must contain enough durable engineering information that a zero-context candidate can discover the repository, understand the current slice, identify current authoritative/editable inputs, resolve current required benchmarks/oracles, execute bounded implementation steps, verify acceptance, report exact results, and prepare the successor without prior chat.
+An executable EP must contain enough durable engineering information that a zero-context candidate can discover the repository, understand the current slice, identify current authoritative/editable inputs, resolve current required benchmarks/oracles, execute bounded implementation steps, verify acceptance, report exact results, and prepare the successor without prior chat.
 
-Required categories remain:
+The semantic validator requires:
 
-- immutable identity and predecessor baton;
-- exact roadmap revision/objective/phase/work-package;
-- observable outcome and context capsule;
-- executable repository-discovery contract;
-- typed inputs with authority/source/value/editability/applicability/resolution/staleness;
-- typed benchmarks/oracles with payload/expected result/tolerance/independence/applicability/resolution;
+- observable outcome plus a non-placeholder context capsule;
+- executable `DSTEP-*` repository-discovery instructions;
+- typed slice-specific inputs;
+- typed benchmarks/oracles when present;
 - allowed-write, allowed-read, protected, prohibited and Owner-reserved scope;
-- structured anti-drift/staleness conditions;
-- executable implementation steps with targets, reads, writes, inputs, tests, acceptance, expected intermediate state and stop conditions;
-- quality-blueprint applicability with reasons;
+- structured anti-drift restrictions and invalidation rules;
+- executable implementation steps with exact mappings to inputs, acceptance and tests;
 - weighted acceptance and classified validation;
-- true stop conditions distinct from evidence/quality limitations;
-- exact structured return/report payload;
-- checkpoint duties and successor duties.
+- source-bound report reconciliation payloads rather than headings alone;
+- exact durable successor outputs.
 
-## Slice-specific readiness
+## Slice-specific inputs
 
-Inputs and benchmarks are not globally blocking merely because they appear in the EP. Each one declares applicability such as:
+Each input records stable identity, description, authority, durable source, type/units, editability, applicability, resolution, consumers, validation and stale conditions. A `READY`/`OWNER_EDITABLE_READY` input must embed a value or define a resolution mechanism.
+
+Applicability:
 
 ```text
 CURRENT_STEP_REQUIRED
@@ -44,7 +42,7 @@ FUTURE_STEP
 INFORMATIONAL
 ```
 
-and resolution such as:
+Resolution:
 
 ```text
 READY
@@ -55,29 +53,115 @@ INVALID
 STALE
 ```
 
-Only an unresolved condition applicable to the currently authorized slice can remove current WRITE permission. This preserves evidence truth without recreating an "everything is blocked" workflow.
+An executable EP cannot carry a current-required input in `MISSING_BLOCKING`, `INVALID`, `STALE`, or `DEFERRED_NOT_CURRENTLY_REQUIRED` state. Future/informational inputs remain visible without falsely blocking the current authorized slice.
+
+## Benchmarks / oracles
+
+Each declared benchmark/oracle records:
+
+```text
+id / name / purpose
+source
+oracle_class
+payload
+expected result
+tolerance
+independence rationale
+applicability / resolution
+AC/TEST mappings
+stale conditions
+```
+
+Oracle classes currently include analytical, reference-data, independent-implementation, frozen-golden, external-standard, manual-reconstruction and observational evidence. Empty benchmark lists are permitted when the current slice does not require an independent benchmark; any benchmark that is declared must be semantically complete.
 
 ## Discovery
 
-Discovery is executable, not narrative. A forward discovery instruction uses a `DSTEP-xxxx` ID and names an action, target, question, expected outputs, receipt requirement and reconciliation/stop condition. The incoming candidate records the resulting evidence in a separate `DISC-xxxx` Discovery Receipt during takeover certification.
+Discovery is executable, not narrative. A forward instruction uses a `DSTEP-*` ID and carries:
+
+```text
+action
+target / targets
+question
+expected outputs
+receipt-required flag
+failure/reconciliation behavior
+```
+
+The future candidate evidence object remains distinct:
 
 ```text
 DSTEP-* = forward discovery instruction in the EP
-DISC-*  = backward discovery evidence produced by the candidate
+DISC-*  = backward Discovery Receipt produced by the incoming candidate
 ```
 
-The current kernel EP template still contains legacy `DISC-*` step examples. WP-01 owns that template/schema/validator migration; WP-00 records the namespace decision without partially implementing the semantic EP.
+Legacy `DISC-*` discovery-step IDs are rejected by semantic validation. The `DISC-*` receipt itself is WP-02 work.
 
 ## Scope and authority
 
-Scope does not silently expand. Protected/prohibited domains and invariants carry reasons. If acceptance requires a prohibited or Owner-reserved change, the EP becomes stale or requires an explicit authority/roadmap transaction.
+The semantic scope is split into:
 
-## Report contract
+```text
+allowed        material write domains
+allowed_reads  explicit read dependencies
+protected      invariants/domains that must remain unchanged
+prohibited     work this EP may not perform
+owner_reserved changes requiring explicit Owner authority
+```
 
-A list of section names is insufficient. The EP defines the required structured payload for acceptance reconciliation, changed files, evidence, quality findings, discoveries, limitations, roadmap/issue impact and ordered next work. Generated reports remain projections of authority objects; they cannot override the EP, checkpoint or roadmap.
+Every declared domain carries a reason. An executable EP must have a non-empty allowed-write domain. Acceptance that requires prohibited or Owner-reserved work invalidates the forward contract rather than silently expanding it.
+
+## Anti-drift
+
+`anti_drift.do_not` and `anti_drift.stale_if` are structured records. They carry stable IDs, explicit restrictions/conditions, reasons/rationale, and an effect (`STALE | STOP | OWNER_REVIEW | RECONCILE`). Empty/vague string-only anti-drift is not sufficient for an executable EP.
+
+## Implementation steps
+
+Every implementation step names:
+
+```text
+id
+objective
+targets
+reads
+writes
+input IDs
+acceptance IDs
+test IDs
+expected state
+stop conditions
+```
+
+Input/acceptance/test references are cross-checked against the EP. A vague step such as “implement required changes” does not pass semantic validation.
+
+## Exact report contract
+
+Required report headings remain stable for human continuity, but headings are no longer enough. `report_contract.payloads[]` binds each mandatory section to source objects and required reconciliation fields. `validate_report_contract.py` independently enforces those payloads, while `validate_ep_semantics.py` treats them as part of overall baton sufficiency.
+
+Generated reports remain projections. They do not override roadmap, EP, checkpoint, progress, issue, quality or future certification authority.
+
+## Successor contract
+
+`successor_relay.required_outputs` must durably require at least:
+
+```text
+checkpoint
+next_frontier
+successor_ep_or_terminal_disposition
+```
+
+The canonical template also carries progress and issue-projection reconciliation outputs. This turns successor preparation from an informal duty list into an explicit return contract.
+
+## Repository profile and protocol basis
+
+WP-01 also closes two discovery preconditions around the EP:
+
+- `REPO_PROFILE.yaml` is now a required aggregate-conformance object with dedicated procedural validation;
+- `REPO_STATE.relay_protocol.version/basis_ref` is now mandatory, and placeholder/unbound protocol refs fail repo-state validation.
+
+This makes repository discovery depend on admitted repository metadata and a pinned V2.5 protocol basis instead of bootstrap convention alone.
 
 ## Failure rule
 
 The EP fails semantic sufficiency if a new candidate needs hidden chat context to resolve a material instruction, authority source, current input, benchmark/oracle, scope boundary, implementation step, required test, acceptance criterion, report obligation, successor duty or staleness condition.
 
-The current kernel validators do not yet enforce all semantics in this document. WP-01 implements that transition and must add negative regressions for deliberately hollow EPs.
+WP-01 does **not** claim candidate takeover certification. A semantically complete baton is necessary but not sufficient for `TAKEOVER_CERTIFIED`; DISC/QUAL/TC admission remains WP-02/WP-03 work.
