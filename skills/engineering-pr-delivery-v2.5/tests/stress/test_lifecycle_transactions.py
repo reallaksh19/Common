@@ -16,9 +16,9 @@ class LifecycleTransactionStressTests(unittest.TestCase):
     def test_checkpoint_baton_must_route_to_active_ep(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
-            state={"active_ep":{"id":"EP-2","path":"agents/relay/execution-packages/EP-2.yaml"},"last_checkpoint":{"id":"CP-1","path":"agents/relay/checkpoints/CP-1.yaml"},"current_position":{"work_package":"WP-2"}}
+            state={"relay_state":"ACTIVE","active_ep":{"id":"EP-2","path":"agents/relay/execution-packages/EP-2.yaml","state":"ACTIVE"},"last_checkpoint":{"id":"CP-1","path":"agents/relay/checkpoints/CP-1.yaml"},"current_position":{"work_package":"WP-2"}}
             ep={"identity":{"previous_checkpoint":"CP-1"}}
-            cp={"schema_version":"relay-v2.5","checkpoint_id":"CP-1","ep_id":"EP-1","roadmap_basis":{"roadmap_id":"RM-X","revision":"RM-1"},"implementation_result":{},"acceptance_results":[],"validation_results":[],"quality_findings":[],"discoveries":[],"roadmap_reconciliation":{"result":"STATUS_UPDATE"},"successor":{"frontier_work_package":"WP-2","ep_id":"EP-2"}}
+            cp={"schema_version":"relay-v2.5","checkpoint_id":"CP-1","ep_id":"EP-1","roadmap_basis":{"roadmap_id":"RM-X","revision":"RM-1"},"implementation_result":{},"acceptance_results":[],"validation_results":[],"quality_findings":[],"discoveries":[],"roadmap_reconciliation":{"result":"STATUS_UPDATE"},"successor":{"mode":"SERIAL","frontier_work_package":"WP-2","ep_id":"EP-2","parallel_plan":None,"lanes":[]}}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/execution-packages/EP-2.yaml",ep);dump(root/"agents/relay/checkpoints/CP-1.yaml",cp)
             self.assertEqual([],checkpoint_linkage(root)[0])
             cp["successor"]["ep_id"]="EP-WRONG";dump(root/"agents/relay/checkpoints/CP-1.yaml",cp)
@@ -27,7 +27,7 @@ class LifecycleTransactionStressTests(unittest.TestCase):
     def test_active_hard_stop_cannot_claim_execution_can_continue(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
-            state={"status_planes":{"execution":{"state":"WAITING","can_continue":True,"next_action":"Wait for owner decision."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"PARTIAL","summary":"Evidence retained","not_run":[]},"stop":{"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Owner intent must be resolved.","basis":["ODR-PROPOSAL-1"]}}}
+            state={"relay_state":"ACTIVE","status_planes":{"execution":{"state":"WAITING","can_continue":True,"next_action":"Wait for owner decision."},"quality":{"state":"CLEAR","findings":[]},"evidence":{"state":"PARTIAL","summary":"Evidence retained","not_run":[]},"stop":{"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Owner intent must be resolved.","basis":["ODR-PROPOSAL-1"]}}}
             dump(root/"agents/relay/REPO_STATE.yaml",state)
             self.assertTrue(any("can_continue=false" in x for x in state_planes(root)[0]))
 
