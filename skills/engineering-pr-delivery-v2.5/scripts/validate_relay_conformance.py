@@ -11,13 +11,14 @@ from validate_ep_staleness import validate as staleness
 from validate_report_contract import validate as report_contract
 from validate_progress import validate as progress
 from validate_serial_execution import validate as execution
+from validate_state_planes import validate as state_planes
 from validate_phase_transition_questions import validate as questions
 from validate_issue_graph import validate as issue_graph
 from validate_issue_closure import validate as issue_closure
 from validate_supersession import validate as supersession
 from validate_roadmap_transaction import validate as roadmap_transaction
 from relaylib import print_result
-CHECKS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("progress",progress),("execution_policy",execution),("phase_questions",questions),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+CHECKS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("progress",progress),("execution_policy",execution),("state_planes",state_planes),("phase_questions",questions),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
 
 def validate(root:Path):
     e=[];w=[]

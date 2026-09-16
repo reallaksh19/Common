@@ -26,4 +26,21 @@ progress:
   phase_percent: 0
   ep_percent: 0
   basis_revision: "<PB-id>"
+status_planes:
+  execution:
+    state: READY
+    can_continue: true
+    next_action: "<exact next action>"
+  quality:
+    state: CLEAR
+    findings: []
+  evidence:
+    state: PARTIAL
+    summary: "<evidence summary>"
+    not_run: []
+  stop:
+    active: false
+    category: NONE
+    reason: ""
+    basis: []
 chat_context_required: false

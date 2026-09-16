@@ -8,6 +8,9 @@ description: Roadmap-first engineering relay for durable multi-agent delivery. T
 ## Governing objective
 A replacement agent entering the repository with no conversational history must be able to locate the authoritative overall roadmap, determine the current roadmap position/frontier, execute one self-contained EP, validate it, checkpoint reality, reconcile the roadmap, recompute the frontier, and leave a validated successor EP. Conversation is acceleration, never custody.
 
+## Repository-agnostic core
+The Common implementation is portable policy, not downstream-project code. Generic skill logic, schemas, templates and validators must not encode downstream repository names, issue numbers, branch names, product domains, formulas or application-specific workflow semantics. Real repositories are black-box validation/stress targets. When a stress target exposes a weakness, repair the generic invariant/validator and add a synthetic reproduction; do not special-case that repository. Read `operating-model/repository-agnosticism.md`.
+
 ## Authority order
 ```text
 explicit Owner intent / Owner Decision Record
@@ -67,7 +70,16 @@ Every EP contains: identity, roadmap_source, outcome, context_capsule, repositor
 An EP fails if a new agent needs chat to resolve a material instruction. Every acceptance criterion maps to verification.
 
 ## Separate state planes
-Never collapse execution, quality, evidence and stop state. Validation truth is `PASS | FAIL | NOT_RUN | NA`; test obligation is `MUST_PASS | SHOULD_RUN | INFORMATIONAL`. `NOT_RUN` is evidence truth, not automatically a stop.
+`REPO_STATE.yaml` carries four independent status planes:
+```text
+EXECUTION — what is happening and whether work can continue
+QUALITY   — maintainability/design/UX findings
+EVIDENCE  — what was actually run/proven/not run
+STOP      — true hard-stop condition only
+```
+Do not use one overloaded `BLOCKED` state. `NOT_RUN` is evidence truth and is not a hard stop by itself. A hard stop must name an allowed category, reason and durable basis. Read `operating-model/state-planes.md`.
+
+Validation truth is `PASS | FAIL | NOT_RUN | NA`; test obligation is `MUST_PASS | SHOULD_RUN | INFORMATIONAL`.
 
 Hard stops are reserved for true inability to proceed safely: `OWNER_DECISION_REQUIRED`, `ESSENTIAL_INPUT_MISSING`, `AUTHORITY_VIOLATION`, `PROTECTED_INVARIANT_FAILURE`, `WRITE_COLLISION`, `SUPERSEDED_EP`, `ROADMAP_CONFLICT`, `REPOSITORY_STATE_CONFLICT`, `UNSAFE_ENGINEERING_RESULT`.
 
@@ -93,10 +105,11 @@ Questions anchor to incoming roadmap nodes, AC IDs, TEST IDs, INPUT IDs and prod
 Assume conversation termination cannot be predicted. Before material changes, durable roadmap/REPO_STATE/EP/scope/inputs/acceptance must exist. At custody transfer: checkpoint → roadmap/progress/issues reconciliation → frontier recomputation → successor EP → successor validation → cold-start PASS → REPO_STATE transfer. Code completion alone is not relay completion.
 
 ## Human handover
-Always show overall roadmap %, current phase %/checklist, current EP %/checklist, plain-language status, quality findings, evidence, exact next actions, next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, successor readiness, and `conversation context required: NO`.
+Always show overall roadmap %, current phase %/checklist, current EP %/checklist, plain-language execution/quality/evidence/stop status, exact next actions, next roadmap node, phase-transition YES/NO, new Q1-Q5 when required, successor readiness, and `conversation context required: NO`.
 
 ## Validation entrypoint
 ```bash
 python skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/cold_start_check.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/stress_test_relay.py <repo-root> [<repo-root> ...]
 ```

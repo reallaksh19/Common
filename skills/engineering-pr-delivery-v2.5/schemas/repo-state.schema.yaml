@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, progress, chat_context_required]
+required: [schema_version, repository, roadmap, current_position, execution_policy, active_ep, progress, status_planes, chat_context_required]
 properties:
   schema_version: {const: relay-v2.5}
   roadmap:
@@ -17,5 +17,37 @@ properties:
   active_ep:
     type: object
     required: [id, path, state]
+  status_planes:
+    type: object
+    required: [execution, quality, evidence, stop]
+    properties:
+      execution:
+        type: object
+        required: [state, can_continue, next_action]
+        properties:
+          state: {enum: [IDLE, READY, ACTIVE, WAITING, COMPLETE]}
+          can_continue: {type: boolean}
+          next_action: {type: string, minLength: 1}
+      quality:
+        type: object
+        required: [state, findings]
+        properties:
+          state: {enum: [CLEAR, NEEDS_ATTENTION, OWNER_REVIEW_REQUIRED]}
+          findings: {type: array}
+      evidence:
+        type: object
+        required: [state, summary, not_run]
+        properties:
+          state: {enum: [COMPLETE, PARTIAL, NOT_RUN, FAILED, NA]}
+          summary: {type: string}
+          not_run: {type: array}
+      stop:
+        type: object
+        required: [active, category, reason, basis]
+        properties:
+          active: {type: boolean}
+          category: {enum: [NONE, OWNER_DECISION_REQUIRED, ESSENTIAL_INPUT_MISSING, AUTHORITY_VIOLATION, PROTECTED_INVARIANT_FAILURE, WRITE_COLLISION, SUPERSEDED_EP, ROADMAP_CONFLICT, REPOSITORY_STATE_CONFLICT, UNSAFE_ENGINEERING_RESULT]}
+          reason: {type: string}
+          basis: {type: array}
   chat_context_required: {const: false}
 additionalProperties: true
