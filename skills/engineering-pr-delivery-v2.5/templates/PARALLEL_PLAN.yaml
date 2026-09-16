@@ -1,5 +1,6 @@
 schema_version: relay-v2.5
 id: PLAN-P001
+previous_replan: null
 owner_approval:
   approved: true
   authority: OWNER
