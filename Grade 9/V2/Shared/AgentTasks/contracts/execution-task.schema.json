@@ -70,20 +70,6 @@
       "uniqueItems": true
     },
     "write_mode": {"type": "string", "enum": ["ANALYZE_ONLY", "IMPLEMENT"]},
-    "governed_inputs": {
-      "type": "array",
-      "description": "Optional exact repository artifacts supplied to the task. Binding them does not promote or reinterpret their authority.",
-      "items": {
-        "type": "object",
-        "required": ["role", "path"],
-        "properties": {
-          "role": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
-          "path": {"type": "string", "minLength": 1}
-        },
-        "additionalProperties": false
-      },
-      "default": []
-    },
     "expected_scope": {
       "type": "array",
       "items": {"type": "string", "minLength": 1},
