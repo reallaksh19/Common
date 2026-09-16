@@ -1,5 +1,5 @@
 from __future__ import annotations
-import sys,tempfile,unittest
+import copy,sys,tempfile,unittest
 from pathlib import Path
 import yaml
 HERE=Path(__file__).resolve();sys.path.insert(0,str(HERE.parents[2]/"scripts"))
@@ -63,18 +63,12 @@ class LifecycleTransactionStressTests(unittest.TestCase):
     def test_supersession_preserves_acceptance_and_exact_evidence_state(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
-            transfer={
-                "basis":["CP-8"],
-                "unresolved_acceptance":[{"id":"AC-9","state":"NOT_RUN","basis":["EP-8"]}],
-                "inputs":["INPUT-3"],"risks":["RISK-2"],"decisions":["DEC-4"],
-                "evidence":[{"id":"EV-7","status":"NOT_RUN","basis_ref":"head-A","reason":"Runner unavailable."}],
-            }
+            transfer={"basis":["CP-8"],"unresolved_acceptance":[{"id":"AC-9","state":"NOT_RUN","basis":["EP-8"]}],"inputs":["INPUT-3"],"risks":["RISK-2"],"decisions":["DEC-4"],"evidence":[{"id":"EV-7","status":"NOT_RUN","basis_ref":"head-A","reason":"Runner unavailable."}]}
             graph={"nodes":[
-                {"id":"ISSUE-OLD","state":"SUPERSEDED","github_state":"OPEN","supersession_receipt":{"successor":"ISSUE-NEW",**transfer}},
-                {"id":"ISSUE-NEW","state":"OPEN","github_state":"OPEN","supersession_inheritance":{"predecessor":"ISSUE-OLD",**transfer}},
+                {"id":"ISSUE-OLD","state":"SUPERSEDED","github_state":"OPEN","supersession_receipt":{"successor":"ISSUE-NEW",**copy.deepcopy(transfer)}},
+                {"id":"ISSUE-NEW","state":"OPEN","github_state":"OPEN","supersession_inheritance":{"predecessor":"ISSUE-OLD",**copy.deepcopy(transfer)}},
             ],"relationships":[{"from":"ISSUE-NEW","relation":"SUPERSEDES","to":"ISSUE-OLD"}]}
-            dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph)
-            self.assertEqual([],supersession(root)[0])
+            dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph);self.assertEqual([],supersession(root)[0])
             graph["nodes"][1]["supersession_inheritance"]["evidence"][0]["status"]="PASS";dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph)
             self.assertTrue(any("transfer mismatch for evidence" in x for x in supersession(root)[0]))
 
@@ -87,9 +81,7 @@ class LifecycleTransactionStressTests(unittest.TestCase):
             graph={"nodes":[{"id":"ISSUE-1","state":"COMPLETE","github_state":"CLOSED","roadmap_node":"WP-1","closure_receipt":receipt}],"relationships":[]}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",roadmap);dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph)
             errors=issue_closure(root)[0]
-            self.assertTrue(any("non-terminal roadmap node" in x for x in errors))
-            self.assertTrue(any("acceptance is not terminal" in x for x in errors))
-            self.assertTrue(any("NOT_RUN evidence cannot be marked SATISFIED" in x for x in errors))
+            self.assertTrue(any("non-terminal roadmap node" in x for x in errors));self.assertTrue(any("acceptance is not terminal" in x for x in errors));self.assertTrue(any("NOT_RUN evidence cannot be marked SATISFIED" in x for x in errors))
 
     def test_closed_superseded_issue_requires_successor_and_transferred_unresolved_work(self):
         with tempfile.TemporaryDirectory() as td:
@@ -99,8 +91,8 @@ class LifecycleTransactionStressTests(unittest.TestCase):
             transfer={"basis":["CP-8"],"unresolved_acceptance":[{"id":"AC-9","state":"NOT_RUN","basis":["EP-8"]}],"inputs":[],"risks":[],"decisions":[],"evidence":[{"id":"EV-7","status":"NOT_RUN","basis_ref":"head-A","reason":"Runner unavailable."}]}
             closure={"acceptance_terminal":True,"evidence_terminal":True,"acceptance":[{"id":"AC-9","status":"NOT_RUN","disposition":"SUPERSEDED","basis":["EP-8"]}],"evidence":[{"id":"EV-7","status":"NOT_RUN","basis_ref":"head-A","disposition":"SUPERSEDED","reason":"Runner unavailable."}],"pr_disposition":"SUPERSEDED","remaining_work_disposition":"SUPERSEDED_BY_SUCCESSOR","unresolved_items":[{"id":"EV-7","kind":"EVIDENCE","state":"NOT_RUN","basis":["head-A"]}],"successor":"ISSUE-NEW","checkpoint":"CP-8"}
             graph={"nodes":[
-                {"id":"ISSUE-OLD","state":"SUPERSEDED","github_state":"CLOSED","roadmap_node":"WP-OLD","supersession_receipt":{"successor":"ISSUE-NEW",**transfer},"closure_receipt":closure},
-                {"id":"ISSUE-NEW","state":"ACTIVE","github_state":"OPEN","roadmap_node":"WP-NEW","supersession_inheritance":{"predecessor":"ISSUE-OLD",**transfer}},
+                {"id":"ISSUE-OLD","state":"SUPERSEDED","github_state":"CLOSED","roadmap_node":"WP-OLD","supersession_receipt":{"successor":"ISSUE-NEW",**copy.deepcopy(transfer)},"closure_receipt":closure},
+                {"id":"ISSUE-NEW","state":"ACTIVE","github_state":"OPEN","roadmap_node":"WP-NEW","supersession_inheritance":{"predecessor":"ISSUE-OLD",**copy.deepcopy(transfer)}},
             ],"relationships":[{"from":"ISSUE-NEW","relation":"SUPERSEDES","to":"ISSUE-OLD"}]}
             dump(root/"agents/relay/REPO_STATE.yaml",state);dump(root/"agents/relay/roadmap/OVERALL_ROADMAP.yaml",roadmap);dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph)
             self.assertEqual([],supersession(root)[0]);self.assertEqual([],issue_closure(root)[0])
