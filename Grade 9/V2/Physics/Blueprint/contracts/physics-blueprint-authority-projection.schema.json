@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-blueprint-authority-projection.schema.json",
+  "title": "Physics Blueprint Authority Projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "projection_id", "authority_class", "scope", "engineering_gate", "release_authority", "projection_digest"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "projection_id": {"type": "string", "pattern": "^PHY-BP-AUTH-[A-Z0-9-]+$"},
+    "authority_class": {"const": "PHYSICS_BLUEPRINT_AUTHORITY_PROJECTION"},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_digest", "curriculum_status", "curriculum_binding_state", "curriculum_binding_id", "curriculum_binding_digest"],
+      "properties": {
+        "scope_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "curriculum_status": {"enum": ["SUPPORTED_BY_REPOSITORY_AUTHORITY", "HELD_INSUFFICIENT_AUTHORITY"]},
+        "curriculum_binding_state": {"enum": ["BOUND_CONFIRMED", "UNBOUND", "REPOSITORY_INTERNAL_SCOPE"]},
+        "curriculum_binding_id": {"type": ["string", "null"]},
+        "curriculum_binding_digest": {"anyOf": [{"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, {"type": "null"}]}
+      }
+    },
+    "engineering_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["envelope_id", "envelope_digest", "dimensions", "consumer_permissions", "publication_authorization"],
+      "properties": {
+        "envelope_id": {"type": "string", "minLength": 1},
+        "envelope_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["technical", "research_provenance", "external_prerequisites", "source_authority"],
+          "properties": {
+            "technical": {"enum": ["READY", "BLOCKED"]},
+            "research_provenance": {"enum": ["READY", "BLOCKED", "NOT_REQUIRED"]},
+            "external_prerequisites": {"enum": ["READY", "HELD"]},
+            "source_authority": {"enum": ["READY", "HELD", "NOT_APPLICABLE"]}
+          }
+        },
+        "consumer_permissions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["status", "reason_codes"],
+            "properties": {
+              "status": {"enum": ["ALLOWED", "BLOCKED", "NOT_AUTHORIZED"]},
+              "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            }
+          }
+        },
+        "publication_authorization": {"const": "NOT_IMPLIED"}
+      }
+    },
+    "release_authority": {"const": "NOT_GRANTED_BY_PROJECTION"},
+    "projection_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
