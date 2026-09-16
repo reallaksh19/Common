@@ -20,7 +20,8 @@ active_ep:
   path: agents/relay/execution-packages/<EP-id>.yaml
   state: EXECUTABLE
 last_checkpoint:
-  id: "<CP-id-or-NONE>"
+  id: NONE
+  path: null
 progress:
   overall_percent: 0
   phase_percent: 0
@@ -36,7 +37,7 @@ status_planes:
     findings: []
   evidence:
     state: PARTIAL
-    summary: "<evidence summary>"
+    summary: "<plain-language evidence summary>"
     not_run: []
   stop:
     active: false
