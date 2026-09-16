@@ -12,6 +12,7 @@ from validate_ep_staleness import validate as staleness
 from validate_report_contract import validate as report_contract
 from validate_progress import validate as progress
 from validate_serial_execution import validate as execution
+from validate_parallel_plan import validate as parallel_plan
 from validate_phase_transition_questions import validate as questions
 from validate_issue_graph import validate as issue_graph
 from validate_issue_closure import validate as issue_closure
@@ -20,7 +21,7 @@ from validate_roadmap_transaction import validate as roadmap_transaction
 from validate_state_planes import validate as state_planes
 from validate_checkpoint_linkage import validate as checkpoint_linkage
 
-ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("state_planes",state_planes),("checkpoint_linkage",checkpoint_linkage),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("state_planes",state_planes),("checkpoint_linkage",checkpoint_linkage),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
@@ -28,7 +29,7 @@ def validate(root:Path):
     try:s=load_yaml(root/"agents/relay/REPO_STATE.yaml")
     except Exception as exc:return [f"repo_state: {exc}"],w
     checks=list(ALWAYS)
-    if (s.get("active_ep") or {}).get("state")!="NONE":checks[3:3]=ACTIVE_EP_ONLY
+    if s.get("relay_state")=="ACTIVE":checks[3:3]=ACTIVE_EP_ONLY
     for name,check in checks:
         try:ce,cw=check(root)
         except Exception as exc:ce,cw=[str(exc)],[]
