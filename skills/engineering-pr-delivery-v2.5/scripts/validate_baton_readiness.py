@@ -17,12 +17,13 @@ from validate_ep_acceptance_mapping import validate as ep_acceptance
 from validate_ep_staleness import validate as ep_staleness
 from validate_report_contract import validate as report_contract
 from validate_parallel_plan import validate as parallel_plan
+from validate_question_set import validate as question_sets
 
 
 def baton_prerequisite_errors(root:Path)->list[str]:
     state=load_yaml(root/"agents/relay/REPO_STATE.yaml");relay_state=state.get("relay_state")
     if relay_state=="INITIALIZING":return ["relay is still INITIALIZING"]
-    checks=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("execution_policy",execution_policy),("checkpoint_linkage",checkpoint_linkage),("state_planes",state_planes),("roadmap_continuity",continuity)]
+    checks=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("execution_policy",execution_policy),("checkpoint_linkage",checkpoint_linkage),("state_planes",state_planes),("roadmap_continuity",continuity),("question_sets",question_sets)]
     if relay_state=="ACTIVE":checks.extend([("ep_self_contained",ep_self_contained),("ep_semantics",ep_semantics),("ep_acceptance",ep_acceptance),("ep_staleness",ep_staleness),("report_contract",report_contract)])
     elif relay_state=="PARALLEL":checks.append(("parallel_plan",parallel_plan))
     errors=[]
