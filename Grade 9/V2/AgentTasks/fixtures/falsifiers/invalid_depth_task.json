@@ -1,0 +1,17 @@
+{
+  "task_id": "TASK-MUTANT-004",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Motion",
+  "subtopic": "1D Motion",
+  "engineering_depth": "JEE_ADVANCED_OLYMPIAD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "target_consumers": ["PROBLEM_SEMANTICS"],
+  "write_mode": "IMPLEMENT"
+}

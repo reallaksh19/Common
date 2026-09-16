@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "AGENT-TASK-KIND-REGISTRY-v1",
+  "description": "Data-driven registry defining executable task kinds, authority requirements, change classes, validators, and consumer targets. Replaces hardcoded prose prompt templates.",
+  "task_kinds": {
+    "ARCHITECTURE_AUDIT": {
+      "description": "Cold-start audit of current repository architecture, manifests, schemas, and readiness states.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "SUBJECT_ENTRYPOINT", "ENGINEERING_GATE_SPEC"],
+      "allowed_change_classes": ["DOC", "TEST"],
+      "required_outputs": ["AUDIT_REPORT"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-01", "SEP-24"]
+    },
+    "CURRICULUM_RESEARCH": {
+      "description": "Extract and reconcile curriculum scope, officially mandated topics, and grade-level constraints.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "SOURCE_PROVENANCE_SCHEMA"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC"],
+      "required_outputs": ["CURRICULUM_BINDING_RECORD"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-10"]
+    },
+    "OPEN_DISCOVERY": {
+      "description": "Broad external discovery across textbooks, curricula, question banks, and research literature.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "SOURCE_PROVENANCE_SCHEMA"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC"],
+      "required_outputs": ["DISCOVERY_DOSSIER"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-06"]
+    },
+    "SOURCE_RESEARCH": {
+      "description": "Rigorous sourcing and attribution audit of specific question or concept corpora.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "SOURCE_PROVENANCE_SCHEMA"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC"],
+      "required_outputs": ["SOURCE_PROVENANCE_LEDGER"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-05", "SEP-11"]
+    },
+    "SUBTOPIC_ENGINEERING": {
+      "description": "Engineering intake, capability decomposition, prerequisite closure, and gate alignment for an atomic subtopic.",
+      "required_authority_classes": [
+        "SUBJECT_MANIFEST",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_VALIDATOR",
+        "CANONICAL_CAPABILITIES",
+        "SOURCE_PROVENANCE_SCHEMA"
+      ],
+      "allowed_change_classes": ["DATA_ONLY", "TEST", "DOC"],
+      "required_outputs": ["GOVERNED_SUBTOPIC_PACKAGE", "ENGINEERING_PREFLIGHT"],
+      "required_validators": ["validate_engineering_gates.py"],
+      "consumer_targets": [
+        "PROBLEM_SEMANTICS",
+        "CORE_AUTHORING",
+        "CORE2_TRANSFER",
+        "REPRESENTATION"
+      ],
+      "promotion_permitted": true,
+      "aliases": ["SEP-07"]
+    },
+    "RESEARCH_OVERLAY": {
+      "description": "Deep literature, model limitations, advanced derivations, and limiting-case overlay on an existing subtopic.",
+      "required_authority_classes": [
+        "SUBJECT_MANIFEST",
+        "ENGINEERING_GATE_POLICY",
+        "ENGINEERING_GATE_VALIDATOR",
+        "SOURCE_PROVENANCE_SCHEMA"
+      ],
+      "allowed_change_classes": ["DATA_ONLY", "TEST", "DOC"],
+      "required_outputs": ["RESEARCH_OVERLAY_DOSSIER", "FORMAL_CLAIM_LEDGER"],
+      "required_validators": ["validate_engineering_gates.py"],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE2_TRANSFER"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-09"]
+    },
+    "PREREQUISITE_AUDIT": {
+      "description": "Full audit of internal and cross-domain prerequisite acyclicity, provider ownership, and bridgeability.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "ENGINEERING_GATE_POLICY", "CROSS_DOMAIN_POLICY"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC", "TEST"],
+      "required_outputs": ["PREREQUISITE_GRAPH_REPORT"],
+      "required_validators": ["validate_engineering_gates.py"],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-16"]
+    },
+    "ASSESSMENT_MINING": {
+      "description": "Question bank mining, item validity verification, and question-to-capability binding.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "SOURCE_PROVENANCE_SCHEMA"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC"],
+      "required_outputs": ["QUESTION_SET_RECORD", "SCOPE_BINDING_LEDGER"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE2_TRANSFER"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-12", "SEP-13"]
+    },
+    "PEDAGOGY_RESEARCH": {
+      "description": "Research into pedagogical content knowledge (PCK), misconception catalogs, and learning progressions.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "CANONICAL_CAPABILITIES"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC"],
+      "required_outputs": ["PCK_RESEARCH_DOSSIER"],
+      "required_validators": [],
+      "consumer_targets": ["CORE_AUTHORING", "REPRESENTATION"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-14"]
+    },
+    "REPRESENTATION_DESIGN": {
+      "description": "Design and physical rendering specification for visual teaching primitives, plots, schematics, and diagrams.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "ENGINEERING_GATE_SPEC"],
+      "allowed_change_classes": ["DATA_ONLY", "DOC", "TEST"],
+      "required_outputs": ["REPRESENTATION_SPEC_BUNDLE"],
+      "required_validators": [],
+      "consumer_targets": ["REPRESENTATION", "CORE_AUTHORING", "CORE2_TRANSFER"],
+      "promotion_permitted": true,
+      "aliases": ["SEP-15"]
+    },
+    "INDEPENDENT_REPRODUCTION": {
+      "description": "Independent clean-agent re-execution of a bounded task packet to test structural reproducibility.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "ENGINEERING_GATE_POLICY"],
+      "allowed_change_classes": ["DOC"],
+      "required_outputs": ["INDEPENDENT_EXECUTION_REPORT"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-17"]
+    },
+    "CROSS_AGENT_RECONCILIATION": {
+      "description": "Structural comparison of execution reports across independent agents to detect authority ambiguities.",
+      "required_authority_classes": ["SUBJECT_MANIFEST"],
+      "allowed_change_classes": ["DOC"],
+      "required_outputs": ["RECONCILIATION_REPORT"],
+      "required_validators": [],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-18"]
+    },
+    "ARCHITECTURE_FALSIFICATION": {
+      "description": "Stress-test architecture and validation gates with negative mutants and boundary cases.",
+      "required_authority_classes": ["SUBJECT_MANIFEST", "ENGINEERING_GATE_POLICY", "ENGINEERING_GATE_VALIDATOR"],
+      "allowed_change_classes": ["TEST", "DOC"],
+      "required_outputs": ["FALSIFICATION_BATTERY_REPORT"],
+      "required_validators": ["validate_engineering_gates.py"],
+      "consumer_targets": ["PROBLEM_SEMANTICS", "CORE_AUTHORING", "CORE2_TRANSFER"],
+      "promotion_permitted": false,
+      "aliases": ["SEP-08", "SEP-25"]
+    }
+  }
+}

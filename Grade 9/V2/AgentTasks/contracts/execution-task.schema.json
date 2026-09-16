@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/grade9/agent-tasks/execution-task.schema.json",
+  "title": "ExecutionTask",
+  "description": "Governing schema for human task intent payloads in the Standalone Delegation Layer. Captures human intent only without embedding architectural truth or subject ontology.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "task_kind",
+    "repository",
+    "target_ref",
+    "subject",
+    "grade",
+    "curriculum",
+    "curriculum_version",
+    "topic",
+    "subtopic",
+    "engineering_depth",
+    "learner_state",
+    "web_research_allowed",
+    "target_consumers",
+    "write_mode"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+$",
+      "description": "Unique identifier for this task instance."
+    },
+    "task_kind": {
+      "type": "string",
+      "enum": [
+        "ARCHITECTURE_AUDIT",
+        "CURRICULUM_RESEARCH",
+        "OPEN_DISCOVERY",
+        "SOURCE_RESEARCH",
+        "SUBTOPIC_ENGINEERING",
+        "RESEARCH_OVERLAY",
+        "PREREQUISITE_AUDIT",
+        "ASSESSMENT_MINING",
+        "PEDAGOGY_RESEARCH",
+        "REPRESENTATION_DESIGN",
+        "INDEPENDENT_REPRODUCTION",
+        "CROSS_AGENT_RECONCILIATION",
+        "ARCHITECTURE_FALSIFICATION"
+      ],
+      "description": "Data-driven task category defining required authority, allowed changes, outputs, and validators."
+    },
+    "repository": {
+      "type": "string",
+      "description": "Target GitHub repository, e.g. reallaksh19/Common"
+    },
+    "target_ref": {
+      "type": "string",
+      "description": "Target git ref: 'DISCOVER_CURRENT' or explicit branch/commit SHA."
+    },
+    "subject": {
+      "type": "string",
+      "enum": ["PHYSICS", "MATHEMATICS", "CHEMISTRY"],
+      "description": "Target academic discipline."
+    },
+    "grade": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12,
+      "description": "Target grade level."
+    },
+    "curriculum": {
+      "type": "string",
+      "description": "Governing curriculum or examination framework, e.g. CBSE, ICSE, IIT_JEE, IOQM, NEET."
+    },
+    "curriculum_version": {
+      "type": "string",
+      "description": "Governing academic year or curriculum version, e.g. 2026-27."
+    },
+    "topic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Disciplinary chapter or overarching topic."
+    },
+    "subtopic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Atomic subtopic under engineering."
+    },
+    "engineering_depth": {
+      "type": "string",
+      "enum": ["FOUNDATION", "STANDARD", "RESEARCH"],
+      "description": "Engineering rigor tier. Architecturally independent of grade, exam name, difficulty, or curriculum classification."
+    },
+    "learner_state": {
+      "type": "string",
+      "enum": ["UNKNOWN", "NOVICE", "MISCONCEPTION_ACTIVE", "INTERMEDIATE", "ADVANCED"],
+      "description": "Cognitive diagnostic state of the learner. Conditions pedagogical support and sequencing; strictly NEVER mutates technical domain truth."
+    },
+    "web_research_allowed": {
+      "type": "boolean",
+      "description": "True if broad open discovery from external sources is permitted. Discovery permission != promotion permission."
+    },
+    "local_question_banks": {
+      "type": ["string", "array"],
+      "items": { "type": "string" },
+      "description": "Location of local question bank corpora or 'DISCOVER_FROM_REPOSITORY'."
+    },
+    "target_consumers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PROBLEM_SEMANTICS",
+          "CORE_AUTHORING",
+          "CORE2_TRANSFER",
+          "REPRESENTATION",
+          "COVERAGE_CLOSURE",
+          "EXACT_PRODUCT",
+          "PUBLICATION"
+        ]
+      },
+      "minItems": 1,
+      "description": "Downstream consumers for which readiness is evaluated."
+    },
+    "write_mode": {
+      "type": "string",
+      "enum": ["IMPLEMENT", "AUDIT_ONLY", "DRY_RUN"],
+      "description": "Execution write permission."
+    },
+    "scope_hints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Human hints regarding expected subtopic boundaries."
+    },
+    "explicit_exclusions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Concepts explicitly outside task scope."
+    }
+  }
+}

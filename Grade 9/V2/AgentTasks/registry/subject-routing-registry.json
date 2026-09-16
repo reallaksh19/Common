@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "SUBJECT-ROUTING-REGISTRY-v1",
+  "description": "Minimal non-semantic routing registry mapping subject identifiers to canonical manifest and gate entrypoints. Strictly contains zero disciplinary ontology, formulas, or concepts.",
+  "routes": {
+    "PHYSICS": {
+      "manifest_ref": "Grade 9/V2/Physics/GENERATION_AUTHORITY_MANIFEST.json",
+      "entrypoint_ref": "Grade 9/V2/Physics/V2_GENERATION_ENTRYPOINT.md",
+      "engineering_gate_spec": "Grade 9/V2/Physics/Blueprint/PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "gate_policy_ref": "Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v1.json",
+      "gate_validator_ref": "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates.py",
+      "canonical_capabilities_ref": "Grade 9/V2/Physics/Canonical/registry/capabilities.json",
+      "source_provenance_schema_ref": "Grade 9/V2/Physics/AssessmentIntake/contracts/assessment-source-provenance.schema.json",
+      "blueprint_architecture_ref": "Grade 9/V2/Physics/Blueprint/SELF_HELP_ARCHITECTURE_V8.md"
+    },
+    "MATHEMATICS": {
+      "manifest_ref": "Grade 9/V2/Mathematics/GENERATION_AUTHORITY_MANIFEST.json",
+      "entrypoint_ref": "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md",
+      "source_provenance_schema_ref": "Grade 9/V2/Mathematics/AssessmentIntake/contracts/assessment-source-provenance.schema.json"
+    },
+    "CHEMISTRY": {
+      "manifest_ref": "Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json",
+      "entrypoint_ref": "Grade 9/V2/Chemistry/CHEMISTRY_V2_GENERATION_ENTRYPOINT.md",
+      "source_provenance_schema_ref": "Grade 9/V2/Chemistry/AssessmentIntake/contracts/chemistry-source-provenance.schema.json"
+    }
+  }
+}

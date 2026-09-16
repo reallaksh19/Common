@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-PHY-KIN-001",
+  "task_kind": "SUBTOPIC_ENGINEERING",
+  "repository": "reallaksh19/Common",
+  "target_ref": "DISCOVER_CURRENT",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "curriculum_version": "2026-27",
+  "topic": "Motion",
+  "subtopic": "1D Motion",
+  "engineering_depth": "STANDARD",
+  "learner_state": "UNKNOWN",
+  "web_research_allowed": true,
+  "local_question_banks": "DISCOVER_FROM_REPOSITORY",
+  "target_consumers": [
+    "PROBLEM_SEMANTICS",
+    "CORE_AUTHORING",
+    "CORE2_TRANSFER",
+    "REPRESENTATION"
+  ],
+  "write_mode": "IMPLEMENT",
+  "scope_hints": [
+    "Displacement, Velocity & Constant Acceleration Equations",
+    "v = u + at, s = ut + 0.5at^2, v^2 = u^2 + 2as"
+  ],
+  "explicit_exclusions": [
+    "Variable acceleration requiring calculus integration",
+    "Relativistic kinematics"
+  ]
+}
