@@ -1,0 +1,15 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, generated_from, relay_state, current_position, progress, execution, quality, evidence, stop, projection, relay_readiness, takeover_admissions, next_work, acceptance, parallel_lanes, issue_summary]
+properties:
+  schema_version: {const: relay-v2.5-report-projection}
+  generated_from:
+    type: object
+    required: [roadmap_revision, progress_basis, repo_state_digest, roadmap_digest, progress_digest, issue_graph_digest, ep_id, ep_digest, checkpoint_id, checkpoint_digest]
+  progress:
+    type: object
+    required: [progress_basis, overall_percent, current, hierarchy]
+  next_work: {type: [object, 'null']}
+  acceptance: {type: array}
+  parallel_lanes: {type: array}
+additionalProperties: true
