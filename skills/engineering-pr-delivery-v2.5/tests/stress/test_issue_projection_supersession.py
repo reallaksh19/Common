@@ -1,5 +1,5 @@
 from __future__ import annotations
-import sys,tempfile,unittest
+import copy,sys,tempfile,unittest
 from pathlib import Path
 import yaml
 HERE=Path(__file__).resolve();sys.path.insert(0,str(HERE.parents[2]/"scripts"))
@@ -20,10 +20,10 @@ def deep_graph():
     return {"schema_version":"relay-v2.5","graph_revision":rev,"nodes":[root,mid,leaf_a,leaf_b],"relationships":[{"from":"ISSUE-ROOT","relation":"PARENT_OF","to":"ISSUE-MID"},{"from":"ISSUE-MID","relation":"PARENT_OF","to":"ISSUE-A"},{"from":"ISSUE-MID","relation":"PARENT_OF","to":"ISSUE-B"}]}
 
 def transfer(successor,acceptance,evidence,basis):
-    return {"successor":successor,"basis":basis,"unresolved_acceptance":acceptance,"inputs":[],"risks":[],"decisions":[],"evidence":evidence}
+    return {"successor":successor,"basis":copy.deepcopy(basis),"unresolved_acceptance":copy.deepcopy(acceptance),"inputs":[],"risks":[],"decisions":[],"evidence":copy.deepcopy(evidence)}
 
 def inheritance(predecessor,acceptance,evidence,basis):
-    return {"predecessor":predecessor,"basis":basis,"unresolved_acceptance":acceptance,"inputs":[],"risks":[],"decisions":[],"evidence":evidence}
+    return {"predecessor":predecessor,"basis":copy.deepcopy(basis),"unresolved_acceptance":copy.deepcopy(acceptance),"inputs":[],"risks":[],"decisions":[],"evidence":copy.deepcopy(evidence)}
 
 def chain_graph():
     acx={"id":"AC-X","state":"NOT_RUN","basis":["EP-A"]};acy={"id":"AC-Y","state":"NOT_RUN","basis":["EP-B"]}
