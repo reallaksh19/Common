@@ -141,6 +141,21 @@ def consume_execution_packet(
             "delegation packet cannot authorize Blueprint consumers",
         )
 
+    # Current repository authority starts P-A from exact QuestionSet and
+    # DeclaredTopicScope artifacts. No repository-owned mapping currently binds
+    # a delegated task's free-text labels to an assessment-input set. Therefore
+    # execution must remain explicitly HELD rather than inferred from labels.
+    execution_route = {
+        "status": "HELD_NO_REPOSITORY_ROUTE",
+        "execution_authorized": False,
+        "required_authority": "REPOSITORY_OWNED_TASK_TO_ASSESSMENT_INPUT_ROUTE",
+        "label_inference": "PROHIBITED",
+        "reason": (
+            "Current Physics generation authority requires exact QuestionSet and DeclaredTopicScope inputs, "
+            "but declares no repository-owned route from delegated task intent to that input set."
+        ),
+    }
+
     receipt: dict[str, Any] = {
         "schema_version": "1.0.0",
         "receipt_id": "PHY-BLUEPRINT-TASK-INTAKE-" + packet["packet_digest"].split(":", 1)[1][:16],
@@ -162,6 +177,7 @@ def consume_execution_packet(
             "topic": task["topic"],
             "subtopic": task["subtopic"],
         },
+        "execution_route": execution_route,
         "authority_boundary": {
             "packet_authority_use": "DELEGATION_CONTEXT_ONLY",
             "scope_selection": "REPOSITORY_GOVERNED_NOT_PACKET",
