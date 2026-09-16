@@ -8,7 +8,7 @@ REQ=["schema_version","identity","roadmap_source","outcome","context_capsule","r
 def validate(root:Path):
     e=[]; w=[]; s=load_yaml(root/"agents/relay/REPO_STATE.yaml"); ep=load_yaml(root/s["active_ep"]["path"]); e+=require(ep,REQ,"EP")
     if ep.get("schema_version")!="relay-v2.5":e.append("EP: schema_version must be relay-v2.5")
-    e+=scan_context_phrases(ep); e+=require(ep.get("identity") or {},["ep_id","branch","execution_state"],"EP.identity"); e+=require(ep.get("roadmap_source") or {},["roadmap_id","roadmap_revision","objective","phase","work_package"],"EP.roadmap_source"); e+=require(ep.get("scope") or {},["allowed","prohibited"],"EP.scope")
+    e+=scan_context_phrases(ep); e+=require(ep.get("identity") or {},["ep_id","branch","execution_state","previous_checkpoint"],"EP.identity"); e+=require(ep.get("roadmap_source") or {},["roadmap_id","roadmap_revision","objective","phase","work_package"],"EP.roadmap_source"); e+=require(ep.get("scope") or {},["allowed","prohibited"],"EP.scope")
     if not ep.get("repository_discovery"):e.append("EP.repository_discovery must contain at least one concrete step")
     if not ep.get("acceptance"):e.append("EP.acceptance must contain at least one criterion")
     suc=ep.get("successor_relay") or {}
