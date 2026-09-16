@@ -65,13 +65,13 @@ class ChemistryRepresentationIntentTests(unittest.TestCase):
         self.assertEqual(ctx.exception.code, "CHEM_REP_INTENT_DRIFT")
 
     def test_unmapped_representation_type_fails_closed(self):
-        gate, _ = self.packet_for("CHEM-SYNTH-REP-UNMAPPED", "REPUNMAPPED")
-        gate["representations"][0]["representation_type"] = "SYNTHETIC_NEVER_REGISTERED_TYPE"
-        req = request("CHEM-ENG-REQ-REPUNMAPPED2")
-        man = manifest(req["request_id"], "CHEM-ENG-MAN-REPUNMAPPED2", gate["subtopic_id"])
-        packet = compile_blueprint_obligations(req, man, registry=registry(gate))
+        _, packet = self.packet_for("CHEM-SYNTH-REP-UNMAPPED", "REPUNMAPPED")
+        from compile_chemistry_representation_intent import load
+        policy = load("policies/chemistry-representation-intent.v1.json")
+        missing = copy.deepcopy(policy)
+        missing["representation_type_rules"].pop("JOHNSTONE_TRIPLET_DIAGRAM")
         with self.assertRaises(ChemistryRepresentationIntentError) as ctx:
-            compile_representation_intent("CORE1A", packet)
+            compile_representation_intent("CORE1A", packet, policy=missing)
         self.assertEqual(ctx.exception.code, "CHEM_REP_INTENT_TYPE_UNMAPPED")
 
     def test_policy_cannot_authorize_primitive_outside_c_h_page_intent(self):
