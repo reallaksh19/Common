@@ -10,9 +10,15 @@ from referencing import Registry, Resource  # noqa: E402
 HERE = Path(__file__).resolve()
 COLD = HERE.parents[1]
 PHYS = HERE.parents[2]
+REPO = HERE.parents[5]
 sys.path.insert(0, str(HERE.parent))
 
-from physics_cold_start_runner import digest, fail, verify_manifest  # noqa: E402
+from physics_cold_start_runner import (  # noqa: E402
+    digest,
+    fail,
+    validate_assessment_input_bindings,
+    verify_manifest,
+)
 
 
 def load(p):
@@ -34,8 +40,15 @@ def check(name, instance):
     Draft202012Validator(schema(name), registry=_registry()).validate(instance)
 
 
-def validate_report(report, manifest, artifacts=None):
+def validate_report(
+    report,
+    manifest,
+    artifacts=None,
+    assessment_input_bindings=None,
+    repo_root=REPO,
+):
     verify_manifest(manifest)
+    routed_inputs = validate_assessment_input_bindings(assessment_input_bindings, repo_root)
     if report["report_digest"] != digest(report, "report_digest"):
         fail("FINAL_PAGE_DECISION_WITHOUT_AUTHORITY_TRACE", "report digest")
     if report["manifest_digest"] != manifest["manifest_digest"]:
@@ -60,10 +73,27 @@ def validate_report(report, manifest, artifacts=None):
     ):
         if banned in manual:
             fail(code)
+
     declared = set(manifest["authorities"].values()) | set(manifest["engines"].values())
+    if routed_inputs is not None:
+        declared.update(row["path"] for row in routed_inputs.values())
     undeclared = [r for r in reads if r not in declared]
     if undeclared:
         fail("RUNTIME_READ_OUTSIDE_AUTHORITY_MANIFEST", ",".join(sorted(undeclared)[:3]))
+
+    if routed_inputs is not None:
+        routed_paths = {role: row["path"] for role, row in routed_inputs.items()}
+        for role in ("QUESTION_SET", "DECLARED_TOPIC_SCOPE"):
+            if routed_paths[role] not in reads:
+                fail("ROUTED_ASSESSMENT_INPUT_NOT_READ", role)
+        attempt_path = routed_paths.get("ATTEMPT_SET")
+        if report["run_mode"] == "NO_ATTEMPT" and attempt_path and attempt_path in reads:
+            fail("NO_ATTEMPT_RUN_READS_ROUTED_ATTEMPT_SET")
+        if report["run_mode"] == "WITH_ATTEMPTS":
+            if attempt_path is None:
+                fail("WITH_ATTEMPTS_ROUTE_MISSING_ATTEMPT_SET")
+            if attempt_path not in reads:
+                fail("WITH_ATTEMPTS_ROUTE_DID_NOT_READ_ATTEMPT_SET")
 
     required = set(manifest["required_authority_trace_decisions"])
     traces = report["authority_trace"]
@@ -177,8 +207,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", required=True)
     ap.add_argument("--manifest", default=str(PHYS / "GENERATION_AUTHORITY_MANIFEST.json"))
+    ap.add_argument("--assessment-input-bindings")
     a = ap.parse_args()
-    validate_report(load(a.report), load(a.manifest))
+    bindings = load(a.assessment_input_bindings) if a.assessment_input_bindings else None
+    validate_report(load(a.report), load(a.manifest), assessment_input_bindings=bindings)
     print("PHY P-K cold-start report = PASS")
 
 
