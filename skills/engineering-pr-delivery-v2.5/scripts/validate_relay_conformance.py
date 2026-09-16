@@ -29,8 +29,10 @@ from validate_state_planes import validate as state_planes
 from validate_checkpoint_linkage import validate as checkpoint_linkage
 from validate_projection_convergence import validate as projection
 from validate_drift_receipt import validate as drift
+from validate_takeover_certification import validate as takeover
+from validate_baton_readiness import validate as baton_readiness
 
-ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("takeover",takeover)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
@@ -39,6 +41,7 @@ def validate(root:Path):
     except Exception as exc:return [f"repo_state: {exc}"],w
     checks=list(ALWAYS)
     if s.get("relay_state")=="ACTIVE":checks.extend(ACTIVE_EP_ONLY)
+    checks.append(("baton_readiness",baton_readiness))
     for name,check in checks:
         try:ce,cw=check(root)
         except Exception as exc:ce,cw=[str(exc)],[]
