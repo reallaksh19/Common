@@ -47,7 +47,7 @@ def build(manifest:dict)->dict[str,dict]:
         "last_checkpoint":{"id":"NONE","path":None},
         "progress":{"overall_percent":0,"phase_percent":0,"ep_percent":0,"basis_revision":"PB-0001"},
         "status_planes":{
-            "execution":{"state":"WAITING","can_continue":False,"next_action":init["next_action"]},
+            "execution":{"state":"WAITING","can_continue":False,"material_authority":"NONE","next_action":init["next_action"]},
             "quality":{"state":"OWNER_REVIEW_REQUIRED","findings":list(init.get("notes") or [])},
             "evidence":{"state":"NA","summary":"Relay bootstrap created; no executable engineering evidence exists yet.","not_run":[]},
             "stop":{"active":False,"category":"NONE","reason":"","basis":[]}
