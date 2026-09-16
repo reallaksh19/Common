@@ -52,12 +52,13 @@ def validate_ttu_v2_semantics(ttu:dict)->None:
             if lr["mode"] not in {"RECONSTRUCTION","TRANSFER_RECONSTRUCTION"}:raise AssertionError("TTU2_B_LAYER_MODE_DRIFT")
 
 def validate():
-    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json","topic-blueprint.schema.json","publication-ir.schema.json","render-custody.schema.json","render-preflight-report.schema.json","m2d-render-readiness.schema.json","m2d-manuscript-release-binding.schema.json","m2d-composition-plan.schema.json","b-layer-runtime-boundary.schema.json","technical-teaching-unit.schema.json","technical-teaching-unit-v2.schema.json"]
+    names=["architecture-blueprint.schema.json","packet-envelope.schema.json","evidence-state.schema.json","routing-decision.schema.json","independent-validation-session.schema.json","join-packet.schema.json","role-bindings.schema.json","learner-purpose-control-state.schema.json","core1a-stage-run.schema.json","topic-blueprint.schema.json","publication-ir.schema.json","render-custody.schema.json","render-preflight-report.schema.json","m2d-render-readiness.schema.json","m2d-manuscript-release-binding.schema.json","m2d-composition-plan.schema.json","b-layer-runtime-boundary.schema.json","technical-teaching-unit.schema.json","technical-teaching-unit-v2.schema.json","blueprint-agent-task-intake.schema.json","blueprint-execution-route-registry.schema.json"]
     schemas={n:load(ROOT/"contracts"/n) for n in names}
     for s in schemas.values():Draft202012Validator.check_schema(s)
     architecture=load(ROOT/"policy"/"architecture.v1.json");Draft202012Validator(schemas["architecture-blueprint.schema.json"]).validate(architecture)
     bindings=load(ROOT/"policy"/"role-bindings.v1.json");Draft202012Validator(schemas["role-bindings.schema.json"]).validate(bindings)
     b_policy=load(ROOT/"policy"/"b-layer-runtime-boundary.v1.json");Draft202012Validator(schemas["b-layer-runtime-boundary.schema.json"]).validate(b_policy)
+    route_registry=load(ROOT/"registry"/"physics-agent-task-execution-routes.v1.json");Draft202012Validator(schemas["blueprint-execution-route-registry.schema.json"]).validate(route_registry)
     ev=Draft202012Validator(schemas["evidence-state.schema.json"])
     for f in sorted((ROOT/"fixtures"/"golden").glob("*.json")):ev.validate(load(f)["evidence"])
 
