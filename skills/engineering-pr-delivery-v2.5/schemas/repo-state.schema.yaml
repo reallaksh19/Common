@@ -30,7 +30,8 @@ properties:
     properties:
       id: {type: [string, 'null']}
       path: {type: [string, 'null']}
-      state: {enum: [NONE, EXECUTABLE, ACTIVE, ROUTER]}
+      state: {enum: [NONE, EXECUTABLE, ACTIVE, RECONCILING, ROUTER]}
+      continuity_receipt: {type: [string, 'null']}
   last_checkpoint:
     type: object
     required: [id, path]
