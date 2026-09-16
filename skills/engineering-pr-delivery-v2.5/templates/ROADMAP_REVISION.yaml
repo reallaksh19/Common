@@ -19,5 +19,6 @@ progress_basis_change:
   new_basis: PB-0001
   old_total_weight: 100
   new_total_weight: 100
+# Must equal the frontier computed from the resulting OVERALL_ROADMAP.
 frontier_after: []
 notes: []
