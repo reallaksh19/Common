@@ -18,12 +18,13 @@ from validate_issue_graph import validate as issue_graph
 from validate_issue_closure import validate as issue_closure
 from validate_supersession import validate as supersession
 from validate_roadmap_transaction import validate as roadmap_transaction
+from validate_owner_decision import validate as owner_decisions
 from validate_state_planes import validate as state_planes
 from validate_checkpoint_linkage import validate as checkpoint_linkage
 from validate_projection_convergence import validate as projection
 from validate_drift_receipt import validate as drift
 
-ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
