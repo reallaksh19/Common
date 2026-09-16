@@ -75,12 +75,7 @@ def validate_inputs(catalog: dict, catalog_schema: dict, c2_receipt: dict) -> No
         raise ValueError("C3 must not silently upgrade C0-F007")
 
 
-def build_manifest() -> dict:
-    catalog = load_json(CATALOG)
-    catalog_schema = load_json(CATALOG_SCHEMA)
-    c2_receipt = load_json(C2_RECEIPT)
-    validate_inputs(catalog, catalog_schema, c2_receipt)
-
+def project_catalog(catalog: dict, *, require_paths: bool = True) -> tuple[list[dict], dict[str, list[dict]]]:
     components: list[dict] = []
     references: dict[str, list[dict]] = {kind: [] for kind in REFERENCE_KINDS}
 
@@ -96,8 +91,7 @@ def build_manifest() -> dict:
             }
         )
         for rel in component["evidence_paths"]:
-            path = ROOT / rel
-            if not path.exists():
+            if require_paths and not (ROOT / rel).exists():
                 raise ValueError(f"catalog evidence path is missing: {rel}")
             kind = classify_evidence_path(rel)
             if kind is not None:
@@ -106,6 +100,15 @@ def build_manifest() -> dict:
     components.sort(key=lambda row: row["component_id"])
     for kind in REFERENCE_KINDS:
         references[kind].sort(key=lambda row: (row["component_id"], row["path"]))
+    return components, references
+
+
+def build_manifest() -> dict:
+    catalog = load_json(CATALOG)
+    catalog_schema = load_json(CATALOG_SCHEMA)
+    c2_receipt = load_json(C2_RECEIPT)
+    validate_inputs(catalog, catalog_schema, c2_receipt)
+    components, references = project_catalog(catalog)
 
     return {
         "schema_version": "0.1.0",
