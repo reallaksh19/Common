@@ -11,8 +11,14 @@ def validate_ep_data(root:Path,ep:dict,label="EP"):
     if ep.get("schema_version")!="relay-v2.5":e.append(f"{label}: schema_version must be relay-v2.5")
     e+=[f"{label}{x[1:]}" if x.startswith("$") else f"{label}: {x}" for x in scan_context_phrases(ep)]
     identity=ep.get("identity") or {};e+=require(identity,["ep_id","branch","base_ref","execution_state","previous_checkpoint"],f"{label}.identity")
-    previous_checkpoint=identity.get("previous_checkpoint");previous_join=identity.get("previous_join")
-    if previous_checkpoint not in NONE_IDS and previous_join not in NONE_IDS:e.append(f"{label}.identity cannot declare both previous_checkpoint and previous_join")
+    predecessor_values=[identity.get("previous_checkpoint"),identity.get("previous_join"),identity.get("previous_replan")]
+    if sum(x not in NONE_IDS for x in predecessor_values)>1:e.append(f"{label}.identity may declare only one of previous_checkpoint, previous_join, previous_replan")
+    if identity.get("previous_replan") not in NONE_IDS:
+        inh=ep.get("replan_inheritance") or {}
+        if str(inh.get("from_replan"))!=str(identity.get("previous_replan")):e.append(f"{label}.replan_inheritance.from_replan must match identity.previous_replan")
+        if "unresolved_acceptance" not in inh or "evidence" not in inh:e.append(f"{label}.replan_inheritance must retain unresolved_acceptance and evidence")
+    elif ep.get("replan_inheritance") not in {None,{}}:
+        e.append(f"{label}.replan_inheritance requires identity.previous_replan")
     git_basis=ep.get("git_basis") or {};e+=require(git_basis,["expected_branch","material_ref","base_branch","base_observed_ref","drift_policy","drift_receipt"],f"{label}.git_basis")
     if git_basis.get("drift_policy")!="RECHECK_BEFORE_WRITE":e.append(f"{label}.git_basis.drift_policy must be RECHECK_BEFORE_WRITE")
     if git_basis.get("expected_branch") and identity.get("branch") and git_basis.get("expected_branch")!=identity.get("branch"):e.append(f"{label}.git_basis.expected_branch must match identity.branch")
