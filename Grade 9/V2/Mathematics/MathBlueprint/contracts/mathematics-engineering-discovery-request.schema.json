@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "mathematics-engineering-discovery-request.schema.json",
+  "title": "MathematicsEngineeringDiscoveryRequest",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version","subject","discovery_request_id","query"],

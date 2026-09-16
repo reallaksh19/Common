@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "mathematics-engineering-request.schema.json",
+  "title": "MathematicsEngineeringRequest",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version","subject","request_id","scope_kind","scope_refs","engineering_depth","learning_purpose"],

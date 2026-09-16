@@ -1,0 +1,1586 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "MATH-ENG-DISC-BENCH-RUN-V1",
+  "authority": "TEST_BENCHMARK_RESULTS_ONLY",
+  "technical_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED",
+  "metrics": {
+    "TOTAL_QUERIES": 80,
+    "VALID_TARGET_QUERIES": 77,
+    "NO_TARGET_QUERIES": 3,
+    "TOP_1_RECALL": 1.0,
+    "TOP_3_RECALL": 1.0,
+    "TOP_5_RECALL": 1.0,
+    "MISS_RATE": 0.0,
+    "NOISE_RATE": 0.0541,
+    "AMBIGUITY_PRESERVATION_RATE": 0.95,
+    "NO_VALID_TARGET_BEHAVIOR_SAFE": true,
+    "VOCABULARY_CONTRIBUTION_RATE": 0.987,
+    "DETERMINISM": true
+  },
+  "results": [
+    {
+      "query_id": "Q01",
+      "query_text": "Quadratic Equations, Discriminant Analysis & Vieta Relations",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-REL-FUNCTIONS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q02",
+      "query_text": "Polynomials, Factor Theorem & Algebraic Identities",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-TRIG-RATIOS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q03",
+      "query_text": "Linear Systems in Two Variables & Consistency Classification",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CONIC-HYPERBOLA"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q04",
+      "query_text": "Real Numbers, Radicals & Conjugate Rationalization",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-NUM-RADICALS"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-RADICALS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-FUNC-TYPES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q05",
+      "query_text": "Euclidean Triangles: Congruence & Similarity Criteria",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-TRIANGLES",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-GEO-PYTHAGORAS",
+        "MATH-GEO-CIRCLES",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q06",
+      "query_text": "Vieta relations and sum of roots",
+      "category": "CURATED_ALIAS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-GEO-LINES-ANGLES",
+        "MATH-REL-FUNCTIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q07",
+      "query_text": "discriminant analysis b2 minus 4ac",
+      "category": "CURATED_ALIAS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-GEO-CIRCLES-AREA"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q08",
+      "query_text": "factor theorem and remainder theorem",
+      "category": "CURATED_ALIAS",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-TRIANGLES",
+        "MATH-CALC-LIMITS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q09",
+      "query_text": "algebraic identities binomial square",
+      "category": "CURATED_ALIAS",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-TRIG-RATIOS",
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-NUM-RADICALS",
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q10",
+      "query_text": "cartesian plane distance metric",
+      "category": "CURATED_ALIAS",
+      "expected": [
+        "MATH-GEO-COORDINATES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-COORDINATES",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-3D-INTRO",
+        "MATH-LINES-2D",
+        "MATH-CONIC-CIRCLE",
+        "MATH-GEO-PYTHAGORAS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q11",
+      "query_text": "zeros of a quadratic polynomial",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-CALC-DERIVATIVES"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q12",
+      "query_text": "nature of roots real and equal",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-RADICALS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-FUNC-TYPES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q13",
+      "query_text": "pair of linear equations in two variables",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q14",
+      "query_text": "conjugate rationalization of denominator",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-NUM-RADICALS"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-RADICALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-CALC-DERIVATIVES",
+        "MATH-CALC-LIMITS",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-LINES-2D"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q15",
+      "query_text": "congruence criteria SAS and SSS",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-TRIANGLES",
+        "MATH-GEO-CIRCLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q16",
+      "query_text": "Theory of Equations",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-LINES-2D",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q17",
+      "query_text": "Location of roots with parameter ranges",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-CONIC-ELLIPSE"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q18",
+      "query_text": "Newton sums for symmetric power sums of roots",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q19",
+      "query_text": "Common roots condition between two quadratic equations",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-SEQ-AP"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q20",
+      "query_text": "Transformation of equations roots reciprocated",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q21",
+      "query_text": "Sridharacharya formula for quadratic roots",
+      "category": "REGIONAL_TERMS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-COORDINATES",
+        "MATH-GEO-HERON",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q22",
+      "query_text": "sign of quadratic trinomial",
+      "category": "REGIONAL_TERMS",
+      "expected": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-ELLIPSE"
+      ],
+      "hit_ranks": [
+        1,
+        4
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q23",
+      "query_text": "surds rationalisation",
+      "category": "REGIONAL_TERMS",
+      "expected": [
+        "MATH-NUM-RADICALS"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-RADICALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q24",
+      "query_text": "hcf and lcm by prime factorisation",
+      "category": "REGIONAL_TERMS",
+      "expected": [
+        "MATH-NUM-EUCLID-DIVISION"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-IRRATIONAL-PROOF",
+        "MATH-NUM-RADICALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q25",
+      "query_text": "simultaneous equations in two unknowns",
+      "category": "REGIONAL_TERMS",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q26",
+      "query_text": "QE",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q27",
+      "query_text": "AP nth term and sum",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-SEQ-AP"
+      ],
+      "observed_candidates": [
+        "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-GEO-LINES-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q28",
+      "query_text": "BPT Basic Proportionality Theorem",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-TRIANGLES",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-CIRCLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q29",
+      "query_text": "HCF by Euclid algorithm",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-NUM-EUCLID-DIVISION"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-COORDINATES",
+        "MATH-NUM-IRRATIONAL-PROOF"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q30",
+      "query_text": "pythagorean trig identities",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-TRIG-RATIOS"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-RATIOS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-TRIG-EXTENDED-DOMAIN",
+        "MATH-TRIG-HEIGHTS-DISTANCES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q31",
+      "query_text": "b^2 - 4ac",
+      "category": "NOTATION_NAMES",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-CONIC-PARABOLA"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q32",
+      "query_text": "alpha plus beta minus b over a",
+      "category": "NOTATION_NAMES",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-RATIOS",
+        "MATH-NUM-RADICALS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q33",
+      "query_text": "a1 over a2 equals b1 over b2",
+      "category": "NOTATION_NAMES",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-MENS-SURFACES",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q34",
+      "query_text": "sin squared theta plus cos squared theta",
+      "category": "NOTATION_NAMES",
+      "expected": [
+        "MATH-TRIG-RATIOS"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-RATIOS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-GP-SPECIAL"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q35",
+      "query_text": "sqrt of prime is irrational",
+      "category": "NOTATION_NAMES",
+      "expected": [
+        "MATH-NUM-IRRATIONAL-PROOF"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-IRRATIONAL-PROOF",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-NUM-RADICALS",
+        "MATH-3D-INTRO",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-CONIC-CIRCLE"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q36",
+      "query_text": "Vieta relations",
+      "category": "PARTIAL_PHRASES",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-REL-FUNCTIONS",
+        "MATH-LINES-2D",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-FUNC-TYPES",
+        "MATH-GEO-CIRCLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q37",
+      "query_text": "discriminant analysis",
+      "category": "PARTIAL_PHRASES",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-PROB-EVENTS",
+        "MATH-REL-FUNCTIONS",
+        "MATH-STAT-VARIANCE-SD"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q38",
+      "query_text": "factor theorem",
+      "category": "PARTIAL_PHRASES",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-TRIANGLES",
+        "MATH-GEO-CIRCLES",
+        "MATH-CALC-LIMITS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q39",
+      "query_text": "cyclic quadrilaterals",
+      "category": "PARTIAL_PHRASES",
+      "expected": [
+        "MATH-GEO-CIRCLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-QUADRILATERALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q40",
+      "query_text": "conjugate rationalization",
+      "category": "PARTIAL_PHRASES",
+      "expected": [
+        "MATH-NUM-RADICALS"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-RADICALS",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q41",
+      "query_text": "Vieta Relations Quadratic Equations Discriminant Analysis",
+      "category": "WORD_ORDER_PERMUTATIONS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-REL-FUNCTIONS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q42",
+      "query_text": "Identities Algebraic Factor Theorem Polynomials",
+      "category": "WORD_ORDER_PERMUTATIONS",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-TRIG-RATIOS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q43",
+      "query_text": "Two Variables Linear Systems Classification Consistency",
+      "category": "WORD_ORDER_PERMUTATIONS",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CONIC-HYPERBOLA"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q44",
+      "query_text": "Similarity Congruence Criteria Triangles Euclidean",
+      "category": "WORD_ORDER_PERMUTATIONS",
+      "expected": [
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-TRIANGLES",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-GEO-PYTHAGORAS",
+        "MATH-GEO-CIRCLES",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q45",
+      "query_text": "Theorey of Equations",
+      "category": "MINOR_MISSPELLINGS",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-3D-INTRO",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q46",
+      "query_text": "Quadratik Equations discrimenant",
+      "category": "MINOR_MISSPELLINGS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-3D-INTRO",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q47",
+      "query_text": "Veta relations root sum",
+      "category": "MINOR_MISSPELLINGS",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-AP",
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-REL-FUNCTIONS",
+        "MATH-GEO-LINES-ANGLES",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q48",
+      "query_text": "Euclid devision lemma",
+      "category": "MINOR_MISSPELLINGS",
+      "expected": [
+        "MATH-NUM-EUCLID-DIVISION"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-NUM-IRRATIONAL-PROOF"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q49",
+      "query_text": "theory-of-equations",
+      "category": "SPACING_HYPHENATION",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-LINES-2D",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q50",
+      "query_text": "quadratic-equations-vieta",
+      "category": "SPACING_HYPHENATION",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q51",
+      "query_text": "polynomial identities",
+      "category": "PLURAL_SINGULAR_VARIATION",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-RATIOS",
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-NUM-RADICALS",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q52",
+      "query_text": "radical conjugate rationalisations",
+      "category": "PLURAL_SINGULAR_VARIATION",
+      "expected": [
+        "MATH-NUM-RADICALS"
+      ],
+      "observed_candidates": [
+        "MATH-NUM-RADICALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q53",
+      "query_text": "Finding roots when equation has degree two",
+      "category": "CONCEPTUAL_PARAPHRASES",
+      "expected": [
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LINES-2D",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q54",
+      "query_text": "Splitting middle term to find factors",
+      "category": "CONCEPTUAL_PARAPHRASES",
+      "expected": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-SEQ-AP",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-SEQ-GP-SPECIAL"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q55",
+      "query_text": "Check if two lines intersect coincide or parallel",
+      "category": "CONCEPTUAL_PARAPHRASES",
+      "expected": [
+        "MATH-LIN-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-GEO-LINES-ANGLES",
+        "MATH-LINES-2D",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-GEO-COORDINATES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q56",
+      "query_text": "Roots",
+      "category": "AMBIGUOUS_PHRASES",
+      "expected": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-NUM-RADICALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-NUM-RADICALS"
+      ],
+      "hit_ranks": [
+        1,
+        4,
+        5
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q57",
+      "query_text": "Equations",
+      "category": "AMBIGUOUS_PHRASES",
+      "expected": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-LINES-2D",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q58",
+      "query_text": "Polynomials",
+      "category": "AMBIGUOUS_PHRASES",
+      "expected": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-CALC-LIMITS",
+        "MATH-GEO-COORDINATES",
+        "MATH-LIN-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1,
+        3
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q59",
+      "query_text": "Geometry",
+      "category": "AMBIGUOUS_PHRASES",
+      "expected": [
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-COORDINATES",
+        "MATH-GEO-LINES-ANGLES",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-COORDINATES",
+        "MATH-3D-INTRO",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CONIC-HYPERBOLA"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q60",
+      "query_text": "Photosynthesis light reaction chloroplast",
+      "category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "status": "OUT_OF_DOMAIN_TESTED",
+      "candidate_count": 0,
+      "top_candidate": null
+    },
+    {
+      "query_id": "Q61",
+      "query_text": "Thermodynamics Carnot engine entropy",
+      "category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "status": "OUT_OF_DOMAIN_TESTED",
+      "candidate_count": 0,
+      "top_candidate": null
+    },
+    {
+      "query_id": "Q62",
+      "query_text": "Ancient Roman Empire Senate and Julius Caesar",
+      "category": "OUT_OF_DOMAIN_NO_VALID_TARGET",
+      "status": "OUT_OF_DOMAIN_TESTED",
+      "candidate_count": 0,
+      "top_candidate": null
+    },
+    {
+      "query_id": "Q63",
+      "query_text": "Linear equations in two variables quadratic graph",
+      "category": "ADVERSARIAL_NEAR_MISS",
+      "expected": [
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-LIN-EQUATIONS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-SEQ-AP",
+        "MATH-LIN-INEQUALITIES",
+        "MATH-TRIG-EQUATIONS",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1,
+        2,
+        6
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q64",
+      "query_text": "Radical square roots in quadratic formula",
+      "category": "ADVERSARIAL_NEAR_MISS",
+      "expected": [
+        "MATH-NUM-RADICALS",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "observed_candidates": [
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-COORDINATES",
+        "MATH-GEO-HERON",
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-NUM-RADICALS"
+      ],
+      "hit_ranks": [
+        1,
+        6
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q65",
+      "query_text": "Circle theorem inscribed angle in a triangle",
+      "category": "ADVERSARIAL_NEAR_MISS",
+      "expected": [
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-CONIC-CIRCLE",
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-GEO-LINES-ANGLES"
+      ],
+      "hit_ranks": [
+        1,
+        2
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q66",
+      "query_text": "Limits of Functions: Indeterminate Forms & Standard Limits",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CALC-LIMITS"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-LIMITS",
+        "MATH-CONIC-PARABOLA",
+        "MATH-LINES-2D",
+        "MATH-REL-FUNCTIONS",
+        "MATH-TRIG-EXTENDED-DOMAIN",
+        "MATH-STAT-VARIANCE-SD"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q67",
+      "query_text": "L'Hopital's Rule for 0/0 limits",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-CALC-LIMITS"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-LIMITS",
+        "MATH-CALC-DERIVATIVES",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-3D-INTRO",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-STAT-CUMFREQ"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q68",
+      "query_text": "Derivatives: First Principles, Product, Quotient & Chain Rules",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CALC-DERIVATIVES"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-DERIVATIVES",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-3D-INTRO",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-CALC-LIMITS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q69",
+      "query_text": "differentiation by chain rule",
+      "category": "SCHOOL_TERMINOLOGY",
+      "expected": [
+        "MATH-CALC-DERIVATIVES"
+      ],
+      "observed_candidates": [
+        "MATH-CALC-DERIVATIVES",
+        "MATH-CALC-LIMITS",
+        "MATH-TRIG-PROPERTIES-TRIANGLES",
+        "MATH-GEO-EUCLID-FOUNDATIONS",
+        "MATH-3D-INTRO",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q70",
+      "query_text": "Conic Sections: Parabola, Standard Forms & Latus Rectum",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-CONIC-PARABOLA"
+      ],
+      "observed_candidates": [
+        "MATH-CONIC-PARABOLA",
+        "MATH-CONIC-HYPERBOLA",
+        "MATH-CONIC-CIRCLE",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-CALC-LIMITS",
+        "MATH-LINES-2D"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q71",
+      "query_text": "latus rectum of parabola",
+      "category": "TECHNICAL_IDENTIFIERS",
+      "expected": [
+        "MATH-CONIC-PARABOLA"
+      ],
+      "observed_candidates": [
+        "MATH-CONIC-PARABOLA",
+        "MATH-CONIC-ELLIPSE",
+        "MATH-ALG-POLY-ZEROS-GRAPH",
+        "MATH-QUAD-EQUATIONS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q72",
+      "query_text": "Complex Numbers: Argand Plane, Modulus, Argument & Polar Form",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-LINES-2D",
+        "MATH-NUM-RADICALS",
+        "MATH-GEO-COORDINATES",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-ALG-POLYNOMIALS"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q73",
+      "query_text": "Euler form and De Moivre theorem",
+      "category": "COMPETITION_TERMINOLOGY",
+      "expected": [
+        "MATH-ALG-COMPLEX-NUMBERS"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-COMPLEX-NUMBERS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-CIRCLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q74",
+      "query_text": "Compound Angle Identities & Double/Half Angle Formulas",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-TRIG-RATIOS",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
+        "MATH-3D-INTRO"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q75",
+      "query_text": "double angle formulas",
+      "category": "TECHNICAL_IDENTIFIERS",
+      "expected": [
+        "MATH-TRIG-COMPOUND-ANGLES"
+      ],
+      "observed_candidates": [
+        "MATH-TRIG-COMPOUND-ANGLES",
+        "MATH-GEO-CIRCLES",
+        "MATH-GEO-TRIANGLES",
+        "MATH-3D-INTRO",
+        "MATH-GEO-COORDINATES",
+        "MATH-GEO-LINES-ANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q76",
+      "query_text": "Permutations & Combinations: Fundamental Counting, nPr & nCr",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-PERM-COMB"
+      ],
+      "observed_candidates": [
+        "MATH-PERM-COMB",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-CIRCLES-AREA",
+        "MATH-TRIG-RATIOS",
+        "MATH-MENS-SURFACES",
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q77",
+      "query_text": "nPr and nCr combinations",
+      "category": "ABBREVIATIONS",
+      "expected": [
+        "MATH-PERM-COMB"
+      ],
+      "observed_candidates": [
+        "MATH-PERM-COMB",
+        "MATH-GEO-CIRCLES-AREA",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLY-ZEROS-GRAPH"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q78",
+      "query_text": "Binomial Theorem for Positive Integral Index & General Terms",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-ALG-BINOMIAL-THEOREM"
+      ],
+      "observed_candidates": [
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-PROB-EVENTS",
+        "MATH-GEO-TRIANGLES",
+        "MATH-SEQ-AP"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q79",
+      "query_text": "Geometric Progressions, Infinite GP & Special Sums (Sigma n^2, n^3)",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-SEQ-GP-SPECIAL"
+      ],
+      "observed_candidates": [
+        "MATH-SEQ-GP-SPECIAL",
+        "MATH-SEQ-AP",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-QUAD-EQUATIONS",
+        "MATH-LIN-EQUATIONS",
+        "MATH-MENS-SURFACES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    },
+    {
+      "query_id": "Q80",
+      "query_text": "Axiomatic Probability, Conditional Probability & Bayes' Theorem",
+      "category": "CANONICAL_LEARNER_TITLE",
+      "expected": [
+        "MATH-PROB-EVENTS"
+      ],
+      "observed_candidates": [
+        "MATH-PROB-EVENTS",
+        "MATH-ALG-BINOMIAL-THEOREM",
+        "MATH-STAT-PROBABILITY",
+        "MATH-ALG-POLYNOMIALS",
+        "MATH-NUM-EUCLID-DIVISION",
+        "MATH-GEO-TRIANGLES"
+      ],
+      "hit_ranks": [
+        1
+      ],
+      "has_hit": true
+    }
+  ],
+  "gap_records": []
+}
