@@ -11,7 +11,7 @@ HARD_STOPS={"OWNER_DECISION_REQUIRED","ESSENTIAL_INPUT_MISSING","AUTHORITY_VIOLA
 NOT_RUN_CAUSES={"INFRASTRUCTURE","UNAVAILABLE_TOOL","NOT_SCHEDULED","DEPENDENCY_WAIT","OTHER"}
 
 def validate(root:Path):
-    e=[];w=[];s=load_yaml(root/"agents/relay/REPO_STATE.yaml");planes=s.get("status_planes") or {}
+    e=[];w=[];s=load_yaml(root/"agents/relay/REPO_STATE.yaml");planes=s.get("status_planes") or {};relay_state=s.get("relay_state")
     e+=require(planes,["execution","quality","evidence","stop"],"REPO_STATE.status_planes")
     execution=planes.get("execution") or {};quality=planes.get("quality") or {};evidence=planes.get("evidence") or {};stop=planes.get("stop") or {}
     e+=require(execution,["state","can_continue","next_action"],"status_planes.execution")
@@ -38,6 +38,18 @@ def validate(root:Path):
         if execution.get("can_continue") is not False:e.append("active hard stop requires execution.can_continue=false")
     else:
         if stop.get("category") not in {None,"NONE"}:e.append("inactive stop must use category NONE")
+
+    ex_state=execution.get("state");can=execution.get("can_continue")
+    if relay_state=="INITIALIZING":
+        if ex_state!="WAITING" or can is not False:e.append("INITIALIZING relay requires execution WAITING and can_continue=false")
+    elif relay_state=="ACTIVE":
+        if ex_state not in {"READY","ACTIVE","WAITING"}:e.append("ACTIVE relay execution must be READY, ACTIVE, or WAITING")
+    elif relay_state=="PARALLEL":
+        if ex_state not in {"ACTIVE","WAITING"}:e.append("PARALLEL relay execution must be ACTIVE or WAITING")
+    elif relay_state=="IDLE":
+        if ex_state not in {"IDLE","WAITING"} or can is not False:e.append("IDLE relay requires execution IDLE/WAITING and can_continue=false")
+    elif relay_state=="TERMINAL":
+        if ex_state!="COMPLETE" or can is not False:e.append("TERMINAL relay requires execution COMPLETE and can_continue=false")
     return e,w
 
 def main():
