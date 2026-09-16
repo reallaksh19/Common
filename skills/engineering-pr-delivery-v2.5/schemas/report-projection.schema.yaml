@@ -5,11 +5,26 @@ properties:
   schema_version: {const: relay-v2.5-report-projection}
   generated_from:
     type: object
-    required: [roadmap_revision, progress_basis, repo_state_digest, roadmap_digest, progress_digest, issue_graph_digest, ep_id, ep_digest, checkpoint_id, checkpoint_digest]
+    required: [roadmap_revision, progress_basis, repo_state_digest, roadmap_digest, progress_digest, issue_graph_digest, ep_id, ep_digest, checkpoint_id, checkpoint_digest, quality_review_id, quality_review_digest]
+    properties:
+      quality_review_id: {type: [string, 'null']}
+      quality_review_digest: {type: [string, 'null']}
   progress:
     type: object
     required: [progress_basis, overall_percent, current, hierarchy]
   next_work: {type: [object, 'null']}
   acceptance: {type: array}
   parallel_lanes: {type: array}
+  checkpoint:
+    type: [object, 'null']
+    properties:
+      quality_review:
+        type: [object, 'null']
+        properties:
+          id: {type: string, pattern: '^QRV-'}
+          overall_state: {enum: [CLEAR, NEEDS_ATTENTION, OWNER_REVIEW_REQUIRED]}
+          execution_effect: {type: object}
+          findings: {type: array}
+          owner_report: {type: object}
+          successor_handover: {type: object}
 additionalProperties: true
