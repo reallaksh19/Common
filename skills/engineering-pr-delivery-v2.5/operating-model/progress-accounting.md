@@ -3,16 +3,28 @@
 Progress is calculated from durable acceptance, never guessed from elapsed effort or narrative confidence.
 
 ```text
-Acceptance Criterion -> EP -> Work Package -> Phase -> Objective -> Overall Roadmap
+Acceptance Criterion
+  -> Implementation Step
+  -> EP
+  -> Work Package
+  -> Phase
+  -> Objective
+  -> Overall Roadmap
 ```
+
+`PROGRESS.yaml` is the progress authority. It carries calculated buckets for objectives, phases, work packages, execution packages, implementation steps and acceptance criteria. Current acceptance rows also carry explicit status and durable basis.
+
+`REPO_STATE.progress.overall_percent`, `phase_percent` and `ep_percent` are compatibility/location mirrors only. `validate_progress.py` requires them to agree with `PROGRESS.yaml`; generated status and handover output reads the source-derived projection rather than trusting those mirrors.
+
+A roadmap/current-EP node missing from `PROGRESS.yaml` is invalid. This prevents a handover from silently omitting a work package, step or acceptance criterion.
+
+Generated progress projection is produced by `scripts/progress_projection.py` and consumed by `report_projection.py`, `render_status.py` and `render_handover.py`.
 
 When approved scope changes the denominator, create a new Progress Basis. Preserve completed work; do not rewrite history merely to keep the displayed percentage stable.
 
 ## Catch-up / completion basis
 
-The V2.5 completion revamp defined in `catchup-completion-roadmap.md` uses a new explicit basis rather than inheriting a narrative percentage from the earlier control-plane build.
-
-Suggested denominator weights are:
+The V2.5 completion revamp defined in `catchup-completion-roadmap.md` uses an explicit 100-point denominator:
 
 ```text
 WP-00 Kernel baseline / object matrix                 5
@@ -31,8 +43,4 @@ WP-11 PR Readiness                                    1
                                                     100
 ```
 
-These numbers define the catch-up denominator only. Progress inside each WP must still be earned through weighted acceptance criteria and checkpoint evidence.
-
-Future WPs may be fully defined without being executable. Serial execution means only the current frontier WP contributes active material execution. The initial revamp frontier is WP-00; WP-01 depends on WP-00 and WP-02 depends on WP-01.
-
-A material Owner-approved change to this completion scope must create a new Progress Basis rather than silently editing the denominator.
+These weights define the catch-up denominator only. Progress inside each WP remains acceptance/checkpoint-derived. A material Owner-approved scope change creates a new Progress Basis rather than silently editing the denominator.
