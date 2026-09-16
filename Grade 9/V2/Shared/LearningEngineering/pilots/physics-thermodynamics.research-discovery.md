@@ -33,7 +33,25 @@ MIT thermodynamics references are used for disciplinary semantics that the curri
 
 These are not Grade XI curriculum authorities. Advanced topics such as entropy formalism, enthalpy, Gibbs free energy or Carnot analysis therefore remain research/adjacent context unless a separate current curriculum or assessment authority promotes them for its own intent.
 
-## 4. Research-depth learner evidence
+## 4. First-law applicability remains a blocking semantic review
+
+The prototype relation currently records the familiar internal-energy form
+
+```text
+Delta U = Q_in - W_by
+```
+
+under a declared work-by-system sign convention. The MIT Unified Engineering reference states the more general first-law balance in terms of total system energy, which can include internal, macroscopic kinetic and potential energy.
+
+Therefore the `Delta U` form must not be treated as universally applicable. Before this relation could be promoted, it must explicitly bind the condition that macroscopic kinetic and potential energy changes are negligible/zero or are accounted separately outside the internal-energy balance.
+
+This issue is recorded in:
+
+`physics-thermodynamics.first-law-validity.review.json`
+
+with `review_state=BLOCKING_SEMANTIC_REVIEW`. The review is machine-falsified: while that applicability condition is absent from the prototype relation, the package must remain held. Schema validity alone cannot close this review.
+
+## 5. Research-depth learner evidence
 
 The pilot records peer-reviewed Physics Education Research evidence because RESEARCH depth requires a stronger literature dossier. It deliberately preserves population limits.
 
@@ -67,13 +85,13 @@ The study reports a widespread unproductive tendency among introductory universi
 
 Disposition: population-limited research evidence. Because the current CBSE chapter listing does not explicitly require entropy formalism, the pilot keeps this evidence in the additive RESEARCH layer rather than rewriting the STANDARD curriculum/core claim set.
 
-## 5. STANDARD → RESEARCH invariance
+## 6. STANDARD → RESEARCH invariance
 
 The machine-readable pilot contains a `base_claim_snapshot` whose entries are `depth=STANDARD`. The RESEARCH-only claim list is disjoint and every research claim carries `mutates_base_claims=false`.
 
 Therefore increasing `ENGINEERING_DEPTH` changes evidence obligations and may add literature/applicability detail, but it does not silently alter the confirmed curriculum binding or validated base claims. Any future contradiction or supersession would require an explicit governed mechanism; the planned `research_overlay` module is not yet active.
 
-## 6. Prerequisite and provider boundary
+## 7. Prerequisite and provider boundary
 
 The pilot models two same-subject bridges from earlier Class XI Physics material: work/energy and thermal-properties concepts. It also records a contextual external Mathematics need for graph/area interpretation where p–V reasoning is actually used.
 
@@ -84,7 +102,7 @@ That external prerequisite is **not self-certified**. Two unresolved architectur
 
 The pilot therefore records this edge with `missing_behavior=UNRESOLVED` and no provider readiness receipt.
 
-## 7. Grade-authority mismatch found by the diversity stress
+## 8. Grade-authority mismatch found by the diversity stress
 
 The currently routed Physics generation manifest explicitly declares `grade: 9`. The official Thermodynamics target is Class XI. Prior to this pilot, AgentTasks resolved subject authority by subject adapter but did not expose task-grade compatibility.
 
@@ -98,7 +116,7 @@ generation_authority_scope.grade_state = MATCH | MISMATCH | UNDECLARED
 
 A mismatch permits discovery/reconciliation but holds production/Engineering use of that manifest for the requested grade. This fix contains no Thermodynamics-specific branch.
 
-## 8. Explicit holds
+## 9. Explicit holds
 
 The pilot remains `HELD` because:
 
@@ -106,11 +124,12 @@ The pilot remains `HELD` because:
 - the production SKP→Engineering promotion path is inactive;
 - the `research_overlay` module is still PLANNED;
 - Grade XI target-population learner-conception evidence is insufficient for canonical misconception promotion;
-- the cross-domain identifier/provider seam is unresolved.
+- the cross-domain identifier/provider seam is unresolved;
+- the prototype first-law `Delta U` relation still requires an explicit macroscopic kinetic/potential-energy applicability condition before semantic promotion.
 
 These are expected architecture results, not reasons to fabricate readiness or weaken the evidence model.
 
-## 9. Non-claims
+## 10. Non-claims
 
 This pilot does not claim that:
 
@@ -119,5 +138,6 @@ This pilot does not claim that:
 - university learner research directly represents CBSE Grade XI students;
 - JEE Main defines CBSE curriculum scope;
 - entropy/Carnot/enthalpy/Gibbs content is current CBSE-required Physics Thermodynamics;
+- the `Delta U = Q_in - W_by` form is universally valid when macroscopic kinetic/potential-energy changes matter;
 - a Mathematics prerequisite is provider-ready;
 - Engineering readiness, consumer permission, publication, or authorized human review has been granted.
