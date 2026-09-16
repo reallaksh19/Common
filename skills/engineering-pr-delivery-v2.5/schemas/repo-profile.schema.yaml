@@ -1,0 +1,10 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, repository_type, default_branch, important_paths, commands]
+properties:
+  schema_version: {const: relay-v2.5}
+  repository_type: {type: string}
+  default_branch: {type: string, minLength: 1}
+  important_paths: {type: object}
+  commands: {type: object}
+additionalProperties: true

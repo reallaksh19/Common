@@ -1,0 +1,3 @@
+# Migration blueprint
+
+A migration must preserve durable truth while refusing to manufacture V2.5 certainty. Extract factual prior state, map durable Owner intent/inputs/benchmarks/history, construct an initial roadmap, reconcile current position, compute the frontier, create a new V2.5 EP, and run cold-start validation. A V2 endpoint may seed a checkpoint/context capsule but is never automatically a valid V2.5 EP.

@@ -1,0 +1,15 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, nodes, relationships]
+properties:
+  schema_version: {const: relay-v2.5}
+  nodes: {type: array}
+  relationships:
+    type: array
+    items:
+      type: object
+      required: [from, relation, to]
+      properties:
+        relation:
+          enum: [PARENT_OF, DEPENDS_ON, BLOCKS, SUPERSEDES, REVISION_OF, RELATES_TO, INTEGRATED_BY, DUPLICATES]
+additionalProperties: true

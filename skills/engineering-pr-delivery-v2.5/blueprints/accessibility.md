@@ -1,0 +1,3 @@
+# Accessibility blueprint
+
+For affected UI, evaluate semantic structure, names/labels, keyboard reachability, focus order/visibility, error association, status announcements, contrast dependencies, motion, zoom/reflow and non-pointer operation as applicable. Report concrete user impact. Accessibility findings map either to explicit acceptance or to quality findings; do not use generic compliance language as evidence.
