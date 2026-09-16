@@ -46,6 +46,10 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_architecture_documentation_drift_audit.py'
       - name: Validate C2 normative-root consolidation
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_normative_root_consolidation.py'
+      - name: Verify C3 generated architecture references are current
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/generate_mathematics_architecture_references.py' --check
+      - name: Run C3 generated architecture reference falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_generated_architecture_references.py'
       - name: Validate governed Engineering discovery vocabulary
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_discovery_vocabulary.py'
       - name: Run non-authoritative Engineering discovery falsifiers

@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C3_GENERATED_REFERENCES_COMPLETE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "view_class": "DERIVED_NON_AUTHORITATIVE_ARCHITECTURE_REFERENCE",
+  "publication_authorization": "NOT_IMPLIED",
+  "catalog_semantics": "CLASSIFICATION_ONLY_UNCHANGED",
+  "production_consumers_allowed": false,
+  "source_custody": {
+    "catalog_path": "design/mathematics-architecture-catalog.candidate.json",
+    "catalog_git_blob_sha": "469f1eaaf671fd274dcb5c332b4b73e1ac01b0bd",
+    "catalog_schema_path": "design/mathematics-architecture-catalog.candidate.schema.json",
+    "catalog_schema_git_blob_sha": "b335ef39a7971eafdc464a5f759e11380bfbcfae",
+    "c2_receipt_path": "design/mathematics-normative-root-consolidation.json",
+    "c2_receipt_git_blob_sha": "785fe5e5ac3e203ab04838e6be0b7914c6f4cec4",
+    "generator_path": "design/generate_mathematics_architecture_references.py",
+    "generator_git_blob_sha": "fc55f28b2199ffd5458cf5cd963de96834a38a48"
+  },
+  "generated_outputs": {
+    "manifest_path": "design/generated/mathematics-architecture-reference-index.generated.json",
+    "markdown_path": "design/generated/MATHEMATICS_ARCHITECTURE_REFERENCES.generated.md"
+  },
+  "component_count": 17,
+  "reference_counts": {
+    "SCHEMA": 24,
+    "POLICY": 11,
+    "VALIDATOR": 10,
+    "TEST": 2
+  },
+  "tracked_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "runtime_auto_materialization_executable": false
+  },
+  "next_stage": "C4_SUBJECT_ADAPTER_INTERFACE_READY"
+}
