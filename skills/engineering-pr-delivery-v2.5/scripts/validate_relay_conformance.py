@@ -15,6 +15,7 @@ from validate_serial_execution import validate as execution
 from validate_parallel_plan import validate as parallel_plan
 from validate_parallel_join import validate as parallel_join
 from validate_parallel_replan import validate as parallel_replan
+from validate_roadmap_continuity import validate as roadmap_continuity
 from validate_phase_transition_questions import validate as questions
 from validate_issue_graph import validate as issue_graph
 from validate_issue_closure import validate as issue_closure
@@ -26,7 +27,7 @@ from validate_checkpoint_linkage import validate as checkpoint_linkage
 from validate_projection_convergence import validate as projection
 from validate_drift_receipt import validate as drift
 
-ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
+ALWAYS=[("repo_state",repo_state),("roadmap",roadmap),("frontier",frontier),("progress",progress),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions",questions)]
 
 def validate(root:Path):
