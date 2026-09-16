@@ -23,7 +23,7 @@ class BlackBoxRegressionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root)
             s["projection"]=required_projection()
-            s["relay_readiness"]={"repository_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Issue projection pending"]}
+            s["relay_readiness"]={"baton_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Issue projection pending"]}
             dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertEqual([],projection(root)[0])
             s["relay_readiness"]["handover_ready"]=True;dump(root/"agents/relay/REPO_STATE.yaml",s)
@@ -33,7 +33,7 @@ class BlackBoxRegressionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root)
             s["projection"]=required_projection("PUBLISHED_UNCONFIRMED",receipt="external-receipt-17")
-            s["relay_readiness"]={"repository_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Publication observed but not yet reconciled"]}
+            s["relay_readiness"]={"baton_ready":True,"projection_ready":False,"handover_ready":False,"reasons":["Publication observed but not yet reconciled"]}
             dump(root/"agents/relay/REPO_STATE.yaml",s)
             errors,warnings=projection(root);self.assertEqual([],errors);self.assertTrue(any("operation_id" in x for x in warnings))
             self.assertEqual("PROJ-OP-1",s["projection"]["operation_id"])
@@ -42,7 +42,7 @@ class BlackBoxRegressionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,_,_,s=good(root)
             s["projection"]=required_projection("IN_SYNC",execution_ref="EP-OLD",receipt="external-receipt-17",basis=["verified:synthetic"])
-            s["relay_readiness"]={"repository_ready":True,"projection_ready":True,"handover_ready":True,"reasons":[]}
+            s["relay_readiness"]={"baton_ready":True,"projection_ready":True,"handover_ready":True,"reasons":[]}
             dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertTrue(any("execution_ref" in x for x in projection(root)[0]))
             s["projection"]["execution_ref"]="EP-1";s["projection"]["receipt"]=None;dump(root/"agents/relay/REPO_STATE.yaml",s)
