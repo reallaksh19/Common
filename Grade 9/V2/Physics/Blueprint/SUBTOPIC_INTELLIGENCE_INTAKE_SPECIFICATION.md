@@ -972,7 +972,2741 @@ Step 4: f3 = 3 · 79.06 ≈ 237.17 Hz
 
 ---
 
-## 15. Intake Validation Checklist for Future Subtopics
+## 15. Foundation Packet: Scalars, Vectors, Magnitude, and Direction (`PHY-VEC-BASICS`)
+
+### 15.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-VEC-BASICS`
+- **Learner Title**: Scalars, Vectors, Magnitude, and Direction
+- **Chapter / Domain**: Vectors / Motion in a Plane &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **PRECOND-2**:  *Boundary constraint*: Physical model breaks down.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-VEC-MAG-NONNEG`**: $$ — 
+
+
+### 15.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-VECBAS-01` (`CONCEPT`): A scalar is a physical quantity completely specified by a single real number representing magnitude with appropriate units, obeying ordinary algebra.
+- `ATOM-VECBAS-02` (`RELATION`): A vector is a physical quantity possessing both a non-negative magnitude and an intrinsic spatial direction that transforms according to vector algebra.
+- `ATOM-VECBAS-03` (`INVARIANT`): Vectors are denoted by an arrow over a symbol or boldface; magnitude is denoted by |A| or A, with |A| >= 0.
+- `ATOM-VECBAS-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-VECBAS-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-VEC-CURRENT**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: MISC-VEC-NEG-MAG**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+
+---
+
+### 15.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-VECBAS-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Scalars, Vectors, Magnitude, and Direction.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-VECBAS-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Scalars, Vectors, Magnitude, and Direction.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 15.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-VECBAS-01` (`CBSE_BOARD`): Scalars, Vectors, Magnitude, and Direction Standard Core — Standard textbook problem setup.
+- `FAMILY-VECBAS-02` (`JEE_MAIN`): Scalars, Vectors, Magnitude, and Direction Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 16. Foundation Packet: Resolution of Vectors into Orthogonal Components (`PHY-VEC-COMPONENTS`)
+
+### 16.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-VEC-COMPONENTS`
+- **Learner Title**: Resolution of Vectors into Orthogonal Components
+- **Chapter / Domain**: Vectors / Motion in a Plane &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-VEC-COMP-X`**: $$ — 
+- **Equation `EQ-VEC-COMP-Y`**: $$ — 
+- **Equation `EQ-VEC-RECON-MAG`**: $$ — 
+
+
+### 16.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-VECCOMP-01` (`CONCEPT`): Any vector in a 2D plane can be uniquely decomposed into two perpendicular projections along orthogonal axes: A = A_x i + A_y j.
+- `ATOM-VECCOMP-02` (`RELATION`): Dimensionless vectors of unit magnitude (i, j, k) specifying spatial axis directions.
+- `ATOM-VECCOMP-03` (`INVARIANT`): Scalar components A_x and A_y are signed real numbers depending on alignment with declared positive axes.
+- `ATOM-VECCOMP-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-VECCOMP-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-VEC-COS-ALWAYS-X**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Resolution of Vectors into Orthogonal Components**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 16.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-VECCOMP-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Resolution of Vectors into Orthogonal Components.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-VECCOMP-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Resolution of Vectors into Orthogonal Components.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 16.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-VECCOMP-01` (`CBSE_BOARD`): Resolution of Vectors into Orthogonal Components Standard Core — Standard textbook problem setup.
+- `FAMILY-VECCOMP-02` (`JEE_MAIN`): Resolution of Vectors into Orthogonal Components Advanced Transfer — Competitive entrance examination problem.
+
+---
+## 17. Foundation Packet: Force as an Interaction between Bodies (`PHY-NLM-INTERACTION`)
+
+### 17.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-INTERACTION`
+- **Learner Title**: Force as an Interaction between Bodies
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-FNET`**: $$ — 
+
+
+### 17.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMINT-01` (`CONCEPT`): A force is a vector push or pull exerted by one identifiable physical body on another body as a result of an interaction.
+- `ATOM-NLMINT-02` (`RELATION`): Every genuine force requires an explicit agent (causer) and receiver (object acted on): F_{on Receiver by Agent}.
+- `ATOM-NLMINT-03` (`INVARIANT`): Forces are strictly contact forces (requiring physical contact) or field forces (action at a distance).
+- `ATOM-NLMINT-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMINT-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-FORCE-OF-MOTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Force as an Interaction between Bodies**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 17.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMINT-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Force as an Interaction between Bodies.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMINT-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Force as an Interaction between Bodies.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 17.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMINT-01` (`CBSE_BOARD`): Force as an Interaction between Bodies Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMINT-02` (`JEE_MAIN`): Force as an Interaction between Bodies Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 18. Foundation Packet: Free-Body Diagrams and System Isolation (`PHY-NLM-FBD`)
+
+### 18.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-FBD`
+- **Learner Title**: Free-Body Diagrams and System Isolation
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-FBD-SUM`**: $$ — 
+
+
+### 18.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMFBD-01` (`CONCEPT`): A system is isolated by defining an imaginary closed boundary around the body of interest, severing all external connections.
+- `ATOM-NLMFBD-02` (`RELATION`): An FBD represents the isolated body showing ALL external forces acting ON that body as directed vectors.
+- `ATOM-NLMFBD-03` (`INVARIANT`): An FBD must contain ONLY forces exerted ON the isolated body BY external agents. Forces exerted BY the body are strictly prohibited.
+- `ATOM-NLMFBD-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMFBD-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-FBD-MA-FORCE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: MISC-NLM-FBD-PAIR-ON-ONE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+
+---
+
+### 18.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMFBD-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Free-Body Diagrams and System Isolation.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMFBD-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Free-Body Diagrams and System Isolation.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 18.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMFBD-01` (`CBSE_BOARD`): Free-Body Diagrams and System Isolation Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMFBD-02` (`JEE_MAIN`): Free-Body Diagrams and System Isolation Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 19. Foundation Packet: Newton's Second Law of Motion (`PHY-NLM-SECOND-LAW`)
+
+### 19.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-SECOND-LAW`
+- **Learner Title**: Newton's Second Law of Motion
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-NEWTON2-COMP-X`**: $$ — 
+- **Equation `EQ-NLM-NEWTON2-COMP-Y`**: $$ — 
+
+
+### 19.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMTWO-01` (`CONCEPT`): The net external force on a body equals the time rate of change of its linear momentum: F_net = dp/dt.
+- `ATOM-NLMTWO-02` (`RELATION`): For constant mass, sum F = m*a. Acceleration is directly proportional to net force and points strictly in net force direction.
+- `ATOM-NLMTWO-03` (`INVARIANT`): Vector sum F = m*a decouples into independent equations: sum F_x = m*a_x and sum F_y = m*a_y.
+- `ATOM-NLMTWO-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMTWO-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-A-DIR-VEL**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: MISC-NLM-SCALAR-FMA**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+
+---
+
+### 19.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMTWO-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Newton's Second Law of Motion.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMTWO-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Newton's Second Law of Motion.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 19.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMTWO-01` (`CBSE_BOARD`): Newton's Second Law of Motion Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMTWO-02` (`JEE_MAIN`): Newton's Second Law of Motion Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 20. Foundation Packet: Newton's Third Law of Motion (`PHY-NLM-THIRD-LAW`)
+
+### 20.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-THIRD-LAW`
+- **Learner Title**: Newton's Third Law of Motion
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-NEWTON3-PAIR`**: $$ — 
+
+
+### 20.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMTHREE-01` (`CONCEPT`): To every action there is always an equal and opposite reaction: F_AB = -F_BA.
+- `ATOM-NLMTHREE-02` (`RELATION`): Action and reaction forces act strictly on two different bodies; they NEVER act on the same body.
+- `ATOM-NLMTHREE-03` (`INVARIANT`): An action-reaction pair consists of forces of the exact same physical nature (both gravitational, both normal, etc.).
+- `ATOM-NLMTHREE-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMTHREE-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-NORMAL-WEIGHT-PAIR**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: MISC-NLM-HORSE-CART**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+
+---
+
+### 20.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMTHREE-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Newton's Third Law of Motion.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMTHREE-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Newton's Third Law of Motion.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 20.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMTHREE-01` (`CBSE_BOARD`): Newton's Third Law of Motion Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMTHREE-02` (`JEE_MAIN`): Newton's Third Law of Motion Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 21. Foundation Packet: Normal Contact Force and Surface Constraints (`PHY-NLM-NORMAL`)
+
+### 21.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-NORMAL`
+- **Learner Title**: Normal Contact Force and Surface Constraints
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-NORMAL-SOLVE`**: $$ — 
+
+
+### 21.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMNOR-01` (`CONCEPT`): The normal force N is a contact force exerted by a compressed solid surface on a body, directed perpendicular to the surface.
+- `ATOM-NLMNOR-02` (`RELATION`): The normal force is a constraint force self-adjusting to enforce the kinematic condition a_perp = 0.
+- `ATOM-NLMNOR-03` (`INVARIANT`): N = mg holds ONLY for solitary body at rest on flat horizontal surface. Under any other conditions, N != mg.
+- `ATOM-NLMNOR-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMNOR-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-N-EQUALS-MG**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Normal Contact Force and Surface Constraints**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 21.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMNOR-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Normal Contact Force and Surface Constraints.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMNOR-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Normal Contact Force and Surface Constraints.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 21.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMNOR-01` (`CBSE_BOARD`): Normal Contact Force and Surface Constraints Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMNOR-02` (`JEE_MAIN`): Normal Contact Force and Surface Constraints Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 22. Foundation Packet: Tension in Light Strings and Pulley Systems (`PHY-NLM-TENSION`)
+
+### 22.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-TENSION`
+- **Learner Title**: Tension in Light Strings and Pulley Systems
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-ATWOOD-ACCEL`**: $$ — 
+- **Equation `EQ-NLM-ATWOOD-TENSION`**: $$ — 
+
+
+### 22.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMTEN-01` (`CONCEPT`): A flexible string can only pull, never push (T >= 0); tension points away from the body along string line.
+- `ATOM-NLMTEN-02` (`RELATION`): An ideal string is massless and inextensible; tension is strictly uniform along its continuous length.
+- `ATOM-NLMTEN-03` (`INVARIANT`): Because string is inextensible, connected bodies share acceleration magnitude along constraint path: a1 = a2 = a.
+- `ATOM-NLMTEN-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMTEN-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-TENSION-EQUALS-WEIGHT**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Tension in Light Strings and Pulley Systems**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 22.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMTEN-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Tension in Light Strings and Pulley Systems.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMTEN-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Tension in Light Strings and Pulley Systems.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 22.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMTEN-01` (`CBSE_BOARD`): Tension in Light Strings and Pulley Systems Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMTEN-02` (`JEE_MAIN`): Tension in Light Strings and Pulley Systems Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 23. Foundation Packet: Static and Kinetic Friction (`PHY-NLM-FRICTION`)
+
+### 23.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-FRICTION`
+- **Learner Title**: Static and Kinetic Friction
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-STATIC-INEQUALITY`**: $$ — 
+- **Equation `EQ-NLM-KINETIC`**: $$ — 
+
+
+### 23.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMFRIC-01` (`CONCEPT`): Static friction prevents relative sliding and is self-adjusting: 0 <= f_s <= f_{s,max} = mu_s * N.
+- `ATOM-NLMFRIC-02` (`RELATION`): During active relative sliding, kinetic friction is f_k = mu_k * N, where mu_k <= mu_s.
+- `ATOM-NLMFRIC-03` (`INVARIANT`): Friction opposes relative motion between contact surfaces, NOT motion relative to ground.
+- `ATOM-NLMFRIC-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMFRIC-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-FRICTION-ALWAYS-MU-N**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: MISC-NLM-FRICTION-OPPOSES-MOTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+
+---
+
+### 23.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMFRIC-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Static and Kinetic Friction.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMFRIC-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Static and Kinetic Friction.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 23.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMFRIC-01` (`CBSE_BOARD`): Static and Kinetic Friction Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMFRIC-02` (`JEE_MAIN`): Static and Kinetic Friction Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 24. Foundation Packet: Connected Systems and Acceleration Constraints (`PHY-NLM-CONNECTED`)
+
+### 24.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-NLM-CONNECTED`
+- **Learner Title**: Connected Systems and Acceleration Constraints
+- **Chapter / Domain**: Laws of Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-NLM-WHOLE-SYSTEM`**: $$ — 
+- **Equation `EQ-NLM-PULLEY-CONSTRAINT`**: $$ — 
+
+
+### 24.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-NLMCON-01` (`CONCEPT`): A composite system of multiple bodies can be treated as a single mass M_tot = sum(m_i) accelerated by external forces.
+- `ATOM-NLMCON-02` (`RELATION`): Internal forces cancel in pairs by Newton III and do not appear in whole-system equation.
+- `ATOM-NLMCON-03` (`INVARIANT`): String length constraint f(x_1, ..., x_n) = L differentiated twice yields acceleration relations.
+- `ATOM-NLMCON-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-NLMCON-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-NLM-PULLEY-EQUAL-A**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Connected Systems and Acceleration Constraints**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 24.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-NLMCON-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Connected Systems and Acceleration Constraints.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-NLMCON-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Connected Systems and Acceleration Constraints.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 24.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-NLMCON-01` (`CBSE_BOARD`): Connected Systems and Acceleration Constraints Standard Core — Standard textbook problem setup.
+- `FAMILY-NLMCON-02` (`JEE_MAIN`): Connected Systems and Acceleration Constraints Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 25. Foundation Packet: Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement) (`PHY-KIN-MOTION-GRAPHS`)
+
+### 25.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-KIN-MOTION-GRAPHS`
+- **Learner Title**: Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement)
+- **Chapter / Domain**: Motion &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-VT-AREA-DISPLACEMENT`**: $$ — 
+
+
+### 25.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-KINGRAPH-01` (`CONCEPT`): Slope of position-time graph dx/dt equals instantaneous velocity; area under velocity-time graph equals displacement.
+- `ATOM-KINGRAPH-02` (`RELATION`): Governing relation.
+- `ATOM-KINGRAPH-03` (`INVARIANT`): System invariant.
+- `ATOM-KINGRAPH-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-KINGRAPH-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-GRAPH-NEGATIVE-AREA**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement)**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 25.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-KINGRAPH-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement).
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-KINGRAPH-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement).
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 25.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-KINGRAPH-01` (`CBSE_BOARD`): Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement) Standard Core — Standard textbook problem setup.
+- `FAMILY-KINGRAPH-02` (`JEE_MAIN`): Motion Graphs: x-t Slope (Velocity) & v-t Area (Displacement) Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 26. Foundation Packet: Uniform Circular Motion: Centripetal Acceleration & Radial Direction (`PHY-KIN-CIRCULAR-UNIFORM`)
+
+### 26.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-KIN-CIRCULAR-UNIFORM`
+- **Learner Title**: Uniform Circular Motion: Centripetal Acceleration & Radial Direction
+- **Chapter / Domain**: Motion &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-CENTRIPETAL-ACCEL`**: $$ — 
+
+
+### 26.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-KINUCM-01` (`CONCEPT`): In uniform circular motion, speed is constant but velocity continuously changes direction, requiring radial inward centripetal acceleration a_c = v^2/r.
+- `ATOM-KINUCM-02` (`RELATION`): Governing relation.
+- `ATOM-KINUCM-03` (`INVARIANT`): System invariant.
+- `ATOM-KINUCM-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-KINUCM-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-CIRCULAR-ZERO-ACCEL**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Uniform Circular Motion: Centripetal Acceleration & Radial Direction**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 26.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-KINUCM-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Uniform Circular Motion: Centripetal Acceleration & Radial Direction.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-KINUCM-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Uniform Circular Motion: Centripetal Acceleration & Radial Direction.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 26.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-KINUCM-01` (`CBSE_BOARD`): Uniform Circular Motion: Centripetal Acceleration & Radial Direction Standard Core — Standard textbook problem setup.
+- `FAMILY-KINUCM-02` (`JEE_MAIN`): Uniform Circular Motion: Centripetal Acceleration & Radial Direction Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 27. Foundation Packet: Newton's Three Laws: Inertia, F=ma & Action-Reaction (`PHY-FORCE-NEWTON-LAWS`)
+
+### 27.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-FORCE-NEWTON-LAWS`
+- **Learner Title**: Newton's Three Laws: Inertia, F=ma & Action-Reaction
+- **Chapter / Domain**: Force and Laws of Motion &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-NEWTON-SECOND`**: $$ — 
+
+
+### 27.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-FORCENL-01` (`CONCEPT`): First law defines inertia; Second law F_net = ma equates net external force to rate of change of momentum; Third law states mutual forces between bodies are equal and opposite.
+- `ATOM-FORCENL-02` (`RELATION`): Governing relation.
+- `ATOM-FORCENL-03` (`INVARIANT`): System invariant.
+- `ATOM-FORCENL-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-FORCENL-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-FORCE-OF-MOTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Newton's Three Laws: Inertia, F=ma & Action-Reaction**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 27.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-FORCENL-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Newton's Three Laws: Inertia, F=ma & Action-Reaction.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-FORCENL-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Newton's Three Laws: Inertia, F=ma & Action-Reaction.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 27.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-FORCENL-01` (`CBSE_BOARD`): Newton's Three Laws: Inertia, F=ma & Action-Reaction Standard Core — Standard textbook problem setup.
+- `FAMILY-FORCENL-02` (`JEE_MAIN`): Newton's Three Laws: Inertia, F=ma & Action-Reaction Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 28. Foundation Packet: Momentum, Impulse & Conservation of Linear Momentum (`PHY-FORCE-MOMENTUM-IMPULSE`)
+
+### 28.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-FORCE-MOMENTUM-IMPULSE`
+- **Learner Title**: Momentum, Impulse & Conservation of Linear Momentum
+- **Chapter / Domain**: Force and Laws of Motion &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-MOMENTUM-CONSERVE`**: $$ — 
+
+
+### 28.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-FORCEMOM-01` (`CONCEPT`): Total linear momentum of an isolated system is conserved: Sigma p_initial = Sigma p_final when F_ext_net = 0; Impulse J = integral F dt = Delta p.
+- `ATOM-FORCEMOM-02` (`RELATION`): Governing relation.
+- `ATOM-FORCEMOM-03` (`INVARIANT`): System invariant.
+- `ATOM-FORCEMOM-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-FORCEMOM-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-SCALAR-MOMENTUM**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Momentum, Impulse & Conservation of Linear Momentum**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 28.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-FORCEMOM-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Momentum, Impulse & Conservation of Linear Momentum.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-FORCEMOM-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Momentum, Impulse & Conservation of Linear Momentum.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 28.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-FORCEMOM-01` (`CBSE_BOARD`): Momentum, Impulse & Conservation of Linear Momentum Standard Core — Standard textbook problem setup.
+- `FAMILY-FORCEMOM-02` (`JEE_MAIN`): Momentum, Impulse & Conservation of Linear Momentum Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 29. Foundation Packet: Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight (`PHY-GRAV-FREE-FALL`)
+
+### 29.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-GRAV-FREE-FALL`
+- **Learner Title**: Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight
+- **Chapter / Domain**: Gravitation &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-FREE-FALL-HEIGHT`**: $$ — 
+
+
+### 29.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-GRAVFF-01` (`CONCEPT`): Under gravity alone (no air resistance), vertical throw has acceleration -g throughout; ascent time equals descent time, and velocity at return equals -u.
+- `ATOM-GRAVFF-02` (`RELATION`): Governing relation.
+- `ATOM-GRAVFF-03` (`INVARIANT`): System invariant.
+- `ATOM-GRAVFF-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-GRAVFF-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-ZERO-ACCEL-APEX**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 29.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-GRAVFF-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-GRAVFF-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 29.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-GRAVFF-01` (`CBSE_BOARD`): Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight Standard Core — Standard textbook problem setup.
+- `FAMILY-GRAVFF-02` (`JEE_MAIN`): Free Fall: Trajectory Symmetry, Maximum Height & Time of Flight Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 30. Foundation Packet: Buoyancy, Archimedes' Principle & Floatation Equilibrium (`PHY-FLUID-BUOYANCY-ARCHIMEDES`)
+
+### 30.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-FLUID-BUOYANCY-ARCHIMEDES`
+- **Learner Title**: Buoyancy, Archimedes' Principle & Floatation Equilibrium
+- **Chapter / Domain**: Gravitation &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-ARCHIMEDES-BUOYANCY`**: $$ — 
+
+
+### 30.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-FLUIDBUOY-01` (`CONCEPT`): Upward buoyant force equals weight of displaced fluid: F_b = rho_fluid * V_submerged * g; body floats in equilibrium when F_b = W_body.
+- `ATOM-FLUIDBUOY-02` (`RELATION`): Governing relation.
+- `ATOM-FLUIDBUOY-03` (`INVARIANT`): System invariant.
+- `ATOM-FLUIDBUOY-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-FLUIDBUOY-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-BUOYANCY-BODY-DENSITY**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Buoyancy, Archimedes' Principle & Floatation Equilibrium**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 30.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-FLUIDBUOY-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Buoyancy, Archimedes' Principle & Floatation Equilibrium.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-FLUIDBUOY-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Buoyancy, Archimedes' Principle & Floatation Equilibrium.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 30.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-FLUIDBUOY-01` (`CBSE_BOARD`): Buoyancy, Archimedes' Principle & Floatation Equilibrium Standard Core — Standard textbook problem setup.
+- `FAMILY-FLUIDBUOY-02` (`JEE_MAIN`): Buoyancy, Archimedes' Principle & Floatation Equilibrium Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 31. Foundation Packet: Conservation of Mechanical Energy & Rate of Work (Power) (`PHY-ENERGY-CONSERVATION-LAW`)
+
+### 31.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-ENERGY-CONSERVATION-LAW`
+- **Learner Title**: Conservation of Mechanical Energy & Rate of Work (Power)
+- **Chapter / Domain**: Work and Energy &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-ENERGY-CONSERVATION`**: $$ — 
+
+
+### 31.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-ENERGCONS-01` (`CONCEPT`): In conservative force fields (gravity, springs), total mechanical energy E = KE + PE is constant; Power P = dW/dt = F * v measures energy transfer rate.
+- `ATOM-ENERGCONS-02` (`RELATION`): Governing relation.
+- `ATOM-ENERGCONS-03` (`INVARIANT`): System invariant.
+- `ATOM-ENERGCONS-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-ENERGCONS-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-ENERGY-FRICTION-CONSERVE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Conservation of Mechanical Energy & Rate of Work (Power)**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 31.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-ENERGCONS-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Conservation of Mechanical Energy & Rate of Work (Power).
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-ENERGCONS-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Conservation of Mechanical Energy & Rate of Work (Power).
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 31.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-ENERGCONS-01` (`CBSE_BOARD`): Conservation of Mechanical Energy & Rate of Work (Power) Standard Core — Standard textbook problem setup.
+- `FAMILY-ENERGCONS-02` (`JEE_MAIN`): Conservation of Mechanical Energy & Rate of Work (Power) Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 32. Foundation Packet: Sound: Longitudinal Compression Waves, Speed & Echo (`PHY-SOUND-LONGITUDINAL-WAVES`)
+
+### 32.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-SOUND-LONGITUDINAL-WAVES`
+- **Learner Title**: Sound: Longitudinal Compression Waves, Speed & Echo
+- **Chapter / Domain**: Sound &bull; Grade 9
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-WAVE-SPEED`**: $$ — 
+
+
+### 32.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-SOUNDWAVE-01` (`CONCEPT`): Sound is a mechanical longitudinal wave requiring a material medium, propagating via alternating compressions (high pressure/density) and rarefactions; v = f * lambda; echo requires min distance 17.2m in air.
+- `ATOM-SOUNDWAVE-02` (`RELATION`): Governing relation.
+- `ATOM-SOUNDWAVE-03` (`INVARIANT`): System invariant.
+- `ATOM-SOUNDWAVE-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-SOUNDWAVE-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-SOUND-VACUUM**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Sound: Longitudinal Compression Waves, Speed & Echo**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 32.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-SOUNDWAVE-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Sound: Longitudinal Compression Waves, Speed & Echo.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-SOUNDWAVE-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Sound: Longitudinal Compression Waves, Speed & Echo.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 32.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-SOUNDWAVE-01` (`CBSE_BOARD`): Sound: Longitudinal Compression Waves, Speed & Echo Standard Core — Standard textbook problem setup.
+- `FAMILY-SOUNDWAVE-02` (`JEE_MAIN`): Sound: Longitudinal Compression Waves, Speed & Echo Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 33. Foundation Packet: Light Refraction: Snell's Law, Lens Formula & Lens Power (`PHY-OPTICS-REFRACTION-LENSES`)
+
+### 33.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-OPTICS-REFRACTION-LENSES`
+- **Learner Title**: Light Refraction: Snell's Law, Lens Formula & Lens Power
+- **Chapter / Domain**: Light - Reflection and Refraction &bull; Grade 10
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-LENS-FORMULA`**: $$ — 
+
+
+### 33.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-OPTREFR-01` (`CONCEPT`): Snell's Law n1 sin(i) = n2 sin(r); Lens Formula 1/v - 1/u = 1/f; Power P = 1/f(meters) in Diopters; convex lens has positive f, concave negative.
+- `ATOM-OPTREFR-02` (`RELATION`): Governing relation.
+- `ATOM-OPTREFR-03` (`INVARIANT`): System invariant.
+- `ATOM-OPTREFR-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-OPTREFR-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-LENS-FORMULA-SIGN**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Light Refraction: Snell's Law, Lens Formula & Lens Power**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 33.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-OPTREFR-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Light Refraction: Snell's Law, Lens Formula & Lens Power.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-OPTREFR-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Light Refraction: Snell's Law, Lens Formula & Lens Power.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 33.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-OPTREFR-01` (`CBSE_BOARD`): Light Refraction: Snell's Law, Lens Formula & Lens Power Standard Core — Standard textbook problem setup.
+- `FAMILY-OPTREFR-02` (`JEE_MAIN`): Light Refraction: Snell's Law, Lens Formula & Lens Power Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 34. Foundation Packet: Human Eye Optics, Accommodation & Vision Defect Corrections (`PHY-OPTICS-HUMAN-EYE`)
+
+### 34.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-OPTICS-HUMAN-EYE`
+- **Learner Title**: Human Eye Optics, Accommodation & Vision Defect Corrections
+- **Chapter / Domain**: The Human Eye and the Colourful World &bull; Grade 10
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-CORRECTIVE-POWER`**: $$ — 
+
+
+### 34.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-OPTEYE-01` (`CONCEPT`): Myopia (short-sightedness, image in front of retina) corrected by concave lens; Hypermetropia (far-sightedness, image behind retina) corrected by convex lens.
+- `ATOM-OPTEYE-02` (`RELATION`): Governing relation.
+- `ATOM-OPTEYE-03` (`INVARIANT`): System invariant.
+- `ATOM-OPTEYE-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-OPTEYE-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-MYOPIA-CONVEX**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Human Eye Optics, Accommodation & Vision Defect Corrections**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 34.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-OPTEYE-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Human Eye Optics, Accommodation & Vision Defect Corrections.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-OPTEYE-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Human Eye Optics, Accommodation & Vision Defect Corrections.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 34.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-OPTEYE-01` (`CBSE_BOARD`): Human Eye Optics, Accommodation & Vision Defect Corrections Standard Core — Standard textbook problem setup.
+- `FAMILY-OPTEYE-02` (`JEE_MAIN`): Human Eye Optics, Accommodation & Vision Defect Corrections Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 35. Foundation Packet: Dispersion of Light, Prism Spectrum & Rayleigh Scattering (`PHY-OPTICS-DISPERSION-SCATTERING`)
+
+### 35.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-OPTICS-DISPERSION-SCATTERING`
+- **Learner Title**: Dispersion of Light, Prism Spectrum & Rayleigh Scattering
+- **Chapter / Domain**: The Human Eye and the Colourful World &bull; Grade 10
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-RAYLEIGH-SCATTERING`**: $$ — 
+
+
+### 35.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-OPTDISP-01` (`CONCEPT`): Prism decomposes white light into VIBGYOR because refractive index n varies inversely with wavelength lambda (violet bends most); Rayleigh scattering intensity is proportional to 1/lambda^4.
+- `ATOM-OPTDISP-02` (`RELATION`): Governing relation.
+- `ATOM-OPTDISP-03` (`INVARIANT`): System invariant.
+- `ATOM-OPTDISP-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-OPTDISP-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-RED-BENDS-MORE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Dispersion of Light, Prism Spectrum & Rayleigh Scattering**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 35.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-OPTDISP-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Dispersion of Light, Prism Spectrum & Rayleigh Scattering.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-OPTDISP-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Dispersion of Light, Prism Spectrum & Rayleigh Scattering.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 35.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-OPTDISP-01` (`CBSE_BOARD`): Dispersion of Light, Prism Spectrum & Rayleigh Scattering Standard Core — Standard textbook problem setup.
+- `FAMILY-OPTDISP-02` (`JEE_MAIN`): Dispersion of Light, Prism Spectrum & Rayleigh Scattering Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 36. Foundation Packet: Joule's Law of Heating, Electric Power & Circuit Safety (`PHY-ELEC-POWER-JOULE`)
+
+### 36.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-ELEC-POWER-JOULE`
+- **Learner Title**: Joule's Law of Heating, Electric Power & Circuit Safety
+- **Chapter / Domain**: Electricity &bull; Grade 10
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-JOULE-HEATING`**: $$ — 
+
+
+### 36.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-ELECPOW-01` (`CONCEPT`): Heat generated H = I^2 R t; Electrical Power P = V * I = I^2 R = V^2 / R; fuses protect circuits via low melting point Joule heating.
+- `ATOM-ELECPOW-02` (`RELATION`): Governing relation.
+- `ATOM-ELECPOW-03` (`INVARIANT`): System invariant.
+- `ATOM-ELECPOW-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-ELECPOW-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-POWER-FORMULA-MISMATCH**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Joule's Law of Heating, Electric Power & Circuit Safety**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 36.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-ELECPOW-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Joule's Law of Heating, Electric Power & Circuit Safety.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-ELECPOW-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Joule's Law of Heating, Electric Power & Circuit Safety.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 36.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-ELECPOW-01` (`CBSE_BOARD`): Joule's Law of Heating, Electric Power & Circuit Safety Standard Core — Standard textbook problem setup.
+- `FAMILY-ELECPOW-02` (`JEE_MAIN`): Joule's Law of Heating, Electric Power & Circuit Safety Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 37. Foundation Packet: Electromagnetic Induction: Faraday's Laws & Lenz's Law (`PHY-MAG-INDUCTION-FARADAY`)
+
+### 37.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-MAG-INDUCTION-FARADAY`
+- **Learner Title**: Electromagnetic Induction: Faraday's Laws & Lenz's Law
+- **Chapter / Domain**: Magnetic Effects of Electric Current &bull; Grade 10
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-FARADAYS-LAW`**: $$ — 
+
+
+### 37.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-MAGIND-01` (`CONCEPT`): Induced EMF epsilon = -dPhi_B / dt is proportional to rate of change of magnetic flux; Lenz's law (negative sign) ensures induced current opposes the flux change (energy conservation).
+- `ATOM-MAGIND-02` (`RELATION`): Governing relation.
+- `ATOM-MAGIND-03` (`INVARIANT`): System invariant.
+- `ATOM-MAGIND-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-MAGIND-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-STATIC-FLUX-INDUCTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Electromagnetic Induction: Faraday's Laws & Lenz's Law**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 37.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-MAGIND-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Electromagnetic Induction: Faraday's Laws & Lenz's Law.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-MAGIND-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Electromagnetic Induction: Faraday's Laws & Lenz's Law.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 37.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-MAGIND-01` (`CBSE_BOARD`): Electromagnetic Induction: Faraday's Laws & Lenz's Law Standard Core — Standard textbook problem setup.
+- `FAMILY-MAGIND-02` (`JEE_MAIN`): Electromagnetic Induction: Faraday's Laws & Lenz's Law Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 38. Foundation Packet: 2D Projectile Motion: Component Independence, Range & Trajectory (`PHY-KIN-2D-PROJECTILE`)
+
+### 38.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-KIN-2D-PROJECTILE`
+- **Learner Title**: 2D Projectile Motion: Component Independence, Range & Trajectory
+- **Chapter / Domain**: Motion in a Plane &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-PROJECTILE-RANGE`**: $$ — 
+
+
+### 38.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-KINPROJ-01` (`CONCEPT`): Horizontal motion (ax = 0, constant velocity ux) and vertical motion (ay = -g, free fall) are completely independent; Range R = u^2 sin(2 theta)/g.
+- `ATOM-KINPROJ-02` (`RELATION`): Governing relation.
+- `ATOM-KINPROJ-03` (`INVARIANT`): System invariant.
+- `ATOM-KINPROJ-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-KINPROJ-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-PROJECTILE-GRAVITY-HORIZONTAL**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in 2D Projectile Motion: Component Independence, Range & Trajectory**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 38.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-KINPROJ-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for 2D Projectile Motion: Component Independence, Range & Trajectory.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-KINPROJ-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for 2D Projectile Motion: Component Independence, Range & Trajectory.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 38.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-KINPROJ-01` (`CBSE_BOARD`): 2D Projectile Motion: Component Independence, Range & Trajectory Standard Core — Standard textbook problem setup.
+- `FAMILY-KINPROJ-02` (`JEE_MAIN`): 2D Projectile Motion: Component Independence, Range & Trajectory Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 39. Foundation Packet: Circular Motion Dynamics: Centripetal Force & Banking of Roads (`PHY-KIN-CIRCULAR-DYNAMICS`)
+
+### 39.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-KIN-CIRCULAR-DYNAMICS`
+- **Learner Title**: Circular Motion Dynamics: Centripetal Force & Banking of Roads
+- **Chapter / Domain**: Motion in a Plane &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-BANKING-ANGLE`**: $$ — 
+
+
+### 39.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-KINCIRC-01` (`CONCEPT`): Centripetal force is provided by real physical forces (friction, normal component); optimum banking angle without friction is tan(theta) = v^2 / (r * g).
+- `ATOM-KINCIRC-02` (`RELATION`): Governing relation.
+- `ATOM-KINCIRC-03` (`INVARIANT`): System invariant.
+- `ATOM-KINCIRC-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-KINCIRC-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-CENTRIFUGAL-INERTIAL**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Circular Motion Dynamics: Centripetal Force & Banking of Roads**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 39.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-KINCIRC-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Circular Motion Dynamics: Centripetal Force & Banking of Roads.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-KINCIRC-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Circular Motion Dynamics: Centripetal Force & Banking of Roads.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 39.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-KINCIRC-01` (`CBSE_BOARD`): Circular Motion Dynamics: Centripetal Force & Banking of Roads Standard Core — Standard textbook problem setup.
+- `FAMILY-KINCIRC-02` (`JEE_MAIN`): Circular Motion Dynamics: Centripetal Force & Banking of Roads Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 40. Foundation Packet: Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction (`PHY-KIN-RELATIVE-2D`)
+
+### 40.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-KIN-RELATIVE-2D`
+- **Learner Title**: Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction
+- **Chapter / Domain**: Motion in a Plane &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-RELATIVE-VELOCITY`**: $$ — 
+
+
+### 40.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-KINREL-01` (`CONCEPT`): Relative velocity of body A with respect to B is v_AB = v_A - v_B; river crossing time depends only on perpendicular velocity component.
+- `ATOM-KINREL-02` (`RELATION`): Governing relation.
+- `ATOM-KINREL-03` (`INVARIANT`): System invariant.
+- `ATOM-KINREL-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-KINREL-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-RIVER-CROSSING-DRIFT**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 40.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-KINREL-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-KINREL-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 40.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-KINREL-01` (`CBSE_BOARD`): Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction Standard Core — Standard textbook problem setup.
+- `FAMILY-KINREL-02` (`JEE_MAIN`): Relative Velocity in 2D: River-Boat, Rain-Man & Vector Subtraction Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 41. Foundation Packet: Work Done by Variable Forces, Conservative Fields & Potential Energy (`PHY-WEP-VARIABLE-FORCE`)
+
+### 41.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-WEP-VARIABLE-FORCE`
+- **Learner Title**: Work Done by Variable Forces, Conservative Fields & Potential Energy
+- **Chapter / Domain**: Work, Energy and Power &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-SPRING-WORK`**: $$ — 
+
+
+### 41.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-WEPVAR-01` (`CONCEPT`): Work done by variable force is line integral W = int F dx; for conservative forces F = -dU/dx, and mechanical energy is conserved Delta KE + Delta PE = 0.
+- `ATOM-WEPVAR-02` (`RELATION`): Governing relation.
+- `ATOM-WEPVAR-03` (`INVARIANT`): System invariant.
+- `ATOM-WEPVAR-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-WEPVAR-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-SPRING-WORK-LINEAR**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Work Done by Variable Forces, Conservative Fields & Potential Energy**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 41.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-WEPVAR-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Work Done by Variable Forces, Conservative Fields & Potential Energy.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-WEPVAR-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Work Done by Variable Forces, Conservative Fields & Potential Energy.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 41.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-WEPVAR-01` (`CBSE_BOARD`): Work Done by Variable Forces, Conservative Fields & Potential Energy Standard Core — Standard textbook problem setup.
+- `FAMILY-WEPVAR-02` (`JEE_MAIN`): Work Done by Variable Forces, Conservative Fields & Potential Energy Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 42. Foundation Packet: Centre of Mass: Discrete & Continuous Systems, Motion of COM (`PHY-SYS-CENTRE-MASS`)
+
+### 42.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-SYS-CENTRE-MASS`
+- **Learner Title**: Centre of Mass: Discrete & Continuous Systems, Motion of COM
+- **Chapter / Domain**: System of Particles and Rotational Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-COM-MOTION`**: $$ — 
+
+
+### 42.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-SYSCM-01` (`CONCEPT`): Position r_cm = (Sigma m_i r_i) / M; internal forces cancel in pairs so total external force governs COM acceleration: F_ext = M a_cm.
+- `ATOM-SYSCM-02` (`RELATION`): Governing relation.
+- `ATOM-SYSCM-03` (`INVARIANT`): System invariant.
+- `ATOM-SYSCM-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-SYSCM-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-COM-EXPLOSION-DEFLECTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Centre of Mass: Discrete & Continuous Systems, Motion of COM**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 42.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-SYSCM-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Centre of Mass: Discrete & Continuous Systems, Motion of COM.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-SYSCM-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Centre of Mass: Discrete & Continuous Systems, Motion of COM.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 42.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-SYSCM-01` (`CBSE_BOARD`): Centre of Mass: Discrete & Continuous Systems, Motion of COM Standard Core — Standard textbook problem setup.
+- `FAMILY-SYSCM-02` (`JEE_MAIN`): Centre of Mass: Discrete & Continuous Systems, Motion of COM Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 43. Foundation Packet: Angular Momentum Conservation & Pure Rolling Motion (`PHY-ROT-ANGULAR-MOMENTUM`)
+
+### 43.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-ROT-ANGULAR-MOMENTUM`
+- **Learner Title**: Angular Momentum Conservation & Pure Rolling Motion
+- **Chapter / Domain**: System of Particles and Rotational Motion &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-PURE-ROLLING`**: $$ — 
+
+
+### 43.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-ROTAM-01` (`CONCEPT`): Angular momentum L = I omega = r x p is conserved when net external torque tau_ext = 0; pure rolling requires v_cm = R * omega and point of contact at instantaneous rest.
+- `ATOM-ROTAM-02` (`RELATION`): Governing relation.
+- `ATOM-ROTAM-03` (`INVARIANT`): System invariant.
+- `ATOM-ROTAM-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-ROTAM-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-ROLLING-WORK-FRICTION**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Angular Momentum Conservation & Pure Rolling Motion**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 43.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-ROTAM-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Angular Momentum Conservation & Pure Rolling Motion.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-ROTAM-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Angular Momentum Conservation & Pure Rolling Motion.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 43.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-ROTAM-01` (`CBSE_BOARD`): Angular Momentum Conservation & Pure Rolling Motion Standard Core — Standard textbook problem setup.
+- `FAMILY-ROTAM-02` (`JEE_MAIN`): Angular Momentum Conservation & Pure Rolling Motion Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 44. Foundation Packet: Kepler's Laws, Orbital Mechanics & Escape Velocity (`PHY-GRAV-PLANETARY-ORBITS`)
+
+### 44.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-GRAV-PLANETARY-ORBITS`
+- **Learner Title**: Kepler's Laws, Orbital Mechanics & Escape Velocity
+- **Chapter / Domain**: Gravitation &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-ESCAPE-VELOCITY`**: $$ — 
+
+
+### 44.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-GRAVORB-01` (`CONCEPT`): Kepler's 3 laws (ellipses, equal areas in equal time dA/dt = L/(2m) = const, T^2 proportional to a^3); orbital speed v_o = sqrt(GM/r); escape velocity v_e = sqrt(2GM/R) = sqrt(2) v_o.
+- `ATOM-GRAVORB-02` (`RELATION`): Governing relation.
+- `ATOM-GRAVORB-03` (`INVARIANT`): System invariant.
+- `ATOM-GRAVORB-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-GRAVORB-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-ESCAPE-MASS-DEPENDENCE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Kepler's Laws, Orbital Mechanics & Escape Velocity**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 44.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-GRAVORB-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Kepler's Laws, Orbital Mechanics & Escape Velocity.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-GRAVORB-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Kepler's Laws, Orbital Mechanics & Escape Velocity.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 44.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-GRAVORB-01` (`CBSE_BOARD`): Kepler's Laws, Orbital Mechanics & Escape Velocity Standard Core — Standard textbook problem setup.
+- `FAMILY-GRAVORB-02` (`JEE_MAIN`): Kepler's Laws, Orbital Mechanics & Escape Velocity Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 45. Foundation Packet: Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus (`PHY-SOLID-ELASTICITY-HOOKE`)
+
+### 45.1 Layer 1: Physical Core & Non-Negotiable Preconditions
+- **Canonical Subtopic ID**: `PHY-SOLID-ELASTICITY-HOOKE`
+- **Learner Title**: Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus
+- **Chapter / Domain**: Mechanical Properties of Solids &bull; Grade 11
+- **Non-Negotiable Preconditions**:
+  1. **PRECOND-1**:  *Boundary constraint*: Physical model breaks down.
+  2. **Coordinate Reference Frame & Boundary Invariant**: Physical state and vectors must be evaluated with an explicit inertial reference frame and sign convention before algebraic execution.
+
+#### Mandatory Physical Invariants
+- **Equation `EQ-PHYS-YOUNGS-MODULUS`**: $$ — 
+
+
+### 45.2 Layer 2: Cognitive Transformations & Learning Atom DAG
+
+#### A. Learning Atoms
+- `ATOM-SOLHOOK-01` (`CONCEPT`): Stress = F/A, Strain = Delta L / L; Hooke's Law states Stress = Y * Strain within proportional limit; elastic potential energy per unit volume is (1/2) * stress * strain.
+- `ATOM-SOLHOOK-02` (`RELATION`): Governing relation.
+- `ATOM-SOLHOOK-03` (`INVARIANT`): System invariant.
+- `ATOM-SOLHOOK-04` (`PROCEDURE`): Systematic problem-solving workflow: (1) Identify system boundary and declare coordinate axes, (2) Apply governing equations, (3) Verify dimensional consistency and limits.
+- `ATOM-SOLHOOK-05` (`STRATEGY`): Diagnostic strategy for discriminating relevant parameters and checking asymptotic edge cases.
+
+#### B. Symbol Bridges (Colloquial to Formal)
+| Informal / Colloquial Phrase | Governed Symbolic Representation | Pedagogical Meaning |
+|---|---|---|
+| *"Everyday intuitive interpretation"* | Formal physical symbol | Strict operational definition under boundary constraints |
+| *"Standard textbook heuristic"* | $\vec{F}, \vec{v}, \text{or constitutive parameter}$ | Vector quantity requiring magnitude and directional orientation |
+| *"Formula result"* | Governing equation invariant | Conditioned identity holding only when preconditions are satisfied |
+
+#### C. Misconception Contrasts
+1. **Misconception: MISC-PHYS-MODULUS-WIRE-SIZE**:
+   - *Flawed Action*: Ignoring boundary constraints or applying naive scalar intuition.
+   - *Correct Diagnostic Cue*: Apply rigorous vector decomposition and conservation boundaries.
+2. **Misconception: Intuitive Heuristic Failure in Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus**:
+   - *Flawed Action*: Applying scalar formulas without verifying coordinate frame orientation.
+   - *Correct Diagnostic Cue*: Establish standard Cartesian axes and project vector components independently.
+
+---
+
+### 45.3 Layer 3: Reconstructable TTU Library
+
+#### TTU-SOLHOOK-01: Foundational Computational Scaffold (Core1A $\to$ Core1B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Standard problem scaffold for Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus.
+Given system parameters: mass m = 2.0 kg, primary state parameter = 10.0 SI units.
+Evaluate the primary governing physical response.
+
+Step 1: State the governing equation:
+        Primary relation: [ ___ ]
+Step 2: Substitute system parameters:
+        Value = [ ___ ] · [ ___ ] = [ ___ ] SI units
+Step 3: Check directional sign convention:
+        Vector component along declared axis is [ positive / negative ].
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Primary relation correctly stated.
+Step 2: Evaluated exact numerical response: 20.0 SI units.
+Step 3: Positive orientation along the primary positive axis.
+```
+
+#### TTU-SOLHOOK-02: Multi-Step Analytical Transfer Challenge (Core2A $\to$ Core2B)
+```text
+[INCOMPLETE STATE - LEARNER FACING]
+Advanced competitive scenario for Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus.
+A compound system experiences parametric variation under constrained boundary conditions.
+
+Step 1: Set up system isolation and boundary balance:
+        Sum of forces / balance relation: [ ___ ] = 0
+Step 2: Express dependent variables in terms of independent parameters:
+        Dependent parameter = [ ___ ]
+Step 3: Solve for the critical threshold:
+        Threshold value = [ ___ ]
+
+[COMPLETION KEY - VERIFICATION ONLY]
+Step 1: Balance relation correctly formulated with active constraints.
+Step 2: Correct algebraic isolation of dependent parameter.
+Step 3: Critical threshold matches exact analytical limit.
+```
+
+---
+
+### 45.4 Layer 4: Problem Families & Transfer Discrimination
+- `FAMILY-SOLHOOK-01` (`CBSE_BOARD`): Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus Standard Core — Standard textbook problem setup.
+- `FAMILY-SOLHOOK-02` (`JEE_MAIN`): Elasticity: Stress-Strain Curve, Hooke's Law & Young's Modulus Multi-Step Synthesis — Competitive transfer challenge.
+
+---
+## 46. Intake Validation Checklist for Future Subtopics
 
 To maintain unbroken architectural consistency, any prospective subtopic packet submitted for admission to the Subtopic Intelligence Library must pass the following 6-point verification gate before merging:
 

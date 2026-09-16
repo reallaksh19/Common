@@ -283,3 +283,85 @@ Fail closed on microscopic labels, oversized low-information figures, excessive 
 ## Real M2D publication boundary
 
 Representation readiness may exist while publication remains independently blocked until repository-backed manuscript/source authority exists. Learner-product architecture, runtime activation, owner decisions and visual quality cannot substitute for missing source/manuscript release evidence.
+
+---
+
+## Observability, Usability, Discovery Quality & Architecture Governance
+
+The Physics Blueprint includes a complete developer-facing and academician observability workbench achieving full structural and test parity with Mathematics PR #395:
+
+1. **Physics Blueprint Run Builder** (`tools/run_builder/`):
+   - Standalone browser workbench (`index.html`, `run_builder.js`, `run_builder.css`) and CLI compiler (`compile_run.py`).
+   - Compiles human run settings into reproducible prompt manifests and execution manifests with live schema validation, dependency visibility, presets for CBSE (Grade 9 Motion, Grade 10 Light), IIT-JEE (Rotational Dynamics), and NSEP Olympiad (Fluid Dynamics), and config export.
+   - CLI fixture validation mode: `python compile_run.py --validate-fixtures`.
+   - Test suite: `tools/run_builder/tests/test_run_builder.py` (11/11 tests PASS).
+
+2. **Blueprint Architecture Explorer** (`tools/architecture_explorer/`):
+   - Derived observability engine (`generate_architecture_manifest.py`) compiling 158 components and 269 relations into `architecture_observation_manifest.json`.
+   - Standalone interactive explorer UI (`index.html`, `explorer.js`, `explorer.css`) featuring dependency search, layer filtering, orphaned-contract detection, and gap reporting with offline fallback.
+   - CI integrity verification mode: `python generate_architecture_manifest.py --check`.
+   - Test suite: `tools/architecture_explorer/tests/test_architecture_explorer.py` (10/10 tests PASS).
+
+3. **Engineering Discovery Quality Benchmark & Explorer** (`benchmarks/discovery/`):
+   - Quantitative stress-test suite (`benchmark_runner.py`) running across 100 curated multi-tier queries (`corpus/engineering_discovery_benchmark_corpus.v1.json`).
+   - Interactive 5-view UI (`benchmarks/discovery/index.html`, `discovery_explorer.js`, `discovery_explorer.css`) with overview, query search, live playground, vocabulary catalog, and academician guide.
+   - Measures candidate recall (100% Top-1 recall, 100% Top-3, 0% miss rate), noise rate, determinism, and vocabulary contributions across all 43 gates and 372 curated terms.
+   - Generates `VOCABULARY_GAP_REPORT.md` (0 gaps across all 43 gates) and proves that candidate discovery ranking never bypasses exact Engineering Gate authorization.
+   - Test suites: `benchmarks/discovery/tests/test_engineering_discovery_benchmark.py` (7/7 tests PASS) and `test_discovery_explorer.py` (4/4 tests PASS).
+
+4. **Unified Observability Workbench Portal & Drift Audit** (`tools/index.html`, `CORE_ARCHITECTURE_DRIFT_AUDIT.md`):
+   - Gateway portal linking Run Builder, Architecture Explorer, Discovery Benchmark, Drift Audit, and Subtopic Intelligence Library with badge verification.
+   - Exhaustive audit comparing all normative documents, schemas, and validators to maintain strict pedagogical, physical, and governance alignment.
+
+5. **Subtopic Intelligence Library (SIL)** (`SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md`):
+   - 4-layer pedagogical knowledge intake architecture: Physical Core, Learning Atom DAG & Misconception Contrasts, Reconstructable TTUs, and Competitive Exam Problem Families.
+   - Complete 43-subtopic coverage delivered: all 43 subtopics across Grades 9–11 (CBSE, JEE Main, JEE Advanced, and NSEP Olympiad).
+   - Programmatic 6-point intake verification gate: `engine/validate_subtopic_intelligence_library.py` (43/43 Packets PASS).
+   - Test suite: `tests/test_subtopic_intelligence_library.py` (7/7 tests PASS).
+
+6. **Authoritative Engineering Workbench Pipeline & Proof** (`engine/compile_physics_engineering_workbench.py`):
+   - Compiles and validates transitive closures, exact gate resolution, depth compliance, and cryptographically bound receipts for all 43 subtopics.
+   - Registry-wide proof generation: `python compile_physics_engineering_workbench.py --registry-proof-out /tmp/physics-engineering-workbench/registry-proof.json`.
+
+### Local & CI Verification Commands
+
+```bash
+# 1. Authoritative Gate Registry Validation
+python "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates.py"
+
+# 2. Governed Discovery Vocabulary & Non-Authoritative Discovery Falsifiers
+python "Grade 9/V2/Physics/Blueprint/engine/validate_physics_engineering_discovery_vocabulary.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery.py"
+
+# 3. Registry-Driven Workbench, Custody Binding & Admission Falsifiers
+python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_binding.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineered_domain_admission.py"
+
+# 4. Domain Projections (v1 & v2), Visibility Manifest & Registry Composition
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection_v2.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_domain_projection_binding.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_visibility_manifest.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_registry_composition.py"
+
+# 5. Architecture Explorer Integrity Check
+python "Grade 9/V2/Physics/Blueprint/tools/architecture_explorer/generate_architecture_manifest.py" --check
+python "Grade 9/V2/Physics/Blueprint/tools/architecture_explorer/tests/test_architecture_explorer.py"
+
+# 6. Run Builder Fixtures & Test Suite
+python "Grade 9/V2/Physics/Blueprint/tools/run_builder/compile_run.py" --validate-fixtures
+python "Grade 9/V2/Physics/Blueprint/tools/run_builder/tests/test_run_builder.py"
+
+# 7. Discovery Benchmark Recall & Explorer Tests
+python "Grade 9/V2/Physics/Blueprint/benchmarks/discovery/tests/test_engineering_discovery_benchmark.py"
+python "Grade 9/V2/Physics/Blueprint/benchmarks/discovery/tests/test_discovery_explorer.py"
+
+# 8. Subtopic Intelligence Library (43/43 Subtopics) Validation
+python "Grade 9/V2/Physics/Blueprint/engine/validate_subtopic_intelligence_library.py"
+python "Grade 9/V2/Physics/Blueprint/tests/test_subtopic_intelligence_library.py"
+
+# 9. Registry-wide Authorization Proof Compilation
+python "Grade 9/V2/Physics/Blueprint/engine/compile_physics_engineering_workbench.py" --registry-proof-out /tmp/physics-engineering-workbench/registry-proof.json
+```

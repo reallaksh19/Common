@@ -5,8 +5,8 @@
   "authority": "DERIVED_ARCHITECTURE_OBSERVATION",
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
-  "component_count": 155,
-  "relation_count": 263,
+  "component_count": 158,
+  "relation_count": 285,
   "components": {
     "schema:architecture-blueprint.schema.json": {
       "component_id": "schema:architecture-blueprint.schema.json",
@@ -1786,7 +1786,9 @@
       "validator_refs": [],
       "consumer_refs": [],
       "policy_refs": [],
-      "test_refs": [],
+      "test_refs": [
+        "test:test_physics_engineering_discovery.py"
+      ],
       "documentation_refs": [
         "doc:ENGINEERING_AUTHORITY.md"
       ]
@@ -1811,9 +1813,12 @@
         "test:test_engineering_domain_projection_v2.py",
         "test:test_engineering_visibility_manifest.py",
         "test:test_physics_engineering_binding.py",
+        "test:test_physics_engineering_discovery.py",
         "test:test_physics_engineering_workbench.py"
       ],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "engine:compile_publication_ir.py": {
       "component_id": "engine:compile_publication_ir.py",
@@ -1865,8 +1870,12 @@
       "validator_refs": [],
       "consumer_refs": [],
       "policy_refs": [],
-      "test_refs": [],
-      "documentation_refs": []
+      "test_refs": [
+        "test:test_engineering_registry_composition.py"
+      ],
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "engine:governor.py": {
       "component_id": "engine:governor.py",
@@ -2129,6 +2138,7 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [
+        "test:test_engineering_registry_composition.py",
         "test:test_physics_engineering_gates.py"
       ],
       "documentation_refs": [
@@ -2154,6 +2164,24 @@
       ],
       "documentation_refs": []
     },
+    "engine:validate_physics_engineering_discovery_vocabulary.py": {
+      "component_id": "engine:validate_physics_engineering_discovery_vocabulary.py",
+      "name": "validate_physics_engineering_discovery_vocabulary.py",
+      "path": "engine/validate_physics_engineering_discovery_vocabulary.py",
+      "component_type": "VALIDATOR",
+      "schema_version": "N/A",
+      "title": "Validate Physics Engineering Discovery Vocabulary",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "PRODUCTION",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md"
+      ]
+    },
     "engine:validate_subtopic_intelligence_library.py": {
       "component_id": "engine:validate_subtopic_intelligence_library.py",
       "name": "validate_subtopic_intelligence_library.py",
@@ -2170,7 +2198,9 @@
       "test_refs": [
         "test:test_subtopic_intelligence_library.py"
       ],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "engine:validate_technical_teaching_unit.py": {
       "component_id": "engine:validate_technical_teaching_unit.py",
@@ -2491,7 +2521,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_engineering_domain_projection.py": {
       "component_id": "test:test_engineering_domain_projection.py",
@@ -2507,7 +2539,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_engineering_domain_projection_binding.py": {
       "component_id": "test:test_engineering_domain_projection_binding.py",
@@ -2523,7 +2557,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_engineering_domain_projection_v2.py": {
       "component_id": "test:test_engineering_domain_projection_v2.py",
@@ -2539,7 +2575,27 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
+    },
+    "test:test_engineering_registry_composition.py": {
+      "component_id": "test:test_engineering_registry_composition.py",
+      "name": "test_engineering_registry_composition.py",
+      "path": "tests/test_engineering_registry_composition.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Engineering Registry Composition",
+      "authority_domain": "ENGINEERING_GATE_AUTHORITY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_engineering_visibility_manifest.py": {
       "component_id": "test:test_engineering_visibility_manifest.py",
@@ -2555,7 +2611,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_physics_engineering_binding.py": {
       "component_id": "test:test_physics_engineering_binding.py",
@@ -2571,7 +2629,27 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
+    },
+    "test:test_physics_engineering_discovery.py": {
+      "component_id": "test:test_physics_engineering_discovery.py",
+      "name": "test_physics_engineering_discovery.py",
+      "path": "tests/test_physics_engineering_discovery.py",
+      "component_type": "TEST_SUITE",
+      "schema_version": "N/A",
+      "title": "Test Physics Engineering Discovery",
+      "authority_domain": "NON_AUTHORITATIVE_DISCOVERY",
+      "maturity_observation": "TEST_FIXTURE",
+      "producer_refs": [],
+      "validator_refs": [],
+      "consumer_refs": [],
+      "policy_refs": [],
+      "test_refs": [],
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_physics_engineering_gates.py": {
       "component_id": "test:test_physics_engineering_gates.py",
@@ -2606,7 +2684,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_subtopic_intelligence_library.py": {
       "component_id": "test:test_subtopic_intelligence_library.py",
@@ -2622,7 +2702,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "doc:CANONICAL_ARCHITECTURE.md": {
       "component_id": "doc:CANONICAL_ARCHITECTURE.md",
@@ -2661,7 +2743,8 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CANONICAL_ARCHITECTURE.md"
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:README.md"
       ]
     },
     "doc:ENGINEERING_AUTHORITY.md": {
@@ -2888,7 +2971,8 @@
       "test_refs": [],
       "documentation_refs": [
         "doc:CANONICAL_ARCHITECTURE.md",
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
       ]
     }
   },
@@ -3363,6 +3447,12 @@
     },
     {
       "source": "doc:README.md",
+      "target": "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "doc:PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -3375,6 +3465,24 @@
     },
     {
       "source": "doc:README.md",
+      "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "engine:validate_ccu.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -3382,6 +3490,18 @@
     {
       "source": "doc:README.md",
       "target": "engine:validate_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_physics_engineering_discovery_vocabulary.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_subtopic_intelligence_library.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -3447,7 +3567,67 @@
     },
     {
       "source": "doc:README.md",
+      "target": "test:test_engineered_domain_admission.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_engineering_domain_projection.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_engineering_domain_projection_binding.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_engineering_domain_projection_v2.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_engineering_registry_composition.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_engineering_visibility_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_physics_engineering_binding.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_physics_engineering_discovery.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "test:test_physics_engineering_gates.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_physics_engineering_workbench.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_subtopic_intelligence_library.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -4196,6 +4376,18 @@
       "confidence": "DERIVED"
     },
     {
+      "source": "engine:validate_physics_engineering_discovery_vocabulary.py",
+      "target": "engine:compile_physics_engineering_discovery.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "engine:validate_physics_engineering_discovery_vocabulary.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
+      "relation_type": "IMPORTS",
+      "confidence": "EXPLICIT"
+    },
+    {
       "source": "engine:validate_topic_blueprint.py",
       "target": "engine:governor.py",
       "relation_type": "IMPORTS",
@@ -4430,6 +4622,18 @@
       "confidence": "EXPLICIT"
     },
     {
+      "source": "test:test_engineering_registry_composition.py",
+      "target": "engine:engineering_registry_composition.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_engineering_registry_composition.py",
+      "target": "engine:validate_engineering_gates.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
       "source": "test:test_engineering_visibility_manifest.py",
       "target": "engine:compile_engineering_visibility_manifest.py",
       "relation_type": "TESTS",
@@ -4450,6 +4654,18 @@
     {
       "source": "test:test_physics_engineering_binding.py",
       "target": "engine:validate_physics_engineering_binding.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_discovery.py",
+      "target": "engine:compile_physics_engineering_discovery.py",
+      "relation_type": "TESTS",
+      "confidence": "EXPLICIT"
+    },
+    {
+      "source": "test:test_physics_engineering_discovery.py",
+      "target": "engine:compile_physics_engineering_workbench.py",
       "relation_type": "TESTS",
       "confidence": "EXPLICIT"
     },
@@ -4507,7 +4723,9 @@
       "schema:technical-teaching-unit-v3.schema.json",
       "schema:technical-teaching-unit.schema.json"
     ],
-    "validators_without_tests": [],
+    "validators_without_tests": [
+      "engine:validate_physics_engineering_discovery_vocabulary.py"
+    ],
     "policies_without_consumer": [
       "policy:core-governance-cdau.v1.json",
       "policy:core-governance-cdau.v2.json",
@@ -4551,5 +4769,5 @@
       "schema:technical-teaching-unit.schema.json"
     ]
   },
-  "manifest_digest": "sha256:190d4ac0cdf7a7928b015404abd49b8b7b5bbf0e82eeec61e0362c3d7c7360e2"
+  "manifest_digest": "sha256:e01782931d12701f3dd92c80c6d35522daf27b1bef4d3438251c5b88c127f5cb"
 }
