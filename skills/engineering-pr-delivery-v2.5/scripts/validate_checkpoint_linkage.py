@@ -10,18 +10,18 @@ NONE_IDS={None,"","NONE"}
 def validate(root:Path):
     e=[];w=[];s=load_yaml(root/"agents/relay/REPO_STATE.yaml");last=s.get("last_checkpoint")
     if not isinstance(last,dict):return ["REPO_STATE.last_checkpoint must be a mapping"],w
-    relay_state=s.get("relay_state");active=s.get("active_ep") or {};checkpoint_id=last.get("id");checkpoint_path=last.get("path");join=s.get("predecessor_join") or {};join_active=bool(join.get("id") or join.get("path"))
+    relay_state=s.get("relay_state");active=s.get("active_ep") or {};checkpoint_id=last.get("id");checkpoint_path=last.get("path");join=s.get("predecessor_join") or {};join_active=bool(join.get("id") or join.get("path"));replan=s.get("predecessor_replan") or {};replan_active=bool(replan.get("id") or replan.get("path"))
 
     if checkpoint_id in NONE_IDS:
         if checkpoint_path not in {None,""}:e.append("last_checkpoint.path must be null/empty when last_checkpoint.id is NONE")
-        if relay_state=="ACTIVE" and join_active:
-            return e,w
+        if join_active or replan_active:return e,w
         if relay_state=="ACTIVE":
             ep=load_yaml(root/active["path"]);previous=(ep.get("identity") or {}).get("previous_checkpoint")
             if previous not in NONE_IDS:e.append("active EP previous_checkpoint must be NONE when repository has no last checkpoint")
         return e,w
 
     if join_active:e.append("singular last_checkpoint cannot be active at the same time as predecessor_join")
+    if replan_active:e.append("singular last_checkpoint cannot be active at the same time as predecessor_replan")
     if not checkpoint_path:return ["last_checkpoint.path is required when last_checkpoint.id is set"],w
     path=root/checkpoint_path
     if not path.exists():return [f"last checkpoint file does not exist: {checkpoint_path}"],w
@@ -30,7 +30,7 @@ def validate(root:Path):
     successor=cp.get("successor") or {};mode=successor.get("mode")
 
     if relay_state=="ACTIVE":
-        if mode!="SERIAL":e.append("ACTIVE relay requires last checkpoint successor.mode SERIAL unless predecessor_join is active")
+        if mode!="SERIAL":e.append("ACTIVE relay requires last checkpoint successor.mode SERIAL unless a non-checkpoint predecessor baton is active")
         ep=load_yaml(root/active["path"]);previous=(ep.get("identity") or {}).get("previous_checkpoint")
         if str(previous)!=str(checkpoint_id):e.append("active EP identity.previous_checkpoint does not match REPO_STATE.last_checkpoint.id")
         if str(successor.get("ep_id"))!=str(active.get("id")):e.append("last checkpoint successor.ep_id does not match active EP")
