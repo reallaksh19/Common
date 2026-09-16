@@ -4,6 +4,7 @@ required: [schema_version, id, owner_approval, ascii_topology, lanes, shared_wri
 properties:
   schema_version: {const: relay-v2.5}
   id: {type: string, minLength: 1}
+  previous_replan: {type: [string, 'null']}
   owner_approval:
     type: object
     required: [approved, authority, source, approval_token]
