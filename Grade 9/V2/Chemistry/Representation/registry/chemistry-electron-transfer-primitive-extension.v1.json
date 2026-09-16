@@ -26,6 +26,7 @@
         "ELECTRON_EXCHANGE_BALANCED",
         "SPECIES_IDENTITY_STABLE"
       ],
+      "runtime_fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
       "topic_scope_refs": [],
       "decorative": false,
       "accessibility_pattern": "Electron-transfer ledger showing source-authorized before/after states, electrons lost or gained, and the electron-balance check."
