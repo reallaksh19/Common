@@ -27,7 +27,11 @@
       "PHY-ENERGY-CONSERVATION-LAW",
       "PHY-WEP-VARIABLE-FORCE"
     ],
-    "required_current_disposition": "MIGRATION_REQUIRED",
+    "current_dispositions": {
+      "PHY-WORK-ENERGY-POWER": "EXACT_V3_ID",
+      "PHY-ENERGY-CONSERVATION-LAW": "EXACT_V3_ID",
+      "PHY-WEP-VARIABLE-FORCE": "MIGRATION_REQUIRED"
+    },
     "promotion_path": "DISCOVERY_TO_V3_ENGINEERING_TO_SHARED_ENGINEERING_GATE_TO_PHYSICS_BLUEPRINT_AUTHORITY_PROJECTION",
     "copy_ready_state_from_source_pr": false
   }
