@@ -33,13 +33,13 @@ class SilExplorerTests(unittest.TestCase):
         self.assertIn("packet-list", content)
         self.assertIn("detail-area", content)
 
-    def test_sil_catalog_data_covers_all_twelve_packets(self) -> None:
+    def test_sil_catalog_data_covers_all_packets(self) -> None:
         content = CATALOG_DATA_JS.read_text(encoding="utf-8")
         json_match = re.search(r"window\.SIL_CATALOG\s*=\s*(\[.*?\]);\s*$", content, re.DOTALL)
         self.assertIsNotNone(json_match, "sil_catalog_data.js must declare window.SIL_CATALOG as a JSON array")
 
         catalog = json.loads(json_match.group(1))
-        self.assertEqual(len(catalog), 12, "Catalog must contain exactly 12 foundation packets")
+        self.assertEqual(len(catalog), 15, "Catalog must contain exactly 15 foundation packets")
 
         expected_gates = [
             "MATH-QUAD-EQUATIONS",
@@ -54,6 +54,9 @@ class SilExplorerTests(unittest.TestCase):
             "MATH-CONIC-PARABOLA",
             "MATH-CALC-LIMITS",
             "MATH-PERM-COMB",
+            "MATH-CONIC-ELLIPSE",
+            "MATH-CONIC-HYPERBOLA",
+            "MATH-CALC-DERIVATIVES",
         ]
 
         found_gates = [p["gate_id"] for p in catalog]

@@ -32,8 +32,8 @@ class SubtopicIntelligenceLibraryTests(unittest.TestCase):
     def test_sil_intake_validation_full_spec_passes(self) -> None:
         report = validate_subtopic_intelligence_spec(self.spec_text)
         self.assertEqual(report["status"], "PASS")
-        self.assertEqual(report["total_packets_evaluated"], 12)
-        self.assertEqual(report["packets_passing"], 12)
+        self.assertEqual(report["total_packets_evaluated"], 15)
+        self.assertEqual(report["packets_passing"], 15)
         self.assertEqual(report["packets_failing"], 0)
 
     def test_sil_each_packet_satisfies_all_gates(self) -> None:

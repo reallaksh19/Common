@@ -144,6 +144,72 @@ document.addEventListener("DOMContentLoaded", () => {
         </svg>
       `;
     }
+    if (gateId.includes("ELL")) {
+      return `
+        <svg class="svg-canvas" viewBox="0 0 400 160">
+          <!-- Axes -->
+          <line x1="40" y1="80" x2="360" y2="80" stroke="#334155" stroke-width="1.5" />
+          <line x1="200" y1="15" x2="200" y2="145" stroke="#334155" stroke-width="1.5" />
+          <!-- Auxiliary Circle (subtle dashed) -->
+          <ellipse cx="200" cy="80" rx="110" ry="110" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="3,3" />
+          <!-- Ellipse -->
+          <ellipse cx="200" cy="80" rx="110" ry="55" fill="rgba(168,85,247,0.1)" stroke="#a855f7" stroke-width="2.2" />
+          <!-- Foci S and S' -->
+          <circle cx="135" cy="80" r="3.5" fill="#f59e0b" />
+          <text x="130" y="96" fill="#fcd34d" font-size="10">S(-ae,0)</text>
+          <circle cx="265" cy="80" r="3.5" fill="#f59e0b" />
+          <text x="255" y="96" fill="#fcd34d" font-size="10">S'(ae,0)</text>
+          <!-- Focal rays to point P -->
+          <line x1="135" y1="80" x2="245" y2="40" stroke="#10b981" stroke-width="1.2" stroke-dasharray="2,2" />
+          <line x1="265" y1="80" x2="245" y2="40" stroke="#10b981" stroke-width="1.2" stroke-dasharray="2,2" />
+          <circle cx="245" cy="40" r="3.5" fill="#10b981" />
+          <text x="252" y="38" fill="#6ee7b7" font-size="10">P(x,y)</text>
+          <text x="200" y="152" fill="#94a3b8" font-size="10" text-anchor="middle">SP + S'P = 2a &bull; e = √(1 - b²/a²)</text>
+        </svg>
+      `;
+    }
+    if (gateId.includes("HYPERB")) {
+      return `
+        <svg class="svg-canvas" viewBox="0 0 400 160">
+          <!-- Axes -->
+          <line x1="30" y1="80" x2="370" y2="80" stroke="#334155" stroke-width="1.5" />
+          <line x1="200" y1="10" x2="200" y2="150" stroke="#334155" stroke-width="1.5" />
+          <!-- Asymptotes -->
+          <line x1="60" y1="140" x2="340" y2="20" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3" />
+          <line x1="60" y1="20" x2="340" y2="140" stroke="#64748b" stroke-width="1" stroke-dasharray="4,3" />
+          <!-- Right branch -->
+          <path d="M 330,25 Q 260,80 330,135" fill="none" stroke="#ec4899" stroke-width="2.2" />
+          <!-- Left branch -->
+          <path d="M 70,25 Q 140,80 70,135" fill="none" stroke="#ec4899" stroke-width="2.2" />
+          <!-- Vertices -->
+          <circle cx="250" cy="80" r="3" fill="#38bdf8" />
+          <text x="253" y="75" fill="#38bdf8" font-size="9">A(a,0)</text>
+          <circle cx="150" cy="80" r="3" fill="#38bdf8" />
+          <text x="127" y="75" fill="#38bdf8" font-size="9">A'(-a,0)</text>
+          <text x="200" y="152" fill="#94a3b8" font-size="10" text-anchor="middle">Asymptotes: y = ±(b/a)x &bull; e² = 1 + b²/a²</text>
+        </svg>
+      `;
+    }
+    if (gateId.includes("DERIV")) {
+      return `
+        <svg class="svg-canvas" viewBox="0 0 400 160">
+          <!-- Axes -->
+          <line x1="30" y1="140" x2="370" y2="140" stroke="#334155" stroke-width="1.5" />
+          <line x1="70" y1="15" x2="70" y2="150" stroke="#334155" stroke-width="1.5" />
+          <!-- Curve f(x) -->
+          <path d="M 80,130 C 140,120 200,90 320,25" fill="none" stroke="#38bdf8" stroke-width="2.2" />
+          <text x="325" y="25" fill="#38bdf8" font-size="10">y = f(x)</text>
+          <!-- Tangent Line at P -->
+          <line x1="120" y1="135" x2="280" y2="45" stroke="#f59e0b" stroke-width="2" />
+          <!-- Point of Tangency P -->
+          <circle cx="200" cy="90" r="4" fill="#f59e0b" />
+          <text x="208" y="94" fill="#fcd34d" font-size="10">P(x₀, f(x₀))</text>
+          <!-- Secant line (faint) -->
+          <line x1="150" y1="122" x2="280" y2="35" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3" />
+          <text x="200" y="154" fill="#94a3b8" font-size="10" text-anchor="middle">f'(x₀) = lim [f(x₀+h) - f(x₀)] / h</text>
+        </svg>
+      `;
+    }
     // Default Cartesian / Function Grid
     return `
       <svg class="svg-canvas" viewBox="0 0 400 160">

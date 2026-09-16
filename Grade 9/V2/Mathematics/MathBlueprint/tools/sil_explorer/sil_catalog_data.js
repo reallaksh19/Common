@@ -1249,5 +1249,300 @@ window.SIL_CATALOG = [
         "description": "Generating functions for integer partitions, Burnside's Lemma for rotational symmetries, grid walk lattice paths avoiding boundary y = x."
       }
     ]
+  },
+  {
+    "gate_id": "MATH-CONIC-ELLIPSE",
+    "title": "Ellipse Geometry & Focal Invariants",
+    "section_number": 15,
+    "domain": "Conic Sections & Analytical Geometry",
+    "grade_level": "Grade 11–12",
+    "exam_families": [
+      "CBSE",
+      "JEE Main",
+      "JEE Advanced"
+    ],
+    "preconditions": [
+      "**Semi-Axis Strict Positive Invariant**: Semi-major axis $a$ and semi-minor axis $b$ must satisfy $a > b > 0$. If $a = b$, the conic degrades to a circle with eccentricity $e = 0$.",
+      "**Eccentricity Bounded Open Interval**: Eccentricity satisfies $e = \\sqrt{1 - \\frac{b^2}{a^2}} \\in (0, 1)$. If $e = 0$, degenerate circle; if $e = 1$, parabola; if $e > 1$, hyperbola.",
+      "**Focal Distance Sum Invariant (Central Orbit)**: For any point $P(x, y)$ on the ellipse and foci $S(ae, 0), S'(-ae, 0)$, $SP + S'P = 2a$."
+    ],
+    "atoms": [
+      {
+        "atom_id": "ATOM-ELL-01",
+        "atom_type": "CONCEPT",
+        "description": "Standard horizontal ellipse $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$ with parametric representation $(a\\cos\\theta, b\\sin\\theta), \\theta \\in [0, 2\\pi)$ (eccentric angle)."
+      },
+      {
+        "atom_id": "ATOM-ELL-02",
+        "atom_type": "RELATION",
+        "description": "Auxiliary circle $x^2 + y^2 = a^2$ constructed on the major axis as diameter; ordinate projection ratio $\\frac{y_{\\text{ellipse}}}{y_{\\text{circle}}} = \\frac{b}{a}$."
+      },
+      {
+        "atom_id": "ATOM-ELL-03",
+        "atom_type": "INVARIANT",
+        "description": "Director circle $x^2 + y^2 = a^2 + b^2$ as the locus of points of intersection of perpendicular tangents to the ellipse."
+      },
+      {
+        "atom_id": "ATOM-ELL-04",
+        "atom_type": "PROCEDURE",
+        "description": "Tangency condition for line $y = mx + c$: $c^2 = a^2m^2 + b^2$; point of contact $\\left(-\\frac{a^2m}{c}, \\frac{b^2}{c}\\right)$."
+      },
+      {
+        "atom_id": "ATOM-ELL-05",
+        "atom_type": "STRATEGY",
+        "description": "Focal property and reflection invariant: the normal at point $P$ bisects the angle $\\angle SPS'$ formed by the focal radii, directing rays from one focus to the other."
+      }
+    ],
+    "misconceptions": [
+      {
+        "name": "Confusing Eccentric Angle with Polar Angle",
+        "flawed_action": "Setting $\\tan\\theta = \\frac{y_P}{x_P}$ when given eccentric angle $\\theta$.",
+        "diagnostic_cue": "Eccentric angle $\\theta$ is the polar angle of the corresponding point $Q(a\\cos\\theta, a\\sin\\theta)$ on the auxiliary circle, not $P$. The actual polar angle $\\phi$ satisfies $\\tan\\phi = \\frac{b}{a}\\tan\\theta$."
+      },
+      {
+        "name": "Applying Parabolic Directrix Distance Directly",
+        "flawed_action": "Assuming focal distance $SP = PM$ directly without multiplying by eccentricity $e$.",
+        "diagnostic_cue": "In an ellipse $e < 1$, the fundamental locus ratio is $\\frac{SP}{PM} = e < 1$, so $SP = e \\cdot PM = a - ex_P$."
+      }
+    ],
+    "ttus": [
+      {
+        "ttu_id": "TTU-ELL-01",
+        "title": "Incomplete Focal Distance & Eccentricity Discovery Frame",
+        "role": "Core1A $\\to$ Core1B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [-8, 8], y ∈ [-6, 6]",
+        "scaffold": "Step 1: Identify semi-major axis a² = 25 ==> a = [ ___ ]\n        Identify semi-minor axis b² = 16 ==> b = [ ___ ]\nStep 2: Calculate eccentricity e = √(1 - b²/a²):\n        e = √(1 - [ ___ ] / [ ___ ]) = √(9/25) = [ ___ ]\nStep 3: Calculate focus coordinate c = ae:\n        c = [ ___ ] · [ ___ ] = [ ___ ]\n        Foci: S([ ___ ], 0) and S'([ ___ ], 0)\nStep 4: Verify focal distance sum for P(0, 4):\n        SP = √((0 - 3)² + (4 - 0)²) = √(9 + 16) = [ ___ ]\n        S'P = √((0 - (-3))² + (4 - 0)²) = √(9 + 16) = [ ___ ]\n        SP + S'P = [ ___ ] + [ ___ ] = [ ___ ] = 2a",
+        "completion_key": "Step 1: 5; 4\nStep 2: 16; 25; 3/5\nStep 3: 5; 3/5; 3; 3; -3\nStep 4: 5; 5; 5; 5; 10"
+      },
+      {
+        "ttu_id": "TTU-ELL-02",
+        "title": "Director Circle & Perpendicular Tangent Locus Model",
+        "role": "Core2A $\\to$ Core2B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [-9, 9], y ∈ [-9, 9]",
+        "scaffold": "Step 1: Equation of tangent with slope m to x²/a² + y²/b² = 1:\n        y = mx ± √(a²m² + b²)  ==> (y - mx)² = [ ___ ]m² + [ ___ ]\nStep 2: Since tangent passes through Q(h, k):\n        (k - mh)² = a²m² + b²  ==> m²(h² - a²) - 2hkm + (k² - b²) = 0\nStep 3: For orthogonal tangents, the product of roots m₁m₂ = -1:\n        Product of roots = (k² - b²) / (h² - a²) = [ ___ ]\nStep 4: Simplify locus equation:\n        k² - b² = -(h² - a²)  ==> h² + k² = [ ___ ] + [ ___ ] = [ ___ ]\n        Locus of (h, k): x² + y² = [ ___ ] (radius R = [ ___ ])",
+        "completion_key": "Step 1: a²; b²\nStep 2: m²(h² - 16) - 2hkm + (k² - 9) = 0\nStep 3: -1\nStep 4: a²; b²; 25; 25; 5"
+      }
+    ],
+    "families": [
+      {
+        "family_id": "FAMILY-ELL-01",
+        "tier": "Foundation / CBSE",
+        "description": "Standard form derivation, vertices, foci, latus rectum length 2b²/a, eccentricity calculations."
+      },
+      {
+        "family_id": "FAMILY-ELL-02",
+        "tier": "Olympiad / IOQM",
+        "description": "Focal reflection geometry, auxiliary circle pedal property (product of perpendiculars from foci to any tangent is b²), maximum area of inscribed rectangle."
+      },
+      {
+        "family_id": "FAMILY-ELL-03",
+        "tier": "JEE Main",
+        "description": "Tangent equations in slope form y = mx ± √(a²m² + b²), chord of contact T = 0, midpoint chord T = S₁, director circle applications."
+      },
+      {
+        "family_id": "FAMILY-ELL-04",
+        "tier": "JEE Advanced",
+        "description": "Concentric auxiliary circle mappings, common tangents between ellipse and parabola, eccentric angle parameter intervals, normal chord reflection trajectories."
+      }
+    ]
+  },
+  {
+    "gate_id": "MATH-CONIC-HYPERBOLA",
+    "title": "Hyperbolic Conics, Asymptotes & Rectangular Hyperbolas",
+    "section_number": 16,
+    "domain": "Conic Sections & Analytical Geometry",
+    "grade_level": "Grade 11–12",
+    "exam_families": [
+      "CBSE",
+      "JEE Main",
+      "JEE Advanced"
+    ],
+    "preconditions": [
+      "**Eccentricity Greater Than Unity**: Eccentricity satisfies $e = \\sqrt{1 + \\frac{b^2}{a^2}} > 1$. If $e = 1$, degenerate parabola; if $e \\le 1$, ellipse or circle.",
+      "**Transverse vs Conjugate Axis Real Dimensions**: Transverse axis $2a > 0$ and conjugate axis $2b > 0$; $b^2 = a^2(e^2 - 1)$.",
+      "**Focal Distance Difference Constant**: For any point $P(x, y)$ on the hyperbola and foci $S(ae, 0), S'(-ae, 0)$, $|SP - S'P| = 2a$."
+    ],
+    "atoms": [
+      {
+        "atom_id": "ATOM-HYP-01",
+        "atom_type": "CONCEPT",
+        "description": "Standard horizontal hyperbola $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$ with parametric representation $(a\\sec\\theta, b\\tan\\theta)$."
+      },
+      {
+        "atom_id": "ATOM-HYP-02",
+        "atom_type": "RELATION",
+        "description": "Asymptote pair $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 0 \\implies y = \\pm \\frac{b}{a}x$, lines tangent to the hyperbola at infinity."
+      },
+      {
+        "atom_id": "ATOM-HYP-03",
+        "atom_type": "INVARIANT",
+        "description": "Rectangular (equilateral) hyperbola $a = b \\implies x^2 - y^2 = a^2$ with eccentricity $e = \\sqrt{2}$; rotated $45^\\circ$ yields $xy = c^2$ with parametric form $(ct, c/t)$."
+      },
+      {
+        "atom_id": "ATOM-HYP-04",
+        "atom_type": "PROCEDURE",
+        "description": "Tangency condition for line $y = mx + c$: $c^2 = a^2m^2 - b^2$, with condition for real tangents $|m| > \\frac{b}{a}$."
+      },
+      {
+        "atom_id": "ATOM-HYP-05",
+        "atom_type": "STRATEGY",
+        "description": "Director circle analysis $x^2 + y^2 = a^2 - b^2$: exists as a real circle iff $a > b$; degenerates to point $(0,0)$ if $a = b$ (rectangular hyperbola); nonexistent if $a < b$."
+      }
+    ],
+    "misconceptions": [
+      {
+        "name": "Assuming Director Circle Always Exists for Any Hyperbola",
+        "flawed_action": "Writing $x^2 + y^2 = a^2 - b^2$ for perpendicular tangents when $a < b$.",
+        "diagnostic_cue": "For $a < b$, $a^2 - b^2 < 0$, so no real perpendicular tangents can be drawn to the hyperbola."
+      },
+      {
+        "name": "Tangent Equation for Rectangular Form $xy = c^2$",
+        "flawed_action": "Differentiating implicitly to find slope but forgetting parametric chord and tangent forms $x + yt^2 = 2ct$.",
+        "diagnostic_cue": "Parametric point $P(ct, c/t)$ gives tangent $T \\equiv \\frac{x}{t} + yt = 2c \\iff x + yt^2 = 2ct$."
+      }
+    ],
+    "ttus": [
+      {
+        "ttu_id": "TTU-HYP-01",
+        "title": "Incomplete Asymptote & Conjugate Relation Frame",
+        "role": "Core1A $\\to$ Core1B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [-10, 10], y ∈ [-8, 8]",
+        "scaffold": "Step 1: Identify semi-transverse axis a² = 16 ==> a = [ ___ ]\n        Identify semi-conjugate axis b² = 9 ==> b = [ ___ ]\nStep 2: Calculate eccentricity e = √(1 + b²/a²):\n        e = √(1 + [ ___ ] / [ ___ ]) = √(25/16) = [ ___ ]\nStep 3: Calculate focus coordinate c = ae:\n        c = [ ___ ] · [ ___ ] = [ ___ ]\n        Foci: S([ ___ ], 0) and S'([ ___ ], 0)\nStep 4: Asymptote pair formula x²/a² - y²/b² = 0:\n        y = ± ([ ___ ] / [ ___ ])x  ==> 3x ± [ ___ ]y = 0",
+        "completion_key": "Step 1: 4; 3\nStep 2: 9; 16; 5/4\nStep 3: 4; 5/4; 5; 5; -5\nStep 4: 3; 4; 4"
+      },
+      {
+        "ttu_id": "TTU-HYP-02",
+        "title": "Rectangular Hyperbola Tangent Intercept & Triangle Area Model",
+        "role": "Core2A $\\to$ Core2B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [-1, 8], y ∈ [-1, 8]",
+        "scaffold": "Step 1: Equation of tangent to xy = c² at P(ct, c/t):\n        Using T = 0: x(c/t) + y(ct) = 2c²  ==> x + y[ ___ ] = [ ___ ]ct\nStep 2: Find x-intercept A (set y = 0):\n        x + 0 = 2ct  ==> x_A = [ ___ ]ct ==> A([ ___ ], 0)\nStep 3: Find y-intercept B (set x = 0):\n        0 + y t² = 2ct ==> y_B = [ ___ ] / t ==> B(0, [ ___ ])\nStep 4: Area of right-angled triangle OAB:\n        Area = 1/2 · |x_A| · |y_B| = 1/2 · (2ct) · ([ ___ ]) = [ ___ ]c²\n        Conclusion: Area is independent of parameter t and equals [ ___ ]c².",
+        "completion_key": "Step 1: t²; 2\nStep 2: 2; 2ct\nStep 3: 2c; 2c/t\nStep 4: 2c/t; 2; 2"
+      }
+    ],
+    "families": [
+      {
+        "family_id": "FAMILY-HYP-01",
+        "tier": "Foundation / CBSE",
+        "description": "Standard form derivation, vertices, foci, latus rectum length 2b²/a, eccentricity calculations."
+      },
+      {
+        "family_id": "FAMILY-HYP-02",
+        "tier": "Olympiad / IOQM",
+        "description": "Asymptote bounding geometry, area of triangle formed by tangent and asymptotes is constant (2c² or ab), chord bisected at point of contact."
+      },
+      {
+        "family_id": "FAMILY-HYP-03",
+        "tier": "JEE Main",
+        "description": "Conjugate hyperbola relations (1/e₁² + 1/e₂² = 1), rectangular hyperbola normal chords, director circle conditions x² + y² = a² - b²."
+      },
+      {
+        "family_id": "FAMILY-HYP-04",
+        "tier": "JEE Advanced",
+        "description": "Concyclic points on rectangular hyperbola (t₁t₂t₃t₄ = 1), common tangents between circle/parabola and hyperbola, reflection property."
+      }
+    ]
+  },
+  {
+    "gate_id": "MATH-CALC-DERIVATIVES",
+    "title": "Differential Calculus, Mean Value Theorems & Tangency Invariants",
+    "section_number": 17,
+    "domain": "Differential Calculus & Real Analysis",
+    "grade_level": "Grade 11–12",
+    "exam_families": [
+      "CBSE",
+      "IOQM",
+      "JEE Main",
+      "JEE Advanced"
+    ],
+    "preconditions": [
+      "**Limit Difference Quotient Existence**: The derivative $f'(x_0) = \\lim_{h\\to 0} \\frac{f(x_0+h) - f(x_0)}{h}$ exists if and only if both left-hand derivative ($LHD$) and right-hand derivative ($RHD$) exist and are strictly equal finite real numbers.",
+      "**Differentiability Implies Continuity**: If $f$ is differentiable at $x_0$, then $f$ is necessarily continuous at $x_0$. The converse is strictly false (e.g. $f(x) = |x|$ at $x = 0$).",
+      "**Open vs Closed Interval Hypotheses**: Rolle's Theorem and Lagrange's MVT strictly mandate continuity on $[a, b]$ and differentiability on open interval $(a, b)$."
+    ],
+    "atoms": [
+      {
+        "atom_id": "ATOM-DERIV-01",
+        "atom_type": "CONCEPT",
+        "description": "Instantaneous rate of change as secant line limit slope: $f'(x_0) = \\lim_{x\\to x_0} \\frac{f(x) - f(x_0)}{x - x_0}$."
+      },
+      {
+        "atom_id": "ATOM-DERIV-02",
+        "atom_type": "RELATION",
+        "description": "Lagrange's Mean Value Theorem: $\\exists c \\in (a, b)$ such that $f'(c) = \\frac{f(b) - f(a)}{b - a}$; Rolle's Theorem as special case when $f(a) = f(b) \\implies f'(c) = 0$."
+      },
+      {
+        "atom_id": "ATOM-DERIV-03",
+        "atom_type": "INVARIANT",
+        "description": "Monotonicity trichotomy: $f'(x) > 0 \\implies$ strictly increasing; $f'(x) < 0 \\implies$ strictly decreasing; $f'(x) = 0$ on interval $\\implies$ constant."
+      },
+      {
+        "atom_id": "ATOM-DERIV-04",
+        "atom_type": "PROCEDURE",
+        "description": "Tangent and Normal lines at $(x_0, y_0)$: Tangent $y - y_0 = f'(x_0)(x - x_0)$; Normal $y - y_0 = -\\frac{1}{f'(x_0)}(x - x_0)$ where $f'(x_0) \\neq 0$."
+      },
+      {
+        "atom_id": "ATOM-DERIV-05",
+        "atom_type": "STRATEGY",
+        "description": "Root isolation between zeros of differentiable functions using Rolle's Theorem: between any two consecutive roots of $f(x) = 0$, there exists at least one root of $f'(x) = 0$."
+      }
+    ],
+    "misconceptions": [
+      {
+        "name": "Equating Continuity with Differentiability",
+        "flawed_action": "Assuming $f(x) = |x - 2|$ has a tangent at $x = 2$ because it is continuous everywhere.",
+        "diagnostic_cue": "$LHD = -1$ and $RHD = +1$. Distinct one-sided limits mean the instantaneous slope does not exist; geometrically, this is a sharp corner."
+      },
+      {
+        "name": "Applying MVT Across a Discontinuity or Corner",
+        "flawed_action": "Applying Rolle's Theorem to $f(x) = 1 - x^{2/3}$ on $[-1, 1]$ since $f(-1) = f(1) = 0$.",
+        "diagnostic_cue": "$f'(x) = -\\frac{2}{3x^{1/3}}$ is undefined at $x = 0 \\in (-1, 1)$. Hypotheses fail, so no $c$ with $f'(c) = 0$ is guaranteed or exists."
+      }
+    ],
+    "ttus": [
+      {
+        "ttu_id": "TTU-DERIV-01",
+        "title": "Incomplete Limit Difference Quotient Secant-to-Tangent Scaffold",
+        "role": "Core1A $\\to$ Core1B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [-1, 5], y ∈ [-1, 10]",
+        "scaffold": "Step 1: Compute function values:\n        f(2) = 2² = [ ___ ]\n        f(2 + h) = (2 + h)² = [ ___ ] + [ ___ ]h + h²\nStep 2: Form difference quotient (secant slope m_sec):\n        m_sec = [f(2 + h) - f(2)] / h = ([ ___ ] + 4h + h² - [ ___ ]) / h\nStep 3: Simplify fraction for h ≠ 0:\n        m_sec = (4h + h²) / h = [ ___ ] + h\nStep 4: Take the limit as h → 0:\n        f'(2) = lim_{h → 0} ([ ___ ] + h) = [ ___ ]\nStep 5: Equation of tangent line at (2, 4):\n        y - 4 = [ ___ ](x - 2)  ==> y = [ ___ ]x - [ ___ ]",
+        "completion_key": "Step 1: 4; 4; 4\nStep 2: 4; 4\nStep 3: 4\nStep 4: 4; 4\nStep 5: 4; 4; 4"
+      },
+      {
+        "ttu_id": "TTU-DERIV-02",
+        "title": "Lagrange Mean Value Theorem Interval Derivation Model",
+        "role": "Core2A $\\to$ Core2B",
+        "kind": "RECONSTRUCTABLE_SCAFFOLD",
+        "viewport": "x ∈ [0, 5], y ∈ [0, 20]",
+        "scaffold": "Step 1: Verify MVT hypotheses:\n        f(x) is a polynomial ==> continuous on [[ ___ ], [ ___ ]] and differentiable on ([ ___ ], [ ___ ]).\nStep 2: Compute boundary values:\n        f(1) = 1³ - 3(1) = [ ___ ]\n        f(3) = 3³ - 3(3) = 27 - 9 = [ ___ ]\nStep 3: Calculate average secant slope:\n        m_sec = [f(3) - f(1)] / (3 - 1) = ([ ___ ] - (-2)) / 2 = [ ___ ] / 2 = [ ___ ]\nStep 4: Compute derivative f'(x) and set equal to m_sec:\n        f'(x) = [ ___ ]x² - [ ___ ]\n        3c² - 3 = 10 ==> 3c² = [ ___ ] ==> c² = [ ___ ] / 3\nStep 5: Choose root strictly inside open interval (1, 3):\n        c = +√([ ___ ] / 3) ≈ 2.08 ∈ (1, 3)",
+        "completion_key": "Step 1: 1; 3; 1; 3\nStep 2: -2; 18\nStep 3: 18; 20; 10\nStep 4: 3; 3; 13; 13\nStep 5: 13"
+      }
+    ],
+    "families": [
+      {
+        "family_id": "FAMILY-DERIV-01",
+        "tier": "Foundation / CBSE",
+        "description": "Differentiation of standard elementary functions (polynomial, trigonometric, exponential, logarithmic), chain rule, product rule, quotient rule, parametric derivatives."
+      },
+      {
+        "family_id": "FAMILY-DERIV-02",
+        "tier": "Olympiad / IOQM",
+        "description": "Rolle's theorem root bounding for polynomials, Mean Value Theorem inequalities (e.g. sin x < x for x > 0), Cauchy's MVT."
+      },
+      {
+        "family_id": "FAMILY-DERIV-03",
+        "tier": "JEE Main",
+        "description": "Tangents and normals, sub-tangent and sub-normal geometric lengths, rate of change word problems, MVT parameter determination."
+      },
+      {
+        "family_id": "FAMILY-DERIV-04",
+        "tier": "JEE Advanced",
+        "description": "Monotonicity intervals of composite functions, curve inflection points, root counting using derivative sign changes, orthogonal trajectory systems."
+      }
+    ]
   }
 ];

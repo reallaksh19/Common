@@ -34,6 +34,9 @@ DOMAIN_MAP = {
     "MATH-CONIC-PARABOLA": ("Conic Sections & Analytical Geometry", "Grade 11–12", ["CBSE", "JEE Main", "JEE Advanced"]),
     "MATH-CALC-LIMITS": ("Calculus Foundations & Real Analysis", "Grade 11–12", ["CBSE", "JEE Main", "JEE Advanced"]),
     "MATH-PERM-COMB": ("Combinatorics & Discrete Mathematics", "Grade 11–12", ["CBSE", "IOQM", "JEE Main", "JEE Advanced"]),
+    "MATH-CONIC-ELLIPSE": ("Conic Sections & Analytical Geometry", "Grade 11–12", ["CBSE", "JEE Main", "JEE Advanced"]),
+    "MATH-CONIC-HYPERBOLA": ("Conic Sections & Analytical Geometry", "Grade 11–12", ["CBSE", "JEE Main", "JEE Advanced"]),
+    "MATH-CALC-DERIVATIVES": ("Differential Calculus & Real Analysis", "Grade 11–12", ["CBSE", "IOQM", "JEE Main", "JEE Advanced"]),
 }
 
 
