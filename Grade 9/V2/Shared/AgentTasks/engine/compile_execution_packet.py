@@ -76,6 +76,75 @@ def _task_kind(task_kind: str) -> dict[str, Any]:
     return matches[0]
 
 
+def verify_packet_digest(packet: dict[str, Any]) -> None:
+    expected = packet.get("packet_digest")
+    if not isinstance(expected, str):
+        raise PacketCompilationError("E_AGENT_PACKET_DIGEST_MISSING", "packet_digest missing")
+    payload = {key: value for key, value in packet.items() if key != "packet_digest"}
+    actual = digest(payload)
+    if actual != expected:
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_DIGEST_MISMATCH",
+            f"expected {expected}; recomputed {actual}",
+        )
+
+
+def validate_packet(packet: dict[str, Any]) -> None:
+    """Validate a compiled packet as custody infrastructure, never as domain/readiness authority."""
+    try:
+        jsonschema.validate(packet, _packet_schema())
+    except jsonschema.ValidationError as exc:
+        raise PacketCompilationError("E_AGENT_PACKET_SCHEMA", exc.message) from exc
+
+    verify_packet_digest(packet)
+
+    task = packet["task"]
+    repository_state = packet["repository_state"]
+    task_kind_contract = packet["task_kind_contract"]
+    subject_adapter = packet["learning_engineering_state"]["subject_adapter"]
+
+    if repository_state["repository"] != task["repository"]:
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_REPOSITORY_MISMATCH",
+            "repository_state.repository does not match task.repository",
+        )
+    if task_kind_contract["task_kind"] != task["task_kind"]:
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_TASK_KIND_MISMATCH",
+            "task-kind contract does not match task intent",
+        )
+    if str(subject_adapter["subject"]).casefold() != str(task["subject"]).casefold():
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_SUBJECT_BINDING_MISMATCH",
+            "bound subject adapter does not match task subject",
+        )
+
+    classes = [row["authority_class"] for row in packet["authority_bindings"]]
+    if len(classes) != len(set(classes)):
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_AUTHORITY_DUPLICATE",
+            "authority classes must be unique",
+        )
+    missing = sorted(set(task_kind_contract["required_authority_classes"]) - set(classes))
+    if missing:
+        raise PacketCompilationError(
+            "E_AGENT_REQUIRED_AUTHORITY_UNBOUND",
+            f"missing authority bindings: {', '.join(missing)}",
+        )
+
+    preflight = packet["engineering_preflight"]
+    if preflight["engineering_state"] != "NOT_EVALUATED":
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_READINESS_ASSERTION",
+            "delegation packet may not assert Engineering readiness",
+        )
+    if preflight["publication_authorization"] != "NOT_IMPLIED":
+        raise PacketCompilationError(
+            "E_AGENT_PACKET_PUBLICATION_ASSERTION",
+            "delegation packet may not authorize publication",
+        )
+
+
 def compile_packet(
     task: dict[str, Any],
     *,
@@ -117,24 +186,8 @@ def compile_packet(
         "engineering_preflight": resolved["engineering_preflight"],
     }
     packet["packet_digest"] = digest(packet)
-    try:
-        jsonschema.validate(packet, _packet_schema())
-    except jsonschema.ValidationError as exc:
-        raise PacketCompilationError("E_AGENT_PACKET_SCHEMA", exc.message) from exc
+    validate_packet(packet)
     return packet
-
-
-def verify_packet_digest(packet: dict[str, Any]) -> None:
-    expected = packet.get("packet_digest")
-    if not isinstance(expected, str):
-        raise PacketCompilationError("E_AGENT_PACKET_DIGEST_MISSING", "packet_digest missing")
-    payload = {key: value for key, value in packet.items() if key != "packet_digest"}
-    actual = digest(payload)
-    if actual != expected:
-        raise PacketCompilationError(
-            "E_AGENT_PACKET_DIGEST_MISMATCH",
-            f"expected {expected}; recomputed {actual}",
-        )
 
 
 def main() -> None:
