@@ -77,7 +77,7 @@ The SDU MUST NOT inspect or infer learner knowledge percentage.
 ### Difficulty policy
 
 ```text
-EASY   → up to 10 pages; no pedagogy-enrichment web research
+EASY   → up to 10 pages; web research default absent / optional, never prohibited (if used, full custody required)
 MEDIUM → up to 20 pages; targeted research required
 HARD   → up to 30 pages; deep research required
 ```

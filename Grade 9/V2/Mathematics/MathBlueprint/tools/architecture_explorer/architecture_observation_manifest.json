@@ -6,7 +6,7 @@
   "technical_authorization": "NOT_EVALUATED",
   "publication_authorization": "NOT_IMPLIED",
   "component_count": 159,
-  "relation_count": 456,
+  "relation_count": 467,
   "components": {
     "schema:math-agent-context-manifest.schema.json": {
       "component_id": "schema:math-agent-context-manifest.schema.json",
@@ -1502,7 +1502,8 @@
       ],
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
-        "doc:ENGINEERING_WORKBENCH.md"
+        "doc:ENGINEERING_WORKBENCH.md",
+        "doc:README.md"
       ]
     },
     "engine:compile_governed_product_page_blueprint.py": {
@@ -1593,7 +1594,8 @@
         "test:test_publication_bundle.py"
       ],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
       ]
     },
     "engine:compile_sdu_lau_generation_spec.py": {
@@ -1847,7 +1849,8 @@
         "test:test_adaptive_router.py"
       ],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
       ]
     },
     "engine:run_bound_blueprint_publication.py": {
@@ -1916,7 +1919,8 @@
         "test:test_dual_intelligence.py"
       ],
       "documentation_refs": [
-        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md"
+        "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
+        "doc:README.md"
       ]
     },
     "engine:run_engineering_bound_producer_release_golden.py": {
@@ -2199,7 +2203,8 @@
       "documentation_refs": [
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:PRODUCT_GOVERNANCE.md",
-        "doc:PRODUCT_GOVERNANCE_GATE.md"
+        "doc:PRODUCT_GOVERNANCE_GATE.md",
+        "doc:README.md"
       ]
     },
     "engine:validate_publication_bundle.py": {
@@ -2279,7 +2284,9 @@
       "test_refs": [
         "test:test_subtopic_intelligence_library.py"
       ],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_adaptive_router.py": {
       "component_id": "test:test_adaptive_router.py",
@@ -2776,7 +2783,9 @@
       "consumer_refs": [],
       "policy_refs": [],
       "test_refs": [],
-      "documentation_refs": []
+      "documentation_refs": [
+        "doc:README.md"
+      ]
     },
     "test:test_technical_composition.py": {
       "component_id": "test:test_technical_composition.py",
@@ -2898,6 +2907,7 @@
         "doc:ENGINEERING_DISCOVERY.md",
         "doc:ENGINEERING_GATE_BLUEPRINT_AUTHORITY.md",
         "doc:ENGINEERING_WORKBENCH.md",
+        "doc:README.md",
         "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
@@ -3019,6 +3029,7 @@
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:DUAL_TRACK_PRODUCT_MODEL.md",
         "doc:GENERATION_CALIBRATION.md",
+        "doc:README.md",
         "doc:SELF_TEACHING.md",
         "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
@@ -3060,6 +3071,7 @@
         "doc:CANONICAL_ARCHITECTURE.md",
         "doc:CORE_ARCHITECTURE_DRIFT_AUDIT.md",
         "doc:PRODUCT_GOVERNANCE.md",
+        "doc:README.md",
         "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md"
       ]
     },
@@ -3116,7 +3128,8 @@
       "policy_refs": [],
       "test_refs": [],
       "documentation_refs": [
-        "doc:CANONICAL_ARCHITECTURE.md"
+        "doc:CANONICAL_ARCHITECTURE.md",
+        "doc:README.md"
       ]
     },
     "doc:TECHNICAL_COMPOSITION.md": {
@@ -4391,6 +4404,12 @@
     },
     {
       "source": "doc:README.md",
+      "target": "doc:ENGINEERING_AUTHORITY.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "doc:GENERATION_CALIBRATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -4403,7 +4422,25 @@
     },
     {
       "source": "doc:README.md",
+      "target": "doc:PEDAGOGY_AND_CALIBRATION.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "doc:PRODUCT_GOVERNANCE_GATE.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "doc:SELF_TEACHING.md",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "doc:SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -4421,6 +4458,30 @@
     },
     {
       "source": "doc:README.md",
+      "target": "engine:compile_engineering_visibility_manifest.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:compile_publication_bundle.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:route_math_learning_run.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:run_dual_intelligence.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "engine:validate_learner_page_blueprint.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -4433,6 +4494,12 @@
     },
     {
       "source": "doc:README.md",
+      "target": "engine:validate_product_governance.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
       "target": "engine:validate_self_teaching_contract.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
@@ -4440,6 +4507,12 @@
     {
       "source": "doc:README.md",
       "target": "engine:validate_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "engine:validate_subtopic_intelligence_library.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -4500,6 +4573,12 @@
     {
       "source": "doc:README.md",
       "target": "test:test_self_teaching_generation_spec.py",
+      "relation_type": "REFERENCES",
+      "confidence": "DERIVED"
+    },
+    {
+      "source": "doc:README.md",
+      "target": "test:test_subtopic_intelligence_library.py",
       "relation_type": "REFERENCES",
       "confidence": "DERIVED"
     },
@@ -5932,5 +6011,5 @@
       "schema:math-dual-track-product-model.schema.json"
     ]
   },
-  "manifest_digest": "sha256:fe35713f5c8b0864496460da5d778725f6bdb83b588ca8f24ef2668eec154cbd"
+  "manifest_digest": "sha256:9f3ad41a22898211a654dd23c92482a3609b82b3c53f6c33723acd6814b6d2db"
 }

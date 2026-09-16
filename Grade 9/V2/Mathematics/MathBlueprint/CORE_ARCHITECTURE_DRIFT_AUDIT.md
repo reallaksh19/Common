@@ -237,6 +237,7 @@ math-learner-publication-bundle       compile_publication_bundle.py             
 
 ### Finding DRIFT-01
 - **Classification**: `DOCUMENT_STALE`
+- **Status**: `RESOLVED` (Updated `README.md` to establish `CANONICAL_ARCHITECTURE.md` as canonical root and marked single-track assimilation pipeline as transitional)
 - **Subject**: Blueprint Topology Overview
 - **Source A**: `README.md` (Lines 15–40) presenting single-track `AssimilationDemand` $\to$ `AssimilationPlan` as the primary topology.
 - **Source B**: `CANONICAL_ARCHITECTURE.md` (Lines 10–65) establishing Six-Core Architecture (Ground Truth $\to$ Core0 $\to$ Core1/Core2 $\to$ CDR $\to$ CDAU $\to$ SDU/LAU $\to$ TTU $\to$ Publication).
@@ -244,10 +245,11 @@ math-learner-publication-bundle       compile_publication_bundle.py             
 - **Why they differ**: `README.md` was authored during early V2 Math development and was not refreshed when the canonical target architecture was formalized.
 - **Operational Consequence**: New developers and agents reading `README.md` may build single-track assimilation pipelines instead of the governed SDU/LAU dual-track structure.
 - **Severity**: `HIGH`
-- **Recommended Action**: Update `README.md` to reference `CANONICAL_ARCHITECTURE.md` as canonical root and mark the single-track assimilation pipeline as transitional.
+- **Resolution**: Updated `README.md` with the canonical Six-Core Architecture diagram, linking `CANONICAL_ARCHITECTURE.md` and subordinate modules, and designating single-track assimilation as transitional V1.
 
 ### Finding DRIFT-02
 - **Classification**: `DOCUMENT_AMBIGUITY`
+- **Status**: `RESOLVED` (Standardized across `CANONICAL_ARCHITECTURE.md`, `PEDAGOGY_AND_CALIBRATION.md`, `DUAL_TRACK_PRODUCT_MODEL.md`, `PRODUCT_GOVERNANCE.md`, and `README.md`)
 - **Subject**: EASY Pedagogy Research Phrasing
 - **Source A**: `PRODUCT_GOVERNANCE.md` Section 3 ("pedagogy-enrichment web research OPTIONAL... optional EASY research may be omitted. If used, brief and references must be fully bound").
 - **Source B**: `GENERATION_CALIBRATION.md` Section 2 ("pedagogy-enrichment web research is optional, not prohibited... remain at the subtopic level").
@@ -256,7 +258,7 @@ math-learner-publication-bundle       compile_publication_bundle.py             
 - **Why they differ**: Nuance between "default absent" and "prohibited".
 - **Operational Consequence**: Minor confusion for research agents wondering if they should block or allow optional web research for foundational topics.
 - **Severity**: `MEDIUM`
-- **Recommended Action**: Standardize phrasing across all documents to: *"EASY difficulty: Web research is default absent / optional, never prohibited. If used, full claim and source custody is required."*
+- **Resolution**: Standardized phrasing across all documents: *"EASY difficulty: Web research is default absent / optional, never prohibited. If used, full claim and source custody is required."*
 
 ### Finding DRIFT-03
 - **Classification**: `NORMATIVE_CONTRADICTION`
