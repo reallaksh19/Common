@@ -5,6 +5,7 @@ identity:
   base_ref: "<material-ref>"
   execution_state: EXECUTABLE
   previous_checkpoint: NONE
+  previous_join: null
 git_basis:
   expected_branch: "<branch>"
   material_ref: "<material commit/ref>"
