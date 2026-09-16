@@ -13,15 +13,13 @@ from jsonschema import Draft202012Validator
 HERE = Path(__file__).resolve()
 ROOT = HERE.parents[1]
 REPO = ROOT.parents[3]
-SHARED_GATE = REPO / "Grade 9" / "V2" / "Shared" / "EngineeringGate"
 sys.path.insert(0, str(ROOT / "engine"))
-sys.path.insert(0, str(SHARED_GATE / "engine"))
 
 from compile_domain_prerequisite_closure import compile_domain_prerequisite_closure  # noqa: E402
 from compile_engineering_closure import compile_closure  # noqa: E402
 from compile_join import compile_join  # noqa: E402
+from compile_physics_blueprint_authority import compile_physics_blueprint_authority  # noqa: E402
 from compile_scoped_evidence import compile_scoped_evidence  # noqa: E402
-from evaluate_readiness import build_envelope  # noqa: E402
 from governor import route_scoped  # noqa: E402
 
 
@@ -77,14 +75,15 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
     authority_refs = list(request["domain_authority_refs"])
     authority_receipts = [load_repo(ref) for ref in authority_refs]
     domain = compile_domain_prerequisite_closure(engineering, authority_receipts, authority_refs)
-    readiness = build_envelope(engineering_request, engineering_manifest, engineering, domain)
+    authority = compile_physics_blueprint_authority(scoped, engineering_request, engineering_manifest, engineering, domain)
     join = compile_join(load(request["join_spec_ref"]), assessment_coverage=scoped["assessment_coverage"])
 
+    gate_authority = authority["engineering_gate"]
     route_value = routing["final_route"]
-    engineering_ready = readiness["dimensions"]["technical"] == "READY"
+    engineering_ready = gate_authority["dimensions"]["technical"] == "READY"
     semantic_present = scoped["evidence"]["sources"]["semantic_source"]["availability"] != "ABSENT"
-    curriculum_ready = scoped["curriculum_status"] == "SUPPORTED_BY_REPOSITORY_AUTHORITY"
-    domain_ready = readiness["dimensions"]["external_prerequisites"] == "READY"
+    curriculum_ready = authority["scope"]["curriculum_status"] == "SUPPORTED_BY_REPOSITORY_AUTHORITY"
+    domain_ready = gate_authority["dimensions"]["external_prerequisites"] == "READY"
     control_present = exists_ref(request.get("control_state_ref"))
     core1a_release = exists_ref(request.get("core1a_release_ref"))
     core1b_release = exists_ref(request.get("core1b_release_ref"))
@@ -142,10 +141,10 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
     def technical_downstream(consumer: str, locally_instantiated: bool, absent_state: str) -> str:
         if not locally_instantiated:
             return absent_state
-        permission = readiness["consumer_permissions"].get(consumer)
+        permission = gate_authority["consumer_permissions"].get(consumer)
         return "READY" if permission and permission["status"] == "ALLOWED" else "BLOCKED"
 
-    publication_permission = readiness["consumer_permissions"].get("PUBLICATION")
+    publication_permission = gate_authority["consumer_permissions"].get("PUBLICATION")
     publication_state = (
         "NOT_AUTHORIZED"
         if publication_permission and publication_permission["status"] == "NOT_AUTHORIZED"
@@ -172,7 +171,9 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
         violations.append("CORE2A_READY_WITHOUT_CORE2_CUSTODY")
     if cores["CORE2B"]["status"] == "READY_FOR_TRANSFER" and (not core2a_pool or not core1b_release):
         violations.append("CORE2B_READY_WITHOUT_REQUIRED_UPSTREAM")
-    if readiness["publication_authorization"] != "NOT_IMPLIED":
+    if authority["release_authority"] != "NOT_GRANTED_BY_PROJECTION":
+        violations.append("PHYSICS_AUTHORITY_PROJECTION_GRANTED_RELEASE")
+    if gate_authority["publication_authorization"] != "NOT_IMPLIED":
         violations.append("ENGINEERING_GATE_PUBLICATION_AUTHORIZATION_NOT_INDEPENDENT")
     if publication_permission and publication_permission["status"] != "NOT_AUTHORIZED":
         violations.append("ENGINEERING_GATE_PUBLICATION_CONSUMER_AUTHORIZED")
@@ -194,7 +195,14 @@ def compile_stress_test(request: dict[str, Any]) -> dict[str, Any]:
             "scope_digest": scoped["scope_digest"],
             "scoped_evidence_receipt_digest": scoped["receipt_digest"],
         },
-        "curriculum_status": scoped["curriculum_status"],
+        "curriculum_status": authority["scope"]["curriculum_status"],
+        "authority_projection": {
+            "projection_digest": authority["projection_digest"],
+            "curriculum_binding_state": authority["scope"]["curriculum_binding_state"],
+            "curriculum_binding_id": authority["scope"]["curriculum_binding_id"],
+            "engineering_envelope_digest": gate_authority["envelope_digest"],
+            "release_authority": authority["release_authority"],
+        },
         "routing": {
             "target_route": route_value,
             "matched_rule_id": routing["matched_rule_id"],
