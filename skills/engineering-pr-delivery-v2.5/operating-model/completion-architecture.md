@@ -11,11 +11,11 @@ WP-02 Baton readiness + Takeover Certification      DELIVERED — CP-R003
 WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
 WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
 WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
-WP-06 Quality Procedure Library                     DELIVERED — CP-R007, exact-head CI pending
-WP-07 Human Communication                           NEXT after CP-R007 CI PASS
+WP-06 Quality Procedure Library                     DELIVERED — CP-R007
+WP-07 Human Communication                           CURRENT FRONTIER
 ```
 
-WP-06 pre-checkpoint implementation verification passed workflow **35146877546** on `c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868`, including compile, 7 root units and 118 synthetic stress tests.
+CP-R007 checkpoint/status verification passed workflow **35147172696** on `d695329c5bf69fa6c127ae2b47dc35d99227631b`, including compile, 7 root units and 118 synthetic stress tests.
 
 Conversation is acceleration, never custody.
 
@@ -126,21 +126,7 @@ migration
 github-delivery
 ```
 
-Applicable procedures require reason + review focus. Not-applicable procedures require a concrete reason but do not perform ceremonial review. Each blueprint defines:
-
-```text
-WHEN TO APPLY
-REQUIRED INPUTS
-PROCEDURE
-BEST-PRACTICE CHECKLIST
-ANTI-PATTERNS
-REQUIRED ARTIFACTS
-VERIFICATION
-QUALITY FINDING CLASSIFICATION
-TRUE HARD-STOP CONDITIONS
-OWNER REPORT
-SUCCESSOR HANDOVER
-```
+Applicable procedures require reason + review focus. Not-applicable procedures require a concrete reason but do not perform ceremonial review. Each blueprint defines WHEN TO APPLY, REQUIRED INPUTS, PROCEDURE, BEST-PRACTICE CHECKLIST, ANTI-PATTERNS, REQUIRED ARTIFACTS, VERIFICATION, QUALITY FINDING CLASSIFICATION, TRUE HARD-STOP CONDITIONS, OWNER REPORT and SUCCESSOR HANDOVER.
 
 The durable quality transaction is:
 
@@ -161,20 +147,42 @@ Deferred, Owner-review-required and unresolved findings transfer exactly through
 
 Report projection source-binds checkpoint QRV id/digest and exposes QRV state/findings/execution effect/Owner report/transfer as derived information; generated reports never become quality authority.
 
-WP-06 pre-checkpoint evidence:
+WP-06 evidence:
 
 ```text
-head c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
-workflow 35146877546 — PASS
-root units 7
-stress tests 118
+pre-checkpoint implementation
+  c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
+  workflow 35146877546 — PASS
+
+CP-R007 checkpoint/status
+  d695329c5bf69fa6c127ae2b47dc35d99227631b
+  workflow 35147172696 — PASS
+
+root units: 7
+stress tests: 118
 ```
+
+## Current WP-07 — Human Communication
+
+WP-07 is the sole material frontier. It must derive separate technical and Owner-facing communication from the same authoritative report projection without creating a second truth source.
+
+The Owner view must explain in plain language:
+
+- what the system can do now;
+- what it will not change;
+- why the current work exists;
+- what evidence exists and what is missing;
+- material quality concerns without relay jargon;
+- roadmap/progress changes;
+- exact next work;
+- any genuine Owner decision required.
+
+Technical status may retain relay terminology. Owner status must translate it rather than hiding it.
 
 ## Remaining target layers
 
 ```text
-CP-R007 exact-head validation                       REQUIRED
-WP-07 Human Communication / Owner projection       NEXT after CP-R007 PASS
+WP-07 Human Communication / Owner projection       CURRENT
 WP-08 Owner Change Intake over ODR transactions    WAITING
 WP-09 End-to-end A -> B -> C certification         WAITING
 WP-10 self-consistency audit                       WAITING
@@ -216,8 +224,8 @@ baton readiness / TC             COMPLETE — CP-R003
 strong qualification             COMPLETE — CP-R004
 full progress/handover           COMPLETE — CP-R005
 GitHub operations                COMPLETE — CP-R006
-quality procedures               COMPLETE — CP-R007, exact-head CI pending
-human communication              NEXT after CP-R007 PASS
+quality procedures               COMPLETE — CP-R007
+human communication              CURRENT — WP-07
 owner change intake              WAITING
 end-to-end certification         WAITING
 self-consistency audit           WAITING
