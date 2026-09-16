@@ -249,6 +249,8 @@ A technically strong source can still be unusable for reproduced learner-facing 
 
 ## 16. Provenance model
 
+**Provenance is not truth.** Provenance establishes custody, derivation history, and responsibility; semantic correctness must be evaluated separately.
+
 The target model is structurally compatible with W3C PROV:
 
 - **Entity** — source document, dataset, question, package, receipt, generated artifact;
