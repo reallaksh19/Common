@@ -13,6 +13,7 @@ def build(root:Path)->dict:
     state_path=root/"agents/relay/REPO_STATE.yaml";state=load_yaml(state_path)
     roadmap_path=root/state["roadmap"]["path"];progress_path=root/"agents/relay/roadmap/PROGRESS.yaml";issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
     active=state.get("active_ep") or {};ep=_maybe(root,active.get("path"));cp=_maybe(root,(state.get("last_checkpoint") or {}).get("path"));issues=load_yaml(issue_path) if issue_path.exists() else {"nodes":[],"relationships":[]}
+    qptr=(cp or {}).get("quality_review") or {};qpath=qptr.get("path");qrv=_maybe(root,qpath)
     projection={
         "schema_version":"relay-v2.5-report-projection",
         "generated_from":{
@@ -26,6 +27,8 @@ def build(root:Path)->dict:
             "ep_digest":yaml_digest(root/active["path"]) if active.get("path") and (root/active["path"]).exists() else None,
             "checkpoint_id":(state.get("last_checkpoint") or {}).get("id"),
             "checkpoint_digest":yaml_digest(root/(state.get("last_checkpoint") or {})["path"]) if (state.get("last_checkpoint") or {}).get("path") and (root/(state.get("last_checkpoint") or {})["path"]).exists() else None,
+            "quality_review_id":qptr.get("id"),
+            "quality_review_digest":yaml_digest(root/qpath) if qpath and (root/qpath).exists() else None,
         },
         "relay_state":state.get("relay_state"),
         "current_position":state.get("current_position") or {},
@@ -53,6 +56,6 @@ def build(root:Path)->dict:
             lep=_maybe(root,lane.get("ep_path")) or {}
             projection["parallel_lanes"].append({"lane_id":lane.get("id"),"work_package":lane.get("work_package"),"ep_id":lane.get("ep_id"),"branch":lane.get("branch"),"next_work":lep.get("next_work") or {}})
     if cp:
-        projection["checkpoint"]={"id":cp.get("checkpoint_id"),"implementation_result":cp.get("implementation_result") or {},"acceptance_results":cp.get("acceptance_results") or [],"validation_results":cp.get("validation_results") or [],"quality_findings":cp.get("quality_findings") or []}
+        projection["checkpoint"]={"id":cp.get("checkpoint_id"),"implementation_result":cp.get("implementation_result") or {},"acceptance_results":cp.get("acceptance_results") or [],"validation_results":cp.get("validation_results") or [],"quality_review":({"id":qrv.get("quality_review_id"),"overall_state":qrv.get("overall_state"),"execution_effect":qrv.get("execution_effect") or {},"findings":qrv.get("findings") or [],"owner_report":qrv.get("owner_report") or {},"successor_handover":qrv.get("successor_handover") or {}} if qrv else None),"quality_findings":cp.get("quality_findings") or []}
     else:projection["checkpoint"]=None
     return projection
