@@ -1,0 +1,88 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Relay V2.5 Zero-Context Reconstruction Projection
+type: object
+required:
+  - schema_version
+  - conversation_context_required
+  - relay_state
+  - roadmap
+  - progress
+  - execution
+  - evidence
+  - quality
+  - stop
+  - projection
+  - relay_readiness
+  - owner_decisions
+  - routes
+properties:
+  schema_version:
+    const: relay-v2.5-zero-context-reconstruction
+  conversation_context_required:
+    const: false
+  relay_state:
+    enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]
+  active_ep_state:
+    type: [string, 'null']
+  roadmap:
+    type: object
+  progress:
+    type: object
+  execution:
+    type: object
+  evidence:
+    type: object
+  quality:
+    type: object
+  stop:
+    type: object
+  projection:
+    type: object
+  relay_readiness:
+    type: object
+  owner_decisions:
+    type: array
+  routes:
+    type: array
+    items:
+      type: object
+      required:
+        - route_key
+        - route
+        - roadmap_position
+        - why_task_exists
+        - current_task
+        - owner_decisions
+        - input_authority_editability
+        - benchmarks_oracles
+        - scope
+        - quality_obligations
+        - evidence
+        - tests_required
+        - acceptance
+        - first_implementation_action
+        - stale_conditions
+        - next_work
+      properties:
+        route_key: {type: string, minLength: 1}
+        route: {type: object}
+        roadmap_position: {type: object}
+        why_task_exists: {type: string, minLength: 1}
+        current_task: {type: object}
+        owner_decisions: {type: array}
+        predecessor_established: {type: [object, 'null']}
+        remaining_uncertain: {type: array}
+        input_authority_editability: {type: array, minItems: 1}
+        benchmarks_oracles: {type: array, minItems: 1}
+        scope: {type: object}
+        quality_obligations: {type: object}
+        evidence: {type: object}
+        tests_required: {type: array, minItems: 1}
+        acceptance: {type: array, minItems: 1}
+        first_implementation_action: {type: [object, 'null']}
+        stale_conditions: {type: array}
+        next_work: {type: object}
+        projection_state: {type: object}
+  no_active_work:
+    type: [object, 'null']
+additionalProperties: true
