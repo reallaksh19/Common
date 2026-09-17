@@ -29,9 +29,9 @@ report = compile_report()
 assert report["source_snapshot"]["pr_number"] == 383
 assert report["source_snapshot"]["head_sha"] == "e92481f6e03a8bb49a55f568b03cba7c12fb942a"
 assert report["source_snapshot"]["source_gate_count"] == 43
-assert report["counts"]["migration_gap_count"] == 26
+assert report["counts"]["migration_gap_count"] == 24
 assert report["counts"]["structural_minimums_satisfied_count"] == 0
-assert report["counts"]["structural_minimums_blocked_count"] == 26
+assert report["counts"]["structural_minimums_blocked_count"] == 24
 assert report["target_contract"]["minimums_derived_from_schema"] is True
 assert report["target_contract"]["readiness_rule"] == "STRUCTURAL_PREFLIGHT_NEVER_GRANTS_ENGINEERING_READINESS"
 
@@ -46,6 +46,8 @@ assert "PHY-GRAV-FREE-FALL" not in entries
 assert "PHY-FORCE-NEWTON-LAWS" not in entries
 assert "PHY-KIN-2D-PROJECTILE" not in entries
 assert "PHY-KIN-RELATIVE-2D" not in entries
+assert "PHY-WORK-ENERGY-POWER" not in entries
+assert "PHY-ENERGY-CONSERVATION-LAW" not in entries
 
 for row in report["entries"]:
     failures = [field for field, minimum in row["v3_minimums"].items() if row["source_counts"][field] < minimum]
