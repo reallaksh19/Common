@@ -27,13 +27,13 @@ CP-R008  WP-07 Human Communication                  COMPLETE
    |
 CP-R009  WP-08 Owner Change Intake                  COMPLETE
    |
-CP-R010  WP-09 End-to-end Relay Certification       COMPLETE PENDING EXACT-HEAD CI
+CP-R010  WP-09 End-to-end Relay Certification       COMPLETE
    |
    v
-WP-10    Self-consistency Audit                     NEXT AFTER CP-R010 CI PASS
+WP-10    Self-consistency Audit                     CURRENT FRONTIER
 ```
 
-WP-09 pre-checkpoint implementation passed workflow **35192108782** on head `3ff5b26281078822c9965c4048c5f6b3bc8c851d`: compile PASS, 7 root units PASS, 135 repository-neutral synthetic stress tests PASS.
+CP-R010 checkpoint/status verification passed workflow **35192617156** on head `669ab0346976df3e331d4975c65185e4125f0b45`: compile PASS, 7 root units PASS, dedicated synthetic stress suite PASS.
 
 ## Progress Basis
 
@@ -48,12 +48,12 @@ WP-09 pre-checkpoint implementation passed workflow **35192108782** on head `3ff
 | WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
 | WP-07 Human Communication | 6 | COMPLETE — CP-R008 |
 | WP-08 Owner Change Intake | 3 | COMPLETE — CP-R009 |
-| WP-09 End-to-end Relay Certification Matrix | 5 | COMPLETE — CP-R010 PENDING EXACT-HEAD CI |
-| WP-10 Self-consistency Audit | 2 | WAITING FOR CP-R010 CI |
+| WP-09 End-to-end Relay Certification Matrix | 5 | COMPLETE — CP-R010 |
+| WP-10 Self-consistency Audit | 2 | CURRENT FRONTIER |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Conditional earned completion: 97%.** Formal WP-09 closure requires exact-head CI containing CP-R010 and this reconciliation.
+**Earned completion: 97%.** Progress remains acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -118,24 +118,25 @@ The strict repository-only boundary deliberately discards predecessor helper ret
 
 Lifecycle certification covers ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL; INITIALIZING remains covered by bootstrap/core tests. RECONCILING remains READ_ONLY, stale required projection remains not handover-ready, and IDLE/TERMINAL expose no material route.
 
-WP-09 pre-checkpoint evidence:
+WP-09 evidence:
 
 ```text
-implementation + docs
+pre-checkpoint implementation + docs
   3ff5b26281078822c9965c4048c5f6b3bc8c851d
   workflow 35192108782 — PASS
 
+CP-R010 checkpoint/status
+  669ab0346976df3e331d4975c65185e4125f0b45
+  workflow 35192617156 — PASS
+
 root units: 7
-stress tests: 135
+stress tests: 135 on the pre-checkpoint implementation; checkpoint/status suite unchanged except completion artifacts
 ```
 
 ## Remaining dependency topology
 
 ```text
-CP-R010 exact-head verification
-   |
-   v
-WP-10 Self-consistency Audit
+WP-10 Self-consistency Audit          CURRENT
    |
    v
 WP-11 PR Readiness
