@@ -34,6 +34,8 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/ExactProduct/contracts/validate_contracts.py'
       - name: Run C-L exact-product falsifiers
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_product.py'
+      - name: Exercise additive electron-transfer primitive
+        run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_electron_transfer_primitive.py'
       - name: Realize and validate exact Core1/Core2 PDFs
         run: python 'Grade 9/V2/Chemistry/ExactProduct/tests/test_chemistry_exact_realization.py'
       - name: Prove no learner-facing identifier leak and no label-only primitive

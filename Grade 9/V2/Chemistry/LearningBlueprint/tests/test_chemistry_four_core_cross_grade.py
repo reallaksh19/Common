@@ -65,12 +65,13 @@ class ChemistryFourCoreCrossGradeTests(unittest.TestCase):
                     authority = compile_core_authority(
                         mode,
                         "TEST_ONLY",
-                        payloads()[mode],
+                        payloads(gate)[mode],
                         packet,
                         realized,
                         authority_id=f"CHEM-CORE-AUTH-CROSS-GRADE-{gate['cbse_ref']['grade']}-{mode}",
                         payload_ref=f"tests/cross-grade-{mode.lower()}.json",
                     )
+                    self.assertEqual(authority["representation_closure"]["status"], "PASS")
                     scope = scope_for(authority, audit, audit_ref)
                     custody = compile_core_product_custody(
                         request,

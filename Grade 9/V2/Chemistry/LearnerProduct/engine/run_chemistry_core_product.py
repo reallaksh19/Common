@@ -12,10 +12,21 @@ HERE = Path(__file__).resolve()
 LP_ROOT = HERE.parents[1]
 CHEM_ROOT = LP_ROOT.parent
 sys.path.insert(0, str(CHEM_ROOT / "LearningBlueprint" / "engine"))
+sys.path.insert(0, str(CHEM_ROOT / "ExactProduct" / "engine"))
+
+from chemistry_electron_transfer_primitive import install as install_electron_transfer_primitive  # noqa: E402
+from chemistry_runtime_fact_parameter_bridge import install as install_runtime_fact_parameter_bridge  # noqa: E402
+
+# Additive C-H runtime capability. These installs provide renderer capability and
+# governed parameter consumption only; they never select a primitive or author
+# scientific facts. Selection/facts remain upstream governed representation authority.
+install_electron_transfer_primitive()
+install_runtime_fact_parameter_bridge()
 
 from compile_chemistry_core_authority import digest as semantic_digest  # noqa: E402
 from compile_chemistry_core_product_custody import digest_without  # noqa: E402
-from render_chemistry_a_content_first import render_core1a_content_first, render_core2a_content_first  # noqa: E402
+from render_chemistry_core1a_review import render_core1a_content_first  # noqa: E402
+from render_chemistry_a_content_first import render_core2a_content_first  # noqa: E402
 from render_chemistry_static_b_product import render_static_b_product  # noqa: E402
 from preflight_chemistry_core_product import run_core_product_preflight  # noqa: E402
 
@@ -66,7 +77,7 @@ def run_core_product(
     elif mode == "CORE2A":
         metrics = render_core2a_content_first(payload.get("source_plan"), payload.get("challenge_plan"), payload["representation_bundle"], policy, pdf_path)
     elif mode in {"CORE1B", "CORE2B"}:
-        metrics = render_static_b_product(mode, payload, pdf_path)
+        metrics = render_static_b_product(mode, payload, policy, pdf_path)
     else:
         raise ValueError("CHEM_CORE_RUN_MODE_INVALID")
 

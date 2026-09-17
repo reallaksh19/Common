@@ -87,17 +87,70 @@ def bucket():
     }
 
 
-def payloads():
+def _representation_fixture(gate):
+    engineering_refs = [row["representation_id"] for row in gate.get("representations", [])]
+    concrete = [f"REP-TEST-CONCRETE-{index:02d}" for index, _ in enumerate(engineering_refs, 1)]
+    # A renderable representation fixture is required now that the B-layer test
+    # proves physical closure rather than only identifier custody. The synthetic
+    # electron-transfer rows are test data; they do not define production authority.
+    representations = [
+        {
+            "representation_id": ref,
+            "primitive_id": "ELECTRON_TRANSFER_LEDGER",
+            "chemical_entities": ["X", "X⁺", "Y", "Y⁻"],
+            "notation_tokens": ["X", "X⁺", "Y", "Y⁻"],
+            "source_semantic_data": {
+                "chemical_entities": ["X", "X⁺", "Y", "Y⁻"],
+                "verification_requirements": ["Check that electron loss equals electron gain."],
+                "oxidation_states": [
+                    {"element":"X","before":0,"after":1,"before_species":"X","after_species":"X⁺","electron_count":1},
+                    {"element":"Y","before":0,"after":-1,"before_species":"Y","after_species":"Y⁻","electron_count":1},
+                ],
+            },
+            "instructional_job": "Track a source-authorized before/after state change and its electron count.",
+            "attention_target": "State direction, electron direction and equal exchange.",
+            "learner_action_expected": "Compare both rows and verify equal electron exchange.",
+            "condition_exception_context": [],
+            "species_roles": [],
+            "accessibility_text": "Synthetic test ledger with one electron lost and one electron gained.",
+        }
+        for ref in concrete
+    ]
+    bundle = {
+        "bundle_id": "TEST-REP-BUNDLE",
+        "representations": representations,
+    }
+    bindings = [
+        {
+            "representation_ref": rep_ref,
+            "engineering_representation_refs": [engineering_ref],
+        }
+        for rep_ref, engineering_ref in zip(concrete, engineering_refs)
+    ]
+    return concrete, bundle, bindings
+
+
+def payloads(gate=None):
+    gate = gate or REGISTRY["subtopic_gates"][0]
+    rep_refs, rep_bundle, bindings = _representation_fixture(gate)
     return {
         "CORE1A": {
-            "manuscript":{"manuscript_id":"TEST-MANUSCRIPT","buckets":[{"learning_atoms":[{"atom_id":"ATOM-1"}]}]},
-            "representation_bundle":{"bundle_id":"TEST-REP-BUNDLE"}
+            "manuscript":{
+                "manuscript_id":"TEST-MANUSCRIPT",
+                "buckets":[{
+                    "learning_atoms":[{"atom_id":"ATOM-1"}],
+                    "teaching_sections":[{"representation_refs":rep_refs}],
+                }],
+            },
+            "representation_bundle":copy.deepcopy(rep_bundle),
+            "representation_bindings":copy.deepcopy(bindings),
         },
         "CORE1B": {
             "subject":"CHEMISTRY","delivery_mode":"STATIC","new_chemistry_refs":[],"module_ref":"MODULE-1","title":"Reconstruct the model",
             "instruction_bucket":bucket(),"capability_ref":"CAP-TEST","approved_capability_refs":["CAP-TEST"],
             "problem_family_ref":"PF-TEST","approved_problem_family_refs":["PF-TEST"],
-            "used_representation_refs":["REP-TEST"],"approved_representation_refs":["REP-TEST"],
+            "used_representation_refs":rep_refs,"approved_representation_refs":rep_refs,
+            "representation_bundle":copy.deepcopy(rep_bundle),"representation_bindings":copy.deepcopy(bindings),
             "task_prompt":"Explain the relationship and show the decisive chemical reasoning.",
             "canonical_answer":"The response must preserve the stated chemical identity and apply the governing relationship consistently.",
             "check":"Re-read the givens and independently verify the final relationship.","help_mode":"PROGRESSIVE_FIXED",
@@ -109,13 +162,21 @@ def payloads():
             ],"workspace_lines":5
         },
         "CORE2A": {
-            "source_plan":{"items":[{"item_id":"ITEM-1"}]},"challenge_plan":None,"representation_bundle":{"bundle_id":"TEST-REP-BUNDLE"}
+            "source_plan":{"items":[{
+                "item_id":"ITEM-1",
+                "learner_support":{"see_the_idea":{"pre_taught_representation_refs":rep_refs}},
+                "core1a_binding":{"h2_evidence_refs":[]},
+            }]},"challenge_plan":None,
+            "representation_bundle":copy.deepcopy(rep_bundle),
+            "representation_bindings":copy.deepcopy(bindings),
         },
         "CORE2B": {
             "subject":"CHEMISTRY","delivery_mode":"STATIC","new_chemistry_refs":[],
             "learner_conditioning":{"schema_version":"4.0.0","mode":"KNOWLEDGE_PERCENT","knowledge_percent":50},
             "selected_item_id":"ITEM-1","legal_core2a_item_ids":["ITEM-1"],"question_mode":"FROZEN_SOURCE_ITEM",
             "source_item":{"item_id":"ITEM-1","source_locator":"Synthetic source used only for compiler testing","stem":"Determine the chemically consistent conclusion from the stated evidence.","canonical_answer":"The conclusion follows from the preserved chemical relationship.","problem_family_ref":"PF-TEST","provenance_class":"SOURCE_CORE2"},
+            "used_representation_refs":rep_refs,"approved_representation_refs":rep_refs,
+            "representation_bundle":copy.deepcopy(rep_bundle),"representation_bindings":copy.deepcopy(bindings),
             "help_mode":"PROGRESSIVE_FIXED","help":[
                 {"level":"H1_ORIENT","text":"State the target before doing any manipulation."},
                 {"level":"H2_STRUCTURE","text":"Separate the decisive evidence from descriptive detail."},
@@ -156,7 +217,7 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
         return [row["obligation_id"] for row in self.packet["obligations"] if mode in row["authorized_modes"]]
 
     def authority_for(self, mode):
-        return compile_core_authority(mode,"TEST_ONLY",payloads()[mode],self.packet,self.realized_for(mode),authority_id=f"CHEM-CORE-AUTH-FOUR-CORE-TEST-{mode}",payload_ref=f"tests/{mode.lower()}.json")
+        return compile_core_authority(mode,"TEST_ONLY",payloads(self.gate)[mode],self.packet,self.realized_for(mode),authority_id=f"CHEM-CORE-AUTH-FOUR-CORE-TEST-{mode}",payload_ref=f"tests/{mode.lower()}.json")
 
     def test_engineering_compiles_to_topic_neutral_obligations(self):
         self.assertEqual(self.packet["status"],"BLUEPRINT_OBLIGATIONS_READY")
@@ -168,6 +229,7 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
     def test_all_four_modes_compile_authority_and_current_custody(self):
         for mode in ("CORE1A","CORE1B","CORE2A","CORE2B"):
             authority = self.authority_for(mode)
+            self.assertEqual(authority["representation_closure"]["status"], "PASS")
             scope = scope_for(authority,self.audit,self.audit_ref)
             custody = compile_core_product_custody(self.request,self.manifest,self.packet,scope,authority,registry=REGISTRY,source_audit_payloads=self.audit_payloads)
             self.assertEqual(custody["status"],"CORE_PRODUCT_CUSTODY_READY")
@@ -177,8 +239,29 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
         realized = self.realized_for("CORE1A")
         required = next(row["obligation_id"] for row in self.packet["obligations"] if row["direct"] and "CORE1A" in row["required_realization_modes"])
         with self.assertRaises(ChemistryCoreAuthorityError) as ctx:
-            compile_core_authority("CORE1A","TEST_ONLY",payloads()["CORE1A"],self.packet,[x for x in realized if x != required],authority_id="CHEM-CORE-AUTH-FOUR-CORE-NEGATIVE",payload_ref="tests/negative.json")
+            compile_core_authority("CORE1A","TEST_ONLY",payloads(self.gate)["CORE1A"],self.packet,[x for x in realized if x != required],authority_id="CHEM-CORE-AUTH-FOUR-CORE-NEGATIVE",payload_ref="tests/negative.json")
         self.assertEqual(ctx.exception.code,"CHEM_CORE_AUTH_REQUIRED_OBLIGATION_MISSING")
+
+    def test_required_core1a_representation_must_be_used(self):
+        payload = payloads(self.gate)["CORE1A"]
+        payload["manuscript"]["buckets"][0]["teaching_sections"][0]["representation_refs"] = []
+        with self.assertRaises(ChemistryCoreAuthorityError) as ctx:
+            compile_core_authority("CORE1A","TEST_ONLY",payload,self.packet,self.realized_for("CORE1A"),authority_id="CHEM-CORE-AUTH-REP-MISSING",payload_ref="tests/rep-missing.json")
+        self.assertEqual(ctx.exception.code,"CHEM_CORE_AUTH_REQUIRED_REPRESENTATION_UNREALIZED")
+
+    def test_representation_binding_cannot_expand_engineering_authority(self):
+        payload = payloads(self.gate)["CORE1A"]
+        payload["representation_bindings"][0]["engineering_representation_refs"] = ["REP-UNAUTHORIZED-TEST"]
+        with self.assertRaises(ChemistryCoreAuthorityError) as ctx:
+            compile_core_authority("CORE1A","TEST_ONLY",payload,self.packet,self.realized_for("CORE1A"),authority_id="CHEM-CORE-AUTH-REP-UNAUTHORIZED",payload_ref="tests/rep-unauthorized.json")
+        self.assertEqual(ctx.exception.code,"CHEM_CORE_AUTH_REPRESENTATION_ASSET_UNAUTHORIZED")
+
+    def test_used_representation_must_have_engineering_binding(self):
+        payload = payloads(self.gate)["CORE1B"]
+        payload["representation_bindings"] = []
+        with self.assertRaises(ChemistryCoreAuthorityError) as ctx:
+            compile_core_authority("CORE1B","TEST_ONLY",payload,self.packet,self.realized_for("CORE1B"),authority_id="CHEM-CORE-AUTH-REP-UNBOUND",payload_ref="tests/rep-unbound.json")
+        self.assertEqual(ctx.exception.code,"CHEM_CORE_AUTH_REPRESENTATION_USE_UNBOUND")
 
     def test_stale_obligation_packet_cannot_establish_custody(self):
         authority = self.authority_for("CORE2A")
@@ -192,16 +275,13 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
         stress = make_production_audit(self.gate,role="STRESS_TEST_SOURCE_AUDIT")
         stress_packet = compile_blueprint_obligations(self.request,self.manifest,registry=REGISTRY,source_audit_payloads={self.audit_ref:stress})
         mode = "CORE2A"
-        authority = compile_core_authority(mode,"TEST_ONLY",payloads()[mode],stress_packet,[row["obligation_id"] for row in stress_packet["obligations"] if mode in row["authorized_modes"]],authority_id="CHEM-CORE-AUTH-STRESS-NEGATIVE",payload_ref="tests/stress.json")
+        authority = compile_core_authority(mode,"TEST_ONLY",payloads(self.gate)[mode],stress_packet,[row["obligation_id"] for row in stress_packet["obligations"] if mode in row["authorized_modes"]],authority_id="CHEM-CORE-AUTH-STRESS-NEGATIVE",payload_ref="tests/stress.json")
         scope = scope_for(authority,stress,self.audit_ref)
         with self.assertRaises(ChemistryCoreProductCustodyError) as ctx:
             compile_core_product_custody(self.request,self.manifest,stress_packet,scope,authority,registry=REGISTRY,source_audit_payloads={self.audit_ref:stress})
         self.assertEqual(ctx.exception.code,"CHEM_CORE_CUSTODY_SOURCE_AUDIT_NOT_PRODUCTION")
 
     def test_static_b_modes_render_and_preflight_from_exact_custody(self):
-        # Blueprint-only CI intentionally installs only contract dependencies.
-        # Artifact realization is exercised here when render dependencies are present
-        # and is mandatory in the dedicated four-core workflow.
         try:
             from run_chemistry_core_product import run_core_product
         except ModuleNotFoundError as exc:
@@ -213,10 +293,14 @@ class ChemistryFourCoreCompilationTests(unittest.TestCase):
             scope = scope_for(authority,self.audit,self.audit_ref)
             custody = compile_core_product_custody(self.request,self.manifest,self.packet,scope,authority,registry=REGISTRY,source_audit_payloads=self.audit_payloads)
             with tempfile.TemporaryDirectory() as td:
-                render, preflight = run_core_product(custody,authority,payloads()[mode],Path(td))
+                render, preflight = run_core_product(custody,authority,payloads(self.gate)[mode],Path(td))
                 self.assertEqual(preflight["status"],"PASS")
                 self.assertEqual(render["product_mode"],mode)
                 self.assertTrue((Path(td) / render["artifact"]["path"]).exists())
+                self.assertEqual(
+                    set(preflight["physical_representation_closure"]["physically_realized_representation_refs"]),
+                    set(authority["representation_closure"]["used_representation_refs"]),
+                )
 
     def test_generic_compilers_do_not_branch_on_topic_names(self):
         names = [

@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0.0",
+  "extension_id": "CHEM-C-H-RUNTIME-FACTS-ELECTRON-TRANSFER-v1",
+  "subject": "CHEMISTRY",
+  "additive_only": true,
+  "adapter_authored_facts_forbidden": true,
+  "fact_packets": [
+    {
+      "fact_packet_id": "CHEM-REP-FACT-ELECTRON-TRANSFER-ARROWS-v1",
+      "semantic_instance_ref": "CHEM-SEM-INSTANCE-REDOX-CUO-H2-v1",
+      "source_authority_kind": "ENGINEERING_OBLIGATION",
+      "source_gate_id": "CHEM-REDOX-OXIDATION",
+      "source_representation_ref": "REP-CHEM-ELECTRON-TRANSFER-ARROWS",
+      "source_equation_refs": [
+        "EQ-CHEM-REDOX-TRANSFER"
+      ],
+      "fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
+      "parameters": {
+        "chemical_entities": [
+          "CuO(s) + H2(g) -> Cu(s) + H2O(l)"
+        ],
+        "oxidation_states": [
+          {
+            "element": "Cu",
+            "before": 2,
+            "after": 0,
+            "before_species": "CuO(s)",
+            "after_species": "Cu(s)",
+            "electron_count": 2
+          },
+          {
+            "element": "H",
+            "before": 0,
+            "after": 1,
+            "before_species": "H2(g)",
+            "after_species": "H2O(l)",
+            "electron_count": 2
+          }
+        ],
+        "checks": [
+          "Check total electrons lost by reducing agent equals total electrons gained by oxidizing agent"
+        ]
+      }
+    },
+    {
+      "fact_packet_id": "CHEM-REP-FACT-ELECTRON-TRANSFER-ZN-CU-v1",
+      "semantic_instance_ref": "CHEM-SEM-INSTANCE-REDOX-ZN-CU-v1",
+      "source_authority_kind": "BLUEPRINT_CONTENT_AUTHORITY",
+      "source_gate_id": "CHEM-REDOX-OXIDATION",
+      "source_representation_ref": "REP-CHEM-ELECTRON-TRANSFER-ARROWS",
+      "source_authority_ref": "CORE1A-STUDY-NOTE-REDOX-STATE-AGENT-v1",
+      "source_content_object_refs": [
+        "OBJ-OVERALL-EQ",
+        "OBJ-STATE-LANE",
+        "OBJ-ZN-HALF",
+        "OBJ-CU-HALF",
+        "OBJ-E-VERIFY",
+        "OBJ-E-WORKED"
+      ],
+      "fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
+      "parameters": {
+        "chemical_entities": [
+          "Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)"
+        ],
+        "oxidation_states": [
+          {
+            "element": "Zn",
+            "before": 0,
+            "after": 2,
+            "before_species": "Zn(s)",
+            "after_species": "Zn²⁺(aq)",
+            "electron_count": 2
+          },
+          {
+            "element": "Cu",
+            "before": 2,
+            "after": 0,
+            "before_species": "Cu²⁺(aq)",
+            "after_species": "Cu(s)",
+            "electron_count": 2
+          }
+        ],
+        "checks": [
+          "Check 2e⁻ lost by Zn equals 2e⁻ gained by Cu²⁺"
+        ]
+      }
+    }
+  ]
+}

@@ -28,3 +28,5 @@ jobs:
         run: python 'Grade 9/V2/Chemistry/Representation/contracts/validate_contracts.py'
       - name: Run C-H representation falsifiers
         run: python 'Grade 9/V2/Chemistry/Representation/tests/test_chemistry_representations.py'
+      - name: Validate additive electron-transfer representation authority
+        run: python 'Grade 9/V2/Chemistry/Representation/tests/test_chemistry_electron_transfer_extension.py'

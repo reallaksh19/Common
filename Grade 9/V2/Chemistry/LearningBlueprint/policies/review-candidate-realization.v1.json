@@ -1,0 +1,74 @@
+{
+  "policy_id": "CHEM-REVIEW-CANDIDATE-REALIZATION-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "GENERIC_LEARNER_PRODUCT_REALIZATION_GATE",
+  "authority_inputs": [
+    "policies/v5-study-product-quality-policy.json",
+    "policies/v7-product-assurance-policy.json",
+    "policies/product-control-consolidation.v1.json"
+  ],
+  "governing_principles": [
+    "STRUCTURAL_PDF_PASS_IS_NOT_REVIEW_READINESS",
+    "CONTENT_CLOSURE_PRECEDES_COMPOSITION",
+    "PAGE_COUNT_IS_NOT_A_QUALITY_METRIC",
+    "LAYOUT_MAY_ORGANIZE_AUTHORIZED_CONTENT_BUT_MAY_NOT_AUTHOR_CHEMISTRY",
+    "WORKSPACE_IS_PRODUCTIVE_ONLY_WHEN_BOUND_TO_A_LEARNER_ACTION",
+    "LOCAL_VISUAL_OBLIGATIONS_REMAIN_LOCAL",
+    "A_AND_B_PRODUCTS_REQUIRE_DISTINCT_LEARNER_EXPERIENCES"
+  ],
+  "maturity_states": [
+    "ENGINEERING_PROOF",
+    "MACHINE_REVIEW_CANDIDATE",
+    "HUMAN_REVIEW_PENDING",
+    "RELEASE_AUTHORIZED"
+  ],
+  "review_candidate_requirements": {
+    "standard_page_role_required": true,
+    "actual_render_trace_required": true,
+    "content_active_area_uses_v5_policy": true,
+    "workspace_active_area_uses_v5_policy": true,
+    "noncover_major_semantic_surface_min": 1,
+    "plain_document_layout_forbidden": true,
+    "unjustified_blank_area_forbidden": true,
+    "task_bound_workspace_required": true,
+    "mode_distinct_surface_jobs_required": true,
+    "local_visual_closure_inherited_from_product_control": true,
+    "answer_visibility_inherited_from_render_policy": true,
+    "human_release_may_not_be_inferred": true
+  },
+  "major_semantic_surface_kinds": [
+    "CONCEPT_PANEL",
+    "QUESTION_PANEL",
+    "VISUAL_PANEL",
+    "WORKSPACE_PANEL",
+    "CLUE_PANEL",
+    "ANSWER_PANEL",
+    "VERIFICATION_PANEL",
+    "ACTION_PANEL",
+    "ROUTE_PANEL"
+  ],
+  "standard_page_roles": [
+    "COVER",
+    "ROUTE_OR_MAP",
+    "CONCEPT_EXPLANATION",
+    "RULE_OR_DERIVATION",
+    "REPRESENTATION",
+    "TTU_RECONSTRUCTION",
+    "WORKED_EXAMPLE",
+    "MISCONCEPTION_OR_BOUNDARY",
+    "PRACTICE",
+    "QUESTION_EPISODE",
+    "WORKSPACE",
+    "SOLUTION",
+    "SUMMARY_OR_HANDOUT"
+  ],
+  "mode_required_surface_jobs": {
+    "CORE1A": ["CONCEPT_PANEL", "ACTION_PANEL"],
+    "CORE1B": ["QUESTION_PANEL", "WORKSPACE_PANEL", "CLUE_PANEL", "ANSWER_PANEL", "VERIFICATION_PANEL"],
+    "CORE2A": ["QUESTION_PANEL", "WORKSPACE_PANEL", "ANSWER_PANEL", "VERIFICATION_PANEL"],
+    "CORE2B": ["QUESTION_PANEL", "ACTION_PANEL", "WORKSPACE_PANEL", "CLUE_PANEL", "ANSWER_PANEL", "VERIFICATION_PANEL"]
+  },
+  "review_candidate_status": "MACHINE_REVIEW_CANDIDATE",
+  "failure_status": "ENGINEERING_PROOF"
+}

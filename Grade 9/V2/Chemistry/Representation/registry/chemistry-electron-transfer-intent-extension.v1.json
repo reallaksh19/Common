@@ -1,0 +1,14 @@
+{
+  "extension_id": "CHEM-REP-INTENT-ELECTRON-TRANSFER-EXT-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "extends_policy": "CHEM-ENGINEERING-REPRESENTATION-INTENT-v1",
+  "additive_only": true,
+  "representation_type_rules": {
+    "ELECTRON_TRANSFER_DIAGRAM": {
+      "status": "RESOLVED",
+      "capability_ref": "CAP-TRACK-OXIDATION-STATE",
+      "primitive_id": "ELECTRON_TRANSFER_LEDGER"
+    }
+  }
+}

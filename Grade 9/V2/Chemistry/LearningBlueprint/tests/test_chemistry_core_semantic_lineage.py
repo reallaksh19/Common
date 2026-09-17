@@ -76,7 +76,10 @@ def payload():
         "manuscript": {
             "manuscript_id": "TEST-SEMANTIC-MANUSCRIPT",
             "buckets": [
-                {"learning_atoms": [{"atom_id": "ATOM-SEMANTIC-1"}]}
+                {
+                    "learning_atoms": [{"atom_id": "ATOM-SEMANTIC-1"}],
+                    "teaching_sections": [{"representation_refs": []}],
+                }
             ],
         },
         "representation_bundle": {"bundle_id": "TEST-SEMANTIC-REP-BUNDLE"},

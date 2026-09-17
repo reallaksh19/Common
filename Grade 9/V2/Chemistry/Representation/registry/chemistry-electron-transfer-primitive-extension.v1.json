@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "extension_id": "CHEM-C-H-ELECTRON-TRANSFER-EXT-v1",
+  "subject": "CHEMISTRY",
+  "extends_primitive_registry": "CHEM-C-H-PRIMITIVES-v1",
+  "extends_page_intent_profile": "CHEM-C-H-PAGE-INTENT-v1",
+  "renderer_selection_forbidden": true,
+  "primitives": [
+    {
+      "primitive_id": "ELECTRON_TRANSFER_LEDGER",
+      "capability_refs": [
+        "CAP-TRACK-OXIDATION-STATE",
+        "CAP-TRACK-REACTING-SPECIES",
+        "CAP-VERIFY-CHEMICAL-REPRESENTATION"
+      ],
+      "instructional_job": "Externalize source-authorized electron loss and gain as a balanced ledger tied to before/after species states.",
+      "attention_target": "Numerical electron loss and gain for the tracked species, with total electron loss equal to total electron gain.",
+      "translation_obligation": "SYMBOLIC_TO_LEDGER",
+      "representation_level_from": "SYMBOLIC",
+      "representation_level_to": "SYMBOLIC",
+      "learner_action": "Read each tracked state change, record electrons lost or gained, then verify total loss equals total gain.",
+      "renderer_constraints": [
+        "STATE_VALUES_EXPLICIT",
+        "ELECTRON_COUNT_EXPLICIT",
+        "LOSS_GAIN_DIRECTION_FROM_STATE_CHANGE",
+        "ELECTRON_EXCHANGE_BALANCED",
+        "SPECIES_IDENTITY_STABLE"
+      ],
+      "runtime_fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
+      "topic_scope_refs": [],
+      "decorative": false,
+      "accessibility_pattern": "Electron-transfer ledger showing source-authorized before/after states, electrons lost or gained, and the electron-balance check."
+    }
+  ],
+  "conditional_primitives": {
+    "ELECTRON_TRANSFER_EVIDENCE": "ELECTRON_TRANSFER_LEDGER"
+  }
+}
