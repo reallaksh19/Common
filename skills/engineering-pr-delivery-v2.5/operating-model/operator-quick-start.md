@@ -1,0 +1,162 @@
+# Engineering Relay V2.5 operator quick-start
+
+## Goal
+
+Recover and operate a V2.5 relay from repository state alone. Do not use prior chat as required execution context.
+
+## 1. Discover the relay deterministically
+
+Start from the repository root:
+
+```text
+AGENTS.md
+  ↓
+agents/relay/REPO_STATE.yaml
+  ↓
+referenced roadmap / progress / issue graph
+  ↓
+current serial EP or approved parallel plan
+  ↓
+referenced predecessor / continuity / certification evidence
+```
+
+Do not scan for the newest handover file, infer the active branch from issue comments, or guess the current EP.
+
+## 2. Run repository-level admission
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/cold_start_check.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/zero_context_reconstruction.py <repo-root>
+```
+
+`validate_relay_conformance.py` proves the durable repository contract is coherent. `cold_start_check.py` is a recovery diagnostic. `zero_context_reconstruction.py` derives what a successor should be able to explain from repository state.
+
+A green repository is not yet permission for an arbitrary incoming candidate to write.
+
+## 3. Resolve the current route
+
+For ACTIVE/SERIAL work, resolve the one current EP. For PARALLEL work, resolve the lane from the checked-out branch/worktree. For IDLE/TERMINAL there is no material route.
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_route.py <repo-root>
+```
+
+If the route is ambiguous or the checkout does not belong to an approved lane, do not perform material writes.
+
+## 4. Independently qualify the incoming candidate
+
+The outgoing baton can be `BATON_READY` before the candidate exists. The incoming candidate must then produce current repository-only evidence:
+
+```text
+DSTEP-* contract
+   ↓
+DISC-* receipt
+   ↓
+QSET-* / QUAL-* when phase or material qualification boundary requires it
+   ↓
+TC-* Takeover Certification
+```
+
+Run:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
+```
+
+Only run qualification validators when the route actually requires the corresponding objects. Candidate self-certification is invalid.
+
+## 5. Gate every material write on live state
+
+Immediately before material writes:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
+```
+
+`MATERIAL_WRITE_READY` is runtime-derived. A persisted `material_authority: WRITE` or ACTIVE lifecycle is not enough.
+
+If base state moved, follow the drift contract. `DISJOINT` may preserve writes; qualified-boundary movement needs required confirmation; `OVERLAPPING | UNKNOWN` withhold write authority until reconciliation.
+
+## 6. Execute only the current slice
+
+Follow the current EP exactly:
+
+- use only current-slice ready inputs/oracles;
+- stay inside `allowed_write` and protected/prohibited boundaries;
+- execute ordered implementation steps;
+- run only quality procedures routed as applicable;
+- preserve exact acceptance/test/oracle evidence;
+- stop on true hard-stop conditions rather than converting ordinary quality/evidence gaps into blockers.
+
+Defined future work is not executable work.
+
+## 7. Checkpoint reality and hand over
+
+Before custody transfer:
+
+```text
+implementation result
+  ↓
+applicable tests/oracles
+  ↓
+QRV-* quality review
+  ↓
+CP-* checkpoint
+  ↓
+roadmap/progress/issue reconciliation
+  ↓
+frontier recomputation
+  ↓
+successor EP / approved parallel route / join / replan / terminal disposition
+  ↓
+QSET-* if fresh qualification is required
+  ↓
+BATON_READY
+  ↓
+required external projection convergence
+```
+
+Render the disposable human views only after source objects are reconciled:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_status.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_handover.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_owner_status.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_technical_status.py <repo-root>
+```
+
+## 8. What the successor must be able to answer without chat
+
+The repository must provide enough information to answer, materially and specifically:
+
+- Why does this task exist and where is it in the roadmap?
+- Which Owner decisions govern it?
+- What did predecessors establish, and what remains uncertain?
+- Which inputs are editable versus authoritative?
+- Which benchmark/oracle proves the result?
+- What may change, what is protected, and what is prohibited?
+- What evidence exists or is missing?
+- Which tests/quality procedures are required?
+- What is the first exact implementation action?
+- What makes the current EP stale or removes write authority?
+- What must happen next after this slice?
+
+If any material answer requires prior conversation, the baton is incomplete.
+
+## 9. Maintenance / release checks for Common
+
+Within the Common repository itself:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
+python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests -p 'test*.py' -v
+python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress -p 'test*.py' -v
+```
+
+The scoped GitHub workflow runs the same audit and test surfaces.
