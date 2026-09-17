@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "MATH-ALL-CORE-EQDIST-OWNER-WAIVER-v1",
+  "subject": "MATHEMATICS",
+  "grade": 9,
+  "subtopic_id": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+  "subtopic_title": "Point on an Axis Equidistant from Two Fixed Points",
+  "purpose": "PRACTICE",
+  "calibration": {
+    "learner_knowledge_percent": null,
+    "owner_waiver": {
+      "owner_ref": "CHAT-OWNER-APPROVAL-2026-09-14T11:40:41Z",
+      "reason": "Owner instructed the run to proceed after the missing-calibration gate was explicitly reported; the previously exercised reduced-support M4 control set is now bound as an explicit owner control rather than synthetic learner evidence.",
+      "selected_core2a_support_profile": "REDUCED_SUPPORT",
+      "selected_core2a_max_demand_level": "M4_HIDDEN_STRUCTURE",
+      "selected_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+    },
+    "is_learner_evidence": false,
+    "is_mastery_claim": false
+  },
+  "core1": {
+    "status": "AUTHORITY_READY",
+    "difficulty_badge": "MEDIUM",
+    "governing_sentence": "Position first; distance second.",
+    "approved_capability_refs": [
+      "CAP-COORD-PAIR",
+      "CAP-DISTANCE-FORMULA",
+      "CAP-EQUIDISTANT-EQUATION",
+      "CAP-SOLVE-REDUCED-LINEAR"
+    ],
+    "concept_boundary": "Averaging x-coordinates is only a symmetry shortcut; the general method comes from the axis constraint plus equality of squared distances."
+  },
+  "core1a": {
+    "status": "ASSIMILATION_COMPILED",
+    "difficulty_badge": "MEDIUM",
+    "learner_knowledge_consulted": false,
+    "teaching_sequence": [
+      "SEE_THE_AXIS_CONSTRAINT",
+      "BUILD_TWO_RIGHT_TRIANGLE_DISTANCE_MODELS",
+      "SET_SQUARED_DISTANCES_EQUAL",
+      "EXPAND_AND_CANCEL_X_SQUARED",
+      "SOLVE_THE_REDUCED_LINEAR_EQUATION",
+      "CONTRAST_SYMMETRY_SHORTCUT_WITH_GENERAL_METHOD",
+      "CONNECT_TO_PERPENDICULAR_BISECTOR_LOCUS"
+    ],
+    "worked_anchor": {
+      "stem": "Find P on the x-axis equidistant from A(-1,4) and B(7,2).",
+      "equation": "(x+1)^2+16=(x-7)^2+4",
+      "reduced_equation": "16x=36",
+      "answer": "P=(9/4,0)",
+      "verification": "PA^2=PB^2=425/16"
+    }
+  },
+  "core1b": {
+    "status": "STATIC_CONSOLIDATION_COMPILED",
+    "delivery_mode": "STATIC",
+    "new_math_refs": [],
+    "block_kinds": [
+      "METHOD_COMPARISON",
+      "ERROR_CONTRAST",
+      "COMPLETION",
+      "FADED",
+      "CONTROLLED_VARIATION",
+      "CLOSE_INDEPENDENT",
+      "ANSWER_CHECK"
+    ],
+    "quality_claim": "The product asks the learner to reconstruct already authorised mathematics; it does not infer mastery or ingest runtime responses."
+  },
+  "core2": {
+    "status": "ASSESSMENT_INTELLIGENCE_READY",
+    "problem_family": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "recognition_cue": "axis constraint plus equal distances to two fixed points",
+    "hidden_state_or_event": "The unknown point is constrained to P=(x,0), so the two distances share one scalar unknown.",
+    "first_non_obvious_move": "Parameterise P=(x,0) before constructing distance expressions.",
+    "representation_switch": "coordinate description -> two squared-distance models -> reduced linear equation",
+    "common_wrong_chain": "Average the x-coordinates without checking whether the geometry has the symmetry that makes the shortcut valid.",
+    "check": "Substitute the solved coordinate into both squared distances and compare."
+  },
+  "core2a": {
+    "status": "LEGAL_POOL_COMPILED",
+    "purpose": "PRACTICE",
+    "support_profile": "REDUCED_SUPPORT",
+    "max_demand_level": "M4_HIDDEN_STRUCTURE",
+    "legal_items": [
+      {
+        "item_id": "EQ-D1",
+        "demand_level": "M0_DIRECT",
+        "slot": "GUIDED_DIRECT",
+        "stem": "P lies on the x-axis and is equidistant from A(-2,3) and B(4,3). Find P.",
+        "recognition_cue": "same-height fixed points plus x-axis constraint",
+        "representation_choice": "Use P=(x,0) and compare squared distances; symmetry may then be recognised as a shortcut.",
+        "first_non_obvious_move": "Write P=(x,0).",
+        "expert_solution_steps": [
+          "Set (x+2)^2+9=(x-4)^2+9.",
+          "Cancel the common vertical-distance term and expand.",
+          "12x=12, so x=1."
+        ],
+        "why_key_move_works": "Equal distances remain equal after squaring, and the shared vertical contribution cancels.",
+        "common_wrong_chain": "Write P=(x,y) and create an unnecessary two-variable problem.",
+        "verification": "Both squared distances are 18 at P=(1,0).",
+        "answer_check": "P=(1,0).",
+        "provenance_role": "GENERATED_FROM_CORE2_FAMILY"
+      },
+      {
+        "item_id": "EQ-R1",
+        "demand_level": "M2_REPRESENTATION_TRANSFER",
+        "slot": "REPRESENTATION_SHIFT",
+        "stem": "A coordinate diagram shows P constrained to the x-axis, A(-1,4), and B(7,2). Build and solve the equal-distance equation.",
+        "recognition_cue": "diagram rather than verbal family label",
+        "representation_choice": "Translate horizontal and vertical offsets in the diagram into two squared-distance expressions.",
+        "first_non_obvious_move": "Convert the diagram constraint to P=(x,0).",
+        "expert_solution_steps": [
+          "PA^2=(x+1)^2+16 and PB^2=(x-7)^2+4.",
+          "Set them equal and expand.",
+          "16x=36, so x=9/4."
+        ],
+        "why_key_move_works": "The coordinate diagram and the algebra describe the same two right-triangle distance models.",
+        "common_wrong_chain": "Read the x-coordinates only and average -1 and 7.",
+        "verification": "Both squared distances are 425/16.",
+        "answer_check": "P=(9/4,0).",
+        "provenance_role": "GENERATED_FROM_CORE2_FAMILY"
+      },
+      {
+        "item_id": "EQ-I1",
+        "demand_level": "M3_INVERSE_TARGET",
+        "slot": "REVERSED_TARGET",
+        "stem": "P=(2,0) is equidistant from A(-1,4) and B(k,2). Find the possible value(s) of k.",
+        "recognition_cue": "the point P is known but one fixed-point coordinate is unknown",
+        "representation_choice": "Build the two squared distances from the known P and solve for the missing coordinate.",
+        "first_non_obvious_move": "Treat k, not P, as the unknown in the same equidistance invariant.",
+        "expert_solution_steps": [
+          "PA^2=3^2+4^2=25.",
+          "PB^2=(2-k)^2+2^2.",
+          "Set (2-k)^2+4=25, giving (2-k)^2=21.",
+          "Therefore k=2±sqrt(21)."
+        ],
+        "why_key_move_works": "Inverse targeting changes which quantity is unknown but does not change the governing equal-distance relation.",
+        "common_wrong_chain": "Assume the answer must be the midpoint or force k to be an integer.",
+        "verification": "For either value, PB^2=21+4=25=PA^2.",
+        "answer_check": "k=2±sqrt(21).",
+        "provenance_role": "GENERATED_FROM_CORE2_FAMILY"
+      },
+      {
+        "item_id": "EQ-H1",
+        "demand_level": "M4_HIDDEN_STRUCTURE",
+        "slot": "HIDDEN_INFORMATION",
+        "stem": "A point P=(x,0) satisfies (x+3)^2+16=(x-5)^2+4. Interpret the equation geometrically and find P.",
+        "recognition_cue": "the equal-distance structure is encoded as an equation rather than stated in words",
+        "representation_choice": "Interpret each side as a squared distance from P to a fixed point.",
+        "first_non_obvious_move": "Recognise possible fixed points A(-3,4) and B(5,2).",
+        "expert_solution_steps": [
+          "Expand: x^2+6x+25=x^2-10x+29.",
+          "Cancel x^2 and solve 16x=4.",
+          "x=1/4, so P=(1/4,0)."
+        ],
+        "why_key_move_works": "The equation already encodes the invariant PA^2=PB^2; the task is to uncover the geometry before solving.",
+        "common_wrong_chain": "Treat the equation as context-free algebra and miss the distance interpretation.",
+        "verification": "Substituting x=1/4 makes both sides 425/16.",
+        "answer_check": "P=(1/4,0).",
+        "provenance_role": "GENERATED_FROM_CORE2_FAMILY"
+      }
+    ]
+  },
+  "core2b": {
+    "status": "STATIC_TRANSFER_COMPILED",
+    "delivery_mode": "STATIC",
+    "compile_ceiling": "M4_HIDDEN_STRUCTURE",
+    "selected_item_ids": [
+      "EQ-D1",
+      "EQ-R1",
+      "EQ-I1",
+      "EQ-H1"
+    ],
+    "help_sequence": [
+      "RECOGNITION_HELP",
+      "CONCEPT_HELP",
+      "REPRESENTATION_HELP",
+      "FIRST_MOVE_HELP",
+      "METHOD_HELP",
+      "ANSWER_VERIFICATION"
+    ],
+    "attempt_first": true,
+    "family_label_hidden_from_m4_item": true,
+    "runtime_adaptation": false,
+    "learner_state_transition": false
+  },
+  "run_audit": {
+    "all_six_cores_present": true,
+    "a_layers_govern_validity": true,
+    "b_layers_are_static_products": true,
+    "core1_depth_uses_math_difficulty_not_learner_percent": true,
+    "core2_calibration_uses_explicit_owner_control": true,
+    "owner_waiver_does_not_become_learner_evidence": true,
+    "core2a_items_respect_m4_ceiling": true,
+    "core2b_selection_is_subset_of_core2a_legal_pool": true,
+    "answers_independently_checked": true,
+    "status": "PASS"
+  }
+}
