@@ -18,8 +18,35 @@ from compile_chemistry_learner_gate_projection import (  # noqa: E402
     validate_learner_gate_projection,
 )
 from compile_chemistry_semantic_projection import compile_semantic_projection  # noqa: E402
-from test_chemistry_four_core_compilation import payloads  # noqa: E402
 from test_chemistry_semantic_projection_generic import make_packet  # noqa: E402
+
+
+def _core1a_payload_for_packet(packet):
+    representation_obligations = [
+        row for row in packet["obligations"]
+        if row["kind"] == "REPRESENTATION" and row["direct"]
+    ]
+    if len(representation_obligations) != 1:
+        raise AssertionError("synthetic learner-gate fixture expects exactly one direct representation")
+    engineering_ref = representation_obligations[0]["asset_ref"]
+    concrete_ref = "REP-TEST-LEARNER-GATE"
+    return {
+        "manuscript": {
+            "manuscript_id": "TEST-LEARNER-GATE-MANUSCRIPT",
+            "buckets": [{
+                "learning_atoms": [{"atom_id": "ATOM-LEARNER-GATE-1"}],
+                "teaching_sections": [{"representation_refs": [concrete_ref]}],
+            }],
+        },
+        "representation_bundle": {
+            "bundle_id": "TEST-LEARNER-GATE-REP-BUNDLE",
+            "representations": [{"representation_id": concrete_ref}],
+        },
+        "representation_bindings": [{
+            "representation_ref": concrete_ref,
+            "engineering_representation_refs": [engineering_ref],
+        }],
+    }
 
 
 class ChemistryLearnerGateProjectionTests(unittest.TestCase):
@@ -83,7 +110,7 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         self.assertEqual(projection["counts"]["context_semantic_count"], 1)
         realized = [row["obligation_id"] for row in packet["obligations"] if "CORE1A" in row["authorized_modes"]]
         authority = compile_core_authority(
-            "CORE1A", "SYNTHETIC", payloads()["CORE1A"], packet, realized,
+            "CORE1A", "SYNTHETIC", _core1a_payload_for_packet(packet), packet, realized,
             authority_id="CHEM-CORE-AUTH-LEARNER-GATE-CONTEXT-TEST",
             payload_ref="tests/learner-gate-context.json",
         )
@@ -106,7 +133,7 @@ class ChemistryLearnerGateProjectionTests(unittest.TestCase):
         projection = compile_learner_gate_projection(packet)
         realized = [row["obligation_id"] for row in packet["obligations"] if "CORE1A" in row["authorized_modes"]]
         authority = compile_core_authority(
-            "CORE1A", "SYNTHETIC", payloads()["CORE1A"], packet, realized,
+            "CORE1A", "SYNTHETIC", _core1a_payload_for_packet(packet), packet, realized,
             authority_id="CHEM-CORE-AUTH-LEARNER-GATE-TEST",
             payload_ref="tests/learner-gate.json",
         )
