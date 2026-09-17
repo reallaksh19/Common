@@ -1,0 +1,94 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R012
+work_package:
+  id: WP-11
+  title: PR Readiness
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R011
+  merged_predecessor_ref: "fb28a0817cab109a1120e3826ce11439b49586de"
+  readiness_through_ref: "5455bb90895461ba1d7476af10c84863f979fb93"
+  checkpoint_program_ref: "7d3c7d84dbcb51f87bf402eb6b720e17a88f8579"
+  pr: "reallaksh19/Common#409"
+  branch: "agent/engineering-pr-delivery-v2.5-completion"
+
+scope:
+  performed:
+    - Verify the follow-up PR diff is isolated to the scoped V2.5 workflow and skills/engineering-pr-delivery-v2.5 tree.
+    - Verify no engineering-pr-delivery-v2 file is modified and no downstream repository is modified.
+    - Add stable architecture-index.md navigation.
+    - Add operator-quick-start.md for zero-chat recovery and execution.
+    - Add synthetic-relay-example.md as a repository-neutral end-to-end walkthrough.
+    - Make the release navigation documents mandatory in self_consistency_audit.py.
+    - Verify there are no unresolved review threads or submitted reviews requiring resolution.
+    - Verify release-documentation and exact checkpoint/program-state heads pass the complete scoped workflow.
+  explicitly_not_performed:
+    - Changes to engineering-pr-delivery-v2.
+    - Downstream repository adoption or modification.
+    - New relay architecture or protocol semantics.
+    - Automatic merge of PR #409.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-11-pr-readiness.md"
+  architecture_index: "skills/engineering-pr-delivery-v2.5/operating-model/architecture-index.md"
+  operator_quick_start: "skills/engineering-pr-delivery-v2.5/operating-model/operator-quick-start.md"
+  synthetic_example: "skills/engineering-pr-delivery-v2.5/operating-model/synthetic-relay-example.md"
+  audit: "skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py"
+  workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+
+acceptance:
+  - id: AC-11-01
+    status: PASS
+    statement: PR #409 changed paths are restricted to the scoped V2.5 workflow and V2.5 skill tree; V2 and downstream repositories are untouched.
+    basis: ["pr:409 changed-path review", "operating-model/wp-11-pr-readiness.md"]
+  - id: AC-11-02
+    status: PASS
+    statement: Stable architecture navigation, operator quick-start and repository-neutral synthetic relay walkthrough exist and are cross-linked.
+    basis: ["operating-model/architecture-index.md", "operating-model/operator-quick-start.md", "operating-model/synthetic-relay-example.md"]
+  - id: AC-11-03
+    status: PASS
+    statement: The deterministic self-consistency audit requires the release navigation documents and their critical operator sentinels.
+    basis: ["scripts/self_consistency_audit.py", "workflow:35205304623"]
+  - id: AC-11-04
+    status: PASS
+    statement: There are no unresolved PR review threads or submitted review obligations on PR #409 at readiness review time.
+    basis: ["pr:409 review-thread review", "pr:409 review-submission review"]
+  - id: AC-11-05
+    status: PASS
+    statement: Release-documentation head passes compile, self-consistency audit, root units and dedicated synthetic stress discovery.
+    basis: ["workflow:35205304623", "head:5455bb90895461ba1d7476af10c84863f979fb93", "root_unit_count:7", "stress_count:135"]
+  - id: AC-11-06
+    status: PASS
+    statement: Exact CP-R012 checkpoint/program-state head passes compile, self-consistency audit, root units and dedicated synthetic stress discovery.
+    basis: ["workflow:35208661282", "head:7d3c7d84dbcb51f87bf402eb6b720e17a88f8579", "root_unit_count:7", "stress_count:135"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 99
+  earned_by_this_checkpoint: 1
+  earned_after_this_checkpoint: 100
+  percent_after_this_checkpoint: 100
+  note: "Completion is acceptance/checkpoint derived; CP-R012 exact checkpoint/program-state verification passed."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35205304623
+  pre_checkpoint_green_ref: "5455bb90895461ba1d7476af10c84863f979fb93"
+  checkpoint_status_green_run: 35208661282
+  checkpoint_status_green_ref: "7d3c7d84dbcb51f87bf402eb6b720e17a88f8579"
+  required_steps:
+    compile: true
+    self_consistency_audit: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  result: PASS
+
+successor:
+  mode: NONE
+  work_package: null
+  title: null
+  state: PROGRAM_COMPLETE
+  next_action: "Run one final canonical-head workflow after formal completion wording, then PR #409 may be marked ready for review. Merge remains an explicit Owner decision."

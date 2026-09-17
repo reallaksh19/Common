@@ -1,0 +1,99 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R011
+work_package:
+  id: WP-10
+  title: Self-consistency Audit
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R010
+  merged_predecessor_ref: "fb28a0817cab109a1120e3826ce11439b49586de"
+  implementation_through_ref: "f741a54da9e22e6a2f75aa15f54fd53563ee69de"
+  pr: "reallaksh19/Common#409"
+  branch: "agent/engineering-pr-delivery-v2.5-completion"
+
+scope:
+  performed:
+    - Add a deterministic cross-surface self-consistency audit and execute it in scoped CI before root/stress suites.
+    - Audit YAML contract parseability, durable object surfaces, quality blueprint procedure structure, validator reachability, renderer/operator documentation, authority vocabulary, CI coverage and repository-neutral runtime logic.
+    - Reconcile object-authority-matrix.md from its stale CP-R002 state through CP-R010.
+    - Reconcile relay-conformance.md through the delivered qualification, progress/report, GitHub projection, QRV, human communication, Owner-change and zero-context release layers.
+    - Replace stale top-level SKILL instructions with the current operator contract and zero-context/self-consistency entrypoints.
+    - Reconcile scripts/README.md with zero-context reconstruction, roadmap rendering and self-consistency commands.
+    - Add a stable quality-procedures.md operating model separate from the historical WP-06 implementation report.
+    - Remove project-specific audit exception logic and use generic repository-neutral portability checks.
+    - Record all findings and dispositions in wp-10-self-consistency-audit.md.
+  explicitly_not_performed:
+    - Final PR readiness cleanup; owned by WP-11.
+    - Changes to engineering-pr-delivery-v2.
+    - Downstream repository adoption or modification.
+    - Merge of PR #409.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-10-self-consistency-audit.md"
+  audit: "skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py"
+  authority_matrix: "skills/engineering-pr-delivery-v2.5/operating-model/object-authority-matrix.md"
+  relay_conformance: "skills/engineering-pr-delivery-v2.5/operating-model/relay-conformance.md"
+  stable_quality_model: "skills/engineering-pr-delivery-v2.5/operating-model/quality-procedures.md"
+  operator_skill: "skills/engineering-pr-delivery-v2.5/SKILL.md"
+  operator_commands: "skills/engineering-pr-delivery-v2.5/scripts/README.md"
+  workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+
+acceptance:
+  - id: AC-10-01
+    status: PASS
+    statement: A deterministic executable audit covers schema/template parseability, object surfaces, blueprint structure, validator/renderer reachability, authority vocabulary and scoped CI coverage.
+    basis: ["scripts/self_consistency_audit.py", "workflow:35197914544"]
+  - id: AC-10-02
+    status: PASS
+    statement: Current normative authority and relay-conformance documentation are reconciled through CP-R010 with delivered readiness, qualification, quality, projection, communication and zero-context objects.
+    basis: ["operating-model/object-authority-matrix.md", "operating-model/relay-conformance.md"]
+  - id: AC-10-03
+    status: PASS
+    statement: Top-level operator documentation exposes current zero-context certification and self-consistency entrypoints and contains no audited stale future-tense completion claims.
+    basis: ["SKILL.md", "scripts/README.md", "workflow:35197914544"]
+  - id: AC-10-04
+    status: PASS
+    statement: Repository-neutral runtime audit logic contains no downstream-repository-specific routing exception; portability checks are generic.
+    basis: ["scripts/self_consistency_audit.py", "operating-model/wp-10-self-consistency-audit.md"]
+  - id: AC-10-05
+    status: PASS
+    statement: The corrected audit reports zero warnings and no blocking finding remains.
+    basis: ["workflow:35197671662", "head:3beae3849550fb0cd28abe658c63d1d770d9d3fa", "audit_warnings:0"]
+  - id: AC-10-06
+    status: PASS
+    statement: Documentation-aligned WP-10 implementation passes compile, self-consistency audit, root units and dedicated synthetic stress discovery before checkpoint creation.
+    basis: ["workflow:35197914544", "head:f741a54da9e22e6a2f75aa15f54fd53563ee69de", "root_unit_count:7", "stress_count:135"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 97
+  earned_by_this_checkpoint: 2
+  earned_after_this_checkpoint: 99
+  percent_after_this_checkpoint: 99
+  note: "Completion remains acceptance/checkpoint derived; WP-11 owns the final 1%."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35197914544
+  pre_checkpoint_green_ref: "f741a54da9e22e6a2f75aa15f54fd53563ee69de"
+  required_steps:
+    compile: true
+    self_consistency_audit: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-10 content acceptance is complete; formal checkpoint validity requires workflow PASS on the exact head containing CP-R011 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-11
+  title: PR Readiness
+  planned_execution_package: EP-R012
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Perform final portability and V2-isolation scan over the follow-up PR diff.
+    - Verify architecture/operator quick-start/readiness documentation is sufficient and no temporary completion-only wording remains misleading.
+    - Verify exact-head self-consistency audit, root units and stress suite.
+    - Reconcile final completion to 100 percent and prepare PR #409 for explicit merge decision without auto-merging it.
