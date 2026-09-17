@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineered-domain-admission.schema.json",
+  "title": "Mathematics Engineered Canonical Domain Admission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "admission_id",
+    "domain_registry_ref",
+    "authorizations",
+    "subtopic_gate_map"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "admission_id": {"type":"string","pattern":"^MATH-ENG-DOMAIN-ADMISSION-[A-Z0-9_-]+$"},
+    "domain_registry_ref": {"type":"string","minLength":3},
+    "authorizations": {
+      "type":"array",
+      "minItems":1,
+      "items": {
+        "type":"object",
+        "additionalProperties":false,
+        "required":["authorization_id","engineering_request_ref","engineering_manifest_ref","engineering_binding_ref"],
+        "properties": {
+          "authorization_id":{"type":"string","pattern":"^MATH-ENG-AUTH-[A-Z0-9_-]+$"},
+          "engineering_request_ref":{"type":"string","minLength":3},
+          "engineering_manifest_ref":{"type":"string","minLength":3},
+          "engineering_binding_ref":{"type":"string","minLength":3}
+        }
+      }
+    },
+    "subtopic_gate_map": {
+      "type":"array",
+      "minItems":1,
+      "items": {
+        "type":"object",
+        "additionalProperties":false,
+        "required":["subtopic_id","gate_bindings"],
+        "properties": {
+          "subtopic_id":{"type":"string","minLength":3},
+          "gate_bindings": {
+            "type":"array",
+            "minItems":1,
+            "items": {
+              "type":"object",
+              "additionalProperties":false,
+              "required":["engineering_gate_id","authorization_ref"],
+              "properties": {
+                "engineering_gate_id":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"},
+                "authorization_ref":{"type":"string","pattern":"^MATH-ENG-AUTH-[A-Z0-9_-]+$"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

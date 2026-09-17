@@ -1,0 +1,230 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C5_SUBTOPIC_INTELLIGENCE_CONTRACT_FAMILY_CANDIDATE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "source_stage": {
+    "c4_receipt_path": "design/mathematics-subject-adapter-equivalence.receipt.json",
+    "required_status": "C4_SUBJECT_ADAPTER_INTERFACE_EXTRACTED",
+    "required_next_stage": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY"
+  },
+  "central_doctrine": {
+    "pack_model": "COMPILED_DIGEST_BOUND_CONTEXT_VIEW",
+    "subject_truth_owner": "SUBJECT_ENGINEERING_AND_CANONICAL_DOMAIN",
+    "pack_may_define_subject_truth": false,
+    "exact_authority_resolution_required": true,
+    "topic_specific_dispatch_forbidden": true,
+    "learner_state_is_run_specific": true,
+    "coverage_may_authorize": false
+  },
+  "contract_objects": [
+    {
+      "contract_id": "STEM-SIL-SUBTOPIC-PACK",
+      "ownership_class": "COMPOSITION_VIEW",
+      "may_inline_subject_truth": false,
+      "may_grant_technical_authority": false,
+      "may_grant_publication_authority": false,
+      "required_reference_classes": [
+        "EXACT_SUBJECT_REFERENCE",
+        "EXACT_SCOPE_REFERENCE",
+        "DEPENDENCY_BINDING",
+        "KNOWN_GAP_REFERENCE"
+      ]
+    },
+    {
+      "contract_id": "STEM-SIL-LEARNING-TRANSITION",
+      "ownership_class": "GOVERNED_LEARNING_STRUCTURE",
+      "may_inline_subject_truth": false,
+      "may_grant_technical_authority": false,
+      "may_grant_publication_authority": false,
+      "required_reference_classes": [
+        "EXACT_SUBJECT_REFERENCE",
+        "PEDAGOGY_EVIDENCE_REFERENCE",
+        "DEPENDENCY_BINDING"
+      ]
+    },
+    {
+      "contract_id": "STEM-SIL-SOURCE-SELECTION-PROFILE",
+      "ownership_class": "GOVERNED_SOURCE_SELECTION",
+      "may_inline_subject_truth": false,
+      "may_grant_technical_authority": false,
+      "may_grant_publication_authority": false,
+      "required_reference_classes": [
+        "EXACT_SUBJECT_REFERENCE",
+        "PEDAGOGY_EVIDENCE_REFERENCE",
+        "DEPENDENCY_BINDING"
+      ]
+    },
+    {
+      "contract_id": "STEM-SIL-LIBRARY-GAP",
+      "ownership_class": "GAP_TRACKING",
+      "may_inline_subject_truth": false,
+      "may_grant_technical_authority": false,
+      "may_grant_publication_authority": false,
+      "required_reference_classes": [
+        "DEPENDENCY_BINDING",
+        "KNOWN_GAP_REFERENCE"
+      ]
+    },
+    {
+      "contract_id": "STEM-SIL-COVERAGE-REPORT",
+      "ownership_class": "DERIVED_AUDIT",
+      "may_inline_subject_truth": false,
+      "may_grant_technical_authority": false,
+      "may_grant_publication_authority": false,
+      "required_reference_classes": [
+        "DEPENDENCY_BINDING",
+        "KNOWN_GAP_REFERENCE"
+      ]
+    }
+  ],
+  "dependency_classes": [
+    {
+      "dependency_class": "LOGICAL_DEPENDENCY",
+      "owner_domain": "SUBJECT_ENGINEERING",
+      "sil_may_define": false,
+      "required_support_class": "EXACT_SUBJECT_REFERENCE"
+    },
+    {
+      "dependency_class": "ASSESSMENT_CAPABILITY_DEPENDENCY",
+      "owner_domain": "ASSESSMENT",
+      "sil_may_define": false,
+      "required_support_class": "ASSESSMENT_REFERENCE"
+    },
+    {
+      "dependency_class": "INSTRUCTIONAL_SEQUENCE",
+      "owner_domain": "LEARNING_STRUCTURE",
+      "sil_may_define": true,
+      "required_support_class": "PEDAGOGY_EVIDENCE_REFERENCE"
+    },
+    {
+      "dependency_class": "REPRESENTATION_BRIDGE",
+      "owner_domain": "LEARNING_STRUCTURE",
+      "sil_may_define": true,
+      "required_support_class": "EXACT_SUBJECT_REFERENCE"
+    },
+    {
+      "dependency_class": "REPAIR_SEQUENCE",
+      "owner_domain": "LEARNING_STRUCTURE",
+      "sil_may_define": true,
+      "required_support_class": "PEDAGOGY_EVIDENCE_REFERENCE"
+    }
+  ],
+  "exact_reference_contract": {
+    "required_fields": [
+      "ref",
+      "ref_type",
+      "subject_id",
+      "registry_ref",
+      "registry_version_or_digest"
+    ],
+    "free_text_may_promote": false,
+    "unresolved_ref_action": "EMIT_GAP_AND_BLOCK_DEPENDENT_CLAIM"
+  },
+  "compiled_pack_locks": {
+    "view_class": "COMPILED_SUBTOPIC_INTELLIGENCE_CONTEXT",
+    "authority": "COMPOSITION_OF_BOUND_GOVERNED_REFERENCES",
+    "technical_authorization": "NOT_GRANTED_BY_PACK",
+    "publication_authorization": "NOT_IMPLIED",
+    "learner_mastery_claim": "NOT_IMPLIED"
+  },
+  "mathematics_reference_projection": {
+    "subject_id": "MATHEMATICS",
+    "projection_status": "CURRENT_REFERENCE_VOCABULARY_ONLY_NOT_GENERIC_KERNEL",
+    "canonical_object_schema_path": "contracts/math-canonical-domain-registry.schema.json",
+    "canonical_object_types": [
+      "CONCEPT",
+      "MODEL",
+      "EQUATION",
+      "DERIVATION",
+      "CAPABILITY",
+      "LEARNING_ATOM",
+      "REPRESENTATION",
+      "MISCONCEPTION",
+      "PROBLEM_FAMILY",
+      "SOURCE_QUESTION",
+      "CANONICAL_SOLUTION",
+      "EXAMPLE",
+      "VERIFICATION_RULE"
+    ]
+  },
+  "pr395_integration": {
+    "source_repository": "reallaksh19/Common",
+    "source_pr": 395,
+    "source_head_sha": "242878b04787905087060318c14b89b14238f195",
+    "merge_base_with_c4": "d86e7b764edbb8f72d5358c93ee57fb4ebd6cad8",
+    "source_relation": "DIVERGED_21_AHEAD_9_BEHIND_AT_C5_AUDIT",
+    "import_mode": "DIGEST_PINNED_CANDIDATE_SOURCE_ONLY",
+    "candidate_packet_count": 15,
+    "packet_authority": "NONE",
+    "direct_runtime_import_allowed": false,
+    "direct_normative_import_allowed": false,
+    "source_artifacts": [
+      {
+        "path": "Grade 9/V2/Mathematics/MathBlueprint/SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+        "git_blob_sha": "1131a05b8c125a8c253dad37bd0b31990f81a27b",
+        "source_role": "CANDIDATE_PACKET_CORPUS",
+        "disposition": "ADAPT_TO_REFERENCE_NORMALIZED_CANDIDATES"
+      },
+      {
+        "path": "Grade 9/V2/Mathematics/MathBlueprint/engine/validate_subtopic_intelligence_library.py",
+        "git_blob_sha": "af9eff27888618e5b3c769a2d21a3de8d561efe2",
+        "source_role": "CANDIDATE_STRUCTURAL_VALIDATOR",
+        "disposition": "REPLACE_WITH_EXACT_REFERENCE_VALIDATION"
+      },
+      {
+        "path": "Grade 9/V2/Mathematics/MathBlueprint/references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md",
+        "git_blob_sha": "491f7024af886b8b9c31a4e329e5ead29caf1ec0",
+        "source_role": "NON_AUTHORITATIVE_RESEARCH_INPUT",
+        "disposition": "RETAIN_AS_NON_AUTHORITATIVE_RESEARCH_INPUT"
+      },
+      {
+        "path": "Grade 9/V2/Mathematics/MathBlueprint/tools/sil_explorer/generate_sil_catalog.py",
+        "git_blob_sha": "59d9c0d67896f7c0d4488576903f543cc9886221",
+        "source_role": "DERIVED_OBSERVABILITY_GENERATOR",
+        "disposition": "DEFER_UNTIL_NORMALIZED_CATALOG"
+      }
+    ],
+    "layer_mapping": [
+      {
+        "source_layer": "LAYER_1_MATHEMATICAL_CORE",
+        "normalized_disposition": "EXACT_SUBJECT_REFERENCE_OR_GAP",
+        "automatic_authority_promotion": false
+      },
+      {
+        "source_layer": "LAYER_2_COGNITIVE_TRANSFORMATIONS",
+        "normalized_disposition": "EXACT_DOMAIN_REFERENCE_PLUS_GOVERNED_LEARNING_TRANSITION_OR_GAP",
+        "automatic_authority_promotion": false
+      },
+      {
+        "source_layer": "LAYER_3_RECONSTRUCTABLE_TTU",
+        "normalized_disposition": "NON_AUTHORITATIVE_TTU_CANDIDATE_INPUT_ONLY",
+        "automatic_authority_promotion": false
+      },
+      {
+        "source_layer": "LAYER_4_PROBLEM_FAMILIES",
+        "normalized_disposition": "EXACT_PROBLEM_FAMILY_OR_ASSESSMENT_REFERENCE_OR_GAP",
+        "automatic_authority_promotion": false
+      }
+    ]
+  },
+  "promotion_requirements": [
+    "EXACT_ID_RESOLUTION",
+    "CURRENT_AUTHORITY_REVALIDATION",
+    "DIGEST_BOUND_DEPENDENCIES",
+    "NO_INLINE_SUBJECT_TRUTH",
+    "NO_DISCOVERY_TO_AUTHORITY",
+    "EXPLICIT_GAP_ON_MISSING",
+    "PRODUCTION_RUNTIME_SEPARATION",
+    "DETERMINISTIC_COMPILATION",
+    "LEARNER_STATE_SEPARATION"
+  ],
+  "tracked_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "runtime_auto_materialization_executable": false
+  },
+  "next_stage": "C6_MATHEMATICS_SIL_PILOT_READY"
+}

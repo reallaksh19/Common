@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C4_SUBJECT_ADAPTER_INTERFACE_EXTRACTED",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "equivalence_status": "PASS_DESIGN_PROJECTION_ONLY",
+  "mathematics_runtime_path_changed": false,
+  "mathematics_validation_weakened": false,
+  "mathematics_object_type_count": 13,
+  "bound_core_operation_count": 8,
+  "conditional_unbound_operation_ids": [
+    "VALIDATE_SUBJECT_SAFETY"
+  ],
+  "chemistry_status": "DESIGN_STRESS_TARGET_ONLY",
+  "source_custody": {
+    "interface_path": "design/stem-subject-adapter-interface.candidate.json",
+    "interface_git_blob_sha": "5d1d53a9b2aa7dadad6dba5d462ed48150b27a89",
+    "interface_schema_path": "design/stem-subject-adapter-interface.candidate.schema.json",
+    "interface_schema_git_blob_sha": "05a252d3516ef7f19986ee6b60d7c537d39cac85",
+    "c3_receipt_path": "design/mathematics-generated-references.receipt.json",
+    "c3_receipt_git_blob_sha": "d1a6e3292bc3e0045d55b3329764f884fc17146d",
+    "catalog_path": "design/mathematics-architecture-catalog.candidate.json",
+    "catalog_git_blob_sha": "469f1eaaf671fd274dcb5c332b4b73e1ac01b0bd",
+    "mathematics_domain_schema_path": "contracts/math-canonical-domain-registry.schema.json",
+    "mathematics_domain_schema_git_blob_sha": "d4637501e08fc941e28325627b14aca9fd9ab2df",
+    "validator_path": "design/validate_subject_adapter_interface_candidate.py",
+    "validator_git_blob_sha": "544b2f6ac52811a4eb842d08982e1347513f7338"
+  },
+  "tracked_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "runtime_auto_materialization_executable": false
+  },
+  "next_stage": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY"
+}

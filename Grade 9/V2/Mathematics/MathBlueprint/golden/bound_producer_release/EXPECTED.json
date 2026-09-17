@@ -1,0 +1,67 @@
+{
+  "golden_id": "MATH-BOUND-PRODUCER-RELEASE-v3",
+  "subject": "MATHEMATICS",
+  "purpose": "REVISION",
+  "producer_mode": "ACTUAL_CLI",
+  "registry_mode": "FULL_MIXED_COLD_START_RUN_ENGINEERING_COVERED",
+  "engineering_crosswalk_ref": "MATH-ASSESSMENT-ENG-XWALK-MIXED-G9-V2",
+  "full_mixed_expected_engineering_gap_capability_refs": [],
+  "engineering_bound_projection": {
+    "source_question_refs": [
+      "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7",
+      "Q8", "Q9", "Q10", "Q11", "Q12", "Q13", "Q14"
+    ],
+    "capability_refs": [
+      "MATH-ANGLE-SUM",
+      "MATH-ARITHMETIC-DIVISION",
+      "MATH-BINOMIAL-SQUARE-EXPANSION",
+      "MATH-COLLINEARITY-BY-SLOPE",
+      "MATH-COORDINATE-DISTANCE",
+      "MATH-COORDINATE-QUADRANT-SIGN-TRANSFORM",
+      "MATH-EQUALITY-PRESERVATION",
+      "MATH-EQUIDISTANCE-COORDINATE-MODEL",
+      "MATH-EQUIDISTANT-POINT-ON-AXIS",
+      "MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE",
+      "MATH-EUCLID-PARALLEL-CONDITION",
+      "MATH-FRACTION-ARITHMETIC",
+      "MATH-GEOMETRIC-MODELLING",
+      "MATH-LINE-EQUATION-FROM-SLOPE-POINT",
+      "MATH-LINE-EQUATION-FROM-TWO-POINTS",
+      "MATH-LINE-Y-INTERCEPT",
+      "MATH-LINEAR-EXTRAPOLATION",
+      "MATH-LINEAR-PARAMETER-CONDITION",
+      "MATH-LINEAR-SYSTEM-SETUP",
+      "MATH-LINEAR-SYSTEM-SOLVE",
+      "MATH-ORDERED-PAIR-SEMANTICS",
+      "MATH-RIVER-CURRENT-MODEL",
+      "MATH-SIGN-PROPAGATION",
+      "MATH-SLOPE-AS-RATE-OF-CHANGE",
+      "MATH-SLOPE-COMPUTATION",
+      "MATH-SUBSTITUTION",
+      "MATH-UNIT-INTERPRETATION",
+      "MATH-UNORDERED-PAIR-COUNT",
+      "MATH-VARIABLE-SEMANTICS",
+      "MATH-WORD-MODELLING"
+    ],
+    "rationale": "This projection is identity-preserving and equals the complete current mixed Grade 9 cold-start scope: all 14 source questions and all 30 required capabilities are included. It exists only to preserve the golden runner's deterministic projection contract; it no longer narrows scope. Every capability is covered by the exact v2 AssessmentScope-to-Engineering bridge, including Euclid foundations."
+  },
+  "required_stages": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "required_stage_pairs": [
+    "CORE1A__CORE1B",
+    "CORE1A__CORE2A",
+    "CORE1A__CORE2B",
+    "CORE1B__CORE2A",
+    "CORE1B__CORE2B",
+    "CORE2A__CORE2B"
+  ],
+  "required_release_checks": [
+    "ENGINEERING_DOMAIN_AUTHORIZATION",
+    "FULL_REGISTRY_COVERAGE",
+    "ALL_SIX_CROSS_CORE_PAIRS",
+    "CORE1A_CORE1B_DIFFICULTY_EQUALITY",
+    "CORE2A_CORE2B_LEARNER_FIT",
+    "FROZEN_SOURCE_STEM_CUSTODY",
+    "CANONICAL_ANSWER_CONTRACT_CUSTODY"
+  ],
+  "scope_note": "This golden proves the actual Core1A/Core1B/Core2A/Core2B CLI receipt/release chain over the complete mixed Grade 9 cold-start corpus. The full 30-capability scope must be Engineering-covered; any future upstream gap fails before authoring rather than silently narrowing or fuzzily remapping the release scope."
+}

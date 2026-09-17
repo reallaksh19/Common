@@ -1,0 +1,81 @@
+name: V2 Mathematics Engineering Workbench
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Mathematics/MathBlueprint/**'
+      - '.github/workflows/v2-math-engineering-workbench.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mathematics-engineering-workbench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install 'jsonschema>=4.20,<5'
+      - name: Validate authoritative Mathematics Engineering Gate registry
+        shell: bash
+        run: |
+          mkdir -p /tmp/math-engineering-workbench
+          set -o pipefail
+          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_gates.py' 2>&1 \
+            | tee /tmp/math-engineering-workbench/validator.log
+      - name: Upload Engineering validator diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mathematics-engineering-validator-diagnostics
+          path: /tmp/math-engineering-workbench/validator.log
+          if-no-files-found: error
+      - name: Run Mathematics Engineering Gate falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_gates.py'
+      - name: Enforce Engineering-to-Blueprint topic independence
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_blueprint_topic_independence.py'
+      - name: Enforce design-workspace non-authority boundary
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_design_authority_boundary.py'
+      - name: Validate non-normative architecture catalog candidate
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_architecture_catalog_candidate.py'
+      - name: Validate executable-first architecture documentation drift audit
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_architecture_documentation_drift_audit.py'
+      - name: Validate C2 normative-root consolidation
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_normative_root_consolidation.py'
+      - name: Verify C3 generated architecture references are current
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/generate_mathematics_architecture_references.py' --check
+      - name: Run C3 generated architecture reference falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_generated_architecture_references.py'
+      - name: Verify C4 subject adapter equivalence receipt is current
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/validate_subject_adapter_interface_candidate.py' --check
+      - name: Run C4 subject adapter interface falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_subject_adapter_interface_candidate.py'
+      - name: Validate C5 SIL contracts and PR395 integration custody
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/validate_c5_sil_contracts.py'
+      - name: Run C5 SIL contract and PR395 integration falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/test_c5_sil_contracts.py'
+      - name: Validate governed Engineering discovery vocabulary
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_discovery_vocabulary.py'
+      - name: Run non-authoritative Engineering discovery falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_discovery.py'
+      - name: Run registry-driven Engineering Workbench falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_workbench.py'
+      - name: Run runtime custody binding falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_mathematics_engineering_binding.py'
+      - name: Run generic Engineering-gated domain admission falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_engineered_domain_admission.py'
+      - name: Compile registry-wide Blueprint authorization proof
+        run: |
+          mkdir -p /tmp/math-engineering-workbench
+          python 'Grade 9/V2/Mathematics/MathBlueprint/engine/compile_mathematics_engineering_workbench.py' \
+            --registry-proof-out /tmp/math-engineering-workbench/registry-proof.json
+      - name: Upload Workbench proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: mathematics-engineering-workbench-proof
+          path: /tmp/math-engineering-workbench/
+          if-no-files-found: error

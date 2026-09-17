@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learning-run-blueprint.schema.json",
+  "title": "Mathematics Learning Run Blueprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "schema_version",
+    "subject",
+    "ground_truth_ref",
+    "ground_truth_digest",
+    "control_plane",
+    "current_state",
+    "state_history",
+    "routing_ref",
+    "bundles",
+    "publication_ref",
+    "audit_ref",
+    "run_digest"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "ground_truth_ref": {"type": "string", "pattern": "^MATH-GT-[0-9a-f]{16}$"},
+    "ground_truth_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "control_plane": {"$ref": "#/$defs/controlPlane"},
+    "current_state": {"$ref": "#/$defs/runState"},
+    "state_history": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/stateRecord"}
+    },
+    "routing_ref": {"type": ["string", "null"]},
+    "bundles": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/bundle"}
+    },
+    "publication_ref": {"type": ["string", "null"]},
+    "audit_ref": {"type": ["string", "null"]},
+    "run_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "runState": {
+      "enum": [
+        "GT_READY",
+        "ROUTED",
+        "FIRST_CORE_COMPLETE",
+        "SECOND_CORE_COMPLETE",
+        "CROSS_VALIDATED",
+        "JOIN_READY",
+        "ASSIMILATION_COMPILED",
+        "CORE1A_REALIZED",
+        "EXPOSURE_RECORDED",
+        "CORE2A_ELIGIBLE",
+        "CORE2A_REALIZED",
+        "FINAL_AUDIT_PASS",
+        "BLOCKED_EVIDENCE",
+        "BLOCKED_CONFLICT",
+        "BLOCKED_PREREQUISITE",
+        "BLOCKED_REPRESENTATION",
+        "BLOCKED_EXPOSURE",
+        "BLOCKED_OWNER_REVIEW"
+      ]
+    },
+    "controlPlane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "learner_prior_percent",
+        "learning_purpose",
+        "product_mode",
+        "owner_override_refs"
+      ],
+      "properties": {
+        "learner_prior_percent": {"type": ["integer", "null"], "minimum": 0, "maximum": 100},
+        "learning_purpose": {
+          "type": ["string", "null"],
+          "enum": ["FIRST_STUDY", "CONSOLIDATION", "REVISION", "COMPETITIVE_EXAM", null]
+        },
+        "product_mode": {
+          "type": ["string", "null"],
+          "enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION", null]
+        },
+        "owner_override_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "stateRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "state", "reason_code"],
+      "properties": {
+        "sequence": {"type": "integer", "minimum": 0},
+        "state": {"$ref": "#/$defs/runState"},
+        "reason_code": {"type": "string", "minLength": 1}
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bundle_id",
+        "subtopic_refs",
+        "first_role",
+        "core1_execution_ref",
+        "core2_execution_ref",
+        "cross_validation_ref",
+        "join_ref",
+        "assimilation_plan_ref",
+        "core1a_ref",
+        "exposure_receipt_refs",
+        "core2a_eligibility_ref",
+        "core2a_ref"
+      ],
+      "properties": {
+        "bundle_id": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+        "subtopic_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "first_role": {"type": ["string", "null"], "enum": ["CORE1", "CORE2", null]},
+        "core1_execution_ref": {"type": ["string", "null"]},
+        "core2_execution_ref": {"type": ["string", "null"]},
+        "cross_validation_ref": {"type": ["string", "null"]},
+        "join_ref": {"type": ["string", "null"]},
+        "assimilation_plan_ref": {"type": ["string", "null"]},
+        "core1a_ref": {"type": ["string", "null"]},
+        "exposure_receipt_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "core2a_eligibility_ref": {"type": ["string", "null"]},
+        "core2a_ref": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

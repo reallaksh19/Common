@@ -1,0 +1,24 @@
+{
+  "fixture_id": "MATH-ASSIMILATION-GOLDEN-VIETA-v1",
+  "purpose": "Prove that cross-validated semantic and assessment intelligence compile into pedagogical obligations while learner uncertainty remains explicit.",
+  "precondition": "CROSS_VALIDATED",
+  "inputs": {
+    "semantic_claim": "The sum and product of roots are encoded by coefficients.",
+    "assessment_claim": "Questions require recognizing the useful symmetric relation before calculation.",
+    "learner_capability": "CAP-VIETA-01",
+    "learner_readiness": "UNKNOWN",
+    "learning_purpose": "CONSOLIDATION"
+  },
+  "expected": {
+    "semantic_requirements_preserved": true,
+    "assessment_requirements_preserved": true,
+    "learner_gap": "UNKNOWN_REQUIRES_PROBE_OR_FULL_SUPPORT",
+    "unknown_is_not_converted_to_weakness": true,
+    "assimilation_obligation_type": "INFERENCE_BRIDGE",
+    "obligation_has_claim_provenance": true,
+    "obligation_has_original_evidence_provenance": true,
+    "owner_constraints_have_authority_class": "OWNER_CONTROL",
+    "manuscript_content_generated": false,
+    "terminal_state": "JOIN_READY"
+  }
+}

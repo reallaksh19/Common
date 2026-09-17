@@ -1,0 +1,28 @@
+{
+  "policy_id": "MATH-CROSS-CORE-SIMILARITY-v1",
+  "version": "1.0.0",
+  "content_thresholds": {
+    "near_duplicate": 0.75,
+    "hard_duplicate": 0.90
+  },
+  "pedagogy_thresholds": {
+    "strong_overlap": 0.60,
+    "same_realization": 0.80
+  },
+  "structural_thresholds": {
+    "same_or_near_copy": 0.90,
+    "structural_sibling_min": 0.70,
+    "far_transfer_min": 0.40
+  },
+  "exact_repeat_exempt_kinds": ["EQUATION", "SOURCE_STEM"],
+  "exact_repeat_allowed_relations": ["SEMANTIC_REUSE", "CANONICAL_REPEAT", "FADING_ANCHOR"],
+  "transfer_relations": ["STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"],
+  "rules": [
+    "High content and high pedagogical similarity is duplication unless an explicit legal lineage relation authorizes it.",
+    "Exact source stems and canonical equations may repeat only with explicit semantic/source lineage.",
+    "FADING_ANCHOR may reuse the same problem but never counts as transfer evidence.",
+    "STRUCTURAL_SIBLING is normally structural similarity 0.70-0.89.",
+    "FAR_TRANSFER_SIBLING is normally structural similarity 0.40-0.69 and must preserve capability overlap.",
+    "Structural similarity below 0.40 requires family-drift review even when the item looks novel."
+  ]
+}

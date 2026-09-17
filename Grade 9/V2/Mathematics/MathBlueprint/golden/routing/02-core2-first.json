@@ -1,0 +1,18 @@
+{
+  "name": "question corpus reveals scope when syllabus is absent",
+  "subtopic": {
+    "subtopic_ref": "TOE-HIDDEN-ROOTS",
+    "display_name": "Recovering hidden roots",
+    "sequence": 0,
+    "coherence_group": "THEORY_OF_EQUATIONS",
+    "scope_authority": {"score": 0, "reason_codes": ["SYLLABUS_ABSENT"], "evidence_refs": []},
+    "semantic_source_strength": {"score": 1, "reason_codes": ["SOURCE_FRAGMENTARY"], "evidence_refs": ["GT-AUTHORITATIVE_SOURCE-4444444444444444"]},
+    "question_evidence": {"score": 4, "reason_codes": ["RICH_QUESTION_CORPUS"], "evidence_refs": ["GT-QUESTION_CORPUS-5555555555555555"]},
+    "question_resolution": {"score": 4, "reason_codes": ["QUESTIONS_WELL_RESOLVED"], "evidence_refs": ["GT-QUESTION_CORPUS-5555555555555555"]},
+    "uncertainty": {"score": 1, "reason_codes": ["SCOPE_INFERRED_FROM_QUESTIONS"], "evidence_refs": ["GT-QUESTION_CORPUS-5555555555555555"]},
+    "conflict_index": {"score": 0, "reason_codes": ["NO_MATERIAL_CONFLICT"], "evidence_refs": []},
+    "unresolved_issue_refs": ["SCOPE_NEEDS_SEMANTIC_CONFIRMATION"],
+    "conflict_refs": []
+  },
+  "expected": {"system_action": "CORE2_FIRST", "eligible_roles": ["CORE2"], "final_action": "CORE2_FIRST"}
+}

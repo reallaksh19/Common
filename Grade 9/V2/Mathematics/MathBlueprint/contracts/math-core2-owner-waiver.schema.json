@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-core2-owner-waiver.schema.json",
+  "title": "Mathematics Core2 Owner Waiver",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "subject", "waiver_id", "release_class", "owner_ref",
+    "reason", "selected_core2a_support_profile", "selected_core2a_max_demand_level",
+    "selected_core2b_max_demand_level", "waiver_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "waiver_id": {"type": "string", "pattern": "^MATH-CORE2-WAIVER-"},
+    "release_class": {"enum": ["OWNER_DECLARED", "TEST_ONLY"]},
+    "owner_ref": {"type": "string", "minLength": 3},
+    "reason": {"type": "string", "minLength": 12},
+    "selected_core2a_support_profile": {
+      "enum": ["FOUNDATION_GUIDED", "STANDARD_GUIDED", "REDUCED_SUPPORT", "ADVANCED_APPLIED"]
+    },
+    "selected_core2a_max_demand_level": {
+      "enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]
+    },
+    "selected_core2b_max_demand_level": {
+      "enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]
+    },
+    "waiver_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

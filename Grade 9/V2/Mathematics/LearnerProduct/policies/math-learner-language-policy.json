@@ -1,0 +1,31 @@
+{
+  "policy_id": "MATH-LEARNER-LANGUAGE-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "labels": {
+    "ATTEMPT": "TRY IT FIRST",
+    "H1": "SMALL CLUE",
+    "H2": "BIGGER CLUE",
+    "H3": "HOW DO I START?",
+    "REASONING": "THINK IT THROUGH",
+    "SOLUTION": "FULL WORKING",
+    "VERIFICATION": "QUICK CHECK",
+    "PROVENANCE": "WHERE THIS QUESTION CAME FROM"
+  },
+  "forbidden_learner_terms": [
+    "reasoning route",
+    "solution route",
+    "repair route",
+    "grounding",
+    "learning atom",
+    "demand vector",
+    "transfer ladder",
+    "capability_ref",
+    "problem_family_ref",
+    "PCK",
+    "release class",
+    "publication engineering",
+    "promotion registry"
+  ],
+  "rule": "Internal semantics may remain technical. Learner pages must use only approved public labels or ordinary mathematical language."
+}

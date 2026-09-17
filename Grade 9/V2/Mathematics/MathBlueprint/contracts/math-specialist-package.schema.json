@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-specialist-package.schema.json",
+  "title": "Mathematics Specialist Intelligence Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "package_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "role",
+    "intelligence_kind",
+    "phase",
+    "agent_instance_id",
+    "work_order_ref",
+    "work_order_digest",
+    "context_ref",
+    "context_digest",
+    "ground_truth_ref",
+    "ground_truth_digest",
+    "source_visibility",
+    "upstream_package_visible",
+    "sealed_before_upstream_exposure",
+    "claims",
+    "package_digest"
+  ],
+  "properties": {
+    "package_id": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "role": {"enum": ["CORE1", "CORE2"]},
+    "intelligence_kind": {"enum": ["SEMANTIC_STRUCTURE", "ASSESSMENT_COGNITION"]},
+    "phase": {"enum": ["FIRST_ROLE_ANALYSIS", "SECOND_ROLE_INDEPENDENT"]},
+    "agent_instance_id": {"type": "string", "minLength": 1},
+    "work_order_ref": {"type": "string", "pattern": "^MATH-WO-[0-9a-f]{16}$"},
+    "work_order_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "context_ref": {"type": "string", "pattern": "^MATH-CTX-[0-9a-f]{16}$"},
+    "context_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ground_truth_ref": {"type": "string", "pattern": "^MATH-GT-[0-9a-f]{16}$"},
+    "ground_truth_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_visibility": {"const": "GROUND_TRUTH_ONLY"},
+    "upstream_package_visible": {"const": false},
+    "sealed_before_upstream_exposure": {"const": true},
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/claim"}
+    },
+    "package_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claim_id",
+        "claim_type",
+        "statement",
+        "subtopic_ref",
+        "evidence_refs",
+        "confidence",
+        "dependency_claim_refs",
+        "unresolved_issue_refs",
+        "claim_digest"
+      ],
+      "properties": {
+        "claim_id": {"type": "string", "pattern": "^MATH-CL-[0-9a-f]{16}$"},
+        "claim_type": {
+          "enum": [
+            "CONCEPT", "MODEL", "LAW", "EQUATION", "DERIVATION", "PREREQUISITE", "CONSTRAINT", "INVARIANT", "STATE", "VALIDITY", "CONCEPT_BOUNDARY", "REPRESENTATION_AFFORDANCE", "STRUCTURAL_CONTRAST",
+            "QUESTION_DEMAND", "RECOGNITION_CUE", "HIDDEN_CONSTRAINT", "REQUIRED_CAPABILITY", "FIRST_NON_OBVIOUS_MOVE", "REPRESENTATION_SWITCH", "REASONING_CHAIN", "WRONG_CHAIN", "DIFFICULTY_VECTOR", "PROBLEM_FAMILY", "MISCONCEPTION", "SOLUTION_STRUCTURE", "TRANSFER_ENVELOPE"
+          ]
+        },
+        "statement": {"type": "string", "minLength": 1},
+        "subtopic_ref": {"type": "string", "minLength": 1},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "confidence": {"enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]},
+        "dependency_claim_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^MATH-CL-[0-9a-f]{16}$"}
+        },
+        "unresolved_issue_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "claim_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-stage-governance-receipt.schema.json",
+  "title": "Mathematics Producer Stage Governance Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "subject", "receipt_id", "stage", "producer_ref", "source_refs",
+    "registry_binding", "purpose_evidence", "difficulty_evidence", "learner_fit_evidence",
+    "question_custody", "coverage_claims", "artifacts", "release_state"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "receipt_id": {"type": "string", "pattern": "^MATH-STAGE-GOV-[A-Z0-9_-]+-[0-9a-f]{16}$"},
+    "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "producer_ref": {"type": "string", "minLength": 3},
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+    "registry_binding": {"$ref": "#/$defs/registryBinding"},
+    "engineering_custody": {"$ref": "#/$defs/engineeringCustody"},
+    "purpose_evidence": {"$ref": "#/$defs/purposeEvidence"},
+    "difficulty_evidence": {"type": "array", "items": {"$ref": "#/$defs/difficultyEvidence"}},
+    "learner_fit_evidence": {"type": "array", "items": {"$ref": "#/$defs/learnerFitEvidence"}},
+    "question_custody": {"type": "array", "items": {"$ref": "#/$defs/questionCustody"}},
+    "coverage_claims": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/coverageClaim"}},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifact"}},
+    "release_state": {"enum": ["READY_FOR_CROSS_CORE_AUDIT", "UNBOUND_PRE_RELEASE", "BLOCKED_GOVERNANCE"]}
+  },
+  "$defs": {
+    "assetType": {"enum": ["CONCEPT","MODEL","EQUATION","DERIVATION","CAPABILITY","LEARNING_ATOM","REPRESENTATION","MISCONCEPTION","PROBLEM_FAMILY","SOURCE_QUESTION","CANONICAL_SOLUTION","EXAMPLE","VERIFICATION_RULE","TTU"]},
+    "artifactKind": {"enum": ["NARRATIVE", "EQUATION", "DERIVATION", "SOURCE_STEM", "EXAMPLE", "QUESTION", "REPRESENTATION", "SOLUTION", "TTU"]},
+    "demandLevel": {"enum": ["M0_DIRECT", "M1_CONTROLLED_VARIATION", "M2_REPRESENTATION_TRANSFER", "M3_INVERSE_TARGET", "M4_HIDDEN_STRUCTURE", "M5_METHOD_DISCRIMINATION", "M6_FAMILY_DISCRIMINATION", "M7_MULTI_STEP_SYNTHESIS", "M8_MIXED_COMPETITIVE"]},
+    "registryBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "registry_ref", "matched_asset_refs"],
+      "properties": {
+        "status": {"enum": ["BOUND", "UNBOUND"]},
+        "registry_ref": {"type": ["string", "null"], "pattern": "^MATH-REG-"},
+        "matched_asset_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}}
+      }
+    },
+    "engineeringAuthorizationCustody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id", "engineering_binding_id", "engineering_closure_receipt_id",
+        "engineering_closure_receipt_digest", "engineering_registry_digest", "validator_contract_digest",
+        "scope_refs", "direct_gate_ids", "transitive_gate_ids"
+      ],
+      "properties": {
+        "authorization_id": {"type":"string","pattern":"^MATH-ENG-AUTH-[A-Z0-9_-]+$"},
+        "engineering_binding_id": {"type":"string","pattern":"^MATH-ENG-BIND-[A-Z0-9_-]+$"},
+        "engineering_closure_receipt_id": {"type":"string","pattern":"^MATH-ENG-CLOSURE-[A-Z0-9_-]+$"},
+        "engineering_closure_receipt_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "engineering_registry_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "validator_contract_digest": {"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+        "scope_refs": {"type":"array","minItems":1,"maxItems":3,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+        "direct_gate_ids": {"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}},
+        "transitive_gate_ids": {"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}}
+      }
+    },
+    "engineeringCustody": {
+      "oneOf": [
+        {
+          "type":"object",
+          "additionalProperties":false,
+          "required":["status","reason"],
+          "properties": {"status":{"const":"UNBOUND"},"reason":{"type":"string","minLength":3}}
+        },
+        {
+          "type":"object",
+          "additionalProperties":false,
+          "required":[
+            "status", "admission_id", "admission_digest", "domain_registry_id", "domain_registry_digest",
+            "engineering_registry_digest", "validator_contract_digest", "subtopic_gate_map_digest",
+            "authorized_direct_gate_ids", "authorization_custody", "custody_digest"
+          ],
+          "properties": {
+            "status":{"const":"BOUND"},
+            "admission_id":{"type":"string","pattern":"^MATH-ENG-DOMAIN-ADMISSION-[A-Z0-9_-]+$"},
+            "admission_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "domain_registry_id":{"type":"string","pattern":"^MATH-REG-"},
+            "domain_registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "engineering_registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "validator_contract_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "subtopic_gate_map_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+            "authorized_direct_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","pattern":"^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}},
+            "authorization_custody":{"type":"array","minItems":1,"items":{"$ref":"#/$defs/engineeringAuthorizationCustody"}},
+            "custody_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}
+          }
+        }
+      ]
+    },
+    "purposeEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["purpose_contract", "learner_actions", "canonical_reveal_after_attempt", "evidence_refs"],
+      "properties": {
+        "purpose_contract": {"enum": ["BUILD_UNDERSTANDING", "RECONSTRUCT_CONCEPT", "SOLUTION_APPRENTICESHIP", "TRANSFER_TUTOR"]},
+        "learner_actions": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"enum": ["READ", "INSPECT", "INTERPRET", "COMPARE", "PREDICT", "GENERATE", "SELECT", "DISCRIMINATE", "DIAGNOSE", "DERIVE", "CONNECT", "VERIFY", "TRANSFER", "STUDY_SOLUTION", "ANALYZE_FIRST_MOVE", "ATTEMPT", "MODEL_SELECT", "REPRESENT", "FIRST_MOVE", "SOLVE"]}},
+        "canonical_reveal_after_attempt": {"type": "boolean"},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}}
+      }
+    },
+    "difficultyEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["subtopic_ref", "declared_badge", "badge_authority", "derived_dimensions", "operational_badge", "page_ceiling", "research_level", "owner_override_ref", "evidence_refs"],
+      "properties": {
+        "subtopic_ref": {"type": "string", "minLength": 3}, "declared_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "badge_authority": {"enum": ["OWNER", "SOURCE_METADATA", "DERIVED", "VALIDATED_DERIVED"]},
+        "derived_dimensions": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 4}, "minProperties": 10},
+        "operational_badge": {"enum": ["EASY", "MEDIUM", "HARD"]}, "page_ceiling": {"enum": [10, 20, 30]},
+        "research_level": {"enum": ["NONE", "TARGETED", "DEEP"]}, "owner_override_ref": {"type": ["string", "null"], "minLength": 3},
+        "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}}
+      }
+    },
+    "calibrationBasis": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["type", "learner_knowledge_percent", "knowledge_source_ref", "calibration_policy_ref", "capability_knowledge"], "properties": {"type": {"const": "KNOWLEDGE_PERCENT"}, "learner_knowledge_percent": {"type": "number", "minimum": 0, "maximum": 100}, "knowledge_source_ref": {"type": "string", "minLength": 3}, "calibration_policy_ref": {"type": "string", "minLength": 3}, "capability_knowledge": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["capability_ref", "percent"], "properties": {"capability_ref": {"type": "string", "minLength": 2}, "percent": {"type": "number", "minimum": 0, "maximum": 100}}}}}},
+        {"type": "object", "additionalProperties": false, "required": ["type", "owner_ref", "reason"], "properties": {"type": {"const": "OWNER_OVERRIDE"}, "owner_ref": {"type": "string", "minLength": 3}, "reason": {"type": "string", "minLength": 8}}}
+      ]
+    },
+    "learnerFitEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["item_ref", "calibration_basis", "required_capability_refs", "support_mode", "maximum_allowed_demand", "actual_demand", "taught_scope_verified"],
+      "properties": {
+        "item_ref": {"type": "string", "minLength": 2}, "calibration_basis": {"$ref": "#/$defs/calibrationBasis"},
+        "required_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "support_mode": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+        "maximum_allowed_demand": {"$ref": "#/$defs/demandLevel"}, "actual_demand": {"$ref": "#/$defs/demandLevel"}, "taught_scope_verified": {"const": true}
+      }
+    },
+    "questionCustody": {
+      "type": "object", "additionalProperties": false,
+      "required": ["question_id", "origin", "source_question_no", "source_ref", "source_relation", "parent_question_refs", "exact_stem_hash", "answer_contract_ref", "answer_status", "learner_source_label", "official_past_question_claim", "verified_official_source_ref"],
+      "properties": {
+        "question_id": {"type": "string", "minLength": 2}, "origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
+        "source_question_no": {"type": ["string", "null"], "minLength": 1}, "source_ref": {"type": "string", "minLength": 2},
+        "source_relation": {"enum": ["EXACT_SOURCE", "FRESH_ORIGINAL", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
+        "parent_question_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "exact_stem_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}, "answer_contract_ref": {"type": "string", "minLength": 3},
+        "answer_status": {"const": "VERIFIED"}, "learner_source_label": {"type": "string", "minLength": 5},
+        "official_past_question_claim": {"type": "boolean"}, "verified_official_source_ref": {"type": ["string", "null"], "minLength": 3}
+      }
+    },
+    "coverageClaim": {
+      "type": "object", "additionalProperties": false,
+      "required": ["local_ref", "local_type", "canonical_asset_refs", "disposition", "realization_refs"],
+      "properties": {
+        "local_ref": {"type": "string", "minLength": 2}, "local_type": {"$ref": "#/$defs/assetType"},
+        "canonical_asset_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "disposition": {"enum": ["REALIZED", "RECONSTRUCTED", "REFERENCED", "USED"]},
+        "realization_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}}
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["artifact_ref", "artifact_kind", "content_hash", "content_tokens", "math_tokens", "pedagogy_signature", "structural_signature", "capability_refs", "canonical_asset_refs", "lineage_keys"],
+      "properties": {
+        "artifact_ref": {"type": "string", "minLength": 2}, "artifact_kind": {"$ref": "#/$defs/artifactKind"},
+        "content_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "content_tokens": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "math_tokens": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "pedagogy_signature": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "structural_signature": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "canonical_asset_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REG-MATH-"}},
+        "lineage_keys": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}}
+      }
+    }
+  }
+}

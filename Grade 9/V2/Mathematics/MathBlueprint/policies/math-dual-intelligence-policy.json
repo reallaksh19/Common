@@ -1,0 +1,71 @@
+{
+  "policy_id": "MATH-DUAL-INTELLIGENCE-v1",
+  "policy_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "principle": "Core1 and Core2 reconstruct different intelligence from the same original ground truth. Execution order may vary; neither role may self-validate or treat upstream derived claims as ground truth.",
+  "roles": {
+    "CORE1": {
+      "intelligence_kind": "SEMANTIC_STRUCTURE",
+      "claim_types": [
+        "CONCEPT",
+        "MODEL",
+        "LAW",
+        "EQUATION",
+        "DERIVATION",
+        "PREREQUISITE",
+        "CONSTRAINT",
+        "INVARIANT",
+        "STATE",
+        "VALIDITY",
+        "CONCEPT_BOUNDARY",
+        "REPRESENTATION_AFFORDANCE",
+        "STRUCTURAL_CONTRAST"
+      ]
+    },
+    "CORE2": {
+      "intelligence_kind": "ASSESSMENT_COGNITION",
+      "claim_types": [
+        "QUESTION_DEMAND",
+        "RECOGNITION_CUE",
+        "HIDDEN_CONSTRAINT",
+        "REQUIRED_CAPABILITY",
+        "FIRST_NON_OBVIOUS_MOVE",
+        "REPRESENTATION_SWITCH",
+        "REASONING_CHAIN",
+        "WRONG_CHAIN",
+        "DIFFICULTY_VECTOR",
+        "PROBLEM_FAMILY",
+        "MISCONCEPTION",
+        "SOLUTION_STRUCTURE",
+        "TRANSFER_ENVELOPE"
+      ]
+    }
+  },
+  "firewall": {
+    "require_distinct_first_and_second_agent_instances": true,
+    "first_role_context": "GROUND_TRUTH_ONLY",
+    "second_independent_context": "GROUND_TRUTH_ONLY",
+    "second_independent_upstream_visibility": "WITHHELD",
+    "independent_package_must_be_sealed_before_validation_context": true,
+    "validation_context": "GROUND_TRUTH_PLUS_UPSTREAM_VALIDATION",
+    "validation_agent_must_equal_second_independent_agent": true,
+    "first_package_may_not_become_ground_truth": true
+  },
+  "validation_classifications": [
+    "CONFIRMED",
+    "REFINED",
+    "MISSING",
+    "UNSUPPORTED",
+    "CONTRADICTED",
+    "OUT_OF_SCOPE",
+    "UNKNOWN"
+  ],
+  "release_rules": {
+    "every_first_package_claim_requires_one_validation_record": true,
+    "refined_claim_requires_refined_statement": true,
+    "unsupported_or_contradicted_claim_requires_ground_truth_evidence": true,
+    "unknown_must_remain_unknown": true,
+    "missing_findings_must_reference_independent_second_role_claims": true,
+    "cross_validation_does_not_mutate_original_packages": true
+  }
+}

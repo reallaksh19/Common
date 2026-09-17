@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","subject","manifest_id","request_id","scope_kind","scope_refs","registry_ref","resolution_mode","direct_gate_ids"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "manifest_id": {"type": "string", "pattern": "^MATH-ENG-MANIFEST-[A-Z0-9_-]+$"},
+    "request_id": {"type": "string", "pattern": "^MATH-ENG-REQ-[A-Z0-9_-]+$"},
+    "scope_kind": {"enum": ["ENGINEERING_GATE","BUCKET"]},
+    "scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 3}
+    },
+    "registry_ref": {"const": "policies/mathematics-technical-engineering-gates.v1.json"},
+    "resolution_mode": {"enum": ["GATE_IDENTITY","REGISTRY_LINKED_BUCKET"]},
+    "direct_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-[A-Z0-9]+-[A-Z0-9-]+$"}
+    }
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-learner-page-blueprint.schema.json",
+  "title": "Mathematics Learner Page Blueprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "subject", "blueprint_id", "difficulty_badge", "pages", "depth_obligations"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "blueprint_id": {"type": "string", "minLength": 6},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "pages": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/page"}},
+    "depth_obligations": {"type": "array", "items": {"$ref": "#/$defs/depthObligation"}}
+  },
+  "$defs": {
+    "stage": {"enum": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"]},
+    "pageKind": {"enum": ["COVER", "BASIC_NOTES", "TEACHING", "OPEN_TUTOR", "SOURCE_QUESTION", "SOLUTION_APPRENTICESHIP", "TRANSFER_TUTOR"]},
+    "contentRole": {"enum": ["NARRATIVE", "EXPLANATION", "HINT", "INSTRUCTION", "IMMUTABLE_SOURCE", "CANONICAL_FORMULA", "CANONICAL_DEFINITION", "ANSWER_IDENTITY", "DERIVED_MATHEMATICS"]},
+    "transformation": {"enum": ["NONE", "BUILD", "RECONSTRUCT", "CONTRAST", "SOLUTION_ANATOMY", "TRANSFER", "VERIFY", "IMMUTABLE_CARRY"]},
+    "technicalKind": {
+      "enum": [
+        "DEFINITION", "EQUATION", "DERIVATION", "DIAGRAM", "GRAPH", "TABLE", "WORKED_EXAMPLE", "CASE_ANALYSIS", "COUNTEREXAMPLE",
+        "OPEN_TASK", "TECHNICAL_WORKSPACE", "ANSWER_DERIVATION", "VERIFICATION",
+        "PROBLEM", "HINT_LADDER", "ANSWER_CHECK", "SOLUTION_CHAIN", "WHY_MOVE_WORKS", "WRONG_CHAIN", "TRANSFER_CLASSIFICATION"
+      ]
+    },
+    "contentBlock": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["block_id", "content_role", "content_signature", "math_refs", "upstream_ref", "transformation"],
+      "properties": {
+        "block_id": {"type": "string", "minLength": 3},
+        "content_role": {"$ref": "#/$defs/contentRole"},
+        "content_signature": {"type": "string", "minLength": 3},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "upstream_ref": {"type": ["string", "null"], "minLength": 2},
+        "transformation": {"$ref": "#/$defs/transformation"}
+      }
+    },
+    "technicalBlock": {
+      "allOf": [
+        {"$ref": "#/$defs/contentBlock"},
+        {
+          "type": "object",
+          "required": ["kind"],
+          "properties": {"kind": {"$ref": "#/$defs/technicalKind"}}
+        }
+      ]
+    },
+    "proseBlock": {"$ref": "#/$defs/contentBlock"},
+    "viewport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {"type": "number", "minimum": 0, "maximum": 1},
+        "y": {"type": "number", "minimum": 0, "maximum": 1},
+        "width": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "height": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}
+      }
+    },
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representation_id", "kind", "math_refs", "semantic_geometry_refs", "must_make_visible", "must_not_imply", "clip_to_viewport", "viewport"],
+      "properties": {
+        "representation_id": {"type": "string", "minLength": 3},
+        "kind": {"enum": ["COORDINATE_DIAGRAM", "GEOMETRIC_DIAGRAM", "GRAPH", "NUMBER_LINE", "TABLE", "FLOW", "SYMBOL_MAP", "OTHER"]},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "semantic_geometry_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "must_make_visible": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "must_not_imply": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "clip_to_viewport": {"type": "boolean"},
+        "viewport": {"$ref": "#/$defs/viewport"}
+      }
+    },
+    "ttuPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["part_id", "semantic_role", "content_ref"],
+      "properties": {
+        "part_id": {"type": "string", "minLength": 2},
+        "semantic_role": {"type": "string", "minLength": 3},
+        "content_ref": {"type": "string", "minLength": 2}
+      }
+    },
+    "ttuCompletionPart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["part_id", "completed_content_ref"],
+      "properties": {
+        "part_id": {"type": "string", "minLength": 2},
+        "completed_content_ref": {"type": "string", "minLength": 2}
+      }
+    },
+    "reconstructableTTU": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ttu_id", "kind", "math_refs", "source_ttu_ref", "lineage_transform", "fading_level", "reconstructable",
+        "given_parts", "missing_parts", "target_relations", "reconstruction_prompt", "completion_key", "verification_refs",
+        "clip_to_viewport", "viewport"
+      ],
+      "properties": {
+        "ttu_id": {"type": "string", "minLength": 4},
+        "kind": {"enum": ["INCOMPLETE_DIAGRAM", "COMPONENT_MODEL", "INCOMPLETE_GRAPH", "EQUATION_SKELETON", "EVENT_LINE", "TABLE_SKELETON", "PROOF_CHAIN", "COORDINATE_MODEL", "FLOW_MODEL", "CONSTRUCTION_SEQUENCE"]},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+        "source_ttu_ref": {"type": ["string", "null"], "minLength": 4},
+        "lineage_transform": {"enum": ["BUILD", "RECONSTRUCT", "CONTRAST", "SOLUTION_ANATOMY", "TRANSFER"]},
+        "fading_level": {"enum": ["MODELLED", "GUIDED", "FADED", "INDEPENDENT"]},
+        "reconstructable": {"const": true},
+        "given_parts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ttuPart"}},
+        "missing_parts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ttuPart"}},
+        "target_relations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+        "reconstruction_prompt": {"type": "string", "minLength": 8},
+        "completion_key": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["completed_parts", "final_check"],
+          "properties": {
+            "completed_parts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ttuCompletionPart"}},
+            "final_check": {"type": "string", "minLength": 3}
+          }
+        },
+        "verification_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "clip_to_viewport": {"type": "boolean"},
+        "viewport": {"$ref": "#/$defs/viewport"}
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workspace_id", "purpose", "math_refs"],
+      "properties": {
+        "workspace_id": {"type": "string", "minLength": 3},
+        "purpose": {"enum": ["LEARNER_DERIVATION", "DIAGRAM_CONSTRUCTION", "CALCULATION", "CLASSIFICATION", "RECONSTRUCTION"]},
+        "math_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 2}}
+      }
+    },
+    "pagination": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "break_reason", "manual_spacers_used"],
+      "properties": {
+        "mode": {"enum": ["FLOW", "PEDAGOGIC_BREAK"]},
+        "break_reason": {"type": ["string", "null"], "minLength": 8},
+        "manual_spacers_used": {"type": "boolean"}
+      }
+    },
+    "page": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_id", "stage", "page_kind", "page_purpose", "pagination", "technical_blocks", "prose_blocks", "representations", "reconstructable_ttus", "workspace_blocks"],
+      "properties": {
+        "page_id": {"type": "string", "minLength": 3},
+        "stage": {"$ref": "#/$defs/stage"},
+        "page_kind": {"$ref": "#/$defs/pageKind"},
+        "page_purpose": {"type": "string", "minLength": 8},
+        "pagination": {"$ref": "#/$defs/pagination"},
+        "technical_blocks": {"type": "array", "items": {"$ref": "#/$defs/technicalBlock"}},
+        "prose_blocks": {"type": "array", "items": {"$ref": "#/$defs/proseBlock"}},
+        "representations": {"type": "array", "items": {"$ref": "#/$defs/representation"}},
+        "reconstructable_ttus": {"type": "array", "items": {"$ref": "#/$defs/reconstructableTTU"}},
+        "workspace_blocks": {"type": "array", "items": {"$ref": "#/$defs/workspace"}}
+      }
+    },
+    "depthObligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "badge", "obligation_id", "disposition", "evidence_refs", "not_applicable_reason"],
+      "properties": {
+        "stage": {"enum": ["CORE1A", "CORE1B"]},
+        "badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "obligation_id": {"type": "string", "minLength": 3},
+        "disposition": {"enum": ["SATISFIED", "NOT_APPLICABLE"]},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+        "not_applicable_reason": {"type": ["string", "null"], "minLength": 8}
+      }
+    }
+  }
+}

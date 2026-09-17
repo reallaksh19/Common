@@ -1,0 +1,267 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "extension_id": "REG-MATH-TECH-GATE-V1-EUCLID-FOUNDATIONS-EXT",
+  "base_registry_id": "REG-MATH-TECH-GATE-V1",
+  "base_registry_git_blob_sha": "9c305c816564c145d77ca74ec6206e3491f73afe",
+  "expected_base_gate_count": 44,
+  "expected_composed_gate_count": 45,
+  "subtopic_gates": [
+    {
+      "subtopic_id": "MATH-GEO-EUCLID-FOUNDATIONS",
+      "learner_title": "Euclidean Foundations: Axioms, Postulates & Theorem Status",
+      "chapter": "Introduction to Euclid's Geometry",
+      "jee_tier": "NOT_IN_JEE",
+      "cbse_ref": {
+        "grade": 9,
+        "chapter": "5",
+        "section": "Euclid's definitions, axioms/common notions and postulates"
+      },
+      "authority_tier": "SOURCE-DEFINED",
+      "maturity": "ENGINEERING",
+      "technical_readiness": "ENGINEERING_GATE_READY",
+      "provenance": {
+        "authority_class": "SOURCE-DEFINED",
+        "source_curriculum": "CBSE / NCERT / National Curriculum Framework",
+        "source_scope": "IN_SCOPE",
+        "source_reference": "Class IX Mathematics, Chapter 5: Introduction to Euclid's Geometry",
+        "claim_status": "VERIFIED_CANONICAL"
+      },
+      "canonical_concept_ids": [
+        "CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION",
+        "CON-MATH-EUCLID-ASSUMPTION-VS-THEOREM",
+        "CON-MATH-EUCLID-SCOPE-OF-ASSUMPTION"
+      ],
+      "prerequisite_ids": [],
+      "linked_buckets": [
+        "BUCKET-MATH-EUCLID-FOUNDATIONS"
+      ],
+      "linked_problem_family_ids": [
+        "PF-MATH-EUCLID-AXIOM-POSTULATE-CLASSIFICATION"
+      ],
+      "technical_core": [
+        {
+          "concept_id": "CON-MATH-EUCLID-AXIOM-POSTULATE-DISTINCTION",
+          "canonical_statement": "Within the Grade 9 Euclidean-geometry curriculum, an axiom/common notion is an accepted general mathematical statement, while a postulate is an accepted assumption stated for the geometric theory under study.",
+          "why_required": "It supplies the exact classification rule demanded by the AssessmentScope capability MATH-EUCLID-CLASSIFY-AXIOM-POSTULATE.",
+          "failure_if_omitted": "Learners classify by wording or memorized numbering instead of the statement's logical scope and role."
+        },
+        {
+          "concept_id": "CON-MATH-EUCLID-ASSUMPTION-VS-THEOREM",
+          "canonical_statement": "Axioms and postulates are starting assumptions inside the stated axiomatic system; a theorem is a proposition established from definitions, axioms/postulates and previously proved results.",
+          "why_required": "Classification is incomplete unless assumed statements are separated from derived statements.",
+          "failure_if_omitted": "A theorem may be mislabelled as an axiom merely because it is familiar or universally used."
+        },
+        {
+          "concept_id": "CON-MATH-EUCLID-SCOPE-OF-ASSUMPTION",
+          "canonical_statement": "The school-level axiom/postulate distinction is determined by scope: general mathematical applicability supports AXIOM classification; geometry-specific assumption supports POSTULATE classification. Modern texts may use the terms more interchangeably, so classification must remain bound to the declared curriculum convention.",
+          "why_required": "It states the validity boundary and prevents historical or modern terminology from silently replacing the curriculum's intended distinction.",
+          "failure_if_omitted": "A correct statement may be marked inconsistently because the governing terminology convention is left unstated."
+        }
+      ],
+      "mandatory_equations": [
+        {
+          "equation_id": "EQ-MATH-EUCLID-CLASSIFICATION",
+          "formula": "class(S) = AXIOM if S is an accepted general mathematical assumption; class(S) = POSTULATE if S is an accepted geometry-specific assumption",
+          "meaning_of_symbols": "S is the statement being classified; class(S) is its curriculum-governed logical status.",
+          "symbols": [
+            {
+              "symbol": "S",
+              "name": "Statement",
+              "domain": "Curriculum-authorized foundational mathematical statements",
+              "geometric_or_algebraic_role": "Object being classified"
+            },
+            {
+              "symbol": "class(S)",
+              "name": "Classification",
+              "domain": "{AXIOM, POSTULATE}",
+              "geometric_or_algebraic_role": "Logical role under the declared Euclidean curriculum convention"
+            }
+          ],
+          "reference_frame_or_sign": "Classification frame is the Grade 9 Euclidean-geometry curriculum convention, not unrestricted modern terminology.",
+          "conditions_of_validity": "Apply only after confirming the statement is being treated as a foundational assumption rather than a definition or theorem; then classify by general-versus-geometry-specific scope.",
+          "obligations": [
+            "EXPLAIN",
+            "INTERPRET",
+            "APPLY",
+            "VERIFY"
+          ]
+        }
+      ],
+      "representations": [
+        {
+          "representation_id": "REP-MATH-EUCLID-CLASSIFICATION-TABLE",
+          "representation_type": "DEFINITION_CLASSIFICATION_TABLE",
+          "name": "Axiom / Postulate / Theorem Status Table",
+          "math_encoded": "Columns: statement; assumed-or-derived status; scope; resulting classification; justification.",
+          "mandatory_labels": [
+            "Statement",
+            "Assumed or Derived?",
+            "General Mathematics or Geometry-Specific?",
+            "Classification",
+            "Justification"
+          ],
+          "what_cannot_be_omitted": "The assumed-versus-derived test and the scope test must both be visible before assigning the label.",
+          "common_incorrect_version": "A two-column memorization list that labels sentences as axiom/postulate without showing the decision criterion.",
+          "verification_method": "Check that every classified item first passes the foundational-assumption test and then uses the declared scope criterion."
+        },
+        {
+          "representation_id": "REP-MATH-EUCLID-LOGICAL-STATUS-FLOW",
+          "representation_type": "DEFINITION_CLASSIFICATION_TABLE",
+          "name": "Foundational-Status Decision Flow",
+          "math_encoded": "Decision flow: statement -> foundational assumption? -> if no, definition/theorem route; if yes, general mathematical scope? -> AXIOM, otherwise geometry-specific -> POSTULATE.",
+          "mandatory_labels": [
+            "Foundational assumption?",
+            "Definition or theorem",
+            "General mathematical scope?",
+            "Geometry-specific scope?",
+            "Axiom",
+            "Postulate"
+          ],
+          "what_cannot_be_omitted": "The first branch must separate assumptions from definitions/theorems before the axiom/postulate scope branch.",
+          "common_incorrect_version": "A one-step flow that asks only whether the sentence appears geometric and labels it a postulate.",
+          "verification_method": "Trace a theorem and an axiom through the flow; they must diverge at the foundational-assumption branch before scope classification."
+        }
+      ],
+      "model_conditions": [
+        {
+          "condition": "Use the Grade 9 Euclidean curriculum convention for the words axiom and postulate.",
+          "why_needed": "Different mathematical traditions may use the two words with less separation than this school-level classification task.",
+          "what_changes_if_violated": "The same statement may receive a different terminology label even though its logical role is unchanged."
+        },
+        {
+          "condition": "Definitions and theorems must be excluded before the axiom/postulate scope test is applied.",
+          "why_needed": "The classification relation concerns foundational assumptions, not every mathematical sentence.",
+          "what_changes_if_violated": "Derived propositions or definitions can be falsely promoted to foundational assumptions."
+        }
+      ],
+      "reasoning_sequence": [
+        {
+          "step": 1,
+          "expert_action": "Identify whether the statement is presented as a foundational assumption, a definition, or a derived theorem.",
+          "inferential_jump": "LOW"
+        },
+        {
+          "step": 2,
+          "expert_action": "If it is a foundational assumption, determine whether its intended scope is general mathematics or specifically Euclidean geometry.",
+          "inferential_jump": "MEDIUM"
+        },
+        {
+          "step": 3,
+          "expert_action": "Classify the statement as AXIOM or POSTULATE under the declared curriculum convention and state the scope-based reason.",
+          "inferential_jump": "LOW"
+        },
+        {
+          "step": 4,
+          "expert_action": "Verify the classification by checking that no proof/derivation claim or definition role has been mistaken for an assumption.",
+          "inferential_jump": "MEDIUM"
+        }
+      ],
+      "required_transformations": [
+        {
+          "from_mode": "Natural-language foundational statement",
+          "to_mode": "Explicit logical-status and scope classification",
+          "target_core_role": "CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION",
+          "description": "Make the assumption/derivation distinction and general-versus-geometry-specific scope visible before naming axiom or postulate."
+        },
+        {
+          "from_mode": "Given axiom/postulate label",
+          "to_mode": "Learner-generated classification justification",
+          "target_core_role": "CORE1B_GENERATIVE_RECONSTRUCTION",
+          "description": "Require the learner to reconstruct why the statement has that logical status instead of recalling a label only."
+        },
+        {
+          "from_mode": "Source classification question",
+          "to_mode": "Worked classification decision chain",
+          "target_core_role": "CORE2A_DECLARATIVE_WORKED_PROBLEM",
+          "description": "Solve by checking foundational status, scope and exclusion of theorem/definition alternatives."
+        },
+        {
+          "from_mode": "Familiar Euclidean statement",
+          "to_mode": "Fresh classification transfer",
+          "target_core_role": "CORE2B_GENERATIVE_TRANSFER",
+          "description": "Classify a structurally similar but non-identical statement using the same scope-and-status invariant."
+        }
+      ],
+      "misconceptions": [
+        {
+          "misconception_id": "MISC-MATH-EUCLID-AXIOM-POSTULATE-PROOF",
+          "incorrect_belief": "An axiom is proved while a postulate is accepted without proof, or vice versa.",
+          "why_plausible": "Learners often memorize two labels but attach the distinction to proof status rather than scope.",
+          "required_counterexample": "Both 'things equal to the same thing are equal to one another' and Euclid's parallel postulate function as starting assumptions in the school-level system; neither is proved inside that system before use.",
+          "required_technical_repair": "Use proof status only to separate assumptions from theorems; use general-versus-geometry-specific scope to distinguish axiom from postulate under this curriculum convention."
+        },
+        {
+          "misconception_id": "MISC-MATH-EUCLID-ALL-GEOMETRY-POSTULATES",
+          "incorrect_belief": "Any statement appearing in a geometry chapter must be a postulate.",
+          "why_plausible": "Chapter location is mistaken for logical scope.",
+          "required_counterexample": "A general common notion such as equality transitivity can be used in geometry while remaining a general mathematical axiom/common notion.",
+          "required_technical_repair": "Classify the statement's role and scope, not the page or chapter in which it appears."
+        }
+      ],
+      "mandatory_verifications": [
+        "Verify that each classification first distinguishes foundational assumption from theorem/definition.",
+        "Verify that AXIOM versus POSTULATE is justified by general-mathematics versus geometry-specific scope under the declared Grade 9 convention.",
+        "Verify that no statement is classified solely from memorized numbering, wording, or chapter location."
+      ],
+      "problem_families": [
+        {
+          "family_id": "PF-MATH-EUCLID-AXIOM-POSTULATE-CLASSIFICATION",
+          "name": "Classify Foundational Euclidean Statements",
+          "recognition_cues": "Question asks whether a given foundational statement is an axiom/common notion, postulate, or a non-foundational statement such as a theorem.",
+          "first_technical_move": "Determine assumed-versus-derived status, then inspect general-versus-geometry-specific scope.",
+          "common_fatal_error": "Choosing a label from memorized wording without checking logical role and scope.",
+          "typical_unknown": "Correct classification with a scope-based justification"
+        }
+      ],
+      "difficulty_profile": {
+        "prerequisite_depth": 0,
+        "element_interactivity": 1,
+        "inferential_jump_severity": 1,
+        "representation_translation": 1,
+        "model_discrimination": 2,
+        "sign_or_frame_sensitivity": 0,
+        "multi_step_dependency": 1,
+        "abstraction": 2,
+        "misconception_density": 2,
+        "synthesis": 1,
+        "provisional_difficulty": "EASY",
+        "difficulty_basis": "Low computational load but non-trivial logical-role discrimination between assumptions, definitions and derived propositions.",
+        "maturity": "ENGINEERING"
+      },
+      "release_checklist": {
+        "canonical_concepts_present": true,
+        "mandatory_equations_present": true,
+        "validity_conditions_stated": true,
+        "required_representations_present": true,
+        "reasoning_chain_complete": true,
+        "misconceptions_addressed": true,
+        "independent_verification_exists": true,
+        "problem_family_map_exists": true,
+        "provenance_verified": true,
+        "difficulty_profile_validated": true
+      },
+      "badges": {
+        "base_badges": [
+          "EUCLIDEAN_FOUNDATIONS",
+          "AXIOM_POSTULATE_CLASSIFICATION"
+        ],
+        "conditional_badges": [
+          "FOUNDATIONAL_LOGIC_DISCRIMINATION"
+        ]
+      },
+      "falsification_cases": [
+        {
+          "test_id": "FALS-EUCLID-FOUNDATIONS-01",
+          "authoring_defect": "Classify axiom versus postulate by whether the statement is proved rather than by its curriculum-governed scope after foundational status is established.",
+          "expected_failure_reason": "Both categories are starting assumptions in the declared system; proof status separates them from theorems, not from each other."
+        },
+        {
+          "test_id": "FALS-EUCLID-FOUNDATIONS-02",
+          "authoring_defect": "Treat a derived theorem as an axiom because it is broadly applicable.",
+          "expected_failure_reason": "Derived statements must fail the foundational-assumption test before any axiom/postulate scope classification is attempted."
+        }
+      ]
+    }
+  ]
+}

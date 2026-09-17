@@ -1,0 +1,9 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"math-independent-answer-audit.schema.json",
+  "title":"Mathematics Independent Answer Audit",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["audit_id","answers"],
+  "properties":{"audit_id":{"type":"string","minLength":3},"answers":{"type":"object","additionalProperties":{"type":"object","additionalProperties":false,"required":["status","canonical_answer","evidence"],"properties":{"status":{"const":"PASS"},"canonical_answer":{},"evidence":{"type":"string","minLength":3}}}}}
+}

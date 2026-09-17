@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-specialist-work-order.schema.json",
+  "title": "Mathematics Specialist Work Order",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "work_order_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "role",
+    "intelligence_kind",
+    "phase",
+    "agent_instance_id",
+    "ground_truth_ref",
+    "ground_truth_digest",
+    "allowed_ground_truth_evidence_refs",
+    "upstream_visibility",
+    "allowed_upstream_package_refs",
+    "withheld_upstream_package_refs",
+    "independent_package_ref",
+    "work_order_digest"
+  ],
+  "properties": {
+    "work_order_id": {"type": "string", "pattern": "^MATH-WO-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "role": {"enum": ["CORE1", "CORE2"]},
+    "intelligence_kind": {"enum": ["SEMANTIC_STRUCTURE", "ASSESSMENT_COGNITION"]},
+    "phase": {"enum": ["FIRST_ROLE_ANALYSIS", "SECOND_ROLE_INDEPENDENT", "SECOND_ROLE_VALIDATION"]},
+    "agent_instance_id": {"type": "string", "minLength": 1},
+    "ground_truth_ref": {"type": "string", "pattern": "^MATH-GT-[0-9a-f]{16}$"},
+    "ground_truth_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "allowed_ground_truth_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "upstream_visibility": {"enum": ["WITHHELD", "VISIBLE"]},
+    "allowed_upstream_package_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"}
+    },
+    "withheld_upstream_package_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"}
+    },
+    "independent_package_ref": {"type": ["string", "null"], "pattern": "^MATH-SP-[0-9a-f]{16}$"},
+    "work_order_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"phase": {"enum": ["FIRST_ROLE_ANALYSIS", "SECOND_ROLE_INDEPENDENT"]}}},
+      "then": {
+        "properties": {
+          "upstream_visibility": {"const": "WITHHELD"},
+          "allowed_upstream_package_refs": {"maxItems": 0},
+          "independent_package_ref": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"phase": {"const": "SECOND_ROLE_VALIDATION"}}},
+      "then": {
+        "properties": {
+          "upstream_visibility": {"const": "VISIBLE"},
+          "allowed_upstream_package_refs": {"minItems": 2},
+          "withheld_upstream_package_refs": {"maxItems": 0},
+          "independent_package_ref": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"}
+        }
+      }
+    }
+  ]
+}

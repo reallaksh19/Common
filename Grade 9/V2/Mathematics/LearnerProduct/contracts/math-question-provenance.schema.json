@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-question-provenance.schema.json",
+  "title": "Mathematics Question Provenance",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["question_origin", "display_inline", "learner_label", "citations", "official_past_question_claim"],
+  "properties": {
+    "question_origin": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
+    "display_inline": {"const": true},
+    "learner_label": {"const": "Where this question came from"},
+    "citations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["citation_kind", "label", "locator", "use", "text_relation"],
+        "properties": {
+          "citation_kind": {"enum": ["CORE2_SOURCE", "CORE1_TEACHING", "CORE1A_TEACHING", "COMPETITION_BENCHMARK", "GENERATED_ORIGINAL"]},
+          "label": {"type": "string", "minLength": 3},
+          "locator": {"type": "string", "minLength": 2},
+          "url": {"type": ["string", "null"], "format": "uri"},
+          "use": {"enum": ["SOURCE_TEXT", "CONCEPT_SUPPORT", "STYLE_BENCHMARK", "ORIGIN_DISCLOSURE"]},
+          "text_relation": {"enum": ["EXACT_SOURCE", "FRESH_ORIGINAL", "STYLE_ONLY"]}
+        }
+      }
+    },
+    "official_past_question_claim": {"type": "boolean"},
+    "verified_official_source_ref": {"type": ["string", "null"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"question_origin": {"const": "GENERATED_ORIGINAL"}}, "required": ["question_origin"]},
+      "then": {"properties": {"official_past_question_claim": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"official_past_question_claim": {"const": true}}, "required": ["official_past_question_claim"]},
+      "then": {"required": ["verified_official_source_ref"], "properties": {"verified_official_source_ref": {"type": "string", "minLength": 3}}}
+    }
+  ]
+}

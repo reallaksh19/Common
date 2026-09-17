@@ -1,0 +1,32 @@
+{
+  "fixture_id": "MATH-DUAL-GOLDEN-CORE1-FIRST-v1",
+  "purpose": "Prove that strong semantic evidence may route Core1 first without granting Core2 blind trust.",
+  "route": "CORE1_FIRST",
+  "expected_sequence": [
+    "FIRST_ROLE_ANALYSIS",
+    "SECOND_ROLE_INDEPENDENT",
+    "SECOND_ROLE_VALIDATION"
+  ],
+  "required_invariants": {
+    "first_role": "CORE1",
+    "second_role": "CORE2",
+    "distinct_agent_instances": true,
+    "first_context": "GROUND_TRUTH_ONLY",
+    "second_independent_context": "GROUND_TRUTH_ONLY",
+    "first_package_withheld_during_second_independent_pass": true,
+    "independent_package_sealed_before_validation": true,
+    "validation_context": "GROUND_TRUTH_PLUS_UPSTREAM_VALIDATION",
+    "every_first_claim_classified": true,
+    "original_packages_mutated_by_validation": false,
+    "terminal_state": "CROSS_VALIDATED"
+  },
+  "allowed_validation_classifications": [
+    "CONFIRMED",
+    "REFINED",
+    "MISSING",
+    "UNSUPPORTED",
+    "CONTRADICTED",
+    "OUT_OF_SCOPE",
+    "UNKNOWN"
+  ]
+}

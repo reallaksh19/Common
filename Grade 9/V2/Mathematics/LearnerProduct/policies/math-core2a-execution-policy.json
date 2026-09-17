@@ -1,0 +1,60 @@
+{
+  "policy_id": "MATH-CORE2A-EXECUTION-v1",
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "source_lane": {
+    "preserve_all_core2_questions": true,
+    "preserve_source_order": true,
+    "preserve_source_identity": true,
+    "preserve_attempt_before_solution": true,
+    "inline_citation_required": true
+  },
+  "challenge_selection": {
+    "per_bucket": {
+      "near_transfer": 1,
+      "structural_variation": 1,
+      "mixed_synthesis": "WHEN_ELIGIBLE"
+    },
+    "structural_variation_priority": [
+      "HIDDEN_INFORMATION",
+      "REVERSED_TARGET",
+      "REPRESENTATION_SHIFT",
+      "PARAMETER_CONSTRAINT"
+    ],
+    "mixed_synthesis_eligibility": {
+      "minimum_mature_bucket_count": 2,
+      "all_required_capabilities_taught": true
+    }
+  },
+  "support_sequence": [
+    "TRY_IT_FIRST",
+    "SMALL_CLUE",
+    "BIGGER_CLUE",
+    "HOW_DO_I_START",
+    "THINK_IT_THROUGH",
+    "FULL_WORKING",
+    "QUICK_CHECK"
+  ],
+  "hint_semantics": {
+    "SMALL_CLUE": "NOTICE_STRUCTURE",
+    "BIGGER_CLUE": "CHOOSE_METHOD_OR_REPRESENTATION",
+    "HOW_DO_I_START": "FIRST_EXECUTABLE_STEP"
+  },
+  "challenge_validation": [
+    "INDEPENDENTLY_SOLVED",
+    "ANSWER_VERIFIED",
+    "DOMAIN_AND_MULTIPLICITY_CHECKED",
+    "REQUIRED_CAPABILITIES_TAUGHT",
+    "NOT_MATERIALLY_NEAR_COPY",
+    "INLINE_PROVENANCE_BOUND"
+  ],
+  "stop_conditions": [
+    "CORE2A_UNTAUGHT_MATH_REQUIRED",
+    "CORE2A_HINT_ATOM_NOT_PRETAUGHT",
+    "CORE2A_CHALLENGE_TARGET_UNGROUNDED",
+    "CORE2A_GENERATED_ITEM_NOT_INDEPENDENTLY_VERIFIED",
+    "CORE2A_GENERATED_ITEM_TOO_CLOSE_TO_SOURCE",
+    "CORE2A_QUESTION_CITATION_MISSING",
+    "CORE2A_GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION"
+  ]
+}

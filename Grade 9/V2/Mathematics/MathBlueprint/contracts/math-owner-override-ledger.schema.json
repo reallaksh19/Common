@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-owner-override-ledger.schema.json",
+  "title": "Mathematics Owner Override Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["ledger_id","schema_version","subject","run_ref","overrides","ledger_digest"],
+  "properties": {
+    "ledger_id": {"type": "string", "pattern": "^MATH-OVR-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "overrides": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["override_id","target_type","target_ref","mode","requested_action","owner_reason","ground_truth_changed"],
+        "properties": {
+          "override_id": {"type": "string", "pattern": "^OVR-[A-Za-z0-9._-]+$"},
+          "target_type": {"const": "FIRST_ROLE"},
+          "target_ref": {"type": "string", "minLength": 1},
+          "mode": {"enum": ["HARD","SOFT"]},
+          "requested_action": {"enum": ["CORE1_FIRST","CORE2_FIRST","BLOCK_OWNER_REVIEW"]},
+          "owner_reason": {"type": "string", "minLength": 1},
+          "ground_truth_changed": {"const": false}
+        }
+      }
+    },
+    "ledger_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

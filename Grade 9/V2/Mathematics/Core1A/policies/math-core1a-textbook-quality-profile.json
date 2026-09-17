@@ -1,0 +1,107 @@
+{
+  "profile_id": "MATH-CORE1A-TEXTBOOK-QUALITY-v2",
+  "schema_version": "2.0.0",
+  "subject": "MATHEMATICS",
+  "purpose": "Synthesize coherent teaching buckets from the exact capability-level Core1 plan and exact M-F learner StudyModel, then realize those buckets as a learner-facing textbook manuscript and PDF without changing learner diagnosis/treatment or mathematical authority.",
+  "input_contract": {
+    "required": [
+      "MathCore1StudyPlan",
+      "MathLearnerStudyModel"
+    ],
+    "binding_invariants": [
+      "Core1.study_model_ref == StudyModel.study_model_id",
+      "Core1.study_model_digest == StudyModel.study_model_digest",
+      "Core1 capability coverage == StudyModel capability coverage",
+      "Core1 treatment == StudyModel treatment for every capability",
+      "Core1 scope_role == StudyModel scope_role for every capability",
+      "Core1 assessment-question bindings == StudyModel bindings for every capability"
+    ],
+    "repository_authority": [
+      "Math PCK candidate registry",
+      "Math problem-family registry"
+    ],
+    "forbidden": [
+      "invent a second learner-state vocabulary",
+      "original assessment-question reuse as Core1A worked/practice instance",
+      "renderer-invented bucket invariant"
+    ]
+  },
+  "bucket_synthesis": {
+    "capability_is_not_bucket": true,
+    "direct_grouping_rule": "Group directly assessed capabilities only when they share governed problem-family authority.",
+    "prerequisite_attachment_rule": "Attach prerequisite-only capability to one dependent bucket only when the dependency is unambiguous; shared prerequisites remain their own bridge bucket.",
+    "exactly_once_capability_coverage": true,
+    "ordering_rule": "Use approved Core1 capability order as the stable bucket-order basis; do not invent difficulty ordering.",
+    "invariant_grounding": [
+      "problem-family target_job",
+      "bound PCK anchor"
+    ],
+    "learning_atom_grounding": [
+      "bound PCK anchor or ordinary-language bridge",
+      "bound PCK reconstruction steps"
+    ]
+  },
+  "learner_state_policy": {
+    "authoritative_values": ["UNKNOWN", "DEVELOPING", "READY"],
+    "authoritative_treatments": ["VERIFY_ONLY", "ACTIVE_STUDY", "REPAIR_BEFORE", "REPAIR_IN_UNIT", "PROBE_FIRST"],
+    "must_preserve_confidence": true,
+    "must_preserve_observation_refs": true,
+    "must_preserve_priority_band": true,
+    "forbidden_replacements": ["FOUNDATION", "PARTIAL", "20% learner", "50% learner"]
+  },
+  "full_teaching_requirements": {
+    "worked_examples_min": 2,
+    "practice_roles": ["WORKED", "GUIDED", "FADED", "INDEPENDENT", "TRANSFER"],
+    "requires": ["opening", "concept_explanation", "why_it_works", "common_mistake", "repair", "verification"],
+    "hint_policy": "GUIDED exposes at most two hints, FADED at most one hint, INDEPENDENT and TRANSFER expose no hint in the main learner flow."
+  },
+  "learner_language": {
+    "forbid_internal_ids": true,
+    "forbid_authoring_meta": true,
+    "forbid_release_review_meta": true,
+    "forbid_learner_state_metadata_on_student_pages": true,
+    "forbidden_phrases": [
+      "author a new instance",
+      "source reuse is forbidden",
+      "candidate learner product",
+      "publication engineering",
+      "reconstruction route",
+      "fading dimensions",
+      "promotion registry",
+      "release class",
+      "learner_state_readiness",
+      "priority_band"
+    ]
+  },
+  "publication": {
+    "body_font_min_pt": 9.5,
+    "content_driven_pagination": true,
+    "book_like_not_slide_like": true,
+    "answers_after_attempt": true,
+    "page_numbers": true,
+    "bucket_is_visible_teaching_unit": true
+  },
+  "falsifiers": [
+    "CORE1A_STUDY_MODEL_REF_MISMATCH",
+    "CORE1A_STUDY_MODEL_DIGEST_BINDING_MISMATCH",
+    "CORE1A_STUDY_MODEL_DIGEST_INVALID",
+    "CORE1A_CORE1_SCOPE_COVERAGE_DRIFT",
+    "CORE1A_STUDY_MODEL_SCOPE_COVERAGE_DRIFT",
+    "CORE1A_TREATMENT_DRIFT",
+    "CORE1A_SCOPE_ROLE_DRIFT",
+    "CORE1A_ASSESSMENT_BINDING_DRIFT",
+    "CORE1A_BUCKET_COVERAGE_FAILED",
+    "CORE1A_BUCKET_INVARIANT_UNGROUNDED",
+    "CORE1A_BUCKET_PCK_BINDING_MISSING",
+    "CORE1A_BUCKET_LEARNING_ATOMS_MISSING",
+    "CORE1A_LEARNER_TREATMENT_DRIFT",
+    "CORE1_AUTHORED_INSTANCE_NOT_MATERIALIZED",
+    "CORE1A_FAMILY_GENERATOR_MISSING",
+    "CORE1A_INTERNAL_JARGON_LEAK",
+    "CORE1A_INTERNAL_IDENTIFIER_LEAK",
+    "CORE1A_WORKED_EXAMPLE_DEPTH_MISSING",
+    "CORE1A_CONCEPT_EXPLANATION_UNDERREALIZED",
+    "CORE1_MISCONCEPTION_REPAIR_NOT_MATERIALIZED",
+    "CORE1A_QUALITY_GATE_FAILED"
+  ]
+}

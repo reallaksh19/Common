@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-self-teaching-contract.schema.json",
+  "title": "Mathematics Self-Teaching Stage Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "subject",
+    "self_taught",
+    "stage_profiles",
+    "generation_governance",
+    "global_invariants"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.1.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "self_taught": {"const": true},
+    "stage_profiles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+      "properties": {
+        "CORE1A": {"$ref": "#/$defs/stageProfile"},
+        "CORE1B": {"$ref": "#/$defs/stageProfile"},
+        "CORE2A": {"$ref": "#/$defs/stageProfile"},
+        "CORE2B": {"$ref": "#/$defs/stageProfile"}
+      }
+    },
+    "generation_governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core1_series", "core2_series"],
+      "properties": {
+        "core1_series": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bucket_unit",
+            "learner_knowledge_controls_depth",
+            "difficulty_badges",
+            "page_budget_is_cap_not_target",
+            "pedagogy_research_does_not_change_authority",
+            "research_source_count_is_not_quality_proxy"
+          ],
+          "properties": {
+            "bucket_unit": {"const": "SUBTOPIC_BUCKET"},
+            "learner_knowledge_controls_depth": {"const": false},
+            "page_budget_is_cap_not_target": {"const": true},
+            "pedagogy_research_does_not_change_authority": {"const": true},
+            "research_source_count_is_not_quality_proxy": {"const": true},
+            "difficulty_badges": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["EASY", "MEDIUM", "HARD"],
+              "properties": {
+                "EASY": {"$ref": "#/$defs/depthProfile"},
+                "MEDIUM": {"$ref": "#/$defs/depthProfile"},
+                "HARD": {"$ref": "#/$defs/depthProfile"}
+              }
+            }
+          }
+        },
+        "core2_series": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "calibration_applies_to",
+            "learner_knowledge_percent_required_unless_owner_waiver",
+            "owner_waiver_allowed",
+            "missing_calibration_blocks_generation",
+            "knowledge_percent_is_mastery_claim",
+            "purpose_still_required",
+            "no_silent_default",
+            "core2a_question_demand_is_calibrated",
+            "core2b_transfer_demand_is_calibrated",
+            "owner_waiver_must_supply_all_resolved_controls"
+          ],
+          "properties": {
+            "calibration_applies_to": {"type": "array", "const": ["CORE2A", "CORE2B"]},
+            "learner_knowledge_percent_required_unless_owner_waiver": {"const": true},
+            "owner_waiver_allowed": {"const": true},
+            "missing_calibration_blocks_generation": {"const": true},
+            "knowledge_percent_is_mastery_claim": {"const": false},
+            "purpose_still_required": {"const": true},
+            "no_silent_default": {"const": true},
+            "core2a_question_demand_is_calibrated": {"const": true},
+            "core2b_transfer_demand_is_calibrated": {"const": true},
+            "owner_waiver_must_supply_all_resolved_controls": {"const": true}
+          }
+        }
+      }
+    },
+    "global_invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "all_stages_close_the_help_loop",
+        "answers_are_independently_verified",
+        "visuals_have_cognitive_purpose",
+        "frozen_core2_questions_are_not_rewritten",
+        "generated_variants_have_new_identity",
+        "static_products_do_not_claim_learner_mastery",
+        "core1_depth_not_learner_percentage_driven",
+        "core2_requires_knowledge_or_owner_waiver",
+        "page_budgets_are_caps_not_quotas",
+        "web_research_never_becomes_curriculum_authority"
+      ],
+      "properties": {
+        "all_stages_close_the_help_loop": {"type": "boolean"},
+        "answers_are_independently_verified": {"type": "boolean"},
+        "visuals_have_cognitive_purpose": {"type": "boolean"},
+        "frozen_core2_questions_are_not_rewritten": {"type": "boolean"},
+        "generated_variants_have_new_identity": {"type": "boolean"},
+        "static_products_do_not_claim_learner_mastery": {"type": "boolean"},
+        "core1_depth_not_learner_percentage_driven": {"type": "boolean"},
+        "core2_requires_knowledge_or_owner_waiver": {"type": "boolean"},
+        "page_budgets_are_caps_not_quotas": {"type": "boolean"},
+        "web_research_never_becomes_curriculum_authority": {"type": "boolean"}
+      }
+    }
+  },
+  "$defs": {
+    "depthProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_pages",
+        "pedagogy_web_research",
+        "research_depth",
+        "subsubtopic_decomposition_allowed",
+        "visual_intensity",
+        "step_by_step_required",
+        "dedicated_diagrams_required"
+      ],
+      "properties": {
+        "max_pages": {"type": "integer", "minimum": 1},
+        "pedagogy_web_research": {"enum": ["OPTIONAL", "REQUIRED"]},
+        "research_depth": {"enum": ["NONE", "STANDARD", "DEEP"]},
+        "subsubtopic_decomposition_allowed": {"type": "boolean"},
+        "visual_intensity": {"enum": ["STANDARD", "HIGH", "VERY_HIGH"]},
+        "step_by_step_required": {"const": true},
+        "dedicated_diagrams_required": {"type": "boolean"}
+      }
+    },
+    "stageProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "role",
+        "governing_question",
+        "attempt_before_explanation",
+        "help_path",
+        "answer_support",
+        "visual_contract",
+        "required_cognitive_moves"
+      ],
+      "properties": {
+        "mode": {"enum": ["DECLARATIVE", "OPEN_ENDED"]},
+        "role": {"type": "string", "minLength": 3},
+        "governing_question": {"type": "string", "minLength": 10},
+        "attempt_before_explanation": {"type": "boolean"},
+        "help_path": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "MEANING_HELP",
+              "RECOGNITION_HELP",
+              "REPRESENTATION_HELP",
+              "CONCEPT_HELP",
+              "FIRST_MOVE_HELP",
+              "PROCEDURE_HELP",
+              "METHOD_HELP",
+              "FULL_WORKING",
+              "ANSWER_VERIFICATION"
+            ]
+          }
+        },
+        "answer_support": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "present",
+            "explanatory",
+            "numeric_or_symbolic_check",
+            "graphical_or_representation_check_when_useful"
+          ],
+          "properties": {
+            "present": {"const": true},
+            "explanatory": {"const": true},
+            "numeric_or_symbolic_check": {"const": true},
+            "graphical_or_representation_check_when_useful": {"const": true}
+          }
+        },
+        "visual_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["cognitive_purpose", "must_make_visible", "symbol_bridge", "must_not_imply"],
+          "properties": {
+            "cognitive_purpose": {"type": "string", "minLength": 3},
+            "must_make_visible": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}},
+            "symbol_bridge": {"type": "string", "minLength": 3},
+            "must_not_imply": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 2}}
+          }
+        },
+        "required_cognitive_moves": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 3}
+        }
+      }
+    }
+  }
+}

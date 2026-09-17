@@ -1,0 +1,44 @@
+{
+  "core1a_authority_ref": "MATH-C1A-GOLDEN-LINSYS",
+  "learner_treatment": "ACTIVE_STUDY",
+  "difficulty_governance": {
+    "subtopic_ref": "MATH-LINEAR-SYSTEM-SOLVE",
+    "declared_badge": "HARD",
+    "badge_authority": "DERIVED",
+    "derived_dimensions": {
+      "prerequisite_depth": 3,
+      "element_interactivity": 4,
+      "inferential_jump_severity": 3,
+      "representation_translation": 3,
+      "abstraction": 3,
+      "method_discrimination": 4,
+      "notation_density": 3,
+      "derivation_burden": 3,
+      "misconception_density": 4,
+      "special_case_sensitivity": 3
+    },
+    "operational_badge": "HARD",
+    "page_ceiling": 30,
+    "research_level": "DEEP",
+    "owner_override_ref": null,
+    "evidence_refs": ["DIFF:HARD:linear-system-v1", "RESEARCH:linear-system-deep"]
+  },
+  "approved_capability_refs": [
+    "MATH-LINEAR-SYSTEM-SOLVE",
+    "MATH-LINEAR-SYSTEM-SETUP",
+    "MATH-WORD-MODELLING",
+    "MATH-VARIABLE-SEMANTICS",
+    "MATH-EQUALITY-PRESERVATION",
+    "MATH-SUBSTITUTION"
+  ],
+  "title": "Consolidation — Linear Systems from Two Conditions",
+  "blocks": [
+    {"block_id":"LS-METHODS","kind":"METHOD_COMPARISON","title":"Same system — two methods","capability_refs":["MATH-LINEAR-SYSTEM-SOLVE","MATH-SUBSTITUTION"],"new_math_refs":[],"learner_text":"Compare substitution and elimination for x + y = 9 and x - y = 3.","math_lines":["Elimination: add the equations -> 2x = 12 -> x = 6, y = 3","Substitution: x = 9 - y -> 9 - y - y = 3 -> y = 3, x = 6"]},
+    {"block_id":"LS-ERROR","kind":"ERROR_CONTRAST","title":"Variable meanings cannot drift","capability_refs":["MATH-VARIABLE-SEMANTICS","MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP"],"new_math_refs":[],"learner_text":"If x is adult tickets and y is student tickets, every equation must keep those meanings fixed.","math_lines":["Correct: x + y = 14","Correct: 8x + 5y = 91","Wrong model: 5x + 8y = 91 after silently swapping meanings"]},
+    {"block_id":"LS-COMPLETION","kind":"COMPLETION","title":"Complete the modelling chain","capability_refs":["MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP","MATH-LINEAR-SYSTEM-SOLVE"],"new_math_refs":[],"learner_text":"Two numbers have sum 17 and difference 5.","math_lines":["Let x = larger number, y = smaller number","x + y = [    ]","x - y = [    ]","Add equations: [              ]","x = [    ], y = [    ]"]},
+    {"block_id":"LS-FADED","kind":"FADED","title":"Now choose the efficient method","capability_refs":["MATH-LINEAR-SYSTEM-SOLVE"],"new_math_refs":[],"learner_text":"Solve 2x + y = 11 and 2x - y = 5.","math_lines":["Method: ____________________","First transformation: ____________________","Solution: ____________________"]},
+    {"block_id":"LS-VARIATION","kind":"CONTROLLED_VARIATION","title":"Change one modelling feature","capability_refs":["MATH-LINEAR-SYSTEM-SETUP","MATH-LINEAR-SYSTEM-SOLVE"],"new_math_refs":[],"learner_text":"Keep two unknowns and two independent conditions fixed while changing one structural feature.","math_lines":[],"columns":["case","second_condition","efficient_method"],"rows":[{"case":"1","second_condition":"x - y = 3","efficient_method":"elimination","changed_features":[]},{"case":"2","second_condition":"y = x - 3","efficient_method":"substitution","changed_features":["equation form"]},{"case":"3","second_condition":"2x - y = 3","efficient_method":"depends on first equation","changed_features":["coefficient structure"]}]},
+    {"block_id":"LS-INDEP","kind":"CLOSE_INDEPENDENT","title":"Close independent consolidation","capability_refs":["MATH-WORD-MODELLING","MATH-LINEAR-SYSTEM-SETUP","MATH-LINEAR-SYSTEM-SOLVE"],"new_math_refs":[],"learner_text":"Adult tickets cost 8 and student tickets cost 5. Fourteen tickets cost 91 in total. Define variables, form the system, and solve.","math_lines":[]},
+    {"block_id":"LS-ANSWERS","kind":"ANSWER_CHECK","title":"Answer check","capability_refs":["MATH-LINEAR-SYSTEM-SOLVE"],"new_math_refs":[],"learner_text":"Completion: x=11, y=6. Faded system: x=4, y=3. Ticket problem: 7 adult and 7 student tickets.","math_lines":[]}
+  ]
+}

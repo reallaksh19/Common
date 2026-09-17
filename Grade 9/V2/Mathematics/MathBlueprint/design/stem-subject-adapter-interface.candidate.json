@@ -1,0 +1,203 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C4_SUBJECT_ADAPTER_INTERFACE_CANDIDATE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "source_stage": {
+    "c3_receipt_path": "design/mathematics-generated-references.receipt.json",
+    "required_status": "C3_GENERATED_REFERENCES_COMPLETE",
+    "required_next_stage": "C4_SUBJECT_ADAPTER_INTERFACE_READY"
+  },
+  "generic_kernel_boundary": {
+    "owns": [
+      "IDENTITY",
+      "SCOPE_MEMBERSHIP",
+      "PROVENANCE",
+      "MATURITY",
+      "EXACT_REFERENCE_CUSTODY",
+      "DISCOVERY_NON_AUTHORITY",
+      "RESEARCH_EVIDENCE_PROMOTION",
+      "LEARNER_CALIBRATION",
+      "LEARNING_PURPOSE_CONTROL",
+      "PREREQUISITE_TRANSITION_COMPOSITION",
+      "ASSESSMENT_CUSTODY",
+      "TTU_LIFECYCLE",
+      "PUBLICATION_LIFECYCLE",
+      "VERSIONING_INVALIDATION",
+      "RISK_LIMITATION_REPORTING"
+    ],
+    "must_not_encode_subject_truth": true,
+    "topic_specific_dispatch_forbidden": true
+  },
+  "interface_operations": [
+    {
+      "operation_id": "DISCOVER_CANDIDATES",
+      "requirement": "CORE",
+      "authority_semantics": "NON_AUTHORITATIVE_DISCOVERY_ONLY",
+      "contract": "Return candidate subject identities for human-facing discovery without selecting, authorizing or upgrading any candidate."
+    },
+    {
+      "operation_id": "RESOLVE_EXACT_IDENTITY",
+      "requirement": "CORE",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Resolve an explicitly selected exact subject identity against current governed subject authority and fail closed when it is absent or stale."
+    },
+    {
+      "operation_id": "VALIDATE_SUBJECT_AUTHORITY",
+      "requirement": "CORE",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Validate the currently governed subject object or gate under subject-specific structural and maturity invariants without creating new subject truth."
+    },
+    {
+      "operation_id": "COMPUTE_PREREQUISITE_CLOSURE",
+      "requirement": "CORE",
+      "authority_semantics": "DERIVES_FROM_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Compute deterministic prerequisite closure only from governed exact subject relationships and preserve direct versus prerequisite-only identity."
+    },
+    {
+      "operation_id": "RETURN_CANONICAL_OBJECTS",
+      "requirement": "CORE",
+      "authority_semantics": "DERIVES_FROM_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Return canonical subject objects projected from already-authorized subject state while preserving source identity, provenance and custody."
+    },
+    {
+      "operation_id": "VALIDATE_TRANSFORMATION",
+      "requirement": "CORE",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Validate a requested subject transformation only through subject-governed legality, constraints, derivation or invariant data rather than generic plausibility."
+    },
+    {
+      "operation_id": "VALIDATE_REPRESENTATION",
+      "requirement": "CORE",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Validate a representation against subject-governed meaning, bindings, visible requirements and forbidden implications."
+    },
+    {
+      "operation_id": "VALIDATE_VERIFICATION_RULE",
+      "requirement": "CORE",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "Validate a subject verification method and its applicability from governed subject objects without treating generic confidence as correctness."
+    },
+    {
+      "operation_id": "VALIDATE_SUBJECT_SAFETY",
+      "requirement": "CONDITIONAL_SUBJECT_CAPABILITY",
+      "authority_semantics": "CONSUMES_EXISTING_SUBJECT_AUTHORITY",
+      "contract": "When a subject exposes safety-governed actions, validate them through explicit subject safety authority; absence of such authority must not be filled by generic inference."
+    }
+  ],
+  "mathematics_projection": {
+    "subject_id": "MATHEMATICS",
+    "projection_status": "DESIGN_PROJECTION_OF_CURRENT_EXECUTABLE_BEHAVIOR",
+    "authority": "NONE",
+    "runtime_path_unchanged": true,
+    "validation_weakened": false,
+    "authority_owner": "MATHEMATICS_ENGINEERING_AND_GOVERNED_DOMAIN_DATA",
+    "canonical_object_schema_path": "contracts/math-canonical-domain-registry.schema.json",
+    "canonical_object_types": [
+      "CONCEPT",
+      "MODEL",
+      "EQUATION",
+      "DERIVATION",
+      "CAPABILITY",
+      "LEARNING_ATOM",
+      "REPRESENTATION",
+      "MISCONCEPTION",
+      "PROBLEM_FAMILY",
+      "SOURCE_QUESTION",
+      "CANONICAL_SOLUTION",
+      "EXAMPLE",
+      "VERIFICATION_RULE"
+    ],
+    "operation_bindings": [
+      {
+        "operation_id": "DISCOVER_CANDIDATES",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-ENGINEERING-DISCOVERY"],
+        "evidence_paths": ["engine/compile_mathematics_engineering_discovery.py"]
+      },
+      {
+        "operation_id": "RESOLVE_EXACT_IDENTITY",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-ENGINEERING-WORKBENCH"],
+        "evidence_paths": ["engine/compile_mathematics_engineering_workbench.py"]
+      },
+      {
+        "operation_id": "VALIDATE_SUBJECT_AUTHORITY",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-ENGINEERING-VALIDATION"],
+        "evidence_paths": ["engine/validate_mathematics_engineering_gates.py"]
+      },
+      {
+        "operation_id": "COMPUTE_PREREQUISITE_CLOSURE",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-ENGINEERING-WORKBENCH"],
+        "evidence_paths": ["engine/compile_mathematics_engineering_workbench.py"]
+      },
+      {
+        "operation_id": "RETURN_CANONICAL_OBJECTS",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-DOMAIN-PROJECTION"],
+        "evidence_paths": ["engine/project_engineering_to_domain_registry_v2.py"]
+      },
+      {
+        "operation_id": "VALIDATE_TRANSFORMATION",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-ENGINEERING-VALIDATION"],
+        "evidence_paths": ["policies/mathematics-engineering-gate-invariants.v1.json"]
+      },
+      {
+        "operation_id": "VALIDATE_REPRESENTATION",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-DOMAIN-PROJECTION"],
+        "evidence_paths": ["contracts/math-canonical-domain-registry.schema.json"]
+      },
+      {
+        "operation_id": "VALIDATE_VERIFICATION_RULE",
+        "binding_status": "CURRENT_BEHAVIOR_REFERENCE_ONLY",
+        "component_ids": ["MATH-ARCH-DOMAIN-PROJECTION"],
+        "evidence_paths": ["contracts/math-canonical-domain-registry.schema.json"]
+      }
+    ]
+  },
+  "chemistry_stress_target": {
+    "subject_id": "CHEMISTRY",
+    "status": "DESIGN_STRESS_TARGET_ONLY",
+    "authority": "NONE",
+    "runtime_binding_present": false,
+    "production_registry_ref": null,
+    "production_validator_ref": null,
+    "candidate_object_types": [
+      "CHEMICAL_ENTITY",
+      "SUBSTANCE_SPECIES",
+      "MACRO_OBSERVATION",
+      "PARTICLE_MODEL",
+      "SYMBOLIC_REPRESENTATION",
+      "REACTION",
+      "REACTION_CONDITION",
+      "STOICHIOMETRIC_RELATION",
+      "MECHANISM",
+      "THERMODYNAMIC_STATE_RELATION",
+      "KINETIC_MODEL",
+      "PERIODIC_PROPERTY_RELATION",
+      "NOMENCLATURE_RULE",
+      "EXPERIMENTAL_OBSERVATION",
+      "MEASUREMENT_UNIT_UNCERTAINTY",
+      "HAZARD_LAB_SAFETY_CONSTRAINT"
+    ],
+    "required_subject_specific_controls": [
+      "MACRO_PARTICLE_SYMBOLIC_COORDINATION",
+      "CHEMICAL_IDENTITY_AND_NOMENCLATURE",
+      "MEASUREMENT_UNIT_UNCERTAINTY",
+      "REACTION_CONDITION_CUSTODY",
+      "LAB_SAFETY_AUTHORITY"
+    ]
+  },
+  "tracked_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "runtime_auto_materialization_executable": false
+  },
+  "next_stage": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY"
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.3.0",
+  "subject": "MATHEMATICS",
+  "core1_buckets": [
+    {
+      "bucket_id": "B-EASY-ORDERED-PAIR",
+      "subtopic_id": "MATH-ORDERED-PAIR-SEMANTICS",
+      "subtopic_title": "Representing a point constrained to an axis",
+      "difficulty_badge": "EASY",
+      "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "difficulty_dimensions": {"prerequisite_depth":1,"element_interactivity":1,"inferential_jump_severity":1,"representation_translation":1,"abstraction":1,"method_discrimination":1,"notation_density":1,"derivation_burden":1,"misconception_density":1,"special_case_sensitivity":1},
+      "difficulty_validation_refs": ["DIFF:EASY:ordered-pair-v1"],
+      "target_page_budget": 8,
+      "subsubtopic_plan": [],
+      "pedagogy_research_brief_ref": null,
+      "pedagogy_web_research_refs": [],
+      "source_integrity_verification_refs": []
+    },
+    {
+      "bucket_id": "B-MEDIUM-EQUAL-DISTANCE",
+      "subtopic_id": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+      "subtopic_title": "Building an equal-distance equation from coordinates",
+      "difficulty_badge": "MEDIUM",
+      "difficulty_badge_basis": "CORE1_SEMANTIC_COMPLEXITY",
+      "difficulty_dimensions": {"prerequisite_depth":2,"element_interactivity":3,"inferential_jump_severity":2,"representation_translation":3,"abstraction":2,"method_discrimination":2,"notation_density":2,"derivation_burden":2,"misconception_density":3,"special_case_sensitivity":2},
+      "difficulty_validation_refs": ["DIFF:MEDIUM:equal-distance-v1"],
+      "target_page_budget": 18,
+      "subsubtopic_plan": ["distance as a geometric invariant","mapping coordinates to squared-distance expressions"],
+      "pedagogy_research_brief_ref": "RESEARCH:equal-distance-standard",
+      "pedagogy_web_research_refs": ["https://doi.org/10.1016/j.edurev.2024.100639","https://doi.org/10.1016/S0959-4752(01)00030-5"],
+      "source_integrity_verification_refs": []
+    },
+    {
+      "bucket_id": "B-HARD-METHOD-VALIDITY",
+      "subtopic_id": "MATH-METHOD-VALIDITY",
+      "subtopic_title": "Recognizing when symmetry shortcuts are valid or fail",
+      "difficulty_badge": "HARD",
+      "difficulty_badge_basis": "OWNER",
+      "difficulty_dimensions": {"prerequisite_depth":3,"element_interactivity":4,"inferential_jump_severity":4,"representation_translation":4,"abstraction":3,"method_discrimination":4,"notation_density":3,"derivation_burden":3,"misconception_density":4,"special_case_sensitivity":3},
+      "difficulty_validation_refs": ["DIFF:HARD:method-validity-v1","OWNER:hard-method-validity"],
+      "target_page_budget": 28,
+      "subsubtopic_plan": ["symmetry condition","general distance model","counterexample and validity boundary","method comparison and reconstruction"],
+      "pedagogy_research_brief_ref": "RESEARCH:method-validity-deep",
+      "pedagogy_web_research_refs": ["https://doi.org/10.1016/j.edurev.2024.100639","https://doi.org/10.1016/0364-0213(89)90002-5","https://doi.org/10.1016/j.jmathb.2024.101192"],
+      "source_integrity_verification_refs": []
+    }
+  ],
+  "core2_calibration": {
+    "purpose": "PRACTICE",
+    "learner_knowledge_percent": 62,
+    "knowledge_percent_source_ref": "ASSESSMENT:diagnostic-2026-09-14",
+    "knowledge_calibration_policy_ref": "OWNER_POLICY:math-core2-calibration-v1",
+    "capability_knowledge": [
+      {"capability_ref":"MATH-EQUIDISTANT-POINT-ON-AXIS","percent":58},
+      {"capability_ref":"MATH-COORDINATE-DISTANCE","percent":66},
+      {"capability_ref":"MATH-ORDERED-PAIR-SEMANTICS","percent":76},
+      {"capability_ref":"MATH-LINEAR-SYSTEM-SOLVE","percent":48}
+    ],
+    "owner_waiver": null,
+    "resolved_core2a_support_profile": "STANDARD_GUIDED",
+    "resolved_core2a_max_demand_level": "M3_INVERSE_TARGET",
+    "resolved_core2b_max_demand_level": "M4_HIDDEN_STRUCTURE"
+  }
+}

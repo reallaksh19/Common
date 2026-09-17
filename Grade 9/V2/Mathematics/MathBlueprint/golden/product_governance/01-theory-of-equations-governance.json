@@ -1,0 +1,153 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "audit_id": "MATH-GOV-THEORY-EQ-001",
+  "registry_ref": "MATH-REG-THEORY-EQ-001",
+  "difficulty_audits": [
+    {
+      "subtopic_id": "THEORY-OF-EQUATIONS",
+      "declared_badge": "HARD",
+      "badge_authority": "VALIDATED_DERIVED",
+      "derived_dimensions": {
+        "prerequisite_depth": 3,
+        "element_interactivity": 3,
+        "inferential_jump_severity": 3,
+        "representation_translation": 3,
+        "abstraction": 3,
+        "method_discrimination": 2,
+        "notation_density": 2,
+        "derivation_burden": 3,
+        "misconception_density": 3,
+        "special_case_sensitivity": 2
+      },
+      "derived_score": 67.5,
+      "derived_badge": "HARD",
+      "operational_badge": "HARD",
+      "page_ceiling": 30,
+      "research_level": "DEEP",
+      "owner_override_ref": null,
+      "consequence_evidence_refs": ["SDU-THEORY-EQ", "RESEARCH-THEORY-EQ", "CONCEPT-TTU-THEORY-EQ"],
+      "status": "ALIGNED"
+    }
+  ],
+  "purpose_audits": [
+    {
+      "stage": "CORE1A",
+      "purpose_contract": "BUILD_UNDERSTANDING",
+      "learner_actions": ["READ", "INSPECT", "INTERPRET", "COMPARE", "VERIFY"],
+      "canonical_reveal_after_attempt": false,
+      "evidence_refs": ["A1-CON-VIETA", "A1-REP-MAP", "A1-CHECK"],
+      "status": "PASS"
+    },
+    {
+      "stage": "CORE1B",
+      "purpose_contract": "RECONSTRUCT_CONCEPT",
+      "learner_actions": ["PREDICT", "GENERATE", "DIAGNOSE", "DERIVE", "VERIFY"],
+      "canonical_reveal_after_attempt": true,
+      "evidence_refs": ["B1-CAP-COEFF", "B1-DIAG-SIGN", "B1-CHECK"],
+      "status": "PASS"
+    },
+    {
+      "stage": "CORE2A",
+      "purpose_contract": "SOLUTION_APPRENTICESHIP",
+      "learner_actions": ["STUDY_SOLUTION", "ANALYZE_FIRST_MOVE", "INTERPRET", "VERIFY"],
+      "canonical_reveal_after_attempt": false,
+      "evidence_refs": ["A2-Q2", "A2-Q2-SOLUTION", "A2-Q2-CHECK"],
+      "status": "PASS"
+    },
+    {
+      "stage": "CORE2B",
+      "purpose_contract": "TRANSFER_TUTOR",
+      "learner_actions": ["ATTEMPT", "MODEL_SELECT", "REPRESENT", "FIRST_MOVE", "SOLVE", "VERIFY", "TRANSFER"],
+      "canonical_reveal_after_attempt": true,
+      "evidence_refs": ["B2-Q2-SIBLING", "B2-Q2-REP-HELP", "B2-Q2-CHECK"],
+      "status": "PASS"
+    }
+  ],
+  "learner_fit_audits": [
+    {
+      "stage": "CORE2A",
+      "item_ref": "A2-Q2",
+      "calibration_basis": {
+        "type": "KNOWLEDGE_PERCENT",
+        "learner_knowledge_percent": 60,
+        "knowledge_source_ref": "LS-THEORY-EQ-60",
+        "calibration_policy_ref": "MATH-KNOWLEDGE-CALIBRATION-v1",
+        "capability_knowledge": [
+          {"capability_ref":"REG-MATH-CAP-COEFF_ROOT","percent":65}
+        ]
+      },
+      "required_capability_refs": ["REG-MATH-CAP-COEFF_ROOT"],
+      "support_mode": "GUIDED",
+      "maximum_allowed_demand": "M4_HIDDEN_STRUCTURE",
+      "actual_demand": "M2_REPRESENTATION_TRANSFER",
+      "taught_scope_verified": true,
+      "result": "PASS"
+    },
+    {
+      "stage": "CORE2B",
+      "item_ref": "B2-Q2-SIBLING",
+      "calibration_basis": {
+        "type": "KNOWLEDGE_PERCENT",
+        "learner_knowledge_percent": 60,
+        "knowledge_source_ref": "LS-THEORY-EQ-60",
+        "calibration_policy_ref": "MATH-KNOWLEDGE-CALIBRATION-v1",
+        "capability_knowledge": [
+          {"capability_ref":"REG-MATH-CAP-COEFF_ROOT","percent":65}
+        ]
+      },
+      "required_capability_refs": ["REG-MATH-CAP-COEFF_ROOT"],
+      "support_mode": "STANDARD",
+      "maximum_allowed_demand": "M5_METHOD_DISCRIMINATION",
+      "actual_demand": "M4_HIDDEN_STRUCTURE",
+      "taught_scope_verified": true,
+      "result": "PASS"
+    }
+  ],
+  "question_custody": [
+    {
+      "question_id": "Q2",
+      "origin": "SOURCE_CORE2",
+      "source_question_no": "Q2",
+      "source_ref": "SRC-Q2",
+      "source_relation": "EXACT_SOURCE",
+      "parent_question_refs": [],
+      "exact_stem_hash": "c7353a0ebccc75d9b5d47db363dcddc3c24e1ab21881c9c46896817a05b26ee3",
+      "answer_contract_ref": "ANS-Q2-v1",
+      "answer_status": "VERIFIED",
+      "learner_source_label": "Source question Q2",
+      "official_past_question_claim": false,
+      "verified_official_source_ref": null
+    },
+    {
+      "question_id": "B2-Q2-SIBLING",
+      "origin": "GENERATED_ORIGINAL",
+      "source_question_no": null,
+      "source_ref": "GEN-THEORY-EQ-B2",
+      "source_relation": "STRUCTURAL_SIBLING",
+      "parent_question_refs": ["Q2"],
+      "exact_stem_hash": null,
+      "answer_contract_ref": "ANS-B2-Q2-SIBLING-v1",
+      "answer_status": "VERIFIED",
+      "learner_source_label": "Generated transfer question; structural sibling of source Q2",
+      "official_past_question_claim": false,
+      "verified_official_source_ref": null
+    }
+  ],
+  "badge_sets": [
+    {
+      "subtopic_id": "THEORY-OF-EQUATIONS",
+      "difficulty": "HARD",
+      "concept_refs": ["REG-MATH-CON-VIETA"],
+      "linkage_refs": ["REG-MATH-CAP-COEFF_ROOT"],
+      "bucket_ref": "B1-ROOTS-COEFFICIENTS",
+      "prerequisite_refs": [],
+      "equation_refs": ["REG-MATH-EQ-VIETA_SUM", "REG-MATH-EQ-VIETA_PRODUCT"],
+      "representation_refs": ["REG-MATH-REP-COEFF_ROOT_MAP"],
+      "misconception_refs": ["REG-MATH-MIS-SIGN"],
+      "problem_family_refs": ["REG-MATH-PF-COEFF_ROOT"],
+      "research_badge": "DEEP",
+      "learner_facing_badges": ["DIFFICULTY", "CONCEPT", "LINKAGE", "BUCKET", "SUBTOPIC", "PROBLEM_FAMILY", "SOURCE"]
+    }
+  ]
+}

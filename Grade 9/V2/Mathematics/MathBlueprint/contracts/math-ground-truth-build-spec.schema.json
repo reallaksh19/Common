@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-ground-truth-build-spec.schema.json",
+  "title": "Mathematics Ground Truth Build Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "subject", "items"],
+  "properties": {
+    "spec_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/item"}
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_type",
+        "authority_class",
+        "availability",
+        "source_path",
+        "ref",
+        "declared_digest",
+        "source_locator",
+        "scope_refs",
+        "notes",
+        "conflict_refs"
+      ],
+      "properties": {
+        "evidence_type": {
+          "enum": [
+            "QUESTION_CORPUS",
+            "SYLLABUS",
+            "AUTHORITATIVE_SOURCE",
+            "ANSWER_KEY",
+            "SOLUTION_SET",
+            "FIGURE_SET"
+          ]
+        },
+        "authority_class": {
+          "enum": ["ORIGINAL_EVIDENCE", "AUTHORITATIVE_SOURCE"]
+        },
+        "availability": {
+          "enum": ["PRESENT", "ABSENT", "PARTIAL", "UNRESOLVED", "CONFLICTED"]
+        },
+        "source_path": {"type": ["string", "null"], "minLength": 1},
+        "ref": {"type": ["string", "null"], "minLength": 1},
+        "declared_digest": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_locator": {"type": ["string", "null"]},
+        "scope_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "notes": {"type": ["string", "null"]},
+        "conflict_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"availability": {"const": "ABSENT"}}},
+          "then": {
+            "properties": {
+              "source_path": {"type": "null"},
+              "ref": {"type": "null"},
+              "declared_digest": {"type": "null"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}

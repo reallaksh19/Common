@@ -1,0 +1,10 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"math-task-intent.schema.json",
+  "title":"Mathematics Learner Task Intent",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["requested_stage","purpose","scope"],
+  "properties":{"requested_stage":{"enum":["CORE1","CORE1A","CORE2","CORE2A"]},"purpose":{"type":["string","null"],"enum":["STARTER","PRACTICE","REVISION","COMPETITION",null]},"scope":{"type":"object","additionalProperties":false,"required":["scope_type","scope_ref"],"properties":{"scope_type":{"enum":["SUBTOPIC","TOPIC","CHAPTER","ASSESSMENT"]},"scope_ref":{"type":"string","minLength":2}}},"learner_facing":{"type":"boolean","default":true},"source_question_policy":{"enum":["ALL","REPRESENTATIVE","ANCHOR_WHERE_USEFUL","NONE"],"default":"ALL"},"answer_visibility":{"enum":["END_ONLY","AFTER_ITEM","STAGED_REVEAL"],"default":"STAGED_REVEAL"}},
+  "allOf":[{"if":{"properties":{"requested_stage":{"const":"CORE2A"}}},"then":{"properties":{"purpose":{"enum":["STARTER","PRACTICE","REVISION","COMPETITION"]}}}}]
+}

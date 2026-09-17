@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-cross-core-similarity-audit.schema.json",
+  "title": "Mathematics Cross-Core Similarity Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "subject", "audit_id", "policy_ref", "coverage_declaration", "comparisons"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "audit_id": {"type": "string", "pattern": "^MATH-SIM-[A-Z0-9][A-Z0-9_-]{4,}$"},
+    "policy_ref": {"const": "MATH-CROSS-CORE-SIMILARITY-v1"},
+    "coverage_declaration": {"$ref": "#/$defs/coverageDeclaration"},
+    "comparisons": {"type": "array", "minItems": 6, "items": {"$ref": "#/$defs/comparison"}}
+  },
+  "$defs": {
+    "stage": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+    "stagePair": {"enum": ["CORE1A__CORE1B", "CORE1A__CORE2A", "CORE1A__CORE2B", "CORE1B__CORE2A", "CORE1B__CORE2B", "CORE2A__CORE2B"]},
+    "artifactKind": {"enum": ["NARRATIVE", "EQUATION", "DERIVATION", "SOURCE_STEM", "EXAMPLE", "QUESTION", "REPRESENTATION", "SOLUTION", "TTU"]},
+    "relation": {"enum": ["NONE", "SEMANTIC_REUSE", "CANONICAL_REPEAT", "FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
+    "classification": {"enum": ["DISTINCT", "LEGITIMATE_TRANSFORMATION", "STRONG_OVERLAP", "NEAR_DUPLICATE", "HARD_DUPLICATE", "FAMILY_DRIFT_REVIEW"]},
+    "coverageDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparison_scope", "stage_pairs", "candidate_pair_count", "uncompared_candidate_count"],
+      "properties": {
+        "comparison_scope": {"const": "ALL_CROSS_CORE_CANDIDATES"},
+        "stage_pairs": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"$ref": "#/$defs/stagePair"}},
+        "candidate_pair_count": {"type": "integer", "minimum": 6},
+        "uncompared_candidate_count": {"const": 0}
+      }
+    },
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "artifact_ref"],
+      "properties": {
+        "stage": {"$ref": "#/$defs/stage"},
+        "artifact_ref": {"type": "string", "minLength": 2}
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["comparison_id", "left", "right", "artifact_kind", "declared_relation", "content_similarity", "pedagogical_similarity", "structural_similarity", "capability_overlap", "classification", "evidence"],
+      "properties": {
+        "comparison_id": {"type": "string", "minLength": 4},
+        "left": {"$ref": "#/$defs/endpoint"},
+        "right": {"$ref": "#/$defs/endpoint"},
+        "artifact_kind": {"$ref": "#/$defs/artifactKind"},
+        "declared_relation": {"$ref": "#/$defs/relation"},
+        "content_similarity": {"type": "number", "minimum": 0, "maximum": 1},
+        "pedagogical_similarity": {"type": "number", "minimum": 0, "maximum": 1},
+        "structural_similarity": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "capability_overlap": {"type": "boolean"},
+        "classification": {"$ref": "#/$defs/classification"},
+        "evidence": {"type": "string", "minLength": 8}
+      }
+    }
+  }
+}

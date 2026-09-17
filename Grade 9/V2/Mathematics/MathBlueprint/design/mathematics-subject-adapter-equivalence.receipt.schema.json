@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://common.local/mathblueprint/design/mathematics-subject-adapter-equivalence.receipt.schema.json",
+  "title": "Mathematics C4 Subject Adapter Equivalence Receipt (Design Only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "authority",
+    "semantic_change",
+    "runtime_migration_authorized",
+    "production_consumers_allowed",
+    "equivalence_status",
+    "mathematics_runtime_path_changed",
+    "mathematics_validation_weakened",
+    "mathematics_object_type_count",
+    "bound_core_operation_count",
+    "conditional_unbound_operation_ids",
+    "chemistry_status",
+    "source_custody",
+    "tracked_runtime_gap",
+    "next_stage"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "C4_SUBJECT_ADAPTER_INTERFACE_EXTRACTED"},
+    "authority": {"const": "NONE"},
+    "semantic_change": {"const": "NONE"},
+    "runtime_migration_authorized": {"const": false},
+    "production_consumers_allowed": {"const": false},
+    "equivalence_status": {"const": "PASS_DESIGN_PROJECTION_ONLY"},
+    "mathematics_runtime_path_changed": {"const": false},
+    "mathematics_validation_weakened": {"const": false},
+    "mathematics_object_type_count": {"type": "integer", "minimum": 1},
+    "bound_core_operation_count": {"type": "integer", "minimum": 1},
+    "conditional_unbound_operation_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"const": "VALIDATE_SUBJECT_SAFETY"}
+    },
+    "chemistry_status": {"const": "DESIGN_STRESS_TARGET_ONLY"},
+    "source_custody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interface_path",
+        "interface_git_blob_sha",
+        "interface_schema_path",
+        "interface_schema_git_blob_sha",
+        "c3_receipt_path",
+        "c3_receipt_git_blob_sha",
+        "catalog_path",
+        "catalog_git_blob_sha",
+        "mathematics_domain_schema_path",
+        "mathematics_domain_schema_git_blob_sha",
+        "validator_path",
+        "validator_git_blob_sha"
+      ],
+      "properties": {
+        "interface_path": {"const": "design/stem-subject-adapter-interface.candidate.json"},
+        "interface_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "interface_schema_path": {"const": "design/stem-subject-adapter-interface.candidate.schema.json"},
+        "interface_schema_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "c3_receipt_path": {"const": "design/mathematics-generated-references.receipt.json"},
+        "c3_receipt_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "catalog_path": {"const": "design/mathematics-architecture-catalog.candidate.json"},
+        "catalog_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "mathematics_domain_schema_path": {"const": "contracts/math-canonical-domain-registry.schema.json"},
+        "mathematics_domain_schema_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "validator_path": {"const": "design/validate_subject_adapter_interface_candidate.py"},
+        "validator_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "tracked_runtime_gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "classification", "runtime_auto_materialization_executable"],
+      "properties": {
+        "finding_id": {"const": "C0-F007"},
+        "classification": {"const": "CURRENT + DOCUMENTED ONLY"},
+        "runtime_auto_materialization_executable": {"const": false}
+      }
+    },
+    "next_stage": {"const": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY"}
+  }
+}

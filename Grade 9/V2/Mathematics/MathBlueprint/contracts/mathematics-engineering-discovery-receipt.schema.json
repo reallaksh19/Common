@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "mathematics-engineering-discovery-receipt.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version","subject","discovery_id","discovery_request_id","discovery_request_digest",
+    "view_class","authority","technical_authorization","publication_authorization",
+    "automatic_selection","requires_explicit_exact_selection","registry_id","registry_digest",
+    "vocabulary_catalog_id","vocabulary_catalog_digest","discovery_index_digest","discovery_index_entry_count",
+    "query","hints","candidate_kinds","candidate_count","candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "discovery_id": {"type": "string", "pattern": "^MATH-ENG-DISC-[A-Z0-9_-]+$"},
+    "discovery_request_id": {"type": "string", "pattern": "^MATH-ENG-DISC-REQ-[A-Z0-9_-]+$"},
+    "discovery_request_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "view_class": {"const": "NON_AUTHORITATIVE_ENGINEERING_DISCOVERY"},
+    "authority": {"const": "CANDIDATE_DISCOVERY_ONLY"},
+    "technical_authorization": {"const": "NOT_EVALUATED"},
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "automatic_selection": {"const": false},
+    "requires_explicit_exact_selection": {"const": true},
+    "registry_id": {"type": "string", "minLength": 1},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "vocabulary_catalog_id": {"type": "string", "pattern": "^MATH-ENG-DISC-VOCAB-[A-Z0-9_-]+$"},
+    "vocabulary_catalog_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "discovery_index_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "discovery_index_entry_count": {"type": "integer", "minimum": 1},
+    "query": {"type": "string", "minLength": 1},
+    "hints": {"type": "array", "items": {"type": "string"}},
+    "candidate_kinds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"enum": ["ENGINEERING_GATE","BUCKET"]}
+    },
+    "candidate_count": {"type": "integer", "minimum": 0, "maximum": 10},
+    "candidates": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "rank","scope_kind","scope_ref","learner_label","score","match_basis","matched_vocabulary_terms",
+          "declared_technical_readiness","source_scope"
+        ],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1, "maximum": 10},
+          "scope_kind": {"enum": ["ENGINEERING_GATE","BUCKET"]},
+          "scope_ref": {"type": "string", "minLength": 3},
+          "learner_label": {"type": "string", "minLength": 1},
+          "score": {"type": "number", "minimum": 0},
+          "match_basis": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "EXACT_IDENTITY","EXACT_LABEL","LABEL_PHRASE","IDENTITY_TOKEN",
+                "LABEL_TOKEN","CONTENT_TOKEN","APPROXIMATE_LABEL","HINT_MATCH","LINKED_GATE_TEXT",
+                "VOCABULARY_EXACT","VOCABULARY_PHRASE","VOCABULARY_TOKEN","APPROXIMATE_VOCABULARY"
+              ]
+            }
+          },
+          "matched_vocabulary_terms": {
+            "type": "array",
+            "uniqueItems": true,
+            "maxItems": 20,
+            "items": {"type": "string", "minLength": 2}
+          },
+          "declared_technical_readiness": {"type": "string", "minLength": 1},
+          "source_scope": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-assimilation-demand.schema.json",
+  "title": "Mathematics Assimilation Demand",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assimilation_demand_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "core1_package_ref",
+    "core1_package_digest",
+    "core2_package_ref",
+    "core2_package_digest",
+    "cross_validation_ref",
+    "cross_validation_digest",
+    "learner_capability_state_ref",
+    "learner_capability_state_digest",
+    "learning_purpose",
+    "semantic_requirements",
+    "assessment_requirements",
+    "learner_gaps",
+    "purpose_requirements",
+    "owner_constraints",
+    "unknowns",
+    "conflicts",
+    "assimilation_obligations",
+    "unresolved_issue_refs",
+    "status",
+    "demand_digest"
+  ],
+  "properties": {
+    "assimilation_demand_id": {"type": "string", "pattern": "^MATH-AD-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "core1_package_ref": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"},
+    "core1_package_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "core2_package_ref": {"type": "string", "pattern": "^MATH-SP-[0-9a-f]{16}$"},
+    "core2_package_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cross_validation_ref": {"type": "string", "pattern": "^MATH-XV-[0-9a-f]{16}$"},
+    "cross_validation_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "learner_capability_state_ref": {"type": ["string", "null"], "pattern": "^MATH-LCS-[0-9a-f]{16}$"},
+    "learner_capability_state_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "learning_purpose": {"enum": ["FIRST_STUDY", "CONSOLIDATION", "REVISION", "COMPETITIVE_EXAM"]},
+    "semantic_requirements": {"type": "array", "items": {"$ref": "#/$defs/requirement"}},
+    "assessment_requirements": {"type": "array", "items": {"$ref": "#/$defs/requirement"}},
+    "learner_gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}},
+    "purpose_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "owner_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["constraint_id", "mode", "target", "instruction", "authority_class"],
+        "properties": {
+          "constraint_id": {"type": "string", "minLength": 1},
+          "mode": {"enum": ["HARD", "SOFT"]},
+          "target": {"type": "string", "minLength": 1},
+          "instruction": {"type": "string", "minLength": 1},
+          "authority_class": {"const": "OWNER_CONTROL"}
+        }
+      }
+    },
+    "unknowns": {"type": "array", "items": {"$ref": "#/$defs/unknown"}},
+    "conflicts": {"type": "array", "items": {"$ref": "#/$defs/conflict"}},
+    "assimilation_obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/obligation"}
+    },
+    "unresolved_issue_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "status": {"enum": ["JOIN_READY", "BLOCKED_CONFLICT"]},
+    "demand_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_ref", "claim_type", "statement", "resolution", "evidence_refs"],
+      "properties": {
+        "claim_ref": {"type": "string", "pattern": "^MATH-CL-[0-9a-f]{16}$"},
+        "claim_type": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "resolution": {"enum": ["CONFIRMED", "REFINED", "MISSING", "INDEPENDENT_GROUNDED"]},
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_ref", "readiness", "gap_state", "basis", "evidence_refs", "owner_control_ref"],
+      "properties": {
+        "capability_ref": {"type": "string", "minLength": 1},
+        "readiness": {"enum": ["UNKNOWN", "DEVELOPING", "READY"]},
+        "gap_state": {"enum": ["NO_IDENTIFIED_GAP", "BRIDGE_OR_PRACTICE_REQUIRED", "UNKNOWN_REQUIRES_PROBE_OR_FULL_SUPPORT"]},
+        "basis": {"enum": ["LEARNER_EVIDENCE", "OWNER_DECLARED_BASELINE", "UNKNOWN"]},
+        "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "owner_control_ref": {"type": ["string", "null"]}
+      }
+    },
+    "unknown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unknown_type", "ref", "statement"],
+      "properties": {
+        "unknown_type": {"enum": ["CLAIM", "LEARNER_CAPABILITY"]},
+        "ref": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1}
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["record_ref", "classification", "claim_ref", "rationale", "blocking", "defer_reason"],
+      "properties": {
+        "record_ref": {"type": "string", "pattern": "^MATH-XR-[0-9a-f]{16}$"},
+        "classification": {"enum": ["UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE"]},
+        "claim_ref": {"type": "string", "pattern": "^MATH-CL-[0-9a-f]{16}$"},
+        "rationale": {"type": "string", "minLength": 1},
+        "blocking": {"type": "boolean"},
+        "defer_reason": {"type": ["string", "null"]}
+      }
+    },
+    "obligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "obligation_id",
+        "obligation_type",
+        "statement",
+        "origin_claim_refs",
+        "origin_evidence_refs",
+        "capability_refs",
+        "learner_gap_states",
+        "required_before_core2a",
+        "notes"
+      ],
+      "properties": {
+        "obligation_id": {"type": "string", "pattern": "^MATH-OBL-[0-9a-f]{16}$"},
+        "obligation_type": {
+          "enum": [
+            "SEMANTIC_UNDERSTANDING",
+            "ASSESSMENT_RECOGNITION",
+            "PREREQUISITE",
+            "INFERENCE_BRIDGE",
+            "EQUATION_ASSIMILATION",
+            "REPRESENTATION",
+            "MISCONCEPTION_CONTRAST",
+            "TRANSFER"
+          ]
+        },
+        "statement": {"type": "string", "minLength": 1},
+        "origin_claim_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^MATH-CL-[0-9a-f]{16}$"}
+        },
+        "origin_evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "learner_gap_states": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "required_before_core2a": {"type": "boolean"},
+        "notes": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

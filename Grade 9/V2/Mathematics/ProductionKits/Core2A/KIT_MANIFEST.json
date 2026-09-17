@@ -1,0 +1,66 @@
+{
+  "kit_id": "MATH-PRODUCTION-KIT-CORE2A-v3",
+  "stage": "CORE2A",
+  "pedagogy_mode": "DECLARATIVE",
+  "learner_role": "SOLUTION_APPRENTICESHIP",
+  "self_teaching_contract": "Grade 9/V2/Mathematics/MathBlueprint/SELF_TEACHING.md",
+  "generation_calibration_contract": "Grade 9/V2/Mathematics/MathBlueprint/GENERATION_CALIBRATION.md",
+  "generation_spec_schema": "Grade 9/V2/Mathematics/MathBlueprint/contracts/math-self-teaching-generation-spec.schema.json",
+  "purpose_gate": {
+    "required": true,
+    "allowed": ["STARTER", "PRACTICE", "REVISION", "COMPETITION"],
+    "interactive_question": "Is this for Starter, Practice, Revision, or Competition?",
+    "batch_failure": "CORE2A_USER_PURPOSE_REQUIRED"
+  },
+  "knowledge_gate": {
+    "required": true,
+    "waivable_by_owner": true,
+    "no_silent_default": true,
+    "resolved_controls": [
+      "CORE2A_SUPPORT_PROFILE",
+      "CORE2A_MAX_DEMAND_LEVEL",
+      "CORE2B_MAX_DEMAND_LEVEL"
+    ]
+  },
+  "source_authority": ["CORE1A_BUCKET_PLAN", "CORE2_PLAN"],
+  "entrypoint": "Grade 9/V2/Mathematics/ProductionKits/Core2A/engine/run_core2a_kit.py",
+  "scaffold_profiles": "Grade 9/V2/Mathematics/ProductionKits/common/profiles/scaffold-profiles.json",
+  "knowledge_support_profiles": "Grade 9/V2/Mathematics/ProductionKits/common/profiles/knowledge-support-profiles.json",
+  "benchmark_registry": "Grade 9/V2/Mathematics/ProductionKits/common/registry/benchmark-source-registry.json",
+  "candidate_contract": "Grade 9/V2/Mathematics/ProductionKits/Core2A/contracts/math-core2a-candidate-set.schema.json",
+  "source_question_freeze": true,
+  "solution_apprenticeship_requirements": [
+    "STRUCTURAL_CUE",
+    "REPRESENTATION_CHOICE",
+    "FIRST_NON_OBVIOUS_MOVE",
+    "STEPWISE_SOLUTION",
+    "WHY_KEY_MOVES_WORK",
+    "COMMON_WRONG_CHAIN",
+    "VERIFICATION",
+    "NEARBY_VARIANT"
+  ],
+  "outputs": ["core2a_product_blueprint.json", "core2a_kit_audit.json", "routing_result.json"],
+  "mode_rules": {
+    "STARTER": "one Core2 anchor per bucket + one GUIDED_DIRECT fresh item per bucket + full/visual scaffold + explicit solution anatomy",
+    "PRACTICE": "all Core2 source items + fresh practice items within the Core2A demand ceiling + solution apprenticeship",
+    "REVISION": "one representative/high-demand Core2 item per bucket + invariant recall + method discrimination where the demand ceiling permits; no competition benchmark",
+    "COMPETITION": "one representative Core2 anchor per bucket + near/structural challenge within the Core2A demand ceiling; official benchmark/archetype role explicit"
+  },
+  "fail_closed": [
+    "CORE2A_USER_PURPOSE_REQUIRED",
+    "MATH_CORE2_CALIBRATION_EXACTLY_ONE_REQUIRED",
+    "MATH_CORE2_KNOWLEDGE_PERCENT_BINDING_INCOMPLETE",
+    "CORE2A_PURPOSE_CALIBRATION_MISMATCH",
+    "CORE2A_CALIBRATION_REMOVED_REQUIRED_CANDIDATES",
+    "CORE2A_CANDIDATE_EXCEEDS_KNOWLEDGE_CEILING",
+    "CORE2A_PURPOSE_CANDIDATE_COVERAGE_GAP",
+    "CORE2A_UNTAUGHT_MATH_REQUIRED",
+    "CORE2A_HINT_DISCLOSES_SOLUTION",
+    "CORE2A_QUESTION_CITATION_MISSING",
+    "GENERATED_ITEM_FALSE_OFFICIAL_ATTRIBUTION",
+    "COMPETITION_BENCHMARK_OUTSIDE_COMPETITION_MODE",
+    "CORE2A_PURPOSE_DIFFERENTIATION_FAILED",
+    "CORE2A_SOURCE_QUESTION_REWRITE_FORBIDDEN",
+    "CORE2A_SOLUTION_APPRENTICESHIP_INCOMPLETE"
+  ]
+}

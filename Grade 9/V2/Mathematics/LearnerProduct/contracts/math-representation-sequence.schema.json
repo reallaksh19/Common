@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-representation-sequence.schema.json",
+  "title": "Mathematics Representation Sequence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["bucket_ref", "stages"],
+  "properties": {
+    "bucket_ref": {"type": "string", "minLength": 3},
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["stage", "status", "purpose", "learning_atom_refs"],
+        "properties": {
+          "stage": {"enum": ["SEE_THE_OBJECT", "SEPARATE_THE_PARTS", "SHOW_INFORMATION_FLOW", "MAP_TO_SYMBOLS", "REBUILD_THE_MODEL", "CHECK_UNDERSTANDING", "CONNECT_TO_CORE2"]},
+          "status": {"enum": ["REQUIRED", "NOT_APPLICABLE"]},
+          "purpose": {"type": "string", "minLength": 8},
+          "learning_atom_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "not_applicable_reason": {"type": ["string", "null"]}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"const": "NOT_APPLICABLE"}}, "required": ["status"]},
+            "then": {"required": ["not_applicable_reason"], "properties": {"not_applicable_reason": {"type": "string", "minLength": 8}}}
+          }
+        ]
+      }
+    }
+  }
+}

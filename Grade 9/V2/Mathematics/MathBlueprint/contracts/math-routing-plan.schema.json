@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-routing-plan.schema.json",
+  "title": "Mathematics Adaptive Routing Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plan_id","schema_version","subject","run_ref","ground_truth_ref","ground_truth_digest","policy_ref","override_ledger_ref","decisions","bundles","blocked_subtopic_refs","status","plan_digest"],
+  "properties": {
+    "plan_id": {"type": "string", "pattern": "^MATH-RP-[0-9a-f]{16}$"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "ground_truth_ref": {"type": "string", "pattern": "^MATH-GT-[0-9a-f]{16}$"},
+    "ground_truth_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy_ref": {"const": "MATH-EVIDENCE-ROUTING-v1"},
+    "override_ledger_ref": {"type": ["string","null"]},
+    "decisions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/decision"}},
+    "bundles": {"type": "array", "items": {"$ref": "#/$defs/bundle"}},
+    "blocked_subtopic_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "status": {"enum": ["ROUTED","BLOCKED_EVIDENCE","BLOCKED_CONFLICT","BLOCKED_OWNER_REVIEW"]},
+    "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subtopic_ref","display_name","sequence","coherence_group","semantic_strength","assessment_strength","eligible_roles","system_action","final_action","first_role","reason_codes","evidence_profile_digest","applied_override_ref","override_mode","unresolved_issue_refs","conflict_refs"],
+      "properties": {
+        "subtopic_ref": {"type": "string", "minLength": 1},
+        "display_name": {"type": "string", "minLength": 1},
+        "sequence": {"type": "integer", "minimum": 0},
+        "coherence_group": {"type": "string", "minLength": 1},
+        "semantic_strength": {"type": "integer", "minimum": 0, "maximum": 4},
+        "assessment_strength": {"type": "integer", "minimum": 0, "maximum": 4},
+        "eligible_roles": {"type": "array", "uniqueItems": true, "items": {"enum": ["CORE1","CORE2"]}},
+        "system_action": {"enum": ["CORE1_FIRST","CORE2_FIRST","BLOCK_EVIDENCE","BLOCK_CONFLICT","BLOCK_OWNER_REVIEW"]},
+        "final_action": {"enum": ["CORE1_FIRST","CORE2_FIRST","BLOCK_EVIDENCE","BLOCK_CONFLICT","BLOCK_OWNER_REVIEW"]},
+        "first_role": {"type": ["string","null"], "enum": ["CORE1","CORE2",null]},
+        "reason_codes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "evidence_profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "applied_override_ref": {"type": ["string","null"]},
+        "override_mode": {"type": ["string","null"], "enum": ["HARD","SOFT",null]},
+        "unresolved_issue_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "conflict_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bundle_id","subtopic_refs","first_role","coherence_group"],
+      "properties": {
+        "bundle_id": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+        "subtopic_refs": {"type": "array", "minItems": 1, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "first_role": {"enum": ["CORE1","CORE2"]},
+        "coherence_group": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

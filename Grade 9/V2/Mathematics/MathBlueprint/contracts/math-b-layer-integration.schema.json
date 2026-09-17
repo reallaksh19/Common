@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "math-b-layer-integration.schema.json",
+  "title": "Mathematics Core1B/Core2B Static Compiler Integration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "integration_id",
+    "schema_version",
+    "subject",
+    "run_ref",
+    "bundle_ref",
+    "assimilation_plan_ref",
+    "core1a_authority",
+    "core1b_lane",
+    "core2a_lane",
+    "core2b_compile_ceiling",
+    "core2b_lane",
+    "invariants",
+    "status",
+    "integration_digest"
+  ],
+  "properties": {
+    "integration_id": {"type": "string", "pattern": "^MATH-BI-[0-9a-f]{16}$"},
+    "schema_version": {"const": "2.0.0"},
+    "subject": {"const": "MATHEMATICS"},
+    "run_ref": {"type": "string", "pattern": "^MATH-MLR-[0-9a-f]{16}$"},
+    "bundle_ref": {"type": "string", "pattern": "^MATH-HB-[0-9a-f]{16}$"},
+    "assimilation_plan_ref": {"type": "string", "pattern": "^MATH-AP-[0-9a-f]{16}$"},
+    "core1a_authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_ref", "authority_digest", "approved_capability_refs", "learner_treatment_ref", "status"],
+      "properties": {
+        "authority_ref": {"type": "string", "minLength": 1},
+        "authority_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "approved_capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "learner_treatment_ref": {"type": ["string", "null"]},
+        "status": {"const": "AUTHORITY_READY"}
+      }
+    },
+    "core1b_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compiled_plan_ref", "compiled_plan_digest", "delivery_mode", "status"],
+      "properties": {
+        "compiled_plan_ref": {"type": ["string", "null"]},
+        "compiled_plan_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "delivery_mode": {"type": ["string", "null"], "enum": ["STATIC", null]},
+        "status": {"enum": ["NOT_COMPILED", "COMPILED"]}
+      }
+    },
+    "core2a_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legal_pool_ref", "legal_pool_digest", "purpose", "status"],
+      "properties": {
+        "legal_pool_ref": {"type": ["string", "null"]},
+        "legal_pool_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "purpose": {"type": ["string", "null"], "enum": ["STARTER", "PRACTICE", "REVISION", "COMPETITION", null]},
+        "status": {"enum": ["NOT_READY", "LEGAL_POOL_READY"]}
+      }
+    },
+    "core2b_compile_ceiling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_demand_level", "source_ref", "source_class"],
+      "properties": {
+        "max_demand_level": {
+          "type": ["string", "null"],
+          "enum": [
+            "M0_DIRECT",
+            "M1_CONTROLLED_VARIATION",
+            "M2_REPRESENTATION_TRANSFER",
+            "M3_INVERSE_TARGET",
+            "M4_HIDDEN_STRUCTURE",
+            "M5_METHOD_DISCRIMINATION",
+            "M6_FAMILY_DISCRIMINATION",
+            "M7_MULTI_STEP_SYNTHESIS",
+            "M8_MIXED_COMPETITIVE",
+            null
+          ]
+        },
+        "source_ref": {"type": ["string", "null"]},
+        "source_class": {
+          "type": ["string", "null"],
+          "enum": ["LEARNER_STATE", "OWNER_CONTROL", "PURPOSE_POLICY", "OTHER_GOVERNED_UPSTREAM", null]
+        }
+      }
+    },
+    "core2b_lane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compiled_plan_ref", "compiled_plan_digest", "delivery_mode", "status"],
+      "properties": {
+        "compiled_plan_ref": {"type": ["string", "null"]},
+        "compiled_plan_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "delivery_mode": {"type": ["string", "null"], "enum": ["STATIC", null]},
+        "status": {"enum": ["NOT_COMPILED", "COMPILED"]}
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "a_layers_govern_validity",
+        "b_layers_are_static_compilers",
+        "compiled_product_not_learner_evidence",
+        "core1b_cannot_add_math",
+        "core2b_requires_core2a_legal_pool",
+        "core2b_ceiling_is_upstream_compile_input",
+        "core2b_does_not_require_core1b_product",
+        "b_layers_do_not_ingest_learner_responses",
+        "b_layers_do_not_emit_learner_state_transitions",
+        "b_layers_may_not_rewrite_upstream_learner_state"
+      ],
+      "properties": {
+        "a_layers_govern_validity": {"const": true},
+        "b_layers_are_static_compilers": {"const": true},
+        "compiled_product_not_learner_evidence": {"const": true},
+        "core1b_cannot_add_math": {"const": true},
+        "core2b_requires_core2a_legal_pool": {"const": true},
+        "core2b_ceiling_is_upstream_compile_input": {"const": true},
+        "core2b_does_not_require_core1b_product": {"const": true},
+        "b_layers_do_not_ingest_learner_responses": {"const": true},
+        "b_layers_do_not_emit_learner_state_transitions": {"const": true},
+        "b_layers_may_not_rewrite_upstream_learner_state": {"const": true}
+      }
+    },
+    "status": {"enum": ["WAITING_UPSTREAM", "READY_TO_COMPILE", "PARTIALLY_COMPILED", "COMPILED"]},
+    "integration_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

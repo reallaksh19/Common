@@ -1,0 +1,33 @@
+{
+  "fixture_id": "MATH-GOLDEN-THEORY-OF-EQUATIONS-v1",
+  "purpose": "Semantic/process golden fixture; not a PDF pixel/hash contract.",
+  "expected_concept_groups": [
+    "ROOTS_FACTORS_EQUATION",
+    "COEFFICIENT_ROOT_RELATIONS",
+    "RECOVER_HIDDEN_ROOT_PAIR",
+    "SYMMETRIC_EXPRESSIONS",
+    "NEWTON_SUMS"
+  ],
+  "required_invariants": [
+    "CORE1_CAPABILITY_COVERAGE_EXACTLY_ONCE",
+    "M_F_LEARNER_TREATMENT_PRESERVED",
+    "SUBSTANTIVE_BUCKET_REPRESENTATION_SEQUENCE_PRESENT",
+    "CORE2_SOURCE_ORDER_AND_IDENTITY_PRESERVED",
+    "CORE2_HINTS_BIND_TO_TAUGHT_CONTENT",
+    "CHALLENGE_SELECTION_FOLLOWS_POLICY",
+    "GENERATED_CHALLENGES_INDEPENDENTLY_SOLVED",
+    "GENERATED_CHALLENGES_REQUIRE_ONLY_TAUGHT_OR_APPROVED_MATH",
+    "EVERY_QUESTION_HAS_INLINE_PROVENANCE",
+    "GENERATED_ITEM_FRESH_ORIGIN_DISCLOSED",
+    "LEARNER_LANGUAGE_POLICY_PASSES",
+    "VISUAL_PREFLIGHT_PASSES",
+    "FINAL_AUDIT_EMITTED"
+  ],
+  "non_contractual": [
+    "page_count",
+    "PDF_sha256",
+    "exact_line_breaks",
+    "exact_box_dimensions",
+    "exact_number_of_micro_examples"
+  ]
+}

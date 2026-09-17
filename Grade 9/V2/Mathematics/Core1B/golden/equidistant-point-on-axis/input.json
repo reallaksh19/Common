@@ -1,0 +1,43 @@
+{
+  "core1a_authority_ref": "MATH-C1A-GOLDEN-EQDIST",
+  "learner_treatment": "ACTIVE_STUDY",
+  "difficulty_governance": {
+    "subtopic_ref": "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "declared_badge": "MEDIUM",
+    "badge_authority": "DERIVED",
+    "derived_dimensions": {
+      "prerequisite_depth": 2,
+      "element_interactivity": 3,
+      "inferential_jump_severity": 2,
+      "representation_translation": 3,
+      "abstraction": 2,
+      "method_discrimination": 2,
+      "notation_density": 2,
+      "derivation_burden": 2,
+      "misconception_density": 3,
+      "special_case_sensitivity": 2
+    },
+    "operational_badge": "MEDIUM",
+    "page_ceiling": 20,
+    "research_level": "TARGETED",
+    "owner_override_ref": null,
+    "evidence_refs": ["DIFF:MEDIUM:equal-distance-v1", "RESEARCH:equal-distance-standard"]
+  },
+  "approved_capability_refs": [
+    "MATH-EQUIDISTANT-POINT-ON-AXIS",
+    "MATH-COORDINATE-DISTANCE",
+    "MATH-BINOMIAL-SQUARE-EXPANSION",
+    "MATH-EQUALITY-PRESERVATION",
+    "MATH-ORDERED-PAIR-SEMANTICS"
+  ],
+  "title": "Consolidation — Point on an Axis at Equal Distances",
+  "blocks": [
+    {"block_id":"EQ-METHODS","kind":"METHOD_COMPARISON","title":"Same problem — two methods","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"new_math_refs":[],"learner_text":"For A(1,2), B(5,2), and P on the x-axis, compare the symmetry shortcut with the general squared-distance method.","math_lines":["Symmetry: x = (1 + 5)/2 = 3, so P = (3,0)","General: (x - 1)^2 + 4 = (x - 5)^2 + 4, so x = 3"]},
+    {"block_id":"EQ-ERROR","kind":"ERROR_CONTRAST","title":"Wrong shortcut — verify before trusting","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS","MATH-COORDINATE-DISTANCE"],"new_math_refs":[],"learner_text":"For A(-1,4), B(7,2), averaging the x-coordinates gives x=3, but that point is not equidistant.","math_lines":["At P=(3,0): PA^2 = 32 while PB^2 = 20","General model: (x + 1)^2 + 16 = (x - 7)^2 + 4","Therefore P = (9/4, 0)"]},
+    {"block_id":"EQ-COMPLETION","kind":"COMPLETION","title":"Complete the missing structure","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS","MATH-BINOMIAL-SQUARE-EXPANSION"],"new_math_refs":[],"learner_text":"A(-2,3), B(4,1). P lies on the x-axis.","math_lines":["P = (____, ____)","PA^2 = (x + 2)^2 + [   ]","PB^2 = (x - 4)^2 + [   ]","x^2 + 4x + 13 = x^2 - 8x + 17","[                         ]"]},
+    {"block_id":"EQ-FADED","kind":"FADED","title":"Now with less support","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"new_math_refs":[],"learner_text":"A(0,5), B(6,1). P lies on the x-axis.","math_lines":["P = (x,0)","x^2 + 25 = ____________________","______________________________"]},
+    {"block_id":"EQ-VARIATION","kind":"CONTROLLED_VARIATION","title":"Change one critical feature","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"new_math_refs":[],"learner_text":"Keep the equal-distance goal fixed while changing the axis or symmetry condition.","math_lines":[],"columns":["case","axis","fixed_points","shortcut","general_model"],"rows":[{"case":"1","axis":"x-axis","fixed_points":"same y","shortcut":"yes","general_model":"yes","changed_features":[]},{"case":"2","axis":"x-axis","fixed_points":"different y","shortcut":"no","general_model":"yes","changed_features":["fixed-point height relation"]},{"case":"3","axis":"y-axis","fixed_points":"same x","shortcut":"yes","general_model":"yes","changed_features":["axis orientation"]}]},
+    {"block_id":"EQ-INDEP","kind":"CLOSE_INDEPENDENT","title":"Close independent consolidation","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"new_math_refs":[],"learner_text":"A(-4,3) and B(2,1) are fixed. P lies on the y-axis and is equidistant from A and B. Find P.","math_lines":[]},
+    {"block_id":"EQ-ANSWERS","kind":"ANSWER_CHECK","title":"Answer check","capability_refs":["MATH-EQUIDISTANT-POINT-ON-AXIS"],"new_math_refs":[],"learner_text":"Completion: P=(1/3,0). Faded: P=(1,0). Close independent: P=(0,5).","math_lines":[]}
+  ]
+}

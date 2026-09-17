@@ -1,0 +1,102 @@
+{
+  "schema_version": "0.1.0",
+  "status": "GENERATED_NON_AUTHORITATIVE_REFERENCE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "view_class": "DERIVED_ARCHITECTURE_REFERENCE_ONLY",
+  "publication_authorization": "NOT_IMPLIED",
+  "generation_rule": "CATALOG_DECLARED_EVIDENCE_PATHS_ONLY",
+  "source_custody": {
+    "catalog_path": "design/mathematics-architecture-catalog.candidate.json",
+    "catalog_git_blob_sha": "469f1eaaf671fd274dcb5c332b4b73e1ac01b0bd",
+    "catalog_schema_path": "design/mathematics-architecture-catalog.candidate.schema.json",
+    "catalog_schema_git_blob_sha": "b335ef39a7971eafdc464a5f759e11380bfbcfae",
+    "c2_receipt_path": "design/mathematics-normative-root-consolidation.json",
+    "c2_receipt_git_blob_sha": "785fe5e5ac3e203ab04838e6be0b7914c6f4cec4",
+    "generator_path": "design/generate_mathematics_architecture_references.py",
+    "generator_git_blob_sha": "fc55f28b2199ffd5458cf5cd963de96834a38a48"
+  },
+  "component_count": 17,
+  "reference_counts": {
+    "SCHEMA": 24,
+    "POLICY": 11,
+    "VALIDATOR": 10,
+    "TEST": 2
+  },
+  "components": [
+    {"component_id":"MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE","architecture_role":"SCOPE_BRIDGE","primary_authority_class":"GOVERNED_POLICY","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-DESIGN-NON-AUTHORITY-GUARD","architecture_role":"CI_GUARD","primary_authority_class":"CI_GUARD","runtime_authority_effect":"EXECUTABLE_ORCHESTRATION_ONLY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-DESIGN-WORKSPACE","architecture_role":"DESIGN_WORKSPACE","primary_authority_class":"DESIGN_ONLY","runtime_authority_effect":"NONE_DESIGN_ONLY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-DOMAIN-PROJECTION","architecture_role":"DOMAIN_PROJECTION","primary_authority_class":"PRODUCTION_COMPILER","runtime_authority_effect":"EXECUTABLE_ORCHESTRATION_ONLY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-ENGINEERING-CUSTODY","architecture_role":"RUNTIME_CUSTODY","primary_authority_class":"SCHEMA_CONTRACT","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","architecture_role":"NON_AUTHORITATIVE_DISCOVERY","primary_authority_class":"DERIVED_NON_AUTHORITATIVE_VIEW","runtime_authority_effect":"DERIVED_NON_AUTHORITATIVE","publication_authority_effect":"NOT_IMPLIED"},
+    {"component_id":"MATH-ARCH-ENGINEERING-REGISTRY","architecture_role":"SUBJECT_AUTHORITY","primary_authority_class":"AUTHORITATIVE_DATA","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-ENGINEERING-VALIDATION","architecture_role":"POLICY_AND_VALIDATION","primary_authority_class":"PRODUCTION_VALIDATOR","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-ENGINEERING-VISIBILITY","architecture_role":"DERIVED_VISIBILITY","primary_authority_class":"DERIVED_NON_AUTHORITATIVE_VIEW","runtime_authority_effect":"DERIVED_NON_AUTHORITATIVE","publication_authority_effect":"NOT_IMPLIED"},
+    {"component_id":"MATH-ARCH-ENGINEERING-WORKBENCH","architecture_role":"EXACT_AUTHORIZATION","primary_authority_class":"PRODUCTION_COMPILER","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-PEDAGOGY-RESEARCH","architecture_role":"PEDAGOGY_EVIDENCE","primary_authority_class":"SCHEMA_CONTRACT","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-PRODUCER-GOVERNANCE","architecture_role":"PRODUCER","primary_authority_class":"PRODUCER","runtime_authority_effect":"EXECUTABLE_ORCHESTRATION_ONLY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-PUBLICATION","architecture_role":"PUBLICATION_BOUNDARY","primary_authority_class":"PUBLICATION_BOUNDARY","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"RELEASE_GATED_PUBLICATION_BOUNDARY"},
+    {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","architecture_role":"ORCHESTRATION","primary_authority_class":"PRODUCTION_COMPILER","runtime_authority_effect":"EXECUTABLE_ORCHESTRATION_ONLY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-SELF-TEACHING-CALIBRATION","architecture_role":"CALIBRATION","primary_authority_class":"GOVERNED_POLICY","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"NONE"},
+    {"component_id":"MATH-ARCH-STAGE-RELEASE","architecture_role":"RELEASE_GATE","primary_authority_class":"RELEASE_GATE","runtime_authority_effect":"CURRENT_EXECUTABLE_AUTHORITY","publication_authority_effect":"RELEASE_GATED_PUBLICATION_BOUNDARY"},
+    {"component_id":"MATH-ARCH-TOPIC-INDEPENDENCE-GUARD","architecture_role":"CI_GUARD","primary_authority_class":"CI_GUARD","runtime_authority_effect":"EXECUTABLE_ORCHESTRATION_ONLY","publication_authority_effect":"NONE"}
+  ],
+  "references": {
+    "SCHEMA": [
+      {"component_id":"MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE","path":"contracts/math-assessment-engineering-crosswalk.schema.json"},
+      {"component_id":"MATH-ARCH-DOMAIN-PROJECTION","path":"contracts/math-canonical-domain-registry.schema.json"},
+      {"component_id":"MATH-ARCH-DOMAIN-PROJECTION","path":"contracts/math-engineering-domain-projection-v2.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-CUSTODY","path":"contracts/mathematics-engineering-binding.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"contracts/mathematics-engineering-discovery-receipt.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"contracts/mathematics-engineering-discovery-request.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"contracts/mathematics-engineering-discovery-selection.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"contracts/mathematics-engineering-discovery-vocabulary.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-REGISTRY","path":"contracts/mathematics-technical-engineering-gate.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-VISIBILITY","path":"contracts/math-engineering-visibility-manifest.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-WORKBENCH","path":"contracts/mathematics-engineering-closure-receipt.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-WORKBENCH","path":"contracts/mathematics-engineering-manifest.schema.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-WORKBENCH","path":"contracts/mathematics-engineering-request.schema.json"},
+      {"component_id":"MATH-ARCH-PEDAGOGY-RESEARCH","path":"contracts/math-pedagogy-research-manifest.schema.json"},
+      {"component_id":"MATH-ARCH-PRODUCER-GOVERNANCE","path":"contracts/math-b-layer-integration.schema.json"},
+      {"component_id":"MATH-ARCH-PRODUCER-GOVERNANCE","path":"contracts/math-core1a-authoring-assets.schema.json"},
+      {"component_id":"MATH-ARCH-PUBLICATION","path":"contracts/math-learner-publication-bundle.schema.json"},
+      {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","path":"contracts/math-assimilation-plan.schema.json"},
+      {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","path":"contracts/math-dual-intelligence-session.schema.json"},
+      {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","path":"contracts/math-routing-plan.schema.json"},
+      {"component_id":"MATH-ARCH-SELF-TEACHING-CALIBRATION","path":"contracts/math-self-teaching-contract.schema.json"},
+      {"component_id":"MATH-ARCH-SELF-TEACHING-CALIBRATION","path":"contracts/math-self-teaching-generation-spec.schema.json"},
+      {"component_id":"MATH-ARCH-STAGE-RELEASE","path":"contracts/math-product-governance-audit.schema.json"},
+      {"component_id":"MATH-ARCH-STAGE-RELEASE","path":"contracts/math-stage-governance-receipt.schema.json"}
+    ],
+    "POLICY": [
+      {"component_id":"MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE","path":"policies/math-assessment-engineering-crosswalk.mixed-grade9.v1.json"},
+      {"component_id":"MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE","path":"policies/math-assessment-engineering-crosswalk.mixed-grade9.v2.patch.json"},
+      {"component_id":"MATH-ARCH-DOMAIN-PROJECTION","path":"policies/math-canonical-domain-registry-policy.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"policies/mathematics-engineering-discovery-vocabulary.v1.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-REGISTRY","path":"policies/mathematics-engineering-extension-catalog.v1.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-REGISTRY","path":"policies/mathematics-technical-engineering-gates.v1.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-VALIDATION","path":"policies/mathematics-engineering-depth-policy.v1.json"},
+      {"component_id":"MATH-ARCH-ENGINEERING-VALIDATION","path":"policies/mathematics-engineering-gate-invariants.v1.json"},
+      {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","path":"policies/math-dual-intelligence-policy.json"},
+      {"component_id":"MATH-ARCH-ROUTING-ASSIMILATION","path":"policies/math-evidence-routing-policy.json"},
+      {"component_id":"MATH-ARCH-SELF-TEACHING-CALIBRATION","path":"policies/math-self-teaching-policy.json"}
+    ],
+    "VALIDATOR": [
+      {"component_id":"MATH-ARCH-ASSESSMENT-ENGINEERING-BRIDGE","path":"engine/validate_assessment_engineering_crosswalk.py"},
+      {"component_id":"MATH-ARCH-DOMAIN-PROJECTION","path":"engine/validate_engineering_domain_projection_binding_v2.py"},
+      {"component_id":"MATH-ARCH-ENGINEERING-CUSTODY","path":"engine/validate_mathematics_engineering_binding.py"},
+      {"component_id":"MATH-ARCH-ENGINEERING-DISCOVERY","path":"engine/validate_mathematics_engineering_discovery_vocabulary.py"},
+      {"component_id":"MATH-ARCH-ENGINEERING-VALIDATION","path":"engine/validate_mathematics_engineering_gates.py"},
+      {"component_id":"MATH-ARCH-PEDAGOGY-RESEARCH","path":"engine/validate_pedagogy_research_manifest.py"},
+      {"component_id":"MATH-ARCH-PRODUCER-GOVERNANCE","path":"engine/validate_b_layer_integration.py"},
+      {"component_id":"MATH-ARCH-PUBLICATION","path":"engine/validate_publication_bundle.py"},
+      {"component_id":"MATH-ARCH-SELF-TEACHING-CALIBRATION","path":"engine/validate_self_teaching_generation_spec.py"},
+      {"component_id":"MATH-ARCH-STAGE-RELEASE","path":"engine/validate_product_governance.py"}
+    ],
+    "TEST": [
+      {"component_id":"MATH-ARCH-DESIGN-NON-AUTHORITY-GUARD","path":"tests/test_design_authority_boundary.py"},
+      {"component_id":"MATH-ARCH-TOPIC-INDEPENDENCE-GUARD","path":"tests/test_blueprint_topic_independence.py"}
+    ]
+  }
+}

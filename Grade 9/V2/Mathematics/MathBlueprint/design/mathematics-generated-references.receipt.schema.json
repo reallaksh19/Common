@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://common.local/mathblueprint/design/mathematics-generated-references.receipt.schema.json",
+  "title": "Mathematics C3 Generated References Receipt (Design Only)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "authority",
+    "semantic_change",
+    "view_class",
+    "publication_authorization",
+    "catalog_semantics",
+    "production_consumers_allowed",
+    "source_custody",
+    "generated_outputs",
+    "component_count",
+    "reference_counts",
+    "tracked_runtime_gap",
+    "next_stage"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "C3_GENERATED_REFERENCES_COMPLETE"},
+    "authority": {"const": "NONE"},
+    "semantic_change": {"const": "NONE"},
+    "view_class": {"const": "DERIVED_NON_AUTHORITATIVE_ARCHITECTURE_REFERENCE"},
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "catalog_semantics": {"const": "CLASSIFICATION_ONLY_UNCHANGED"},
+    "production_consumers_allowed": {"const": false},
+    "source_custody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_path",
+        "catalog_git_blob_sha",
+        "catalog_schema_path",
+        "catalog_schema_git_blob_sha",
+        "c2_receipt_path",
+        "c2_receipt_git_blob_sha",
+        "generator_path",
+        "generator_git_blob_sha"
+      ],
+      "properties": {
+        "catalog_path": {"const": "design/mathematics-architecture-catalog.candidate.json"},
+        "catalog_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "catalog_schema_path": {"const": "design/mathematics-architecture-catalog.candidate.schema.json"},
+        "catalog_schema_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "c2_receipt_path": {"const": "design/mathematics-normative-root-consolidation.json"},
+        "c2_receipt_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "generator_path": {"const": "design/generate_mathematics_architecture_references.py"},
+        "generator_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "generated_outputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_path", "markdown_path"],
+      "properties": {
+        "manifest_path": {"const": "design/generated/mathematics-architecture-reference-index.generated.json"},
+        "markdown_path": {"const": "design/generated/MATHEMATICS_ARCHITECTURE_REFERENCES.generated.md"}
+      }
+    },
+    "component_count": {"type": "integer", "minimum": 1},
+    "reference_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["SCHEMA", "POLICY", "VALIDATOR", "TEST"],
+      "properties": {
+        "SCHEMA": {"type": "integer", "minimum": 0},
+        "POLICY": {"type": "integer", "minimum": 0},
+        "VALIDATOR": {"type": "integer", "minimum": 0},
+        "TEST": {"type": "integer", "minimum": 0}
+      }
+    },
+    "tracked_runtime_gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "classification", "runtime_auto_materialization_executable"],
+      "properties": {
+        "finding_id": {"const": "C0-F007"},
+        "classification": {"const": "CURRENT + DOCUMENTED ONLY"},
+        "runtime_auto_materialization_executable": {"const": false}
+      }
+    },
+    "next_stage": {"const": "C4_SUBJECT_ADAPTER_INTERFACE_READY"}
+  }
+}

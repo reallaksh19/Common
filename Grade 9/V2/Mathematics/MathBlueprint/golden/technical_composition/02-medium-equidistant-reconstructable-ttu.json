@@ -1,0 +1,275 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "blueprint_id": "MATH-PAGE-BP-EQDIST-MEDIUM-TTU-v1",
+  "difficulty_badge": "MEDIUM",
+  "pages": [
+    {
+      "page_id": "C1-P1",
+      "stage": "CORE1",
+      "page_kind": "BASIC_NOTES",
+      "page_purpose": "Establish the constrained-point model and equal-distance invariant without expanding into teaching prose.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C1-DEF", "kind": "DEFINITION", "content_role": "CANONICAL_DEFINITION", "content_signature": "sig-c1-axis-form", "math_refs": ["CAP-COORD-PAIR"], "upstream_ref": null, "transformation": "NONE"},
+        {"block_id": "C1-EQ", "kind": "EQUATION", "content_role": "CANONICAL_FORMULA", "content_signature": "sig-c1-equal-distance", "math_refs": ["CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"], "upstream_ref": null, "transformation": "BUILD"}
+      ],
+      "prose_blocks": [],
+      "representations": [
+        {"representation_id": "REP-C1", "kind": "COORDINATE_DIAGRAM", "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA"], "semantic_geometry_refs": ["x-axis", "A", "B", "P"], "must_make_visible": ["P has y-coordinate zero", "the same x controls both distances"], "must_not_imply": ["P is automatically the midpoint"], "clip_to_viewport": true, "viewport": {"x": 0.08, "y": 0.18, "width": 0.42, "height": 0.32}}
+      ],
+      "reconstructable_ttus": [],
+      "workspace_blocks": []
+    },
+    {
+      "page_id": "C1A-P1",
+      "stage": "CORE1A",
+      "page_kind": "TEACHING",
+      "page_purpose": "Derive the relation, bridge representation to symbols, and then make the learner reconstruct one technical object.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C1A-DERIVE", "kind": "DERIVATION", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1a-derivation", "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C1-EQ", "transformation": "BUILD"},
+        {"block_id": "C1A-DIAG", "kind": "DIAGRAM", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1a-two-triangles", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "REP-C1", "transformation": "BUILD"},
+        {"block_id": "C1A-EXAMPLE", "kind": "WORKED_EXAMPLE", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1a-anchor", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": null, "transformation": "BUILD"},
+        {"block_id": "C1A-CASE", "kind": "CASE_ANALYSIS", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1a-special-case", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": null, "transformation": "CONTRAST"},
+        {"block_id": "C1A-COUNTER", "kind": "COUNTEREXAMPLE", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1a-midpoint-counterexample", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": null, "transformation": "CONTRAST"},
+        {"block_id": "C1A-VERIFY", "kind": "VERIFICATION", "content_role": "ANSWER_IDENTITY", "content_signature": "sig-c1a-anchor-check", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "C1A-EXAMPLE", "transformation": "VERIFY"}
+      ],
+      "prose_blocks": [
+        {"block_id": "C1A-EXPL", "content_role": "EXPLANATION", "content_signature": "sig-c1a-x2-cancellation", "math_refs": ["CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C1A-DERIVE", "transformation": "BUILD"}
+      ],
+      "representations": [
+        {"representation_id": "REP-C1A", "kind": "COORDINATE_DIAGRAM", "math_refs": ["CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"], "semantic_geometry_refs": ["x-axis", "right-triangle-A", "right-triangle-B", "horizontal-offsets", "vertical-offsets"], "must_make_visible": ["each distance decomposes into horizontal and vertical offsets", "both distance models share x"], "must_not_imply": ["the two triangles are congruent"], "clip_to_viewport": true, "viewport": {"x": 0.07, "y": 0.12, "width": 0.44, "height": 0.30}}
+      ],
+      "reconstructable_ttus": [
+        {
+          "ttu_id": "TTU-C1A-DIAGRAM",
+          "kind": "INCOMPLETE_DIAGRAM",
+          "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"],
+          "source_ttu_ref": null,
+          "lineage_transform": "BUILD",
+          "fading_level": "GUIDED",
+          "reconstructable": true,
+          "given_parts": [
+            {"part_id": "axis", "semantic_role": "constraint", "content_ref": "x-axis"},
+            {"part_id": "A", "semantic_role": "fixed-point", "content_ref": "A(-1,4)"},
+            {"part_id": "B", "semantic_role": "fixed-point", "content_ref": "B(7,2)"}
+          ],
+          "missing_parts": [
+            {"part_id": "P", "semantic_role": "unknown-point", "content_ref": "P=(x,0)"},
+            {"part_id": "legs-A", "semantic_role": "distance-components", "content_ref": "horizontal/vertical offsets from P to A"},
+            {"part_id": "legs-B", "semantic_role": "distance-components", "content_ref": "horizontal/vertical offsets from P to B"}
+          ],
+          "target_relations": ["PA^2=(x+1)^2+16", "PB^2=(x-7)^2+4", "PA^2=PB^2"],
+          "reconstruction_prompt": "Place P on the x-axis, complete both right-triangle component models, and write the two squared-distance relations.",
+          "completion_key": {
+            "completed_parts": [
+              {"part_id": "P", "completed_content_ref": "P=(x,0)"},
+              {"part_id": "legs-A", "completed_content_ref": "horizontal x+1; vertical 4"},
+              {"part_id": "legs-B", "completed_content_ref": "horizontal x-7; vertical 2"}
+            ],
+            "final_check": "The completed diagram must support PA^2=(x+1)^2+16 and PB^2=(x-7)^2+4."
+          },
+          "verification_refs": ["C1A-VERIFY"],
+          "clip_to_viewport": true,
+          "viewport": {"x": 0.52, "y": 0.12, "width": 0.40, "height": 0.30}
+        }
+      ],
+      "workspace_blocks": []
+    },
+    {
+      "page_id": "C1B-P1",
+      "stage": "CORE1B",
+      "page_kind": "OPEN_TUTOR",
+      "page_purpose": "Reconstruct the known representation with more information withheld, then verify the rebuilt mathematics.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C1B-TASK", "kind": "OPEN_TASK", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1b-open-rebuild", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C1A-DERIVE", "transformation": "RECONSTRUCT"},
+        {"block_id": "C1B-WORK", "kind": "TECHNICAL_WORKSPACE", "content_role": "INSTRUCTION", "content_signature": "sig-c1b-workspace", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C1A-DERIVE", "transformation": "RECONSTRUCT"},
+        {"block_id": "C1B-CONTRAST", "kind": "COUNTEREXAMPLE", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1b-shortcut-contrast", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C1A-COUNTER", "transformation": "CONTRAST"},
+        {"block_id": "C1B-ANSWER", "kind": "ANSWER_DERIVATION", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c1b-answer-derivation", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C1B-TASK", "transformation": "VERIFY"},
+        {"block_id": "C1B-VERIFY", "kind": "VERIFICATION", "content_role": "ANSWER_IDENTITY", "content_signature": "sig-c1b-answer-check", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "C1B-ANSWER", "transformation": "VERIFY"}
+      ],
+      "prose_blocks": [
+        {"block_id": "C1B-HINT", "content_role": "HINT", "content_signature": "sig-c1b-minimal-hint", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C1A-DERIVE", "transformation": "RECONSTRUCT"}
+      ],
+      "representations": [],
+      "reconstructable_ttus": [
+        {
+          "ttu_id": "TTU-C1B-DIAGRAM",
+          "kind": "INCOMPLETE_DIAGRAM",
+          "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"],
+          "source_ttu_ref": "TTU-C1A-DIAGRAM",
+          "lineage_transform": "RECONSTRUCT",
+          "fading_level": "FADED",
+          "reconstructable": true,
+          "given_parts": [
+            {"part_id": "axis", "semantic_role": "constraint", "content_ref": "unlabelled x-axis"},
+            {"part_id": "A", "semantic_role": "fixed-point", "content_ref": "A(-1,4)"},
+            {"part_id": "B", "semantic_role": "fixed-point", "content_ref": "B(7,2)"}
+          ],
+          "missing_parts": [
+            {"part_id": "P", "semantic_role": "unknown-point", "content_ref": "learner must position and parameterise P"},
+            {"part_id": "distance-models", "semantic_role": "equation-components", "content_ref": "learner must reconstruct both squared-distance expressions"},
+            {"part_id": "locus", "semantic_role": "geometric-check", "content_ref": "learner must draw the equidistance locus only inside the graph viewport"}
+          ],
+          "target_relations": ["P=(x,0)", "PA^2=PB^2", "the locus-axis intersection is the required point"],
+          "reconstruction_prompt": "Rebuild the missing point, distance models and equidistance locus. Do not use the midpoint shortcut unless you first justify its symmetry condition.",
+          "completion_key": {
+            "completed_parts": [
+              {"part_id": "P", "completed_content_ref": "P=(9/4,0) after solving"},
+              {"part_id": "distance-models", "completed_content_ref": "(x+1)^2+16=(x-7)^2+4"},
+              {"part_id": "locus", "completed_content_ref": "perpendicular-bisector line clipped to the graph box and intersecting y=0 at x=9/4"}
+            ],
+            "final_check": "Substitution at x=9/4 gives equal squared distances."
+          },
+          "verification_refs": ["C1B-VERIFY"],
+          "clip_to_viewport": true,
+          "viewport": {"x": 0.54, "y": 0.16, "width": 0.36, "height": 0.28}
+        }
+      ],
+      "workspace_blocks": [
+        {"workspace_id": "WS-C1B", "purpose": "LEARNER_DERIVATION", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"]}
+      ]
+    },
+    {
+      "page_id": "C2-P1",
+      "stage": "CORE2",
+      "page_kind": "SOURCE_QUESTION",
+      "page_purpose": "Present the frozen source question with ladder hints and an answer check only.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C2-PROBLEM", "kind": "PROBLEM", "content_role": "IMMUTABLE_SOURCE", "content_signature": "sig-source-anchor", "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"], "upstream_ref": null, "transformation": "NONE"},
+        {"block_id": "C2-HINTS", "kind": "HINT_LADDER", "content_role": "HINT", "content_signature": "sig-c2-hints", "math_refs": ["CAP-COORD-PAIR", "CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2-PROBLEM", "transformation": "RECONSTRUCT"},
+        {"block_id": "C2-CHECK", "kind": "ANSWER_CHECK", "content_role": "ANSWER_IDENTITY", "content_signature": "sig-c2-check", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "C2-PROBLEM", "transformation": "VERIFY"}
+      ],
+      "prose_blocks": [],
+      "representations": [],
+      "reconstructable_ttus": [],
+      "workspace_blocks": []
+    },
+    {
+      "page_id": "C2A-P1",
+      "stage": "CORE2A",
+      "page_kind": "SOLUTION_APPRENTICESHIP",
+      "page_purpose": "Expose expert solution anatomy and then make the learner reconstruct the decisive equation chain.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C2A-PROBLEM", "kind": "PROBLEM", "content_role": "IMMUTABLE_SOURCE", "content_signature": "sig-source-anchor", "math_refs": ["CAP-COORD-PAIR", "CAP-DISTANCE-FORMULA", "CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2-PROBLEM", "transformation": "IMMUTABLE_CARRY"},
+        {"block_id": "C2A-SOLVE", "kind": "SOLUTION_CHAIN", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c2a-solution", "math_refs": ["CAP-COORD-PAIR", "CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C2-PROBLEM", "transformation": "SOLUTION_ANATOMY"},
+        {"block_id": "C2A-WHY", "kind": "WHY_MOVE_WORKS", "content_role": "EXPLANATION", "content_signature": "sig-c2a-why", "math_refs": ["CAP-COORD-PAIR", "CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2A-SOLVE", "transformation": "SOLUTION_ANATOMY"},
+        {"block_id": "C2A-WRONG", "kind": "WRONG_CHAIN", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c2a-wrong", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2-PROBLEM", "transformation": "CONTRAST"},
+        {"block_id": "C2A-VERIFY", "kind": "VERIFICATION", "content_role": "ANSWER_IDENTITY", "content_signature": "sig-c2a-check", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "C2A-SOLVE", "transformation": "VERIFY"}
+      ],
+      "prose_blocks": [],
+      "representations": [],
+      "reconstructable_ttus": [
+        {
+          "ttu_id": "TTU-C2A-EQUATION",
+          "kind": "EQUATION_SKELETON",
+          "math_refs": ["CAP-COORD-PAIR", "CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"],
+          "source_ttu_ref": null,
+          "lineage_transform": "SOLUTION_ANATOMY",
+          "fading_level": "GUIDED",
+          "reconstructable": true,
+          "given_parts": [
+            {"part_id": "constraint", "semantic_role": "problem-constraint", "content_ref": "P lies on the x-axis"},
+            {"part_id": "A", "semantic_role": "fixed-point", "content_ref": "A(-1,4)"},
+            {"part_id": "B", "semantic_role": "fixed-point", "content_ref": "B(7,2)"}
+          ],
+          "missing_parts": [
+            {"part_id": "first-move", "semantic_role": "parameterisation", "content_ref": "P=(x,0)"},
+            {"part_id": "equal-distance-equation", "semantic_role": "governing-equation", "content_ref": "two squared distances set equal"},
+            {"part_id": "reduced-line", "semantic_role": "algebraic-reduction", "content_ref": "16x=36"}
+          ],
+          "target_relations": ["P=(x,0)", "(x+1)^2+16=(x-7)^2+4", "16x=36"],
+          "reconstruction_prompt": "Fill the first non-obvious move, the equal-distance equation and the reduced linear equation before reading the expert chain.",
+          "completion_key": {
+            "completed_parts": [
+              {"part_id": "first-move", "completed_content_ref": "P=(x,0)"},
+              {"part_id": "equal-distance-equation", "completed_content_ref": "(x+1)^2+16=(x-7)^2+4"},
+              {"part_id": "reduced-line", "completed_content_ref": "16x=36"}
+            ],
+            "final_check": "The chain must end at x=9/4 and survive substitution into both squared distances."
+          },
+          "verification_refs": ["C2A-VERIFY"],
+          "clip_to_viewport": true,
+          "viewport": {"x": 0.08, "y": 0.56, "width": 0.84, "height": 0.18}
+        }
+      ],
+      "workspace_blocks": []
+    },
+    {
+      "page_id": "C2B-P1",
+      "stage": "CORE2B",
+      "page_kind": "TRANSFER_TUTOR",
+      "page_purpose": "Hide the family cue and require the learner to reconstruct the mathematical chain from a changed surface.",
+      "pagination": {"mode": "FLOW", "break_reason": null, "manual_spacers_used": false},
+      "technical_blocks": [
+        {"block_id": "C2B-PROBLEM", "kind": "PROBLEM", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c2b-hidden-problem", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C2A-SOLVE", "transformation": "TRANSFER"},
+        {"block_id": "C2B-CLASSIFY", "kind": "TRANSFER_CLASSIFICATION", "content_role": "INSTRUCTION", "content_signature": "sig-c2b-classify", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2A-WHY", "transformation": "TRANSFER"},
+        {"block_id": "C2B-WORK", "kind": "TECHNICAL_WORKSPACE", "content_role": "INSTRUCTION", "content_signature": "sig-c2b-workspace", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C2B-PROBLEM", "transformation": "RECONSTRUCT"},
+        {"block_id": "C2B-ANSWER", "kind": "ANSWER_DERIVATION", "content_role": "DERIVED_MATHEMATICS", "content_signature": "sig-c2b-answer", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"], "upstream_ref": "C2B-PROBLEM", "transformation": "VERIFY"},
+        {"block_id": "C2B-VERIFY", "kind": "VERIFICATION", "content_role": "ANSWER_IDENTITY", "content_signature": "sig-c2b-check", "math_refs": ["CAP-DISTANCE-FORMULA"], "upstream_ref": "C2B-ANSWER", "transformation": "VERIFY"}
+      ],
+      "prose_blocks": [
+        {"block_id": "C2B-HINT", "content_role": "HINT", "content_signature": "sig-c2b-recognition-hint", "math_refs": ["CAP-EQUIDISTANT-EQUATION"], "upstream_ref": "C2A-WHY", "transformation": "TRANSFER"}
+      ],
+      "representations": [],
+      "reconstructable_ttus": [
+        {
+          "ttu_id": "TTU-C2B-EQUATION",
+          "kind": "EQUATION_SKELETON",
+          "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"],
+          "source_ttu_ref": "TTU-C2A-EQUATION",
+          "lineage_transform": "TRANSFER",
+          "fading_level": "INDEPENDENT",
+          "reconstructable": true,
+          "given_parts": [
+            {"part_id": "encoded-equation", "semantic_role": "changed-surface", "content_ref": "(x+3)^2+16=(x-5)^2+4"}
+          ],
+          "missing_parts": [
+            {"part_id": "hidden-geometry", "semantic_role": "classification", "content_ref": "identify the two fixed points and equal-distance structure"},
+            {"part_id": "reduced-line", "semantic_role": "algebraic-reduction", "content_ref": "derive 16x=4"},
+            {"part_id": "point", "semantic_role": "final-geometric-object", "content_ref": "P=(1/4,0)"}
+          ],
+          "target_relations": ["the two sides are squared distances", "16x=4", "P=(1/4,0)"],
+          "reconstruction_prompt": "Recover the hidden geometry from the equation, reduce it, and state the point without being told the problem family.",
+          "completion_key": {
+            "completed_parts": [
+              {"part_id": "hidden-geometry", "completed_content_ref": "A(-3,4), B(5,2), P=(x,0), with PA^2=PB^2"},
+              {"part_id": "reduced-line", "completed_content_ref": "16x=4"},
+              {"part_id": "point", "completed_content_ref": "P=(1/4,0)"}
+            ],
+            "final_check": "At x=1/4 both sides equal 425/16."
+          },
+          "verification_refs": ["C2B-VERIFY"],
+          "clip_to_viewport": true,
+          "viewport": {"x": 0.08, "y": 0.50, "width": 0.84, "height": 0.22}
+        }
+      ],
+      "workspace_blocks": [
+        {"workspace_id": "WS-C2B", "purpose": "CLASSIFICATION", "math_refs": ["CAP-EQUIDISTANT-EQUATION", "CAP-SOLVE-REDUCED-LINEAR"]}
+      ]
+    }
+  ],
+  "depth_obligations": [
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "OBJECT_MODEL", "disposition": "SATISFIED", "evidence_refs": ["C1A-DIAG"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "PRIMARY_RELATION", "disposition": "SATISFIED", "evidence_refs": ["C1A-DERIVE"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "RELATION_DERIVATION", "disposition": "SATISFIED", "evidence_refs": ["C1A-DERIVE"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "PRIMARY_REPRESENTATION", "disposition": "SATISFIED", "evidence_refs": ["REP-C1A"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "REPRESENTATION_SYMBOL_BRIDGE", "disposition": "SATISFIED", "evidence_refs": ["C1A-DERIVE", "REP-C1A"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "WORKED_ANCHOR", "disposition": "SATISFIED", "evidence_refs": ["C1A-EXAMPLE"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "RECONSTRUCTABLE_TTU", "disposition": "SATISFIED", "evidence_refs": ["TTU-C1A-DIAGRAM"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "VALIDITY_OR_SPECIAL_CASE", "disposition": "SATISFIED", "evidence_refs": ["C1A-CASE"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "MISCONCEPTION_COUNTEREXAMPLE", "disposition": "SATISFIED", "evidence_refs": ["C1A-COUNTER"], "not_applicable_reason": null},
+    {"stage": "CORE1A", "badge": "MEDIUM", "obligation_id": "INDEPENDENT_CHECK", "disposition": "SATISFIED", "evidence_refs": ["C1A-VERIFY"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "OPEN_RECONSTRUCTION", "disposition": "SATISFIED", "evidence_refs": ["C1B-TASK"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "REPRESENTATION_REBUILD", "disposition": "SATISFIED", "evidence_refs": ["TTU-C1B-DIAGRAM"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "RECONSTRUCTABLE_TTU", "disposition": "SATISFIED", "evidence_refs": ["TTU-C1B-DIAGRAM"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "METHOD_OR_ERROR_CONTRAST", "disposition": "SATISFIED", "evidence_refs": ["C1B-CONTRAST"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "FADED_RECONSTRUCTION", "disposition": "SATISFIED", "evidence_refs": ["TTU-C1B-DIAGRAM"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "INDEPENDENT_USE", "disposition": "SATISFIED", "evidence_refs": ["C1B-TASK"], "not_applicable_reason": null},
+    {"stage": "CORE1B", "badge": "MEDIUM", "obligation_id": "ANSWER_VERIFICATION", "disposition": "SATISFIED", "evidence_refs": ["C1B-VERIFY"], "not_applicable_reason": null}
+  ]
+}

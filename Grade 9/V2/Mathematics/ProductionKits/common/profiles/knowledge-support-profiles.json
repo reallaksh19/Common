@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "profiles": [
+    {
+      "profile_id": "FOUNDATION_GUIDED",
+      "settings": {
+        "concept_recap": "FULL",
+        "representation_density": "HIGH",
+        "worked_example_density": "HIGH",
+        "help_visibility": "AVAILABLE",
+        "fading_rate": "SLOW"
+      }
+    },
+    {
+      "profile_id": "STANDARD_GUIDED",
+      "settings": {
+        "concept_recap": "COMPACT",
+        "representation_density": "HIGH",
+        "worked_example_density": "MODERATE",
+        "help_visibility": "AVAILABLE",
+        "fading_rate": "MEDIUM"
+      }
+    },
+    {
+      "profile_id": "REDUCED_SUPPORT",
+      "settings": {
+        "concept_recap": "MINIMAL",
+        "representation_density": "MODERATE",
+        "worked_example_density": "LOW",
+        "help_visibility": "HIDDEN_AVAILABLE",
+        "fading_rate": "FAST"
+      }
+    },
+    {
+      "profile_id": "ADVANCED_APPLIED",
+      "settings": {
+        "concept_recap": "ON_DEMAND",
+        "representation_density": "TARGETED",
+        "worked_example_density": "NONE_BEFORE_ATTEMPT",
+        "help_visibility": "STRICTLY_STAGED_HIDDEN",
+        "fading_rate": "IMMEDIATE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "schema_version":"1.0.0",
+  "profiles":[
+    {"purpose":"STARTER","profile_id":"MATH-SCAFFOLD-STARTER-v1","settings":{"concept_recap":"FULL","representation_density":"HIGH","worked_example_density":"HIGH","attempt_before_help":true,"help_visibility":"AVAILABLE","fading_rate":"SLOW","source_question_policy":"ANCHOR_WHERE_USEFUL","question_mix":{"recognition":0.25,"direct":0.45,"near_transfer":0.3,"competitive":0.0}}},
+    {"purpose":"PRACTICE","profile_id":"MATH-SCAFFOLD-PRACTICE-v1","settings":{"concept_recap":"COMPACT","representation_density":"MODERATE","worked_example_density":"LOW","attempt_before_help":true,"help_visibility":"HIDDEN_AVAILABLE","fading_rate":"MEDIUM","source_question_policy":"ALL","question_mix":{"direct":0.3,"near_transfer":0.4,"representation_variation":0.3,"competitive":0.0}}},
+    {"purpose":"REVISION","profile_id":"MATH-SCAFFOLD-REVISION-v1","settings":{"concept_recap":"MINIMAL","representation_density":"LOW","worked_example_density":"MINIMAL","attempt_before_help":true,"help_visibility":"SPARSE","fading_rate":"FAST","source_question_policy":"REPRESENTATIVE","question_mix":{"quick_recall":0.25,"method_discrimination":0.35,"mixed_retrieval":0.4,"competitive":0.0}}},
+    {"purpose":"COMPETITION","profile_id":"MATH-SCAFFOLD-COMPETITION-v1","settings":{"concept_recap":"ON_DEMAND","representation_density":"TARGETED","worked_example_density":"NONE_BEFORE_ATTEMPT","attempt_before_help":true,"help_visibility":"STRICTLY_STAGED_HIDDEN","fading_rate":"IMMEDIATE","source_question_policy":"ANCHOR_WHERE_USEFUL","question_mix":{"near_transfer":0.15,"hidden_structure":0.25,"reverse_target":0.2,"representation_shift":0.2,"mixed_synthesis":0.2}}}
+  ]
+}

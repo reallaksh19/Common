@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "subject": "MATHEMATICS",
+  "source_id": "MATH-CORE1A-AUTHORING-MIGRATION-v1",
+  "content_role": "CORE1A_AUTHORING_CANDIDATE_SOURCE",
+  "curriculum_authority": false,
+  "legacy_source_ref": "policies/core1a-capability-authoring.legacy.pydata",
+  "legacy_source_git_blob_sha": "908114e86ee29cb34f99a707fe4e975a12f08253",
+  "projection_contract_ref": "MathBlueprint/contracts/math-core1a-authoring-assets.schema.json",
+  "parser_contract": "RESTRICTED_AST_LITERAL_PROJECTION_v1",
+  "migration_note": "Lossless frozen migration of the former executable capability authoring corpus. This source is data only: it must never be imported or executed, and it is not curriculum authority."
+}
