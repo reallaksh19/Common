@@ -58,11 +58,14 @@ SBA04 = {
     "PHY-M2D-SPEED-AT-HEIGHT",
 }
 RELATIVE = {"PHY-M2D-RELATIVE-VELOCITY"}
-FULL = BASE15 | GRAVITY | SBA04 | RELATIVE
+WORK_ENERGY = {"PHY-WORK-ENERGY-POWER", "PHY-ENERGY-CONSERVATION-LAW"}
+FULL = BASE15 | GRAVITY | SBA04 | RELATIVE | WORK_ENERGY
 SBA23_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-MOVING-LAUNCHER"}
 GRAV_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW","PHY-GRAV-FORCE","PHY-GRAV-FIELD"}
 SBA04_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK"} | SBA04
 RELATIVE_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-M2D-RELATIVE-VELOCITY"}
+WORK_ENERGY_CLOSURE = {"PHY-VEC-BASICS","PHY-VEC-ADD-SUB","PHY-VEC-COMPONENTS","PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-WORK-ENERGY-POWER"}
+CONSERVATION_CLOSURE = WORK_ENERGY_CLOSURE | {"PHY-NLM-NORMAL","PHY-NLM-FRICTION","PHY-ENERGY-CONSERVATION-LAW"}
 
 # Deterministic canonical assembly and validator-derived readiness.
 assert REG == build_registry()
@@ -70,7 +73,7 @@ assert digest(REG) == digest(build_registry())
 report = validate(REG)
 assert report["status"] == "PASS"
 assert report["registry_id"] == "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3"
-assert report["gate_count"] == 24
+assert report["gate_count"] == 26
 assert report["all_engineering_ready"] is True
 assert {x["gate_id"] for x in report["gate_states"]} == FULL
 assert all("status" not in g for g in REG["gates"])
@@ -118,11 +121,21 @@ assert relative["prerequisites"] == ["PHY-VEC-ADD-SUB", "PHY-VEC-COMPONENTS"]
 assert any(a["source_ref"].endswith("#PHY-KIN-RELATIVE-2D") for a in relative["authority_basis"])
 assert {r["relation_id"] for r in relative["relations"]} == {"EQ-M2D-RELATIVE-VELOCITY", "EQ-M2D-RIVER-CROSSING-TIME", "EQ-M2D-RIVER-DRIFT"}
 
+# Work-Energy growth uses generic V3 semantics, including balance and reference checks.
+work = gate(REG, "PHY-WORK-ENERGY-POWER")
+conservation = gate(REG, "PHY-ENERGY-CONSERVATION-LAW")
+assert work["scope_state"] == "ACTIVE"
+assert conservation["scope_state"] == "ACTIVE"
+assert conservation["prerequisites"] == ["PHY-WORK-ENERGY-POWER", "PHY-NLM-FRICTION"]
+assert {"ENERGY_ACCOUNTING", "REFERENCE_CONSISTENCY"}.issubset(set(conservation["verifications"]))
+
 # Subject growth may not pollute older scoped closures.
 assert physics_closure(REG, ["PHY-M2D-MOVING-LAUNCHER"]) == SBA23_CLOSURE
 assert physics_closure(REG, ["PHY-GRAV-FIELD"]) == GRAV_CLOSURE
 assert physics_closure(REG, sorted(SBA04)) == SBA04_CLOSURE
 assert physics_closure(REG, ["PHY-M2D-RELATIVE-VELOCITY"]) == RELATIVE_CLOSURE
+assert physics_closure(REG, ["PHY-WORK-ENERGY-POWER"]) == WORK_ENERGY_CLOSURE
+assert physics_closure(REG, ["PHY-ENERGY-CONSERVATION-LAW"]) == CONSERVATION_CLOSURE
 
 # Shared problem-family IDs are legal cross-gate linkage, semantic authority IDs are not.
 assert "PF-NLM-INCLINE" in {x["family_id"] for x in gate(REG, "PHY-NLM-SECOND-LAW")["problem_families"]}
@@ -171,6 +184,12 @@ bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-RELATIVE-VELOCITY")["required_invarian
 bad=copy.deepcopy(REG); g=gate(bad,"PHY-M2D-RELATIVE-VELOCITY"); g["relations"]=[r for r in g["relations"] if r["relation_id"]!="EQ-M2D-RIVER-CROSSING-TIME"]; must_fail(bad,"PHY_GATE_REQUIRED_RELATION_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-RELATIVE-VELOCITY")["prerequisites"].remove("PHY-VEC-COMPONENTS"); must_fail(bad,"PHY_GATE_REQUIRED_PREREQUISITE_MISSING")
 
+# Work-Energy verification and applicability falsifiers.
+bad=copy.deepcopy(REG); gate(bad,"PHY-ENERGY-CONSERVATION-LAW")["verifications"].remove("ENERGY_ACCOUNTING"); must_fail(bad,"PHY_GATE_REQUIRED_VERIFICATION_MISSING")
+bad=copy.deepcopy(REG); gate(bad,"PHY-ENERGY-CONSERVATION-LAW")["verifications"].remove("REFERENCE_CONSISTENCY"); must_fail(bad,"PHY_GATE_REQUIRED_VERIFICATION_MISSING")
+bad=copy.deepcopy(REG); gate(bad,"PHY-ENERGY-CONSERVATION-LAW")["required_invariants"].remove("INV-WEP-MECH-CONSERVATION-CONDITIONAL"); must_fail(bad,"PHY_GATE_REQUIRED_INVARIANT_MISSING")
+bad=copy.deepcopy(REG); gate(bad,"PHY-WORK-ENERGY-POWER")["prerequisites"].remove("PHY-NLM-SECOND-LAW"); must_fail(bad,"PHY_GATE_REQUIRED_PREREQUISITE_MISSING")
+
 # SBA04 technical-gate falsifiers: one per new capability plus bucket custody.
 for gid, invariant in [
     ("PHY-M2D-VELOCITY-EVOLUTION","INV-M2D-APEX-VY-ZERO-NOT-GZERO"),
@@ -185,4 +204,4 @@ for gid, invariant in [
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-VELOCITY-EVOLUTION")["linked_buckets"].remove("M2D-SBA-04"); must_fail(bad,"PHY_GATE_REQUIRED_BUCKET_BINDING_MISSING")
 bad=copy.deepcopy(REG); gate(bad,"PHY-M2D-PERPENDICULAR-VELOCITY")["relations"][0]["symbols"][0]["reference_frame_role"]=""; must_fail(bad,"PHY_GATE_SCHEMA_VIOLATION")
 
-print("Physics Technical Engineering Gates v3: PASS (24-gate custody + relative velocity + scoped-closure invariance + SBA04 technical gates + mutation falsifiers)")
+print("Physics Technical Engineering Gates v3: PASS (26-gate custody + Work-Energy verification ontology + scoped-closure invariance + mutation falsifiers)")
