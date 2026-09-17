@@ -35,7 +35,7 @@ def load(rel: str):
     return json.loads((ROOT / rel).read_text(encoding="utf-8"))
 
 
-def canonical_digest(obj: dict) -> str:
+def canonical_digest(obj: object) -> str:
     raw = json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     return "sha256:" + hashlib.sha256(raw).hexdigest()
 
@@ -229,12 +229,42 @@ def compile_closure(
         authority_note = "technical engineering closure is BLOCKED; declared downstream technical consumers may not consume this scope as ready"
 
     extension_refs = list(manifest.get("gate_extension_refs", []))
+    request_digest = canonical_digest(request)
     manifest_digest = canonical_digest(manifest)
+    registry_digest = canonical_digest(registry)
+
+    # Scope-stable custody intentionally excludes the aggregate registry digest. It binds
+    # the exact request/manifest plus the exact content and derived state of only the gates
+    # reachable from this scope. Unrelated subject growth therefore changes registry_digest
+    # (provenance) without changing scoped_closure_digest (authority for this closure).
+    scoped_gate_custody = [
+        {
+            "gate_id": gate_id,
+            "gate_digest": canonical_digest(gate_map[gate_id]) if gate_id in gate_map else None,
+        }
+        for gate_id in ordered
+    ]
+    scoped_digest_payload = {
+        "request_digest": request_digest,
+        "manifest_digest": manifest_digest,
+        "gate_extension_refs": extension_refs,
+        "direct_gate_ids": direct,
+        "transitive_gate_ids": ordered,
+        "scoped_gate_custody": scoped_gate_custody,
+        "gate_states": gate_states,
+        "blockers": blockers,
+        "closure_status": closure_status,
+        "source_item_status": source_status,
+    }
+    scoped_closure_digest = canonical_digest(scoped_digest_payload)
+
+    # Legacy closure_digest remains aggregate-registry-sensitive for backward-compatible
+    # receipt identity. New downstream custody must use scoped_closure_digest instead.
     digest_payload = {
         "request_id": request["request_id"],
         "manifest_id": manifest["manifest_id"],
         "manifest_digest": manifest_digest,
-        "registry_digest": canonical_digest(registry),
+        "registry_digest": registry_digest,
         "gate_extension_refs": extension_refs,
         "direct_gate_ids": direct,
         "transitive_gate_ids": ordered,
@@ -252,8 +282,9 @@ def compile_closure(
         "manifest_digest": manifest_digest,
         "registry_ref": manifest["registry_ref"],
         "gate_extension_refs": extension_refs,
-        "registry_digest": digest_payload["registry_digest"],
+        "registry_digest": registry_digest,
         "closure_digest": canonical_digest(digest_payload),
+        "scoped_closure_digest": scoped_closure_digest,
         "direct_gate_ids": direct,
         "transitive_gate_ids": ordered,
         "gate_states": gate_states,
