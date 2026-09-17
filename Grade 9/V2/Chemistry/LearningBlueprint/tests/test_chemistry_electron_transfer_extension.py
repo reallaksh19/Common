@@ -26,7 +26,7 @@ from test_chemistry_four_core_compilation import (  # noqa: E402
 REP_ROOT = ROOT.parent / "Representation" / "registry"
 EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-primitive-extension.v1.json").read_text(encoding="utf-8"))
 INTENT_EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-intent-extension.v1.json").read_text(encoding="utf-8"))
-FACTS_EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-runtime-facts.v1.json").read_text(encoding="utf-8"))
+SCIENTIFIC_FACTS = json.loads((ROOT / "policies" / "chemistry-scientific-facts.v1.json").read_text(encoding="utf-8"))
 FACT_BACKED_REP = "REP-CHEM-ELECTRON-TRANSFER-ARROWS"
 
 
@@ -74,7 +74,7 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
         self.assertGreaterEqual(len(rows), 2)
         self.assertGreaterEqual(len({gate["subtopic_id"] for gate, _ in rows}), 2)
 
-    def test_intent_extension_and_runtime_facts_resolve_without_adapter_selection(self):
+    def test_intent_extension_and_upstream_scientific_facts_resolve_without_adapter_selection(self):
         gate, engineering_rep = fact_backed_gate()
         packet = packet_for(gate, "tests/in-memory-electron-transfer-extension-audit.json")
         intent = compile_core_representation_intent("CORE1A", packet)
@@ -105,15 +105,15 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
         )
         self.assertIn(EXTENSION["extension_id"], bundle["primitive_registry_extension_refs"])
         self.assertIn(INTENT_EXTENSION["extension_id"], bundle["representation_intent_extension_refs"])
-        self.assertIn(FACTS_EXTENSION["extension_id"], bundle["runtime_fact_extension_refs"])
+        self.assertIn(SCIENTIFIC_FACTS["authority_id"], bundle["runtime_fact_extension_refs"])
         self.assertEqual(realized_target["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
-        self.assertEqual(realized_target["runtime_fact_ref"], FACTS_EXTENSION["fact_packets"][0]["fact_packet_id"])
+        self.assertEqual(realized_target["runtime_fact_ref"], SCIENTIFIC_FACTS["fact_packets"][0]["fact_packet_id"])
         self.assertEqual(target_binding["engineering_representation_refs"], [engineering_rep["representation_id"]])
         self.assertFalse(bundle["summary"]["adapter_primitive_selection_allowed"])
         self.assertFalse(bundle["summary"]["adapter_scientific_semantics_allowed"])
         self.assertFalse(bundle["summary"]["adapter_runtime_facts_allowed"])
 
-    def test_same_broad_type_without_asset_fact_packet_fails_closed(self):
+    def test_same_broad_type_without_scientific_fact_packet_fails_closed(self):
         gate, engineering_rep = next(
             (gate, rep) for gate, rep in electron_transfer_gates()
             if rep["representation_id"] != FACT_BACKED_REP

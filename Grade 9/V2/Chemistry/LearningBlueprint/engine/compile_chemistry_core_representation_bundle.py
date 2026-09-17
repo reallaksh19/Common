@@ -3,9 +3,10 @@
 
 Scientific representation semantics are compiled upstream from Engineering authority.
 Primitive/capability selection is compiled upstream from the C-H page-intent authority.
-Structured primitive runtime facts are resolved from source-bound C-H fact authority.
-A product may nominate an opaque semantic authority/instance ref, but adapters never
-supply primitive IDs, scientific semantic payloads, or primitive runtime parameters.
+Structured primitive runtime facts are projected from upstream Engineering/Blueprint
+scientific fact authority. A product may nominate an opaque semantic authority/instance
+ref, but adapters never supply primitive IDs, scientific facts, semantic payloads, or
+primitive runtime parameters.
 """
 from __future__ import annotations
 
@@ -256,6 +257,7 @@ def compile_core_representation_bundle(
     bindings: list[dict[str, Any]] = []
     runtime_fact_count = 0
     semantic_instances: set[str] = set()
+    scientific_authorities_used: set[str] = set()
     for intent_id in realized:
         row = intents[intent_id]
         primitive_id = row["primitive_id"]
@@ -304,6 +306,8 @@ def compile_core_representation_bundle(
             spec["runtime_fact_digest"] = runtime_fact["fact_packet_digest"]
             spec["runtime_fact_kind"] = runtime_fact["fact_kind"]
             spec["semantic_instance_ref"] = runtime_fact["semantic_instance_ref"]
+            spec["scientific_fact_authority_ref"] = runtime_fact["scientific_fact_authority_ref"]
+            spec["scientific_fact_authority_digest"] = runtime_fact["scientific_fact_authority_digest"]
             spec["runtime_fact_source_authority_kind"] = runtime_fact["source_authority_kind"]
             if runtime_fact.get("source_authority_ref"):
                 spec["runtime_fact_source_authority_ref"] = runtime_fact["source_authority_ref"]
@@ -313,11 +317,14 @@ def compile_core_representation_bundle(
                 spec["runtime_fact_source_content_object_refs"] = runtime_fact["source_content_object_refs"]
             spec["runtime_parameters"] = runtime_fact["parameters"]
             binding["semantic_instance_ref"] = runtime_fact["semantic_instance_ref"]
+            binding["scientific_fact_authority_ref"] = runtime_fact["scientific_fact_authority_ref"]
+            binding["scientific_fact_authority_digest"] = runtime_fact["scientific_fact_authority_digest"]
             binding["runtime_fact_source_authority_kind"] = runtime_fact["source_authority_kind"]
             if runtime_fact.get("source_authority_ref"):
                 binding["runtime_fact_source_authority_ref"] = runtime_fact["source_authority_ref"]
             runtime_fact_count += 1
             semantic_instances.add(runtime_fact["semantic_instance_ref"])
+            scientific_authorities_used.add(runtime_fact["scientific_fact_authority_ref"])
         compiled.append(spec)
         bindings.append(binding)
 
@@ -332,6 +339,11 @@ def compile_core_representation_bundle(
         "primitive_registry_ref": registry["registry_id"],
         "primitive_registry_extension_refs": extension_refs,
         "representation_intent_extension_refs": list(intent_packet.get("policy_extension_refs", [])),
+        "scientific_fact_authority_refs": sorted(scientific_authorities_used),
+        "scientific_fact_authority_digests": {
+            ref: runtime_fact_authority["authority_digests"][ref]
+            for ref in sorted(scientific_authorities_used)
+        },
         "runtime_fact_extension_refs": list(runtime_fact_authority["extension_refs"]),
         "page_intent_profile_ref": profile["profile_id"],
         "notation_contract_ref": notation["contract_id"],
@@ -342,11 +354,13 @@ def compile_core_representation_bundle(
             "required_intent_count": len(required),
             "representation_extension_count": len(extension_refs),
             "representation_intent_extension_count": len(intent_packet.get("policy_extension_refs", [])),
+            "scientific_fact_authority_count": len(scientific_authorities_used),
             "runtime_fact_count": runtime_fact_count,
             "semantic_instance_count": len(semantic_instances),
             "adapter_primitive_selection_allowed": False,
             "adapter_scientific_semantics_allowed": False,
             "adapter_runtime_facts_allowed": False,
+            "representation_layer_scientific_fact_authority_allowed": False,
             "renderer_selection_allowed": False,
         },
         "bundle_digest": "",

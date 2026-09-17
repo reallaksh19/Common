@@ -1,24 +1,20 @@
 #!/usr/bin/env python3
-"""Resolve source-bound Chemistry representation facts into primitive runtime parameters.
+"""Project upstream Chemistry scientific facts into representation runtime parameters.
 
-Runtime facts remain governed authority. A primitive may use an Engineering-obligation
-instance or a Blueprint content-authority instance, but adapters may only nominate
-opaque authority/instance refs. They never supply scientific runtime parameters.
+Scientific fact content and fact-kind validation are owned by governed Engineering/
+Blueprint scientific authority. This module only binds an already-validated fact packet
+to the exact authorized representation/semantic instance and projects its parameters.
+Adapters never supply scientific facts or primitive runtime parameters.
 """
 from __future__ import annotations
 
 import copy
-import hashlib
-import json
-from pathlib import Path
 from typing import Any
 
-import jsonschema
-
-ROOT = Path(__file__).resolve().parents[1]
-SCHEMA_REL = "contracts/chemistry-representation-runtime-facts.schema.json"
-DEFAULT_RUNTIME_FACT_EXTENSION_RELS = (
-    "../Representation/registry/chemistry-electron-transfer-runtime-facts.v1.json",
+from compile_chemistry_scientific_fact_authority import (
+    ChemistryScientificFactAuthorityError,
+    compile_scientific_fact_authority,
+    digest,
 )
 
 
@@ -33,91 +29,23 @@ def fail(code: str, message: str = "") -> None:
     raise ChemistryRepresentationRuntimeFactsError(code, message)
 
 
-def canonical(obj: Any) -> str:
-    return json.dumps(obj, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-
-
-def digest(obj: Any) -> str:
-    return "sha256:" + hashlib.sha256(canonical(obj).encode("utf-8")).hexdigest()
-
-
-def _load(rel: str) -> dict[str, Any]:
-    return json.loads((ROOT / rel).resolve().read_text(encoding="utf-8"))
-
-
-def _validate_electron_transfer_state_ledger(parameters: dict[str, Any], packet_id: str) -> None:
-    rows = parameters.get("oxidation_states")
-    if not isinstance(rows, list) or len(rows) < 2:
-        fail("CHEM_REP_FACT_ELECTRON_STATES_REQUIRED", packet_id)
-    total_lost = 0
-    total_gained = 0
-    for row in rows:
-        before = row.get("before")
-        after = row.get("after")
-        count = row.get("electron_count")
-        if not isinstance(before, int) or not isinstance(after, int) or not isinstance(count, int):
-            fail("CHEM_REP_FACT_ELECTRON_STATE_INVALID", packet_id)
-        delta = after - before
-        magnitude = abs(delta)
-        if magnitude < 1 or count < magnitude or count % magnitude != 0:
-            fail("CHEM_REP_FACT_ELECTRON_COUNT_STATE_MISMATCH", packet_id)
-        if delta > 0:
-            total_lost += count
-        else:
-            total_gained += count
-    if total_lost < 1 or total_gained < 1:
-        fail("CHEM_REP_FACT_ELECTRON_LOSS_AND_GAIN_REQUIRED", packet_id)
-    if total_lost != total_gained:
-        fail(
-            "CHEM_REP_FACT_ELECTRON_EXCHANGE_UNBALANCED",
-            f"{packet_id}:lost={total_lost}:gained={total_gained}",
-        )
-
-
-def _validate_fact_packet(packet: dict[str, Any]) -> None:
-    kind = packet["fact_kind"]
-    if kind == "ELECTRON_TRANSFER_STATE_LEDGER_V1":
-        _validate_electron_transfer_state_ledger(packet["parameters"], packet["fact_packet_id"])
-        return
-    fail("CHEM_REP_FACT_KIND_UNSUPPORTED", str(kind))
-
-
 def compile_runtime_fact_authority(
-    extensions: list[dict[str, Any]] | None = None,
+    authorities: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    rows = list(extensions) if extensions is not None else [_load(rel) for rel in DEFAULT_RUNTIME_FACT_EXTENSION_RELS]
-    schema = _load(SCHEMA_REL)
-    extension_refs: list[str] = []
-    by_representation: dict[str, list[dict[str, Any]]] = {}
-    packet_ids: set[str] = set()
-    semantic_instance_refs: set[str] = set()
-    for extension in rows:
-        try:
-            jsonschema.validate(extension, schema)
-        except jsonschema.ValidationError as exc:
-            fail("CHEM_REP_FACT_EXTENSION_SCHEMA", exc.message)
-        extension_id = extension["extension_id"]
-        if extension_id in extension_refs:
-            fail("CHEM_REP_FACT_EXTENSION_DUPLICATE", extension_id)
-        extension_refs.append(extension_id)
-        for packet in extension["fact_packets"]:
-            packet_id = packet["fact_packet_id"]
-            semantic_ref = packet["semantic_instance_ref"]
-            rep_ref = packet["source_representation_ref"]
-            if packet_id in packet_ids:
-                fail("CHEM_REP_FACT_PACKET_DUPLICATE", packet_id)
-            if semantic_ref in semantic_instance_refs:
-                fail("CHEM_REP_FACT_SEMANTIC_INSTANCE_DUPLICATE", semantic_ref)
-            _validate_fact_packet(packet)
-            packet_ids.add(packet_id)
-            semantic_instance_refs.add(semantic_ref)
-            by_representation.setdefault(rep_ref, []).append(copy.deepcopy(packet))
-    for rep_ref in by_representation:
-        by_representation[rep_ref].sort(key=lambda row: row["semantic_instance_ref"])
+    """Compatibility entrypoint returning a compiled upstream scientific authority.
+
+    The historical function name is retained so representation compilation remains API
+    stable, but the data source is no longer a C-H runtime-fact extension.
+    """
+    try:
+        compiled = compile_scientific_fact_authority(authorities)
+    except ChemistryScientificFactAuthorityError as exc:
+        fail(exc.code, exc.message)
     return {
-        "extension_refs": extension_refs,
-        "fact_packets_by_representation": by_representation,
-        "semantic_instance_refs": sorted(semantic_instance_refs),
+        **compiled,
+        # Retained as a compatibility alias for bundle consumers while authority
+        # ownership migrates. Values are upstream scientific-authority IDs.
+        "extension_refs": list(compiled["authority_refs"]),
     }
 
 
@@ -183,9 +111,7 @@ def _validate_blueprint_source(
     missing = sorted(set(source_refs) - set(by_id))
     if missing:
         fail("CHEM_REP_RUNTIME_FACT_BLUEPRINT_OBJECT_UNAUTHORIZED", ",".join(missing))
-    meaningful_classes = {
-        str(by_id[ref].get("object_class", "")) for ref in source_refs
-    }
+    meaningful_classes = {str(by_id[ref].get("object_class", "")) for ref in source_refs}
     if not meaningful_classes & {"EQUATION", "REPRESENTATION", "REASONING_CHAIN", "VERIFICATION", "WORKED_EXAMPLE"}:
         fail("CHEM_REP_RUNTIME_FACT_BLUEPRINT_SEMANTIC_SOURCE_WEAK", authority_ref)
 
@@ -255,11 +181,17 @@ def resolve_runtime_fact_parameters(
     else:
         fail("CHEM_REP_RUNTIME_FACT_SOURCE_AUTHORITY_KIND_UNSUPPORTED", str(source_kind))
 
+    packet_id = packet["fact_packet_id"]
+    lineage = authority.get("packet_authority", {}).get(packet_id)
+    if not lineage:
+        fail("CHEM_REP_RUNTIME_FACT_SCIENTIFIC_AUTHORITY_LINEAGE_MISSING", packet_id)
     return {
-        "fact_packet_ref": packet["fact_packet_id"],
+        "fact_packet_ref": packet_id,
         "fact_packet_digest": digest(packet),
         "fact_kind": packet["fact_kind"],
         "semantic_instance_ref": packet["semantic_instance_ref"],
+        "scientific_fact_authority_ref": lineage["authority_ref"],
+        "scientific_fact_authority_digest": lineage["authority_digest"],
         "source_authority_kind": source_kind,
         "source_authority_ref": packet.get("source_authority_ref"),
         "source_equation_refs": list(packet.get("source_equation_refs") or []),
