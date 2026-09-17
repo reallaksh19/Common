@@ -5,7 +5,10 @@ From the downstream repository root run the validators from this directory. Prim
 ```bash
 python validate_relay_conformance.py <repo-root>
 python cold_start_check.py <repo-root>
+python zero_context_reconstruction.py <repo-root>
+python validate_zero_context_reconstruction.py <repo-root>
 python stress_test_relay.py <repo-root> [<repo-root> ...]
+python render_roadmap.py <repo-root>
 python render_status.py <repo-root>
 python render_handover.py <repo-root>
 python render_owner_status.py <repo-root> [--output agents/relay/generated/OWNER_STATUS.md]
@@ -14,19 +17,31 @@ python render_owner_change.py <repo-root> [--odr agents/relay/roadmap/owner-deci
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
+## Zero-context release reconstruction
+
+```bash
+python zero_context_reconstruction.py <repo-root>
+python validate_zero_context_reconstruction.py <repo-root>
+```
+
+`zero_context_reconstruction.py` derives the current lifecycle and every active execution route from repository authority objects only. For executable routes it reconstructs task purpose/roadmap position, Owner decisions, predecessor facts/limitations, uncertainty, input authority/editability, benchmark/oracle, scope, quality obligations/findings, evidence present/missing, tests/acceptance, first implementation action, stale conditions, and exact next work.
+
+`validate_zero_context_reconstruction.py` rejects missing material answers or any dependency on prior conversation. It is part of aggregate relay conformance. The release matrix in `../operating-model/relay-certification-matrix.md` covers ACTIVE, RECONCILING, PARALLEL, stale required projection, IDLE, and TERMINAL; bootstrap/core tests cover INITIALIZING.
+
 ## Progress / report projection
 
 ```bash
 python validate_progress.py <repo-root>
 python validate_report_projection.py <repo-root>
 python render_report_projection.py <repo-root>
+python render_roadmap.py <repo-root>
 ```
 
 `PROGRESS.yaml` is authoritative for calculated progress through Objective -> Phase -> Work Package -> EP -> implementation step -> acceptance criterion. `REPO_STATE` percentages are checked mirrors only; status/handover rendering uses `progress_projection.py` rather than trusting those mirrors.
 
-`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph, Owner-decision records, quality review and repository state. It records source digests and never becomes a competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance, structured next-work coverage, current contract scope/context, and current checkpoint QRV source binding when a QRV exists.
+`report_projection.py` derives one structured report from roadmap, progress, current EP/plan, checkpoint, issue graph, Owner-decision records, quality review, and repository state. It records source digests and never becomes competing authority. `validate_report_projection.py` is part of aggregate conformance and requires complete active acceptance, structured next-work coverage, current contract scope/context, and current checkpoint QRV source binding when a QRV exists.
 
-Every executable EP has `next_work.steps[]`: ordered action, concrete targets, inputs, tests/oracles, acceptance IDs, expected result and stop/reconciliation conditions. The one-line execution `next_action` remains a machine hint only.
+Every executable EP has `next_work.steps[]`: ordered action, concrete targets, inputs, tests/oracles, acceptance IDs, expected result, and stop/reconciliation conditions. The one-line execution `next_action` remains a machine hint only.
 
 ## Human communication projections
 
@@ -36,7 +51,7 @@ python render_owner_status.py <repo-root>
 python render_technical_status.py <repo-root>
 ```
 
-`communication_projection.py` consumes the single source-derived report projection and produces two views. `TECHNICAL_STATUS.md` preserves protocol identifiers, source bindings, scope, evidence, quality review, readiness and exact next-work detail. `OWNER_STATUS.md` translates the same truth into plain language: what can happen now, what the work is for, what will not change, evidence and missing evidence, quality/limitations, roadmap progress, decisions genuinely required from the Owner, exact next work and stop conditions.
+`communication_projection.py` consumes the single source-derived report projection and produces two views. `TECHNICAL_STATUS.md` preserves protocol identifiers, source bindings, scope, evidence, quality review, readiness, and exact next-work detail. `OWNER_STATUS.md` translates the same truth into plain language: what can happen now, what the work is for, what will not change, evidence and missing evidence, quality/limitations, roadmap progress, decisions genuinely required from the Owner, exact next work, and stop conditions.
 
 The Owner view must not turn an Owner-reserved domain into a fabricated decision request. Conversely, it may not hide a real `OWNER_DECISION_REQUIRED` stop, missing evidence, unresolved quality risk, protected/prohibited scope, or exact next action. Aggregate conformance validates this convergence. Both Markdown files are disposable generated views; neither is an authority source.
 
@@ -48,11 +63,11 @@ python owner_change_projection.py <repo-root> [--odr agents/relay/roadmap/owner-
 python render_owner_change.py <repo-root> [--odr ...] [--output agents/relay/generated/OWNER_CHANGE.md]
 ```
 
-Owner intent authority remains the ODR; structural mutation authority remains the roadmap revision. For an `INTENT_MUTATION`, `ODR.change_intake` records plain-language previous concept, requested concept, retained behavior, invalidated behavior and new scope. The derived Owner-change projection combines that semantic intent with actual roadmap changes, Progress Basis effect, issue reconciliation, active-EP disposition and resulting frontier.
+Owner intent authority remains the ODR; structural mutation authority remains the roadmap revision. For an `INTENT_MUTATION`, `ODR.change_intake` records plain-language previous concept, requested concept, retained behavior, invalidated behavior, and new scope. The derived Owner-change projection combines that semantic intent with actual roadmap changes, Progress Basis effect, issue reconciliation, active-EP disposition, and resulting frontier.
 
-A CAPTURED decision may be rendered without pretending it is applied. For the current `OWNER_INTENT_MUTATION` revision, aggregate conformance requires an APPLIED ODR, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation. `OWNER_CHANGE.md` is disposable projection only.
+A CAPTURED decision may be rendered without pretending it is applied. For the current `OWNER_INTENT_MUTATION` revision, aggregate conformance requires an APPLIED ODR, current Progress Basis, exact computed frontier, explicit active-work disposition, and visible issue reconciliation. `OWNER_CHANGE.md` is disposable projection only.
 
-## Semantic baton, takeover and qualification
+## Semantic baton, takeover, and qualification
 
 ```bash
 python validate_repo_profile.py <repo-root>
@@ -84,9 +99,11 @@ python validate_quality_review.py <repo-root>
 
 Every executable EP explicitly partitions the built-in quality library into `quality.applicable[]` and `quality.not_applicable[]`. Applicable entries require a concrete reason and review focus; non-applicable entries require a concrete reason. Silent omission is invalid. Only applicable procedures run.
 
-Before checkpoint publication, applicable procedures are recorded in a `QRV-*` Quality Review under `agents/relay/quality/`. QRV is bound to the exact EP contract digest, roadmap revision, material ref and quality-router snapshot. Procedure results are `CLEAR | FINDINGS | NOT_RUN`; NOT_RUN remains quality/evidence truth and is not automatically a stop.
+Before checkpoint publication, applicable procedures are recorded in a `QRV-*` Quality Review under `agents/relay/quality/`. QRV is bound to the exact EP contract digest, roadmap revision, material ref, and quality-router snapshot. Procedure results are `CLEAR | FINDINGS | NOT_RUN`; NOT_RUN remains quality/evidence truth and is not automatically a stop.
 
-Quality findings use `QF-*` IDs and preserve classification, severity, evidence and disposition. Severity alone never creates a hard stop. A finding may set `blocks_execution: true` only when it maps to an existing true hard-stop category with durable basis. Deferred/unresolved findings transfer exactly through `successor_handover`. Checkpoints point to the QRV by id/path/digest and cannot publish an executable successor while the QRV contains a true blocking finding.
+Quality findings use `QF-*` IDs and preserve classification, severity, evidence, and disposition. Severity alone never creates a hard stop. A finding may set `blocks_execution: true` only when it maps to an existing true hard-stop category with durable basis. Deferred/unresolved findings transfer exactly through `successor_handover`. Checkpoints point to the QRV by id/path/digest and cannot publish an executable successor while the QRV contains a true blocking finding.
+
+Read `../operating-model/quality-procedures.md`.
 
 ## GitHub program projection
 
@@ -127,10 +144,20 @@ python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating an EP or acceptance evidence.
 
-Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, Owner/technical communication convergence, Owner-change intake/reconciliation, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
+## Common self-consistency / release development
 
-Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report/communication/change projections and GitHub Issues remain projections, not authority.
+From the Common repository root:
 
-The scoped CI must explicitly execute both root unit discovery and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
+```
+
+The audit verifies YAML contract parseability, required object surfaces, quality blueprint procedure structure, aggregate-validator reachability, renderer/operator documentation, current authority vocabulary, CI coverage, and cross-surface completion consistency. It is executed by the scoped V2.5 workflow before root unit and stress discovery.
+
+Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, Owner/technical communication convergence, Owner-change intake/reconciliation, zero-context reconstruction, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle, and roadmap transactions.
+
+Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report/communication/change projections, zero-context reconstruction output, and GitHub Issues remain projections, not authority.
+
+The scoped CI must explicitly execute the self-consistency audit, root unit discovery, and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
 
 PyYAML is required. Procedural semantic/cross-object validators are the enforcement layer today; declarative schemas/templates are contract aids.
