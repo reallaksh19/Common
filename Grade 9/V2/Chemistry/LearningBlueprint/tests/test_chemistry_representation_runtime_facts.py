@@ -27,12 +27,14 @@ from test_chemistry_four_core_compilation import (  # noqa: E402
     make_request,
 )
 
-FACTS_PATH = ROOT.parent / "Representation" / "registry" / "chemistry-electron-transfer-runtime-facts.v1.json"
+LOCAL_FACTS_PATH = ROOT.parent / "Representation" / "registry" / "chemistry-electron-transfer-runtime-facts.v1.json"
+ENGINEERING_FACTS_PATH = ROOT / "policies" / "chemistry-engineering-representation-facts.v1.json"
 LOCAL_AUTHORITY_PATH = ROOT / "golden" / "v7" / "core1a-study-note-redox-authority.json"
 TARGET_REP = "REP-CHEM-ELECTRON-TRANSFER-ARROWS"
 TARGET_PRIMITIVE = "ELECTRON_TRANSFER_LEDGER"
 TARGET_FACT_KIND = "ELECTRON_TRANSFER_STATE_LEDGER_V1"
 ENGINEERING_INSTANCE = "CHEM-SEM-INSTANCE-REDOX-CUO-H2-v1"
+ENGINEERING_AUTHORITY = "CHEM-ENG-REPRESENTATION-FACTS-v1"
 LOCAL_INSTANCE = "CHEM-SEM-INSTANCE-REDOX-ZN-CU-v1"
 
 
@@ -74,6 +76,7 @@ class ChemistryRepresentationRuntimeFactsTests(unittest.TestCase):
         self.assertEqual(rep["runtime_fact_ref"], "CHEM-REP-FACT-ELECTRON-TRANSFER-ARROWS-v1")
         self.assertEqual(rep["semantic_instance_ref"], ENGINEERING_INSTANCE)
         self.assertEqual(rep["runtime_fact_source_authority_kind"], "ENGINEERING_OBLIGATION")
+        self.assertEqual(rep["runtime_fact_source_authority_ref"], ENGINEERING_AUTHORITY)
         self.assertEqual(rep["runtime_fact_source_equation_refs"], ["EQ-CHEM-REDOX-TRANSFER"])
         self.assertEqual(len(rep["runtime_parameters"]["oxidation_states"]), 2)
         self.assertEqual(
@@ -82,6 +85,7 @@ class ChemistryRepresentationRuntimeFactsTests(unittest.TestCase):
         )
         binding = next(row for row in bindings if row["representation_ref"] == rep["representation_id"])
         self.assertEqual(binding["semantic_instance_ref"], ENGINEERING_INSTANCE)
+        self.assertEqual(binding["runtime_fact_source_authority_ref"], ENGINEERING_AUTHORITY)
         self.assertFalse(bundle["summary"]["adapter_runtime_facts_allowed"])
         self.assertEqual(bundle["summary"]["runtime_fact_count"], 1)
         self.assertEqual(bundle["summary"]["semantic_instance_count"], 1)
@@ -112,19 +116,27 @@ class ChemistryRepresentationRuntimeFactsTests(unittest.TestCase):
         self.assertEqual(binding["runtime_fact_source_authority_ref"], authority_ref)
         self.assertFalse(bundle["summary"]["adapter_scientific_semantics_allowed"])
 
-    def test_primitive_requiring_facts_fails_when_asset_fact_packet_is_missing(self):
+    def test_primitive_requiring_facts_fails_when_engineering_and_local_fact_packets_are_missing(self):
         _, packet, _, target = packet_and_intent()
-        authority = compile_runtime_fact_authority(extensions=[])
+        empty_engineering = json.loads(ENGINEERING_FACTS_PATH.read_text(encoding="utf-8"))
+        empty_engineering["fact_packets"] = []
+        authority = compile_runtime_fact_authority(
+            extensions=[],
+            engineering_fact_authority=empty_engineering,
+        )
         primitive = {"runtime_fact_kind": TARGET_FACT_KIND}
         with self.assertRaises(ChemistryRepresentationRuntimeFactsError) as ctx:
             resolve_runtime_fact_parameters(target, packet, primitive, authority)
         self.assertEqual(ctx.exception.code, "CHEM_REP_RUNTIME_FACTS_REQUIRED")
 
-    def test_runtime_fact_source_equation_must_be_authorized_by_same_gate(self):
+    def test_runtime_fact_source_equation_must_be_authorized_by_same_obligation_packet(self):
         _, packet, _, target = packet_and_intent()
-        extension = json.loads(FACTS_PATH.read_text(encoding="utf-8"))
-        extension["fact_packets"][0]["source_equation_refs"] = ["EQ-CHEM-NOT-AUTHORIZED"]
-        authority = compile_runtime_fact_authority([extension])
+        packet = copy.deepcopy(packet)
+        packet["obligations"] = [
+            row for row in packet["obligations"]
+            if not (row.get("kind") == "EQUATION" and row.get("asset_ref") == "EQ-CHEM-REDOX-TRANSFER")
+        ]
+        authority = compile_runtime_fact_authority()
         primitive = {"runtime_fact_kind": TARGET_FACT_KIND}
         with self.assertRaises(ChemistryRepresentationRuntimeFactsError) as ctx:
             resolve_runtime_fact_parameters(target, packet, primitive, authority)
@@ -155,8 +167,8 @@ class ChemistryRepresentationRuntimeFactsTests(unittest.TestCase):
         _, packet, _, target = packet_and_intent()
         local = json.loads(LOCAL_AUTHORITY_PATH.read_text(encoding="utf-8"))
         authority_ref = local["authority_id"]
-        extension = json.loads(FACTS_PATH.read_text(encoding="utf-8"))
-        duplicate = copy.deepcopy(extension["fact_packets"][1])
+        extension = json.loads(LOCAL_FACTS_PATH.read_text(encoding="utf-8"))
+        duplicate = copy.deepcopy(extension["fact_packets"][0])
         duplicate["fact_packet_id"] = "CHEM-REP-FACT-ELECTRON-TRANSFER-ZN-CU-ALT-v1"
         duplicate["semantic_instance_ref"] = "CHEM-SEM-INSTANCE-REDOX-ZN-CU-ALT-v1"
         extension["fact_packets"].append(duplicate)
@@ -173,25 +185,42 @@ class ChemistryRepresentationRuntimeFactsTests(unittest.TestCase):
             )
         self.assertEqual(ctx.exception.code, "CHEM_REP_RUNTIME_FACT_SEMANTIC_INSTANCE_AMBIGUOUS")
 
-    def test_unbalanced_governed_electron_counts_fail_before_render(self):
-        extension = json.loads(FACTS_PATH.read_text(encoding="utf-8"))
+    def test_c_h_extension_cannot_author_engineering_obligation_facts(self):
+        extension = json.loads(LOCAL_FACTS_PATH.read_text(encoding="utf-8"))
         bad = copy.deepcopy(extension)
-        bad["fact_packets"][0]["parameters"]["oxidation_states"][1]["electron_count"] = 4
+        packet = bad["fact_packets"][0]
+        packet["source_authority_kind"] = "ENGINEERING_OBLIGATION"
+        packet.pop("source_authority_ref", None)
+        packet.pop("source_content_object_refs", None)
+        packet["source_equation_refs"] = ["EQ-CHEM-REDOX-TRANSFER"]
         with self.assertRaises(ChemistryRepresentationRuntimeFactsError) as ctx:
             compile_runtime_fact_authority([bad])
+        self.assertEqual(ctx.exception.code, "CHEM_REP_FACT_EXTENSION_SCHEMA")
+
+    def test_unbalanced_engineering_electron_counts_fail_before_runtime_realization(self):
+        engineering = json.loads(ENGINEERING_FACTS_PATH.read_text(encoding="utf-8"))
+        bad = copy.deepcopy(engineering)
+        bad["fact_packets"][0]["parameters"]["oxidation_states"][1]["electron_count"] = 4
+        with self.assertRaises(ChemistryRepresentationRuntimeFactsError) as ctx:
+            compile_runtime_fact_authority(engineering_fact_authority=bad)
         self.assertEqual(ctx.exception.code, "CHEM_REP_FACT_ELECTRON_EXCHANGE_UNBALANCED")
 
     def test_runtime_fact_compiler_contains_no_topic_or_prose_parser_control_flow(self):
-        text = (ENGINE / "compile_chemistry_representation_runtime_facts.py").read_text(encoding="utf-8").lower()
-        for forbidden in (
-            "re" + "dox",
-            "perm" + "anganate",
-            "mn" + "o4",
-            "meaning_of_symbols",
-            "re.findall",
-            "source_semantic_data",
-        ):
-            self.assertNotIn(forbidden, text)
+        texts = [
+            (ENGINE / "compile_chemistry_representation_runtime_facts.py").read_text(encoding="utf-8").lower(),
+            (ENGINE / "compile_chemistry_engineering_representation_facts.py").read_text(encoding="utf-8").lower(),
+            (ENGINE / "validate_chemistry_representation_fact_packet.py").read_text(encoding="utf-8").lower(),
+        ]
+        for text in texts:
+            for forbidden in (
+                "re" + "dox",
+                "perm" + "anganate",
+                "mn" + "o4",
+                "meaning_of_symbols",
+                "re.findall",
+                "source_semantic_data",
+            ):
+                self.assertNotIn(forbidden, text)
 
 
 if __name__ == "__main__":
