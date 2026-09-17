@@ -27,6 +27,7 @@ REP_ROOT = ROOT.parent / "Representation" / "registry"
 EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-primitive-extension.v1.json").read_text(encoding="utf-8"))
 INTENT_EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-intent-extension.v1.json").read_text(encoding="utf-8"))
 FACTS_EXTENSION = json.loads((REP_ROOT / "chemistry-electron-transfer-runtime-facts.v1.json").read_text(encoding="utf-8"))
+ENGINEERING_FACTS = json.loads((ROOT / "policies/chemistry-engineering-representation-facts.v1.json").read_text(encoding="utf-8"))
 FACT_BACKED_REP = "REP-CHEM-ELECTRON-TRANSFER-ARROWS"
 
 
@@ -107,8 +108,11 @@ class ChemistryElectronTransferExtensionTests(unittest.TestCase):
         self.assertIn(INTENT_EXTENSION["extension_id"], bundle["representation_intent_extension_refs"])
         self.assertIn(FACTS_EXTENSION["extension_id"], bundle["runtime_fact_extension_refs"])
         self.assertEqual(realized_target["primitive_id"], "ELECTRON_TRANSFER_LEDGER")
-        self.assertEqual(realized_target["runtime_fact_ref"], FACTS_EXTENSION["fact_packets"][0]["fact_packet_id"])
+        self.assertEqual(realized_target["runtime_fact_ref"], ENGINEERING_FACTS["fact_packets"][0]["fact_packet_id"])
+        self.assertEqual(realized_target["runtime_fact_source_authority_kind"], "ENGINEERING_OBLIGATION")
+        self.assertEqual(realized_target["runtime_fact_source_authority_ref"], ENGINEERING_FACTS["authority_id"])
         self.assertEqual(target_binding["engineering_representation_refs"], [engineering_rep["representation_id"]])
+        self.assertEqual(target_binding["runtime_fact_source_authority_ref"], ENGINEERING_FACTS["authority_id"])
         self.assertFalse(bundle["summary"]["adapter_primitive_selection_allowed"])
         self.assertFalse(bundle["summary"]["adapter_scientific_semantics_allowed"])
         self.assertFalse(bundle["summary"]["adapter_runtime_facts_allowed"])
