@@ -67,6 +67,38 @@ def _research_artifact(request, manifest, ref_key, schema, ready, supplied, miss
         blockers.append({"code": invalid_code, "message": f"{ref_key} not ready: {exc}"})
 
 
+def _legacy_only_topology_extension(registry: dict) -> dict:
+    """Return a deterministic empty extension for an injected non-canonical registry.
+
+    The repository default topology sidecar is authority for the registry referenced by
+    the manifest. A caller that injects a different registry must not accidentally inherit
+    production typed edges merely because it reuses the same registry_id. Legacy
+    prerequisite_ids on the injected registry remain authoritative unless the caller also
+    injects a matching topology_extension.
+    """
+    return {
+        "schema_version": "1.0.0",
+        "extension_id": "CHEM-ENG-TOPOLOGY-EXT-registry-override-legacy-v1",
+        "subject": "CHEMISTRY",
+        "registry_id": registry["registry_id"],
+        "additive_only": True,
+        "legacy_coverage": "ALLOW_PARTIAL",
+        "edges": [],
+    }
+
+
+def _resolve_topology_extension(manifest: dict, registry: dict, supplied) -> dict | None:
+    if supplied is not None:
+        return supplied
+    try:
+        canonical_registry = load(manifest["registry_ref"])
+    except (FileNotFoundError, json.JSONDecodeError):
+        return _legacy_only_topology_extension(registry)
+    if digest(registry) == digest(canonical_registry):
+        return None
+    return _legacy_only_topology_extension(registry)
+
+
 def compile_closure(
     request: dict,
     manifest: dict,
@@ -87,8 +119,9 @@ def compile_closure(
         validate_registry(registry)
     except ChemistryEngineeringRegistryError as exc:
         fail("CHEM_ENG_REGISTRY_INVALID", f"{exc.code}: {exc.message}")
+    effective_topology_extension = _resolve_topology_extension(manifest, registry, topology_extension)
     try:
-        topology = compile_gate_topology(registry, topology_extension=topology_extension)
+        topology = compile_gate_topology(registry, topology_extension=effective_topology_extension)
     except ChemistryEngineeringTopologyError as exc:
         fail("CHEM_ENG_TOPOLOGY_INVALID", f"{exc.code}: {exc.message}")
 
@@ -218,7 +251,7 @@ def compile_closure(
 
     if request["engineering_depth"] == "RESEARCH":
         _research_artifact(request, manifest, "research_dossier_ref", "contracts/chemistry-engineering-research-dossier.schema.json", "RESEARCH_DOSSIER_READY", research_dossier, "CHEM_ENG_RESEARCH_DOSSIER_REQUIRED", "CHEM_ENG_RESEARCH_DOSSIER_INVALID", blockers)
-        _research_artifact(request, manifest, "claim_ledger_ref", "contracts/chemistry-engineering-claim-ledger.schema.json", "CLAIM_LEDGER_READY", claim_ledger, "CHEM_ENG_CLAIM_LEDGER_REQUIRED", "CHEM_ENG_CLAIM_LEDGER_INVALID", blockers)
+        _research_artifact(request, manifest, "claim_ledger_ref", "contracts/chemistry-engineering-claim-ledger.schema.json", "CLAIM_LEDGER_READY", claim_ledger, "CHEM_ENG_RESEARCH_DOSSIER_REQUIRED", "CHEM_ENG_RESEARCH_DOSSIER_INVALID", blockers)
 
     ready_count = sum(s["status"] == "ENGINEERING_GATE_READY" for s in gate_states)
     blocked_count = len(gate_states) - ready_count

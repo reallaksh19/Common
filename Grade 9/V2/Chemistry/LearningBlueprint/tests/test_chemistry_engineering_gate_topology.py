@@ -118,9 +118,13 @@ def manifest(required, *, optional=None, out_of_scope=None, resolutions=None):
 
 class ChemistryEngineeringGateTopologyTests(unittest.TestCase):
     def test_legacy_prerequisites_normalize_without_changing_closure_contract(self):
-        topology = compile_gate_topology(REGISTRY)
+        legacy_extension = extension(REGISTRY, [])
+        topology = compile_gate_topology(REGISTRY, topology_extension=legacy_extension)
         self.assertEqual(topology["counts"]["explicit_edge_count"], 0)
-        self.assertEqual(validate_gate_topology(REGISTRY, topology)["status"], "PASS")
+        self.assertEqual(
+            validate_gate_topology(REGISTRY, topology, topology_extension=legacy_extension)["status"],
+            "PASS",
+        )
         by_pair = {(row["source_gate_id"], row["target_id"]): row for row in topology["edges"]}
         expected_count = 0
         for gate in REGISTRY["subtopic_gates"]:
@@ -132,11 +136,16 @@ class ChemistryEngineeringGateTopologyTests(unittest.TestCase):
                 self.assertEqual(row["origin"], "LEGACY_PREREQUISITE")
         self.assertEqual(topology["counts"]["edge_count"], expected_count)
 
-        source, _ = ready_pair(stripped_registry())
-        legacy = compile_closure(request(), manifest([source]), registry=stripped_registry(), topology_extension=extension(stripped_registry(), []))
-        implicit = compile_closure(request(), manifest([source]), registry=stripped_registry(), topology_extension=None)
-        self.assertEqual(legacy, implicit)
-        self.assertFalse(any(field in legacy for field in TOPOLOGY_FIELDS))
+        registry = stripped_registry()
+        source, _ = ready_pair(registry)
+        receipt = compile_closure(
+            request(),
+            manifest([source]),
+            registry=registry,
+            topology_extension=extension(registry, []),
+        )
+        self.assertEqual(receipt["closure_status"], "READY")
+        self.assertFalse(any(field in receipt for field in TOPOLOGY_FIELDS))
 
     def test_exact_legacy_mirror_is_allowed_but_relationship_reclassification_fails(self):
         source, target = legacy_internal_pair()

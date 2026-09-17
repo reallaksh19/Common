@@ -4,7 +4,8 @@
 Legacy ``prerequisite_ids`` remain authoritative during migration. They are normalized
 into typed edges so generic closure code consumes one graph model. Explicit relationships
 live in an additive governed sidecar. An exact typed mirror of a legacy prerequisite is
-allowed; conflicting or duplicate relationship declarations fail closed.
+allowed; conflicting or duplicate relationship declarations fail closed. Production
+migration may require every legacy relationship to have an exact typed mirror.
 """
 from __future__ import annotations
 
@@ -176,6 +177,25 @@ def _validate_required_cycle(edges: list[dict[str, Any]], gate_ids: list[str]) -
         walk(gid)
 
 
+def _require_legacy_mirror_coverage(
+    extension: dict[str, Any],
+    legacy_exact: set[tuple[str, str, str]],
+    explicit_exact: set[tuple[str, str, str]],
+) -> None:
+    coverage = extension.get("legacy_coverage", "ALLOW_PARTIAL")
+    if coverage == "ALLOW_PARTIAL":
+        return
+    if coverage != "REQUIRE_ALL_LEGACY_MIRRORS":
+        fail("CHEM_ENG_TOPOLOGY_LEGACY_COVERAGE_INVALID", str(coverage))
+    missing = sorted(legacy_exact - explicit_exact)
+    if missing:
+        encoded = [
+            {"source_gate_id": source, "target_id": target, "relationship_type": relationship_type}
+            for source, target, relationship_type in missing
+        ]
+        fail("CHEM_ENG_TOPOLOGY_LEGACY_COVERAGE_MISSING", json.dumps(encoded, sort_keys=True))
+
+
 def compile_gate_topology(
     registry: dict[str, Any],
     *,
@@ -201,6 +221,7 @@ def compile_gate_topology(
 
     merged: dict[tuple[str, str], dict[str, Any]] = {}
     legacy_keys: set[tuple[str, str]] = set()
+    legacy_exact: set[tuple[str, str, str]] = set()
     explicit_keys: set[tuple[str, str]] = set()
     explicit_exact: set[tuple[str, str, str]] = set()
 
@@ -216,11 +237,14 @@ def compile_gate_topology(
                 if str(target).startswith("CHEM-")
                 else legacy_mapping["external_dependency"]
             )
-            key = (source, str(target))
-            row = _edge_row(source, str(target), relationship_type, "LEGACY_PREREQUISITE", index, policy)
+            target = str(target)
+            key = (source, target)
+            exact = (source, target, relationship_type)
+            row = _edge_row(source, target, relationship_type, "LEGACY_PREREQUISITE", index, policy)
             _validate_target(row, gate_map)
             merged[key] = row
             legacy_keys.add(key)
+            legacy_exact.add(exact)
 
     explicit_by_source: Counter[str] = Counter()
     for edge in extension["edges"]:
@@ -260,6 +284,8 @@ def compile_gate_topology(
         else:
             merged[key] = candidate
         explicit_keys.add(key)
+
+    _require_legacy_mirror_coverage(extension, legacy_exact, explicit_exact)
 
     edges = sorted(
         merged.values(),

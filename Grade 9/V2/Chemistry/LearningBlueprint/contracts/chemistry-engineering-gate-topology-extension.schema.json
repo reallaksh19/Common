@@ -17,6 +17,9 @@
     "subject": { "const": "CHEMISTRY" },
     "registry_id": { "type": "string", "minLength": 1 },
     "additive_only": { "const": true },
+    "legacy_coverage": {
+      "enum": ["ALLOW_PARTIAL", "REQUIRE_ALL_LEGACY_MIRRORS"]
+    },
     "edges": {
       "type": "array",
       "items": {
