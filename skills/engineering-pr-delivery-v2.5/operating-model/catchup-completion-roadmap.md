@@ -23,13 +23,13 @@ CP-R006  WP-05 GitHub Program Projection            COMPLETE
    |
 CP-R007  WP-06 Quality Procedure Library            COMPLETE
    |
-CP-R008  WP-07 Human Communication                  CHECKPOINT WRITTEN — EXACT-HEAD CI REQUIRED
+CP-R008  WP-07 Human Communication                  COMPLETE
    |
    v
-WP-08    Owner Change Intake                        CONDITIONAL NEXT FRONTIER
+WP-08    Owner Change Intake                        CURRENT FRONTIER
 ```
 
-WP-07 documentation-aligned implementation passed workflow **35176089341** on head `49d0e52ee81e34ddf4152927456a4f4e4bdef665`: compile PASS, 7 root units PASS, 125 repository-neutral synthetic stress tests PASS. CP-R008 is not formally closed until the exact head containing this checkpoint and program-state reconciliation passes the same corrected workflow.
+CP-R008 checkpoint/status verification passed workflow **35176262429** on head `3d5c445b83cb28ab8369e4325bae6bc2a4c2a169`: compile PASS, 7 root units PASS, 125 repository-neutral synthetic stress tests PASS.
 
 ## Progress Basis
 
@@ -42,14 +42,14 @@ WP-07 documentation-aligned implementation passed workflow **35176089341** on he
 | WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
 | WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006 |
 | WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
-| WP-07 Human Communication | 6 | CHECKPOINT WRITTEN — CI PENDING |
-| WP-08 Owner Change Intake | 3 | CONDITIONAL NEXT |
+| WP-07 Human Communication | 6 | COMPLETE — CP-R008 |
+| WP-08 Owner Change Intake | 3 | CURRENT FRONTIER |
 | WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
 | WP-10 Self-consistency Audit | 2 | WAITING |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Checkpointed earned completion before CP-R008: 83%. Target after CP-R008 exact-head PASS: 89%.** Progress remains acceptance/checkpoint-derived.
+**Earned completion: 89%.** Progress remains acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -105,7 +105,7 @@ report projection
 
 Technical status preserves protocol precision. Owner status uses plain language for current capability, purpose, protected/non-change scope, evidence/missing evidence, material quality risks/limitations, roadmap/progress reconciliation, genuine Owner decisions, exact next work and active stops. Owner-reserved scope does not fabricate a decision request. Non-blocking quality risk remains visible without becoming a fake stop. Aggregate conformance validates that material truth cannot be hidden.
 
-Pre-checkpoint evidence:
+WP-07 evidence:
 
 ```text
 repaired implementation
@@ -116,16 +116,18 @@ documentation-aligned implementation
   49d0e52ee81e34ddf4152927456a4f4e4bdef665
   workflow 35176089341 — PASS
 
+CP-R008 checkpoint/status
+  3d5c445b83cb28ab8369e4325bae6bc2a4c2a169
+  workflow 35176262429 — PASS
+
 root units: 7
 stress tests: 125
 ```
 
-Formal WP-07 closure still requires the exact checkpoint/program-state CI gate.
-
 ## Remaining dependency topology
 
 ```text
-WP-08 Owner Change Intake             CONDITIONAL AFTER CP-R008 CI
+WP-08 Owner Change Intake             CURRENT
    |
    v
 WP-09 End-to-end Certification
@@ -153,14 +155,14 @@ PR #396 remains draft until:
 [x] generated report reconciliation
 [x] operational GitHub projection — CP-R006
 [x] scoped procedural QRV quality system — CP-R007
-[~] plain-language Owner communication — CP-R008 written, exact-head CI pending
+[x] plain-language Owner communication — CP-R008
 [ ] Owner change-intake projection
 [ ] lifecycle cold-start/certification matrix
 [ ] A -> B -> C zero-chat relay
 [ ] schema/template/validator/renderer/docs audit
 [ ] final exact-head generic CI
-[x] V2 untouched through WP-07 implementation
-[x] no downstream-specific logic through WP-07 implementation
+[x] V2 untouched through WP-07
+[x] no downstream-specific logic through WP-07
 ```
 
 Do not merge automatically.
