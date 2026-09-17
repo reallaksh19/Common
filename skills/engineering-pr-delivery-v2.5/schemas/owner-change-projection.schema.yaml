@@ -1,0 +1,50 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, available]
+properties:
+  schema_version: {const: relay-v2.5-owner-change-projection}
+  available: {type: boolean}
+  reason: {type: string}
+  generated_from:
+    type: object
+    required: [odr_path, odr_digest, roadmap_path, roadmap_digest, roadmap_revision, repo_state_digest]
+  decision:
+    type: object
+    required: [id, kind, statement, source, status, applied, applied_to_current_roadmap]
+    properties:
+      kind: {const: INTENT_MUTATION}
+      status: {enum: [CAPTURED, APPLIED, SUPERSEDED]}
+      applied: {type: boolean}
+      applied_to_current_roadmap: {type: boolean}
+  concept:
+    type: object
+    required: [previous, requested, retained_behavior, invalidated_behavior, new_scope]
+    properties:
+      previous: {type: string, minLength: 1}
+      requested: {type: string, minLength: 1}
+      retained_behavior: {type: array, items: {type: string}}
+      invalidated_behavior: {type: array, items: {type: string}}
+      new_scope: {type: array, items: {type: string}}
+  roadmap_impact:
+    type: object
+    required: [from_revision, to_revision, added, removed, changed, unaffected]
+  progress_basis_effect:
+    type: object
+    required: [old_basis, new_basis, old_total_weight, new_total_weight, current_basis]
+  issue_impact:
+    type: object
+    required: [affected, known_in_current_graph, issue_graph_reconciled]
+  current_ep_disposition:
+    type: object
+    required: [ep_id, work_package, disposition, basis]
+    properties:
+      disposition: {enum: [NO_ACTIVE_EP, PENDING_OWNER_CHANGE, INVALIDATED, RECONCILE_REQUIRED, CONTINUE_UNCHANGED, UNCLASSIFIED]}
+  new_frontier:
+    type: [array, 'null']
+    items: {type: string}
+  current_frontier:
+    type: array
+    items: {type: string}
+  required_reconciliation:
+    type: array
+additionalProperties: true
