@@ -46,6 +46,12 @@ OBJECT_SURFACES = {
     "ZERO_CONTEXT_RECONSTRUCTION": ["schemas/zero-context-reconstruction.schema.yaml", "scripts/zero_context_reconstruction.py", "scripts/validate_zero_context_reconstruction.py", "operating-model/relay-certification-matrix.md"],
 }
 
+RELEASE_DOCS = {
+    "operating-model/architecture-index.md": ["operator-quick-start.md", "synthetic-relay-example.md", "self_consistency_audit.py"],
+    "operating-model/operator-quick-start.md": ["validate_relay_conformance.py", "material_write_ready.py", "prior conversation"],
+    "operating-model/synthetic-relay-example.md": ["DSTEP-01", "DISC-0002", "QUAL-0002", "TC-0002", "MATERIAL_WRITE_READY"],
+}
+
 AGGREGATE_REQUIRED_MODULES = [
     "validate_repo_state", "validate_repo_profile", "validate_roadmap", "validate_execution_frontier",
     "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_change_intake",
@@ -118,6 +124,16 @@ def audit(repo_root: Path) -> tuple[list[str], list[str]]:
     for rel in ["SKILL.md", "blueprints", "operating-model", "schemas", "scripts", "templates", "tests"]:
         if not (skill / rel).exists():
             errors.append(f"missing required surface: {rel}")
+
+    for rel, sentinels in RELEASE_DOCS.items():
+        path = skill / rel
+        if not path.is_file():
+            errors.append(f"missing release navigation document: {rel}")
+            continue
+        text = _text(path)
+        for sentinel in sentinels:
+            if sentinel not in text:
+                errors.append(f"release navigation document {rel} missing sentinel: {sentinel}")
 
     for path in _yaml_files([skill / "schemas", skill / "templates"]):
         try:
