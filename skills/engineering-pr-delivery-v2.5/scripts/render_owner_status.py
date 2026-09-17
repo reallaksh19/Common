@@ -11,7 +11,7 @@ def _text(item,keys):
     if not isinstance(item,dict):return str(item)
     for key in keys:
         value=item.get(key)
-        if value not in {None,"",[]} :return str(value)
+        if value is not None and value != "" and value != []:return str(value)
     return str(item)
 def _scope_line(item):
     if not isinstance(item,dict):return str(item)
