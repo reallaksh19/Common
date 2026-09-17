@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650"
+ data-aiv-network-id="SMALL-FLARE-2RV-001"
+ data-implementation-commit="fbe7f1a4ec27087997df0ef717a62faf7bbb2f8e">
+<title>Small flare network AIV validation example</title>
+<desc>Two sonic relief valves to 4 inch subheader and 8 inch header. SVG geometry is presentation only.</desc>
+<defs>
+ <marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5 0 9z" fill="#38bdf8"/></marker>
+ <style>.b{fill:#07111f}.p{fill:#0f172a;stroke:#334155;stroke-width:1.4}.t{fill:#f8fafc;font:700 22px sans-serif}.s{fill:#cbd5e1;font:12px sans-serif}.m{fill:#94a3b8;font:11px sans-serif}.g{fill:#86efac;font:700 12px sans-serif}.w{fill:#fbbf24;font:700 12px sans-serif}.n{fill:#0b1220;stroke:#7dd3fc;stroke-width:2.5}.x{fill:#0b1220;stroke:#c4b5fd;stroke-width:2.5}.l{stroke:#38bdf8;fill:none;marker-end:url(#a)}</style>
+</defs>
+<rect class="b" width="1200" height="650"/>
+<text class="t" x="30" y="38">Small Flare Network — 2 RVs to 4″ Subheader to 8″ Header</text>
+<text class="m" x="30" y="60">VIB.AIV.ACOUSTIC · SCREENING / ASSESSMENT · designAuthority=false</text>
+<rect class="p" x="25" y="80" width="780" height="330" rx="10"/><text class="s" x="45" y="108">Engineering graph — explicit segment lengths; SVG scale is not engineering distance.</text>
+<g transform="translate(110 170)"><circle class="n" r="27"/><path d="M-13 7L0-10 13 7M0-10V-20" stroke="#7dd3fc" fill="none" stroke-width="2"/><text class="s" text-anchor="middle" y="48">RV-101</text><text class="g" text-anchor="middle" y="65">160.000 dB</text></g>
+<g transform="translate(110 325)"><circle class="n" r="27"/><path d="M-13 7L0-10 13 7M0-10V-20" stroke="#7dd3fc" fill="none" stroke-width="2"/><text class="s" text-anchor="middle" y="48">RV-102</text><text class="g" text-anchor="middle" y="65">154.000 dB</text></g>
+<line class="l" x1="140" y1="170" x2="360" y2="242" stroke-width="3" data-engineering-length-m="6"/><text class="s" x="205" y="185">2″ branch · 6 m</text>
+<line class="l" x1="140" y1="325" x2="360" y2="252" stroke-width="4" data-engineering-length-m="9"/><text class="s" x="205" y="322">3″ branch · 9 m</text>
+<circle class="n" cx="390" cy="247" r="16"/><text class="s" x="374" y="282">J-101</text>
+<line class="l" x1="408" y1="247" x2="570" y2="247" stroke-width="6" data-engineering-length-m="12"/><text class="s" x="450" y="229">4″ subheader · 12 m</text>
+<circle class="n" cx="600" cy="247" r="16"/><text class="s" x="584" y="282">J-102</text>
+<line class="l" x1="618" y1="247" x2="710" y2="247" stroke-width="10" data-engineering-length-m="20"/><text class="s" x="625" y="225">8″ header · 20 m</text>
+<g transform="translate(748 247)"><rect class="x" x="-27" y="-27" width="54" height="54" rx="7"/><path d="M-17-8H17M0-8V18" stroke="#c4b5fd" fill="none" stroke-width="3"/><text class="s" text-anchor="middle" y="48">AIV-ASSESS-HDR-001</text><text class="m" text-anchor="middle" y="64">8″×4″ WELDED_TEE</text></g>
+<text class="s" x="45" y="382">RV-101 path: 6 + 12 + 20 = <tspan class="g">38 m</tspan> · RV-102 path: 9 + 12 + 20 = <tspan class="g">41 m</tspan></text>
+<rect class="p" x="825" y="80" width="350" height="330" rx="10"/><text class="s" x="845" y="110">Screening result</text>
+<text class="m" x="845" y="140">RV-101: 160.000 - 11.2459307487</text><text class="g" x="845" y="158">148.7540692513 dB at point</text>
+<text class="m" x="845" y="188">RV-102: 154.000 - 12.1337673868</text><text class="g" x="845" y="206">141.8662326132 dB at point</text>
+<text class="m" x="845" y="238">Combined point PWL</text><text class="g" x="845" y="258">149.5630257285 dB</text>
+<text class="m" x="845" y="290">Assessment screening LOF</text><text class="g" x="845" y="320" style="font-size:24px">0.29</text>
+<text class="m" x="845" y="350">Line/Case trace LOF: <tspan class="w">1.48 NON-AUTHORITATIVE</tspan></text>
+<text class="w" x="845" y="380">FLM1 mismatch: 1.3279216444 vs 1.2133</text><text class="w" x="845" y="398">Δ 0.1146216444 &gt; tolerance 0.0024</text>
+<rect class="p" x="25" y="430" width="1150" height="185" rx="10"/><text class="s" x="45" y="458">Generated AIV inputs / trace</text>
+<text class="m" x="45" y="485">RV-101 · SONIC · 7.3077430400 kg/s · 5→1 MPa abs · 300 K · MW 20 g/mol · PWL 160 dB</text>
+<text class="m" x="45" y="510">RV-102 · SONIC · 3.6625475183 kg/s · 5→1 MPa abs · 300 K · MW 20 g/mol · PWL 154 dB</text>
+<text class="m" x="45" y="535">Assessment · main OD/ID 219.1/202.74 mm · branch OD 114.3 mm · simultaneous group FLARE-GROUP-1</text>
+<text class="m" x="45" y="560">Distance authority · EXPLICIT_SEGMENT_ENGINEERING_LENGTH_SUM · source IDs RV-101, RV-102</text>
+<text class="w" x="45" y="590">INTEGRATION_PASS_GEOMETRY_QUALIFICATION_MISMATCH · Stage 8 = CONFIGURED_D23_INTERMEDIATES</text>
+</svg>
