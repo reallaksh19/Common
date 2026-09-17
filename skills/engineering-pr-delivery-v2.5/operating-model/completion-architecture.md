@@ -2,7 +2,7 @@
 
 ## Status
 
-This document is the normative completion architecture for Engineering Relay V2.5 in PR #396.
+Engineering Relay V2.5 through WP-09 was merged by explicitly authorized PR #396 at `fb28a0817cab109a1120e3826ce11439b49586de`. WP-10/WP-11 completion work continues on draft PR #409.
 
 ```text
 WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
@@ -15,10 +15,9 @@ WP-06 Quality Procedure Library                     DELIVERED — CP-R007
 WP-07 Human Communication                           DELIVERED — CP-R008
 WP-08 Owner Change Intake                           DELIVERED — CP-R009
 WP-09 End-to-end Relay Certification Matrix         DELIVERED — CP-R010
-WP-10 Self-consistency Audit                        CURRENT FRONTIER
+WP-10 Self-consistency Audit                        CONDITIONAL — CP-R011 exact-head CI pending
+WP-11 PR Readiness                                  WAITING
 ```
-
-CP-R010 checkpoint/status verification passed workflow **35192617156** on `669ab0346976df3e331d4975c65185e4125f0b45`, including compile, 7 root units and the dedicated synthetic stress suite.
 
 Conversation is acceleration, never custody.
 
@@ -27,11 +26,11 @@ Conversation is acceleration, never custody.
 ```text
 OWNER INTENT / ODR
     ↓
-OVERALL ROADMAP
+OVERALL ROADMAP + ROADMAP REVISION
     ↓
 EXECUTABLE FRONTIER
     ↓
-SEMANTIC EP / APPROVED PARALLEL PLAN
+SEMANTIC EP / OWNER-APPROVED PARALLEL PLAN
     ├── DSTEP-* discovery contract
     ├── QSET-* when qualification is required
     ├── quality applicability router
@@ -61,134 +60,96 @@ ROADMAP / PROGRESS / ISSUE RECONCILIATION
     ↓
 CRASH-SAFE EXTERNAL PROJECTION TRANSACTION
     ↓
-SOURCE-DERIVED REPORT PROJECTION
+SOURCE-DERIVED REPORT / COMMUNICATION / OWNER-CHANGE PROJECTIONS
     ↓
-COMMUNICATION PROJECTION
-    ├── TECHNICAL_STATUS.md
-    └── OWNER_STATUS.md
+ZERO_CONTEXT_RECONSTRUCTION
     ↓
-OWNER CHANGE PROJECTION WHEN APPLICABLE
-    └── OWNER_CHANGE.md
-    ↓
-ZERO-CONTEXT SUCCESSOR RECONSTRUCTION
-    ↓
-NEXT EP
+NEXT EP / JOIN / REPLAN / IDLE / TERMINAL
 ```
 
 ## Authority separation
 
 ```text
-Owner intent / ODR        authoritative intent, including semantic change_intake for INTENT_MUTATION
-Overall Roadmap           authoritative plan/topology
-Roadmap revision          authoritative structural mutation transaction
-EP / Parallel Plan        authorized forward slice, quality applicability, exact next work
-DSTEP-*                   forward discovery requirements
-QSET-*                    prepared qualification criteria
-DISC-*                    candidate discovery evidence
-QUAL-*                    evaluated engineering qualification evidence
-TC-*                      route/candidate admission evidence
-Live Git observation      runtime fact
-QRV-*                     exact-basis quality review evidence
-CP                        backward execution truth + QRV pointer
-PROGRESS                  authoritative calculated progress hierarchy
-ISSUE_GRAPH               reconciled issue coordination state
-REPO_STATE                lifecycle/routing/state-plane/bootstrap locator
-GHGEN/GHOP                desired external GitHub projection transaction
-GitHub observation        verified external readback evidence
-Zero-context reconstruction derived repository-only recovery projection
-Report projection         derived structured projection only
-Communication projection  derived human-facing projection only
-Owner-change projection   derived Owner-change projection only
-OWNER_STATUS.md           generated plain-language projection only
-TECHNICAL_STATUS.md       generated technical projection only
-OWNER_CHANGE.md           generated change-impact projection only
-GitHub                    external coordination projection
-Chat                      non-authoritative convenience
+Owner intent / ODR          authoritative intent
+Overall Roadmap             authoritative plan/topology
+Roadmap revision            authoritative mutation transaction
+EP / Parallel Plan          authorized current slice
+DSTEP-*                     forward discovery requirements
+QSET-*                      prepared qualification criteria
+DISC-*                      candidate discovery evidence
+QUAL-*                      evaluated qualification evidence
+TC-*                        route/candidate admission evidence
+Live Git observation        runtime fact
+QRV-*                       exact-basis quality evidence
+CP                          backward execution truth
+PROGRESS                    calculated progress authority
+ISSUE_GRAPH                 repository coordination truth
+REPO_STATE                  lifecycle/routing/bootstrap locator + checked mirrors
+GHGEN/GHOP                  desired external GitHub transaction
+GITHUB_OBSERVATION          verified external readback evidence
+Report/communication/change derived projections only
+ZERO_CONTEXT_RECONSTRUCTION derived repository-only recovery projection
+GitHub UI                    external coordination projection
+Chat                         non-authoritative convenience
 ```
 
-No downstream repository is a Common implementation target. Real repositories can reveal generic failure modes only through read-only stress/validation unless separately authorized.
+No downstream repository is a Common implementation target. Real repositories may reveal generic failure modes only through read-only validation unless separately authorized.
 
-## Delivered WP-01 — semantic baton
+## Delivered invariants
 
-Executable EPs are semantically validated for serial work and approved parallel lanes. They contain typed slice-specific inputs/oracles, executable `DSTEP-*` discovery, bounded scope, structured anti-drift, exact implementation mappings, source-aware report payload requirements and durable successor outputs. `REPO_PROFILE` and the pinned relay-protocol basis are part of conformance.
+### Semantic baton
 
-## Delivered WP-02 — readiness and candidate admission
+Executable EPs are semantically validated for typed slice inputs/oracles, executable discovery, bounded scope/anti-drift, exact implementation mappings, acceptance/tests, quality routing, report payloads, and exact ordered next work. `REPO_PROFILE` and protocol basis are part of admission.
 
-`BATON_READY` is repository-wide and candidate-independent. `TAKEOVER_CERTIFIED(route,candidate)` requires current candidate/route DISC/TC and QUAL when applicable. `HANDOVER_READY = BATON_READY AND PROJECTION_READY`. `MATERIAL_WRITE_READY` is live-derived from current certification, route/Git basis, drift/continuity, WRITE authority, execution continuation and stop state. A persisted WRITE enum alone never authorizes a candidate.
+### Readiness and takeover
 
-## Delivered WP-03 — strong engineering qualification
+`BATON_READY` is candidate-independent. `TAKEOVER_CERTIFIED(route,candidate)` requires current route/candidate DISC/QUAL/TC evidence. `HANDOVER_READY = BATON_READY AND PROJECTION_READY`. `MATERIAL_WRITE_READY` is live-derived from current certification, route/Git basis, drift/continuity, WRITE authority, execution continuation, and stop state; persisted WRITE alone never authorizes a candidate.
 
-Fresh qualification is required for `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`. The durable transaction is `EP.qualification_boundary -> QSET-* -> candidate answers -> independent/deterministic evaluation -> QUAL-* -> TC-*`. Q1 traces production/state authority, Q2 reconstructs the engineering problem with concrete values when quantitative, Q3 proves mutation/invariant/falsifier understanding, Q4 uses an independent oracle, and Q5 names the exact first safe change and predicted verification.
+### Engineering qualification
 
-## Delivered WP-04 — source-derived progress, handover and next work
+Fresh qualification is required for `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`. The durable transaction is `EP.qualification_boundary → QSET-* → candidate answers → independent/deterministic evaluation → QUAL-* → TC-*`.
 
-`PROGRESS.yaml` is authoritative through Acceptance Criterion -> Implementation Step -> EP -> Work Package -> Phase -> Objective -> Overall Roadmap. `REPO_STATE.progress` values are checked mirrors only. Every executable EP carries ordered `next_work.steps[]`. Report/status/handover derive from authority objects and cannot override them.
+### Progress and handover
 
-## Delivered WP-05 — crash-safe GitHub Program Projection operations
+`PROGRESS.yaml` is authoritative through acceptance criterion → implementation step → EP → WP → phase → objective → overall roadmap. `REPO_STATE.progress` values are checked mirrors. Report/status/handover derive from authority objects and cannot override them.
 
-GitHub remains external coordination only. Immutable `GHGEN-*` generations contain stable `GHOP-*` operations `CREATE | LINK | UPDATE | PUBLISH_HANDOVER | SUPERSEDE | REVISE | CLOSE | REOPEN`. Every external mutation is durably marked `ATTEMPTED_UNCONFIRMED` before the call, then read back through `GITHUB_OBSERVATION` and reconciled. `ISSUE_GRAPH.github_state = ABSENT | OPEN | CLOSED | UNKNOWN`; native relationship success requires native provider verification.
+### Crash-safe GitHub projection
 
-## Delivered WP-06 — procedural quality and QRV evidence
+Immutable `GHGEN-*` generations contain stable `GHOP-*` operations. External mutation is journaled `ATTEMPTED_UNCONFIRMED` before the provider call, then verified by readback before ISSUE_GRAPH/repository reconciliation. Unknown outcomes are reconciled before retry; superseded generations lose retry authority.
 
-Quality is routed before execution and evidenced before checkpoint. Every EP partitions all built-in quality procedures exactly once. Applicable procedures require reason + review focus; explicit not-applicable procedures require reason without ceremonial execution. `QRV-*` is bound to EP digest, roadmap revision, material ref and router snapshot. `NOT_RUN` remains evidence/quality truth rather than automatic stop, and severity alone never grants stop authority. Deferred/unresolved findings transfer exactly through successor handover and checkpoints bind QRV by id/path/digest.
+### Procedural quality and QRV
 
-## Delivered WP-07 — source-derived human communication
+Every EP partitions the full built-in quality library. Applicable procedures require reason + review focus; explicit non-applicability requires reason. `QRV-*` binds exact EP/material/router basis. `NOT_RUN` remains evidence/quality truth, severity alone cannot create a stop, and unresolved findings transfer exactly.
 
-WP-07 adds no authority plane. It derives one shared communication projection from the source-derived report projection. Technical status retains protocol precision; Owner status communicates current capability, purpose, protected/non-change scope, evidence/missing evidence, quality/limitations, roadmap/progress, exact next work, genuine Owner decisions and active stops in ordinary language. Owner-reserved scope does not fabricate a decision request, and non-blocking quality risk does not become a fake stop.
+### Human communication
 
-## Delivered WP-08 — Owner Change Intake
+A single source-derived communication projection produces `TECHNICAL_STATUS.md` and plain-language `OWNER_STATUS.md`. Material truth—scope, evidence gaps, quality risk, decisions, stops, progress, and exact next work—cannot be hidden or promoted into competing authority.
 
-WP-08 adds no second change authority. Material Owner-intent change is represented as ODR semantic intent plus an OWNER_INTENT_MUTATION roadmap revision and source-derived change projection. Current applied mutations require exact ODR/revision linkage, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation.
+### Owner Change Intake
 
-## Delivered WP-09 — end-to-end zero-chat release certification
+Owner intent changes use ODR semantic intent plus `OWNER_INTENT_MUTATION` roadmap revision. The derived Owner-change view exposes before/after concept, retained/invalidated behavior, new scope, roadmap/progress/issue effects, active-work disposition, resulting frontier, and applied state without becoming another authority source.
 
-WP-09 implements the defining release proof rather than another narrative checklist.
+### Zero-chat release certification — CP-R010
 
-```text
-Agent A with chat
- -> completes WP-A
- -> persists CP-A / EP-B / QSET-B
- -> chat deleted
-Agent B repository-only
- -> reconstructs work from REPO_STATE and authority objects
- -> DISC / QUAL / TC PASS
- -> completes WP-B
- -> persists CP-B / EP-C / QSET-C
- -> chat deleted
-Agent C repository-only
- -> reconstructs work
- -> independently qualifies/certifies
+The defining A → B → C proof crosses three dependency-ordered work packages. B and C reopen persisted repository artifacts after prior process/chat custody is discarded, reconstruct material context, and independently produce current DISC/QUAL/TC evidence. Lifecycle certification covers ACTIVE, RECONCILING, PARALLEL, stale required projection, IDLE, and TERMINAL; INITIALIZING remains covered by bootstrap/core tests.
+
+CP-R010's final canonical predecessor head `581735fb302cae9a1d8ccd0d518c3a463bb68a4c` passed workflow `35192761449`: compile, 7 root units, 135 stress tests.
+
+## WP-10 — cross-surface consistency
+
+WP-10 adds a deterministic release guard instead of a one-time prose audit:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
 ```
 
-The release proof crosses three dependency-ordered work packages. The strict repository-only regression discards predecessor process-memory return values; Agent B and C reopen persisted EP/QSET state and derive candidate evidence from repository files only.
+It checks YAML contract parseability, durable-object surfaces, quality blueprint procedure structure, aggregate/focused validator reachability, renderer/operator documentation, authority vocabulary, generic portability, and CI coverage.
 
-For every active route, zero-context reconstruction recovers task purpose/roadmap position, Owner decisions, predecessor facts/limitations, current plan and first action, input authority/editability, benchmark/oracle independence, scope, quality obligations, evidence present/missing, tests/acceptance, stale conditions and exact next work.
+The initial red run (`35197070033`) exposed stale CP-R002-era authority/conformance docs, missing zero-context/operator reachability, lack of a stable quality model, and audit-definition false positives. Those were resolved. Corrected head `3beae3849550fb0cd28abe658c63d1d770d9d3fa` passed workflow `35197671662` with self-consistency `0 warning(s)`, 7 root units, and 135 stress tests. Documentation-aligned head `f741a54da9e22e6a2f75aa15f54fd53563ee69de` passed workflow `35197914544`.
 
-Lifecycle certification covers ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL, with INITIALIZING additionally covered by bootstrap/core tests. RECONCILING remains READ_ONLY; stale required projection remains not handover-ready; IDLE and TERMINAL expose no material execution route.
+`CP-R011` now exists. Formal WP-10 closure and 99% earned completion require exact-head CI on CP-R011 plus the reconciled completion-program state.
 
-WP-09 evidence:
-
-```text
-pre-checkpoint implementation + certification docs
-  3ff5b26281078822c9965c4048c5f6b3bc8c851d
-  workflow 35192108782 — PASS
-
-CP-R010 checkpoint/status
-  669ab0346976df3e331d4975c65185e4125f0b45
-  workflow 35192617156 — PASS
-
-root units: 7
-stress tests: 135 on the pre-checkpoint implementation; checkpoint/status suite unchanged except completion artifacts
-```
-
-## Remaining target layers
-
-```text
-WP-10 self-consistency audit                       CURRENT
-WP-11 PR readiness; never automatic merge          WAITING
-```
-
-## Object namespaces
+## Current object namespaces
 
 ```text
 DSTEP-xxxx  EP discovery instruction
@@ -206,27 +167,14 @@ ODR-xxxx    Owner Decision Record
 
 Existing plan/join/replan/drift namespaces remain unchanged.
 
-## Defining release proof
-
-The defining release proof is implemented, exact-checkpoint-head green, and closed as CP-R010. If prior conversation is materially required for any release-question answer, V2.5 fails.
-
-## Validation evidence discipline
-
-A whole-suite claim requires both root unit discovery and dedicated synthetic stress discovery on the claimed exact head. Historical workflow evidence is interpreted according to `ci-evidence-correction.md`.
-
-## Implementation sequence
+## Remaining target
 
 ```text
-baseline                         COMPLETE — CP-R001
-semantic EP                      COMPLETE — CP-R002
-baton readiness / TC             COMPLETE — CP-R003
-strong qualification             COMPLETE — CP-R004
-full progress/handover           COMPLETE — CP-R005
-GitHub operations                COMPLETE — CP-R006
-quality procedures               COMPLETE — CP-R007
-human communication              COMPLETE — CP-R008
-owner change intake              COMPLETE — CP-R009
-end-to-end certification         COMPLETE — CP-R010
-self-consistency audit           CURRENT — WP-10
-PR readiness                     WAITING
+CP-R011 exact-head verification
+   ↓
+WP-11 PR Readiness
+   ↓
+100% completion + explicit Owner merge decision for PR #409
 ```
+
+PR #409 remains draft. There is no automatic merge gate in the skill.
