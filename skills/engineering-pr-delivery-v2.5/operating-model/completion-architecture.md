@@ -13,10 +13,11 @@ WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
 WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
 WP-07 Human Communication                           DELIVERED — CP-R008
-WP-08 Owner Change Intake                           CURRENT FRONTIER
+WP-08 Owner Change Intake                           DELIVERED PENDING CP-R009 EXACT-HEAD CI
+WP-09 End-to-end Relay Certification Matrix         CONDITIONAL NEXT FRONTIER
 ```
 
-CP-R008 checkpoint/status verification passed workflow **35176262429** on `3d5c445b83cb28ab8369e4325bae6bc2a4c2a169`, including compile, 7 root units and 125 synthetic stress tests.
+WP-08 content acceptance is complete. Formal closure and the WP-09 frontier require corrected workflow PASS on the exact head containing CP-R009 and this architecture reconciliation.
 
 Conversation is acceleration, never custody.
 
@@ -65,34 +66,40 @@ COMMUNICATION PROJECTION
     ├── TECHNICAL_STATUS.md
     └── OWNER_STATUS.md
     ↓
+OWNER CHANGE PROJECTION WHEN APPLICABLE
+    └── OWNER_CHANGE.md
+    ↓
 NEXT EP
 ```
 
 ## Authority separation
 
 ```text
-Owner intent / ODR       authoritative intent
-Overall Roadmap          authoritative plan/topology
-EP / Parallel Plan       authorized forward slice, quality applicability, exact next work
-DSTEP-*                  forward discovery requirements
-QSET-*                   prepared qualification criteria
-DISC-*                   candidate discovery evidence
-QUAL-*                   evaluated engineering qualification evidence
-TC-*                     route/candidate admission evidence
-Live Git observation     runtime fact
-QRV-*                    exact-basis quality review evidence
-CP                       backward execution truth + QRV pointer
-PROGRESS                 authoritative calculated progress hierarchy
-ISSUE_GRAPH              reconciled issue coordination state
-REPO_STATE               lifecycle/routing/state-plane/bootstrap locator
-GHGEN/GHOP               desired external GitHub projection transaction
-GitHub observation       verified external readback evidence
-Report projection        derived structured projection only
-Communication projection derived human-facing projection only
-OWNER_STATUS.md          generated plain-language projection only
-TECHNICAL_STATUS.md      generated technical projection only
-GitHub                   external coordination projection
-Chat                     non-authoritative convenience
+Owner intent / ODR        authoritative intent, including semantic change_intake for INTENT_MUTATION
+Overall Roadmap           authoritative plan/topology
+Roadmap revision          authoritative structural mutation transaction
+EP / Parallel Plan        authorized forward slice, quality applicability, exact next work
+DSTEP-*                   forward discovery requirements
+QSET-*                    prepared qualification criteria
+DISC-*                    candidate discovery evidence
+QUAL-*                    evaluated engineering qualification evidence
+TC-*                      route/candidate admission evidence
+Live Git observation      runtime fact
+QRV-*                     exact-basis quality review evidence
+CP                        backward execution truth + QRV pointer
+PROGRESS                  authoritative calculated progress hierarchy
+ISSUE_GRAPH               reconciled issue coordination state
+REPO_STATE                lifecycle/routing/state-plane/bootstrap locator
+GHGEN/GHOP                desired external GitHub projection transaction
+GitHub observation        verified external readback evidence
+Report projection         derived structured projection only
+Communication projection  derived human-facing projection only
+Owner-change projection   derived Owner-change projection only
+OWNER_STATUS.md           generated plain-language projection only
+TECHNICAL_STATUS.md       generated technical projection only
+OWNER_CHANGE.md           generated change-impact projection only
+GitHub                    external coordination projection
+Chat                      non-authoritative convenience
 ```
 
 No downstream repository is a Common implementation target. Real repositories can reveal generic failure modes only through read-only stress/validation unless separately authorized.
@@ -123,62 +130,50 @@ Quality is routed before execution and evidenced before checkpoint. Every EP par
 
 ## Delivered WP-07 — source-derived human communication
 
-WP-07 adds no authority plane. It enriches the source-derived report projection with communication-relevant facts and derives one shared communication projection.
+WP-07 adds no authority plane. It derives one shared communication projection from the source-derived report projection. Technical status retains protocol precision; Owner status communicates current capability, purpose, protected/non-change scope, evidence/missing evidence, quality/limitations, roadmap/progress, exact next work, genuine Owner decisions and active stops in ordinary language. Owner-reserved scope does not fabricate a decision request, and non-blocking quality risk does not become a fake stop.
+
+## Delivered WP-08 — Owner Change Intake
+
+WP-08 adds no second change authority. Material Owner-intent change is represented as:
 
 ```text
-repository authorities
- -> report projection
- -> communication projection
-      -> technical renderer
-      -> Owner renderer
+Owner source
+ -> ODR-* decision + change_intake semantic summary
+ -> OWNER_INTENT_MUTATION roadmap revision
+ -> roadmap / Progress Basis / issue / active-EP reconciliation
+ -> owner_change_projection.py
+ -> OWNER_CHANGE.md
 ```
 
-Technical status retains protocol precision, source identifiers, state planes, scope, evidence, quality and exact next work.
+`ODR.change_intake` records previous concept, requested concept, retained behavior, invalidated behavior and new scope. The roadmap revision remains authoritative for actual added/removed/changed/unaffected topology, Progress Basis change, issue reconciliation and resulting frontier.
 
-Owner status communicates in ordinary engineering/product language:
+For a current applied Owner mutation, conformance requires:
 
-- what can happen now;
-- why the current work exists;
-- what is protected/prohibited or deliberately out of scope;
-- what evidence exists and what has not run;
-- material quality risk and known limitations without blocker inflation;
-- roadmap/progress position and reconciliation;
-- exact next work;
-- decisions genuinely required from the Owner;
-- active stop conditions.
+- an APPLIED ODR of kind `INTENT_MUTATION`;
+- concrete change-intake semantics;
+- exact ODR/revision linkage;
+- current Progress Basis equal to `progress_basis_change.new_basis`;
+- `frontier_after` equal to the computed resulting frontier;
+- explicit active-work disposition;
+- visible issue reconciliation when affected issues are named.
 
-An Owner-reserved domain is not automatically a decision request. Conversely, a real `OWNER_DECISION_REQUIRED` condition cannot be hidden. Non-blocking quality findings remain visible without becoming fake stop language.
+A CAPTURED ODR may be rendered for discussion but cannot claim a post-change frontier or applied status. Derived current-EP dispositions are `NO_ACTIVE_EP | PENDING_OWNER_CHANGE | INVALIDATED | RECONCILE_REQUIRED | CONTINUE_UNCHANGED`; `UNCLASSIFIED` fails an applied current change.
 
-`validate_human_communication.py` participates in aggregate conformance. Repository-neutral stress tests prove shared-source derivation, hard-stop visibility, missing-evidence visibility, non-blocking quality-risk visibility, reserved-vs-required Owner decisions, next-work convergence, and rejection of relay-internal jargon in Owner-facing source text.
-
-WP-07 evidence:
+WP-08 pre-checkpoint evidence:
 
 ```text
-repaired implementation
-  0b5c38f008d670ab9db24cf7b3fe4fccba07893b
-  workflow 35166010334 — PASS
-
 documentation-aligned implementation
-  49d0e52ee81e34ddf4152927456a4f4e4bdef665
-  workflow 35176089341 — PASS
-
-CP-R008 checkpoint/status
-  3d5c445b83cb28ab8369e4325bae6bc2a4c2a169
-  workflow 35176262429 — PASS
+  fb5e0b15f25884793e38ba694505b748acaf84fd
+  workflow 35188301698 — PASS
 
 root units: 7
-stress tests: 125
+stress tests: 131
 ```
-
-## Current WP-08 — Owner Change Intake
-
-WP-08 is now the sole material frontier. It must provide an Owner-facing change-intake transaction/report over existing ODR + roadmap-transaction authority. The intake layer must show previous concept, requested/new concept, retained behavior, invalidated behavior, new scope, roadmap impact, progress-basis effect, issue impact, active-EP disposition, new frontier and whether the Owner decision has been applied. It must not become a second authority source.
 
 ## Remaining target layers
 
 ```text
-WP-08 Owner Change Intake over ODR transactions    CURRENT
-WP-09 End-to-end A -> B -> C certification         WAITING
+WP-09 End-to-end A -> B -> C certification         CONDITIONAL NEXT
 WP-10 self-consistency audit                       WAITING
 WP-11 PR readiness; never automatic merge          WAITING
 ```
@@ -220,8 +215,8 @@ full progress/handover           COMPLETE — CP-R005
 GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
 human communication              COMPLETE — CP-R008
-owner change intake              CURRENT — WP-08
-end-to-end certification         WAITING
+owner change intake              COMPLETE PENDING CI — CP-R009
+end-to-end certification         CONDITIONAL NEXT — WP-09
 self-consistency audit           WAITING
 PR readiness                     WAITING
 ```
