@@ -27,11 +27,13 @@ CP-R008  WP-07 Human Communication                  COMPLETE
    |
 CP-R009  WP-08 Owner Change Intake                  COMPLETE
    |
+CP-R010  WP-09 End-to-end Relay Certification       COMPLETE PENDING EXACT-HEAD CI
+   |
    v
-WP-09    End-to-end Relay Certification Matrix      CURRENT FRONTIER
+WP-10    Self-consistency Audit                     NEXT AFTER CP-R010 CI PASS
 ```
 
-CP-R009 checkpoint/status verification passed workflow **35188484127** on head `2edfa74b0e27f88e895354211a4a4ed2c8d09e91`: compile PASS, 7 root units PASS, 131 repository-neutral synthetic stress tests PASS.
+WP-09 pre-checkpoint implementation passed workflow **35192108782** on head `3ff5b26281078822c9965c4048c5f6b3bc8c851d`: compile PASS, 7 root units PASS, 135 repository-neutral synthetic stress tests PASS.
 
 ## Progress Basis
 
@@ -46,12 +48,12 @@ CP-R009 checkpoint/status verification passed workflow **35188484127** on head `
 | WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
 | WP-07 Human Communication | 6 | COMPLETE — CP-R008 |
 | WP-08 Owner Change Intake | 3 | COMPLETE — CP-R009 |
-| WP-09 End-to-end Relay Certification Matrix | 5 | CURRENT FRONTIER |
-| WP-10 Self-consistency Audit | 2 | WAITING |
+| WP-09 End-to-end Relay Certification Matrix | 5 | COMPLETE — CP-R010 PENDING EXACT-HEAD CI |
+| WP-10 Self-consistency Audit | 2 | WAITING FOR CP-R010 CI |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Earned completion: 92%.** Progress remains acceptance/checkpoint-derived.
+**Conditional earned completion: 97%.** Formal WP-09 closure requires exact-head CI containing CP-R010 and this reconciliation.
 
 ## CI evidence rule
 
@@ -91,39 +93,46 @@ Historical interpretation is corrected in `ci-evidence-correction.md`.
 `CP-R008` delivers `TECHNICAL_STATUS.md` and plain-language `OWNER_STATUS.md` from one source-bound communication projection. Material execution, evidence, quality, stop, scope, roadmap and next-work truth cannot be hidden by the Owner view.
 
 ### WP-08 — Owner Change Intake
+`CP-R009` delivers an Owner-facing change report over ODR + roadmap-transaction authority, including semantic before/after intent, retained/invalidated behavior, scope, roadmap/progress/issue effects, active-work disposition and resulting frontier without creating a second authority source.
 
-`CP-R009`, `wp-08-owner-change-intake.md`, and `owner-change-intake.md` deliver an Owner-facing change report without creating a second intent authority.
+### WP-09 — End-to-end Relay Certification Matrix
+
+`CP-R010`, `wp-09-end-to-end-certification.md`, and `relay-certification-matrix.md` deliver the defining zero-chat release proof.
 
 ```text
-Owner source
-  -> ODR-* + change_intake semantic summary
-  -> OWNER_INTENT_MUTATION roadmap revision
-  -> roadmap / Progress Basis / issue / active-EP reconciliation
-  -> owner_change_projection.py
-  -> OWNER_CHANGE.md
+Agent A works with chat
+  -> CP-A / EP-B / QSET-B persisted
+  -> chat deleted
+Agent B receives repository only
+  -> reconstructs current work
+  -> DISC / QUAL / TC PASS
+  -> completes WP-B
+  -> CP-B / EP-C / QSET-C persisted
+  -> chat deleted
+Agent C receives repository only
+  -> reconstructs current work
+  -> independently qualifies/certifies
 ```
 
-The report includes previous/new concept, retained/invalidated behavior, new scope, roadmap impact, Progress Basis effect, issue impact, current-EP disposition, resulting frontier and whether the decision is actually applied. A CAPTURED decision can be rendered but cannot invent a post-change frontier. Current applied Owner mutations require exact ODR/revision binding, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation.
+The strict repository-only boundary deliberately discards predecessor helper return values: B and C reopen persisted EP/QSET state and derive certification inputs from repository files only. Agent C can reconstruct the defining release questions for task purpose, Owner decisions, predecessor facts, uncertainty, input authority/editability, independent oracle, scope, quality obligations, evidence, tests/acceptance, first action/staleness and exact next work.
 
-WP-08 evidence:
+Lifecycle certification covers ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL; INITIALIZING remains covered by bootstrap/core tests. RECONCILING remains READ_ONLY, stale required projection remains not handover-ready, and IDLE/TERMINAL expose no material route.
+
+WP-09 pre-checkpoint evidence:
 
 ```text
-documentation-aligned implementation
-  fb5e0b15f25884793e38ba694505b748acaf84fd
-  workflow 35188301698 — PASS
-
-CP-R009 checkpoint/status
-  2edfa74b0e27f88e895354211a4a4ed2c8d09e91
-  workflow 35188484127 — PASS
+implementation + docs
+  3ff5b26281078822c9965c4048c5f6b3bc8c851d
+  workflow 35192108782 — PASS
 
 root units: 7
-stress tests: 131
+stress tests: 135
 ```
 
 ## Remaining dependency topology
 
 ```text
-WP-09 End-to-end Certification       CURRENT
+CP-R010 exact-head verification
    |
    v
 WP-10 Self-consistency Audit
@@ -150,12 +159,12 @@ PR #396 remains draft until:
 [x] scoped procedural QRV quality system — CP-R007
 [x] plain-language Owner communication — CP-R008
 [x] Owner change-intake projection — CP-R009
-[ ] lifecycle cold-start/certification matrix
-[ ] A -> B -> C zero-chat relay
+[x] lifecycle cold-start/certification matrix — CP-R010
+[x] A -> B -> C zero-chat relay — CP-R010
 [ ] schema/template/validator/renderer/docs audit
 [ ] final exact-head generic CI
-[x] V2 untouched through WP-08
-[x] no downstream-specific logic through WP-08
+[x] V2 untouched through WP-09
+[x] no downstream-specific logic through WP-09
 ```
 
 Do not merge automatically.
