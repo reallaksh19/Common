@@ -25,11 +25,13 @@ CP-R007  WP-06 Quality Procedure Library            COMPLETE
    |
 CP-R008  WP-07 Human Communication                  COMPLETE
    |
+CP-R009  WP-08 Owner Change Intake                  COMPLETE PENDING EXACT-HEAD CI
+   |
    v
-WP-08    Owner Change Intake                        CURRENT FRONTIER
+WP-09    End-to-end Relay Certification Matrix      CONDITIONAL NEXT FRONTIER
 ```
 
-CP-R008 checkpoint/status verification passed workflow **35176262429** on head `3d5c445b83cb28ab8369e4325bae6bc2a4c2a169`: compile PASS, 7 root units PASS, 125 repository-neutral synthetic stress tests PASS.
+CP-R009 content acceptance is complete. Formal WP-08 closure requires the corrected workflow to pass on the exact head containing CP-R009 and this program reconciliation.
 
 ## Progress Basis
 
@@ -43,13 +45,13 @@ CP-R008 checkpoint/status verification passed workflow **35176262429** on head `
 | WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006 |
 | WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
 | WP-07 Human Communication | 6 | COMPLETE — CP-R008 |
-| WP-08 Owner Change Intake | 3 | CURRENT FRONTIER |
-| WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
+| WP-08 Owner Change Intake | 3 | COMPLETE PENDING EXACT-HEAD CI — CP-R009 |
+| WP-09 End-to-end Relay Certification Matrix | 5 | CONDITIONAL NEXT FRONTIER |
 | WP-10 Self-consistency Audit | 2 | WAITING |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Earned completion: 89%.** Progress remains acceptance/checkpoint-derived.
+**Conditional earned completion: 92%.** It becomes formal only after exact-head CP-R009/status CI passes. Progress remains acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -90,47 +92,42 @@ Historical interpretation is corrected in `ci-evidence-correction.md`.
 
 ### WP-06 — Quality Procedure Library
 
-`CP-R007` and `wp-06-quality-procedures.md` deliver applicability-routed engineering quality and first-class `QRV-*` evidence. Every EP partitions the built-in procedure library exactly once; applicable procedures require reason + review focus, and a quality finding blocks execution only through a valid existing hard-stop mapping with durable basis.
+`CP-R007` delivers applicability-routed engineering quality and first-class `QRV-*` evidence. Every EP partitions the built-in procedure library exactly once; applicable procedures require reason + review focus, and a quality finding blocks execution only through a valid existing hard-stop mapping with durable basis.
 
 ### WP-07 — Human Communication
 
-`CP-R008`, `wp-07-human-communication.md`, and `human-communication.md` deliver two generated views from one source-bound communication projection:
+`CP-R008` delivers `TECHNICAL_STATUS.md` and plain-language `OWNER_STATUS.md` from one source-bound communication projection. Material execution, evidence, quality, stop, scope, roadmap and next-work truth cannot be hidden by the Owner view.
+
+### WP-08 — Owner Change Intake
+
+`CP-R009`, `wp-08-owner-change-intake.md`, and `owner-change-intake.md` deliver an Owner-facing change report without creating a second intent authority.
 
 ```text
-report projection
-  -> communication projection
-      -> TECHNICAL_STATUS.md
-      -> OWNER_STATUS.md
+Owner source
+  -> ODR-* + change_intake semantic summary
+  -> OWNER_INTENT_MUTATION roadmap revision
+  -> roadmap / Progress Basis / issue / active-EP reconciliation
+  -> owner_change_projection.py
+  -> OWNER_CHANGE.md
 ```
 
-Technical status preserves protocol precision. Owner status uses plain language for current capability, purpose, protected/non-change scope, evidence/missing evidence, material quality risks/limitations, roadmap/progress reconciliation, genuine Owner decisions, exact next work and active stops. Owner-reserved scope does not fabricate a decision request. Non-blocking quality risk remains visible without becoming a fake stop. Aggregate conformance validates that material truth cannot be hidden.
+The report includes previous/new concept, retained/invalidated behavior, new scope, roadmap impact, Progress Basis effect, issue impact, current-EP disposition, resulting frontier and whether the decision is actually applied. A CAPTURED decision can be rendered but cannot invent a post-change frontier. Current applied Owner mutations require exact ODR/revision binding, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation.
 
-WP-07 evidence:
+WP-08 pre-checkpoint evidence:
 
 ```text
-repaired implementation
-  0b5c38f008d670ab9db24cf7b3fe4fccba07893b
-  workflow 35166010334 — PASS
-
 documentation-aligned implementation
-  49d0e52ee81e34ddf4152927456a4f4e4bdef665
-  workflow 35176089341 — PASS
-
-CP-R008 checkpoint/status
-  3d5c445b83cb28ab8369e4325bae6bc2a4c2a169
-  workflow 35176262429 — PASS
+  fb5e0b15f25884793e38ba694505b748acaf84fd
+  workflow 35188301698 — PASS
 
 root units: 7
-stress tests: 125
+stress tests: 131
 ```
 
 ## Remaining dependency topology
 
 ```text
-WP-08 Owner Change Intake             CURRENT
-   |
-   v
-WP-09 End-to-end Certification
+WP-09 End-to-end Certification       CONDITIONAL NEXT
    |
    v
 WP-10 Self-consistency Audit
@@ -156,13 +153,14 @@ PR #396 remains draft until:
 [x] operational GitHub projection — CP-R006
 [x] scoped procedural QRV quality system — CP-R007
 [x] plain-language Owner communication — CP-R008
-[ ] Owner change-intake projection
+[x] Owner change-intake projection — CP-R009 content accepted
+[ ] CP-R009 exact-head closure CI
 [ ] lifecycle cold-start/certification matrix
 [ ] A -> B -> C zero-chat relay
 [ ] schema/template/validator/renderer/docs audit
 [ ] final exact-head generic CI
-[x] V2 untouched through WP-07
-[x] no downstream-specific logic through WP-07
+[x] V2 untouched through WP-08
+[x] no downstream-specific logic through WP-08
 ```
 
 Do not merge automatically.
