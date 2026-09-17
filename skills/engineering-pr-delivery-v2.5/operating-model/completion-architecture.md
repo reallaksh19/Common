@@ -12,10 +12,11 @@ WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
 WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
 WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
-WP-07 Human Communication                           CURRENT FRONTIER
+WP-07 Human Communication                           CHECKPOINT WRITTEN — EXACT-HEAD CI REQUIRED
+WP-08 Owner Change Intake                           CONDITIONAL NEXT FRONTIER
 ```
 
-CP-R007 checkpoint/status verification passed workflow **35147172696** on `d695329c5bf69fa6c127ae2b47dc35d99227631b`, including compile, 7 root units and 118 synthetic stress tests.
+WP-07 documentation-aligned implementation passed workflow **35176089341** on `49d0e52ee81e34ddf4152927456a4f4e4bdef665`, including compile, 7 root units and 125 synthetic stress tests. Formal CP-R008 closure requires the same corrected workflow to pass on the exact head containing CP-R008 and this program-state reconciliation.
 
 Conversation is acceleration, never custody.
 
@@ -58,7 +59,11 @@ ROADMAP / PROGRESS / ISSUE RECONCILIATION
     ↓
 CRASH-SAFE EXTERNAL PROJECTION TRANSACTION
     ↓
-SOURCE-DERIVED REPORT / HANDOVER PROJECTION
+SOURCE-DERIVED REPORT PROJECTION
+    ↓
+COMMUNICATION PROJECTION
+    ├── TECHNICAL_STATUS.md
+    └── OWNER_STATUS.md
     ↓
 NEXT EP
 ```
@@ -80,9 +85,12 @@ CP                       backward execution truth + QRV pointer
 PROGRESS                 authoritative calculated progress hierarchy
 ISSUE_GRAPH              reconciled issue coordination state
 REPO_STATE               lifecycle/routing/state-plane/bootstrap locator
-GHGEN/GHOP                desired external GitHub projection transaction
+GHGEN/GHOP               desired external GitHub projection transaction
 GitHub observation       verified external readback evidence
-Report projection / MD   derived projection only
+Report projection        derived structured projection only
+Communication projection derived human-facing projection only
+OWNER_STATUS.md          generated plain-language projection only
+TECHNICAL_STATUS.md      generated technical projection only
 GitHub                   external coordination projection
 Chat                     non-authoritative convenience
 ```
@@ -111,79 +119,63 @@ GitHub remains external coordination only. Immutable `GHGEN-*` generations conta
 
 ## Delivered WP-06 — procedural quality and QRV evidence
 
-Quality is routed before execution and evidenced before checkpoint. Every EP partitions all built-in quality procedures exactly once:
+Quality is routed before execution and evidenced before checkpoint. Every EP partitions all built-in quality procedures exactly once. Applicable procedures require reason + review focus; explicit not-applicable procedures require reason without ceremonial execution. `QRV-*` is bound to EP digest, roadmap revision, material ref and router snapshot. `NOT_RUN` remains evidence/quality truth rather than automatic stop, and severity alone never grants stop authority. Deferred/unresolved findings transfer exactly through successor handover and checkpoints bind QRV by id/path/digest.
+
+## Delivered WP-07 — source-derived human communication
+
+WP-07 adds no authority plane. It enriches the source-derived report projection with communication-relevant facts and derives one shared communication projection.
 
 ```text
-software-design
-coding
-ui-ux
-testing
-engineering-numerics
-code-review
-accessibility
-performance
-migration
-github-delivery
+repository authorities
+ -> report projection
+ -> communication projection
+      -> technical renderer
+      -> Owner renderer
 ```
 
-Applicable procedures require reason + review focus. Not-applicable procedures require a concrete reason but do not perform ceremonial review. Each blueprint defines WHEN TO APPLY, REQUIRED INPUTS, PROCEDURE, BEST-PRACTICE CHECKLIST, ANTI-PATTERNS, REQUIRED ARTIFACTS, VERIFICATION, QUALITY FINDING CLASSIFICATION, TRUE HARD-STOP CONDITIONS, OWNER REPORT and SUCCESSOR HANDOVER.
+Technical status retains protocol precision, source identifiers, state planes, scope, evidence, quality and exact next work.
 
-The durable quality transaction is:
+Owner status must communicate in ordinary engineering/product language:
 
-```text
-EP quality router
- -> applicable procedure execution
- -> QRV-* bound to EP digest / roadmap revision / material ref / router snapshot
- -> procedure results + QF-* findings
- -> execution-effect derivation
- -> exact unresolved-finding transfer
- -> checkpoint QRV id/path/digest
- -> derived report projection
-```
+- what can happen now;
+- why the current work exists;
+- what is protected/prohibited or deliberately out of scope;
+- what evidence exists and what has not run;
+- material quality risk and known limitations without blocker inflation;
+- roadmap/progress position and reconciliation;
+- exact next work;
+- decisions genuinely required from the Owner;
+- active stop conditions.
 
-Procedure results are `CLEAR | FINDINGS | NOT_RUN`. `NOT_RUN` may produce `NEEDS_ATTENTION` but does not automatically stop execution. Severity alone never grants stop authority. A `QF-*` finding can block only when it maps to an existing true hard-stop category with durable basis. Ordinary maintainability/design/UX/accessibility/performance/migration/test-gap concerns may remain visible and non-blocking.
+An Owner-reserved domain is not automatically a decision request. Conversely, a real `OWNER_DECISION_REQUIRED` condition cannot be hidden. Non-blocking quality findings remain visible without becoming fake stop language.
 
-Deferred, Owner-review-required and unresolved findings transfer exactly through QRV successor handover. A checkpoint cannot publish an executable successor while its QRV contains a true blocking finding. Parallel lane checkpoints use lane-specific QRVs.
+`validate_human_communication.py` participates in aggregate conformance. Repository-neutral stress tests prove shared-source derivation, hard-stop visibility, missing-evidence visibility, non-blocking quality-risk visibility, reserved-vs-required Owner decisions, next-work convergence, and rejection of relay-internal jargon in Owner-facing source text.
 
-Report projection source-binds checkpoint QRV id/digest and exposes QRV state/findings/execution effect/Owner report/transfer as derived information; generated reports never become quality authority.
-
-WP-06 evidence:
+WP-07 pre-checkpoint evidence:
 
 ```text
-pre-checkpoint implementation
-  c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
-  workflow 35146877546 — PASS
+repaired implementation
+  0b5c38f008d670ab9db24cf7b3fe4fccba07893b
+  workflow 35166010334 — PASS
 
-CP-R007 checkpoint/status
-  d695329c5bf69fa6c127ae2b47dc35d99227631b
-  workflow 35147172696 — PASS
+documentation-aligned implementation
+  49d0e52ee81e34ddf4152927456a4f4e4bdef665
+  workflow 35176089341 — PASS
 
 root units: 7
-stress tests: 118
+stress tests: 125
 ```
 
-## Current WP-07 — Human Communication
+Formal checkpoint closure remains conditional on exact-head CI after CP-R008/program reconciliation.
 
-WP-07 is the sole material frontier. It must derive separate technical and Owner-facing communication from the same authoritative report projection without creating a second truth source.
+## Conditional next WP-08 — Owner Change Intake
 
-The Owner view must explain in plain language:
-
-- what the system can do now;
-- what it will not change;
-- why the current work exists;
-- what evidence exists and what is missing;
-- material quality concerns without relay jargon;
-- roadmap/progress changes;
-- exact next work;
-- any genuine Owner decision required.
-
-Technical status may retain relay terminology. Owner status must translate it rather than hiding it.
+After CP-R008 exact-head PASS, WP-08 becomes the sole material frontier. It must provide an Owner-facing change-intake transaction/report over existing ODR + roadmap-transaction authority. The intake layer must show previous concept, requested/new concept, retained behavior, invalidated behavior, new scope, roadmap impact, progress-basis effect, issue impact, active-EP disposition, new frontier and whether the Owner decision has been applied. It must not become a second authority source.
 
 ## Remaining target layers
 
 ```text
-WP-07 Human Communication / Owner projection       CURRENT
-WP-08 Owner Change Intake over ODR transactions    WAITING
+WP-08 Owner Change Intake over ODR transactions    CONDITIONAL AFTER CP-R008 CI
 WP-09 End-to-end A -> B -> C certification         WAITING
 WP-10 self-consistency audit                       WAITING
 WP-11 PR readiness; never automatic merge          WAITING
@@ -225,8 +217,8 @@ strong qualification             COMPLETE — CP-R004
 full progress/handover           COMPLETE — CP-R005
 GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
-human communication              CURRENT — WP-07
-owner change intake              WAITING
+human communication              CHECKPOINT WRITTEN — CP-R008 CI PENDING
+owner change intake              CONDITIONAL NEXT
 end-to-end certification         WAITING
 self-consistency audit           WAITING
 PR readiness                     WAITING
