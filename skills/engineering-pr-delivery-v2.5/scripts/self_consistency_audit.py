@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-import sys
+import re
 from typing import Iterable
 
 import yaml
@@ -189,6 +189,8 @@ README_REQUIRED_ENTRYPOINTS = [
     "validate_quality_review.py",
     "validate_human_communication.py",
     "validate_owner_change_intake.py",
+    "render_roadmap.py",
+    "self_consistency_audit.py",
 ]
 
 SKILL_REQUIRED_ENTRYPOINTS = [
@@ -196,6 +198,7 @@ SKILL_REQUIRED_ENTRYPOINTS = [
     "cold_start_check.py",
     "validate_zero_context_reconstruction.py",
     "material_write_ready.py",
+    "self_consistency_audit.py",
 ]
 
 STALE_MARKERS = {
@@ -231,10 +234,9 @@ AUTHORITY_SENTINELS = {
     ],
 }
 
-PORTABILITY_BANNED_TOKENS = [
-    "Advanced_Analysis",
-    "reallaksh19/Advanced_Analysis",
-]
+# Project-specific GitHub repository URLs in Python protocol logic are a portability smell.
+# Documentation can cite Common itself or external standards; runtime logic must not route by repo name.
+REPO_URL_RE = re.compile(r"https?://(?:www\.)?github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
 
 
 def _text(path: Path) -> str:
@@ -331,31 +333,32 @@ def audit(repo_root: Path) -> tuple[list[str], list[str]]:
             if sentinel not in text:
                 errors.append(f"authority sentinel missing from {rel}: {sentinel}")
 
-    # Portability: known downstream stress repositories must never leak into Common protocol logic/docs.
-    text_suffixes = {".md", ".py", ".yaml", ".yml"}
-    for path in skill.rglob("*"):
-        if not path.is_file() or path.suffix not in text_suffixes:
-            continue
-        text = _text(path)
-        for token in PORTABILITY_BANNED_TOKENS:
-            if token in text:
-                errors.append(f"downstream-specific token {token!r} in {path.relative_to(skill)}")
+    # Runtime protocol code must stay repository-neutral. Hard-coded GitHub repo URLs in Python
+    # are rejected generically; documentation/history may identify Common itself as evidence.
+    for path in sorted((skill / "scripts").glob("*.py")):
+        if REPO_URL_RE.search(_text(path)):
+            errors.append(f"hard-coded GitHub repository URL in protocol code: {path.relative_to(skill)}")
 
     if not workflow.exists():
         errors.append("missing scoped V2.5 CI workflow")
     else:
         wf = _text(workflow)
+        audit_cmd = "python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py ."
         root_cmd = "unittest discover -s skills/engineering-pr-delivery-v2.5/tests -p 'test*.py' -v"
         stress_cmd = "unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress -p 'test*.py' -v"
+        if audit_cmd not in wf:
+            errors.append("CI workflow does not execute the self-consistency audit")
         if root_cmd not in wf:
             errors.append("CI workflow does not explicitly execute root unit discovery")
         if stress_cmd not in wf:
             errors.append("CI workflow does not explicitly execute dedicated stress discovery")
 
-    # Lightweight operator reachability inventory. Non-validator/render utility scripts are warnings only.
+    # Lightweight operator reachability inventory. Internal libraries are imported, not invoked.
     documented = readme + "\n" + skill_doc
     library_modules = {
         "relaylib.py",
+        "qualitylib.py",
+        "takeoverlib.py",
         "progress_projection.py",
         "report_projection.py",
         "communication_projection.py",
