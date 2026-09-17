@@ -10,6 +10,7 @@ This is the stable navigation map for the released V2.5 control model. It points
 | --- | --- | --- |
 | Understand the whole relay | `../SKILL.md` | `scripts/validate_relay_conformance.py` |
 | Recover a repository with no chat | `operator-quick-start.md` | `scripts/cold_start_check.py`, `scripts/zero_context_reconstruction.py` |
+| See a repository-neutral relay walkthrough | `synthetic-relay-example.md` | stress tests under `tests/stress/` |
 | Understand authority ownership | `object-authority-matrix.md` | `scripts/self_consistency_audit.py` |
 | Understand roadmap/frontier | `roadmap-first-model.md`, `execution-frontier.md` | `scripts/validate_roadmap.py`, `scripts/validate_execution_frontier.py` |
 | Author/validate an EP | `execution-package.md` | `scripts/validate_ep_semantics.py` |
