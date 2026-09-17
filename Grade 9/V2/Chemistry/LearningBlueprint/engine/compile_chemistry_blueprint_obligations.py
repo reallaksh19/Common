@@ -20,6 +20,12 @@ from validate_chemistry_gate_source_audit import transformation_ref  # noqa: E40
 
 POLICY_REL = "policies/engineering-blueprint-compilation.v1.json"
 SCHEMA_REL = "contracts/chemistry-engineering-blueprint-obligations.schema.json"
+TOPOLOGY_LINEAGE_FIELDS = (
+    "topology_id",
+    "topology_digest",
+    "topology_extension_id",
+    "topology_extension_digest",
+)
 
 
 class ChemistryBlueprintObligationError(ValueError):
@@ -65,9 +71,6 @@ def _row(
         if target_mode is None:
             fail("CHEM_BP_OBL_TRANSFORMATION_TARGET_MISSING", asset_ref)
         authorized = [target_mode]
-        # Engineering declares the target Core, but product source scope decides
-        # whether that transformation is authorized or held for this learner
-        # product. Custody therefore resolves mandatory realization later.
         required = []
     return {
         "obligation_id": _obligation_id(gate["subtopic_id"], kind, asset_ref),
@@ -115,12 +118,14 @@ def compile_blueprint_obligations(
     manifest: dict[str, Any],
     *,
     registry: dict[str, Any] | None = None,
+    topology_extension: dict[str, Any] | None = None,
     source_audit_payloads: dict[str, dict[str, Any]] | None = None,
     research_dossier: dict[str, Any] | None = None,
     claim_ledger: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     closure_kwargs = {
         "registry": registry,
+        "topology_extension": topology_extension,
         "source_audit_payloads": source_audit_payloads,
         "research_dossier": research_dossier,
         "claim_ledger": claim_ledger,
@@ -131,6 +136,9 @@ def compile_blueprint_obligations(
     binding = compile_binding(request, manifest, **closure_kwargs)
     if binding["closure_digest"] != receipt["closure_digest"]:
         fail("CHEM_BP_OBL_CLOSURE_BINDING_DRIFT")
+    if any(field in receipt for field in TOPOLOGY_LINEAGE_FIELDS):
+        if any(binding.get(field) != receipt.get(field) for field in TOPOLOGY_LINEAGE_FIELDS):
+            fail("CHEM_BP_OBL_TOPOLOGY_BINDING_DRIFT")
 
     current_registry = registry if registry is not None else load(manifest["registry_ref"])
     if digest(current_registry) != receipt["registry_digest"]:
@@ -182,6 +190,8 @@ def compile_blueprint_obligations(
         "status": "BLUEPRINT_OBLIGATIONS_READY",
         "packet_digest": "",
     }
+    if "topology_id" in receipt:
+        packet.update({field: receipt[field] for field in TOPOLOGY_LINEAGE_FIELDS})
     packet["packet_digest"] = _packet_digest(packet)
     try:
         jsonschema.validate(packet, load(SCHEMA_REL))

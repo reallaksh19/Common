@@ -3,6 +3,12 @@
   "$id":"chemistry-engineering-authorization-binding.schema.json",
   "type":"object","additionalProperties":false,
   "required":["schema_version","binding_id","request_id","manifest_id","scope_ref","registry_ref","registry_digest","source_audit_states","closure_receipt_id","closure_digest","authorized_consumers","source_item_status","status"],
+  "dependentRequired":{
+    "topology_id":["topology_digest","topology_extension_id","topology_extension_digest"],
+    "topology_digest":["topology_id","topology_extension_id","topology_extension_digest"],
+    "topology_extension_id":["topology_id","topology_digest","topology_extension_digest"],
+    "topology_extension_digest":["topology_id","topology_digest","topology_extension_id"]
+  },
   "properties":{
     "schema_version":{"const":"2.0.0"},
     "binding_id":{"type":"string","pattern":"^CHEM-ENG-BIND-[A-Z0-9-]+$"},
@@ -11,6 +17,10 @@
     "scope_ref":{"type":"string","minLength":1},
     "registry_ref":{"const":"policies/chemistry-technical-engineering-gates.v1.json"},
     "registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "topology_id":{"type":"string","pattern":"^CHEM-ENG-TOPOLOGY-[A-Z0-9-]+$"},
+    "topology_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "topology_extension_id":{"type":"string","minLength":1},
+    "topology_extension_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
     "source_audit_states":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["gate_id","audit_ref","audit_digest","status","scope_policy","audit_role","authority_effect"],"properties":{"gate_id":{"type":"string"},"audit_ref":{"type":"string"},"audit_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"status":{"enum":["SOURCE_HARDENED","SOURCE_HELD"]},"scope_policy":{"type":"string"},"audit_role":{"enum":["PRODUCTION_SOURCE_AUDIT","STRESS_TEST_SOURCE_AUDIT"]},"authority_effect":{"enum":["NONE_STRESS_TEST_ONLY","SOURCE_SCOPE_EVIDENCE_ONLY"]}}}},
     "closure_receipt_id":{"type":"string","pattern":"^CHEM-ENG-CLOSURE-[A-Z0-9-]+$"},
     "closure_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},

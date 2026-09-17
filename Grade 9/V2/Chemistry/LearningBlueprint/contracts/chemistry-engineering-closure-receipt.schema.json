@@ -2,10 +2,17 @@
   "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"chemistry-engineering-closure-receipt.schema.json",
   "type":"object","additionalProperties":false,
   "required":["schema_version","receipt_id","request_id","manifest_id","registry_ref","registry_digest","source_audit_states","closure_digest","direct_gate_ids","optional_gate_ids","out_of_scope_gate_ids","closure_gate_ids","gate_states","external_dependency_states","blockers","counts","closure_status","source_item_status","authority_note"],
+  "dependentRequired":{
+    "topology_id":["topology_digest","topology_extension_id","topology_extension_digest"],
+    "topology_digest":["topology_id","topology_extension_id","topology_extension_digest"],
+    "topology_extension_id":["topology_id","topology_digest","topology_extension_digest"],
+    "topology_extension_digest":["topology_id","topology_digest","topology_extension_id"]
+  },
   "properties":{
     "schema_version":{"const":"2.0.0"},
     "receipt_id":{"type":"string","pattern":"^CHEM-ENG-CLOSURE-[A-Z0-9-]+$"},"request_id":{"type":"string"},"manifest_id":{"type":"string"},
     "registry_ref":{"const":"policies/chemistry-technical-engineering-gates.v1.json"},"registry_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
+    "topology_id":{"type":"string","pattern":"^CHEM-ENG-TOPOLOGY-[A-Z0-9-]+$"},"topology_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"topology_extension_id":{"type":"string"},"topology_extension_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
     "source_audit_states":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["gate_id","audit_ref","audit_digest","status","scope_policy","audit_role","authority_effect"],"properties":{"gate_id":{"type":"string"},"audit_ref":{"type":"string"},"audit_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"status":{"enum":["SOURCE_HARDENED","SOURCE_HELD"]},"scope_policy":{"type":"string","minLength":1},"audit_role":{"enum":["PRODUCTION_SOURCE_AUDIT","STRESS_TEST_SOURCE_AUDIT"]},"authority_effect":{"enum":["NONE_STRESS_TEST_ONLY","SOURCE_SCOPE_EVIDENCE_ONLY"]}}}},
     "closure_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},
     "direct_gate_ids":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string"}},

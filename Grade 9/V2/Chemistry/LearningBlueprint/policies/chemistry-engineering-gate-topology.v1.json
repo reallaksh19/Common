@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "CHEM-ENGINEERING-GATE-TOPOLOGY-v1",
+  "subject": "CHEMISTRY",
+  "status": "ACTIVE",
+  "legacy_prerequisite_mapping": {
+    "chemistry_gate": "PREREQUISITE",
+    "external_dependency": "CROSS_DOMAIN_PREREQUISITE"
+  },
+  "relationship_types": {
+    "PREREQUISITE": {
+      "target_domain": "CHEMISTRY_GATE",
+      "closure_effect": "REQUIRED_GATE",
+      "learner_scope_effect": "CONTEXT_ONLY",
+      "cycle_participates": true
+    },
+    "EXTENDS": {
+      "target_domain": "CHEMISTRY_GATE",
+      "closure_effect": "REQUIRED_GATE",
+      "learner_scope_effect": "CONTEXT_ONLY",
+      "cycle_participates": true
+    },
+    "DECOMPOSES": {
+      "target_domain": "CHEMISTRY_GATE",
+      "closure_effect": "REQUIRED_GATE",
+      "learner_scope_effect": "CONTEXT_ONLY",
+      "cycle_participates": true
+    },
+    "USES_MODEL_FROM": {
+      "target_domain": "CHEMISTRY_GATE",
+      "closure_effect": "REQUIRED_GATE",
+      "learner_scope_effect": "CONTEXT_ONLY",
+      "cycle_participates": true
+    },
+    "OPTIONAL_RESEARCH_EXTENSION": {
+      "target_domain": "CHEMISTRY_GATE",
+      "closure_effect": "NON_REQUIRED_REFERENCE",
+      "learner_scope_effect": "NOT_PROMOTED",
+      "cycle_participates": false
+    },
+    "CROSS_DOMAIN_PREREQUISITE": {
+      "target_domain": "EXTERNAL_DEPENDENCY",
+      "closure_effect": "REQUIRED_EXTERNAL_RESOLUTION",
+      "learner_scope_effect": "CONTEXT_ONLY",
+      "cycle_participates": false
+    }
+  },
+  "migration_rules": {
+    "legacy_prerequisite_ids_remain_authoritative": true,
+    "exact_legacy_typed_mirror_allowed": true,
+    "conflicting_relationship_for_same_source_target_forbidden": true,
+    "duplicate_explicit_edge_forbidden": true,
+    "adapter_authored_relationships_forbidden": true
+  }
+}

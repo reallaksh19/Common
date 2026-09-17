@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0.0",
+  "extension_id": "CHEM-ENG-TOPOLOGY-EXT-default-v1",
+  "subject": "CHEMISTRY",
+  "registry_id": "CHEM-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
+  "additive_only": true,
+  "edges": []
+}

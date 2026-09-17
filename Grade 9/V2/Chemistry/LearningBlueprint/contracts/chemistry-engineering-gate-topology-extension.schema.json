@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ChemistryEngineeringGateTopologyExtension",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "extension_id",
+    "subject",
+    "registry_id",
+    "additive_only",
+    "edges"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "extension_id": { "type": "string", "pattern": "^CHEM-ENG-TOPOLOGY-EXT-[A-Za-z0-9-]+$" },
+    "subject": { "const": "CHEMISTRY" },
+    "registry_id": { "type": "string", "minLength": 1 },
+    "additive_only": { "const": true },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_gate_id", "target_id", "relationship_type", "authority_note"],
+        "properties": {
+          "source_gate_id": { "type": "string", "pattern": "^CHEM-[A-Z0-9]+-[A-Z0-9-]+$" },
+          "target_id": { "type": "string", "minLength": 1 },
+          "relationship_type": {
+            "enum": [
+              "PREREQUISITE",
+              "EXTENDS",
+              "DECOMPOSES",
+              "USES_MODEL_FROM",
+              "OPTIONAL_RESEARCH_EXTENSION",
+              "CROSS_DOMAIN_PREREQUISITE"
+            ]
+          },
+          "authority_note": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

@@ -41,6 +41,13 @@ def compile_binding(request: dict, manifest: dict, **closure_kwargs) -> dict:
         "source_item_status": receipt["source_item_status"],
         "status": "ENGINEERING_AUTHORIZED",
     }
+    if "topology_id" in receipt:
+        binding.update({
+            "topology_id": receipt["topology_id"],
+            "topology_digest": receipt["topology_digest"],
+            "topology_extension_id": receipt["topology_extension_id"],
+            "topology_extension_digest": receipt["topology_extension_digest"],
+        })
     try:
         jsonschema.validate(binding, load("contracts/chemistry-engineering-authorization-binding.schema.json"))
     except jsonschema.ValidationError as exc:

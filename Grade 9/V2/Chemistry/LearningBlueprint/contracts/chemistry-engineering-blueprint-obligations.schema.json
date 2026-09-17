@@ -10,6 +10,12 @@
     "registry_ref", "registry_digest", "direct_gate_ids", "closure_gate_ids", "obligations", "counts",
     "status", "packet_digest"
   ],
+  "dependentRequired": {
+    "topology_id": ["topology_digest", "topology_extension_id", "topology_extension_digest"],
+    "topology_digest": ["topology_id", "topology_extension_id", "topology_extension_digest"],
+    "topology_extension_id": ["topology_id", "topology_digest", "topology_extension_digest"],
+    "topology_extension_digest": ["topology_id", "topology_digest", "topology_extension_id"]
+  },
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "packet_id": {"type": "string", "pattern": "^CHEM-BP-OBL-[A-Z0-9-]+$"},
@@ -23,6 +29,10 @@
     "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "registry_ref": {"type": "string"},
     "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "topology_id": {"type": "string", "pattern": "^CHEM-ENG-TOPOLOGY-[A-Z0-9-]+$"},
+    "topology_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "topology_extension_id": {"type": "string", "minLength": 1},
+    "topology_extension_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "direct_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
     "closure_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
     "obligations": {
