@@ -4,5 +4,6 @@
   "subject": "CHEMISTRY",
   "registry_id": "CHEM-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
   "additive_only": true,
+  "legacy_coverage": "REQUIRE_ALL_LEGACY_MIRRORS",
   "edges": []
 }
