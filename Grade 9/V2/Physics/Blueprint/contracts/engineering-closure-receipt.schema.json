@@ -4,7 +4,7 @@
   "title": "Engineering Gate Closure Receipt",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version","receipt_id","request_id","manifest_id","manifest_digest","registry_ref","gate_extension_refs","registry_digest","closure_digest","direct_gate_ids","transitive_gate_ids","gate_states","blockers","counts","closure_status","source_item_status","authority_note"],
+  "required": ["schema_version","receipt_id","request_id","manifest_id","manifest_digest","registry_ref","gate_extension_refs","registry_digest","closure_digest","scoped_closure_digest","direct_gate_ids","transitive_gate_ids","gate_states","blockers","counts","closure_status","source_item_status","authority_note"],
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
@@ -15,6 +15,7 @@
     "gate_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
     "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "scoped_closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "direct_gate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/gate_id"}},
     "transitive_gate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/gate_id"}},
     "gate_states": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["gate_id","status","direct"], "properties": {"gate_id": {"$ref": "#/$defs/gate_id"}, "status": {"enum": ["ENGINEERING_GATE_READY","ENGINEERING_GATE_INCOMPLETE","SOURCE_SCOPE_HELD","MISSING"]}, "direct": {"type": "boolean"}}}},
