@@ -2,7 +2,9 @@
 
 ## Status
 
-Engineering Relay V2.5 through WP-09 was merged by explicitly authorized PR #396 at `fb28a0817cab109a1120e3826ce11439b49586de`. WP-10/WP-11 completion is isolated on PR #409.
+Engineering Relay V2.5 is complete through WP-11.
+
+PR #396 delivered WP-00 through WP-09 and was explicitly merged at `fb28a0817cab109a1120e3826ce11439b49586de`. WP-10/WP-11 completion is isolated on PR #409.
 
 ```text
 WP-00 Kernel baseline / object matrix               DELIVERED — CP-R001
@@ -16,8 +18,10 @@ WP-07 Human Communication                           DELIVERED — CP-R008
 WP-08 Owner Change Intake                           DELIVERED — CP-R009
 WP-09 End-to-end Relay Certification Matrix         DELIVERED — CP-R010
 WP-10 Self-consistency Audit                        DELIVERED — CP-R011
-WP-11 PR Readiness                                  CONDITIONAL — CP-R012 exact-head CI pending
+WP-11 PR Readiness                                  DELIVERED — CP-R012
 ```
+
+Completion basis: **100% acceptance/checkpoint-derived**.
 
 Conversation is acceleration, never custody.
 
@@ -127,12 +131,20 @@ The defining A → B → C proof crosses dependency-ordered work packages. B and
 ## Completion guards
 
 ### CP-R011 — self-consistency
-`self_consistency_audit.py` is a deterministic release guard that validates declarative contract parseability, durable-object surfaces, quality blueprint procedure structure, validator/renderer reachability, authority vocabulary, repository-generic portability, release navigation, and CI coverage. CP-R011's exact checkpoint/program-state head passed workflow `35198273521`.
+`self_consistency_audit.py` is a deterministic release guard that validates declarative contract parseability, durable-object surfaces, quality blueprint procedure structure, validator/renderer reachability, authority vocabulary, repository-generic portability, release navigation, and CI coverage. CP-R011 checkpoint/program-state verification passed workflow `35198273521`.
 
 ### CP-R012 — PR readiness
-WP-11 verifies PR isolation, V2/downstream non-modification, stable architecture navigation, operator quick-start, repository-neutral synthetic walkthrough, review-thread cleanliness, and release-doc audit coverage. Its pre-checkpoint release-doc head `5455bb90895461ba1d7476af10c84863f979fb93` passed workflow `35205304623`.
+WP-11 verifies PR isolation, V2/downstream non-modification, stable architecture navigation, operator quick-start, repository-neutral synthetic walkthrough, review-thread cleanliness, and release-doc audit coverage.
 
-`CP-R012` exists. Formal release completion requires the scoped workflow to pass on the exact canonical head containing CP-R012 plus the completion reconciliation.
+```text
+release-doc basis
+5455bb90895461ba1d7476af10c84863f979fb93
+workflow 35205304623 — PASS
+
+CP-R012 checkpoint/program-state basis
+7d3c7d84dbcb51f87bf402eb6b720e17a88f8579
+workflow 35208661282 — PASS
+```
 
 ## Stable release navigation
 
@@ -162,14 +174,12 @@ ODR-xxxx    Owner Decision Record
 
 Existing plan/join/replan/drift namespaces remain unchanged.
 
-## Final state transition
+## Release state
 
 ```text
-CP-R012 exact canonical-head verification
-   ↓
-100% completion
-   ↓
-PR #409 may leave draft state
-   ↓
-merge remains an explicit Owner decision
+completion program       100%
+CP-R012                   verified
+canonical final CI        required on this formal-completion head
+PR #409                   eligible to leave draft after canonical final CI PASS
+merge                     explicit Owner decision only
 ```
