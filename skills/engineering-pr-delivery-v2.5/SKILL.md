@@ -1,25 +1,25 @@
 ---
 name: engineering-pr-delivery-v2.5
-description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, crash-safe GitHub projection, drift/continuity control, and serial-by-default material execution.
+description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, crash-safe GitHub projection, quality evidence, and serial-by-default material execution.
 ---
 
 # Engineering PR Delivery v2.5 — engineering relay with a dynamic overall roadmap
 
 ## Governing objective
 
-A replacement agent with no conversational history must be able to recover Owner intent, roadmap position, authorized work, inputs/oracles, scope, predecessor custody, evidence and exact next work from repository state alone; independently prove takeover; execute only when live write readiness permits; checkpoint reality; reconcile roadmap/progress/issues; and leave an equally strong baton.
+A replacement agent with no conversational history must be able to recover Owner intent, roadmap position, authorized work, inputs/oracles, scope, predecessor custody, evidence, quality obligations, acceptance, and exact next work from repository state alone; independently prove takeover; execute only when live write readiness permits; checkpoint reality; reconcile roadmap/progress/issues; and leave an equally strong baton.
 
 Conversation is acceleration, never custody.
 
 ## Repository-agnostic core
 
-Common contains portable relay policy, schemas, templates, validators and synthetic tests. Do not encode downstream repository names, issue IDs, product formulas or workflow-specific exceptions. Real repositories are read-only black-box stress sources unless the Owner separately authorizes adoption. Reduce every discovered weakness to a repository-neutral invariant plus synthetic regression before changing Common protocol logic.
+Common contains portable relay policy, schemas, templates, validators, renderers, and synthetic tests. Do not encode downstream repository names, issue IDs, product formulas, or workflow-specific exceptions. Real repositories are read-only black-box stress sources unless the Owner separately authorizes adoption. Reduce every discovered weakness to a repository-neutral invariant plus synthetic regression before changing Common protocol logic.
 
 ## Authority chain
 
 ```text
 explicit Owner intent / ODR
-→ OVERALL_ROADMAP.yaml
+→ OVERALL_ROADMAP.yaml + roadmap revision
 → executable frontier
 → semantic EP or Owner-approved parallel router
 → BATON_READY
@@ -27,9 +27,13 @@ explicit Owner intent / ODR
 → TAKEOVER_CERTIFIED(route,candidate)
 → live route + Git basis + MATERIAL_WRITE_READY
 → implementation / read-only reconciliation as authorized
+→ applicable quality procedures + tests/oracles
+→ QRV-* quality review
 → checkpoint/evidence
 → roadmap / progress / issue reconciliation
 → required external projection convergence
+→ source-derived report / communication / Owner-change views
+→ ZERO_CONTEXT_RECONSTRUCTION
 → successor baton
 ```
 
@@ -52,6 +56,7 @@ agents/relay/
     discovery/**
     qualification/**
     takeover/**
+  quality/**
   checkpoints/**
   parallel/**
   drift/**
@@ -61,7 +66,7 @@ agents/relay/
   generated/**
 ```
 
-`REPO_STATE.yaml` is the deterministic bootstrap locator.
+`REPO_STATE.yaml` is the deterministic bootstrap locator. It does not replace the authority objects it references.
 
 ## Lifecycle and execution policy
 
@@ -75,7 +80,7 @@ IDLE         — no executable material work currently exists
 TERMINAL     — roadmap work is complete
 ```
 
-`INITIALIZING | IDLE | TERMINAL` have no active material EP. `ACTIVE` requires `SERIAL`. `PARALLEL` requires `OWNER_APPROVED_PARALLEL`, an approved plan and at least two current frontier WPs.
+`INITIALIZING | IDLE | TERMINAL` have no active material EP. `ACTIVE` requires `SERIAL`. `PARALLEL` requires `OWNER_APPROVED_PARALLEL`, an approved plan, and at least two current frontier WPs.
 
 Material execution is **serial by default**. Do not infer parallelism from apparent independence.
 
@@ -89,9 +94,11 @@ ENGINEERING_DISCOVERY_PROPOSAL
 OWNER_INTENT_MUTATION
 ```
 
-Agents may apply factual status updates, may propose structural discoveries, and require an applied Owner Decision Record for Owner-intent mutations. Material revisions reconcile dependencies, EP continuity/staleness, issues, Progress Basis and the computed frontier. `frontier_after` must equal the frontier computed from the resulting roadmap.
+Agents may apply factual status updates, may propose structural discoveries, and require an applied Owner Decision Record for Owner-intent mutations. Material revisions reconcile dependencies, active-EP continuity/staleness, issues, Progress Basis, and the computed frontier. `frontier_after` must equal the frontier computed from the resulting roadmap.
 
 Owner deferral is not technical satisfaction. A `DEFERRAL` keeps named items pending and does not itself grant write authority.
+
+For an Owner-intent mutation, `ODR.change_intake` records the semantic before/after concept while the roadmap revision remains authoritative for actual structural effects. `OWNER_CHANGE.md` is derived only.
 
 ## Semantic Execution Package
 
@@ -101,19 +108,19 @@ Every serial EP and approved parallel lane EP is a forward work contract for one
 - roadmap source/frontier origin;
 - outcome and context capsule;
 - executable `DSTEP-*` repository discovery;
-- typed current/future inputs with authority, source, editability, applicability, resolution and stale conditions;
-- benchmark/oracle contracts with payload, expected result, tolerance/exactness and independence;
-- allowed writes/reads, protected invariants, prohibited and Owner-reserved scope;
+- typed current/future inputs with authority, source, editability, applicability, resolution, and stale conditions;
+- benchmark/oracle contracts with payload, expected result, tolerance/exactness, and independence;
+- allowed writes/reads, protected invariants, prohibited scope, and Owner-reserved scope;
 - structured anti-drift;
-- exact implementation steps mapped to inputs, ACs and tests;
-- quality applicability;
+- exact implementation steps mapped to inputs, ACs, and tests;
+- complete quality applicability routing;
 - acceptance and validation contracts;
 - optional `qualification_boundary`;
 - source-bound report payloads;
-- ordered `next_work.steps[]` with targets, inputs, tests/oracles, acceptance, expected result and stop/reconciliation conditions;
+- ordered `next_work.steps[]` with targets, inputs, tests/oracles, acceptance, expected result, and stop/reconciliation conditions;
 - checkpoint and successor duties.
 
-Exactly one predecessor baton is active: checkpoint, parallel join or parallel replan. EP and CP are different objects and never substitute for each other.
+Exactly one predecessor baton is active: checkpoint, parallel join, or parallel replan. EP and CP are different objects and never substitute for each other.
 
 Read `operating-model/execution-package.md`.
 
@@ -130,7 +137,8 @@ valid roadmap/frontier
 + semantic current EP/plan
 + valid predecessor custody
 + admitted profile/protocol basis
-+ complete discovery/input/oracle/scope/report/successor contract
++ current-slice inputs/oracles ready
++ complete discovery/scope/report/successor contract
 + valid QSET when fresh qualification is required
 + no chat dependency
 ```
@@ -144,8 +152,8 @@ Candidate-specific proof:
 ```text
 BATON_READY
 + current DISC receipt PASS
-+ current TC receipt PASS
 + current QUAL receipt PASS when required
++ current TC receipt PASS
 + all evidence bound to current route/roadmap/EP/profile/predecessor/material basis
 ```
 
@@ -185,9 +193,9 @@ Read `operating-model/takeover-certification.md`.
 
 EP discovery instructions use `DSTEP-*`. Incoming candidate evidence uses `DISC-*`.
 
-A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/material basis, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton digest, required DSTEP coverage and expected output names. `conversation_context_used` must be false.
+A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/material basis, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton digest, required DSTEP coverage, and expected output names. `conversation_context_used` must be false.
 
-A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators re-open evidence and recompute current basis; YAML assertions are not authority.
+A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks, and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators reopen evidence and recompute current basis; YAML assertions are not authority.
 
 ## Engineering qualification — QSET / QUAL
 
@@ -199,14 +207,14 @@ OR
 MATERIAL_QUALIFICATION_BOUNDARY_CHANGED
 ```
 
-A same-phase boundary change includes material change in production path, engineering authority, numerical method, protected invariant, input authority or verification/oracle class.
+A same-phase material boundary change includes material change in production path, engineering authority, numerical method, protected invariant, input authority, or verification/oracle class.
 
 Inline `phase_transition.questions` is retired. A required EP boundary references a durable `QSET-*` bound to the exact route and EP contract digest.
 
 The transaction is:
 
 ```text
-outgoing agent prepares QSET
+outgoing/authorized preparer creates QSET
 → incoming candidate answers from repository only
 → independent/deterministic evaluation
 → QUAL-* receipt
@@ -216,7 +224,7 @@ outgoing agent prepares QSET
 Q1–Q5 semantics:
 
 ```text
-Q1 actual production path, state owner, authority source and downstream consumer
+Q1 actual production path, state owner, authority source, downstream consumer
 Q2 engineering reconstruction; quantitative work carries concrete payload values
 Q3 explicit mutation + protected invariant + exact falsifier
 Q4 independent verification using incoming benchmark/oracle evidence
@@ -229,7 +237,7 @@ Read `operating-model/phase-transition.md`.
 
 ## Live Git routing and drift
 
-Before material writes, use the runtime write gate or diagnose its components:
+Before material writes:
 
 ```bash
 python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
@@ -237,7 +245,7 @@ python skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_route.py <r
 python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-root>
 ```
 
-Every EP declares expected branch, material ref, base branch, observed base ref, `RECHECK_BEFORE_WRITE` and optional drift receipt.
+Every EP declares expected branch, material ref, base branch, observed base ref, `RECHECK_BEFORE_WRITE`, and optional drift receipt.
 
 Base drift classifications:
 
@@ -255,7 +263,7 @@ UNKNOWN
 `REPO_STATE` carries independent planes:
 
 ```text
-EXECUTION — state, can_continue, material_authority, next action
+EXECUTION — state, can_continue, material_authority, machine next-action hint
 QUALITY   — maintainability/design/UX findings
 EVIDENCE  — what actually ran/proved/did not run
 STOP      — true hard stop only
@@ -279,6 +287,16 @@ UNSAFE_ENGINEERING_RESULT
 
 An active hard stop cannot retain WRITE.
 
+## Quality procedures and QRV
+
+Every executable EP partitions the entire built-in quality procedure library exactly once into `quality.applicable[]` and `quality.not_applicable[]`. Applicable procedures require reason + review focus; explicit non-applicability requires a reason and does not trigger ceremonial execution.
+
+Before checkpoint publication, applicable procedures are evidenced in `QRV-*`, bound to exact EP digest, roadmap revision, material ref, and router snapshot.
+
+Procedure results are `CLEAR | FINDINGS | NOT_RUN`. `NOT_RUN` remains evidence/quality truth and is not automatically a stop. Severity alone never creates a hard stop. A quality finding may block execution only through a valid existing hard-stop category with durable basis.
+
+Unresolved findings transfer exactly through successor handover. Read `operating-model/quality-procedures.md`.
+
 ## Checkpoints and exact evidence
 
 Checkpoint successor modes:
@@ -290,79 +308,15 @@ JOIN
 NONE
 ```
 
-Checkpoint evidence is bound to `execution_basis.material_ref`. PASS/FAIL/NOT_RUN observed on another material head cannot silently qualify the current checkpoint. NOT_RUN carries an explicit reason.
+Checkpoint evidence is bound to `execution_basis.material_ref`. PASS/FAIL/NOT_RUN observed on another material head cannot silently qualify the current checkpoint. NOT_RUN carries an explicit reason. Checkpoints bind QRV by id/path/digest when quality review is applicable.
 
 ## Parallel execution
 
-Parallel work requires explicit Owner approval of a named plan and ASCII topology. Each lane declares unique route/branch/worktree, WP/EP, exclusive write domains and shared read domains. Overlapping writes require a specific Owner-approved exception.
+Parallel work requires explicit Owner approval of a named plan and ASCII topology. Each lane declares unique route/branch/worktree, WP/EP, exclusive write domains, and shared read domains. Overlapping writes require a specific Owner-approved exception.
 
 Lane completion uses `JOIN`; integration starts only after all approved lane checkpoints converge and integration is the sole computed frontier.
 
-If any lane becomes stale/invalid/unauthorized before convergence, the old plan loses material-write authority as a whole. A `PARALLEL_REPLAN` classifies every predecessor lane, retains completed checkpoints, transfers unresolved acceptance/evidence exactly, recomputes the frontier and produces either no route, one serial successor, or a newly Owner-approved parallel plan. Old plan branches/worktrees do not remain executable merely because they still exist.
-
-## Issue projection
-
-`ISSUE_GRAPH.yaml` models GitHub coordination relationships including parent/child, dependencies and evidence-preserving supersession. GitHub state is separate from engineering lifecycle state.
-
-The issue node records last verified external state:
-
-```text
-github_state = ABSENT | OPEN | CLOSED | UNKNOWN
-```
-
-`ABSENT` is valid before issue creation. `UNKNOWN` requires a prior locator and means the external state must be re-observed. A CREATE attempt does not make the node OPEN.
-
-`PARENT_OF` is an acyclic single-parent projection tree with revision-bound direct-child rollups. Parent closure cannot hide a child whose GitHub projection is not CLOSED.
-
-A → B → C supersession must preserve inherited unresolved acceptance/evidence exactly or record explicit durable resolution. Silent drop, status/basis mutation, branching successors and cycles are invalid.
-
-## GitHub Program Projection
-
-When external GitHub coordination is required, `REPO_STATE.projection` points to one current immutable `GHGEN-*` file. A generation contains stable `GHOP-*` operations:
-
-```text
-CREATE | LINK | UPDATE | PUBLISH_HANDOVER |
-SUPERSEDE | REVISE | CLOSE | REOPEN
-```
-
-The required mutation order is:
-
-```text
-validate current generation
-→ select one dependency-ready GHOP
-→ persist ATTEMPTED_UNCONFIRMED BEFORE external write
-→ perform exactly that GitHub action
-→ read external state back
-→ write GITHUB_OBSERVATION
-→ reconcile verified result into GHOP / ISSUE_GRAPH / REPO_STATE
-→ only then select another GHOP
-```
-
-Never treat a connector response alone as convergence. Verified readback is the reconciliation boundary.
-
-If an external call times out or crashes after the attempt journal was written, do **not** create a fresh operation or retry blindly. Reconcile the same `GHOP-*` using its stable idempotency key, verified locator and/or `<!-- relay-operation:GHOP-* -->` marker. A verified readback may create a repository `READBACK_RECOVERY:*` receipt when the connector receipt itself was lost.
-
-A body hyperlink is not proof of a provider-native parent/sub-issue relationship. When a required native LINK cannot be created or verified by the available integration, leave projection incomplete and report the external capability limitation rather than claiming success.
-
-When repository desired state advances, activate a new `GHGEN-*`. The predecessor generation becomes immutable SUPERSEDED, any old retryable GHOP loses publication authority, and history preserves whether it was superseded before publication, after an uncertain attempt, or after an unconfirmed publication receipt.
-
-Read `operating-model/github-program-projection.md` and `operating-model/issue-projection.md`.
-
-## Projection convergence
-
-Required external projections use stable generation IDs and states:
-
-```text
-NOT_REQUIRED
-PENDING
-PUBLISHED_UNCONFIRMED
-IN_SYNC
-STALE
-```
-
-Repository truth may advance while an external surface is stale. Top-level projection fields describe the newest desired generation; `observed` records the older verified external generation; intermediate desired generations move to immutable superseded history with no retry authority. Publish/reconcile only the newest authorized generation.
-
-Projection lag or unavailable external relationship capability does not rewrite engineering truth or automatically create a hard stop, but it prevents `HANDOVER_READY` when the projection is required.
+If any lane becomes stale/invalid/unauthorized before convergence, the old plan loses material-write authority as a whole. A `PARALLEL_REPLAN` classifies every predecessor lane, retains completed checkpoints, transfers unresolved acceptance/evidence exactly, recomputes the frontier, and produces either no route, one serial successor, or a newly Owner-approved parallel plan. Old plan branches/worktrees do not remain executable merely because they still exist.
 
 ## Progress and source-derived handover
 
@@ -372,63 +326,140 @@ Progress is calculated only:
 Acceptance Criterion → implementation step → EP → Work Package → Phase → Objective → Overall Roadmap
 ```
 
-`PROGRESS.yaml` is authority. `REPO_STATE` percentages are checked mirrors only. Status, handover and structured report projection derive from repository authority objects rather than generated prose.
+`PROGRESS.yaml` is authority. `REPO_STATE` percentages are checked mirrors only. Approved denominator changes create a new Progress Basis; never preserve a flattering percentage by rewriting completed work.
 
-Approved scope/denominator changes create a new Progress Basis. Do not preserve a flattering percentage by rewriting completed work.
+Every executable EP has structured ordered `next_work.steps[]`. Report/status/handover renderers derive from repository authority objects rather than generated prose.
 
-## Relay durability
+## Issue graph and GitHub projection
 
-Assume conversation can disappear at any time.
-
-Before engineering writes, durable roadmap/EP-or-plan/discovery/inputs/oracles/scope/acceptance must exist and `MATERIAL_WRITE_READY` must pass for the current candidate/live checkout.
-
-At custody transfer:
+`ISSUE_GRAPH.yaml` models coordination relationships and keeps engineering lifecycle separate from verified GitHub state:
 
 ```text
-checkpoint
-→ roadmap/progress/issues reconciliation
-→ frontier recomputation
-→ successor EP/parallel route/join/replan/terminal disposition
-→ semantic baton validation
-→ QSET when fresh qualification is required
-→ BATON_READY
-→ required projection convergence
+github_state = ABSENT | OPEN | CLOSED | UNKNOWN
 ```
 
-A successor candidate later creates DISC/QUAL/TC evidence independently.
+Parent/child projection is acyclic and single-parent. Parent closure cannot hide a non-closed child. Multi-generation supersession preserves unresolved acceptance/evidence exactly or records explicit durable resolution.
+
+When external GitHub coordination is required, `REPO_STATE.projection` points to one current immutable `GHGEN-*` containing stable `GHOP-*` operations:
+
+```text
+CREATE | LINK | UPDATE | PUBLISH_HANDOVER |
+SUPERSEDE | REVISE | CLOSE | REOPEN
+```
+
+Mutation order is:
+
+```text
+validate current generation
+→ select one dependency-ready GHOP
+→ persist ATTEMPTED_UNCONFIRMED before external write
+→ perform exactly that provider action
+→ read external state back
+→ write GITHUB_OBSERVATION
+→ reconcile verified result
+→ only then select another GHOP
+```
+
+Connector response alone is not convergence. A timeout/unknown outcome must reconcile the same stable operation before retry. A body hyperlink is not proof of a provider-native relationship. Superseded generations lose retry authority.
+
+Read `operating-model/github-program-projection.md` and `operating-model/issue-projection.md`.
+
+## Projection convergence
+
+Required external projections use:
+
+```text
+NOT_REQUIRED
+PENDING
+PUBLISHED_UNCONFIRMED
+IN_SYNC
+STALE
+```
+
+Repository truth may advance while external coordination is stale. Projection lag does not rewrite engineering truth or automatically create a hard stop, but required lag prevents `HANDOVER_READY`.
+
+## Human communication and Owner changes
+
+One source-bound report projection feeds one communication projection:
+
+```text
+repository authorities
+→ report projection
+→ communication projection
+   ├── TECHNICAL_STATUS.md
+   └── OWNER_STATUS.md
+```
+
+Technical status retains protocol precision. Owner status uses plain engineering/product language for capability, purpose, protected scope, evidence gaps, quality risks, genuine decisions, stops, progress, and exact next work. Owner-reserved choices are not fabricated as immediate decision requests.
+
+Material Owner changes use ODR authority + roadmap transaction authority. `OWNER_CHANGE.md` is a derived impact view showing previous/requested concept, retained/invalidated behavior, scope, roadmap/progress/issue impact, active-work disposition, resulting frontier, and whether the decision is applied.
+
+Generated views never become authority.
+
+## Zero-context release certification
+
+The defining release proof is repository-only A → B → C across dependency-ordered work packages:
+
+```text
+Agent A with conversation
+→ CP-A / EP-B / QSET-B
+→ conversation removed
+Agent B repository only
+→ ZERO_CONTEXT_RECONSTRUCTION
+→ DISC / QUAL / TC PASS
+→ completes WP-B
+→ CP-B / EP-C / QSET-C
+→ conversation removed
+Agent C repository only
+→ ZERO_CONTEXT_RECONSTRUCTION
+→ independent QUAL / TC PASS
+```
+
+The reconstruction must answer task purpose, Owner decisions, predecessor facts/limitations, uncertainty, input authority/editability, independent oracle, allowed/protected/prohibited scope, quality obligations/findings, evidence present/missing, tests/acceptance, first action, stale conditions, and exact next work.
+
+Lifecycle certification covers ACTIVE, ACTIVE + RECONCILING, PARALLEL, ACTIVE + required projection STALE, IDLE, TERMINAL, with INITIALIZING covered by bootstrap/core tests. Recovery must never invent write permission.
+
+Commands:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/zero_context_reconstruction.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_zero_context_reconstruction.py <repo-root>
+```
+
+Read `operating-model/relay-certification-matrix.md`.
 
 ## Safe bootstrap and V2 migration
 
-Bootstrap is dry-run by default and never fabricates executable work. It creates `INITIALIZING`, no EP and `material_authority: NONE` until roadmap/frontier reconciliation creates a genuine V2.5 work contract.
+Bootstrap is dry-run by default and never fabricates executable work. It creates `INITIALIZING`, no EP, and `material_authority: NONE` until roadmap/frontier reconciliation creates a genuine V2.5 work contract.
 
-V2 migration is evidence-first: inventory legacy state, reconcile Owner intent/unresolved work, establish an explicit V2.5 Progress Basis, compute a DETAILED frontier and create a genuine semantic V2.5 EP. Never auto-promote a V2 endpoint or copy narrative progress as calculated progress.
-
-## Human handover
-
-Generated views report source-derived Objective → Phase → WP → Step → AC progress, lifecycle, current EP or lanes, execution/quality/evidence/stop state, baton/projection/handover readiness, ordered exact next work, predecessor join/replan/continuity where relevant, qualification evidence when relevant, and `conversation context required: NO`.
-
-WP-07 will translate the same machine truth into plainer Owner-facing language; generated views never become authority.
+V2 migration is evidence-first: inventory legacy state, reconcile Owner intent/unresolved work, establish an explicit V2.5 Progress Basis, compute a DETAILED frontier, and create a genuine semantic V2.5 EP. Never auto-promote a V2 endpoint or copy narrative progress as calculated progress.
 
 ## Validation entrypoints
 
 ```bash
 python skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/cold_start_check.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_zero_context_reconstruction.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_quality_review.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_projection_convergence.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_github_projection.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/validate_github_generation_history.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/github_projection_next.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_join.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_replan.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/bootstrap_relay.py <manifest> <repo-root>
 ```
 
-The Common workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must explicitly execute both root unit discovery and dedicated `tests/stress/` discovery. Compilation alone is not stress-test evidence. See `operating-model/ci-evidence-correction.md`.
+For Common development / release consistency:
 
-A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product/engineering validation.
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
+```
+
+The scoped workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must execute compilation, the self-consistency audit, root unit discovery, and dedicated `tests/stress/` discovery. Compilation alone is not test evidence. See `operating-model/ci-evidence-correction.md`.
+
+A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product, engineering calculation, release, or human UX acceptance.
