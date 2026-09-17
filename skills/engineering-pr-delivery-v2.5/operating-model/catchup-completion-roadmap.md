@@ -23,11 +23,13 @@ CP-R006  WP-05 GitHub Program Projection            COMPLETE
    |
 CP-R007  WP-06 Quality Procedure Library            COMPLETE
    |
+CP-R008  WP-07 Human Communication                  CHECKPOINT WRITTEN — EXACT-HEAD CI REQUIRED
+   |
    v
-WP-07    Human Communication                        CURRENT FRONTIER
+WP-08    Owner Change Intake                        CONDITIONAL NEXT FRONTIER
 ```
 
-CP-R007 checkpoint/status verification passed workflow **35147172696** on head `d695329c5bf69fa6c127ae2b47dc35d99227631b`: compile PASS, 7 root units PASS, 118 repository-neutral synthetic stress tests PASS.
+WP-07 documentation-aligned implementation passed workflow **35176089341** on head `49d0e52ee81e34ddf4152927456a4f4e4bdef665`: compile PASS, 7 root units PASS, 125 repository-neutral synthetic stress tests PASS. CP-R008 is not formally closed until the exact head containing this checkpoint and program-state reconciliation passes the same corrected workflow.
 
 ## Progress Basis
 
@@ -40,14 +42,14 @@ CP-R007 checkpoint/status verification passed workflow **35147172696** on head `
 | WP-04 Full progress / handover / next-work | 12 | COMPLETE — CP-R005 |
 | WP-05 GitHub Program Projection operations | 8 | COMPLETE — CP-R006 |
 | WP-06 Quality Procedure Library | 10 | COMPLETE — CP-R007 |
-| WP-07 Human Communication | 6 | CURRENT FRONTIER |
-| WP-08 Owner Change Intake | 3 | WAITING |
+| WP-07 Human Communication | 6 | CHECKPOINT WRITTEN — CI PENDING |
+| WP-08 Owner Change Intake | 3 | CONDITIONAL NEXT |
 | WP-09 End-to-end Relay Certification Matrix | 5 | WAITING |
 | WP-10 Self-consistency Audit | 2 | WAITING |
 | WP-11 PR Readiness | 1 | WAITING |
 | **Total** | **100** | |
 
-**Earned completion: 83%.** Progress remains acceptance/checkpoint-derived.
+**Checkpointed earned completion before CP-R008: 83%. Target after CP-R008 exact-head PASS: 89%.** Progress remains acceptance/checkpoint-derived.
 
 ## CI evidence rule
 
@@ -88,43 +90,42 @@ Historical interpretation is corrected in `ci-evidence-correction.md`.
 
 ### WP-06 — Quality Procedure Library
 
-`CP-R007` and `wp-06-quality-procedures.md` deliver applicability-routed engineering quality and first-class `QRV-*` evidence.
+`CP-R007` and `wp-06-quality-procedures.md` deliver applicability-routed engineering quality and first-class `QRV-*` evidence. Every EP partitions the built-in procedure library exactly once; applicable procedures require reason + review focus, and a quality finding blocks execution only through a valid existing hard-stop mapping with durable basis.
 
-Every EP partitions the built-in procedure library exactly once:
+### WP-07 — Human Communication
+
+`CP-R008`, `wp-07-human-communication.md`, and `human-communication.md` deliver two generated views from one source-bound communication projection:
 
 ```text
-software-design | coding | ui-ux | testing | engineering-numerics
-code-review | accessibility | performance | migration | github-delivery
+report projection
+  -> communication projection
+      -> TECHNICAL_STATUS.md
+      -> OWNER_STATUS.md
 ```
 
-Applicable procedures require a concrete reason and review focus. Explicit not-applicable procedures require a concrete reason but no fake review ceremony. Each blueprint contains WHEN TO APPLY, REQUIRED INPUTS, PROCEDURE, CHECKLIST, ANTI-PATTERNS, ARTIFACTS, VERIFICATION, FINDING CLASSIFICATION, TRUE HARD-STOP CONDITIONS, OWNER REPORT and SUCCESSOR HANDOVER.
+Technical status preserves protocol precision. Owner status uses plain language for current capability, purpose, protected/non-change scope, evidence/missing evidence, material quality risks/limitations, roadmap/progress reconciliation, genuine Owner decisions, exact next work and active stops. Owner-reserved scope does not fabricate a decision request. Non-blocking quality risk remains visible without becoming a fake stop. Aggregate conformance validates that material truth cannot be hidden.
 
-A `QRV-*` is bound to exact EP contract digest, roadmap revision, material ref and router snapshot. Procedure results are `CLEAR | FINDINGS | NOT_RUN`. Quality findings use `QF-*`; severity alone never creates stop authority. A finding blocks execution only when it maps to an existing true hard-stop category with durable basis. Deferred/unresolved findings transfer exactly to successor handover.
-
-Checkpoints cite QRV id/path/digest on the same material basis. A checkpoint cannot publish an executable successor while its QRV has a true blocking finding. Parallel lane checkpoints carry lane-specific QRVs. Report projection source-binds the checkpoint QRV instead of creating a second quality authority.
-
-WP-06 evidence:
+Pre-checkpoint evidence:
 
 ```text
-pre-checkpoint implementation
-  c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868
-  workflow 35146877546 — PASS
+repaired implementation
+  0b5c38f008d670ab9db24cf7b3fe4fccba07893b
+  workflow 35166010334 — PASS
 
-CP-R007 checkpoint/status
-  d695329c5bf69fa6c127ae2b47dc35d99227631b
-  workflow 35147172696 — PASS
+documentation-aligned implementation
+  49d0e52ee81e34ddf4152927456a4f4e4bdef665
+  workflow 35176089341 — PASS
 
 root units: 7
-stress tests: 118
+stress tests: 125
 ```
+
+Formal WP-07 closure still requires the exact checkpoint/program-state CI gate.
 
 ## Remaining dependency topology
 
 ```text
-WP-07 Human Communication          CURRENT
-   |
-   v
-WP-08 Owner Change Intake
+WP-08 Owner Change Intake             CONDITIONAL AFTER CP-R008 CI
    |
    v
 WP-09 End-to-end Certification
@@ -152,14 +153,14 @@ PR #396 remains draft until:
 [x] generated report reconciliation
 [x] operational GitHub projection — CP-R006
 [x] scoped procedural QRV quality system — CP-R007
-[ ] plain-language Owner communication
+[~] plain-language Owner communication — CP-R008 written, exact-head CI pending
 [ ] Owner change-intake projection
 [ ] lifecycle cold-start/certification matrix
 [ ] A -> B -> C zero-chat relay
 [ ] schema/template/validator/renderer/docs audit
 [ ] final exact-head generic CI
-[x] V2 untouched through WP-06
-[x] no downstream-specific logic through WP-06
+[x] V2 untouched through WP-07 implementation
+[x] no downstream-specific logic through WP-07 implementation
 ```
 
 Do not merge automatically.
