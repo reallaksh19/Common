@@ -13,11 +13,11 @@ WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
 WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
 WP-07 Human Communication                           DELIVERED — CP-R008
-WP-08 Owner Change Intake                           DELIVERED PENDING CP-R009 EXACT-HEAD CI
-WP-09 End-to-end Relay Certification Matrix         CONDITIONAL NEXT FRONTIER
+WP-08 Owner Change Intake                           DELIVERED — CP-R009
+WP-09 End-to-end Relay Certification Matrix         CURRENT FRONTIER
 ```
 
-WP-08 content acceptance is complete. Formal closure and the WP-09 frontier require corrected workflow PASS on the exact head containing CP-R009 and this architecture reconciliation.
+CP-R009 checkpoint/status verification passed workflow **35188484127** on `2edfa74b0e27f88e895354211a4a4ed2c8d09e91`, including compile, 7 root units and 131 synthetic stress tests.
 
 Conversation is acceleration, never custody.
 
@@ -159,12 +159,16 @@ For a current applied Owner mutation, conformance requires:
 
 A CAPTURED ODR may be rendered for discussion but cannot claim a post-change frontier or applied status. Derived current-EP dispositions are `NO_ACTIVE_EP | PENDING_OWNER_CHANGE | INVALIDATED | RECONCILE_REQUIRED | CONTINUE_UNCHANGED`; `UNCLASSIFIED` fails an applied current change.
 
-WP-08 pre-checkpoint evidence:
+WP-08 evidence:
 
 ```text
 documentation-aligned implementation
   fb5e0b15f25884793e38ba694505b748acaf84fd
   workflow 35188301698 — PASS
+
+CP-R009 checkpoint/status
+  2edfa74b0e27f88e895354211a4a4ed2c8d09e91
+  workflow 35188484127 — PASS
 
 root units: 7
 stress tests: 131
@@ -173,7 +177,7 @@ stress tests: 131
 ## Remaining target layers
 
 ```text
-WP-09 End-to-end A -> B -> C certification         CONDITIONAL NEXT
+WP-09 End-to-end A -> B -> C certification         CURRENT
 WP-10 self-consistency audit                       WAITING
 WP-11 PR readiness; never automatic merge          WAITING
 ```
@@ -198,7 +202,7 @@ Existing plan/join/replan/drift namespaces remain unchanged.
 
 ## Defining release proof
 
-WP-09 remains `AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C`. Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, progress, staleness and exact next work from repository state alone and obtain current independent certification. If prior conversation is materially required, V2.5 fails.
+WP-09 is now current and remains the defining release proof: `AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C`. Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, progress, staleness and exact next work from repository state alone and obtain current independent certification. If prior conversation is materially required, V2.5 fails.
 
 ## Validation evidence discipline
 
@@ -215,8 +219,8 @@ full progress/handover           COMPLETE — CP-R005
 GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
 human communication              COMPLETE — CP-R008
-owner change intake              COMPLETE PENDING CI — CP-R009
-end-to-end certification         CONDITIONAL NEXT — WP-09
+owner change intake              COMPLETE — CP-R009
+end-to-end certification         CURRENT — WP-09
 self-consistency audit           WAITING
 PR readiness                     WAITING
 ```
