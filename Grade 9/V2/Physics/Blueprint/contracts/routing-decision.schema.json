@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-routing-decision.schema.json",
+  "title": "Physics Routing Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "route_id", "topic_id", "matched_rule_id", "system_finding", "owner_override", "final_route", "evidence_metric_snapshot"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "route_id": {"type": "string", "minLength": 1},
+    "topic_id": {"type": "string", "minLength": 1},
+    "matched_rule_id": {"type": "string", "minLength": 1},
+    "system_finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recommended_route", "reason"],
+      "properties": {
+        "recommended_route": {"enum": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "owner_override": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["override_id", "mode", "requested_route", "reason"],
+          "properties": {
+            "override_id": {"type": "string", "minLength": 1},
+            "mode": {"enum": ["HARD", "SOFT"]},
+            "requested_route": {"enum": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK"]},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "final_route": {"enum": ["CORE1_FIRST", "CORE2_FIRST", "BLOCK"]},
+    "evidence_metric_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["SA", "SS", "QE", "QR", "UA", "CI"],
+      "properties": {
+        "SA": {"type": "integer", "minimum": 0, "maximum": 4},
+        "SS": {"type": "integer", "minimum": 0, "maximum": 4},
+        "QE": {"type": "integer", "minimum": 0, "maximum": 4},
+        "QR": {"type": "integer", "minimum": 0, "maximum": 4},
+        "UA": {"type": "integer", "minimum": 0, "maximum": 4},
+        "CI": {"type": "integer", "minimum": 0, "maximum": 4}
+      }
+    }
+  }
+}

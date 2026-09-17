@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-migration-gap-report.schema.json",
+  "title": "Physics Engineering Migration Gap Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "report_id",
+    "source_snapshot",
+    "target_control_plane",
+    "counts",
+    "already_reconciled",
+    "migration_gaps"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "report_id": {"type": "string", "minLength": 8},
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pr_number",
+        "head_sha",
+        "registry_git_blob_sha",
+        "schema_git_blob_sha",
+        "source_gate_count",
+        "source_registry_digest"
+      ],
+      "properties": {
+        "pr_number": {"type": "integer", "minimum": 1},
+        "head_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "registry_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "schema_git_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "source_gate_count": {"type": "integer", "minimum": 1},
+        "source_registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+      }
+    },
+    "target_control_plane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registry_ref",
+        "canonical_v3_gate_count",
+        "readiness_rule",
+        "source_self_asserted_readiness_imported",
+        "case_specific_overrides"
+      ],
+      "properties": {
+        "registry_ref": {"const": "GENERATED:physics-technical-engineering-gates.v3"},
+        "canonical_v3_gate_count": {"type": "integer", "minimum": 1},
+        "readiness_rule": {"const": "DERIVED_BY_PRODUCTION_V3_VALIDATOR"},
+        "source_self_asserted_readiness_imported": {"const": false},
+        "case_specific_overrides": {"const": "PROHIBITED"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovered_subtopic_count", "already_reconciled_count", "migration_gap_count"],
+      "properties": {
+        "discovered_subtopic_count": {"type": "integer", "minimum": 1},
+        "already_reconciled_count": {"type": "integer", "minimum": 0},
+        "migration_gap_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "already_reconciled": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["discovery_gate_id", "disposition", "v3_gate_ids", "source_gate_digest"],
+        "properties": {
+          "discovery_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "disposition": {"enum": ["EXACT_V3_ID", "MAPPED_V3"]},
+          "v3_gate_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
+          },
+          "source_gate_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "migration_gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "discovery_gate_id",
+          "source_gate_digest",
+          "curriculum",
+          "source_authority",
+          "preserved_source_fields",
+          "discarded_source_control_fields",
+          "blocked_by",
+          "promotion_status",
+          "promotion_authorized"
+        ],
+        "properties": {
+          "discovery_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "source_gate_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "curriculum": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cbse_ref", "jee_tier"],
+            "properties": {
+              "cbse_ref": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["grade", "chapter"],
+                "properties": {
+                  "grade": {"type": "integer", "minimum": 1},
+                  "chapter": {"type": "string", "minLength": 1},
+                  "section": {"type": "string"}
+                }
+              },
+              "jee_tier": {"enum": ["NOT_IN_JEE", "JEE_MAINS", "JEE_ADVANCED", "BOTH"]}
+            }
+          },
+          "source_authority": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["authority_tier", "provenance"],
+            "properties": {
+              "authority_tier": {"enum": ["SOURCE-DEFINED", "STANDARD-PHYSICS-DERIVED", "AUTHORING-RECOMMENDATION", "SOURCE_SCOPE_HELD"]},
+              "provenance": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["authority_class", "source_curriculum", "source_scope", "source_reference", "claim_status"],
+                "properties": {
+                  "authority_class": {"enum": ["SOURCE-DEFINED", "STANDARD-PHYSICS-DERIVED", "AUTHORING-RECOMMENDATION", "SOURCE_SCOPE_HELD"]},
+                  "source_curriculum": {"type": "string", "minLength": 1},
+                  "source_scope": {"enum": ["IN_SCOPE", "OUT_OF_SCOPE", "PREREQUISITE_SCOPE", "HELD_SCOPE"]},
+                  "source_reference": {"type": "string", "minLength": 1},
+                  "claim_status": {"enum": ["VERIFIED_CANONICAL", "PROVISIONAL", "DERIVED"]}
+                }
+              }
+            }
+          },
+          "preserved_source_fields": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "discarded_source_control_fields": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "uniqueItems": true,
+            "items": {"enum": ["technical_readiness", "release_checklist"]}
+          },
+          "blocked_by": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "V3_SCOPE_STATE_REVIEW_REQUIRED",
+                "V3_APPLICABLE_CORES_REQUIRED",
+                "V3_REQUIRED_INVARIANT_PROFILE_REQUIRED",
+                "V3_RELATION_SYMBOL_SEMANTICS_REQUIRED",
+                "V3_MODEL_CONDITION_BINDINGS_REQUIRED",
+                "V3_REPRESENTATION_SEMANTIC_BINDINGS_REQUIRED",
+                "V3_REASONING_DEPENDENCY_BINDINGS_REQUIRED",
+                "V3_TRANSFORMATION_STABLE_IDS_REQUIRED",
+                "V3_MISCONCEPTION_REPRESENTATION_REPAIR_REQUIRED",
+                "V3_PROBLEM_FAMILY_TECHNICAL_BINDINGS_REQUIRED",
+                "V3_FALSIFICATION_STABLE_FAILURE_CODES_REQUIRED"
+              ]
+            }
+          },
+          "promotion_status": {"const": "BLOCKED_PENDING_V3_ENRICHMENT"},
+          "promotion_authorized": {"const": false}
+        }
+      }
+    }
+  }
+}

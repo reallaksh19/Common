@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-closure-receipt.schema.json",
+  "title": "Engineering Gate Closure Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","receipt_id","request_id","manifest_id","manifest_digest","registry_ref","gate_extension_refs","registry_digest","closure_digest","scoped_closure_digest","direct_gate_ids","transitive_gate_ids","gate_states","blockers","counts","closure_status","source_item_status","authority_note"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
+    "manifest_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_ref": {"type": "string", "minLength": 1},
+    "gate_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "scoped_closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "direct_gate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/gate_id"}},
+    "transitive_gate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/gate_id"}},
+    "gate_states": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["gate_id","status","direct"], "properties": {"gate_id": {"$ref": "#/$defs/gate_id"}, "status": {"enum": ["ENGINEERING_GATE_READY","ENGINEERING_GATE_INCOMPLETE","SOURCE_SCOPE_HELD","MISSING"]}, "direct": {"type": "boolean"}}}},
+    "blockers": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["code","message"], "properties": {"code": {"enum": ["E_ENG_GATE_MISSING","E_ENG_GATE_NOT_READY","E_ENG_RESEARCH_DOSSIER_REQUIRED","E_ENG_CLAIM_LEDGER_REQUIRED","E_ENG_RESEARCH_DOSSIER_INVALID","E_ENG_CLAIM_LEDGER_INVALID"]}, "gate_id": {"$ref": "#/$defs/gate_id"}, "message": {"type": "string", "minLength": 1}}}},
+    "counts": {"type": "object", "additionalProperties": false, "required": ["direct_gate_count","transitive_gate_count","ready_gate_count","blocked_gate_count"], "properties": {"direct_gate_count": {"type": "integer", "minimum": 0}, "transitive_gate_count": {"type": "integer", "minimum": 0}, "ready_gate_count": {"type": "integer", "minimum": 0}, "blocked_gate_count": {"type": "integer", "minimum": 0}}},
+    "closure_status": {"enum": ["READY", "BLOCKED"]},
+    "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
+    "authority_note": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "gate_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$"}
+  }
+}

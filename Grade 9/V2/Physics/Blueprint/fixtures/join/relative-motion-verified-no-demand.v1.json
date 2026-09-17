@@ -1,0 +1,1 @@
+{"join_id":"J-PHY-M2D-RELATIVE-STRESS-001","topic_id":"PHY-M2D","core1_packet_ref":"SCOPED:PHY-M2D-RELATIVE-VELOCITY:SEMANTIC","core2_packet_ref":"SCOPED:PHY-M2D-RELATIVE-VELOCITY:ASSESSMENT-COVERAGE","validation_session_refs":["V-PHY-M2D-RELATIVE-STRESS"],"knowledge_claims":[{"claim_ref":"K-PHY-M2D-RELATIVE-VELOCITY"}],"demand_claims":[],"reconciliations":[]}

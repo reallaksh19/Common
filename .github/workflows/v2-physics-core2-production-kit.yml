@@ -1,0 +1,27 @@
+name: V2 Physics Core2
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Core2Transfer/**'
+      - 'Grade 9/V2/Physics/CoreAuthoring/**'
+      - '.github/workflows/v2-physics-core2-production-kit.yml'
+  workflow_dispatch:
+
+jobs:
+  core2-production-kit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install jsonschema
+      - name: Validate existing Core2 contracts
+        run: python 'Grade 9/V2/Physics/Core2Transfer/contracts/validate_contracts.py'
+      - name: Run existing Core2 semantic tests
+        run: python 'Grade 9/V2/Physics/Core2Transfer/tests/test_physics_core2_transfer.py'
+      - name: Run Core2 production-kit golden fixtures
+        run: python 'Grade 9/V2/Physics/Core2Transfer/production_kit/run_golden_fixtures.py'
+      - name: Run Core2 production-kit tests
+        run: python 'Grade 9/V2/Physics/Core2Transfer/tests/test_physics_core2_production_kit.py'

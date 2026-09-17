@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/v2/shared/agent-tasks/execution-packet.schema.json",
+  "title": "ExecutionPacket",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task",
+    "repository_state",
+    "task_kind_contract",
+    "authority_bindings",
+    "learning_engineering_state",
+    "engineering_preflight",
+    "packet_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "task": {"$ref": "execution-task.schema.json"},
+    "repository_state": {
+      "type": "object",
+      "required": ["repository", "resolved_head", "target_ref", "working_tree_state"],
+      "properties": {
+        "repository": {"type": "string", "minLength": 1},
+        "resolved_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "target_ref": {"type": "string", "minLength": 1},
+        "working_tree_state": {"enum": ["CLEAN", "DIRTY", "UNKNOWN"]}
+      },
+      "additionalProperties": false
+    },
+    "task_kind_contract": {
+      "type": "object",
+      "required": ["task_kind", "promotion_policy", "allowed_change_classes", "required_authority_classes", "required_outputs", "blueprint_change_policy"],
+      "properties": {
+        "task_kind": {"type": "string"},
+        "promotion_policy": {"enum": ["NO_PROMOTION", "DEFER_TO_BOUND_AUTHORITY"]},
+        "allowed_change_classes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "required_authority_classes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "required_outputs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "blueprint_change_policy": {"const": "PROHIBITED_REQUIRES_NEW_INVARIANT_TASK"}
+      },
+      "additionalProperties": false
+    },
+    "authority_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["authority_class", "path", "sha256"],
+        "properties": {
+          "authority_class": {"type": "string", "minLength": 1},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "learning_engineering_state": {
+      "type": "object",
+      "required": ["roadmap_id", "authority_state", "bulk_population_allowed", "module_status_counts", "subject_adapter"],
+      "properties": {
+        "roadmap_id": {"type": "string"},
+        "authority_state": {"type": "string"},
+        "bulk_population_allowed": {"type": "boolean"},
+        "module_status_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        },
+        "subject_adapter": {
+          "type": "object",
+          "required": ["subject", "status", "runtime_authority", "current_authority_manifest_ref"],
+          "properties": {
+            "subject": {"type": "string"},
+            "status": {"type": "string"},
+            "runtime_authority": {"type": "boolean"},
+            "current_authority_manifest_ref": {"type": "string"},
+            "generation_authority_scope": {
+              "type": "object",
+              "required": ["task_grade", "declared_grades", "grade_state"],
+              "properties": {
+                "task_grade": {"type": "integer", "minimum": 1},
+                "declared_grades": {
+                  "type": "array",
+                  "items": {"type": "integer", "minimum": 1},
+                  "uniqueItems": true
+                },
+                "grade_state": {"enum": ["MATCH", "MISMATCH", "UNDECLARED"]}
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "engineering_preflight": {
+      "type": "object",
+      "required": ["engineering_state", "research_state", "consumer_permissions", "publication_authorization", "blockers", "next_action"],
+      "properties": {
+        "engineering_state": {"const": "NOT_EVALUATED"},
+        "research_state": {"enum": ["NOT_EVALUATED", "NOT_REQUIRED"]},
+        "consumer_permissions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["status", "reason"],
+            "properties": {
+              "status": {"const": "NOT_EVALUATED"},
+              "reason": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "publication_authorization": {"const": "NOT_IMPLIED"},
+        "blockers": {"type": "array", "items": {"type": "string"}},
+        "next_action": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

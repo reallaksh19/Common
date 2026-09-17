@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2a-challenge-item.schema.json",
+  "title": "Physics Core2A Generated Original Challenge",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "item_id",
+    "schema_version",
+    "subject",
+    "lane",
+    "purpose",
+    "challenge_id",
+    "anchor_question_ref",
+    "bucket_id",
+    "problem_family_ref",
+    "archetype",
+    "prompt",
+    "required_capability_refs",
+    "receipt_refs",
+    "learner_support",
+    "answer_path",
+    "physics_validation",
+    "near_copy_check",
+    "provenance"
+  ],
+  "properties": {
+    "item_id": {"type": "string", "pattern": "^PHY-C2A-CH-"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "lane": {"const": "GENERATED_ORIGINAL"},
+    "purpose": {
+      "enum": ["FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"]
+    },
+    "challenge_id": {"type": "string", "minLength": 1},
+    "anchor_question_ref": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "problem_family_ref": {"type": "string", "pattern": "^PF-"},
+    "archetype": {
+      "enum": [
+        "GUIDED_DIRECT",
+        "NEAR_TRANSFER",
+        "REVERSED_TARGET",
+        "HIDDEN_INFORMATION",
+        "REPRESENTATION_SHIFT",
+        "EVENT_CONSTRAINT",
+        "PARAMETER_CONSTRAINT",
+        "ERROR_DIAGNOSIS",
+        "COMPARE_RANK",
+        "MULTI_STEP_BRIDGE",
+        "MIXED_SYNTHESIS"
+      ]
+    },
+    "prompt": {"type": "string", "minLength": 12},
+    "required_capability_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "receipt_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "learner_support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["try_it_first", "small_clue", "bigger_clue", "how_do_i_start"],
+      "properties": {
+        "try_it_first": {"const": true},
+        "small_clue": {"type": "string", "minLength": 1},
+        "bigger_clue": {"type": "string", "minLength": 1},
+        "how_do_i_start": {"type": "string", "minLength": 1}
+      }
+    },
+    "answer_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canonical_answer", "full_working", "quick_check"],
+      "properties": {
+        "canonical_answer": {"type": "string", "minLength": 1},
+        "full_working": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "quick_check": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "physics_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "validator_type",
+        "computed_value",
+        "computed_unit",
+        "independent_recompute",
+        "dimension_check",
+        "unit_check",
+        "vector_frame_check",
+        "event_constraint_check",
+        "physical_domain_check",
+        "limit_sanity_check",
+        "answer_equivalence_check",
+        "status"
+      ],
+      "properties": {
+        "validator_type": {"type": "string", "minLength": 1},
+        "independent_recompute": {"const": "PASS"},
+        "dimension_check": {"const": "PASS"},
+        "unit_check": {"const": "PASS"},
+        "vector_frame_check": {"const": "PASS"},
+        "event_constraint_check": {"const": "PASS"},
+        "physical_domain_check": {"const": "PASS"},
+        "limit_sanity_check": {"const": "PASS"},
+        "answer_equivalence_check": {"const": "PASS"},
+        "status": {"const": "PASS"},
+        "computed_value": {"type": "number"},
+        "computed_unit": {"type": "string", "minLength": 1}
+      }
+    },
+    "near_copy_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "closest_source_question_ref",
+        "max_sequence_ratio",
+        "max_token_jaccard",
+        "exact_copy",
+        "status"
+      ],
+      "properties": {
+        "closest_source_question_ref": {"type": "string", "minLength": 1},
+        "max_sequence_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "max_token_jaccard": {"type": "number", "minimum": 0, "maximum": 1},
+        "exact_copy": {"const": false},
+        "status": {"const": "PASS"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin",
+        "learner_label",
+        "fresh_original",
+        "official_past_question_claim",
+        "construction_refs"
+      ],
+      "properties": {
+        "origin": {"const": "GENERATED_ORIGINAL"},
+        "learner_label": {"const": "WHERE THIS QUESTION CAME FROM"},
+        "fresh_original": {"const": true},
+        "official_past_question_claim": {"const": false},
+        "construction_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

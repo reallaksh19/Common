@@ -1,0 +1,36 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A5-REPRESENTATION-CANDIDATES-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A5_REPRESENTATION_CANDIDATES",
+  "evidence_kind": "REPRESENTATION_CANDIDATE_SET",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/representation-design-study.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json"
+  ],
+  "artifact_refs": [
+    "CAND-SBA04-STAGED-TRAJECTORY-FIRST",
+    "CAND-SBA04-COMPONENT-CONSTRUCTION-FIRST",
+    "CAND-SBA04-STATE-TABLE-FIRST"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/representation-design-study.v1.json#candidates",
+    "topics/m2d-sba04-design/representation-design-study.v1.json#selection_criteria"
+  ],
+  "proof": {
+    "candidate_ids": [
+      "CAND-SBA04-STAGED-TRAJECTORY-FIRST",
+      "CAND-SBA04-COMPONENT-CONSTRUCTION-FIRST",
+      "CAND-SBA04-STATE-TABLE-FIRST"
+    ],
+    "rejected_candidate_ids": ["CAND-SBA04-STATE-TABLE-FIRST"],
+    "selection_criteria_refs": [
+      "CRIT-SBA04-NOVICE-NOTICING",
+      "CRIT-SBA04-PWSE-TRANSLATION",
+      "CRIT-SBA04-MISCONCEPTION-RESISTANCE",
+      "CRIT-SBA04-CROSS-ATOM-COHERENCE"
+    ]
+  },
+  "unresolved_requirements": []
+}

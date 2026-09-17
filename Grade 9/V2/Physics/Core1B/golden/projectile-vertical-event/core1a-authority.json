@@ -1,0 +1,14 @@
+{
+  "schema_version":"1.0.0",
+  "authority_ref":"C1A-REL-PHY-M2D-SBA04-PROCESS-001",
+  "release_state":"RELEASED",
+  "provenance_class":"PROCESS_GOLDEN",
+  "topic_id":"PHY-M2D",
+  "bucket_id":"M2D-SBA-04",
+  "capability_id":"PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+  "problem_family_refs":["PF-PROJECTILE-VERTICAL-EVENT"],
+  "model_validity_required":true,
+  "explanation_required":true,
+  "allowed_atom_refs":["PHY-A-DIR-01","PHY-A-SIGN-01","PHY-A-VEL-01","PHY-A-ACC-01","PHY-A-ACC-02","PHY-A-CONSTACC-01","PHY-A-TIME-01","PHY-A-COMP-01","PHY-A-GRAV-01","PHY-A-INDEP-01","PHY-A-TABLE-01","PHY-A-GRAPH-01","PHY-A-SLOPE-01","PHY-A-SYM-01","PHY-A-EQ-01"],
+  "authority_digest":"74c5923e987ba03822146360da13e30ab0e57abb5e2b65e51a4750b8ffec1db7"
+}

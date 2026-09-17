@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "design_study_id": "M2D-SBA04-REPRESENTATION-DESIGN-STUDY-V1",
+  "bucket_id": "M2D-SBA-04",
+  "authority_class": "CORE1A_AUTHORING_DESIGN_DECISION",
+  "requirement_receipt_ref": "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+  "selection_criteria": [
+    {
+      "criterion_id": "CRIT-SBA04-NOVICE-NOTICING",
+      "question": "Does the representation make the high-fragility state change or relation perceptually explicit before algebra?"
+    },
+    {
+      "criterion_id": "CRIT-SBA04-PWSE-TRANSLATION",
+      "question": "Can the representation support a controlled picture-to-word-to-symbol-to-equation translation?"
+    },
+    {
+      "criterion_id": "CRIT-SBA04-MISCONCEPTION-RESISTANCE",
+      "question": "Does the representation visibly contradict the dominant SBA04 misconceptions rather than merely annotate them?"
+    },
+    {
+      "criterion_id": "CRIT-SBA04-CROSS-ATOM-COHERENCE",
+      "question": "Can the representation family preserve one coherent mental model across velocity evolution, direction, speed, symmetry, perpendicularity and height-based speed?"
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "CAND-SBA04-STAGED-TRAJECTORY-FIRST",
+      "representation_refs": [
+        "REP-M2D-VELOCITY-STAGE-TIMELINE",
+        "REP-M2D-SAME-HEIGHT-PAIR",
+        "REP-M2D-SPEED-AT-HEIGHT"
+      ],
+      "strengths": [
+        "Makes rising-apex-falling state change and signed vertical velocity visible before equations.",
+        "Supports equal-height and height-origin comparisons in the same trajectory geometry.",
+        "Provides a stable picture layer from which component symbols and equations can be introduced."
+      ],
+      "limitations": [
+        "Direction, magnitude and perpendicular constraints still require local component constructions."
+      ],
+      "criterion_assessment": {
+        "CRIT-SBA04-NOVICE-NOTICING": "STRONG",
+        "CRIT-SBA04-PWSE-TRANSLATION": "STRONG",
+        "CRIT-SBA04-MISCONCEPTION-RESISTANCE": "STRONG",
+        "CRIT-SBA04-CROSS-ATOM-COHERENCE": "STRONG"
+      },
+      "decision_state": "SELECT_PRIMARY_FAMILY"
+    },
+    {
+      "candidate_id": "CAND-SBA04-COMPONENT-CONSTRUCTION-FIRST",
+      "representation_refs": [
+        "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+        "REP-M2D-SPEED-TRIANGLE",
+        "REP-M2D-PERP-VELOCITY-PAIR"
+      ],
+      "strengths": [
+        "Strong local bridge from vector geometry to signed components and equations.",
+        "Directly supports direction, speed magnitude and dot-product constraints."
+      ],
+      "limitations": [
+        "A local triangle-first sequence can hide the temporal rising-apex-falling state model if used as the global primary representation."
+      ],
+      "criterion_assessment": {
+        "CRIT-SBA04-NOVICE-NOTICING": "MIXED",
+        "CRIT-SBA04-PWSE-TRANSLATION": "STRONG",
+        "CRIT-SBA04-MISCONCEPTION-RESISTANCE": "STRONG",
+        "CRIT-SBA04-CROSS-ATOM-COHERENCE": "MIXED"
+      },
+      "decision_state": "SELECT_SECONDARY_FAMILY"
+    },
+    {
+      "candidate_id": "CAND-SBA04-STATE-TABLE-FIRST",
+      "representation_refs": ["AUTHORING-CANDIDATE:SBA04-STATE-TABLE"],
+      "strengths": [
+        "Compactly compares v_x, v_y, speed and direction across named states."
+      ],
+      "limitations": [
+        "Compresses trajectory geometry, tangent direction, right-angle relations and height origin into labels rather than perceptual structure.",
+        "Encourages lookup before reconstruction for the 20-percent foundation pathway."
+      ],
+      "criterion_assessment": {
+        "CRIT-SBA04-NOVICE-NOTICING": "WEAK",
+        "CRIT-SBA04-PWSE-TRANSLATION": "MIXED",
+        "CRIT-SBA04-MISCONCEPTION-RESISTANCE": "WEAK",
+        "CRIT-SBA04-CROSS-ATOM-COHERENCE": "MIXED"
+      },
+      "decision_state": "REJECT_AS_PRIMARY"
+    }
+  ],
+  "decision": {
+    "primary_candidate_id": "CAND-SBA04-STAGED-TRAJECTORY-FIRST",
+    "secondary_candidate_id": "CAND-SBA04-COMPONENT-CONSTRUCTION-FIRST",
+    "rejected_candidate_ids": ["CAND-SBA04-STATE-TABLE-FIRST"],
+    "primary_representation_id": "REP-M2D-VELOCITY-STAGE-TIMELINE",
+    "secondary_representation_ids": [
+      "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+      "REP-M2D-SPEED-TRIANGLE",
+      "REP-M2D-SAME-HEIGHT-PAIR",
+      "REP-M2D-PERP-VELOCITY-PAIR",
+      "REP-M2D-SPEED-AT-HEIGHT"
+    ],
+    "rationale": "Use the staged trajectory timeline as the global novice-facing spine because it exposes the state evolution and apex distinction before algebra; attach component constructions locally where direction, magnitude, perpendicularity, symmetry and height constraints require stronger mathematical geometry. The state table may be used only as a later consolidation view, not as the primary teaching representation."
+  }
+}

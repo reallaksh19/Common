@@ -1,0 +1,21 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core2-transfer-representation.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","representation_id","task","source_contract_ref","answer_contract_ref","source_body","figure_semantics","core1_link","first_step_reference","hints","representation_stages","solution","verification"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "representation_id":{"type":"string","pattern":"^CORE2-TR-"},
+    "task":{"type":"object"},
+    "source_contract_ref":{"type":"string","pattern":"^CORE2-SRC-"},
+    "answer_contract_ref":{"type":"string","pattern":"^CORE2-ANS-"},
+    "source_body":{"type":"object","additionalProperties":false,"required":["stem","options"],"properties":{"stem":{"type":"string"},"options":{"type":"array","items":{"type":"string"}}}},
+    "figure_semantics":{"type":"array","items":{"type":"string"}},
+    "core1_link":{"type":"object","additionalProperties":false,"required":["lesson_ref","capability_ref"],"properties":{"lesson_ref":{"type":"string"},"capability_ref":{"type":"string"}}},
+    "first_step_reference":{"type":"string","minLength":1},
+    "hints":{"type":"array","minItems":3,"maxItems":3,"items":{"type":"object","additionalProperties":false,"required":["level","text"],"properties":{"level":{"enum":["H1_NOTICE","H2_MODEL","H3_START"]},"text":{"type":"string","minLength":1}}}},
+    "representation_stages":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}},
+    "solution":{"type":"array","minItems":2,"items":{"type":"string","minLength":1}},
+    "verification":{"type":"array","minItems":1,"items":{"type":"string","minLength":1}}
+  }
+}

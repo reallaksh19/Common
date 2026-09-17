@@ -1,1 +1,63 @@
-{"$id":"physics-cold-start-comparison.schema.json","$schema":"https://json-schema.org/draft/2020-12/schema","additionalProperties":false,"properties":{"comparison_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},"comparison_id":{"minLength":1,"type":"string"},"expected_differences":{"additionalProperties":false,"properties":{"core1_plan_digest_differs":{"type":"boolean"},"study_model_digest_differs":{"type":"boolean"}},"required":["study_model_digest_differs","core1_plan_digest_differs"],"type":"object"},"invariants":{"additionalProperties":false,"properties":{"declared_topic_scope_digest_identical":{"const":true},"external_corpus_digest_identical":{"const":true},"external_eligibility_identical":{"const":true},"law_truth_identical":{"const":true},"physical_model_truth_identical":{"const":true},"problem_family_truth_identical":{"const":true},"problem_semantics_identical":{"const":true},"question_set_digest_identical":{"const":true},"required_capability_set_identical":{"const":true},"required_item_set_identical":{"const":true},"scope_authority_digest_identical":{"const":true},"study_scope_digest_identical":{"const":true},"two_product_topology_identical":{"const":true}},"required":["question_set_digest_identical","declared_topic_scope_digest_identical","scope_authority_digest_identical","external_corpus_digest_identical","problem_semantics_identical","study_scope_digest_identical","required_capability_set_identical","required_item_set_identical","problem_family_truth_identical","physical_model_truth_identical","law_truth_identical","external_eligibility_identical","two_product_topology_identical"],"type":"object"},"no_attempt_report_ref":{"minLength":1,"type":"string"},"schema_version":{"const":"1.0.0"},"subject":{"const":"PHYSICS"},"with_attempts_report_ref":{"minLength":1,"type":"string"}},"required":["comparison_id","schema_version","subject","no_attempt_report_ref","with_attempts_report_ref","invariants","expected_differences","comparison_digest"],"title":"Physics P-K ColdStartComparison","type":"object"}
+{
+  "$id": "physics-cold-start-comparison.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Physics P-K ColdStartComparison",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "comparison_id", "schema_version", "subject", "no_attempt_report_ref",
+    "with_attempts_report_ref", "invariants", "expected_differences", "comparison_digest"
+  ],
+  "properties": {
+    "comparison_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "no_attempt_report_ref": {"type": "string", "minLength": 1},
+    "with_attempts_report_ref": {"type": "string", "minLength": 1},
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "question_set_digest_identical", "declared_topic_scope_digest_identical",
+        "scope_authority_digest_identical", "engineering_binding_registry_digest_identical",
+        "external_corpus_digest_identical", "assessment_scope_digest_identical",
+        "engineering_readiness_digest_identical", "engineering_consumer_status_identical",
+        "engineering_gate_requirement_state_identical", "problem_semantics_identical",
+        "study_scope_digest_identical", "required_capability_set_identical",
+        "required_item_set_identical", "problem_family_truth_identical",
+        "physical_model_truth_identical", "law_truth_identical",
+        "external_eligibility_identical", "two_product_topology_identical"
+      ],
+      "properties": {
+        "question_set_digest_identical": {"const": true},
+        "declared_topic_scope_digest_identical": {"const": true},
+        "scope_authority_digest_identical": {"const": true},
+        "engineering_binding_registry_digest_identical": {"const": true},
+        "external_corpus_digest_identical": {"const": true},
+        "assessment_scope_digest_identical": {"const": true},
+        "engineering_readiness_digest_identical": {"const": true},
+        "engineering_consumer_status_identical": {"const": true},
+        "engineering_gate_requirement_state_identical": {"const": true},
+        "problem_semantics_identical": {"const": true},
+        "study_scope_digest_identical": {"const": true},
+        "required_capability_set_identical": {"const": true},
+        "required_item_set_identical": {"const": true},
+        "problem_family_truth_identical": {"const": true},
+        "physical_model_truth_identical": {"const": true},
+        "law_truth_identical": {"const": true},
+        "external_eligibility_identical": {"const": true},
+        "two_product_topology_identical": {"const": true}
+      }
+    },
+    "expected_differences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study_model_digest_differs", "core1_plan_digest_differs"],
+      "properties": {
+        "study_model_digest_differs": {"type": "boolean"},
+        "core1_plan_digest_differs": {"type": "boolean"}
+      }
+    },
+    "comparison_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

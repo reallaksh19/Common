@@ -1,0 +1,39 @@
+{
+  "$id": "skp-verification-route.prototype.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Verification Route Prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prototype_only", "verification_route_id", "skp_ref", "target_refs", "checks", "source_refs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "prototype_only": {"const": true},
+    "verification_route_id": {"type": "string", "pattern": "^VERIFY-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "target_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "check_kind", "statement", "relation_refs", "independent_of_primary_route", "independence_rationale", "evidence_refs", "source_check_ref"],
+        "properties": {
+          "check_id": {"type": "string", "pattern": "^CHECK-[A-Z0-9][A-Z0-9_-]*$"},
+          "check_kind": {"enum": ["DIMENSIONAL_CONSISTENCY", "LOGICAL_VALIDITY", "BOUNDARY_CASE", "COUNTEREXAMPLE", "CONSERVATION", "ALTERNATE_DERIVATION", "MODEL_APPLICABILITY", "REPRESENTATION_CONSISTENCY", "NUMERICAL_RECONSTRUCTION", "PHYSICAL_PLAUSIBILITY", "OTHER"]},
+          "statement": {"type": "string", "minLength": 3},
+          "acceptance_condition": {"anyOf": [{"type": "string", "minLength": 3}, {"type": "null"}]},
+          "subject_target": {"anyOf": [{"type": "string", "minLength": 2}, {"type": "null"}]},
+          "source_check_type": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+          "relation_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^REL-[A-Z0-9][A-Z0-9_-]*$"}},
+          "independent_of_primary_route": {"type": "boolean"},
+          "independence_rationale": {"type": "string", "minLength": 5},
+          "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+          "source_check_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+        }
+      }
+    },
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+    "source_route_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+  }
+}

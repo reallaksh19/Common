@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "PHY-COLDSTART-ENGINEERING-SCOPE-BINDINGS-v1",
+  "subject": "PHYSICS",
+  "scope_authority_ref": "Grade 9/V2/Physics/AssessmentScope/authority/physics-assessment-scope-authority.json",
+  "scope_authority_id": "PHY-G9-ASSESSMENT-SCOPE-AUTHORITY-v1",
+  "scope_authority_digest": "b3f7293e89ee917553b0d93534f51f525f1cb30130f777f12ebaa97c7779adc8",
+  "engineering_registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+  "bindings": [
+    {"capability_ref":"PHY-CAP-FRAME-SIGN-SETUP","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope already owns the canonical frame/sign capability identity and validates every item binding that requires it; no separate v3 technical gate currently adds independent domain obligations."},
+    {"capability_ref":"PHY-CAP-MODEL-VALIDITY-CHECK","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope explicitly binds model-validity conditions and unresolved behavior; no dedicated v3 gate exists for this cross-cutting meta-capability."},
+    {"capability_ref":"PHY-CAP-REPRESENTATION-TRANSLATE","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope owns the canonical representation-demand identity at this phase; realization choices remain downstream and no dedicated technical gate is required."},
+    {"capability_ref":"PHY-CAP-STATE-PROPAGATE","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope explicitly records state variables, phase topology and continuity requirements; no separate v3 technical gate exists for the generic state-propagation capability."},
+    {"capability_ref":"PHY-CAP-DISTANCE-DISPLACEMENT","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority defines and validates this elementary kinematics capability; the v3 Engineering registry has no dedicated distance/displacement gate."},
+    {"capability_ref":"PHY-CAP-AVERAGE-SPEED-EQUAL-DISTANCE","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority defines and validates this elementary average-speed capability; the v3 Engineering registry has no dedicated gate for it."},
+    {"capability_ref":"PHY-CAP-UNIFORM-ACCELERATION","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority owns the uniform-acceleration capability and its model conditions; no dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-NTH-SECOND-INTERVAL","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority owns the interval interpretation and prerequisite closure; no dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-FIRST-EQUATION","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority owns the first-equation capability plus model-validity prerequisites; no dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-FREE-FALL-CONSTANT-G","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority explicitly binds constant-g and no-drag assumptions; existing gravitation gates address gravitational field/force rather than this elementary kinematics capability."},
+    {"capability_ref":"PHY-CAP-VERTICAL-PROJECTION","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority owns this one-dimensional projection capability; no exact dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-VT-SIGNED-AREA","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope authority owns the graph-operation demand and verification obligations; no exact dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-MOVING-RELEASE","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current AssessmentScope capability is broader/different from the existing 2D moving-launcher gate; it remains on upstream authority rather than being over-mapped to a non-equivalent gate."},
+    {"capability_ref":"PHY-CAP-MULTIPHASE-KINEMATICS","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope explicitly binds multiphase topology and state handoff; no exact generic multiphase v3 gate currently exists."},
+    {"capability_ref":"PHY-CAP-RELATIVE-ACCELERATION-SAME-G","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"The current capability concerns same-g relative acceleration and is not semantically identical to the 2D relative-velocity gate; no false equivalence is promoted."},
+    {"capability_ref":"PHY-CAP-XT-SLOPE-VELOCITY","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope owns the x-t slope graph operation and associated verification; no dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-GRAPH-ACCELERATION","authority_route":"UPSTREAM_SCOPE_AUTHORITY","engineering_gate_ids":[],"rationale":"AssessmentScope owns the graph-acceleration semantics and verification obligations; no dedicated v3 technical gate currently exists."},
+    {"capability_ref":"PHY-CAP-PROJECTILE-COMPONENTS","authority_route":"ENGINEERING_GATE","engineering_gate_ids":["PHY-M2D-PROJECTILE-COMPONENTS"],"rationale":"This capability has an exact active v3 technical gate with model conditions, component relations, representations and reasoning-sequence obligations."}
+  ],
+  "registry_digest": "450b54c3457ae3122966eb009e5b5092524059744be21d8e8aa54eabd0fcbabb"
+}

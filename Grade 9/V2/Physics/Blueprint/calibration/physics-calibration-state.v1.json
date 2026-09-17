@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0.0",
+  "state_id": "PHY-CAL-STATE-V1",
+  "duplication": {
+    "maturity": "ENGINEERING",
+    "evidence_refs": [],
+    "held_out_evaluation": {"status": "NOT_STARTED"},
+    "validated_policy_ref": null,
+    "approval_ref": null,
+    "notes": "Current lexical/structural thresholds are review heuristics only. Deterministic custody/fingerprint rules may still block."
+  },
+  "difficulty": {
+    "maturity": "ENGINEERING",
+    "evidence_refs": [],
+    "held_out_evaluation": {"status": "NOT_STARTED"},
+    "validated_policy_ref": null,
+    "approval_ref": null,
+    "notes": "SDU 0-3 profiles are authoring-governance heuristics, not empirical item difficulty."
+  },
+  "learner_fit": {
+    "maturity": "ENGINEERING",
+    "evidence_refs": [],
+    "held_out_evaluation": {"status": "NOT_STARTED"},
+    "validated_policy_ref": null,
+    "approval_ref": null,
+    "notes": "LAU fit labels are routing predictions until sufficient observed learner outcomes support calibration."
+  }
+}

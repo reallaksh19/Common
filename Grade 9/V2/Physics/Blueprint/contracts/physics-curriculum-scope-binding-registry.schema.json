@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-curriculum-scope-binding-registry.schema.json",
+  "title": "Physics Curriculum Scope Binding Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_id", "subject", "selector_semantics", "bindings"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "registry_id": {"const": "PHYSICS-CURRICULUM-SCOPE-BINDINGS-V1"},
+    "subject": {"const": "PHYSICS"},
+    "selector_semantics": {"const": "EXACT_GRADE_CURRICULUM_SCOPE_AND_GATE_SET"},
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["binding_id", "grade", "curriculum", "scope_kind", "scope_ref", "required_gate_ids", "classification", "authority_refs", "state"],
+        "properties": {
+          "binding_id": {"type": "string", "pattern": "^PHY-CURR-BIND-[A-Z0-9-]+$"},
+          "grade": {"type": "integer", "minimum": 1, "maximum": 13},
+          "curriculum": {"type": "string", "minLength": 1},
+          "scope_kind": {"enum": ["TOPIC", "SUBTOPIC", "BUCKET", "CASE"]},
+          "scope_ref": {"type": "string", "minLength": 1},
+          "required_gate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+          "classification": {"enum": ["CURRICULUM_REQUIRED", "CURRICULUM_DERIVED", "PREREQUISITE_BRIDGE", "COMPETITIVE_EXTENSION", "RESEARCH_EXTENSION"]},
+          "authority_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "state": {"const": "CONFIRMED"}
+        }
+      }
+    }
+  }
+}

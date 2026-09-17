@@ -1,0 +1,16 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1-production-task.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","task_id","treatment","prior_knowledge_pct","difficulty","scaffold_profile_id","required_inputs","required_outputs"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "task_id":{"type":"string","pattern":"^CORE1-TASK-"},
+    "treatment":{"enum":["FULL_LEARNING","READY_VERIFY_ONLY","PROBE_FIRST"]},
+    "prior_knowledge_pct":{"enum":[20,50]},
+    "difficulty":{"enum":["D1","D2","D3","D4"]},
+    "scaffold_profile_id":{"type":"string","minLength":1},
+    "required_inputs":{"type":"array","minItems":3,"items":{"type":"string"},"uniqueItems":true},
+    "required_outputs":{"type":"array","minItems":2,"items":{"type":"string"},"uniqueItems":true}
+  }
+}

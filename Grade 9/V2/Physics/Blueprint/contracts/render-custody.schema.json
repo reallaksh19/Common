@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-render-custody.schema.json",
+  "title": "Physics Blueprint Render Custody",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "custody_id",
+    "publication_ir_digest",
+    "renderer_name",
+    "renderer_authority",
+    "renderer_report_digest",
+    "expected_pdf_sha256"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "custody_id": {
+      "type": "string",
+      "pattern": "^RENDER-CUSTODY-"
+    },
+    "publication_ir_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "renderer_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "renderer_authority": {
+      "const": "COMPOSITION_ONLY"
+    },
+    "renderer_report_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "expected_pdf_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

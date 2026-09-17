@@ -1,0 +1,13 @@
+{
+  "schema_version": "3.0.0",
+  "binding_id": "TECH-GATE-BIND-M2D-SBA23-V3",
+  "bucket_id": "M2D-SBA-23",
+  "primary_gate_id": "PHY-M2D-MOVING-LAUNCHER",
+  "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba23-request.v1.json",
+  "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json",
+  "closure_receipt_id": "ENG-CLOSURE-M2D-SBA23-V3",
+  "scope_custody": "SCOPED_CLOSURE_DIGEST",
+  "scoped_closure_digest": "sha256:9bb2f044871dfc70abfafdfd76f203e02b3f6ceb74be5bcc128e82582e7ee2b0",
+  "aggregate_registry_custody": "PROVENANCE_ONLY",
+  "notes": "Active SBA23 technical custody binds the exact request, manifest, reachable gate content and derived closure state through scoped_closure_digest. The subject-wide registry digest remains visible provenance but unrelated Physics gate growth cannot invalidate this unchanged scope. Consumer permission remains derived by the global Engineering Gate; source/legal custody remains independent."
+}

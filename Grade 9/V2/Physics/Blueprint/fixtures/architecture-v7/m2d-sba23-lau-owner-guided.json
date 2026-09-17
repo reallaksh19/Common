@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "lau_id": "LAU-M2D-SBA23-OWNER-GUIDED-PROCESS-GOLDEN",
+  "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "selection_basis": {
+    "type": "OWNER_OVERRIDE",
+    "owner_override": {
+      "owner_ref": "OWNER-M2D-SBA23-PILOT",
+      "reason": "student knowledge percentage unavailable for design-pilot validation",
+      "support_band": "GUIDED"
+    }
+  },
+  "task_demand": {
+    "structural_distance": "LOW",
+    "representation_change": "LOW",
+    "model_discrimination": "MEDIUM",
+    "sign_or_direction_reversal": true,
+    "reversed_target": false,
+    "constraint_inversion": false,
+    "multi_step_bridge": "LOW",
+    "synthesis": "NONE",
+    "competitive_mixing": "NONE"
+  },
+  "support_decision": {
+    "support_band": "GUIDED",
+    "core2a_behavior": "representative worked exemplar with explicit recognition cue, technical representation, first move, full working and verification",
+    "core2b_behavior": "attempt-first structural sibling when legal, fixed help on recognition/representation/first move, canonical reveal after attempt",
+    "predicted_fit": "UNCERTAIN",
+    "prediction_is_psychometric_claim": false
+  },
+  "core2b_lineage": {
+    "source_relation": "STRUCTURAL_SIBLING",
+    "may_count_as_transfer_evidence": true
+  },
+  "authority_guards": {
+    "no_silent_default": true,
+    "may_rewrite_frozen_source": false,
+    "may_expand_legal_pool": false,
+    "may_manufacture_mastery": false
+  }
+}

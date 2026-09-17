@@ -1,0 +1,20 @@
+{
+  "schema_version":"1.0.0",
+  "unit_id":"PHY-C1B-M2D-SBA23-PROCESS-001",
+  "subject":"PHYSICS",
+  "bucket_id":"M2D-SBA-23",
+  "capability_id":"PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "problem_family_ref":"PF-MOVING-LAUNCHER-PROJECTILE",
+  "upstream_authority":{"core1a_release_ref":"C1A-REL-PHY-M2D-SBA23-PROCESS-001","core1a_release_digest":"10af24ce40a1fe1ba2b5af886842ea3e22b3272249c00c6f4ab7d02f7460f2d5"},
+  "atom_refs":["PHY-ML-FRAME-01","PHY-ML-ADD-01","PHY-ML-COMP-01","PHY-ML-CLOCK-01","PHY-ML-GRAV-01","PHY-ML-LIMIT-01","PHY-ML-SELECT-01"],
+  "prerequisite_skip_evidence":[],
+  "readiness_requirements":["recognise","represent","explain","applicability","model_select","first_move","finish","check"],
+  "model_validity_required":true,
+  "explanation_required":true,
+  "learner_surface":{
+    "teacher_moves":["Name the object and observer before writing a velocity.","Combine the launcher's ground velocity with the object's velocity relative to the launcher before using projectile equations.","After release, use the combined ground-frame components on one projectile clock."],
+    "worked_example":"A platform moves east at 4 m/s while a ball is projected east at 7 m/s relative to the platform. Find the ball's horizontal launch velocity in the ground frame and explain why the velocities add.",
+    "faded_task":"A cart moves east at 5 m/s. A ball is projected at 10 m/s relative to the cart, with relative components 8 m/s east and 6 m/s up. Set up the ground-frame launch components; complete the vector addition yourself.",
+    "independent_task":"A trolley moves west at 3 m/s. A ball is projected relative to the trolley with components 8 m/s east and 6 m/s up. Find the ground-frame launch components, state when Galilean velocity addition applies, and check the zero-trolley-speed limit."
+  }
+}

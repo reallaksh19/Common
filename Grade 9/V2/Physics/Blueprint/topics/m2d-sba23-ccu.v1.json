@@ -1,0 +1,200 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-23",
+  "publication_scope": "DESIGN_PILOT_ONLY",
+  "production_release_authorized": false,
+  "canonical_assets": [
+    {
+      "asset_id": "CON-ML-FRAME-NAMING-01",
+      "asset_type": "CONCEPT",
+      "canonical_content": "Every velocity is named by moving object and observation frame before use.",
+      "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "EQ-ML-GALILEAN-ADD-01",
+      "asset_type": "EQUATION",
+      "canonical_content": "v_object,ground = v_object,source + v_source,ground",
+      "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "REP-ML-VELOCITY-TRIANGLE-01",
+      "asset_type": "REPRESENTATION",
+      "canonical_content": "Head-to-tail frame velocity construction with object/frame labels.",
+      "applicable_cores": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "EQ-ML-POST-RELEASE-01",
+      "asset_type": "EQUATION_SET",
+      "canonical_content": "x=u_x t; y=u_y t-1/2 g t^2 using one post-release clock in the chosen frame.",
+      "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "MIS-ML-INHERITED-HORIZONTAL-01",
+      "asset_type": "MISCONCEPTION",
+      "canonical_content": "Ending contact does not erase inherited horizontal velocity; gravity does not cancel it.",
+      "applicable_cores": ["CORE1A", "CORE1B"]
+    },
+    {
+      "asset_id": "CHECK-ML-INVERSE-01",
+      "asset_type": "VERIFICATION",
+      "canonical_content": "Proposed ground velocity minus source velocity recovers the relative velocity.",
+      "applicable_cores": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "CHECK-ML-ZERO-SOURCE-01",
+      "asset_type": "VERIFICATION",
+      "canonical_content": "As source speed tends to zero, the launch state reduces to the ordinary source-relative projectile launch state.",
+      "applicable_cores": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]
+    },
+    {
+      "asset_id": "SRC-M23-Q15",
+      "asset_type": "FROZEN_SOURCE_QUESTION",
+      "canonical_content": "Q15 — Moving launch source; exact prompt/solution/source hints unresolved.",
+      "applicable_cores": ["CORE2", "CORE2A", "CORE2B"]
+    }
+  ],
+  "coverage_matrix": [
+    {"asset_id":"CON-ML-FRAME-NAMING-01","core":"CORE1","disposition":"REQUIRED","realization_ref":"Core1:compact-frame-notation"},
+    {"asset_id":"CON-ML-FRAME-NAMING-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:frame-language"},
+    {"asset_id":"CON-ML-FRAME-NAMING-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:frame-reconstruction","parent_asset_id":"CON-ML-FRAME-NAMING-01","transformation_ref":"GENERATION"},
+    {"asset_id":"CON-ML-FRAME-NAMING-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:setup-extraction"},
+    {"asset_id":"CON-ML-FRAME-NAMING-01","core":"CORE2B","disposition":"TRANSFORMED","realization_ref":"C2B-PTTU:model-selection","parent_asset_id":"CON-ML-FRAME-NAMING-01","transformation_ref":"SELECTION"},
+
+    {"asset_id":"EQ-ML-GALILEAN-ADD-01","core":"CORE1","disposition":"REQUIRED","realization_ref":"Core1:minimum-relation"},
+    {"asset_id":"EQ-ML-GALILEAN-ADD-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:derive-and-interpret"},
+    {"asset_id":"EQ-ML-GALILEAN-ADD-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:reconstruct-relation","parent_asset_id":"EQ-ML-GALILEAN-ADD-01","transformation_ref":"DERIVATION_CONNECTION"},
+    {"asset_id":"EQ-ML-GALILEAN-ADD-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:worked-model-selection"},
+    {"asset_id":"EQ-ML-GALILEAN-ADD-01","core":"CORE2B","disposition":"TRANSFORMED","realization_ref":"C2B-PTTU:independent-model-selection","parent_asset_id":"EQ-ML-GALILEAN-ADD-01","transformation_ref":"TRANSFER"},
+
+    {"asset_id":"REP-ML-VELOCITY-TRIANGLE-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:complete-vector-triangle"},
+    {"asset_id":"REP-ML-VELOCITY-TRIANGLE-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:learner-generated-vector-triangle","parent_asset_id":"REP-ML-VELOCITY-TRIANGLE-01","transformation_ref":"GENERATION"},
+    {"asset_id":"REP-ML-VELOCITY-TRIANGLE-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:expert-representation"},
+    {"asset_id":"REP-ML-VELOCITY-TRIANGLE-01","core":"CORE2B","disposition":"TRANSFORMED","realization_ref":"C2B-PTTU:representation-selection","parent_asset_id":"REP-ML-VELOCITY-TRIANGLE-01","transformation_ref":"SELECTION"},
+
+    {"asset_id":"EQ-ML-POST-RELEASE-01","core":"CORE1","disposition":"REQUIRED","realization_ref":"Core1:post-release-equations"},
+    {"asset_id":"EQ-ML-POST-RELEASE-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:one-clock-model"},
+    {"asset_id":"EQ-ML-POST-RELEASE-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:one-clock-diagnosis","parent_asset_id":"EQ-ML-POST-RELEASE-01","transformation_ref":"DIAGNOSIS"},
+    {"asset_id":"EQ-ML-POST-RELEASE-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:convert-then-event"},
+    {"asset_id":"EQ-ML-POST-RELEASE-01","core":"CORE2B","disposition":"TRANSFORMED","realization_ref":"C2B-PTTU:two-stage-transfer","parent_asset_id":"EQ-ML-POST-RELEASE-01","transformation_ref":"TRANSFER"},
+
+    {"asset_id":"MIS-ML-INHERITED-HORIZONTAL-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:misconception-contrast"},
+    {"asset_id":"MIS-ML-INHERITED-HORIZONTAL-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:misconception-diagnosis","parent_asset_id":"MIS-ML-INHERITED-HORIZONTAL-01","transformation_ref":"DIAGNOSIS"},
+
+    {"asset_id":"CHECK-ML-INVERSE-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:inverse-check"},
+    {"asset_id":"CHECK-ML-INVERSE-01","core":"CORE1B","disposition":"REQUIRED","realization_ref":"C1B-TTU:independent-inverse-check"},
+    {"asset_id":"CHECK-ML-INVERSE-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:inverse-check"},
+    {"asset_id":"CHECK-ML-INVERSE-01","core":"CORE2B","disposition":"REQUIRED","realization_ref":"C2B-PTTU:inverse-check"},
+
+    {"asset_id":"CHECK-ML-ZERO-SOURCE-01","core":"CORE1A","disposition":"REQUIRED","realization_ref":"C1A-TTU:limit-check"},
+    {"asset_id":"CHECK-ML-ZERO-SOURCE-01","core":"CORE1B","disposition":"TRANSFORMED","realization_ref":"C1B-TTU:learner-limit-check","parent_asset_id":"CHECK-ML-ZERO-SOURCE-01","transformation_ref":"VERIFICATION"},
+    {"asset_id":"CHECK-ML-ZERO-SOURCE-01","core":"CORE2A","disposition":"REQUIRED","realization_ref":"C2A-PTTU:limit-check"},
+    {"asset_id":"CHECK-ML-ZERO-SOURCE-01","core":"CORE2B","disposition":"TRANSFORMED","realization_ref":"C2B-PTTU:limit-check","parent_asset_id":"CHECK-ML-ZERO-SOURCE-01","transformation_ref":"VERIFICATION"},
+
+    {"asset_id":"SRC-M23-Q15","core":"CORE2","disposition":"HELD","blocking_reason":"Exact Q15 prompt, source solution and source H1/H2/H3 are unresolved."},
+    {"asset_id":"SRC-M23-Q15","core":"CORE2A","disposition":"HELD","blocking_reason":"Core2A legal pool cannot contain Q15 until exact source custody is resolved."},
+    {"asset_id":"SRC-M23-Q15","core":"CORE2B","disposition":"HELD","blocking_reason":"Core2B cannot derive transfer legality from an unresolved Core2A pool."}
+  ],
+  "question_records": [
+    {
+      "question_id":"SRC-M23-Q15",
+      "display_number":"Q15",
+      "core":"CORE2",
+      "source_class":"FROZEN_SOURCE",
+      "source":{"document_id":"UNRESOLVED","title":"Moving launch source","source_question_no":"Q15","source_ref":"HELD: exact repository source unresolved","source_digest":"HELD"},
+      "problem_family":"PF-MOVING-LAUNCHER-PROJECTILE",
+      "bucket_id":"M2D-SBA-23",
+      "capability_ids":["PHY-CAP-MOVING-LAUNCHER-GALILEAN"],
+      "answer":{"answer_type":"HELD","status":"HELD"},
+      "legal_status":"HELD",
+      "display_source_label":"SOURCE Q15 — HELD / NOT RELEASED",
+      "badges":{"CORE":"CORE2","BUCKET":"M2D-SBA-23","CONCEPT":"MOVING_LAUNCHER","SOURCE":"SOURCE","ANSWER_STATUS":"HELD","DIFFICULTY":"HARD","QUESTION_NUMBER":"Q15"}
+    },
+    {
+      "question_id":"AC-M23-C1A-001",
+      "display_number":"Author Example 1A-01",
+      "core":"CORE1A",
+      "source_class":"AUTHOR_CREATED",
+      "source":{"document_id":"BLUEPRINT-DESIGN-PILOT","title":"SBA23 V8 author-created teaching example","source_ref":"AUTHOR_CREATED: not source Q15"},
+      "problem_family":"PF-MOVING-LAUNCHER-PROJECTILE",
+      "bucket_id":"M2D-SBA-23",
+      "capability_ids":["PHY-CAP-MOVING-LAUNCHER-GALILEAN"],
+      "answer":{"answer_id":"ANS-AC-M23-C1A-001","answer_type":"CANONICAL_SOLUTION","status":"AVAILABLE","canonical_answer":"v_ball,ground=(14,6) m/s; ground speed about 15.2 m/s and angle about 23.2 degrees above east.","solution_ref":"C1A-TTU:worked-example-F1"},
+      "legal_status":"DESIGN_PILOT_ONLY",
+      "display_source_label":"AUTHOR-CREATED PRACTICE — NOT SOURCE Q15",
+      "badges":{"CORE":"CORE1A","BUCKET":"M2D-SBA-23","CONCEPT":"MOVING_LAUNCHER","SOURCE":"AUTHOR_CREATED","ANSWER_STATUS":"ANSWER PROVIDED","DIFFICULTY":"HARD","PROBLEM_FAMILY":"RELEASE_CONVERSION","LEARNER_ACTION":"DERIVE","REPRESENTATION":"VECTOR_COMPONENT"},
+      "example_fingerprint":{"problem_family":"PF-MOVING-LAUNCHER-PROJECTILE","context":"TROLLEY","givens":["source velocity east","relative launch speed and angle"],"numeric_values":["6","10","37","0.6","0.8"],"target_unknown":"ground-frame launch components","representation":"complete vector component construction","model_sequence":["frame conversion","component interpretation"],"special_condition":"east positive","solution_path":["resolve relative launch","add source horizontal component","verify limiting case"]}
+    },
+    {
+      "question_id":"AC-M23-C1B-001",
+      "display_number":"Author Reconstruction 1B-01",
+      "core":"CORE1B",
+      "source_class":"AUTHOR_CREATED",
+      "source":{"document_id":"BLUEPRINT-DESIGN-PILOT","title":"SBA23 V8 author-created reconstruction","source_ref":"AUTHOR_CREATED: not source Q15"},
+      "problem_family":"PF-MOVING-LAUNCHER-PROJECTILE",
+      "bucket_id":"M2D-SBA-23",
+      "capability_ids":["PHY-CAP-MOVING-LAUNCHER-GALILEAN"],
+      "answer":{"answer_id":"ANS-AC-M23-C1B-001","answer_type":"CANONICAL_SOLUTION","status":"AVAILABLE","canonical_answer":"With east positive, v_source,ground=(-3,0) m/s and v_ball,source=(8,6) m/s, so v_ball,ground=(5,6) m/s.","solution_ref":"C1B-TTU:reconstruction-F1"},
+      "legal_status":"DESIGN_PILOT_ONLY",
+      "display_source_label":"AUTHOR-CREATED RECONSTRUCTION — NOT SOURCE Q15",
+      "badges":{"CORE":"CORE1B","BUCKET":"M2D-SBA-23","CONCEPT":"MOVING_LAUNCHER","SOURCE":"AUTHOR_CREATED","ANSWER_STATUS":"ANSWER PROVIDED","DIFFICULTY":"HARD","PROBLEM_FAMILY":"RELEASE_CONVERSION","LEARNER_ACTION":"REPRESENT","REPRESENTATION":"LEARNER_GENERATED_VECTOR"},
+      "example_fingerprint":{"problem_family":"PF-MOVING-LAUNCHER-PROJECTILE","context":"TROLLEY_OPPOSITE_DIRECTION","givens":["source velocity west","relative launch components east and up"],"numeric_values":["3","8","6"],"target_unknown":"ground-frame launch vector and frame explanation","representation":"learner generated signed vector component construction","model_sequence":["choose sign convention","frame conversion","verification"],"special_condition":"opposing horizontal velocities","solution_path":["encode source negative","add vectors","inverse check relative state"]}
+    },
+    {
+      "question_id":"DP-M23-C2A-001",
+      "display_number":"Design Pilot 2A-01",
+      "core":"CORE2A",
+      "source_class":"AUTHOR_CREATED_DESIGN_PILOT",
+      "source":{"document_id":"BLUEPRINT-DESIGN-PILOT","title":"SBA23 V8 nonproduction Core2A pilot","source_ref":"AUTHOR_CREATED_DESIGN_PILOT: not legal Core2/Q15 pool"},
+      "problem_family":"PF-MOVING-LAUNCHER-PROJECTILE",
+      "bucket_id":"M2D-SBA-23",
+      "capability_ids":["PHY-CAP-MOVING-LAUNCHER-GALILEAN"],
+      "answer":{"answer_id":"ANS-DP-M23-C2A-001","answer_type":"CANONICAL_SOLUTION","status":"AVAILABLE","canonical_answer":"v_ball,source=(14,8)-(6,0)=(8,8) m/s.","solution_ref":"C2A-PTTU:reverse-target-pilot"},
+      "legal_status":"DESIGN_PILOT_ONLY",
+      "display_source_label":"AUTHOR-CREATED DESIGN PILOT — NOT LEGAL CORE2A SOURCE",
+      "badges":{"CORE":"CORE2A","BUCKET":"M2D-SBA-23","CONCEPT":"MOVING_LAUNCHER","SOURCE":"AUTHOR_CREATED_DESIGN_PILOT","ANSWER_STATUS":"ANSWER PROVIDED","DIFFICULTY":"HARD","PROBLEM_FAMILY":"REVERSED_TARGET","LEARNER_ACTION":"SELECT","REPRESENTATION":"VECTOR_RELATION"},
+      "example_fingerprint":{"problem_family":"PF-MOVING-LAUNCHER-PROJECTILE","context":"CART","givens":["ground launch vector","source velocity east"],"numeric_values":["14","8","6"],"target_unknown":"source-relative launch vector","representation":"reverse vector relation","model_sequence":["frame relation","rearrange target"],"special_condition":"reversed target","solution_path":["write invariant","subtract source vector","inverse check"]}
+    },
+    {
+      "question_id":"DP-M23-C2B-001",
+      "display_number":"Design Pilot 2B-01",
+      "core":"CORE2B",
+      "source_class":"AUTHOR_CREATED_DESIGN_PILOT",
+      "source":{"document_id":"BLUEPRINT-DESIGN-PILOT","title":"SBA23 V8 nonproduction Core2B pilot","source_ref":"AUTHOR_CREATED_DESIGN_PILOT: not legal Core2B transfer evidence"},
+      "problem_family":"PF-MOVING-LAUNCHER-PROJECTILE",
+      "bucket_id":"M2D-SBA-23",
+      "capability_ids":["PHY-CAP-MOVING-LAUNCHER-GALILEAN"],
+      "answer":{"answer_id":"ANS-DP-M23-C2B-001","answer_type":"CANONICAL_SOLUTION","status":"AVAILABLE","canonical_answer":"v_ball,ground=(-7,8)+(7,0)=(0,8) m/s, so the ground-frame launch is vertical at 8 m/s.","solution_ref":"C2B-PTTU:cancellation-pilot"},
+      "legal_status":"DESIGN_PILOT_ONLY",
+      "display_source_label":"AUTHOR-CREATED DESIGN PILOT — NOT LEGAL TRANSFER EVIDENCE",
+      "badges":{"CORE":"CORE2B","BUCKET":"M2D-SBA-23","CONCEPT":"MOVING_LAUNCHER","SOURCE":"AUTHOR_CREATED_DESIGN_PILOT","ANSWER_STATUS":"ANSWER PROVIDED","DIFFICULTY":"HARD","PROBLEM_FAMILY":"CONSTRAINT_CANCELLATION","LEARNER_ACTION":"TRANSFER","REPRESENTATION":"VECTOR_COMPONENT","TRANSFER_DISTANCE":"NEAR"},
+      "example_fingerprint":{"problem_family":"PF-MOVING-LAUNCHER-PROJECTILE","context":"PLATFORM","givens":["source velocity east","relative horizontal velocity west","relative vertical velocity up"],"numeric_values":["7","-7","8"],"target_unknown":"ground launch speed and direction","representation":"signed component construction","model_sequence":["frame conversion","constraint recognition"],"special_condition":"horizontal cancellation","solution_path":["add signed components","recognize zero horizontal component","verify direction"]},
+      "lineage":{"parent_question_id":"DP-M23-C2A-001","transformation_type":"PEDAGOGICAL_TRANSFORMATION","counts_as_transfer_evidence":false}
+    }
+  ],
+  "similarity_pairs": [
+    {
+      "left_question_id":"AC-M23-C1A-001",
+      "right_question_id":"AC-M23-C1B-001",
+      "relationship":"PEDAGOGICAL_TRANSFORMATION",
+      "usage_equivalent":false,
+      "lexical_text_left":"A trolley moves east at 6 m/s. A ball is launched at 10 m/s at 37 degrees relative to the trolley. Find the ground-frame launch components.",
+      "lexical_text_right":"A trolley moves west at 3 m/s. Relative launch components are 8 m/s east and 6 m/s up. Construct the ground-frame launch vector and explain the frame relation."
+    },
+    {
+      "left_question_id":"DP-M23-C2A-001",
+      "right_question_id":"DP-M23-C2B-001",
+      "relationship":"PEDAGOGICAL_TRANSFORMATION",
+      "usage_equivalent":false,
+      "lexical_text_left":"Ground launch vector is 14 east and 8 up while the cart moves east at 6. Recover the source-relative launch vector.",
+      "lexical_text_right":"A platform moves east at 7 while the ball is launched 7 west and 8 up relative to it. Find the ground launch speed and direction."
+    }
+  ],
+  "receipts": {
+    "coverage_receipt":"PASS",
+    "question_custody_receipt":"PASS",
+    "duplication_receipt":"PASS",
+    "source_integrity_receipt":"HELD",
+    "answer_resolution_receipt":"HELD",
+    "held_scope":"Q15 frozen source only; all released/design-pilot learner questions have canonical resolutions."
+  }
+}

@@ -37,4 +37,18 @@ except ValueError: pass
 x=copy.deepcopy(passsubs[0]); x['review_dimension']='VISUAL'; x['reviewer_class']='HUMAN_VISUAL'; x['rubric_id']='MATH-VISUAL-RUBRIC-1'; x['rubric_results']=[{'criterion_id':c['criterion_id'],'disposition':'PASS','evidence':'x'} for c in rubrics['VISUAL']['criteria']]; x['reviewer_id']='test-subject-001'
 r=project(candidate,testreg,policy,rubrics,[x],'TEST_ONLY'); assert 'REVIEWER_NOT_AUTHORIZED_FOR_CLASS' in r['rejected_submissions'][0]['reasons']
 p2=project(candidate,testreg,policy,rubrics,passsubs,'TEST_ONLY'); assert json.dumps(passed,sort_keys=True)==json.dumps(p2,sort_keys=True)
-print('V2 shared human-review intake falsifiers = 14 PASS')
+
+# Four-dimension, exact-artifact-set support is opt-in and leaves legacy Math behavior unchanged.
+c4=copy.deepcopy(candidate); c4['candidate_id']='SYNTHETIC-FOUR-DIM'; c4['artifact_sha256_refs']=[candidate['artifact_sha256'],'1'*64]
+p4=copy.deepcopy(policy); p4['required_pass_submissions']['ASSESSMENT']=1; p4['require_exact_artifact_set_binding']=True; p4['quality_state_by_dimension']={'SUBJECT':'SUBJECT_CORRECTNESS','PEDAGOGY':'PEDAGOGICAL_DESIGN','ASSESSMENT':'ASSESSMENT_DESIGN','VISUAL':'VISUAL_USABILITY'}
+r4=copy.deepcopy(testreg); r4['authorized_reviewers']['HUMAN_ASSESSMENT']=['test-assessment-001']
+rubs4=copy.deepcopy(rubrics); rubs4['ASSESSMENT']={'schema_version':'1.0.0','rubric_id':'SYNTH-ASSESSMENT-RUBRIC','review_dimension':'ASSESSMENT','criteria':[{'criterion_id':'A1','required':True,'description':'assessment criterion'}]}
+subs4=copy.deepcopy(passsubs)
+for s in subs4: s['candidate_artifact_sha256_refs']=list(c4['artifact_sha256_refs'])
+subs4.append({'submission_id':'SYNTH-ASSESSMENT-PASS','schema_version':'1.0.0','candidate_artifact_sha256':c4['artifact_sha256'],'candidate_artifact_sha256_refs':list(c4['artifact_sha256_refs']),'review_dimension':'ASSESSMENT','reviewer_class':'HUMAN_ASSESSMENT','reviewer_id':'test-assessment-001','reviewer_authorization_version':r4['version'],'review_status':'PASS','rubric_id':'SYNTH-ASSESSMENT-RUBRIC','rubric_results':[{'criterion_id':'A1','disposition':'PASS','evidence':'synthetic'}],'findings':[],'evidence_refs':['SYNTHETIC'],'attestation':{'affirmed':True,'statement':'synthetic assessment review'},'submitted_at':'2026-09-15T00:00:00Z','source':'HUMAN_SUBMISSION','test_only':True})
+four=project(c4,r4,p4,rubs4,subs4,'TEST_ONLY'); q4=four['quality_review_summary']['quality_states']
+assert [q4[p4['quality_state_by_dimension'][d]] for d in ('SUBJECT','PEDAGOGY','ASSESSMENT','VISUAL')]==['PASS','PASS','PASS','PASS']
+assert four['candidate_artifact_sha256_refs']==sorted(c4['artifact_sha256_refs']) and four['release_evidence_eligible'] is False
+broken=copy.deepcopy(subs4); broken[0].pop('candidate_artifact_sha256_refs',None)
+br=project(c4,r4,p4,rubs4,broken,'TEST_ONLY'); assert 'CANDIDATE_ARTIFACT_SET_MISMATCH' in {x for rr in br['rejected_submissions'] for x in rr['reasons']}
+print('V2 shared human-review intake falsifiers = 16 PASS')

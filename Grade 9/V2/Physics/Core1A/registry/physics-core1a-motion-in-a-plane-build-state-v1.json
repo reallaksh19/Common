@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA-BUILD-STATE-v1",
+  "branch": "v2-physics-core1a-publication",
+  "pr_number": 350,
+  "policy": {
+    "skip_zero_primary_question_buckets": true,
+    "target_prior_knowledge_pct": 20,
+    "next_bucket_rule": "Choose the lowest-index bucket after the last completed active bucket whose production_status is ACTIVE; skip SKIP_NO_PRIMARY_CORE2.",
+    "handoff_rule": "Do not advance next_active_bucket until the current manifest is COMPLETE and CI passes."
+  },
+  "completed_active_buckets": [
+    "M2D-SBA-03",
+    "M2D-SBA-04",
+    "M2D-SBA-05",
+    "M2D-SBA-06",
+    "M2D-SBA-07",
+    "M2D-SBA-21",
+    "M2D-SBA-22"
+  ],
+  "skipped_no_primary_buckets_seen_so_far": [
+    "M2D-SBA-01",
+    "M2D-SBA-02",
+    "M2D-SBA-08",
+    "M2D-SBA-09",
+    "M2D-SBA-10",
+    "M2D-SBA-11",
+    "M2D-SBA-12",
+    "M2D-SBA-13",
+    "M2D-SBA-14",
+    "M2D-SBA-15",
+    "M2D-SBA-16",
+    "M2D-SBA-17",
+    "M2D-SBA-18",
+    "M2D-SBA-19",
+    "M2D-SBA-20"
+  ],
+  "last_completed_bucket": "M2D-SBA-22",
+  "next_active_bucket": "M2D-SBA-23",
+  "gold_standard_buckets": {
+    "M2D-SBA-03": "LOW question load; one main routine; independent practice, protected hints and readiness gate.",
+    "M2D-SBA-04": "HIGH question load; multiple distinct velocity-event routines plus cross-bucket release control.",
+    "M2D-SBA-05": "VERY_HIGH question load; family-map planning, enlarged transfer section, multiple independent-practice/readiness sequences.",
+    "M2D-SBA-06": "D3 low-question-load professional-lossless reference: full derivation depth, two distinct transfer families, restrained heading hierarchy and no instructional-function loss during textbook redesign.",
+    "M2D-SBA-07": "D2 HIGH-load professional-lossless reference: eight learning atoms, four transfer families, two worked/completion bridges, independent practice before protected hints, and restrained textbook heading hierarchy.",
+    "M2D-SBA-21": "D3 MEDIUM-load source-extension reference: explicit source-boundary disclosure, nine learning atoms, second-intersection geometry, normal-impact dual constraints, three independent transfer routines and professional-lossless publication.",
+    "M2D-SBA-22": "D3 LOW-load timed-event reference: one global-clock invariant, two distinct event-information families, two worked examples, mixed independent practice, protected hints and explicit Q05/Q26 readiness gates."
+  },
+  "required_start_files": [
+    "AGENT_RUNBOOK.md",
+    "README.md",
+    "CORE1A_UI_SPEC.md",
+    "PROFESSIONAL_TEXTBOOK_SPEC.md",
+    "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "registry/physics-core1a-core2-linkage.json"
+  ]
+}

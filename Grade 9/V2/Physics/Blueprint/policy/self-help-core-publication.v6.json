@@ -1,0 +1,135 @@
+{
+  "schema_version": "6.0.0",
+  "policy_id": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V6",
+  "scope": "Grade 9-11 Physics learner products",
+  "premise": "Every Core learner product must be self-help, technically complete at the required depth, visually releasable, and built from reconstruction-complete TTUs rather than diagrams/equations counted in isolation.",
+  "control_planes": {
+    "CORE1_FAMILY": {
+      "applies_to": ["CORE1A", "CORE1B"],
+      "student_knowledge_pct_drives_authored_depth": false,
+      "always_subtopic_bucket_wise": true,
+      "shared_learning_model_required": true,
+      "difficulty_policy_ref": "Blueprint/policy/core1ab-bucket-authoring.v2.json"
+    },
+    "CORE2_FAMILY": {
+      "applies_to": ["CORE2A", "CORE2B"],
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "student_knowledge_pct_required_unless_owner_override": true,
+      "knowledge_policy_ref": "Blueprint/policy/core2ab-knowledge-routing.v1.json",
+      "owner_override_may_expand_legal_pool": false,
+      "owner_override_may_rewrite_frozen_core2_source": false
+    }
+  },
+  "authoring_center": {
+    "primary_units_in_order": [
+      "SUBTOPIC_BUCKET",
+      "HIDDEN_INVARIANT",
+      "INFERENTIAL_JUMP",
+      "PROBLEM_FAMILY",
+      "RECONSTRUCTION_COMPLETE_TECHNICAL_TEACHING_UNIT",
+      "LAYER_REALIZATION"
+    ],
+    "anti_pattern": "Do not use prose volume, page count, image count, equation count, generic cards, cosmetic blanks or A/B symmetry as evidence of learner-product quality."
+  },
+  "normative_refs": [
+    "Blueprint/policy/technical-teaching-unit.v2.json",
+    "Blueprint/contracts/technical-teaching-unit-v2.schema.json",
+    "Blueprint/policy/physics-representation-semantic-quality.v1.json",
+    "Blueprint/policy/pdf-layout-integrity.v2.json",
+    "Blueprint/policy/core1ab-bucket-authoring.v2.json",
+    "Blueprint/policy/core2ab-knowledge-routing.v1.json"
+  ],
+  "technical_teaching_unit_gate": {
+    "canonical_completed_state_required": true,
+    "reconstruction_contract_required": true,
+    "semantic_omission_required": true,
+    "learner_reconstruction_task_required": true,
+    "fixed_help_required": true,
+    "canonical_reveal_after_attempt_required": true,
+    "independent_verification_required": true,
+    "diagram_plus_equation_presence_alone_proves_ttu_complete": false,
+    "generic_cards_count_as_physics_representation": false,
+    "cosmetic_blank_counts_as_reconstruction": false,
+    "compare_with_answer_counts_as_independent_verification": false,
+    "representation_must_bind_to_reasoning": true
+  },
+  "mode_rule": {
+    "dominant_not_exclusive": true,
+    "core1a_may_include_small_generative_checks": true,
+    "core1b_may_include_post_attempt_explanation_and_targeted_reteach": true,
+    "parallel_duplicate_books_for_A_and_B": false
+  },
+  "learner_surface_roles": {
+    "CORE1A": {
+      "mode": "DECLARATIVE_DOMINANT_CANONICAL_TTU_REFERENCE",
+      "depth_driver": "BUCKET_DIFFICULTY_BADGE_FOR_INFERENTIAL_AND_TECHNICAL_CLOSURE",
+      "page_budget": "CORE1A_SOFT_CEILING_BY_BADGE",
+      "major_jump_or_family_requires_complete_ttu": true,
+      "may_render_canonical_completed_state": true,
+      "ttu_must_already_define_downstream_reconstruction_contract": true
+    },
+    "CORE1B": {
+      "mode": "GENERATIVE_DOMINANT_TTU_RECONSTRUCTION",
+      "scope_driver": "SHARED_BUCKET_LEARNING_MODEL",
+      "page_budget": "DERIVED_FROM_FRAGILE_CHECKPOINT_COVERAGE_NOT_BADGE_SYMMETRY",
+      "fragile_technical_checkpoint_requires_reconstructable_ttu": true,
+      "semantic_omissions_must_target_reasoning": true,
+      "fixed_help_bound_to_omissions": true,
+      "independent_verification_before_reveal": true,
+      "full_hint_ladder_required_for_every_prompt": false
+    },
+    "CORE2A": {
+      "mode": "DECLARATIVE_DOMINANT_WORKED_PROBLEM_TTU",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "selection_rule": "REPRESENTATIVE_EXEMPLARS_BY_FAMILY_AND_DEMAND_NOT_AUTOMATIC_ALL_ITEM_SOLVING",
+      "representative_worked_item_requires_complete_ttu": true,
+      "canonical_problem_state_and_working_visible": true
+    },
+    "CORE2B": {
+      "mode": "GENERATIVE_DOMINANT_TRANSFER_RECONSTRUCTION_TTU",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "selection_rule": "ATTEMPT_FIRST_LEGAL_ITEMS_WITH_STRUCTURAL_VARIATION; AVOID_ONE_FOR_ONE_MIRROR_OF_CORE2A_WHEN_POOL_PERMITS",
+      "learner_selects_or_constructs_representation_and_model_when_part_of_transfer_demand": true,
+      "semantic_omission_or_model_selection_required_when_material": true,
+      "independent_verification_before_reveal": true
+    }
+  },
+  "representation_quality": {
+    "eligible_representation_must_encode_physics_structure": true,
+    "all_working_variables_identifiable_in_representation_when_material": true,
+    "frame_axis_direction_explicit_when_material": true,
+    "figure_reasoning_binding_required": true,
+    "oversized_empty_plot_counts_as_representation": false,
+    "prose_cards_count_as_technical_diagram": false,
+    "model_discrimination_requires_physical_trigger_model_first_move_and_rejection_reason": true
+  },
+  "task_grammar_policy": {
+    "MICRO_PROMPT": {"full_hint_ladder_required": false, "local_resolution_required": true},
+    "REPRESENTATION_TASK": {"full_hint_ladder_required": false, "reconstructable_ttu_required_when_technical": true, "semantic_omission_required": true},
+    "SUBSTANTIVE_TASK": {"progressive_rescue_required_when_learner_can_be_stranded": true, "full_technical_check_required": true, "fixed_help_bound_to_omissions": true},
+    "MIXED_RETRIEVAL": {"family_or_invariant_identification_required": true, "answer_key_may_not_be_the_only_verification": true}
+  },
+  "layout_release": {
+    "successful_pdf_generation_is_visual_preflight_pass": false,
+    "render_every_page": true,
+    "flow_layout_or_collision_validation_required": true,
+    "native_text_equations_preferred": true,
+    "learner_state_and_canonical_state_visually_distinct": true,
+    "omitted_elements_must_have_visible_targets": true,
+    "help_must_be_visually_separate_from_canonical_reveal": true,
+    "fail_on_text_figure_overlap": true,
+    "fail_on_label_vector_overlap": true,
+    "fail_on_clipped_labels": true,
+    "fail_on_microscopic_figure_labels": true,
+    "fail_on_oversized_low_information_figure": true,
+    "fail_on_orphaned_figure_from_working": true,
+    "thumbnail_review_required_for_new_figure_grammar": true
+  },
+  "authority_boundary": {
+    "core1b_may_author_new_semantics": false,
+    "core2b_may_legalize_transfer": false,
+    "teaching_configuration_is_mastery_evidence": false,
+    "generated_items_may_replace_frozen_core2_source": false,
+    "full_solution_exposure_is_mastery_evidence": false
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$id": "skp-source-plan.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Source Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "sourceIntent": {
+      "enum": [
+        "CURRICULUM_AUTHORITY",
+        "SUBJECT_TRUTH",
+        "DERIVATION_REFERENCE",
+        "NOVICE_EXPLANATION",
+        "ADVANCED_EXPLANATION",
+        "MISCONCEPTION_EVIDENCE",
+        "REPRESENTATION_REFERENCE",
+        "QUESTION_FAMILY_EVIDENCE",
+        "LOCAL_ASSESSMENT",
+        "EXTERNAL_ASSESSMENT",
+        "RESEARCH_EXTENSION",
+        "HISTORICAL_CONTEXT"
+      ]
+    }
+  },
+  "required": ["schema_version", "source_plan_id", "skp_ref", "engineering_depth", "obligations"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "source_plan_id": {"type": "string", "pattern": "^SOURCE-PLAN-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "engineering_depth": {"enum": ["FOUNDATION", "STANDARD", "RESEARCH"]},
+    "obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "obligation_id", "source_intent", "target_refs", "required",
+          "selection_policy", "corroboration_policy", "unresolved_behavior"
+        ],
+        "properties": {
+          "obligation_id": {"type": "string", "pattern": "^SRC-OBL-[A-Z0-9][A-Z0-9_-]*$"},
+          "source_intent": {"$ref": "#/$defs/sourceIntent"},
+          "target_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "required": {"type": "boolean"},
+          "selection_policy": {"type": "string", "minLength": 10},
+          "corroboration_policy": {
+            "enum": [
+              "SINGLE_APPROPRIATE_AUTHORITY",
+              "RISK_BASED_CORROBORATION",
+              "MULTIPLE_INDEPENDENT_REQUIRED",
+              "RESEARCH_LEDGER_REQUIRED"
+            ]
+          },
+          "unresolved_behavior": {"enum": ["HOLD_PROMOTION", "CANDIDATE_ONLY", "RESEARCH_ONLY", "ALLOW_WITH_EXPLICIT_UNRESOLVED"]}
+        }
+      }
+    }
+  }
+}

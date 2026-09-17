@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/physics/study-differentiation-unit.schema.json",
+  "title": "Physics Study Differentiation Unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "sdu_id", "bucket_id", "capability_id", "difficulty",
+    "research_dossier", "concept_decomposition", "core1a_realization", "core1b_realization"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "sdu_id": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "capability_id": {"type": "string", "minLength": 1},
+    "difficulty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["badge", "authority", "evidence_profile", "student_knowledge_pct_used"],
+      "properties": {
+        "badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "authority": {"enum": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"]},
+        "student_knowledge_pct_used": {"const": false},
+        "evidence_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["prerequisite_depth", "element_interactivity", "inferential_jump_severity", "representation_translation", "model_discrimination", "sign_or_frame_sensitivity", "multi_step_dependency", "abstraction", "misconception_density", "synthesis"],
+          "properties": {
+            "prerequisite_depth": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "element_interactivity": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "inferential_jump_severity": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "representation_translation": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "model_discrimination": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "sign_or_frame_sensitivity": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "multi_step_dependency": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "abstraction": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "misconception_density": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+            "synthesis": {"enum": ["LOW", "MEDIUM", "HIGH"]}
+          }
+        }
+      }
+    },
+    "research_dossier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["research_level", "semantic_sources", "misconception_evidence", "representation_evidence", "design_decisions"],
+      "properties": {
+        "research_level": {"enum": ["NONE_BY_DEFAULT", "TARGETED", "DEEP"]},
+        "semantic_sources": {"type": "array", "items": {"type": "string"}},
+        "misconception_evidence": {"type": "array", "items": {"type": "string"}},
+        "representation_evidence": {"type": "array", "items": {"type": "string"}},
+        "design_decisions": {
+          "type": "object", "additionalProperties": false,
+          "required": ["selected_representations", "rejected_representations", "translation_risks", "visual_implications"],
+          "properties": {
+            "selected_representations": {"type": "array", "items": {"type": "string"}},
+            "rejected_representations": {"type": "array", "items": {"type": "string"}},
+            "translation_risks": {"type": "array", "items": {"type": "string"}},
+            "visual_implications": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    "concept_decomposition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["subtopics", "sub_subtopics", "learning_atoms", "inferential_jumps", "problem_families", "misconceptions", "representations"],
+      "properties": {
+        "subtopics": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "sub_subtopics": {"type": "array", "items": {"type": "string"}},
+        "learning_atoms": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "inferential_jumps": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "problem_families": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "misconceptions": {"type": "array", "items": {"type": "string"}},
+        "representations": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "core1a_realization": {"$ref": "#/$defs/realization"},
+    "core1b_realization": {"$ref": "#/$defs/realization"}
+  },
+  "$defs": {
+    "realization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["soft_page_ceiling", "actual_length_independently_derived", "closure_requirements", "ttu_family", "dominant_mode"],
+      "properties": {
+        "soft_page_ceiling": {"enum": [10, 20, 30]},
+        "actual_length_independently_derived": {"const": true},
+        "closure_requirements": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "ttu_family": {"const": "CONCEPT_TTU"},
+        "dominant_mode": {"enum": ["DECLARATIVE", "GENERATIVE"]}
+      }
+    }
+  }
+}

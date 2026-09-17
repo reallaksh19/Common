@@ -1,0 +1,322 @@
+{
+  "schema_version": "2.0.0",
+  "audit_id": "C1A-MIGRATION-AUDIT-M2D-SBA04-V1",
+  "migration_spec_ref": "topics/m2d-sba04-core1a-migration-spec.v1.json",
+  "bucket_id": "M2D-SBA-04",
+  "source_refs": [
+    "Core1A/registry/build-manifests/M2D-SBA-04-v1.json",
+    "Core1A/registry/physics-core1a-core2-linkage.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+    "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json",
+    "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
+    "topics/m2d-sba04-core1a-migration-spec.v1.json",
+    "topics/m2d-sba04-design/intrinsic-design-state.v1.json",
+    "topics/m2d-sba04-design/learner-purpose-control-state.v1.json",
+    "topics/m2d-sba04-design/pwse-bridge-plan.v1.json",
+    "topics/m2d-sba04-design/representation-design-study.v1.json",
+    "topics/m2d-sba04-design/unresolved-jump-audit.v1.json",
+    "topics/m2d-sba04-design/worked-faded-independent-lineages.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a0-learner-state-gap.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a11-unresolved-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a6-representation-decision.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json"
+  ],
+  "legacy_claim": {
+    "status": "COMPLETE",
+    "claim_ref": "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#handoff.status",
+    "accepted_as_v9_release_evidence": false
+  },
+  "technical_gate_audit": {
+    "engineering_request_ref": "fixtures/engineering-workbench/m2d-sba04-request.v1.json",
+    "engineering_manifest_ref": "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json",
+    "registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+    "direct_gate_ids": [
+      "PHY-M2D-VELOCITY-EVOLUTION",
+      "PHY-M2D-VELOCITY-DIRECTION",
+      "PHY-M2D-SPEED-MAGNITUDE",
+      "PHY-M2D-SAME-HEIGHT-VELOCITY",
+      "PHY-M2D-PERPENDICULAR-VELOCITY",
+      "PHY-M2D-SPEED-AT-HEIGHT"
+    ],
+    "closure_gate_ids": [
+      "PHY-VEC-BASICS",
+      "PHY-VEC-ADD-SUB",
+      "PHY-VEC-COMPONENTS",
+      "PHY-M2D-PROJECTILE-COMPONENTS",
+      "PHY-M2D-SHARED-CLOCK",
+      "PHY-M2D-VELOCITY-EVOLUTION",
+      "PHY-M2D-VELOCITY-DIRECTION",
+      "PHY-M2D-SPEED-MAGNITUDE",
+      "PHY-M2D-SAME-HEIGHT-VELOCITY",
+      "PHY-M2D-PERPENDICULAR-VELOCITY",
+      "PHY-M2D-SPEED-AT-HEIGHT"
+    ],
+    "status": "READY"
+  },
+  "stage_audit": [
+    {
+      "stage": "1A0_LEARNER_STATE_GAP",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "SDU-M2D-SBA04-INTRINSIC-V1",
+        "CTRL-PHY-M2D-SBA04-PRIOR20-V1"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/intrinsic-design-state.v1.json#requirements",
+        "topics/m2d-sba04-design/learner-purpose-control-state.v1.json#capability_states"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A0-LEARNER-STATE-GAP-V1."
+      ]
+    },
+    {
+      "stage": "1A1_LEARNING_ATOMS",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#buckets[M2D-SBA-04].profiles[20].learning_atoms"
+      ],
+      "notes": [
+        "Repository-backed learning atoms exactly match the build manifest namespace."
+      ]
+    },
+    {
+      "stage": "1A2_INFERENTIAL_JUMPS",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+        "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+        "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#reasoning_sequence"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A2-INFERENTIAL-JUMP-CLOSURE-V1."
+      ]
+    },
+    {
+      "stage": "1A3_COGNITIVE_TRANSFORMATION",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+        "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+        "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#reasoning_sequence",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#reasoning_sequence"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A3-COGNITIVE-TRANSFORMATION-V1."
+      ]
+    },
+    {
+      "stage": "1A4_REPRESENTATION_REQUIREMENTS",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "REP-M2D-VELOCITY-STAGE-TIMELINE",
+        "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+        "REP-M2D-SPEED-TRIANGLE",
+        "REP-M2D-SAME-HEIGHT-PAIR",
+        "REP-M2D-PERP-VELOCITY-PAIR",
+        "REP-M2D-SPEED-AT-HEIGHT"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#representations",
+        "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#representations",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#representations",
+        "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#representations",
+        "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#representations",
+        "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#representations"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A4-REPRESENTATION-REQUIREMENTS-V1."
+      ]
+    },
+    {
+      "stage": "1A5_REPRESENTATION_CANDIDATES",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "CAND-SBA04-STAGED-TRAJECTORY-FIRST",
+        "CAND-SBA04-COMPONENT-CONSTRUCTION-FIRST",
+        "CAND-SBA04-STATE-TABLE-FIRST"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/representation-design-study.v1.json#candidates",
+        "topics/m2d-sba04-design/representation-design-study.v1.json#selection_criteria"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A5-REPRESENTATION-CANDIDATES-V1."
+      ]
+    },
+    {
+      "stage": "1A6_REPRESENTATION_DECISIONS",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "REP-M2D-VELOCITY-STAGE-TIMELINE",
+        "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+        "REP-M2D-SPEED-TRIANGLE",
+        "REP-M2D-SAME-HEIGHT-PAIR",
+        "REP-M2D-PERP-VELOCITY-PAIR",
+        "REP-M2D-SPEED-AT-HEIGHT"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/representation-design-study.v1.json#decision",
+        "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json#proof"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A6-REPRESENTATION-DECISION-V1."
+      ]
+    },
+    {
+      "stage": "1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/pwse-bridge-plan.v1.json#bridges"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A7-PWSE-BRIDGE-V1."
+      ]
+    },
+    {
+      "stage": "1A8_MISCONCEPTION_CONTRAST",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "M2D-SBA-04A",
+        "M2D-SBA-04B",
+        "M2D-SBA-04C",
+        "M2D-SBA-04D",
+        "M2D-SBA-04E",
+        "M2D-SBA-04F",
+        "M2D-SBA-04G"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms[*].misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-EVOLUTION.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-VELOCITY-DIRECTION.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-MAGNITUDE.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SAME-HEIGHT-VELOCITY.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-PERPENDICULAR-VELOCITY.misconceptions",
+        "GENERATED:physics-technical-engineering-gates.v3#PHY-M2D-SPEED-AT-HEIGHT.misconceptions"
+      ],
+      "notes": [
+        "Every learning atom declares misconceptions and the direct Engineering Gates provide governed counterexample/repair requirements."
+      ]
+    },
+    {
+      "stage": "1A9_WORKED_FADED_INDEPENDENT_PLAN",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "M2D-SBA04-R1-LIN-V1",
+        "M2D-SBA04-R2-LIN-V1",
+        "M2D-SBA04-R3-LIN-V1",
+        "M2D-SBA04-R4-LIN-V1"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/worked-faded-independent-lineages.v1.json#lineages",
+        "Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json#M2D-SBA-04.transfer_routines"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A9-WORKED-FADED-INDEPENDENT-V1."
+      ]
+    },
+    {
+      "stage": "1A10_CORE2_TRANSFER_BRIDGE",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "Q01",
+        "Q11",
+        "Q13",
+        "Q14",
+        "Q17",
+        "Q27",
+        "Q40"
+      ],
+      "evidence_refs": [
+        "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#core2_hint_coverage",
+        "Core1A/registry/build-manifests/M2D-SBA-04-v1.json#question_release"
+      ],
+      "notes": [
+        "Every primary Core2 question has exact H1/H2/H3 preteach trace to a repository learning atom; held transfers remain explicit in the build manifest."
+      ]
+    },
+    {
+      "stage": "1A11_UNRESOLVED_JUMP_AUDIT",
+      "evidence_state": "PRESENT",
+      "artifact_refs": [
+        "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+        "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+        "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+        "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+        "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+        "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+      ],
+      "evidence_refs": [
+        "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#required_jump_refs",
+        "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#closed_jump_refs",
+        "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#unresolved_jump_refs"
+      ],
+      "notes": [
+        "Promoted by governed migration evidence receipt M2D-SBA04-1A11-UNRESOLVED-JUMP-CLOSURE-V1."
+      ]
+    }
+  ],
+  "release_authorized": true,
+  "block_reasons": []
+}

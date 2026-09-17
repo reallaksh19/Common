@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "scope": ["CORE2A", "CORE2B"],
+  "required_selection_basis": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"],
+  "no_silent_default": true,
+  "knowledge_percent": {
+    "required_range": [0, 100],
+    "capability_specific_preferred": true,
+    "global_subject_percent_is_weaker_evidence": true,
+    "required_metadata": ["capability_scope", "provenance", "confidence", "evidence_count"],
+    "subdimensions": ["recognition", "representation", "model_selection", "first_move", "execution", "explanation", "verification"]
+  },
+  "owner_override": {
+    "allowed_only_when_usable_knowledge_evidence_is_unavailable": true,
+    "required_fields": ["owner_ref", "reason", "support_band"],
+    "support_bands": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"],
+    "may_rewrite_frozen_source": false,
+    "may_expand_legal_pool": false,
+    "may_manufacture_mastery": false
+  },
+  "task_demand_dimensions": ["structural_distance", "representation_change", "model_discrimination", "sign_or_direction_reversal", "reversed_target", "constraint_inversion", "multi_step_bridge", "synthesis", "competitive_mixing"],
+  "fit_model": "learner_state_x_task_demand_x_support",
+  "fit_prediction_is_psychometric_claim": false,
+  "support_may_change": ["prerequisite_bridge", "representation_completion", "hint_availability", "working_step_completion", "question_order", "structural_distance", "retrieval_timing"],
+  "support_may_not_change": ["physics_truth", "frozen_source_wording", "source_custody", "legal_pool"],
+  "core2a": {
+    "ttu_family": "PROBLEM_TTU",
+    "purpose": "EXPERT_PROBLEM_LEARNING",
+    "default_item_strategy": "REPRESENTATIVE_WORKED_EXEMPLAR"
+  },
+  "core2b": {
+    "ttu_family": "PROBLEM_TTU",
+    "purpose": "TRANSFER_AND_INDEPENDENT_MODELLING",
+    "lineage_modes": {
+      "FADING_ANCHOR": {"may_count_as_transfer_evidence": false},
+      "STRUCTURAL_SIBLING": {"may_count_as_transfer_evidence": true},
+      "FAR_TRANSFER_SIBLING": {"may_count_as_transfer_evidence": true}
+    },
+    "exact_item_replay_should_be_avoided_when_legal_sibling_exists": true
+  },
+  "post_use_evidence": {
+    "correct_no_or_low_hint": "stronger_independence_evidence",
+    "correct_after_notice": "recognition_support_hypothesis",
+    "correct_after_representation_help": "representation_support_hypothesis",
+    "correct_after_start_help": "first_move_dependency_hypothesis",
+    "incorrect_after_full_fixed_help": "repair_or_prerequisite_gap_hypothesis",
+    "automatic_hypothesis_is_diagnosis": false
+  }
+}

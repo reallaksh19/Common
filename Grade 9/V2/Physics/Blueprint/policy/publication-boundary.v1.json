@@ -1,0 +1,15 @@
+{
+  "policy_id":"PHY-PUBLICATION-BOUNDARY-v1",
+  "schema_version":"1.0.0",
+  "semantic_authority":"UPSTREAM_ONLY",
+  "renderer_authority":"COMPOSITION_ONLY",
+  "upstream_release_required":true,
+  "required_semantic_refs_must_be_placed_exactly_once":true,
+  "optional_semantic_refs_may_be_omitted":true,
+  "unknown_semantic_refs_forbidden":true,
+  "content_digest_must_match_upstream":true,
+  "representation_substitution_forbidden":true,
+  "raw_ground_truth_to_renderer_forbidden":true,
+  "renderer_semantic_generation_forbidden":true,
+  "stop_conditions":["PUBLICATION_UPSTREAM_NOT_RELEASED","PUBLICATION_REQUIRED_REF_MISSING","PUBLICATION_REQUIRED_REF_DUPLICATED","PUBLICATION_UNKNOWN_SEMANTIC_REF","PUBLICATION_CONTENT_DIGEST_MISMATCH","PUBLICATION_REPRESENTATION_NOT_AUTHORIZED","PUBLICATION_SOURCE_ROLE_DRIFT"]
+}

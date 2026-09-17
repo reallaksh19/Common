@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "PHY-C1A-M2D-SBA23-SOURCE-AUDIT-v1",
+  "bucket_id": "M2D-SBA-23",
+  "question_id": "Q15",
+  "governed_identity": {
+    "sba_title": "Launch from something already moving",
+    "core1a_home": "MOVING_LAUNCHER",
+    "linkage_concept_id": "moving-launcher",
+    "linkage_challenge_title": "Moving launch source",
+    "core2_prompt_page": 17,
+    "core2_solution_page": 78
+  },
+  "evidence_checked": [
+    "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "registry/physics-core1a-core2-linkage.json",
+    "../Core2Transfer/registry/",
+    "../Core2Transfer/fixtures/"
+  ],
+  "cross_pr_provenance_checked": {
+    "pull_request": 343,
+    "head_sha": "1fa38f19cf196bff10452ddb53426999844355d2",
+    "revised_core2_manifest": "Grade 9/V2/Physics/CaseStudies/AgentBootstrap/2026-09-12/revised-core1-core2/REVISED_CORE2_V2_MANIFEST.md",
+    "revised_core2_outputs": "Grade 9/V2/Physics/CaseStudies/AgentBootstrap/2026-09-12/revised-core1-core2/OUTPUTS.md",
+    "revised_core2_repo_generator": "Grade 9/V2/Physics/CaseStudies/AgentBootstrap/2026-09-12/revised-core1-core2/build_motion2d_revised_core2_v2.py",
+    "source_scan_status": "CHAT_PROVIDED_NOT_REDISTRIBUTED",
+    "revised_core2_pdf_status": "GENERATED_CONVERSATION_ARTIFACT_NOT_REPOSITORY_FILE",
+    "repo_generator_status": "CONTRACT_ONLY_CHAT_SOURCE_NOT_EMBEDDED",
+    "usable_as_exact_q15_authority": false,
+    "finding": "PR 343 proves the Revised Core 2 v2 artifact identity and hash lineage but does not place the source scan, the generated PDF bytes, or the exact Q15 prompt/solution/H1-H2-H3 text under repository custody. It therefore cannot close G1 or G4."
+  },
+  "exact_source_body": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "text": null},
+  "exact_source_solution": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "text": null},
+  "exact_source_hint_ladder": {"state": "UNRESOLVED_IN_REPOSITORY_TEXT_SURFACES_CHECKED", "h1": null, "h2": null, "h3": null},
+  "classification": "SOURCE_EVIDENCE_INCOMPLETE",
+  "release_decision": "BLOCK",
+  "blocked_claims": [
+    "Q15_SOURCE_EXACT",
+    "Q15_H1_H2_H3_PRETAUGHT",
+    "CORE1A_TEACHING_COMPLETE_FOR_Q15",
+    "CORE1A_MANUSCRIPT_RELEASE_FOR_SBA23",
+    "T_PHY_RECEIPT_FOR_Q15",
+    "CORE2A_Q15_RELEASE"
+  ],
+  "next_required_evidence": "Place repository-custodied Revised Core (2) v2 evidence containing the exact Q15 prompt, canonical solution and H1/H2/H3 ladder on the active Physics authority branch; bind exact bytes/digest and audit those texts verbatim before changing this decision."
+}

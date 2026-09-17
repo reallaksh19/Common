@@ -1,0 +1,80 @@
+{
+  "schema_version": "2.0.0",
+  "policy_id": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V2",
+  "scope": "Grade 9-11 Physics learner products",
+  "premise": "Every Core learner product must be usable without a teacher physically present.",
+  "control_planes": {
+    "CORE1_FAMILY": {
+      "applies_to": ["CORE1A", "CORE1B"],
+      "adaptation_driver": "BUCKET_DIFFICULTY_BADGE_ONLY",
+      "student_knowledge_pct_drives_depth": false,
+      "always_subtopic_bucket_wise": true,
+      "difficulty_policy_ref": "Blueprint/policy/core1ab-bucket-depth.v1.json",
+      "legacy_prior_knowledge_fields": "DEPRECATED_MIGRATION_COMPATIBILITY_ONLY"
+    },
+    "CORE2_FAMILY": {
+      "applies_to": ["CORE2A", "CORE2B"],
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "student_knowledge_pct_required_unless_owner_override": true,
+      "knowledge_policy_ref": "Blueprint/policy/core2ab-knowledge-routing.v1.json",
+      "owner_override_may_expand_legal_pool": false,
+      "owner_override_may_rewrite_frozen_core2_source": false
+    }
+  },
+  "authority_boundary": {
+    "preserve_existing_runtime_custody": true,
+    "core1b_may_author_new_semantics": false,
+    "core2b_may_legalize_transfer": false,
+    "teaching_configuration_is_mastery_evidence": false,
+    "generated_items_may_replace_frozen_core2_source": false
+  },
+  "learner_surface_roles": {
+    "CORE1A": {
+      "mode": "DECLARATIVE_DEEP_TEACHING",
+      "question": "Teach me this subtopic completely.",
+      "depth_driver": "BUCKET_DIFFICULTY_BADGE",
+      "product": "Detailed subtopic-wise declarative notes with solution-level breakdown, visual clues, diagrams and worked reasoning."
+    },
+    "CORE1B": {
+      "mode": "GENERATIVE_CONCEPT_COACH",
+      "question": "Can I reconstruct, explain, represent and independently use what was taught?",
+      "depth_driver": "BUCKET_DIFFICULTY_BADGE",
+      "product": "Open-ended subtopic-wise self-teaching episodes with concept-level guidance.",
+      "required_episode": ["OPEN_ENDED_PROMPT", "ATTEMPT_SPACE", "H1_NOTICE", "H2_REPRESENT", "H3_START", "TRY_AGAIN", "CHECK_AFTER_ATTEMPT", "CONCEPTUAL_RECONSTRUCTION", "REPAIR_ROUTE"]
+    },
+    "CORE2A": {
+      "mode": "DECLARATIVE_WORKED_TRANSFER_ATLAS",
+      "question": "Show me how an expert recognizes and solves this problem family.",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "required_problem_spine": ["QUESTION", "REQUIRED_KNOWLEDGE", "WHAT_TO_NOTICE", "PROBLEM_REPRESENTATION", "WHY_THIS_MODEL", "FIRST_MOVE", "FULL_WORKING", "PHYSICAL_CHECK", "COMMON_WRONG_ROUTE", "WHY_THIS_IS_HARD", "VARIATION_NOTE"],
+      "source_rule": "Frozen Core2 source items are never rewritten to make them easier; adaptation changes support, ordering, completion level and clearly-labelled generated-original variants."
+    },
+    "CORE2B": {
+      "mode": "GENERATIVE_TRANSFER_COACH",
+      "question": "Can I recognize, select and transfer it when the surface changes?",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "required_episode": ["UNFAMILIAR_QUESTION", "FIRST_MOVE_ATTEMPT", "SOLUTION_ATTEMPT", "H1_NOTICE", "H2_REPRESENT", "H3_START", "TRY_AGAIN", "CHECK_AFTER_ATTEMPT", "WHAT_STAYED_THE_SAME", "WHAT_CHANGED", "REPAIR_ROUTE"]
+    }
+  },
+  "universal_self_help_contract": {
+    "every_open_ended_prompt_has_local_resolution": true,
+    "answer_may_be_same_page_or_immediately_following": true,
+    "help_is_progressive_not_all_at_once": true,
+    "wrong_answer_never_routes_to_ask_teacher": true,
+    "repair_route_required_for_nontrivial_failure": true,
+    "visuals_require_function_tag": ["REPRESENT", "EXPLAIN", "COMPARE", "PREDICT", "DERIVE", "CHECK"],
+    "model_applicability_must_be_visible_when_material": true
+  },
+  "hint_ladder": {
+    "H1_NOTICE": "Point attention to the physical event, invariant, relationship or clue; do not give the formula.",
+    "H2_REPRESENT": "Prompt the useful representation: diagram, graph, table, event line, component split or symbolic structure.",
+    "H3_START": "Give the first executable conceptual/mathematical move, but not the completed solution.",
+    "FULL_SOLUTION": "Available only after an attempt path; exposure does not count as independent mastery."
+  },
+  "evidence_boundary": {
+    "core1a_publication_proves_mastery": false,
+    "core1b_independent_observed_use_may_support_independence": true,
+    "core2a_worked_solution_proves_transfer": false,
+    "core2b_low_hint_observed_transfer_may_support_transfer_robustness": true
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-m2d-render-readiness.schema.json",
+  "title": "Physics Motion in a Plane Render Readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version","readiness_id","topic_id","chapter_plan_digest",
+    "primitive_registry_digest","requirements_policy_digest","concepts","summary","readiness_digest"
+  ],
+  "properties": {
+    "schema_version": {"const":"1.0.0"},
+    "readiness_id": {"type":"string","pattern":"^M2D-RENDER-READINESS-"},
+    "topic_id": {"const":"PHY-M2D"},
+    "chapter_plan_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "primitive_registry_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "requirements_policy_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "concepts": {
+      "type":"array","minItems":1,
+      "items": {
+        "type":"object","additionalProperties":false,
+        "required":[
+          "concept_id","illustration_archetype","required_cognitive_jobs",
+          "authorized_existing_primitive_refs","missing_primitive_capabilities",
+          "state","rationale"
+        ],
+        "properties": {
+          "concept_id":{"type":"string","minLength":1},
+          "illustration_archetype":{"type":"string","minLength":1},
+          "required_cognitive_jobs":{"type":"array","minItems":1,"items":{"type":"string"},"uniqueItems":true},
+          "authorized_existing_primitive_refs":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+          "missing_primitive_capabilities":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+          "state":{"enum":["READY_FOR_REALIZATION","BLOCKED_NEEDS_PRIMITIVE"]},
+          "rationale":{"type":"string","minLength":1}
+        }
+      }
+    },
+    "summary": {
+      "type":"object","additionalProperties":false,
+      "required":["concept_count","ready_count","blocked_count","blocked_concept_ids","status","release_authorized"],
+      "properties": {
+        "concept_count":{"type":"integer","minimum":1},
+        "ready_count":{"type":"integer","minimum":0},
+        "blocked_count":{"type":"integer","minimum":0},
+        "blocked_concept_ids":{"type":"array","items":{"type":"string"},"uniqueItems":true},
+        "status":{"enum":["READY_FOR_RENDER_ADAPTER","BLOCKED_REPRESENTATION_GAP"]},
+        "release_authorized":{"const":false}
+      }
+    },
+    "readiness_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

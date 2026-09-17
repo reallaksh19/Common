@@ -1,0 +1,224 @@
+{
+  "fixture_id": "SKP-PILOT-KERNEL-SYNTHETIC-v1",
+  "identity": {
+    "schema_version": "0.1.0",
+    "skp_id": "SKP-SYNTHETIC-RELATION",
+    "subject": "SYNTHETIC",
+    "canonical_name": "Synthetic relation interpretation",
+    "aliases": ["Synthetic relation pilot"],
+    "package_semver": "0.1.0",
+    "predecessor_refs": [],
+    "supersession_state": "PILOT_CURRENT",
+    "supersedes_ref": null,
+    "identity_rationale": "A subject-neutral pilot fixture used only to falsify shared SKP kernel contracts."
+  },
+  "scope": {
+    "schema_version": "0.1.0",
+    "scope_id": "SKP-SCOPE-SYNTHETIC-RELATION",
+    "skp_ref": "SKP-SYNTHETIC-RELATION",
+    "includes": [
+      {
+        "scope_item_id": "SCOPE-TARGET",
+        "statement": "Interpret and apply a governed relation under its declared applicability conditions.",
+        "evidence_refs": ["SRC-CURRICULUM"]
+      }
+    ],
+    "excludes": [
+      {
+        "scope_item_id": "SCOPE-ADJACENT",
+        "statement": "Derivation of unrelated adjacent relations is outside this synthetic pilot scope.",
+        "evidence_refs": ["SRC-CURRICULUM"]
+      }
+    ],
+    "adjacent_refs": ["SKP-SYNTHETIC-ADJACENT"],
+    "unresolved_boundaries": []
+  },
+  "curriculum_bindings": [
+    {
+      "schema_version": "0.1.0",
+      "binding_id": "CURR-SYNTHETIC-TARGET",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "curriculum_authority": "Synthetic Curriculum Authority",
+      "jurisdiction": "TEST",
+      "grade": "9",
+      "curriculum_version": "pilot-v1",
+      "unit_ref": "UNIT-SYNTHETIC",
+      "classification": "CURRICULUM_DERIVED",
+      "explicitness": "INFERRED",
+      "scope_refs": ["SCOPE-TARGET"],
+      "evidence_refs": ["SRC-CURRICULUM"],
+      "rationale": "The synthetic authority supports the target scope only for contract and cross-reference falsification.",
+      "exclusions": ["No real curriculum claim is made by this fixture."],
+      "binding_state": "CONFIRMED"
+    }
+  ],
+  "capabilities": [
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-INTERPRET-RELATION",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Interpret relation meaning",
+      "disciplinary_meaning": "Identify the meaning and applicability conditions of a governed relation before using it.",
+      "learner_success_statement": "Can state what the relation means and identify whether its declared conditions are satisfied.",
+      "scope_refs": ["SCOPE-TARGET"],
+      "observability": {
+        "state": "DIRECT",
+        "evidence_types": ["EXPLANATION", "CONDITION_CHECK"]
+      },
+      "granularity_rationale": "Interpretation has a distinct success criterion and can fail independently of later application.",
+      "source_refs": ["SRC-DOMAIN"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    },
+    {
+      "schema_version": "0.1.0",
+      "capability_id": "CAP-APPLY-RELATION",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Apply relation legally",
+      "disciplinary_meaning": "Use the governed relation only after its declared applicability conditions have been established.",
+      "learner_success_statement": "Can select and apply the relation in a valid case and refuse it when the conditions are not met.",
+      "scope_refs": ["SCOPE-TARGET"],
+      "observability": {
+        "state": "DIRECT",
+        "evidence_types": ["APPLICATION", "COUNTEREXAMPLE"]
+      },
+      "granularity_rationale": "Application is separately observable from interpretation and requires the interpretation capability as a prerequisite.",
+      "source_refs": ["SRC-DOMAIN"],
+      "subject_extension_refs": [],
+      "status": "PILOT"
+    }
+  ],
+  "prerequisite_edges": [
+    {
+      "schema_version": "0.1.0",
+      "edge_id": "EDGE-INTERPRET-BEFORE-APPLY",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "prerequisite_ref": "CAP-INTERPRET-RELATION",
+      "target_ref": "CAP-APPLY-RELATION",
+      "edge_type": "STRUCTURAL_PREREQUISITE",
+      "rationale": "Legal application requires identifying the relation meaning and applicability conditions before execution.",
+      "evidence_refs": ["SRC-DOMAIN"],
+      "hardness": "HARD",
+      "missing_behavior": "HARD_BLOCK",
+      "bridge_ref": null,
+      "provider_owner": null,
+      "progression_status": "HYPOTHESIZED_PROGRESSION",
+      "progression_evidence_refs": ["SRC-PCK"]
+    }
+  ],
+  "source_plan": {
+    "schema_version": "0.1.0",
+    "source_plan_id": "SOURCE-PLAN-SYNTHETIC-RELATION",
+    "skp_ref": "SKP-SYNTHETIC-RELATION",
+    "engineering_depth": "STANDARD",
+    "obligations": [
+      {
+        "obligation_id": "SRC-OBL-CURRICULUM",
+        "source_intent": "CURRICULUM_AUTHORITY",
+        "target_refs": ["SCOPE-TARGET", "CURR-SYNTHETIC-TARGET"],
+        "required": true,
+        "selection_policy": "Use the exact declared curriculum authority for the versioned scope binding.",
+        "corroboration_policy": "SINGLE_APPROPRIATE_AUTHORITY",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      },
+      {
+        "obligation_id": "SRC-OBL-DOMAIN",
+        "source_intent": "SUBJECT_TRUTH",
+        "target_refs": ["CAP-INTERPRET-RELATION", "CAP-APPLY-RELATION"],
+        "required": true,
+        "selection_policy": "Use a source suitable for validating the governed relation meaning and applicability conditions.",
+        "corroboration_policy": "RISK_BASED_CORROBORATION",
+        "unresolved_behavior": "HOLD_PROMOTION"
+      },
+      {
+        "obligation_id": "SRC-OBL-PROGRESSION",
+        "source_intent": "MISCONCEPTION_EVIDENCE",
+        "target_refs": ["EDGE-INTERPRET-BEFORE-APPLY"],
+        "required": false,
+        "selection_policy": "Use pedagogical evidence only to characterize the progression; do not promote it to domain truth.",
+        "corroboration_policy": "RISK_BASED_CORROBORATION",
+        "unresolved_behavior": "ALLOW_WITH_EXPLICIT_UNRESOLVED"
+      }
+    ]
+  },
+  "source_ledger": [
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-CURRICULUM",
+      "title": "Synthetic curriculum authority fixture",
+      "creator_or_organization": "LearningEngineering test fixture",
+      "publication_year": null,
+      "source_type": "OFFICIAL_CURRICULUM",
+      "source_locator": "fixture://synthetic/curriculum",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "pilot-v1",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "CURRICULUM_AUTHORITY",
+          "target_refs": ["SCOPE-TARGET", "CURR-SYNTHETIC-TARGET"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This fixture is the declared exact curriculum authority for the synthetic pilot and no real-world claim is inferred from it.",
+          "limitations": ["Synthetic test evidence only."],
+          "population_context": null,
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "OPEN_OR_PUBLIC_DOMAIN",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-DOMAIN",
+      "title": "Synthetic domain reference fixture",
+      "creator_or_organization": "LearningEngineering test fixture",
+      "publication_year": null,
+      "source_type": "PROFESSIONAL_REFERENCE",
+      "source_locator": "fixture://synthetic/domain",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "pilot-v1",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "SUBJECT_TRUTH",
+          "target_refs": ["CAP-INTERPRET-RELATION", "CAP-APPLY-RELATION", "EDGE-INTERPRET-BEFORE-APPLY"],
+          "authority_disposition": "PROMOTED_FOR_INTENT",
+          "selection_reason": "This fixture supplies the declared relation and applicability semantics needed only for subject-neutral contract testing.",
+          "limitations": ["Synthetic test evidence only."],
+          "population_context": null,
+          "corroboration_state": "NOT_REQUIRED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "OPEN_OR_PUBLIC_DOMAIN",
+      "overall_disposition": "PROMOTED"
+    },
+    {
+      "schema_version": "0.1.0",
+      "source_id": "SRC-PCK",
+      "title": "Synthetic pedagogical evidence fixture",
+      "creator_or_organization": "LearningEngineering test fixture",
+      "publication_year": null,
+      "source_type": "PEER_REVIEWED_RESEARCH",
+      "source_locator": "fixture://synthetic/pck",
+      "provenance_scope": "LOCAL_REPOSITORY",
+      "version_identity": "pilot-v1",
+      "content_digest": null,
+      "intent_assessments": [
+        {
+          "source_intent": "MISCONCEPTION_EVIDENCE",
+          "target_refs": ["EDGE-INTERPRET-BEFORE-APPLY"],
+          "authority_disposition": "CANDIDATE",
+          "selection_reason": "This synthetic source exists to prove that pedagogical progression evidence remains distinct from structural prerequisite authority.",
+          "limitations": ["Synthetic test evidence only; not empirical learner evidence."],
+          "population_context": "Synthetic learner population",
+          "corroboration_state": "UNRESOLVED"
+        }
+      ],
+      "conflict_refs": [],
+      "licensing_state": "OPEN_OR_PUBLIC_DOMAIN",
+      "overall_disposition": "CANDIDATE"
+    }
+  ]
+}

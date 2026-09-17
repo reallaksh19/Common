@@ -1,0 +1,244 @@
+{
+  "schema_version": "2.0.0",
+  "ttu_id": "TTU2-M2D-SBA23-FRAME-CONVERSION-PROCESS-GOLDEN",
+  "task_scale": "SUBSTANTIVE",
+  "bucket_id": "M2D-SBA-23",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "difficulty_badge": "HARD",
+  "authority_binding": {
+    "authority_ref": "C1A-REL-PHY-M2D-SBA23-PROCESS-001",
+    "authority_class": "PROCESS_GOLDEN",
+    "may_author_new_semantics": false
+  },
+  "semantic_target": {
+    "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+    "learning_atom_ids": ["PHY-ML-FRAME-01", "PHY-ML-ADD-01", "PHY-ML-COMP-01", "PHY-ML-SELECT-01"],
+    "inferential_jump": "A source-relative launch velocity cannot be inserted directly into ground-frame projectile equations; it must first be transformed into the ground frame.",
+    "success_claim": "Learner reconstructs the frame-labelled velocity triangle, writes the Galilean relation, and obtains the ground-frame launch components before projectile kinematics."
+  },
+  "physical_setup": {
+    "objects": ["ball", "trolley", "ground observer"],
+    "event": "ball released from a trolley moving east at constant velocity",
+    "knowns": ["v_BT = (8,6) m/s", "v_TG = (6,0) m/s"],
+    "unknown": "v_BG",
+    "analysis_frame": "GROUND",
+    "axis_or_sign_convention": "+x east, +y upward",
+    "model_conditions": ["ordinary speeds", "trolley has constant velocity relative to ground"]
+  },
+  "canonical_completed_state": {
+    "representation": {
+      "representation_id": "REP-M2D-SBA23-VEL-TRIANGLE-CANONICAL",
+      "type": "VECTOR_OR_COMPONENT_CONSTRUCTION",
+      "elements": [
+        {
+          "element_id": "E-FRAME-BT",
+          "semantic_type": "FRAME_LABEL",
+          "canonical_content": "v_BT: ball relative trolley",
+          "reasoning_role": "identifies the relative launch vector and its frame",
+          "required_for_solution": true
+        },
+        {
+          "element_id": "E-FRAME-TG",
+          "semantic_type": "FRAME_LABEL",
+          "canonical_content": "v_TG: trolley relative ground",
+          "reasoning_role": "identifies the source velocity and its frame",
+          "required_for_solution": true
+        },
+        {
+          "element_id": "E-RESULT-BG",
+          "semantic_type": "VECTOR",
+          "canonical_content": "v_BG = (14,6) m/s",
+          "reasoning_role": "resultant ground-frame launch vector",
+          "required_for_solution": true
+        },
+        {
+          "element_id": "E-COMP-X",
+          "semantic_type": "COMPONENT",
+          "canonical_content": "u_x,G = 8 + 6 = 14 m/s",
+          "reasoning_role": "horizontal component transformation",
+          "required_for_solution": true
+        },
+        {
+          "element_id": "E-COMP-Y",
+          "semantic_type": "COMPONENT",
+          "canonical_content": "u_y,G = 6 m/s",
+          "reasoning_role": "vertical component remains unchanged because source velocity is horizontal",
+          "required_for_solution": true
+        }
+      ],
+      "bindings": [
+        {
+          "element_id": "E-FRAME-BT",
+          "relation_or_step_id": "REL-GALILEAN-VEL",
+          "binding_reason": "v_BT is the first addend in the velocity-chain relation"
+        },
+        {
+          "element_id": "E-FRAME-TG",
+          "relation_or_step_id": "REL-GALILEAN-VEL",
+          "binding_reason": "v_TG is the source-frame translation term"
+        },
+        {
+          "element_id": "E-RESULT-BG",
+          "relation_or_step_id": "REL-GALILEAN-VEL",
+          "binding_reason": "v_BG is the resultant required by the ground-frame projectile model"
+        },
+        {
+          "element_id": "E-COMP-X",
+          "relation_or_step_id": "REL-COMP-X",
+          "binding_reason": "the source velocity modifies only the horizontal component in this setup"
+        },
+        {
+          "element_id": "E-COMP-Y",
+          "relation_or_step_id": "REL-COMP-Y",
+          "binding_reason": "the source has no vertical component"
+        }
+      ]
+    },
+    "governing_relations": [
+      {
+        "relation_id": "REL-GALILEAN-VEL",
+        "expression": "v_BG = v_BT + v_TG",
+        "conditions": ["ordinary speeds", "constant relative frame velocity"]
+      },
+      {
+        "relation_id": "REL-COMP-X",
+        "expression": "u_x,G = u_x,T + V",
+        "conditions": ["source velocity is horizontal"]
+      },
+      {
+        "relation_id": "REL-COMP-Y",
+        "expression": "u_y,G = u_y,T",
+        "conditions": ["source has zero vertical velocity component"]
+      }
+    ],
+    "working_steps": [
+      {
+        "step_id": "S1",
+        "action": "Identify each velocity by object and reference frame.",
+        "uses_element_ids": ["E-FRAME-BT", "E-FRAME-TG"],
+        "uses_relation_ids": ["REL-GALILEAN-VEL"],
+        "output": "correct frame-labelled velocity chain"
+      },
+      {
+        "step_id": "S2",
+        "action": "Add the horizontal components and preserve the vertical component.",
+        "uses_element_ids": ["E-COMP-X", "E-COMP-Y"],
+        "uses_relation_ids": ["REL-COMP-X", "REL-COMP-Y"],
+        "output": "u_x,G = 14 m/s and u_y,G = 6 m/s"
+      },
+      {
+        "step_id": "S3",
+        "action": "State the ground-frame launch vector before using projectile equations.",
+        "uses_element_ids": ["E-RESULT-BG"],
+        "uses_relation_ids": ["REL-GALILEAN-VEL"],
+        "output": "v_BG = (14,6) m/s"
+      }
+    ],
+    "result_or_conclusion": "The ball enters the ground-frame projectile model with launch components (14,6) m/s."
+  },
+  "reconstruction_contract": {
+    "reconstruction_required": true,
+    "omissions": [
+      {
+        "element_id": "E-RESULT-BG",
+        "semantic_type": "VECTOR",
+        "omission_kind": "REMOVE_MAGNITUDE",
+        "learner_action": "COMPLETE",
+        "targeted_capability": "construct the resultant ground-frame launch vector",
+        "pedagogical_reason": "the resultant is the key bridge between frame conversion and projectile motion"
+      },
+      {
+        "element_id": "E-COMP-X",
+        "semantic_type": "COMPONENT",
+        "omission_kind": "REMOVE_COMPONENT",
+        "learner_action": "CALCULATE",
+        "targeted_capability": "apply the horizontal component transformation",
+        "pedagogical_reason": "the learner must actively combine the source and relative horizontal velocities rather than copy a completed vector"
+      }
+    ],
+    "learner_task": {
+      "prompt": "Complete the missing resultant and horizontal component in the velocity construction. Then write the ground-frame launch vector to be used in projectile equations.",
+      "expected_product": "completed labelled velocity triangle plus u_x,G and u_y,G",
+      "success_criteria": [
+        "resultant is labelled v_BG",
+        "u_x,G = 14 m/s",
+        "u_y,G = 6 m/s",
+        "all velocities are expressed in the ground-frame chain before projectile equations"
+      ]
+    },
+    "fixed_help": {
+      "help_is_preauthored_and_fixed": true,
+      "steps": [
+        {
+          "help_id": "H1",
+          "function": "NOTICE",
+          "text": "Which two velocities must be combined to obtain the missing ball velocity seen from the ground?",
+          "addresses_element_ids": ["E-RESULT-BG"]
+        },
+        {
+          "help_id": "H2",
+          "function": "REPRESENT",
+          "text": "Place the known source velocity head-to-tail with the known relative launch and draw the missing resultant from the original tail to the final head.",
+          "addresses_element_ids": ["E-RESULT-BG"]
+        },
+        {
+          "help_id": "H3",
+          "function": "START",
+          "text": "Use the velocity-chain relation, then calculate the missing horizontal component by adding 8 + 6.",
+          "addresses_element_ids": ["E-RESULT-BG", "E-COMP-X"]
+        }
+      ],
+      "dynamic_semantic_help_allowed_before_reveal": false
+    },
+    "reveal_rule": {
+      "attempt_required_before_canonical_reveal": true,
+      "canonical_state_reveal_after_attempt": true,
+      "full_solution_exposure_is_mastery_evidence": false
+    },
+    "anti_triviality": {
+      "cosmetic_blank_allowed": false,
+      "arbitrary_number_blank_allowed": false,
+      "answer_copy_task_allowed": false,
+      "omitted_elements_must_change_reasoning_state": true
+    }
+  },
+  "verification_contract": {
+    "independent_rules": [
+      {
+        "rule_id": "VERIFY-INVERSE",
+        "type": "INVERSE_RELATION",
+        "instruction": "Subtract the source velocity (6,0) from your proposed ground velocity. You should recover the given relative launch (8,6).",
+        "uses_answer_key": false,
+        "applicable_before_reveal": true
+      },
+      {
+        "rule_id": "VERIFY-LIMIT",
+        "type": "LIMITING_CASE",
+        "instruction": "Set the trolley speed to zero in your component rule. The ground launch must reduce to the trolley-relative launch.",
+        "uses_answer_key": false,
+        "applicable_before_reveal": true
+      }
+    ]
+  },
+  "layer_realizations": [
+    {
+      "layer": "CORE1A",
+      "mode": "REFERENCE",
+      "uses_canonical_state": true,
+      "uses_reconstruction_contract": false
+    },
+    {
+      "layer": "CORE1B",
+      "mode": "RECONSTRUCTION",
+      "uses_canonical_state": true,
+      "uses_reconstruction_contract": true
+    }
+  ],
+  "layout_contract": {
+    "learner_state_and_canonical_state_visually_distinct": true,
+    "omitted_elements_have_visible_targets": true,
+    "help_separated_from_canonical_reveal": true,
+    "minimum_final_label_pt": 8.0,
+    "oversized_low_information_figure": false
+  }
+}

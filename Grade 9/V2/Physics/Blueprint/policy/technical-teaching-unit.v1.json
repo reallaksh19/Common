@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-TECHNICAL-TEACHING-UNIT-V1",
+  "applies_to": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "premise": "A technically valid Physics learner unit must bind setup, representation, governing relation, working, result and verification. Mere presence of a diagram/equation is insufficient.",
+  "ttu_required_components": [
+    "PHYSICAL_SETUP",
+    "TECHNICAL_REPRESENTATION",
+    "GOVERNING_RELATION",
+    "MAPPING_OR_WORKING",
+    "RESULT_OR_CONCLUSION",
+    "VERIFICATION"
+  ],
+  "component_semantics": {
+    "PHYSICAL_SETUP": "Objects/event, givens, unknown, reference frame, axes/sign convention when material.",
+    "TECHNICAL_REPRESENTATION": "A Physics-domain representation carrying structure needed to understand or solve the task.",
+    "GOVERNING_RELATION": "Law, equation, vector relation, geometric relation or model condition selected for the task.",
+    "MAPPING_OR_WORKING": "Visible bridge from representation/givens into the governing relation, including intermediate transformation/algebra when material.",
+    "RESULT_OR_CONCLUSION": "Numerical, symbolic or conceptual result stated in the requested frame/quantity.",
+    "VERIFICATION": "At least one material sign, direction, units, dimensional, limiting-case, physical-sense or model-validity check."
+  },
+  "completion_rule": {
+    "all_material_components_required": true,
+    "may_span_immediately_adjacent_pages": true,
+    "learner_may_not_be_required_to_infer_missing_picture_to_equation_bridge": true,
+    "final_equation_without_visible_mapping_is_complete_ttu": false
+  },
+  "core1a": {
+    "major_inferential_jump_requires_complete_ttu": true,
+    "major_problem_family_requires_complete_ttu": true,
+    "worked_example_must_show_intermediate_working": true
+  },
+  "core1b": {
+    "fragile_checkpoint_requires_reconstructable_ttu_when_technical": true,
+    "reconstructable_modes": [
+      "LABEL_INCOMPLETE_REPRESENTATION",
+      "COMPLETE_DIAGRAM_OR_GRAPH",
+      "FILL_COMPONENT_OR_EQUATION_MAP",
+      "SELECT_MODEL_FROM_SETUP",
+      "DERIVE_OR_REARRANGE_RELATION",
+      "COMPLETE_EVENT_TIMELINE",
+      "COMPLETE_TECHNICAL_WORKING"
+    ],
+    "prose_only_prompt_may_replace_material_technical_reconstruction": false
+  },
+  "core2a": {
+    "representative_worked_item_requires_complete_problem_ttu": true,
+    "question_to_solution_spine": [
+      "QUESTION",
+      "EXTRACT_KNOWN_UNKNOWN_FRAME_EVENT",
+      "CONSTRUCT_TECHNICAL_REPRESENTATION",
+      "SELECT_GOVERNING_RELATION",
+      "MAP_GIVENS_TO_RELATION",
+      "SHOW_INTERMEDIATE_WORKING",
+      "RESULT",
+      "VERIFY",
+      "WRONG_ROUTE_OR_VARIATION_WHEN_MATERIAL"
+    ],
+    "large_figure_plus_final_equation_is_complete_worked_solution": false
+  },
+  "core2b": {
+    "transfer_item_requires_learner_setup_extraction_when_material": true,
+    "learner_selects_or_constructs_representation_before_reveal_when_part_of_demand": true,
+    "learner_selects_governing_relation_or_first_move_when_part_of_demand": true,
+    "technical_check_after_attempt_required": true,
+    "invariant_and_changed_dimension_must_be_named_after_solution": true
+  }
+}

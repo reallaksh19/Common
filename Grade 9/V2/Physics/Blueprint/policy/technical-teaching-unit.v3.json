@@ -1,0 +1,54 @@
+{
+  "schema_version": "3.0.0",
+  "ttu_families": {
+    "CONCEPT_TTU": {
+      "used_by": ["CORE1A", "CORE1B"],
+      "centres_on": ["conceptual_change", "equation_meaning", "representation", "derivation", "contrast", "misconception_repair"]
+    },
+    "PROBLEM_TTU": {
+      "used_by": ["CORE2A", "CORE2B"],
+      "centres_on": ["recognition", "model_selection", "constraint", "first_move", "solution_path", "verification", "transfer"]
+    }
+  },
+  "shared_required_anatomy": ["authority_binding", "semantic_target", "canonical_expert_state", "technical_representation", "representation_relation_bindings", "reasoning_state_graph", "learner_transformation", "fixed_help", "canonical_reveal", "independent_verification", "repair_contract", "layout_contract"],
+  "learner_transformation_modes": ["PREDICTION", "COMPLETION", "GENERATION", "SELECTION", "DISCRIMINATION", "DIAGNOSIS", "DERIVATION_CONNECTION", "VERIFICATION", "TRANSFER"],
+  "transformation_rules": {
+    "must_change_reasoning_state": true,
+    "must_produce_observable_learner_product": true,
+    "must_target_capability": true,
+    "blank_or_omission_required_for_all_modes": false,
+    "completion_omissions_must_reference_canonical_element_ids": true,
+    "cosmetic_blank_allowed": false,
+    "arbitrary_number_blank_without_reasoning_role_allowed": false,
+    "answer_copy_task_allowed": false
+  },
+  "tutor_dialogue": {
+    "available_functions": ["ATTEMPT", "NOTICE", "REPRESENT", "EXPLAIN", "CONNECT", "START", "CONTRAST", "REPAIR"],
+    "all_functions_required_for_every_task": false,
+    "prompt_sequence_must_be_target_driven": true,
+    "help_must_be_preauthored": true,
+    "dynamic_new_semantics_before_reveal_allowed": false
+  },
+  "canonical_reveal": {
+    "attempt_required": true,
+    "canonical_state_revealed_after_attempt": true,
+    "full_solution_exposure_is_mastery_evidence": false,
+    "full_solution_exposure_is_transfer_evidence": false
+  },
+  "verification": {
+    "answer_key_only_counts_as_independent_verification": false,
+    "must_be_applicable_before_reveal_when_technically_possible": true,
+    "allowed_types": ["INVERSE_RELATION", "SUBSTITUTE_BACK", "LIMITING_CASE", "DIMENSIONAL", "SIGN_DIRECTION", "CONSERVATION", "GRAPH_BEHAVIOR", "BOUNDARY_CONDITION", "ALTERNATE_REPRESENTATION", "MODEL_VALIDITY"]
+  },
+  "layer_realization": {
+    "CORE1A": "COMPLETE_CONCEPT_REFERENCE",
+    "CORE1B": "CONCEPT_RECONSTRUCTION",
+    "CORE2A": "COMPLETE_WORKED_PROBLEM",
+    "CORE2B": "TRANSFER_RECONSTRUCTION"
+  },
+  "hard_bucket_guidance": {
+    "core1b_should_include_multiple_high_value_transformation_modes": true,
+    "pile_of_micro_blanks_is_sufficient": false,
+    "prose_only_reconstruction_allowed_when_technical_representation_is_natural": false
+  }
+}

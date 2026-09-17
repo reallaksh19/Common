@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-render-preflight-report.schema.json",
+  "title": "Physics Blueprint Render Preflight Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version","preflight_id","publication_ir_id","publication_ir_digest",
+    "renderer_name","renderer_report_digest","pdf_sha256","page_count",
+    "minimum_actual_text_font_pt","page_audit","sample_pages","machine_findings",
+    "machine_preflight_pass","machine_release_state","human_visual_review_state","release_authorized"
+  ],
+  "properties": {
+    "schema_version": {"const":"1.0.0"},
+    "preflight_id": {"type":"string","pattern":"^RENDER-PREFLIGHT-"},
+    "publication_ir_id": {"type":"string","pattern":"^PUBIR-PHY-"},
+    "publication_ir_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "renderer_name": {"type":"string","minLength":1},
+    "renderer_report_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "pdf_sha256": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "page_count": {"type":"integer","minimum":0},
+    "minimum_actual_text_font_pt": {"type":["number","null"],"minimum":0},
+    "page_audit": {"type":"array","items":{"type":"object"}},
+    "sample_pages": {"type":"array","items":{"type":"object"}},
+    "machine_findings": {"type":"array","items":{"type":"string"},"uniqueItems":true},
+    "machine_preflight_pass": {"type":"boolean"},
+    "machine_release_state": {"enum":["MACHINE_PREFLIGHT_PASS_HUMAN_VISUAL_REVIEW_PENDING","MACHINE_PREFLIGHT_BLOCKED"]},
+    "human_visual_review_state": {"const":"PENDING"},
+    "release_authorized": {"const":false}
+  }
+}

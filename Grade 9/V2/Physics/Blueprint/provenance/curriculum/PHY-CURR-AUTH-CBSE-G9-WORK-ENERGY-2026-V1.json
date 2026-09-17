@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "authority_record_id": "PHY-CURR-AUTH-CBSE-G9-WORK-ENERGY-2026-V1",
+  "authority_class": "CURRICULUM_AUTHORITY_RECORD",
+  "subject": "PHYSICS",
+  "grade": 9,
+  "curriculum": "CBSE",
+  "academic_session": "2026-27",
+  "evidence_sources": [
+    {
+      "source_role": "CURRICULUM_INDEX",
+      "organization": "CBSE",
+      "title": "CBSE Curriculum for the Academic Year 2026-27 — Secondary Curriculum Part 1 Class IX",
+      "official_locator": "https://cbseacademic.nic.in/curriculum_2027.html",
+      "version_identity": "CBSE Curriculum 2026-27 / Class IX / Science main subject",
+      "evidence_locator": "Secondary Curriculum Part 1 (Class IX), Main Subjects: Science",
+      "selection_reason": "Current CBSE academic-session index establishes Science as a Class IX main subject under the released 2026-27 curriculum.",
+      "limitations": [
+        "The index establishes current CBSE curriculum context; detailed Work/Energy content is taken from the official NCERT Grade 9 science syllabus source below."
+      ]
+    },
+    {
+      "source_role": "RELEASE_NOTICE",
+      "organization": "CBSE",
+      "title": "Acad-14/2026 — Release of CBSE Curriculum for Academic Session 2026-27 for Classes IX-XII",
+      "official_locator": "https://cbseacademic.nic.in/web_material/Circulars/2026/14_Circular_2026.pdf",
+      "version_identity": "CBSE Circular Acad-14/2026 dated 01.04.2026",
+      "evidence_locator": "Class IX curriculum release and NCF-2023 implementation notice",
+      "selection_reason": "The current CBSE release notice establishes the 2026-27 Class IX curriculum transition and official curriculum publication context.",
+      "limitations": [
+        "The circular does not enumerate the Work/Energy content; it is release/context evidence rather than the detailed content source."
+      ]
+    },
+    {
+      "source_role": "CONTENT_SYLLABUS",
+      "organization": "NCERT",
+      "title": "Syllabus Secondary Stage (Phase I), Grade 9, Part 2 — Science, Mathematics, and Social Science",
+      "official_locator": "https://ncert.nic.in/pdf/announcement/Syllabus_Secondary_Stage_Phase_I_Grade_9_Part_2.pdf",
+      "version_identity": "NCERT Grade 9 Part 2 syllabus, April 2026",
+      "evidence_locator": "Science section, Work, Energy and Simple Machines; printed page 30 / PDF page index 31",
+      "selection_reason": "The official current Grade 9 science syllabus explicitly enumerates Work/Energy content and learning outcomes for the 2026-27 Grade 9 transition.",
+      "limitations": [
+        "The PDF carries a DRAFT watermark while being published on the official NCERT site for 2026-27 planning; this authority record must be revalidated if CBSE/NCERT republishes a superseding version.",
+        "This source supports Grade 9 constant-force work, work-energy theorem, mechanical/kinetic/potential energy, free-fall PE-KE conversion, conservation of energy, and power; it does not support Grade 11 variable-force line-integral treatment."
+      ]
+    }
+  ],
+  "scope_assertions": [
+    {
+      "scope_kind": "SUBTOPIC",
+      "scope_ref": "PHY-WEP-G9-ENERGY-ACCOUNTING-CONSERVATION",
+      "classification": "CURRICULUM_REQUIRED",
+      "supported_gate_ids": [
+        "PHY-WORK-ENERGY-POWER",
+        "PHY-ENERGY-CONSERVATION-LAW"
+      ],
+      "supported_claims": [
+        "CONSTANT_FORCE_WORK",
+        "WORK_ENERGY_THEOREM",
+        "KINETIC_ENERGY",
+        "GRAVITATIONAL_POTENTIAL_ENERGY_RAISED_OBJECT",
+        "MECHANICAL_ENERGY",
+        "FREE_FALL_PE_KE_CONVERSION",
+        "CONSERVATION_OF_ENERGY",
+        "POWER"
+      ]
+    }
+  ],
+  "excluded_extensions": [
+    "Variable-force work as a line integral is not promoted into the Grade 9 scope.",
+    "Potential-energy gradients and advanced conservative-force formalism are not promoted into the Grade 9 scope.",
+    "Grade 11/JEE/Olympiad Work-Energy-Power material is not curriculum authority for this Grade 9 binding."
+  ],
+  "state": "CONFIRMED",
+  "engineering_authorization": "NOT_EVALUATED",
+  "publication_authorization": "NOT_IMPLIED"
+}

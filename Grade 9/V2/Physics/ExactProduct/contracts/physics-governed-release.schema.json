@@ -1,0 +1,28 @@
+{
+  "$id":"physics-governed-release.schema.json",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties":false,
+  "properties":{
+    "artifact_sha256_refs":{"items":{"pattern":"^[a-f0-9]{64}$","type":"string"},"minItems":2,"type":"array","uniqueItems":true},
+    "blocking_states":{"items":{"type":"string"},"type":"array","uniqueItems":true},
+    "candidate_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "candidate_ref":{"minLength":1,"type":"string"},
+    "classification":{"enum":["V2_MATURE_INSTRUCTIONAL_PRODUCT","BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT","FAILED_MACHINE_QUALITY_GATE","TEST_ONLY_FULL_PASS_NOT_RELEASEABLE"]},
+    "decision_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "decision_id":{"minLength":1,"type":"string"},
+    "exit_code":{"enum":[0,1,2]},
+    "gate_mode":{"enum":["REAL_RELEASE","TEST_ONLY"]},
+    "human_review_input_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "human_review_intake_ref":{"minLength":1,"type":"string"},
+    "human_review_release_evidence_eligible":{"type":"boolean"},
+    "quality_states":{"additionalProperties":false,"properties":{"ASSESSMENT_DESIGN":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"MATURE_DESIGN_QUALITY":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"PEDAGOGICAL_DESIGN":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"PUBLICATION_ENGINEERING":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"REFERENCE_COMPARABILITY":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"SUBJECT_CORRECTNESS":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]},"VISUAL_USABILITY":{"enum":["PASS","FAIL","PENDING","NOT_RUN","READY_TO_RUN"]}},"required":["PUBLICATION_ENGINEERING","SUBJECT_CORRECTNESS","PEDAGOGICAL_DESIGN","ASSESSMENT_DESIGN","VISUAL_USABILITY","MATURE_DESIGN_QUALITY","REFERENCE_COMPARABILITY"],"type":"object"},
+    "reference_comparison_digest":{"type":["string","null"],"pattern":"^[a-f0-9]{64}$"},
+    "reference_comparison_ref":{"type":["string","null"]},
+    "reference_read_authorized":{"type":"boolean"},
+    "release_evidence_eligible":{"type":"boolean"},
+    "schema_version":{"const":"1.0.0"},
+    "subject":{"const":"PHYSICS"}
+  },
+  "required":["decision_id","schema_version","subject","candidate_ref","candidate_digest","artifact_sha256_refs","gate_mode","human_review_intake_ref","human_review_input_digest","human_review_release_evidence_eligible","quality_states","reference_comparison_ref","reference_comparison_digest","reference_read_authorized","classification","release_evidence_eligible","exit_code","blocking_states","decision_digest"],
+  "type":"object"
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "rubric_id": "PHY-P-L-VISUAL-RUBRIC-v1",
+  "review_dimension": "VISUAL",
+  "criteria": [
+    {"criterion_id":"PHY-VIS-READABILITY","required":true,"description":"Verify tables, equations, labels and body text are readable at intended use size."},
+    {"criterion_id":"PHY-VIS-WORKSPACE","required":true,"description":"Verify learner workspace is sufficient for the intended written work."},
+    {"criterion_id":"PHY-VIS-DENSITY-HIERARCHY","required":true,"description":"Verify density and hierarchy support scanning and do not obscure the instructional sequence."},
+    {"criterion_id":"PHY-VIS-PAGE-COMPOSITION","required":true,"description":"Verify figures and text compose cleanly without clipping, collision or misleading spatial relationships."}
+  ]
+}

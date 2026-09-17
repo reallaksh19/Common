@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-technical-gate-binding-v2.schema.json",
+  "title": "Physics Bucket Technical Gate Binding v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "binding_id", "bucket_id", "primary_gate_id",
+    "engineering_request_ref", "engineering_manifest_ref",
+    "closure_receipt_id", "closure_receipt_digest", "closure_logic_digest",
+    "registry_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0.0"},
+    "binding_id": {"type": "string", "pattern": "^TECH-GATE-BIND-[A-Z0-9-]+-V2$"},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "primary_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+    "engineering_request_ref": {"type": "string", "minLength": 1},
+    "engineering_manifest_ref": {"type": "string", "minLength": 1},
+    "closure_receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
+    "closure_receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "closure_logic_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "notes": {"type": "string"}
+  }
+}

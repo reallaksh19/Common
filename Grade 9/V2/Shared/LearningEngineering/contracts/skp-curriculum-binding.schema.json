@@ -1,0 +1,82 @@
+{
+  "$id": "skp-curriculum-binding.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Curriculum Binding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "binding_id",
+    "skp_ref",
+    "curriculum_authority",
+    "jurisdiction",
+    "grade",
+    "curriculum_version",
+    "unit_ref",
+    "classification",
+    "explicitness",
+    "scope_refs",
+    "evidence_refs",
+    "rationale",
+    "binding_state"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "binding_id": {"type": "string", "pattern": "^CURR-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "curriculum_authority": {"type": "string", "minLength": 2},
+    "jurisdiction": {"type": "string", "minLength": 2},
+    "grade": {"type": "string", "minLength": 1},
+    "curriculum_version": {"type": "string", "minLength": 1},
+    "unit_ref": {"type": "string", "minLength": 1},
+    "classification": {
+      "enum": [
+        "CURRICULUM_REQUIRED",
+        "CURRICULUM_DERIVED",
+        "PREREQUISITE_BRIDGE",
+        "COMPETITIVE_EXTENSION",
+        "RESEARCH_EXTENSION",
+        "OUT_OF_SCOPE",
+        "UNRESOLVED"
+      ]
+    },
+    "explicitness": {"enum": ["EXPLICIT", "INFERRED", "NOT_APPLICABLE", "UNRESOLVED"]},
+    "scope_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^SCOPE-[A-Z0-9][A-Z0-9_-]*$"}
+    },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "rationale": {"type": "string", "minLength": 10},
+    "exclusions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 3}
+    },
+    "binding_state": {"enum": ["CONFIRMED", "UNRESOLVED"]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"classification": {"const": "UNRESOLVED"}}},
+      "then": {"properties": {"binding_state": {"const": "UNRESOLVED"}}}
+    },
+    {
+      "if": {"properties": {"binding_state": {"const": "CONFIRMED"}}},
+      "then": {
+        "not": {
+          "properties": {
+            "classification": {"const": "UNRESOLVED"},
+            "explicitness": {"const": "UNRESOLVED"}
+          },
+          "required": ["classification", "explicitness"]
+        }
+      }
+    }
+  ]
+}

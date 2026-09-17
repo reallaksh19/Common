@@ -1,0 +1,17 @@
+{
+  "run_id":"C1A-RUN-PHY-M2D-GOLDEN-001","topic_id":"PHY-M2D","join_ref":"J-PHY-M2D-GOLDEN-001","join_digest":"dd01e525272927e860fcede12aaa34afb8a25702df8cd5d237b38f54ca6acd9b","control_state_ref":"CTRL-PHY-M2D-P20-FIRST-001","control_digest":"2052aba8cc2e4bb6fb9d99492c138746fee350dfc6b5c4d48247fd71cd53ae7e","unresolved_required_jump_count":0,
+  "stage_results":[
+    {"stage":"1A0_LEARNER_STATE_GAP","status":"PASS","artifact_refs":["A-GAP-001"],"evidence_refs":["CTRL-PHY-M2D-P20-FIRST-001"],"notes":[]},
+    {"stage":"1A1_LEARNING_ATOMS","status":"PASS","artifact_refs":["A-ATOM-001"],"evidence_refs":["J-PHY-M2D-GOLDEN-001"],"notes":[]},
+    {"stage":"1A2_INFERENTIAL_JUMPS","status":"PASS","artifact_refs":["A-JUMP-001"],"evidence_refs":["JITEM-PHY-0001"],"notes":[]},
+    {"stage":"1A3_COGNITIVE_TRANSFORMATION","status":"PASS","artifact_refs":["A-CT-001"],"evidence_refs":["A-JUMP-001"],"notes":[]},
+    {"stage":"1A4_REPRESENTATION_REQUIREMENTS","status":"PASS","artifact_refs":["A-RR-001"],"evidence_refs":["A-CT-001"],"notes":[]},
+    {"stage":"1A5_REPRESENTATION_CANDIDATES","status":"PASS","artifact_refs":["A-RC-001"],"evidence_refs":["A-RR-001"],"notes":[]},
+    {"stage":"1A6_REPRESENTATION_DECISIONS","status":"PASS","artifact_refs":["A-RD-001"],"evidence_refs":["A-RC-001"],"notes":[]},
+    {"stage":"1A7_PICTURE_WORD_SYMBOL_EQUATION_BRIDGE","status":"PASS","artifact_refs":["A-BRIDGE-001"],"evidence_refs":["A-RD-001"],"notes":[]},
+    {"stage":"1A8_MISCONCEPTION_CONTRAST","status":"PASS","artifact_refs":["A-MC-001"],"evidence_refs":["A-BRIDGE-001"],"notes":[]},
+    {"stage":"1A9_WORKED_FADED_INDEPENDENT_PLAN","status":"PASS","artifact_refs":["A-WFI-001"],"evidence_refs":["A-MC-001"],"notes":[]},
+    {"stage":"1A10_CORE2_TRANSFER_BRIDGE","status":"PASS","artifact_refs":["A-C2B-001"],"evidence_refs":["D-Q11-HORIZONTAL-EVENT"],"notes":[]},
+    {"stage":"1A11_UNRESOLVED_JUMP_AUDIT","status":"PASS","artifact_refs":["A-AUDIT-001"],"evidence_refs":["A-JUMP-001"],"notes":[]}
+  ]
+}

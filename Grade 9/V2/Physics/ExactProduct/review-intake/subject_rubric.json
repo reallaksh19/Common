@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "rubric_id": "PHY-P-L-SUBJECT-RUBRIC-v1",
+  "review_dimension": "SUBJECT",
+  "criteria": [
+    {"criterion_id":"PHY-SUBJ-STATEMENTS","required":true,"description":"Verify Physics statements and governed physical relationships in the exact candidate."},
+    {"criterion_id":"PHY-SUBJ-STATE-CONTINUITY","required":true,"description":"Verify state-continuity conditions and model/event boundaries are physically correct."},
+    {"criterion_id":"PHY-SUBJ-SIGNS-FRAMES","required":true,"description":"Verify signs, axes, reference frames and vector directions are explicit and correct."},
+    {"criterion_id":"PHY-SUBJ-WORKED-TRACE","required":true,"description":"Verify numeric worked traces and problem givens preserve the repository-backed source/model semantics."}
+  ]
+}

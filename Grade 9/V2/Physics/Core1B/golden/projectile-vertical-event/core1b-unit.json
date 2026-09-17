@@ -1,0 +1,15 @@
+{
+  "schema_version":"1.0.0",
+  "unit_id":"PHY-C1B-M2D-SBA04-PROCESS-001",
+  "subject":"PHYSICS",
+  "bucket_id":"M2D-SBA-04",
+  "capability_id":"PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+  "problem_family_ref":"PF-PROJECTILE-VERTICAL-EVENT",
+  "upstream_authority":{"core1a_release_ref":"C1A-REL-PHY-M2D-SBA04-PROCESS-001","core1a_release_digest":"74c5923e987ba03822146360da13e30ab0e57abb5e2b65e51a4750b8ffec1db7"},
+  "atom_refs":["PHY-A-DIR-01","PHY-A-SIGN-01","PHY-A-VEL-01","PHY-A-ACC-01","PHY-A-ACC-02","PHY-A-CONSTACC-01","PHY-A-TIME-01","PHY-A-COMP-01","PHY-A-GRAV-01","PHY-A-INDEP-01","PHY-A-TABLE-01","PHY-A-GRAPH-01","PHY-A-SLOPE-01","PHY-A-SYM-01","PHY-A-EQ-01"],
+  "prerequisite_skip_evidence":[],
+  "readiness_requirements":["recognise","represent","explain","applicability","model_select","first_move","finish","check"],
+  "model_validity_required":true,
+  "explanation_required":true,
+  "learner_surface":{"teacher_moves":["Choose upward as positive and keep that choice attached to every vertical quantity.","Track the vertical velocity on one clock while gravity keeps acting downward.","Explain what the vertical-motion equation says before substituting."],"worked_example":"A projectile has vertical velocity 12 m/s upward after 1 s. With g = 10 m/s^2 downward, reconstruct the launch vertical component and check the sign physically.","faded_task":"At 2 s the vertical component is 6 m/s upward and the vertical acceleration is -9 m/s^2. Set up the relation; complete only the final rearrangement yourself.","independent_task":"A projectile has vertical velocity 3 m/s upward after 3 s with vertical acceleration -9 m/s^2. Find the launch vertical component, state why the model applies, and check the result."}
+}

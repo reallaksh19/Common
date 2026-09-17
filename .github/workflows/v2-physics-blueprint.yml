@@ -1,0 +1,149 @@
+name: V2 Physics Blueprint
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Blueprint/**'
+      - 'Grade 9/V2/Physics/Core1A/**'
+      - 'Grade 9/V2/Physics/Core1B/**'
+      - 'Grade 9/V2/Physics/Representation/**'
+      - 'Grade 9/V2/Physics/Core2A/**'
+      - 'Grade 9/V2/Physics/Core2B/**'
+      - 'Grade 9/V2/Shared/AgentTasks/**'
+      - 'Grade 9/V2/Shared/LearningEngineering/**'
+      - 'Grade 9/V2/Shared/EngineeringGate/**'
+      - 'Grade 9/V2/Shared/CrossDomain/**'
+      - 'Grade 9/V2/**/GENERATION_AUTHORITY_MANIFEST.json'
+      - 'Grade 9/V2/Chemistry/CHEMISTRY_GENERATION_AUTHORITY_MANIFEST.json'
+      - '.github/workflows/v2-physics-blueprint.yml'
+  workflow_dispatch:
+
+jobs:
+  blueprint-v1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install jsonschema reportlab pymupdf
+      - name: Validate Shared AgentTasks execution kernel
+        run: |
+          python -m py_compile 'Grade 9/V2/Shared/AgentTasks/engine/'*.py
+          python -m unittest 'Grade 9/V2/Shared/AgentTasks/tests/test_execution_kernel.py' -v
+      - name: Compile generic AgentTasks packet and Engineering preflight
+        run: |
+          python 'Grade 9/V2/Shared/AgentTasks/engine/compile_execution_packet.py' \
+            --task 'Grade 9/V2/Shared/AgentTasks/fixtures/valid/physics-subtopic-engineering.task.json' \
+            --output /tmp/execution-packet.json \
+            --preflight-output /tmp/engineering-preflight.md
+          python - <<'PY'
+          import json
+          packet = json.load(open('/tmp/execution-packet.json', encoding='utf-8'))
+          assert packet['engineering_preflight']['engineering_state'] == 'NOT_EVALUATED'
+          assert packet['engineering_preflight']['publication_authorization'] == 'NOT_IMPLIED'
+          assert packet['packet_digest'].startswith('sha256:')
+          PY
+      - name: Validate Blueprint delegation-context intake boundary
+        run: |
+          python -m py_compile 'Grade 9/V2/Physics/Blueprint/engine/consume_agent_task_packet.py'
+          python 'Grade 9/V2/Physics/Blueprint/tests/test_blueprint_agent_task_intake.py'
+      - name: Validate blueprint contracts and role bindings
+        run: python "Grade 9/V2/Physics/Blueprint/contracts/validate_contracts.py"
+      - name: Validate canonical Physics Technical Engineering Gates v2
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
+      - name: Reconcile PR383 discovery breadth against canonical v3 Workbench
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py"
+      - name: Validate SBA23 technical-gate prerequisite closure
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
+      - name: Validate reconstruction-complete TTU v2 falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_ttu_v2.py"
+      - name: Validate self-help learner-product grammar and three-topic pilot
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_self_help_core_grammar.py"
+      - name: Validate V7 CDAU SDU LAU and TTU v3 architecture
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_cdau_sdu_lau_ttu_v7.py"
+      - name: Validate SBA23 V7 realization and source-hold boundaries
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_sba23_v7_realization.py"
+      - name: Validate SBA23 V8 CCU process golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu.py" "topics/m2d-sba23-ccu.v1.json"
+      - name: Run V8 CCU custody coverage duplication difficulty and fit falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_ccu_v8.py"
+      - name: Validate V9 calibration-aware CCU process golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_ccu_v2.py" "topics/m2d-sba23-ccu.v1.json"
+      - name: Validate V9 calibration maturity and heuristic-review falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_calibration_v9.py"
+      - name: Run B-layer runtime-boundary falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_b_layer_boundary.py"
+      - name: Run Core1B observed-evidence runtime falsifiers
+        run: python "Grade 9/V2/Physics/Core1B/tests/test_core1b_runtime.py"
+      - name: Run Core2B exact-pool transfer runtime falsifiers
+        run: python "Grade 9/V2/Physics/Core2B/tests/test_core2b_runtime.py"
+      - name: Run adaptive-routing golden fixtures
+        run: python "Grade 9/V2/Physics/Blueprint/engine/run_golden_fixtures.py"
+      - name: Run blueprint routing tests
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_routing.py"
+      - name: Validate V10 contract inventory and Shared cross-domain boundary
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_contract_inventory_v10.py"
+      - name: Validate V10 scoped evidence and curriculum authority
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_scope_v10.py"
+      - name: Validate V10 external-domain prerequisite handoff
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_domain_prerequisites_v10.py"
+      - name: Run V10 seven-core stress falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_stress_test_v10.py"
+      - name: Run V10 stress-batch determinism falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_stress_batch_v10.py"
+      - name: Compile governed V10 seven-core stress receipts
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_all_stress_tests.py" --out-dir /tmp/physics-blueprint-stress-receipts
+      - name: Run independent second-pass tests
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_independence.py"
+      - name: Run Core1 x Core2 Join falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_join.py"
+      - name: Compile Join golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_join.py" "Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json" --out /tmp/physics-join.json
+      - name: Run learner-purpose control-state falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_control_state.py"
+      - name: Compile learner-purpose control-state golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/resolve_control_state.py" "Grade 9/V2/Physics/Blueprint/fixtures/control-state/m2d-p20-first-study.json" --out /tmp/physics-control-state.json
+      - name: Run Core1A state-machine falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_core1a_stage_machine.py"
+      - name: Validate real M2D-SBA-04 Core1A migration evidence
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_core1a_sba04_real_migration.py"
+      - name: Prove manuscript gate from exact Join and control-state digests
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_core1a_stage_run.py" "Grade 9/V2/Physics/Blueprint/fixtures/core1a/stage-run-ready.json" --join /tmp/physics-join.json --control-state /tmp/physics-control-state.json --out /tmp/physics-core1a-stage-run.json
+      - name: Run Motion-in-a-Plane topic-pilot falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_topic_pilot.py"
+      - name: Validate Motion-in-a-Plane topic blueprint and derived route
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_topic_blueprint.py" "Grade 9/V2/Physics/Blueprint/topics/motion-in-a-plane.v1.json"
+      - name: Run Publication IR lossless-boundary falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_publication_ir.py"
+      - name: Compile lossless Publication IR golden
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_publication_ir.py" "Grade 9/V2/Physics/Blueprint/fixtures/publication/m2d-core1a-ir.json" --out /tmp/physics-publication-ir.json
+      - name: Run actual-render custody and finished-PDF preflight falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_render_preflight.py"
+      - name: Build actual render process golden with existing Physics renderer
+        run: python "Grade 9/V2/Physics/Blueprint/engine/build_render_process_golden.py" --out-dir /tmp/physics-blueprint-render-golden
+      - name: Prove subject-wide 2D Physics primitives are real vector graphics
+        run: python "Grade 9/V2/Physics/Representation/tests/test_physics_2d_primitives.py"
+      - name: Run real Motion-in-a-Plane representation-readiness falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_m2d_render_readiness.py"
+      - name: Compile real Motion-in-a-Plane representation-readiness report
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_m2d_render_readiness.py" --out /tmp/physics-blueprint-render-golden/m2d-render-readiness.json
+      - name: Run real M2D composition and manuscript-release falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_blueprint_m2d_composition_gate.py"
+      - name: Compile current real M2D composition state
+        run: python "Grade 9/V2/Physics/Blueprint/engine/compile_m2d_composition_plan.py" --out /tmp/physics-blueprint-render-golden/m2d-composition-plan-current.json
+      - name: Upload rendered process proof and M2D readiness/composition state for human review
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-blueprint-render-process-golden
+          path: /tmp/physics-blueprint-render-golden
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload governed V10 seven-core stress receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-blueprint-v10-stress-receipts
+          path: /tmp/physics-blueprint-stress-receipts
+          if-no-files-found: error
+          retention-days: 14

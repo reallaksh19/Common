@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core1a-task-contract.schema.json",
+  "title": "Physics Core1A Production Task Contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task_id", "bucket_id", "prior_knowledge_pct", "difficulty", "pathway", "primary_questions", "question_load", "prerequisite_buckets", "source_mode_hint", "scaffold_profile_id", "required_inputs", "required_outputs", "gates"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "task_id": {"type": "string", "pattern": "^TASK-M2D-SBA-\\d{2}-P(20|50)$"},
+    "bucket_id": {"type": "string", "pattern": "^M2D-SBA-\\d{2}$"},
+    "prior_knowledge_pct": {"enum": [20, 50]},
+    "difficulty": {"enum": ["D1", "D2", "D3", "D4"]},
+    "pathway": {"enum": ["FOUNDATION_PATH", "QUICK_START_PATH"]},
+    "primary_questions": {"type": "array", "items": {"type": "string", "pattern": "^Q\\d{2}$"}, "minItems": 1, "uniqueItems": true},
+    "question_load": {"type": "object", "additionalProperties": false, "required": ["count", "class", "minimum_transfer_families"], "properties": {"count": {"type": "integer", "minimum": 1}, "class": {"enum": ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]}, "minimum_transfer_families": {"type": "integer", "minimum": 1}}},
+    "prerequisite_buckets": {"type": "array", "items": {"type": "string", "pattern": "^M2D-SBA-\\d{2}$"}, "uniqueItems": true},
+    "source_mode_hint": {"enum": ["THEORY_BACKED", "PRACTICE_DRIVEN", "SOURCE_VISIBLE_EXTENSION"]},
+    "scaffold_profile_id": {"type": "string", "pattern": "^P(20|50)_D[1-4]$"},
+    "required_inputs": {"type": "array", "items": {"enum": ["SOURCE_CONTRACT", "ANSWER_CONTRACT", "SBA_PROFILE", "TRANSFER_ROUTINES", "SCAFFOLD_PROFILE"]}, "minItems": 3, "uniqueItems": true},
+    "required_outputs": {"type": "array", "items": {"enum": ["LEARNING_REPRESENTATION", "VALIDATION_REPORT", "BUILD_MANIFEST", "PDF", "MONTAGE"]}, "minItems": 3, "uniqueItems": true},
+    "gates": {"type": "array", "minItems": 10, "maxItems": 10, "items": {"enum": ["G0_INDEX_SYNC", "G1_SOURCE_AND_CORE2_AUDIT", "G2_DIFFICULTY_AND_READINESS", "G3_LEARNING_ATOM_DECOMPOSITION", "G4_CORE2_HINT_PRETEACH_AUDIT", "G5_PROBLEM_FAMILY_ASSIMILATION", "G6_PAGE_PLAN", "G7_RENDER_AND_VISUAL_AUDIT", "G8_READINESS_AND_TRANSFER_AUDIT", "G9_MACHINE_QA_AND_HANDOFF"]}}
+  }
+}

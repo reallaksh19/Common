@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-03",
+  "learner_profile": {"prior_knowledge_pct": 20, "intrinsic_difficulty": "D2", "pathway": "FOUNDATION_PATH"},
+  "source_inputs": {
+    "sba_registry": "registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index": "registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage": "registry/physics-core1a-core2-linkage.json",
+    "profile_registry": null,
+    "transfer_registry": "registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json"
+  },
+  "primary_questions": ["Q10", "Q43"],
+  "question_release": [
+    {"question_id":"Q10","status":"RELEASED","routine_id":"M2D-SBA-03-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q43","status":"HELD","routine_id":null,"release_prerequisite_buckets":["M2D-SBA-04"]}
+  ],
+  "question_load": {"count": 2, "class": "LOW", "minimum_transfer_families": 1},
+  "phase_gates": [
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["SBA publication index contains M2D-SBA-03."]},
+    {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"PASS","evidence":["Component motion and Q10/Q43 requirements audited."]},
+    {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D2, 20% foundation path."]},
+    {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Components, horizontal motion, vertical motion, shared clock and no-time relation decomposed."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["Q10 pre-taught; Q43 held until SBA-04 apex teaching."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["R1 velocity-component routine created for Q10; Q43 release dependency is explicit."]},
+    {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["Concept build followed by method, independent practice, separate hints and readiness."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["13-page transfer-revised PDF rendered and visually checked."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Recognise/represent/first-move/finish readiness gate added for Q10."]},
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PASS","evidence":["Core1A and full Physics chain CI passed after transfer architecture update."]}
+  ],
+  "learning_atoms": ["M2D-SBA-03A","M2D-SBA-03B","M2D-SBA-03C","M2D-SBA-03D","M2D-SBA-03E","M2D-SBA-03F","M2D-SBA-03G"],
+  "transfer_routines": ["M2D-SBA-03-R1"],
+  "publication_plan": {
+    "first_surface":"SBA_PUBLICATION_INDEX",
+    "macro_order":["SBA_INDEX","FOUNDATION_PRETRAINING","CONCEPT_BUILD","PICTORIAL_STAGES","PICTURE_TO_MATHS","MISCONCEPTION","WATCH_ONE","COMPLETE_ONE","PROBLEM_FAMILY_ROUTINES","INDEPENDENT_PRACTICE","HINTS","READINESS","CORE2_TRANSFER_SUMMARY"],
+    "independent_practice_policy":"ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy":"NEXT_PAGE",
+    "readiness_gate_policy":"RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa": {"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":true,"visual_audit_complete":true,"pdf_preflight_complete":true,"ci_passed":true},
+  "handoff": {
+    "status":"COMPLETE",
+    "expected_pdf_name":"M2D-SBA-03-one-clock-two-directions-20pct-transfer-revised.pdf",
+    "expected_montage_name":"M2D-SBA-03-transfer-revised-montage.jpg",
+    "next_active_bucket":"M2D-SBA-04",
+    "notes":["Q43 ownership remains SBA-03 but release depends on SBA-04 apex teaching."]
+  }
+}

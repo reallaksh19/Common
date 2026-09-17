@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0.0",
+  "review_id": "PR383-MAP-PHY-FORCE-NEWTON-LAWS-V1",
+  "review_authority": "REPOSITORY_ENGINEERING_MAPPING_REVIEW",
+  "mapping_scope": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY",
+  "source_snapshot": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "discovery_gate_id": "PHY-FORCE-NEWTON-LAWS",
+    "source_control_fields_ignored": ["technical_readiness", "release_checklist"]
+  },
+  "target_snapshot": [
+    {
+      "gate_id": "PHY-NLM-INTERACTION",
+      "gate_ref": "engineering-gates/newtonian-mechanics/PHY-NLM-INTERACTION.v3.json",
+      "gate_git_blob_sha": "490078cf1ecd8e96156161aa519e7757063e8121"
+    },
+    {
+      "gate_id": "PHY-NLM-FBD",
+      "gate_ref": "engineering-gates/newtonian-mechanics/PHY-NLM-FBD.v3.json",
+      "gate_git_blob_sha": "9677c7effb9b61d34ea853f5882323a305e70755"
+    },
+    {
+      "gate_id": "PHY-NLM-FIRST-LAW",
+      "gate_ref": "engineering-gates/newtonian-mechanics/PHY-NLM-FIRST-LAW.v3.json",
+      "gate_git_blob_sha": "d8e20ab903bf8d1ec2af014f9b21a295afff724f"
+    },
+    {
+      "gate_id": "PHY-NLM-SECOND-LAW",
+      "gate_ref": "engineering-gates/newtonian-mechanics/PHY-NLM-SECOND-LAW.v3.json",
+      "gate_git_blob_sha": "19017bca5ca0739bf6ce40b13cc3b5d3469a9cbf"
+    },
+    {
+      "gate_id": "PHY-NLM-THIRD-LAW",
+      "gate_ref": "engineering-gates/newtonian-mechanics/PHY-NLM-THIRD-LAW.v3.json",
+      "gate_git_blob_sha": "0e3f27be5eb9ba4b709b23fffc3f27645cd27feb"
+    }
+  ],
+  "coverage": [
+    {
+      "source_pointer": "/technical_core/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-INTERACTION", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-NLM-FIRST-LAW", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-NLM-THIRD-LAW", "target_pointer": "/concepts/0"}
+      ],
+      "review_note": "The broad source concept is intentionally decomposed across force-as-interaction, inertia/equilibrium, net-force acceleration, and reciprocal-force-pair authorities."
+    },
+    {
+      "source_pointer": "/mandatory_equations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The source vector second-law relation is preserved by the canonical axis-wise x and y net-force equations for one selected constant-mass system."
+    },
+    {
+      "source_pointer": "/representations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/representations/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/representations/0"}
+      ],
+      "review_note": "The canonical FBD authority isolates one receiver/system and the second-law representation adds declared axes and complete external-force component accounting."
+    },
+    {
+      "source_pointer": "/model_conditions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-FIRST-LAW", "target_pointer": "/model_conditions/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/relations/0"}
+      ],
+      "review_note": "The inertial-frame condition is explicit in the first-law model condition and is also a condition of the canonical second-law relation."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/reasoning_sequence/0"}
+      ],
+      "review_note": "The refined FBD sequence begins by selecting exactly one body or system before forces are drawn."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-INTERACTION", "target_pointer": "/reasoning_sequence/1"},
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/reasoning_sequence/1"},
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/reasoning_sequence/2"}
+      ],
+      "review_note": "The refined interaction/FBD chain identifies all external interactions crossing the selected boundary and draws only forces acting on that receiver."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/2",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/reasoning_sequence/2"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The canonical second-law sequence writes net-force equations axis-wise for the same system and declared axes."
+    },
+    {
+      "source_pointer": "/required_transformations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-INTERACTION", "target_pointer": "/required_transformations/0"},
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/required_transformations/1"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/required_transformations/1"}
+      ],
+      "review_note": "The old scenario-to-equation transformation is decomposed into scene-to-interaction, interaction-to-FBD, and force-component-to-governed-dynamics transformations."
+    },
+    {
+      "source_pointer": "/misconceptions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-INTERACTION", "target_pointer": "/misconceptions/0"},
+        {"gate_id": "PHY-NLM-FIRST-LAW", "target_pointer": "/misconceptions/0"}
+      ],
+      "review_note": "The refined gates reject force as an intrinsic property of a moving object and preserve constant-velocity motion as compatible with zero net force."
+    },
+    {
+      "source_pointer": "/mandatory_verifications/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/verifications/0"},
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/verifications/3"}
+      ],
+      "review_note": "The canonical second-law authority requires units and model-validity verification; the refined NLM gates add body/agent and direction checks."
+    },
+    {
+      "source_pointer": "/problem_families/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-SECOND-LAW", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "The canonical single-body Newton-II family preserves the source workflow: complete FBD first, then resolve forces and solve for acceleration or force."
+    },
+    {
+      "source_pointer": "/falsification_cases/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-NLM-FBD", "target_pointer": "/misconceptions/0"},
+        {"gate_id": "PHY-NLM-THIRD-LAW", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-NLM-THIRD-LAW", "target_pointer": "/representations/0"}
+      ],
+      "review_note": "The source action-reaction-on-one-FBD defect is explicitly rejected by both the FBD receiver rule and the canonical third-law distinct-body authority."
+    }
+  ],
+  "decision": {
+    "status": "APPROVED",
+    "uncovered_source_pointers": [],
+    "readiness_authorized": false,
+    "source_custody_promoted": false
+  }
+}

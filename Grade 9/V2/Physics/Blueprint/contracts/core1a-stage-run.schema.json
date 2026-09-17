@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1a-stage-run.schema.json",
+  "title":"Physics Core1A Assimilation Stage Run",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","run_id","topic_id","join_ref","join_digest","control_state_ref","control_digest","stage_results","unresolved_required_jump_count","manuscript_gate","next_stage","block_reasons","stage_run_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "run_id":{"type":"string","pattern":"^C1A-RUN-PHY-"},
+    "topic_id":{"type":"string","minLength":1},
+    "join_ref":{"type":"string","pattern":"^J-PHY-"},
+    "join_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "control_state_ref":{"type":"string","pattern":"^CTRL-PHY-"},
+    "control_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "stage_results":{"type":"array","maxItems":12,"items":{"type":"object","additionalProperties":false,"required":["stage","status","artifact_refs","evidence_refs","notes"],"properties":{"stage":{"type":"string","minLength":1},"status":{"enum":["PASS","BLOCKED"]},"artifact_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},"evidence_refs":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},"notes":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}}},
+    "unresolved_required_jump_count":{"type":"integer","minimum":0},
+    "manuscript_gate":{"enum":["IN_PROGRESS","RELEASED","BLOCKED"]},
+    "next_stage":{"type":["string","null"]},
+    "block_reasons":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "stage_run_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

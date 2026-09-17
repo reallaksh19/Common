@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "snapshot_id": "PR383-ENGINEERING-REGISTRY-E92481F",
+  "source": {
+    "repository": "reallaksh19/Common",
+    "pr_number": 383,
+    "head_sha": "e92481f6e03a8bb49a55f568b03cba7c12fb942a",
+    "registry_path": "Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "schema_path": "Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate.schema.json",
+    "schema_git_blob_sha": "3aece88e05b22c550155515b8b43fdf8f4788f1f"
+  },
+  "local": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "schema_ref": "provenance/pr383/physics-technical-engineering-gate.schema.json"
+  },
+  "role": "DISCOVERY_MIGRATION_INPUT_NOT_READINESS_AUTHORITY",
+  "control_rule": "Canonical v3 source files plus external invariant profile plus production v3 validator are the only technical-readiness authority."
+}

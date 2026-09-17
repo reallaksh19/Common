@@ -1,0 +1,53 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A11-UNRESOLVED-JUMP-CLOSURE-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A11_UNRESOLVED_JUMP_AUDIT",
+  "evidence_kind": "UNRESOLVED_JUMP_CLOSURE",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/unresolved-jump-audit.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json"
+  ],
+  "artifact_refs": [
+    "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+    "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+    "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#required_jump_refs",
+    "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#closed_jump_refs",
+    "topics/m2d-sba04-design/unresolved-jump-audit.v1.json#unresolved_jump_refs"
+  ],
+  "proof": {
+    "required_jump_refs": [
+      "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+      "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+      "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+      "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+      "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+      "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+      "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+      "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+    ],
+    "closure_receipt_refs": [
+      "topics/m2d-sba04-stage-evidence/1a2-inferential-jump-closure.v1.json",
+      "topics/m2d-sba04-stage-evidence/1a3-cognitive-transformation.v1.json",
+      "topics/m2d-sba04-stage-evidence/1a4-representation-requirements.v1.json",
+      "topics/m2d-sba04-stage-evidence/1a7-pwse-bridge.v1.json",
+      "topics/m2d-sba04-stage-evidence/1a9-worked-faded-independent.v1.json"
+    ],
+    "unresolved_jump_refs": [],
+    "unresolved_required_jump_count": 0
+  },
+  "unresolved_requirements": []
+}

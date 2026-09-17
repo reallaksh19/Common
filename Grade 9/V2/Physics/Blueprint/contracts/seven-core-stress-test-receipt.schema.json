@@ -1,0 +1,28 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-seven-core-stress-test-receipt.schema.json",
+  "title":"Physics Seven-Core Stress Test Receipt",
+  "type":"object",
+  "additionalProperties":false,
+  "required":["schema_version","stress_test_id","subject","grade","requested_curriculum","scope","curriculum_status","authority_projection","routing","engineering","domain_prerequisites","join","cores","downstream","architecture_violations","final_verdict","receipt_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "stress_test_id":{"type":"string","pattern":"^STRESS-PHY-"},
+    "subject":{"const":"PHYSICS"},
+    "grade":{"type":"integer"},
+    "requested_curriculum":{"type":"string"},
+    "scope":{"type":"object","additionalProperties":false,"required":["kind","ref","topic_id","scope_digest","scoped_evidence_receipt_digest"],"properties":{"kind":{"enum":["TOPIC","SUBTOPIC","BUCKET","CASE"]},"ref":{"type":"string"},"topic_id":{"type":"string"},"scope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"scoped_evidence_receipt_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}}},
+    "curriculum_status":{"enum":["SUPPORTED_BY_REPOSITORY_AUTHORITY","HELD_INSUFFICIENT_AUTHORITY"]},
+    "authority_projection":{"type":"object","additionalProperties":false,"required":["projection_digest","curriculum_binding_state","curriculum_binding_id","engineering_envelope_digest","release_authority"],"properties":{"projection_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"curriculum_binding_state":{"enum":["BOUND_CONFIRMED","UNBOUND","REPOSITORY_INTERNAL_SCOPE"]},"curriculum_binding_id":{"type":["string","null"]},"engineering_envelope_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"release_authority":{"const":"NOT_GRANTED_BY_PROJECTION"}}},
+    "routing":{"type":"object","additionalProperties":false,"required":["target_route","matched_rule_id","scope_consistent"],"properties":{"target_route":{"enum":["CORE1_FIRST","CORE2_FIRST","BLOCK"]},"matched_rule_id":{"type":"string"},"scope_consistent":{"const":true}}},
+    "engineering":{"type":"object","additionalProperties":false,"required":["closure_status","closure_digest","gate_states"],"properties":{"closure_status":{"enum":["READY","BLOCKED"]},"closure_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"gate_states":{"type":"array"}}},
+    "domain_prerequisites":{"type":"object","additionalProperties":false,"required":["closure_status","closure_digest","prerequisites","demands"],"properties":{"closure_status":{"enum":["READY","HELD"]},"closure_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"},"prerequisites":{"type":"array"},"demands":{"type":"array"}}},
+    "join":{"type":"object","additionalProperties":false,"required":["join_status","assimilation_ready","assessment_coverage_state","join_digest"],"properties":{"join_status":{"enum":["JOIN_READY","JOIN_READY_WITH_HOLDS","JOIN_READY_NO_CORE2_DEMAND","JOIN_BLOCKED"]},"assimilation_ready":{"type":"boolean"},"assessment_coverage_state":{"enum":["DEMANDS_PRESENT","VERIFIED_NO_TARGET_DEMAND","COVERAGE_UNKNOWN"]},"join_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}}},
+    "cores":{"type":"object","additionalProperties":false,"required":["CORE0","CORE1","CORE1A","CORE1B","CORE2","CORE2A","CORE2B"],"properties":{"CORE0":{"$ref":"#/$defs/coreState"},"CORE1":{"$ref":"#/$defs/coreState"},"CORE1A":{"$ref":"#/$defs/coreState"},"CORE1B":{"$ref":"#/$defs/coreState"},"CORE2":{"$ref":"#/$defs/coreState"},"CORE2A":{"$ref":"#/$defs/coreState"},"CORE2B":{"$ref":"#/$defs/coreState"}}},
+    "downstream":{"type":"object","additionalProperties":false,"required":["CCU","CDAU","SDU","LAU","CONCEPT_TTU","PROBLEM_TTU","PUBLICATION","HUMAN_REVIEW"],"properties":{"CCU":{"$ref":"#/$defs/downstreamState"},"CDAU":{"$ref":"#/$defs/downstreamState"},"SDU":{"$ref":"#/$defs/downstreamState"},"LAU":{"$ref":"#/$defs/downstreamState"},"CONCEPT_TTU":{"$ref":"#/$defs/downstreamState"},"PROBLEM_TTU":{"$ref":"#/$defs/downstreamState"},"PUBLICATION":{"$ref":"#/$defs/downstreamState"},"HUMAN_REVIEW":{"$ref":"#/$defs/downstreamState"}}},
+    "architecture_violations":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "final_verdict":{"enum":["STRESS_TEST_PASS","STRESS_TEST_FAIL"]},
+    "receipt_digest":{"type":"string","pattern":"^sha256:[0-9a-f]{64}$"}
+  },
+  "$defs":{"coreState":{"type":"object","additionalProperties":false,"required":["status","blockers"],"properties":{"status":{"type":"string","minLength":1},"blockers":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}}}},"downstreamState":{"enum":["PASS","READY","HELD","BLOCKED","NOT_AUTHORIZED","NOT_INSTANTIATED","NOT_APPLICABLE","NOT_RUN","NOT_ISSUED"]}}
+}

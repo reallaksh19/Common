@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-technical-engineering-gate-extension-v1.schema.json",
+  "title": "Physics Technical Engineering Gate Extension v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "extension_id", "base_registry_ref", "gates"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "extension_id": {"type": "string", "pattern": "^ENG-GATE-EXT-[A-Z0-9-]+$"},
+    "base_registry_ref": {"const": "policy/physics-technical-engineering-gates.v2.json"},
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "object"}
+    },
+    "notes": {"type": "string"}
+  }
+}

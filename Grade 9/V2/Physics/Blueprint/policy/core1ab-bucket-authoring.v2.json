@@ -1,0 +1,109 @@
+{
+  "schema_version": "2.0.0",
+  "policy_id": "PHY-CORE1AB-BUCKET-AUTHORING-V2",
+  "applies_to": ["CORE1A", "CORE1B"],
+  "segmentation_unit": "SUBTOPIC_BUCKET",
+  "student_knowledge_pct_used_for_authored_depth": false,
+  "difficulty_badges": ["EASY", "MEDIUM", "HARD"],
+  "legacy_aliases": {"LOW": "EASY"},
+  "shared_bucket_learning_model": {
+    "required_fields": [
+      "HIDDEN_INVARIANTS",
+      "PREREQUISITE_BRIDGES",
+      "INFERENTIAL_JUMPS",
+      "REPRESENTATIONS",
+      "MISCONCEPTIONS",
+      "PROBLEM_FAMILIES",
+      "SOURCE_CORE2_LINKAGE",
+      "FRAGILE_CHECKPOINTS"
+    ],
+    "purpose": "Core1A and Core1B share capability scope through one learning model without requiring equal exposition or equal page count."
+  },
+  "page_budget_rule": {
+    "applies_primarily_to": "CORE1A",
+    "type": "SOFT_CAPACITY_CEILING_NOT_TARGET",
+    "anti_padding": true,
+    "core1b_inherits_core1a_page_budget": false,
+    "over_ceiling_action": "Split into coherent sub-subtopics first; exceed only with explicit owner exception. Never compress away necessary inferential steps."
+  },
+  "difficulty_semantics": {
+    "normative_definition": "Difficulty controls inferential closure, not visual quantity.",
+    "representation_sufficiency_rule": "Every major inferential jump must have an adequate representation or explanation when a representation materially helps cross that jump.",
+    "visual_quantity_is_quality_proxy": false
+  },
+  "badges": {
+    "EASY": {
+      "core1a_soft_page_ceiling": 10,
+      "web_research_required_for_visual_and_pedagogy_design": false,
+      "web_research_exception": "Required when source integrity, factual uncertainty, current external information or a missing representation demands verification.",
+      "sub_subtopic_decomposition": "OPTIONAL_WHEN_USEFUL",
+      "inferential_closure": "COMPLETE_BUT_COMPACT"
+    },
+    "MEDIUM": {
+      "core1a_soft_page_ceiling": 20,
+      "web_research_required_for_visual_and_pedagogy_design": true,
+      "research_scope": "Find established representations, misconception patterns, worked-example structures and high-value explanations; adapt, do not copy.",
+      "sub_subtopic_decomposition": "REQUIRED_WHEN_MULTIPLE_DISTINCT_INFERENTIAL_JUMPS_OR_PROBLEM_FAMILIES_EXIST",
+      "inferential_closure": "DETAILED"
+    },
+    "HARD": {
+      "core1a_soft_page_ceiling": 30,
+      "web_research_required_for_visual_and_pedagogy_design": true,
+      "research_scope": "Research established representations, misconception evidence, expert solution structures, alternative representations and high-value visual explanations; adapt, do not copy.",
+      "sub_subtopic_decomposition": "EXPECTED_AND_REQUIRED_WHEN_CONCEPTUAL_JUMPS_CAN_BE_ISOLATED",
+      "inferential_closure": "EVERY_MAJOR_JUMP_EXPLICIT"
+    }
+  },
+  "mode_rule": {
+    "A_B_ARE_DOMINANT_MODES_NOT_EXCLUSIVE_CONTENT_TYPES": true,
+    "CORE1A": {
+      "dominant_mode": "DECLARATIVE",
+      "may_include": ["PREDICTION", "QUICK_CHECK", "SHORT_COMPLETION", "SELF_EXPLAIN_PROMPT"],
+      "must_not_become": "PASSIVE_TEXT_ONLY"
+    },
+    "CORE1B": {
+      "dominant_mode": "GENERATIVE",
+      "may_include": ["POST_ATTEMPT_EXPLANATION", "WORKED_RECONSTRUCTION", "TARGETED_RETEACH"],
+      "must_not_become": "QUESTION_ONLY_WORKSHEET_OR_CHATBOT_TRANSCRIPT"
+    }
+  },
+  "core1a_realization": {
+    "purpose": "Establish the complete declarative mental model and problem-family structure.",
+    "typical_components": [
+      "PHYSICAL_IDEA",
+      "PREREQUISITE_BRIDGE",
+      "REPRESENTATION",
+      "WORDS_TO_SYMBOLS",
+      "MODEL_CONDITIONS",
+      "WORKED_EXAMPLE",
+      "MISCONCEPTION_CONTRAST",
+      "PROBLEM_FAMILY_METHOD",
+      "CHECK",
+      "SOURCE_BOUNDARY"
+    ]
+  },
+  "core1b_realization": {
+    "purpose": "Exercise fragile points and problem-family recognition generatively.",
+    "page_budget_derivation": "CHECKPOINT_COVERAGE_NOT_DIFFICULTY_SYMMETRY",
+    "fixed_badge_page_ceiling": false,
+    "required_coverage": [
+      "EVERY_FRAGILE_INFERENTIAL_JUMP_AT_LEAST_ONCE",
+      "EVERY_MATERIAL_MISCONCEPTION_AT_LEAST_ONCE",
+      "EVERY_DISTINCT_PROBLEM_FAMILY_RECOGNITION_AT_LEAST_ONCE",
+      "MIXED_OR_RETRIEVAL_CHECK_WHEN_MULTIPLE_FAMILIES_CAN_BE_CONFUSED"
+    ],
+    "task_grammars": {
+      "MICRO_PREDICTION_OR_EXPLANATION": ["PROMPT", "ATTEMPT", "MODEL_RESPONSE"],
+      "REPRESENTATION_TASK": ["DRAW_OR_COMPLETE_OR_TRANSLATE", "CHECK_REPRESENTATION", "EXPLAIN_KEY_FEATURE"],
+      "CONCEPT_RECONSTRUCTION": ["OPEN_PROMPT", "ATTEMPT", "OPTIONAL_CLUE", "CONCEPTUAL_CHECK"],
+      "SUBSTANTIVE_PROBLEM": ["QUESTION", "ATTEMPT", "H1_NOTICE", "H2_REPRESENT", "H3_START", "RETRY", "FULL_CHECK", "REPAIR"],
+      "MIXED_RETRIEVAL": ["UNLABELED_TASK", "ATTEMPT", "COMPACT_CHECK", "FAMILY_OR_INVARIANT_IDENTIFICATION"]
+    }
+  },
+  "hint_ladder_rule": {
+    "ladder": ["H1_NOTICE", "H2_REPRESENT", "H3_START"],
+    "mandatory_for_every_prompt": false,
+    "standard_for": "SUBSTANTIVE_TASKS_WHERE_PROGRESSIVE_RESCUE_IS_NEEDED",
+    "every_open_prompt_requires_local_resolution": true
+  }
+}

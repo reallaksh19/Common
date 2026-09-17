@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/v2/shared/agent-tasks/execution-report.schema.json",
+  "title": "ExecutionReport",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "task_id",
+    "packet_digest",
+    "start_head",
+    "end_head",
+    "execution_result",
+    "engineering_state",
+    "research_state",
+    "consumer_permissions",
+    "publication_state",
+    "authority_bindings_used",
+    "changed_files",
+    "tests",
+    "workflows",
+    "blockers",
+    "limitations",
+    "unresolved",
+    "architecture_findings",
+    "memory_dependency_detected"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "task_id": {"type": "string", "minLength": 3},
+    "packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "start_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "end_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "execution_result": {"enum": ["COMPLETE", "PARTIAL", "BLOCKED", "STALE_PACKET"]},
+    "engineering_state": {"enum": ["READY", "HELD", "BLOCKED", "NOT_EVALUATED"]},
+    "research_state": {"enum": ["READY", "HELD", "BLOCKED", "NOT_REQUIRED", "NOT_EVALUATED"]},
+    "consumer_permissions": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "reason_codes"],
+        "properties": {
+          "status": {"enum": ["ALLOWED", "BLOCKED", "NOT_AUTHORIZED", "NOT_EVALUATED"]},
+          "reason_codes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+        },
+        "additionalProperties": false
+      }
+    },
+    "publication_state": {"enum": ["NOT_IMPLIED", "INDEPENDENTLY_GOVERNED", "NOT_EVALUATED"]},
+    "authority_bindings_used": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["authority_class", "path", "sha256"],
+        "properties": {
+          "authority_class": {"type": "string"},
+          "path": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "changed_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "change_class", "reason", "authority_impact"],
+        "properties": {
+          "path": {"type": "string"},
+          "change_class": {"enum": ["DATA_ONLY", "CONTRACT_OR_SCHEMA", "GENERIC_ENGINE", "SUBJECT_ADAPTER", "BLUEPRINT", "TEST", "DOC", "MIGRATION"]},
+          "reason": {"type": "string"},
+          "authority_impact": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "tests": {"type": "array", "items": {"type": "object"}},
+    "workflows": {"type": "array", "items": {"type": "object"}},
+    "blockers": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "unresolved": {"type": "array", "items": {"type": "string"}},
+    "architecture_findings": {"type": "array", "items": {"type": "string"}},
+    "memory_dependency_detected": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

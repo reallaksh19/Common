@@ -1,0 +1,181 @@
+name: V2 Physics Engineering Workbench
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-engineering-*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate-v3.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-gate-binding*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/engineering-gates/**'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_*.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_all_engineering_readiness.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_domain_prerequisite_closure.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_discovery_catalog.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_mapping_review.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_technical_gate_binding.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_ccu_engineering_ready.py'
+      - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/**'
+      - 'Grade 9/V2/Physics/Blueprint/provenance/pr383/**'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_engineering_readiness_envelope.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_mapping_reviews.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_migration_preflight.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v2.json'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-gate-invariants.v3.json'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-discovery-catalog.pr383.v1.json'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v2.py'
+      - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-technical-gate-binding*.json'
+      - 'Grade 9/V2/Physics/Blueprint/topics/m2d-sba23-ccu.v1.json'
+      - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH.md'
+      - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_READINESS_KERNEL.md'
+      - 'Grade 9/V2/Physics/Blueprint/ENGINEERING_WORKBENCH_V1.md'
+      - 'Grade 9/V2/Physics/Blueprint/PR383_TO_V3_MIGRATION.md'
+      - 'Grade 9/V2/Shared/EngineeringGate/**'
+      - 'Grade 9/V2/Shared/CrossDomain/**'
+      - 'Grade 9/V2/Shared/LearningEngineering/**'
+      - '.github/workflows/v2-physics-engineering-workbench.yml'
+  workflow_dispatch:
+
+jobs:
+  engineering-workbench-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install jsonschema
+      - name: Prove global Engineering Gate readiness policy without topic fixtures
+        run: python "Grade 9/V2/Shared/EngineeringGate/tests/test_readiness_policy.py"
+      - name: Validate shared LearningEngineering architecture and all bounded pilot falsifiers
+        run: |
+          set -euo pipefail
+          for test_file in "Grade 9/V2/Shared/LearningEngineering/tests"/test_*.py; do
+            echo "==> $test_file"
+            python "$test_file"
+          done
+      - name: Run legacy v2 gate regression proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v2.py"
+      - name: Build canonical Physics Technical Engineering Gates v3 registry
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py"
+          --out /tmp/physics-engineering-gates-v3.json
+      - name: Validate canonical Physics Technical Engineering Gates v3 registry
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py"
+          --registry /tmp/physics-engineering-gates-v3.json
+          --report-out /tmp/physics-engineering-gates-v3-report.json
+      - name: Validate repository-backed PR383 discovery mapping reviews
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_mapping_reviews.py"
+      - name: Reconcile PR383 discovery breadth against canonical v3 Workbench
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_discovery_catalog.py"
+      - name: Validate exact PR383 source custody and fail-closed v3 migration gaps
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_pr383_v3_migration_gaps.py"
+      - name: Compile subject-wide PR383 to v3 migration-gap artifact
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_pr383_v3_migration_gaps.py"
+          --out /tmp/pr383-v3-migration-gaps.json
+      - name: Validate source-only structural preflight for unresolved migrations
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_migration_preflight.py"
+      - name: Compile source-only structural migration preflight artifact
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_migration_preflight.py"
+          --out /tmp/pr383-v3-migration-preflight.json
+      - name: Run Physics v3 full-registry equivalence and mutation falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
+      - name: Run legacy Engineering Workbench v1 regression falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v1.py"
+      - name: Run Blueprint adapter against global Engineering Gate authority
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_engineering_readiness_envelope.py"
+      - name: Run canonical v3 Engineering Workbench SBA23 integration proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba23.py"
+      - name: Run canonical v3 Engineering Workbench SBA04 real-bucket proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_workbench_v3_sba04.py"
+      - name: Validate exact SBA23 Workbench closure custody binding
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_technical_gate_binding.py"
+      - name: Compile all canonical v3 requests through one generic readiness pipeline
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_all_engineering_readiness.py"
+          --out-dir /tmp/physics-engineering-readiness
+      - name: Compile SBA23 v3 engineering closure receipt
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
+          "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
+          "fixtures/engineering-workbench/m2d-sba23-manifest.v3.json"
+          --out /tmp/m2d-sba23-engineering-closure.json
+      - name: Compile human-visible SBA23 Engineering Passport
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_passport.py"
+          "fixtures/engineering-workbench/m2d-sba23-request.v1.json"
+          /tmp/m2d-sba23-engineering-closure.json
+          --out /tmp/m2d-sba23-engineering-passport.json
+          --markdown-out /tmp/m2d-sba23-engineering-passport.md
+      - name: Compile SBA04 v3 engineering closure receipt
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
+          "fixtures/engineering-workbench/m2d-sba04-request.v1.json"
+          "fixtures/engineering-workbench/m2d-sba04-manifest.v3.json"
+          --out /tmp/m2d-sba04-engineering-closure.json
+      - name: Compile human-visible SBA04 Engineering Passport
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_passport.py"
+          "fixtures/engineering-workbench/m2d-sba04-request.v1.json"
+          /tmp/m2d-sba04-engineering-closure.json
+          --out /tmp/m2d-sba04-engineering-passport.json
+          --markdown-out /tmp/m2d-sba04-engineering-passport.md
+      - name: Publish canonical aggregate engineering authority in workflow summary
+        run: cat /tmp/physics-engineering-readiness/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload subject-wide PR383 migration-gap proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-pr383-v3-migration-gaps
+          path: /tmp/pr383-v3-migration-gaps.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload subject-wide PR383 structural migration preflight
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-pr383-v3-migration-preflight
+          path: /tmp/pr383-v3-migration-preflight.json
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload aggregate engineering readiness proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-readiness
+          path: /tmp/physics-engineering-readiness
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload SBA23 engineering proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-workbench-sba23
+          path: |
+            /tmp/physics-engineering-gates-v3.json
+            /tmp/physics-engineering-gates-v3-report.json
+            /tmp/m2d-sba23-engineering-closure.json
+            /tmp/m2d-sba23-engineering-passport.json
+            /tmp/m2d-sba23-engineering-passport.md
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload SBA04 engineering proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-engineering-workbench-sba04
+          path: |
+            /tmp/m2d-sba04-engineering-closure.json
+            /tmp/m2d-sba04-engineering-passport.json
+            /tmp/m2d-sba04-engineering-passport.md
+          if-no-files-found: error
+          retention-days: 14

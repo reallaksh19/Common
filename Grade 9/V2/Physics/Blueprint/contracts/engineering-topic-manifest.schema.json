@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-topic-manifest.schema.json",
+  "title": "Physics Engineering Topic/Subtopic Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version","manifest_id","request_id","scope_kind","scope_ref","topic_id","title","registry_ref","required_gate_ids","optional_gate_ids","out_of_scope_gate_ids","source_item_status","downstream_consumers"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "scope_kind": {"enum": ["TOPIC", "SUBTOPIC", "BUCKET", "ASSESSMENT_SCOPE"]},
+    "scope_ref": {"type": "string", "minLength": 1},
+    "topic_id": {"type": ["string", "null"], "pattern": "^PHY-[A-Z0-9-]+$"},
+    "title": {"type": "string", "minLength": 3},
+    "registry_ref": {"enum": ["policy/physics-technical-engineering-gates.v2.json", "GENERATED:physics-technical-engineering-gates.v3-sba23", "GENERATED:physics-technical-engineering-gates.v3"]},
+    "gate_extension_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "required_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "optional_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "out_of_scope_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+    "research_dossier_ref": {"type": "string", "minLength": 1},
+    "claim_ledger_ref": {"type": "string", "minLength": 1},
+    "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]},
+    "downstream_consumers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}},
+    "notes": {"type": "string"}
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/common/schemas/v2/shared/agent-tasks/execution-task.schema.json",
+  "title": "ExecutionTask",
+  "description": "Human task intent for the thin delegation layer. This contract does not carry Engineering readiness or subject authority.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "task_kind",
+    "repository",
+    "target_ref",
+    "subject",
+    "grade",
+    "curriculum",
+    "topic",
+    "subtopic",
+    "engineering_depth",
+    "learner_state",
+    "web_research_allowed",
+    "local_question_banks",
+    "target_consumers",
+    "write_mode"
+  ],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 3},
+    "task_kind": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+    "repository": {"type": "string", "minLength": 3},
+    "target_ref": {
+      "type": "string",
+      "minLength": 1,
+      "description": "DISCOVER_CURRENT, a branch/ref label, or an exact commit SHA. Exact SHA mismatch fails closed."
+    },
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Subject identifier resolved against the current LearningEngineering subject-adapter registry; no subject enum is owned here."
+    },
+    "grade": {"type": "integer", "minimum": 1, "maximum": 20},
+    "curriculum": {
+      "type": "object",
+      "required": ["system", "version"],
+      "properties": {
+        "system": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "topic": {"type": "string", "minLength": 1},
+    "subtopic": {"type": "string", "minLength": 1},
+    "execution_route_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9][A-Z0-9._:-]*$",
+      "description": "Optional opaque route request. It has no subject semantics in AgentTasks; the current subject authority must resolve it by exact ID or hold execution."
+    },
+    "engineering_depth": {
+      "type": "string",
+      "enum": ["FOUNDATION", "STANDARD", "RESEARCH"],
+      "description": "Evidence/knowledge depth. It is not an exam tier and is independent of learner state."
+    },
+    "learner_state": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Pass-through learner-control context. This layer does not define learner-state semantics."
+    },
+    "web_research_allowed": {"type": "boolean"},
+    "local_question_banks": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      ]
+    },
+    "target_consumers": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "write_mode": {"type": "string", "enum": ["ANALYZE_ONLY", "IMPLEMENT"]},
+    "expected_scope": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true,
+      "default": []
+    },
+    "explicit_exclusions": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true,
+      "default": []
+    }
+  },
+  "additionalProperties": false
+}

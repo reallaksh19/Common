@@ -1,0 +1,74 @@
+{
+  "schema_version": "3.0.0",
+  "pilot_id": "PHY-BP-SELF-HELP-THREE-TOPIC-FALSIFICATION-V3",
+  "purpose": "Falsify family-first asymmetric A/B authoring before chapter-wide rollout.",
+  "release_status": "DESIGN_PILOT_NOT_PRODUCTION_AUTHORITY",
+  "topics": [
+    {
+      "topic_id": "PROJECTILE_VERTICAL_EVENT",
+      "core1_bucket_difficulty_badge": "HARD",
+      "core2_adaptation_input": {
+        "selection_basis": "KNOWLEDGE_PERCENT",
+        "student_knowledge_pct": 20
+      },
+      "repo_binding": "M2D-SBA-04 / PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE",
+      "must_falsify": [
+        "Core1B duplicates Core1A page-for-page",
+        "Core1B forces H1-H2-H3 on every micro-prompt",
+        "Core2A solves every legal item instead of selecting representative family exemplars",
+        "Core2B mirrors Core2A worked exemplars item-for-item"
+      ]
+    },
+    {
+      "topic_id": "MOVING_LAUNCHER_RELATIVE_VELOCITY",
+      "core1_bucket_difficulty_badge": "HARD",
+      "core2_adaptation_input": {
+        "selection_basis": "OWNER_OVERRIDE",
+        "student_knowledge_pct": null,
+        "owner_override": {
+          "owner_ref": "PILOT_OWNER",
+          "reason": "Knowledge percentage unavailable for pilot learner.",
+          "support_band": "GUIDED"
+        }
+      },
+      "repo_binding": "M2D-SBA-23 / PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE_EXACT_Q15_HELD",
+      "must_falsify": [
+        "Generated practice is confused with frozen Q15",
+        "Hard badge is interpreted as visual or page inflation",
+        "Core1B repeats every Core1A explanation instead of exercising fragile frame/sign/model-selection points",
+        "Owner override expands legal transfer scope"
+      ]
+    },
+    {
+      "topic_id": "NEWTON_MODEL_SELECTION",
+      "core1_bucket_difficulty_badge": "MEDIUM",
+      "core2_adaptation_input": {
+        "selection_basis": "KNOWLEDGE_PERCENT",
+        "student_knowledge_pct": 50
+      },
+      "repo_binding": "NONE_YET",
+      "source_status": "DESIGN_ONLY_REQUIRES_FUTURE_CORE1_CORE2_BINDING",
+      "must_falsify": [
+        "The family-first grammar depends specifically on projectile motion",
+        "A/B dominant-mode distinction collapses into declarative-only versus question-only",
+        "Hints disclose equations before representation/model selection on substantive tasks",
+        "Core2A changes source wording instead of support"
+      ]
+    }
+  ],
+  "pass_criteria": {
+    "shared_bucket_learning_model_precedes_layer_realization": true,
+    "core1a_page_ceiling_not_inherited_by_core1b": true,
+    "difficulty_controls_inferential_closure_not_visual_quantity": true,
+    "a_b_are_dominant_modes_not_exclusive_content_types": true,
+    "full_hint_ladder_not_required_for_every_prompt": true,
+    "core2a_representative_problem_family_selection": true,
+    "core2b_not_one_for_one_core2a_mirror": true,
+    "core2ab_requires_knowledge_or_owner_override": true,
+    "owner_override_does_not_expand_legality": true,
+    "core2_source_immutability_preserved": true,
+    "runtime_authority_guards_unchanged": true
+  }
+}

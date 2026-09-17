@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "V2-CROSS-DOMAIN-PROVIDER-REGISTRY-v1",
+  "authority_contract_ref": "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json",
+  "demand_contract_ref": "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-demand.schema.json",
+  "providers": [
+    {
+      "prerequisite_prefix": "MATH-",
+      "provider_subject": "MATHEMATICS",
+      "provider_root": "Grade 9/V2/Mathematics",
+      "authority_entrypoint_ref": "Grade 9/V2/Mathematics/V2_GENERATION_ENTRYPOINT.md"
+    }
+  ],
+  "unknown_provider_policy": "OPEN_UNROUTABLE_AND_HOLD",
+  "rules": {
+    "consumer_may_not_self_certify_provider_readiness": true,
+    "missing_provider_receipt_emits_open_demand": true,
+    "ready_authority_must_be_provider_owned": true,
+    "ready_authority_must_bind_repository_evidence": true
+  }
+}

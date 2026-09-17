@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "scope": ["CORE1A", "CORE1B"],
+  "student_knowledge_pct_may_drive_authored_depth": false,
+  "difficulty": {
+    "badge_enum": ["EASY", "MEDIUM", "HARD"],
+    "authority_enum": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"],
+    "owner_or_source_badge_may_be_silently_changed": false,
+    "evidence_profile_dimensions": ["prerequisite_depth", "element_interactivity", "inferential_jump_severity", "representation_translation", "model_discrimination", "sign_or_frame_sensitivity", "multi_step_dependency", "abstraction", "misconception_density", "synthesis"]
+  },
+  "research_policy": {
+    "EASY": "NONE_BY_DEFAULT",
+    "MEDIUM": "TARGETED",
+    "HARD": "DEEP",
+    "research_must_produce_design_decisions": true
+  },
+  "shared_depth_envelope": {
+    "EASY": 10,
+    "MEDIUM": 20,
+    "HARD": 30,
+    "applies_to_core1a": true,
+    "applies_to_core1b": true,
+    "page_count_is_quota": false,
+    "same_ceiling_implies_same_actual_length": false,
+    "same_ceiling_implies_same_content": false,
+    "actual_lengths_independently_derived": true
+  },
+  "core1a": {
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "DECLARATIVE",
+    "primary_quality_metric": "INFERENTIAL_CLOSURE"
+  },
+  "core1b": {
+    "ttu_family": "CONCEPT_TTU",
+    "dominant_mode": "GENERATIVE",
+    "reconstruction_rigor_follows_same_badge": true,
+    "must_not_duplicate_core1a_page_for_page": true,
+    "hard_substantive_tasks_should_use_high_value_reconstruction_modes": true
+  }
+}

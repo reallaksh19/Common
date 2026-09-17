@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-readiness-envelope.schema.json",
+  "title": "Global Engineering Gate Readiness Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "policy_id", "authority_layer", "envelope_id", "request_id", "manifest_id",
+    "engineering_receipt", "domain_receipt", "dimensions", "consumer_permissions",
+    "overall_state", "publication_authorization", "blockers", "next_action", "envelope_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "policy_id": {"type": "string", "minLength": 3},
+    "authority_layer": {"const": "ENGINEERING_GATE"},
+    "envelope_id": {"type": "string", "pattern": "^ENG-READY-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "manifest_id": {"type": "string", "pattern": "^ENG-MAN-[A-Z0-9-]+$"},
+    "engineering_receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "manifest_digest", "closure_digest", "closure_status", "source_item_status"],
+      "properties": {
+        "receipt_id": {"type": "string"},
+        "manifest_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "closure_status": {"enum": ["READY", "BLOCKED"]},
+        "source_item_status": {"enum": ["INDEPENDENT_OF_TECHNICAL_GATE", "SOURCE_HELD", "SOURCE_READY"]}
+      }
+    },
+    "domain_receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "closure_digest", "closure_status", "prerequisite_count", "held_count"],
+      "properties": {
+        "receipt_id": {"type": "string"},
+        "closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "closure_status": {"enum": ["READY", "HELD"]},
+        "prerequisite_count": {"type": "integer", "minimum": 0},
+        "held_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "dimensions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["technical", "research_provenance", "external_prerequisites", "source_authority"],
+      "properties": {
+        "technical": {"enum": ["READY", "BLOCKED"]},
+        "research_provenance": {"enum": ["READY", "BLOCKED", "NOT_REQUIRED"]},
+        "external_prerequisites": {"enum": ["READY", "HELD"]},
+        "source_authority": {"enum": ["READY", "HELD", "NOT_APPLICABLE"]}
+      }
+    },
+    "consumer_permissions": {"type": "object", "additionalProperties": {"$ref": "#/$defs/consumer"}},
+    "overall_state": {"enum": ["READY_FOR_TECHNICAL_CONSUMPTION", "BLOCKED"]},
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "dimension", "message"],
+        "properties": {
+          "code": {"type": "string", "minLength": 2},
+          "dimension": {"enum": ["TECHNICAL", "RESEARCH_PROVENANCE", "EXTERNAL_PREREQUISITES"]},
+          "ref": {"type": ["string", "null"]},
+          "message": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "next_action": {"type": "string", "minLength": 3},
+    "envelope_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "consumer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "reason_codes"],
+      "properties": {
+        "status": {"enum": ["ALLOWED", "BLOCKED", "NOT_AUTHORIZED"]},
+        "reason_codes": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+      }
+    }
+  }
+}

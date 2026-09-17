@@ -1,0 +1,199 @@
+{
+  "fixture_id": "SKP-SEMANTIC-PROTOTYPE-SYNTHETIC-v1",
+  "skp_ref": "SKP-SYNTHETIC-RELATION",
+  "concepts": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "concept_id": "CONCEPT-SYNTHETIC-RELATIVE-STATE",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Synthetic relative state",
+      "concept_kind": "STATE",
+      "disciplinary_meaning": "A derived state defined by comparing two source states under one declared convention.",
+      "source_refs": ["SRC-DOMAIN"],
+      "subject_extension_refs": [],
+      "source_object_ref": null
+    }
+  ],
+  "relations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "relation_id": "REL-SYNTHETIC-DIFFERENCE",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Synthetic state difference",
+      "relation_kind": "EQUALITY",
+      "formal_expression": "z = x - y",
+      "meaning": "The derived state z is the ordered difference of source states x and y under one shared convention.",
+      "concept_refs": ["CONCEPT-SYNTHETIC-RELATIVE-STATE"],
+      "capability_refs": ["CAP-INTERPRET-RELATION", "CAP-APPLY-RELATION"],
+      "applicability_conditions": [
+        {
+          "condition_id": "COND-SYNTHETIC-COMMON-CONVENTION",
+          "statement": "x and y are expressed under the same declared convention before subtraction.",
+          "evidence_refs": ["SRC-DOMAIN"],
+          "state": "REQUIRED"
+        }
+      ],
+      "source_refs": ["SRC-DOMAIN"],
+      "subject_extension_refs": [],
+      "source_relation_ref": null
+    }
+  ],
+  "representations": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-SYNTHETIC-STATE-DIAGRAM",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Synthetic state diagram",
+      "representation_kind": "DIAGRAM",
+      "purpose": "Show the two source states and the directed comparison used to construct the derived state.",
+      "encodes_refs": ["CONCEPT-SYNTHETIC-RELATIVE-STATE", "REL-SYNTHETIC-DIFFERENCE"],
+      "decision_state": "SELECTED_PRIMARY",
+      "decision_basis_refs": ["SRC-DOMAIN"],
+      "translation_edges": [
+        {
+          "target_representation_ref": "REP-SYNTHETIC-SYMBOLIC",
+          "preserved_information": ["ordered source states", "direction of comparison"],
+          "potential_loss": ["spatial layout"],
+          "capability_refs": ["CAP-INTERPRET-RELATION"],
+          "evidence_refs": ["SRC-DOMAIN"]
+        }
+      ],
+      "source_refs": ["SRC-DOMAIN"],
+      "source_representation_ref": null
+    },
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "representation_id": "REP-SYNTHETIC-SYMBOLIC",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Synthetic symbolic relation",
+      "representation_kind": "SYMBOLIC",
+      "purpose": "Encode the ordered state difference compactly for formal reasoning and application.",
+      "encodes_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+      "decision_state": "SELECTED_SECONDARY",
+      "decision_basis_refs": ["SRC-DOMAIN"],
+      "translation_edges": [
+        {
+          "target_representation_ref": "REP-SYNTHETIC-STATE-DIAGRAM",
+          "preserved_information": ["ordered source states", "difference direction"],
+          "potential_loss": ["symbolic compactness"],
+          "capability_refs": ["CAP-APPLY-RELATION"],
+          "evidence_refs": ["SRC-DOMAIN"]
+        }
+      ],
+      "source_refs": ["SRC-DOMAIN"],
+      "source_representation_ref": null
+    }
+  ],
+  "reasoning_sequences": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "sequence_id": "REASON-SYNTHETIC-DIFFERENCE",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "capability_refs": ["CAP-INTERPRET-RELATION", "CAP-APPLY-RELATION"],
+      "steps": [
+        {
+          "step_id": "STEP-SYNTHETIC-01",
+          "semantic_role": "BIND_CONVENTION",
+          "semantic_job": "Bind one shared convention for both source states.",
+          "relation_refs": [],
+          "representation_refs": ["REP-SYNTHETIC-STATE-DIAGRAM"],
+          "fragility": "HIGH",
+          "fragility_rationale": "Using different conventions makes the ordered subtraction semantically invalid.",
+          "source_step_ref": null
+        },
+        {
+          "step_id": "STEP-SYNTHETIC-02",
+          "semantic_role": "REPRESENT",
+          "semantic_job": "Encode the two source states and their ordered comparison.",
+          "relation_refs": [],
+          "representation_refs": ["REP-SYNTHETIC-STATE-DIAGRAM"],
+          "fragility": "MEDIUM",
+          "fragility_rationale": "The comparison direction must remain visible.",
+          "source_step_ref": null
+        },
+        {
+          "step_id": "STEP-SYNTHETIC-03",
+          "semantic_role": "CHOOSE_RELATION",
+          "semantic_job": "Apply the governed ordered-difference relation.",
+          "relation_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+          "representation_refs": ["REP-SYNTHETIC-SYMBOLIC"],
+          "fragility": "HIGH",
+          "fragility_rationale": "Reversing the operand order changes the derived state.",
+          "source_step_ref": null
+        },
+        {
+          "step_id": "STEP-SYNTHETIC-04",
+          "semantic_role": "INTERPRET_RESULT",
+          "semantic_job": "Interpret the sign or direction of the derived state under the bound convention.",
+          "relation_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+          "representation_refs": ["REP-SYNTHETIC-SYMBOLIC"],
+          "fragility": "MEDIUM",
+          "fragility_rationale": "Interpretation depends on the original convention.",
+          "source_step_ref": null
+        }
+      ],
+      "learner_support_authority": false,
+      "source_refs": ["SRC-DOMAIN"],
+      "source_route_ref": null
+    }
+  ],
+  "verification_routes": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "verification_route_id": "VERIFY-SYNTHETIC-DIFFERENCE",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "target_refs": ["REL-SYNTHETIC-DIFFERENCE", "REASON-SYNTHETIC-DIFFERENCE"],
+      "checks": [
+        {
+          "check_id": "CHECK-SYNTHETIC-CONVENTION",
+          "check_kind": "MODEL_APPLICABILITY",
+          "statement": "Confirm both source states use the same convention before subtraction.",
+          "relation_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+          "independent_of_primary_route": false,
+          "independence_rationale": "This check repeats the relation applicability requirement rather than providing an independent derivation.",
+          "evidence_refs": ["SRC-DOMAIN"],
+          "source_check_ref": null
+        },
+        {
+          "check_id": "CHECK-SYNTHETIC-RECONSTRUCTION",
+          "check_kind": "ALTERNATE_DERIVATION",
+          "statement": "Reconstruct one source state from the other source state and the derived difference.",
+          "relation_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+          "independent_of_primary_route": true,
+          "independence_rationale": "Reverse reconstruction checks the ordered difference without repeating the forward calculation.",
+          "evidence_refs": ["SRC-DOMAIN"],
+          "source_check_ref": null
+        }
+      ],
+      "source_refs": ["SRC-DOMAIN"],
+      "source_route_ref": null
+    }
+  ],
+  "problem_families": [
+    {
+      "schema_version": "0.1.0",
+      "prototype_only": true,
+      "problem_family_id": "FAMILY-SYNTHETIC-ORDERED-DIFFERENCE",
+      "skp_ref": "SKP-SYNTHETIC-RELATION",
+      "title": "Ordered state difference",
+      "structural_signature": "Two source states share one convention and a derived state is formed by an ordered difference.",
+      "capability_refs": ["CAP-INTERPRET-RELATION", "CAP-APPLY-RELATION"],
+      "concept_refs": ["CONCEPT-SYNTHETIC-RELATIVE-STATE"],
+      "relation_refs": ["REL-SYNTHETIC-DIFFERENCE"],
+      "reasoning_sequence_refs": ["REASON-SYNTHETIC-DIFFERENCE"],
+      "representation_refs": ["REP-SYNTHETIC-STATE-DIAGRAM", "REP-SYNTHETIC-SYMBOLIC"],
+      "verification_route_refs": ["VERIFY-SYNTHETIC-DIFFERENCE"],
+      "allowed_variations": ["different numerical source states", "different labels while preserving operand order"],
+      "transfer_boundaries": ["not valid when the source states use incompatible conventions"],
+      "surface_cues_not_authority": true,
+      "source_refs": ["SRC-DOMAIN"],
+      "source_family_ref": null
+    }
+  ]
+}

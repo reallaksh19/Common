@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "PHY-P-L-REVIEWERS-REAL-v1",
+  "registry_class": "REAL",
+  "version": "1.0.0",
+  "authorized_reviewers": {
+    "HUMAN_SUBJECT": [],
+    "HUMAN_PEDAGOGY": [],
+    "HUMAN_ASSESSMENT": [],
+    "HUMAN_VISUAL": []
+  }
+}

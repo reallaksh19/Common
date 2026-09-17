@@ -1,0 +1,14 @@
+{
+  "task":{"schema_version":"1.0.0","task_id":"CORE2-TASK-QG02-MEDIUM","question_id":"QG02","question_type":"NUMERIC","guide_demand":"MEDIUM","scaffold_profile_id":"CORE2-GUIDE-MEDIUM","required_inputs":["SOURCE_CONTRACT","ANSWER_CONTRACT","CORE1_LINK","SCAFFOLD_PROFILE"],"required_outputs":["TRANSFER_REPRESENTATION","VALIDATION_REPORT"]},
+  "source_contract":{"schema_version":"1.0.0","source_contract_id":"CORE2-SRC-QG02","question_id":"QG02","source_body":{"stem":"A projectile has vertical velocity 12 m/s upward at t = 1 s. Take g = 10 m/s^2. What was its initial vertical velocity?","options":[]},"source_link":"fixture://core2/qg02","figure_semantics":["one global time axis from launch to the stated event"],"source_digest":"QG02-SYNTH-001","eligible":true,"production_claim":false,"provenance_note":"Synthetic golden fixture for production-kit validation; not a real examination source."},
+  "answer_contract":{"schema_version":"1.0.0","answer_contract_id":"CORE2-ANS-QG02","question_id":"QG02","answer_type":"NUMERIC","canonical_answer":"22 m/s","solution_steps":["Use v_y = u_y - gt at the stated global time.","Rearrange to u_y = v_y + gt and evaluate to obtain 22 m/s."],"verification_route":["After one second gravity should have reduced the upward vertical velocity by 10 m/s."],"forbidden_hint_tokens":["22 m/s","twenty-two"]},
+  "scaffold_profile":{"profile_id":"CORE2-GUIDE-MEDIUM","guide_demand":"MEDIUM","minimum_representation_stages":2,"hint_order":["H1_NOTICE","H2_MODEL","H3_START"],"solution_after_hints":true},
+  "core1_link":{"lesson_ref":"CORE1-LESSON-TIMED-EVENTS","capability_ref":"PHY-CAP-SHARED-CLOCK"},
+  "first_step_reference":"Place the stated event on the same clock that started at launch.",
+  "hint_seed":[
+    {"level":"H1_NOTICE","text":"The stated time is measured from launch; do not reset the clock at the event."},
+    {"level":"H2_MODEL","text":"Use the constant-gravity vertical-velocity model for one continuous projectile flight."},
+    {"level":"H3_START","text":"Start from v_y = u_y - gt and rearrange for the unknown launch component."}
+  ],
+  "representation_stages":["mark launch at t zero and the event at t one second","show the vertical velocity changing under downward gravity"]
+}

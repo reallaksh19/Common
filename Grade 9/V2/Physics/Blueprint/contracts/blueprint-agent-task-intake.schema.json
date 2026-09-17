@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "blueprint-agent-task-intake.schema.json",
+  "title": "Physics Blueprint AgentTask Intake Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "status",
+    "packet_digest",
+    "repository_head",
+    "task_id",
+    "task_kind",
+    "execution_intent",
+    "non_authoritative_labels",
+    "execution_route",
+    "authority_boundary",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "receipt_id": {"type": "string", "pattern": "^PHY-BLUEPRINT-TASK-INTAKE-[0-9a-f]{16}$"},
+    "status": {"const": "ACCEPTED_AS_DELEGATION_CONTEXT"},
+    "packet_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "repository_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "task_id": {"type": "string", "minLength": 1},
+    "task_kind": {"type": "string", "minLength": 1},
+    "execution_intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["engineering_depth", "learner_state", "web_research_allowed", "target_consumers", "write_mode"],
+      "properties": {
+        "engineering_depth": {"enum": ["FOUNDATION", "STANDARD", "RESEARCH"]},
+        "learner_state": {"type": "string", "minLength": 1},
+        "web_research_allowed": {"type": "boolean"},
+        "target_consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "write_mode": {"enum": ["ANALYZE_ONLY", "IMPLEMENT"]}
+      }
+    },
+    "non_authoritative_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["grade", "curriculum", "topic", "subtopic"],
+      "properties": {
+        "grade": {"type": "integer"},
+        "curriculum": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["system", "version"],
+          "properties": {
+            "system": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1}
+          }
+        },
+        "topic": {"type": "string", "minLength": 1},
+        "subtopic": {"type": "string", "minLength": 1}
+      }
+    },
+    "execution_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "execution_authorized",
+        "authorization_scope",
+        "route_id",
+        "route_registry",
+        "input_bindings",
+        "label_inference",
+        "reason"
+      ],
+      "properties": {
+        "status": {"enum": ["HELD_NO_ROUTE_REQUESTED", "HELD_ROUTE_UNRESOLVED", "RESOLVED_REPOSITORY_ROUTE"]},
+        "execution_authorized": {"type": "boolean"},
+        "authorization_scope": {"const": "P-A_INPUT_SELECTION_ONLY"},
+        "route_id": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^[A-Z0-9][A-Z0-9._:-]*$"}
+          ]
+        },
+        "route_registry": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["registry_id", "path", "sha256"],
+              "properties": {
+                "registry_id": {"type": "string", "minLength": 1},
+                "path": {"type": "string", "minLength": 1},
+                "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+              }
+            }
+          ]
+        },
+        "input_bindings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "required", "path", "sha256"],
+            "properties": {
+              "role": {"enum": ["QUESTION_SET", "DECLARED_TOPIC_SCOPE", "ATTEMPT_SET"]},
+              "required": {"type": "boolean"},
+              "path": {"type": "string", "minLength": 1},
+              "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+            }
+          }
+        },
+        "label_inference": {"const": "PROHIBITED"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "authority_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packet_authority_use",
+        "scope_selection",
+        "domain_truth",
+        "engineering_readiness",
+        "learner_state_effect",
+        "consumer_permissions",
+        "publication"
+      ],
+      "properties": {
+        "packet_authority_use": {"const": "DELEGATION_CONTEXT_ONLY"},
+        "scope_selection": {"const": "REPOSITORY_GOVERNED_NOT_PACKET"},
+        "domain_truth": {"const": "REPOSITORY_GOVERNED_NOT_PACKET"},
+        "engineering_readiness": {"const": "RECOMPUTE_FROM_GOVERNED_SCOPE"},
+        "learner_state_effect": {"const": "TREATMENT_CONTEXT_ONLY_NOT_DOMAIN_TRUTH"},
+        "consumer_permissions": {"const": "NOT_AUTHORIZED_BY_PACKET"},
+        "publication": {"const": "NOT_AUTHORIZED_BY_PACKET"}
+      }
+    },
+    "receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

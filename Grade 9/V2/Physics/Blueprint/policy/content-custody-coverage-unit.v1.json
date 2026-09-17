@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0.0",
+  "name": "CONTENT_CUSTODY_COVERAGE_UNIT",
+  "short_name": "CCU",
+  "position": "CANONICAL_DOMAIN_REGISTRY_TO_CDAU",
+  "purpose": [
+    "prevent_silent_asset_omission",
+    "preserve_question_and_source_custody",
+    "require_answer_or_canonical_resolution_for_every_released_question",
+    "classify_cross_core_reuse_and_duplication",
+    "emit_release_receipts_for_downstream_CDAU"
+  ],
+  "asset_disposition_enum": [
+    "REQUIRED",
+    "OPTIONAL",
+    "TRANSFORMED",
+    "SOURCE_ONLY",
+    "NOT_APPLICABLE",
+    "PROHIBITED",
+    "HELD"
+  ],
+  "coverage_rules": {
+    "every_registered_asset_requires_disposition_for_every_applicable_core": true,
+    "blank_or_missing_disposition_allowed": false,
+    "required_asset_requires_realization_ref": true,
+    "transformed_asset_requires_parent_asset_and_transformation_ref": true,
+    "held_asset_requires_blocking_reason": true,
+    "prohibited_asset_must_not_have_realization_ref": true,
+    "coverage_release_requires_zero_unexplained_omissions": true
+  },
+  "question_custody": {
+    "source_class_enum": [
+      "FROZEN_SOURCE",
+      "OWNER_SUPPLIED",
+      "AUTHOR_CREATED",
+      "GENERATED_LEGAL_SIBLING",
+      "AUTHOR_CREATED_DESIGN_PILOT"
+    ],
+    "answer_type_enum": [
+      "SOURCE_ANSWER",
+      "CANONICAL_ANSWER",
+      "CANONICAL_SOLUTION",
+      "CANONICAL_DERIVATION",
+      "CANONICAL_DIAGRAM",
+      "CANONICAL_RUBRIC",
+      "HELD"
+    ],
+    "released_question_requires_source_class": true,
+    "released_question_requires_display_source_label": true,
+    "released_question_requires_answer_or_resolution": true,
+    "frozen_source_retains_original_question_number": true,
+    "frozen_source_requires_source_ref_and_digest_when_released": true,
+    "generated_or_author_created_may_not_impersonate_source": true,
+    "held_source_or_answer_blocks_question_release": true,
+    "learner_facing_question_without_resolution_allowed": false
+  },
+  "similarity": {
+    "decision_is_not_single_score": true,
+    "signals": [
+      "asset_identity",
+      "example_structural_fingerprint",
+      "lexical_five_shingle_jaccard",
+      "semantic_similarity_review_signal",
+      "usage_mode",
+      "learner_action",
+      "solution_path"
+    ],
+    "lexical_five_shingle_jaccard": {
+      "high_duplicate_risk_at_or_above": 0.90,
+      "review_at_or_above": 0.80,
+      "candidate_at_or_above": 0.65,
+      "hard_block_by_lexical_signal_alone": false
+    },
+    "structural_fingerprint": {
+      "weights": {
+        "problem_family": 0.20,
+        "target_unknown": 0.15,
+        "model_sequence": 0.15,
+        "solution_path": 0.15,
+        "givens": 0.10,
+        "numeric_values": 0.10,
+        "representation": 0.10,
+        "context": 0.03,
+        "special_condition": 0.02
+      },
+      "block_at_or_above_when_same_or_equivalent_pedagogical_usage": 0.85,
+      "review_at_or_above": 0.70
+    },
+    "semantic_similarity": {
+      "hardcoded_universal_cosine_threshold_allowed": false,
+      "threshold_mode": "CALIBRATED_ON_LABELLED_PHYSICS_PAIRS",
+      "use": "REVIEW_SIGNAL_ONLY_UNTIL_CALIBRATED"
+    },
+    "adjacent_layer_defaults": {
+      "exact_numeric_example_reuse": "PROHIBITED_UNLESS_FADING_ANCHOR",
+      "exact_complete_diagram_reuse": "PROHIBITED_UNLESS_TRANSFORMED_OR_FADING_ANCHOR",
+      "fundamental_equation_reuse": "ALLOWED_WITH_DECLARED_USAGE_MODE",
+      "exact_explanatory_paragraph_reuse": "PROHIBITED",
+      "core2a_to_core2b_exact_item_reuse": "FADING_ANCHOR_ONLY_AND_NOT_TRANSFER_EVIDENCE"
+    },
+    "classification_enum": [
+      "SEMANTIC_REUSE",
+      "PEDAGOGICAL_TRANSFORMATION",
+      "FADING_ANCHOR",
+      "STRUCTURAL_SIBLING",
+      "FAR_TRANSFER_SIBLING",
+      "NEAR_DUPLICATE",
+      "PEDAGOGICAL_DUPLICATION"
+    ],
+    "release_blocked_classifications": ["PEDAGOGICAL_DUPLICATION"],
+    "review_required_classifications": ["NEAR_DUPLICATE"]
+  },
+  "receipts": {
+    "required": [
+      "coverage_receipt",
+      "question_custody_receipt",
+      "duplication_receipt",
+      "source_integrity_receipt",
+      "answer_resolution_receipt"
+    ],
+    "downstream_consumers": ["CDAU", "PUBLICATION_GATE"]
+  }
+}

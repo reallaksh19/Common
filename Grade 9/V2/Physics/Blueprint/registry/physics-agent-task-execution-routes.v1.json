@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "PHY-BLUEPRINT-EXECUTION-ROUTES-v1",
+  "subject": "PHYSICS",
+  "selector_semantics": "OPAQUE_EXACT_ROUTE_ID",
+  "label_inference_allowed": false,
+  "routes": [
+    {
+      "route_id": "PHY-PA-ROUTE-001-V1",
+      "status": "ACTIVE",
+      "entry_phase": "P-A AssessmentIntake",
+      "inputs": [
+        {
+          "role": "QUESTION_SET",
+          "required": true,
+          "path": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-question-set.fixture.json"
+        },
+        {
+          "role": "DECLARED_TOPIC_SCOPE",
+          "required": true,
+          "path": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-topic-scope.fixture.json"
+        },
+        {
+          "role": "ATTEMPT_SET",
+          "required": false,
+          "path": "Grade 9/V2/Physics/AssessmentIntake/fixtures/motion-attempt-set.fixture.json"
+        }
+      ]
+    }
+  ],
+  "registry_digest": "sha256:97d94c1246edcc3f19deeea01b722671510bbbf481dda4960fab7a463d80e602"
+}

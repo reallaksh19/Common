@@ -1,0 +1,192 @@
+{
+  "schema_version": "1.0.0",
+  "review_id": "PR383-MAP-PHY-GRAV-FREE-FALL-V1",
+  "review_authority": "REPOSITORY_ENGINEERING_MAPPING_REVIEW",
+  "mapping_scope": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY",
+  "source_snapshot": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "discovery_gate_id": "PHY-GRAV-FREE-FALL",
+    "source_control_fields_ignored": ["technical_readiness", "release_checklist"]
+  },
+  "target_snapshot": [
+    {
+      "gate_id": "PHY-GRAV-FORCE",
+      "gate_ref": "engineering-gates/gravitation/PHY-GRAV-FORCE.v3.json",
+      "gate_git_blob_sha": "eef622be6f884297e3dbbada12d9b828103739ee"
+    },
+    {
+      "gate_id": "PHY-GRAV-FIELD",
+      "gate_ref": "engineering-gates/gravitation/PHY-GRAV-FIELD.v3.json",
+      "gate_git_blob_sha": "7c09a863e3747172fc19784a9048b55999e08e11"
+    },
+    {
+      "gate_id": "PHY-M2D-PROJECTILE-COMPONENTS",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-PROJECTILE-COMPONENTS.v3.json",
+      "gate_git_blob_sha": "21aec7a09eadbbdf9acc904913dfe082d51bb936"
+    },
+    {
+      "gate_id": "PHY-M2D-SHARED-CLOCK",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-SHARED-CLOCK.v3.json",
+      "gate_git_blob_sha": "af715733f1a28b52395f871a5ab5d78c136d3e2a"
+    },
+    {
+      "gate_id": "PHY-M2D-VELOCITY-EVOLUTION",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+      "gate_git_blob_sha": "616d09f228daaeebd3f5e77a907db4486abd9442"
+    },
+    {
+      "gate_id": "PHY-M2D-SAME-HEIGHT-VELOCITY",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+      "gate_git_blob_sha": "5987e49c9ec0478e9fc89f383556b8c68504cad0"
+    }
+  ],
+  "coverage": [
+    {
+      "source_pointer": "/prerequisite_ids/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "The source's separate PHY-KIN-1D-MOTION prerequisite is absorbed into explicit governed vertical displacement, vertical-velocity evolution and named-event timing relations; no nonexistent canonical prerequisite ID is invented."
+    },
+    {
+      "source_pointer": "/prerequisite_ids/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The source PHY-GRAV-UNIVERSAL-LAW prerequisite is already canonically decomposed into Newtonian gravitational force and gravitational field authority; the downstream free-fall model then applies the source-declared local uniform-g approximation."
+    },
+    {
+      "source_pointer": "/technical_core/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/concepts/1"},
+        {"gate_id": "PHY-M2D-SAME-HEIGHT-VELOCITY", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "Constant downward gravity and apex velocity state are explicit in velocity evolution; return-to-release-level velocity reversal is the same-height relation. Equal ascent/descent segment durations are normalized through the governed vertical displacement/velocity equations and the named return-to-level event. This does not assert that two same-height states have equal absolute timestamps."
+    },
+    {
+      "source_pointer": "/mandatory_equations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "The source H_max and same-level total-flight-time shortcut formulas are represented in normalized form by y=u_y t-0.5 g t^2, v_y=u_y-g t, the apex condition v_y=0, and the named return-to-level event. This follows the existing canonical projectile mapping rather than creating duplicate shortcut-formula authority."
+    },
+    {
+      "source_pointer": "/representations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/representations/0"},
+        {"gate_id": "PHY-M2D-SAME-HEIGHT-VELOCITY", "target_pointer": "/representations/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/representations/0"}
+      ],
+      "review_note": "The refined representations jointly preserve launch/rising, apex v_y=0 with persistent downward g, falling/return sign reversal at the same level, and an explicit release-to-event clock."
+    },
+    {
+      "source_pointer": "/model_conditions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/model_conditions/0"}
+      ],
+      "review_note": "The canonical vertical relations explicitly use uniform downward gravity; v_y=u_y-g t states the upward-positive sign convention while the model condition keeps gravity downward throughout."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/reasoning_sequence/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/reasoning_sequence/0"}
+      ],
+      "review_note": "Both canonical sequences require the frame, axes and sign convention to be declared before velocity signs or gravity are interpreted."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/reasoning_sequence/2"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/concepts/1"}
+      ],
+      "review_note": "The canonical apex step explicitly treats the event as v_y=0 while retaining downward gravitational acceleration."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/2",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/reasoning_sequence/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/reasoning_sequence/2"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "Maximum-height and total-return-time calculations are normalized to the apex and return-to-level events using the governed vertical displacement and velocity relations, then verified on one event clock."
+    },
+    {
+      "source_pointer": "/required_transformations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/required_transformations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/required_transformations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/required_transformations/0"}
+      ],
+      "review_note": "The source scenario-to-equation transformation is decomposed into the governed vertical component equation, signed velocity-event evolution, and explicit mapping of apex/return events to one elapsed time."
+    },
+    {
+      "source_pointer": "/misconceptions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/misconceptions/1"}
+      ],
+      "review_note": "MIS-M2D-APEX-G-ZERO directly rejects the source misconception that acceleration vanishes when instantaneous vertical velocity is zero at the apex."
+    },
+    {
+      "source_pointer": "/mandatory_verifications/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/verifications/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/verifications/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/verifications/3"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/verifications/1"}
+      ],
+      "review_note": "The refined authorities require unit consistency, model validity and substitution back into the named event state, covering the source dimensional/physical consistency check."
+    },
+    {
+      "source_pointer": "/problem_families/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-SAME-HEIGHT-VELOCITY", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "Vertical maximum-height and same-level return requests are covered by the component-evolution, special-event timing, apex-state and same-height comparison families; no separate free-fall shortcut family is needed for readiness."
+    },
+    {
+      "source_pointer": "/falsification_cases/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/required_invariants/2"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/misconceptions/1"}
+      ],
+      "review_note": "The source zero-acceleration-at-apex defect is directly rejected by the apex-v_y-zero/not-g-zero invariant and the canonical apex-gravity misconception repair."
+    }
+  ],
+  "decision": {
+    "status": "APPROVED",
+    "uncovered_source_pointers": [],
+    "readiness_authorized": false,
+    "source_custody_promoted": false
+  }
+}

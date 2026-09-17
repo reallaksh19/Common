@@ -1,0 +1,33 @@
+{
+  "schema_version":"1.0.0",
+  "topic_blueprint_id":"TB-PHY-M2D-v1",
+  "subject":"PHYSICS",
+  "grade":9,
+  "topic_id":"PHY-M2D",
+  "title":"Motion in a Plane",
+  "canonical_blueprint_root":"Grade 9/V2/Physics/Blueprint",
+  "evidence":{
+    "schema_version":"1.0.0",
+    "topic_id":"PHY-M2D",
+    "ground_truth_refs":["Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-inventory.json","Grade 9/V2/Physics/Core1A/registry/physics-core1a-core2-linkage.json"],
+    "sources":{
+      "syllabus":{"availability":"PARTIAL","authority_strength":2,"granularity":"COARSE","integrity_state":"MIXED","notes":["Syllabus/scope evidence is present but too coarse to dominate first-role routing."]},
+      "semantic_source":{"availability":"PRESENT","authority_strength":3,"granularity":"DETAILED","integrity_state":"MIXED","notes":["Authoritative semantic source is present; source gaps/extensions remain explicitly tracked."]},
+      "question_corpus":{"availability":"PRESENT","authority_strength":4,"granularity":"DETAILED","count":59,"integrity_state":"MIXED","notes":["Revised Core2 provides 59 indexed questions with high demand-resolution; QC exceptions remain visible."]},
+      "answer_key":{"availability":"PRESENT","authority_strength":3,"granularity":"DETAILED","integrity_state":"MIXED","notes":["Answer/QC evidence exists but is not assumed universally clean."]},
+      "figures":{"availability":"PRESENT","authority_strength":3,"granularity":"MODERATE","integrity_state":"MIXED","notes":["Figure evidence is present and preserved as semantic evidence rather than decoration."]}
+    },
+    "metrics":{
+      "SA":{"value":2,"basis":"Scope authority exists but is partial/coarse."},
+      "SS":{"value":3,"basis":"Semantic source is strong enough for independent Core1 reconstruction."},
+      "QE":{"value":4,"basis":"59-question corpus provides rich assessment evidence."},
+      "QR":{"value":4,"basis":"Question-to-capability/hint/figure mapping provides high-resolution demand evidence."},
+      "UA":{"value":1,"basis":"Uncertainty exists but is localized and explicitly represented."},
+      "CI":{"value":1,"basis":"Known source/QC conflicts exist but do not dominate the corpus."}
+    }
+  },
+  "expected_route":"CORE2_FIRST",
+  "route_must_be_derived":true,
+  "pilot_bindings":{"join_fixture":"Grade 9/V2/Physics/Blueprint/fixtures/join/join-ready.json","control_state_fixture":"Grade 9/V2/Physics/Blueprint/fixtures/control-state/m2d-p20-first-study.json","core1a_stage_fixture":"Grade 9/V2/Physics/Blueprint/fixtures/core1a/stage-run-ready.json","core2a_runtime_root":"Grade 9/V2/Physics/Core2A"},
+  "topic_blueprint_digest":"e79e5a73029bbb2ddc99db4c06098baabf01a474ae363058656bbdec0a3215fb"
+}

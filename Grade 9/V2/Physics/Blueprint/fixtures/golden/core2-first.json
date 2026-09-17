@@ -1,0 +1,24 @@
+{
+  "fixture_id": "PHY-BP-GOLDEN-CORE2-FIRST",
+  "expected_route": "CORE2_FIRST",
+  "evidence": {
+    "schema_version": "1.0.0",
+    "topic_id": "PHY-GOLDEN-ASSESSMENT-STRONG",
+    "ground_truth_refs": ["GT-GOLDEN-ASSESSMENT-001"],
+    "sources": {
+      "syllabus": {"availability": "ABSENT", "authority_strength": 0, "granularity": "NONE", "integrity_state": "NOT_APPLICABLE", "notes": ["No syllabus supplied."]},
+      "semantic_source": {"availability": "PARTIAL", "authority_strength": 1, "granularity": "COARSE", "integrity_state": "MIXED", "notes": ["Only fragmentary source material exists."]},
+      "question_corpus": {"availability": "PRESENT", "authority_strength": 4, "granularity": "DETAILED", "count": 48, "integrity_state": "CLEAN", "notes": ["Large, well-resolved question corpus reveals recurring scope and operations."]},
+      "answer_key": {"availability": "PRESENT", "authority_strength": 3, "granularity": "DETAILED", "integrity_state": "CLEAN", "notes": []},
+      "figures": {"availability": "PRESENT", "authority_strength": 3, "granularity": "MODERATE", "integrity_state": "CLEAN", "notes": []}
+    },
+    "metrics": {
+      "SA": {"value": 0, "basis": "No syllabus authority is available."},
+      "SS": {"value": 1, "basis": "Semantic source is fragmentary and coarse."},
+      "QE": {"value": 4, "basis": "Rich question corpus with many independent items."},
+      "QR": {"value": 4, "basis": "Question wording, figures and answers allow high-resolution demand reconstruction."},
+      "UA": {"value": 1, "basis": "Assessment scope is well evidenced even though semantic source is weak."},
+      "CI": {"value": 0, "basis": "No material conflict in the supplied assessment evidence."}
+    }
+  }
+}

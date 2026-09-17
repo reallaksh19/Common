@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0.0",
+  "cdau_id": "CDAU-M2D-SBA23-PROCESS-GOLDEN",
+  "bucket_id": "M2D-SBA-23",
+  "capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "problem_family_id": "MOVING_LAUNCHER_RELEASE_CONVERSION",
+  "domain_authority": {
+    "ground_truth_ref": "M2D-SBA23-SOURCE-AUDIT-V1",
+    "core1_ref": "CORE1-PHY-M2D-MOVING-LAUNCHER",
+    "core2_ref": "CORE2-Q15-HELD",
+    "join_ref": "JOIN-PHY-M2D-SBA23",
+    "may_rewrite_source_truth": false
+  },
+  "core_purpose_contract": [
+    {"layer": "CORE1A", "purpose": "construct complete moving-launcher frame model", "dominant_mode": "DECLARATIVE", "learner_actions": ["INTERPRET", "FOLLOW_DERIVATION"], "prohibited_modes": ["QUESTION_BANK_DOMINANCE"]},
+    {"layer": "CORE1B", "purpose": "reconstruct moving-launcher frame model", "dominant_mode": "GENERATIVE", "learner_actions": ["GENERATE", "SELECT", "DIAGNOSE", "VERIFY"], "prohibited_modes": ["SECOND_COPY_OF_CORE1A"]},
+    {"layer": "CORE2A", "purpose": "study expert legal problem-family reasoning", "dominant_mode": "WORKED_PROBLEM", "learner_actions": ["STUDY", "COMPARE"], "prohibited_modes": ["EXHAUSTIVE_SOLVED_COPY"]},
+    {"layer": "CORE2B", "purpose": "transfer frame conversion to fresh legal challenge", "dominant_mode": "TRANSFER", "learner_actions": ["RECOGNISE", "SELECT", "SOLVE", "VERIFY"], "prohibited_modes": ["REPLAY_OF_CORE2A"]}
+  ],
+  "content_lineage": {
+    "canonical_assets": [
+      {"asset_id": "EQ-GALILEAN-VEL-ADD-01", "asset_type": "EQUATION"},
+      {"asset_id": "REP-MOVING-LAUNCHER-VEL-TRIANGLE-01", "asset_type": "REPRESENTATION"},
+      {"asset_id": "PF-MOVING-LAUNCHER-RELEASE-CONVERSION", "asset_type": "PROBLEM_FAMILY"}
+    ],
+    "layer_usages": [
+      {"layer": "CORE1A", "asset_id": "EQ-GALILEAN-VEL-ADD-01", "usage_mode": "DERIVE", "transformation_note": "complete equation mapped to frame-labelled vector construction"},
+      {"layer": "CORE1B", "asset_id": "EQ-GALILEAN-VEL-ADD-01", "usage_mode": "RECONSTRUCT", "transformation_note": "learner generates relation from incomplete frame construction"},
+      {"layer": "CORE2A", "asset_id": "PF-MOVING-LAUNCHER-RELEASE-CONVERSION", "usage_mode": "WORKED_EXEMPLAR", "transformation_note": "representative worked sibling only when legal"},
+      {"layer": "CORE2B", "asset_id": "PF-MOVING-LAUNCHER-RELEASE-CONVERSION", "usage_mode": "TRANSFER", "transformation_note": "fresh structural sibling when legal"}
+    ],
+    "cross_core_relationship": "PEDAGOGICAL_TRANSFORMATION",
+    "duplication_classification": {
+      "release_allowed": true,
+      "reason": "same invariant is retained but learner action and example lineage differ across layers"
+    }
+  },
+  "example_fingerprint": {
+    "context": "moving trolley launch",
+    "givens": ["source velocity", "source-relative launch components"],
+    "numeric_values": ["8", "6", "6"],
+    "target_unknown": "ground-frame launch vector",
+    "representation": "frame-labelled vector triangle plus components",
+    "model_sequence": ["frame conversion", "component result"],
+    "special_condition": "source velocity horizontal",
+    "solution_path": ["identify frames", "write vector relation", "add components", "verify inverse relation"]
+  },
+  "owner_control": {
+    "override_present": true,
+    "system_finding": "Q15 exact prompt and source hint ladder unresolved",
+    "owner_decision": "allow learner-product design pilot but do not release Q15 or legal transfer pool",
+    "final_action": "route study track to SDU and Core2 design routing to owner-waived LAU pilot",
+    "bounded_authority": {
+      "may_change_product_routing": true,
+      "may_change_source_truth": false,
+      "may_change_observed_evidence": false,
+      "may_expand_legal_pool": false
+    }
+  },
+  "routing_target": "SDU"
+}

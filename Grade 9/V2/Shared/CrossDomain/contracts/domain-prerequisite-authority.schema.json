@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.common/v2/shared/cross-domain/domain-prerequisite-authority.schema.json",
+  "title": "Cross-Domain Prerequisite Authority Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "receipt_id",
+    "provider_subject",
+    "prerequisite_id",
+    "status",
+    "evidence_refs",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "receipt_id": {"type": "string", "pattern": "^DOMAIN-AUTH-[A-Z0-9-]+$"},
+    "provider_subject": {"type": "string", "minLength": 1},
+    "prerequisite_id": {"type": "string", "minLength": 1},
+    "status": {"const": "READY_FROM_AUTHORITATIVE_DOMAIN"},
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

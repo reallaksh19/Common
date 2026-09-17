@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "subject": "PHYSICS",
+  "requested_topic": "GRAVITATION",
+  "requested_scope": "GRAVITATIONAL_FIELD",
+  "engineering_depth": "RESEARCH",
+  "requested_action": "AUTO_DISCOVER",
+  "curriculum_scope": {
+    "grades": [9, 10, 11],
+    "curriculum": "GRADE_9_11_PHYSICS_ENGINEERING",
+    "exam_family": "COMPETITIVE_EXAM"
+  },
+  "requested_for": ["CORE1","CORE1A","CORE1B","CORE2A","CORE2B","CCU","CDAU","SDU","LAU","TTU","PUBLICATION"],
+  "notes": "Research depth governs technical evidence, not learner difficulty. Scope is Newtonian gravitational force and field; potential, energy, orbits and general relativity are out of scope."
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "SYNTH-C1A-REP-DECISION",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A6_REPRESENTATION_DECISIONS",
+  "evidence_kind": "REPRESENTATION_DECISION",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json",
+    "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json"
+  ],
+  "artifact_refs": ["REP-A", "REP-B"],
+  "evidence_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json#representation_decision",
+    "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json#proof"
+  ],
+  "proof": {
+    "candidate_set_receipt_ref": "fixtures/core1a-migration-stage-evidence/valid-representation-candidates.json",
+    "primary_representation_id": "REP-A",
+    "secondary_representation_ids": ["REP-B"],
+    "decision_rationale": "Synthetic fixture selects a primary and secondary representation after explicit candidate comparison."
+  },
+  "unresolved_requirements": []
+}

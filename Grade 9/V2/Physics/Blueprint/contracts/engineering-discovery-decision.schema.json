@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "engineering-discovery-decision.schema.json",
+  "title": "Physics Engineering Discovery Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "decision_id", "request_id", "decision_mode", "existing_reusable_gate_ids", "missing_capabilities", "operations", "status"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "decision_id": {"type": "string", "pattern": "^ENG-DISC-[A-Z0-9-]+$"},
+    "request_id": {"type": "string", "pattern": "^ENG-REQ-[A-Z0-9-]+$"},
+    "decision_mode": {"const": "HUMAN_REVIEWED"},
+    "existing_reusable_gate_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
+    },
+    "missing_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 3}
+    },
+    "operations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["operation", "gate_id", "rationale"],
+        "properties": {
+          "operation": {"enum": ["REUSE", "EXTEND", "CREATE_CHILD", "REFACTOR", "SOURCE_SCOPE_HELD"]},
+          "gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "parent_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "rationale": {"type": "string", "minLength": 12}
+        }
+      }
+    },
+    "status": {"const": "DISCOVERY_APPROVED"}
+  }
+}

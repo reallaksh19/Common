@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-engineering-scope-binding.schema.json",
+  "title": "Physics Cold-Start Scope-to-Engineering Authority Bindings",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "registry_id",
+    "subject",
+    "scope_authority_ref",
+    "scope_authority_id",
+    "scope_authority_digest",
+    "engineering_registry_ref",
+    "bindings",
+    "registry_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "registry_id": {"type": "string", "pattern": "^PHY-[A-Z0-9-]+-v[0-9]+$"},
+    "subject": {"const": "PHYSICS"},
+    "scope_authority_ref": {"type": "string", "minLength": 3},
+    "scope_authority_id": {"type": "string", "minLength": 3},
+    "scope_authority_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "engineering_registry_ref": {"const": "GENERATED:physics-technical-engineering-gates.v3"},
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/binding"}
+    },
+    "registry_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability_ref", "authority_route", "engineering_gate_ids", "rationale"],
+      "properties": {
+        "capability_ref": {"type": "string", "pattern": "^PHY-CAP-[A-Z0-9-]+$"},
+        "authority_route": {"enum": ["ENGINEERING_GATE", "UPSTREAM_SCOPE_AUTHORITY"]},
+        "engineering_gate_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}
+        },
+        "rationale": {"type": "string", "minLength": 30}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"authority_route": {"const": "ENGINEERING_GATE"}}},
+          "then": {"properties": {"engineering_gate_ids": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"authority_route": {"const": "UPSTREAM_SCOPE_AUTHORITY"}}},
+          "then": {"properties": {"engineering_gate_ids": {"maxItems": 0}}}
+        }
+      ]
+    }
+  }
+}

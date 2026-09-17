@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0.0",
+  "architecture_version": "SELF_HELP_V7",
+  "bucket_id": "M2D-SBA-23",
+  "learner_title": "Launch from something already moving",
+  "intrinsic_difficulty_badge": "HARD",
+  "canonical_capability_id": "PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+  "canonical_problem_family_id": "PF-MOVING-LAUNCHER-PROJECTILE",
+  "architecture_refs": {
+    "cdau": "../policy/core-governance-cdau.v1.json",
+    "sdu": "../policy/study-differentiation-unit.v1.json",
+    "lau": "../policy/learner-adaptation-unit.v1.json",
+    "ttu": "../policy/technical-teaching-unit.v3.json"
+  },
+  "source_boundary": {
+    "primary_core2_item_id": "Q15",
+    "exact_prompt": "HELD",
+    "source_solution": "HELD",
+    "source_h1_h2_h3": "HELD",
+    "production_core2a_legal_item_count": 0,
+    "author_created_items_may_substitute_for_q15": false,
+    "owner_may_release_q15_without_source_resolution": false
+  },
+  "canonical_assets": [
+    {
+      "asset_id": "EQ-ML-GALILEAN-ADD-01",
+      "asset_type": "EQUATION",
+      "canonical_content": "v_object,ground = v_object,source + v_source,ground",
+      "cross_core_reuse": "SEMANTIC_REUSE_ALLOWED"
+    },
+    {
+      "asset_id": "REP-ML-VELOCITY-TRIANGLE-01",
+      "asset_type": "REPRESENTATION",
+      "canonical_content": "head-to-tail frame velocity construction",
+      "cross_core_reuse": "TRANSFORM_OR_RECONSTRUCT_NOT_SILENT_COPY"
+    },
+    {
+      "asset_id": "CHECK-ML-INVERSE-01",
+      "asset_type": "VERIFICATION",
+      "canonical_content": "proposed ground velocity minus source velocity recovers relative velocity",
+      "cross_core_reuse": "SEMANTIC_REUSE_ALLOWED"
+    },
+    {
+      "asset_id": "CHECK-ML-ZERO-SOURCE-01",
+      "asset_type": "VERIFICATION",
+      "canonical_content": "source speed tending to zero reduces to ordinary projectile launch state",
+      "cross_core_reuse": "SEMANTIC_REUSE_ALLOWED"
+    }
+  ],
+  "sdu_realization": {
+    "student_knowledge_pct_used": false,
+    "shared_soft_maximum_page_envelope": 30,
+    "core1a_actual_length_derived_independently": true,
+    "core1b_actual_length_derived_independently": true,
+    "core1a": {
+      "status": "DESIGN_READY_SOURCE_GATED_NOT_RELEASED",
+      "dominant_mode": "DECLARATIVE",
+      "ttu_family": "CONCEPT_TTU",
+      "required_transformations_authored_for_downstream": [
+        "GENERATION",
+        "SELECTION",
+        "DISCRIMINATION",
+        "DIAGNOSIS",
+        "DERIVATION_CONNECTION",
+        "VERIFICATION"
+      ],
+      "worked_example_fingerprint": {
+        "fingerprint_id": "FP-M23-C1A-001",
+        "problem_family": "PF-MOVING-LAUNCHER-PROJECTILE",
+        "context": "TROLLEY",
+        "givens": ["source velocity east", "relative launch speed and angle"],
+        "numeric_values": ["6 m/s", "10 m/s", "37 degrees", "sin37=0.6", "cos37=0.8"],
+        "target_unknown": "ground-frame launch components",
+        "representation": "complete vector/component construction",
+        "model_sequence": ["frame conversion", "component interpretation"],
+        "special_condition": "east positive",
+        "solution_path": ["resolve relative launch", "add source horizontal component", "verify limiting case"]
+      },
+      "publication_authority": "BLOCKED_UNTIL_EXISTING_CORE1A_SOURCE_GATES_CLOSE"
+    },
+    "core1b": {
+      "status": "PROCESS_GOLDEN_ONLY_NO_MASTERY_INFERENCE",
+      "dominant_mode": "GENERATIVE",
+      "ttu_family": "CONCEPT_TTU",
+      "high_value_transformation_modes": [
+        "GENERATION",
+        "SELECTION",
+        "DISCRIMINATION",
+        "DIAGNOSIS",
+        "DERIVATION_CONNECTION",
+        "VERIFICATION"
+      ],
+      "practice_example_fingerprint": {
+        "fingerprint_id": "FP-M23-C1B-001",
+        "problem_family": "PF-MOVING-LAUNCHER-PROJECTILE",
+        "context": "TROLLEY_OPPOSITE_DIRECTION",
+        "givens": ["source velocity west", "relative launch components east/up"],
+        "numeric_values": ["3 m/s west", "8 m/s east", "6 m/s up"],
+        "target_unknown": "ground-frame launch vector plus frame/model explanation",
+        "representation": "learner-generated signed vector/component construction",
+        "model_sequence": ["choose sign convention", "frame conversion", "verification"],
+        "special_condition": "opposing horizontal velocities",
+        "solution_path": ["encode source as negative", "add vectors", "inverse-check relative state"]
+      },
+      "relationship_to_core1a_example": "PEDAGOGICAL_TRANSFORMATION",
+      "same_numeric_dataset_as_core1a": false,
+      "same_solution_surface_as_core1a": false,
+      "observed_evidence_required_for_mastery": true
+    }
+  },
+  "lau_realization": {
+    "production_selection_basis": "UNRESOLVED_BECAUSE_LEGAL_POOL_EMPTY",
+    "design_pilot_selection_basis": {
+      "type": "OWNER_OVERRIDE",
+      "owner_ref": "OWNER-SBA23-DESIGN-PILOT",
+      "reason": "Knowledge percentage is not available; architecture may be exercised only as a non-production design pilot while Q15 remains held.",
+      "support_band": "GUIDED"
+    },
+    "core2a": {
+      "status": "BLOCKED_SOURCE_CUSTODY",
+      "ttu_family": "PROBLEM_TTU",
+      "production_legal_items": [],
+      "generated_design_items_are_legal_pool": false,
+      "may_publish_design_pilot": true,
+      "design_pilot_must_be_marked_nonproduction": true
+    },
+    "core2b": {
+      "status": "BLOCKED_CORE2A_LEGAL_POOL",
+      "ttu_family": "PROBLEM_TTU",
+      "production_transfer_items": [],
+      "allowed_lineage_when_pool_exists": ["FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"],
+      "fading_anchor_counts_as_independent_transfer_evidence": false,
+      "structural_sibling_may_count_as_transfer_evidence": true,
+      "far_transfer_sibling_may_count_as_transfer_evidence": true
+    }
+  },
+  "cross_core_duplication_controls": {
+    "fundamental_equation_repetition_allowed": true,
+    "exact_explanatory_paragraph_repetition_allowed": false,
+    "exact_numeric_example_reuse_across_adjacent_ab_layers_default": "PROHIBITED",
+    "exact_diagram_reuse_across_adjacent_ab_layers_default": "PROHIBITED_UNLESS_TRANSFORMED_OR_FADING_ANCHOR",
+    "example_fingerprint_comparison_required": true,
+    "pedagogical_duplication_release_allowed": false,
+    "core2_source_question_may_be_rewritten_to_create_freshness": false
+  },
+  "release_gates": {
+    "G_DOMAIN": "PASS_FOR_AUTHOR_CREATED_CONCEPT_MODEL",
+    "G_PURPOSE": "PASS_FOR_V7_PLAN",
+    "G_DIFFERENTIATION": "PASS_FOR_DECLARED_FINGERPRINTS",
+    "G_TTU": "PROCESS_GOLDEN_ONLY",
+    "G_DIFFICULTY": "PASS_HARD_INTRINSIC_BUCKET",
+    "G_FIT": "DESIGN_PILOT_OWNER_OVERRIDE_ONLY",
+    "G_PUBLICATION": "BLOCKED_UPSTREAM_SOURCE_AND_MANUSCRIPT_RELEASE"
+  }
+}

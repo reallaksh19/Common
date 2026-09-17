@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0.0",
+  "review_id": "PR383-MAP-PHY-GRAV-UNIVERSAL-LAW-V1",
+  "review_authority": "REPOSITORY_ENGINEERING_MAPPING_REVIEW",
+  "mapping_scope": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY",
+  "source_snapshot": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "discovery_gate_id": "PHY-GRAV-UNIVERSAL-LAW",
+    "source_control_fields_ignored": ["technical_readiness", "release_checklist"]
+  },
+  "target_snapshot": [
+    {
+      "gate_id": "PHY-GRAV-FORCE",
+      "gate_ref": "engineering-gates/gravitation/PHY-GRAV-FORCE.v3.json",
+      "gate_git_blob_sha": "eef622be6f884297e3dbbada12d9b828103739ee"
+    },
+    {
+      "gate_id": "PHY-GRAV-FIELD",
+      "gate_ref": "engineering-gates/gravitation/PHY-GRAV-FIELD.v3.json",
+      "gate_git_blob_sha": "7c09a863e3747172fc19784a9048b55999e08e11"
+    }
+  ],
+  "coverage": [
+    {
+      "source_pointer": "/technical_core/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The broad source concept is intentionally split: mutual inverse-square attraction is carried by the force gate, while local g = GM/r^2 is carried by the field gate."
+    },
+    {
+      "source_pointer": "/mandatory_equations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/relations/0"}
+      ],
+      "review_note": "The source Newtonian force equation is preserved by EQ-GRAV-FORCE-MAGNITUDE with explicit centre-distance and model conditions."
+    },
+    {
+      "source_pointer": "/representations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/representations/0"}
+      ],
+      "review_note": "The canonical force-pair diagram preserves two masses, centre-to-centre separation, and equal/opposite attractive force vectors."
+    },
+    {
+      "source_pointer": "/model_conditions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/model_conditions/1"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/model_conditions/1"}
+      ],
+      "review_note": "Both refined gates explicitly bind point-mass or external spherical-symmetry reduction to centre-based inverse-square relations."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/reasoning_sequence/1"}
+      ],
+      "review_note": "The refined force reasoning requires model validation and definition of centre-to-centre separation before calculation."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/reasoning_sequence/2"}
+      ],
+      "review_note": "The refined force reasoning explicitly computes inverse-square magnitude and assigns attractive direction."
+    },
+    {
+      "source_pointer": "/required_transformations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/required_transformations/0"},
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/reasoning_sequence/2"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/required_transformations/1"}
+      ],
+      "review_note": "The old scenario-to-equation move is decomposed into source-receiver modelling plus governed force computation, with source/field-point geometry feeding the local-g relation."
+    },
+    {
+      "source_pointer": "/misconceptions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/relations/0/symbols/1"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/misconceptions/1"}
+      ],
+      "review_note": "G remains an explicit positive model constant in the force authority, while the field authority defines local g = GM/r^2 and rejects universal local-g treatment."
+    },
+    {
+      "source_pointer": "/mandatory_verifications/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/verifications/0"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/verifications/0"}
+      ],
+      "review_note": "Both canonical gates require unit/dimensional consistency checks; the refined gates add further model and direction verification."
+    },
+    {
+      "source_pointer": "/problem_families/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/problem_families/1"},
+        {"gate_id": "PHY-GRAV-FIELD", "target_pointer": "/problem_families/1"}
+      ],
+      "review_note": "The source family is split into two-mass force, external spherical force, and surface/altitude field families, preserving both F and local-g targets."
+    },
+    {
+      "source_pointer": "/falsification_cases/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/model_conditions/1"},
+        {"gate_id": "PHY-GRAV-FORCE", "target_pointer": "/problem_families/1"}
+      ],
+      "review_note": "The source surface-distance failure is explicitly represented by the external spherical model condition and the canonical family's fatal error requiring centre distance."
+    }
+  ],
+  "decision": {
+    "status": "APPROVED",
+    "uncovered_source_pointers": [],
+    "readiness_authorized": false,
+    "source_custody_promoted": false
+  }
+}

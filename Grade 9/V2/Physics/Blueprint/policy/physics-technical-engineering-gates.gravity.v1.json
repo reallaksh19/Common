@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "extension_id": "ENG-GATE-EXT-GRAV-V1",
+  "base_registry_ref": "policy/physics-technical-engineering-gates.v2.json",
+  "gates": [
+    {
+      "subtopic_id": "PHY-GRAV-FORCE",
+      "title": "Newtonian gravitational interaction force",
+      "domain": "Gravitation",
+      "status": "ENGINEERING_GATE_READY",
+      "authority_basis": [
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-FORCE-LAW","claim_scope":"Newtonian inverse-square attractive interaction for point masses."},
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-SPHERICAL-EXTERNAL","claim_scope":"External gravitational force of a spherically symmetric source may be treated as if its mass were concentrated at its centre."},
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-THIRD-LAW-PAIR","claim_scope":"Mutual gravitational forces form an equal-and-opposite interaction pair on distinct bodies."}
+      ],
+      "prerequisites": ["PHY-NLM-INTERACTION","PHY-NLM-THIRD-LAW","PHY-VEC-BASICS"],
+      "linked_buckets": [],
+      "applicable_cores": ["CORE1","CORE1A","CORE1B","CORE2A","CORE2B"],
+      "required_invariants": ["INV-GRAV-FORCE-ATTRACTIVE","INV-GRAV-FORCE-INVERSE-SQUARE","INV-GRAV-FORCE-DISTINCT-BODIES","INV-GRAV-FORCE-SOURCE-DISTANCE-SCOPE"],
+      "concepts": [
+        {"concept_id":"CON-GRAV-FORCE-ATTRACTION","statement":"In the Newtonian model, two masses exert mutual attractive forces along the line joining their centres or point-mass locations.","authority_ref":0},
+        {"concept_id":"CON-GRAV-SPHERICAL-EXTERNAL","statement":"Outside a spherically symmetric mass distribution, the Newtonian gravitational interaction is equivalent to using the total source mass at the centre.","authority_ref":1}
+      ],
+      "relations": [
+        {"relation_id":"EQ-GRAV-FORCE-MAGNITUDE","expression":"F = G m1 m2 / r^2","symbol_bindings":["F: gravitational-force magnitude","G: Newtonian gravitational constant","m1,m2: interacting masses","r: centre-to-centre or point-mass separation"],"conditions":["Newtonian regime","Point masses or valid external spherical-symmetry reduction","r > 0"],"obligations":["EXPLAIN","INTERPRET","APPLY","VERIFY"]},
+        {"relation_id":"EQ-GRAV-FORCE-VECTOR","expression":"F_on_m_by_M = -(G M m / r^2) rhat_source_to_test","symbol_bindings":["M: source mass","m: receiver/test mass","rhat_source_to_test: unit vector from source toward receiver","F_on_m_by_M: force on receiver due to source"],"conditions":["Newtonian regime","Declared source and receiver","r > 0"],"obligations":["REPRESENT","APPLY","VERIFY"]}
+      ],
+      "representations": [
+        {"representation_id":"REP-GRAV-FORCE-PAIR","representation_type":"INTERACTION_VECTOR_DIAGRAM","mandatory_elements":["source mass","receiver mass","centre-to-centre separation r","force on source","force on receiver","agent-receiver labels"],"forbidden_omissions":["force direction","receiver identity","definition of r"],"relation_bindings":["EQ-GRAV-FORCE-MAGNITUDE","EQ-GRAV-FORCE-VECTOR"]}
+      ],
+      "reasoning_sequence": ["Identify the two interacting masses and name source and receiver for the force being computed.","Check that the point-mass or external spherical-symmetry Newtonian model is valid and define r.","Compute the inverse-square magnitude and assign the attractive direction toward the other mass.","Check units, third-law pairing and limiting behaviour with changing separation."],
+      "misconceptions": [
+        {"misconception_id":"MIS-GRAV-FORCE-FALLING-ONLY","bad_model":"Gravity acts only while an object is falling downward and disappears while the object is supported or moving upward.","repair":"Treat gravity as an interaction present whenever the masses and Newtonian model apply; motion state does not switch the interaction on or off."},
+        {"misconception_id":"MIS-GRAV-FORCE-FOLLOWS-MOTION","bad_model":"The gravitational-force direction follows the object's velocity or trajectory direction.","repair":"Determine force direction from source-receiver geometry: Newtonian gravity points toward the attracting source, independent of instantaneous velocity."}
+      ],
+      "verifications": ["UNITS","SIGN_DIRECTION","SYMMETRY","LIMITING_CASE","MODEL_VALIDITY","ORDER_OF_MAGNITUDE","BODY_AGENT_CONSISTENCY"],
+      "problem_families": ["PF-GRAV-TWO-MASS-FORCE","PF-GRAV-SPHERICAL-EXTERNAL-FORCE"],
+      "difficulty_engineering": {"maturity":"ENGINEERING","provisional_badge":"MEDIUM","dimensions":{"prerequisite_depth":2,"element_interactivity":2,"inferential_jump_severity":2,"representation_translation":2,"model_discrimination":2,"sign_or_frame_sensitivity":2,"multi_step_dependency":2,"abstraction":2,"misconception_density":3,"synthesis":2}}
+    },
+    {
+      "subtopic_id": "PHY-GRAV-FIELD",
+      "title": "Gravitational field: force per unit mass, radial field and superposition",
+      "domain": "Gravitation",
+      "status": "ENGINEERING_GATE_READY",
+      "authority_basis": [
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-FIELD-DEFINITION","claim_scope":"Gravitational field at a point is the gravitational force per unit test mass in the Newtonian model."},
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-FIELD-RADIAL","claim_scope":"A point or externally equivalent spherical source produces an inward radial inverse-square field."},
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-FIELD-SUPERPOSITION","claim_scope":"Newtonian gravitational-field contributions combine by vector superposition."},
+        {"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"ENG-CLAIMS-GRAV-FIELD-V1:CL-GRAV-LOCAL-G-NOT-UNIVERSAL","claim_scope":"The near-Earth value about 9.8 N/kg is local, while gravitational field strength varies with position."}
+      ],
+      "prerequisites": ["PHY-GRAV-FORCE","PHY-VEC-COMPONENTS","PHY-NLM-SECOND-LAW"],
+      "linked_buckets": [],
+      "applicable_cores": ["CORE1","CORE1A","CORE1B","CORE2A","CORE2B"],
+      "required_invariants": ["INV-GRAV-FIELD-FORCE-PER-MASS","INV-GRAV-FIELD-TEST-MASS-INDEPENDENCE","INV-GRAV-FIELD-RADIAL-INWARD","INV-GRAV-FIELD-INVERSE-SQUARE","INV-GRAV-FIELD-SUPERPOSITION","INV-GRAV-FIELD-MODEL-SCOPE"],
+      "concepts": [
+        {"concept_id":"CON-GRAV-FIELD-FORCE-PER-MASS","statement":"The gravitational field at a point is the gravitational force per unit test mass there and, within the Newtonian test-mass model, does not depend on the chosen test mass.","authority_ref":0},
+        {"concept_id":"CON-GRAV-FIELD-RADIAL","statement":"For a point source or outside a spherically symmetric source, the field is radial, directed toward the source, and decreases with the inverse square of distance.","authority_ref":1},
+        {"concept_id":"CON-GRAV-FIELD-SUPERPOSITION","statement":"For multiple Newtonian sources, the net gravitational field at one point is the vector sum of the individual source fields evaluated at that same point.","authority_ref":2}
+      ],
+      "relations": [
+        {"relation_id":"EQ-GRAV-FIELD-DEFINITION","expression":"g = F_grav / m_test","symbol_bindings":["g: gravitational-field vector","F_grav: gravitational force on the test mass","m_test: positive test mass"],"conditions":["Newtonian model","Test mass does not materially alter the source configuration"],"obligations":["EXPLAIN","INTERPRET","INVERT","VERIFY"]},
+        {"relation_id":"EQ-GRAV-FIELD-POINT-MASS","expression":"g = -(G M / r^2) rhat_source_to_fieldpoint","symbol_bindings":["M: source mass","r: distance from source centre to field point","rhat_source_to_fieldpoint: outward radial unit vector","g: field vector at the field point"],"conditions":["Newtonian regime","Point source or external spherical-symmetry reduction","r > 0"],"obligations":["REPRESENT","APPLY","VERIFY"]},
+        {"relation_id":"EQ-GRAV-FIELD-SUPERPOSITION","expression":"g_net = sum_i g_i","symbol_bindings":["g_i: field contribution from source i at the same field point","g_net: vector sum of all included field contributions"],"conditions":["Newtonian linear superposition","All contributions expressed in one coordinate frame at the same field point"],"obligations":["REPRESENT","APPLY","VERIFY"]}
+      ],
+      "representations": [
+        {"representation_id":"REP-GRAV-RADIAL-FIELD","representation_type":"VECTOR_FIELD_DIAGRAM","mandatory_elements":["source centre","field point or radial samples","inward-directed field vectors or field lines","distance reference r","magnitude-decrease cue with increasing r"],"forbidden_omissions":["field direction","source location","distance dependence"],"relation_bindings":["EQ-GRAV-FIELD-POINT-MASS"]},
+        {"representation_id":"REP-GRAV-FIELD-SUPERPOSITION","representation_type":"VECTOR_COMPOSITION_DIAGRAM","mandatory_elements":["field point","source labels","individual g_i vectors at the field point","vector resultant g_net"],"forbidden_omissions":["common field point","vector directions","resultant"],"relation_bindings":["EQ-GRAV-FIELD-SUPERPOSITION"]}
+      ],
+      "reasoning_sequence": ["Identify the source mass model and field point before introducing a test mass or numerical relation.","Define the radial direction and evaluate each source contribution with its inverse-square magnitude and inward direction.","For multiple sources, express all field vectors in one frame and add them vectorially at the same field point.","Connect field to force only after the field is known using F_grav = m_test g, then verify units, direction, symmetry and limiting behaviour."],
+      "misconceptions": [
+        {"misconception_id":"MIS-GRAV-FIELD-EQUALS-FORCE","bad_model":"Gravitational field and gravitational force are the same physical quantity and must have the same numerical value for every object.","repair":"Field is force per unit mass with units N/kg (equivalently m/s^2); force on a particular mass is F_grav = m g."},
+        {"misconception_id":"MIS-GRAV-G-UNIVERSAL-9P8","bad_model":"The gravitational field strength g is universally 9.8 N/kg everywhere in space.","repair":"About 9.8 N/kg is a near-Earth-surface approximation; in the Newtonian external-source model the field magnitude varies as GM/r^2."},
+        {"misconception_id":"MIS-GRAV-DOWN-ABSOLUTE","bad_model":"Gravity always points toward a fixed downward direction on the page or in absolute space.","repair":"For a spherical source, the field direction is locally toward the source centre; the drawing orientation is only a coordinate choice."}
+      ],
+      "verifications": ["UNITS","SIGN_DIRECTION","SYMMETRY","LIMITING_CASE","GEOMETRIC_CONSISTENCY","MODEL_VALIDITY","ORDER_OF_MAGNITUDE"],
+      "problem_families": ["PF-GRAV-FIELD-POINT-MASS","PF-GRAV-FIELD-SPHERICAL-EXTERNAL","PF-GRAV-FIELD-SUPERPOSITION"],
+      "difficulty_engineering": {"maturity":"ENGINEERING","provisional_badge":"HARD","dimensions":{"prerequisite_depth":3,"element_interactivity":3,"inferential_jump_severity":3,"representation_translation":3,"model_discrimination":3,"sign_or_frame_sensitivity":3,"multi_step_dependency":3,"abstraction":3,"misconception_density":3,"synthesis":3}}
+    }
+  ],
+  "notes": "Research-level Gravity vertical slice. The extension is merged with the canonical v2 registry in memory and validated by the same production gate validator before closure."
+}

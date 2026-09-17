@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "fixture_id": "CORE1A-MIGRATION-STAGE-EVIDENCE-SYNTHETIC",
+  "representation_candidates": {
+    "candidate_ids": ["REP-A", "REP-B", "REP-C"],
+    "rejected_candidate_ids": ["REP-C"],
+    "selection_criteria_refs": ["CRIT-NOVICE-NOTICING", "CRIT-TRANSLATION"]
+  },
+  "representation_decision": {
+    "primary_representation_id": "REP-A",
+    "secondary_representation_ids": ["REP-B"],
+    "decision_rationale": "Synthetic fixture proving typed migration receipt plumbing only."
+  },
+  "worked_to_faded_lineage": {
+    "lineages": [
+      {
+        "lineage_id": "LIN-1",
+        "worked_ref": "WORKED-1",
+        "faded_ref": "FADED-1",
+        "independent_ref": "INDEPENDENT-1",
+        "invariant_fingerprint": "sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "fading_changes": ["remove-explicit-step-labels"]
+      }
+    ]
+  }
+}

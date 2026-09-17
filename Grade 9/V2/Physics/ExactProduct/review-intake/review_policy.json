@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-P-L-HUMAN-REVIEW-v1",
+  "version": "1.0.0",
+  "required_pass_submissions": {
+    "SUBJECT": 1,
+    "PEDAGOGY": 1,
+    "ASSESSMENT": 1,
+    "VISUAL": 1
+  },
+  "quality_state_by_dimension": {
+    "SUBJECT": "SUBJECT_CORRECTNESS",
+    "PEDAGOGY": "PEDAGOGICAL_DESIGN",
+    "ASSESSMENT": "ASSESSMENT_DESIGN",
+    "VISUAL": "VISUAL_USABILITY"
+  },
+  "require_exact_artifact_set_binding": true,
+  "reject_on_invalid_submission": true,
+  "benchmark_comparative_validation_state": "NOT_RUN"
+}

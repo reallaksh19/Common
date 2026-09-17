@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-TECHNICAL-DENSITY-FIGURE-CONTRACT-V1",
+  "scope": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "premise": "Physics depth is demonstrated by correct technical representations and reasoning, not prose volume.",
+  "hard_bucket_contract": {
+    "prose_only_release_allowed": false,
+    "required_technical_forms_when_material": [
+      "EQUATION_OR_SYMBOLIC_RELATION",
+      "DIAGRAM_OR_GRAPH",
+      "COMPONENT_OR_VECTOR_REPRESENTATION",
+      "WORKED_TRANSFORMATION_OR_DERIVATION",
+      "MODEL_CONDITION",
+      "PHYSICAL_OR_LIMITING_CHECK"
+    ],
+    "inferential_jump_rule": "Each fragile or major inferential jump must be closed by at least one technically adequate representation; prose alone is insufficient when a diagram, graph, vector construction, table or equation is materially necessary.",
+    "diagram_count_rule": "No quota. A diagram is required by conceptual need, not decoration.",
+    "technical_density_rule": "A Hard learner product must visibly contain the equations, vectors/components, diagrams/graphs and worked manipulations needed to reconstruct the Physics. Long prose explanations do not substitute for technical working."
+  },
+  "core1a": {
+    "required": [
+      "formal_notation_for_key_quantities",
+      "major_model_equations",
+      "worked_example_with_visible_intermediate_steps",
+      "problem_family_method_or_decision_structure",
+      "model_validity_or_applicability",
+      "at_least_one_physical_dimensional_or_limiting_check_when_applicable"
+    ]
+  },
+  "core1b": {
+    "hard_bucket_representation_requirement": "Each fragile checkpoint that depends on a technical representation must expose an incomplete, fillable, comparable or reconstructable version of that representation to the learner.",
+    "examples": [
+      "complete a vector triangle",
+      "fill missing component equations",
+      "sketch or complete a graph/trajectory",
+      "label a free-body or frame diagram",
+      "reconstruct an event timeline",
+      "derive or rearrange a symbolic relation"
+    ],
+    "prohibited_failure_mode": "A Hard Core1B consisting mainly of prose prompts and blank answer lines without technical diagrams/equations/representations is noncompliant."
+  },
+  "core2a": {
+    "solution_level_rule": "Worked problem learning must show expert representation and intermediate technical working, not only narrative explanation and final answer."
+  },
+  "core2b": {
+    "attempt_level_rule": "Transfer tasks must require the learner to select or construct the technical representation/model before solution reveal when that representation is part of the capability."
+  }
+}

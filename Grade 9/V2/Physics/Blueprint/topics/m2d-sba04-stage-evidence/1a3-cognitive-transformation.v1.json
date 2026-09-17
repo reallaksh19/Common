@@ -1,0 +1,98 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A3-COGNITIVE-TRANSFORMATION-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A3_COGNITIVE_TRANSFORMATION",
+  "evidence_kind": "COGNITIVE_TRANSFORMATION",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json"
+  ],
+  "artifact_refs": [
+    "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+    "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+    "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+  ],
+  "evidence_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#reasoning_sequence"
+  ],
+  "proof": {
+    "transformations": [
+      {
+        "jump_ref": "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+        "novice_state": "Apex is treated as a full stop or zero-acceleration state because v_y becomes zero.",
+        "target_expert_state": "Apex is recognized as a component event: v_y=0 while v_x remains and g stays downward.",
+        "teaching_move_refs": ["M2D-SBA-04B:mark-apex-v_y=0", "M2D-SBA-04B:keep-g-downward-at-every-stage"],
+        "verification_ref": "M2D-SBA-04B:check:identify-v_y-sign-and-velocity-direction-at-each-stage"
+      },
+      {
+        "jump_ref": "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+        "novice_state": "Launch angle is reused later or the sign of v_y is discarded when reading direction.",
+        "target_expert_state": "Instantaneous direction is reconstructed from the current signed component pair in the declared frame.",
+        "teaching_move_refs": ["M2D-SBA-04C:component-triangle-at-one-instant", "M2D-SBA-04C:sign-of-phi-above-below-horizontal"],
+        "verification_ref": "M2D-SBA-04C:check:calculate-phi-from-components"
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+        "novice_state": "Minimum speed at the apex is conflated with zero total velocity.",
+        "target_expert_state": "Speed is treated as vector magnitude; at the apex v_y=0 leaves the nonzero horizontal component as the minimum speed.",
+        "teaching_move_refs": ["M2D-SBA-04D:minimum-magnitude-at-v_y=0", "M2D-SBA-04D:connect-v_min-to-u-cos-theta"],
+        "verification_ref": "M2D-SBA-04D:check:compare-speeds-at-launch-apex-and-same-height-landing"
+      },
+      {
+        "jump_ref": "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+        "novice_state": "Equal height or equal speed is upgraded to equal velocity on rising and falling branches.",
+        "target_expert_state": "The learner preserves equal v_x and equal |v_y| while reversing the sign of v_y, separating scalar speed equality from vector inequality.",
+        "teaching_move_refs": ["M2D-SBA-04E:equal-|v_y|-opposite-signs", "M2D-SBA-04E:compare-velocity-arrows"],
+        "verification_ref": "M2D-SBA-04E:check:state-which-quantities-match-and-which-reverse-sign"
+      },
+      {
+        "jump_ref": "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+        "novice_state": "The compared velocity vectors are not explicitly identified in one common frame before solving.",
+        "target_expert_state": "Both intended velocity vectors are named, drawn and decomposed in one shared coordinate basis before the constraint is formed.",
+        "teaching_move_refs": ["M2D-SBA-04F:show-two-perpendicular-arrows", "M2D-SBA-04F:write-component-pairs"],
+        "verification_ref": "M2D-SBA-04F:check:set-up-v(t)-dot-u=0"
+      },
+      {
+        "jump_ref": "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+        "novice_state": "Perpendicularity is reduced to an incorrect one-component-zero shortcut.",
+        "target_expert_state": "Perpendicularity is translated to a signed component dot product equal to zero before time evolution is substituted.",
+        "teaching_move_refs": ["M2D-SBA-04F:introduce-dot-product-zero-test", "M2D-SBA-04F:apply-to-u-and-v(t)"],
+        "verification_ref": "M2D-SBA-04F:check:verify-a-dot-product-is-zero"
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+        "novice_state": "Height y is substituted from a convenient diagram reference without matching the initial state used by u_y.",
+        "target_expert_state": "The vertical displacement origin is declared first and tied to the initial state of the no-time relation.",
+        "teaching_move_refs": ["M2D-SBA-04G:start-from-vertical-no-time-relation", "M2D-SBA-04G:evaluate-at-H-and-H/2"],
+        "verification_ref": "M2D-SBA-04G:check:derive-v_y^2=u_y^2/2-at-H/2"
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED",
+        "novice_state": "After finding v_y at a height, the vertical component is mistaken for the whole speed.",
+        "target_expert_state": "The unchanged horizontal component is retained and total speed is reconstructed from both squared components.",
+        "teaching_move_refs": ["M2D-SBA-04G:rebuild-total-speed-from-components", "M2D-SBA-04G:compare-squared-speeds"],
+        "verification_ref": "M2D-SBA-04G:check:compare-v^2-at-two-heights"
+      }
+    ],
+    "unmapped_jump_refs": []
+  },
+  "unresolved_requirements": []
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-evidence-state.schema.json",
+  "title": "Physics Evidence State",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "topic_id", "ground_truth_refs", "sources", "metrics"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "ground_truth_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["syllabus", "semantic_source", "question_corpus", "answer_key", "figures"],
+      "properties": {
+        "syllabus": {"$ref": "#/$defs/evidenceItem"},
+        "semantic_source": {"$ref": "#/$defs/evidenceItem"},
+        "question_corpus": {"$ref": "#/$defs/evidenceItem"},
+        "answer_key": {"$ref": "#/$defs/evidenceItem"},
+        "figures": {"$ref": "#/$defs/evidenceItem"}
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["SA", "SS", "QE", "QR", "UA", "CI"],
+      "properties": {
+        "SA": {"$ref": "#/$defs/metric"},
+        "SS": {"$ref": "#/$defs/metric"},
+        "QE": {"$ref": "#/$defs/metric"},
+        "QR": {"$ref": "#/$defs/metric"},
+        "UA": {"$ref": "#/$defs/metric"},
+        "CI": {"$ref": "#/$defs/metric"}
+      }
+    }
+  },
+  "$defs": {
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["availability", "authority_strength", "notes"],
+      "properties": {
+        "availability": {"enum": ["PRESENT", "PARTIAL", "ABSENT"]},
+        "authority_strength": {"type": "integer", "minimum": 0, "maximum": 4},
+        "granularity": {"enum": ["NONE", "COARSE", "MODERATE", "DETAILED"]},
+        "count": {"type": "integer", "minimum": 0},
+        "integrity_state": {"enum": ["CLEAN", "MIXED", "AMBIGUOUS", "NOT_APPLICABLE"]},
+        "notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "basis"],
+      "properties": {
+        "value": {"type": "integer", "minimum": 0, "maximum": 4},
+        "basis": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

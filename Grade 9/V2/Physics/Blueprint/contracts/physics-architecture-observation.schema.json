@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-architecture-observation.schema.json",
+  "title": "Physics Architecture Observation Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_class",
+    "authority",
+    "engineering_authorization",
+    "publication_authorization",
+    "canonical_v3",
+    "discovery_coverage",
+    "work_energy_reconciliation",
+    "invariants",
+    "observation_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "manifest_class": {"const": "DERIVED_PHYSICS_ARCHITECTURE_OBSERVATION"},
+    "authority": {"const": "DERIVED_OBSERVABILITY_ONLY"},
+    "engineering_authorization": {"const": "NOT_EVALUATED"},
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "canonical_v3": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["registry_id", "registry_digest", "gate_count", "gate_ids"],
+      "properties": {
+        "registry_id": {"const": "PHYSICS-TECHNICAL-ENGINEERING-GATES-V3"},
+        "registry_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "gate_count": {"type": "integer", "minimum": 1},
+        "gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}}
+      }
+    },
+    "discovery_coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["catalog_id", "catalog_digest", "discovered_subtopic_count", "exact_v3_count", "mapped_v3_count", "migration_required_count"],
+      "properties": {
+        "catalog_id": {"type": "string", "minLength": 1},
+        "catalog_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "discovered_subtopic_count": {"type": "integer", "minimum": 0},
+        "exact_v3_count": {"type": "integer", "minimum": 0},
+        "mapped_v3_count": {"type": "integer", "minimum": 0},
+        "migration_required_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "work_energy_reconciliation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["discovery_gate_id", "disposition", "v3_gate_ids", "curriculum_grade", "curriculum_chapter"],
+        "properties": {
+          "discovery_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+          "disposition": {"enum": ["EXACT_V3_ID", "MAPPED_V3", "MIGRATION_REQUIRED"]},
+          "v3_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"}},
+          "curriculum_grade": {"type": "integer", "minimum": 1, "maximum": 13},
+          "curriculum_chapter": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovery_cannot_authorize", "observation_cannot_authorize", "parallel_engineering_authority_prohibited", "v3_is_canonical_physics_technical_authority"],
+      "properties": {
+        "discovery_cannot_authorize": {"const": true},
+        "observation_cannot_authorize": {"const": true},
+        "parallel_engineering_authority_prohibited": {"const": true},
+        "v3_is_canonical_physics_technical_authority": {"const": true}
+      }
+    },
+    "observation_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

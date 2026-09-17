@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-23",
+  "status": "PROVISIONAL_TEACHING_MODEL_NOT_RELEASE_AUTHORITY",
+  "learner_title": "Launch from something already moving",
+  "intrinsic_difficulty": "D3",
+  "target_prior_knowledge_pct": 20,
+  "prerequisite_buckets": ["M2D-SBA-03", "M2D-SBA-09"],
+  "core1a_home": "MOVING_LAUNCHER",
+  "core2_primary_questions": ["Q15"],
+  "authority_boundary": "This file may guide future authoring and process-golden runtime tests. It may not authorize Q15 release, manuscript release, Core2A eligibility, or learner mastery.",
+  "repository_supported_facts": [
+    "M2D-SBA-23 is titled 'Launch from something already moving'.",
+    "Its Core1A home is MOVING_LAUNCHER.",
+    "Its sole primary Core2 question is Q15.",
+    "Its prerequisite buckets are M2D-SBA-03 and M2D-SBA-09.",
+    "Core1A/Core2 linkage names Q15 'Moving launch source' and links it to 'moving-launcher'."
+  ],
+  "learning_atoms": [
+    {"atom_id":"M2D-SBA-23A","title":"Name the frame before naming a velocity","purpose":"Keep platform-relative and ground-relative velocities distinct.","prerequisite_support":["M2D-SBA-09"],"teaching_moves":["draw the platform and ground as two labelled frames","attach every velocity arrow to an object and an observer","say velocity of object relative to frame before writing a symbol"],"visual_stage_count":5,"misconceptions":["a velocity has the same numerical value in every frame","an unlabeled arrow is enough to identify a velocity"],"checks":["label object, observer and velocity on a two-frame sketch"]},
+    {"atom_id":"M2D-SBA-23B","title":"The released object carries the launcher's motion","purpose":"At release, combine the object's velocity relative to the launcher with the launcher's velocity relative to the ground.","prerequisite_support":["M2D-SBA-23A"],"teaching_moves":["freeze the instant before release","show platform velocity as already present in the ground frame","build v_object,ground = v_object,platform + v_platform,ground vectorially"],"visual_stage_count":6,"misconceptions":["release erases the platform velocity","add speed magnitudes without direction"],"checks":["construct a ground-frame launch vector from two labelled relative velocities"]},
+    {"atom_id":"M2D-SBA-23C","title":"Add vectors before resolving the projectile","purpose":"Form the correct ground-frame initial velocity before applying projectile component equations.","prerequisite_support":["M2D-SBA-23B","M2D-SBA-03"],"teaching_moves":["combine frame velocities first","then resolve the resulting launch vector into x and y components","contrast with resolving each unlabeled speed and adding scalars"],"visual_stage_count":5,"misconceptions":["projectile equations can start before the reference-frame conversion is complete"],"checks":["state the ground-frame u_x and u_y from a fresh moving-launcher diagram"]},
+    {"atom_id":"M2D-SBA-23D","title":"After release, use one projectile clock","purpose":"Once the ground-frame launch state is known, evolve horizontal and vertical motion on the same time variable.","prerequisite_support":["M2D-SBA-23C"],"teaching_moves":["mark t=0 at release","write x=u_x t and y=u_y t-1/2 g t^2 for the ground frame when air resistance is neglected","keep the launcher motion separate unless the question explicitly compares them later"],"visual_stage_count":5,"misconceptions":["the object remains dynamically attached to the launcher after release","horizontal and vertical components use different clocks"],"checks":["write the two ground-frame position equations with one shared t"]},
+    {"atom_id":"M2D-SBA-23E","title":"Gravity does not cancel inherited horizontal motion","purpose":"Separate the post-release gravitational acceleration from the inherited horizontal velocity.","prerequisite_support":["M2D-SBA-23D"],"teaching_moves":["draw velocity and acceleration arrows immediately after release","show gravity changing only the vertical velocity in the standard model","track horizontal velocity as constant when horizontal acceleration is zero"],"visual_stage_count":5,"misconceptions":["gravity removes the launcher's horizontal velocity","a downward acceleration implies a downward horizontal component"],"checks":["explain which component gravity changes and which it does not"]},
+    {"atom_id":"M2D-SBA-23F","title":"Choose the observation frame before comparing paths","purpose":"Interpret trajectories consistently when the same release is described from the launcher and from the ground.","prerequisite_support":["M2D-SBA-23A","M2D-SBA-23E"],"teaching_moves":["compare two sketches of the same release from different inertial observers","keep the event and clock shared while changing velocity description","distinguish path appearance from physical interaction"],"visual_stage_count":6,"misconceptions":["different observed paths mean different forces acted","mix coordinates from one frame with velocities from another"],"checks":["identify which quantities must be transformed before using one frame's projectile equations"]},
+    {"atom_id":"M2D-SBA-23G","title":"Check the zero-platform-speed limit","purpose":"Use a limiting case to verify that a moving-launcher model reduces to ordinary projectile motion.","prerequisite_support":["M2D-SBA-23B","M2D-SBA-23D"],"teaching_moves":["set platform velocity to zero symbolically","confirm the launch vector becomes the relative launch vector","compare the remaining equations with M2D-SBA-03"],"visual_stage_count":4,"misconceptions":["a frame-addition formula is valid only when both speeds are nonzero"],"checks":["state what the model becomes when the launcher is stationary"]},
+    {"atom_id":"M2D-SBA-23H","title":"Select the moving-launcher first move","purpose":"Recognise when reference-frame conversion must precede projectile kinematics.","prerequisite_support":["M2D-SBA-23C","M2D-SBA-23F","M2D-SBA-23G"],"teaching_moves":["sort examples into stationary-launch, moving-launcher and moving-observer cases","state the first move before calculating","justify why frame conversion precedes component kinematics"],"visual_stage_count":4,"misconceptions":["start with a memorised range or flight-time formula before identifying the ground-frame launch velocity"],"checks":["choose and explain the correct first move in an unseen moving-launcher setup"]}
+  ],
+  "generated_practice": {
+    "status": "AUTHOR_CREATED_NOT_SOURCE_Q15",
+    "prompt": "A trolley moves east at 6 m/s. At one instant a ball is projected at 10 m/s relative to the trolley, 37 degrees above east. Using sin 37 degrees = 0.6 and cos 37 degrees = 0.8, state the ball's initial horizontal and vertical velocity components in the ground frame.",
+    "answer_check": "Relative components are (8, 6) m/s; add the trolley's (6, 0) m/s, giving ground-frame components (14, 6) m/s.",
+    "purpose": "Exercise the frame-addition invariant without claiming to reproduce Q15."
+  },
+  "core2_release": {"Q15": "HELD_UNTIL_EXACT_SOURCE_AND_H1_H2_H3_AUDIT"}
+}

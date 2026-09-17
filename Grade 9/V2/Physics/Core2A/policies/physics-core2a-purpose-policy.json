@@ -1,0 +1,33 @@
+{
+  "policy_id": "PHY-CORE2A-PURPOSE-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "purposes": {
+    "FIRST_STUDY": {
+      "source_selection": "FIRST_RELEASABLE_PER_BUCKET",
+      "generated_requirements": ["GUIDED_DIRECT_WHEN_AVAILABLE"],
+      "support_density": "HIGH"
+    },
+    "PRACTICE": {
+      "source_selection": "ALL_RELEASABLE",
+      "generated_requirements": ["NEAR_TRANSFER_WHEN_AVAILABLE"],
+      "support_density": "MEDIUM_HIDDEN"
+    },
+    "REVISION": {
+      "source_selection": "HIGHEST_DEMAND_PER_BUCKET",
+      "generated_requirements": [],
+      "support_density": "LOW"
+    },
+    "COMPETITIVE_EXAM": {
+      "source_selection": "HIGHEST_DEMAND_PER_BUCKET",
+      "generated_requirements": ["NEAR_TRANSFER", "STRUCTURAL_VARIATION"],
+      "support_density": "LOW_ATTEMPT_FIRST"
+    }
+  },
+  "invariants": [
+    "PURPOSE_DOES_NOT_EXPAND_PHYSICS_SCOPE",
+    "SOURCE_CORPUS_CUSTODY_REMAINS_COMPLETE",
+    "PRODUCT_SELECTION_MAY_BE_PURPOSE_DEPENDENT",
+    "TEACHING_COMPLETE_IS_NOT_LEARNER_MASTERY"
+  ]
+}

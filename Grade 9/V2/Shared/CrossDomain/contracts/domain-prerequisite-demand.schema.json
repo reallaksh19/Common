@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.common/v2/shared/cross-domain/domain-prerequisite-demand.schema.json",
+  "title": "Cross-Domain Prerequisite Demand",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "demand_id",
+    "requester_subject",
+    "provider_subject",
+    "provider_entrypoint_ref",
+    "prerequisite_id",
+    "required_by_gate_ids",
+    "engineering_receipt_ref",
+    "engineering_closure_digest",
+    "authority_contract_ref",
+    "status",
+    "demand_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "demand_id": {"type": "string", "pattern": "^DOMAIN-DEMAND-[A-Z0-9-]+$"},
+    "requester_subject": {"type": "string", "minLength": 1},
+    "provider_subject": {"type": ["string", "null"]},
+    "provider_entrypoint_ref": {"type": ["string", "null"]},
+    "prerequisite_id": {"type": "string", "minLength": 1},
+    "required_by_gate_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "engineering_receipt_ref": {"type": "string", "minLength": 1},
+    "engineering_closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "authority_contract_ref": {"const": "Grade 9/V2/Shared/CrossDomain/contracts/domain-prerequisite-authority.schema.json"},
+    "status": {"enum": ["OPEN_HELD", "OPEN_UNROUTABLE"]},
+    "demand_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

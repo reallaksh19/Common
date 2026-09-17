@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/physics/learner-adaptation-unit.schema.json",
+  "title": "Physics Learner Adaptation Unit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "lau_id", "capability_id", "problem_family_id", "selection_basis", "task_demand", "support_decision", "authority_guards"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "lau_id": {"type": "string", "minLength": 1},
+    "capability_id": {"type": "string", "minLength": 1},
+    "problem_family_id": {"type": "string", "minLength": 1},
+    "selection_basis": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["type", "learner_model"],
+          "properties": {
+            "type": {"const": "KNOWLEDGE_PERCENT"},
+            "learner_model": {
+              "type": "object", "additionalProperties": false,
+              "required": ["knowledge_pct", "capability_scope", "provenance", "confidence", "evidence_count", "subdimensions"],
+              "properties": {
+                "knowledge_pct": {"type": "number", "minimum": 0, "maximum": 100},
+                "capability_scope": {"type": "string", "minLength": 1},
+                "provenance": {"enum": ["DIAGNOSTIC", "CORE1B_EVIDENCE", "TEACHER_OBSERVATION", "PRIOR_ASSESSMENT", "OWNER_INPUT"]},
+                "confidence": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+                "evidence_count": {"type": "integer", "minimum": 0},
+                "subdimensions": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["recognition", "representation", "model_selection", "first_move", "execution", "explanation", "verification"],
+                  "properties": {
+                    "recognition": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "representation": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "model_selection": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "first_move": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "execution": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "explanation": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+                    "verification": {"type": ["number", "null"], "minimum": 0, "maximum": 100}
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["type", "owner_override"],
+          "properties": {
+            "type": {"const": "OWNER_OVERRIDE"},
+            "owner_override": {
+              "type": "object", "additionalProperties": false,
+              "required": ["owner_ref", "reason", "support_band"],
+              "properties": {
+                "owner_ref": {"type": "string", "minLength": 1},
+                "reason": {"type": "string", "minLength": 1},
+                "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]}
+              }
+            }
+          }
+        }
+      ]
+    },
+    "task_demand": {
+      "type": "object", "additionalProperties": false,
+      "required": ["structural_distance", "representation_change", "model_discrimination", "sign_or_direction_reversal", "reversed_target", "constraint_inversion", "multi_step_bridge", "synthesis", "competitive_mixing"],
+      "properties": {
+        "structural_distance": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+        "representation_change": {"enum": ["NONE", "LOW", "MEDIUM", "HIGH"]},
+        "model_discrimination": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+        "sign_or_direction_reversal": {"type": "boolean"},
+        "reversed_target": {"type": "boolean"},
+        "constraint_inversion": {"type": "boolean"},
+        "multi_step_bridge": {"enum": ["NONE", "LOW", "MEDIUM", "HIGH"]},
+        "synthesis": {"enum": ["NONE", "LOW", "MEDIUM", "HIGH"]},
+        "competitive_mixing": {"enum": ["NONE", "LOW", "MEDIUM", "HIGH"]}
+      }
+    },
+    "support_decision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["support_band", "core2a_behavior", "core2b_behavior", "predicted_fit", "prediction_is_psychometric_claim"],
+      "properties": {
+        "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+        "core2a_behavior": {"type": "string", "minLength": 1},
+        "core2b_behavior": {"type": "string", "minLength": 1},
+        "predicted_fit": {"enum": ["LIKELY_OVERLOAD", "APPROPRIATE_CHALLENGE", "LIKELY_UNDERCHALLENGE", "UNCERTAIN"]},
+        "prediction_is_psychometric_claim": {"const": false}
+      }
+    },
+    "core2b_lineage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_relation", "may_count_as_transfer_evidence"],
+      "properties": {
+        "source_relation": {"enum": ["FADING_ANCHOR", "STRUCTURAL_SIBLING", "FAR_TRANSFER_SIBLING"]},
+        "may_count_as_transfer_evidence": {"type": "boolean"}
+      }
+    },
+    "authority_guards": {
+      "type": "object", "additionalProperties": false,
+      "required": ["no_silent_default", "may_rewrite_frozen_source", "may_expand_legal_pool", "may_manufacture_mastery"],
+      "properties": {
+        "no_silent_default": {"const": true},
+        "may_rewrite_frozen_source": {"const": false},
+        "may_expand_legal_pool": {"const": false},
+        "may_manufacture_mastery": {"const": false}
+      }
+    }
+  }
+}

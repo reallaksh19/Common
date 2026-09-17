@@ -1,0 +1,44 @@
+{
+  "$id": "skp-representation.prototype.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Representation Prototype",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "prototype_only", "representation_id", "skp_ref", "title", "representation_kind", "purpose", "encodes_refs", "decision_state", "decision_basis_refs", "translation_edges", "source_refs"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "prototype_only": {"const": true},
+    "representation_id": {"type": "string", "pattern": "^REP-[A-Z0-9][A-Z0-9_-]*$"},
+    "skp_ref": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "title": {"type": "string", "minLength": 3},
+    "representation_kind": {"enum": ["DIAGRAM", "GRAPH", "TABLE", "SYMBOLIC", "EQUATION", "GEOMETRIC_CONSTRUCTION", "PHYSICAL_MODEL", "PARTICULATE_MODEL", "TEXTUAL", "OTHER"]},
+    "purpose": {"type": "string", "minLength": 8},
+    "encodes_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "decision_state": {"enum": ["CANDIDATE_ONLY", "SELECTED_PRIMARY", "SELECTED_SECONDARY", "REJECTED"]},
+    "decision_basis_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "translation_invariants": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+    "translation_edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_representation_ref", "preserved_information", "potential_loss", "capability_refs", "evidence_refs"],
+        "properties": {
+          "target_representation_ref": {"type": "string", "pattern": "^REP-[A-Z0-9][A-Z0-9_-]*$"},
+          "preserved_information": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "potential_loss": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "capability_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CAP-[A-Z0-9][A-Z0-9_-]*$"}},
+          "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}}
+        }
+      }
+    },
+    "source_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^SRC-[A-Z0-9][A-Z0-9_-]*$"}},
+    "source_representation_ref": {"anyOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"decision_state": {"enum": ["SELECTED_PRIMARY", "SELECTED_SECONDARY", "REJECTED"]}}},
+      "then": {"properties": {"decision_basis_refs": {"minItems": 1}}}
+    }
+  ]
+}

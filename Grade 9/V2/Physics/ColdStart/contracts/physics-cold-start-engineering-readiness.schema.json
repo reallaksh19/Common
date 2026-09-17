@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-cold-start-engineering-readiness.schema.json",
+  "title": "Physics Cold-Start Engineering Readiness",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "readiness_id",
+    "subject",
+    "authority_layer",
+    "scope_model_ref",
+    "scope_model_digest",
+    "scope_authority_ref",
+    "scope_authority_digest",
+    "binding_registry_ref",
+    "binding_registry_digest",
+    "required_capability_refs",
+    "capability_routes",
+    "technical_gate_requirement_state",
+    "engineering_request",
+    "engineering_manifest",
+    "engineering_closure",
+    "domain_closure",
+    "readiness_envelope",
+    "required_consumer",
+    "consumer_status",
+    "readiness_digest"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "readiness_id": {"type": "string", "pattern": "^PHY-ENG-READINESS-[A-F0-9]+$"},
+    "subject": {"const": "PHYSICS"},
+    "authority_layer": {"const": "ENGINEERING_GATE"},
+    "scope_model_ref": {"type": "string", "minLength": 3},
+    "scope_model_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scope_authority_ref": {"type": "string", "minLength": 3},
+    "scope_authority_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "binding_registry_ref": {"type": "string", "minLength": 3},
+    "binding_registry_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "required_capability_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^PHY-CAP-[A-Z0-9-]+$"}},
+    "capability_routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["capability_ref", "authority_route", "engineering_gate_ids", "rationale"],
+        "properties": {
+          "capability_ref": {"type": "string"},
+          "authority_route": {"enum": ["ENGINEERING_GATE", "UPSTREAM_SCOPE_AUTHORITY"]},
+          "engineering_gate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "rationale": {"type": "string", "minLength": 30}
+        }
+      }
+    },
+    "technical_gate_requirement_state": {"enum": ["NOT_REQUIRED_FOR_THIS_SCOPE", "REQUIRED_AND_READY"]},
+    "engineering_request": {"type": "object"},
+    "engineering_manifest": {"type": "object"},
+    "engineering_closure": {"type": "object"},
+    "domain_closure": {"type": "object"},
+    "readiness_envelope": {"type": "object"},
+    "required_consumer": {"const": "PROBLEM_SEMANTICS"},
+    "consumer_status": {"enum": ["ALLOWED", "BLOCKED"]},
+    "readiness_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

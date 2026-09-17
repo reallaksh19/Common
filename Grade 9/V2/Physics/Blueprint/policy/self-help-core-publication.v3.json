@@ -1,0 +1,137 @@
+{
+  "schema_version": "3.0.0",
+  "policy_id": "PHY-BP-SELF-HELP-CORE-PUBLICATION-V3",
+  "scope": "Grade 9-11 Physics learner products",
+  "premise": "Every Core learner product must be usable without a teacher physically present.",
+  "control_planes": {
+    "CORE1_FAMILY": {
+      "applies_to": ["CORE1A", "CORE1B"],
+      "student_knowledge_pct_drives_authored_depth": false,
+      "always_subtopic_bucket_wise": true,
+      "shared_learning_model_required": true,
+      "difficulty_policy_ref": "Blueprint/policy/core1ab-bucket-authoring.v2.json",
+      "legacy_prior_knowledge_fields": "DEPRECATED_MIGRATION_COMPATIBILITY_ONLY"
+    },
+    "CORE2_FAMILY": {
+      "applies_to": ["CORE2A", "CORE2B"],
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "student_knowledge_pct_required_unless_owner_override": true,
+      "knowledge_policy_ref": "Blueprint/policy/core2ab-knowledge-routing.v1.json",
+      "owner_override_may_expand_legal_pool": false,
+      "owner_override_may_rewrite_frozen_core2_source": false
+    }
+  },
+  "authoring_center": {
+    "primary_units_in_order": [
+      "SUBTOPIC_BUCKET",
+      "HIDDEN_INVARIANT",
+      "INFERENTIAL_JUMP",
+      "PROBLEM_FAMILY",
+      "REPRESENTATION_AND_MISCONCEPTION",
+      "LAYER_REALIZATION"
+    ],
+    "anti_pattern": "Do not make page count, visual quantity or A/B symmetry the primary authoring unit."
+  },
+  "authority_boundary": {
+    "preserve_existing_runtime_custody": true,
+    "core1b_may_author_new_semantics": false,
+    "core2b_may_legalize_transfer": false,
+    "teaching_configuration_is_mastery_evidence": false,
+    "generated_items_may_replace_frozen_core2_source": false
+  },
+  "mode_rule": {
+    "dominant_not_exclusive": true,
+    "core1a_may_include_small_generative_checks": true,
+    "core1b_may_include_post_attempt_explanation_and_targeted_reteach": true,
+    "core2a_may_include_attempt_before_solution": true,
+    "core2b_may_include_post_attempt_explanation": true,
+    "parallel_duplicate_books_for_A_and_B": false
+  },
+  "learner_surface_roles": {
+    "CORE1A": {
+      "mode": "DECLARATIVE_DOMINANT_DEEP_TEACHING",
+      "question": "Teach me this subtopic completely.",
+      "depth_driver": "BUCKET_DIFFICULTY_BADGE_FOR_INFERENTIAL_CLOSURE",
+      "page_budget": "CORE1A_SOFT_CEILING_BY_BADGE",
+      "product": "Complete declarative mental model, worked reasoning and problem-family structure with small generative checks allowed."
+    },
+    "CORE1B": {
+      "mode": "GENERATIVE_DOMINANT_CONCEPT_RECONSTRUCTION",
+      "question": "Can I reconstruct, explain, represent and independently use the fragile parts of what was taught?",
+      "scope_driver": "SHARED_BUCKET_LEARNING_MODEL",
+      "page_budget": "DERIVED_FROM_FRAGILE_CHECKPOINT_COVERAGE_NOT_BADGE_SYMMETRY",
+      "product": "Selected generative checkpoints over fragile inferential jumps, misconceptions, problem-family recognition and mixed retrieval.",
+      "full_hint_ladder_required_for_every_prompt": false
+    },
+    "CORE2A": {
+      "mode": "DECLARATIVE_DOMINANT_WORKED_PROBLEM_FAMILY_LEARNING",
+      "question": "Show me how an expert recognizes and solves representative legal problem families.",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "selection_rule": "REPRESENTATIVE_EXEMPLARS_BY_FAMILY_AND_DEMAND_NOT_AUTOMATIC_ALL_ITEM_SOLVING",
+      "source_rule": "Frozen Core2 source items are never rewritten to make them easier; generated-original variants must already be legal under Core2A."
+    },
+    "CORE2B": {
+      "mode": "GENERATIVE_DOMINANT_TRANSFER_COACH",
+      "question": "Can I recognize, select and transfer it when the surface changes?",
+      "adaptation_driver": "STUDENT_KNOWLEDGE_PERCENT_OR_OWNER_OVERRIDE",
+      "selection_rule": "ATTEMPT_FIRST_LEGAL_ITEMS_WITH_STRUCTURAL_VARIATION; AVOID_ONE_FOR_ONE_MIRROR_OF_CORE2A_WHEN_POOL_PERMITS",
+      "full_hint_ladder_required_for_every_prompt": false
+    }
+  },
+  "task_grammar_policy": {
+    "MICRO_PROMPT": {
+      "allowed_shape": ["PROMPT", "ATTEMPT", "LOCAL_RESOLUTION"],
+      "full_hint_ladder_required": false
+    },
+    "REPRESENTATION_TASK": {
+      "allowed_shape": ["REPRESENT", "ATTEMPT", "CHECK_REPRESENTATION", "EXPLAIN_KEY_FEATURE"],
+      "full_hint_ladder_required": false
+    },
+    "SUBSTANTIVE_TASK": {
+      "recommended_shape": ["QUESTION", "ATTEMPT", "H1_NOTICE", "H2_REPRESENT", "H3_START", "RETRY", "FULL_CHECK", "REPAIR"],
+      "progressive_rescue_required_when_learner_can_be_stranded": true
+    },
+    "MIXED_RETRIEVAL": {
+      "allowed_shape": ["UNLABELED_TASK", "ATTEMPT", "COMPACT_CHECK", "FAMILY_OR_INVARIANT_IDENTIFICATION"]
+    }
+  },
+  "universal_self_help_contract": {
+    "every_open_ended_prompt_has_local_resolution": true,
+    "answer_may_be_same_page_or_immediately_following": true,
+    "help_is_progressive_when_task_warrants_it": true,
+    "wrong_answer_never_routes_to_ask_teacher": true,
+    "repair_route_required_for_nontrivial_failure": true,
+    "visuals_require_instructional_function": true,
+    "visual_quantity_is_not_quality_proxy": true,
+    "model_applicability_must_be_visible_when_material": true
+  },
+  "hint_ladder": {
+    "H1_NOTICE": "Point attention to the physical event, invariant, relationship or clue; do not give the formula.",
+    "H2_REPRESENT": "Prompt the useful representation: diagram, graph, table, event line, component split or symbolic structure.",
+    "H3_START": "Give the first executable conceptual/mathematical move, but not the completed solution.",
+    "FULL_SOLUTION": "Available after an attempt path; exposure does not count as independent mastery.",
+    "mandatory_for_every_prompt": false
+  },
+  "core2_family_realization": {
+    "core2a_should_solve_every_legal_item_by_default": false,
+    "core2b_should_mirror_core2a_item_for_item": false,
+    "prefer_different_transfer_items_after_worked_exemplars_when_legal_pool_allows": true,
+    "transfer_dimensions": [
+      "STRUCTURAL_DISTANCE",
+      "DIRECTION_OR_SIGN_REVERSAL",
+      "REVERSED_TARGET",
+      "REPRESENTATION_CHANGE",
+      "MODEL_DISCRIMINATION",
+      "CONSTRAINT_INVERSION",
+      "MULTI_STEP_BRIDGE",
+      "SYNTHESIS",
+      "COMPETITIVE_MIXING"
+    ]
+  },
+  "evidence_boundary": {
+    "core1a_publication_proves_mastery": false,
+    "core1b_independent_observed_use_may_support_independence": true,
+    "core2a_worked_solution_proves_transfer": false,
+    "core2b_low_hint_observed_transfer_may_support_transfer_robustness": true
+  }
+}

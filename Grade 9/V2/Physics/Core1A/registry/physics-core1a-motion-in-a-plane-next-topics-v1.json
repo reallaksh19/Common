@@ -1,0 +1,374 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-CORE1A-MOTION-IN-A-PLANE-NEXT-v1",
+  "chapter_title": "Motion in a Plane - River, Rain and Circular Motion",
+  "build_scope": "Continue after Relative Motion through §7.3 Circular Motion; keep the supplied Formulae Sheet as a source cross-check.",
+  "core2_policy": "Only link a learner concept to Revised Core (2) v2 when a matching challenge exists. Do not invent links for river, rain or circular-motion ideas that are absent from the 59-question revised set.",
+  "concepts": [
+    {
+      "concept_id": "RIVER_FOUNDATION",
+      "learner_title": "Three arrows tell the boat's real motion",
+      "difficulty": "D2",
+      "prerequisite_concepts": ["RELATIVE_MOTION_FOUNDATION"],
+      "source_group_ids": ["SRC-G6.1"],
+      "equation_ids": ["M2D-EQ-RIVER-SUM"],
+      "plain_language": [
+        "A boat has one velocity through the water, while the water itself has another velocity relative to the ground.",
+        "The path seen from the river bank comes from adding those two velocity arrows."
+      ],
+      "physics_words": ["boat relative to water", "stream relative to ground", "boat relative to ground", "resultant"],
+      "model_notes": [
+        "Use one x-y coordinate system for all three velocity vectors.",
+        "In the source setup, the stream flows along x and the river width is measured across y."
+      ],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"boat_water","title":"Boat through the water","learner_question":"Which arrow describes what the boat can do in still water?"},
+          {"id":"stream_ground","title":"Water moves too","learner_question":"Which arrow belongs to the stream?"},
+          {"id":"resultant_ground","title":"Add the arrows","learner_question":"Where does the boat actually move relative to the bank?"},
+          {"id":"landing_point","title":"Compare intended and actual landing points","learner_question":"What does the downstream shift mean?"}
+        ]
+      },
+      "easy_mistake": "Using the boat's still-water speed as if it were automatically the boat's speed and direction relative to the bank.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RIVER_RESULTANT",
+      "learner_title": "Add the boat and stream arrows",
+      "difficulty": "D2",
+      "prerequisite_concepts": ["RIVER_FOUNDATION"],
+      "source_group_ids": ["SRC-G6.1.1"],
+      "equation_ids": ["M2D-EQ-RIVER-MAG", "M2D-EQ-RIVER-DIR"],
+      "plain_language": [
+        "The boat-water arrow and stream arrow form a triangle or parallelogram. The diagonal is the motion seen from the bank.",
+        "Magnitude tells how fast the boat moves over the ground; direction tells where that resultant points."
+      ],
+      "physics_words": ["parallelogram of velocities", "resultant speed", "resultant direction"],
+      "model_notes": ["The angle symbols alpha and beta must match the source geometry before the formulas are used."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"given_vectors","title":"Draw the two known velocity arrows","learner_question":"What are the directions of v_boat,water and v_stream?"},
+          {"id":"parallelogram","title":"Complete the parallelogram","learner_question":"Which diagonal is the ground velocity?"},
+          {"id":"read_magnitude","title":"Find the diagonal length","learner_question":"Which sides and included angle control the resultant speed?"},
+          {"id":"read_direction","title":"Find where the diagonal points","learner_question":"Which components determine the direction angle?"}
+        ]
+      },
+      "easy_mistake": "Adding speed numbers without respecting the angle between the vectors.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RIVER_CROSSING_TIME",
+      "learner_title": "Which part of the velocity gets you across?",
+      "difficulty": "D2",
+      "prerequisite_concepts": ["RIVER_FOUNDATION", "RIVER_RESULTANT"],
+      "source_group_ids": ["SRC-G6.1.2"],
+      "equation_ids": ["M2D-EQ-RIVER-T"],
+      "plain_language": [
+        "Only the across-river component closes the distance between the two banks.",
+        "The stream can push the boat sideways without helping it cover the river width."
+      ],
+      "physics_words": ["across-river component", "river width", "crossing time"],
+      "model_notes": ["In the source geometry, theta is measured from the across-river direction."],
+      "illustration": {
+        "archetype": "COMPONENT_FILTER",
+        "stages": [
+          {"id":"show_width","title":"Mark the river width","learner_question":"Which distance must become d?"},
+          {"id":"split_velocity","title":"Split the boat's velocity","learner_question":"Which component points across the river?"},
+          {"id":"ignore_parallel_for_time","title":"Ignore the parallel component for crossing time","learner_question":"Why does downstream motion not reduce the width?"},
+          {"id":"unlock_time","title":"Distance divided by across speed","learner_question":"Which speed belongs in t = distance/speed?"}
+        ]
+      },
+      "easy_mistake": "Dividing river width by the total resultant speed instead of by the across-river component.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RIVER_DRIFT",
+      "learner_title": "Why the boat lands downstream",
+      "difficulty": "D2",
+      "prerequisite_concepts": ["RIVER_CROSSING_TIME"],
+      "source_group_ids": ["SRC-G6.1.3"],
+      "equation_ids": ["M2D-EQ-RIVER-DRIFT"],
+      "plain_language": [
+        "While the boat is crossing, the stream-parallel component keeps moving it sideways.",
+        "Drift is simply sideways ground speed multiplied by the same crossing time."
+      ],
+      "physics_words": ["drift", "parallel component", "same crossing time"],
+      "model_notes": ["Keep the source sign convention when deciding whether the boat's own upstream component subtracts from the stream."],
+      "illustration": {
+        "archetype": "MOTION_UNFOLDS",
+        "stages": [
+          {"id":"start_opposite","title":"Mark the directly opposite point","learner_question":"Where would the boat arrive with no stream?"},
+          {"id":"crossing_clock","title":"Let the crossing clock run","learner_question":"How long is the boat exposed to sideways motion?"},
+          {"id":"parallel_motion","title":"Track the sideways component","learner_question":"What is the ground velocity along the bank?"},
+          {"id":"measure_drift","title":"Measure the landing shift","learner_question":"How far downstream has the boat moved?"}
+        ]
+      },
+      "easy_mistake": "Using a different time for drift than for the crossing. Both motions happen during the same interval.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RIVER_SHORTEST_TIME",
+      "learner_title": "Fastest crossing is not the straightest path",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["RIVER_CROSSING_TIME", "RIVER_DRIFT"],
+      "source_group_ids": ["SRC-G6.1.4"],
+      "equation_ids": ["M2D-EQ-RIVER-TMIN", "M2D-EQ-RIVER-DRIFTMIN"],
+      "plain_language": [
+        "To cross in the least time, make the boat's across-river component as large as possible.",
+        "That usually means pointing directly across, but the stream then carries the boat downstream."
+      ],
+      "physics_words": ["minimum time", "maximum across component", "drift"],
+      "model_notes": ["The source minimum-time result uses theta = 0 in its across-river angle convention."],
+      "illustration": {
+        "archetype": "COMPARE",
+        "stages": [
+          {"id":"candidate_headings","title":"Compare possible headings","learner_question":"Which heading gives the biggest across-river component?"},
+          {"id":"fastest_case","title":"Point directly across","learner_question":"Why is the across component now maximum?"},
+          {"id":"drift_consequence","title":"Watch the stream carry the boat","learner_question":"What happens to the landing point?"},
+          {"id":"contrast_straight_path","title":"Compare with a zero-drift path","learner_question":"Why can the straighter path take longer?"}
+        ]
+      },
+      "easy_mistake": "Assuming minimum time and zero drift are the same steering condition.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RIVER_ZERO_DRIFT",
+      "learner_title": "Aim upstream to arrive directly opposite",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["RIVER_SHORTEST_TIME"],
+      "source_group_ids": ["SRC-GFORM"],
+      "equation_ids": ["M2D-EQ-RIVER-ZERODRIFT-VY", "M2D-EQ-RIVER-ZERODRIFT-T", "M2D-EQ-RIVER-ZERODRIFT-ANGLE"],
+      "plain_language": [
+        "For zero drift, the boat must spend part of its speed fighting the stream upstream.",
+        "The upstream component cancels the stream; only the remaining across-river component carries the boat to the other bank."
+      ],
+      "physics_words": ["zero drift", "upstream component", "component cancellation"],
+      "model_notes": ["Zero drift is possible only when the boat's still-water speed is at least as large as the stream speed."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"stream_arrow","title":"Start with the stream arrow","learner_question":"What sideways motion must be cancelled?"},
+          {"id":"aim_upstream","title":"Tilt the boat upstream","learner_question":"Which part of the boat velocity cancels the stream?"},
+          {"id":"cancel_parallel","title":"Cancel the parallel components","learner_question":"What is the ground velocity along the bank now?"},
+          {"id":"remaining_across","title":"Use what remains to cross","learner_question":"What across speed is left after cancellation?"}
+        ]
+      },
+      "easy_mistake": "Using the full boat speed as the across speed after some of it has been used to cancel the current.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "AIRCRAFT_CROSSWIND",
+      "learner_title": "Steer into the wind to travel straight",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["RELATIVE_MOTION_FOUNDATION", "RIVER_RESULTANT"],
+      "source_group_ids": [],
+      "equation_ids": ["M2D-EQ-RIVER-SUM"],
+      "plain_language": [
+        "Wind changes an aircraft's ground track in the same way a stream changes a boat's ground path.",
+        "The pilot chooses an air-velocity heading so that, after the wind is added, the ground resultant points toward the destination."
+      ],
+      "physics_words": ["airspeed", "wind velocity", "ground track", "heading"],
+      "model_notes": ["The source Illustration 12 uses a closed velocity triangle and a required north-east resultant."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"desired_track","title":"Draw the ground track you want","learner_question":"Which direction must the resultant point?"},
+          {"id":"wind_vector","title":"Add the wind","learner_question":"Which way will the wind push the aircraft?"},
+          {"id":"solve_heading","title":"Close the velocity triangle","learner_question":"Which aircraft heading makes the triangle close?"},
+          {"id":"check_resultant","title":"Check the final ground direction","learner_question":"Does the resultant point to the destination?"}
+        ]
+      },
+      "easy_mistake": "Pointing the aircraft directly at the destination and then adding the wind afterward.",
+      "source_examples": ["M2D-ILL-12"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "NESTED_RELATIVE_VELOCITY",
+      "learner_title": "A person walking inside a moving boat",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["RELATIVE_MOTION_FOUNDATION", "RIVER_FOUNDATION"],
+      "source_group_ids": [],
+      "equation_ids": ["M2D-EQ-RIVER-SUM"],
+      "plain_language": [
+        "The person's motion relative to the ground is built in layers: person relative to boat, then boat relative to ground.",
+        "Solve the boat's ground motion first; then add the person's motion inside the boat."
+      ],
+      "physics_words": ["nested frames", "person relative to boat", "boat relative to ground"],
+      "model_notes": ["The source Illustration 13 is solved in two stages rather than by mixing all speeds at once."],
+      "illustration": {
+        "archetype": "STAGED_SEQUENCE",
+        "stages": [
+          {"id":"boat_vs_stream","title":"Find the boat's ground velocity","learner_question":"How does the stream change the boat first?"},
+          {"id":"person_vs_boat","title":"Add the person's motion inside the boat","learner_question":"Which direction is the person walking relative to the boat?"},
+          {"id":"person_vs_ground","title":"Combine the two layers","learner_question":"What does a person standing on the bank see?"}
+        ]
+      },
+      "easy_mistake": "Combining person-to-boat speed directly with stream speed while skipping the boat-to-ground step.",
+      "source_examples": ["M2D-ILL-13"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "RAIN_APPARENT_MOTION",
+      "learner_title": "Why rain seems to tilt when you move",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["RELATIVE_MOTION_FOUNDATION"],
+      "source_group_ids": ["SRC-G6-RAIN", "SRC-GFORM"],
+      "equation_ids": ["M2D-EQ-RAIN", "M2D-EQ-RAIN-MAG-SPECIAL"],
+      "plain_language": [
+        "Rain has one velocity relative to the ground, but a moving person sees the rain using a different frame.",
+        "Subtract the observer's velocity from the rain velocity; the direction of the result is the apparent direction of the rain."
+      ],
+      "physics_words": ["actual rain velocity", "observer velocity", "apparent rain velocity"],
+      "model_notes": ["The source inverse-rain example uses two observations to reconstruct the hidden ground-frame rain components."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"actual_rain","title":"Start with the rain in the ground frame","learner_question":"What is the rain really doing?"},
+          {"id":"observer_one","title":"Move with the first observer speed","learner_question":"What must be true if the rain looks vertical?"},
+          {"id":"observer_two","title":"Change the observer speed","learner_question":"How does the apparent vector change?"},
+          {"id":"reconstruct","title":"Rebuild the true rain vector","learner_question":"Which hidden components are fixed by the two observations?"}
+        ]
+      },
+      "easy_mistake": "Treating the apparent rain direction as the actual ground-frame rain direction.",
+      "source_examples": ["M2D-ILL-14-RAIN"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "CIRCULAR_FOUNDATION",
+      "learner_title": "Motion around a circle",
+      "difficulty": "D1",
+      "prerequisite_concepts": [],
+      "source_group_ids": ["SRC-G7"],
+      "equation_ids": [],
+      "plain_language": [
+        "Circular motion means following a circular path. The speed may stay constant or it may change.",
+        "The source uses a satellite, a stone on a rope and a car on a curved track as familiar examples."
+      ],
+      "physics_words": ["circular motion", "uniform circular motion", "non-uniform circular motion", "angular displacement"],
+      "model_notes": ["Angular displacement theta tells how far around the circle the object has turned."],
+      "illustration": {
+        "archetype": "COMPARE_THEN_BUILD",
+        "stages": [
+          {"id":"everyday_examples","title":"Spot circular motion in real life","learner_question":"What is common to the satellite, stone and car?"},
+          {"id":"angle_sweep","title":"Measure turning with an angle","learner_question":"What does theta measure?"},
+          {"id":"uniform_vs_nonuniform","title":"Compare constant and changing speed","learner_question":"What can change even when the path stays circular?"}
+        ]
+      },
+      "easy_mistake": "Thinking every circular motion has constant speed.",
+      "source_examples": [],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "CIRCULAR_ANGULAR_LINEAR",
+      "learner_title": "From turning rate to ordinary speed",
+      "difficulty": "D2",
+      "prerequisite_concepts": ["CIRCULAR_FOUNDATION"],
+      "source_group_ids": ["SRC-G7.3", "SRC-GFORM"],
+      "equation_ids": ["M2D-EQ-CIRC-OMEGAAVG", "M2D-EQ-CIRC-OMEGA", "M2D-EQ-CIRC-ALPHAAVG", "M2D-EQ-CIRC-ALPHA", "M2D-EQ-CIRC-V", "M2D-EQ-CIRC-AT", "M2D-EQ-CIRC-ALPHA-THETA"],
+      "plain_language": [
+        "Angular velocity tells how quickly the angle changes. Angular acceleration tells how quickly angular velocity changes.",
+        "Radius turns angular rates into ordinary tangential speed and tangential acceleration."
+      ],
+      "physics_words": ["angular displacement", "angular velocity", "angular acceleration", "tangential speed"],
+      "model_notes": ["Use radians when connecting angular quantities directly to linear quantities such as v = r omega."],
+      "illustration": {
+        "archetype": "DERIVATION_BRIDGE",
+        "stages": [
+          {"id":"angle_change","title":"Watch the angle change","learner_question":"How much angle is swept in a time interval?"},
+          {"id":"angular_rate","title":"Turn angle change into angular velocity","learner_question":"What does omega measure?"},
+          {"id":"arc_speed","title":"Connect angle to arc distance","learner_question":"Why does a larger radius give a larger linear speed for the same omega?"},
+          {"id":"acceleration_bridge","title":"Differentiate once more","learner_question":"How does alpha create tangential acceleration?"}
+        ]
+      },
+      "easy_mistake": "Treating omega and v as the same quantity even though one is angular and one is linear.",
+      "source_examples": ["M2D-ILL-15"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "CIRCULAR_UNIFORM",
+      "learner_title": "Same speed, but the velocity keeps changing",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["CIRCULAR_FOUNDATION", "CIRCULAR_ANGULAR_LINEAR"],
+      "source_group_ids": ["SRC-G7.1"],
+      "equation_ids": ["M2D-EQ-CIRC-AR", "M2D-EQ-CIRC-AR-OMEGA", "M2D-EQ-CIRC-X", "M2D-EQ-CIRC-Y", "M2D-EQ-CIRC-VX", "M2D-EQ-CIRC-VY"],
+      "plain_language": [
+        "In uniform circular motion the speed can stay constant while the velocity changes because the direction keeps turning.",
+        "The velocity is tangent to the circle; the acceleration points inward toward the centre."
+      ],
+      "physics_words": ["tangent velocity", "radial acceleration", "centripetal acceleration", "inward direction"],
+      "model_notes": ["Radial acceleration changes the direction of velocity, not its speed in uniform circular motion."],
+      "illustration": {
+        "archetype": "EVENT_TIMELINE",
+        "stages": [
+          {"id":"two_positions","title":"Compare two nearby positions","learner_question":"How have the velocity arrows changed direction?"},
+          {"id":"delta_v","title":"Build the change in velocity","learner_question":"Which way does Delta v point?"},
+          {"id":"inward_acceleration","title":"Read the acceleration direction","learner_question":"Why must acceleration point toward the centre?"},
+          {"id":"component_derivation","title":"Rebuild the source component derivation","learner_question":"How do x, y, v_x and v_y lead to a_r = v^2/r?"}
+        ]
+      },
+      "easy_mistake": "Saying acceleration is zero because the speed is constant.",
+      "source_examples": ["M2D-ILL-14-CIRC", "M2D-ILL-17"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    },
+    {
+      "concept_id": "CIRCULAR_NONUNIFORM",
+      "learner_title": "Two accelerations with two different jobs",
+      "difficulty": "D3",
+      "prerequisite_concepts": ["CIRCULAR_UNIFORM", "CIRCULAR_ANGULAR_LINEAR"],
+      "source_group_ids": ["SRC-G7.2"],
+      "equation_ids": ["M2D-EQ-CIRC-AR", "M2D-EQ-CIRC-AT", "M2D-EQ-CIRC-ATOT", "M2D-EQ-CIRC-AT-DVDT"],
+      "plain_language": [
+        "When speed changes on a circular path, acceleration has two jobs at once.",
+        "The radial part turns the velocity inward; the tangential part changes how large the speed is."
+      ],
+      "physics_words": ["radial acceleration", "tangential acceleration", "total acceleration"],
+      "model_notes": ["Radial and tangential accelerations are perpendicular, so their magnitudes combine with Pythagoras."],
+      "illustration": {
+        "archetype": "VECTOR_BUILD",
+        "stages": [
+          {"id":"radial_job","title":"Draw the inward acceleration","learner_question":"Which component changes direction?"},
+          {"id":"tangential_job","title":"Draw the tangential acceleration","learner_question":"Which component changes speed?"},
+          {"id":"right_angle","title":"Notice the right angle","learner_question":"Why are a_r and a_t perpendicular?"},
+          {"id":"total_vector","title":"Build the total acceleration","learner_question":"How do the two components combine?"}
+        ]
+      },
+      "easy_mistake": "Calling the total acceleration centripetal when a tangential component is also present.",
+      "source_examples": ["M2D-ILL-16", "M2D-ILL-18"],
+      "core2_challenges": [],
+      "question_link_status": "NO_DIRECT_MATCH_IN_REVISED_CORE2_V2",
+      "build_status": "BUILT"
+    }
+  ]
+}

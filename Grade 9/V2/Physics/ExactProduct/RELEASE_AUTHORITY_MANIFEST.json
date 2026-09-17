@@ -1,0 +1,44 @@
+{
+  "authority_rule": "REAL mature release is authorized only by the governed release engine consuming exact candidate custody, AI advisory evidence, Shared HumanReview REAL_RELEASE evidence, and a final eligible comparator receipt.",
+  "candidate_source": "P-K exact two-product candidate",
+  "contracts": {
+    "ai_pre_review": "Grade 9/V2/Physics/ExactProduct/contracts/physics-exact-product-review.schema.json",
+    "exact_candidate": "Grade 9/V2/Physics/ExactProduct/contracts/physics-exact-product-candidate.schema.json",
+    "governed_release": "Grade 9/V2/Physics/ExactProduct/contracts/physics-governed-release.schema.json",
+    "reference_comparison": "Grade 9/V2/Physics/ExactProduct/contracts/physics-reference-comparison.schema.json",
+    "reference_eligibility": "Grade 9/V2/Physics/ExactProduct/contracts/physics-reference-eligibility.schema.json",
+    "shared_candidate_binding": "Grade 9/V2/Shared/HumanReview/contracts/candidate-review-binding.schema.json",
+    "shared_intake_result": "Grade 9/V2/Shared/HumanReview/contracts/human-review-intake-result.schema.json",
+    "shared_submission": "Grade 9/V2/Shared/HumanReview/contracts/human-review-submission.schema.json"
+  },
+  "engines": {
+    "ai_pre_review": "Grade 9/V2/Physics/ExactProduct/engine/audit_physics_exact_candidate.py",
+    "governed_release": "Grade 9/V2/Physics/ExactProduct/engine/evaluate_physics_governed_release.py",
+    "human_review_binding": "Grade 9/V2/Physics/ExactProduct/engine/build_physics_human_review_binding.py",
+    "machine_state_projection": "Grade 9/V2/Physics/ExactProduct/engine/evaluate_physics_exact_product.py",
+    "reference_eligibility": "Grade 9/V2/Physics/ExactProduct/engine/check_physics_reference_eligibility.py",
+    "shared_human_review_intake": "Grade 9/V2/Shared/HumanReview/engine/ingest_human_reviews.py"
+  },
+  "manifest_digest": "d9536ff8e787397400483dd7ee595699239bc6a19bf24c9c660a66f1513f542c",
+  "manifest_id": "PHY-P-L-RELEASE-AUTHORITY-v1",
+  "real_release_current_state": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT",
+  "reference_comparator": {
+    "access_phase": "FINAL_COMPARATIVE_VALIDATION",
+    "allowed_only_after_all_governed_human_gates_pass": true,
+    "comparator_id": "FROZEN_PR156_MATURE_DESIGN_COMPARATOR",
+    "current_state": "NOT_AUTHORIZED_TO_READ",
+    "producer_input": false
+  },
+  "review_intake": {
+    "policy": "Grade 9/V2/Physics/ExactProduct/review-intake/review_policy.json",
+    "real_current_state": "NO_AUTHORIZED_REVIEWERS_AND_NO_REAL_SUBMISSIONS",
+    "real_reviewer_registry": "Grade 9/V2/Physics/ExactProduct/review-intake/reviewer_authorization.real.json",
+    "real_submissions": "Grade 9/V2/Physics/ExactProduct/review-intake/submissions/real",
+    "required_dimensions": ["SUBJECT", "PEDAGOGY", "ASSESSMENT", "VISUAL"],
+    "test_only_release_eligible": false,
+    "test_reviewer_registry": "Grade 9/V2/Physics/ExactProduct/review-intake/reviewer_authorization.test-only.json"
+  },
+  "schema_version": "1.0.0",
+  "stage": "P-L ExactProduct",
+  "subject": "PHYSICS"
+}

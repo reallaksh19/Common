@@ -1,0 +1,197 @@
+{
+  "subtopic_id": "PHY-M2D-RELATIVE-VELOCITY",
+  "title": "Relative velocity in 2D and river-crossing decomposition",
+  "domain": "Motion in a Plane",
+  "scope_state": "ACTIVE",
+  "authority_basis": [
+    {
+      "claim_class": "SOURCE_DEFINED",
+      "source_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json#PHY-KIN-RELATIVE-2D",
+      "claim_scope": "Pinned PR383 source defines 2D relative velocity by vector subtraction and river-crossing time/drift by perpendicular and parallel velocity components."
+    }
+  ],
+  "prerequisites": ["PHY-VEC-ADD-SUB", "PHY-VEC-COMPONENTS"],
+  "linked_buckets": [],
+  "applicable_cores": ["CORE1", "CORE1A", "CORE1B", "CORE2A", "CORE2B"],
+  "required_invariants": [
+    "INV-M2D-RELATIVE-VELOCITY-SUBTRACTION",
+    "INV-M2D-RELATIVE-COMPONENT-DECOMPOSITION",
+    "INV-M2D-RIVER-CROSSING-PERP-TIME",
+    "INV-M2D-RIVER-DRIFT-PARALLEL"
+  ],
+  "concepts": [
+    {
+      "concept_id": "CON-M2D-RELATIVE-VELOCITY-2D",
+      "statement": "The velocity of A relative to B is the vector difference of their velocities in the same reference frame; in river crossing, the perpendicular component controls crossing time while the parallel component controls drift.",
+      "why_required": "It separates frame-relative motion from scalar speed comparison and keeps crossing duration distinct from downstream drift.",
+      "failure_if_omitted": "Relative velocities can be added with the wrong sign, or river drift can be confused with the component that determines crossing time.",
+      "authority_ref": 0
+    }
+  ],
+  "relations": [
+    {
+      "relation_id": "EQ-M2D-RELATIVE-VELOCITY",
+      "expression": "v_A_relative_B = v_A_ground - v_B_ground",
+      "symbols": [
+        {"symbol": "v_A_relative_B", "name": "velocity of A relative to B", "physical_quantity": "VELOCITY", "domain": "EUCLIDEAN_VECTOR", "unit_dimension": "L T^-1", "reference_frame_role": "A_OBSERVED_RELATIVE_TO_B", "sign_role": "VECTOR_DIFFERENCE"},
+        {"symbol": "v_A_ground", "name": "velocity of A in common ground frame", "physical_quantity": "VELOCITY", "domain": "EUCLIDEAN_VECTOR", "unit_dimension": "L T^-1", "reference_frame_role": "A_OBSERVED_FROM_GROUND", "sign_role": "VECTOR_DIRECTION_ENCODED"},
+        {"symbol": "v_B_ground", "name": "velocity of B in common ground frame", "physical_quantity": "VELOCITY", "domain": "EUCLIDEAN_VECTOR", "unit_dimension": "L T^-1", "reference_frame_role": "B_OBSERVED_FROM_GROUND", "sign_role": "SUBTRACTED_VECTOR_DIRECTION_ENCODED"}
+      ],
+      "conditions": ["Galilean relativity", "Speeds are much less than c", "v_A_ground and v_B_ground are expressed in the same frame"],
+      "obligations": ["EXPLAIN", "REPRESENT", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-M2D-RIVER-CROSSING-TIME",
+      "expression": "t_cross = d / v_perpendicular",
+      "symbols": [
+        {"symbol": "t_cross", "name": "river crossing time", "physical_quantity": "TIME", "domain": "REAL_NONNEGATIVE", "unit_dimension": "T", "reference_frame_role": "GROUND_FRAME_EVENT_TIME", "sign_role": "NONNEGATIVE_ELAPSED_TIME"},
+        {"symbol": "d", "name": "river width", "physical_quantity": "LENGTH", "domain": "REAL_POSITIVE", "unit_dimension": "L", "reference_frame_role": "PERPENDICULAR_TO_BANKS", "sign_role": "POSITIVE_DISTANCE"},
+        {"symbol": "v_perpendicular", "name": "velocity component perpendicular to bank", "physical_quantity": "VELOCITY_COMPONENT", "domain": "REAL_NONZERO", "unit_dimension": "L T^-1", "reference_frame_role": "GROUND_FRAME_BANK_NORMAL_AXIS", "sign_role": "SIGNED_COMPONENT_TOWARD_OPPOSITE_BANK"}
+      ],
+      "conditions": ["River width is measured perpendicular to the banks", "The perpendicular velocity component is nonzero"],
+      "obligations": ["EXPLAIN", "APPLY", "VERIFY"]
+    },
+    {
+      "relation_id": "EQ-M2D-RIVER-DRIFT",
+      "expression": "x_drift = v_parallel t_cross",
+      "symbols": [
+        {"symbol": "x_drift", "name": "downstream drift", "physical_quantity": "DISPLACEMENT", "domain": "REAL_SIGNED", "unit_dimension": "L", "reference_frame_role": "GROUND_FRAME_BANK_PARALLEL_AXIS", "sign_role": "SIGNED_COMPONENT"},
+        {"symbol": "v_parallel", "name": "velocity component parallel to bank", "physical_quantity": "VELOCITY_COMPONENT", "domain": "REAL_SIGNED", "unit_dimension": "L T^-1", "reference_frame_role": "GROUND_FRAME_BANK_PARALLEL_AXIS", "sign_role": "SIGNED_COMPONENT"},
+        {"symbol": "t_cross", "name": "river crossing time", "physical_quantity": "TIME", "domain": "REAL_NONNEGATIVE", "unit_dimension": "T", "reference_frame_role": "GROUND_FRAME_EVENT_TIME", "sign_role": "NONNEGATIVE_ELAPSED_TIME"}
+      ],
+      "conditions": ["Parallel and perpendicular components refer to the same river-crossing event"],
+      "obligations": ["INTERPRET", "APPLY", "VERIFY"]
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "COND-M2D-RELATIVE-GALILEAN",
+      "condition": "Relative velocity is evaluated under the source-declared Galilean regime with speeds much less than c.",
+      "physical_reason": "The source relation uses ordinary vector subtraction between velocities in a common frame.",
+      "required_for_relations": ["EQ-M2D-RELATIVE-VELOCITY"],
+      "failure_consequence": "The source-declared relative-velocity relation is outside its stated validity condition.",
+      "alternative_model_required": "NON_GALILEAN_RELATIVE_VELOCITY_MODEL"
+    },
+    {
+      "condition_id": "COND-M2D-RIVER-COMPONENT-SEPARATION",
+      "condition": "Crossing duration is computed from the component perpendicular to the banks, while the parallel component contributes downstream drift.",
+      "physical_reason": "The pinned source explicitly separates perpendicular crossing progress from parallel river drift.",
+      "required_for_relations": ["EQ-M2D-RIVER-CROSSING-TIME", "EQ-M2D-RIVER-DRIFT"],
+      "failure_consequence": "Using resultant speed for crossing time conflates crossing progress with downstream drift.",
+      "alternative_model_required": "REBUILD_BANK_ALIGNED_COMPONENT_MODEL"
+    }
+  ],
+  "representations": [
+    {
+      "representation_id": "REP-M2D-RIVER-RELATIVE-VELOCITY",
+      "representation_type": "GEOMETRIC_VECTOR_DIAGRAM",
+      "semantic_geometry": "A river-bank diagram shows river velocity, boat velocity relative to water, resultant ground velocity, river width, and bank-parallel/perpendicular directions as one vector-triangle model.",
+      "mandatory_elements": ["river banks", "river velocity vector", "boat-relative-water velocity vector", "resultant ground velocity vector", "river width", "parallel and perpendicular directions"],
+      "mandatory_labels": ["v_r", "v_br", "v_b", "d", "parallel", "perpendicular"],
+      "forbidden_omissions": ["river width", "vector direction", "resultant ground velocity"],
+      "must_not_imply": ["the component parallel to the bank determines crossing time", "relative velocities may be combined as unsigned scalar speeds"],
+      "relation_bindings": ["EQ-M2D-RELATIVE-VELOCITY", "EQ-M2D-RIVER-CROSSING-TIME", "EQ-M2D-RIVER-DRIFT"],
+      "concept_bindings": ["CON-M2D-RELATIVE-VELOCITY-2D"],
+      "verification_method": "Check the relative-velocity vector relation component-wise, compute crossing time from the perpendicular component, and compute drift from the parallel component over that same time.",
+      "primitive_registry_refs": ["PHYSICS_2D:VECTOR_CHAIN", "PHYSICS_2D:AXES"]
+    }
+  ],
+  "reasoning_sequence": [
+    {
+      "step_id": "RS-M2D-REL-DECOMPOSE",
+      "sequence": 1,
+      "expert_action": "Decompose the boat velocity into components parallel and perpendicular to the river bank while preserving the vector-relative-velocity relation.",
+      "depends_on": [],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-M2D-RELATIVE-VELOCITY-2D"],
+      "required_relations": ["EQ-M2D-RELATIVE-VELOCITY"],
+      "failure_if_skipped": "Crossing and drift calculations can use the resultant speed or the wrong component."
+    },
+    {
+      "step_id": "RS-M2D-REL-CROSSING-TIME",
+      "sequence": 2,
+      "expert_action": "Compute crossing time from river width divided by the velocity component perpendicular to the bank.",
+      "depends_on": ["RS-M2D-REL-DECOMPOSE"],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-M2D-RELATIVE-VELOCITY-2D"],
+      "required_relations": ["EQ-M2D-RIVER-CROSSING-TIME"],
+      "failure_if_skipped": "Parallel drift can be incorrectly allowed to change the time needed to reach the opposite bank."
+    },
+    {
+      "step_id": "RS-M2D-REL-DRIFT",
+      "sequence": 3,
+      "expert_action": "Compute downstream drift from the parallel velocity component multiplied by the crossing time.",
+      "depends_on": ["RS-M2D-REL-CROSSING-TIME"],
+      "inferential_jump": "LOW",
+      "required_concepts": ["CON-M2D-RELATIVE-VELOCITY-2D"],
+      "required_relations": ["EQ-M2D-RIVER-DRIFT"],
+      "failure_if_skipped": "The river-current effect can be confused with the perpendicular crossing component."
+    }
+  ],
+  "required_transformations": [
+    {
+      "transformation_id": "TR-M2D-REL-SCENARIO-TO-VECTORS",
+      "from_mode": "PHYSICAL_RELATIVE_MOTION_SCENARIO",
+      "to_mode": "BANK_ALIGNED_RELATIVE_VELOCITY_MODEL",
+      "target_core_roles": ["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION", "CORE1B_GENERATIVE_RECONSTRUCTION"],
+      "description": "Translate the physical relative-motion scenario into a vector relation with explicit bank-parallel and bank-perpendicular components."
+    },
+    {
+      "transformation_id": "TR-M2D-REL-VECTORS-TO-CROSSING",
+      "from_mode": "BANK_ALIGNED_RELATIVE_VELOCITY_MODEL",
+      "to_mode": "CROSSING_TIME_AND_DRIFT_SOLUTION",
+      "target_core_roles": ["CORE2A_DECLARATIVE_WORKED_PROBLEM", "CORE2B_GENERATIVE_TRANSFER"],
+      "description": "Use the perpendicular component for crossing time and the parallel component with that same time for downstream drift."
+    }
+  ],
+  "misconceptions": [
+    {
+      "misconception_id": "MIS-M2D-RIVER-CURRENT-INCREASES-CROSSING-TIME",
+      "incorrect_model": "A river current parallel to the bank necessarily increases the time required to cross directly to the opposite bank.",
+      "why_plausible": "Downstream drift changes the visible path length and can be confused with progress across the river.",
+      "trigger_contexts": ["river crossing", "shortest-time river problems", "shortest-path river problems"],
+      "required_counterexample": "A river velocity purely parallel to the bank has zero projection on the perpendicular crossing axis.",
+      "required_representation_repair": "Use the river-boat vector diagram with explicit parallel and perpendicular axes, keeping drift and crossing progress on separate components.",
+      "required_technical_repair": "Compute crossing time strictly from the velocity component perpendicular to the banks; use the parallel component only for drift.",
+      "verification": "Recompute t_cross from d/v_perpendicular and confirm that changing only v_parallel changes x_drift but not t_cross."
+    }
+  ],
+  "verifications": ["UNITS", "SIGN_DIRECTION", "GEOMETRIC_CONSISTENCY", "MODEL_VALIDITY", "SUBSTITUTE_BACK"],
+  "problem_families": [
+    {
+      "family_id": "PF-M2D-RIVER-BOAT-SOLVE",
+      "name": "Shortest time versus shortest path river crossing",
+      "recognition_cues": ["flowing river", "heading angle", "shortest path", "shortest crossing time", "downstream drift"],
+      "hidden_invariants": ["INV-M2D-RELATIVE-VELOCITY-SUBTRACTION", "INV-M2D-RELATIVE-COMPONENT-DECOMPOSITION", "INV-M2D-RIVER-CROSSING-PERP-TIME", "INV-M2D-RIVER-DRIFT-PARALLEL"],
+      "first_technical_move": "Resolve the boat and river velocities in bank-parallel and bank-perpendicular directions before computing time or drift.",
+      "required_representation": "REP-M2D-RIVER-RELATIVE-VELOCITY",
+      "typical_unknowns": ["heading angle", "crossing time", "downstream drift"],
+      "fatal_errors": ["adding relative velocities as unsigned speeds", "using resultant speed for crossing time", "accepting an impossible heading requiring a component larger than the boat speed"],
+      "required_capabilities": ["FORM_RELATIVE_VELOCITY_VECTOR", "DECOMPOSE_BANK_ALIGNED_COMPONENTS", "SOLVE_CROSSING_TIME", "SOLVE_DRIFT", "CHECK_HEADING_FEASIBILITY"],
+      "transfer_dimensions": ["REPRESENTATION_CHANGE", "SIGN_DIRECTION_REVERSAL", "CONSTRAINT_INVERSION", "MULTI_STEP_BRIDGE"]
+    }
+  ],
+  "difficulty_engineering": {
+    "maturity": "ENGINEERING",
+    "provisional_badge": "MEDIUM",
+    "dimensions": {
+      "prerequisite_depth": 2,
+      "element_interactivity": 2,
+      "inferential_jump_severity": 2,
+      "representation_translation": 1,
+      "model_discrimination": 2,
+      "sign_or_frame_sensitivity": 2,
+      "multi_step_dependency": 2,
+      "abstraction": 2,
+      "misconception_density": 1,
+      "synthesis": 2
+    }
+  },
+  "falsification_cases": [
+    {
+      "test_id": "PHY-V3-FAIL-M2D-REL-01",
+      "authoring_defect": "Remove the relative-velocity subtraction invariant so addition can replace v_A - v_B.",
+      "expected_failure_code": "PHY_GATE_REQUIRED_INVARIANT_MISSING"
+    }
+  ]
+}

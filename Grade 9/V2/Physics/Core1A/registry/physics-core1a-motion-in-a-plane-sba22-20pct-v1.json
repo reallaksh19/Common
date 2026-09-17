@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA22-20P-v1",
+  "policy": {
+    "purpose": "Difficulty- and prior-knowledge-aware SBA teaching map between Core1 and Core2.",
+    "primary_question_rule": "Each Q01-Q59 has exactly one primary SBA bucket.",
+    "production_selection_rule": "Skip dedicated SBA PDFs when primary question count is zero.",
+    "target_prior_knowledge_pct": [20, 50],
+    "priority_rule": "Prioritise D2-D4 buckets for learners at or below 50% usable prior knowledge.",
+    "core2_hint_preteach_rule": "Every Core2 H1/H2/H3 reveal must trace to earlier Core1A teaching; release prerequisites may delay a question.",
+    "teaching_sequence_rule": "Pretrain -> visual stages -> physics meaning -> maths -> worked/guided practice -> retrieval -> Core2.",
+    "difficulty_support": {
+      "D1": {"minimum_visual_stages_20pct": 2, "minimum_visual_stages_50pct": 1, "required_support_20pct": ["pretraining+visual+worked+retrieval"], "required_support_50pct": ["activation+visual+check"]},
+      "D2": {"minimum_visual_stages_20pct": 4, "minimum_visual_stages_50pct": 2, "required_support_20pct": ["prerequisite+staged visual+misconception+worked+guided+retrieval"], "required_support_50pct": ["activation+staged visual+worked+transfer"]},
+      "D3": {"minimum_visual_stages_20pct": 5, "minimum_visual_stages_50pct": 3, "required_support_20pct": ["foundation+staged visual+model+misconception+worked+completion+hints+retrieval+hint audit"], "required_support_50pct": ["checkpoint+staged visual+connection+worked+transfer+hint audit"]},
+      "D4": {"minimum_visual_stages_20pct": 6, "minimum_visual_stages_50pct": 4, "required_support_20pct": ["full rebuild+staged visual+derivation+multiple examples+guided transfer+hint audit"], "required_support_50pct": ["checkpoint+staged visual+derivation+worked+transfer+hint audit"]}
+    }
+  },
+  "buckets": [
+    {
+      "bucket_id": "M2D-SBA-22",
+      "learner_title": "Use one clock at a special event",
+      "intrinsic_difficulty": "D3",
+      "source_basis": ["SRC-GPRACTICE"],
+      "core1a_homes": ["PROJECTILE_TIMED_EVENTS"],
+      "core2_primary_questions": ["Q05", "Q26"],
+      "production_status": "ACTIVE",
+      "production_reason": "Primary Core2 present; timed-event questions require a dedicated 20-percent learner bridge that assembles earlier component and same-height ideas into one-clock routines.",
+      "prerequisite_buckets": ["M2D-SBA-03"],
+      "profiles": [
+        {
+          "prior_knowledge_pct": 20,
+          "pathway": "FOUNDATION_PATH",
+          "learning_atoms": [
+            {"atom_id":"M2D-SBA-22A","title":"A special event is a snapshot","purpose":"Treat a wall, point P, apex or landing as one instant on the same projectile clock.","prerequisite_support":["M2D-SBA-03"],"teaching_moves":["draw one launch-to-landing timeline with marked events","show x and y at one event share the same t","write x_p=u_x t_p and y_p=u_y t_p-1/2 g t_p^2"],"visual_stage_count":5,"misconceptions":["a named event starts a new projectile","x and y may use different event times"],"checks":["explain why one event needs one shared time"]},
+            {"atom_id":"M2D-SBA-22B","title":"Recover the hidden launch from a timed coordinate","purpose":"Use known x, y and t at one event to recover the initial horizontal and vertical components.","prerequisite_support":["M2D-SBA-22A"],"teaching_moves":["use u_x=x_p/t_p first","use the same t_p in the vertical event equation","interpret the recovered components as launch-state information"],"visual_stage_count":5,"misconceptions":["the marked event must be the apex","the horizontal and vertical equations describe different moments"],"checks":["recover u_x and u_y from a fresh timed coordinate"]},
+            {"atom_id":"M2D-SBA-22C","title":"Do not reset the clock after the event","purpose":"Continue the original motion after an intermediate event using T-t_p rather than inventing a second time origin.","prerequisite_support":["M2D-SBA-22A"],"teaching_moves":["compare one global timeline with a wrong reset-at-event timeline","mark event time t_p and landing time T","write remaining time=T-t_p"],"visual_stage_count":5,"misconceptions":["set t=0 again after the wall or point P"],"checks":["find remaining time from a total flight time and event time"]},
+            {"atom_id":"M2D-SBA-22D","title":"Same-height landing reveals the total clock","purpose":"Use u_y to recover total flight time when landing returns to the launch level.","prerequisite_support":["M2D-SBA-05"],"teaching_moves":["mark launch, apex and landing on one trajectory","restate T=2u_y/g with its validity condition","connect recovered u_y from an event to whole-flight time"],"visual_stage_count":4,"misconceptions":["use T=2u_y/g for unequal-height landing"],"checks":["state when the same-height total-time shortcut is valid"]},
+            {"atom_id":"M2D-SBA-22E","title":"Build total time from time parts","purpose":"Combine time to an intermediate point and time from that point to landing before doing kinematics.","prerequisite_support":["M2D-SBA-22A"],"teaching_moves":["draw launch-to-P and P-to-landing intervals on one line","add the two intervals to obtain T","identify which interval is measured from launch"],"visual_stage_count":5,"misconceptions":["treat the post-P interval as the total flight time"],"checks":["build T correctly from two stated time segments"]},
+            {"atom_id":"M2D-SBA-22F","title":"Use total time to reconstruct event height","purpose":"Convert total same-height flight time to u_y, then evaluate y at the event time measured from launch.","prerequisite_support":["M2D-SBA-22D","M2D-SBA-22E"],"teaching_moves":["find u_y=gT/2","return to t=t_to_P","evaluate y=u_y t-1/2 gt^2"],"visual_stage_count":5,"misconceptions":["use the remaining time after P inside the height equation for P"],"checks":["find event height from a split flight-time description"]},
+            {"atom_id":"M2D-SBA-22G","title":"Use the apex time as a sense check","purpose":"Locate the event before or after the apex using T/2 without replacing the main calculation.","prerequisite_support":["M2D-SBA-04","M2D-SBA-22D"],"teaching_moves":["plot height against time","mark apex at T/2","compare t_p with T/2 to check rising or falling state"],"visual_stage_count":4,"misconceptions":["treat symmetry as a substitute for the event equations in every case"],"checks":["classify a timed event as rising or falling"]},
+            {"atom_id":"M2D-SBA-22H","title":"Choose the event family before calculating","purpose":"Distinguish timed-coordinate recovery from time-partition reconstruction and select the correct first move.","prerequisite_support":["M2D-SBA-22B","M2D-SBA-22F"],"teaching_moves":["compare the two problem families side by side","map recognition signal to first move","complete mixed transfer practice without family labels"],"visual_stage_count":4,"misconceptions":["choose formulas from keywords without identifying the event information structure"],"checks":["identify the correct first move for Q05-like and Q26-like structures"]}
+          ],
+          "core2_hint_coverage": [
+            {"question_id":"Q05","primary":true,"release_prerequisite_buckets":[],"hint_rungs":[{"rung":"H1","core1a_learning_atom":"M2D-SBA-22A","pre_taught":true,"evidence":"The wall is taught as an intermediate event on one continuous flight rather than as a new launch."},{"rung":"H2","core1a_learning_atom":"M2D-SBA-22B","pre_taught":true,"evidence":"Timed x and y coordinates are used at one shared t to recover u_x and u_y."},{"rung":"H3","core1a_learning_atom":"M2D-SBA-22B","pre_taught":true,"evidence":"Worked and independent practice start with the horizontal event equation to recover u_x first."}]},
+            {"question_id":"Q26","primary":true,"release_prerequisite_buckets":[],"hint_rungs":[{"rung":"H1","core1a_learning_atom":"M2D-SBA-22E","pre_taught":true,"evidence":"Time before P and time after P are explicitly combined into one total flight time."},{"rung":"H2","core1a_learning_atom":"M2D-SBA-22F","pre_taught":true,"evidence":"Same-height total time is converted to u_y and the event height is then evaluated at the launch-based event time."},{"rung":"H3","core1a_learning_atom":"M2D-SBA-22F","pre_taught":true,"evidence":"Worked and independent practice use u_y=gT/2 before substituting t_to_P in the vertical position equation."}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+name: V2 Physics Core1A
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Core1A/**'
+      - 'Grade 9/V2/Physics/CoreAuthoring/**'
+      - 'Grade 9/V2/Physics/Representation/**'
+      - '.github/workflows/v2-physics-core1a.yml'
+  workflow_dispatch:
+
+jobs:
+  core1a:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install renderer/test dependencies
+        run: pip install reportlab jsonschema pypdf
+      - name: Run Core1A falsifiers
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a.py'
+      - name: Run Core1A learner UI policy checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_core1a_ui_policy.py'
+      - name: Run Core1A-Core2 linkage checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_linkage.py'
+      - name: Run Core1A SBA schema, assimilation and transfer checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba.py'
+      - name: Run executable Core1A production-kit checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_production_kit.py'
+      - name: Run three golden production fixtures
+        run: python 'Grade 9/V2/Physics/Core1A/production_kit/run_golden_fixtures.py'
+      - name: Run SBA agent handoff and build-state checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_agent_handoff.py'
+      - name: Resolve next active SBA deterministically
+        run: python 'Grade 9/V2/Physics/Core1A/engine/next_sba.py'
+      - name: Route next active SBA through production kit
+        run: python 'Grade 9/V2/Physics/Core1A/production_kit/task_router.py' --prior 20 --out /tmp/core1a-next-task.json
+      - name: Run SBA05 publication-index and transfer-family checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba05_transfer.py'
+      - name: Run SBA06 trajectory-transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba06_transfer.py'
+      - name: Run SBA07 horizontal-launch transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba07_transfer.py'
+      - name: Run SBA21 inclined-plane transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba21_transfer.py'
+      - name: Run SBA22 timed-event transfer and professional-lossless checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_sba22_transfer.py'
+      - name: Run source completeness checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_physics_core1a_source_coverage.py'
+      - name: Run first Motion in a Plane chapter build checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_motion_in_a_plane_chapter_build.py'
+      - name: Compile first Motion in a Plane learner chapter plan
+        run: python 'Grade 9/V2/Physics/Core1A/engine/build_motion_in_a_plane_chapter.py' --out /tmp/motion-in-a-plane-core1a-chapter-plan.json
+      - name: Run river, rain and circular-motion build checks
+        run: python 'Grade 9/V2/Physics/Core1A/tests/test_motion_in_a_plane_next_topics_build.py'
+      - name: Compile river, rain and circular-motion learner plan
+        run: python 'Grade 9/V2/Physics/Core1A/engine/build_motion_in_a_plane_next_topics.py' --out /tmp/motion-in-a-plane-core1a-next-topics-plan.json
+      - name: Validate production-kit contracts and fixtures
+        run: |
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-task-contract.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-source-contract.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-answer-contract.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-scaffold-profiles.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-learning-representation.schema.json' > /dev/null
+          python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-scaffold-profiles-v1.json' > /dev/null
+          for f in 'Grade 9/V2/Physics/Core1A/fixtures/golden/'*.json; do
+            python -m json.tool "$f" > /dev/null
+          done
+      - name: Validate publication policy JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-publication-policy.json' > /dev/null
+      - name: Validate Core1A-Core2 linkage JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-core2-linkage.json' > /dev/null
+      - name: Validate SBA registry JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba-v1.json' > /dev/null
+      - name: Validate SBA publication-index JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json' > /dev/null
+      - name: Validate SBA build-state JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-build-state-v1.json' > /dev/null
+      - name: Validate SBA build manifests
+        run: |
+          for f in 'Grade 9/V2/Physics/Core1A/registry/build-manifests/'*.json; do
+            python -m json.tool "$f" > /dev/null
+          done
+      - name: Validate SBA transfer-routine registry JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-transfer-routines-v1.json' > /dev/null
+      - name: Validate SBA05 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-transfer-v1.json' > /dev/null
+      - name: Validate SBA06 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba06-transfer-v1.json' > /dev/null
+      - name: Validate SBA07 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba07-transfer-v1.json' > /dev/null
+      - name: Validate SBA21 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba21-transfer-v1.json' > /dev/null
+      - name: Validate SBA22 transfer-routine JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba22-transfer-v1.json' > /dev/null
+      - name: Validate SBA04 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json' > /dev/null
+      - name: Validate SBA05 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba05-20pct-v1.json' > /dev/null
+      - name: Validate SBA06 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba06-20pct-v1.json' > /dev/null
+      - name: Validate SBA07 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba07-20pct-v1.json' > /dev/null
+      - name: Validate SBA21 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba21-20pct-v1.json' > /dev/null
+      - name: Validate SBA22 20-percent profile JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-sba22-20pct-v1.json' > /dev/null
+      - name: Validate learner language JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-learner-language.json' > /dev/null
+      - name: Validate Motion in a Plane source inventory JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-inventory.json' > /dev/null
+      - name: Validate Motion in a Plane source supplement JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-source-supplement-v1.json' > /dev/null
+      - name: Validate Motion in a Plane chapter registry JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-chapter-v1.json' > /dev/null
+      - name: Validate next-topic registry JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/registry/physics-core1a-motion-in-a-plane-next-topics-v1.json' > /dev/null
+      - name: Validate publication schema JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-publication-plan.schema.json' > /dev/null
+      - name: Validate SBA schema JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-subtopic-bucket.schema.json' > /dev/null
+      - name: Validate SBA publication-index schema JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-sba-publication-index.schema.json' > /dev/null
+      - name: Validate SBA build-manifest schema JSON
+        run: python -m json.tool 'Grade 9/V2/Physics/Core1A/contracts/physics-core1a-sba-build-manifest.schema.json' > /dev/null

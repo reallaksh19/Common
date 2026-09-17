@@ -1,0 +1,20 @@
+{
+  "policy_id":"PHY-BP-M2D-COMPOSITION-RELEASE-v1",
+  "schema_version":"1.0.0",
+  "topic_id":"PHY-M2D",
+  "requirements":{
+    "representation_readiness_status":"READY_FOR_RENDER_ADAPTER",
+    "manuscript_gate":"RELEASED",
+    "manuscript_next_stage":"1A12_MANUSCRIPT",
+    "unresolved_required_jump_count":0,
+    "provenance_class":"REPOSITORY_PRODUCTION",
+    "repository_ref_prefix":"repo:",
+    "forbidden_provenance_tokens":["GOLDEN","PROCESS_FIXTURE"]
+  },
+  "authority_rules":{
+    "composition_plan_may_open_publication_ir":true,
+    "composition_plan_may_invoke_renderer_directly":false,
+    "composition_plan_may_authorize_release":false,
+    "process_fixture_may_authorize_real_publication":false
+  }
+}

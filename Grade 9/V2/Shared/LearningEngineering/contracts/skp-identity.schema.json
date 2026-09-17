@@ -1,0 +1,53 @@
+{
+  "$id": "skp-identity.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SKP Pilot Identity",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "skp_id",
+    "subject",
+    "canonical_name",
+    "aliases",
+    "package_semver",
+    "predecessor_refs",
+    "supersession_state"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "skp_id": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+    "subject": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]*$"},
+    "canonical_name": {"type": "string", "minLength": 2},
+    "aliases": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "package_semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "predecessor_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"}
+    },
+    "supersession_state": {
+      "enum": ["PILOT_CURRENT", "CURRENT", "DEPRECATED", "SUPERSEDED"]
+    },
+    "supersedes_ref": {
+      "anyOf": [
+        {"type": "string", "pattern": "^SKP-[A-Z0-9][A-Z0-9_-]*$"},
+        {"type": "null"}
+      ]
+    },
+    "identity_rationale": {"type": "string", "minLength": 10}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"supersession_state": {"const": "SUPERSEDED"}}},
+      "then": {"required": ["supersedes_ref"]}
+    }
+  ]
+}

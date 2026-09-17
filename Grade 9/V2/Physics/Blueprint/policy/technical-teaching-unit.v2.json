@@ -1,0 +1,128 @@
+{
+  "schema_version": "2.0.0",
+  "policy_id": "PHY-TECHNICAL-TEACHING-UNIT-V2",
+  "premise": "A TTU is a stateful teaching object, not a diagram container. It must define the canonical expert state and a bounded learner-reconstruction state with semantically meaningful omissions, fixed help, canonical completion and independent verification.",
+  "research_rationale": {
+    "completion_problem_principle": "Partial solutions should omit meaningful solution structure so the learner must process and complete it; arbitrary blanks do not create the completion-problem effect.",
+    "guidance_fading_principle": "Support should be preauthored and bounded so the same canonical structure can move from complete worked reference to partial completion and then independent use.",
+    "generative_learning_principle": "Learner generation is useful only when the learner must select, organize or integrate domain information; decorative drawing or redundant prompts do not count.",
+    "self_explanation_boundary": "Prompts and explanations must target unresolved structure; redundant prompting can add unnecessary cognitive load."
+  },
+  "ttu_identity": {
+    "canonical_state_required": true,
+    "reconstruction_contract_required": true,
+    "independent_verification_required": true,
+    "authority_binding_required": true
+  },
+  "canonical_completed_state": {
+    "must_include": [
+      "DOMAIN_REPRESENTATION_WITH_SEMANTIC_ELEMENTS",
+      "GOVERNING_RELATIONS",
+      "REPRESENTATION_TO_RELATION_BINDINGS",
+      "INTERMEDIATE_WORKING",
+      "RESULT_OR_CONCLUSION"
+    ],
+    "must_be_unambiguous": true,
+    "renderer_may_not_invent_missing_semantics": true
+  },
+  "reconstruction_contract": {
+    "omissions_must_reference_canonical_element_ids": true,
+    "omissions_must_be_semantically_material": true,
+    "allowed_omission_targets": [
+      "FRAME_LABEL",
+      "AXIS_OR_SIGN",
+      "VECTOR",
+      "VECTOR_DIRECTION",
+      "VECTOR_MAGNITUDE",
+      "COMPONENT",
+      "FORCE",
+      "EVENT_MARKER",
+      "GRAPH_AXIS",
+      "GRAPH_FEATURE",
+      "GEOMETRIC_CONSTRAINT",
+      "EQUATION_TERM",
+      "MODEL_CONDITION",
+      "BOUNDARY_CONDITION",
+      "INTERMEDIATE_STATE"
+    ],
+    "prohibited_omissions": [
+      "COSMETIC_BLANK",
+      "ARBITRARY_NUMBER_BLANK_WITHOUT_REASONING_ROLE",
+      "COPY_THE_VISIBLE_ANSWER",
+      "REMOVE_WHOLE_REPRESENTATION_WITHOUT_ANCHOR",
+      "HIDE_ELEMENT_NOT_USED_IN_REASONING"
+    ],
+    "learner_task_required": true,
+    "learner_product_must_change_reasoning_state": true,
+    "canonical_completed_state_revealed_only_after_attempt": true
+  },
+  "fixed_help": {
+    "help_must_be_preauthored": true,
+    "help_must_bind_to_omitted_element_ids": true,
+    "dynamic_new_semantics_before_reveal_allowed": false,
+    "substantive_default_functions": ["NOTICE", "REPRESENT", "START"],
+    "micro_task_may_use_fewer_steps": true,
+    "help_may_not_copy_canonical_completion": true
+  },
+  "verification": {
+    "must_be_independent_of_answer_key": true,
+    "must_be_applicable_to_learner_state_before_reveal": true,
+    "allowed_types": [
+      "INVERSE_RELATION",
+      "SUBSTITUTE_BACK",
+      "LIMITING_CASE",
+      "DIMENSIONAL",
+      "SIGN_DIRECTION",
+      "CONSERVATION",
+      "GRAPH_BEHAVIOR",
+      "BOUNDARY_CONDITION",
+      "ALTERNATE_REPRESENTATION",
+      "MODEL_VALIDITY"
+    ],
+    "compare_with_answer_is_independent_verification": false,
+    "verification_should_test_structure_not_memory": true
+  },
+  "layer_realization": {
+    "CORE1A": {
+      "default_mode": "REFERENCE",
+      "may_show_canonical_complete_state": true,
+      "underlying_ttu_still_contains_reconstruction_contract": true,
+      "purpose": "Make the complete expert structure explicit without requiring the downstream layer to invent its omissions."
+    },
+    "CORE1B": {
+      "default_mode": "RECONSTRUCTION",
+      "must_use_semantic_omissions": true,
+      "must_use_fixed_help_when_rescue_is_needed": true,
+      "must_reveal_canonical_state_after_attempt": true,
+      "full_solution_exposure_is_mastery_evidence": false
+    },
+    "CORE2A": {
+      "default_mode": "WORKED_APPLICATION",
+      "must_show_complete_problem_state_and_working": true,
+      "may_include_attempt_before_reveal": true
+    },
+    "CORE2B": {
+      "default_mode": "TRANSFER_RECONSTRUCTION",
+      "must_require_selection_or_reconstruction_of_material_structure": true,
+      "must_use_fresh_legal_item_when_pool_permits": true,
+      "full_solution_exposure_is_transfer_mastery": false
+    }
+  },
+  "hard_bucket_rule": {
+    "substantive_b_layer_ttu_minimum_semantic_omissions": 2,
+    "at_least_one_omission_must_be_representation_or_model_structure": true,
+    "prose_only_reconstruction_allowed": false
+  },
+  "release_failures": [
+    "TTU_CANONICAL_STATE_MISSING",
+    "TTU_OMISSION_NOT_IN_CANONICAL_STATE",
+    "TTU_TRIVIAL_OR_COSMETIC_OMISSION",
+    "TTU_LEARNER_TASK_MISSING",
+    "TTU_HELP_NOT_FIXED",
+    "TTU_HELP_NOT_BOUND_TO_OMISSION",
+    "TTU_CANONICAL_REVEAL_BEFORE_ATTEMPT",
+    "TTU_NO_INDEPENDENT_VERIFICATION",
+    "TTU_VERIFICATION_IS_ANSWER_COMPARISON",
+    "TTU_B_LAYER_NO_RECONSTRUCTION"
+  ]
+}

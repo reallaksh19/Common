@@ -1,0 +1,31 @@
+{
+  "registry_id": "PHY-CORE2A-VALIDATORS-v1",
+  "schema_version": "1.0.0",
+  "validators": {
+    "CONSTANT_ACCELERATION_VELOCITY": {
+      "required_fields": ["u", "a", "t", "expected_v", "u_unit", "a_unit", "t_unit", "expected_v_unit"],
+      "quantity": "VELOCITY",
+      "relation": "v = u + a t"
+    },
+    "CONSTANT_ACCELERATION_INITIAL_VELOCITY": {
+      "required_fields": ["v", "a", "t", "expected_u", "v_unit", "a_unit", "t_unit", "expected_u_unit"],
+      "quantity": "VELOCITY",
+      "relation": "u = v - a t"
+    },
+    "VECTOR_DOT_PERPENDICULAR": {
+      "required_fields": ["vector_a", "vector_b", "vector_unit"],
+      "quantity": "DIMENSIONLESS_ZERO_TEST",
+      "relation": "a dot b = 0"
+    },
+    "SPEED_FROM_COMPONENTS": {
+      "required_fields": ["vx", "vy", "expected_speed", "vx_unit", "vy_unit", "expected_speed_unit"],
+      "quantity": "SPEED",
+      "relation": "speed = sqrt(vx^2 + vy^2)"
+    },
+    "CONSTANT_ACCELERATION_EVENT_TIME": {
+      "required_fields": ["u", "v", "a", "expected_t", "u_unit", "v_unit", "a_unit", "expected_t_unit"],
+      "quantity": "TIME",
+      "relation": "t = (v - u) / a"
+    }
+  }
+}

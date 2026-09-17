@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "PHY-CORE2AB-KNOWLEDGE-ROUTING-V1",
+  "applies_to": ["CORE2A", "CORE2B"],
+  "required_input_rule": {
+    "selection_basis_enum": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"],
+    "no_silent_default": true,
+    "KNOWLEDGE_PERCENT": {
+      "student_knowledge_pct_required": true,
+      "range_inclusive": [0, 100]
+    },
+    "OWNER_OVERRIDE": {
+      "student_knowledge_pct_may_be_unknown": true,
+      "required_fields": ["owner_ref", "reason", "support_band"],
+      "support_band_enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]
+    }
+  },
+  "default_operational_bands": {
+    "disclaimer": "Operational support bands only; not psychometric claims. Owner policy may tune thresholds without changing Physics authority.",
+    "0-25": "FOUNDATION_HIGH_SUPPORT",
+    "26-50": "GUIDED",
+    "51-75": "STANDARD",
+    "76-100": "CHALLENGE_MINIMAL"
+  },
+  "core2a_behavior": {
+    "FOUNDATION_HIGH_SUPPORT": ["prerequisite_bridge", "full_visual_representation", "expert_notice", "worked_first_move", "full_reasoned_solution", "near_isomorphic_generated_original_if_legal"],
+    "GUIDED": ["recognition_cue", "visual_representation", "partially_faded_working", "full_solution_after_attempt"],
+    "STANDARD": ["attempt_then_compact_expert_solution", "checks", "variation_note"],
+    "CHALLENGE_MINIMAL": ["attempt_first", "minimal_pre_solution_cueing", "compact_expert_solution", "error_analysis_and_variation"]
+  },
+  "core2b_behavior": {
+    "invariant": "Always attempt-first; knowledge/support band changes hint availability, reveal timing and eligible challenge difficulty within the exact legal/evidence-eligible pool.",
+    "FOUNDATION_HIGH_SUPPORT": ["near_transfer_first", "H1_readily_available", "H2_readily_available", "H3_available", "full_solution_after_attempt", "repair_on_failure"],
+    "GUIDED": ["near_then_structural", "H1_H2_optional", "H3_optional", "full_solution_after_attempt"],
+    "STANDARD": ["structural_variation", "hints_hidden_by_default", "full_solution_after_attempt"],
+    "CHALLENGE_MINIMAL": ["highest_eligible_structural_demand", "hints_available_on_demand_only", "mixed_retrieval_when_legal"]
+  },
+  "authority_guards": {
+    "knowledge_pct_may_expand_core2a_legal_pool": false,
+    "owner_override_may_expand_core2a_legal_pool": false,
+    "knowledge_pct_may_rewrite_frozen_source": false,
+    "owner_override_may_rewrite_frozen_source": false,
+    "owner_override_waives_only_missing_knowledge_pct": true,
+    "core2b_still_requires_core1b_evidence_and_exact_core2a_item_custody": true
+  }
+}

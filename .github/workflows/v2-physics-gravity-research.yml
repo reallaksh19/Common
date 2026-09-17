@@ -1,0 +1,76 @@
+name: V2 Physics Gravity Research
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Physics/Blueprint/contracts/engineering-*.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/contracts/physics-technical-engineering-gate-v3.schema.json'
+      - 'Grade 9/V2/Physics/Blueprint/engineering-gates/gravitation/**'
+      - 'Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py'
+      - 'Grade 9/V2/Physics/Blueprint/engine/validate_gravity_research_v1.py'
+      - 'Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/grav-field-*.json'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-engineering-gate-invariants.v3.json'
+      - 'Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.gravity.v1.json'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py'
+      - 'Grade 9/V2/Physics/Blueprint/tests/test_physics_gravity_research_v1.py'
+      - 'Grade 9/V2/Physics/Blueprint/GRAVITY_RESEARCH_ENGINEERING_V1.md'
+      - '.github/workflows/v2-physics-gravity-research.yml'
+  workflow_dispatch:
+
+jobs:
+  gravity-research-v3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install jsonschema
+      - name: Build canonical Physics v3 Engineering Gate registry
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/build_physics_engineering_gate_registry_v3.py"
+          --out /tmp/physics-engineering-gates-v3.json
+      - name: Validate canonical Physics v3 Engineering Gate registry
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/validate_engineering_gates_v3.py"
+          --registry /tmp/physics-engineering-gates-v3.json
+          --report-out /tmp/physics-engineering-gates-v3-report.json
+      - name: Run full-registry equivalence and falsifier proof
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_engineering_gates_v3_sba23.py"
+      - name: Run Gravity research provenance and closure falsifiers
+        run: python "Grade 9/V2/Physics/Blueprint/tests/test_physics_gravity_research_v1.py"
+      - name: Validate Gravity research production state
+        run: python "Grade 9/V2/Physics/Blueprint/engine/validate_gravity_research_v1.py"
+      - name: Compile Gravity v3 engineering closure
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_closure.py"
+          "fixtures/engineering-workbench/grav-field-request.v1.json"
+          "fixtures/engineering-workbench/grav-field-manifest.v3.json"
+          --out /tmp/grav-field-engineering-closure.json
+      - name: Compile human-visible Gravity Engineering Passport
+        run: >-
+          python "Grade 9/V2/Physics/Blueprint/engine/compile_engineering_passport.py"
+          "fixtures/engineering-workbench/grav-field-request.v1.json"
+          /tmp/grav-field-engineering-closure.json
+          --out /tmp/grav-field-engineering-passport.json
+          --markdown-out /tmp/grav-field-engineering-passport.md
+      - name: Publish Gravity passport in workflow summary
+        run: cat /tmp/grav-field-engineering-passport.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload Gravity research engineering proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: physics-gravity-research-v3
+          path: |
+            /tmp/physics-engineering-gates-v3.json
+            /tmp/physics-engineering-gates-v3-report.json
+            /tmp/grav-field-engineering-closure.json
+            /tmp/grav-field-engineering-passport.json
+            /tmp/grav-field-engineering-passport.md
+            Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/grav-field-discovery.v1.json
+            Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/grav-field-research-dossier.v1.json
+            Grade 9/V2/Physics/Blueprint/fixtures/engineering-workbench/grav-field-claim-ledger.v1.json
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,37 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A6-REPRESENTATION-DECISION-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A6_REPRESENTATION_DECISIONS",
+  "evidence_kind": "REPRESENTATION_DECISION",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "topics/m2d-sba04-design/representation-design-study.v1.json",
+    "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json"
+  ],
+  "artifact_refs": [
+    "REP-M2D-VELOCITY-STAGE-TIMELINE",
+    "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+    "REP-M2D-SPEED-TRIANGLE",
+    "REP-M2D-SAME-HEIGHT-PAIR",
+    "REP-M2D-PERP-VELOCITY-PAIR",
+    "REP-M2D-SPEED-AT-HEIGHT"
+  ],
+  "evidence_refs": [
+    "topics/m2d-sba04-design/representation-design-study.v1.json#decision",
+    "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json#proof"
+  ],
+  "proof": {
+    "candidate_set_receipt_ref": "topics/m2d-sba04-stage-evidence/1a5-representation-candidates.v1.json",
+    "primary_representation_id": "REP-M2D-VELOCITY-STAGE-TIMELINE",
+    "secondary_representation_ids": [
+      "REP-M2D-VELOCITY-DIRECTION-TRIANGLE",
+      "REP-M2D-SPEED-TRIANGLE",
+      "REP-M2D-SAME-HEIGHT-PAIR",
+      "REP-M2D-PERP-VELOCITY-PAIR",
+      "REP-M2D-SPEED-AT-HEIGHT"
+    ],
+    "decision_rationale": "Use the staged trajectory timeline as the global novice-facing spine because it exposes rising-apex-falling state evolution and the apex component distinction before algebra. Use component constructions as local secondary representations for direction, speed magnitude, equal-height comparison, perpendicularity and height-based speed. The state-table candidate is not selected as a primary teaching representation."
+  },
+  "unresolved_requirements": []
+}

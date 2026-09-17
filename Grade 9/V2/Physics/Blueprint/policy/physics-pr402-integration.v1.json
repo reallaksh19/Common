@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "integration_id": "PHY-PR402-INTEGRATION-v1",
+  "source_pr": 402,
+  "source_head": "efd5d47df8daa3de5996d8419652dd76cb08dc89",
+  "canonical_pr": 350,
+  "authority": "NON_AUTHORITATIVE_RECONCILIATION",
+  "rules": {
+    "source_branch_may_define_runtime_authority": false,
+    "aggregate_v1_registry_may_replace_v3": false,
+    "observability_may_grant_readiness": false,
+    "discovery_breadth_may_grant_curriculum_authority": false,
+    "sil_content_may_bypass_learning_engineering_promotion": false,
+    "all_regression_and_stress_execution_owned_by_blueprint": true
+  },
+  "asset_dispositions": {
+    "architecture_observability": "REWRITE_AGAINST_CURRENT_V3_AND_DISCOVERY",
+    "discovery_benchmark": "NON_AUTHORITATIVE_INPUT_ONLY",
+    "subtopic_intelligence_library": "RECONCILE_THROUGH_LEARNING_ENGINEERING_NOT_RUNTIME_AUTHORITY",
+    "nano_research": "RESEARCH_INPUT_ONLY_REQUIRES_SOURCE_GOVERNANCE",
+    "aggregate_v1_engineering_registry": "DO_NOT_PROMOTE_AS_PARALLEL_AUTHORITY",
+    "run_builder": "DO_NOT_USE_AS_AUTHORITY_OR_READINESS_COMPILER"
+  },
+  "work_energy_next_scope": {
+    "discovery_gate_ids": [
+      "PHY-WORK-ENERGY-POWER",
+      "PHY-ENERGY-CONSERVATION-LAW",
+      "PHY-WEP-VARIABLE-FORCE"
+    ],
+    "current_dispositions": {
+      "PHY-WORK-ENERGY-POWER": "EXACT_V3_ID",
+      "PHY-ENERGY-CONSERVATION-LAW": "EXACT_V3_ID",
+      "PHY-WEP-VARIABLE-FORCE": "MIGRATION_REQUIRED"
+    },
+    "promotion_path": "DISCOVERY_TO_V3_ENGINEERING_TO_SHARED_ENGINEERING_GATE_TO_PHYSICS_BLUEPRINT_AUTHORITY_PROJECTION",
+    "copy_ready_state_from_source_pr": false
+  }
+}

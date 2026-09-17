@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "GLOBAL-ENGINEERING-READINESS-V1",
+  "authority_layer": "ENGINEERING_GATE",
+  "technical_ready_status": "READY",
+  "domain_ready_status": "READY",
+  "authoritative_prerequisite_status": "READY_FROM_AUTHORITATIVE_DOMAIN",
+  "research_depth_value": "RESEARCH",
+  "research_blocker_codes": [
+    "E_ENG_RESEARCH_DOSSIER_REQUIRED",
+    "E_ENG_RESEARCH_DOSSIER_INVALID",
+    "E_ENG_CLAIM_LEDGER_REQUIRED",
+    "E_ENG_CLAIM_LEDGER_INVALID"
+  ],
+  "non_authorizing_consumers": {
+    "PUBLICATION": "ENGINEERING_GATE_DOES_NOT_AUTHORIZE_PUBLICATION"
+  },
+  "ready_state": "READY_FOR_TECHNICAL_CONSUMPTION",
+  "blocked_state": "BLOCKED"
+}

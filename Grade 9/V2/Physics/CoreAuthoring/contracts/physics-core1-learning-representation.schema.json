@@ -1,0 +1,17 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1-learning-representation.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","representation_id","task","source_contract_ref","answer_contract_ref","sections","practice_ladder","verification","transfer_bridge"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "representation_id":{"type":"string","pattern":"^CORE1-LR-"},
+    "task":{"type":"object"},
+    "source_contract_ref":{"type":"string","pattern":"^CORE1-SRC-"},
+    "answer_contract_ref":{"type":"string","pattern":"^CORE1-ANS-"},
+    "sections":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["kind","title","content","visual_stages"],"properties":{"kind":{"enum":["SEE","REALIZE","UNDERSTAND","ACTIVATE","PROBE","MISCONCEPTION","WORKED"]},"title":{"type":"string","minLength":1},"content":{"type":"array","minItems":1,"items":{"type":"string"}},"visual_stages":{"type":"integer","minimum":0}}}},
+    "practice_ladder":{"type":"array","items":{"enum":["GUIDED","FADED","INDEPENDENT"]},"uniqueItems":true},
+    "verification":{"type":"array","minItems":1,"items":{"type":"string"}},
+    "transfer_bridge":{"type":"object","additionalProperties":false,"required":["problem_family_ref","first_move","do_not_leak_external_items"],"properties":{"problem_family_ref":{"type":"string"},"first_move":{"type":"string"},"do_not_leak_external_items":{"const":true}}}
+  }
+}

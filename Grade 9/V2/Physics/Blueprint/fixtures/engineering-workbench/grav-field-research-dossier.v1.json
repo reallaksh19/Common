@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "dossier_id": "ENG-DOSSIER-GRAV-FIELD-V1",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "engineering_depth": "RESEARCH",
+  "scope_definition": "Newtonian gravitational interaction force and gravitational field for point masses and the external field of spherically symmetric sources, including force-field distinction, vector direction, inverse-square dependence, superposition, and near-Earth local-g interpretation for Grade 9-11 competitive-exam engineering.",
+  "authoritative_source_set": [
+    {
+      "source_ref": "https://openstax.org/books/university-physics-volume-1/pages/13-1-newtons-law-of-universal-gravitation",
+      "authority_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "Newtonian inverse-square force law, attractive direction, third-law pair and point/spherical-source applicability."
+    },
+    {
+      "source_ref": "https://openstax.org/books/university-physics-volume-1/pages/13-2-gravitation-near-earths-surface",
+      "authority_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "Gravitational field, inward radial field-line representation, inverse-square spatial dependence and variation of g with position."
+    },
+    {
+      "source_ref": "https://openstax.org/books/university-physics-volume-1/pages/5-1-forces",
+      "authority_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "Vector addition of multiple force contributions used to derive Newtonian field superposition."
+    },
+    {
+      "source_ref": "https://openstax.org/books/university-physics-volume-1/pages/5-4-mass-and-weight",
+      "authority_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "Weight relation w = m g and the fact that gravitational acceleration/field strength varies with location."
+    },
+    {
+      "source_ref": "https://physics.nist.gov/cuu/Constants/",
+      "authority_class": "STANDARD_PHYSICS_DERIVED",
+      "scope": "Current CODATA provenance for the Newtonian constant of gravitation G when a numerical value is required."
+    },
+    {
+      "source_ref": "https://link.springer.com/chapter/10.1007/978-3-030-30188-0_4",
+      "authority_class": "AUTHORING_RECOMMENDATION",
+      "scope": "Twenty-year TIMSS/TIMSS Advanced evidence on persistent gravity misconceptions across school grades, used only to select misconception falsifiers and not as Physics authority."
+    }
+  ],
+  "curriculum_boundaries": [
+    "Include Newtonian gravitational force and field at Grade 9-11 competitive-exam engineering depth while keeping learner-facing depth independently governed downstream.",
+    "Include point-mass relations and the external equivalence of spherically symmetric sources; do not claim the same formula for arbitrary interior points of extended bodies.",
+    "Include vector superposition of gravitational fields at a common field point.",
+    "Treat approximately 9.8 N/kg as a local near-Earth-surface value, not a universal constant.",
+    "Exclude gravitational potential, potential energy, escape speed, orbital mechanics, shell-interior field derivations and general relativity from this request."
+  ],
+  "selected_design_decisions": [
+    "Create PHY-GRAV-FORCE as a child of the existing interaction/NLM capability family instead of extending NLM with gravity-specific relations.",
+    "Create PHY-GRAV-FIELD as a child of PHY-GRAV-FORCE because field has independent ontology, relations, representations, misconceptions and verification logic.",
+    "Reuse existing vector-component and Newton-II gates rather than duplicating vector algebra or net-force reasoning inside Gravitation.",
+    "Require explicit source-to-field-point radial direction and inverse-square model conditions before any numerical substitution.",
+    "Use TIMSS misconception evidence to make continuous action of gravity and direction/source geometry explicit engineering invariants."
+  ],
+  "rejected_alternatives": [
+    "Reject a monolithic PHY-GRAVITY gate because force, field, potential, energy and orbital dynamics have separable technical ownership.",
+    "Reject adding gravitational field directly to PHY-NLM-SECOND-LAW because that would mix a specific interaction/field model into a general dynamics gate.",
+    "Reject treating g = 9.8 N/kg as universally valid.",
+    "Reject introducing gravitational potential, energy or orbit relations before separate engineering requests establish their scope and prerequisites."
+  ],
+  "status": "RESEARCH_DOSSIER_READY"
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0.0",
+  "bridge_plan_id": "M2D-SBA04-PWSE-BRIDGE-PLAN-V1",
+  "bucket_id": "M2D-SBA-04",
+  "authority_class": "CORE1A_AUTHORING_DESIGN_DECISION",
+  "representation_decision_ref": "topics/m2d-sba04-stage-evidence/1a6-representation-decision.v1.json",
+  "source_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json"
+  ],
+  "bridges": [
+    {
+      "learning_atom_ref": "M2D-SBA-04A",
+      "picture": {"id": "PWSE-SBA04A-PIC-COMPONENT-ARROW", "content": "Tangent velocity arrow decomposed into signed horizontal and vertical component arrows."},
+      "word": {"id": "PWSE-SBA04A-WORD-VECTOR-NOT-SCALAR", "content": "Velocity is a directed state built from components; speed is only its nonnegative magnitude."},
+      "symbol": {"id": "PWSE-SBA04A-SYM-VECTOR-COMPONENTS", "content": "v=(v_x,v_y), speed=|v|"},
+      "equation": {"id": "PWSE-SBA04A-EQ-MAGNITUDE", "content": "v=sqrt(v_x^2+v_y^2)"},
+      "translation_checks": ["Given signed v_x and v_y, draw the tangent velocity arrow and state why a negative v_y does not make speed negative."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04B",
+      "picture": {"id": "PWSE-SBA04B-PIC-RISE-APEX-FALL", "content": "Five-stage trajectory timeline with constant v_x arrows, signed v_y arrows and downward g at every stage."},
+      "word": {"id": "PWSE-SBA04B-WORD-COMPONENT-EVOLUTION", "content": "Horizontal velocity stays constant while vertical velocity decreases through zero and becomes negative; gravity remains downward."},
+      "symbol": {"id": "PWSE-SBA04B-SYM-STATE-SIGNS", "content": "v_x=u_x; v_y>0 rising, v_y=0 apex, v_y<0 falling; g downward"},
+      "equation": {"id": "PWSE-SBA04B-EQ-EVOLUTION", "content": "v_x(t)=u_x; v_y(t)=u_y-g t"},
+      "translation_checks": ["For a marked trajectory stage, infer the signs of v_x and v_y and identify whether the stage can be the apex without setting g to zero."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04C",
+      "picture": {"id": "PWSE-SBA04C-PIC-DIRECTION-TRIANGLE", "content": "Current tangent velocity with signed v_x/v_y components and angle phi from the positive horizontal."},
+      "word": {"id": "PWSE-SBA04C-WORD-CURRENT-DIRECTION", "content": "Instantaneous direction comes from the current signed component pair, not from reusing the launch angle."},
+      "symbol": {"id": "PWSE-SBA04C-SYM-PHI-COMPONENTS", "content": "phi from (v_x,v_y), with the sign/quadrant preserved"},
+      "equation": {"id": "PWSE-SBA04C-EQ-DIRECTION", "content": "phi=atan2(v_y,v_x)"},
+      "translation_checks": ["Translate a falling-branch component triangle into a negative/below-horizontal direction and recover phi from the signed components."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04D",
+      "picture": {"id": "PWSE-SBA04D-PIC-SPEED-TRIANGLE", "content": "Velocity component triangle whose hypotenuse is speed, compared with the apex state where the vertical leg is zero."},
+      "word": {"id": "PWSE-SBA04D-WORD-MAGNITUDE-AND-APEX", "content": "Speed is the magnitude of velocity; in the standard model it is minimum at the apex because only the horizontal component remains."},
+      "symbol": {"id": "PWSE-SBA04D-SYM-SPEED", "content": "v, v_x, v_y; at apex v_y=0"},
+      "equation": {"id": "PWSE-SBA04D-EQ-SPEED", "content": "v^2=v_x^2+v_y^2; v_apex=|v_x|=|u_x|"},
+      "translation_checks": ["From an apex picture, write the component state and explain algebraically why minimum speed is not zero for an oblique launch."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04E",
+      "picture": {"id": "PWSE-SBA04E-PIC-SAME-HEIGHT-PAIR", "content": "Rising and falling points at one horizontal height line with equal v_x, opposite signed v_y and equal-length resultant arrows."},
+      "word": {"id": "PWSE-SBA04E-WORD-SAME-SPEED-DIFFERENT-VELOCITY", "content": "At the same height the speeds match, but the velocity vectors differ because the vertical component reverses direction."},
+      "symbol": {"id": "PWSE-SBA04E-SYM-PAIRED-STATES", "content": "(v_x,+|v_y|) rising and (v_x,-|v_y|) falling"},
+      "equation": {"id": "PWSE-SBA04E-EQ-SYMMETRY", "content": "v_y,fall=-v_y,rise; v_fall=v_rise"},
+      "translation_checks": ["Given two equal-height trajectory points, write both component pairs and identify exactly which quantities match and which change sign."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04F",
+      "picture": {"id": "PWSE-SBA04F-PIC-PERPENDICULAR-PAIR", "content": "Reference velocity u and instantaneous velocity v(t) shown at right angles in one shared x-y frame, with both component pairs visible."},
+      "word": {"id": "PWSE-SBA04F-WORD-PERP-CONSTRAINT", "content": "Perpendicularity is a relation between both vectors, not a rule that one component must vanish."},
+      "symbol": {"id": "PWSE-SBA04F-SYM-DOT-PAIR", "content": "u=(u_x,u_y), v(t)=(v_x(t),v_y(t))"},
+      "equation": {"id": "PWSE-SBA04F-EQ-DOT-ZERO", "content": "u_x v_x(t)+u_y v_y(t)=0"},
+      "translation_checks": ["Translate a right-angle vector picture into the signed component dot-product equation before substituting projectile time evolution."]
+    },
+    {
+      "learning_atom_ref": "M2D-SBA-04G",
+      "picture": {"id": "PWSE-SBA04G-PIC-HEIGHT-STATE", "content": "Trajectory with declared y=0 launch origin, target height y, apex H, constant horizontal component and vertical component at the target state."},
+      "word": {"id": "PWSE-SBA04G-WORD-HEIGHT-WITHOUT-CLOCK", "content": "Use vertical displacement to obtain the vertical component at the target height, then rebuild total speed with the unchanged horizontal component."},
+      "symbol": {"id": "PWSE-SBA04G-SYM-HEIGHT-SPEED", "content": "y, u_x, u_y, v_y, v"},
+      "equation": {"id": "PWSE-SBA04G-EQ-HEIGHT-SPEED", "content": "v_y^2=u_y^2-2 g y; v^2=u_x^2+v_y^2"},
+      "translation_checks": ["From a marked target height, declare the displacement origin, derive v_y^2, and then reconstruct v^2 without solving time first."]
+    }
+  ]
+}

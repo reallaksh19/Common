@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0.0",
+  "review_id": "PR383-MAP-PHY-KIN-2D-PROJECTILE-V1",
+  "review_authority": "REPOSITORY_ENGINEERING_MAPPING_REVIEW",
+  "mapping_scope": "TECHNICAL_DISCOVERY_RECONCILIATION_ONLY",
+  "source_snapshot": {
+    "registry_ref": "provenance/pr383/physics-technical-engineering-gates.v1.json",
+    "registry_git_blob_sha": "89b009c31c79ad4b2009577220705d2711eadc4b",
+    "discovery_gate_id": "PHY-KIN-2D-PROJECTILE",
+    "source_control_fields_ignored": ["technical_readiness", "release_checklist"]
+  },
+  "target_snapshot": [
+    {
+      "gate_id": "PHY-M2D-PROJECTILE-COMPONENTS",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-PROJECTILE-COMPONENTS.v3.json",
+      "gate_git_blob_sha": "21aec7a09eadbbdf9acc904913dfe082d51bb936"
+    },
+    {
+      "gate_id": "PHY-M2D-SHARED-CLOCK",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-SHARED-CLOCK.v3.json",
+      "gate_git_blob_sha": "af715733f1a28b52395f871a5ab5d78c136d3e2a"
+    },
+    {
+      "gate_id": "PHY-M2D-VELOCITY-EVOLUTION",
+      "gate_ref": "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+      "gate_git_blob_sha": "616d09f228daaeebd3f5e77a907db4486abd9442"
+    }
+  ],
+  "coverage": [
+    {
+      "source_pointer": "/prerequisite_ids/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/prerequisites/0"}
+      ],
+      "review_note": "The source vector-components prerequisite is retained explicitly by the canonical projectile-components gate."
+    },
+    {
+      "source_pointer": "/prerequisite_ids/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The old separate PHY-KIN-1D-MOTION dependency is absorbed into explicit governed one-dimensional x/y displacement and vertical-velocity component relations in the refined canonical M2D gates; it is not imported as a nonexistent canonical prerequisite ID."
+    },
+    {
+      "source_pointer": "/technical_core/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/concepts/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The canonical component model preserves one projectile with zero horizontal acceleration and uniform vertical gravity under one declared state."
+    },
+    {
+      "source_pointer": "/mandatory_equations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "The source level-ground range, maximum-height and flight-time formulas are represented in normalized form by governed x/y displacement equations, one shared return/apex event time, and the apex condition v_y=0. The mapping preserves the mechanics rather than importing a duplicate shortcut-formula gate."
+    },
+    {
+      "source_pointer": "/representations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/representations/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/representations/0"}
+      ],
+      "review_note": "The refined representations preserve the curved trajectory, constant horizontal component, signed vertical evolution, apex v_y=0 and persistent downward gravity."
+    },
+    {
+      "source_pointer": "/model_conditions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "The source same-elevation restriction is retained as a return-to-level event solved from the governed vertical displacement relation; unequal-elevation events remain general event solves rather than being forced through the shortcut range formula."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/reasoning_sequence/1"}
+      ],
+      "review_note": "The canonical sequence resolves the launch vector into signed horizontal and vertical components before applying kinematics."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/1",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/reasoning_sequence/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/reasoning_sequence/2"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/1"}
+      ],
+      "review_note": "Flight time is normalized to a named return-to-level event solved from vertical motion and then shared with the horizontal component."
+    },
+    {
+      "source_pointer": "/reasoning_sequence/2",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/relations/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/reasoning_sequence/2"}
+      ],
+      "review_note": "The source range step is preserved as horizontal displacement x=u_x t evaluated at the same flight event time."
+    },
+    {
+      "source_pointer": "/required_transformations/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/required_transformations/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/required_transformations/1"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/required_transformations/1"}
+      ],
+      "review_note": "The old scenario-to-equation transformation is decomposed into launch-state components, governed component equations, and one same-event 2D state."
+    },
+    {
+      "source_pointer": "/misconceptions/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/misconceptions/0"}
+      ],
+      "review_note": "The canonical misconception explicitly rejects gravity changing the horizontal velocity component in the no-drag model."
+    },
+    {
+      "source_pointer": "/mandatory_verifications/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/verifications/0"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/verifications/2"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/verifications/1"}
+      ],
+      "review_note": "The refined gates require unit consistency, model validity and substitution back into the shared-event state."
+    },
+    {
+      "source_pointer": "/problem_families/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-SHARED-CLOCK", "target_pointer": "/problem_families/0"},
+        {"gate_id": "PHY-M2D-VELOCITY-EVOLUTION", "target_pointer": "/problem_families/0"}
+      ],
+      "review_note": "Range/flight and apex requests are decomposed across component evolution, special-event timing, and apex velocity-event solution families."
+    },
+    {
+      "source_pointer": "/falsification_cases/0",
+      "status": "COVERED",
+      "target_refs": [
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/required_invariants/2"},
+        {"gate_id": "PHY-M2D-PROJECTILE-COMPONENTS", "target_pointer": "/misconceptions/0"}
+      ],
+      "review_note": "The source nonzero-horizontal-acceleration defect is directly rejected by the vertical-gravity-only invariant and horizontal-gravity misconception repair."
+    }
+  ],
+  "decision": {
+    "status": "APPROVED",
+    "uncovered_source_pointers": [],
+    "readiness_authorized": false,
+    "source_custody_promoted": false
+  }
+}

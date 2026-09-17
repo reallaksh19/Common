@@ -1,0 +1,98 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "M2D-SBA04-1A2-INFERENTIAL-JUMP-CLOSURE-V1",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A2_INFERENTIAL_JUMPS",
+  "evidence_kind": "INFERENTIAL_JUMP_CLOSURE",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json"
+  ],
+  "artifact_refs": [
+    "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+    "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+    "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+    "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+    "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+    "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED"
+  ],
+  "evidence_refs": [
+    "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#learning_atoms",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#reasoning_sequence",
+    "engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#reasoning_sequence"
+  ],
+  "proof": {
+    "jump_rows": [
+      {
+        "jump_ref": "PHY-M2D-VELOCITY-EVOLUTION:RS-M2D-VE-APEX",
+        "learning_atom_refs": ["M2D-SBA-04B"],
+        "novice_obligation": "Treat the apex as v_y=0 only; preserve nonzero v_x and downward g.",
+        "closure_move_refs": ["M2D-SBA-04B:mark-apex-v_y=0", "M2D-SBA-04B:keep-g-downward-at-every-stage"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-EVOLUTION.v3.json#RS-M2D-VE-APEX", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04B.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-VELOCITY-DIRECTION:RS-M2D-VD-ANGLE",
+        "learning_atom_refs": ["M2D-SBA-04C"],
+        "novice_obligation": "Use the current signed component pair to determine instantaneous direction and retain the sign of v_y.",
+        "closure_move_refs": ["M2D-SBA-04C:component-triangle-at-one-instant", "M2D-SBA-04C:sign-of-phi-above-below-horizontal"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-VELOCITY-DIRECTION.v3.json#RS-M2D-VD-ANGLE", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04C.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-MAGNITUDE:RS-M2D-SM-APEX",
+        "learning_atom_refs": ["M2D-SBA-04D"],
+        "novice_obligation": "Recognize that minimum apex speed is the surviving horizontal component, not zero total speed.",
+        "closure_move_refs": ["M2D-SBA-04D:minimum-magnitude-at-v_y=0", "M2D-SBA-04D:connect-v_min-to-u-cos-theta"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-SPEED-MAGNITUDE.v3.json#RS-M2D-SM-APEX", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04D.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-SAME-HEIGHT-VELOCITY:RS-M2D-SH-COMPARE",
+        "learning_atom_refs": ["M2D-SBA-04E"],
+        "novice_obligation": "At equal heights, keep v_x the same and reverse only the sign of v_y before comparing speed and velocity.",
+        "closure_move_refs": ["M2D-SBA-04E:equal-|v_y|-opposite-signs", "M2D-SBA-04E:compare-velocity-arrows"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-SAME-HEIGHT-VELOCITY.v3.json#RS-M2D-SH-COMPARE", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04E.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-IDENTIFY",
+        "learning_atom_refs": ["M2D-SBA-04F"],
+        "novice_obligation": "Identify the two velocity vectors and express both in one common component frame before imposing perpendicularity.",
+        "closure_move_refs": ["M2D-SBA-04F:show-two-perpendicular-arrows", "M2D-SBA-04F:write-component-pairs"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#RS-M2D-PV-IDENTIFY", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04F.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-PERPENDICULAR-VELOCITY:RS-M2D-PV-DOT",
+        "learning_atom_refs": ["M2D-SBA-04F"],
+        "novice_obligation": "Translate perpendicular velocity arrows into a signed component dot-product condition equal to zero, not a component-zero shortcut.",
+        "closure_move_refs": ["M2D-SBA-04F:introduce-dot-product-zero-test", "M2D-SBA-04F:apply-to-u-and-v(t)"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-PERPENDICULAR-VELOCITY.v3.json#RS-M2D-PV-DOT", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04F.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-ORIGIN",
+        "learning_atom_refs": ["M2D-SBA-04G"],
+        "novice_obligation": "Declare the height origin that matches the initial state used in the no-time vertical relation before substituting y.",
+        "closure_move_refs": ["M2D-SBA-04G:start-from-vertical-no-time-relation", "M2D-SBA-04G:evaluate-at-H-and-H/2"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#RS-M2D-SHGT-ORIGIN", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04G.teaching_moves"]
+      },
+      {
+        "jump_ref": "PHY-M2D-SPEED-AT-HEIGHT:RS-M2D-SHGT-SPEED",
+        "learning_atom_refs": ["M2D-SBA-04G"],
+        "novice_obligation": "After solving v_y^2 at the target height, retain constant v_x and reconstruct total speed from both components.",
+        "closure_move_refs": ["M2D-SBA-04G:rebuild-total-speed-from-components", "M2D-SBA-04G:compare-squared-speeds"],
+        "evidence_refs": ["engineering-gates/motion-in-2d/PHY-M2D-SPEED-AT-HEIGHT.v3.json#RS-M2D-SHGT-SPEED", "Core1A/registry/physics-core1a-motion-in-a-plane-sba04-20pct-v1.json#M2D-SBA-04G.teaching_moves"]
+      }
+    ],
+    "uncovered_jump_refs": []
+  },
+  "unresolved_requirements": []
+}

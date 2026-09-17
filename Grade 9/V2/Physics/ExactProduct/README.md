@@ -1,107 +1,115 @@
-# Physics V2 — P-L Exact-product quality gate
+# Physics V2 — P-L Exact-product quality and governed release
 
-P-L implements issue #260 under the #320 catch-up. It is the publication-quality firewall
-after P-K cold-start generation, and it is **fail-closed**.
+P-L is the fail-closed quality/release firewall after P-K code generation. P-K may generate the two learner PDFs; P-L decides whether those exact bytes are eligible to be called a mature instructional product.
 
 ```text
-P-K exact artifacts (two PDFs + page maps + run report + coverage closure)
--> machine exact-product gate
--> AI pre-review (advisory only)
--> authorized Physics subject review        [PENDING]
--> authorized pedagogy review               [PENDING]
--> authorized assessment review             [PENDING]
--> authorized visual/usability review       [PENDING]
--> frozen PR #156 mature-design comparison  [NOT_RUN]
--> V2_MATURE_INSTRUCTIONAL_PRODUCT
+P-K exact two-PDF candidate
+        ↓
+machine exact-product gate
+        ↓
+AI pre-review — advisory only
+        ↓
+exact artifact-set review binding
+        ↓
+Shared V2 HumanReview intake
+  SUBJECT      → SUBJECT_CORRECTNESS
+  PEDAGOGY     → PEDAGOGICAL_DESIGN
+  ASSESSMENT   → ASSESSMENT_DESIGN
+  VISUAL       → VISUAL_USABILITY
+        ↓
+all four governed REAL reviews PASS
+        ↓
+reference-comparison eligibility guard
+        ↓
+frozen PR #156 comparator may be accessed only here
+        ↓
+REFERENCE_COMPARABILITY PASS / FAIL
+        ↓
+derived MATURE_DESIGN_QUALITY
+        ↓
+V2_MATURE_INSTRUCTIONAL_PRODUCT
 ```
 
-## Seven states, tracked independently
+## Authority boundary
+
+`evaluate_physics_exact_product.py` remains the machine/state-projection primitive and its synthetic attestation path exists for falsifier tests. It is **not** the real mature-release authority.
+
+`evaluate_physics_governed_release.py` is the canonical real-release authority. A `REAL_RELEASE` decision consumes:
+
+- the exact P-L candidate;
+- the exact-byte-bound AI advisory review;
+- the deterministic two-PDF HumanReview candidate binding;
+- a Shared HumanReview `REAL_RELEASE` projection from the Physics review policy, real reviewer registry and real submissions;
+- optionally, a final governed reference-comparison receipt after the human gate opens.
+
+Arbitrary JSON attestations are therefore incapable of authorizing a real P-L release. TEST_ONLY projections may exercise the full state machine but are permanently non-releaseable.
+
+## Seven independent quality states
 
 ```text
 PUBLICATION_ENGINEERING   machine-settable
-SUBJECT_CORRECTNESS       authorized human only
-PEDAGOGICAL_DESIGN        authorized human only
-ASSESSMENT_DESIGN         authorized human only
-VISUAL_USABILITY          authorized human only
+SUBJECT_CORRECTNESS       governed authorized human evidence only
+PEDAGOGICAL_DESIGN        governed authorized human evidence only
+ASSESSMENT_DESIGN         governed authorized human evidence only
+VISUAL_USABILITY          governed authorized human evidence only
+REFERENCE_COMPARABILITY   final-stage governed comparator only
 MATURE_DESIGN_QUALITY     derived, never declared
-REFERENCE_COMPARABILITY   derived, and the comparator may only run last
 ```
 
-No state may impersonate another. A machine pass with no attestation cannot make a human
-state `PASS` (`MACHINE_GREEN_CLAIMED_AS_PEDAGOGY_PASS`), an AI review cannot satisfy a
-human state (`AI_PRE_REVIEW_COUNTED_AS_HUMAN_REVIEW`), and `MATURE_DESIGN_QUALITY` is
-computed from the others rather than set (`MATURE_CLAIMED_WITH_A_PENDING_REVIEW`,
-`MATURE_CLAIMED_WITH_A_FAILED_REVIEW`).
+Machine success does not imply any human state. AI pre-review does not imply human review. Human review does not imply reference comparability. Mature quality is derived only after all required states resolve PASS.
 
-## Exit codes
+## Exact artifact-set custody
+
+Physics P-L is a two-product topology. `build_physics_human_review_binding.py` recomputes a deterministic artifact-set digest from the exact SHA-256 hashes of:
+
+- `physics-core-study-guide.pdf`
+- `physics-transfer-solution-book.pdf`
+
+Every Shared HumanReview submission must bind the same complete artifact-hash set. The governed release engine recomputes the set digest again before consuming review evidence.
+
+## Human review intake
+
+`review-intake/` contains:
+
+- the four-dimension review policy;
+- repository-backed subject, pedagogy, assessment and visual rubrics;
+- the REAL reviewer authorization registry;
+- a TEST_ONLY reviewer registry;
+- the real submissions directory and submission instructions.
+
+The **REAL reviewer registry is intentionally empty**. No authorized human Physics V2 review currently exists. Therefore the current real projection is:
 
 ```text
-0  PASS     exact product and every required release gate resolved PASS
-1  FAIL     a machine or review gate failed
-2  BLOCKED  machine gates green, but a required authorized review or exact artifact is missing
+SUBJECT_CORRECTNESS    PENDING
+PEDAGOGICAL_DESIGN     PENDING
+ASSESSMENT_DESIGN      PENDING
+VISUAL_USABILITY       PENDING
 ```
 
-Machine-green with missing human review returns **2**, never 0
-(`BLOCKED_REPORTED_AS_PASS`).
+and `release_evidence_eligible=false`.
+
+Adding a real reviewer or real review submission is an explicit governance event. CI, AI, ChatGPT, synthetic fixtures or an unregistered person cannot create reviewer authorization.
+
+## Final reference-comparison boundary
+
+PR #156 is the frozen mature-design comparator and is forbidden as P-A…P-K producer input. `check_physics_reference_eligibility.py` proves ordering by returning before it reads a supplied reference path unless all governed human gates pass.
+
+The current CI deliberately supplies a nonexistent reference path. Because real human review is pending, the guard must report `BLOCKED_HUMAN_QUALITY_GATES`, `reference_read_attempted=false`, and succeed without that file existing.
+
+A later comparator result must satisfy `physics-reference-comparison.schema.json`, bind the exact candidate digest and both PDF hashes, declare `FINAL_COMPARATIVE_VALIDATION`, and preserve `raw_reference_used_as_runtime_template=false`. A real mature release additionally requires real-release-eligible human evidence and a real-release-eligible comparator receipt.
+
+## Exit semantics
+
+```text
+0  PASS     real governed evidence resolves every required gate PASS
+1  FAIL     machine, governed human, or final comparison gate fails
+2  BLOCKED  required governed evidence is absent, pending, or TEST_ONLY
+```
 
 ## Current honest state
 
-```bash
-python "Grade 9/V2/Physics/ExactProduct/engine/evaluate_physics_exact_product.py" \
-  --run-dir /tmp/physics-v2-cold-start/with-attempts
-```
+P-K generation is machine-ready and produces the two real learner PDFs. P-L publication engineering is green. The product is **not mature** because no authorized human reviews exist and the final comparator is consequently not authorized to run.
 
-```text
-PHY P-L exact product: BLOCKED — BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT
-  machine gate: PASS (0 findings)
-  PUBLICATION_ENGINEERING    PASS
-  SUBJECT_CORRECTNESS        PENDING
-  PEDAGOGICAL_DESIGN         PENDING
-  ASSESSMENT_DESIGN          PENDING
-  VISUAL_USABILITY           PENDING
-  MATURE_DESIGN_QUALITY      PENDING
-  REFERENCE_COMPARABILITY    NOT_RUN
-```
+The canonical CI proof is `.github/workflows/v2-physics-chain-g-to-l.yml`. It builds the exact candidate, projects the empty real HumanReview state, proves the reference cannot be read, and requires the governed release engine to return exit code 2.
 
-**No authorized human reviewer has examined any Physics V2 artifact.** The Physics product
-is not mature and this gate says so. Chemistry's C-L (#274) was closed by marking things
-complete despite a FAIL pre-review and zero human review; that is precisely what this gate
-is built to make impossible here.
-
-`learning_effectiveness` defaults to `STUDY_REQUIRED` and can never be `VALIDATED` from a
-rendered PDF (`LEARNING_EFFECTIVENESS_CLAIMED_FROM_A_POLISHED_PDF`).
-
-## Machine gates
-
-Twenty machine failure codes are checked against the real artifacts, including handout
-answer leakage, internal-token leakage onto the learner surface, label-only figures,
-off-page text, minimum font size, physical-page custody, exact artifact hash binding,
-source and external-corpus coverage reconciliation, missing Core2 pages, thin hint ladders
-and solutions without verification. All are falsifier-tested by mutating the real run.
-
-## The AI pre-review is advisory and says so
-
-`audit_physics_exact_candidate.py` produces an `AI_ASSISTED_REFERENCE_REVIEW` record bound
-to the exact PDF hashes, carrying `authority: ADVISORY_ONLY`, `sets_quality_states: false`
-and `may_set_mature_classification: false`. Its concern list always includes
-`NO_HUMAN_HAS_READ_THIS_PRODUCT`. Any record claiming more is rejected.
-
-## PR #156
-
-PR #156 is the frozen mature-design comparator and is admissible **only** at
-`REFERENCE_COMPARABILITY`, after all four human gates pass. It is never a producer input:
-the P-K manifest does not declare it, and reading it fails
-`PR156_USED_AS_PRODUCER_INPUT_BEFORE_FINAL_COMPARISON`. Because the human gates are
-`PENDING`, `REFERENCE_COMPARABILITY` is `NOT_RUN` and running it early fails
-`REFERENCE_COMPARISON_RUN_BEFORE_HUMAN_GATES`.
-
-## Running
-
-```bash
-python "Grade 9/V2/Physics/ExactProduct/contracts/validate_contracts.py"
-python "Grade 9/V2/Physics/ExactProduct/tests/test_physics_exact_product.py"
-```
-
-The four `PASS` attestations that appear in the test are **synthetic fixtures exercising
-the state machine**. They are not recorded anywhere as review, and no shipped run carries
-them.
+`learning_effectiveness` remains separate. A polished/rendered PDF is not evidence of validated learning effectiveness.

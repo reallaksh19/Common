@@ -1,0 +1,42 @@
+{
+  "subtopic_id": "PHY-VEC-BASICS",
+  "title": "Scalar/vector identity, notation and direction",
+  "domain": "Vectors",
+  "scope_state": "ACTIVE",
+  "authority_basis": [{"claim_class":"STANDARD_PHYSICS_DERIVED","source_ref":"STANDARD_PHYSICS:VECTOR_FOUNDATIONS","claim_scope":"Scalar/vector distinction, vector magnitude, direction and notation."}],
+  "prerequisites": ["MATH-GEO-2D"],
+  "linked_buckets": ["M2D-SBA-01"],
+  "applicable_cores": ["CORE1","CORE1A","CORE1B","CORE2A","CORE2B"],
+  "required_invariants": ["INV-VEC-SCALAR-VECTOR-DISTINCTION","INV-VEC-MAGNITUDE-NONNEGATIVE","INV-VEC-DIRECTION-REFERENCE"],
+  "concepts": [
+    {"concept_id":"CON-VEC-SCALAR-VECTOR","statement":"A vector requires magnitude and spatial direction and obeys vector addition; a scalar does not.","why_required":"This distinguishes physical vectors from scalars before any vector algebra is attempted.","failure_if_omitted":"Directional wording may be mistaken for vector structure and later addition rules become incoherent.","authority_ref":0},
+    {"concept_id":"CON-VEC-DIRECTION-REFERENCE","statement":"Vector direction is meaningful only relative to a declared axis, bearing convention, or equivalent reference.","why_required":"Signs and angles cannot be interpreted without a declared directional reference.","failure_if_omitted":"The same vector description can be assigned incompatible signs or angles.","authority_ref":0}
+  ],
+  "relations": [{
+    "relation_id":"EQ-VEC-MAGNITUDE-NONNEGATIVE","expression":"|A| >= 0",
+    "symbols":[
+      {"symbol":"A","name":"vector A","physical_quantity":"GENERIC_VECTOR","domain":"EUCLIDEAN_VECTOR","unit_dimension":"INHERITS_QUANTITY","reference_frame_role":"DECLARED_REFERENCE_REQUIRED","sign_role":"VECTOR_DIRECTION_ENCODED"},
+      {"symbol":"|A|","name":"magnitude of A","physical_quantity":"VECTOR_MAGNITUDE","domain":"REAL_NONNEGATIVE","unit_dimension":"INHERITS_QUANTITY","reference_frame_role":"FRAME_INVARIANT_UNDER_AXIS_ROTATION","sign_role":"NONNEGATIVE_MAGNITUDE"}
+    ],
+    "conditions":["Euclidean vector magnitude"],"obligations":["EXPLAIN","INTERPRET","VERIFY"]
+  }],
+  "model_conditions": [{"condition_id":"COND-VEC-EUCLIDEAN","condition":"Vector is represented in a Euclidean spatial model.","physical_reason":"The ordinary magnitude and directed-segment interpretation assume Euclidean geometry.","required_for_relations":["EQ-VEC-MAGNITUDE-NONNEGATIVE"],"failure_consequence":"A different mathematical vector space may require a different norm or interpretation.","alternative_model_required":"GENERAL_VECTOR_SPACE_NORM"}],
+  "representations": [{"representation_id":"REP-VEC-DIRECTED-SEGMENT","representation_type":"VECTOR_DIAGRAM","semantic_geometry":"A directed segment encodes a start point, direction and length proportional to magnitude relative to a declared reference.","mandatory_elements":["arrowhead","vector label","direction reference"],"mandatory_labels":["vector name","reference direction"],"forbidden_omissions":["arrowhead","reference direction"],"must_not_imply":["the drawing scale itself proves the numerical magnitude","directional wording alone makes a quantity a vector"],"relation_bindings":["EQ-VEC-MAGNITUDE-NONNEGATIVE"],"concept_bindings":["CON-VEC-SCALAR-VECTOR","CON-VEC-DIRECTION-REFERENCE"],"verification_method":"Check arrow direction against the declared reference and keep magnitude nonnegative.","primitive_registry_refs":["PHYSICS_2D:ARROW","PHYSICS_2D:AXIS_REFERENCE"]}],
+  "reasoning_sequence": [
+    {"step_id":"RS-VEC-BASICS-CLASSIFY","sequence":1,"expert_action":"Classify the physical quantity as scalar or vector.","depends_on":[],"inferential_jump":"LOW","required_concepts":["CON-VEC-SCALAR-VECTOR"],"required_relations":[],"failure_if_skipped":"Scalar and vector operations may be mixed without justification."},
+    {"step_id":"RS-VEC-BASICS-REFERENCE","sequence":2,"expert_action":"Declare the direction reference before interpreting sign or angle.","depends_on":["RS-VEC-BASICS-CLASSIFY"],"inferential_jump":"MEDIUM","required_concepts":["CON-VEC-DIRECTION-REFERENCE"],"required_relations":[],"failure_if_skipped":"Direction and sign become ambiguous."},
+    {"step_id":"RS-VEC-BASICS-MAGNITUDE","sequence":3,"expert_action":"Separate the vector symbol from its nonnegative scalar magnitude.","depends_on":["RS-VEC-BASICS-REFERENCE"],"inferential_jump":"LOW","required_concepts":["CON-VEC-SCALAR-VECTOR"],"required_relations":["EQ-VEC-MAGNITUDE-NONNEGATIVE"],"failure_if_skipped":"Signed components may be confused with vector magnitude."}
+  ],
+  "required_transformations": [
+    {"transformation_id":"TR-VEC-BASICS-PICTURE-SYMBOL","from_mode":"DIRECTED_PHYSICAL_PICTURE","to_mode":"VECTOR_SYMBOL_AND_MAGNITUDE","target_core_roles":["CORE1A_DECLARATIVE_CONCEPT_CONSTRUCTION","CORE1B_GENERATIVE_RECONSTRUCTION"],"description":"Map a directed physical quantity to a vector symbol while keeping its magnitude as a separate nonnegative scalar."},
+    {"transformation_id":"TR-VEC-BASICS-SYMBOL-APPLICATION","from_mode":"VECTOR_SYMBOL_AND_DIRECTION_REFERENCE","to_mode":"PROBLEM_VECTOR_MODEL","target_core_roles":["CORE2A_DECLARATIVE_WORKED_PROBLEM","CORE2B_GENERATIVE_TRANSFER"],"description":"Use the declared direction reference to interpret the vector consistently inside a problem."}
+  ],
+  "misconceptions": [{"misconception_id":"MIS-VEC-DIRECTION-ENOUGH","incorrect_model":"Any quantity described with a direction is automatically a vector.","why_plausible":"Everyday language uses direction loosely and can hide whether the quantity obeys vector addition.","trigger_contexts":["speed with compass wording","rotation descriptions"],"required_counterexample":"A scalar speed can be reported while motion direction is separately described; the scalar itself still does not obey vector addition.","required_representation_repair":"Contrast a scalar label with a directed arrow that has a declared reference.","required_technical_repair":"Require vector addition behaviour and spatial transformation, not directional wording alone.","verification":"Test whether the quantity combines according to vector addition."}],
+  "verifications": ["UNITS","SIGN_DIRECTION","GEOMETRIC_CONSISTENCY"],
+  "problem_families": [
+    {"family_id":"PF-VEC-IDENTIFY","name":"Identify scalar versus vector quantities","recognition_cues":["quantity classification","magnitude versus direction"],"hidden_invariants":["INV-VEC-SCALAR-VECTOR-DISTINCTION"],"first_technical_move":"Identify whether vector addition and spatial direction are intrinsic to the quantity.","required_representation":"REP-VEC-DIRECTED-SEGMENT","typical_unknowns":["quantity class"],"fatal_errors":["treating directional wording as sufficient proof of vector character"],"required_capabilities":["CLASSIFY_VECTOR_SCALAR"],"transfer_dimensions":["MODEL_DISCRIMINATION"]},
+    {"family_id":"PF-VEC-POLAR-SPEC","name":"Specify vector magnitude and direction","recognition_cues":["magnitude plus bearing or angle","direction reference"],"hidden_invariants":["INV-VEC-DIRECTION-REFERENCE","INV-VEC-MAGNITUDE-NONNEGATIVE"],"first_technical_move":"Declare the direction reference before interpreting the angle.","required_representation":"REP-VEC-DIRECTED-SEGMENT","typical_unknowns":["direction","magnitude"],"fatal_errors":["using an angle without a reference axis"],"required_capabilities":["DECLARE_DIRECTION_REFERENCE"],"transfer_dimensions":["REPRESENTATION_CHANGE","SIGN_DIRECTION_REVERSAL"]}
+  ],
+  "difficulty_engineering":{"maturity":"ENGINEERING","provisional_badge":"MEDIUM","dimensions":{"prerequisite_depth":1,"element_interactivity":1,"inferential_jump_severity":1,"representation_translation":2,"model_discrimination":2,"sign_or_frame_sensitivity":2,"multi_step_dependency":1,"abstraction":2,"misconception_density":2,"synthesis":1}},
+  "falsification_cases":[{"test_id":"PHY-V3-FAIL-VEC-BASICS-01","authoring_defect":"Remove the direction-reference invariant from vector basics.","expected_failure_code":"PHY_GATE_REQUIRED_INVARIANT_MISSING"}]
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-technical-gate-binding-v3.schema.json",
+  "title": "Physics Bucket Technical Gate Binding v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "binding_id", "bucket_id", "primary_gate_id",
+    "engineering_request_ref", "engineering_manifest_ref",
+    "closure_receipt_id", "scope_custody", "scoped_closure_digest",
+    "aggregate_registry_custody"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "binding_id": {"type": "string", "pattern": "^TECH-GATE-BIND-[A-Z0-9-]+-V3$"},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "primary_gate_id": {"type": "string", "pattern": "^PHY-[A-Z0-9]+-[A-Z0-9-]+$"},
+    "engineering_request_ref": {"type": "string", "minLength": 1},
+    "engineering_manifest_ref": {"type": "string", "minLength": 1},
+    "closure_receipt_id": {"type": "string", "pattern": "^ENG-CLOSURE-[A-Z0-9-]+$"},
+    "scope_custody": {"const": "SCOPED_CLOSURE_DIGEST"},
+    "scoped_closure_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "aggregate_registry_custody": {"const": "PROVENANCE_ONLY"},
+    "notes": {"type": "string"}
+  }
+}

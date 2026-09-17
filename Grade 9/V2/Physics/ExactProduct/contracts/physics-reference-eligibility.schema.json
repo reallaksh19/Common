@@ -1,0 +1,20 @@
+{
+  "$id":"physics-reference-eligibility.schema.json",
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties":false,
+  "properties":{
+    "artifact_sha256_refs":{"items":{"pattern":"^[a-f0-9]{64}$","type":"string"},"minItems":2,"type":"array","uniqueItems":true},
+    "blocking_reasons":{"items":{"type":"string"},"type":"array","uniqueItems":true},
+    "candidate_sha256":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "eligibility_id":{"minLength":1,"type":"string"},
+    "input_digest":{"pattern":"^[a-f0-9]{64}$","type":"string"},
+    "mode":{"enum":["REAL_RELEASE","TEST_ONLY"]},
+    "reference_read_attempted":{"type":"boolean"},
+    "release_evidence_eligible":{"type":"boolean"},
+    "schema_version":{"const":"1.0.0"},
+    "status":{"enum":["BLOCKED_HUMAN_QUALITY_GATES","READY_FOR_REFERENCE_COMPARISON"]},
+    "subject":{"const":"PHYSICS"}
+  },
+  "required":["eligibility_id","schema_version","subject","candidate_sha256","artifact_sha256_refs","mode","status","blocking_reasons","reference_read_attempted","release_evidence_eligible","input_digest"],
+  "type":"object"
+}

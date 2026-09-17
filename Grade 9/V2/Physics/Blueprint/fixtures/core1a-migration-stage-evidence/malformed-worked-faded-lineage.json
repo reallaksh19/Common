@@ -1,0 +1,27 @@
+{
+  "schema_version": "2.0.0",
+  "receipt_id": "SYNTH-C1A-MALFORMED-LINEAGE",
+  "bucket_id": "M2D-SBA-04",
+  "stage": "1A9_WORKED_FADED_INDEPENDENT_PLAN",
+  "evidence_kind": "WORKED_TO_FADED_LINEAGE",
+  "evidence_state": "PRESENT",
+  "source_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json"
+  ],
+  "artifact_refs": ["LIN-BAD"],
+  "evidence_refs": [
+    "fixtures/core1a-migration-stage-evidence/synthetic-source.json#worked_to_faded_lineage"
+  ],
+  "proof": {
+    "lineages": [
+      {
+        "lineage_id": "LIN-BAD",
+        "worked_ref": "WORKED-1",
+        "faded_ref": "FADED-1",
+        "independent_ref": "INDEPENDENT-1",
+        "fading_changes": ["remove-explicit-step-labels"]
+      }
+    ]
+  },
+  "unresolved_requirements": []
+}

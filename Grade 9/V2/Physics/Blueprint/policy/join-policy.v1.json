@@ -1,0 +1,15 @@
+{
+  "policy_id": "PHY-JOIN-v1",
+  "schema_version": "1.0.0",
+  "pass_states": ["CONFIRMED", "REFINED"],
+  "unresolved_states": ["MISSING", "UNSUPPORTED", "CONTRADICTED", "OUT_OF_SCOPE", "UNKNOWN"],
+  "required_unresolved_disposition": "BLOCK",
+  "non_blocking_unresolved_disposition": "HOLD",
+  "pass_disposition": "READY_FOR_ASSIMILATION",
+  "coverage_rule": "EVERY_CORE2_DEMAND_CLAIM_EXACTLY_ONCE",
+  "confirmed_or_refined_requires_semantic_grounding": true,
+  "ready_item_requires_assimilation_obligations": true,
+  "unresolved_item_requires_issue_record": true,
+  "critical_conflict_blocks_core1a": true,
+  "absence_or_conflict_may_not_be_rewritten_as_low_importance": true
+}

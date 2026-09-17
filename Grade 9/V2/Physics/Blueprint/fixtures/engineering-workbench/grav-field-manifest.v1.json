@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_id": "ENG-MAN-GRAV-FIELD-V1",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "scope_kind": "SUBTOPIC",
+  "scope_ref": "PHY-GRAV-FIELD",
+  "topic_id": "PHY-GRAV",
+  "title": "Research-level gravitational field engineering scope",
+  "registry_ref": "policy/physics-technical-engineering-gates.v2.json",
+  "gate_extension_refs": ["policy/physics-technical-engineering-gates.gravity.v1.json"],
+  "required_gate_ids": ["PHY-GRAV-FIELD"],
+  "optional_gate_ids": [],
+  "out_of_scope_gate_ids": ["PHY-GRAV-POTENTIAL","PHY-GRAV-ENERGY","PHY-GRAV-ORBIT"],
+  "research_dossier_ref": "fixtures/engineering-workbench/grav-field-research-dossier.v1.json",
+  "claim_ledger_ref": "fixtures/engineering-workbench/grav-field-claim-ledger.v1.json",
+  "source_item_status": "INDEPENDENT_OF_TECHNICAL_GATE",
+  "downstream_consumers": ["CCU","CDAU","SDU","LAU","TTU","PUBLICATION"],
+  "notes": "One direct gate is declared. The Workbench must merge the Gravity extension, validate it with the canonical production gate validator, and derive all Physics prerequisites transitively."
+}

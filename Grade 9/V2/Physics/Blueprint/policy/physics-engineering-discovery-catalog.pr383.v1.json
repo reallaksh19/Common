@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0.0",
+  "catalog_id": "PHYSICS-ENGINEERING-DISCOVERY-PR383-V1",
+  "source_snapshot": {
+    "repository": "reallaksh19/Common",
+    "pr_number": 383,
+    "head_sha": "e92481f6e03a8bb49a55f568b03cba7c12fb942a",
+    "declared_subtopic_count": 43,
+    "role": "DISCOVERY_COVERAGE_INPUT_NOT_READINESS_AUTHORITY",
+    "source_refs": [
+      "Grade 9/V2/Physics/Blueprint/PHYSICS_TECHNICAL_ENGINEERING_GATES.md",
+      "Grade 9/V2/Physics/Blueprint/policy/physics-technical-engineering-gates.v1.json"
+    ]
+  },
+  "control_plane": {
+    "canonical_registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+    "readiness_rule": "DERIVED_BY_PRODUCTION_V3_VALIDATOR",
+    "case_specific_overrides": "PROHIBITED"
+  },
+  "stress_test_policy": {
+    "case_artifacts_role": "STRESS_TEST_ONLY",
+    "may_define_gate_logic": false,
+    "may_promote_source_custody": false
+  },
+  "discovered_subtopics": [
+    {"discovery_gate_id":"PHY-VEC-BASICS","curriculum":{"grade":11,"chapter":"Ch 3"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-VEC-BASICS"]},
+    {"discovery_gate_id":"PHY-VEC-ADD-SUB","curriculum":{"grade":11,"chapter":"Ch 3"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-VEC-ADD-SUB"]},
+    {"discovery_gate_id":"PHY-VEC-COMPONENTS","curriculum":{"grade":11,"chapter":"Ch 3"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-VEC-COMPONENTS"]},
+    {"discovery_gate_id":"PHY-NLM-INTERACTION","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-INTERACTION"]},
+    {"discovery_gate_id":"PHY-NLM-FBD","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-FBD"]},
+    {"discovery_gate_id":"PHY-NLM-FIRST-LAW","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-FIRST-LAW"]},
+    {"discovery_gate_id":"PHY-NLM-SECOND-LAW","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-SECOND-LAW"]},
+    {"discovery_gate_id":"PHY-NLM-THIRD-LAW","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-THIRD-LAW"]},
+    {"discovery_gate_id":"PHY-NLM-NORMAL","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-NORMAL"]},
+    {"discovery_gate_id":"PHY-NLM-TENSION","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-TENSION"]},
+    {"discovery_gate_id":"PHY-NLM-FRICTION","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-FRICTION"]},
+    {"discovery_gate_id":"PHY-NLM-CONNECTED","curriculum":{"grade":11,"chapter":"Ch 5"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-NLM-CONNECTED"]},
+    {"discovery_gate_id":"PHY-KIN-1D-MOTION","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-KIN-MOTION-GRAPHS","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-KIN-CIRCULAR-UNIFORM","curriculum":{"grade":9,"chapter":"Ch 8"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-FORCE-NEWTON-LAWS","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-NLM-INTERACTION","PHY-NLM-FBD","PHY-NLM-FIRST-LAW","PHY-NLM-SECOND-LAW","PHY-NLM-THIRD-LAW"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-FORCE-NEWTON-LAWS.v1.json"},
+    {"discovery_gate_id":"PHY-FORCE-MOMENTUM-IMPULSE","curriculum":{"grade":9,"chapter":"Ch 9"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-GRAV-UNIVERSAL-LAW","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-GRAV-FORCE","PHY-GRAV-FIELD"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-GRAV-UNIVERSAL-LAW.v1.json"},
+    {"discovery_gate_id":"PHY-GRAV-FREE-FALL","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MAPPED_V3","v3_gate_ids":["PHY-GRAV-FORCE","PHY-GRAV-FIELD","PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-VELOCITY-EVOLUTION","PHY-M2D-SAME-HEIGHT-VELOCITY"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-GRAV-FREE-FALL.v1.json"},
+    {"discovery_gate_id":"PHY-FLUID-BUOYANCY-ARCHIMEDES","curriculum":{"grade":9,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-WORK-ENERGY-POWER","curriculum":{"grade":9,"chapter":"Ch 11"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-WORK-ENERGY-POWER"]},
+    {"discovery_gate_id":"PHY-ENERGY-CONSERVATION-LAW","curriculum":{"grade":9,"chapter":"Ch 11"},"jee_tier":"BOTH","disposition":"EXACT_V3_ID","v3_gate_ids":["PHY-ENERGY-CONSERVATION-LAW"]},
+    {"discovery_gate_id":"PHY-SOUND-LONGITUDINAL-WAVES","curriculum":{"grade":9,"chapter":"Ch 12"},"jee_tier":"NOT_IN_JEE","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-OPTICS-REFLECTION-MIRRORS","curriculum":{"grade":10,"chapter":"Ch 10"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-OPTICS-REFRACTION-LENSES","curriculum":{"grade":10,"chapter":"Ch 10"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-OPTICS-HUMAN-EYE","curriculum":{"grade":10,"chapter":"Ch 11"},"jee_tier":"NOT_IN_JEE","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-OPTICS-DISPERSION-SCATTERING","curriculum":{"grade":10,"chapter":"Ch 11"},"jee_tier":"NOT_IN_JEE","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-ELEC-CURRENT-OHM","curriculum":{"grade":10,"chapter":"Ch 12"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-ELEC-POWER-JOULE","curriculum":{"grade":10,"chapter":"Ch 12"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-MAG-FIELD-LORENTZ","curriculum":{"grade":10,"chapter":"Ch 13"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-MAG-INDUCTION-FARADAY","curriculum":{"grade":10,"chapter":"Ch 13"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-KIN-2D-PROJECTILE","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-M2D-PROJECTILE-COMPONENTS","PHY-M2D-SHARED-CLOCK","PHY-M2D-VELOCITY-EVOLUTION"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-KIN-2D-PROJECTILE.v1.json"},
+    {"discovery_gate_id":"PHY-KIN-CIRCULAR-DYNAMICS","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-KIN-RELATIVE-2D","curriculum":{"grade":11,"chapter":"Ch 4"},"jee_tier":"BOTH","disposition":"MAPPED_V3","v3_gate_ids":["PHY-M2D-RELATIVE-VELOCITY"],"mapping_review_ref":"provenance/pr383/mapping-reviews/PHY-KIN-RELATIVE-2D.v1.json"},
+    {"discovery_gate_id":"PHY-WEP-VARIABLE-FORCE","curriculum":{"grade":11,"chapter":"Ch 6"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-SYS-CENTRE-MASS","curriculum":{"grade":11,"chapter":"Ch 7"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-ROT-RIGID-BODY","curriculum":{"grade":11,"chapter":"Ch 7"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-ROT-ANGULAR-MOMENTUM","curriculum":{"grade":11,"chapter":"Ch 7"},"jee_tier":"JEE_ADVANCED","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-GRAV-PLANETARY-ORBITS","curriculum":{"grade":11,"chapter":"Ch 8"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-SOLID-ELASTICITY-HOOKE","curriculum":{"grade":11,"chapter":"Ch 9"},"jee_tier":"JEE_MAINS","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-FLUID-BERNOULLI-EQUATION","curriculum":{"grade":11,"chapter":"Ch 10"},"jee_tier":"JEE_ADVANCED","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-THERMO-FIRST-SECOND-LAW","curriculum":{"grade":11,"chapter":"Ch 12"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]},
+    {"discovery_gate_id":"PHY-OSC-SHM-WAVES","curriculum":{"grade":11,"chapter":"Ch 14"},"jee_tier":"BOTH","disposition":"MIGRATION_REQUIRED","v3_gate_ids":[]}
+  ],
+  "v3_native_or_refined_gate_ids": [
+    "PHY-M2D-VELOCITY-DIRECTION",
+    "PHY-M2D-SPEED-MAGNITUDE",
+    "PHY-M2D-PERPENDICULAR-VELOCITY",
+    "PHY-M2D-SPEED-AT-HEIGHT",
+    "PHY-M2D-MOVING-LAUNCHER"
+  ]
+}

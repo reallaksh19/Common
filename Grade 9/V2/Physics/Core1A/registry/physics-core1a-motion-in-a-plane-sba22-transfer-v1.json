@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "chapter_id": "PHY-M2D-SBA22-TRANSFER-v1",
+  "purpose": "Problem-family assimilation routines for M2D-SBA-22 after concept teaching and before Revised Core (2) transfer.",
+  "bucket_id": "M2D-SBA-22",
+  "prior_knowledge_pct": 20,
+  "transfer_routines": [
+    {
+      "routine_id": "M2D-SBA-22-R1",
+      "title": "Timed coordinate, then continue the flight",
+      "core2_questions": ["Q05"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["wall or point reached at a stated time", "both x and y coordinates are known at that event", "question asks about a later part of the same flight"],
+      "method_steps": [
+        {"step":1,"title":"Recover the horizontal launch component","learner_move":"Use u_x=x_p/t_p."},
+        {"step":2,"title":"Recover the vertical launch component","learner_move":"Use y_p=u_y t_p-1/2 g t_p^2 at the same event time."},
+        {"step":3,"title":"Build the total flight clock when landing is same-height","learner_move":"Use T=2u_y/g."},
+        {"step":4,"title":"Continue the same flight after the event","learner_move":"Use T-t_p for remaining time and unchanged u_x for the remaining horizontal distance."}
+      ],
+      "independent_practice": {"prompt":"At t=1.5 s a projectile is at x=54 m and y=18.75 m. It later lands at the launch level. Take g=10 m/s^2. How far horizontally does it travel after that event before landing?","answer_check":"u_x=36 m/s; u_y=20 m/s; T=4 s; remaining time=2.5 s; remaining horizontal distance=90 m."},
+      "hint_ladder": [
+        {"rung":"H1","label":"Key physics","prompt":"The marked point is an intermediate event. Its x, y and time reveal the launch components."},
+        {"rung":"H2","label":"Representation","prompt":"Use 54=u_x(1.5) and 18.75=u_y(1.5)-5(1.5)^2."},
+        {"rung":"H3","label":"First move","prompt":"Start with u_x=36 m/s, then solve the vertical event equation."}
+      ],
+      "readiness_checks": ["recognise an intermediate timed-coordinate event", "write x and y at one shared event time", "recover u_x and u_y without H2/H3", "find T and continue the same flight using T-t_p"],
+      "release_rule": "Release Q05 after 4/4 readiness without H2/H3."
+    },
+    {
+      "routine_id": "M2D-SBA-22-R2",
+      "title": "Time before P plus time after P",
+      "core2_questions": ["Q26"],
+      "release_prerequisite_buckets": [],
+      "recognition_signals": ["time from launch to point P is given", "time from P to same-height landing is also given", "height or state at P is asked"],
+      "method_steps": [
+        {"step":1,"title":"Build the total flight time","learner_move":"Add the time to P and the time from P to landing."},
+        {"step":2,"title":"Recover the initial vertical component","learner_move":"Use u_y=gT/2 for same-height landing."},
+        {"step":3,"title":"Return to the event time from launch","learner_move":"Use t=t_to_P, not the remaining time."},
+        {"step":4,"title":"Evaluate the event state and check it","learner_move":"Use y=u_y t-1/2 gt^2 and compare t with T/2 to see whether P is before or after the apex."}
+      ],
+      "independent_practice": {"prompt":"A projectile reaches P 2 s after launch and lands back on the launch level 4 s after passing P. Take g=10 m/s^2. Find the height of P above the launch level.","answer_check":"T=6 s; u_y=30 m/s; y(P)=40 m."},
+      "hint_ladder": [
+        {"rung":"H1","label":"Key physics","prompt":"Both stated durations belong to one launch-to-landing flight. Build total T first."},
+        {"rung":"H2","label":"Representation","prompt":"T=2+4=6 s, so u_y=gT/2. Then use y=u_y t-1/2 gt^2 at t=2 s."},
+        {"rung":"H3","label":"First move","prompt":"Start with u_y=30 m/s."}
+      ],
+      "readiness_checks": ["recognise a time-partition event question", "add the two intervals to build T", "obtain u_y=gT/2 without H2/H3", "evaluate y at the correct launch-based event time and sense-check against T/2"],
+      "release_rule": "Release Q26 after 4/4 readiness without H2/H3."
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"physics-core1b-authority-release.schema.json",
+  "type":"object","additionalProperties":false,
+  "required":["schema_version","authority_ref","release_state","provenance_class","topic_id","bucket_id","capability_id","problem_family_refs","model_validity_required","explanation_required","allowed_atom_refs","authority_digest"],
+  "properties":{
+    "schema_version":{"const":"1.0.0"},
+    "authority_ref":{"type":"string","minLength":1},
+    "release_state":{"const":"RELEASED"},
+    "provenance_class":{"enum":["PROCESS_GOLDEN","REPOSITORY_PRODUCTION"]},
+    "topic_id":{"type":"string","minLength":1},
+    "bucket_id":{"type":"string","minLength":1},
+    "capability_id":{"type":"string","minLength":1},
+    "problem_family_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "model_validity_required":{"type":"boolean"},
+    "explanation_required":{"type":"boolean"},
+    "allowed_atom_refs":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "authority_digest":{"type":"string","pattern":"^[0-9a-f]{64}$"}
+  }
+}

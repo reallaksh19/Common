@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "bucket_id": "M2D-SBA-22",
+  "learner_profile": {"prior_knowledge_pct":20,"intrinsic_difficulty":"D3","pathway":"FOUNDATION_PATH"},
+  "source_inputs": {
+    "sba_registry":"registry/physics-core1a-motion-in-a-plane-sba-v1.json",
+    "publication_index":"registry/physics-core1a-motion-in-a-plane-sba-publication-index-v1.json",
+    "core2_linkage":"registry/physics-core1a-core2-linkage.json",
+    "profile_registry":"registry/physics-core1a-motion-in-a-plane-sba22-20pct-v1.json",
+    "transfer_registry":"registry/physics-core1a-motion-in-a-plane-sba22-transfer-v1.json"
+  },
+  "primary_questions": ["Q05","Q26"],
+  "question_release": [
+    {"question_id":"Q05","status":"RELEASED","routine_id":"M2D-SBA-22-R1","release_prerequisite_buckets":[]},
+    {"question_id":"Q26","status":"RELEASED","routine_id":"M2D-SBA-22-R2","release_prerequisite_buckets":[]}
+  ],
+  "question_load": {"count":2,"class":"LOW","minimum_transfer_families":2},
+  "phase_gates": [
+    {"gate":"G0_INDEX_SYNC","status":"PASS","evidence":["Publication index contains M2D-SBA-22 as the current active row after completed SBA-21."]},
+    {"gate":"G1_SOURCE_AND_CORE2_AUDIT","status":"PASS","evidence":["Source boundary is practice-driven; Q05 and Q26 prompt, solution and hint ladders were audited against Revised Core (2) v2."]},
+    {"gate":"G2_DIFFICULTY_AND_READINESS","status":"PASS","evidence":["D3 concept with 20% foundation path; two primary questions form two distinct timed-event transfer families."]},
+    {"gate":"G3_LEARNING_ATOM_DECOMPOSITION","status":"PASS","evidence":["Eight learning atoms cover event snapshots, launch-state recovery, clock continuity, total-flight reconstruction, event height and family choice."]},
+    {"gate":"G4_CORE2_HINT_PRETEACH_AUDIT","status":"PASS","evidence":["Every Q05/Q26 H1/H2/H3 reveal maps to an earlier learning atom plus worked and independent practice."]},
+    {"gate":"G5_PROBLEM_FAMILY_ASSIMILATION","status":"PASS","evidence":["R1 timed-coordinate continuation and R2 time-partition reconstruction are separated and independently practised."]},
+    {"gate":"G6_PAGE_PLAN","status":"PASS","evidence":["17-page professional-lossless plan preserves staged graphics, two worked examples, two independent-practice/hint/readiness sequences, mixed practice and final family chooser."]},
+    {"gate":"G7_RENDER_AND_VISUAL_AUDIT","status":"PASS","evidence":["17 pages rendered; worked-example figure bounds and time-partition labels were corrected; PDF preflight passes."]},
+    {"gate":"G8_READINESS_AND_TRANSFER_AUDIT","status":"PASS","evidence":["Each released family has independent practice before next-page H1/H2/H3 and a recognise/represent/first-move/finish readiness gate."]},
+    {"gate":"G9_MACHINE_QA_AND_HANDOFF","status":"PASS","evidence":["Dedicated SBA22 test, full Core1A workflow and full Physics P-G to P-L chain all passed before advancing build state."]}
+  ],
+  "learning_atoms": ["M2D-SBA-22A","M2D-SBA-22B","M2D-SBA-22C","M2D-SBA-22D","M2D-SBA-22E","M2D-SBA-22F","M2D-SBA-22G","M2D-SBA-22H"],
+  "transfer_routines": ["M2D-SBA-22-R1","M2D-SBA-22-R2"],
+  "publication_plan": {
+    "first_surface":"SBA_PUBLICATION_INDEX",
+    "macro_order":["SBA_INDEX","FOUNDATION_PRETRAINING","CONCEPT_BUILD","PICTORIAL_STAGES","PICTURE_TO_MATHS","MISCONCEPTION","WATCH_ONE","COMPLETE_ONE","PROBLEM_FAMILY_ROUTINES","INDEPENDENT_PRACTICE","HINTS","READINESS","CORE2_TRANSFER_SUMMARY"],
+    "independent_practice_policy":"ATTEMPT_BEFORE_HINTS",
+    "hint_delivery_policy":"NEXT_PAGE",
+    "readiness_gate_policy":"RECOGNISE_REPRESENT_FIRST_MOVE_FINISH"
+  },
+  "qa": {"schema_valid":true,"primary_question_coverage_exact":true,"hint_preteach_complete":true,"visual_audit_complete":true,"pdf_preflight_complete":true,"ci_passed":true},
+  "handoff": {
+    "status":"COMPLETE",
+    "expected_pdf_name":"M2D-SBA-22-professional-textbook-lossless-v1.pdf",
+    "expected_montage_name":"M2D-SBA-22-professional-textbook-lossless-v1-montage.jpg",
+    "next_active_bucket":"M2D-SBA-23",
+    "notes":[
+      "Professional-lossless presentation is mandatory; learner heading hierarchy remains restrained.",
+      "The source basis is Level-I practice rather than a separate timed-events theory section; Core1A therefore assembles the bridge from earlier authorised component and same-height ideas.",
+      "Q05 and Q26 are both released only after independent practice and readiness without H2/H3.",
+      "Next active bucket is M2D-SBA-23 after CI-backed handoff."
+    ]
+  }
+}

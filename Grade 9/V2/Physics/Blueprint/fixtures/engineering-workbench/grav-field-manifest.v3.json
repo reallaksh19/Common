@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "manifest_id": "ENG-MAN-GRAV-FIELD-V3",
+  "request_id": "ENG-REQ-GRAV-FIELD-V1",
+  "scope_kind": "SUBTOPIC",
+  "scope_ref": "PHY-GRAV-FIELD",
+  "topic_id": "PHY-GRAV",
+  "title": "Research-level gravitational field engineering scope",
+  "registry_ref": "GENERATED:physics-technical-engineering-gates.v3",
+  "required_gate_ids": ["PHY-GRAV-FIELD"],
+  "optional_gate_ids": [],
+  "out_of_scope_gate_ids": ["PHY-GRAV-POTENTIAL","PHY-GRAV-ENERGY","PHY-GRAV-ORBIT"],
+  "research_dossier_ref": "fixtures/engineering-workbench/grav-field-research-dossier.v1.json",
+  "claim_ledger_ref": "fixtures/engineering-workbench/grav-field-claim-ledger.v1.json",
+  "source_item_status": "INDEPENDENT_OF_TECHNICAL_GATE",
+  "downstream_consumers": ["CCU","CDAU","SDU","LAU","TTU","PUBLICATION"],
+  "notes": "One direct Gravity field gate is declared. The canonical v3 Workbench must derive the reviewed gravitational-force child plus all Vector/NLM prerequisites transitively. Potential, energy and orbit remain explicitly out of scope."
+}

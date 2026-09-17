@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "physics-core2a-source-item.schema.json",
+  "title": "Physics Core2A Source Item",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "item_id",
+    "schema_version",
+    "subject",
+    "lane",
+    "purpose",
+    "question_ref",
+    "bucket_id",
+    "problem_family_ref",
+    "source_snapshot",
+    "teaching_release",
+    "learner_support",
+    "answer_path",
+    "provenance"
+  ],
+  "properties": {
+    "item_id": {"type": "string", "pattern": "^PHY-C2A-SRC-"},
+    "schema_version": {"const": "1.0.0"},
+    "subject": {"const": "PHYSICS"},
+    "lane": {"const": "SOURCE_CORE2"},
+    "purpose": {
+      "enum": ["FIRST_STUDY", "PRACTICE", "REVISION", "COMPETITIVE_EXAM"]
+    },
+    "question_ref": {"type": "string", "minLength": 1},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "problem_family_ref": {"type": "string", "pattern": "^PF-"},
+    "source_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_body",
+        "figure_semantics",
+        "source_contract_ref",
+        "answer_contract_ref"
+      ],
+      "properties": {
+        "source_body": {"type": "object"},
+        "figure_semantics": {"type": "array", "items": {"type": "string"}},
+        "source_contract_ref": {"type": "string", "minLength": 1},
+        "answer_contract_ref": {"type": "string", "minLength": 1}
+      }
+    },
+    "teaching_release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "required_capability_refs", "receipt_refs"],
+      "properties": {
+        "status": {"const": "RELEASED"},
+        "required_capability_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        },
+        "receipt_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "learner_support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "try_it_first",
+        "small_clue",
+        "bigger_clue",
+        "how_do_i_start",
+        "think_it_through",
+        "quick_check"
+      ],
+      "properties": {
+        "try_it_first": {"const": true},
+        "small_clue": {"type": "string", "minLength": 1},
+        "bigger_clue": {"type": "string", "minLength": 1},
+        "how_do_i_start": {"type": "string", "minLength": 1},
+        "think_it_through": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "quick_check": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "answer_path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["full_working", "verification"],
+      "properties": {
+        "full_working": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "verification": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "learner_label", "source_locator"],
+      "properties": {
+        "origin": {"const": "SOURCE_CORE2"},
+        "learner_label": {"const": "WHERE THIS QUESTION CAME FROM"},
+        "source_locator": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": "2.0.0",
+  "pilot_id": "PHY-BP-SELF-HELP-THREE-TOPIC-FALSIFICATION-V2",
+  "purpose": "Falsify the refined difficulty-vs-knowledge architecture before chapter-wide rollout.",
+  "release_status": "DESIGN_PILOT_NOT_PRODUCTION_AUTHORITY",
+  "topics": [
+    {
+      "topic_id": "PROJECTILE_VERTICAL_EVENT",
+      "core1ab_bucket_difficulty_badge": "HARD",
+      "core2_adaptation_input": {
+        "selection_basis": "KNOWLEDGE_PERCENT",
+        "student_knowledge_pct": 20
+      },
+      "repo_binding": "M2D-SBA-04 / PHY-CAP-PROJECTILE-VERTICAL-EVENT",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE",
+      "must_falsify": [
+        "Core1A/Core1B depth changes because learner knowledge percentage changes",
+        "Core2A accepts missing knowledge percent without owner override",
+        "Core2B reveals the model before an attempt"
+      ]
+    },
+    {
+      "topic_id": "MOVING_LAUNCHER_RELATIVE_VELOCITY",
+      "core1ab_bucket_difficulty_badge": "HARD",
+      "core2_adaptation_input": {
+        "selection_basis": "OWNER_OVERRIDE",
+        "student_knowledge_pct": null,
+        "owner_override": {
+          "owner_ref": "PILOT_OWNER",
+          "reason": "Knowledge percentage unavailable for pilot learner.",
+          "support_band": "GUIDED"
+        }
+      },
+      "repo_binding": "M2D-SBA-23 / PHY-CAP-MOVING-LAUNCHER-GALILEAN",
+      "source_status": "PROCESS_GOLDEN_AVAILABLE_EXACT_Q15_HELD",
+      "must_falsify": [
+        "Owner override expands legal transfer scope",
+        "Generated practice is confused with frozen Q15",
+        "Core1B becomes a chatbot transcript"
+      ]
+    },
+    {
+      "topic_id": "NEWTON_MODEL_SELECTION",
+      "core1ab_bucket_difficulty_badge": "MEDIUM",
+      "core2_adaptation_input": {
+        "selection_basis": "KNOWLEDGE_PERCENT",
+        "student_knowledge_pct": 50
+      },
+      "repo_binding": "NONE_YET",
+      "source_status": "DESIGN_ONLY_REQUIRES_FUTURE_CORE1_CORE2_BINDING",
+      "must_falsify": [
+        "The grammar depends specifically on projectile motion",
+        "Medium bucket omits required research-led representation planning",
+        "Core2A changes source wording instead of support"
+      ]
+    }
+  ],
+  "pass_criteria": {
+    "core1ab_depth_driven_only_by_bucket_difficulty": true,
+    "core1ab_always_subtopic_bucket_wise": true,
+    "core2ab_requires_knowledge_or_owner_override": true,
+    "owner_override_does_not_expand_legality": true,
+    "core2_source_immutability_preserved": true,
+    "runtime_authority_guards_unchanged": true
+  }
+}

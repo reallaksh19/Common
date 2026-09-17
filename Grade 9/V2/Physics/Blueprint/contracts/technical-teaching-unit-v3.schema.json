@@ -1,0 +1,232 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/physics/technical-teaching-unit-v3.schema.json",
+  "title": "Physics Technical Teaching Unit v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "ttu_id", "ttu_family", "task_scale", "bucket_id", "problem_family_id",
+    "authority_binding", "semantic_target", "canonical_expert_state", "learner_transformation",
+    "fixed_help", "canonical_reveal", "verification_contract", "repair_contract", "layer_realizations", "layout_contract"
+  ],
+  "properties": {
+    "schema_version": {"const": "3.0.0"},
+    "ttu_id": {"type": "string", "minLength": 1},
+    "ttu_family": {"enum": ["CONCEPT_TTU", "PROBLEM_TTU"]},
+    "task_scale": {"enum": ["MICRO", "SUBSTANTIVE"]},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "problem_family_id": {"type": "string", "minLength": 1},
+    "authority_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authority_ref", "authority_class", "may_author_new_semantics"],
+      "properties": {
+        "authority_ref": {"type": "string", "minLength": 1},
+        "authority_class": {"enum": ["CORE1_RELEASED_SEMANTICS", "CORE1A_RELEASED_TEACHING", "CORE2_FROZEN_SOURCE", "CORE2A_LEGAL_ITEM", "PROCESS_GOLDEN"]},
+        "may_author_new_semantics": {"const": false}
+      }
+    },
+    "semantic_target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["capability_id", "learning_atom_ids", "inferential_jump", "success_claim"],
+      "properties": {
+        "capability_id": {"type": "string", "minLength": 1},
+        "learning_atom_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "inferential_jump": {"type": "string", "minLength": 1},
+        "success_claim": {"type": "string", "minLength": 1}
+      }
+    },
+    "canonical_expert_state": {
+      "type": "object", "additionalProperties": false,
+      "required": ["setup", "representation", "governing_relations", "reasoning_state_graph", "result_or_conclusion"],
+      "properties": {
+        "setup": {
+          "type": "object", "additionalProperties": false,
+          "required": ["knowns", "unknowns", "conditions"],
+          "properties": {
+            "knowns": {"type": "array", "items": {"type": "string"}},
+            "unknowns": {"type": "array", "items": {"type": "string"}},
+            "conditions": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "representation": {
+          "type": "object", "additionalProperties": false,
+          "required": ["representation_id", "type", "elements", "bindings"],
+          "properties": {
+            "representation_id": {"type": "string", "minLength": 1},
+            "type": {"enum": ["VECTOR_OR_COMPONENT_CONSTRUCTION", "FREE_BODY_DIAGRAM", "GEOMETRIC_CONSTRUCTION", "TRAJECTORY_WITH_MEANINGFUL_AXES", "PHYSICAL_GRAPH", "EVENT_TIMELINE", "STATE_TRANSITION_DIAGRAM", "REFERENCE_FRAME_OR_COORDINATE_DIAGRAM", "PHYSICAL_VARIABLE_TABLE", "EQUATION_DEPENDENCY_MAP", "MODEL_COMPARISON"]},
+            "elements": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["element_id", "semantic_type", "canonical_content", "reasoning_role", "required_for_solution"],
+                "properties": {
+                  "element_id": {"type": "string", "minLength": 1},
+                  "semantic_type": {"enum": ["OBJECT", "FRAME_LABEL", "AXIS_OR_SIGN", "VECTOR", "VECTOR_DIRECTION", "VECTOR_MAGNITUDE", "COMPONENT", "FORCE", "EVENT_MARKER", "GRAPH_AXIS", "GRAPH_FEATURE", "GEOMETRIC_CONSTRAINT", "EQUATION_TERM", "MODEL_CONDITION", "BOUNDARY_CONDITION", "INTERMEDIATE_STATE", "MODEL_CHOICE", "ERROR_STATE"]},
+                  "canonical_content": {"type": "string", "minLength": 1},
+                  "reasoning_role": {"type": "string", "minLength": 1},
+                  "required_for_solution": {"type": "boolean"}
+                }
+              }
+            },
+            "bindings": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["element_id", "relation_or_state_id", "binding_reason"],
+                "properties": {
+                  "element_id": {"type": "string", "minLength": 1},
+                  "relation_or_state_id": {"type": "string", "minLength": 1},
+                  "binding_reason": {"type": "string", "minLength": 1}
+                }
+              }
+            }
+          }
+        },
+        "governing_relations": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["relation_id", "expression", "conditions"],
+            "properties": {
+              "relation_id": {"type": "string", "minLength": 1},
+              "expression": {"type": "string", "minLength": 1},
+              "conditions": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "reasoning_state_graph": {
+          "type": "array", "minItems": 2,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["state_id", "action", "input_ids", "output"],
+            "properties": {
+              "state_id": {"type": "string", "minLength": 1},
+              "action": {"type": "string", "minLength": 1},
+              "input_ids": {"type": "array", "items": {"type": "string"}},
+              "output": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "result_or_conclusion": {"type": "string", "minLength": 1}
+      }
+    },
+    "learner_transformation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["required", "modes", "changes_reasoning_state", "observable_product", "targets", "semantic_omissions", "success_criteria", "anti_triviality"],
+      "properties": {
+        "required": {"const": true},
+        "modes": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"enum": ["PREDICTION", "COMPLETION", "GENERATION", "SELECTION", "DISCRIMINATION", "DIAGNOSIS", "DERIVATION_CONNECTION", "VERIFICATION", "TRANSFER"]}
+        },
+        "changes_reasoning_state": {"const": true},
+        "observable_product": {"type": "string", "minLength": 1},
+        "targets": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "semantic_omissions": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["element_id", "omission_kind", "pedagogical_reason"],
+            "properties": {
+              "element_id": {"type": "string", "minLength": 1},
+              "omission_kind": {"enum": ["REMOVE_LABEL", "REMOVE_DIRECTION", "REMOVE_MAGNITUDE", "REMOVE_COMPONENT", "REMOVE_EQUATION_TERM", "REMOVE_AXIS_OR_SIGN", "REMOVE_EVENT_MARKER", "REMOVE_FORCE", "REMOVE_GRAPH_FEATURE", "REMOVE_GEOMETRIC_CONSTRAINT", "REMOVE_MODEL_SELECTION", "REMOVE_BOUNDARY_CONDITION", "REMOVE_INTERMEDIATE_STEP"]},
+              "pedagogical_reason": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        "success_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "anti_triviality": {
+          "type": "object", "additionalProperties": false,
+          "required": ["cosmetic_blank_allowed", "arbitrary_number_blank_allowed", "answer_copy_task_allowed", "learner_action_targets_capability"],
+          "properties": {
+            "cosmetic_blank_allowed": {"const": false},
+            "arbitrary_number_blank_allowed": {"const": false},
+            "answer_copy_task_allowed": {"const": false},
+            "learner_action_targets_capability": {"const": true}
+          }
+        }
+      }
+    },
+    "fixed_help": {
+      "type": "object", "additionalProperties": false,
+      "required": ["preauthored", "prompts", "dynamic_new_semantics_before_reveal_allowed"],
+      "properties": {
+        "preauthored": {"const": true},
+        "prompts": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["prompt_id", "function", "text", "addresses_targets"],
+            "properties": {
+              "prompt_id": {"type": "string", "minLength": 1},
+              "function": {"enum": ["ATTEMPT", "NOTICE", "REPRESENT", "EXPLAIN", "CONNECT", "START", "CONTRAST", "REPAIR"]},
+              "text": {"type": "string", "minLength": 1},
+              "addresses_targets": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+            }
+          }
+        },
+        "dynamic_new_semantics_before_reveal_allowed": {"const": false}
+      }
+    },
+    "canonical_reveal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["attempt_required", "canonical_state_revealed_after_attempt", "full_solution_exposure_is_mastery_evidence"],
+      "properties": {
+        "attempt_required": {"const": true},
+        "canonical_state_revealed_after_attempt": {"const": true},
+        "full_solution_exposure_is_mastery_evidence": {"const": false}
+      }
+    },
+    "verification_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["independent_rules"],
+      "properties": {
+        "independent_rules": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["rule_id", "type", "instruction", "uses_answer_key", "applicable_before_reveal"],
+            "properties": {
+              "rule_id": {"type": "string", "minLength": 1},
+              "type": {"enum": ["INVERSE_RELATION", "SUBSTITUTE_BACK", "LIMITING_CASE", "DIMENSIONAL", "SIGN_DIRECTION", "CONSERVATION", "GRAPH_BEHAVIOR", "BOUNDARY_CONDITION", "ALTERNATE_REPRESENTATION", "MODEL_VALIDITY"]},
+              "instruction": {"type": "string", "minLength": 1},
+              "uses_answer_key": {"const": false},
+              "applicable_before_reveal": {"const": true}
+            }
+          }
+        }
+      }
+    },
+    "repair_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["failure_hypotheses", "smallest_repair_route"],
+      "properties": {
+        "failure_hypotheses": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "smallest_repair_route": {"type": "string", "minLength": 1}
+      }
+    },
+    "layer_realizations": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["layer", "mode", "uses_canonical_state", "uses_learner_transformation"],
+        "properties": {
+          "layer": {"enum": ["CORE1A", "CORE1B", "CORE2A", "CORE2B"]},
+          "mode": {"enum": ["REFERENCE", "RECONSTRUCTION", "WORKED_APPLICATION", "TRANSFER_RECONSTRUCTION"]},
+          "uses_canonical_state": {"type": "boolean"},
+          "uses_learner_transformation": {"type": "boolean"}
+        }
+      }
+    },
+    "layout_contract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["learner_state_and_canonical_state_visually_distinct", "help_separated_from_canonical_reveal", "minimum_final_label_pt", "oversized_low_information_figure"],
+      "properties": {
+        "learner_state_and_canonical_state_visually_distinct": {"const": true},
+        "help_separated_from_canonical_reveal": {"const": true},
+        "minimum_final_label_pt": {"type": "number", "minimum": 8.0},
+        "oversized_low_information_figure": {"const": false}
+      }
+    }
+  }
+}
