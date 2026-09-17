@@ -14,10 +14,11 @@ WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
 WP-07 Human Communication                           DELIVERED — CP-R008
 WP-08 Owner Change Intake                           DELIVERED — CP-R009
-WP-09 End-to-end Relay Certification Matrix         CURRENT FRONTIER
+WP-09 End-to-end Relay Certification Matrix         DELIVERED — CP-R010 PENDING EXACT-HEAD CI
+WP-10 Self-consistency Audit                        NEXT AFTER CP-R010 CI PASS
 ```
 
-CP-R009 checkpoint/status verification passed workflow **35188484127** on `2edfa74b0e27f88e895354211a4a4ed2c8d09e91`, including compile, 7 root units and 131 synthetic stress tests.
+WP-09 pre-checkpoint implementation passed workflow **35192108782** on `3ff5b26281078822c9965c4048c5f6b3bc8c851d`, including compile, 7 root units and 135 synthetic stress tests.
 
 Conversation is acceleration, never custody.
 
@@ -69,6 +70,8 @@ COMMUNICATION PROJECTION
 OWNER CHANGE PROJECTION WHEN APPLICABLE
     └── OWNER_CHANGE.md
     ↓
+ZERO-CONTEXT SUCCESSOR RECONSTRUCTION
+    ↓
 NEXT EP
 ```
 
@@ -92,6 +95,7 @@ ISSUE_GRAPH               reconciled issue coordination state
 REPO_STATE                lifecycle/routing/state-plane/bootstrap locator
 GHGEN/GHOP                desired external GitHub projection transaction
 GitHub observation        verified external readback evidence
+Zero-context reconstruction derived repository-only recovery projection
 Report projection         derived structured projection only
 Communication projection  derived human-facing projection only
 Owner-change projection   derived Owner-change projection only
@@ -134,51 +138,62 @@ WP-07 adds no authority plane. It derives one shared communication projection fr
 
 ## Delivered WP-08 — Owner Change Intake
 
-WP-08 adds no second change authority. Material Owner-intent change is represented as:
+WP-08 adds no second change authority. Material Owner-intent change is represented as ODR semantic intent plus an OWNER_INTENT_MUTATION roadmap revision and source-derived change projection. Current applied mutations require exact ODR/revision linkage, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation.
+
+## Delivered WP-09 — end-to-end zero-chat release certification
+
+WP-09 implements the defining release proof rather than another narrative checklist.
 
 ```text
-Owner source
- -> ODR-* decision + change_intake semantic summary
- -> OWNER_INTENT_MUTATION roadmap revision
- -> roadmap / Progress Basis / issue / active-EP reconciliation
- -> owner_change_projection.py
- -> OWNER_CHANGE.md
+Agent A with chat
+ -> completes WP-A
+ -> persists CP-A / EP-B / QSET-B
+ -> chat deleted
+Agent B repository-only
+ -> reconstructs work from REPO_STATE and authority objects
+ -> DISC / QUAL / TC PASS
+ -> completes WP-B
+ -> persists CP-B / EP-C / QSET-C
+ -> chat deleted
+Agent C repository-only
+ -> reconstructs work
+ -> independently qualifies/certifies
 ```
 
-`ODR.change_intake` records previous concept, requested concept, retained behavior, invalidated behavior and new scope. The roadmap revision remains authoritative for actual added/removed/changed/unaffected topology, Progress Basis change, issue reconciliation and resulting frontier.
+The release proof crosses three dependency-ordered work packages. The strict repository-only regression discards predecessor process-memory return values; Agent B and C reopen persisted EP/QSET state and derive candidate evidence from repository files only.
 
-For a current applied Owner mutation, conformance requires:
+For every active route, zero-context reconstruction recovers:
 
-- an APPLIED ODR of kind `INTENT_MUTATION`;
-- concrete change-intake semantics;
-- exact ODR/revision linkage;
-- current Progress Basis equal to `progress_basis_change.new_basis`;
-- `frontier_after` equal to the computed resulting frontier;
-- explicit active-work disposition;
-- visible issue reconciliation when affected issues are named.
+- why the task exists and its roadmap position;
+- governing Owner decisions;
+- predecessor checkpoint facts, limitations and remaining work;
+- current implementation plan and exact first action;
+- input authority/editability/applicability/resolution;
+- benchmark/oracle and independence/tolerance;
+- allowed/protected/prohibited scope;
+- quality obligations and QRV evidence;
+- evidence present/missing;
+- tests and acceptance criteria;
+- stale conditions and exact next work.
 
-A CAPTURED ODR may be rendered for discussion but cannot claim a post-change frontier or applied status. Derived current-EP dispositions are `NO_ACTIVE_EP | PENDING_OWNER_CHANGE | INVALIDATED | RECONCILE_REQUIRED | CONTINUE_UNCHANGED`; `UNCLASSIFIED` fails an applied current change.
+Lifecycle certification covers ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL, with INITIALIZING additionally covered by bootstrap/core tests. RECONCILING remains READ_ONLY; stale required projection remains not handover-ready; IDLE and TERMINAL expose no material execution route.
 
-WP-08 evidence:
+WP-09 pre-checkpoint evidence:
 
 ```text
-documentation-aligned implementation
-  fb5e0b15f25884793e38ba694505b748acaf84fd
-  workflow 35188301698 — PASS
-
-CP-R009 checkpoint/status
-  2edfa74b0e27f88e895354211a4a4ed2c8d09e91
-  workflow 35188484127 — PASS
+implementation + certification docs
+  3ff5b26281078822c9965c4048c5f6b3bc8c851d
+  workflow 35192108782 — PASS
 
 root units: 7
-stress tests: 131
+stress tests: 135
 ```
 
 ## Remaining target layers
 
 ```text
-WP-09 End-to-end A -> B -> C certification         CURRENT
-WP-10 self-consistency audit                       WAITING
+CP-R010 exact-head verification                    CURRENT GATE
+WP-10 self-consistency audit                       NEXT
 WP-11 PR readiness; never automatic merge          WAITING
 ```
 
@@ -202,7 +217,7 @@ Existing plan/join/replan/drift namespaces remain unchanged.
 
 ## Defining release proof
 
-WP-09 is now current and remains the defining release proof: `AGENT A -> CHAT DELETED -> AGENT B -> CHAT DELETED -> AGENT C`. Agent C must reconstruct Owner intent, roadmap position, predecessor facts/limitations, current task, inputs/editability, benchmarks/oracles, scope, quality obligations, tests, acceptance, progress, staleness and exact next work from repository state alone and obtain current independent certification. If prior conversation is materially required, V2.5 fails.
+The defining release proof is now implemented and green pre-checkpoint. Formal completion still requires exact-head CI on CP-R010 plus the completion-program reconciliation. If prior conversation is materially required for any release-question answer, V2.5 fails.
 
 ## Validation evidence discipline
 
@@ -220,7 +235,7 @@ GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
 human communication              COMPLETE — CP-R008
 owner change intake              COMPLETE — CP-R009
-end-to-end certification         CURRENT — WP-09
-self-consistency audit           WAITING
+end-to-end certification         COMPLETE — CP-R010 PENDING EXACT-HEAD CI
+self-consistency audit           NEXT AFTER CP-R010 CI
 PR readiness                     WAITING
 ```
