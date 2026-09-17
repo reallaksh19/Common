@@ -10,6 +10,7 @@ basis:
   predecessor_checkpoint: CP-R011
   merged_predecessor_ref: "fb28a0817cab109a1120e3826ce11439b49586de"
   readiness_through_ref: "5455bb90895461ba1d7476af10c84863f979fb93"
+  checkpoint_program_ref: "7d3c7d84dbcb51f87bf402eb6b720e17a88f8579"
   pr: "reallaksh19/Common#409"
   branch: "agent/engineering-pr-delivery-v2.5-completion"
 
@@ -22,7 +23,7 @@ scope:
     - Add synthetic-relay-example.md as a repository-neutral end-to-end walkthrough.
     - Make the release navigation documents mandatory in self_consistency_audit.py.
     - Verify there are no unresolved review threads or submitted reviews requiring resolution.
-    - Verify the release-documentation head passes the complete scoped workflow.
+    - Verify release-documentation and exact checkpoint/program-state heads pass the complete scoped workflow.
   explicitly_not_performed:
     - Changes to engineering-pr-delivery-v2.
     - Downstream repository adoption or modification.
@@ -58,6 +59,10 @@ acceptance:
     status: PASS
     statement: Release-documentation head passes compile, self-consistency audit, root units and dedicated synthetic stress discovery.
     basis: ["workflow:35205304623", "head:5455bb90895461ba1d7476af10c84863f979fb93", "root_unit_count:7", "stress_count:135"]
+  - id: AC-11-06
+    status: PASS
+    statement: Exact CP-R012 checkpoint/program-state head passes compile, self-consistency audit, root units and dedicated synthetic stress discovery.
+    basis: ["workflow:35208661282", "head:7d3c7d84dbcb51f87bf402eb6b720e17a88f8579", "root_unit_count:7", "stress_count:135"]
 
 completion_progress:
   basis_total: 100
@@ -65,23 +70,25 @@ completion_progress:
   earned_by_this_checkpoint: 1
   earned_after_this_checkpoint: 100
   percent_after_this_checkpoint: 100
-  note: "Completion is acceptance/checkpoint derived; formal CP-R012 validity requires exact canonical-head workflow PASS."
+  note: "Completion is acceptance/checkpoint derived; CP-R012 exact checkpoint/program-state verification passed."
 
 verification:
   exact_checkpoint_head_ci_required: true
   required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
   pre_checkpoint_green_run: 35205304623
   pre_checkpoint_green_ref: "5455bb90895461ba1d7476af10c84863f979fb93"
+  checkpoint_status_green_run: 35208661282
+  checkpoint_status_green_ref: "7d3c7d84dbcb51f87bf402eb6b720e17a88f8579"
   required_steps:
     compile: true
     self_consistency_audit: true
     root_unit_tests: true
     synthetic_stress_tests: true
-  claim_before_final_ci: "WP-11 content acceptance is complete; formal 100% completion requires workflow PASS on the exact head containing CP-R012 and completion-program reconciliation."
+  result: PASS
 
 successor:
   mode: NONE
   work_package: null
   title: null
-  state: PROGRAM_COMPLETE_AFTER_EXACT_HEAD_CI_PASS
-  next_action: "After exact canonical-head CI passes, mark PR #409 ready for review. Merge remains an explicit Owner decision."
+  state: PROGRAM_COMPLETE
+  next_action: "Run one final canonical-head workflow after formal completion wording, then PR #409 may be marked ready for review. Merge remains an explicit Owner decision."
