@@ -54,6 +54,10 @@ jobs:
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/validate_subject_adapter_interface_candidate.py' --check
       - name: Run C4 subject adapter interface falsifiers
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/tests/test_subject_adapter_interface_candidate.py'
+      - name: Validate C5 SIL contracts and PR395 integration custody
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/validate_c5_sil_contracts.py'
+      - name: Run C5 SIL contract and PR395 integration falsifiers
+        run: python 'Grade 9/V2/Mathematics/MathBlueprint/design/test_c5_sil_contracts.py'
       - name: Validate governed Engineering discovery vocabulary
         run: python 'Grade 9/V2/Mathematics/MathBlueprint/engine/validate_mathematics_engineering_discovery_vocabulary.py'
       - name: Run non-authoritative Engineering discovery falsifiers

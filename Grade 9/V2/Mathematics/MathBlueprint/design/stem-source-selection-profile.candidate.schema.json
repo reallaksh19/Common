@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stem-source-selection-profile.candidate.schema.json",
+  "title": "STEM Source Selection Profile Candidate",
+  "description": "C5 design-only recommendation metadata. Source suitability never upgrades a source to subject authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "authority", "technical_authorization", "profile_id", "subject_id", "source_ref", "source_role", "supports_refs", "why_preferred", "known_limitations", "rejection_conditions", "capture_or_version_ref", "profile_digest"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "DESIGN_CANDIDATE"},
+    "authority": {"const": "NONE"},
+    "technical_authorization": {"const": "NOT_IMPLIED"},
+    "profile_id": {"type": "string", "pattern": "^SIL-SOURCE-[A-Z0-9][A-Z0-9_-]{3,}$"},
+    "subject_id": {"type": "string", "minLength": 2},
+    "source_ref": {"type": "string", "minLength": 3},
+    "source_role": {"enum": ["CURRICULUM_AUTHORITY", "EXAM_SCOPE_AUTHORITY", "SUBJECT_AUTHORITY", "TECHNICAL_REFERENCE", "REFERENCE_DATA", "PEDAGOGY_EVIDENCE", "FOUNDATION_EXPLANATION", "ADVANCED_EXPLANATION", "REPRESENTATION_REFERENCE", "QUESTION_BANK", "COMPETITION_QUESTION_SOURCE", "SAFETY_AUTHORITY"]},
+    "supports_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+    "suitable_grade_ranges": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "suitable_learning_purpose_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+    "suitable_target_program_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 2}},
+    "suitable_knowledge_contexts": {"type": "array", "items": {"type": "string", "minLength": 2}},
+    "why_preferred": {"type": "string", "minLength": 8},
+    "known_limitations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 3}},
+    "rejection_conditions": {"type": "array", "items": {"type": "string", "minLength": 3}},
+    "capture_or_version_ref": {"type": "string", "minLength": 3},
+    "capture_digest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "rights_reuse_state": {"enum": ["UNKNOWN_REVIEW_REQUIRED", "LINK_ONLY", "QUOTATION_LIMITED", "REUSE_ALLOWED", "OWNER_APPROVED"]},
+    "last_checked_at": {"type": "string", "format": "date-time"},
+    "profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
