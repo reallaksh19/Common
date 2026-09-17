@@ -1,0 +1,83 @@
+{
+  "GEO-MIQUEL-01": {
+    "remember": "For D,E,F on the side-lines of triangle ABC, circles (AEF), (BFD), (CDE) pass through one common Miquel point.",
+    "link": "The executable proof is “two circles first”: define M as their second intersection, then prove M lies on the third.",
+    "why": "Cyclicity rewrites angles at M as angles at the original triangle vertices; the rewritten angles combine to satisfy the third cyclic test.",
+    "notice": "Three circles each using one triangle vertex and the two adjacent side-points.",
+    "try": "Choose M from the first two circles. Do not invoke the theorem name as a magic step.",
+    "contrast": "Keep side-extension orientation consistent when using directed angles.",
+    "example": "If M lies on (AEF) and (BFD), rewrite ∠EMF and ∠FMD using the corresponding vertex angles, then test C,D,E,M for cyclicity."
+  },
+  "GEO-TANGENT-01": {
+    "remember": "Radius to a tangent point is perpendicular to the tangent. Tangents from the same external point to the same circle are equal. The line of centres is perpendicular to a common chord.",
+    "link": "A tangent should trigger a right angle before any long angle chase.",
+    "why": "The radius to the closest point of a tangent line is perpendicular; equal tangent lengths follow from congruent right triangles.",
+    "notice": "“Tangent at T”, two tangents from one point, or two intersecting circles with a common chord.",
+    "try": "Draw the radius to each contact point immediately.",
+    "contrast": "Equal tangents must come from one external point to one circle.",
+    "example": "If PA and PB are tangents from P to one circle, then PA=PB."
+  },
+  "GEO-CIRCLEPACK-01": {
+    "remember": "Two externally tangent circles of radii r1,r2 touching the same line have horizontal centre separation d=2√(r1r2). Tangent circles are related by homothety at the tangency point.",
+    "link": "Circle packing becomes one-dimensional after projecting the centres to the common tangent line.",
+    "why": "The centre distance is r1+r2 and the vertical difference is |r1-r2|; Pythagoras gives d²=(r1+r2)²-(r1-r2)²=4r1r2.",
+    "notice": "Multiple circles tangent to one baseline or internally/externally tangent at a shared point.",
+    "try": "Drop perpendicular radii to the common tangent and write centre gaps.",
+    "contrast": "Identify internal versus external tangency before using a centre-distance formula.",
+    "example": "Radii 9 and 4 on one tangent line have horizontal centre gap 2√36=12."
+  },
+  "GEO-TRIG-01": {
+    "remember": "sin=opposite/hypotenuse, cos=adjacent/hypotenuse, tan=opposite/adjacent; a/sin A=b/sin B=c/sin C=2R; c²=a²+b²-2ab cos C.",
+    "link": "Trig is a geometry tool, not a default. Use it when side-angle data is more direct than a synthetic theorem.",
+    "why": "Sine/cosine rules extend right-triangle ratios to arbitrary triangles; the sine-area formula links angles to area.",
+    "notice": "Known opposite side-angle pair -> sine rule; two sides + included angle or all three sides -> cosine rule.",
+    "try": "Write the side opposite each named angle before choosing a formula.",
+    "contrast": "Do not use trig when one circle/similarity theorem already closes the problem.",
+    "example": "If A=30°, B=45°, a=6, then b=6·sin45°/sin30° and b²=72."
+  },
+  "GEO-COORD-01": {
+    "remember": "Choose coordinates to make the strongest structure automatic. Distance²=(x2-x1)²+(y2-y1)²; midpoint averages coordinates; perpendicular vectors have dot product 0.",
+    "link": "Coordinates are especially effective for rectangles, symmetric triangles, circles with known centres, and many perpendicularities.",
+    "why": "A good placement turns geometric constraints into zero coordinates, equal coordinates, or simple linear equations.",
+    "notice": "Many numeric perpendicularities, axis-aligned rectangles, arc intersections, or symmetry.",
+    "try": "Place the longest/most constrained line on an axis before assigning unknown coordinates.",
+    "contrast": "Bad coordinates add variables. Use them only if they reduce the work.",
+    "example": "For an isosceles triangle, placing the base endpoints at (-a,0),(a,0) puts the apex on x=0 automatically."
+  },
+  "GEO-VECTOR-01": {
+    "remember": "Midpoint M=(A+B)/2, centroid G=(A+B+C)/3. For consecutive parallelogram A,B,C,D: D=A+C-B.",
+    "link": "Vectors are excellent for repeated parallelograms and centroid identities because midpoint/centroid operations are linear.",
+    "why": "Parallelogram completion and centroid averaging are affine operations, so the coordinate-free vector equations stay short.",
+    "notice": "Repeated parallelograms, centroids, or a sum of squared distances from a centre point.",
+    "try": "Choose an origin that makes one important point zero - often the centroid or an arbitrary common point O.",
+    "contrast": "Do not expand coordinates component-by-component if a single vector identity works.",
+    "example": "If O is the origin and OAEB is a parallelogram, then e=a+b."
+  },
+  "GEO-LOCUS-01": {
+    "remember": "Equidistant from two points -> perpendicular bisector. Equidistant from two intersecting lines -> two angle bisectors. Fixed distance from a point -> circle. Fixed distance from a line -> two parallels.",
+    "link": "Construction problems become easier when the target condition is first translated into a locus or a ratio.",
+    "why": "Each locus is exactly the set of points satisfying the distance condition, so an intersection of loci solves simultaneous constraints.",
+    "notice": "“Equidistant”, “construct”, “fixed distance”, or “parallel through a point”.",
+    "try": "State the locus in words before drawing compass arcs or parallels.",
+    "contrast": "Check edge cases: if a given line coincides with an angle-bisector locus, there can be infinitely many points.",
+    "example": "A point equidistant from A and B must lie on the perpendicular bisector of AB."
+  },
+  "GEO-OPT-01": {
+    "remember": "For fixed base, triangle area is maximized by maximizing perpendicular height. For a fixed chord in a fixed circle, the farthest point from the chord-line lies on the perpendicular diameter.",
+    "link": "Optimization is usually about the variable inside the target formula, not the visually longest segment.",
+    "why": "With base fixed, area=(1/2)bh is linear in height, so the geometry reduces to a farthest-point problem.",
+    "notice": "“Maximum area”, fixed base/chord, or a shape constrained to a circle.",
+    "try": "Write the target formula and identify the only variable quantity.",
+    "contrast": "Do not optimize a side length merely because it changes in the picture.",
+    "example": "Among triangles with base 10, height 8 has larger area than height 6 regardless of the slanted sides."
+  },
+  "GEO-MENS-01": {
+    "remember": "Cube side s: edge s, face diagonal s√2, body diagonal s√3, surface area 6s², volume s³. Closed cylinder: TSA=2πr(r+h), V=πr²h.",
+    "link": "Mensuration questions often add an integer or interpretation filter after the formula.",
+    "why": "The main difficulty is usually identifying which geometric distance or surface the coordinates/formula represent.",
+    "notice": "3D coordinates, cube vertex distances, cylinder surface/volume relations.",
+    "try": "Classify a cube segment as edge, face diagonal, or body diagonal before solving for s.",
+    "contrast": "Do not assume two coordinate differences show an edge; an edge changes only one coordinate in an axis-aligned model.",
+    "example": "A cube body diagonal d gives s=d/√3 and surface area 6s²."
+  }
+}
