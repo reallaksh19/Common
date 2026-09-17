@@ -1,0 +1,29 @@
+schema_version: relay-v2.5
+id: ODR-0001
+decision:
+  authority: OWNER
+  kind: INTENT_MUTATION
+  statement: "<exact Owner decision>"
+  source: "<durable source/reference>"
+effects:
+  requirement_disposition: NOT_APPLICABLE
+  grants_material_write_authority: false
+  pending_items: []
+impact:
+  class: [LOCAL]
+affected:
+  objectives: []
+  phases: []
+  work_packages: []
+  execution_packages: []
+  issues: []
+# Required by the Owner-change projection when decision.kind is INTENT_MUTATION.
+# This is part of the ODR authority; generated OWNER_CHANGE.md is derived from it.
+change_intake:
+  previous_concept: "<plain-language concept before this decision>"
+  requested_concept: "<plain-language concept requested by the Owner>"
+  retained_behavior: []
+  invalidated_behavior: []
+  new_scope: []
+required_reconciliation: []
+status: CAPTURED

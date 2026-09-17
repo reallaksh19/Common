@@ -1,0 +1,80 @@
+schema_version: relay-v2.5
+relay_state: ACTIVE
+repository:
+  name: "<repo-name>"
+  remote: "<owner/repo>"
+relay_protocol:
+  version: "2.5"
+  basis_ref: "<pinned Common SHA>"
+roadmap:
+  id: "<roadmap-id>"
+  revision: "<RM-xxxx>"
+  path: agents/relay/roadmap/OVERALL_ROADMAP.yaml
+current_position:
+  objective: "<OBJ-id>"
+  phase: "<PHASE-id>"
+  work_package: "<WP-id>"
+  work_packages: []
+execution_policy:
+  mode: SERIAL
+active_ep:
+  id: "<EP-id>"
+  path: agents/relay/execution-packages/<EP-id>.yaml
+  state: EXECUTABLE
+  continuity_receipt: null
+last_checkpoint:
+  id: NONE
+  path: null
+predecessor_join:
+  id: null
+  path: null
+predecessor_replan:
+  id: null
+  path: null
+takeover_admissions: []
+# Compatibility/location mirrors only. PROGRESS.yaml is authoritative and
+# validate_progress.py requires these values to agree with the derived source rows.
+progress:
+  overall_percent: 0
+  phase_percent: 0
+  ep_percent: 0
+  basis_revision: "<PB-id>"
+status_planes:
+  execution:
+    state: READY
+    can_continue: true
+    material_authority: WRITE
+    # Machine hint only; the EP next_work.steps[] contract is the detailed successor plan.
+    next_action: "<short operational hint>"
+  quality:
+    state: CLEAR
+    findings: []
+  evidence:
+    state: PARTIAL
+    summary: "<plain-language evidence summary>"
+    not_run: []
+  stop:
+    active: false
+    category: NONE
+    reason: ""
+    basis: []
+projection:
+  required: true
+  state: PENDING
+  operation_id: GHGEN-0001
+  target: "github:<owner/repo>:issues"
+  adapter: GITHUB_ISSUES
+  plan: agents/relay/projection/generations/GHGEN-0001.yaml
+  roadmap_revision: "<current RM-xxxx>"
+  execution_ref: "<current EP-id / PLAN-id / NONE>"
+  receipt: null
+  basis: []
+  observed: null
+  superseded_operations: []
+relay_readiness:
+  baton_ready: true
+  projection_ready: false
+  handover_ready: false
+  reasons:
+    - Required external coordination projection is not yet synchronized.
+chat_context_required: false

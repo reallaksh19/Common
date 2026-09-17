@@ -1,0 +1,32 @@
+schema_version: relay-v2.5-migration-reconciliation
+status: NEEDS_RECONCILIATION
+source_inventory: "<path-to-v2-inventory>"
+owner_intent:
+  authoritative_sources: []
+  unresolved_questions: []
+roadmap_mapping:
+  objectives: []
+  phases: []
+  work_packages: []
+current_position:
+  objective: null
+  phase: null
+  work_package: null
+durable_inputs: []
+benchmarks: []
+history_to_preserve:
+  checkpoints: []
+  evidence: []
+  decisions: []
+unresolved_work: []
+first_v25_ep:
+  create_only_after:
+    - owner intent reconciled
+    - current roadmap revision established
+    - executable frontier computed
+    - scope and acceptance made self-contained
+    - cold-start inputs complete
+  ep_id: null
+notes:
+  - A V2 endpoint is migration evidence/context only and is never automatically promoted to a V2.5 EP.
+  - Progress is recalculated from an explicit V2.5 basis; it is not copied from narrative estimates.

@@ -1,0 +1,86 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, candidate, prepared_by, evaluated_by, self_certification, route, basis, discovery_receipt, qualification, checks, result, conversation_context_used]
+properties:
+  schema_version: {const: relay-v2.5-takeover-certification}
+  id: {type: string, pattern: '^TC-'}
+  candidate:
+    type: object
+    required: [agent_instance_id]
+    properties:
+      agent_instance_id: {type: string, minLength: 1}
+  prepared_by:
+    type: object
+    required: [agent_instance_id]
+    properties:
+      agent_instance_id: {type: string, minLength: 1}
+  evaluated_by:
+    type: object
+    required: [type, identity, basis]
+    properties:
+      type: {enum: [DETERMINISTIC_VALIDATOR, INDEPENDENT_AGENT, OWNER]}
+      identity: {type: string, minLength: 1}
+      basis: {type: array, minItems: 1}
+  self_certification:
+    type: object
+    required: [allowed]
+    properties:
+      allowed: {const: false}
+  route:
+    type: object
+    required: [route_key, mode, execution_ref, ep_id, ep_path, plan_id, plan_path, lane_id]
+    properties:
+      route_key: {type: string, minLength: 1}
+      mode: {enum: [SERIAL, PARALLEL_LANE]}
+      execution_ref: {type: string, minLength: 1}
+      ep_id: {type: string, minLength: 1}
+      ep_path: {type: string, minLength: 1}
+      plan_id: {type: [string, 'null']}
+      plan_path: {type: [string, 'null']}
+      lane_id: {type: [string, 'null']}
+  basis:
+    type: object
+    required: [roadmap_id, roadmap_revision, relay_protocol_basis_ref, material_ref, ep_contract_digest, repo_profile_digest, predecessor_baton]
+    properties:
+      roadmap_id: {type: string, minLength: 1}
+      roadmap_revision: {type: string, minLength: 1}
+      relay_protocol_basis_ref: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      ep_contract_digest: {type: string, pattern: '^sha256:'}
+      repo_profile_digest: {type: string, pattern: '^sha256:'}
+      predecessor_baton:
+        type: object
+        required: [type, id, path, digest]
+        properties:
+          type: {enum: [NONE, CHECKPOINT, JOIN, REPLAN]}
+          id: {type: string, minLength: 1}
+          path: {type: [string, 'null']}
+          digest: {type: [string, 'null']}
+  discovery_receipt:
+    type: object
+    required: [id, path]
+    properties:
+      id: {type: string, pattern: '^DISC-'}
+      path: {type: string, minLength: 1}
+  qualification:
+    type: object
+    required: [required, status, receipt_id, receipt_path, receipt_digest]
+    properties:
+      required: {type: boolean}
+      status: {enum: [NOT_REQUIRED, PENDING, PASS]}
+      receipt_id: {type: [string, 'null']}
+      receipt_path: {type: [string, 'null']}
+      receipt_digest: {type: [string, 'null']}
+  checks:
+    type: object
+    required: [baton_semantics, repository_discovery, route_grounding, input_oracle_readiness, scope_understood, report_successor_contract]
+    properties:
+      baton_semantics: {enum: [PASS, FAIL]}
+      repository_discovery: {enum: [PASS, FAIL]}
+      route_grounding: {enum: [PASS, FAIL]}
+      input_oracle_readiness: {enum: [PASS, FAIL]}
+      scope_understood: {enum: [PASS, FAIL]}
+      report_successor_contract: {enum: [PASS, FAIL]}
+  result: {enum: [PASS, FAIL]}
+  conversation_context_used: {const: false}
+additionalProperties: true

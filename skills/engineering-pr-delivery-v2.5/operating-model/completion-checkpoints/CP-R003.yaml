@@ -1,0 +1,145 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R003
+work_package:
+  id: WP-02
+  title: Baton readiness + Takeover Certification
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R002
+  implementation_through_ref: "33ef1ab6c1d723c8de763b28146e25319738167e"
+  evidence_correction_ref: "a1a0dafee96c120af709d46ade394538c816360c"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Separate outgoing baton completeness from incoming candidate certification.
+    - Replace lifecycle-derived repository readiness with candidate-independent BATON_READY validation.
+    - Add route-scoped DISC-* Discovery Receipts for executed DSTEP-* discovery contracts.
+    - Add route/candidate-scoped TC-* Takeover Certifications with candidate, preparer and evaluator identity.
+    - Prohibit candidate self-preparation/self-certification of takeover criteria.
+    - Bind discovery/certification evidence to roadmap, material basis, semantic EP digest, REPO_PROFILE digest and predecessor-baton digest.
+    - Add route-scoped takeover admissions for serial and Owner-approved parallel lane execution.
+    - Keep PROJECTION_READY independent from baton/candidate readiness.
+    - Define HANDOVER_READY as BATON_READY AND PROJECTION_READY.
+    - Implement MATERIAL_WRITE_READY as a live-derived candidate/route/Git/authority/stop gate rather than a persisted timeless boolean.
+    - Prevent phase-transition qualification requirements from being bypassed by Takeover Certification before WP-03 QUAL validation exists.
+    - Add repository-neutral zero-context takeover regressions including live temporary-Git write-readiness checks.
+    - Correct CI so root unit tests and tests/stress are executed as separate explicit workflow steps.
+    - Correct aliased synthetic evidence fixtures so supersession/replan mutation tests actually compare independent predecessor/successor custody objects.
+  explicitly_not_performed:
+    - QUAL-* evaluated phase/material-boundary qualification implementation; owned by WP-03.
+    - Full progress/handover/next-work redesign; owned by WP-04.
+    - GitHub operation orchestration; owned by WP-05.
+    - QRV quality procedure implementation; owned by WP-06.
+    - Owner-facing human communication redesign; owned by WP-07.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  discovery_template: "skills/engineering-pr-delivery-v2.5/templates/DISCOVERY_RECEIPT.yaml"
+  discovery_schema: "skills/engineering-pr-delivery-v2.5/schemas/discovery-receipt.schema.yaml"
+  discovery_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py"
+  takeover_template: "skills/engineering-pr-delivery-v2.5/templates/TAKEOVER_CERTIFICATION.yaml"
+  takeover_schema: "skills/engineering-pr-delivery-v2.5/schemas/takeover-certification.schema.yaml"
+  takeover_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py"
+  baton_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py"
+  write_gate: "skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py"
+  takeover_library: "skills/engineering-pr-delivery-v2.5/scripts/takeoverlib.py"
+  aggregate_conformance: "skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py"
+  repo_state_template: "skills/engineering-pr-delivery-v2.5/templates/REPO_STATE.yaml"
+  repo_state_schema: "skills/engineering-pr-delivery-v2.5/schemas/repo-state.schema.yaml"
+  zero_context_regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_takeover_certification.py"
+  ci_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  ci_evidence_correction: "skills/engineering-pr-delivery-v2.5/operating-model/ci-evidence-correction.md"
+
+acceptance:
+  - id: AC-02-01
+    status: PASS
+    statement: BATON_READY is candidate-independent and is not inferred from ACTIVE lifecycle alone.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_baton_can_be_ready_before_any_candidate_exists"]
+  - id: AC-02-02
+    status: PASS
+    statement: A zero-chat incoming candidate can execute repository discovery and receive current independent Takeover Certification.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_zero_context_candidate_can_be_independently_certified"]
+  - id: AC-02-03
+    status: PASS
+    statement: Candidate cannot prepare its own takeover criteria/certification.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_candidate_cannot_prepare_its_own_certification"]
+  - id: AC-02-04
+    status: PASS
+    statement: Discovery Receipt must cover the exact expected outputs of required DSTEP instructions.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_discovery_receipt_must_cover_exact_expected_outputs"]
+  - id: AC-02-05
+    status: PASS
+    statement: EP contract mutation invalidates an existing certification through exact contract digest binding.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_ep_contract_change_invalidates_existing_certification"]
+  - id: AC-02-06
+    status: PASS
+    statement: Approved parallel takeover certification is scoped to the exact lane route rather than repository-global candidate admission.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_parallel_certification_is_route_scoped"]
+  - id: AC-02-07
+    status: PASS
+    statement: A phase qualification boundary cannot be bypassed by claiming TC PASS before evaluated QUAL support exists.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_phase_qualification_boundary_cannot_be_bypassed_by_tc"]
+  - id: AC-02-08
+    status: PASS
+    statement: MATERIAL_WRITE_READY is candidate-specific and live Git/route dependent rather than a persisted readiness flag.
+    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_material_write_ready_is_live_and_candidate_specific"]
+  - id: AC-02-09
+    status: PASS
+    statement: Corrected CI executes root unit discovery and the dedicated synthetic stress directory as separate required steps.
+    basis: ["workflow:35095076892", "operating-model/ci-evidence-correction.md"]
+  - id: AC-02-10
+    status: PASS
+    statement: The corrected whole-suite run passes root unit tests and all discovered synthetic stress tests on the exact implementation head.
+    basis: ["workflow:35095076892", "head:33ef1ab6c1d723c8de763b28146e25319738167e"]
+
+baseline_findings:
+  resolved_by_wp_02:
+    - BA-006
+  carried_forward:
+    - BA-003
+    - BA-007
+    - BA-008
+    - BA-009
+    - BA-010
+    - BA-011
+    - BA-012
+    - BA-013
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 23
+  earned_by_this_checkpoint: 18
+  earned_after_this_checkpoint: 41
+  percent_after_this_checkpoint: 41
+  note: "Program-level completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35095076892
+  pre_checkpoint_green_ref: "33ef1ab6c1d723c8de763b28146e25319738167e"
+  corrected_ci_semantics:
+    root_unit_step_required: true
+    synthetic_stress_step_required: true
+    historical_correction: "operating-model/ci-evidence-correction.md"
+  claim_before_final_ci: "WP-02 content acceptance is complete; formal checkpoint validity requires both explicit unit and stress steps PASS on the final exact head containing CP-R003 and program-state reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-03
+  title: Strong phase / material-boundary qualification
+  planned_execution_package: EP-R004
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Replace metadata-only phase questions with durable QUESTION_SET plus evaluated QUAL-* receipt.
+    - Trigger fresh qualification on PHASE_CHANGED or MATERIAL_QUALIFICATION_BOUNDARY_CHANGED.
+    - Require concrete production trace, engineering reconstruction where applicable, boundary/falsifier reasoning, independent verification, and exact first safe slice.
+    - Bind QUAL evidence to exact incoming EP, candidate and engineering basis.
+    - Reconcile QUAL PASS into TC-* so qualification-required routes can become TAKEOVER_CERTIFIED.

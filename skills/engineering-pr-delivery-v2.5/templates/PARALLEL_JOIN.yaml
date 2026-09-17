@@ -1,0 +1,20 @@
+schema_version: relay-v2.5
+id: JOIN-P001
+parallel_plan:
+  id: PLAN-P001
+  path: agents/relay/parallel/PLAN-P001.yaml
+roadmap_revision: "<RM-xxxx>"
+lane_checkpoints:
+  - lane_id: LANE-A
+    work_package: "<WP-A>"
+    checkpoint_id: "<CP-A>"
+    checkpoint_path: agents/relay/checkpoints/<CP-A>.yaml
+  - lane_id: LANE-B
+    work_package: "<WP-B>"
+    checkpoint_id: "<CP-B>"
+    checkpoint_path: agents/relay/checkpoints/<CP-B>.yaml
+integration:
+  work_package: "<integration-WP>"
+  ep_id: "<integration-EP>"
+  ep_path: agents/relay/execution-packages/<integration-EP>.yaml
+state: READY

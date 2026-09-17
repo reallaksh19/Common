@@ -1,0 +1,103 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R008
+work_package:
+  id: WP-07
+  title: Human Communication
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R007
+  implementation_through_ref: "49d0e52ee81e34ddf4152927456a4f4e4bdef665"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Extend the source-derived report projection with current contract purpose/scope, Owner decisions, known problems/non-goals, checkpoint limitations/remaining work and roadmap reconciliation.
+    - Derive one shared communication projection from the report projection rather than reading authority objects independently in multiple renderers.
+    - Add a technical status renderer that preserves protocol identifiers, source basis, execution/evidence/quality/stop state, scope and exact next work.
+    - Add an Owner status renderer using plain language for current capability, purpose, protected/non-change scope, evidence gaps, quality risks/limitations, roadmap progress, decisions required now, exact next work and stop conditions.
+    - Distinguish Owner-reserved scope from an Owner decision genuinely required now.
+    - Keep non-blocking quality risks visible without promoting them to hard stops.
+    - Add aggregate human-communication convergence validation.
+    - Add repository-neutral stress regressions proving material truth cannot be hidden from the Owner view.
+    - Document the human-communication projection contract and operator commands.
+  explicitly_not_performed:
+    - Owner change-intake transaction and impact report; owned by WP-08.
+    - Full Agent A -> B -> C zero-chat release certification; owned by WP-09.
+    - Whole-surface self-consistency audit; owned by WP-10.
+    - PR ready-for-review transition or merge.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-07-human-communication.md"
+  operating_model: "skills/engineering-pr-delivery-v2.5/operating-model/human-communication.md"
+  report_projection: "skills/engineering-pr-delivery-v2.5/scripts/report_projection.py"
+  communication_projection: "skills/engineering-pr-delivery-v2.5/scripts/communication_projection.py"
+  owner_renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_owner_status.py"
+  technical_renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_technical_status.py"
+  validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_human_communication.py"
+  regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_human_communication.py"
+
+acceptance:
+  - id: AC-07-01
+    status: PASS
+    statement: Owner and technical views derive from one shared source-bound communication projection rather than creating separate authorities.
+    basis: ["scripts/communication_projection.py", "tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_owner_and_technical_views_share_one_report_projection"]
+  - id: AC-07-02
+    status: PASS
+    statement: The Owner view exposes current capability, purpose, protected/non-change scope, evidence/missing evidence, quality risks/limitations, roadmap progress, exact next work and active stops in plain language.
+    basis: ["scripts/render_owner_status.py", "operating-model/human-communication.md"]
+  - id: AC-07-03
+    status: PASS
+    statement: A genuine OWNER_DECISION_REQUIRED condition is visible while Owner-reserved scope alone does not fabricate a decision request.
+    basis: ["tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_owner_decision_hard_stop_is_visible_and_plain", "tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_owner_reserved_choice_is_not_invented_as_decision_required_now"]
+  - id: AC-07-04
+    status: PASS
+    statement: Missing evidence cannot be hidden in Owner communication.
+    basis: ["tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_missing_evidence_cannot_be_hidden"]
+  - id: AC-07-05
+    status: PASS
+    statement: Non-blocking quality risk remains visible without becoming fake execution-stop language.
+    basis: ["tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_nonblocking_quality_risk_is_visible_without_fake_stop"]
+  - id: AC-07-06
+    status: PASS
+    statement: Owner-facing communication tracks exact next-work source changes and rejects relay-internal jargon where plain language is required.
+    basis: ["tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_owner_view_tracks_next_work_source_mutation", "tests/stress/test_human_communication.py::HumanCommunicationStressTests.test_owner_view_rejects_internal_jargon_in_user_facing_source_text"]
+  - id: AC-07-07
+    status: PASS
+    statement: Documentation-aligned implementation passes compile, root units and the dedicated repository-neutral synthetic stress suite before checkpoint creation.
+    basis: ["workflow:35176089341", "head:49d0e52ee81e34ddf4152927456a4f4e4bdef665", "root_unit_count:7", "stress_count:125"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 83
+  earned_by_this_checkpoint: 6
+  earned_after_this_checkpoint: 89
+  percent_after_this_checkpoint: 89
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35176089341
+  pre_checkpoint_green_ref: "49d0e52ee81e34ddf4152927456a4f4e4bdef665"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-07 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the final exact head containing CP-R008 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-08
+  title: Owner Change Intake
+  planned_execution_package: EP-R009
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Define a source-bound Owner change-intake object/report over ODR plus roadmap transaction authority.
+    - Show previous concept, requested/new concept, retained behavior, invalidated behavior, new scope, roadmap/progress/issue impact, current EP disposition and new frontier.
+    - Keep the intake/report as a projection/workflow aid; ODR and roadmap transaction remain authoritative.

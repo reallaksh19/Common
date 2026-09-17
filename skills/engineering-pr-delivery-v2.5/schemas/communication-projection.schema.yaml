@@ -1,0 +1,44 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, generated_from, owner, technical]
+properties:
+  schema_version: {const: relay-v2.5-communication-projection}
+  generated_from:
+    type: object
+    required: [report_projection_digest, report_sources]
+    properties:
+      report_projection_digest: {type: string, pattern: '^sha256:'}
+      report_sources: {type: object}
+  owner:
+    type: object
+    required: [capability, purpose, scope, evidence, quality, roadmap, decisions, next_work, stop_conditions]
+    properties:
+      capability:
+        type: object
+        required: [summary, can_continue, material_authority, active_stop]
+      purpose: {type: object}
+      scope:
+        type: object
+        required: [protected, prohibited, owner_reserved, deliberate_non_goals]
+      evidence:
+        type: object
+        required: [state, summary, not_run, acceptance]
+      quality:
+        type: object
+        required: [state, visible_risks, procedure_gaps, known_limitations, known_problems]
+      roadmap:
+        type: object
+        required: [summary, progress, last_reconciliation]
+      decisions:
+        type: object
+        required: [required_now, recorded, reserved]
+      next_work:
+        type: object
+        required: [steps]
+      stop_conditions: {type: array}
+  technical:
+    type: object
+    required: [report]
+    properties:
+      report: {type: object}
+additionalProperties: false

@@ -1,0 +1,18 @@
+schema_version: relay-v2.5-roadmap-continuity
+id: RC-0001
+ep_id: EP-0001
+work_package: WP-0001
+from_revision: RM-0001
+to_revision: RM-0003
+revision_chain:
+  - path: agents/relay/roadmap/revisions/RM-0002.yaml
+  - path: agents/relay/roadmap/revisions/RM-0003.yaml
+disposition: CONTINUE_UNCHANGED
+impact_checks:
+  work_package_definition_changed: false
+  dependencies_changed: false
+  acceptance_changed: false
+  scope_authority_changed: false
+  protected_invariants_changed: false
+basis:
+  - "<why the active EP remains unchanged or why reconciliation is required>"

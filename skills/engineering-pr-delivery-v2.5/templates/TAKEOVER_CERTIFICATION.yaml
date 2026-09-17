@@ -1,0 +1,52 @@
+schema_version: relay-v2.5-takeover-certification
+id: TC-0001
+candidate:
+  agent_instance_id: "<incoming-agent-instance>"
+prepared_by:
+  agent_instance_id: "<outgoing-agent-instance>"
+evaluated_by:
+  type: DETERMINISTIC_VALIDATOR
+  identity: validate_takeover_certification.py
+  basis:
+    - "<durable evaluation basis>"
+self_certification:
+  allowed: false
+route:
+  route_key: "SERIAL:<EP-id>"
+  mode: SERIAL
+  execution_ref: "<EP-id / PLAN-id>"
+  ep_id: "<EP-id>"
+  ep_path: "agents/relay/execution-packages/<EP-id>.yaml"
+  plan_id: null
+  plan_path: null
+  lane_id: null
+basis:
+  roadmap_id: "<roadmap-id>"
+  roadmap_revision: "<RM-id>"
+  relay_protocol_basis_ref: "<pinned Common ref>"
+  material_ref: "<EP material ref>"
+  ep_contract_digest: "sha256:<semantic EP digest>"
+  repo_profile_digest: "sha256:<REPO_PROFILE digest>"
+  predecessor_baton:
+    type: NONE
+    id: NONE
+    path: null
+    digest: null
+discovery_receipt:
+  id: DISC-0001
+  path: agents/relay/certifications/discovery/DISC-0001.yaml
+qualification:
+  required: false
+  status: NOT_REQUIRED
+  receipt_id: null
+  receipt_path: null
+  receipt_digest: null
+checks:
+  baton_semantics: PASS
+  repository_discovery: PASS
+  route_grounding: PASS
+  input_oracle_readiness: PASS
+  scope_understood: PASS
+  report_successor_contract: PASS
+result: PASS
+conversation_context_used: false

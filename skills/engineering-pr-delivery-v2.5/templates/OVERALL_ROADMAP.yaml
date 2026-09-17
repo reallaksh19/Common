@@ -1,0 +1,26 @@
+schema_version: relay-v2.5
+roadmap:
+  id: "<roadmap-id>"
+  revision: RM-0001
+  title: "<overall engineering roadmap>"
+objectives:
+  - id: OBJ-001
+    title: "<objective>"
+    state: ACTIVE
+    definition: DEFINED
+    weight: 100
+    phases:
+      - id: PHASE-001
+        title: "<phase>"
+        state: ACTIVE
+        definition: DETAILED
+        weight: 100
+        work_packages:
+          - id: WP-001
+            title: "<work package>"
+            state: PLANNED
+            definition: DETAILED
+            execution_status: EXECUTABLE
+            weight: 100
+            depends_on: []
+            issue: null

@@ -1,0 +1,33 @@
+schema_version: relay-v2.5
+checkpoint_id: CP-0001
+ep_id: EP-0001
+roadmap_basis:
+  roadmap_id: "<roadmap-id>"
+  revision: RM-0001
+execution_basis:
+  material_ref: "<exact material commit/ref validated by this checkpoint>"
+implementation_result:
+  completed_steps: []
+  files_changed: []
+acceptance_results: []
+validation_results: []
+quality_review:
+  id: QRV-0001
+  path: agents/relay/quality/QRV-0001.yaml
+  digest: "<sha256 canonical QRV digest>"
+quality_findings: []
+known_limitations: []
+discoveries: []
+roadmap_reconciliation:
+  result: NO_ROADMAP_CHANGE
+  status_updates: []
+  proposals: []
+  owner_decisions_required: []
+remaining_work: []
+successor:
+  mode: SERIAL
+  frontier_work_package: "<next-WP-or-null>"
+  ep_id: "<next-EP-or-null>"
+  parallel_plan: null
+  lane_id: null
+  lanes: []

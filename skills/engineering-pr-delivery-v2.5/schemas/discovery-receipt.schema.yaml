@@ -1,0 +1,59 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, candidate, route, basis, steps, result, conversation_context_used]
+properties:
+  schema_version: {const: relay-v2.5-discovery}
+  id: {type: string, pattern: '^DISC-'}
+  candidate:
+    type: object
+    required: [agent_instance_id]
+    properties:
+      agent_instance_id: {type: string, minLength: 1}
+  route:
+    type: object
+    required: [route_key, mode, execution_ref, ep_id, ep_path, plan_id, plan_path, lane_id]
+    properties:
+      route_key: {type: string, minLength: 1}
+      mode: {enum: [SERIAL, PARALLEL_LANE]}
+      execution_ref: {type: string, minLength: 1}
+      ep_id: {type: string, minLength: 1}
+      ep_path: {type: string, minLength: 1}
+      plan_id: {type: [string, 'null']}
+      plan_path: {type: [string, 'null']}
+      lane_id: {type: [string, 'null']}
+  basis:
+    type: object
+    required: [roadmap_id, roadmap_revision, relay_protocol_basis_ref, material_ref, ep_contract_digest, repo_profile_digest, predecessor_baton]
+    properties:
+      roadmap_id: {type: string, minLength: 1}
+      roadmap_revision: {type: string, minLength: 1}
+      relay_protocol_basis_ref: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      ep_contract_digest: {type: string, pattern: '^sha256:'}
+      repo_profile_digest: {type: string, pattern: '^sha256:'}
+      predecessor_baton:
+        type: object
+        required: [type, id, path, digest]
+        properties:
+          type: {enum: [NONE, CHECKPOINT, JOIN, REPLAN]}
+          id: {type: string, minLength: 1}
+          path: {type: [string, 'null']}
+          digest: {type: [string, 'null']}
+  steps:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, status, outputs, basis]
+      properties:
+        id: {type: string, pattern: '^DSTEP-'}
+        status: {enum: [PASS, FAIL]}
+        outputs:
+          type: array
+          minItems: 1
+        basis:
+          type: array
+          minItems: 1
+  result: {enum: [PASS, FAIL]}
+  conversation_context_used: {const: false}
+additionalProperties: true

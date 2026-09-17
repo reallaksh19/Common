@@ -1,0 +1,63 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, generation, operations]
+properties:
+  schema_version: {const: relay-v2.5-github-projection}
+  generation:
+    type: object
+    required: [id, repository, roadmap_revision, issue_graph_revision, execution_ref, state, basis]
+    properties:
+      id: {type: string, pattern: '^GHGEN-'}
+      repository: {type: string, minLength: 3}
+      roadmap_revision: {type: string, minLength: 1}
+      issue_graph_revision: {type: string, minLength: 1}
+      execution_ref: {type: string, minLength: 1}
+      state: {enum: [PREPARED, PUBLISHING, PUBLISHED_UNCONFIRMED, IN_SYNC, STALE, SUPERSEDED]}
+      supersedes_generation: {type: [string, 'null']}
+      basis: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+  operations:
+    type: array
+    items:
+      type: object
+      required: [id, kind, state, idempotency_key, subject, depends_on, preconditions, desired, publication, verification, reconciliation]
+      properties:
+        id: {type: string, pattern: '^GHOP-'}
+        kind: {enum: [CREATE, LINK, UPDATE, PUBLISH_HANDOVER, SUPERSEDE, REVISE, CLOSE, REOPEN]}
+        state: {enum: [PREPARED, ATTEMPTED_UNCONFIRMED, PUBLISHED_UNCONFIRMED, VERIFIED, SUPERSEDED, FAILED]}
+        idempotency_key: {type: string, minLength: 1}
+        depends_on: {type: array, items: {type: string, pattern: '^GHOP-'}}
+        subject:
+          type: object
+          required: [issue_node, related_nodes]
+          properties:
+            issue_node: {type: string, minLength: 1}
+            related_nodes: {type: array, items: {type: string, minLength: 1}}
+        preconditions: {type: object}
+        desired: {type: object}
+        publication:
+          type: object
+          required: [attempt_count, last_attempt_basis, receipt]
+          properties:
+            attempt_count: {type: integer, minimum: 0}
+            last_attempt_basis: {type: array, items: {type: string}}
+            receipt: {}
+            last_error: {type: [string, 'null']}
+        verification:
+          type: object
+          required: [status, basis]
+          properties:
+            status: {enum: [NOT_RUN, PASS, FAIL]}
+            basis: {type: array, items: {type: string}}
+            observed_issue_number: {type: [integer, 'null']}
+            observed_issue_id: {type: [integer, string, 'null']}
+            observed_github_state: {enum: [ABSENT, OPEN, CLOSED, UNKNOWN, null]}
+            observed_relationships: {type: array}
+        reconciliation:
+          type: object
+          required: [issue_graph_effects, complete_when]
+          properties:
+            issue_graph_effects: {type: array}
+            complete_when: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+        superseded_by: {type: [string, 'null']}
+        failure_basis: {type: array}
+additionalProperties: true

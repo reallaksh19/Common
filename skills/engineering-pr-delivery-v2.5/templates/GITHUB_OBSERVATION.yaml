@@ -1,0 +1,22 @@
+schema_version: relay-v2.5-github-observation
+generation_id: GHGEN-0001
+operation_id: GHOP-0001
+candidate_basis:
+  - "<exact connector/readback basis>"
+publication:
+  attempted: true
+  receipt: null
+  error: null
+readback:
+  performed: true
+  found: true
+  issue_number: 123
+  issue_id: "<external issue id>"
+  github_state: OPEN
+  marker_present: true
+  relationships: []
+  body_digest: "<optional digest of observed projected body>"
+  basis:
+    - "<durable readback reference>"
+result: VERIFIED
+reason: "Observed external state matches the prepared GHOP desired state."

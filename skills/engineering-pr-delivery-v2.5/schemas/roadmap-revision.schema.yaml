@@ -1,0 +1,12 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, revision, changes, invalidated_execution_packages, issue_graph_reconciled, progress_basis_change, frontier_after]
+properties:
+  schema_version: {const: relay-v2.5}
+  revision:
+    type: object
+    required: [id, from_revision, to_revision, classification, trigger]
+  changes:
+    type: object
+    required: [added, removed, changed, unaffected]
+additionalProperties: true

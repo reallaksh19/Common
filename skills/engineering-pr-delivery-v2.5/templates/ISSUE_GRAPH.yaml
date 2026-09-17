@@ -1,0 +1,93 @@
+schema_version: relay-v2.5
+# Required when PARENT_OF relationships exist. Parent rollups bind to this revision.
+graph_revision: IG-0001
+
+# ISSUE_GRAPH is a coordination projection. OVERALL_ROADMAP remains engineering authority.
+# github_state is the LAST VERIFIED external state, not a desired publication state:
+#   ABSENT  no GitHub issue has been verified for this node yet
+#   OPEN    external issue was verified open
+#   CLOSED  external issue was verified closed
+#   UNKNOWN a prior locator exists, but current external state must be re-observed
+# A verified locator is stored under github.issue_number / github.issue_id / github.url.
+# Publication intent and uncertain writes live in GHGEN-*/GHOP-* projection generations;
+# never set github_state OPEN merely because a CREATE call was attempted.
+#
+# Planned/executable issue example before GitHub creation:
+# - id: ISSUE-001
+#   state: ACTIVE
+#   github_state: ABSENT
+#   github: {}
+#   roadmap_node: WP-001
+#
+# Same node after verified CREATE reconciliation:
+# - id: ISSUE-001
+#   state: ACTIVE
+#   github_state: OPEN
+#   github:
+#     issue_number: 123
+#     issue_id: "<provider-id>"
+#     url: "<optional-url>"
+#   roadmap_node: WP-001
+#
+# Aggregate parent example:
+# - id: ISSUE-PARENT
+#   state: ACTIVE
+#   github_state: OPEN
+#   github: {issue_number: 100}
+#   child_rollup:
+#     graph_revision: IG-0001
+#     direct_children:
+#       - {id: ISSUE-CHILD-A, state: COMPLETE, github_state: CLOSED}
+#       - {id: ISSUE-CHILD-B, state: ACTIVE, github_state: OPEN}
+#     derived_state: ACTIVE
+#     all_children_terminal: false
+#
+# PARENT_OF is acyclic; each child has at most one direct parent. Parent rollups
+# snapshot direct children only. Deep rollups work recursively because an aggregate
+# child is validated against its own direct children before its parent can be trusted.
+# A closed parent may not hide a direct child whose GitHub projection is not CLOSED.
+#
+# Supersession predecessor example:
+# - id: ISSUE-OLD
+#   state: SUPERSEDED
+#   github_state: CLOSED
+#   github: {issue_number: 120}
+#   roadmap_node: WP-OLD
+#   supersession_receipt:
+#     successor: ISSUE-NEW
+#     basis: ["CP-0012", "ODR-0008"]
+#     unresolved_acceptance:
+#       - id: AC-09
+#         state: NOT_RUN
+#         basis: ["EP-0012"]
+#     inputs: []
+#     risks: []
+#     decisions: []
+#     evidence:
+#       - id: TEST-09
+#         status: NOT_RUN
+#         basis_ref: "head-abc"
+#         reason: "External runner unavailable."
+#   closure_receipt:
+#     acceptance_terminal: true
+#     evidence_terminal: true
+#     acceptance: []
+#     evidence: []
+#     pr_disposition: SUPERSEDED
+#     remaining_work_disposition: SUPERSEDED_BY_SUCCESSOR
+#     unresolved_items: []
+#     successor: ISSUE-NEW
+#     checkpoint: CP-0012
+#
+# An intermediate successor that is superseded again carries inherited unresolved
+# acceptance/evidence unchanged into its outgoing receipt, or records an explicit
+# supersession_resolution with terminal disposition and durable basis.
+# supersession_resolution:
+#   acceptance:
+#     - {id: AC-09, disposition: RESOLVED, basis: ["CP-0013", "TEST-09"]}
+#   evidence: []
+#
+# SUPERSEDES is linear/acyclic at issue level. Work splitting belongs in roadmap
+# topology / child issues, not multiple competing successors.
+nodes: []
+relationships: []

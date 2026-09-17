@@ -1,0 +1,154 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R002
+work_package:
+  id: WP-01
+  title: Semantic Execution Package
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R001
+  implementation_through_ref: "f88d85fd1fef4db5fe4339872f0542586964fba0"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Add procedural semantic EP validation for serial active EPs and approved parallel lane EPs.
+    - Implement DSTEP-* forward discovery instructions while reserving DISC-* for future candidate Discovery Receipts.
+    - Add typed slice-specific input semantics and executable-state readiness rules.
+    - Add typed benchmark/oracle semantics with independence, payload, expected result, tolerance, applicability and mappings.
+    - Strengthen allowed-write/read, protected, prohibited and Owner-reserved scope semantics.
+    - Replace vague anti-drift strings with structured restriction/invalidation contracts.
+    - Require implementation steps to map exact targets, reads, writes, inputs, acceptance, tests, expected state and stop conditions.
+    - Replace headings-only report validation with source-bound reconciliation payload contracts.
+    - Add durable successor-output requirements.
+    - Admit REPO_PROFILE.yaml into aggregate conformance with a dedicated validator.
+    - Enforce REPO_STATE relay_protocol.version and explicit pinned basis_ref.
+    - Upgrade canonical serial and parallel synthetic fixtures to the semantic EP contract.
+    - Add repository-neutral negative regressions for deliberately hollow EPs.
+  explicitly_not_performed:
+    - Candidate-specific Discovery Receipt implementation.
+    - Takeover Certification or TAKEOVER_CERTIFIED implementation.
+    - MATERIAL_WRITE_READY candidate predicate.
+    - Evaluated QUAL-* qualification receipts.
+    - WP-04 progress/handover redesign.
+    - WP-05 GitHub operation orchestration.
+    - WP-06 QRV quality-review artifacts.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  semantic_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_ep_semantics.py"
+  repo_profile_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_repo_profile.py"
+  report_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_report_contract.py"
+  aggregate_conformance: "skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py"
+  parallel_lane_admission: "skills/engineering-pr-delivery-v2.5/scripts/validate_parallel_plan.py"
+  ep_template: "skills/engineering-pr-delivery-v2.5/templates/EP.yaml"
+  ep_schema: "skills/engineering-pr-delivery-v2.5/schemas/execution-package.schema.yaml"
+  repo_state_schema: "skills/engineering-pr-delivery-v2.5/schemas/repo-state.schema.yaml"
+  repo_profile_schema: "skills/engineering-pr-delivery-v2.5/schemas/repo-profile.schema.yaml"
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-01-semantic-ep.md"
+  semantic_ep_spec: "skills/engineering-pr-delivery-v2.5/operating-model/execution-package.md"
+  negative_regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_semantic_ep.py"
+
+acceptance:
+  - id: AC-01-01
+    status: PASS
+    statement: A rich repository-neutral serial EP passes semantic validation.
+    basis: ["tests/test_core.py::CoreTests.test_good_repo"]
+  - id: AC-01-02
+    status: PASS
+    statement: Approved parallel lane EPs are subject to the same semantic validator.
+    basis: ["tests/stress/test_parallel_bootstrap.py::ParallelBootstrapStressTests.test_valid_parallel_router_is_cold_startable"]
+  - id: AC-01-03
+    status: PASS
+    statement: Semantically empty current-required inputs fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_semantically_empty_current_input_fails"]
+  - id: AC-01-04
+    status: PASS
+    statement: An unresolved current-required input cannot coexist with executable EP state.
+    basis: ["tests/stress/test_semantic_ep.py::test_unresolved_current_required_input_cannot_claim_executable"]
+  - id: AC-01-05
+    status: PASS
+    statement: Empty required benchmark/oracle payload and expected result fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_semantically_empty_required_benchmark_fails"]
+  - id: AC-01-06
+    status: PASS
+    statement: Vague discovery and DISC-* instruction namespace collision fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_vague_discovery_step_and_receipt_namespace_collision_fail"]
+  - id: AC-01-07
+    status: PASS
+    statement: Empty executable material-write scope fails.
+    basis: ["tests/stress/test_semantic_ep.py::test_empty_write_scope_cannot_claim_executable"]
+  - id: AC-01-08
+    status: PASS
+    statement: Unstructured or empty anti-drift contracts fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_unstructured_or_empty_anti_drift_fails"]
+  - id: AC-01-09
+    status: PASS
+    statement: Vague implementation steps without exact mappings fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_vague_implementation_step_fails"]
+  - id: AC-01-10
+    status: PASS
+    statement: Report headings without source/reconciliation payloads fail.
+    basis: ["tests/stress/test_semantic_ep.py::test_report_headings_without_reconciliation_payload_fail"]
+  - id: AC-01-11
+    status: PASS
+    statement: REPO_PROFILE is mandatory for aggregate repository conformance.
+    basis: ["tests/stress/test_semantic_ep.py::test_repository_profile_is_required_for_conformance"]
+  - id: AC-01-12
+    status: PASS
+    statement: Placeholder/unbound relay protocol basis is rejected.
+    basis: ["tests/stress/test_semantic_ep.py::test_protocol_binding_cannot_be_placeholder"]
+
+baseline_findings:
+  resolved_by_wp_01:
+    - BA-001
+    - BA-002
+    - BA-004
+    - BA-005
+  strengthened_but_not_fully_retired:
+    - id: BA-006
+      remaining: Candidate-specific independent admission remains WP-02.
+    - id: BA-009
+      remaining: Generated report/progress/handover reconciliation remains WP-04/WP-07; the EP report contract itself is now semantic.
+  carried_forward:
+    - BA-003
+    - BA-007
+    - BA-008
+    - BA-010
+    - BA-011
+    - BA-012
+    - BA-013
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 5
+  earned_by_this_checkpoint: 18
+  earned_after_this_checkpoint: 23
+  percent_after_this_checkpoint: 23
+  note: "Program-level completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35090985476
+  pre_checkpoint_green_ref: "f88d85fd1fef4db5fe4339872f0542586964fba0"
+  claim_before_final_ci: "WP-01 content acceptance is complete; formal checkpoint validity requires scoped CI PASS on the final exact head containing CP-R002 and status reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-02
+  title: Baton readiness + Takeover Certification
+  planned_execution_package: EP-R003
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Define BATON_READY from repository-semantic proof rather than relay lifecycle.
+    - Add DISC-* candidate Discovery Receipt bound to exact EP/roadmap/material basis.
+    - Add TC-* Takeover Certification with candidate, preparer and independent evaluator identity.
+    - Add TAKEOVER_CERTIFIED and MATERIAL_WRITE_READY predicates without conflating them with outgoing baton completeness.
+    - Define invalidation when roadmap, EP, predecessor baton, Git/material basis, current-slice inputs/oracles, scope or qualification basis changes.
+    - Run the mandatory zero-context takeover proof before allowing WP-03 to begin.

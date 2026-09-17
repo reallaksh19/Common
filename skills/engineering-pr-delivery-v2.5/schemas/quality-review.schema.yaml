@@ -1,0 +1,79 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, quality_review_id, ep, roadmap_revision, material_ref, reviewer, router_snapshot, procedure_results, findings, overall_state, execution_effect, owner_report, successor_handover]
+properties:
+  schema_version: {const: relay-v2.5-quality-review}
+  quality_review_id: {type: string, pattern: '^QRV-'}
+  ep:
+    type: object
+    required: [id, path, contract_digest]
+    properties:
+      id: {type: string, pattern: '^EP-'}
+      path: {type: string, minLength: 1}
+      contract_digest: {type: string, minLength: 1}
+  roadmap_revision: {type: string, minLength: 1}
+  material_ref: {type: string, minLength: 1}
+  reviewer:
+    type: object
+    required: [type, identity]
+    properties:
+      type: {enum: [AGENT, OWNER, DETERMINISTIC_VALIDATOR]}
+      identity: {type: string, minLength: 1}
+  router_snapshot:
+    type: object
+    required: [applicable, not_applicable]
+    properties:
+      applicable: {type: array}
+      not_applicable: {type: array}
+  procedure_results:
+    type: array
+    items:
+      type: object
+      required: [blueprint, result, evidence]
+      properties:
+        blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+        result: {enum: [CLEAR, FINDINGS, NOT_RUN]}
+        evidence: {type: array, items: {type: string, minLength: 1}}
+        reason: {type: ['string', 'null']}
+        cause: {enum: [INFRASTRUCTURE, UNAVAILABLE_TOOL, NOT_SCHEDULED, DEPENDENCY_WAIT, OTHER, null]}
+  findings:
+    type: array
+    items:
+      type: object
+      required: [id, blueprint, classification, severity, disposition, statement, evidence, blocks_execution, hard_stop]
+      properties:
+        id: {type: string, pattern: '^QF-'}
+        blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+        classification: {enum: [MAINTAINABILITY, DESIGN, UX, ACCESSIBILITY, PERFORMANCE, MIGRATION, NUMERICAL_RISK, TEST_GAP, DELIVERY_RISK, SAFETY, AUTHORITY, OTHER]}
+        severity: {enum: [INFO, LOW, MEDIUM, HIGH, CRITICAL]}
+        disposition: {enum: [REMEDIATED, ACCEPTED_CURRENT_SLICE, DEFERRED, OWNER_REVIEW_REQUIRED, UNRESOLVED]}
+        statement: {type: string, minLength: 1}
+        evidence: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+        blocks_execution: {type: boolean}
+        hard_stop:
+          type: [object, 'null']
+          properties:
+            category: {enum: [OWNER_DECISION_REQUIRED, ESSENTIAL_INPUT_MISSING, AUTHORITY_VIOLATION, PROTECTED_INVARIANT_FAILURE, WRITE_COLLISION, SUPERSEDED_EP, ROADMAP_CONFLICT, REPOSITORY_STATE_CONFLICT, UNSAFE_ENGINEERING_RESULT]}
+            trigger: {enum: [AUTHORITY, ESSENTIAL_INPUT, PROTECTED_INVARIANT, UNSAFE_ENGINEERING_RESULT]}
+            basis: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+  overall_state: {enum: [CLEAR, NEEDS_ATTENTION, OWNER_REVIEW_REQUIRED]}
+  execution_effect:
+    type: object
+    required: [blocks_execution, blocking_findings]
+    properties:
+      blocks_execution: {type: boolean}
+      blocking_findings: {type: array, items: {type: string, pattern: '^QF-'}}
+  owner_report:
+    type: object
+    required: [summary, visible_risks, decisions_required]
+    properties:
+      summary: {type: string, minLength: 1}
+      visible_risks: {type: array}
+      decisions_required: {type: array}
+  successor_handover:
+    type: object
+    required: [unresolved_findings, follow_up]
+    properties:
+      unresolved_findings: {type: array, items: {type: string, pattern: '^QF-'}}
+      follow_up: {type: array, items: {type: string, minLength: 1}}
+additionalProperties: true

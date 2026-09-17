@@ -1,0 +1,19 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, from_base, to_base, classification, changed_paths, affected_scope, rationale, qualification]
+properties:
+  schema_version: {const: relay-v2.5-drift}
+  from_base: {type: string, minLength: 1}
+  to_base: {type: string, minLength: 1}
+  classification: {enum: [DISJOINT, WITHIN_QUALIFIED_BOUNDARY, OVERLAPPING, UNKNOWN]}
+  changed_paths: {type: array, items: {type: string}}
+  affected_scope: {type: array, items: {type: string}}
+  rationale: {type: string, minLength: 1}
+  qualification:
+    type: object
+    required: [basis, confirmation, confirmation_basis]
+    properties:
+      basis: {type: array, items: {type: string}}
+      confirmation: {enum: [NOT_REQUIRED, REQUIRED, SATISFIED, DEFERRED_PENDING]}
+      confirmation_basis: {type: array, items: {type: string}}
+additionalProperties: true

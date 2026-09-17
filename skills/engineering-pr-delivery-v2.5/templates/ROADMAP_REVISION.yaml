@@ -1,0 +1,26 @@
+schema_version: relay-v2.5
+revision:
+  id: RM-0002
+  from_revision: RM-0001
+  to_revision: RM-0002
+  classification: EXECUTION_DERIVED_STATUS
+  trigger:
+    type: CHECKPOINT
+    ref: CP-0001
+# If material execution is active, classify that active WP explicitly as changed,
+# removed, or unaffected. Silence is not evidence that the EP survived the revision.
+changes:
+  added: []
+  removed: []
+  changed: []
+  unaffected: []
+invalidated_execution_packages: []
+issue_graph_reconciled: false
+progress_basis_change:
+  old_basis: PB-0001
+  new_basis: PB-0001
+  old_total_weight: 100
+  new_total_weight: 100
+# Must equal the frontier computed from the resulting OVERALL_ROADMAP.
+frontier_after: []
+notes: []

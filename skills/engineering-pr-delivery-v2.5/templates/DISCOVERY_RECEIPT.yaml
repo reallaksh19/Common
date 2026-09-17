@@ -1,0 +1,37 @@
+schema_version: relay-v2.5-discovery
+id: DISC-0001
+candidate:
+  agent_instance_id: "<incoming-agent-instance>"
+route:
+  route_key: "SERIAL:<EP-id>"
+  mode: SERIAL
+  execution_ref: "<EP-id / PLAN-id>"
+  ep_id: "<EP-id>"
+  ep_path: "agents/relay/execution-packages/<EP-id>.yaml"
+  plan_id: null
+  plan_path: null
+  lane_id: null
+basis:
+  roadmap_id: "<roadmap-id>"
+  roadmap_revision: "<RM-id>"
+  relay_protocol_basis_ref: "<pinned Common ref>"
+  material_ref: "<EP material ref>"
+  ep_contract_digest: "sha256:<semantic EP digest>"
+  repo_profile_digest: "sha256:<REPO_PROFILE digest>"
+  predecessor_baton:
+    type: NONE
+    id: NONE
+    path: null
+    digest: null
+steps:
+  - id: DSTEP-0001
+    status: PASS
+    outputs:
+      - name: "<expected output name>"
+        value: "<observed value>"
+        basis:
+          - "<durable repository basis>"
+    basis:
+      - "<durable basis proving this discovery step>"
+result: PASS
+conversation_context_used: false

@@ -1,0 +1,25 @@
+schema_version: relay-v2.5-bootstrap
+repository:
+  name: "<repository-name>"
+  remote: "<owner/repository>"
+  repository_type: "<application/library/service/monorepo/etc>"
+  default_branch: "<default-branch>"
+relay_protocol:
+  basis_ref: "<pinned Common commit>"
+roadmap:
+  id: "<roadmap-id>"
+  revision: RM-0001
+  title: "<overall engineering roadmap title>"
+initial_position:
+  objective:
+    id: OBJ-001
+    title: "<initial objective>"
+  phase:
+    id: PHASE-001
+    title: "<initial phase>"
+  work_package:
+    id: WP-001
+    title: "<initial work package or discovery package>"
+initialization:
+  next_action: "Owner/architect reconciles the roadmap basis and promotes one DETAILED work package to the executable frontier."
+  notes: []

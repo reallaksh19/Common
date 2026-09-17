@@ -1,0 +1,53 @@
+schema_version: relay-v2.5-parallel-replan
+id: REPLAN-P001
+predecessor_plan:
+  id: PLAN-P001
+  path: agents/relay/parallel/PLAN-P001.yaml
+trigger:
+  type: LANE_INVALIDATED
+  lane_id: LANE-B
+  reason: "<why the approved topology can no longer execute as written>"
+  basis: ["<durable evidence/decision reference>"]
+lane_dispositions:
+  - lane_id: LANE-A
+    work_package: WP-A
+    disposition: COMPLETE
+    checkpoint:
+      id: CP-A
+      path: agents/relay/checkpoints/CP-A.yaml
+  - lane_id: LANE-B
+    work_package: WP-B
+    disposition: INVALIDATED
+    basis: ["<drift/failure/owner-decision reference>"]
+    unresolved_acceptance:
+      - id: AC-B1
+        state: NOT_RUN
+        basis: ["<old EP/acceptance reference>"]
+    evidence:
+      - id: TEST-B1
+        status: NOT_RUN
+        basis_ref: "<old material ref>"
+        reason: "<why not run>"
+    # transfers partition the complete unresolved acceptance/evidence inventory.
+    # Every item above must appear exactly once below with unchanged state/status/basis.
+    transfers:
+      - work_package: WP-B2
+        unresolved_acceptance:
+          - id: AC-B1
+            state: NOT_RUN
+            basis: ["<old EP/acceptance reference>"]
+        evidence:
+          - id: TEST-B1
+            status: NOT_RUN
+            basis_ref: "<old material ref>"
+            reason: "<why not run>"
+roadmap_reconciliation:
+  roadmap_revision: RM-0002
+  frontier_after: [WP-B2]
+successor_route:
+  mode: SERIAL
+  work_package: WP-B2
+  ep_id: EP-B2
+  ep_path: agents/relay/execution-packages/EP-B2.yaml
+  parallel_plan_id: null
+  parallel_plan_path: null

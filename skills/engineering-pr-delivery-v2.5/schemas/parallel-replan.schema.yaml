@@ -1,0 +1,46 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, predecessor_plan, trigger, lane_dispositions, roadmap_reconciliation, successor_route]
+properties:
+  schema_version: {const: relay-v2.5-parallel-replan}
+  id: {type: string, minLength: 1}
+  predecessor_plan:
+    type: object
+    required: [id, path]
+  trigger:
+    type: object
+    required: [type, lane_id, reason, basis]
+    properties:
+      type: {enum: [LANE_INVALIDATED, OWNER_REPLAN, ROADMAP_REPLAN, ROUTE_CONFLICT]}
+      basis: {type: array, minItems: 1}
+  lane_dispositions:
+    type: array
+    minItems: 2
+    items:
+      type: object
+      required: [lane_id, work_package, disposition]
+      properties:
+        disposition: {enum: [COMPLETE, CARRIED, INVALIDATED]}
+        unresolved_acceptance: {type: array}
+        evidence: {type: array}
+        transfers:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [work_package, unresolved_acceptance, evidence]
+            properties:
+              work_package: {type: string, minLength: 1}
+              unresolved_acceptance: {type: array}
+              evidence: {type: array}
+  roadmap_reconciliation:
+    type: object
+    required: [roadmap_revision, frontier_after]
+    properties:
+      frontier_after: {type: array, items: {type: string}, uniqueItems: true}
+  successor_route:
+    type: object
+    required: [mode, work_package, ep_id, ep_path, parallel_plan_id, parallel_plan_path]
+    properties:
+      mode: {enum: [SERIAL, PARALLEL, NONE]}
+additionalProperties: true

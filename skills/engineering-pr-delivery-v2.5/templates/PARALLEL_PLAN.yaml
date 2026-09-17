@@ -1,0 +1,51 @@
+schema_version: relay-v2.5
+id: PLAN-P001
+previous_replan: null
+previous_replan_path: null
+owner_approval:
+  approved: true
+  authority: OWNER
+  source: "<durable owner approval reference>"
+  approval_token: "APPROVE PARALLEL PLAN-P001"
+ascii_topology: |
+  ROADMAP FRONTIER
+        |
+     +--+--+
+     |     |
+  LANE-A LANE-B
+     |     |
+     +--+--+
+        |
+   INTEGRATION
+lanes:
+  - id: LANE-A
+    state: ACTIVE
+    work_package: "<WP-A>"
+    ep_id: "<EP-A>"
+    ep_path: agents/relay/execution-packages/<EP-A>.yaml
+    branch: "<branch-a>"
+    worktree: "<optional-worktree-a>"
+    write_domains: ["<exclusive/path/a/>"]
+    shared_read_domains: []
+  - id: LANE-B
+    state: ACTIVE
+    work_package: "<WP-B>"
+    ep_id: "<EP-B>"
+    ep_path: agents/relay/execution-packages/<EP-B>.yaml
+    branch: "<branch-b>"
+    worktree: "<optional-worktree-b>"
+    write_domains: ["<exclusive/path/b/>"]
+    shared_read_domains: []
+shared_write_exceptions: []
+integration:
+  owner: "<integration owner>"
+  work_package: "<integration-WP>"
+  planned_ep_id: "<integration-EP-id>"
+  creation_policy: WHEN_FRONTIER
+  depends_on_lanes: [LANE-A, LANE-B]
+risks:
+  - id: RISK-01
+    description: "<parallel collision/integration risk>"
+stop_conditions:
+  - id: STOP-01
+    condition: "A lane needs to write outside its approved domain or into another lane's domain."

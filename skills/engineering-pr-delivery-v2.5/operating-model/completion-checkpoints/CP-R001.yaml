@@ -1,0 +1,106 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R001
+work_package:
+  id: WP-00
+  title: Kernel baseline / object matrix
+  status: COMPLETE
+
+basis:
+  program_start_ref: "744bd8336b183af16f285acdd5eabbd6f29d7c36"
+  audited_through_ref: "9f581e82248cd864551f22139b119060b5265ef1"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Inventory actual V2.5 branch objects, schemas, templates, scripts, renderers, blueprints and CI.
+    - Reconcile actual enforcement against the object/authority matrix.
+    - Classify current and target control objects as KEEP, STRENGTHEN, REPLACE, DEPRECATE or ADD.
+    - Identify cross-object authority leaks and assign each to a successor work package.
+    - Resolve the discovery instruction/receipt namespace collision architecturally.
+  explicitly_not_performed:
+    - WP-01 Semantic Execution Package implementation.
+    - WP-02 readiness or Takeover Certification implementation.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  authority_matrix: "skills/engineering-pr-delivery-v2.5/operating-model/object-authority-matrix.md"
+  baseline_audit: "skills/engineering-pr-delivery-v2.5/operating-model/completion-baseline-audit.md"
+  completion_architecture: "skills/engineering-pr-delivery-v2.5/operating-model/completion-architecture.md"
+  semantic_ep_target: "skills/engineering-pr-delivery-v2.5/operating-model/execution-package.md"
+  completion_roadmap: "skills/engineering-pr-delivery-v2.5/operating-model/catchup-completion-roadmap.md"
+
+acceptance:
+  - id: AC-00-01
+    status: PASS
+    statement: Actual branch inventory is captured.
+    basis: ["completion-baseline-audit.md#inventory-observed-at-wp-00-start"]
+  - id: AC-00-02
+    status: PASS
+    statement: Existing control objects have authority roles and revamp classifications.
+    basis: ["object-authority-matrix.md#actual-kernel--target-matrix"]
+  - id: AC-00-03
+    status: PASS
+    statement: Authority/projection/enforcement gaps have stable finding IDs.
+    basis: ["completion-baseline-audit.md#findings"]
+  - id: AC-00-04
+    status: PASS
+    statement: Every identified gap has a successor work-package owner.
+    basis: ["completion-baseline-audit.md#wp-ownership-map"]
+  - id: AC-00-05
+    status: PASS
+    statement: Discovery instruction and receipt namespaces are distinct in the target architecture.
+    basis:
+      - "completion-architecture.md#repository-discovery"
+      - "execution-package.md#discovery"
+  - id: AC-00-06
+    status: PASS
+    statement: Strong kernel objects are explicitly retained instead of being rewritten without evidence.
+    basis: ["completion-baseline-audit.md#strong-kernel-components-retained"]
+  - id: AC-00-07
+    status: PASS
+    statement: No WP-01 semantic EP implementation was performed during WP-00.
+    basis: ["completion-baseline-audit.md#wp-00-acceptance-assessment"]
+
+findings_carried_forward:
+  - BA-001
+  - BA-002
+  - BA-003
+  - BA-004
+  - BA-005
+  - BA-006
+  - BA-007
+  - BA-008
+  - BA-009
+  - BA-010
+  - BA-011
+  - BA-012
+  - BA-013
+
+completion_progress:
+  basis_total: 100
+  earned_after_this_checkpoint: 5
+  percent_after_this_checkpoint: 5
+  note: "Program-level completion basis from catchup-completion-roadmap.md; future progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  claim_before_ci: "WP-00 content acceptance complete; final checkpoint validity requires scoped CI PASS on the commit containing CP-R001."
+
+successor:
+  mode: SERIAL
+  work_package: WP-01
+  title: Semantic Execution Package
+  planned_execution_package: EP-R002
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Migrate EP discovery instruction IDs from legacy DISC-* examples to DSTEP-* while reserving DISC-* for candidate receipts.
+    - Implement typed slice-specific input and benchmark/oracle contracts.
+    - Make repository discovery executable and output-contract driven.
+    - Strengthen scope, anti-drift, implementation-step and report payload semantics.
+    - Add negative regressions proving deliberately hollow EPs fail semantically.

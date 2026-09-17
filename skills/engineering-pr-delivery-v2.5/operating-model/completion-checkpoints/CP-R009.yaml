@@ -1,0 +1,99 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R009
+work_package:
+  id: WP-08
+  title: Owner Change Intake
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R008
+  implementation_through_ref: "fb5e0b15f25884793e38ba694505b748acaf84fd"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Extend Owner INTENT_MUTATION records with a semantic before/after change_intake summary while keeping the ODR authoritative.
+    - Derive a source-bound Owner change projection from the ODR, linked roadmap revision, current Progress Basis, issue graph, repository state and computed frontier.
+    - Render a plain-language OWNER_CHANGE report containing previous/new concept, retained/invalidated behavior, new scope, roadmap impact, progress-basis effect, issue impact, active-EP disposition, new frontier and applied state.
+    - Distinguish a CAPTURED pending Owner change from an APPLIED change without inventing post-change frontier truth.
+    - Require current Owner-intent roadmap mutations to bind an APPLIED ODR, current Progress Basis and exact computed frontier.
+    - Require explicit current-EP/work-package disposition under an applied Owner mutation.
+    - Require visible issue reconciliation when the Owner change names affected issues.
+    - Add aggregate conformance validation and repository-neutral synthetic regressions.
+    - Document the Owner change-intake transaction and operator commands.
+  explicitly_not_performed:
+    - Full Agent A -> B -> C zero-chat release certification; owned by WP-09.
+    - Whole-surface self-consistency audit; owned by WP-10.
+    - PR ready-for-review transition or merge.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-08-owner-change-intake.md"
+  operating_model: "skills/engineering-pr-delivery-v2.5/operating-model/owner-change-intake.md"
+  odr_template: "skills/engineering-pr-delivery-v2.5/templates/ODR.yaml"
+  projection_schema: "skills/engineering-pr-delivery-v2.5/schemas/owner-change-projection.schema.yaml"
+  projection: "skills/engineering-pr-delivery-v2.5/scripts/owner_change_projection.py"
+  renderer: "skills/engineering-pr-delivery-v2.5/scripts/render_owner_change.py"
+  validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_owner_change_intake.py"
+  regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_owner_change_intake.py"
+
+acceptance:
+  - id: AC-08-01
+    status: PASS
+    statement: Owner-change reporting derives from ODR intent authority plus roadmap transaction authority and does not create a competing mutable change authority.
+    basis: ["operating-model/owner-change-intake.md", "scripts/owner_change_projection.py"]
+  - id: AC-08-02
+    status: PASS
+    statement: Material Owner change reporting includes previous concept, requested/new concept, retained behavior, invalidated behavior and new scope.
+    basis: ["templates/ODR.yaml", "tests/stress/test_owner_change_intake.py::OwnerChangeIntakeStressTests.test_applied_owner_change_projects_semantic_and_structural_impact"]
+  - id: AC-08-03
+    status: PASS
+    statement: Applied Owner changes expose roadmap impact, Progress Basis effect, issue impact, current-EP disposition and exact resulting frontier.
+    basis: ["scripts/render_owner_change.py", "scripts/validate_owner_change_intake.py"]
+  - id: AC-08-04
+    status: PASS
+    statement: CAPTURED Owner decisions remain visibly not applied and cannot invent a post-change frontier.
+    basis: ["tests/stress/test_owner_change_intake.py::OwnerChangeIntakeStressTests.test_pending_change_is_visible_but_not_applied"]
+  - id: AC-08-05
+    status: PASS
+    statement: Current applied Owner mutations fail when active work lacks explicit disposition or when issue/progress/frontier reconciliation is stale.
+    basis: ["tests/stress/test_owner_change_intake.py::OwnerChangeIntakeStressTests.test_active_work_must_have_explicit_disposition", "tests/stress/test_owner_change_intake.py::OwnerChangeIntakeStressTests.test_issue_impact_cannot_claim_reconciled_when_revision_did_not", "tests/stress/test_owner_change_intake.py::OwnerChangeIntakeStressTests.test_progress_basis_and_frontier_are_source_bound"]
+  - id: AC-08-06
+    status: PASS
+    statement: Documentation-aligned implementation passes compile, root units and the dedicated repository-neutral synthetic stress suite before checkpoint creation.
+    basis: ["workflow:35188301698", "head:fb5e0b15f25884793e38ba694505b748acaf84fd", "root_unit_count:7", "stress_count:131"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 89
+  earned_by_this_checkpoint: 3
+  earned_after_this_checkpoint: 92
+  percent_after_this_checkpoint: 92
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35188301698
+  pre_checkpoint_green_ref: "fb5e0b15f25884793e38ba694505b748acaf84fd"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-08 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the final exact head containing CP-R009 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-09
+  title: End-to-end Relay Certification Matrix
+  planned_execution_package: EP-R010
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Build the full Agent A -> chat deleted -> Agent B -> chat deleted -> Agent C repository-only relay certification.
+    - Cover lifecycle recovery across ACTIVE, RECONCILING, PARALLEL, stale projection, IDLE and TERMINAL.
+    - Require candidate discovery, qualification when applicable, current takeover certification, exact baton recovery and repository-only answers to the release questions.
+    - Fail certification if any material answer requires prior conversation.

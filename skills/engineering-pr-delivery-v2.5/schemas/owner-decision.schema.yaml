@@ -1,0 +1,22 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, decision, effects, impact, affected, required_reconciliation, status]
+properties:
+  schema_version: {const: relay-v2.5}
+  decision:
+    type: object
+    required: [authority, kind, statement, source]
+    properties:
+      authority: {const: OWNER}
+      kind: {enum: [INTENT_MUTATION, DEFERRAL, AUTHORIZATION, DECLINE, NO_CHANGE_CONFIRMATION]}
+      statement: {type: string, minLength: 1}
+      source: {type: string, minLength: 1}
+  effects:
+    type: object
+    required: [requirement_disposition, grants_material_write_authority, pending_items]
+    properties:
+      requirement_disposition: {enum: [NOT_APPLICABLE, SATISFIED, PENDING_NOT_SATISFIED]}
+      grants_material_write_authority: {type: boolean}
+      pending_items: {type: array, items: {type: string}, uniqueItems: true}
+  status: {enum: [CAPTURED, APPLIED, SUPERSEDED]}
+additionalProperties: true

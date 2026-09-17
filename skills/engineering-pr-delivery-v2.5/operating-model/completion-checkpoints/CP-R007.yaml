@@ -1,0 +1,126 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R007
+work_package:
+  id: WP-06
+  title: Quality Procedure Library and QRV evidence
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R006
+  implementation_through_ref: "c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Expand all ten built-in quality blueprints into executable procedures with applicability, inputs, steps, checklist, anti-patterns, artifacts, verification, finding classification, true stop conditions, Owner report and successor handover.
+    - Replace the legacy quality.blueprints list with a complete applicability router covering every built-in blueprint exactly once.
+    - Require concrete review_focus for applicable procedures while avoiding artificial review ceremony for explicit not-applicable procedures.
+    - Add first-class QRV-* Quality Review schema, template, library helpers and validators.
+    - Bind QRV to the exact EP contract digest, roadmap revision, material ref and quality-router snapshot.
+    - Separate procedure result, quality finding, evidence status and execution stop semantics.
+    - Require a valid existing hard-stop mapping and durable basis before a quality finding may block execution.
+    - Require unresolved/deferred quality findings to transfer exactly through successor handover.
+    - Require quality-required checkpoints to cite current QRV id/path/digest on the same material basis.
+    - Prevent checkpoints with a true blocking QRV from publishing an executable successor.
+    - Preserve quality custody for parallel lane checkpoints.
+    - Bind checkpoint QRV into the derived report projection without making generated reports authoritative.
+    - Add focused repository-neutral quality-procedure stress regressions.
+  explicitly_not_performed:
+    - Plain-language Owner versus technical communication split; owned by WP-07.
+    - Owner change-intake UX over ODR/roadmap transactions; owned by WP-08.
+    - Full Agent A -> B -> C zero-chat release certification; owned by WP-09.
+    - Final whole-surface schema/template/validator/renderer/docs consistency audit; owned by WP-10.
+    - PR ready-for-review transition or merge; owned by WP-11/Owner authorization.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-06-quality-procedures.md"
+  quality_review_template: "skills/engineering-pr-delivery-v2.5/templates/QUALITY_REVIEW.yaml"
+  quality_review_schema: "skills/engineering-pr-delivery-v2.5/schemas/quality-review.schema.yaml"
+  quality_library: "skills/engineering-pr-delivery-v2.5/scripts/qualitylib.py"
+  blueprint_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_blueprints.py"
+  quality_router_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_quality_router.py"
+  quality_review_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_quality_review.py"
+  report_projection: "skills/engineering-pr-delivery-v2.5/scripts/report_projection.py"
+  regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_quality_procedures.py"
+
+acceptance:
+  - id: AC-06-01
+    status: PASS
+    statement: Every built-in quality blueprint is a substantive executable procedure with all required procedure sections.
+    basis: ["scripts/validate_blueprints.py", "tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_blueprint_library_is_procedural"]
+  - id: AC-06-02
+    status: PASS
+    statement: Each EP explicitly partitions the complete quality library into applicable and not-applicable procedures, and only applicable procedures require review focus.
+    basis: ["scripts/validate_quality_router.py", "tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_router_is_complete_partition_and_only_applicable_requires_focus"]
+  - id: AC-06-03
+    status: PASS
+    statement: QRV exactly covers applicable procedures and is bound to the exact EP/router/roadmap/material basis.
+    basis: ["scripts/validate_quality_review.py", "tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_clear_qrv_exactly_covers_applicable_procedures"]
+  - id: AC-06-04
+    status: PASS
+    statement: NOT_RUN quality procedure evidence produces attention without automatically becoming an execution hard stop.
+    basis: ["tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_not_run_is_quality_attention_not_execution_block"]
+  - id: AC-06-05
+    status: PASS
+    statement: High-severity ordinary maintainability findings can remain non-blocking; severity alone never grants stop authority.
+    basis: ["tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_high_severity_ordinary_finding_does_not_become_fake_blocker"]
+  - id: AC-06-06
+    status: PASS
+    statement: A blocking quality finding requires a valid existing hard-stop trigger/category mapping and durable basis.
+    basis: ["tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_blocking_finding_requires_real_hard_stop_mapping"]
+  - id: AC-06-07
+    status: PASS
+    statement: Unresolved/deferred quality findings cannot disappear during successor transfer.
+    basis: ["tests/stress/test_quality_procedures.py::QualityProcedureStressTests.test_unresolved_findings_cannot_disappear_from_handover"]
+  - id: AC-06-08
+    status: PASS
+    statement: Parallel lane convergence retains lane-specific QRV custody rather than bypassing quality review.
+    basis: ["tests/stress/test_parallel_convergence.py::ParallelConvergenceStressTests.test_parallel_join_becomes_cold_startable_serial_integration"]
+  - id: AC-06-09
+    status: PASS
+    statement: Checkpoints bind QRV evidence by id/path/digest/material basis and cannot publish an executable successor while the QRV has a true blocking finding.
+    basis: ["scripts/validate_quality_review.py", "templates/CP.yaml", "schemas/checkpoint.schema.yaml"]
+  - id: AC-06-10
+    status: PASS
+    statement: Derived report projection source-binds and exposes checkpoint QRV without becoming a competing quality authority.
+    basis: ["scripts/report_projection.py", "scripts/validate_report_projection.py", "schemas/report-projection.schema.yaml"]
+  - id: AC-06-11
+    status: PASS
+    statement: Documentation-aligned implementation passes compile, root units and the dedicated repository-neutral synthetic stress suite before checkpoint creation.
+    basis: ["workflow:35146877546", "head:c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868", "root_unit_count:7", "stress_count:118"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 73
+  earned_by_this_checkpoint: 10
+  earned_after_this_checkpoint: 83
+  percent_after_this_checkpoint: 83
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35146877546
+  pre_checkpoint_green_ref: "c5a3f8dfb9111081b15fef607dd2b6e7ba8ae868"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-06 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the final exact head containing CP-R007 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-07
+  title: Human Communication
+  planned_execution_package: EP-R008
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Separate technical machine-facing status from plain-language Owner status without creating another authority source.
+    - Translate relay terms into Owner-relevant capability, risk, evidence, missing evidence and decision language.
+    - Derive OWNER_STATUS and TECHNICAL_STATUS from the same authoritative report projection.
+    - Add repository-neutral regressions proving Owner-facing output cannot hide hard stops, evidence gaps, roadmap changes or exact next work.

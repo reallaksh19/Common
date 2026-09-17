@@ -1,0 +1,38 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, generated_from, roadmap_summary, relay_state, current_position, progress, execution, quality, evidence, stop, projection, relay_readiness, takeover_admissions, active_contract, owner_decisions, next_work, acceptance, parallel_lanes, issue_summary, checkpoint]
+properties:
+  schema_version: {const: relay-v2.5-report-projection}
+  generated_from:
+    type: object
+    required: [roadmap_revision, progress_basis, repo_state_digest, roadmap_digest, progress_digest, issue_graph_digest, owner_decisions_digest, ep_id, ep_digest, checkpoint_id, checkpoint_digest, quality_review_id, quality_review_digest]
+    properties:
+      owner_decisions_digest: {type: string, pattern: '^sha256:'}
+      quality_review_id: {type: [string, 'null']}
+      quality_review_digest: {type: [string, 'null']}
+  roadmap_summary: {type: object}
+  progress:
+    type: object
+    required: [progress_basis, overall_percent, current, hierarchy]
+  active_contract: {type: [object, 'null']}
+  owner_decisions: {type: array}
+  next_work: {type: [object, 'null']}
+  acceptance: {type: array}
+  parallel_lanes: {type: array}
+  checkpoint:
+    type: [object, 'null']
+    properties:
+      quality_review:
+        type: [object, 'null']
+        properties:
+          id: {type: string, pattern: '^QRV-'}
+          overall_state: {enum: [CLEAR, NEEDS_ATTENTION, OWNER_REVIEW_REQUIRED]}
+          execution_effect: {type: object}
+          procedure_results: {type: array}
+          findings: {type: array}
+          owner_report: {type: object}
+          successor_handover: {type: object}
+      known_limitations: {type: array}
+      remaining_work: {type: array}
+      roadmap_reconciliation: {type: object}
+additionalProperties: true

@@ -1,0 +1,142 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R004
+work_package:
+  id: WP-03
+  title: Strong phase / material-boundary qualification
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R003
+  implementation_through_ref: "0d0b52528d348f3978adc0f660d4e0c9cf0f3191"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Replace inline phase-transition question metadata with a durable qualification boundary referencing QSET-*.
+    - Add QSET-* Question Set template, schema and procedural validator.
+    - Add QUAL-* Qualification Receipt template, schema and procedural validator.
+    - Require fresh qualification for PHASE_CHANGED or MATERIAL_QUALIFICATION_BOUNDARY_CHANGED.
+    - Require Q1 production/source tracing with structured production-path outputs.
+    - Require Q2 engineering reconstruction with explicit mode and concrete values for quantitative work.
+    - Require Q3 mutation, protected invariant and exact falsifier.
+    - Require Q4 independent verification bound to incoming benchmark/oracle references.
+    - Require Q5 exact first safe implementation slice with predicted before/after verification.
+    - Bind QSET and QUAL to the exact serial/parallel route, roadmap revision, work package and semantic EP digest.
+    - Prohibit candidate-authored qualification criteria and candidate self-evaluation.
+    - Allow deterministic evaluation only when exact deterministic expectations exist and match candidate outputs.
+    - Require QUAL PASS to include PASS evaluation with durable basis for every Q1-Q5 item.
+    - Make BATON_READY fail when a required qualification boundary lacks a current strong QSET.
+    - Make TC-* require current QUAL PASS and exact qualification receipt digest when qualification is required.
+    - Retire inline phase_transition.questions as an executable qualification contract.
+    - Add repository-neutral synthetic regressions for phase-change and same-phase material-boundary qualification.
+  explicitly_not_performed:
+    - Full Objective -> Phase -> WP -> Task -> AC Owner handover/progress redesign; owned by WP-04.
+    - Generated report reconciliation; owned by WP-04/WP-07.
+    - GitHub operation orchestration; owned by WP-05.
+    - QRV quality procedure implementation; owned by WP-06.
+    - Owner-language communication redesign; owned by WP-07.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+    - PR merge or ready-for-review transition.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-03-qualification.md"
+  question_set_template: "skills/engineering-pr-delivery-v2.5/templates/QUESTION_SET.yaml"
+  question_set_schema: "skills/engineering-pr-delivery-v2.5/schemas/question-set.schema.yaml"
+  question_set_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py"
+  qualification_template: "skills/engineering-pr-delivery-v2.5/templates/QUALIFICATION_RECEIPT.yaml"
+  qualification_schema: "skills/engineering-pr-delivery-v2.5/schemas/qualification-receipt.schema.yaml"
+  qualification_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py"
+  compatibility_entrypoint: "skills/engineering-pr-delivery-v2.5/scripts/validate_phase_transition_questions.py"
+  takeover_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py"
+  baton_validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py"
+  aggregate_conformance: "skills/engineering-pr-delivery-v2.5/scripts/validate_relay_conformance.py"
+  qualification_regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_qualification.py"
+
+acceptance:
+  - id: AC-03-01
+    status: PASS
+    statement: Phase-change qualification can produce a current QUAL PASS consumed by TC-*.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_phase_change_qualification_allows_current_tc"]
+  - id: AC-03-02
+    status: PASS
+    statement: A material engineering boundary change inside the same nominal phase requires fresh qualification.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_same_phase_material_boundary_requires_fresh_qualification"]
+  - id: AC-03-03
+    status: PASS
+    statement: Quantitative Q2 reconstruction requires concrete payload values.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_quantitative_q2_requires_concrete_values"]
+  - id: AC-03-04
+    status: PASS
+    statement: Q3 requires an exact falsifier rather than generic boundary prose.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_q3_requires_exact_falsifier"]
+  - id: AC-03-05
+    status: PASS
+    statement: Incoming candidate cannot prepare its own qualification criteria.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_candidate_cannot_prepare_own_question_set"]
+  - id: AC-03-06
+    status: PASS
+    statement: Candidate answers must provide every required structured output.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_answer_must_supply_required_structured_outputs"]
+  - id: AC-03-07
+    status: PASS
+    statement: Candidate cannot act as the independent evaluator of its own qualification.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_independent_evaluator_cannot_be_candidate"]
+  - id: AC-03-08
+    status: PASS
+    statement: Mutation of QUAL evidence after TC issuance invalidates TC through receipt digest binding.
+    basis: ["tests/stress/test_qualification.py::QualificationStressTests.test_qual_change_invalidates_tc_digest"]
+  - id: AC-03-09
+    status: PASS
+    statement: Retired inline phase-transition question metadata is rejected in favor of qualification_boundary and durable QSET/QUAL evidence.
+    basis: ["tests/stress/test_lifecycle_transactions.py::LifecycleTransactionStressTests.test_inline_phase_transition_questions_are_retired"]
+  - id: AC-03-10
+    status: PASS
+    statement: Documentation-aligned implementation passes compile, root units and all discovered synthetic stress tests before checkpoint creation.
+    basis: ["workflow:35098797964", "head:3e32dcc562651db019a0ff4e9cf48e4099ab43bd", "stress_count:99"]
+
+baseline_findings:
+  resolved_by_wp_03:
+    - BA-010
+  carried_forward:
+    - BA-003
+    - BA-008
+    - BA-009
+    - BA-011
+    - BA-012
+    - BA-013
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 41
+  earned_by_this_checkpoint: 12
+  earned_after_this_checkpoint: 53
+  percent_after_this_checkpoint: 53
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35098797964
+  pre_checkpoint_green_ref: "3e32dcc562651db019a0ff4e9cf48e4099ab43bd"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-03 content acceptance is complete; formal checkpoint validity requires the corrected workflow PASS on the final exact head containing CP-R004 and program-state reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-04
+  title: Full progress / handover / next-work contract
+  planned_execution_package: EP-R005
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Derive Owner-facing progress from authoritative roadmap/progress/EP/CP objects rather than unverified REPO_STATE phase/EP percentage mirrors.
+    - Render Overall -> Objective -> Phase -> Work Package -> Task/Step -> Acceptance hierarchy with evidence-aware state.
+    - Replace vague next_action dependence with structured ordered next-work steps including targets, inputs, tests, acceptance and stop conditions.
+    - Add a structured generated report projection reconciled to source objects rather than a manually authoritative report.
+    - Preserve machine truth while keeping Owner-facing communication redesign itself in WP-07.

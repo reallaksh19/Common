@@ -1,0 +1,178 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, identity, git_basis, roadmap_source, outcome, context_capsule, repository_discovery, inputs, benchmarks, scope, anti_drift, implementation_plan, next_work, quality, acceptance, validation, failure_and_stop_conditions, report_contract, checkpoint_contract, successor_relay]
+properties:
+  schema_version: {const: relay-v2.5}
+  identity:
+    type: object
+    required: [ep_id, branch, base_ref, execution_state, previous_checkpoint]
+    properties:
+      previous_checkpoint: {type: [string, 'null']}
+      previous_join: {type: [string, 'null']}
+      previous_replan: {type: [string, 'null']}
+  replan_inheritance:
+    type: [object, 'null']
+    properties:
+      from_replan: {type: string}
+      unresolved_acceptance: {type: array}
+      evidence: {type: array}
+  git_basis:
+    type: object
+    required: [expected_branch, material_ref, base_branch, base_observed_ref, drift_policy, drift_receipt]
+    properties:
+      expected_branch: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      base_branch: {type: string, minLength: 1}
+      base_observed_ref: {type: string, minLength: 1}
+      drift_policy: {const: RECHECK_BEFORE_WRITE}
+      drift_receipt: {type: [string, 'null']}
+  roadmap_source:
+    type: object
+    required: [roadmap_id, roadmap_revision, objective, phase, work_package]
+  repository_discovery:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, action, question, expected_outputs, receipt_required, on_failure]
+      properties:
+        id: {type: string, pattern: '^DSTEP-'}
+        action: {enum: [LOCATE, TRACE, VERIFY, COMPARE, INSPECT, RESOLVE, VERIFY_GIT]}
+        target: {type: string}
+        targets: {type: array, items: {type: string}, minItems: 1}
+        question: {type: string, minLength: 1}
+        expected_outputs: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        receipt_required: {type: boolean}
+        on_failure: {type: string, minLength: 1}
+  inputs:
+    type: array
+    items:
+      type: object
+      required: [id, name, description, authority, source, type, units, editable, applicability, resolution, consumers, validation, stale_if]
+      properties:
+        id: {type: string, minLength: 1}
+        name: {type: string, minLength: 1}
+        description: {type: string, minLength: 1}
+        authority: {type: string, minLength: 1}
+        source: {type: string, minLength: 1}
+        type: {type: string, minLength: 1}
+        editable: {type: boolean}
+        applicability: {enum: [CURRENT_STEP_REQUIRED, CURRENT_EP_REQUIRED, FUTURE_STEP, INFORMATIONAL]}
+        resolution: {enum: [READY, OWNER_EDITABLE_READY, DEFERRED_NOT_CURRENTLY_REQUIRED, MISSING_BLOCKING, INVALID, STALE]}
+        consumers: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        validation: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        stale_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+  benchmarks:
+    type: array
+    items:
+      type: object
+      required: [id, name, purpose, source, oracle_class, payload, expected, tolerance, independence, applicability, resolution, verifies, stale_if]
+      properties:
+        id: {type: string, minLength: 1}
+        name: {type: string, minLength: 1}
+        purpose: {type: string, minLength: 1}
+        source: {type: string, minLength: 1}
+        oracle_class: {enum: [ANALYTICAL, REFERENCE_DATA, INDEPENDENT_IMPLEMENTATION, FROZEN_GOLDEN, EXTERNAL_STANDARD, MANUAL_RECONSTRUCTION, OBSERVATIONAL]}
+        independence: {type: string, minLength: 1}
+        applicability: {enum: [CURRENT_STEP_REQUIRED, CURRENT_EP_REQUIRED, FUTURE_STEP, INFORMATIONAL]}
+        resolution: {enum: [READY, OWNER_EDITABLE_READY, DEFERRED_NOT_CURRENTLY_REQUIRED, MISSING_BLOCKING, INVALID, STALE]}
+        verifies: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+        stale_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+  scope:
+    type: object
+    required: [allowed, allowed_reads, protected, prohibited, owner_reserved]
+  anti_drift:
+    type: object
+    required: [do_not, stale_if]
+  implementation_plan:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, objective, targets, reads, writes, inputs, acceptance, tests, expected_state, stop_conditions]
+  next_work:
+    type: object
+    required: [phase_transition, steps]
+    properties:
+      phase_transition: {type: boolean}
+      steps:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required: [order, action, targets, inputs, tests, benchmarks, acceptance, expected_result, stop_if]
+          properties:
+            order: {type: integer, minimum: 1}
+            action: {type: string, minLength: 1}
+            targets: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+            inputs: {type: array, items: {type: string, minLength: 1}}
+            tests: {type: array, items: {type: string, minLength: 1}}
+            benchmarks: {type: array, items: {type: string, minLength: 1}}
+            acceptance: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+            expected_result: {type: string, minLength: 1}
+            stop_if: {type: array, items: {type: string, minLength: 1}, minItems: 1}
+  qualification_boundary:
+    type: object
+    required: [required]
+    properties:
+      required: {type: boolean}
+      trigger: {enum: [PHASE_CHANGED, MATERIAL_QUALIFICATION_BOUNDARY_CHANGED]}
+      from_phase: {type: string}
+      to_phase: {type: string}
+      changed_dimensions: {type: array}
+      basis: {type: array}
+      question_set:
+        type: object
+        required: [id, path]
+        properties:
+          id: {type: string, pattern: '^QSET-'}
+          path: {type: string, minLength: 1}
+  quality:
+    type: object
+    required: [applicable, not_applicable, review_contract, findings_policy, ordinary_findings_are_hard_stops]
+    properties:
+      applicable:
+        type: array
+        items:
+          type: object
+          required: [blueprint, reason, review_focus]
+          properties:
+            blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+            reason: {type: string, minLength: 1}
+            review_focus: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+      not_applicable:
+        type: array
+        items:
+          type: object
+          required: [blueprint, reason]
+          properties:
+            blueprint: {enum: [software-design, coding, ui-ux, testing, engineering-numerics, code-review, accessibility, performance, migration, github-delivery]}
+            reason: {type: string, minLength: 1}
+            review_focus: {type: array, items: {type: string, minLength: 1}}
+      review_contract:
+        type: object
+        required: [required, required_before_checkpoint, receipt_namespace, required_outputs]
+        properties:
+          required: {const: true}
+          required_before_checkpoint: {const: true}
+          receipt_namespace: {const: 'QRV-'}
+          required_outputs:
+            type: array
+            minItems: 4
+            maxItems: 4
+            uniqueItems: true
+            items: {enum: [procedure_results, findings, owner_report, successor_handover]}
+      findings_policy: {type: string, minLength: 1}
+      ordinary_findings_are_hard_stops: {const: false}
+  acceptance: {type: array, minItems: 1}
+  report_contract:
+    type: object
+    required: [sections, payloads]
+  successor_relay:
+    type: object
+    required: [required, duties, required_outputs]
+    properties:
+      required: {const: true}
+      duties: {type: array, minItems: 1}
+      required_outputs: {type: array, minItems: 1}
+additionalProperties: true

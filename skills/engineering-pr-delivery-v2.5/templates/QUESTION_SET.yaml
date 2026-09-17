@@ -1,0 +1,66 @@
+schema_version: relay-v2.5-question-set
+id: QSET-0001
+route:
+  route_key: "SERIAL:EP-0001"
+  mode: SERIAL
+  execution_ref: EP-0001
+  ep_id: EP-0001
+  ep_path: agents/relay/execution-packages/EP-0001.yaml
+  plan_id: null
+  plan_path: null
+  lane_id: null
+  roadmap_revision: RM-0001
+  work_package: WP-001
+  ep_contract_digest: "<sha256>"
+boundary:
+  trigger: PHASE_CHANGED
+  from_phase: PHASE-000
+  to_phase: PHASE-001
+  changed_dimensions:
+    - PRODUCTION_PATH
+  basis:
+    - "<durable reason this boundary requires fresh qualification>"
+questions:
+  - id: Q1
+    focus: PRODUCTION_PATH
+    anchors: [WP-001, INPUT-01]
+    prompt: "Trace the actual incoming production path for this work package."
+    required_output_keys: [production_entrypoint, state_owner, authority_source, downstream_consumer]
+    evidence_required: true
+  - id: Q2
+    focus: ENGINEERING_PROBLEM
+    anchors: [WP-001, INPUT-01, AC-01]
+    prompt: "Reconstruct the incoming engineering problem from the supplied payload."
+    reconstruction_mode: LOGIC_RECONSTRUCTION
+    payload:
+      source: "<durable payload/input source>"
+      values: {}
+    required_output_keys: [reconstruction_steps, intermediate_result, expected_result]
+    evidence_required: true
+  - id: Q3
+    focus: BOUNDARIES_INVARIANTS
+    anchors: [WP-001, AC-01]
+    prompt: "Apply the declared mutation and identify the protected invariant and exact falsifier."
+    mutation:
+      condition: "<specific authority/input/failure mutation>"
+      protected_invariant: "<what must remain true>"
+      falsifier: "<exact observation proving the invariant is violated>"
+    required_output_keys: [mutation_effect, protected_invariant, falsifier]
+    evidence_required: true
+  - id: Q4
+    focus: VERIFICATION
+    anchors: [AC-01, TEST-01, BENCH-01]
+    prompt: "Independently verify the incoming result without relying on the production implementation."
+    oracle_refs: [BENCH-01]
+    independence_requirement: "Use an oracle/reconstruction independent of the production implementation path."
+    required_output_keys: [independent_method, predicted_result, tolerance_or_exactness]
+    evidence_required: true
+  - id: Q5
+    focus: FIRST_SAFE_SLICE
+    anchors: [STEP-01, AC-01, TEST-01]
+    prompt: "State the first exact bounded implementation change and its predicted before/after verification."
+    step_refs: [STEP-01]
+    required_output_keys: [first_change, predicted_before, predicted_after, verification]
+    evidence_required: true
+prepared_by:
+  agent_instance_id: "<outgoing-agent-instance>"

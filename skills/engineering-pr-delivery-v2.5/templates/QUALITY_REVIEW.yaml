@@ -1,0 +1,37 @@
+schema_version: relay-v2.5-quality-review
+quality_review_id: QRV-0001
+ep:
+  id: EP-0001
+  path: agents/relay/execution-packages/EP-0001.yaml
+  contract_digest: "<sha256 canonical EP digest>"
+roadmap_revision: RM-0001
+material_ref: "<exact material ref reviewed>"
+reviewer:
+  type: AGENT
+  identity: "<reviewer identity>"
+router_snapshot:
+  applicable:
+    - blueprint: coding
+      reason: "Production implementation changed."
+      review_focus: [state ownership, error behavior, maintainability]
+  not_applicable:
+    - blueprint: engineering-numerics
+      reason: "No numerical authority or solver behavior changed."
+procedure_results:
+  - blueprint: coding
+    result: CLEAR
+    evidence: ["<review notes / diff / command / artifact>"]
+    reason: null
+    cause: null
+findings: []
+overall_state: CLEAR
+execution_effect:
+  blocks_execution: false
+  blocking_findings: []
+owner_report:
+  summary: "Quality review found no unresolved material quality concerns."
+  visible_risks: []
+  decisions_required: []
+successor_handover:
+  unresolved_findings: []
+  follow_up: []
