@@ -69,15 +69,17 @@ assert reconciled["PHY-KIN-2D-PROJECTILE"]["v3_gate_ids"] == [
 ]
 assert reconciled["PHY-KIN-RELATIVE-2D"]["disposition"] == "MAPPED_V3"
 assert reconciled["PHY-KIN-RELATIVE-2D"]["v3_gate_ids"] == ["PHY-M2D-RELATIVE-VELOCITY"]
-assert reconciled["PHY-WEP-WORK-ENERGY"]["disposition"] == "EXACT_V3_ID"
-assert reconciled["PHY-WEP-CONSERVATION"]["disposition"] == "EXACT_V3_ID"
+assert reconciled["PHY-WORK-ENERGY-POWER"]["disposition"] == "EXACT_V3_ID"
+assert reconciled["PHY-WORK-ENERGY-POWER"]["v3_gate_ids"] == ["PHY-WORK-ENERGY-POWER"]
+assert reconciled["PHY-ENERGY-CONSERVATION-LAW"]["disposition"] == "EXACT_V3_ID"
+assert reconciled["PHY-ENERGY-CONSERVATION-LAW"]["v3_gate_ids"] == ["PHY-ENERGY-CONSERVATION-LAW"]
 assert all(row["discovery_gate_id"] != "PHY-GRAV-UNIVERSAL-LAW" for row in report["migration_gaps"])
 assert all(row["discovery_gate_id"] != "PHY-GRAV-FREE-FALL" for row in report["migration_gaps"])
 assert all(row["discovery_gate_id"] != "PHY-FORCE-NEWTON-LAWS" for row in report["migration_gaps"])
 assert all(row["discovery_gate_id"] != "PHY-KIN-2D-PROJECTILE" for row in report["migration_gaps"])
 assert all(row["discovery_gate_id"] != "PHY-KIN-RELATIVE-2D" for row in report["migration_gaps"])
-assert all(row["discovery_gate_id"] != "PHY-WEP-WORK-ENERGY" for row in report["migration_gaps"])
-assert all(row["discovery_gate_id"] != "PHY-WEP-CONSERVATION" for row in report["migration_gaps"])
+assert all(row["discovery_gate_id"] != "PHY-WORK-ENERGY-POWER" for row in report["migration_gaps"])
+assert all(row["discovery_gate_id"] != "PHY-ENERGY-CONSERVATION-LAW" for row in report["migration_gaps"])
 
 for gap in report["migration_gaps"]:
     assert gap["promotion_status"] == "BLOCKED_PENDING_V3_ENRICHMENT"
