@@ -1,0 +1,100 @@
+schema_version: v2.5-completion-program-v1
+kind: COMPLETION_PROGRAM_CHECKPOINT
+checkpoint_id: CP-R010
+work_package:
+  id: WP-09
+  title: End-to-end Relay Certification Matrix
+  status: COMPLETE
+
+basis:
+  predecessor_checkpoint: CP-R009
+  implementation_through_ref: "3ff5b26281078822c9965c4048c5f6b3bc8c851d"
+  pr: "reallaksh19/Common#396"
+  base_ref: "fed57820909f4984a97d67437340df952b73a5ab"
+  branch: "agent/engineering-pr-delivery-v2.5"
+
+scope:
+  performed:
+    - Add a source-derived zero-context reconstruction object and validator for repository-only relay recovery.
+    - Require active routes to reconstruct why the task exists, governing Owner decisions, predecessor facts/limitations, uncertainty, input authority/editability, benchmarks/oracles, scope, quality obligations, evidence, tests, acceptance, first action, stale conditions and exact next work.
+    - Execute the defining Agent A -> chat deleted -> Agent B -> chat deleted -> Agent C synthetic relay across three dependency-ordered work packages.
+    - Require Agent B and Agent C to independently create DISC/QUAL/TC evidence with conversation_context_used false and current route/contract bindings.
+    - Add a strict repository-only boundary regression that discards predecessor handoff return values and reconstructs candidate evidence by reopening repository files only.
+    - Certify lifecycle recovery semantics for ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL; retain INITIALIZING coverage in bootstrap/core tests.
+    - Keep RECONCILING read-only, stale required projection not handover-ready, and IDLE/TERMINAL without material routes.
+    - Add aggregate zero-context reconstruction validation and a documented relay certification matrix.
+  explicitly_not_performed:
+    - Whole-surface schema/template/validator/renderer/docs self-consistency audit; owned by WP-10.
+    - PR ready-for-review transition, merge, or auto-merge.
+    - Downstream repository adoption or modification.
+    - V2 modification.
+
+artifacts:
+  implementation_report: "skills/engineering-pr-delivery-v2.5/operating-model/wp-09-end-to-end-certification.md"
+  certification_matrix: "skills/engineering-pr-delivery-v2.5/operating-model/relay-certification-matrix.md"
+  reconstruction_schema: "skills/engineering-pr-delivery-v2.5/schemas/zero-context-reconstruction.schema.yaml"
+  reconstruction: "skills/engineering-pr-delivery-v2.5/scripts/zero_context_reconstruction.py"
+  validator: "skills/engineering-pr-delivery-v2.5/scripts/validate_zero_context_reconstruction.py"
+  lifecycle_regressions: "skills/engineering-pr-delivery-v2.5/tests/stress/test_end_to_end_relay_certification.py"
+  abc_release_proof: "skills/engineering-pr-delivery-v2.5/tests/stress/test_zero_chat_release_proof.py"
+  repository_only_boundary: "skills/engineering-pr-delivery-v2.5/tests/stress/test_zero_chat_repository_only_boundary.py"
+
+acceptance:
+  - id: AC-09-01
+    status: PASS
+    statement: Every active execution route can reconstruct the material engineering context required by an unknown replacement from repository state alone.
+    basis: ["scripts/zero_context_reconstruction.py", "scripts/validate_zero_context_reconstruction.py"]
+  - id: AC-09-02
+    status: PASS
+    statement: The synthetic relay crosses WP-1 -> WP-2 -> WP-3 through CP-A and CP-B, with Agent B and Agent C receiving repository state rather than prior chat.
+    basis: ["tests/stress/test_zero_chat_release_proof.py::ZeroChatReleaseProofTests.test_agent_a_b_c_release_proof_crosses_completed_work_packages_with_qualification"]
+  - id: AC-09-03
+    status: PASS
+    statement: Agent B and Agent C independently qualify and certify on current repository evidence with conversation_context_used false.
+    basis: ["tests/stress/test_zero_chat_release_proof.py", "tests/stress/test_zero_chat_repository_only_boundary.py"]
+  - id: AC-09-04
+    status: PASS
+    statement: Candidate B and C reconstruction does not depend on predecessor process-memory return values; active EP/QSET/certification inputs are reopened from persisted repository files.
+    basis: ["tests/stress/test_zero_chat_repository_only_boundary.py::ZeroChatRepositoryOnlyBoundaryTests.test_b_and_c_use_only_repository_state_after_handoff"]
+  - id: AC-09-05
+    status: PASS
+    statement: Agent C can answer the defining release questions for purpose, Owner decisions, predecessor facts, uncertainty, input authority/editability, independent oracle, scope, quality, evidence, tests/acceptance, first action/staleness and next work.
+    basis: ["operating-model/relay-certification-matrix.md", "tests/stress/test_zero_chat_release_proof.py"]
+  - id: AC-09-06
+    status: PASS
+    statement: ACTIVE, RECONCILING, PARALLEL, stale required projection, IDLE and TERMINAL cold-start according to their authority semantics without inventing write permission.
+    basis: ["tests/stress/test_end_to_end_relay_certification.py::EndToEndRelayCertificationTests.test_lifecycle_cold_start_certification_matrix", "operating-model/relay-certification-matrix.md"]
+  - id: AC-09-07
+    status: PASS
+    statement: Pre-checkpoint implementation passes compile, root units and the complete dedicated synthetic stress suite.
+    basis: ["workflow:35192108782", "head:3ff5b26281078822c9965c4048c5f6b3bc8c851d", "root_unit_count:7", "stress_count:135"]
+
+completion_progress:
+  basis_total: 100
+  earned_before_this_checkpoint: 92
+  earned_by_this_checkpoint: 5
+  earned_after_this_checkpoint: 97
+  percent_after_this_checkpoint: 97
+  note: "Program completion basis from catchup-completion-roadmap.md; progress remains acceptance/checkpoint derived."
+
+verification:
+  exact_checkpoint_head_ci_required: true
+  required_workflow: ".github/workflows/engineering-pr-delivery-v2.5.yml"
+  pre_checkpoint_green_run: 35192108782
+  pre_checkpoint_green_ref: "3ff5b26281078822c9965c4048c5f6b3bc8c851d"
+  required_steps:
+    compile: true
+    root_unit_tests: true
+    synthetic_stress_tests: true
+  claim_before_final_ci: "WP-09 content acceptance is complete; formal checkpoint validity requires corrected workflow PASS on the final exact head containing CP-R010 and completion-program reconciliation."
+
+successor:
+  mode: SERIAL
+  work_package: WP-10
+  title: Self-consistency Audit
+  planned_execution_package: EP-R011
+  state: NEXT_FRONTIER_AFTER_CHECKPOINT_CI_PASS
+  first_actions:
+    - Audit schema <-> template <-> validator <-> renderer <-> documentation <-> SKILL consistency.
+    - Find unread fields, orphan validators, duplicate concepts, obsolete names, silent defaults and multiple authority claims.
+    - Audit producer/consumer, lifecycle/authority, progress/acceptance, issue/roadmap and certification/readiness consistency.
