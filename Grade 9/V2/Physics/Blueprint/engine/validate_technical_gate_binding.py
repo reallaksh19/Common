@@ -90,13 +90,7 @@ def validate_v1(binding: dict) -> dict:
     }
 
 
-def validate_v2(binding: dict) -> dict:
-    try:
-        schema = load("contracts/physics-technical-gate-binding-v2.schema.json")
-        jsonschema.validate(binding, schema)
-    except jsonschema.ValidationError as exc:
-        fail("E_BIND_SCHEMA", exc.message)
-
+def compile_bound_receipt(binding: dict, *, registry: dict | None = None) -> dict:
     request = load(binding["engineering_request_ref"])
     manifest = load(binding["engineering_manifest_ref"])
     if manifest.get("scope_kind") != "BUCKET" or manifest.get("scope_ref") != binding["bucket_id"]:
@@ -105,13 +99,24 @@ def validate_v2(binding: dict) -> dict:
         fail("E_BIND_PRIMARY_NOT_DIRECT", f"{binding['primary_gate_id']} is not a direct gate in the engineering manifest")
 
     try:
-        receipt = compile_closure(request, manifest)
+        receipt = compile_closure(request, manifest, registry=registry)
     except Exception as exc:
         fail("E_BIND_CLOSURE_RECOMPILE_FAILED", str(exc))
     if receipt["closure_status"] != "READY":
         fail("E_BIND_GATE_NOT_READY", f"current Workbench closure is {receipt['closure_status']}")
     if receipt["receipt_id"] != binding["closure_receipt_id"]:
         fail("E_BIND_RECEIPT_ID_MISMATCH", f"expected {binding['closure_receipt_id']} got {receipt['receipt_id']}")
+    return receipt
+
+
+def validate_v2(binding: dict) -> dict:
+    try:
+        schema = load("contracts/physics-technical-gate-binding-v2.schema.json")
+        jsonschema.validate(binding, schema)
+    except jsonschema.ValidationError as exc:
+        fail("E_BIND_SCHEMA", exc.message)
+
+    receipt = compile_bound_receipt(binding)
     actual_receipt_digest = canonical_digest(receipt)
     if actual_receipt_digest != binding["closure_receipt_digest"]:
         fail("E_BIND_RECEIPT_DIGEST_MISMATCH", f"expected {binding['closure_receipt_digest']} got {actual_receipt_digest}")
@@ -127,7 +132,7 @@ def validate_v2(binding: dict) -> dict:
         "primary_gate_id": binding["primary_gate_id"],
         "gate_closure": list(receipt["transitive_gate_ids"]),
         "source_item_status": receipt["source_item_status"],
-        "authority_note": "technical authority is custodied by the exact Workbench closure receipt; source/legal state remains independent",
+        "authority_note": "legacy v2 custody pins the whole Workbench receipt and aggregate registry; source/legal state remains independent",
         "binding_mode": "EXACT_WORKBENCH_CLOSURE_RECEIPT",
         "closure_receipt_id": receipt["receipt_id"],
         "closure_receipt_digest": actual_receipt_digest,
@@ -136,8 +141,41 @@ def validate_v2(binding: dict) -> dict:
     }
 
 
+def validate_v3(binding: dict, *, registry: dict | None = None) -> dict:
+    try:
+        schema = load("contracts/physics-technical-gate-binding-v3.schema.json")
+        jsonschema.validate(binding, schema)
+    except jsonschema.ValidationError as exc:
+        fail("E_BIND_SCHEMA", exc.message)
+
+    receipt = compile_bound_receipt(binding, registry=registry)
+    actual_scoped_digest = receipt["scoped_closure_digest"]
+    if actual_scoped_digest != binding["scoped_closure_digest"]:
+        fail(
+            "E_BIND_SCOPED_CLOSURE_DIGEST_MISMATCH",
+            f"expected {binding['scoped_closure_digest']} got {actual_scoped_digest}",
+        )
+
+    return {
+        "status": "PASS",
+        "binding_id": binding["binding_id"],
+        "bucket_id": binding["bucket_id"],
+        "primary_gate_id": binding["primary_gate_id"],
+        "gate_closure": list(receipt["transitive_gate_ids"]),
+        "source_item_status": receipt["source_item_status"],
+        "authority_note": "active technical custody pins the exact scoped closure; aggregate registry digest is provenance only and source/legal state remains independent",
+        "binding_mode": "SCOPED_WORKBENCH_CLOSURE_RECEIPT",
+        "closure_receipt_id": receipt["receipt_id"],
+        "scoped_closure_digest": actual_scoped_digest,
+        "registry_digest": receipt["registry_digest"],
+        "aggregate_registry_custody": "PROVENANCE_ONLY",
+    }
+
+
 def validate(binding: dict) -> dict:
     version = binding.get("schema_version")
+    if version == "3.0.0":
+        return validate_v3(binding)
     if version == "2.0.0":
         return validate_v2(binding)
     if version == "1.0.0":
@@ -146,7 +184,7 @@ def validate(binding: dict) -> dict:
 
 
 def main():
-    rel = sys.argv[1] if len(sys.argv) > 1 else "topics/m2d-sba23-technical-gate-binding.v2.json"
+    rel = sys.argv[1] if len(sys.argv) > 1 else "topics/m2d-sba23-technical-gate-binding.v3.json"
     print(json.dumps(validate(load(rel)), indent=2))
 
 
