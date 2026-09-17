@@ -1,9 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "extension_id": "CHEM-C-H-RUNTIME-FACTS-ELECTRON-TRANSFER-v1",
+  "authority_id": "CHEM-SCI-FACT-AUTH-G9-11-v1",
   "subject": "CHEMISTRY",
-  "additive_only": true,
+  "authority_scope": "ENGINEERING_AND_BLUEPRINT_SCIENTIFIC_FACTS",
   "adapter_authored_facts_forbidden": true,
+  "representation_layer_owns_scientific_facts": false,
   "fact_packets": [
     {
       "fact_packet_id": "CHEM-REP-FACT-ELECTRON-TRANSFER-ARROWS-v1",
@@ -11,14 +12,10 @@
       "source_authority_kind": "ENGINEERING_OBLIGATION",
       "source_gate_id": "CHEM-REDOX-OXIDATION",
       "source_representation_ref": "REP-CHEM-ELECTRON-TRANSFER-ARROWS",
-      "source_equation_refs": [
-        "EQ-CHEM-REDOX-TRANSFER"
-      ],
+      "source_equation_refs": ["EQ-CHEM-REDOX-TRANSFER"],
       "fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
       "parameters": {
-        "chemical_entities": [
-          "CuO(s) + H2(g) -> Cu(s) + H2O(l)"
-        ],
+        "chemical_entities": ["CuO(s) + H2(g) -> Cu(s) + H2O(l)"],
         "oxidation_states": [
           {
             "element": "Cu",
@@ -37,9 +34,7 @@
             "electron_count": 2
           }
         ],
-        "checks": [
-          "Check total electrons lost by reducing agent equals total electrons gained by oxidizing agent"
-        ]
+        "checks": ["Check total electrons lost by reducing agent equals total electrons gained by oxidizing agent"]
       }
     },
     {
@@ -59,9 +54,7 @@
       ],
       "fact_kind": "ELECTRON_TRANSFER_STATE_LEDGER_V1",
       "parameters": {
-        "chemical_entities": [
-          "Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)"
-        ],
+        "chemical_entities": ["Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)"],
         "oxidation_states": [
           {
             "element": "Zn",
@@ -80,9 +73,7 @@
             "electron_count": 2
           }
         ],
-        "checks": [
-          "Check 2e⁻ lost by Zn equals 2e⁻ gained by Cu²⁺"
-        ]
+        "checks": ["Check 2e⁻ lost by Zn equals 2e⁻ gained by Cu²⁺"]
       }
     }
   ]
