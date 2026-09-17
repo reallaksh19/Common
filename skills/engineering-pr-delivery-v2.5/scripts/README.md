@@ -10,6 +10,7 @@ python render_status.py <repo-root>
 python render_handover.py <repo-root>
 python render_owner_status.py <repo-root> [--output agents/relay/generated/OWNER_STATUS.md]
 python render_technical_status.py <repo-root> [--output agents/relay/generated/TECHNICAL_STATUS.md]
+python render_owner_change.py <repo-root> [--odr agents/relay/roadmap/owner-decisions/ODR-xxxx.yaml] [--output agents/relay/generated/OWNER_CHANGE.md]
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
@@ -38,6 +39,18 @@ python render_technical_status.py <repo-root>
 `communication_projection.py` consumes the single source-derived report projection and produces two views. `TECHNICAL_STATUS.md` preserves protocol identifiers, source bindings, scope, evidence, quality review, readiness and exact next-work detail. `OWNER_STATUS.md` translates the same truth into plain language: what can happen now, what the work is for, what will not change, evidence and missing evidence, quality/limitations, roadmap progress, decisions genuinely required from the Owner, exact next work and stop conditions.
 
 The Owner view must not turn an Owner-reserved domain into a fabricated decision request. Conversely, it may not hide a real `OWNER_DECISION_REQUIRED` stop, missing evidence, unresolved quality risk, protected/prohibited scope, or exact next action. Aggregate conformance validates this convergence. Both Markdown files are disposable generated views; neither is an authority source.
+
+## Owner change intake / report
+
+```bash
+python validate_owner_change_intake.py <repo-root>
+python owner_change_projection.py <repo-root> [--odr agents/relay/roadmap/owner-decisions/ODR-xxxx.yaml]
+python render_owner_change.py <repo-root> [--odr ...] [--output agents/relay/generated/OWNER_CHANGE.md]
+```
+
+Owner intent authority remains the ODR; structural mutation authority remains the roadmap revision. For an `INTENT_MUTATION`, `ODR.change_intake` records plain-language previous concept, requested concept, retained behavior, invalidated behavior and new scope. The derived Owner-change projection combines that semantic intent with actual roadmap changes, Progress Basis effect, issue reconciliation, active-EP disposition and resulting frontier.
+
+A CAPTURED decision may be rendered without pretending it is applied. For the current `OWNER_INTENT_MUTATION` revision, aggregate conformance requires an APPLIED ODR, current Progress Basis, exact computed frontier, explicit active-work disposition and visible issue reconciliation. `OWNER_CHANGE.md` is disposable projection only.
 
 ## Semantic baton, takeover and qualification
 
@@ -114,9 +127,9 @@ python prepare_v2_migration.py <inventory.yaml> --output <reconciliation.yaml>
 
 Bootstrap creates complete zero-weight roadmap progress rows without fabricating an EP or acceptance evidence.
 
-Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, Owner/technical communication convergence, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
+Aggregate relay conformance verifies repository/profile/protocol admission, lifecycle/routing, roadmap topology/frontier, semantic serial EPs or every approved parallel lane EP, structured next work, quality applicability and QRV custody, QSET/QUAL/TC admission, acceptance/staleness/continuity, full calculated progress hierarchy, derived report projection, Owner/technical communication convergence, Owner-change intake/reconciliation, execution/material authority, projection generation/readiness, GitHub generation/operation reconciliation when enabled, drift, serial/fork/join/replan custody, Owner decisions, issue lifecycle and roadmap transactions.
 
-Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report/communication projections and GitHub Issues remain projections, not authority.
+Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated Markdown, generated report/communication/change projections and GitHub Issues remain projections, not authority.
 
 The scoped CI must explicitly execute both root unit discovery and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
 
