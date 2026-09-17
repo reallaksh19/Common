@@ -14,11 +14,11 @@ WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
 WP-07 Human Communication                           DELIVERED — CP-R008
 WP-08 Owner Change Intake                           DELIVERED — CP-R009
-WP-09 End-to-end Relay Certification Matrix         DELIVERED — CP-R010 PENDING EXACT-HEAD CI
-WP-10 Self-consistency Audit                        NEXT AFTER CP-R010 CI PASS
+WP-09 End-to-end Relay Certification Matrix         DELIVERED — CP-R010
+WP-10 Self-consistency Audit                        CURRENT FRONTIER
 ```
 
-WP-09 pre-checkpoint implementation passed workflow **35192108782** on `3ff5b26281078822c9965c4048c5f6b3bc8c851d`, including compile, 7 root units and 135 synthetic stress tests.
+CP-R010 checkpoint/status verification passed workflow **35192617156** on `669ab0346976df3e331d4975c65185e4125f0b45`, including compile, 7 root units and the dedicated synthetic stress suite.
 
 Conversation is acceleration, never custody.
 
@@ -162,38 +162,29 @@ Agent C repository-only
 
 The release proof crosses three dependency-ordered work packages. The strict repository-only regression discards predecessor process-memory return values; Agent B and C reopen persisted EP/QSET state and derive candidate evidence from repository files only.
 
-For every active route, zero-context reconstruction recovers:
-
-- why the task exists and its roadmap position;
-- governing Owner decisions;
-- predecessor checkpoint facts, limitations and remaining work;
-- current implementation plan and exact first action;
-- input authority/editability/applicability/resolution;
-- benchmark/oracle and independence/tolerance;
-- allowed/protected/prohibited scope;
-- quality obligations and QRV evidence;
-- evidence present/missing;
-- tests and acceptance criteria;
-- stale conditions and exact next work.
+For every active route, zero-context reconstruction recovers task purpose/roadmap position, Owner decisions, predecessor facts/limitations, current plan and first action, input authority/editability, benchmark/oracle independence, scope, quality obligations, evidence present/missing, tests/acceptance, stale conditions and exact next work.
 
 Lifecycle certification covers ACTIVE, ACTIVE+RECONCILING, PARALLEL, ACTIVE+required projection STALE, IDLE and TERMINAL, with INITIALIZING additionally covered by bootstrap/core tests. RECONCILING remains READ_ONLY; stale required projection remains not handover-ready; IDLE and TERMINAL expose no material execution route.
 
-WP-09 pre-checkpoint evidence:
+WP-09 evidence:
 
 ```text
-implementation + certification docs
+pre-checkpoint implementation + certification docs
   3ff5b26281078822c9965c4048c5f6b3bc8c851d
   workflow 35192108782 — PASS
 
+CP-R010 checkpoint/status
+  669ab0346976df3e331d4975c65185e4125f0b45
+  workflow 35192617156 — PASS
+
 root units: 7
-stress tests: 135
+stress tests: 135 on the pre-checkpoint implementation; checkpoint/status suite unchanged except completion artifacts
 ```
 
 ## Remaining target layers
 
 ```text
-CP-R010 exact-head verification                    CURRENT GATE
-WP-10 self-consistency audit                       NEXT
+WP-10 self-consistency audit                       CURRENT
 WP-11 PR readiness; never automatic merge          WAITING
 ```
 
@@ -217,7 +208,7 @@ Existing plan/join/replan/drift namespaces remain unchanged.
 
 ## Defining release proof
 
-The defining release proof is now implemented and green pre-checkpoint. Formal completion still requires exact-head CI on CP-R010 plus the completion-program reconciliation. If prior conversation is materially required for any release-question answer, V2.5 fails.
+The defining release proof is implemented, exact-checkpoint-head green, and closed as CP-R010. If prior conversation is materially required for any release-question answer, V2.5 fails.
 
 ## Validation evidence discipline
 
@@ -235,7 +226,7 @@ GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
 human communication              COMPLETE — CP-R008
 owner change intake              COMPLETE — CP-R009
-end-to-end certification         COMPLETE — CP-R010 PENDING EXACT-HEAD CI
-self-consistency audit           NEXT AFTER CP-R010 CI
+end-to-end certification         COMPLETE — CP-R010
+self-consistency audit           CURRENT — WP-10
 PR readiness                     WAITING
 ```
