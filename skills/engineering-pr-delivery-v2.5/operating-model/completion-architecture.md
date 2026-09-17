@@ -12,11 +12,11 @@ WP-03 Strong phase/boundary qualification           DELIVERED — CP-R004
 WP-04 Full progress / handover / next-work          DELIVERED — CP-R005
 WP-05 GitHub Program Projection operations          DELIVERED — CP-R006
 WP-06 Quality Procedure Library                     DELIVERED — CP-R007
-WP-07 Human Communication                           CHECKPOINT WRITTEN — EXACT-HEAD CI REQUIRED
-WP-08 Owner Change Intake                           CONDITIONAL NEXT FRONTIER
+WP-07 Human Communication                           DELIVERED — CP-R008
+WP-08 Owner Change Intake                           CURRENT FRONTIER
 ```
 
-WP-07 documentation-aligned implementation passed workflow **35176089341** on `49d0e52ee81e34ddf4152927456a4f4e4bdef665`, including compile, 7 root units and 125 synthetic stress tests. Formal CP-R008 closure requires the same corrected workflow to pass on the exact head containing CP-R008 and this program-state reconciliation.
+CP-R008 checkpoint/status verification passed workflow **35176262429** on `3d5c445b83cb28ab8369e4325bae6bc2a4c2a169`, including compile, 7 root units and 125 synthetic stress tests.
 
 Conversation is acceleration, never custody.
 
@@ -135,7 +135,7 @@ repository authorities
 
 Technical status retains protocol precision, source identifiers, state planes, scope, evidence, quality and exact next work.
 
-Owner status must communicate in ordinary engineering/product language:
+Owner status communicates in ordinary engineering/product language:
 
 - what can happen now;
 - why the current work exists;
@@ -151,7 +151,7 @@ An Owner-reserved domain is not automatically a decision request. Conversely, a 
 
 `validate_human_communication.py` participates in aggregate conformance. Repository-neutral stress tests prove shared-source derivation, hard-stop visibility, missing-evidence visibility, non-blocking quality-risk visibility, reserved-vs-required Owner decisions, next-work convergence, and rejection of relay-internal jargon in Owner-facing source text.
 
-WP-07 pre-checkpoint evidence:
+WP-07 evidence:
 
 ```text
 repaired implementation
@@ -162,20 +162,22 @@ documentation-aligned implementation
   49d0e52ee81e34ddf4152927456a4f4e4bdef665
   workflow 35176089341 — PASS
 
+CP-R008 checkpoint/status
+  3d5c445b83cb28ab8369e4325bae6bc2a4c2a169
+  workflow 35176262429 — PASS
+
 root units: 7
 stress tests: 125
 ```
 
-Formal checkpoint closure remains conditional on exact-head CI after CP-R008/program reconciliation.
+## Current WP-08 — Owner Change Intake
 
-## Conditional next WP-08 — Owner Change Intake
-
-After CP-R008 exact-head PASS, WP-08 becomes the sole material frontier. It must provide an Owner-facing change-intake transaction/report over existing ODR + roadmap-transaction authority. The intake layer must show previous concept, requested/new concept, retained behavior, invalidated behavior, new scope, roadmap impact, progress-basis effect, issue impact, active-EP disposition, new frontier and whether the Owner decision has been applied. It must not become a second authority source.
+WP-08 is now the sole material frontier. It must provide an Owner-facing change-intake transaction/report over existing ODR + roadmap-transaction authority. The intake layer must show previous concept, requested/new concept, retained behavior, invalidated behavior, new scope, roadmap impact, progress-basis effect, issue impact, active-EP disposition, new frontier and whether the Owner decision has been applied. It must not become a second authority source.
 
 ## Remaining target layers
 
 ```text
-WP-08 Owner Change Intake over ODR transactions    CONDITIONAL AFTER CP-R008 CI
+WP-08 Owner Change Intake over ODR transactions    CURRENT
 WP-09 End-to-end A -> B -> C certification         WAITING
 WP-10 self-consistency audit                       WAITING
 WP-11 PR readiness; never automatic merge          WAITING
@@ -217,8 +219,8 @@ strong qualification             COMPLETE — CP-R004
 full progress/handover           COMPLETE — CP-R005
 GitHub operations                COMPLETE — CP-R006
 quality procedures               COMPLETE — CP-R007
-human communication              CHECKPOINT WRITTEN — CP-R008 CI PENDING
-owner change intake              CONDITIONAL NEXT
+human communication              COMPLETE — CP-R008
+owner change intake              CURRENT — WP-08
 end-to-end certification         WAITING
 self-consistency audit           WAITING
 PR readiness                     WAITING
