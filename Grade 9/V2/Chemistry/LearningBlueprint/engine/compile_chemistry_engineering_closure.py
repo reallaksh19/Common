@@ -12,6 +12,10 @@ import jsonschema
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "engine"))
 
+from compile_chemistry_engineering_gate_topology import (  # noqa: E402
+    ChemistryEngineeringTopologyError,
+    compile_gate_topology,
+)
 from validate_chemistry_engineering_registry_runtime import (  # noqa: E402
     ChemistryEngineeringRegistryError,
     validate as validate_registry,
@@ -63,7 +67,16 @@ def _research_artifact(request, manifest, ref_key, schema, ready, supplied, miss
         blockers.append({"code": invalid_code, "message": f"{ref_key} not ready: {exc}"})
 
 
-def compile_closure(request: dict, manifest: dict, *, registry=None, research_dossier=None, claim_ledger=None, source_audit_payloads=None) -> dict:
+def compile_closure(
+    request: dict,
+    manifest: dict,
+    *,
+    registry=None,
+    topology_extension=None,
+    research_dossier=None,
+    claim_ledger=None,
+    source_audit_payloads=None,
+) -> dict:
     validate_schema(request, "contracts/chemistry-engineering-request.schema.json", "CHEM_ENG_REQUEST_SCHEMA")
     validate_schema(manifest, "contracts/chemistry-engineering-topic-manifest.schema.json", "CHEM_ENG_MANIFEST_SCHEMA")
     if request["request_id"] != manifest["request_id"]:
@@ -74,8 +87,16 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
         validate_registry(registry)
     except ChemistryEngineeringRegistryError as exc:
         fail("CHEM_ENG_REGISTRY_INVALID", f"{exc.code}: {exc.message}")
+    try:
+        topology = compile_gate_topology(registry, topology_extension=topology_extension)
+    except ChemistryEngineeringTopologyError as exc:
+        fail("CHEM_ENG_TOPOLOGY_INVALID", f"{exc.code}: {exc.message}")
 
     gate_map = {g["subtopic_id"]: g for g in registry["subtopic_gates"]}
+    edges_by_source: dict[str, list[dict]] = {}
+    for edge in topology["edges"]:
+        edges_by_source.setdefault(edge["source_gate_id"], []).append(edge)
+
     direct = list(manifest["required_gate_ids"])
     optional = list(manifest["optional_gate_ids"])
     out_of_scope = list(manifest["out_of_scope_gate_ids"])
@@ -121,11 +142,16 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
             ordered.append(gid)
             return
         visiting.append(gid)
-        for prereq in gate.get("prerequisite_ids", []):
-            if prereq.startswith("CHEM-"):
-                walk(prereq)
+        for edge in edges_by_source.get(gid, []):
+            effect = edge["closure_effect"]
+            if effect == "REQUIRED_GATE":
+                walk(edge["target_id"])
+            elif effect == "REQUIRED_EXTERNAL_RESOLUTION":
+                external.add(edge["target_id"])
+            elif effect == "NON_REQUIRED_REFERENCE":
+                continue
             else:
-                external.add(prereq)
+                fail("CHEM_ENG_TOPOLOGY_EFFECT_UNKNOWN", effect)
         visiting.pop()
         seen.add(gid)
         ordered.append(gid)
@@ -201,6 +227,7 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
     registry_digest = digest(registry)
     production_audits = sum(s["audit_role"] == "PRODUCTION_SOURCE_AUDIT" for s in source_audit_states)
     stress_audits = sum(s["audit_role"] == "STRESS_TEST_SOURCE_AUDIT" for s in source_audit_states)
+    typed_topology = topology["counts"]["explicit_edge_count"] > 0
 
     payload = {
         "request_id": request["request_id"],
@@ -217,6 +244,13 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
         "closure_status": closure_status,
         "source_item_status": manifest["source_item_status"],
     }
+    if typed_topology:
+        payload.update({
+            "topology_id": topology["topology_id"],
+            "topology_digest": topology["topology_digest"],
+            "topology_extension_id": topology["extension_id"],
+            "topology_extension_digest": topology["extension_digest"],
+        })
     note = (
         "technical engineering closure READY; source-scope authorization, pedagogy, learner state and publication remain independent"
         if closure_status == "READY"
@@ -255,6 +289,13 @@ def compile_closure(request: dict, manifest: dict, *, registry=None, research_do
         "source_item_status": manifest["source_item_status"],
         "authority_note": note,
     }
+    if typed_topology:
+        receipt.update({
+            "topology_id": topology["topology_id"],
+            "topology_digest": topology["topology_digest"],
+            "topology_extension_id": topology["extension_id"],
+            "topology_extension_digest": topology["extension_digest"],
+        })
     validate_schema(receipt, "contracts/chemistry-engineering-closure-receipt.schema.json", "CHEM_ENG_RECEIPT_SCHEMA")
     return receipt
 

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ChemistryEngineeringGateTopology",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "topology_id",
+    "subject",
+    "registry_id",
+    "registry_digest",
+    "policy_ref",
+    "policy_digest",
+    "extension_ref",
+    "extension_id",
+    "extension_digest",
+    "edges",
+    "counts",
+    "status",
+    "topology_digest"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "topology_id": { "type": "string", "pattern": "^CHEM-ENG-TOPOLOGY-[A-Z0-9-]+$" },
+    "subject": { "const": "CHEMISTRY" },
+    "registry_id": { "type": "string" },
+    "registry_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "policy_ref": { "const": "policies/chemistry-engineering-gate-topology.v1.json" },
+    "policy_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "extension_ref": { "const": "policies/chemistry-engineering-gate-topology-edges.v1.json" },
+    "extension_id": { "type": "string" },
+    "extension_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "edge_id",
+          "source_gate_id",
+          "target_id",
+          "relationship_type",
+          "target_domain",
+          "closure_effect",
+          "learner_scope_effect",
+          "cycle_participates",
+          "origin",
+          "source_order"
+        ],
+        "properties": {
+          "edge_id": { "type": "string", "pattern": "^CHEM-EDGE-[A-F0-9]{24}$" },
+          "source_gate_id": { "type": "string", "pattern": "^CHEM-[A-Z0-9]+-[A-Z0-9-]+$" },
+          "target_id": { "type": "string", "minLength": 1 },
+          "relationship_type": {
+            "enum": [
+              "PREREQUISITE",
+              "EXTENDS",
+              "DECOMPOSES",
+              "USES_MODEL_FROM",
+              "OPTIONAL_RESEARCH_EXTENSION",
+              "CROSS_DOMAIN_PREREQUISITE"
+            ]
+          },
+          "target_domain": { "enum": ["CHEMISTRY_GATE", "EXTERNAL_DEPENDENCY"] },
+          "closure_effect": { "enum": ["REQUIRED_GATE", "NON_REQUIRED_REFERENCE", "REQUIRED_EXTERNAL_RESOLUTION"] },
+          "learner_scope_effect": { "enum": ["CONTEXT_ONLY", "NOT_PROMOTED"] },
+          "cycle_participates": { "type": "boolean" },
+          "origin": { "enum": ["LEGACY_PREREQUISITE", "EXPLICIT_TYPED_EDGE", "LEGACY_AND_EXPLICIT"] },
+          "source_order": { "type": "integer", "minimum": 0 },
+          "authority_note": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["edge_count", "legacy_edge_count", "explicit_edge_count", "relationship_type_counts", "closure_effect_counts"],
+      "properties": {
+        "edge_count": { "type": "integer", "minimum": 0 },
+        "legacy_edge_count": { "type": "integer", "minimum": 0 },
+        "explicit_edge_count": { "type": "integer", "minimum": 0 },
+        "relationship_type_counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+        "closure_effect_counts": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } }
+      }
+    },
+    "status": { "const": "ENGINEERING_GATE_TOPOLOGY_READY" },
+    "topology_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}
