@@ -5,5 +5,366 @@
   "registry_id": "CHEM-G9-11-TECHNICAL-ENGINEERING-GATES-v1",
   "additive_only": true,
   "legacy_coverage": "REQUIRE_ALL_LEGACY_MIRRORS",
-  "edges": []
+  "edges": [
+    {
+      "source_gate_id": "CHEM-ACID-BASE-IONS",
+      "target_id": "CHEM-STATE-SYMBOLS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ACID-PH-INDICATORS",
+      "target_id": "CHEM-ACID-BASE-IONS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+      "target_id": "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-ELECTRONIC-CONFIG",
+      "target_id": "CHEM-ATOM-QUANTUM-NUMBERS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-ISOTOPES-ISOBARS",
+      "target_id": "CHEM-ATOM-RUTHERFORD-BOHR",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-ISOTOPES-ISOBARS",
+      "target_id": "CHEM-ION-VALENCY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-PHOTOELECTRIC-BOHR",
+      "target_id": "CHEM-ATOM-RUTHERFORD-BOHR",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-QUANTUM-NUMBERS",
+      "target_id": "CHEM-ATOM-DE-BROGLIE-UNCERTAINTY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ATOM-RUTHERFORD-BOHR",
+      "target_id": "CHEM-SYM-LITERACY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-DIPOLE-RESONANCE",
+      "target_id": "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+      "target_id": "CHEM-BOND-VSEPR-GEOMETRY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-HYDROGEN-BONDING",
+      "target_id": "CHEM-BOND-DIPOLE-RESONANCE",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-LEWIS-FORMAL-CHARGE",
+      "target_id": "CHEM-CARBON-COVALENT-BONDING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-MOT-DIATOMIC",
+      "target_id": "CHEM-BOND-HYBRIDIZATION-ORBITAL",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-BOND-VSEPR-GEOMETRY",
+      "target_id": "CHEM-BOND-DIPOLE-RESONANCE",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CALC-STOICHIOMETRY",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CARBON-COMBUSTION-SOAPS",
+      "target_id": "CHEM-CARBON-HOMOLOGOUS-SERIES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CARBON-COMBUSTION-SOAPS",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CARBON-COVALENT-BONDING",
+      "target_id": "CHEM-IONIC-BOND-PROPERTIES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CARBON-COVALENT-BONDING",
+      "target_id": "CHEM-SYM-LITERACY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-CARBON-HOMOLOGOUS-SERIES",
+      "target_id": "CHEM-CARBON-COVALENT-BONDING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQ-BALANCING",
+      "target_id": "CHEM-FORMULA-CONSTRUCTION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-BUFFERS-COMMON-ION",
+      "target_id": "CHEM-EQUIL-IONIC-PH-OSTWALD",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-IONIC-PH-OSTWALD",
+      "target_id": "CHEM-ACID-PH-INDICATORS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-IONIC-PH-OSTWALD",
+      "target_id": "CHEM-EQUIL-LAW-MASS-ACTION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-LAW-MASS-ACTION",
+      "target_id": "CHEM-THERMO-GIBBS-SPONTANEITY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-LE-CHATELIER",
+      "target_id": "CHEM-EQUIL-LAW-MASS-ACTION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-EQUIL-SOLUBILITY-PRODUCT",
+      "target_id": "CHEM-EQUIL-BUFFERS-COMMON-ION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-FORMULA-CONSTRUCTION",
+      "target_id": "CHEM-ION-VALENCY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-HYDROCARBONS-ALKENE-ADDITION",
+      "target_id": "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ION-VALENCY",
+      "target_id": "CHEM-SYM-LITERACY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-IONIC-BOND-PROPERTIES",
+      "target_id": "CHEM-FORMULA-CONSTRUCTION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-IONIC-BOND-PROPERTIES",
+      "target_id": "CHEM-ION-VALENCY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-MATTER-LATENT-HEAT",
+      "target_id": "CHEM-MATTER-STATES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-METALS-EXTRACTION-METALLURGY",
+      "target_id": "CHEM-METALS-REACTIVITY-SERIES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-METALS-EXTRACTION-METALLURGY",
+      "target_id": "CHEM-REDOX-OXIDATION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-METALS-REACTIVITY-SERIES",
+      "target_id": "CHEM-RXN-TYPES-DECOMPOSITION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-MIXTURE-SEPARATION",
+      "target_id": "CHEM-MATTER-STATES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+      "target_id": "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ORGANIC-INTERMEDIATES-STABILITY",
+      "target_id": "CHEM-ORGANIC-ELECTRONIC-EFFECTS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-ORGANIC-NOMENCLATURE-ISOMER",
+      "target_id": "CHEM-CARBON-HOMOLOGOUS-SERIES",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-PERIODIC-IONIZATION-ENERGY",
+      "target_id": "CHEM-PERIODIC-TABLE-TRENDS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-PERIODIC-TABLE-TRENDS",
+      "target_id": "CHEM-ATOM-QUANTUM-NUMBERS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-REACTION-CONDITIONS",
+      "target_id": "CHEM-STATE-SYMBOLS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-REDOX-BALANCING-CELLS",
+      "target_id": "CHEM-REDOX-OXIDATION",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-REDOX-OXIDATION",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-REDOX-OXIDATION",
+      "target_id": "CHEM-ION-VALENCY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-REP-TRANSLATION",
+      "target_id": "CHEM-STATE-SYMBOLS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-RXN-TYPES-DECOMPOSITION",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-RXN-TYPES-DECOMPOSITION",
+      "target_id": "CHEM-STATE-SYMBOLS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+      "target_id": "CHEM-ACID-BASE-IONS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-SALTS-DOMESTIC-INDUSTRIAL",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-STATE-SYMBOLS",
+      "target_id": "CHEM-EQ-BALANCING",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-STOICH-CONCENTRATION-UNITS",
+      "target_id": "CHEM-CALC-STOICHIOMETRY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-STOICH-EMPIRICAL-FORMULA",
+      "target_id": "CHEM-CALC-STOICHIOMETRY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-SYM-LITERACY",
+      "target_id": "MATH-BASIC-ARITHMETIC",
+      "relationship_type": "CROSS_DOMAIN_PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-THERMO-ENTHALPY-HESS",
+      "target_id": "CHEM-THERMO-FIRST-LAW-WORK",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-THERMO-ENTROPY-SECOND-LAW",
+      "target_id": "CHEM-THERMO-ENTHALPY-HESS",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-THERMO-FIRST-LAW-WORK",
+      "target_id": "CHEM-CALC-STOICHIOMETRY",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    },
+    {
+      "source_gate_id": "CHEM-THERMO-GIBBS-SPONTANEITY",
+      "target_id": "CHEM-THERMO-ENTROPY-SECOND-LAW",
+      "relationship_type": "PREREQUISITE",
+      "authority_note": "Typed migration mirror of legacy prerequisite_ids; relationship semantics are unchanged."
+    }
+  ]
 }
