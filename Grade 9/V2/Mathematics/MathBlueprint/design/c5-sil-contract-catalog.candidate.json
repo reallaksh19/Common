@@ -1,0 +1,33 @@
+{
+  "schema_version": "0.1.0",
+  "catalog_id": "MATH-C5-SIL-CONTRACT-CATALOG",
+  "status": "DESIGN_CONTRACTS_READY",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "contracts": [
+    {"contract_id": "SIL-PACK", "path": "design/stem-subtopic-intelligence-pack.candidate.schema.json", "git_blob_sha": "79a8f092728b34ccdc7491eaed788ab865fd6b87", "owner_domain": "COMPOSITION", "authority_effect": "NONE"},
+    {"contract_id": "SIL-LEARNING-TRANSITION", "path": "design/stem-learning-transition.candidate.schema.json", "git_blob_sha": "bb43cf2f826bad1533f2a277b992ea05eac48626", "owner_domain": "LEARNING_STRUCTURE", "authority_effect": "NONE"},
+    {"contract_id": "SIL-SOURCE-SELECTION", "path": "design/stem-source-selection-profile.candidate.schema.json", "git_blob_sha": "2e944b4cfa9e89f511c5501662faf023849dce4f", "owner_domain": "SOURCE_SELECTION", "authority_effect": "NONE"},
+    {"contract_id": "SIL-GAP", "path": "design/stem-library-gap.candidate.schema.json", "git_blob_sha": "fd2e0084286dbfd311fd300aa4fd0c805be76116", "owner_domain": "GAP_ROUTING", "authority_effect": "NONE"},
+    {"contract_id": "SIL-COVERAGE", "path": "design/stem-library-coverage-report.candidate.schema.json", "git_blob_sha": "1417bad5e31dfc1bb530036dcb1343425c7e9f3a", "owner_domain": "DERIVED_COVERAGE", "authority_effect": "NONE"}
+  ],
+  "integration_manifest": {
+    "path": "design/pr395-sil-integration.candidate.json",
+    "git_blob_sha": "a9e639944da7e1c6f4ee6fa069edabb84a36bc2d"
+  },
+  "mandatory_invariants": [
+    "PACK_COMPOSES_EXACT_REFS_ONLY",
+    "PACK_CANNOT_GRANT_TECHNICAL_AUTHORITY",
+    "PACK_CANNOT_GRANT_PUBLICATION_AUTHORITY",
+    "PACK_CANNOT_CLAIM_LEARNER_MASTERY",
+    "LOGICAL_DEPENDENCY_REMAINS_SUBJECT_OWNED",
+    "INSTRUCTIONAL_SEQUENCE_CANNOT_SATISFY_LOGICAL_DEPENDENCY",
+    "SOURCE_SUITABILITY_CANNOT_SATISFY_SUBJECT_AUTHORITY",
+    "COVERAGE_PASS_CANNOT_IMPLY_AUTHORIZATION",
+    "MISSING_TRUTH_BECOMES_GAP_NOT_GENERATED_PROSE",
+    "PR395_CONTENT_REMAINS_CANDIDATE_UNTIL_EXACT_PROMOTION"
+  ],
+  "next_stage": "C6_MATHEMATICS_SIL_PILOT_READY"
+}

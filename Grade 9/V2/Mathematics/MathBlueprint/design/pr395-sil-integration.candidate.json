@@ -1,0 +1,75 @@
+{
+  "schema_version": "0.1.0",
+  "integration_id": "MATH-C5-PR395-SIL-INTEGRATION",
+  "status": "DESIGN_INTEGRATION_CANDIDATE",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "publication_authorization": "NOT_IMPLIED",
+  "normalization_rule": "EXACT_REFERENCE_COMPOSITION_ONLY",
+  "source_pull_request": {
+    "number": 395,
+    "head_ref": "v2-math-phase1-observability-workbench",
+    "head_sha": "242878b04787905087060318c14b89b14238f195",
+    "declared_base_sha": "d86e7b764edbb8f72d5358c93ee57fb4ebd6cad8",
+    "current_c4_head_sha_at_integration": "41d6040565408fe0ee5844090da19947358b31d9",
+    "merge_base_sha": "d86e7b764edbb8f72d5358c93ee57fb4ebd6cad8",
+    "relationship": "DIVERGED",
+    "ahead_by": 21,
+    "behind_by": 9,
+    "whole_branch_merge_authorized": false
+  },
+  "candidate_surfaces": [
+    {
+      "path": "Grade 9/V2/Mathematics/MathBlueprint/SUBTOPIC_INTELLIGENCE_INTAKE_SPECIFICATION.md",
+      "git_blob_sha": "1131a05b8c125a8c253dad37bd0b31990f81a27b",
+      "classification": "CANDIDATE_SUBTOPIC_CORPUS",
+      "promotion_rule": "PARSE_AS_CANDIDATE_ONLY_THEN_RESOLVE_EXACT_EXISTING_AUTHORITY_OR_ROUTE_GAP",
+      "technical_authorization": "NOT_IMPLIED"
+    },
+    {
+      "path": "Grade 9/V2/Mathematics/MathBlueprint/engine/validate_subtopic_intelligence_library.py",
+      "git_blob_sha": "af9eff27888618e5b3c769a2d21a3de8d561efe2",
+      "classification": "STRUCTURAL_VALIDATOR_REFERENCE",
+      "promotion_rule": "MAY_INFORM_C5_FALSIFIERS_BUT_CANNOT_PROVE_SUBJECT_AUTHORITY",
+      "technical_authorization": "NOT_IMPLIED"
+    },
+    {
+      "path": "Grade 9/V2/Mathematics/MathBlueprint/references/NANO_LEVEL_SUBTOPIC_INTELLIGENCE_RESEARCH.md",
+      "git_blob_sha": "491f7024af886b8b9c31a4e329e5ead29caf1ec0",
+      "classification": "CANDIDATE_RESEARCH_CORPUS",
+      "promotion_rule": "CLAIM_LEVEL_RESEARCH_PROMOTION_REQUIRED_BEFORE_PRODUCTION_USE",
+      "technical_authorization": "NOT_IMPLIED"
+    },
+    {
+      "path": "Grade 9/V2/Mathematics/MathBlueprint/tools/sil_explorer/generate_sil_catalog.py",
+      "git_blob_sha": "59d9c0d67896f7c0d4488576903f543cc9886221",
+      "classification": "OBSERVABILITY_TOOLING_CANDIDATE",
+      "promotion_rule": "DERIVED_VIEW_ONLY_AFTER_C5_CONTRACT_NORMALIZATION",
+      "technical_authorization": "NOT_IMPLIED"
+    }
+  ],
+  "explicit_non_imports": [
+    "PR395_CANONICAL_ARCHITECTURE_OR_SUBORDINATE_NORMATIVE_REWRITES",
+    "PR395_TOPIC_FORMULAS_OR_INVARIANTS_AS_LIBRARY_AUTHORITY",
+    "PR395_EXAM_SCOPE_MEMBERSHIP_WITHOUT_EXISTING_EXACT_SCOPE_AUTHORITY",
+    "PR395_COUNT_BASED_SIL_PASS_AS_SUBJECT_AUTHORITY_PROOF",
+    "PR395_DISCOVERY_RANK_OR_ALIAS_AS_EXACT_ENGINEERING_SELECTION",
+    "PR395_LEARNER_PERCENTAGE_AS_CORE1_DEPTH_AUTHORITY"
+  ],
+  "integration_constraints": [
+    "SIL packet identity must resolve through exact governed subject identity before composition.",
+    "Mathematical equations, invariants, derivations, logical prerequisites and canonical problem families are exact references to existing governed subject/domain objects or explicit gaps.",
+    "Instructional sequencing, repair and representation-use metadata may be separately governed learning-structure records but cannot masquerade as mathematical dependency.",
+    "Candidate research requires existing claim-level evidence promotion before use in production pedagogy.",
+    "Coverage is derived and cannot imply technical or publication authorization.",
+    "No runtime or Blueprint topic branch may read PR395 prose as authority."
+  ],
+  "c4_boundary_ref": {
+    "path": "Grade 9/V2/Mathematics/MathBlueprint/design/mathematics-subject-adapter-equivalence.receipt.json",
+    "git_blob_sha": "b7c264572bb3092a73bf95e4ec46e8872bf1cb72",
+    "required_status": "C4_SUBJECT_ADAPTER_INTERFACE_EXTRACTED",
+    "required_next_stage": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_READY"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1.0",
+  "status": "C5_SUBTOPIC_INTELLIGENCE_LIBRARY_CONTRACTS_INTEGRATED",
+  "authority": "NONE",
+  "semantic_change": "NONE",
+  "runtime_migration_authorized": false,
+  "production_consumers_allowed": false,
+  "publication_authorization": "NOT_IMPLIED",
+  "pr395_integration_status": "CANDIDATE_SURFACES_PINNED",
+  "pr395_whole_branch_merge_authorized": false,
+  "pr395_head_sha": "242878b04787905087060318c14b89b14238f195",
+  "contract_count": 5,
+  "mutation_falsifier_count": 9,
+  "pack_authority_model": "COMPOSITION_OF_EXACT_GOVERNED_REFERENCES_ONLY",
+  "missing_truth_policy": "ROUTE_TYPED_GAP_FAIL_CLOSED",
+  "predecessor_gate": {
+    "status": "C4_SUBJECT_ADAPTER_INTERFACE_EXTRACTED",
+    "receipt_path": "design/mathematics-subject-adapter-equivalence.receipt.json",
+    "git_blob_sha": "b7c264572bb3092a73bf95e4ec46e8872bf1cb72"
+  },
+  "source_custody": {
+    "integration_manifest_path": "design/pr395-sil-integration.candidate.json",
+    "integration_manifest_git_blob_sha": "a9e639944da7e1c6f4ee6fa069edabb84a36bc2d",
+    "contract_catalog_path": "design/c5-sil-contract-catalog.candidate.json",
+    "contract_catalog_git_blob_sha": "5bf9d3def949fb405ebfffbdcba8a25bf97023cd",
+    "pack_schema_path": "design/stem-subtopic-intelligence-pack.candidate.schema.json",
+    "pack_schema_git_blob_sha": "79a8f092728b34ccdc7491eaed788ab865fd6b87",
+    "learning_transition_schema_path": "design/stem-learning-transition.candidate.schema.json",
+    "learning_transition_schema_git_blob_sha": "bb43cf2f826bad1533f2a277b992ea05eac48626",
+    "source_selection_schema_path": "design/stem-source-selection-profile.candidate.schema.json",
+    "source_selection_schema_git_blob_sha": "2e944b4cfa9e89f511c5501662faf023849dce4f",
+    "gap_schema_path": "design/stem-library-gap.candidate.schema.json",
+    "gap_schema_git_blob_sha": "fd2e0084286dbfd311fd300aa4fd0c805be76116",
+    "coverage_schema_path": "design/stem-library-coverage-report.candidate.schema.json",
+    "coverage_schema_git_blob_sha": "1417bad5e31dfc1bb530036dcb1343425c7e9f3a",
+    "validator_path": "design/validate_c5_sil_contracts.py",
+    "validator_git_blob_sha": "3917073ad6063d41e08ceb128a3d74e99c37a6d7",
+    "test_path": "design/test_c5_sil_contracts.py",
+    "test_git_blob_sha": "1703fac8fb54afca04ea1e725f021a0a725f665f",
+    "design_note_path": "design/C5_PR395_SIL_INTEGRATION.md",
+    "design_note_git_blob_sha": "99a03e0e7fb08753560d9906819ec926b63188ef"
+  },
+  "preserved_runtime_gap": {
+    "finding_id": "C0-F007",
+    "classification": "CURRENT + DOCUMENTED ONLY",
+    "runtime_auto_materialization_executable": false
+  },
+  "next_stage": "C6_MATHEMATICS_SIL_PILOT_READY"
+}

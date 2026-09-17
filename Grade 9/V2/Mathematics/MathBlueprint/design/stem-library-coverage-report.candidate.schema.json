@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "stem-library-coverage-report.candidate.schema.json",
+  "title": "STEM Library Coverage Report Candidate",
+  "description": "Derived coverage report. PASS never implies technical or publication authorization.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "authority", "technical_authorization", "publication_authorization", "report_id", "pack_ref", "pack_digest", "coverage_profile_ref", "categories", "open_gap_refs", "result", "report_digest"],
+  "properties": {
+    "schema_version": {"const": "0.1.0"},
+    "status": {"const": "DERIVED_DESIGN_CANDIDATE"},
+    "authority": {"const": "DERIVED_LIBRARY_COVERAGE"},
+    "technical_authorization": {"const": "NOT_IMPLIED"},
+    "publication_authorization": {"const": "NOT_IMPLIED"},
+    "report_id": {"type": "string", "pattern": "^SIL-COVERAGE-[A-Z0-9][A-Z0-9_-]{3,}$"},
+    "pack_ref": {"type": "string", "minLength": 3},
+    "pack_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "coverage_profile_ref": {"type": "string", "minLength": 3},
+    "categories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category", "state", "supporting_refs", "reason"],
+        "properties": {
+          "category": {"enum": ["SUBJECT_IDENTITY", "SCOPE_PARTITION", "LOGICAL_PREREQUISITE_CLOSURE", "INSTRUCTIONAL_TRANSITIONS", "CANONICAL_OBJECTS", "REPRESENTATIONS", "MISCONCEPTION_REPAIR", "ASSESSMENT", "VERIFICATION", "SOURCE_STRATEGY", "PEDAGOGY_RESEARCH", "KNOWN_GAP_DISCLOSURE"]},
+          "state": {"enum": ["SATISFIED", "NOT_APPLICABLE", "BLOCKED"]},
+          "supporting_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+          "reason": {"type": "string", "minLength": 3}
+        }
+      }
+    },
+    "open_gap_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 3}},
+    "result": {"enum": ["PASS", "BLOCKED"]},
+    "report_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
