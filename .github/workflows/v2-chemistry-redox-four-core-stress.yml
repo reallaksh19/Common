@@ -1,0 +1,92 @@
+name: V2 Chemistry Redox Four-Core Stress
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - 'Grade 9/V2/Chemistry/LearnerProduct/**'
+      - 'Grade 9/V2/Chemistry/Representation/**'
+      - '.github/workflows/v2-chemistry-redox-four-core-stress.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  redox-four-core-stress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip jsonschema reportlab pymupdf pypdf pytest
+
+      - name: Run generic transformation-scope falsifiers
+        run: >-
+          pytest -q
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_chemistry_four_core_transformation_scope.py'
+
+      - name: Run governed Redox stress custody falsifiers
+        run: >-
+          pytest -q
+          'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_redox_four_core_stress.py'
+
+      - name: Compile and render all four Redox Core products from governed repository authority
+        run: >-
+          python
+          'Grade 9/V2/Chemistry/LearningBlueprint/stress_tests/redox/four_core/build_redox_four_core_governed.py'
+          --out-dir 'out/redox-four-core'
+          --render
+
+      - name: Verify four PDFs are machine review candidates
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('out/redox-four-core')
+          manifest = json.loads((root / 'redox-four-core-stress-manifest.json').read_text(encoding='utf-8'))
+          assert manifest['status'] == 'PASS'
+          assert manifest['held_transform_realized_by_any_core'] is False
+          assert manifest['representation_authority_mode'] == 'GOVERNED_INTENT_PLUS_LOCAL_SEMANTIC_INSTANCE_FACTS'
+          assert manifest['representation_semantic_authority_ref'] == 'CORE1A-STUDY-NOTE-REDOX-STATE-AGENT-v1'
+          assert manifest['fixture_authored_representation_semantics'] is False
+          for mode in ('core1a', 'core1b', 'core2a', 'core2b'):
+              folder = root / mode
+              pdf = folder / f'chemistry_{mode}.pdf'
+              preflight = json.loads((folder / 'core_product_preflight.json').read_text(encoding='utf-8'))
+              payload = json.loads((folder / 'payload.json').read_text(encoding='utf-8'))
+              assert pdf.is_file() and pdf.stat().st_size > 0, pdf
+              assert preflight['status'] == 'PASS', (mode, preflight)
+              assert preflight['maturity_state'] == 'MACHINE_REVIEW_CANDIDATE', (mode, preflight.get('maturity_state'))
+              review = preflight['review_candidate']
+              assert review['status'] == 'PASS', (mode, review)
+              assert review['maturity_state'] == 'MACHINE_REVIEW_CANDIDATE', (mode, review.get('maturity_state'))
+              assert review['human_release_inferred'] is False, mode
+              bundle = payload['representation_bundle']
+              assert bundle['summary']['adapter_primitive_selection_allowed'] is False, mode
+              assert bundle['summary']['adapter_scientific_semantics_allowed'] is False, mode
+              assert bundle['summary']['adapter_runtime_facts_allowed'] is False, mode
+              assert bundle['summary']['runtime_fact_count'] >= 1, mode
+              assert bundle['summary']['semantic_instance_count'] == 1, mode
+              runtime_rows = [rep for rep in bundle['representations'] if rep.get('runtime_fact_ref')]
+              assert runtime_rows, mode
+              assert {rep['semantic_instance_ref'] for rep in runtime_rows} == {'CHEM-SEM-INSTANCE-REDOX-ZN-CU-v1'}, mode
+              assert {rep['runtime_fact_source_authority_ref'] for rep in runtime_rows} == {'CORE1A-STUDY-NOTE-REDOX-STATE-AGENT-v1'}, mode
+              pages = sorted((folder / 'pages').glob('page-*.png'))
+              assert pages, mode
+          print('Redox four-Core governed local-semantic-instance machine review-candidate closure: PASS')
+          PY
+
+      - name: Upload Redox four-Core diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-redox-four-core-stress
+          path: out/redox-four-core
+          if-no-files-found: warn

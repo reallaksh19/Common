@@ -1,0 +1,36 @@
+{
+  "fixture_id": "CHEM-REDOX-FOUR-CORE-SOURCE-SCOPE-STRESS-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "stress_only": true,
+  "gate_id": "CHEM-REDOX-OXIDATION",
+  "learner_grade": 9,
+  "program_context": "COMPETITIVE_FOUNDATION_EXTENSION",
+  "authorized_scope_tiers": [
+    "FOUNDATION_G10",
+    "FORMAL_G11"
+  ],
+  "held_scope_tiers": [
+    "EXTENDED_G11"
+  ],
+  "core1a_atom_scope_assignments": {
+    "LA-REDOX-TRACK-001": "FOUNDATION_G10",
+    "LA-REDOX-STATE-CHANGE-002": "FORMAL_G11",
+    "LA-REDOX-ELECTRON-002": "FORMAL_G11",
+    "LA-REDOX-AGENT-003": "FORMAL_G11"
+  },
+  "held_transformation_guards": [
+    {
+      "fingerprint": "HALF_REACTIONS->BALANCED_OVERALL_REDOX|CORE1B_GENERATIVE_RECONSTRUCTION",
+      "detection_tokens": [
+        "MnO4",
+        "permanganate",
+        "acidic medium"
+      ]
+    }
+  ],
+  "provenance": {
+    "production_source_audit_pr": 388,
+    "scope_contract_basis": "Current Redox production source-audit validation fixture; this file is stress data and does not define generic compiler policy."
+  }
+}
