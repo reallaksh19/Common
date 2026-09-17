@@ -193,7 +193,7 @@
         "reasoning_sequence": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/reasoning_step"}},
         "required_transformations": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/transformation"}},
         "misconceptions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/misconception"}},
-        "verifications": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["DIMENSIONAL", "UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "INVERSE_RELATION", "SUBSTITUTE_BACK", "GRAPH_BEHAVIOUR", "BOUNDARY_CONDITION", "CONSERVATION", "SYMMETRY", "GEOMETRIC_CONSISTENCY", "MODEL_VALIDITY", "ORDER_OF_MAGNITUDE", "SHARED_CLOCK", "BODY_AGENT_CONSISTENCY", "STATIC_THRESHOLD", "CONSTRAINT_CONSISTENCY"]}},
+        "verifications": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["DIMENSIONAL", "UNITS", "SIGN_DIRECTION", "LIMITING_CASE", "INVERSE_RELATION", "SUBSTITUTE_BACK", "GRAPH_BEHAVIOUR", "BOUNDARY_CONDITION", "CONSERVATION", "SYMMETRY", "GEOMETRIC_CONSISTENCY", "MODEL_VALIDITY", "ORDER_OF_MAGNITUDE", "SHARED_CLOCK", "BODY_AGENT_CONSISTENCY", "STATIC_THRESHOLD", "CONSTRAINT_CONSISTENCY", "ENERGY_ACCOUNTING", "REFERENCE_CONSISTENCY"]}},
         "problem_families": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/problem_family"}},
         "difficulty_engineering": {"$ref": "#/$defs/difficulty"},
         "falsification_cases": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/falsification_case"}}
