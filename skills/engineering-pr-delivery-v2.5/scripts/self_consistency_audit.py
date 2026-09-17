@@ -1,0 +1,391 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+import sys
+from typing import Iterable
+
+import yaml
+
+
+REQUIRED_BLUEPRINT_HEADINGS = [
+    "## WHEN TO APPLY",
+    "## REQUIRED INPUTS",
+    "## PROCEDURE",
+    "## BEST-PRACTICE CHECKLIST",
+    "## ANTI-PATTERNS",
+    "## REQUIRED ARTIFACTS",
+    "## VERIFICATION",
+    "## QUALITY FINDING CLASSIFICATION",
+    "## TRUE HARD-STOP CONDITIONS",
+    "## OWNER REPORT",
+    "## SUCCESSOR HANDOVER",
+]
+
+# Durable object families that must have an explicit producer/shape/consumer path.
+OBJECT_SURFACES = {
+    "EP": [
+        "templates/EP.yaml",
+        "schemas/execution-package.schema.yaml",
+        "scripts/validate_ep_semantics.py",
+        "operating-model/execution-package.md",
+    ],
+    "CP": [
+        "templates/CP.yaml",
+        "schemas/checkpoint.schema.yaml",
+        "scripts/validate_checkpoint_linkage.py",
+        "operating-model/checkpoint.md",
+    ],
+    "DISC": [
+        "templates/DISCOVERY_RECEIPT.yaml",
+        "schemas/discovery-receipt.schema.yaml",
+        "scripts/validate_discovery_receipt.py",
+        "scripts/validate_takeover_certification.py",
+    ],
+    "QSET": [
+        "templates/QUESTION_SET.yaml",
+        "schemas/question-set.schema.yaml",
+        "scripts/validate_question_set.py",
+        "operating-model/phase-transition.md",
+    ],
+    "QUAL": [
+        "templates/QUALIFICATION_RECEIPT.yaml",
+        "schemas/qualification-receipt.schema.yaml",
+        "scripts/validate_qualification_receipt.py",
+        "operating-model/phase-transition.md",
+    ],
+    "TC": [
+        "templates/TAKEOVER_CERTIFICATION.yaml",
+        "schemas/takeover-certification.schema.yaml",
+        "scripts/validate_takeover_certification.py",
+        "operating-model/takeover-certification.md",
+    ],
+    "QRV": [
+        "templates/QUALITY_REVIEW.yaml",
+        "schemas/quality-review.schema.yaml",
+        "scripts/validate_quality_review.py",
+        "operating-model/quality-procedures.md",
+    ],
+    "ODR": [
+        "templates/ODR.yaml",
+        "schemas/owner-decision.schema.yaml",
+        "scripts/validate_owner_decision.py",
+        "operating-model/owner-change-intake.md",
+    ],
+    "REPO_STATE": [
+        "templates/REPO_STATE.yaml",
+        "schemas/repo-state.schema.yaml",
+        "scripts/validate_repo_state.py",
+    ],
+    "REPO_PROFILE": [
+        "templates/REPO_PROFILE.yaml",
+        "schemas/repo-profile.schema.yaml",
+        "scripts/validate_repo_profile.py",
+    ],
+    "ROADMAP": [
+        "templates/OVERALL_ROADMAP.yaml",
+        "schemas/roadmap.schema.yaml",
+        "scripts/validate_roadmap.py",
+    ],
+    "PROGRESS": [
+        "templates/PROGRESS.yaml",
+        "schemas/progress.schema.yaml",
+        "scripts/validate_progress.py",
+        "operating-model/progress-accounting.md",
+    ],
+    "ISSUE_GRAPH": [
+        "templates/ISSUE_GRAPH.yaml",
+        "schemas/issue-graph.schema.yaml",
+        "scripts/validate_issue_graph.py",
+        "operating-model/issue-projection.md",
+    ],
+    "PARALLEL_PLAN": [
+        "templates/PARALLEL_PLAN.yaml",
+        "schemas/parallel-plan.schema.yaml",
+        "scripts/validate_parallel_plan.py",
+    ],
+    "PARALLEL_JOIN": [
+        "templates/PARALLEL_JOIN.yaml",
+        "schemas/parallel-join.schema.yaml",
+        "scripts/validate_parallel_join.py",
+    ],
+    "PARALLEL_REPLAN": [
+        "templates/PARALLEL_REPLAN.yaml",
+        "schemas/parallel-replan.schema.yaml",
+        "scripts/validate_parallel_replan.py",
+    ],
+    "REPORT_PROJECTION": [
+        "schemas/report-projection.schema.yaml",
+        "scripts/report_projection.py",
+        "scripts/validate_report_projection.py",
+    ],
+    "COMMUNICATION_PROJECTION": [
+        "schemas/communication-projection.schema.yaml",
+        "scripts/communication_projection.py",
+        "scripts/validate_human_communication.py",
+        "scripts/render_owner_status.py",
+        "scripts/render_technical_status.py",
+        "operating-model/human-communication.md",
+    ],
+    "OWNER_CHANGE_PROJECTION": [
+        "schemas/owner-change-projection.schema.yaml",
+        "scripts/owner_change_projection.py",
+        "scripts/validate_owner_change_intake.py",
+        "scripts/render_owner_change.py",
+        "operating-model/owner-change-intake.md",
+    ],
+    "ZERO_CONTEXT_RECONSTRUCTION": [
+        "schemas/zero-context-reconstruction.schema.yaml",
+        "scripts/zero_context_reconstruction.py",
+        "scripts/validate_zero_context_reconstruction.py",
+        "operating-model/relay-certification-matrix.md",
+    ],
+}
+
+AGGREGATE_REQUIRED_MODULES = [
+    "validate_repo_state",
+    "validate_repo_profile",
+    "validate_roadmap",
+    "validate_execution_frontier",
+    "validate_progress",
+    "validate_report_projection",
+    "validate_human_communication",
+    "validate_owner_change_intake",
+    "validate_zero_context_reconstruction",
+    "validate_serial_execution",
+    "validate_parallel_plan",
+    "validate_parallel_join",
+    "validate_parallel_replan",
+    "validate_roadmap_continuity",
+    "validate_state_planes",
+    "validate_projection_convergence",
+    "validate_github_projection",
+    "validate_github_generation_history",
+    "validate_checkpoint_linkage",
+    "validate_owner_decision",
+    "validate_issue_graph",
+    "validate_issue_projection_tree",
+    "validate_issue_closure",
+    "validate_supersession",
+    "validate_roadmap_transaction",
+    "validate_question_set",
+    "validate_qualification_receipt",
+    "validate_takeover_certification",
+    "validate_blueprints",
+    "validate_quality_router",
+    "validate_quality_review",
+    "validate_baton_readiness",
+]
+
+README_REQUIRED_ENTRYPOINTS = [
+    "validate_relay_conformance.py",
+    "cold_start_check.py",
+    "validate_zero_context_reconstruction.py",
+    "zero_context_reconstruction.py",
+    "validate_baton_readiness.py",
+    "validate_takeover_certification.py",
+    "material_write_ready.py",
+    "validate_quality_review.py",
+    "validate_human_communication.py",
+    "validate_owner_change_intake.py",
+]
+
+SKILL_REQUIRED_ENTRYPOINTS = [
+    "validate_relay_conformance.py",
+    "cold_start_check.py",
+    "validate_zero_context_reconstruction.py",
+    "material_write_ready.py",
+]
+
+STALE_MARKERS = {
+    "operating-model/object-authority-matrix.md": [
+        "Current matrix after CP-R002",
+        "Not implemented",
+        "`repository_ready` kernel field",
+        "future `DISC/QUAL/TC` objects",
+    ],
+    "operating-model/relay-conformance.md": [
+        "WP-03 still has to implement",
+        "Later WPs still own",
+    ],
+    "SKILL.md": [
+        "WP-07 will translate",
+    ],
+}
+
+AUTHORITY_SENTINELS = {
+    "SKILL.md": [
+        "Conversation is acceleration, never custody.",
+        "GitHub Issues and generated Markdown are projections, not roadmap authority.",
+        "`PROGRESS.yaml` is authority.",
+        "Never persist this as a timeless boolean.",
+    ],
+    "operating-model/object-authority-matrix.md": [
+        "BATON_READY",
+        "TAKEOVER_CERTIFIED",
+        "MATERIAL_WRITE_READY",
+        "QRV-*",
+        "OWNER_STATUS.md",
+        "ZERO_CONTEXT_RECONSTRUCTION",
+    ],
+}
+
+PORTABILITY_BANNED_TOKENS = [
+    "Advanced_Analysis",
+    "reallaksh19/Advanced_Analysis",
+]
+
+
+def _text(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def _yaml_files(paths: Iterable[Path]) -> list[Path]:
+    out: list[Path] = []
+    for base in paths:
+        if base.exists():
+            out.extend(sorted(base.glob("*.yaml")))
+            out.extend(sorted(base.glob("*.yml")))
+    return out
+
+
+def audit(repo_root: Path) -> tuple[list[str], list[str]]:
+    errors: list[str] = []
+    warnings: list[str] = []
+    skill = repo_root / "skills" / "engineering-pr-delivery-v2.5"
+    workflow = repo_root / ".github" / "workflows" / "engineering-pr-delivery-v2.5.yml"
+
+    if not skill.is_dir():
+        return [f"missing skill root: {skill}"], warnings
+
+    for rel in ["SKILL.md", "blueprints", "operating-model", "schemas", "scripts", "templates", "tests"]:
+        if not (skill / rel).exists():
+            errors.append(f"missing required surface: {rel}")
+
+    # Declarative contract files must at least be valid YAML mappings.
+    for path in _yaml_files([skill / "schemas", skill / "templates"]):
+        try:
+            data = yaml.safe_load(_text(path))
+        except Exception as exc:
+            errors.append(f"YAML parse failed {path.relative_to(skill)}: {exc}")
+            continue
+        if not isinstance(data, dict):
+            errors.append(f"YAML top-level must be mapping: {path.relative_to(skill)}")
+
+    # Durable object families need a complete shape/producer/consumer/doc surface.
+    for object_name, rels in OBJECT_SURFACES.items():
+        for rel in rels:
+            if not (skill / rel).exists():
+                errors.append(f"{object_name}: missing surface {rel}")
+
+    # The procedural blueprint library is executable process, not headings-only prose.
+    blueprints = sorted((skill / "blueprints").glob("*.md"))
+    if not blueprints:
+        errors.append("no quality blueprints found")
+    for path in blueprints:
+        text = _text(path)
+        for heading in REQUIRED_BLUEPRINT_HEADINGS:
+            if heading not in text:
+                errors.append(f"{path.name}: missing procedural heading {heading}")
+
+    aggregate = _text(skill / "scripts" / "validate_relay_conformance.py")
+    readme = _text(skill / "scripts" / "README.md")
+    skill_doc = _text(skill / "SKILL.md")
+
+    for module in AGGREGATE_REQUIRED_MODULES:
+        if module not in aggregate:
+            errors.append(f"aggregate conformance does not reference {module}")
+
+    # Every validator must be either aggregate-reachable or documented as a focused operator diagnostic.
+    for path in sorted((skill / "scripts").glob("validate_*.py")):
+        module = path.stem
+        if module not in aggregate and path.name not in readme:
+            errors.append(f"orphan validator: {path.name} is neither aggregate-reachable nor documented")
+
+    for path in sorted((skill / "scripts").glob("render_*.py")):
+        if path.name not in readme:
+            errors.append(f"undocumented renderer: {path.name}")
+
+    for name in README_REQUIRED_ENTRYPOINTS:
+        if name not in readme:
+            errors.append(f"scripts/README.md missing operator entrypoint {name}")
+    for name in SKILL_REQUIRED_ENTRYPOINTS:
+        if name not in skill_doc:
+            errors.append(f"SKILL.md missing core entrypoint {name}")
+
+    # Current normative docs cannot keep retired implementation-state claims.
+    for rel, markers in STALE_MARKERS.items():
+        text = _text(skill / rel)
+        for marker in markers:
+            if marker in text:
+                errors.append(f"stale normative claim in {rel}: {marker}")
+
+    matrix = _text(skill / "operating-model" / "object-authority-matrix.md")
+    if "Current matrix after CP-R010" not in matrix:
+        errors.append("object-authority-matrix.md is not reconciled through CP-R010")
+
+    for rel, sentinels in AUTHORITY_SENTINELS.items():
+        text = _text(skill / rel)
+        for sentinel in sentinels:
+            if sentinel not in text:
+                errors.append(f"authority sentinel missing from {rel}: {sentinel}")
+
+    # Portability: known downstream stress repositories must never leak into Common protocol logic/docs.
+    text_suffixes = {".md", ".py", ".yaml", ".yml"}
+    for path in skill.rglob("*"):
+        if not path.is_file() or path.suffix not in text_suffixes:
+            continue
+        text = _text(path)
+        for token in PORTABILITY_BANNED_TOKENS:
+            if token in text:
+                errors.append(f"downstream-specific token {token!r} in {path.relative_to(skill)}")
+
+    if not workflow.exists():
+        errors.append("missing scoped V2.5 CI workflow")
+    else:
+        wf = _text(workflow)
+        root_cmd = "unittest discover -s skills/engineering-pr-delivery-v2.5/tests -p 'test*.py' -v"
+        stress_cmd = "unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress -p 'test*.py' -v"
+        if root_cmd not in wf:
+            errors.append("CI workflow does not explicitly execute root unit discovery")
+        if stress_cmd not in wf:
+            errors.append("CI workflow does not explicitly execute dedicated stress discovery")
+
+    # Lightweight operator reachability inventory. Non-validator/render utility scripts are warnings only.
+    documented = readme + "\n" + skill_doc
+    library_modules = {
+        "relaylib.py",
+        "progress_projection.py",
+        "report_projection.py",
+        "communication_projection.py",
+        "owner_change_projection.py",
+        "zero_context_reconstruction.py",
+    }
+    for path in sorted((skill / "scripts").glob("*.py")):
+        if path.name.startswith("validate_") or path.name.startswith("render_") or path.name in library_modules:
+            continue
+        if path.name not in documented:
+            warnings.append(f"script not named in operator docs: {path.name}")
+
+    return errors, warnings
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Audit Engineering Relay V2.5 cross-surface consistency")
+    parser.add_argument("repo_root", nargs="?", default=".")
+    args = parser.parse_args()
+    errors, warnings = audit(Path(args.repo_root).resolve())
+    for warning in warnings:
+        print(f"WARNING: {warning}")
+    for error in errors:
+        print(f"ERROR: {error}")
+    if errors:
+        print(f"FAIL: {len(errors)} error(s), {len(warnings)} warning(s)")
+        return 1
+    print(f"PASS: self-consistency audit; {len(warnings)} warning(s)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
