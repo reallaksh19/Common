@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Primary/V2/Mathematics/BenchmarkAcceptance/candidate_export.schema.json",
+  "title": "Primary Math V2 Benchmark Candidate Export",
+  "type": "object",
+  "required": ["version", "candidate_id", "evidence_class", "cases"],
+  "properties": {
+    "version": {"const": "1.0.0"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "evidence_class": {"enum": ["TEST_FIXTURE", "REAL_CANDIDATE"]},
+    "producer": {"type": "string"},
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "core1_sha256": {"type": ["string", "null"]},
+        "core2_sha256": {"type": ["string", "null"]},
+        "physical_page_map_digest": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["case_id", "scope", "representations", "math_evidence"],
+        "properties": {
+          "case_id": {"type": "string"},
+          "scope": {
+            "type": "object",
+            "required": ["basis"],
+            "properties": {
+              "basis": {
+                "enum": [
+                  "QUESTION_SET_OBSERVED",
+                  "SCHOOL_CLASSWORK_OBSERVED",
+                  "CURRICULUM_CONFIRMED",
+                  "CURRICULUM_OVERLAY",
+                  "COMMON_G4_5_CAPABILITY",
+                  "EXTENSION",
+                  "STRETCH",
+                  "MAPPING_PENDING",
+                  "SOURCE_NOT_PROVIDED"
+                ]
+              },
+              "authority_ref": {"type": ["string", "null"]},
+              "universal_grade_claim": {"type": "boolean", "default": false}
+            },
+            "additionalProperties": true
+          },
+          "representations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "math_evidence": {"type": "object"},
+          "work_evidence": {"type": ["object", "null"]},
+          "diagnosis_evidence": {"type": ["object", "null"]},
+          "product_evidence": {"type": ["object", "null"]},
+          "hint_evidence": {"type": ["object", "null"]},
+          "runtime_evidence": {"type": ["object", "null"]},
+          "surface_evidence": {"type": ["object", "null"]},
+          "custody_evidence": {"type": ["object", "null"]},
+          "producer_claims": {"type": ["object", "null"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
