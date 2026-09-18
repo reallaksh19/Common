@@ -1,0 +1,50 @@
+name: Grade 4 Math V2 visual hint coverage
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 4/V2/Mathematics/**'
+      - '.github/workflows/grade4-math-v2-visual-hints.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'Grade 4/V2/Mathematics/**'
+      - '.github/workflows/grade4-math-v2-visual-hints.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-visual-hints:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest reportlab jsonschema pypdfium2 pillow
+      - name: Require and realize H1 H2 H3 visual hints for every source question
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_source_visual_hint_coverage.py'
+      - name: Prove staged hints measure, wrap and fail closed
+        run: python 'Grade 4/V2/Mathematics/Acceptance/Validation/validate_staged_hint_layout.py'
+      - name: Render visual-hint probes with PDFium
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import pypdfium2 as pdfium
+          paths = [
+              Path('build/grade4_math_v2/Source_Visual_Hint_Probe.pdf'),
+              Path('build/grade4_math_v2/Staged_Hint_Layout_Probe.pdf'),
+          ]
+          total = 0
+          for path in paths:
+              doc = pdfium.PdfDocument(str(path))
+              assert len(doc) >= 1
+              for i in range(len(doc)):
+                  image = doc[i].render(scale=1.25).to_pil()
+                  assert image.width > 500 and image.height > 700
+                  total += 1
+          print(f'visual-hint PDFium PASS: {total} pages across {len(paths)} probes')
+          PY

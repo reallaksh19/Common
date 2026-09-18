@@ -15,6 +15,12 @@
   "properties": {
     "question_ref": {"type": "string", "minLength": 1},
     "source_ref": {"type": ["string", "null"]},
+    "source_identity": {
+      "oneOf": [
+        {"$ref": "source-identity.schema.json"},
+        {"type": "null"}
+      ]
+    },
     "raw_text": {"type": ["string", "null"]},
     "concept_key": {"type": "string", "minLength": 1},
     "concept_title": {"type": "string", "minLength": 1},

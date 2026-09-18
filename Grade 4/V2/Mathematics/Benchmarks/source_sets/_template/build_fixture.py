@@ -1,7 +1,7 @@
 """Explicit semantic-extraction template for one scanned Grade-4 Math source set.
 
-Copy this directory before editing it.  This template intentionally contains no
-keyword guessing and no default mathematical interpretation.  Every source
+Copy this directory before editing it. This template intentionally contains no
+keyword guessing and no default mathematical interpretation. Every source
 question must receive an explicit QUESTION_SPECS entry before authoring can run.
 """
 from __future__ import annotations
@@ -13,42 +13,7 @@ from typing import Any, Dict, Mapping
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "source.json"
-
-# Optional user/source labels.  These may label or constrain already-supported
-# evidence; they may not add unsupported mathematics.
 TOPIC_HINTS: list[str] = []
-
-# Fill this explicitly after source.json is faithfully transcribed.
-#
-# Required shape per question:
-#
-# QUESTION_SPECS = {
-#     "Q1": {
-#         "concept_key": "...",
-#         "concept_title": "...",
-#         "scope_basis": "QUESTION_SET_OBSERVED",
-#         "authority_ref": None,
-#         "capability_refs": ["CANONICAL_ID"],
-#         "prerequisite_refs": [],
-#         "problem_family_refs": ["CANONICAL_ID"],
-#         "translation_refs": [],
-#         "quantity_structure": None,
-#         "representation_requirements": [
-#             {
-#                 "representation_id": "REP-Q1-...",
-#                 "role": "STRUCTURAL",
-#                 "primitive_kind": "...",
-#                 "semantic_params": {...},
-#                 "validator_refs": ["..."],
-#                 "fade_modes": ["FULL", "PARTIAL", "NONE"],
-#                 "provenance": "ENGINE_AUTHORED_VISUAL"
-#             }
-#         ],
-#         "learning_support_blueprint": {...}
-#     }
-# }
-#
-# Do not paste the p97-p99 values here.  Map the new scan on its own evidence.
 QUESTION_SPECS: Dict[str, Dict[str, Any]] = {}
 
 REQUIRED_SPEC_FIELDS = (
@@ -77,6 +42,7 @@ def _load_source() -> Dict[str, Any]:
         raise ValueError("SOURCE_QUESTION_SET_REQUIRED")
 
     seen: set[str] = set()
+    seen_display: set[str] = set()
     for row in questions:
         qref = str(row.get("question_ref") or "")
         if not qref:
@@ -84,9 +50,20 @@ def _load_source() -> Dict[str, Any]:
         if qref in seen:
             raise ValueError(f"DUPLICATE_SOURCE_QUESTION_REF: {qref}")
         seen.add(qref)
+
+        display_ref = str(row.get("source_display_ref") or "")
+        if not display_ref or "REPLACE_" in display_ref:
+            raise ValueError(f"SOURCE_DISPLAY_REF_MISSING: {qref}")
+        if display_ref in seen_display:
+            raise ValueError(f"DUPLICATE_SOURCE_DISPLAY_REF: {display_ref}")
+        seen_display.add(display_ref)
+
         raw = str(row.get("raw_text") or "")
         if not raw or "REPLACE_" in raw:
             raise ValueError(f"TEMPLATE_NOT_FILLED: {qref}.raw_text")
+        numeric_tokens = row.get("source_numeric_tokens")
+        if not isinstance(numeric_tokens, list) or any("REPLACE_" in str(x) for x in numeric_tokens):
+            raise ValueError(f"SOURCE_NUMERIC_TOKENS_REQUIRED: {qref}")
         if row.get("source_issue") == "TEMPLATE_NOT_FILLED":
             raise ValueError(f"TEMPLATE_NOT_FILLED: {qref}.source_issue")
     return payload
@@ -106,6 +83,20 @@ def _validate_spec(qref: str, spec: Mapping[str, Any]) -> None:
         raise ValueError(f"SEMANTIC_MAPPING_INCOMPLETE: {qref}: learning_support_blueprint")
 
 
+def _source_identity(row: Mapping[str, Any]) -> Dict[str, Any]:
+    return {
+        "source_ref": str(row["question_ref"]),
+        "source_display_ref": str(row["source_display_ref"]),
+        "source_text": str(row["raw_text"]),
+        "source_numeric_tokens": [str(x) for x in row.get("source_numeric_tokens") or []],
+        "source_asset_ref": row.get("asset_ref"),
+        "source_page_or_image_index": row.get("page_or_image_index"),
+        "source_section_label": row.get("source_section_label"),
+        "source_item_label": row.get("source_item_label"),
+        "source_issue": row.get("source_issue"),
+    }
+
+
 def build_primary_input() -> Dict[str, Any]:
     source = _load_source()
     source_set_id = str(source["source_set_id"])
@@ -119,9 +110,7 @@ def build_primary_input() -> Dict[str, Any]:
     for row in source["questions"]:
         qref = str(row["question_ref"])
         if qref not in QUESTION_SPECS:
-            raise ValueError(
-                f"SEMANTIC_EVIDENCE_REQUIRED: {qref}; add an explicit QUESTION_SPECS entry"
-            )
+            raise ValueError(f"SEMANTIC_EVIDENCE_REQUIRED: {qref}; add an explicit QUESTION_SPECS entry")
         spec = QUESTION_SPECS[qref]
         _validate_spec(qref, spec)
 
@@ -132,6 +121,7 @@ def build_primary_input() -> Dict[str, Any]:
         evidence = {
             "question_ref": qref,
             "source_ref": source_set_id,
+            "source_identity": _source_identity(row),
             "raw_text": row["raw_text"],
             "concept_key": spec["concept_key"],
             "concept_title": spec["concept_title"],

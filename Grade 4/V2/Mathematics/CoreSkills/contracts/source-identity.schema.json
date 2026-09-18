@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reallaksh19.github.io/Common/Grade4/V2/Mathematics/CoreSkills/contracts/source-identity.schema.json",
+  "title": "Grade4MathSourceIdentity",
+  "type": "object",
+  "required": [
+    "source_ref",
+    "source_display_ref",
+    "source_text",
+    "source_numeric_tokens"
+  ],
+  "properties": {
+    "source_ref": {"type": "string", "minLength": 1},
+    "source_display_ref": {"type": "string", "minLength": 1},
+    "source_text": {"type": "string", "minLength": 1},
+    "source_numeric_tokens": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "source_asset_ref": {"type": ["string", "null"]},
+    "source_page_or_image_index": {"type": ["integer", "null"], "minimum": 1},
+    "source_section_label": {"type": ["string", "null"]},
+    "source_item_label": {"type": ["string", "null"]},
+    "source_issue": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
