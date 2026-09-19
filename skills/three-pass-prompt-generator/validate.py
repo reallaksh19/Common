@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R3"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R4"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -290,6 +290,22 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: preflight missing {field}")
 
         level = _field_value(preflight, "USER-REQUESTED LEVEL:")
+        user_intent = _field_value(preflight, "USER INTENT:")
+        intent_type = _field_value(preflight, "INTENT TYPE:")
+        authorized_actions = _field_value(preflight, "AUTHORIZED ACTIONS:")
+        intent_completion = _field_value(preflight, "INTENT COMPLETION TEST:")
+        if not user_intent:
+            errors.append(f"{label}: USER INTENT must be substantive")
+        if intent_type not in {"ANALYZE_ONLY", "ANALYZE_THEN_ACT", "EXECUTE_DEFINED_ACTION", "DECIDE", "HANDOVER"}:
+            errors.append(f"{label}: INTENT TYPE is invalid: {intent_type!r}")
+        if not authorized_actions:
+            errors.append(f"{label}: AUTHORIZED ACTIONS must be explicit; use NONE for analysis-only")
+        if not intent_completion:
+            errors.append(f"{label}: INTENT COMPLETION TEST must be substantive")
+        intent_gate_tail = preflight.split("INTENT-FIDELITY GATE:", 1)[1][:220] if "INTENT-FIDELITY GATE:" in preflight else ""
+        if "PASS" not in intent_gate_tail:
+            errors.append(f"{label}: INTENT-FIDELITY GATE must PASS")
+
         if level == "ISSUE_TASK":
             for field in (
                 "WHY NOW:",
