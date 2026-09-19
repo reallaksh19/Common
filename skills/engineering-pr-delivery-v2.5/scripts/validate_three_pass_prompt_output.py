@@ -19,6 +19,25 @@ LEGACY_ACTIVE_PATTERNS = (
     "Your deliverable is a better current register",
 )
 
+PROMPT1_METHOD_META_PATTERNS = (
+    "this answer will be used",
+    "fixed independent reference",
+    "independent reference in a later pass",
+    "later pass",
+    "next pass",
+    "third pass",
+    "do not inspect the current repository",
+    "do not inspect the repository",
+    "do not open any repository",
+    "do not open the repository",
+    "do not open the issue tracker",
+    "you will be held to this picture",
+    "before seeing the current answer",
+    "before seeing the current implementation",
+    "prompt 2 will",
+    "prompt 3 will",
+)
+
 REQUIRED_BASIS_FIELDS = (
     "SCHEMA SOURCE:",
     "SCHEMA REF:",
@@ -58,6 +77,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "ARTIFACT-ERASURE GATE:",
     "CURRENT-VOCABULARY GATE:",
     "PROMPT-1 OBJECT GATE:",
+    "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
 )
@@ -196,8 +216,12 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[1], p1 + 1)
             prompt1 = lot[p1:p2 if p2 >= 0 else len(lot)]
-            if "register is the thing" in prompt1.lower():
+            prompt1_lower = prompt1.lower()
+            if "register is the thing" in prompt1_lower:
                 errors.append(f"{label}: Prompt 1 is artifact-form anchored to a register")
+            for phrase in PROMPT1_METHOD_META_PATTERNS:
+                if phrase in prompt1_lower:
+                    errors.append(f"{label}: Prompt 1 leaks generator/method language: {phrase!r}")
 
         p3 = lot.find(PROMPT_HEADINGS[2])
         if p3 >= 0:
