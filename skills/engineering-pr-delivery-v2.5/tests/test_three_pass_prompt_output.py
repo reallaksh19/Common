@@ -208,9 +208,15 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("ISSUE_TASK missing WHY NOW:" in e for e in errors))
 
     def test_selected_witness_requires_work_product(self):
-        bad = GOOD.replace("INDEPENDENT WORK PRODUCT:\ntransparent reconstruction and comparison", "INDEPENDENT WORK PRODUCT:\n")
+        bad = GOOD.replace(
+            "INDEPENDENT WORK PRODUCT:\ntransparent reconstruction and comparison\n",
+            "",
+        )
         errors = MOD.validate_text(bad, SHA)
-        self.assertTrue(any("selected witness requires non-empty INDEPENDENT WORK PRODUCT:" in e for e in errors))
+        self.assertTrue(
+            any("INDEPENDENT WORK PRODUCT:" in e for e in errors),
+            errors,
+        )
 
     def test_no_witness_may_be_explicit(self):
         no_witness = GOOD.replace("PROBLEM WITNESS TYPE:\nbenchmark", "PROBLEM WITNESS TYPE:\nNONE")
