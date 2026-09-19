@@ -186,3 +186,32 @@ Rules:
 `technical_ready_to_merge` is derived from current acceptance/evidence plus current provider lifecycle/check/mergeability/review facts. It returns `YES | NO | UNKNOWN` with reasons.
 
 The delivery observation is evidence, not roadmap authority and not authorization.
+
+
+## Unmerged PR carry-forward
+
+Owner status must never silently forget a still-active PR.
+
+When `REPO_STATE.delivery.observations[]` contains provider observations, every PR last observed as:
+
+```text
+DRAFT
+OPEN
+UNKNOWN
+```
+
+is listed under **Unmerged PRs carried forward** on every Owner publication.
+
+For each carried PR, show at least:
+
+- PR number / URL;
+- lifecycle;
+- current observed head SHA;
+- correlated Issue number(s);
+- correlated EP id(s) / work package(s);
+- relationship meaning.
+
+A PR leaves this recurring list only after provider readback records terminal `MERGED` or `CLOSED` state. It can remain in durable evidence/history without cluttering every future summary.
+
+This carry-forward is based on provider observation evidence, not memory of prior chat.
+
