@@ -126,7 +126,7 @@ The canonical generator/validator now lives in the standalone package:
 skills/three-pass-prompt-generator/
 ```
 
-The validator in this V2.5 scripts directory is compatibility-only.
+The legacy `validate_three_pass_prompt_output.py` in this V2.5 scripts directory is compatibility-only and delegates to the standalone validator.
 
 ```bash
 python ../../three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <current-schema-sha>
