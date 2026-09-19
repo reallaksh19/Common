@@ -5,9 +5,10 @@ from pathlib import Path
 from communication_projection import build
 from render_owner_status import render as render_owner
 from takeoverlib import digest_mapping
+from owner_publication import cursor_digest,publication_status
 
 FORBIDDEN_OWNER_TOKENS=("BATON_READY","TAKEOVER_CERTIFIED","MATERIAL_WRITE_READY","GHGEN-","GHOP-","QSET-","QUAL-","DISC-","QRV-","ODR-","REPO_STATE","material_authority")
-OWNER_HEADINGS=("## What can happen now","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Action required outside this environment","## Decisions for you","## What happens next","## What would stop progress")
+OWNER_HEADINGS=("## What can happen now","## What changed","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Action required outside this environment","## Decisions for you","## What happens next","## What would stop progress")
 
 
 def _subjects(items):
@@ -34,6 +35,11 @@ def validate(root:Path):
     if c.get("schema_version")!="relay-v2.5-communication-projection":e.append("communication projection schema_version mismatch")
     if (c.get("generated_from") or {}).get("report_projection_digest")!=digest_mapping(report):e.append("communication projection is not bound to its technical report projection")
     if (c.get("generated_from") or {}).get("report_sources")!=(report.get("generated_from") or {}):e.append("communication projection source bindings diverge from report projection")
+    if (c.get("generated_from") or {}).get("owner_publication_cursor_digest")!=cursor_digest(root):e.append("communication projection Owner publication cursor binding is stale")
+    expected_change=publication_status(root,report);owner_change=owner.get("change") or {}
+    for key in ("event_class","changed_dimensions","publication_due","current_digest","previous_publication_id","previous_sequence","cursor_path","cursor_present"):
+        if owner_change.get(key)!=expected_change.get(key):e.append(f"Owner publication change {key} diverges from current cursor/report truth")
+    if owner_change.get("details")!=expected_change.get("details"):e.append("Owner publication change details diverge from current cursor/report truth")
     source_work=report.get("current_work") or {};owner_work=owner.get("current_work") or {}
     for key in ("objective","phase","work_package","ep_id"):
         if owner_work.get(key)!=source_work.get(key):e.append(f"Owner current_work {key} diverges from source report")
@@ -68,6 +74,10 @@ def validate(root:Path):
         if heading not in text:e.append(f"Owner status missing required section {heading}")
     for token in FORBIDDEN_OWNER_TOKENS:
         if token in text:e.append(f"Owner status leaks relay-internal jargon: {token}")
+    event_text=str(owner_change.get("event_class") or "").replace("_"," ").title()
+    if event_text and event_text not in text:e.append("Owner status hides deterministic publication event class")
+    if owner_change.get("event_class")=="NO_MATERIAL_PROGRESS" and "No material engineering" not in text:e.append("Owner status must explicitly report no material progress")
+    if "task" not in (owner_change.get("changed_dimensions") or []) and owner_change.get("event_class") not in {"INITIAL_SNAPSHOT","NO_MATERIAL_PROGRESS"} and "Acceptance/progress did not move." not in text:e.append("Owner status hides unchanged acceptance/progress fact")
     if stop.get("active") and str(stop.get("reason") or "") not in text:e.append("Owner status hides active stop reason")
     for item in evidence.get("not_run",[]) or []:
         if str(item.get("reason") or "") and str(item.get("reason")) not in text:e.append(f"Owner status hides missing-evidence reason for {item.get('id')}")
