@@ -20,12 +20,17 @@ LEGACY_ACTIVE_PATTERNS = (
 )
 
 INVALID_THREE_PASS_PROTOCOL_PATTERNS = (
+    "# QUALIFICATION GATE",
+    "## QUALIFICATION GATE",
     "QUALIFICATION GATE — ANSWER QSET",
     "schema_version: relay-v2.5-question-set",
     "route_key: \"SERIAL:TO_BE_BOUND\"",
     "ep_contract_digest: TO_BE_BOUND",
     "QUESTION_SET_ADMISSION_STATUS",
     "Do not proceed to Pass 3 until that evaluation returns PASS",
+    "ADMISSION GATE — check before anything else",
+    "QUESTION_SET_ADMISSION_STATUS",
+    "Submit your Q1–Q5 answers with your reality reconstruction to an independent evaluator",
 )
 
 PROMPT1_METHOD_META_PATTERNS = (
@@ -51,6 +56,7 @@ PROMPT1_METHOD_META_PATTERNS = (
 )
 
 REQUIRED_BASIS_FIELDS = (
+    "GENERATOR MODE:",
     "SCHEMA SOURCE:",
     "SCHEMA REF:",
     "SCHEMA CONTENT SHA:",
@@ -109,7 +115,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
-    "QSET-SEPARATION GATE:",
+    "MODE-ISOLATION GATE:",
 )
 
 PROMPT_HEADINGS = (
@@ -174,8 +180,11 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
 
         status = _field_value(basis, "SCHEMA FETCH STATUS:")
         sha = _field_value(basis, "SCHEMA CONTENT SHA:")
+        mode = _field_value(basis, "GENERATOR MODE:")
         compatibility = _field_value(basis, "SCHEMA COMPATIBILITY:")
 
+        if mode != "THREE_PASS_ONLY":
+            errors.append("GENERATOR MODE must be THREE_PASS_ONLY")
         if status not in {"LIVE_THIS_RUN", "USER_SUPPLIED_TEXT"}:
             errors.append("SCHEMA FETCH STATUS must be LIVE_THIS_RUN or USER_SUPPLIED_TEXT")
         if status == "LIVE_THIS_RUN" and not HEX40.fullmatch(sha):
@@ -276,9 +285,9 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             tail = preflight.split("COMPLEX Q1–Q5 COVERAGE:", 1)[1][:220] if "COMPLEX Q1–Q5 COVERAGE:" in preflight else ""
             if "PASS" not in tail:
                 errors.append(f"{label}: COMPLEX Q1–Q5 COVERAGE must PASS when complex mode is ON")
-            qset_tail = preflight.split("QSET-SEPARATION GATE:", 1)[1][:220] if "QSET-SEPARATION GATE:" in preflight else ""
+            qset_tail = preflight.split("MODE-ISOLATION GATE:", 1)[1][:220] if "MODE-ISOLATION GATE:" in preflight else ""
             if "PASS" not in qset_tail:
-                errors.append(f"{label}: QSET-SEPARATION GATE must PASS when complex mode is ON")
+                errors.append(f"{label}: MODE-ISOLATION GATE must PASS when complex mode is ON")
 
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[1], p1 + 1)
