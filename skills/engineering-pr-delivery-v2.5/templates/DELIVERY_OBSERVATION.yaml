@@ -24,5 +24,17 @@ review:
   state: UNKNOWN
   unresolved_threads: null
   change_requests: null
+description_contract:
+  marker: "<!-- relay-pr-correlation:v1 -->"
+  marker_present: true
+  body_digest: "sha256:<provider-body-digest>"
+  correlations:
+    - issue_node: ISSUE-0001
+      issue_number: 1
+      ep_id: EP-0001
+      ep_path: agents/relay/execution-packages/EP-0001.yaml
+      work_package: WP-0001
+      relationship: IMPLEMENTS
+      meaning: "<why this EP is delivered by this PR for this issue>"
 readback_basis:
   - "<durable provider readback reference>"
