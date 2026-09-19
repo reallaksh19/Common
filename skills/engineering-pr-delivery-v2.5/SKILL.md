@@ -2,42 +2,31 @@
 
 ## REQUEST MODE DISPATCH — FIRST ACTION
 
-Before applying any other section of this skill, classify the user's request.
-
 ### THREE_PASS_GENERATOR
 
-Enter this mode when the user asks to use, generate from, apply, or review:
+If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method:
+
+**leave this skill immediately.**
+
+Canonical standalone launcher:
 
 ```text
-skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.md
+skills/three-pass-prompt-generator/SKILL.md
 ```
 
-or explicitly asks for "3 pass", "three-pass", "Prompt 1 / Prompt 2 / Prompt 3", or complex Q1–Q5 questions under that schema.
+Canonical standalone schema:
 
-In this mode:
+```text
+skills/three-pass-prompt-generator/schema.md
+```
 
-1. fetch the current schema from `main`;
-2. before target reasoning, emit/verify the schema's mandatory execution handshake with protocol revision `TPG-3P-2026-09-19-R2`, `GENERATOR MODE = THREE_PASS_ONLY`, `LIVE_THIS_RUN`, and the actual fetched schema SHA;
-3. set `GENERATOR MODE = THREE_PASS_ONLY`;
-4. follow that schema as the complete local protocol;
-5. use repository/issue material only as target evidence;
-6. do **not** apply the engineering-delivery certification/takeover sections of this skill;
-7. validate the generated artifact with `validate_three_pass_prompt_output.py`;
-8. return the artifact and STOP.
+Do not read or apply the engineering-delivery sections below for that request.
 
-No other section below may add stages, gates, receipts, qualification packages, route metadata, evaluator requirements, or takeover machinery to a THREE_PASS_GENERATOR artifact.
+Three-pass generation and engineering-delivery execution are mutually exclusive modes.
 
 ### ENGINEERING_DELIVERY
 
-Use the remaining engineering-delivery protocol only when the user is actually asking to execute/manage engineering delivery rather than generate three-pass prompts.
-
----
-
-name: engineering-pr-delivery-v2.5
-description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, crash-safe GitHub projection, quality evidence, and serial-by-default material execution.
----
-
-# Engineering PR Delivery v2.5 — engineering relay with a dynamic overall roadmap
+Only continue below when the user is actually asking to execute/manage engineering delivery rather than generate three-pass prompts.
 
 ## Governing objective
 
@@ -240,20 +229,20 @@ When this mode is active, the schema is the exclusive repository-local protocol 
 Canonical schema:
 
 ```text
-skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.md
+skills/three-pass-prompt-generator/schema.md
 ```
 
 When a user asks to generate, regenerate, review, or apply the three-pass prompts/schema:
 
 1. **Fetch the canonical schema from current `main` in the same run.**
-2. Before reading the target, produce the schema execution handshake required by the live schema, including protocol revision `TPG-3P-2026-09-19-R2` and the actual fetched SHA.
+2. Before reading the target, produce the schema execution handshake required by the live schema, including protocol revision `TPG-3P-2026-09-19-R3` and the actual fetched SHA.
 3. Record the same fetched content/blob SHA in the generated output's shared `SCHEMA BASIS`.
 4. Never reconstruct the generator from conversation memory, a previous generated answer, an assistant summary, an older commit, or an earlier fetched copy.
 5. Resolve targets only from user authority: current user message → earlier user-supplied target/lot → user-supplied canonical URL/name. A previous assistant guess is never target authority.
 6. Execute the fetched schema literally, including its visible preflight and all gates.
 7. Before returning the generated prompts, validate the complete draft with:
    ```bash
-   python skills/engineering-pr-delivery-v2.5/scripts/validate_three_pass_prompt_output.py <generated-markdown> --expected-schema-sha <fetched-content-sha>
+   python skills/three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <fetched-content-sha>
    ```
 8. If validation fails, do **not** return the draft. Rebuild it from the fetched current schema.
 
@@ -533,7 +522,7 @@ python skills/engineering-pr-delivery-v2.5/scripts/validate_zero_context_reconst
 python skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py <repo-root>
-python skills/engineering-pr-delivery-v2.5/scripts/validate_three_pass_prompt_output.py <generated-markdown> --expected-schema-sha <current-schema-sha>
+python skills/three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <current-schema-sha>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
