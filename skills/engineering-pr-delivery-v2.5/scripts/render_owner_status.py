@@ -88,6 +88,30 @@ def render_projection(c:dict)->str:
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
     recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
+    delivery=o.get("delivery") or {};lines += ["","## Delivery"]
+    if delivery.get("applicability")=="NOT_APPLICABLE":
+        lines.append("- No pull-request delivery vehicle is currently required.")
+    else:
+        vehicle=delivery.get("vehicle") or {}
+        if vehicle:
+            number=vehicle.get("number");url=vehicle.get("url");lifecycle=str(vehicle.get("lifecycle") or "UNKNOWN").replace("_"," ").title()
+            label=f"PR #{number}" if number is not None else "Current pull request"
+            suffix=f" — {url}" if url else ""
+            lines.append(f"- {label}: **{lifecycle}**{suffix}")
+            head=vehicle.get("head") or {};base=vehicle.get("base") or {}
+            lines.append(f"- Head: `{head.get('ref') or 'unknown'}` @ `{head.get('sha') or 'unknown'}`; base: `{base.get('ref') or 'unknown'}`.")
+        else:lines.append("- Current PR identity/head is unknown; provider readback is missing.")
+        checks=(delivery.get("checks") or {}).get("state") or "UNKNOWN"
+        merge=(delivery.get("mergeability") or {}).get("state") or "UNKNOWN"
+        review=(delivery.get("review") or {}).get("state") or "UNKNOWN"
+        ready=(delivery.get("ready_for_review") or {}).get("state") or "UNKNOWN"
+        technical=(delivery.get("technical_ready_to_merge") or {}).get("state") or "UNKNOWN"
+        authorization=(delivery.get("merge_authorization") or {}).get("state") or "UNKNOWN"
+        lines.append(f"- Exact-head checks: **{str(checks).replace('_',' ').title()}**; mergeability: **{str(merge).replace('_',' ').title()}**; review state: **{str(review).replace('_',' ').title()}**.")
+        lines.append(f"- Ready for review: **{ready}**; technically ready to merge: **{technical}**; merge authorization: **{str(authorization).replace('_',' ').title()}**.")
+        for reason in (delivery.get("technical_ready_to_merge") or {}).get("reasons") or []:lines.append(f"  - Technical readiness: {reason}")
+        auth_reason=(delivery.get("merge_authorization") or {}).get("reason")
+        if auth_reason:lines.append(f"  - Authorization: {auth_reason}")
     actions=o.get("external_actions") or [];lines += ["","## Action required outside this environment"]
     if actions:
         for idx,item in enumerate(actions,1):
