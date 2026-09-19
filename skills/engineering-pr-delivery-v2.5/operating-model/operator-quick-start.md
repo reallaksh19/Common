@@ -219,3 +219,34 @@ Use the emitted generator request as input to the **freshly fetched live** stand
 
 The stable handover key is the duplicate-prevention basis. For the same active ownership boundary, search/read back for the matching open handover issue and update it. Create a new issue only when no valid match exists or the ownership boundary materially changed.
 
+
+
+## 9. Publish Owner progress
+
+Before returning control after a meaningful work unit:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py \
+  <repo-root> --apply
+```
+
+This renders the source-derived Owner status and records the exact normalized baseline under `agents/relay/publication/OWNER_PUBLICATION.yaml`.
+
+If current truth has not changed since the previous publication, the output says `NO_MATERIAL_PROGRESS` and the cursor is not rewritten. Use `--force-record` only for an explicit heartbeat that should be retained as a publication receipt.
+
+Focused integrity check:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_owner_publication.py <repo-root>
+```
+
+For `Plan for Handover`, use the same transaction through:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --apply-publication \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The handover planner derives INTENT after this Owner publication is recorded.
