@@ -226,7 +226,8 @@ For `ISSUE_TASK`, the required blind-pass control is:
 
 ```text
 Prompt 1 =
-PROBLEM KERNEL
+ISSUE TASK CONTRACT
++ PROBLEM KERNEL
 + TARGET ANCHORS
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
@@ -236,6 +237,10 @@ PROBLEM KERNEL
 A current artifact being a register, matrix, roadmap, checklist, or decision package does not make that artifact type the Prompt-1 imagination object.
 
 Prompt 1 must also be **method-invisible**. The future agent should receive the human/domain situation directly. Do not narrate the generator mechanics with phrases such as "later pass", "fixed independent reference", "do not inspect the repository", or "you will be held to this picture". The outer bootstrap/schema controls blindness; Prompt 1 should feel like a real practitioner problem.
+
+For `ISSUE_TASK`, the ISSUE TASK CONTRACT is mandatory: why the issue exists now, its stated starting scenario, responsible actor/job, exact owned question, non-goals/ownership boundary, and why it differs from parent/sibling issues. Do not abstract those away merely because they came from the target issue.
+
+When the user invokes `complex` three-pass mode, Q1–Q5 means the schema's **human Prompt-1 reasoning lenses only**. Do not create a formal relay `QSET-*`, qualification/admission gate, route/EP/digest metadata, `TO_BE_BOUND` placeholders, or evaluator requirement. Formal QSET/QUAL belongs to relay takeover certification, not three-pass prompt generation.
 
 This bootstrap requirement sits **outside** the schema by design: a stale copy of the schema cannot be trusted to tell an agent to fetch a newer copy of itself.
 
