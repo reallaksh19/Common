@@ -1113,7 +1113,7 @@ The preflight is metadata, **not a fourth prompt**.
 
 Output this structure and nothing else:
 
-```markdown
+````markdown
 ## PREFLIGHT RECORD
 
 ```text
@@ -1174,7 +1174,7 @@ PASS — <one short reason>
 ```text
 <complete Prompt 3 text only>
 ```
-```
+````
 
 ### Copy-pasteability rules
 
@@ -1374,45 +1374,84 @@ Built and maintained by one developer with AI-agent help.
 ## Frozen preflight
 
 ```text
-TARGET NATIVE DELIVERABLE:
-working browser PDF product / product direction
-
-REQUEST MODE:
 TARGET TITLE:
 Static browser-based PDF editor
+
 TARGET LINK:
 not supplied
+
 PARENT REPOSITORY / SYSTEM:
 not supplied
+
 REPOSITORY / SYSTEM LINK:
 not supplied
 
-
+REQUEST MODE:
 REVIEW
-
-TARGET PURPOSE:
-This product exists so that users can seriously edit, inspect and save real PDFs
-in a browser-oriented environment without depending on backend infrastructure.
 
 TARGET SCOPE:
 PRODUCT
+
+CURRENT REALITY — QUARANTINED FROM PROMPT 1
+
+CURRENT ARTIFACT FORM:
+existing browser PDF editor/product implementation
+
+CURRENT STATED ANSWER / IMPLEMENTATION:
+not supplied in the blind brief; inspect the real application/repository only in Prompt 2
+
+CURRENT-STATE FACTS:
+an existing implementation is being reviewed, but its architecture and abstractions
+must not shape Prompt 1
+
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+
+UNDERLYING HUMAN PROBLEM:
+Users need to seriously edit, inspect and save real PDFs in a browser-oriented environment
+without having to operate backend infrastructure.
+
+HUMAN OUTCOME:
+A personal or professional user can open a real PDF, understand it, modify it confidently,
+work with large documents, save it and reopen it without the tool becoming fragile or misleading.
+
+GENUINE CONSTRAINTS:
+primarily client-side/static; phone and desktop; one developer with AI assistance;
+real PDF semantics and large-document behaviour matter
 
 EXPERTISE:
 PDF/browser architecture and document-editing product expertise
 
 IMAGINATION OBJECT:
-an excellent static/browser PDF editor experience and architecture
+an excellent static/browser PDF editing experience and the principles needed to sustain it
+
+PROMPT 2
 
 REALITY OBJECT:
-the current PDF application's real architecture, editing journeys, performance,
-persistence, supported operations and in-flight work
+the current PDF application's real user journeys, architecture, performance, persistence,
+supported operations, tests and in-flight work
 
-FINAL OUTPUT CONTRACT:
-a product-level gap analysis and phased roadmap from current reality
-toward the independent reference picture
+PROMPT 3
+
+COMPARISON QUESTION:
+what meaningful distance remains between the independent PDF-editor picture and today's
+application, and what is the smallest sensible phased path from here?
+
+HANDOVER DESTINATION:
+the next agent should understand the intended user experience, what reality taught us,
+the real remaining gaps, what should not be built, and what evidence should change direction
+
+ARTIFACT-ERASURE GATE:
+PASS — the Prompt-1 picture survives removal of the current implementation
+
+CURRENT-VOCABULARY GATE:
+PASS — no current library, cache, schema or architecture name is required
+
+PROMPT-1 OBJECT GATE:
+PASS — the answer independently defines the PDF experience being sought
+
+PROMPT-3 FREEDOM GATE:
+PASS — current architecture may be preserved, changed, simplified or replaced
 ```
-
-**Gate expectation:** a perfect Prompt-1 answer describes the PDF product itself. PASS.
 
 ## What a good generated Prompt 1 should feel like
 
@@ -1485,45 +1524,84 @@ Machine checks must not be mistaken for proof that material actually teaches.
 ## Frozen preflight
 
 ```text
-TARGET NATIVE DELIVERABLE:
-revalidated Grade-9 system/programme direction
-
-REQUEST MODE:
 TARGET TITLE:
 Grade9V3 repository
+
 TARGET LINK:
 https://github.com/reallaksh19/Grade9V3
+
 PARENT REPOSITORY / SYSTEM:
 reallaksh19/Grade9V3
+
 REPOSITORY / SYSTEM LINK:
 https://github.com/reallaksh19/Grade9V3
 
-
+REQUEST MODE:
 REVIEW
-
-TARGET PURPOSE:
-This system exists so that learners can study independently, understand ideas,
-practise, recover from misunderstandings, repair prerequisites and transfer learning.
 
 TARGET SCOPE:
 REPOSITORY_SYSTEM
+
+CURRENT REALITY — QUARANTINED FROM PROMPT 1
+
+CURRENT ARTIFACT FORM:
+existing self-study repository/system
+
+CURRENT STATED ANSWER / IMPLEMENTATION:
+the repository already has its own products, routing, schemas, matrices, gates,
+subject boundaries and programme history; all of that belongs to Prompt 2
+
+CURRENT-STATE FACTS:
+the current system is a living implementation with recent work and subject-specific progress
+
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+
+UNDERLYING HUMAN PROBLEM:
+A Grade-9 learner studying mostly alone needs to understand new ideas, practise them,
+recover from misunderstanding or missing prerequisites, and eventually handle unfamiliar work.
+
+HUMAN OUTCOME:
+The learner can move from first exposure to independent application with useful diagnosis
+and repair when they get stuck.
+
+GENUINE CONSTRAINTS:
+multiple subjects; one developer with agents; maintainability across topics matters;
+machine checks are not proof that material actually teaches
 
 EXPERTISE:
 learning-system, curriculum and educational-product architecture expertise
 
 IMAGINATION OBJECT:
-an excellent Grade-9 self-study system and learner journey
+an excellent Grade-9 self-study learner journey and system
+
+PROMPT 2
 
 REALITY OBJECT:
-what Grade9V3 actually provides today across teaching, practice, routing,
-feedback, subjects, evidence and current work
+what Grade9V3 actually provides today across teaching, practice, routing, feedback,
+subjects, evidence, repository architecture and current work
 
-FINAL OUTPUT CONTRACT:
-a present-day definition of what Grade 9 should mean, what is already solved,
-what genuinely remains, and an ordered programme for closing that distance
+PROMPT 3
+
+COMPARISON QUESTION:
+what should Grade 9 mean now, what is already solved, what genuinely remains,
+and what programme makes sense from today's reality?
+
+HANDOVER DESTINATION:
+the next agent should understand the learner destination, what the repository has become,
+the real remaining distance, deliberate boundaries and evidence needed to change direction
+
+ARTIFACT-ERASURE GATE:
+PASS — Prompt 1 still works if all current Core/matrix/gate architecture disappears
+
+CURRENT-VOCABULARY GATE:
+PASS — current Grade9V3 vocabulary is withheld from Prompt 1
+
+PROMPT-1 OBJECT GATE:
+PASS — the answer defines the learner/system outcome independently
+
+PROMPT-3 FREEDOM GATE:
+PASS — current architecture and programme priorities may be preserved or changed
 ```
-
-**Gate expectation:** a perfect Prompt-1 answer describes the learner/system outcome without inheriting Grade9V3 vocabulary. PASS.
 
 ## What a good generated Prompt 1 should feel like
 
@@ -1587,46 +1665,86 @@ https://github.com/reallaksh19/Grade9V3
 ## Frozen preflight
 
 ```text
-TARGET NATIVE DELIVERABLE:
-bounded worksheet-to-learning content/mapping change
-
-REQUEST MODE:
 TARGET TITLE:
 Complete Physics/Math matrices and capability mappings for worksheet-driven study routing
+
 TARGET LINK:
 https://github.com/reallaksh19/Grade9V3/issues/19
+
 PARENT REPOSITORY / SYSTEM:
 reallaksh19/Grade9V3
+
 REPOSITORY / SYSTEM LINK:
 https://github.com/reallaksh19/Grade9V3
 
-
+REQUEST MODE:
 CHANGE
-
-TARGET PURPOSE:
-This issue exists so that a real worksheet question can be connected to the reusable
-learner ability it requires, the genuine earlier knowledge it depends on,
-and where that knowledge is taught.
 
 TARGET SCOPE:
 TASK_ARTIFACT
+
+CURRENT REALITY — QUARANTINED FROM PROMPT 1
+
+CURRENT ARTIFACT FORM:
+GitHub implementation/content-mapping issue
+
+CURRENT STATED ANSWER / IMPLEMENTATION:
+the issue is currently expressed through matrices, capabilities, prerequisite closure,
+rungs/microtopics and a historical implementation checklist
+
+CURRENT-STATE FACTS:
+later repository work may already have satisfied or changed parts of the original issue
+
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+
+UNDERLYING HUMAN PROBLEM:
+When a learner is stuck on a real worksheet question, the system needs to identify
+the reusable learner ability involved, the genuine prior understanding required,
+and where that understanding can be learned or repaired.
+
+HUMAN OUTCOME:
+real questions reliably lead a learner to the right reusable knowledge and prerequisites
+rather than to context-specific patches
+
+GENUINE CONSTRAINTS:
+mappings must remain reusable across questions; prerequisites must be genuine;
+the solution should not invent one special concept for every surface context
 
 EXPERTISE:
 learning-system and curriculum-mapping expertise
 
 IMAGINATION OBJECT:
-an excellent worksheet-question-to-learning mapping outcome
+an excellent question → reusable learning need → prerequisite → teaching outcome
+
+PROMPT 2
 
 REALITY OBJECT:
 what Issue #19, the current repository, later PRs and real-question evidence
 have already accomplished
 
-FINAL OUTPUT CONTRACT:
-a rewritten present-day Issue #19 containing only the meaningful remaining work
-and its smallest durable solution
-```
+PROMPT 3
 
-**Gate expectation:** a perfect Prompt-1 answer explains question → reusable ability → prerequisite → teaching location, not the whole Grade-9 system. PASS.
+COMPARISON QUESTION:
+given today's repository, what meaningful work under Issue #19 genuinely remains,
+if any, and what is the smallest durable response?
+
+HANDOVER DESTINATION:
+the next agent should understand the learner problem, what is already solved,
+the real remaining gap, the reusable idea exposed by real questions,
+and what evidence would justify changing course
+
+ARTIFACT-ERASURE GATE:
+PASS — Prompt 1 still works if matrices, rungs and the issue checklist disappear
+
+CURRENT-VOCABULARY GATE:
+PASS — current implementation vocabulary is quarantined
+
+PROMPT-1 OBJECT GATE:
+PASS — the answer independently defines the question-to-learning outcome
+
+PROMPT-3 FREEDOM GATE:
+PASS — Issue #19 may shrink, close, defer, change form or require a bounded implementation
+```
 
 ## What a good generated Prompt 1 should feel like
 
@@ -1813,7 +1931,7 @@ If a future schema revision again generates “imagine an excellent register” 
 
 ---
 
-# FIVE-CASE REGRESSION VALIDATION
+# SIX-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
