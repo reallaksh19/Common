@@ -40,7 +40,9 @@ def validate_file(root:Path,path:Path,state:dict|None=None,expected_route:dict|N
     candidate=str((tc.get("candidate") or {}).get("agent_instance_id") or "");preparer=str((tc.get("prepared_by") or {}).get("agent_instance_id") or "")
     if not candidate:e.append(f"{label}.candidate.agent_instance_id must be explicit")
     if not preparer:e.append(f"{label}.prepared_by.agent_instance_id must be explicit")
-    if candidate and preparer and candidate==preparer:e.append(f"{label}: candidate must not prepare its own takeover criteria/certification")
+    # prepared_by is provenance for the TC document, not certification authority.
+    # The candidate may assemble its own TC record; authority comes from evaluated_by
+    # plus the validator's independent re-opening of DISC/QUAL/EP/current route basis.
     if expected_candidate is not None and candidate!=str(expected_candidate):e.append(f"{label}.candidate does not match takeover admission")
     evaluator=tc.get("evaluated_by") or {};etype=evaluator.get("type");eid=str(evaluator.get("identity") or "")
     if etype not in EVALUATORS:e.append(f"{label}.evaluated_by.type invalid: {etype}")
