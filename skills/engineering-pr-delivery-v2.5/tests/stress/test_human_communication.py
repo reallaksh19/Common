@@ -8,6 +8,7 @@ from communication_projection import build as communication
 from render_owner_status import render as owner_status
 from render_technical_status import render as technical_status
 from validate_human_communication import validate as communication_check
+from validate_ep_semantics import validate as ep_semantics
 from takeoverlib import digest_mapping,yaml_digest
 
 class HumanCommunicationStressTests(unittest.TestCase):
@@ -78,6 +79,60 @@ class HumanCommunicationStressTests(unittest.TestCase):
             self.assertIn("https://github.com/owner/repo/issues/410",text)
             self.assertIn("active execution-package progress: **50%**",text)
             self.assertEqual([],communication_check(root)[0])
+
+
+    def test_external_local_gate_is_actionable_in_owner_view(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["next_work"]["steps"][0]["execution_requirement"]={
+                "id":"EXECREQ-1",
+                "type":"LOCAL_ENVIRONMENT",
+                "actor":"AUTHORIZED_OPERATOR",
+                "environment":{"kind":"REAL_GIT_CHECKOUT","description":"A real Git checkout with a usable .git object database."},
+                "command":"./tools/verify-admission --require-git",
+                "instruction":None,
+                "working_directory":"REPOSITORY_ROOT",
+                "required_basis":["current EP material_ref"],
+                "unavailable_here_reason":"The current environment has source files but no usable Git object database.",
+                "expected_evidence":["TEST-1"],
+                "blocks":["product implementation start"],
+                "success_condition":"The command exits successfully against the admitted revision.",
+                "clears":["repository-admission gate","product implementation may begin"],
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertEqual([],ep_semantics(root)[0])
+            self.assertEqual([],communication_check(root)[0])
+            text=owner_status(root)
+            for expected in (
+                "./tools/verify-admission --require-git",
+                "A real Git checkout with a usable .git object database.",
+                "The current environment has source files but no usable Git object database.",
+                "TEST-1",
+                "product implementation start",
+                "repository-admission gate",
+                "product implementation may begin",
+            ):self.assertIn(expected,text)
+
+    def test_external_execution_requirement_needs_command_or_instruction(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["next_work"]["steps"][0]["execution_requirement"]={
+                "id":"EXECREQ-1",
+                "type":"EXTERNAL_ENVIRONMENT",
+                "actor":"AUTHORIZED_OPERATOR",
+                "environment":{"kind":"EXTERNAL_RUNNER","description":"The required external runner."},
+                "command":None,
+                "instruction":None,
+                "working_directory":"REPOSITORY_ROOT",
+                "required_basis":["current EP material_ref"],
+                "unavailable_here_reason":"The runner is not accessible from this environment.",
+                "expected_evidence":["TEST-1"],
+                "blocks":["acceptance evidence"],
+                "success_condition":"The required validation completes.",
+                "clears":["acceptance evidence gap"],
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("requires command or executable instruction" in x for x in ep_semantics(root)[0]))
 
     def test_owner_view_rejects_internal_jargon_in_user_facing_source_text(self):
         with tempfile.TemporaryDirectory() as td:
