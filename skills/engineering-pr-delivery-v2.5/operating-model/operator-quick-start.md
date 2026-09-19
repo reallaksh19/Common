@@ -250,3 +250,29 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <re
 ```
 
 The handover planner derives INTENT after this Owner publication is recorded.
+
+
+## 10. Reconcile live PR delivery
+
+If the current slice is delivered through a pull request, read back the provider and persist a current `DELIVERY_OBSERVATION` before claiming readiness.
+
+Record independently:
+
+- PR number/URL and lifecycle;
+- head SHA / base;
+- mergeability;
+- exact-head check state and check head SHA;
+- review/change-request state;
+- durable provider readback references.
+
+Then point `REPO_STATE.delivery.observation` at the observation and run:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_report_projection.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_owner_status.py <repo-root>
+```
+
+Never translate `mergeable` into `technical ready`, or `technical ready` into `merge authorized`.
+
+If the Owner authorizes merge, capture an applied ODR whose structured `delivery_authorization` names the exact repository, PR and current head SHA. Any later head change makes that authorization stale.
