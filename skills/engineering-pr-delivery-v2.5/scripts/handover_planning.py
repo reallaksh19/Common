@@ -225,6 +225,20 @@ def _text_requirements(report:dict)->dict:
     }
 
 
+
+def parse_handover_command(command:str)->dict:
+    normalized=" ".join(str(command or "").strip().lower().replace(","," ").split())
+    if not normalized.startswith("plan for handover"):
+        return {"status":"ERROR","reason":"Command is not a Plan for Handover invocation.","complex_project":False}
+    tail=normalized[len("plan for handover"):].strip()
+    complex_project="complex" in tail.split()
+    return {
+        "status":"READY",
+        "command":"PLAN_FOR_HANDOVER",
+        "complex_project":complex_project,
+        "visible_q1_q5":complex_project,
+    }
+
 def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex_project:bool=False,handover_issue_url:str|None=None)->dict:
     report=build_report(root);contract=resolve_work_contract(root,report)
     if contract.get("status")!="RESOLVED":
