@@ -11,6 +11,7 @@ required:
   - expected_outcomes
   - text_requirements
   - owner_core_requirements
+  - incremental
   - issue_strategy
   - generator
 properties:
@@ -54,6 +55,18 @@ properties:
   owner_core_requirements:
     type: array
     items: {type: string, minLength: 1}
+  incremental:
+    type: object
+    required: [prior_publication_present, prior_issue_node, prior_issue_number, prior_issue_url, prior_source_report_digest, newly_pending, retained_pending, completed_since_prior]
+    properties:
+      prior_publication_present: {type: boolean}
+      prior_issue_node: {type: [string, 'null']}
+      prior_issue_number: {type: [integer, 'null']}
+      prior_issue_url: {type: [string, 'null']}
+      prior_source_report_digest: {type: [string, 'null']}
+      newly_pending: {type: array}
+      retained_pending: {type: array}
+      completed_since_prior: {type: array}
   issue_strategy:
     type: object
     required:
