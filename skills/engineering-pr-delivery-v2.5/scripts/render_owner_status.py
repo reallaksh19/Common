@@ -66,6 +66,20 @@ def render(root:Path)->str:
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
     recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
+    actions=o.get("external_actions") or [];lines += ["","## Action required outside this environment"]
+    if actions:
+        for idx,item in enumerate(actions,1):
+            env=item.get("environment") or {};lines.append(f"{idx}. {item.get('action')}")
+            lines.append(f"   - Environment: {env.get('description') or env.get('kind') or 'specified external environment'}")
+            if item.get("command"):lines.append(f"   - Command: `{item.get('command')}`")
+            elif item.get("instruction"):lines.append(f"   - Instruction: {item.get('instruction')}")
+            lines.append(f"   - Working location: {item.get('working_directory')}")
+            lines.append(f"   - Why it cannot run here: {item.get('unavailable_here_reason')}")
+            lines.append(f"   - Evidence produced: {', '.join(str(x) for x in (item.get('expected_evidence') or []))}")
+            lines.append(f"   - Currently prevents: {', '.join(str(x) for x in (item.get('blocks') or []))}")
+            lines.append(f"   - Success condition: {item.get('success_condition')}")
+            lines.append(f"   - Success clears: {', '.join(str(x) for x in (item.get('clears') or []))}")
+    else:lines.append("- No action outside the current environment is presently required.")
     decisions=o.get("decisions") or {};required=decisions.get("required_now") or [];lines += ["","## Decisions for you"]
     if required:
         for item in required:lines.append(f"- {item.get('reason')}")
