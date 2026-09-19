@@ -128,6 +128,8 @@ This validator checks generated three-pass prompt Markdown before it is returned
 
 Prompt 1 is also required to be **method-invisible**. The validator rejects generator/meta language such as “later pass”, “fixed independent reference”, “do not inspect the repository”, repository-deferral phrasing, and similar wording that pulls the future agent out of the real human/domain situation.
 
+For issue-level output, the preflight also records any selected concrete **problem witness** and its required independent work product. A witness may carry real benchmark/input/output payload from the issue, but reported results are treated as claims to reproduce or falsify; the issue's current interpretation or recommendation remains quarantined.
+
 This is intentionally a focused authoring-artifact validator rather than part of aggregate relay-state conformance.
 
 ## Other focused diagnostics
