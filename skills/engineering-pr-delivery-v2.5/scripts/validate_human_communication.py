@@ -45,7 +45,7 @@ def validate(root:Path):
         if owner_work.get(key)!=source_work.get(key):e.append(f"Owner current_work {key} diverges from source report")
     if owner_work.get("issues")!=(source_work.get("issues") or []):e.append("Owner current issues diverge from source report")
     progress=report.get("progress") or {};cur=progress.get("current") or {};op=((owner.get("roadmap") or {}).get("progress") or {})
-    expected_progress={"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")}
+    expected_progress={"progress_basis":progress.get("progress_basis") or {},"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")}
     for key,value in expected_progress.items():
         if op.get(key)!=value:e.append(f"Owner progress {key} diverges from source report")
     if (owner.get("delivery") or {})!=(report.get("delivery") or {}):e.append("Owner delivery vector diverges from source report")
@@ -82,6 +82,16 @@ def validate(root:Path):
     if stop.get("active") and str(stop.get("reason") or "") not in text:e.append("Owner status hides active stop reason")
     for item in evidence.get("not_run",[]) or []:
         if str(item.get("reason") or "") and str(item.get("reason")) not in text:e.append(f"Owner status hides missing-evidence reason for {item.get('id')}")
+    for item in report.get("acceptance") or []:
+        if not isinstance(item,dict):continue
+        aid=str(item.get("id") or "")
+        if aid and aid not in text:e.append(f"Owner status hides acceptance criterion {aid}")
+        status=str(item.get("status") or "").replace("_"," ").title()
+        if status and status not in text:e.append(f"Owner status hides acceptance status for {aid}")
+        percent=item.get("percent")
+        if isinstance(percent,(int,float)) and f"{percent:g}%" not in text:e.append(f"Owner status hides acceptance percent for {aid}")
+        for basis in item.get("basis") or []:
+            if str(basis) not in text:e.append(f"Owner status hides acceptance basis for {aid}: {basis}")
     for finding in source_risks:
         if str(finding.get("statement") or "") and str(finding.get("statement")) not in text:e.append(f"Owner status hides unresolved quality risk {finding.get('id')}")
     for issue in source_work.get("issues") or []:
@@ -114,6 +124,13 @@ def validate(root:Path):
     for key in ("protected","prohibited"):
         for subject in _subjects(scope.get(key)):
             if subject not in text:e.append(f"Owner status hides {key} scope: {subject}")
+    pb=progress.get("progress_basis") or {}
+    if pb.get("id") and str(pb.get("id")) not in text:e.append("Owner status hides current progress-basis id")
+    basis_delta=(owner_change.get("details") or {}).get("progress_basis") or {}
+    if basis_delta.get("from")!=basis_delta.get("to"):
+        before=basis_delta.get("from") or {};after=basis_delta.get("to") or {}
+        if before.get("id") and str(before.get("id")) not in text:e.append("Owner status hides prior progress-basis id")
+        if after.get("id") and str(after.get("id")) not in text:e.append("Owner status hides new progress-basis id")
     if cur.get("ep_percent") is not None and f"{cur.get('ep_percent'):g}%" not in text:e.append("Owner status hides active execution-package progress")
     for item in expected_external:
         for value in (item.get("command") or item.get("instruction"),item.get("unavailable_here_reason"),item.get("success_condition")):
