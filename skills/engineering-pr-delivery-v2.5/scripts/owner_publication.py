@@ -327,6 +327,7 @@ def make_cursor(
             "changed_dimensions": list(change.get("changed_dimensions") or []),
             "owner_view_digest": digest_mapping({"text": owner_view}),
             "report_projection_digest": report_digest,
+            "normalized_report_digest": digest_mapping(baseline),
         },
         "source": {
             "report_sources": copy.deepcopy(report.get("generated_from") or {}),
