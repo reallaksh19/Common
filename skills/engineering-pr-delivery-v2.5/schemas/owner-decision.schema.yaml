@@ -18,5 +18,16 @@ properties:
       requirement_disposition: {enum: [NOT_APPLICABLE, SATISFIED, PENDING_NOT_SATISFIED]}
       grants_material_write_authority: {type: boolean}
       pending_items: {type: array, items: {type: string}, uniqueItems: true}
+  delivery_authorization:
+    type: [object, 'null']
+    required: [action, provider, repository, vehicle, number, head_sha, disposition]
+    properties:
+      action: {const: MERGE}
+      provider: {const: GITHUB}
+      repository: {type: string, minLength: 1}
+      vehicle: {const: PULL_REQUEST}
+      number: {type: integer, minimum: 1}
+      head_sha: {type: string, minLength: 1}
+      disposition: {enum: [GRANTED, REVOKED]}
   status: {enum: [CAPTURED, APPLIED, SUPERSEDED]}
 additionalProperties: true
