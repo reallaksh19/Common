@@ -88,7 +88,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `ISSUE_GRAPH.yaml` | AUTHORITY repository coordination model | issue reconciliation | GitHub projection operations, closure/supersession validators | Engineering/GitHub coordination model; GitHub UI does not become roadmap authority |
 | `GHGEN-*` / `GHOP-*` | AUTHORITY desired external projection transaction | projection planner | publisher/reconciler | Desired GitHub coordination generation/operations, with retry authority only for current generation |
 | `GITHUB_OBSERVATION` | EVIDENCE | external readback | GitHub reconciliation | Verified issue-projection external reality; connector response alone is insufficient |
-| `DELIVERY_OBSERVATION` (`DOBS-*`) | EVIDENCE | provider PR/check/review readback | delivery projection, report/Owner status | Current PR identity/lifecycle/head/base/checks/mergeability/review facts only; never merge authority |
+| `DELIVERY_OBSERVATION` (`DOBS-*`) | EVIDENCE | provider PR/check/review/body readback | delivery projection, PR-correlation validation, report/Owner status | Current PR identity/lifecycle/head/base/checks/mergeability/review facts plus provider-read Issue↔EP description declarations; never roadmap or merge authority |
 | Delivery readiness projection | DERIVED | DOBS + acceptance/evidence + ODR | Owner status / delivery review | Separates ready-for-review, technical-ready-to-merge and merge authorization; cannot authorize merge |
 | `ODR.delivery_authorization` | AUTHORITY | explicit Owner authorization | delivery projection | Exact repository/PR/head MERGE grant or revocation only; separate from material write authority |
 | Report projection | DERIVED | roadmap/progress/EP/CP/issue/QRV/state | status/handover/communication | Structured derived report only |
@@ -110,7 +110,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 2. Derived predicates are recomputed from current authority/evidence and are not persisted as independent authorization claims.
 3. Generated reports/views can expose repository truth but cannot resolve conflicts by overriding their sources.
 4. External GitHub observations can reconcile coordination state only through the current authorized projection transaction.
-4a. Delivery observations record provider PR/check/review reality only. Merge authorization is never inferred from provider state and comes only from applied Owner ODR authority.
+4a. Delivery observations record provider PR/check/review/body reality only. Their Issue↔EP rows are validated against ISSUE_GRAPH and EP truth; body strings alone are not authority. Merge authorization is never inferred from provider state and comes only from applied Owner ODR authority.
 5. Runtime Git facts participate in write readiness but cannot be replaced by stale repository assertions.
 6. A candidate's DISC/QUAL/TC evidence can admit that candidate; it cannot change the EP, roadmap, or Owner decision.
 7. Checkpoints preserve execution/evidence custody; roadmap revisions preserve planning/intent effects. Neither substitutes for the other.
