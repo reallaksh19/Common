@@ -172,3 +172,37 @@ python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress 
 ```
 
 The scoped GitHub workflow runs the same audit and test surfaces.
+
+## 8. Explicit Owner command: Plan for Handover
+
+When the Owner explicitly says `Plan for Handover`, first render/publish the normal Owner status from current repository truth. Then derive the handover transaction:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+For the explicit complex variant:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover, complex project" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The output intentionally stops before three-pass generation until the handover issue has been created/updated through GHGEN/GHOP and its external identity/linkage read back.
+
+After verified issue readback:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --handover-issue-url "<verified handover issue URL>" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+Use the emitted generator request as input to the **freshly fetched live** standalone three-pass generator. Do not generate against a guessed or attempted issue URL.
+
+The stable handover key is the duplicate-prevention basis. For the same active ownership boundary, search/read back for the matching open handover issue and update it. Create a new issue only when no valid match exists or the ownership boundary materially changed.
+
