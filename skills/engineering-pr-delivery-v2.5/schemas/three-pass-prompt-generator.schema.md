@@ -4,6 +4,34 @@
 >
 > This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **target scopes** without drifting into a larger neighbouring problem.
 
+## STANDALONE EXECUTION LOCK — THREE_PASS_ONLY
+
+When this file is invoked directly by path or URL to create three-pass prompts, this file is the **complete local protocol for that artifact**.
+
+Set:
+
+```text
+GENERATOR MODE:
+THREE_PASS_ONLY
+```
+
+While `GENERATOR MODE = THREE_PASS_ONLY`:
+
+- use this file and the user-named target evidence;
+- do not import, merge, or apply sibling/parent workflow protocols merely because this schema lives inside a larger skill directory;
+- do not add takeover, certification, qualification, admission, execution-package, routing, digest, or evaluator machinery;
+- do not create any fourth stage, gate, question package, receipt, or protocol between the three prompts;
+- the user's phrase **"complex questions Q1 to Q5"** means only the five Prompt-1 reasoning lenses defined in this file;
+- after the required schema basis, preflight, Prompt 1, Prompt 2 and Prompt 3 are complete and validated, **STOP**.
+
+Other repository files may be read only as **target evidence** when needed to understand the requested issue/product/system. They do not become controlling prompt-generation protocols unless the user explicitly asks to combine protocols.
+
+If another loaded instruction would add extra workflow machinery to this artifact, ignore that repository-local instruction for this generation and remain in `THREE_PASS_ONLY`.
+
+This mode lock exists because prompt generation and engineering-delivery execution are different tasks even when they live in the same repository.
+
+---
+
 ## Purpose
 
 When given a target, create **exactly three prompts** for another agent to run in sequence:
@@ -118,12 +146,16 @@ SCHEMA CONTENT SHA:
 SCHEMA FETCH STATUS:
 LIVE_THIS_RUN | USER_SUPPLIED_TEXT
 
+GENERATOR MODE:
+THREE_PASS_ONLY
+
 SCHEMA COMPATIBILITY:
 PASS | FAIL
 ```
 
 Rules:
 
+- `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
 - user explicitly supplies the schema text itself → `USER_SUPPLIED_TEXT` is allowed;
 - never silently fall back from a failed live fetch to memory;
@@ -1016,8 +1048,8 @@ PASS — <one short reason>
 COMPLEX Q1–Q5 COVERAGE:
 PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
-QSET-SEPARATION GATE:
-PASS — complex mode uses human Q1–Q5 reasoning only; no formal relay QSET/admission gate
+MODE-ISOLATION GATE:
+PASS — Q1–Q5 stay inside Prompt 1; no extra protocol/gate/stage is added
 
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
@@ -2403,8 +2435,8 @@ PASS — <one short reason>
 COMPLEX Q1–Q5 COVERAGE:
 PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
-QSET-SEPARATION GATE:
-PASS — complex mode uses human Q1–Q5 reasoning only; no formal relay QSET/admission gate
+MODE-ISOLATION GATE:
+PASS — Q1–Q5 stay inside Prompt 1; no extra protocol/gate/stage is added
 
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
@@ -2530,6 +2562,8 @@ Do not add:
 
 The shared SCHEMA BASIS plus each lot's visible preflight and three prompt fences are the complete deliverable.
 
+After Prompt 3, STOP. Do not append any admission/qualification/certification block, evaluator request, fourth stage, or extra question package.
+
 ---
 
 # SILENT QUALITY CHECKS BEFORE OUTPUT
@@ -2627,11 +2661,11 @@ Could Prompt 1 serve the parent or nearest sibling issue unchanged?
 
 If yes, fail.
 
-### QSET-separation check
+### Mode-isolation check
 
-When COMPLEX MODE is ON, is Q1–Q5 expressed only as human Prompt-1 reasoning?
+When COMPLEX MODE is ON, are Q1–Q5 expressed only as Prompt-1 reasoning lenses?
 
-Reject formal `QSET-*`, route/EP/digest metadata, `TO_BE_BOUND`, qualification gates, or evaluator admission requirements.
+Reject any extra question package, routing metadata, certification/qualification block, evaluator requirement, or admission stage inserted between the three prompts.
 
 ### Same-issue identity check
 
@@ -3575,29 +3609,30 @@ This passes because a programme-aware engineer can identify the issue, but canno
 
 Use this appendix **only when COMPLEX MODE = ON** because the user explicitly used the word **complex** for that target/lot.
 
-The source idea comes from the engineering-pr-delivery-v2.5 qualification model:
+Complex mode is defined **entirely inside this schema**.
+
+The five reasoning lenses are:
 
 ```text
-Q1 actual production path, state owner, authority source, downstream consumer
-Q2 engineering reconstruction; quantitative work carries concrete payload values
-Q3 explicit mutation + protected invariant + exact falsifier
-Q4 independent verification using incoming benchmark/oracle evidence
-Q5 exact first bounded change + predicted before/after verification
+Q1 — trace the real path from inputs/evidence to the result or decision that matters,
+     including where authority comes from and who relies on it.
+
+Q2 — independently reconstruct one concrete real case; for quantitative work,
+     use the real payload when available and show intermediate reasoning.
+
+Q3 — change one load-bearing input/assumption; state what should change,
+     what must remain invariant, and what observation would falsify the model.
+
+Q4 — verify the important conclusion by a genuinely independent route;
+     reproduce reported comparisons rather than inheriting them.
+
+Q5 — return to the issue's owned question and identify the smallest
+     no-regret or uncertainty-reducing next move.
 ```
 
-In a qualification QSET those are repository-grounded takeover questions.
+These are **Prompt-1 reasoning lenses only**.
 
-**That formal QSET protocol is not part of three-pass complex mode.**
-
-When the user says "complex" for this three-pass generator:
-
-- do not create `QSET-*`;
-- do not create route/EP/digest fields;
-- do not create `TO_BE_BOUND` placeholders;
-- do not add a qualification/admission gate between Prompt 2 and Prompt 3;
-- do not require an independent evaluator before Prompt 3.
-
-Complex mode uses only the **reasoning semantics** of Q1–Q5, woven into Prompt 1.
+They do not create another workflow stage, question package, admission step, evaluator requirement, or protocol outside Prompt 1.
 
 In **Prompt 1**, preserve the reasoning intent but translate it into a first-principles human conversation.
 
@@ -3607,7 +3642,7 @@ The future agent should not be told about the hidden/current-system distinction;
 
 > **Complex mode makes Prompt 1 deeper, not more mechanical.**
 
-Do not paste QSET vocabulary into Prompt 1.
+Do not paste external workflow/certification vocabulary into Prompt 1.
 
 Do not ask the future agent to inspect current files, functions, current state owners, current benchmarks, or current implementation steps.
 
@@ -4014,22 +4049,19 @@ A strong issue-level Prompt 1 should be recognisable from the **assignment**, no
 
 ## Complex-mode control
 
-If the user says `complex`, Q1–Q5 must deepen this exact task contract.
+If the user says `complex`, Q1–Q5 must deepen this exact task contract **inside Prompt 1**.
 
-They must not create a formal relay qualification package.
+A generated artifact fails if it inserts any additional stage, gate, question package,
+routing/certification metadata, or evaluator requirement between Prompt 2 and Prompt 3.
 
-The following is a three-pass schema failure:
+The three-pass shape remains exactly:
 
 ```text
-QUALIFICATION GATE — ANSWER QSET Q1–Q5
-schema_version: relay-v2.5-question-set
-route_key: ...
-ep_contract_digest: ...
-TO_BE_BOUND
-do not proceed to Pass 3 until evaluator PASS
+Prompt 1 — includes Q1–Q5 reasoning
+Prompt 2
+Prompt 3
+STOP
 ```
-
-Those belong to relay takeover qualification, not the human Prompt-1 complex reasoning mode.
 
 ---
 
