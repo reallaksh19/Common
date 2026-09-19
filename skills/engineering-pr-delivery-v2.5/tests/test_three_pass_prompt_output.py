@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -76,6 +76,16 @@ PARENT REPOSITORY / SYSTEM:
 example/repo
 REPOSITORY / SYSTEM LINK:
 https://example.invalid/repo
+USER INTENT:
+audit the exact issue and then implement the smallest justified authorized action
+INTENT TYPE:
+ANALYZE_THEN_ACT
+AUTHORIZED ACTIONS:
+update the target artifact and verify the result
+INTENT BOUNDARY:
+do not expand beyond the issue
+INTENT COMPLETION TEST:
+the justified action is performed and verified
 REQUEST MODE:
 REVIEW
 COMPLEX MODE:
@@ -132,6 +142,8 @@ REALITY OBJECT:
 current truth
 COMPARISON QUESTION:
 what remains now
+INTENT EXECUTION QUESTION:
+how to fulfill the authorized action after comparison
 HANDOVER DESTINATION:
 understanding for successor
 LOT/LEVEL BOUNDARY GATE:
@@ -152,6 +164,8 @@ SAME-ISSUE IDENTITY GATE:
 PASS — recognisable
 ANSWER-EXCLUSION GATE:
 PASS — answer hidden
+INTENT-FIDELITY GATE:
+PASS — analysis leads to authorized execution
 ARTIFACT-ERASURE GATE:
 PASS — artifact form not required
 CURRENT-VOCABULARY GATE:
@@ -269,7 +283,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-19-R3", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-19-R4", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -280,9 +294,19 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-19-R3")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-19-R4")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
+
+    def test_user_intent_is_required(self):
+        bad = GOOD.replace("USER INTENT:\naudit the exact issue and then implement the smallest justified authorized action\n", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("USER INTENT" in e for e in errors), errors)
+
+    def test_intent_fidelity_gate_must_pass(self):
+        bad = GOOD.replace("INTENT-FIDELITY GATE:\nPASS — analysis leads to authorized execution", "INTENT-FIDELITY GATE:\nFAIL — action disappeared")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("INTENT-FIDELITY GATE must PASS" in e for e in errors), errors)
 
 if __name__ == "__main__":
     unittest.main()
