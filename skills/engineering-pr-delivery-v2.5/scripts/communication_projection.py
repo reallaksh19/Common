@@ -74,8 +74,10 @@ def build(root:Path)->dict:
     report=build_report(root);contract=report.get("active_contract") or {};scope=contract.get("scope") or {};risks,quality_gaps=_visible_quality(report);evidence=report.get("evidence") or {};checkpoint=report.get("checkpoint") or {}
     recorded=[x for x in report.get("owner_decisions",[]) or [] if isinstance(x,dict) and x.get("status")!="SUPERSEDED"]
     next_steps=_exact_next_work(report)
+    titles=_current_titles(report.get("progress") or {});current_work=report.get("current_work") or {}
     owner={
         "capability":_capability(report),
+        "current_work":{**titles,"issues":current_work.get("issues") or [],"outcome":current_work.get("outcome") or {}},
         "purpose":contract.get("outcome") or {},
         "scope":{"protected":scope.get("protected") or [],"prohibited":scope.get("prohibited") or [],"owner_reserved":scope.get("owner_reserved") or [],"deliberate_non_goals":contract.get("deliberate_non_goals") or []},
         "evidence":{"state":evidence.get("state"),"summary":evidence.get("summary"),"not_run":evidence.get("not_run") or [],"acceptance":report.get("acceptance") or []},
