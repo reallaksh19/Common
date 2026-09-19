@@ -293,3 +293,54 @@ or delivery.required=false
 Unknown provider capability/state remains `UNKNOWN`. Stale-head CI must be represented as `STALE`, never PASS.
 
 An Owner merge authorization uses an applied `ODR` with `decision.kind: AUTHORIZATION` plus `delivery_authorization` for `MERGE`, exact repository, PR number and head SHA. This authorization is separate from `grants_material_write_authority`.
+
+
+## PR Issue↔EP correlation
+
+Every active engineering PR under V2.5 must carry a machine-checkable description block that meaningfully correlates the PR to the GitHub issue(s) and execution package(s) it delivers.
+
+Generate the canonical block from repository truth:
+
+```bash
+python render_pr_correlation.py <repo-root>
+```
+
+The block uses:
+
+```text
+<!-- relay-pr-correlation:v1 -->
+## Engineering correlation
+| Issue | Execution package | Work package | Relationship | Meaning |
+...
+```
+
+Each row binds:
+
+```text
+ISSUE_GRAPH node / provider issue number
+↔ EP id / durable EP path
+↔ roadmap work package
+↔ relationship + plain-language meaning
+```
+
+This is stronger than token presence. `validate_pr_correlation.py` proves the ISSUE_GRAPH node and EP both resolve to the declared work package.
+
+Provider readback is stored in `DELIVERY_OBSERVATION.description_contract` with the body digest, marker presence, and normalized correlations.
+
+Validate at minimum at the end of each task/checkpoint:
+
+```bash
+python validate_delivery_observation.py <repo-root>
+python validate_pr_correlation.py <repo-root>
+```
+
+When PR delivery is required:
+
+- every current active EP must appear in at least one non-terminal PR description correlation;
+- the latest task-close checkpoint EP must appear in a tracked PR description correlation;
+- a PR correlation that names unrelated Issue and EP work packages fails;
+- every tracked non-terminal PR (`DRAFT`, `OPEN`, or unresolved `UNKNOWN`) is carried into every Owner summary;
+- `MERGED` and `CLOSED` PRs remain evidence/history but leave the recurring unmerged-PR carry-forward list.
+
+Use `REPO_STATE.delivery.observations[]` for the complete current tracked PR set. The singular `delivery.observation` remains the primary/current vehicle and, when `observations[]` is used, must also appear in that list.
+
