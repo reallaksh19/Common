@@ -19,6 +19,15 @@ LEGACY_ACTIVE_PATTERNS = (
     "Your deliverable is a better current register",
 )
 
+INVALID_THREE_PASS_PROTOCOL_PATTERNS = (
+    "QUALIFICATION GATE — ANSWER QSET",
+    "schema_version: relay-v2.5-question-set",
+    "route_key: \"SERIAL:TO_BE_BOUND\"",
+    "ep_contract_digest: TO_BE_BOUND",
+    "QUESTION_SET_ADMISSION_STATUS",
+    "Do not proceed to Pass 3 until that evaluation returns PASS",
+)
+
 PROMPT1_METHOD_META_PATTERNS = (
     "this answer will be used",
     "fixed independent reference",
@@ -63,6 +72,12 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "CURRENT-STATE FACTS:",
     "CURRENT ANSWER QUARANTINE:",
     "TARGET ANCHORS:",
+    "WHY NOW:",
+    "STARTING PREMISE:",
+    "RESPONSIBLE ACTOR / JOB:",
+    "OWNED QUESTION:",
+    "NON-GOALS / OWNERSHIP BOUNDARY:",
+    "ISSUE DIFFERENTIATOR:",
     "PROBLEM KERNEL:",
     "UNDERLYING HUMAN PROBLEM:",
     "HUMAN OUTCOME:",
@@ -74,6 +89,8 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "HANDOVER DESTINATION:",
     "LOT/LEVEL BOUNDARY GATE:",
     "SPECIFICITY-FLOOR GATE:",
+    "TASK-CONTRACT FIDELITY GATE:",
+    "NEIGHBOUR-SEPARATION GATE:",
     "KERNEL-COVERAGE GATE:",
     "SAME-ISSUE IDENTITY GATE:",
     "ANSWER-EXCLUSION GATE:",
@@ -83,6 +100,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
+    "QSET-SEPARATION GATE:",
 )
 
 PROMPT_HEADINGS = (
@@ -166,6 +184,10 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         if pattern in text:
             errors.append(f"legacy active signature present: {pattern!r}")
 
+    for pattern in INVALID_THREE_PASS_PROTOCOL_PATTERNS:
+        if pattern in text:
+            errors.append(f"formal relay QSET/admission protocol is invalid in three-pass output: {pattern!r}")
+
     lots = _lot_blocks(text)
     if not lots:
         errors.append("at least one '# LOT ...' section is required")
@@ -191,8 +213,16 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         level = _field_value(preflight, "USER-REQUESTED LEVEL:")
         if level == "ISSUE_TASK":
             for field in (
+                "WHY NOW:",
+                "STARTING PREMISE:",
+                "RESPONSIBLE ACTOR / JOB:",
+                "OWNED QUESTION:",
+                "NON-GOALS / OWNERSHIP BOUNDARY:",
+                "ISSUE DIFFERENTIATOR:",
                 "PROBLEM KERNEL:",
                 "CURRENT ANSWER QUARANTINE:",
+                "TASK-CONTRACT FIDELITY GATE:",
+                "NEIGHBOUR-SEPARATION GATE:",
                 "KERNEL-COVERAGE GATE:",
                 "SAME-ISSUE IDENTITY GATE:",
                 "ANSWER-EXCLUSION GATE:",
@@ -200,6 +230,8 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 if field not in preflight:
                     errors.append(f"{label}: ISSUE_TASK missing {field}")
             for gate in (
+                "TASK-CONTRACT FIDELITY GATE:",
+                "NEIGHBOUR-SEPARATION GATE:",
                 "KERNEL-COVERAGE GATE:",
                 "SAME-ISSUE IDENTITY GATE:",
                 "ANSWER-EXCLUSION GATE:",
@@ -215,6 +247,9 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             tail = preflight.split("COMPLEX Q1–Q5 COVERAGE:", 1)[1][:220] if "COMPLEX Q1–Q5 COVERAGE:" in preflight else ""
             if "PASS" not in tail:
                 errors.append(f"{label}: COMPLEX Q1–Q5 COVERAGE must PASS when complex mode is ON")
+            qset_tail = preflight.split("QSET-SEPARATION GATE:", 1)[1][:220] if "QSET-SEPARATION GATE:" in preflight else ""
+            if "PASS" not in qset_tail:
+                errors.append(f"{label}: QSET-SEPARATION GATE must PASS when complex mode is ON")
 
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[1], p1 + 1)
