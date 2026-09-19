@@ -1370,6 +1370,45 @@ The generator's job is to stay inside that band.
 
 ---
 
+# HARD GATE 0.965 — HUMAN-Q-LABEL GATE
+
+When COMPLEX MODE is ON and visible Q1–Q5 headings are used, inspect each heading and the text immediately beneath it.
+
+Fail if the visible surface contains internal taxonomy labels or protocol metadata.
+
+Examples that fail:
+
+```text
+Q1 — PRODUCTION_PATH
+Q2 — ENGINEERING_PROBLEM
+Q3 — BOUNDARIES_INVARIANTS
+Q4 — VERIFICATION
+Q5 — FIRST_SAFE_SLICE
+
+required_output_keys:
+reconstruction_mode:
+payload.source:
+evidence_required:
+oracle_refs:
+step_refs:
+```
+
+Passing labels must be short, natural, target-specific practitioner language.
+
+Examples:
+
+```text
+Q1 — Work out what is happening in this vessel case
+Q2 — Do the calculation yourself
+Q3 — Change the case and see what breaks
+Q4 — Check your result against CAUx
+Q5 — Given what you learned, what is worth doing next?
+```
+
+If the user did not ask to see Q1–Q5 labels, prefer natural prose and do not show labels at all.
+
+---
+
 # HARD GATE 0.97 — HUMAN-IMMERSION GATE
 
 Read Prompt 1 as though you were the future agent receiving it with no knowledge of this schema.
@@ -2362,6 +2401,9 @@ Output this structure and nothing else:
 # SCHEMA BASIS
 
 ```text
+GENERATOR MODE:
+THREE_PASS_ONLY
+
 SCHEMA SOURCE:
 SCHEMA REF:
 SCHEMA CONTENT SHA:
@@ -2470,6 +2512,9 @@ PASS — <one short reason>
 
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
+
+HUMAN-Q-LABEL GATE:
+PASS — <one short reason, or N/A when Q1–Q5 labels are not visible>
 
 HUMAN-IMMERSION GATE:
 PASS — <one short reason>
@@ -2660,6 +2705,12 @@ If not, fail as over-generalised.
 Could Prompt 1 serve the parent or nearest sibling issue unchanged?
 
 If yes, fail.
+
+### Human Q-label check
+
+If Q1–Q5 labels are visible, do they sound like natural, target-specific questions/tasks a practitioner would actually ask?
+
+Reject taxonomy labels and protocol metadata.
 
 ### Mode-isolation check
 
@@ -3833,6 +3884,60 @@ Prompt 1 may use paragraphs, a journey, or conversational questions.
 
 The labels Q1–Q5 are for the generator's internal coverage check, not normally for the future agent.
 
+## Human-visible Q1–Q5 labels
+
+The internal Q1–Q5 semantics are **coverage categories**, not surface language.
+
+If the user explicitly asks to see `Q1` through `Q5`, keep the numbers but translate every visible heading into a short, natural, target-specific question or task.
+
+Use this test:
+
+> **Would an experienced practitioner actually say this heading to another practitioner across a desk?**
+
+If no, rewrite it.
+
+For example, for a quantitative engineering benchmark issue:
+
+```text
+Good:
+Q1 — From this vessel geometry, where does the governing method take you?
+Q2 — Can you reproduce the eight-point result yourself?
+Q3 — What changes when gamma moves away from the source-defined condition?
+Q4 — Why does the external benchmark agree, and what does that actually prove?
+Q5 — Given what you learned, what is actually worth doing next?
+
+Bad:
+Q1 — PRODUCTION_PATH
+Q2 — ENGINEERING_PROBLEM
+Q3 — BOUNDARIES_INVARIANTS
+Q4 — VERIFICATION
+Q5 — FIRST_SAFE_SLICE
+```
+
+Also reject machine/protocol metadata inside Prompt 1 such as:
+
+```text
+anchors:
+evidence_required:
+required_output_keys:
+reconstruction_mode:
+payload.source:
+payload.values:
+oracle_refs:
+independence_requirement:
+step_refs:
+mutation.protected_invariant:
+mutation.falsifier:
+```
+
+Those concepts may guide the generator internally.
+
+They must be rewritten into ordinary practitioner language in the generated prompt.
+
+The future agent should encounter a **real question**, not a schema field.
+
+---
+
 ## Relationship to the three-pass method
 
 Complex Q1–Q5 mode affects **Prompt 1 only**.
@@ -4132,7 +4237,54 @@ The invariant is:
 
 ---
 
-# THIRTEEN-CASE REGRESSION VALIDATION
+# APPENDIX M — HUMAN-Q-LABEL REGRESSION: INTERNAL TAXONOMY MUST NOT SURFACE
+
+A complex Prompt 1 can contain the right reasoning and still feel wrong if it exposes internal taxonomy.
+
+Failure:
+
+```text
+Q1 — PRODUCTION_PATH
+Q2 — ENGINEERING_PROBLEM
+Q3 — BOUNDARIES_INVARIANTS
+Q4 — VERIFICATION
+Q5 — FIRST_SAFE_SLICE
+```
+
+The same failure often carries machine fields such as:
+
+```text
+required_output_keys:
+payload.source:
+reconstruction_mode:
+evidence_required:
+oracle_refs:
+step_refs:
+```
+
+This turns a practitioner prompt into an assessment form.
+
+Correct:
+
+```text
+Q1 — From this vessel geometry, where does WRC 537 take you?
+Q2 — Can you reproduce the eight-point result yourself?
+Q3 — What changes when gamma moves away from the source-defined condition?
+Q4 — Why does CAUx agree, and what does that agreement actually prove?
+Q5 — Given what you learned, what is actually worth doing next?
+```
+
+The internal semantic coverage is unchanged.
+
+Only the surface language changes.
+
+Rule:
+
+> **reason with categories internally; speak in the target domain externally.**
+
+---
+
+# FOURTEEN-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -4151,6 +4303,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Human-immersion Prompt 1 | target-specific human/domain situation | meta instructions about later passes/repository blindness | Prompt 1 is method-invisible; separation is enforced outside it |
 | Issue task-contract specificity | exact issue assignment as scenario | either current-answer leakage or generic humanisation | task contract survives; current answer stays quarantined; sibling/parent drift fails |
 | Concrete-witness issue | real benchmark/example plus issue question | abstract judgement despite a usable witness, or accepting reported result as truth | Prompt 1 independently works the witness, then returns to the owned question |
+| Human Q1–Q5 surface | complex target with visible Q labels | taxonomy headings / protocol metadata | labels read like natural target-specific practitioner questions |
 
 ### Critical negative control
 
@@ -4287,6 +4440,10 @@ When the user explicitly says **complex**, add one more requirement:
 > **Prompt 1 must reason through Q1–Q5 in human form: trace the real witness/path, independently reconstruct it, stress/falsify it, verify it independently, then return to the issue's owned question and choose the smallest no-regret or uncertainty-reducing move.**
 
 Complexity must deepen specificity and falsifiability; it must never become generic ceremony.
+
+Internal Q1–Q5 taxonomy must also disappear at the surface:
+
+> **If Q1–Q5 are shown, their labels must sound like real questions/tasks from the target domain, not names of reasoning categories.**
 
 Prompt 1 must also be **method-invisible**:
 
