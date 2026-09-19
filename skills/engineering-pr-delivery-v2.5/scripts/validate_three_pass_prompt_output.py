@@ -34,6 +34,9 @@ PROMPT1_METHOD_META_PATTERNS = (
     "you will be held to this picture",
     "before seeing the current answer",
     "before seeing the current implementation",
+    "before looking at how this repository",
+    "before looking at how the current repository",
+    "before looking at the repository",
     "prompt 2 will",
     "prompt 3 will",
 )
