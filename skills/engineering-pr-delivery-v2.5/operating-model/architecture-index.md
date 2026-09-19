@@ -19,6 +19,7 @@ This is the stable navigation map for the released V2.5 control model. It points
 | Understand progress and exact next work | `progress-accounting.md`, `wp-04-progress-handover.md` | `scripts/validate_progress.py`, `scripts/render_handover.py` |
 | Route and evidence quality work | `quality-procedures.md` | `scripts/validate_quality_router.py`, `scripts/validate_quality_review.py` |
 | Operate issue/GitHub projection | `issue-projection.md`, `github-program-projection.md` | `scripts/validate_github_projection.py`, `scripts/github_projection_next.py` |
+| Observe PR delivery/readiness | `../blueprints/github-delivery.md`, `human-communication.md` | `scripts/validate_delivery_observation.py`, `scripts/delivery_projection.py` |
 | Handle Owner intent change | `owner-change-intake.md` | `scripts/validate_owner_change_intake.py`, `scripts/render_owner_change.py` |
 | Understand parallel fork/join/replan | `serial-execution.md`, `parallel-replan.md` | `scripts/validate_parallel_plan.py`, `scripts/validate_parallel_join.py`, `scripts/validate_parallel_replan.py` |
 | Understand drift/continuity | `git-observation.md`, `roadmap-continuity.md` | `scripts/inspect_git_context.py`, `scripts/validate_roadmap_continuity.py` |
