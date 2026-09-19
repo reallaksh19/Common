@@ -120,8 +120,16 @@ GitHub is an external coordination projection, never roadmap authority. `GHGEN-*
 
 ## Three-pass prompt output validation
 
+The canonical generator/validator now lives in the standalone package:
+
+```text
+skills/three-pass-prompt-generator/
+```
+
+The validator in this V2.5 scripts directory is compatibility-only.
+
 ```bash
-python validate_three_pass_prompt_output.py <generated-markdown> --expected-schema-sha <current-schema-sha>
+python ../../three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <current-schema-sha>
 ```
 
 This validator checks generated three-pass prompt Markdown before it is returned or handed off. It validates the current schema basis, visible preflight, issue-level problem-kernel/current-answer separation, legacy control-path rejection, and Prompt-3 artifact freedom.
