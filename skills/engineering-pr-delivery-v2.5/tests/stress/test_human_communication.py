@@ -22,6 +22,20 @@ class HumanCommunicationStressTests(unittest.TestCase):
             self.assertIn("EP-1",technical)
             for token in ("BATON_READY","TAKEOVER_CERTIFIED","MATERIAL_WRITE_READY","REPO_STATE","QRV-"):self.assertNotIn(token,owner)
 
+
+    def test_owner_view_projects_current_outcome_from_active_ep(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["outcome"]={
+                "user_visible":["Owner can verify the bounded capability outcome."],
+                "engineering":["The bounded capability invariant is preserved."],
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            text=owner_status(root)
+            self.assertIn("Owner can verify the bounded capability outcome.",text)
+            self.assertIn("The bounded capability invariant is preserved.",text)
+            self.assertEqual([],communication_check(root)[0])
+
     def test_owner_reserved_choice_is_not_invented_as_decision_required_now(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);good(root);c=communication(root)
