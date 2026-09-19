@@ -70,6 +70,17 @@ class HumanCommunicationStressTests(unittest.TestCase):
             text=owner_status(root);self.assertIn("Run the bounded migration rehearsal.",text);self.assertIn("The rehearsal proves the next implementation action is safe.",text);self.assertEqual([],communication_check(root)[0])
 
 
+
+    def test_owner_view_shows_each_acceptance_status_percent_and_basis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            text=owner_status(root)
+            self.assertIn("AC-1",text)
+            self.assertIn("In Progress",text)
+            self.assertIn("50%",text)
+            self.assertIn("basis: synthetic-progress",text)
+            self.assertEqual([],communication_check(root)[0])
+
     def test_owner_view_projects_current_issue_identity_and_ep_progress(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);good(root)
