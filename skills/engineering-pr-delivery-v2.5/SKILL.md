@@ -17,7 +17,7 @@ or explicitly asks for "3 pass", "three-pass", "Prompt 1 / Prompt 2 / Prompt 3",
 In this mode:
 
 1. fetch the current schema from `main`;
-2. before target reasoning, emit/verify the schema's mandatory execution handshake with protocol revision `TPG-3P-2026-09-19-R1`, `GENERATOR MODE = THREE_PASS_ONLY`, `LIVE_THIS_RUN`, and the actual fetched schema SHA;
+2. before target reasoning, emit/verify the schema's mandatory execution handshake with protocol revision `TPG-3P-2026-09-19-R2`, `GENERATOR MODE = THREE_PASS_ONLY`, `LIVE_THIS_RUN`, and the actual fetched schema SHA;
 3. set `GENERATOR MODE = THREE_PASS_ONLY`;
 4. follow that schema as the complete local protocol;
 5. use repository/issue material only as target evidence;
@@ -246,7 +246,7 @@ skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.m
 When a user asks to generate, regenerate, review, or apply the three-pass prompts/schema:
 
 1. **Fetch the canonical schema from current `main` in the same run.**
-2. Before reading the target, produce the schema execution handshake required by the live schema, including protocol revision `TPG-3P-2026-09-19-R1` and the actual fetched SHA.
+2. Before reading the target, produce the schema execution handshake required by the live schema, including protocol revision `TPG-3P-2026-09-19-R2` and the actual fetched SHA.
 3. Record the same fetched content/blob SHA in the generated output's shared `SCHEMA BASIS`.
 4. Never reconstruct the generator from conversation memory, a previous generated answer, an assistant summary, an older commit, or an earlier fetched copy.
 5. Resolve targets only from user authority: current user message → earlier user-supplied target/lot → user-supplied canonical URL/name. A previous assistant guess is never target authority.
