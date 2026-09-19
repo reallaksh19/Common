@@ -276,3 +276,42 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_owner_status.
 Never translate `mergeable` into `technical ready`, or `technical ready` into `merge authorized`.
 
 If the Owner authorizes merge, capture an applied ODR whose structured `delivery_authorization` names the exact repository, PR and current head SHA. Any later head change makes that authorization stale.
+
+
+## 11. Verify PR correlation at task close
+
+If PR delivery is required, the PR description is part of the task-close contract.
+
+Before treating a task/checkpoint as fully handed back:
+
+1. Generate/reconcile the PR correlation block from current repository truth:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_pr_correlation.py <repo-root>
+```
+
+2. Update the provider PR description without dropping still-relevant earlier correlations.
+
+3. Read the provider PR body back and persist the normalized result in the current `DOBS-*` observation.
+
+4. Validate:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_pr_correlation.py <repo-root>
+```
+
+A valid row must prove:
+
+```text
+Issue number
+→ ISSUE_GRAPH node
+→ roadmap work package
+← EP roadmap_source.work_package
+← EP id/path
+```
+
+Mentioning an unrelated issue number and EP id in the PR body is not valid correlation.
+
+For multiple still-unmerged PRs, keep all current `DOBS-*` pointers under `REPO_STATE.delivery.observations[]`. Every Owner status must carry every non-terminal PR forward until provider readback records it as `MERGED` or `CLOSED`.
+
