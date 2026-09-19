@@ -25,7 +25,7 @@ Repository authority objects, current GHGEN/GHOP when applicable, target reposit
 Treating GitHub as roadmap authority, blind retry after timeout, body links masquerading as native relationships, stale-head CI claims, auto-merge without authorization, and overwriting unresolved projection history.
 
 ## REQUIRED ARTIFACTS
-GHGEN/GHOP/observation records when projection is required, CI run IDs/head refs, issue/PR changes, and QRV delivery findings.
+GHGEN/GHOP/observation records when issue projection is required, `DOBS-*` delivery observation when a PR delivery vehicle is current, CI run IDs/head refs, issue/PR changes, and QRV delivery findings. Merge authorization, when granted, is an applied Owner ODR bound to the exact PR/head and is not a provider observation.
 
 ## VERIFICATION
 Read back issue/PR state and relationships, confirm exact head/checks, and validate projection convergence/generation history.
@@ -37,7 +37,7 @@ Use DELIVERY_RISK, MIGRATION, AUTHORITY, or OTHER. Projection lag is coordinatio
 Unauthorized write/merge, repository-state conflict, write collision, or another existing authority/safety stop. A stale external projection can withhold HANDOVER_READY without becoming an engineering hard stop.
 
 ## OWNER REPORT
-Report what changed externally, what remains unconfirmed, CI state, merge/review state, and any explicit Owner action required.
+Report what changed externally, what remains unconfirmed, PR lifecycle/head/base, exact-head CI state, mergeability, review/change-request state, ready-for-review, technical-ready-to-merge, merge authorization, and any explicit Owner action required. Keep these dimensions independent.
 
 ## SUCCESSOR HANDOVER
 Transfer operation/generation IDs, uncertain outcomes, exact refs/run IDs, remaining reconciliation, and what must never be retried blindly.
