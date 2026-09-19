@@ -344,3 +344,15 @@ When PR delivery is required:
 
 Use `REPO_STATE.delivery.observations[]` for the complete current tracked PR set. The singular `delivery.observation` remains the primary/current vehicle and, when `observations[]` is used, must also appear in that list.
 
+
+
+## Owner field-lineage validation
+
+```bash
+python validate_owner_field_lineage.py \
+  <common>/skills/engineering-pr-delivery-v2.5
+```
+
+The declarative contract at `operating-model/owner-field-lineage.yaml` enumerates critical Owner data families and the source/schema/validator/report/communication/renderer/regression surfaces that must retain them.
+
+This validator is also executed by `self_consistency_audit.py`. It is a release-integrity check, not repository engineering authority.
