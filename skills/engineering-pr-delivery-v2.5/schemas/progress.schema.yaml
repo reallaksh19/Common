@@ -1,12 +1,72 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, progress_basis, overall]
+required:
+  - schema_version
+  - progress_basis
+  - overall
+  - objectives
+  - phases
+  - work_packages
+  - execution_packages
+  - implementation_steps
+  - acceptance_criteria
 properties:
   schema_version: {const: relay-v2.5}
   progress_basis:
     type: object
     required: [id, roadmap_revision]
+    properties:
+      id: {type: string, minLength: 1}
+      roadmap_revision: {type: string, minLength: 1}
   overall:
+    $ref: '#/$defs/bucket'
+  objectives:
+    type: array
+    items: {$ref: '#/$defs/id_bucket'}
+  phases:
+    type: array
+    items: {$ref: '#/$defs/id_bucket'}
+  work_packages:
+    type: array
+    items: {$ref: '#/$defs/id_bucket'}
+  execution_packages:
+    type: array
+    items: {$ref: '#/$defs/id_bucket'}
+  implementation_steps:
+    type: array
+    items:
+      allOf:
+        - {$ref: '#/$defs/id_bucket'}
+        - type: object
+          properties:
+            ep_id: {type: string, minLength: 1}
+  acceptance_criteria:
+    type: array
+    items:
+      allOf:
+        - {$ref: '#/$defs/id_bucket'}
+        - type: object
+          required: [status, basis]
+          properties:
+            ep_id: {type: string, minLength: 1}
+            status:
+              enum: [NOT_STARTED, IN_PROGRESS, COMPLETE, NOT_RUN, FAILED, NA]
+            basis:
+              type: array
+              items: {}
+$defs:
+  bucket:
     type: object
     required: [earned_weight, total_weight, percent]
+    properties:
+      earned_weight: {type: number, minimum: 0}
+      total_weight: {type: number, minimum: 0}
+      percent: {type: number, minimum: 0, maximum: 100}
+  id_bucket:
+    allOf:
+      - {$ref: '#/$defs/bucket'}
+      - type: object
+        required: [id]
+        properties:
+          id: {type: string, minLength: 1}
 additionalProperties: true

@@ -46,6 +46,9 @@ def _apply_effects(graph:dict,op:dict,obs:dict):
         if effect.get("set_issue_id")=="OBSERVED":effect["set_issue_id"]=rb.get("issue_id")
         if "set_issue_number" in effect and effect.get("set_issue_number") is not None:gh["issue_number"]=effect["set_issue_number"]
         if "set_issue_id" in effect and effect.get("set_issue_id") is not None:gh["issue_id"]=effect["set_issue_id"]
+        if "set_published_handover_snapshot" in effect:
+            snapshot=effect.get("set_published_handover_snapshot")
+            if isinstance(snapshot,dict):node["published_handover_snapshot"]=copy.deepcopy(snapshot)
     if op.get("kind")=="CREATE" and node_id in nodes:
         node=nodes[node_id];node["github_state"]="OPEN";gh=node.setdefault("github",{})
         if rb.get("issue_number") is not None:gh["issue_number"]=rb.get("issue_number")

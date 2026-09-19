@@ -12,6 +12,15 @@ properties:
       properties:
         state: {enum: [OPEN, ACTIVE, COMPLETE, SUPERSEDED, CANCELLED]}
         github_state: {enum: [ABSENT, OPEN, CLOSED, UNKNOWN]}
+        role: {type: string}
+        handover_key: {type: string, pattern: '^sha256:'}
+        source_contract: {type: object}
+        published_handover_snapshot:
+          type: object
+          required: [source_report_digest, intent]
+          properties:
+            source_report_digest: {type: string, pattern: '^sha256:'}
+            intent: {type: array}
         github:
           type: object
           properties:

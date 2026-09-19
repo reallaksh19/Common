@@ -9,6 +9,18 @@ effects:
   requirement_disposition: NOT_APPLICABLE
   grants_material_write_authority: false
   pending_items: []
+# Optional only for decision.kind: AUTHORIZATION when the Owner explicitly
+# grants/revokes a delivery action. This is separate from material write authority.
+delivery_authorization: null
+# Example:
+# delivery_authorization:
+#   action: MERGE
+#   provider: GITHUB
+#   repository: "<owner/repo>"
+#   vehicle: PULL_REQUEST
+#   number: 123
+#   head_sha: "<exact-pr-head-sha>"
+#   disposition: GRANTED
 impact:
   class: [LOCAL]
 affected:

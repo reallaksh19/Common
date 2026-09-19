@@ -2,9 +2,67 @@
 
 ## REQUEST MODE DISPATCH — FIRST ACTION
 
+### PLAN_FOR_HANDOVER — COMBINED CONTROL TRANSACTION
+
+If the Owner says:
+
+```text
+Plan for Handover
+```
+
+or:
+
+```text
+Plan for Handover, complex project
+```
+
+this is an explicit **combined engineering-delivery + prompt-generation workflow**. It is the narrow exception to the normal three-pass isolation rule below.
+
+Execute in this order:
+
+```text
+normal Owner progress publication
+→ freeze current source-derived handover basis
+→ resolve owned work: verified current GitHub issue, else active task/EP, else current roadmap WP
+→ derive all still-pending INTENT from current repository truth
+→ create or incrementally update the handover GitHub issue through the existing GHGEN/GHOP publication path
+→ verify issue identity and relationship/reference by provider readback
+→ only then enter the standalone three-pass generator using the verified handover issue as TARGET
+→ return the schema-defined copy-pasteable artifact
+```
+
+Use:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --owner-requirement "<user-authored requirement from this session>"
+```
+
+The planner is derived coordination state. Its INTENT does not replace roadmap, EP, PROGRESS, checkpoint/evidence, ISSUE_GRAPH, or ODR authority.
+
+For the same active ownership boundary, the stable handover key means a later command updates the same valid open handover issue rather than creating a duplicate. Recompute pending INTENT every time; completed work must not remain pending merely because older issue prose still lists it.
+
+The handover issue must retain durable input/benchmark locations, expected outcomes, textual constraints/boundaries, and relevant user-authored core requirements from the current session. Never publish credentials/secrets or assistant hidden reasoning.
+
+After verified handover-issue readback, rerun the planner with `--handover-issue-url <verified-url>` to produce the exact standalone-generator input.
+
+The legacy V2.5 three-pass path is a redirect only. For the generator substep fetch current `main`:
+
+```text
+skills/three-pass-prompt-generator/SKILL.md
+skills/three-pass-prompt-generator/schema.md
+```
+
+and obey the live schema revision/SHA. Do not reconstruct it from this skill.
+
+If the command includes the explicit word **complex** (for example `Plan for Handover, complex project`), set complex mode ON. The final artifact still has exactly three prompts; Prompt 1 additionally shows visible target-specific Q1–Q5 as required by the live standalone schema. Plain `Plan for Handover` does not inherit complex mode.
+
+The GitHub issue publication performed inside this compound transaction must not recursively trigger another full `Plan for Handover` transaction.
+
 ### THREE_PASS_GENERATOR
 
-If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method:
+If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method **and this is not the `Plan for Handover` combined command above**:
 
 **leave this skill immediately.**
 
@@ -72,6 +130,7 @@ agents/relay/
     OVERALL_ROADMAP.yaml
     PROGRESS.yaml
     ISSUE_GRAPH.yaml
+    ROADMAP_EVENTS.yaml        # optional append-only material-event history
     revisions/**
     owner-decisions/**
   execution-packages/**
@@ -108,6 +167,23 @@ TERMINAL     — roadmap work is complete
 Material execution is **serial by default**. Do not infer parallelism from apparent independence.
 
 ## Dynamic roadmap
+
+The roadmap is concept/outcome authority, not a task diary. In the current hierarchy, objectives and phases are the concept-level anchors; work packages are execution units.
+
+Material programme history may be appended to `agents/relay/roadmap/ROADMAP_EVENTS.yaml`. Events link upward to objective/phase concepts and sideways to WP/EP/checkpoint/issue/PR execution facts. They are a derived durable history index and never mutate concept truth by themselves.
+
+Major work events follow:
+
+```text
+record material event
+→ reconcile execution
+→ evaluate concept impact
+→ revise roadmap only when the concept itself changed
+```
+
+A discovered additional task under an existing concept is normally `NO_CONCEPT_CHANGE + NEW_EXECUTION_WORK`, not a structural roadmap rewrite. `CONCEPT_CHANGE_PROPOSED` does not apply a change; `CONCEPT_CHANGE_APPLIED` must point to the real roadmap revision.
+
+Read `operating-model/dynamic-roadmap.md`.
 
 Roadmap mutation classes:
 
@@ -500,3 +576,75 @@ python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
 The scoped workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must execute compilation, the self-consistency audit, root unit discovery, and dedicated `tests/stress/` discovery. Compilation alone is not test evidence. See `operating-model/ci-evidence-correction.md`.
 
 A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product, engineering calculation, release, or human UX acceptance.
+
+
+### OWNER PROGRESS PUBLICATION — CONTROL RETURN
+
+Before returning control to the Owner after a material work unit, use the canonical publisher:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py <repo-root> --apply
+```
+
+The publisher compares current source-derived report truth with the last durable Owner publication baseline at:
+
+```text
+agents/relay/publication/OWNER_PUBLICATION.yaml
+```
+
+The cursor is **derived coordination state only**. It records what source-derived state was last shown; it does not define what is currently true.
+
+A publication is materially due after a change to accepted task progress, implementation result, evidence, quality/blocker/control state, current issue/delivery/custody, roadmap disposition, required Owner decision, external/local obligation, or exact next-work contract.
+
+Repeated unchanged polling/retries do not advance the cursor. If control is returned with no material change, render the explicit `NO_MATERIAL_PROGRESS` Owner status; do not manufacture progress. Use `--force-record` only for an intentional heartbeat that should itself become the new publication receipt.
+
+The Owner view must expose the deterministic delta before the normal current-state sections. It must explicitly say when acceptance/progress and implementation/files did not move.
+
+`Plan for Handover` begins with this same publication transaction. Use:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --apply-publication \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The handover INTENT is derived only after that baseline has been published.
+
+
+### PR DESCRIPTION CORRELATION — TASK-CLOSE INVARIANT
+
+When PR delivery is required, every active engineering PR must contain the canonical V2.5 Issue↔EP correlation block.
+
+Generate from repository truth:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/render_pr_correlation.py <repo-root>
+```
+
+A valid correlation is not merely an issue number and EP token in prose. Each row must prove:
+
+```text
+verified GitHub issue number
+↔ ISSUE_GRAPH node
+↔ roadmap work package
+↔ EP roadmap_source.work_package
+↔ EP id/path
+```
+
+with an explicit relationship (`IMPLEMENTS | INTEGRATES | VERIFIES | REMEDIATES`) and plain-language meaning.
+
+After updating the provider PR body, read it back into `DELIVERY_OBSERVATION.description_contract`, then verify:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_pr_correlation.py <repo-root>
+```
+
+This verification is required at the end of each task/checkpoint before claiming delivery handback complete when PR delivery is applicable.
+
+Every current active EP must be represented in at least one non-terminal tracked PR. The latest task-close checkpoint EP must be represented in a tracked PR correlation.
+
+Track all current PR observations in `REPO_STATE.delivery.observations[]`. Every PR last observed as `DRAFT`, `OPEN`, or `UNKNOWN` must be carried forward in every Owner summary with its Issue↔EP correlation until provider readback records `MERGED` or `CLOSED`.
+
+Do not infer disappearance from chat, branch changes, or a newer PR.

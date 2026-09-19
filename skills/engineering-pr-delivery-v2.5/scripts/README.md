@@ -183,3 +183,189 @@ Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated 
 The scoped CI must explicitly execute the self-consistency audit, root unit discovery, and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
 
 PyYAML is required. Procedural semantic/cross-object validators are the enforcement layer today; declarative schemas/templates are contract aids.
+
+
+## Plan for Handover command
+
+Focused command/validator:
+
+```bash
+python plan_handover.py <repo-root> --command "Plan for Handover" \
+  --owner-requirement "<user-authored requirement>"
+
+python plan_handover.py <repo-root> --command "Plan for Handover, complex project" \
+  --owner-requirement "<user-authored requirement>"
+
+python validate_handover_plan.py <repo-root>
+python validate_handover_plan.py <repo-root> --complex-project
+
+# Prepare the immutable GitHub generation + handover ISSUE_GRAPH node.
+python prepare_handover_projection.py <repo-root>
+python prepare_handover_projection.py <repo-root> --apply
+
+# Then use the existing crash-safe transaction:
+python github_projection_next.py <repo-root>
+python begin_github_operation.py <repo-root> --basis "<durable pre-write basis>" --apply
+# perform exactly the returned provider action, read it back,
+# write GITHUB_OBSERVATION, then:
+python reconcile_github_projection.py <observation.yaml> <repo-root> --apply
+```
+
+`handover_planning.py` derives a non-authoritative handover plan from the current report projection and active EP. It resolves the work contract by verified current issue -> active EP -> current roadmap WP, derives pending INTENT, records durable input/benchmark definition paths, retains relevant user-authored session requirements supplied by the executing agent, and creates a stable ownership-boundary key for incremental GitHub issue reuse.
+
+`prepare_handover_projection.py` converts the derived plan into a CREATE or PUBLISH_HANDOVER GHOP. It reuses an existing open handover ISSUE_GRAPH node with the same stable handover key, otherwise proposes a new HANDOVER coordination node. It refuses to prepare over active unreconciled projection work and never claims native parentage before provider readback. The planner/preparer never directly calls GitHub. Use existing GHGEN/GHOP operations for publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
+
+Complex handover mode changes only the generator request: exactly three prompts remain, with visible Q1–Q5 inside Prompt 1 according to the freshly fetched standalone schema.
+
+
+## Dynamic roadmap event ledger
+
+The roadmap event ledger is optional/backward-compatible but, once present, is aggregate-conformance checked.
+
+```bash
+python validate_roadmap_events.py <repo-root>
+
+# Dry run
+python append_roadmap_event.py <event.yaml> <repo-root>
+
+# Append after validation
+python append_roadmap_event.py <event.yaml> <repo-root> --apply
+
+# Human projection: concept roadmap -> execution -> recent events
+python render_roadmap.py <repo-root>
+```
+
+`ROADMAP_EVENTS.yaml` is a source-bound historical index. Objective/phase ids are concept refs; work package / EP / checkpoint / issue / PR belong in execution refs. Events may record or propose concept impact but cannot apply concept-roadmap changes without the governing roadmap revision.
+
+
+## Owner progress publication
+
+```bash
+# Render current delta/current state without changing the baseline.
+python publish_owner_progress.py <repo-root>
+
+# Normal control-return publication.
+python publish_owner_progress.py <repo-root> --apply
+
+# Explicit heartbeat/no-material-progress receipt.
+python publish_owner_progress.py <repo-root> --apply --force-record
+
+python validate_owner_publication.py <repo-root>
+```
+
+The optional cursor lives at `agents/relay/publication/OWNER_PUBLICATION.yaml`. It stores only the last source-derived normalized report baseline plus publication/source digests. It is derived coordination state and cannot replace roadmap, progress, EP, checkpoint/evidence, issue, Owner-decision, or provider truth.
+
+`communication_projection.py` compares the cursor baseline with current report truth. `render_owner_status.py` exposes that comparison under **What changed**. A no-change render is explicit and does not advance the cursor unless the operator intentionally uses `--force-record`.
+
+`plan_handover.py --apply-publication` uses this same publisher before deriving handover INTENT.
+
+
+
+## Live delivery observation
+
+A repository that currently uses a PR delivery vehicle may set:
+
+```yaml
+delivery:
+  required: true
+  provider: GITHUB
+  observation:
+    id: DOBS-0001
+    path: agents/relay/delivery/DOBS-0001.yaml
+```
+
+Validate the provider-readback evidence with:
+
+```bash
+python validate_delivery_observation.py <repo-root>
+```
+
+The observation carries PR identity/lifecycle, exact head/base, mergeability, exact-head checks, review/change-request state, and durable readback basis. `delivery_projection.py` derives review readiness and technical merge readiness and joins exact-head Owner authorization from applied ODRs.
+
+No PR needed:
+
+```text
+delivery omitted
+or delivery.required=false
+→ delivery applicability NOT_APPLICABLE
+```
+
+Unknown provider capability/state remains `UNKNOWN`. Stale-head CI must be represented as `STALE`, never PASS.
+
+An Owner merge authorization uses an applied `ODR` with `decision.kind: AUTHORIZATION` plus `delivery_authorization` for `MERGE`, exact repository, PR number and head SHA. This authorization is separate from `grants_material_write_authority`.
+
+
+## PR Issue↔EP correlation
+
+Every active engineering PR under V2.5 must carry a machine-checkable description block that meaningfully correlates the PR to the GitHub issue(s) and execution package(s) it delivers.
+
+Generate the canonical block from repository truth:
+
+```bash
+python render_pr_correlation.py <repo-root>
+```
+
+The block uses:
+
+```text
+<!-- relay-pr-correlation:v1 -->
+## Engineering correlation
+| Issue | Execution package | Work package | Relationship | Meaning |
+...
+```
+
+Each row binds:
+
+```text
+ISSUE_GRAPH node / provider issue number
+↔ EP id / durable EP path
+↔ roadmap work package
+↔ relationship + plain-language meaning
+```
+
+This is stronger than token presence. `validate_pr_correlation.py` proves the ISSUE_GRAPH node and EP both resolve to the declared work package.
+
+Provider readback is stored in `DELIVERY_OBSERVATION.description_contract` with the body digest, marker presence, and normalized correlations.
+
+Validate at minimum at the end of each task/checkpoint:
+
+```bash
+python validate_delivery_observation.py <repo-root>
+python validate_pr_correlation.py <repo-root>
+```
+
+When PR delivery is required:
+
+- every current active EP must appear in at least one non-terminal PR description correlation;
+- the latest task-close checkpoint EP must appear in a tracked PR description correlation;
+- a PR correlation that names unrelated Issue and EP work packages fails;
+- every tracked non-terminal PR (`DRAFT`, `OPEN`, or unresolved `UNKNOWN`) is carried into every Owner summary;
+- `MERGED` and `CLOSED` PRs remain evidence/history but leave the recurring unmerged-PR carry-forward list.
+
+Use `REPO_STATE.delivery.observations[]` for the complete current tracked PR set. The singular `delivery.observation` remains the primary/current vehicle and, when `observations[]` is used, must also appear in that list.
+
+
+
+## Owner field-lineage validation
+
+```bash
+python validate_owner_field_lineage.py \
+  <common>/skills/engineering-pr-delivery-v2.5
+```
+
+The declarative contract at `operating-model/owner-field-lineage.yaml` enumerates critical Owner data families and the source/schema/validator/report/communication/renderer/regression surfaces that must retain them.
+
+This validator is also executed by `self_consistency_audit.py`. It is a release-integrity check, not repository engineering authority.
+
+
+## Handover live-generator binding
+
+```bash
+python validate_handover_generator_contract.py \
+  <common>/skills/engineering-pr-delivery-v2.5 \
+  --repo-root <common>
+```
+
+This release check proves that `Plan for Handover` still follows the V2.5 compatibility redirect to the standalone current-main three-pass launcher/schema/validator, preserves `THREE_PASS_ONLY`, and that the standalone schema/validator protocol revisions agree.
+
+It deliberately does not pin V2.5 to a particular three-pass revision; the runtime agent must still fetch the canonical schema from current `main` and use its actual content SHA before generating the same-chat artifact.

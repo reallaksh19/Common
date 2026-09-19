@@ -153,7 +153,7 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
     if not isinstance(next_work.get("phase_transition"),bool):e.append(f"{label}.next_work.phase_transition must be boolean")
     if not isinstance(nw_steps,list) or not nw_steps:e.append(f"{label}.next_work.steps must contain ordered successor/current next work")
     else:
-        orders=[]
+        orders=[];req_seen=set()
         for i,item in enumerate(nw_steps):
             nl=f"{label}.next_work.steps[{i}]"
             if not isinstance(item,dict):e.append(f"{nl} must be a mapping");continue
@@ -173,6 +173,27 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
                 if bid not in bench_ids:e.append(f"{nl}.benchmarks references unknown benchmark id {bid}")
             for aid in _items(item.get("acceptance")):
                 if aid not in ac_ids:e.append(f"{nl}.acceptance references unknown acceptance id {aid}")
+            req=item.get("execution_requirement")
+            if req is not None:
+                if not isinstance(req,dict):e.append(f"{nl}.execution_requirement must be a mapping or null")
+                else:
+                    rl=f"{nl}.execution_requirement"
+                    rid=req.get("id")
+                    if not _text(rid) or not str(rid).startswith("EXECREQ-"):e.append(f"{rl}.id must use EXECREQ-* namespace")
+                    elif rid in req_seen:e.append(f"{rl}.id duplicates {rid}")
+                    else:req_seen.add(rid)
+                    if req.get("type") not in {"LOCAL_ENVIRONMENT","EXTERNAL_ENVIRONMENT"}:e.append(f"{rl}.type invalid: {req.get('type')}")
+                    _require_text(e,req,"actor",rl)
+                    env=req.get("environment")
+                    if not isinstance(env,dict):e.append(f"{rl}.environment must be a mapping")
+                    else:
+                        _require_text(e,env,"kind",f"{rl}.environment");_require_text(e,env,"description",f"{rl}.environment")
+                    if not (_text(req.get("command")) or _text(req.get("instruction"))):e.append(f"{rl} requires command or executable instruction")
+                    _require_text(e,req,"working_directory",rl);_require_text(e,req,"unavailable_here_reason",rl);_require_text(e,req,"success_condition",rl)
+                    for key in ("required_basis","expected_evidence","blocks","clears"):
+                        if not _text_list(req.get(key)) or not req.get(key):e.append(f"{rl}.{key} must contain explicit values")
+                    for tid in _items(req.get("expected_evidence")):
+                        if tid not in test_ids:e.append(f"{rl}.expected_evidence references unknown validation id {tid}")
         if orders and orders!=list(range(1,len(orders)+1)):e.append(f"{label}.next_work.steps order must be contiguous starting at 1")
     for i,ac in enumerate(_items(ep.get("acceptance"))):
         if isinstance(ac,dict):_require_text(e,ac,"description",f"{label}.acceptance[{i}]")

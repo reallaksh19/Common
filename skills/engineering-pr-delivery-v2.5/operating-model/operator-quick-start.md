@@ -172,3 +172,146 @@ python -m unittest discover -s skills/engineering-pr-delivery-v2.5/tests/stress 
 ```
 
 The scoped GitHub workflow runs the same audit and test surfaces.
+
+## 8. Explicit Owner command: Plan for Handover
+
+When the Owner explicitly says `Plan for Handover`, first render/publish the normal Owner status from current repository truth. Then derive the handover transaction:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+For the explicit complex variant:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover, complex project" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The first planner output intentionally stops before three-pass generation until the handover issue has been created/updated through GHGEN/GHOP and its external identity/linkage read back.
+
+Prepare the handover GitHub generation without bypassing the existing crash-safe projection transaction:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/prepare_handover_projection.py <repo-root> --apply
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/github_projection_next.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/begin_github_operation.py <repo-root> \
+  --basis "<durable pre-write basis>" --apply
+```
+
+Perform only the provider action returned by `begin_github_operation.py`, then read it back, create a `GITHUB_OBSERVATION`, and reconcile it through `reconcile_github_projection.py --apply`.
+
+If another GitHub generation is still unreconciled, the handover preparer returns `PROJECTION_BUSY` or `RECONCILE_REQUIRED`; do not supersede or retry blindly.
+
+After verified issue readback:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --handover-issue-url "<verified handover issue URL>" \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+Use the emitted generator request as input to the **freshly fetched live** standalone three-pass generator. Do not generate against a guessed or attempted issue URL.
+
+The stable handover key is the duplicate-prevention basis. For the same active ownership boundary, search/read back for the matching open handover issue and update it. Create a new issue only when no valid match exists or the ownership boundary materially changed.
+
+
+
+## 9. Publish Owner progress
+
+Before returning control after a meaningful work unit:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py \
+  <repo-root> --apply
+```
+
+This renders the source-derived Owner status and records the exact normalized baseline under `agents/relay/publication/OWNER_PUBLICATION.yaml`.
+
+If current truth has not changed since the previous publication, the output says `NO_MATERIAL_PROGRESS` and the cursor is not rewritten. Use `--force-record` only for an explicit heartbeat that should be retained as a publication receipt.
+
+Focused integrity check:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_owner_publication.py <repo-root>
+```
+
+For `Plan for Handover`, use the same transaction through:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --apply-publication \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The handover planner derives INTENT after this Owner publication is recorded.
+
+
+## 10. Reconcile live PR delivery
+
+If the current slice is delivered through a pull request, read back the provider and persist a current `DELIVERY_OBSERVATION` before claiming readiness.
+
+Record independently:
+
+- PR number/URL and lifecycle;
+- head SHA / base;
+- mergeability;
+- exact-head check state and check head SHA;
+- review/change-request state;
+- durable provider readback references.
+
+Then point `REPO_STATE.delivery.observation` at the observation and run:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_report_projection.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_owner_status.py <repo-root>
+```
+
+Never translate `mergeable` into `technical ready`, or `technical ready` into `merge authorized`.
+
+If the Owner authorizes merge, capture an applied ODR whose structured `delivery_authorization` names the exact repository, PR and current head SHA. Any later head change makes that authorization stale.
+
+
+## 11. Verify PR correlation at task close
+
+If PR delivery is required, the PR description is part of the task-close contract.
+
+Before treating a task/checkpoint as fully handed back:
+
+1. Generate/reconcile the PR correlation block from current repository truth:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/render_pr_correlation.py <repo-root>
+```
+
+2. Update the provider PR description without dropping still-relevant earlier correlations.
+
+3. Read the provider PR body back and persist the normalized result in the current `DOBS-*` observation.
+
+4. Validate:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_pr_correlation.py <repo-root>
+```
+
+A valid row must prove:
+
+```text
+Issue number
+→ ISSUE_GRAPH node
+→ roadmap work package
+← EP roadmap_source.work_package
+← EP id/path
+```
+
+Mentioning an unrelated issue number and EP id in the PR body is not valid correlation.
+
+For multiple still-unmerged PRs, keep all current `DOBS-*` pointers under `REPO_STATE.delivery.observations[]`. Every Owner status must carry every non-terminal PR forward until provider readback records it as `MERGED` or `CLOSED`.
+

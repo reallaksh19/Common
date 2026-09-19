@@ -12,13 +12,16 @@ This is the stable navigation map for the released V2.5 control model. It points
 | Recover a repository with no chat | `operator-quick-start.md` | `scripts/cold_start_check.py`, `scripts/zero_context_reconstruction.py` |
 | See a repository-neutral relay walkthrough | `synthetic-relay-example.md` | stress tests under `tests/stress/` |
 | Understand authority ownership | `object-authority-matrix.md` | `scripts/self_consistency_audit.py` |
-| Understand roadmap/frontier | `roadmap-first-model.md`, `execution-frontier.md` | `scripts/validate_roadmap.py`, `scripts/validate_execution_frontier.py` |
+| Understand roadmap/frontier | `roadmap-first-model.md`, `dynamic-roadmap.md`, `execution-frontier.md` | `scripts/validate_roadmap.py`, `scripts/validate_roadmap_events.py`, `scripts/validate_execution_frontier.py` |
 | Author/validate an EP | `execution-package.md` | `scripts/validate_ep_semantics.py` |
 | Prove baton/takeover/write readiness | `takeover-certification.md` | `scripts/validate_baton_readiness.py`, `scripts/validate_takeover_certification.py`, `scripts/material_write_ready.py` |
 | Run phase/material-boundary qualification | `phase-transition.md` | `scripts/validate_question_set.py`, `scripts/validate_qualification_receipt.py` |
 | Understand progress and exact next work | `progress-accounting.md`, `wp-04-progress-handover.md` | `scripts/validate_progress.py`, `scripts/render_handover.py` |
 | Route and evidence quality work | `quality-procedures.md` | `scripts/validate_quality_router.py`, `scripts/validate_quality_review.py` |
 | Operate issue/GitHub projection | `issue-projection.md`, `github-program-projection.md` | `scripts/validate_github_projection.py`, `scripts/github_projection_next.py` |
+| Observe PR delivery/readiness | `../blueprints/github-delivery.md`, `human-communication.md` | `scripts/validate_delivery_observation.py`, `scripts/delivery_projection.py` |
+| Audit Owner field lineage | `owner-field-lineage.md`, `owner-field-lineage.yaml` | `scripts/validate_owner_field_lineage.py`, `scripts/self_consistency_audit.py` |
+| Correlate PR ↔ Issue ↔ EP | `../blueprints/github-delivery.md`, `operator-quick-start.md` | `scripts/render_pr_correlation.py`, `scripts/validate_pr_correlation.py` |
 | Handle Owner intent change | `owner-change-intake.md` | `scripts/validate_owner_change_intake.py`, `scripts/render_owner_change.py` |
 | Understand parallel fork/join/replan | `serial-execution.md`, `parallel-replan.md` | `scripts/validate_parallel_plan.py`, `scripts/validate_parallel_join.py`, `scripts/validate_parallel_replan.py` |
 | Understand drift/continuity | `git-observation.md`, `roadmap-continuity.md` | `scripts/inspect_git_context.py`, `scripts/validate_roadmap_continuity.py` |
@@ -77,7 +80,7 @@ GHGEN-*  GitHub projection generation
 GHOP-*   GitHub projection operation
 ```
 
-Parallel plan/join/replan, drift, roadmap revision/continuity, progress basis, issue graph, repository state, and repository profile retain their documented namespaces.
+Parallel plan/join/replan, drift, roadmap revision/continuity, progress basis, issue graph, repository state, and repository profile retain their documented namespaces. `EVT-*` identifies material roadmap-event ledger entries; these are history/index records, not roadmap authority.
 
 ## Enforcement layers
 

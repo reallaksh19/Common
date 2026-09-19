@@ -3,8 +3,9 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import load_yaml,print_result
-from report_projection import build
+from report_projection import build,_current_issues
 from takeoverlib import digest_mapping,yaml_digest
+from delivery_projection import snapshot as delivery_snapshot
 
 def validate(root:Path):
     e=[];w=[];state=load_yaml(root/"agents/relay/REPO_STATE.yaml");r=build(root);p=r.get("progress") or {};cur=p.get("current") or {}
@@ -13,7 +14,19 @@ def validate(root:Path):
     if basis.get("roadmap_revision")!=(state.get("roadmap") or {}).get("revision"):e.append("report projection roadmap revision is stale")
     if basis.get("progress_basis")!=(state.get("progress") or {}).get("basis_revision"):e.append("report projection progress basis does not match repository state")
     if basis.get("owner_decisions_digest")!=digest_mapping(r.get("owner_decisions") or []):e.append("report projection owner-decision basis is stale")
+    dptr=((state.get("delivery") or {}).get("observation") or {});dpath=dptr.get("path")
+    expected_did=dptr.get("id");expected_ddigest=yaml_digest(root/dpath) if dpath and (root/dpath).exists() else None
+    if basis.get("delivery_observation_id")!=expected_did:e.append("report projection delivery observation id is stale")
+    if basis.get("delivery_observation_digest")!=expected_ddigest:e.append("report projection delivery observation digest is stale")
+    if r.get("delivery")!=delivery_snapshot(root,r):e.append("report projection delivery vector diverges from provider observation/Owner authority")
     if p.get("overall_percent") is None:e.append("report projection requires authoritative overall progress")
+    current_work=r.get("current_work") or {};position=state.get("current_position") or {}
+    for key in ("objective","phase","work_package"):
+        if current_work.get(key)!=position.get(key):e.append(f"report projection current_work.{key} diverges from REPO_STATE")
+    if current_work.get("ep_id")!=(state.get("active_ep") or {}).get("id"):e.append("report projection current_work.ep_id diverges from REPO_STATE")
+    issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml";issue_graph=load_yaml(issue_path) if issue_path.exists() else {"nodes":[]}
+    expected_issues=_current_issues(issue_graph,position.get("work_package"))
+    if current_work.get("issues")!=expected_issues:e.append("report projection current issues diverge from ISSUE_GRAPH")
     cp_ptr=state.get("last_checkpoint") or {};cp_path=cp_ptr.get("path")
     if cp_path and (root/cp_path).exists():
         cp=load_yaml(root/cp_path);qptr=cp.get("quality_review") or {};qpath=qptr.get("path")

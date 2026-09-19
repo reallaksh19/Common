@@ -20,6 +20,7 @@ def _effect_matches(node:dict,effect:dict)->bool:
     gh=node.get("github") or {}
     if "set_issue_number" in effect and gh.get("issue_number")!=effect.get("set_issue_number"):return False
     if "set_issue_id" in effect and str(gh.get("issue_id"))!=str(effect.get("set_issue_id")):return False
+    if "set_published_handover_snapshot" in effect and node.get("published_handover_snapshot")!=effect.get("set_published_handover_snapshot"):return False
     return True
 
 def _has_locator(node:dict)->bool:

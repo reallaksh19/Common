@@ -59,6 +59,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `ODR.change_intake` | AUTHORITY semantic summary | Owner-intent mutation capture | roadmap revision + Owner-change projection | Before/after intent meaning; structural effects remain roadmap-revision truth |
 | `OVERALL_ROADMAP.yaml` | AUTHORITY | roadmap transaction / initialization | frontier, progress, EP admission, issue reconciliation | Objectives/phases/WPs/dependencies/lifecycle state |
 | Roadmap revision | AUTHORITY transaction | approved/factual roadmap mutation | continuity, progress basis, issue reconciliation, Owner-change projection | Exact structural mutation and resulting frontier |
+| `ROADMAP_EVENTS.yaml` | DERIVED DURABLE HISTORY INDEX | reconciled material events via `append_roadmap_event.py` | Owner roadmap, handover context, audit | Links objective/phase concepts to material execution/evidence events; cannot mutate roadmap concepts, progress, issue state, or Owner intent |
 | Roadmap continuity receipt | EVIDENCE | continuity reconciliation | EP validity, material authority | Whether an active EP survives intervening revisions |
 | Executable frontier | DERIVED | roadmap computation | serial/parallel admission, status, zero-context reconstruction | Must be recomputed; cannot be manually asserted as a competing plan |
 | `REPO_STATE.yaml` | AUTHORITY locator + checked mirrors | relay lifecycle/reconciliation | aggregate conformance, route resolution, projections | Deterministic bootstrap locator, lifecycle/routing/state planes; percentage/readiness mirrors are checked, not independent authority |
@@ -86,7 +87,10 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `PROGRESS.yaml` / Progress Basis | AUTHORITY calculated accounting | roadmap/acceptance reconciliation | report/status/handover | Acceptance → step → EP → WP → phase → objective → overall; no guessed percentages |
 | `ISSUE_GRAPH.yaml` | AUTHORITY repository coordination model | issue reconciliation | GitHub projection operations, closure/supersession validators | Engineering/GitHub coordination model; GitHub UI does not become roadmap authority |
 | `GHGEN-*` / `GHOP-*` | AUTHORITY desired external projection transaction | projection planner | publisher/reconciler | Desired GitHub coordination generation/operations, with retry authority only for current generation |
-| `GITHUB_OBSERVATION` | EVIDENCE | external readback | GitHub reconciliation | Verified external reality; connector response alone is insufficient |
+| `GITHUB_OBSERVATION` | EVIDENCE | external readback | GitHub reconciliation | Verified issue-projection external reality; connector response alone is insufficient |
+| `DELIVERY_OBSERVATION` (`DOBS-*`) | EVIDENCE | provider PR/check/review/body readback | delivery projection, PR-correlation validation, report/Owner status | Current PR identity/lifecycle/head/base/checks/mergeability/review facts plus provider-read Issue↔EP description declarations; never roadmap or merge authority |
+| Delivery readiness projection | DERIVED | DOBS + acceptance/evidence + ODR | Owner status / delivery review | Separates ready-for-review, technical-ready-to-merge and merge authorization; cannot authorize merge |
+| `ODR.delivery_authorization` | AUTHORITY | explicit Owner authorization | delivery projection | Exact repository/PR/head MERGE grant or revocation only; separate from material write authority |
 | Report projection | DERIVED | roadmap/progress/EP/CP/issue/QRV/state | status/handover/communication | Structured derived report only |
 | Communication projection | DERIVED | report projection | `TECHNICAL_STATUS.md`, `OWNER_STATUS.md` | One shared human communication source; never writable truth |
 | `TECHNICAL_STATUS.md` | NON_AUTHORITY DERIVED VIEW | technical renderer | engineers/agents | Detailed protocol/source view |
@@ -106,9 +110,11 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 2. Derived predicates are recomputed from current authority/evidence and are not persisted as independent authorization claims.
 3. Generated reports/views can expose repository truth but cannot resolve conflicts by overriding their sources.
 4. External GitHub observations can reconcile coordination state only through the current authorized projection transaction.
+4a. Delivery observations record provider PR/check/review/body reality only. Their Issue↔EP rows are validated against ISSUE_GRAPH and EP truth; body strings alone are not authority. Merge authorization is never inferred from provider state and comes only from applied Owner ODR authority.
 5. Runtime Git facts participate in write readiness but cannot be replaced by stale repository assertions.
 6. A candidate's DISC/QUAL/TC evidence can admit that candidate; it cannot change the EP, roadmap, or Owner decision.
 7. Checkpoints preserve execution/evidence custody; roadmap revisions preserve planning/intent effects. Neither substitutes for the other.
+8. Roadmap events preserve material history and source links. They may propose a concept change, but only roadmap/ODR authority can apply one.
 
 ## Source-of-truth rules
 
@@ -123,6 +129,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 9. `ISSUE_GRAPH.yaml` is repository coordination truth; GitHub remains an external projection.
 10. Report, communication, Owner-change, and ZERO_CONTEXT_RECONSTRUCTION outputs are derived projections.
 11. Conversation is never custody.
+12. `ROADMAP_EVENTS.yaml` is historical context only: objective/phase links are concept references; WP/EP/issue/PR links remain execution references.
 
 ## Historical completion mapping
 

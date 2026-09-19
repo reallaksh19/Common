@@ -57,3 +57,161 @@ The technical view is intentionally allowed to retain protocol terms and object 
 `validate_human_communication.py` checks projection convergence and verifies that the Owner view cannot omit current stop/evidence/quality/scope/decision/next-work truth. Aggregate relay conformance invokes it.
 
 Repository-neutral stress tests cover shared-source derivation, hard-stop visibility, missing evidence, non-blocking quality risk, Owner-reserved versus Owner-required decisions, next-work mutation, and internal-jargon rejection in Owner-facing source text.
+
+
+## Plan for Handover
+
+`Plan for Handover` is a compound Owner command, not a substitute for normal Owner status.
+
+Sequence:
+
+```text
+publish normal Owner status
+→ resolve current owned work
+→ derive pending INTENT
+→ publish/update and verify handover issue
+→ run the live standalone three-pass generator
+→ return the copy-pasteable prompts
+```
+
+Owned-work selection is:
+
+```text
+verified current GitHub issue mapped to the work
+→ otherwise active task / EP
+→ otherwise current roadmap work package
+```
+
+This order chooses the **handover target contract**; it does not allow issue prose to override current roadmap/progress/evidence truth.
+
+The derived handover plan is coordination state. It contains the still-pending acceptance, evidence, next-work, checkpoint-remaining-work and genuinely required Owner-decision obligations; active EP input and benchmark definition paths; expected outcomes; scope/boundaries; and user-authored core requirements explicitly supplied in the current session.
+
+The planner assigns a stable handover key to the ownership boundary. Repeated commands for the same still-active work update the matching open handover issue rather than creating a duplicate. Pending INTENT is recomputed from current truth each time.
+
+Issue publication uses the existing GHGEN/GHOP transaction. Prefer a provider-native child relation when a valid parent issue exists and the integration can create and read it back; otherwise use a verified reciprocal/reference link. A body hyperlink never proves native parentage.
+
+Three-pass generation begins only after the handover issue URL has been verified by provider readback. Follow the live compatibility redirect to `skills/three-pass-prompt-generator/SKILL.md` and `schema.md`; V2.5 does not cache or reproduce that protocol.
+
+`Plan for Handover, complex project` enables the standalone generator's complex mode. The artifact still contains exactly three prompts; Prompt 1 additionally exposes natural target-specific Q1–Q5. A later plain handover command returns to non-complex mode.
+
+Repository scripts must not infer chat requirements. The executing agent passes relevant user-authored session requirements explicitly to `plan_handover.py --owner-requirement ...`. Credential/secret-like values must not be published to GitHub.
+
+
+## Deterministic Owner publication cursor
+
+Owner status is not merely a renderer. Control-return publication uses a durable, derived baseline:
+
+```text
+agents/relay/publication/OWNER_PUBLICATION.yaml
+```
+
+The cursor records the normalized source-derived state that the Owner was last shown, plus source/report/view digests. It is **coordination metadata**, not engineering authority.
+
+Current truth remains in roadmap, PROGRESS, EP, checkpoint/evidence, ISSUE_GRAPH, ODR, state planes, and verified external observations.
+
+Every communication projection derives:
+
+```text
+previous published normalized baseline
+vs
+current report projection
+        ↓
+event class
+changed dimensions
+concise transitions
+publication_due
+```
+
+Supported Owner publication classes include:
+
+```text
+INITIAL_SNAPSHOT
+TASK_PROGRESS
+TASK_REGRESSION
+IMPLEMENTATION_CHANGE
+EVIDENCE_PROGRESS
+DELIVERY_OR_CUSTODY_PROGRESS
+CONTROL_STATE_CHANGE
+WAITING_OR_MONITORING
+NO_MATERIAL_PROGRESS
+```
+
+The Owner view begins with **What changed** and must not force the Owner to infer a delta from current percentages.
+
+Examples:
+
+- evidence-only movement explicitly says acceptance/progress did not move;
+- custody-only movement does not imply implementation;
+- no material movement is stated directly;
+- task regression is visible rather than hidden by aggregate percentages.
+
+Use `publish_owner_progress.py --apply` before normal control return. The command renders from one communication projection and only then records exactly that projection's normalized baseline, avoiding a recompute-after-write race.
+
+An unchanged repeat does not advance the cursor. `--force-record` is reserved for an intentional heartbeat publication.
+
+Material publication cadence is triggered by a change to accepted progress, implementation result, evidence, blocker/quality/control state, current issue/delivery/custody, roadmap disposition, Owner-decision requirement, required external/local action, or exact next-work contract. Repeated unchanged polling/retries are suppressed while autonomous work continues.
+
+
+
+## Live PR delivery/readiness
+
+When the current slice has a pull-request delivery vehicle, Owner communication must project a **vector**, not a single "ready" label.
+
+Provider external reality is recorded as evidence in a current `DELIVERY_OBSERVATION` referenced by optional `REPO_STATE.delivery`.
+
+The Owner delivery section keeps these dimensions independent:
+
+```text
+PR identity / URL
+lifecycle: DRAFT | OPEN | CLOSED | MERGED | UNKNOWN
+head / base
+exact-head checks
+mergeability / conflict
+review / change-request state
+ready for review
+technical ready to merge
+merge authorization
+```
+
+Rules:
+
+- mergeable does not mean ready for review;
+- green checks on an older head do not count as current PASS;
+- ready for review does not mean engineering acceptance is complete;
+- technical readiness does not grant merge authority;
+- merge authorization comes only from an applied Owner `ODR` with structured `delivery_authorization` bound to the exact repository / PR / head SHA;
+- a head change makes an older grant stale;
+- when provider review/check data cannot be observed, report `UNKNOWN` rather than infer success.
+
+`technical_ready_to_merge` is derived from current acceptance/evidence plus current provider lifecycle/check/mergeability/review facts. It returns `YES | NO | UNKNOWN` with reasons.
+
+The delivery observation is evidence, not roadmap authority and not authorization.
+
+
+## Unmerged PR carry-forward
+
+Owner status must never silently forget a still-active PR.
+
+When `REPO_STATE.delivery.observations[]` contains provider observations, every PR last observed as:
+
+```text
+DRAFT
+OPEN
+UNKNOWN
+```
+
+is listed under **Unmerged PRs carried forward** on every Owner publication.
+
+For each carried PR, show at least:
+
+- PR number / URL;
+- lifecycle;
+- current observed head SHA;
+- correlated Issue number(s);
+- correlated EP id(s) / work package(s);
+- relationship meaning.
+
+A PR leaves this recurring list only after provider readback records terminal `MERGED` or `CLOSED` state. It can remain in durable evidence/history without cluttering every future summary.
+
+This carry-forward is based on provider observation evidence, not memory of prior chat.
+

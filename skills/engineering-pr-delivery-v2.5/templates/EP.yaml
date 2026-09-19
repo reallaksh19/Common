@@ -121,6 +121,9 @@ next_work:
       acceptance: [AC-01]
       expected_result: "<observable result after this next action>"
       stop_if: ["<condition requiring reconciliation before continuing>"]
+      # Set this only when the evidence-producing next action must execute outside
+      # the current environment. EP next_work remains the action authority.
+      execution_requirement: null
 qualification_boundary:
   required: false
   trigger: null

@@ -3,15 +3,44 @@ type: object
 required: [schema_version, checkpoint_id, ep_id, roadmap_basis, execution_basis, implementation_result, acceptance_results, validation_results, quality_findings, discoveries, roadmap_reconciliation, successor]
 properties:
   schema_version: {const: relay-v2.5}
-  checkpoint_id: {type: string}
-  ep_id: {type: string}
+  contract_version: {type: integer, enum: [1, 2]}
+  checkpoint_id: {type: string, pattern: '^CP-'}
+  ep_id: {type: string, pattern: '^EP-'}
+  roadmap_basis:
+    type: object
+    required: [roadmap_id, revision]
+    properties:
+      roadmap_id: {type: string, minLength: 1}
+      revision: {type: string, minLength: 1}
   execution_basis:
     type: object
     required: [material_ref]
     properties:
       material_ref: {type: string, minLength: 1}
+  implementation_result:
+    type: object
+    properties:
+      summary: {type: string, minLength: 1}
+      completed_steps:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      files_changed:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  acceptance_results:
+    type: array
   validation_results:
     type: array
+    items:
+      type: object
+      required: [id, status, basis_ref]
+      properties:
+        id: {type: string, minLength: 1}
+        status: {enum: [PASS, FAIL, NOT_RUN, NA]}
+        basis_ref: {type: [string, 'null']}
+        reason: {type: string}
   quality_review:
     type: [object, 'null']
     properties:
@@ -26,11 +55,59 @@ properties:
       required: [id]
       properties:
         id: {type: string, pattern: '^QF-'}
+  known_limitations:
+    type: array
+    items:
+      oneOf:
+        - {type: string, minLength: 1}
+        - type: object
+          required: [statement]
+          properties:
+            id: {type: string}
+            statement: {type: string, minLength: 1}
+            impact: {type: string}
+            basis: {type: array}
+  discoveries:
+    type: array
+  roadmap_reconciliation:
+    type: object
+    required: [result]
+    properties:
+      result: {enum: [NO_ROADMAP_CHANGE, STATUS_UPDATE, ROADMAP_PROPOSAL, OWNER_DECISION_REQUIRED]}
+      status_updates: {type: array}
+      proposals: {type: array}
+      owner_decisions_required: {type: array}
+  remaining_work:
+    type: array
+    items:
+      oneOf:
+        - {type: string, minLength: 1}
+        - type: object
+          required: [statement]
+          properties:
+            id: {type: string}
+            statement: {type: string, minLength: 1}
+            basis: {type: array}
   successor:
     type: object
     required: [mode, frontier_work_package, ep_id, parallel_plan, lanes]
     properties:
       mode: {enum: [SERIAL, PARALLEL, JOIN, NONE]}
+      frontier_work_package: {type: [string, 'null']}
+      ep_id: {type: [string, 'null']}
+      parallel_plan: {type: [string, 'null']}
       lane_id: {type: [string, 'null']}
       lanes: {type: array}
+allOf:
+  - if:
+      required: [contract_version]
+      properties:
+        contract_version: {const: 2}
+    then:
+      required: [known_limitations, remaining_work]
+      properties:
+        implementation_result:
+          required: [summary, completed_steps, files_changed]
+        roadmap_reconciliation:
+          required: [result, status_updates, proposals, owner_decisions_required]
 additionalProperties: true

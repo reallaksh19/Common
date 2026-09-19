@@ -1,0 +1,33 @@
+schema_version: relay-v2.5-roadmap-events
+ledger_revision: 1
+events:
+  - id: EVT-0001
+    sequence: 1
+    event_class: ENGINEERING_DISCOVERY
+    summary: "<material programme event in plain language>"
+
+    # Concept-level links only. Use objective / phase ids here, not work-package ids.
+    concept_refs:
+      - OBJ-001
+      - PHASE-001
+
+    # Execution/delivery references explain where the event happened.
+    execution_refs:
+      work_package: WP-001
+      execution_package: EP-0001
+      checkpoint: CP-0001
+      issue: null
+      pull_request: null
+
+    # Durable source objects/evidence supporting this event.
+    basis:
+      - agents/relay/checkpoints/CP-0001.yaml
+
+    # Events do not mutate concept-roadmap truth by themselves.
+    concept_change: NO_CONCEPT_CHANGE
+    roadmap_revision:
+      id: null
+      path: null
+
+    # What current control action follows from the event.
+    follow_up: NEW_EXECUTION_WORK

@@ -8,6 +8,9 @@ from typing import Iterable
 
 import yaml
 
+from validate_owner_field_lineage import validate as validate_owner_field_lineage
+from validate_handover_generator_contract import validate as validate_handover_generator_contract
+
 
 REQUIRED_BLUEPRINT_HEADINGS = [
     "## WHEN TO APPLY",
@@ -25,7 +28,7 @@ REQUIRED_BLUEPRINT_HEADINGS = [
 
 OBJECT_SURFACES = {
     "EP": ["templates/EP.yaml", "schemas/execution-package.schema.yaml", "scripts/validate_ep_semantics.py", "operating-model/execution-package.md"],
-    "CP": ["templates/CP.yaml", "schemas/checkpoint.schema.yaml", "scripts/validate_checkpoint_linkage.py", "operating-model/checkpoint.md"],
+    "CP": ["templates/CP.yaml", "schemas/checkpoint.schema.yaml", "scripts/validate_checkpoint.py", "scripts/validate_checkpoint_linkage.py", "operating-model/checkpoint.md"],
     "DISC": ["templates/DISCOVERY_RECEIPT.yaml", "schemas/discovery-receipt.schema.yaml", "scripts/validate_discovery_receipt.py", "scripts/validate_takeover_certification.py"],
     "QSET": ["templates/QUESTION_SET.yaml", "schemas/question-set.schema.yaml", "scripts/validate_question_set.py", "operating-model/phase-transition.md"],
     "QUAL": ["templates/QUALIFICATION_RECEIPT.yaml", "schemas/qualification-receipt.schema.yaml", "scripts/validate_qualification_receipt.py", "operating-model/phase-transition.md"],
@@ -44,17 +47,23 @@ OBJECT_SURFACES = {
     "COMMUNICATION_PROJECTION": ["schemas/communication-projection.schema.yaml", "scripts/communication_projection.py", "scripts/validate_human_communication.py", "scripts/render_owner_status.py", "scripts/render_technical_status.py", "operating-model/human-communication.md"],
     "OWNER_CHANGE_PROJECTION": ["schemas/owner-change-projection.schema.yaml", "scripts/owner_change_projection.py", "scripts/validate_owner_change_intake.py", "scripts/render_owner_change.py", "operating-model/owner-change-intake.md"],
     "ZERO_CONTEXT_RECONSTRUCTION": ["schemas/zero-context-reconstruction.schema.yaml", "scripts/zero_context_reconstruction.py", "scripts/validate_zero_context_reconstruction.py", "operating-model/relay-certification-matrix.md"],
+    "HANDOVER_PLAN": ["schemas/handover-plan.schema.yaml", "scripts/handover_planning.py", "scripts/validate_handover_plan.py", "scripts/plan_handover.py", "scripts/prepare_handover_projection.py", "operating-model/human-communication.md"],
+    "ROADMAP_EVENTS": ["templates/ROADMAP_EVENTS.yaml", "schemas/roadmap-events.schema.yaml", "scripts/roadmap_events.py", "scripts/validate_roadmap_events.py", "scripts/append_roadmap_event.py", "operating-model/dynamic-roadmap.md"],
+    "OWNER_PUBLICATION": ["templates/OWNER_PUBLICATION.yaml", "schemas/owner-publication.schema.yaml", "scripts/owner_publication.py", "scripts/validate_owner_publication.py", "scripts/publish_owner_progress.py", "operating-model/human-communication.md"],
+    "DELIVERY_OBSERVATION": ["templates/DELIVERY_OBSERVATION.yaml", "schemas/delivery-observation.schema.yaml", "scripts/validate_delivery_observation.py", "scripts/delivery_projection.py", "scripts/pr_correlation.py", "scripts/validate_pr_correlation.py", "scripts/render_pr_correlation.py", "blueprints/github-delivery.md"],
+    "OWNER_FIELD_LINEAGE": ["operating-model/owner-field-lineage.yaml", "schemas/owner-field-lineage.schema.yaml", "scripts/validate_owner_field_lineage.py", "operating-model/owner-field-lineage.md"],
+    "HANDOVER_GENERATOR_BINDING": ["schemas/three-pass-prompt-generator.schema.md", "scripts/handover_planning.py", "scripts/validate_handover_generator_contract.py"],
 }
 
 RELEASE_DOCS = {
     "operating-model/architecture-index.md": ["operator-quick-start.md", "synthetic-relay-example.md", "self_consistency_audit.py"],
-    "operating-model/operator-quick-start.md": ["validate_relay_conformance.py", "material_write_ready.py", "prior conversation"],
+    "operating-model/operator-quick-start.md": ["validate_relay_conformance.py", "material_write_ready.py", "plan_handover.py", "prior conversation"],
     "operating-model/synthetic-relay-example.md": ["DSTEP-01", "DISC-0002", "QUAL-0002", "TC-0002", "MATERIAL_WRITE_READY"],
 }
 
 AGGREGATE_REQUIRED_MODULES = [
-    "validate_repo_state", "validate_repo_profile", "validate_roadmap", "validate_execution_frontier",
-    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_change_intake",
+    "validate_repo_state", "validate_repo_profile", "validate_roadmap", "validate_roadmap_events", "validate_execution_frontier",
+    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_publication", "validate_delivery_observation", "validate_pr_correlation", "validate_owner_change_intake",
     "validate_zero_context_reconstruction", "validate_serial_execution", "validate_parallel_plan", "validate_parallel_join",
     "validate_parallel_replan", "validate_roadmap_continuity", "validate_state_planes", "validate_projection_convergence",
     "validate_github_projection", "validate_github_generation_history", "validate_checkpoint_linkage", "validate_owner_decision",
@@ -68,11 +77,12 @@ README_REQUIRED_ENTRYPOINTS = [
     "zero_context_reconstruction.py", "validate_baton_readiness.py", "validate_takeover_certification.py",
     "material_write_ready.py", "validate_quality_review.py", "validate_human_communication.py",
     "validate_owner_change_intake.py", "render_roadmap.py", "self_consistency_audit.py",
+    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py", "append_roadmap_event.py", "publish_owner_progress.py", "render_pr_correlation.py", "validate_owner_field_lineage.py", "validate_handover_generator_contract.py",
 ]
 
 SKILL_REQUIRED_ENTRYPOINTS = [
     "validate_relay_conformance.py", "cold_start_check.py", "validate_zero_context_reconstruction.py",
-    "material_write_ready.py", "self_consistency_audit.py",
+    "material_write_ready.py", "publish_owner_progress.py", "plan_handover.py", "self_consistency_audit.py",
 ]
 
 STALE_MARKERS = {
@@ -148,6 +158,14 @@ def audit(repo_root: Path) -> tuple[list[str], list[str]]:
         for rel in rels:
             if not (skill / rel).exists():
                 errors.append(f"{object_name}: missing surface {rel}")
+
+    lineage_errors,lineage_warnings=validate_owner_field_lineage(skill)
+    errors.extend(f"Owner field lineage: {item}" for item in lineage_errors)
+    warnings.extend(f"Owner field lineage: {item}" for item in lineage_warnings)
+
+    generator_errors,generator_warnings=validate_handover_generator_contract(skill,repo_root)
+    errors.extend(f"Handover generator binding: {item}" for item in generator_errors)
+    warnings.extend(f"Handover generator binding: {item}" for item in generator_warnings)
 
     blueprints = sorted((skill / "blueprints").glob("*.md"))
     if not blueprints:
