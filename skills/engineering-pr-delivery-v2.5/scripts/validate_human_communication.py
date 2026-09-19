@@ -20,11 +20,12 @@ def _subjects(items):
 
 def _source_next(report:dict):
     nw=report.get("next_work") or {}
-    if nw.get("steps"):return [x for x in nw["steps"] if isinstance(x,dict)]
+    if nw.get("steps"):
+        return [{**x,"lane_id":None,"ep_id":(report.get("generated_from") or {}).get("ep_id")} for x in nw["steps"] if isinstance(x,dict)]
     out=[]
     for lane in report.get("parallel_lanes",[]) or []:
         for step in (lane.get("next_work") or {}).get("steps",[]) or []:
-            if isinstance(step,dict):out.append(step)
+            if isinstance(step,dict):out.append({**step,"lane_id":lane.get("lane_id"),"ep_id":lane.get("ep_id")})
     return out
 
 
