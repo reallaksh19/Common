@@ -55,6 +55,25 @@ PROMPT1_METHOD_META_PATTERNS = (
     "prompt 3 will",
 )
 
+
+PROMPT1_MACHINE_SURFACE_PATTERNS = (
+    "q1 — production_path",
+    "q2 — engineering_problem",
+    "q3 — boundaries_invariants",
+    "q4 — verification",
+    "q5 — first_safe_slice",
+    "required_output_keys:",
+    "reconstruction_mode:",
+    "payload.source:",
+    "payload.values:",
+    "evidence_required:",
+    "oracle_refs:",
+    "independence_requirement:",
+    "step_refs:",
+    "mutation.protected_invariant:",
+    "mutation.falsifier:",
+)
+
 REQUIRED_BASIS_FIELDS = (
     "GENERATOR MODE:",
     "SCHEMA SOURCE:",
@@ -112,6 +131,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "ARTIFACT-ERASURE GATE:",
     "CURRENT-VOCABULARY GATE:",
     "PROMPT-1 OBJECT GATE:",
+    "HUMAN-Q-LABEL GATE:",
     "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
@@ -298,6 +318,9 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             for phrase in PROMPT1_METHOD_META_PATTERNS:
                 if phrase in prompt1_lower:
                     errors.append(f"{label}: Prompt 1 leaks generator/method language: {phrase!r}")
+            for phrase in PROMPT1_MACHINE_SURFACE_PATTERNS:
+                if phrase in prompt1_lower:
+                    errors.append(f"{label}: Prompt 1 exposes machine/taxonomy surface language: {phrase!r}")
 
         p3 = lot.find(PROMPT_HEADINGS[2])
         if p3 >= 0:
