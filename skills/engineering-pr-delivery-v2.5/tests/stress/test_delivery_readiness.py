@@ -54,6 +54,20 @@ def _observe(root:Path,state:dict,*,head="head-1",checks="PASS",check_head=None,
             "observations":[{"name":"engineering-pr-delivery-v2.5","state":checks}],
         },
         "review":{"state":review,"unresolved_threads":0 if review=="CLEAR" else None,"change_requests":0 if review=="CLEAR" else None},
+        "description_contract":{
+            "marker":"<!-- relay-pr-correlation:v1 -->",
+            "marker_present":True,
+            "body_digest":"sha256:synthetic-pr-body",
+            "correlations":[{
+                "issue_node":"ISSUE-410",
+                "issue_number":410,
+                "ep_id":"EP-1",
+                "ep_path":"agents/relay/execution-packages/EP-1.yaml",
+                "work_package":"WP-1",
+                "relationship":"IMPLEMENTS",
+                "meaning":"EP-1 delivers WP-1 for issue #410.",
+            }],
+        },
         "readback_basis":["provider-readback:synthetic"],
     }
     path="agents/relay/delivery/DOBS-1.yaml";dump(root/path,obs)
