@@ -167,6 +167,23 @@ Material execution is **serial by default**. Do not infer parallelism from appar
 
 ## Dynamic roadmap
 
+The roadmap is concept/outcome authority, not a task diary. In the current hierarchy, objectives and phases are the concept-level anchors; work packages are execution units.
+
+Material programme history may be appended to `agents/relay/roadmap/ROADMAP_EVENTS.yaml`. Events link upward to objective/phase concepts and sideways to WP/EP/checkpoint/issue/PR execution facts. They are a derived durable history index and never mutate concept truth by themselves.
+
+Major work events follow:
+
+```text
+record material event
+→ reconcile execution
+→ evaluate concept impact
+→ revise roadmap only when the concept itself changed
+```
+
+A discovered additional task under an existing concept is normally `NO_CONCEPT_CHANGE + NEW_EXECUTION_WORK`, not a structural roadmap rewrite. `CONCEPT_CHANGE_PROPOSED` does not apply a change; `CONCEPT_CHANGE_APPLIED` must point to the real roadmap revision.
+
+Read `operating-model/dynamic-roadmap.md`.
+
 Roadmap mutation classes:
 
 ```text
