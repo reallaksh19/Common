@@ -191,7 +191,20 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <re
   --owner-requirement "<relevant user-authored requirement>"
 ```
 
-The output intentionally stops before three-pass generation until the handover issue has been created/updated through GHGEN/GHOP and its external identity/linkage read back.
+The first planner output intentionally stops before three-pass generation until the handover issue has been created/updated through GHGEN/GHOP and its external identity/linkage read back.
+
+Prepare the handover GitHub generation without bypassing the existing crash-safe projection transaction:
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/prepare_handover_projection.py <repo-root> --apply
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/github_projection_next.py <repo-root>
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/begin_github_operation.py <repo-root> \
+  --basis "<durable pre-write basis>" --apply
+```
+
+Perform only the provider action returned by `begin_github_operation.py`, then read it back, create a `GITHUB_OBSERVATION`, and reconcile it through `reconcile_github_projection.py --apply`.
+
+If another GitHub generation is still unreconciled, the handover preparer returns `PROJECTION_BUSY` or `RECONCILE_REQUIRED`; do not supersede or retry blindly.
 
 After verified issue readback:
 
