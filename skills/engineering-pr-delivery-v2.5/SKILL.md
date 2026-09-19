@@ -610,3 +610,41 @@ python skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> 
 ```
 
 The handover INTENT is derived only after that baseline has been published.
+
+
+### PR DESCRIPTION CORRELATION — TASK-CLOSE INVARIANT
+
+When PR delivery is required, every active engineering PR must contain the canonical V2.5 Issue↔EP correlation block.
+
+Generate from repository truth:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/render_pr_correlation.py <repo-root>
+```
+
+A valid correlation is not merely an issue number and EP token in prose. Each row must prove:
+
+```text
+verified GitHub issue number
+↔ ISSUE_GRAPH node
+↔ roadmap work package
+↔ EP roadmap_source.work_package
+↔ EP id/path
+```
+
+with an explicit relationship (`IMPLEMENTS | INTEGRATES | VERIFIES | REMEDIATES`) and plain-language meaning.
+
+After updating the provider PR body, read it back into `DELIVERY_OBSERVATION.description_contract`, then verify:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/validate_delivery_observation.py <repo-root>
+python skills/engineering-pr-delivery-v2.5/scripts/validate_pr_correlation.py <repo-root>
+```
+
+This verification is required at the end of each task/checkpoint before claiming delivery handback complete when PR delivery is applicable.
+
+Every current active EP must be represented in at least one non-terminal tracked PR. The latest task-close checkpoint EP must be represented in a tracked PR correlation.
+
+Track all current PR observations in `REPO_STATE.delivery.observations[]`. Every PR last observed as `DRAFT`, `OPEN`, or `UNKNOWN` must be carried forward in every Owner summary with its Issue↔EP correlation until provider readback records `MERGED` or `CLOSED`.
+
+Do not infer disappearance from chat, branch changes, or a newer PR.
