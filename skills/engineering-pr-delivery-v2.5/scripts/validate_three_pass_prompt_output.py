@@ -258,14 +258,17 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             if not witness_type:
                 errors.append(f"{label}: ISSUE_TASK requires PROBLEM WITNESS TYPE")
             if witness_type != "NONE":
-                for field in (
+                witness_required = (
                     "PROBLEM WITNESS SOURCE:",
                     "PROBLEM WITNESS PAYLOAD:",
                     "WHY THIS WITNESS EXPOSES THE ISSUE:",
                     "INDEPENDENT WORK PRODUCT:",
-                ):
-                    if not _field_value(preflight, field):
-                        errors.append(f"{label}: selected witness requires non-empty {field}")
+                )
+                for field in witness_required:
+                    if field not in preflight:
+                        errors.append(f"{label}: selected witness missing {field}")
+                    elif not _field_value(preflight, field):
+                        errors.append(f"{label}: selected witness requires a substantive value for {field}")
         complex_mode = _field_value(preflight, "COMPLEX MODE:")
         if complex_mode not in {"ON", "OFF"}:
             errors.append(f"{label}: COMPLEX MODE must be ON or OFF")
