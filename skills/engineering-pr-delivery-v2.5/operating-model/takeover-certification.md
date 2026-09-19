@@ -5,8 +5,10 @@
 The relay separates three different facts:
 
 1. the repository contains a complete baton for an unknown future replacement;
-2. a particular incoming candidate has independently proved takeover on one current execution route;
+2. a particular execution candidate has repository-grounded admission evidence on one current execution route;
 3. that candidate may write engineering material **right now** in the live checkout.
+
+The execution candidate may be a new successor or the same custodian continuing after preparing/reconciling the EP. EP authorship does not by itself disqualify that candidate.
 
 The first fact is repository-wide. The second is route/candidate-specific. The third is runtime-only because branch, worktree, HEAD and base drift can change after certification.
 
@@ -74,9 +76,9 @@ DISC, QSET, QUAL and TC all bind to this route granularity. Different parallel l
 
 ## Discovery Receipt (`DISC-*`)
 
-The EP contains forward `DSTEP-*` discovery instructions. The incoming candidate executes them from repository state and records the result in a `DISC-*` receipt.
+The EP contains forward `DSTEP-*` discovery instructions. The execution candidate executes them against repository state and records the result in a `DISC-*` receipt.
 
-A PASS receipt is bound to candidate, exact route, roadmap revision, protocol basis, material ref, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton identity/digest, required DSTEP/output coverage and durable observed evidence. `conversation_context_used` must be false.
+A PASS receipt is bound to candidate, exact route, roadmap revision, protocol basis, material ref, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton identity/digest, required DSTEP/output coverage and durable observed evidence. `conversation_context_used: false` means the receipt's claims and evidence were reconstructed from repository sources rather than relying on chat as authority; it does not require the candidate to be a different model/session.
 
 ## Qualification (`QSET-*` / `QUAL-*`)
 
@@ -101,7 +103,7 @@ The candidate cannot prepare its own QSET or serve as its own `INDEPENDENT_AGENT
 A TC records:
 
 - candidate identity;
-- preparer identity;
+- document preparer/assembler identity;
 - evaluator type/identity/basis;
 - `self_certification.allowed: false`;
 - exact route and repository basis;
@@ -135,6 +137,21 @@ qualification:
 ```
 
 The TC validator re-opens DISC and QUAL files and re-runs their objective validation. A YAML assertion is not authority.
+
+### TC authorship is not certification authority
+
+`prepared_by` records who assembled the TC document. It is provenance, not the certifier.
+
+The candidate **may** assemble its own TC record, including when the candidate also prepared the current EP. This is not self-certification because:
+
+- `self_certification.allowed` remains `false`;
+- an `INDEPENDENT_AGENT` evaluator still cannot be the candidate;
+- a `DETERMINISTIC_VALIDATOR` must be the canonical validator identity;
+- the validator independently re-opens the current route, EP, DISC and QUAL evidence and recomputes the bound basis.
+
+For a route with `qualification_boundary.required: false`, no extra agent is required merely to author TC: the candidate may execute DSTEP discovery, write DISC + TC, and use deterministic validation.
+
+For a route with fresh qualification, the stronger qualification rules still apply: the candidate cannot author its own QSET, and it cannot act as its own independent evaluator. Deterministic qualification is valid only when the QSET carries exact machine-checkable expectations.
 
 Editing a QUAL receipt after TC issuance changes its digest and invalidates takeover.
 
@@ -173,7 +190,9 @@ python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py \
   <repo-root> --candidate-id <agent-instance-id>
 ```
 
-For parallel work, live branch/worktree resolution must identify exactly one approved lane. The gate rejects wrong candidate/route, stale DISC/QUAL/TC, branch mismatch, invalid material ancestry, unqualified base drift, READ_ONLY/NONE authority, `can_continue: false`, or an active hard stop.
+For parallel work, live branch/worktree resolution must identify exactly one approved lane. The gate rejects wrong candidate/route, stale DISC/QUAL/TC, branch mismatch, invalid material ancestry, unqualified base drift, READ_ONLY/NONE **route-level** material authority, `can_continue: false`, or an active hard stop.
+
+Candidate admission and route material authority are separate dimensions. A missing candidate admission must not be represented by changing repository-wide `material_authority` to READ_ONLY; `TAKEOVER_CERTIFIED(route,candidate)` already carries that candidate-specific failure.
 
 If the base moved, a drift receipt preserves write readiness only if it validates for WRITE and its `to_base` equals the currently observed base.
 
