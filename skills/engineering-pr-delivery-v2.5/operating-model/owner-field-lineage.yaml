@@ -25,7 +25,7 @@ fields:
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["## What this work is for", "purpose=o.get"]}
       regression:
-        - {path: tests/stress/test_human_communication.py, tokens: ["owner", "purpose"]}
+        - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_projects_current_outcome_from_active_ep", "Owner can verify the bounded capability outcome."]}
 
   - id: OWNER_CURRENT_ISSUE
     human_need: "Know the verified issue identity/state correlated to the current work."
@@ -63,7 +63,7 @@ fields:
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["active execution-package progress", "Overall progress"]}
       regression:
-        - {path: tests/stress/test_human_communication.py, tokens: ["active execution-package progress", "EP progress"]}
+        - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_projects_current_issue_identity_and_ep_progress", "active execution-package progress"]}
 
   - id: OWNER_IMPLEMENTATION_DELTA
     human_need: "Know what was completed and exactly which files changed in the published work unit."
@@ -95,7 +95,7 @@ fields:
       procedural_validator:
         - {path: scripts/validate_state_planes.py, tokens: ["NOT_RUN", "cause", "reason"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: ["planes.get", "evidence"]}
+        - {path: scripts/report_projection.py, tokens: ["status_planes", "evidence"]}
       communication_projection:
         - {path: scripts/communication_projection.py, tokens: ["evidence.get", "not_run"]}
       renderer:
