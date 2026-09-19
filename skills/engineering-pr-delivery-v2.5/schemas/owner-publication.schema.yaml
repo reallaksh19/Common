@@ -1,0 +1,38 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, publication, source, baseline]
+properties:
+  schema_version: {const: relay-v2.5-owner-publication}
+  publication:
+    type: object
+    required: [id, sequence, event_class, changed_dimensions, owner_view_digest, report_projection_digest, normalized_report_digest]
+    properties:
+      id: {type: string, pattern: '^PUB-[0-9]{4,}$'}
+      sequence: {type: integer, minimum: 1}
+      event_class:
+        enum: [INITIAL_SNAPSHOT, TASK_PROGRESS, TASK_REGRESSION, IMPLEMENTATION_CHANGE, EVIDENCE_PROGRESS, DELIVERY_OR_CUSTODY_PROGRESS, CONTROL_STATE_CHANGE, WAITING_OR_MONITORING, NO_MATERIAL_PROGRESS]
+      changed_dimensions:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      owner_view_digest: {type: string, pattern: '^sha256:'}
+      report_projection_digest: {type: string, pattern: '^sha256:'}
+      normalized_report_digest: {type: string, pattern: '^sha256:'}
+  source:
+    type: object
+    required: [report_sources, roadmap_revision, progress_basis, checkpoint_id, ep_id]
+    properties:
+      report_sources: {type: object}
+      roadmap_revision: {type: [string, 'null']}
+      progress_basis: {type: [string, 'null']}
+      checkpoint_id: {type: [string, 'null']}
+      ep_id: {type: [string, 'null']}
+  baseline:
+    type: object
+    required: [digest, report]
+    properties:
+      digest: {type: string, pattern: '^sha256:'}
+      report:
+        type: object
+        required: [task, implementation, evidence, quality, delivery_or_custody, execution, stop, roadmap, next_work, issues, owner_decisions]
+additionalProperties: false
