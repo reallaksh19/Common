@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -269,7 +269,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-19-R1", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-19-R2", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
