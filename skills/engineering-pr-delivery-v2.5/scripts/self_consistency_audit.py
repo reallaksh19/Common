@@ -25,7 +25,7 @@ REQUIRED_BLUEPRINT_HEADINGS = [
 
 OBJECT_SURFACES = {
     "EP": ["templates/EP.yaml", "schemas/execution-package.schema.yaml", "scripts/validate_ep_semantics.py", "operating-model/execution-package.md"],
-    "CP": ["templates/CP.yaml", "schemas/checkpoint.schema.yaml", "scripts/validate_checkpoint_linkage.py", "operating-model/checkpoint.md"],
+    "CP": ["templates/CP.yaml", "schemas/checkpoint.schema.yaml", "scripts/validate_checkpoint.py", "scripts/validate_checkpoint_linkage.py", "operating-model/checkpoint.md"],
     "DISC": ["templates/DISCOVERY_RECEIPT.yaml", "schemas/discovery-receipt.schema.yaml", "scripts/validate_discovery_receipt.py", "scripts/validate_takeover_certification.py"],
     "QSET": ["templates/QUESTION_SET.yaml", "schemas/question-set.schema.yaml", "scripts/validate_question_set.py", "operating-model/phase-transition.md"],
     "QUAL": ["templates/QUALIFICATION_RECEIPT.yaml", "schemas/qualification-receipt.schema.yaml", "scripts/validate_qualification_receipt.py", "operating-model/phase-transition.md"],
