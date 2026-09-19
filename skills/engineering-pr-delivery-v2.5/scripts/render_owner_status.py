@@ -25,7 +25,14 @@ def render(root:Path)->str:
     lines=["# Owner status","","## What can happen now",f"{cap.get('summary')}",f"Overall progress: **{_pct(progress.get('overall_percent'))}**."]
     phase=progress.get("phase_title") or progress.get("phase");wp=progress.get("work_package_title") or progress.get("work_package")
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
-    purpose=o.get("purpose") or {};lines += ["","## What this work is for"]
+    current=o.get("current_work") or {};purpose=o.get("purpose") or {};lines += ["","## What this work is for"]
+    current_wp=current.get("work_package_title") or current.get("work_package");current_ep=current.get("ep_id")
+    if current_wp:lines.append(f"- Current work: **{current_wp}**{f' / {current_ep}' if current_ep else ''}.")
+    for issue in current.get("issues") or []:
+        number=issue.get("issue_number");state=str(issue.get("github_state") or issue.get("engineering_state") or "unknown").replace("_"," ").title();url=issue.get("url")
+        label=f"Issue #{number}" if number is not None else str(issue.get("id") or "Current issue")
+        suffix=f" — {url}" if url else ""
+        lines.append(f"- {label}: **{state}**{suffix}")
     goals=(purpose.get("user_visible") or [])+(purpose.get("engineering") or [])
     if goals:
         for goal in goals:lines.append(f"- {goal}")
@@ -57,7 +64,7 @@ def render(root:Path)->str:
         for gap in quality["procedure_gaps"]:lines.append(f"- {gap.get('procedure')}: {gap.get('reason')}")
     for limitation in quality.get("known_limitations") or []:lines.append(f"- Known limitation: {_text(limitation,['statement','description','reason'])}")
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
-    recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**."]
+    recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
     decisions=o.get("decisions") or {};required=decisions.get("required_now") or [];lines += ["","## Decisions for you"]
     if required:
