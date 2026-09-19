@@ -306,7 +306,7 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
     handover_key=digest_mapping(identity_basis)
     parent=(contract.get("issue") or {}) if contract.get("kind")=="GITHUB_ISSUE" else {}
     incremental=_incremental_delta(root,handover_key,intent)
-    concept_refs=[x for x in (current:=report.get("current_work") or {}).get("objective"),] if False else []
+    current=report.get("current_work") or {}
     concept_refs=[x for x in [current.get("objective"),current.get("phase")] if x]
     recent_events=[event_summary(x) for x in recent_for_concepts(root,concept_refs,limit=8)]
     issue_strategy={
