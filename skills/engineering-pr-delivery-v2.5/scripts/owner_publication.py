@@ -204,13 +204,19 @@ def diff_baselines(previous: dict | None, current: dict) -> dict:
             "details": _details(None, current),
         }
 
+    execution_changed = previous["execution"] != current["execution"]
+    waiting_or_monitoring = execution_changed and (
+        current["execution"].get("state") == "WAITING"
+        or not bool(current["execution"].get("can_continue"))
+    )
     dimensions = {
         "task": previous["task"] != current["task"],
         "implementation": previous["implementation"] != current["implementation"],
         "evidence": previous["evidence"] != current["evidence"],
         "quality": previous["quality"] != current["quality"],
         "delivery_or_custody": previous["delivery_or_custody"] != current["delivery_or_custody"],
-        "execution": previous["execution"] != current["execution"],
+        "execution": execution_changed,
+        "waiting_or_monitoring": waiting_or_monitoring,
         "stop": previous["stop"] != current["stop"],
         "roadmap": previous["roadmap"] != current["roadmap"],
         "next_work": previous["next_work"] != current["next_work"],
@@ -258,12 +264,10 @@ def classify_baseline(previous: dict | None, current: dict) -> dict:
             or diff["dimensions"]["owner_decisions"]
         ):
             event = "CONTROL_STATE_CHANGE"
+        elif diff["dimensions"]["waiting_or_monitoring"]:
+            event = "WAITING_OR_MONITORING"
         elif diff["dimensions"]["execution"]:
-            execution = now["execution"]
-            if execution.get("state") == "WAITING" or not bool(execution.get("can_continue")):
-                event = "WAITING_OR_MONITORING"
-            else:
-                event = "CONTROL_STATE_CHANGE"
+            event = "CONTROL_STATE_CHANGE"
         else:
             event = "NO_MATERIAL_PROGRESS"
 
