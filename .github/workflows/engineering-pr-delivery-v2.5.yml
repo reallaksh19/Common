@@ -7,6 +7,7 @@ on:
       - '.github/workflows/engineering-pr-delivery-v2.5.yml'
   push:
     branches:
+      - 'main'
       - 'agent/engineering-pr-delivery-v2.5*'
     paths:
       - 'skills/engineering-pr-delivery-v2.5/**'
