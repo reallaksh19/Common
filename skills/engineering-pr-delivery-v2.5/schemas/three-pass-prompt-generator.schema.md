@@ -131,7 +131,7 @@ Before drafting Prompt 1, build the following record.
 
 **This record is part of the required output. Always show it before the three prompts.**
 
-Its purpose is to let the user catch a wrong interpretation before running the prompts.
+Its purpose is to let the user catch a wrong target, wrong level, over-generalised problem kernel, or leaked current answer before running the prompts.
 
 Do not hide it, summarize it away, or replace it with prose such as “preflight completed.”
 
@@ -748,6 +748,19 @@ B. the current target / repository / issue / implementation / proposed solution?
 If B, remove it unless you can independently justify it as a genuine constraint.
 
 Hiding the issue number while paraphrasing its current state is **not** blindness.
+
+Likewise, replacing proper nouns with generic nouns is not enough:
+
+```text
+WRC 537        → "a published standard"
+gamma          → "a parameter"
+CAUx           → "third-party software"
+EMP.1          → "a software implementation"
+```
+
+If the narrative structure and current evidence story are preserved, the answer has merely been **laundered into generic language**.
+
+For ISSUE_TASK, preserve the PROBLEM KERNEL directly and remove the current answer instead of anonymising both.
 
 A Prompt 1 that says:
 
@@ -1540,7 +1553,6 @@ PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
 REQUEST MODE:
-TARGET SCOPE:
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 CURRENT ARTIFACT FORM:
@@ -1548,6 +1560,8 @@ CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+TARGET ANCHORS:
+PROBLEM KERNEL:
 UNDERLYING HUMAN PROBLEM:
 HUMAN OUTCOME:
 GENUINE CONSTRAINTS:
@@ -1560,6 +1574,18 @@ REALITY OBJECT:
 PROMPT 3
 COMPARISON QUESTION:
 HANDOVER DESTINATION:
+
+LOT/LEVEL BOUNDARY GATE:
+PASS — <one short reason>
+
+SPECIFICITY-FLOOR GATE:
+PASS — <one short reason>
+
+SAME-ISSUE IDENTITY GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+ANSWER-RECONSTRUCTION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 ARTIFACT-ERASURE GATE:
 PASS — <one short reason>
@@ -1613,7 +1639,7 @@ Therefore:
 
 **Prompt 1 — IMAGINE**
 
-Keep it blind. Use the human purpose, genuine constraints, domain, and imagination object.
+Keep it blind to today's answer. Use TARGET ANCHORS, PROBLEM KERNEL where applicable, human outcome, genuine constraints, domain, and imagination object.
 
 Do not include a live issue/repository link when following it would expose the current answer.
 
@@ -1726,6 +1752,16 @@ If not, fail.
 Did any important Prompt-1 noun or scenario detail come from today's target rather than the blind human problem?
 
 If yes, remove it unless independently justified.
+
+### Laundered-generalisation check
+
+Did the generator merely replace issue-specific proper nouns with generic nouns while preserving today's issue narrative?
+
+If yes, fail.
+
+The correction is:
+- restore the stable PROBLEM KERNEL;
+- remove today's options/evidence interpretation/implementation answer.
 
 ### Human-problem check
 
@@ -1843,8 +1879,6 @@ not supplied
 REQUEST MODE:
 REVIEW
 
-TARGET SCOPE:
-PRODUCT
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 
@@ -1993,8 +2027,6 @@ https://github.com/reallaksh19/Grade9V3
 REQUEST MODE:
 REVIEW
 
-TARGET SCOPE:
-REPOSITORY_SYSTEM
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 
@@ -2119,7 +2151,20 @@ https://github.com/reallaksh19/Grade9V3
 ## Frozen preflight
 
 ```text
-TARGET TITLE:
+LOT:
+single lot
+
+USER-REQUESTED LEVEL:
+ISSUE_TASK
+
+USER-REQUESTED TARGET:
+Grade9V3 Issue #19
+
+LEVEL INTERPRETATION:
+stay on the question-to-learning mapping problem owned by this issue;
+do not broaden to overall Grade9V3
+
+TARGET TITLE / SURFACE:
 Complete Physics/Math matrices and capability mappings for worksheet-driven study routing
 
 TARGET LINK:
@@ -2134,35 +2179,45 @@ https://github.com/reallaksh19/Grade9V3
 REQUEST MODE:
 CHANGE
 
-TARGET SCOPE:
-TASK_ARTIFACT
-
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 
 CURRENT ARTIFACT FORM:
 GitHub implementation/content-mapping issue
 
 CURRENT STATED ANSWER / IMPLEMENTATION:
-the issue is currently expressed through matrices, capabilities, prerequisite closure,
+the issue is expressed through matrices, capabilities, prerequisite closure,
 rungs/microtopics and a historical implementation checklist
 
 CURRENT-STATE FACTS:
-later repository work may already have satisfied or changed parts of the original issue
+later repository work may already have satisfied or changed parts of the issue
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 
+TARGET ANCHORS:
+real Physics/Mathematics worksheet questions;
+self-study learner who gets stuck;
+reusable learner ability;
+genuine prerequisite;
+where the idea is taught
+
+PROBLEM KERNEL:
+- a real worksheet question should resolve to the reusable learner action it requires;
+- supporting ideas must be distinguished from genuine prerequisites;
+- the learner must be able to reach where the needed idea is taught or repaired;
+- the mapping must generalise across questions rather than create one concept per surface context.
+
 UNDERLYING HUMAN PROBLEM:
-When a learner is stuck on a real worksheet question, the system needs to identify
-the reusable learner ability involved, the genuine prior understanding required,
-and where that understanding can be learned or repaired.
+when a learner is stuck on a real worksheet question, the system needs to identify
+what reusable ability is actually missing, what earlier understanding is genuinely required,
+and where that understanding can be learned
 
 HUMAN OUTCOME:
-real questions reliably lead a learner to the right reusable knowledge and prerequisites
-rather than to context-specific patches
+real questions reliably lead a learner to the right reusable knowledge and prerequisite repair
 
 GENUINE CONSTRAINTS:
-mappings must remain reusable across questions; prerequisites must be genuine;
-the solution should not invent one special concept for every surface context
+the mapping must remain reusable across future questions;
+prerequisites must be genuine;
+surface context must not become a capability by itself
 
 EXPERTISE:
 learning-system and curriculum-mapping expertise
@@ -2187,6 +2242,18 @@ the next agent should understand the learner problem, what is already solved,
 the real remaining gap, the reusable idea exposed by real questions,
 and what evidence would justify changing course
 
+LOT/LEVEL BOUNDARY GATE:
+PASS — the target remains Issue #19, not overall Grade9V3
+
+SPECIFICITY-FLOOR GATE:
+PASS — the prompt is specifically about worksheet-question-to-learning mapping
+
+SAME-ISSUE IDENTITY GATE:
+PASS — a Grade9V3-aware reader can distinguish this from sibling content/routing issues
+
+ANSWER-RECONSTRUCTION GATE:
+PASS — matrices, rungs, schema fields and current implementation recipe are withheld
+
 ARTIFACT-ERASURE GATE:
 PASS — Prompt 1 still works if matrices, rungs and the issue checklist disappear
 
@@ -2197,7 +2264,7 @@ PROMPT-1 OBJECT GATE:
 PASS — the answer independently defines the question-to-learning outcome
 
 PROMPT-3 FREEDOM GATE:
-PASS — Issue #19 may shrink, close, defer, change form or require a bounded implementation
+PASS — Issue #19 may shrink, close, defer, change form or require bounded implementation
 ```
 
 ## What a good generated Prompt 1 should feel like
@@ -2678,6 +2745,18 @@ recognisable as this issue
 but
 not reconstructable as today's answer
 ```
+
+That means two independent axes must both be correct:
+
+```text
+IDENTITY PRESERVATION
+keep the facts that make it this issue
+
+ANSWER INDEPENDENCE
+remove the facts that tell you how today's repository has chosen to answer it
+```
+
+Do not trade one for the other.
 
 Prompt 2 brings reality back.
 
