@@ -57,3 +57,41 @@ The technical view is intentionally allowed to retain protocol terms and object 
 `validate_human_communication.py` checks projection convergence and verifies that the Owner view cannot omit current stop/evidence/quality/scope/decision/next-work truth. Aggregate relay conformance invokes it.
 
 Repository-neutral stress tests cover shared-source derivation, hard-stop visibility, missing evidence, non-blocking quality risk, Owner-reserved versus Owner-required decisions, next-work mutation, and internal-jargon rejection in Owner-facing source text.
+
+
+## Plan for Handover
+
+`Plan for Handover` is a compound Owner command, not a substitute for normal Owner status.
+
+Sequence:
+
+```text
+publish normal Owner status
+→ resolve current owned work
+→ derive pending INTENT
+→ publish/update and verify handover issue
+→ run the live standalone three-pass generator
+→ return the copy-pasteable prompts
+```
+
+Owned-work selection is:
+
+```text
+verified current GitHub issue mapped to the work
+→ otherwise active task / EP
+→ otherwise current roadmap work package
+```
+
+This order chooses the **handover target contract**; it does not allow issue prose to override current roadmap/progress/evidence truth.
+
+The derived handover plan is coordination state. It contains the still-pending acceptance, evidence, next-work, checkpoint-remaining-work and genuinely required Owner-decision obligations; active EP input and benchmark definition paths; expected outcomes; scope/boundaries; and user-authored core requirements explicitly supplied in the current session.
+
+The planner assigns a stable handover key to the ownership boundary. Repeated commands for the same still-active work update the matching open handover issue rather than creating a duplicate. Pending INTENT is recomputed from current truth each time.
+
+Issue publication uses the existing GHGEN/GHOP transaction. Prefer a provider-native child relation when a valid parent issue exists and the integration can create and read it back; otherwise use a verified reciprocal/reference link. A body hyperlink never proves native parentage.
+
+Three-pass generation begins only after the handover issue URL has been verified by provider readback. Follow the live compatibility redirect to `skills/three-pass-prompt-generator/SKILL.md` and `schema.md`; V2.5 does not cache or reproduce that protocol.
+
+`Plan for Handover, complex project` enables the standalone generator's complex mode. The artifact still contains exactly three prompts; Prompt 1 additionally exposes natural target-specific Q1–Q5. A later plain handover command returns to non-complex mode.
+
+Repository scripts must not infer chat requirements. The executing agent passes relevant user-authored session requirements explicitly to `plan_handover.py --owner-requirement ...`. Credential/secret-like values must not be published to GitHub.
