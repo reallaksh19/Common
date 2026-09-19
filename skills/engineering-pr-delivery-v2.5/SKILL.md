@@ -2,9 +2,67 @@
 
 ## REQUEST MODE DISPATCH — FIRST ACTION
 
+### PLAN_FOR_HANDOVER — COMBINED CONTROL TRANSACTION
+
+If the Owner says:
+
+```text
+Plan for Handover
+```
+
+or:
+
+```text
+Plan for Handover, complex project
+```
+
+this is an explicit **combined engineering-delivery + prompt-generation workflow**. It is the narrow exception to the normal three-pass isolation rule below.
+
+Execute in this order:
+
+```text
+normal Owner progress publication
+→ freeze current source-derived handover basis
+→ resolve owned work: verified current GitHub issue, else active task/EP, else current roadmap WP
+→ derive all still-pending INTENT from current repository truth
+→ create or incrementally update the handover GitHub issue through the existing GHGEN/GHOP publication path
+→ verify issue identity and relationship/reference by provider readback
+→ only then enter the standalone three-pass generator using the verified handover issue as TARGET
+→ return the schema-defined copy-pasteable artifact
+```
+
+Use:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --owner-requirement "<user-authored requirement from this session>"
+```
+
+The planner is derived coordination state. Its INTENT does not replace roadmap, EP, PROGRESS, checkpoint/evidence, ISSUE_GRAPH, or ODR authority.
+
+For the same active ownership boundary, the stable handover key means a later command updates the same valid open handover issue rather than creating a duplicate. Recompute pending INTENT every time; completed work must not remain pending merely because older issue prose still lists it.
+
+The handover issue must retain durable input/benchmark locations, expected outcomes, textual constraints/boundaries, and relevant user-authored core requirements from the current session. Never publish credentials/secrets or assistant hidden reasoning.
+
+After verified handover-issue readback, rerun the planner with `--handover-issue-url <verified-url>` to produce the exact standalone-generator input.
+
+The legacy V2.5 three-pass path is a redirect only. For the generator substep fetch current `main`:
+
+```text
+skills/three-pass-prompt-generator/SKILL.md
+skills/three-pass-prompt-generator/schema.md
+```
+
+and obey the live schema revision/SHA. Do not reconstruct it from this skill.
+
+If the command includes the explicit word **complex** (for example `Plan for Handover, complex project`), set complex mode ON. The final artifact still has exactly three prompts; Prompt 1 additionally shows visible target-specific Q1–Q5 as required by the live standalone schema. Plain `Plan for Handover` does not inherit complex mode.
+
+The GitHub issue publication performed inside this compound transaction must not recursively trigger another full `Plan for Handover` transaction.
+
 ### THREE_PASS_GENERATOR
 
-If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method:
+If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method **and this is not the `Plan for Handover` combined command above**:
 
 **leave this skill immediately.**
 
