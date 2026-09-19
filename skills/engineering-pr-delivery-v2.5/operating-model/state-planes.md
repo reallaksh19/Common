@@ -11,7 +11,9 @@ can_continue: true | false
 material_authority: WRITE | READ_ONLY | NONE
 ```
 
-`can_continue` answers whether the agent can still perform useful relay work. `material_authority` answers whether it may modify engineering state. These are intentionally independent.
+`can_continue` answers whether useful relay work can still proceed. `material_authority` is the **route/repository-level** material-write posture: whether the current route is permitted to modify engineering state in principle. These are intentionally independent.
+
+`material_authority` is not candidate admission. Do not set it to `READ_ONLY` merely because a particular candidate lacks DISC/QUAL/TC. Candidate-specific permission is derived separately by `TAKEOVER_CERTIFIED(route,candidate)` and `MATERIAL_WRITE_READY(route,candidate,live_git)`.
 
 Examples:
 - `ACTIVE + can_continue:true + WRITE`: normal material execution.
