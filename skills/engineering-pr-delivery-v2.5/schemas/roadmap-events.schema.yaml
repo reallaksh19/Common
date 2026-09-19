@@ -1,0 +1,65 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, ledger_revision, events]
+properties:
+  schema_version: {const: relay-v2.5-roadmap-events}
+  ledger_revision: {type: integer, minimum: 0}
+  events:
+    type: array
+    items:
+      type: object
+      required:
+        - id
+        - sequence
+        - event_class
+        - summary
+        - concept_refs
+        - execution_refs
+        - basis
+        - concept_change
+        - roadmap_revision
+        - follow_up
+      properties:
+        id: {type: string, pattern: '^EVT-'}
+        sequence: {type: integer, minimum: 1}
+        event_class:
+          enum:
+            - TASK_PROGRESS
+            - IMPLEMENTATION_CHANGE
+            - EVIDENCE_PROGRESS
+            - DELIVERY_OR_CUSTODY_PROGRESS
+            - WAITING_OR_MONITORING
+            - ENGINEERING_DISCOVERY
+            - BLOCKER_CHANGE
+            - OWNER_DECISION
+            - ROADMAP_REVISION
+        summary: {type: string, minLength: 1}
+        concept_refs:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, minLength: 1}
+        execution_refs:
+          type: object
+          required: [work_package, execution_package, checkpoint, issue, pull_request]
+          properties:
+            work_package: {type: [string, 'null']}
+            execution_package: {type: [string, 'null']}
+            checkpoint: {type: [string, 'null']}
+            issue: {type: [integer, string, 'null']}
+            pull_request: {type: [integer, string, 'null']}
+        basis:
+          type: array
+          minItems: 1
+          items: {type: string, minLength: 1}
+        concept_change:
+          enum: [NO_CONCEPT_CHANGE, CONCEPT_CHANGE_PROPOSED, CONCEPT_CHANGE_APPLIED]
+        roadmap_revision:
+          type: object
+          required: [id, path]
+          properties:
+            id: {type: [string, 'null']}
+            path: {type: [string, 'null']}
+        follow_up:
+          enum: [NONE, NEW_EXECUTION_WORK, ROADMAP_PROPOSAL, OWNER_DECISION_REQUIRED]
+additionalProperties: false
