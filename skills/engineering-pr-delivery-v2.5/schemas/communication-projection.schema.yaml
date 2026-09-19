@@ -11,7 +11,7 @@ properties:
       report_sources: {type: object}
   owner:
     type: object
-    required: [capability, current_work, purpose, scope, evidence, quality, roadmap, decisions, next_work, stop_conditions]
+    required: [capability, current_work, purpose, scope, evidence, quality, roadmap, decisions, next_work, external_actions, stop_conditions]
     properties:
       capability:
         type: object
@@ -41,6 +41,11 @@ properties:
       next_work:
         type: object
         required: [steps]
+      external_actions:
+        type: array
+        items:
+          type: object
+          required: [id, type, actor, environment, working_directory, required_basis, unavailable_here_reason, expected_evidence, blocks, success_condition, clears, action, expected_result]
       stop_conditions: {type: array}
   technical:
     type: object
