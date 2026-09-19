@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R1"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R2"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
