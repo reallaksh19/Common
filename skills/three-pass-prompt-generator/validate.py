@@ -302,8 +302,8 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             errors.append(f"{label}: AUTHORIZED ACTIONS must be explicit; use NONE for analysis-only")
         if not intent_completion:
             errors.append(f"{label}: INTENT COMPLETION TEST must be substantive")
-        intent_gate_tail = preflight.split("INTENT-FIDELITY GATE:", 1)[1][:220] if "INTENT-FIDELITY GATE:" in preflight else ""
-        if "PASS" not in intent_gate_tail:
+        intent_gate_value = _field_value(preflight, "INTENT-FIDELITY GATE:")
+        if not intent_gate_value.startswith("PASS"):
             errors.append(f"{label}: INTENT-FIDELITY GATE must PASS")
 
         if level == "ISSUE_TASK":
