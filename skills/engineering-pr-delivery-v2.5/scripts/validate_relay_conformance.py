@@ -6,6 +6,7 @@ from relaylib import load_yaml,print_result
 from validate_repo_state import validate as repo_state
 from validate_repo_profile import validate as repo_profile
 from validate_roadmap import validate as roadmap
+from validate_roadmap_events import validate as roadmap_events
 from validate_execution_frontier import validate as frontier
 from validate_ep_self_contained import validate as ep
 from validate_ep_semantics import validate as ep_semantics
@@ -43,7 +44,7 @@ from validate_blueprints import validate as blueprints
 from validate_quality_router import validate as quality_router
 from validate_quality_review import validate as quality_review
 
-ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("frontier",frontier),("progress",progress),("report_projection",report_projection),("human_communication",human_communication),("owner_change_intake",owner_change_intake),("zero_context_reconstruction",zero_context_reconstruction),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("github_projection",github_projection),("github_generation_history",github_generation_history),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover),("quality_blueprints",blueprints),("quality_router",quality_router),("quality_review",quality_review)]
+ALWAYS=[("repo_state",repo_state),("repo_profile",repo_profile),("roadmap",roadmap),("roadmap_events",roadmap_events),("frontier",frontier),("progress",progress),("report_projection",report_projection),("human_communication",human_communication),("owner_change_intake",owner_change_intake),("zero_context_reconstruction",zero_context_reconstruction),("execution_policy",execution),("parallel_plan",parallel_plan),("parallel_join",parallel_join),("parallel_replan",parallel_replan),("roadmap_continuity",roadmap_continuity),("state_planes",state_planes),("projection",projection),("github_projection",github_projection),("github_generation_history",github_generation_history),("drift",drift),("checkpoint_linkage",checkpoint_linkage),("owner_decisions",owner_decisions),("issue_graph",issue_graph),("issue_projection_tree",issue_projection_tree),("issue_closure",issue_closure),("supersession",supersession),("roadmap_transaction",roadmap_transaction),("question_sets",question_sets),("qualifications",qualifications),("takeover",takeover),("quality_blueprints",blueprints),("quality_router",quality_router),("quality_review",quality_review)]
 ACTIVE_EP_ONLY=[("ep_self_contained",ep),("ep_semantics",ep_semantics),("ep_acceptance",acceptance),("ep_staleness",staleness),("report_contract",report_contract),("phase_questions_compat",questions)]
 
 def validate(root:Path):
