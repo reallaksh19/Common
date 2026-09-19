@@ -130,6 +130,7 @@ agents/relay/
     OVERALL_ROADMAP.yaml
     PROGRESS.yaml
     ISSUE_GRAPH.yaml
+    ROADMAP_EVENTS.yaml        # optional append-only material-event history
     revisions/**
     owner-decisions/**
   execution-packages/**
