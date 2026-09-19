@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R1"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -75,6 +76,7 @@ PROMPT1_MACHINE_SURFACE_PATTERNS = (
 )
 
 REQUIRED_BASIS_FIELDS = (
+    "PROTOCOL REVISION:",
     "GENERATOR MODE:",
     "SCHEMA SOURCE:",
     "SCHEMA REF:",
@@ -167,6 +169,14 @@ def _field_value(block: str, field: str) -> str:
     return ""
 
 
+def _handshake_block(text: str) -> str:
+    start = text.find("# SCHEMA EXECUTION HANDSHAKE")
+    basis = text.find("# SCHEMA BASIS")
+    if start < 0:
+        return ""
+    return text[start:basis if basis > start else len(text)]
+
+
 def _basis_block(text: str) -> str:
     start = text.find("# SCHEMA BASIS")
     lot = text.find("# LOT ")
@@ -187,8 +197,30 @@ def _lot_blocks(text: str) -> list[str]:
 def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str]:
     errors: list[str] = []
 
-    if not text.lstrip().startswith("# SCHEMA BASIS"):
-        errors.append("output must begin with '# SCHEMA BASIS'")
+    if not text.lstrip().startswith("# SCHEMA EXECUTION HANDSHAKE"):
+        errors.append("output must begin with '# SCHEMA EXECUTION HANDSHAKE'")
+
+    handshake = _handshake_block(text)
+    if not handshake:
+        errors.append("missing SCHEMA EXECUTION HANDSHAKE block")
+    else:
+        revision = _field_value(handshake, "PROTOCOL REVISION:")
+        handshake_mode = _field_value(handshake, "GENERATOR MODE:")
+        handshake_status = _field_value(handshake, "SCHEMA FETCH STATUS:")
+        handshake_sha = _field_value(handshake, "SCHEMA CONTENT SHA:")
+        handshake_result = _field_value(handshake, "HANDSHAKE STATUS:")
+        if revision != EXPECTED_PROTOCOL_REVISION:
+            errors.append(
+                f"PROTOCOL REVISION must be {EXPECTED_PROTOCOL_REVISION}"
+            )
+        if handshake_mode != "THREE_PASS_ONLY":
+            errors.append("handshake GENERATOR MODE must be THREE_PASS_ONLY")
+        if handshake_status != "LIVE_THIS_RUN":
+            errors.append("handshake SCHEMA FETCH STATUS must be LIVE_THIS_RUN")
+        if not HEX40.fullmatch(handshake_sha):
+            errors.append("handshake requires a 40-character lowercase hex SCHEMA CONTENT SHA")
+        if handshake_result != "PASS":
+            errors.append("HANDSHAKE STATUS must be PASS")
 
     basis = _basis_block(text)
     if not basis:
@@ -198,13 +230,22 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             if field not in basis:
                 errors.append(f"SCHEMA BASIS missing {field}")
 
+        basis_revision = _field_value(basis, "PROTOCOL REVISION:")
         status = _field_value(basis, "SCHEMA FETCH STATUS:")
         sha = _field_value(basis, "SCHEMA CONTENT SHA:")
         mode = _field_value(basis, "GENERATOR MODE:")
         compatibility = _field_value(basis, "SCHEMA COMPATIBILITY:")
 
+        if basis_revision != EXPECTED_PROTOCOL_REVISION:
+            errors.append(
+                f"SCHEMA BASIS PROTOCOL REVISION must be {EXPECTED_PROTOCOL_REVISION}"
+            )
         if mode != "THREE_PASS_ONLY":
             errors.append("GENERATOR MODE must be THREE_PASS_ONLY")
+        if handshake:
+            handshake_sha = _field_value(handshake, "SCHEMA CONTENT SHA:")
+            if sha and handshake_sha and sha != handshake_sha:
+                errors.append("handshake SHA and SCHEMA BASIS SHA must match")
         if status not in {"LIVE_THIS_RUN", "USER_SUPPLIED_TEXT"}:
             errors.append("SCHEMA FETCH STATUS must be LIVE_THIS_RUN or USER_SUPPLIED_TEXT")
         if status == "LIVE_THIS_RUN" and not HEX40.fullmatch(sha):
