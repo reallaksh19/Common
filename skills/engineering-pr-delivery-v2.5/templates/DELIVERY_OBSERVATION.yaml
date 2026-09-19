@@ -1,0 +1,28 @@
+schema_version: relay-v2.5-delivery-observation
+id: DOBS-0001
+provider: GITHUB
+repository: "<owner/repo>"
+vehicle:
+  kind: PULL_REQUEST
+  number: 1
+  url: "https://github.com/<owner>/<repo>/pull/1"
+  lifecycle: OPEN
+  head:
+    ref: "<feature-branch>"
+    sha: "<exact-head-sha>"
+  base:
+    ref: main
+    sha: null
+mergeability:
+  state: UNKNOWN
+checks:
+  state: UNKNOWN
+  head_sha: null
+  required: []
+  observations: []
+review:
+  state: UNKNOWN
+  unresolved_threads: null
+  change_requests: null
+readback_basis:
+  - "<durable provider readback reference>"
