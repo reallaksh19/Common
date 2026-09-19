@@ -47,6 +47,7 @@ OBJECT_SURFACES = {
     "HANDOVER_PLAN": ["schemas/handover-plan.schema.yaml", "scripts/handover_planning.py", "scripts/validate_handover_plan.py", "scripts/plan_handover.py", "scripts/prepare_handover_projection.py", "operating-model/human-communication.md"],
     "ROADMAP_EVENTS": ["templates/ROADMAP_EVENTS.yaml", "schemas/roadmap-events.schema.yaml", "scripts/roadmap_events.py", "scripts/validate_roadmap_events.py", "scripts/append_roadmap_event.py", "operating-model/dynamic-roadmap.md"],
     "OWNER_PUBLICATION": ["templates/OWNER_PUBLICATION.yaml", "schemas/owner-publication.schema.yaml", "scripts/owner_publication.py", "scripts/validate_owner_publication.py", "scripts/publish_owner_progress.py", "operating-model/human-communication.md"],
+    "DELIVERY_OBSERVATION": ["templates/DELIVERY_OBSERVATION.yaml", "schemas/delivery-observation.schema.yaml", "scripts/validate_delivery_observation.py", "scripts/delivery_projection.py", "blueprints/github-delivery.md"],
 }
 
 RELEASE_DOCS = {
@@ -57,7 +58,7 @@ RELEASE_DOCS = {
 
 AGGREGATE_REQUIRED_MODULES = [
     "validate_repo_state", "validate_repo_profile", "validate_roadmap", "validate_roadmap_events", "validate_execution_frontier",
-    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_publication", "validate_owner_change_intake",
+    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_publication", "validate_delivery_observation", "validate_owner_change_intake",
     "validate_zero_context_reconstruction", "validate_serial_execution", "validate_parallel_plan", "validate_parallel_join",
     "validate_parallel_replan", "validate_roadmap_continuity", "validate_state_planes", "validate_projection_convergence",
     "validate_github_projection", "validate_github_generation_history", "validate_checkpoint_linkage", "validate_owner_decision",
