@@ -20,7 +20,7 @@ scope:
     - Replace lifecycle-derived repository readiness with candidate-independent BATON_READY validation.
     - Add route-scoped DISC-* Discovery Receipts for executed DSTEP-* discovery contracts.
     - Add route/candidate-scoped TC-* Takeover Certifications with candidate, preparer and evaluator identity.
-    - Prohibit candidate self-preparation/self-certification of takeover criteria.
+    - Prohibit candidate self-evaluation/self-authorization while allowing candidate-authored TC evidence records when independently/deterministically evaluated.
     - Bind discovery/certification evidence to roadmap, material basis, semantic EP digest, REPO_PROFILE digest and predecessor-baton digest.
     - Add route-scoped takeover admissions for serial and Owner-approved parallel lane execution.
     - Keep PROJECTION_READY independent from baton/candidate readiness.
@@ -68,8 +68,10 @@ acceptance:
     basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_zero_context_candidate_can_be_independently_certified"]
   - id: AC-02-03
     status: PASS
-    statement: Candidate cannot prepare its own takeover criteria/certification.
-    basis: ["tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_candidate_cannot_prepare_its_own_certification"]
+    statement: Candidate-authored TC records are allowed, but the candidate cannot act as its own independent evaluator.
+    basis:
+      - "tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_candidate_may_assemble_own_tc_when_deterministically_evaluated"
+      - "tests/stress/test_takeover_certification.py::TakeoverCertificationStressTests.test_candidate_cannot_be_its_own_independent_tc_evaluator"
   - id: AC-02-04
     status: PASS
     statement: Discovery Receipt must cover the exact expected outputs of required DSTEP instructions.
