@@ -67,7 +67,7 @@ When the user requests complex Q1–Q5, those are the five human reasoning lense
 
 They remain inside Prompt 1.
 
-Do not create any additional question package, qualification gate, admission gate, evaluator step, route metadata, execution-package fields, or fourth stage.
+Do not create any extra workflow stage, machine metadata block, evaluator requirement, or fourth stage.
 
 If visible Q1–Q5 headings are requested, write them in natural target-specific practitioner language.
 
