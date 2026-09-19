@@ -356,3 +356,16 @@ python validate_owner_field_lineage.py \
 The declarative contract at `operating-model/owner-field-lineage.yaml` enumerates critical Owner data families and the source/schema/validator/report/communication/renderer/regression surfaces that must retain them.
 
 This validator is also executed by `self_consistency_audit.py`. It is a release-integrity check, not repository engineering authority.
+
+
+## Handover live-generator binding
+
+```bash
+python validate_handover_generator_contract.py \
+  <common>/skills/engineering-pr-delivery-v2.5 \
+  --repo-root <common>
+```
+
+This release check proves that `Plan for Handover` still follows the V2.5 compatibility redirect to the standalone current-main three-pass launcher/schema/validator, preserves `THREE_PASS_ONLY`, and that the standalone schema/validator protocol revisions agree.
+
+It deliberately does not pin V2.5 to a particular three-pass revision; the runtime agent must still fetch the canonical schema from current `main` and use its actual content SHA before generating the same-chat artifact.
