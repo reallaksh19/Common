@@ -16,17 +16,18 @@ def evaluate(root:Path,candidate_id:str,branch:str|None=None,worktree:str|None=N
     if not baton:errors.append("BATON_READY is false: "+"; ".join(baton_errors[:5]))
     try:live=inspect_git(root,branch,worktree)
     except Exception as exc:return {"status":"FAIL","material_write_ready":False,"candidate_id":candidate_id,"errors":[str(exc)]}
-    routes=current_routes(root,state);route=None
+    routes=current_routes(root,state);route=None;candidate_certified=False;cert_errors=[]
     for item in routes:
         if str(item.get("ep_id"))!=str(live.get("ep_id")):continue
         if item.get("mode")=="PARALLEL_LANE" and str(item.get("lane_id"))!=str(live.get("lane_id")):continue
         route=item;break
     if route is None:errors.append("live route does not map to a current certified execution route")
     else:
-        certified,cert_errors=is_takeover_certified(root,route,candidate_id)
-        if not certified:errors.append("TAKEOVER_CERTIFIED is false: "+"; ".join(cert_errors[:5]))
+        candidate_certified,cert_errors=is_takeover_certified(root,route,candidate_id)
+        if not candidate_certified:errors.append("candidate admission is not certified: "+"; ".join(cert_errors[:5]))
     execution=((state.get("status_planes") or {}).get("execution") or {});stop=((state.get("status_planes") or {}).get("stop") or {})
-    if execution.get("material_authority")!="WRITE":errors.append("material_authority is not WRITE")
+    route_material_authority=execution.get("material_authority")
+    if route_material_authority!="WRITE":errors.append("route-level material_authority is not WRITE; candidate admission does not control this field")
     if execution.get("can_continue") is not True:errors.append("execution.can_continue is not true")
     if stop.get("active") is True:errors.append(f"hard stop is active: {stop.get('category')}")
     if live.get("status")=="NEEDS_DRIFT_RECEIPT" and route is not None:
@@ -40,7 +41,7 @@ def evaluate(root:Path,candidate_id:str,branch:str|None=None,worktree:str|None=N
                 receipt=load_yaml(path)
                 if str(receipt.get("to_base"))!=str(live.get("current_base_ref")):errors.append("drift receipt to_base does not match currently observed base ref")
     elif live.get("status")!="PASS":errors.append(f"live Git context is not write-ready: {live.get('status')}")
-    return {"status":"PASS" if not errors else "FAIL","material_write_ready":not errors,"candidate_id":candidate_id,"route_key":route_key(route) if route else None,"git":live,"errors":errors}
+    return {"status":"PASS" if not errors else "FAIL","material_write_ready":not errors,"candidate_id":candidate_id,"candidate_certified":candidate_certified,"route_material_authority":execution.get("material_authority"),"route_key":route_key(route) if route else None,"git":live,"errors":errors}
 
 
 def main():
