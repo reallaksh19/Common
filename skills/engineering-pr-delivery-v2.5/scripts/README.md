@@ -216,3 +216,23 @@ python reconcile_github_projection.py <observation.yaml> <repo-root> --apply
 `prepare_handover_projection.py` converts the derived plan into a CREATE or PUBLISH_HANDOVER GHOP. It reuses an existing open handover ISSUE_GRAPH node with the same stable handover key, otherwise proposes a new HANDOVER coordination node. It refuses to prepare over active unreconciled projection work and never claims native parentage before provider readback. The planner/preparer never directly calls GitHub. Use existing GHGEN/GHOP operations for publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
 
 Complex handover mode changes only the generator request: exactly three prompts remain, with visible Q1–Q5 inside Prompt 1 according to the freshly fetched standalone schema.
+
+
+## Dynamic roadmap event ledger
+
+The roadmap event ledger is optional/backward-compatible but, once present, is aggregate-conformance checked.
+
+```bash
+python validate_roadmap_events.py <repo-root>
+
+# Dry run
+python append_roadmap_event.py <event.yaml> <repo-root>
+
+# Append after validation
+python append_roadmap_event.py <event.yaml> <repo-root> --apply
+
+# Human projection: concept roadmap -> execution -> recent events
+python render_roadmap.py <repo-root>
+```
+
+`ROADMAP_EVENTS.yaml` is a source-bound historical index. Objective/phase ids are concept refs; work package / EP / checkpoint / issue / PR belong in execution refs. Events may record or propose concept impact but cannot apply concept-roadmap changes without the governing roadmap revision.
