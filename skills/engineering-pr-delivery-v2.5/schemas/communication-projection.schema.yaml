@@ -35,8 +35,9 @@ properties:
         required: [summary, can_continue, material_authority, active_stop]
       current_work:
         type: object
-        required: [objective, phase, work_package, ep_id, overall_percent, phase_percent, work_package_percent, ep_percent, issues, outcome]
+        required: [objective, phase, work_package, ep_id, progress_basis, overall_percent, phase_percent, work_package_percent, ep_percent, issues, outcome]
         properties:
+          progress_basis: {type: object}
           issues: {type: array}
           outcome: {type: object}
       purpose: {type: object}
