@@ -72,10 +72,14 @@ class HandoverPlanningStressTests(unittest.TestCase):
 
     def test_inputs_and_benchmarks_have_durable_full_definition_paths(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);good(root)
+            root=Path(td);_,_,_,state=good(root)
+            state["repository"]["remote"]="owner/repo"
+            dump(root/"agents/relay/REPO_STATE.yaml",state)
             plan=build_handover_plan(root)
             self.assertEqual("agents/relay/execution-packages/EP-1.yaml#inputs/INPUT-1",plan["inputs"][0]["definition_path"])
             self.assertEqual("agents/relay/execution-packages/EP-1.yaml#benchmarks/BENCH-1",plan["benchmarks"][0]["definition_path"])
+            self.assertEqual("https://github.com/owner/repo/blob/abc/agents/relay/execution-packages/EP-1.yaml",plan["inputs"][0]["definition_url"])
+            self.assertEqual("https://github.com/owner/repo/blob/abc/agents/relay/execution-packages/EP-1.yaml",plan["benchmarks"][0]["definition_url"])
 
     def test_same_ownership_boundary_has_stable_handover_key_for_incremental_update(self):
         with tempfile.TemporaryDirectory() as td:
