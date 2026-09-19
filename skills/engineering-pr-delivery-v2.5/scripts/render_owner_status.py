@@ -20,11 +20,33 @@ def _scope_line(item):
     return f"{subject} — {reason}" if reason else str(subject)
 
 
-def render(root:Path)->str:
-    c=build(root);o=c["owner"];cap=o["capability"];progress=(o.get("roadmap") or {}).get("progress") or {};roadmap=(o.get("roadmap") or {}).get("summary") or {}
+def render_projection(c:dict)->str:
+    o=c["owner"];cap=o["capability"];progress=(o.get("roadmap") or {}).get("progress") or {};roadmap=(o.get("roadmap") or {}).get("summary") or {}
     lines=["# Owner status","","## What can happen now",f"{cap.get('summary')}",f"Overall progress: **{_pct(progress.get('overall_percent'))}**."]
     phase=progress.get("phase_title") or progress.get("phase");wp=progress.get("work_package_title") or progress.get("work_package")
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
+    change=o.get("change") or {};details=change.get("details") or {};event=str(change.get("event_class") or "UNKNOWN").replace("_"," ").title()
+    lines += ["","## What changed",f"Publication event: **{event}**."]
+    if change.get("event_class")=="INITIAL_SNAPSHOT":
+        lines.append("- Initial Owner publication baseline established from current repository truth.")
+    elif change.get("event_class")=="NO_MATERIAL_PROGRESS":
+        lines.append("- No material engineering, evidence, delivery/custody, roadmap, blocker, decision, issue, or next-work state changed since the last Owner publication.")
+    else:
+        dims=", ".join(str(x).replace("_"," ") for x in (change.get("changed_dimensions") or []))
+        lines.append(f"- Changed dimensions: {dims or 'none'}.")
+        if "task" not in (change.get("changed_dimensions") or []):lines.append("- Acceptance/progress did not move.")
+        if "implementation" not in (change.get("changed_dimensions") or []):lines.append("- No newly recorded implementation/file change occurred in this publication delta.")
+    for row in details.get("acceptance_transitions") or []:
+        lines.append(f"- Acceptance {row.get('id')}: {row.get('from_status') or 'absent'} ({_pct(row.get('from_percent'))}) → {row.get('to_status') or 'absent'} ({_pct(row.get('to_percent'))}).")
+    if details.get("completed_steps"):lines.append(f"- Completed steps recorded now: {', '.join(str(x) for x in details.get('completed_steps') or [])}.")
+    if details.get("files_changed"):lines.append(f"- Files changed in the current checkpoint result: {', '.join(str(x) for x in details.get('files_changed') or [])}.")
+    ev_change=details.get("evidence_state") or {}
+    if ev_change.get("from")!=ev_change.get("to"):lines.append(f"- Evidence state: {ev_change.get('from') or 'none'} → {ev_change.get('to') or 'none'}.")
+    rm_change=details.get("roadmap_revision") or {}
+    if rm_change.get("from")!=rm_change.get("to"):lines.append(f"- Roadmap revision: {rm_change.get('from') or 'none'} → {rm_change.get('to') or 'none'}.")
+    if details.get("issue_change"):lines.append("- Current issue/coordination identity or state changed.")
+    if details.get("stop_change"):lines.append("- Active stop/blocker state changed.")
+    if details.get("next_work_change"):lines.append("- Exact next-work contract changed.")
     current=o.get("current_work") or {};purpose=o.get("purpose") or {};lines += ["","## What this work is for"]
     current_wp=current.get("work_package_title") or current.get("work_package");current_ep=current.get("ep_id")
     if current_wp:lines.append(f"- Current work: **{current_wp}**{f' / {current_ep}' if current_ep else ''}.")
@@ -98,6 +120,10 @@ def render(root:Path)->str:
         for condition in stop_conditions:lines.append(f"- {condition}")
     elif not active_stop:lines.append("- No additional current stop condition is recorded beyond the active work contract.")
     return "\n".join(lines)+"\n"
+
+
+def render(root:Path)->str:
+    return render_projection(build(root))
 
 
 def main():
