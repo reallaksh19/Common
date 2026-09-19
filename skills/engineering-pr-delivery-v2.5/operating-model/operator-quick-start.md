@@ -44,9 +44,9 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/resolve_execution_ro
 
 If the route is ambiguous or the checkout does not belong to an approved lane, do not perform material writes.
 
-## 4. Independently qualify the incoming candidate
+## 4. Establish candidate admission
 
-The outgoing baton can be `BATON_READY` before the candidate exists. The incoming candidate must then produce current repository-only evidence:
+The baton can be `BATON_READY` before the execution candidate exists. A new successor or a continuing custodian must then produce current repository-grounded evidence:
 
 ```text
 DSTEP-* contract
@@ -68,7 +68,9 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_qualificati
 python <common>/skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
 ```
 
-Only run qualification validators when the route actually requires the corresponding objects. Candidate self-certification is invalid.
+Only run qualification validators when the route actually requires the corresponding objects.
+
+The candidate may assemble its own DISC and TC files. That is evidence authorship, not certification authority. For a non-qualification route, a third agent is **not** required solely to author TC: use the deterministic TC validator. If fresh qualification is required, the candidate still may not author its own QSET or act as its own independent evaluator.
 
 ## 5. Gate every material write on live state
 
@@ -80,6 +82,16 @@ python <common>/skills/engineering-pr-delivery-v2.5/scripts/material_write_ready
 ```
 
 `MATERIAL_WRITE_READY` is runtime-derived. A persisted `material_authority: WRITE` or ACTIVE lifecycle is not enough.
+
+Keep the two authorization layers separate:
+
+```text
+route-level material_authority   → repository/route may write in principle
+candidate admission              → this candidate has current DISC/QUAL/TC
+MATERIAL_WRITE_READY             → both above + live Git/drift/stop checks
+```
+
+Do not set route-level `material_authority` to READ_ONLY merely because candidate admission is not yet complete.
 
 If base state moved, follow the drift contract. `DISJOINT` may preserve writes; qualified-boundary movement needs required confirmation; `OVERLAPPING | UNKNOWN` withhold write authority until reconciliation.
 
