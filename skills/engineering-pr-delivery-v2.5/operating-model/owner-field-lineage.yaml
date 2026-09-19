@@ -1,0 +1,275 @@
+schema_version: relay-v2.5-owner-field-lineage
+required_stages:
+  - source_contract
+  - declarative_schema
+  - procedural_validator
+  - report_projection
+  - communication_projection
+  - renderer
+  - regression
+fields:
+  - id: OWNER_CURRENT_OUTCOME
+    human_need: "Know what current engineering outcome this work is trying to produce."
+    authority: "Active EP outcome under roadmap/current-position authority."
+    stages:
+      source_contract:
+        - {path: templates/EP.yaml, tokens: ["outcome:", "user_visible:", "engineering:"]}
+      declarative_schema:
+        - {path: schemas/execution-package.schema.yaml, tokens: ["outcome", "roadmap_source"]}
+      procedural_validator:
+        - {path: scripts/validate_ep_semantics.py, tokens: ["outcome"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: ["_active_contract", ""outcome""]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""purpose":contract.get("outcome")", ""outcome":current_work.get("outcome")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## What this work is for", "purpose=o.get("purpose")"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["owner", "purpose"]}
+
+  - id: OWNER_CURRENT_ISSUE
+    human_need: "Know the verified issue identity/state correlated to the current work."
+    authority: "ISSUE_GRAPH engineering/provider coordination truth."
+    stages:
+      source_contract:
+        - {path: templates/ISSUE_GRAPH.yaml, tokens: ["github_state", "issue_number", "roadmap_node"]}
+      declarative_schema:
+        - {path: schemas/issue-graph.schema.yaml, tokens: ["github_state", "github"]}
+      procedural_validator:
+        - {path: scripts/validate_issue_graph.py, tokens: ["github_state", "roadmap_node"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: ["_current_issues", ""issues""]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""issues":current_work.get("issues")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Issue #", "current.get("issues")"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_projects_current_issue_identity_and_ep_progress", "Issue #410"]}
+
+  - id: OWNER_ACCEPTANCE_PROGRESS
+    human_need: "See acceptance-derived overall/phase/WP/EP progress without confidence inflation."
+    authority: "PROGRESS.yaml."
+    stages:
+      source_contract:
+        - {path: templates/PROGRESS.yaml, tokens: ["overall:", "execution_packages:", "acceptance_criteria:"]}
+      declarative_schema:
+        - {path: schemas/progress.schema.yaml, tokens: ["execution_packages", "acceptance_criteria", "percent"]}
+      procedural_validator:
+        - {path: scripts/validate_progress.py, tokens: ["PROGRESS.execution_packages", "acceptance_criteria", "mirror"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: ["progress_projection", ""progress""]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["_current_titles", ""acceptance":report.get("acceptance")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["active execution-package progress", "Overall progress"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["active execution-package progress", "EP progress"]}
+
+  - id: OWNER_IMPLEMENTATION_DELTA
+    human_need: "Know what was completed and exactly which files changed in the published work unit."
+    authority: "Checkpoint implementation result on exact material basis."
+    stages:
+      source_contract:
+        - {path: templates/CP.yaml, tokens: ["contract_version: 2", "implementation_result:", "summary:", "completed_steps:", "files_changed:"]}
+      declarative_schema:
+        - {path: schemas/checkpoint.schema.yaml, tokens: ["contract_version", "implementation_result", "completed_steps", "files_changed"]}
+      procedural_validator:
+        - {path: scripts/validate_checkpoint.py, tokens: ["CP v2 implementation_result.summary", "completed_steps", "files_changed"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""implementation_result":cp.get("implementation_result")"]}
+      communication_projection:
+        - {path: scripts/owner_publication.py, tokens: ["_implementation_state", ""files_changed"", ""completed_steps""]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Completed steps recorded now", "Files changed in the current checkpoint result"]}
+      regression:
+        - {path: tests/stress/test_checkpoint_v2.py, tokens: ["test_v2_checkpoint_files_and_completed_steps_reach_owner_publication", "src/example.py"]}
+
+  - id: OWNER_EVIDENCE_NOT_RUN
+    human_need: "See missing/not-run evidence distinctly from failure or completion."
+    authority: "REPO_STATE evidence plane + checkpoint exact-basis validation results."
+    stages:
+      source_contract:
+        - {path: templates/REPO_STATE.yaml, tokens: ["evidence:", "not_run:"]}
+      declarative_schema:
+        - {path: schemas/repo-state.schema.yaml, tokens: ["evidence", "not_run"]}
+      procedural_validator:
+        - {path: scripts/validate_state_planes.py, tokens: ["NOT_RUN", "cause", "reason"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""evidence":planes.get("evidence")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""not_run":evidence.get("not_run")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Evidence state", "not_run"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["NOT_RUN", "evidence"]}
+
+  - id: OWNER_KNOWN_LIMITATIONS
+    human_need: "See limitations that remain true after the latest checkpoint."
+    authority: "Checkpoint v2 known_limitations plus quality state."
+    stages:
+      source_contract:
+        - {path: templates/CP.yaml, tokens: ["known_limitations:"]}
+      declarative_schema:
+        - {path: schemas/checkpoint.schema.yaml, tokens: ["known_limitations"]}
+      procedural_validator:
+        - {path: scripts/validate_checkpoint.py, tokens: ["known_limitations"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""known_limitations":cp.get("known_limitations")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""known_limitations":checkpoint.get("known_limitations")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["known_limitations"]}
+      regression:
+        - {path: tests/stress/test_checkpoint_v2.py, tokens: ["known_limitations"]}
+
+  - id: OWNER_ROADMAP_RECONCILIATION
+    human_need: "Know whether this work changed roadmap status, proposed structure, or needs an Owner decision."
+    authority: "Checkpoint roadmap reconciliation + roadmap/ODR authority."
+    stages:
+      source_contract:
+        - {path: templates/CP.yaml, tokens: ["roadmap_reconciliation:", "status_updates:", "proposals:", "owner_decisions_required:"]}
+      declarative_schema:
+        - {path: schemas/checkpoint.schema.yaml, tokens: ["roadmap_reconciliation", "owner_decisions_required"]}
+      procedural_validator:
+        - {path: scripts/validate_checkpoint.py, tokens: ["RECONCILIATION_RESULTS", "roadmap_reconciliation"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""roadmap_reconciliation":cp.get("roadmap_reconciliation")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""last_reconciliation":checkpoint.get("roadmap_reconciliation")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Last checkpoint roadmap reconciliation", "Roadmap revision"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["roadmap", "reconciliation"]}
+
+  - id: OWNER_EXTERNAL_ACTION
+    human_need: "Know exactly what must run elsewhere, where, why not here, what evidence it produces, and what it clears."
+    authority: "EP next_work execution_requirement."
+    stages:
+      source_contract:
+        - {path: templates/EP.yaml, tokens: ["execution_requirement: null"]}
+      declarative_schema:
+        - {path: schemas/execution-package.schema.yaml, tokens: ["execution_requirement", "unavailable_here_reason", "success_condition", "clears"]}
+      procedural_validator:
+        - {path: scripts/validate_ep_semantics.py, tokens: ["execution_requirement", "requires command or executable instruction"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""next_work":(ep.get("next_work")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["external_actions", "execution_requirement"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## Action required outside this environment", "Why it cannot run here", "Success clears"]}
+      regression:
+        - {path: tests/stress/test_human_communication.py, tokens: ["test_external_local_gate_is_actionable_in_owner_view", "verify-admission"]}
+
+  - id: OWNER_NEXT_WORK
+    human_need: "Know the exact authorized next action and expected result."
+    authority: "EP next_work."
+    stages:
+      source_contract:
+        - {path: templates/EP.yaml, tokens: ["next_work:", "action:", "expected_result:"]}
+      declarative_schema:
+        - {path: schemas/execution-package.schema.yaml, tokens: ["next_work", "expected_result"]}
+      procedural_validator:
+        - {path: scripts/validate_ep_semantics.py, tokens: ["next_work.steps", "expected_result"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: [""next_work":(ep.get("next_work")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["_exact_next_work", ""next_work":{"steps":next_steps}"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## What happens next", "expected_result"]}
+      regression:
+        - {path: tests/stress/test_progress_handover.py, tokens: ["test_handover_renders_objective_phase_wp_step_acceptance_and_next_work", "Implement the bounded synthetic result"]}
+
+  - id: OWNER_PUBLICATION_DELTA
+    human_need: "Know what changed since the last meaningful Owner publication, including explicit no-material-progress."
+    authority: "Current report truth compared with derived OWNER_PUBLICATION baseline."
+    stages:
+      source_contract:
+        - {path: templates/OWNER_PUBLICATION.yaml, tokens: ["publication:", "baseline:", "event_class:"]}
+      declarative_schema:
+        - {path: schemas/owner-publication.schema.yaml, tokens: ["event_class", "normalized_report_digest", "baseline"]}
+      procedural_validator:
+        - {path: scripts/validate_owner_publication.py, tokens: ["baseline.digest", "normalized_report_digest"]}
+      report_projection:
+        - {path: scripts/owner_publication.py, tokens: ["normalize_report", "classify_baseline", "NO_MATERIAL_PROGRESS"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["publication_status", ""change":change"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## What changed", "No material engineering"]}
+      regression:
+        - {path: tests/stress/test_progress_publication.py, tokens: ["test_first_publish_records_initial_snapshot_then_unchanged_state_is_no_progress", "TASK_PROGRESS"]}
+
+  - id: OWNER_DELIVERY_VECTOR
+    human_need: "Keep PR lifecycle, exact-head checks, mergeability, review readiness, technical readiness and authorization independent."
+    authority: "Provider delivery observation + derived readiness + exact-head Owner ODR authorization."
+    stages:
+      source_contract:
+        - {path: templates/DELIVERY_OBSERVATION.yaml, tokens: ["vehicle:", "mergeability:", "checks:", "review:"]}
+      declarative_schema:
+        - {path: schemas/delivery-observation.schema.yaml, tokens: ["mergeability", "checks", "review"]}
+      procedural_validator:
+        - {path: scripts/validate_delivery_observation.py, tokens: ["STALE", "must bind to current PR head"]}
+      report_projection:
+        - {path: scripts/delivery_projection.py, tokens: ["technical_ready_to_merge", "merge_authorization", "ready_for_review"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## Delivery", "technically ready to merge", "merge authorization"]}
+      regression:
+        - {path: tests/stress/test_delivery_readiness.py, tokens: ["test_technical_ready_does_not_imply_merge_authorized", "test_stale_checks_are_explicit"]}
+
+  - id: OWNER_UNMERGED_PR_CARRY_FORWARD
+    human_need: "Never lose a still-unmerged PR from subsequent Owner summaries."
+    authority: "Tracked provider DOBS observations under REPO_STATE.delivery.observations."
+    stages:
+      source_contract:
+        - {path: templates/REPO_STATE.yaml, tokens: ["observations: []", "carried"]}
+      declarative_schema:
+        - {path: schemas/repo-state.schema.yaml, tokens: ["observations:", "DOBS-"]}
+      procedural_validator:
+        - {path: scripts/validate_pr_correlation.py, tokens: ["nonterminal_observations", "carried-forward non-terminal PR"]}
+      report_projection:
+        - {path: scripts/delivery_projection.py, tokens: ["unmerged_prs", "_carry_forward"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Unmerged PRs carried forward", "correlations"]}
+      regression:
+        - {path: tests/stress/test_pr_correlation.py, tokens: ["test_two_open_prs_are_both_carried_forward_in_every_owner_summary", "test_merged_pr_stays_in_evidence_but_leaves_unmerged_carry_forward"]}
+
+  - id: OWNER_PR_ISSUE_EP_CORRELATION
+    human_need: "Know that each active PR is meaningfully correlated to real Issue and EP ownership."
+    authority: "Provider-read PR description evidence reconciled against ISSUE_GRAPH + EP roadmap source."
+    stages:
+      source_contract:
+        - {path: templates/DELIVERY_OBSERVATION.yaml, tokens: ["description_contract:", "relay-pr-correlation:v1", "correlations:"]}
+      declarative_schema:
+        - {path: schemas/delivery-observation.schema.yaml, tokens: ["description_contract", "issue_node", "ep_id", "work_package"]}
+      procedural_validator:
+        - {path: scripts/validate_pr_correlation.py, tokens: ["validate_correlation_rows", "task-close checkpoint EP"]}
+      report_projection:
+        - {path: scripts/delivery_projection.py, tokens: ["correlations_for_observation", ""correlations""]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Issue #", " ↔ ", "relationship"]}
+      regression:
+        - {path: tests/stress/test_pr_correlation.py, tokens: ["test_meaningful_correlation_requires_issue_and_ep_same_work_package", "test_task_close_checkpoint_ep_must_be_verified"]}
+
+  - id: OWNER_DECISION_REQUIREMENT
+    human_need: "Know when an Owner decision is genuinely required and what authorization exists."
+    authority: "ODR + execution stop/roadmap reconciliation."
+    stages:
+      source_contract:
+        - {path: templates/ODR.yaml, tokens: ["decision:", "delivery_authorization:"]}
+      declarative_schema:
+        - {path: schemas/owner-decision.schema.yaml, tokens: ["delivery_authorization", "AUTHORIZATION"]}
+      procedural_validator:
+        - {path: scripts/validate_owner_decision.py, tokens: ["delivery_authorization", "must not grant material write authority"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: ["_owner_decisions", ""delivery_authorization":odr.get("delivery_authorization")"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["_required_owner_decisions", ""decisions""]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["## Decisions for you", "merge authorization"]}
+      regression:
+        - {path: tests/stress/test_delivery_readiness.py, tokens: ["test_applied_owner_authorization_is_exact_pr_head_bound"]}
