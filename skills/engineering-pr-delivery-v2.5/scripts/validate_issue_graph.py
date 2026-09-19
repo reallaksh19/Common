@@ -27,6 +27,18 @@ def validate(root:Path):
         if gh_state=="UNKNOWN" and number is None and gid is None:e.append(f"issue node {k} github_state UNKNOWN requires a prior GitHub locator to reconcile")
         rn=n.get("roadmap_node")
         if rn and rn not in wps:e.append(f"issue node {k} references missing roadmap work package {rn}")
+        if n.get("role")=="HANDOVER":
+            handover_key=str(n.get("handover_key") or "")
+            if not handover_key.startswith("sha256:"):e.append(f"handover issue node {k} requires stable sha256 handover_key")
+            if rn:e.append(f"handover issue node {k} must not claim roadmap_node engineering ownership")
+            source_contract=n.get("source_contract")
+            if not isinstance(source_contract,dict):e.append(f"handover issue node {k} requires source_contract")
+            snapshot=n.get("published_handover_snapshot")
+            if snapshot is not None:
+                if not isinstance(snapshot,dict):e.append(f"handover issue node {k} published_handover_snapshot must be mapping")
+                else:
+                    if not str(snapshot.get("source_report_digest") or "").startswith("sha256:"):e.append(f"handover issue node {k} snapshot requires source_report_digest")
+                    if not isinstance(snapshot.get("intent"),list):e.append(f"handover issue node {k} snapshot.intent must be list")
     for rel in g.get("relationships",[]) or []:
         a,b,kind=str(rel.get("from","")),str(rel.get("to","")),rel.get("relation")
         if kind not in REL:e.append(f"invalid issue relation {kind}")
