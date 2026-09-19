@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from relaylib import load_yaml
+from pr_correlation import correlations_for_observation,load_observations,NONTERMINAL_LIFECYCLE
 
 
 def _authorization(owner_decisions:list[dict],repository:str|None,number:int|None,head_sha:str|None)->dict:
@@ -62,6 +63,42 @@ def _technical(report:dict,obs:dict)->dict:
     return {"state":"YES","reasons":[]}
 
 
+
+def _one(root:Path,report:dict,obs:dict,path:str|None=None)->dict:
+    vehicle=obs.get("vehicle") or {};lifecycle=vehicle.get("lifecycle")
+    if lifecycle=="OPEN":ready={"state":"YES","reason":"The pull request is open and not draft."}
+    elif lifecycle=="DRAFT":ready={"state":"NO","reason":"The pull request is still draft."}
+    elif lifecycle=="UNKNOWN":ready={"state":"UNKNOWN","reason":"The pull request lifecycle is unknown."}
+    else:ready={"state":"NO","reason":f"The pull request lifecycle is {lifecycle}."}
+    authorization=_authorization(report.get("owner_decisions") or [],obs.get("repository"),vehicle.get("number"),(vehicle.get("head") or {}).get("sha"))
+    return {
+        "provider":obs.get("provider"),
+        "repository":obs.get("repository"),
+        "observation_id":obs.get("id"),
+        "observation_path":path,
+        "vehicle":vehicle,
+        "mergeability":obs.get("mergeability") or {"state":"UNKNOWN"},
+        "checks":obs.get("checks") or {"state":"UNKNOWN"},
+        "review":obs.get("review") or {"state":"UNKNOWN"},
+        "description_contract":obs.get("description_contract") or {},
+        "correlations":correlations_for_observation(obs),
+        "readback_basis":obs.get("readback_basis") or [],
+        "ready_for_review":ready,
+        "technical_ready_to_merge":_technical(report,obs),
+        "merge_authorization":authorization,
+    }
+
+
+def _carry_forward(root:Path,state:dict,report:dict)->list[dict]:
+    rows=[]
+    for item in load_observations(root,state):
+        obs=item["observation"];lifecycle=(obs.get("vehicle") or {}).get("lifecycle")
+        if lifecycle not in NONTERMINAL_LIFECYCLE:continue
+        row=_one(root,report,obs,item.get("path"))
+        rows.append(row)
+    rows.sort(key=lambda x:(str(x.get("repository")),int((x.get("vehicle") or {}).get("number") or 0)))
+    return rows
+
 def snapshot(root:Path,report:dict)->dict:
     state=load_yaml(root/"agents/relay/REPO_STATE.yaml");delivery=state.get("delivery")
     if not delivery or delivery.get("required") is False:
@@ -79,25 +116,8 @@ def snapshot(root:Path,report:dict)->dict:
             "ready_for_review":{"state":"UNKNOWN","reason":"A current provider delivery observation is missing."},
             "technical_ready_to_merge":{"state":"UNKNOWN","reasons":["current provider delivery observation is missing"]},
             "merge_authorization":{"state":"UNKNOWN","basis":[],"reason":"Current PR identity/head is unavailable."},
+            "unmerged_prs":_carry_forward(root,state,report),
         }
-    obs=load_yaml(root/str(path));vehicle=obs.get("vehicle") or {};lifecycle=vehicle.get("lifecycle")
-    if lifecycle=="OPEN":ready={"state":"YES","reason":"The pull request is open and not draft."}
-    elif lifecycle=="DRAFT":ready={"state":"NO","reason":"The pull request is still draft."}
-    elif lifecycle=="UNKNOWN":ready={"state":"UNKNOWN","reason":"The pull request lifecycle is unknown."}
-    else:ready={"state":"NO","reason":f"The pull request lifecycle is {lifecycle}."}
-    authorization=_authorization(report.get("owner_decisions") or [],obs.get("repository"),vehicle.get("number"),(vehicle.get("head") or {}).get("sha"))
-    return {
-        "applicability":"APPLICABLE",
-        "provider":obs.get("provider"),
-        "repository":obs.get("repository"),
-        "observation_id":obs.get("id"),
-        "observation_path":str(path),
-        "vehicle":vehicle,
-        "mergeability":obs.get("mergeability") or {"state":"UNKNOWN"},
-        "checks":obs.get("checks") or {"state":"UNKNOWN"},
-        "review":obs.get("review") or {"state":"UNKNOWN"},
-        "readback_basis":obs.get("readback_basis") or [],
-        "ready_for_review":ready,
-        "technical_ready_to_merge":_technical(report,obs),
-        "merge_authorization":authorization,
-    }
+    obs=load_yaml(root/str(path))
+    primary=_one(root,report,obs,str(path))
+    return {"applicability":"APPLICABLE",**primary,"unmerged_prs":_carry_forward(root,state,report)}
