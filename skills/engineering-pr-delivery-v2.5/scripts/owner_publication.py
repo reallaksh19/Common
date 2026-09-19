@@ -95,6 +95,7 @@ def normalize_report(report: dict) -> dict:
             "projection": _mapping(report.get("projection")),
             "relay_readiness": _mapping(report.get("relay_readiness")),
             "takeover_admissions": _list(report.get("takeover_admissions")),
+            "delivery": _mapping(report.get("delivery")),
         },
         "execution": _mapping(report.get("execution")),
         "stop": _mapping(report.get("stop")),
