@@ -16,15 +16,16 @@ Do not solve the target yourself. Your output is the three prompts.
 
 The method is the same throughout, but the generator must freeze a **preflight record** before it is allowed to draft Prompt 1.
 
-The preflight separates seven things that ordinary agents often collapse:
+The preflight separates eight things that ordinary agents often collapse:
 
 1. **Target identity** — the exact thing being discussed.
-2. **Request mode** — what the user wants done now.
-3. **Target purpose** — why the target itself exists.
-4. **Target scope** — product, repository/system, or task/artifact.
-5. **Expertise** — what kind of expert should reason about it.
-6. **Imagination object / reality object** — what Prompt 1 may imagine and what Prompt 2 must inspect.
-7. **Final output contract** — what Prompt 3 must ultimately produce.
+2. **Target native deliverable** — what kind of thing this target itself is meant to leave behind.
+3. **Request mode** — what the user wants done now.
+4. **Target purpose** — why this particular target exists.
+5. **Target scope** — product, repository/system, or task/artifact.
+6. **Expertise** — what kind of expert should reason about it.
+7. **Imagination object / reality object** — what Prompt 1 may imagine and what Prompt 2 must inspect.
+8. **Final output contract** — what Prompt 3 must ultimately produce.
 
 A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. **Expertise is not the object of reasoning.** A finite-element expert may be reasoning about a coordination register rather than designing a finite-element product.
 
@@ -105,9 +106,13 @@ If current facts matter and the future agent can inspect a live repository, issu
 
 # MANDATORY PREFLIGHT — DO NOT GENERATE PROMPTS YET
 
-Before drafting Prompt 1, build the following record internally.
+Before drafting Prompt 1, build the following record.
 
-Do not output this record to the user unless explicitly asked. But do not skip it.
+**This record is part of the required output. Always show it before the three prompts.**
+
+Its purpose is not decoration. It lets the user catch a wrong target interpretation before spending time running the prompts.
+
+Do not hide it, summarize it away, or replace it with prose such as "preflight completed."
 
 ## A. Resolve the exact target
 
@@ -140,7 +145,56 @@ REPOSITORY / SYSTEM LINK:
 
 If the target cannot be inspected and its purpose is not otherwise supplied clearly, **fail closed**: do not invent the target purpose from surrounding context.
 
-## B. Freeze the request mode
+## B. Freeze the target native deliverable
+
+Complete:
+
+> **“When this target succeeds, the thing it leaves behind is ______.”**
+
+Name the artifact or outcome form native to the target itself.
+
+Examples:
+
+```text
+product idea
+→ working product / product direction
+
+repository-wide review
+→ revalidated system/programme direction
+
+implementation issue
+→ bounded implementation/content change
+
+qualification issue
+→ qualification evidence / governed acceptance closure
+
+investigation issue
+→ supported finding / bounded conclusion
+
+decision issue
+→ decision-ready evidence and alternatives
+
+coordination register
+→ current live register
+
+architecture / closure umbrella
+→ revalidated architecture + qualification/closure roadmap
+
+handover task
+→ successor-ready understanding
+```
+
+Do not infer this from REQUEST MODE alone.
+
+```text
+COORDINATE ≠ always REGISTER
+REVIEW ≠ always ROADMAP
+CHANGE ≠ always CODE
+```
+
+The target's own mission/body should tell you what kind of thing it is meant to leave behind.
+
+## C. Freeze the request mode
 
 Choose the single mode that best describes what the user wants done **now**:
 
@@ -175,7 +229,7 @@ Examples:
 → COORDINATE
 ```
 
-## C. Freeze the target purpose
+## D. Freeze the target purpose
 
 Complete exactly:
 
@@ -183,7 +237,35 @@ Complete exactly:
 
 Describe the target itself, not a larger neighbouring product.
 
-## D. Freeze the target scope
+### Purpose proximity test
+
+Ask:
+
+> **Could this TARGET PURPOSE sentence be pasted unchanged onto the parent repository, programme, or several sibling issues and still sound equally correct?**
+
+If yes, the purpose is probably too broad.
+
+Rewrite it closer to **this target's native deliverable**.
+
+Examples:
+
+```text
+Too broad:
+"so an engineer can trust shell-analysis results"
+
+Closer for an architecture/closure umbrella:
+"so the still-valid shell-analysis work is organized into dependency-ordered
+qualification boundaries from geometry through exact-head release"
+
+Too broad:
+"so learners can study Grade 9"
+
+Closer for a question-mapping issue:
+"so a real worksheet question can be traced to the reusable learner ability,
+genuine prerequisites, and teaching location it requires"
+```
+
+## E. Freeze the target scope
 
 Choose exactly one:
 
@@ -195,7 +277,7 @@ TASK_ARTIFACT
 
 Scope answers **how much surrounding system belongs inside the target**.
 
-## E. Freeze the expertise
+## F. Freeze the expertise
 
 Complete:
 
@@ -223,7 +305,7 @@ This is valid.
 
 Do not automatically turn a domain expert into a product-design prompt for that domain.
 
-## F. Freeze the three prompt objects
+## G. Freeze the three prompt objects
 
 Complete all three sentences:
 
@@ -240,7 +322,7 @@ FINAL OUTPUT CONTRACT:
 
 These three lines are construction constraints, not suggestions.
 
-## G. Build the complete preflight record
+## H. Build the complete preflight record
 
 The record must now contain:
 
@@ -250,6 +332,7 @@ TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
+TARGET NATIVE DELIVERABLE:
 REQUEST MODE:
 TARGET PURPOSE:
 TARGET SCOPE:
@@ -274,6 +357,7 @@ The blank must match the frozen **IMAGINATION OBJECT**.
 
 Then compare that perfect answer with:
 
+- TARGET NATIVE DELIVERABLE;
 - REQUEST MODE;
 - TARGET PURPOSE;
 - TARGET SCOPE.
@@ -292,7 +376,7 @@ Before emitting Prompt 3, finish:
 
 > **“If Prompt 3 were answered perfectly, its final deliverable would be ______.”**
 
-The answer must match the frozen **FINAL OUTPUT CONTRACT**.
+The answer must match the frozen **FINAL OUTPUT CONTRACT** **and remain the same kind of thing as the TARGET NATIVE DELIVERABLE**.
 
 Examples:
 
@@ -327,7 +411,7 @@ If Prompt 3 would instead produce a neighbouring product redesign, an unrequeste
 
 # STEP 0A — APPLY THE FROZEN TARGET PURPOSE
 
-The mandatory preflight has already resolved the target identity and request mode.
+The mandatory preflight has already resolved the target identity, native deliverable, and request mode.
 
 Now use the frozen **TARGET PURPOSE** before choosing or applying the target scope.
 
@@ -1129,84 +1213,159 @@ Technical language is fine where the domain genuinely requires it, but the reaso
 
 ---
 
-# HANDOVER REQUIREMENT
+# HANDOVER REQUIREMENT — HAND OVER THE REASONING, NOT THE ACTIVITY LOG
 
-Prompt 3 must end with a handover section.
+Prompt 3 must end with a **reasoning handover**.
 
-The next agent should learn:
+The original purpose of this method is continuity of judgement. The next agent should be able to understand **why this is the right next move**, not merely recover file names, commits, branches, or a task list.
 
-- what we were trying to achieve;
-- what was already good;
-- what reality taught us;
-- why the chosen work matters;
-- what was deliberately left alone;
-- what real evidence supported the decision;
-- what remains unresolved;
-- what should make the next agent change course.
+Use this shape, adapted naturally to the target:
 
-Use this principle:
+```text
+DESTINATION
+What were we ultimately trying to make possible?
+Use the human/reference picture, not the implementation vocabulary.
 
-> Do not merely hand over what you changed.
+REALITY
+What did we learn the current system/task actually is today?
+What surprised us or changed the meaning of the original plan?
 
-> Hand over what you understood.
+REAL GAP
+After comparing destination and reality, what meaningful distance genuinely remains?
+State the gap in today's language.
+
+CHOSEN MOVE
+What is the smallest worthwhile response now, and why this rather than something larger?
+
+DELIBERATELY NOT DONE
+What tempting work are we intentionally leaving alone, and why?
+Include work already solved, unsupported by evidence, outside authority, or unnecessary.
+
+REAL EVIDENCE / EXAMPLE
+What concrete example, user journey, question, model, failure, benchmark, or observation
+most strongly supports the conclusion?
+
+UNRESOLVED
+What remains uncertain, owner-gated, evidence-limited, or intentionally deferred?
+
+WHERE THE NEXT AGENT SHOULD START
+What should the next agent look at first, and what understanding should they carry with them?
+
+WHAT SHOULD CHANGE OUR MIND
+What future evidence or discovery would justify taking a different direction?
+```
+
+For repositories and engineering tasks, operational details such as branch, commit, PR topology, or exact next command may be added **after** this reasoning relay when genuinely useful.
+
+They must not replace it.
+
+The governing principle is:
+
+> **Do not hand over what you did. Hand over what you understood.**
+
+A good handover should let a fresh agent reconstruct the journey:
+
+```text
+destination
+→ current reality
+→ meaningful remaining distance
+→ smallest justified move
+→ evidence
+→ uncertainty
+→ next judgement
+```
+
+This is the same reasoning continuity used by the successful product-level and task-level applications of the method.
 
 ---
 
 # STRICT OUTPUT CONTRACT FOR THE GENERATOR
 
-Before answering me, silently check your work against the quality checks below.
+The generator output has **four visible sections**:
 
-Then output **exactly three major copy-pasteable blocks** and no analysis of the target.
+1. one **PREFLIGHT RECORD**;
+2. exactly three **copy-pasteable prompt blocks**.
 
-Use these headings exactly:
+The preflight is metadata, **not a fourth prompt**.
+
+Output this structure and nothing else:
+
+```markdown
+## PREFLIGHT RECORD
 
 ```text
-# PROMPT 1 — IMAGINE
+TARGET TITLE:
+TARGET LINK:
+PARENT REPOSITORY / SYSTEM:
+REPOSITORY / SYSTEM LINK:
 
-# PROMPT 2 — UNDERSTAND
+TARGET NATIVE DELIVERABLE:
+REQUEST MODE:
+TARGET PURPOSE:
+TARGET SCOPE:
+EXPERTISE:
 
-# PROMPT 3 — REVALIDATE AND MOVE FORWARD
+IMAGINATION OBJECT:
+REALITY OBJECT:
+FINAL OUTPUT CONTRACT:
+
+PROMPT-1 OBJECT GATE:
+PASS — <one short reason>
+
+PROMPT-3 OUTPUT GATE:
+PASS — <one short reason>
 ```
 
-Each block must:
+## PROMPT 1 — IMAGINE
 
-- stand on its own;
-- clearly identify the frozen target at the level appropriate to that pass;
-- preserve the same target purpose;
-- be about its frozen prompt object;
-- be ready to paste directly into another agent;
-- contain enough context for its own purpose;
-- preserve the independence barrier;
-- use human language;
-- be adapted to the selected target scope.
+```text
+<complete Prompt 1 text only>
+```
 
-Do not add a fourth prompt.
+## PROMPT 2 — UNDERSTAND
 
-Do not solve the target.
+```text
+<complete Prompt 2 text only>
+```
 
-Do not output your private classification work.
+## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Do not add a roadmap outside Prompt 3.
+```text
+<complete Prompt 3 text only>
+```
+```
 
-Do not add explanatory prose before or after the three blocks.
+### Copy-pasteability rules
 
-### Link and identity rule by pass
+Each of the three prompt fences must be directly pasteable into another agent **without editing**.
+
+Therefore:
+
+- no commentary before or after a prompt inside its fence;
+- no phrases such as "here is Prompt 1";
+- no analysis notes mixed into the prompt;
+- no "two notes on how I applied the schema" after the prompts;
+- no nested fenced code blocks inside a prompt fence;
+- if a prompt needs a diagram, table, template, or mini-structure, express it as plain indented text inside the outer fence;
+- no placeholders that the user must manually replace when the information is already known;
+- Prompt 2 and Prompt 3 must contain the actual target/repository links when available;
+- Prompt 3 must contain the actual identity capsule, not instructions saying to add one later.
+
+### Pass-specific identity rule
 
 **Prompt 1 — IMAGINE**
 
-Preserve the target identity in neutral human terms, but do **not** require a live issue/repository link when following it would expose the current answer and contaminate the blind pass.
+Keep it blind. Use the human purpose, genuine constraints, domain, and imagination object.
 
-For a task/issue, it is often better to identify the human purpose without giving the future agent a clickable path to implementation history.
+Do not include a live issue/repository link when following it would expose the current answer.
 
 **Prompt 2 — UNDERSTAND**
 
-Include the canonical target link and repository/system link when available. This is the pass where live inspection begins.
+Include the exact target and repository/system links when available.
 
 **Prompt 3 — REVALIDATE AND MOVE FORWARD**
 
-Include the canonical target link and repository/system link when available. This pass must be self-identifying even in a fresh conversation.
-
-For Prompt 3 specifically, the identity capsule is mandatory and should be explicit:
+Include this identity capsule with real resolved values:
 
 ```text
 TARGET:
@@ -1227,15 +1386,53 @@ PURPOSE:
 
 Omit only fields that genuinely do not exist.
 
+### No extra output
+
+Do not add:
+
+- a fourth prompt;
+- explanatory prose before the preflight;
+- commentary between prompt blocks;
+- implementation notes after Prompt 3;
+- a second summary of how you applied the schema.
+
+The visible preflight plus the three prompt fences are the complete deliverable.
+
 ---
 
 # SILENT QUALITY CHECKS BEFORE OUTPUT
 
 Do not show these checks. Use them internally.
 
+### Visible-preflight check
+
+Is the complete PREFLIGHT RECORD visible in the final generator output?
+
+If it is hidden, summarized as "completed", or omitted, fail.
+
+### Copy-pasteability check
+
+Are Prompt 1, Prompt 2, and Prompt 3 each enclosed in their own clean outer text fence and directly pasteable without editing?
+
+If there is commentary mixed into a prompt, unresolved known placeholders, nested fences, or notes after Prompt 3, fail.
+
+### Native-deliverable check
+
+Does TARGET NATIVE DELIVERABLE describe the kind of thing this target itself is supposed to leave behind?
+
+Does FINAL OUTPUT CONTRACT preserve that artifact form rather than mechanically mapping REQUEST MODE to a generic deliverable?
+
+If not, fail.
+
+### Purpose-proximity check
+
+Could TARGET PURPOSE be pasted unchanged onto the parent system or several sibling issues?
+
+If yes, it is probably too broad. Rewrite it closer to this target.
+
 ### Preflight-completeness check
 
-Are REQUEST MODE, TARGET PURPOSE, TARGET SCOPE, EXPERTISE, IMAGINATION OBJECT, REALITY OBJECT, and FINAL OUTPUT CONTRACT all resolved?
+Are TARGET NATIVE DELIVERABLE, REQUEST MODE, TARGET PURPOSE, TARGET SCOPE, EXPERTISE, IMAGINATION OBJECT, REALITY OBJECT, and FINAL OUTPUT CONTRACT all resolved?
 
 If not, do not generate prompts.
 
@@ -1333,9 +1530,15 @@ Does Prompt 3 produce the right kind of outcome for the target role?
 
 If a coordination target ends in a product redesign, or an investigation ends in unrequested implementation, revise it.
 
-### Handover check
+### Handover-reasoning check
 
-Will a replacement agent understand the reasoning, not only the files changed?
+Does Prompt 3 hand over the reasoning journey:
+
+destination → reality → real gap → chosen move → deliberately not done → real evidence/example → unresolved → where next → what changes our mind?
+
+If the handover is mainly branch/commit/PR topology or a task checklist, fail.
+
+Operational details may supplement the reasoning relay, never replace it.
 
 If any check fails, revise the three prompts before output.
 
@@ -1368,6 +1571,9 @@ Built and maintained by one developer with AI-agent help.
 ## Frozen preflight
 
 ```text
+TARGET NATIVE DELIVERABLE:
+working browser PDF product / product direction
+
 REQUEST MODE:
 TARGET TITLE:
 Static browser-based PDF editor
@@ -1476,6 +1682,9 @@ Machine checks must not be mistaken for proof that material actually teaches.
 ## Frozen preflight
 
 ```text
+TARGET NATIVE DELIVERABLE:
+revalidated Grade-9 system/programme direction
+
 REQUEST MODE:
 TARGET TITLE:
 Grade9V3 repository
@@ -1575,6 +1784,9 @@ https://github.com/reallaksh19/Grade9V3
 ## Frozen preflight
 
 ```text
+TARGET NATIVE DELIVERABLE:
+bounded worksheet-to-learning content/mapping change
+
 REQUEST MODE:
 TARGET TITLE:
 Complete Physics/Math matrices and capability mappings for worksheet-driven study routing
@@ -1681,6 +1893,9 @@ owner-gated decisions, known baseline failures, and the exact work that can safe
 ## Frozen preflight
 
 ```text
+TARGET NATIVE DELIVERABLE:
+live engineering coordination register
+
 REQUEST MODE:
 TARGET TITLE:
 [LAFEA REGISTER] Pending activity — merge queue, open work, and the decisions that gate it
@@ -1802,12 +2017,13 @@ This is the canonical example of why **request mode + target purpose must be fro
 
 Before considering a future schema revision safe, mentally run these four controls:
 
-| Case | Request mode | Scope | Imagination object | Final output contract | Expected |
-| --- | --- | --- | --- | --- | --- |
-| Static browser PDF editor | REVIEW | PRODUCT | excellent browser PDF editor | product gap analysis + phased roadmap | PASS |
-| Overall Grade9V3 | REVIEW | REPOSITORY_SYSTEM | excellent Grade-9 self-study system | current meaning of Grade 9 + programme | PASS |
-| Grade9V3 Issue #19 | CHANGE | TASK_ARTIFACT | excellent question-to-learning mapping | rewritten current task + smallest durable change | PASS |
-| Advanced_Analysis Issue #1855 | COORDINATE | TASK_ARTIFACT | excellent live engineering register | reconciled register + executable frontier | PASS |
+| Case | Native deliverable | Request mode | Scope | Imagination object | Final output contract | Expected |
+| --- | --- | --- | --- | --- | --- | --- |
+| Static browser PDF editor | working product / product direction | REVIEW | PRODUCT | excellent browser PDF editor | product gap analysis + phased roadmap | PASS |
+| Overall Grade9V3 | revalidated system/programme direction | REVIEW | REPOSITORY_SYSTEM | excellent Grade-9 self-study system | current meaning of Grade 9 + programme | PASS |
+| Grade9V3 Issue #19 | bounded content/mapping change | CHANGE | TASK_ARTIFACT | excellent question-to-learning mapping | rewritten current task + smallest durable change | PASS |
+| Advanced_Analysis Issue #1855 | live coordination register | COORDINATE | TASK_ARTIFACT | excellent live engineering register | reconciled register + executable frontier | PASS |
+| Advanced_Analysis Issue #1756 | architecture + qualification/closure umbrella | REVIEW/COORDINATE | REPOSITORY_SYSTEM | excellent methodical shell qualification programme | revalidated qualification/closure roadmap | PASS |
 
 The fourth case is the negative control for scope drift:
 
@@ -1845,6 +2061,34 @@ Neighbouring-problem risk: critical — finite-element expertise must not broade
 
 ---
 
+# OUTPUT REGRESSION REQUIREMENTS
+
+Every case study and every generated result must also pass these non-reasoning checks:
+
+```text
+VISIBLE PREFLIGHT RECORD
+must be present
+
+PROMPT 1
+one clean copy-pasteable text block
+
+PROMPT 2
+one clean copy-pasteable text block
+
+PROMPT 3
+one clean copy-pasteable text block
+
+NO EXTRA NOTES
+after Prompt 3
+
+HANDOVER
+must transmit understanding, not merely operations
+```
+
+A result with excellent reasoning but missing the visible preflight, broken copy-pasteability, or an activity-log handover is a schema failure.
+
+---
+
 # FINAL PRINCIPLE
 
 The generator should make a future agent think in this order:
@@ -1871,6 +2115,8 @@ What must the next person understand?
 
 The method is constant.
 
+The **target native deliverable** preserves what kind of thing the target itself is meant to leave behind.
+
 The **request mode** determines what operation the user wants now.
 
 The **target purpose** determines why the target itself exists.
@@ -1884,3 +2130,5 @@ The **imagination object** prevents Prompt 1 from drifting.
 The **reality object** keeps Prompt 2 bounded.
 
 The **final output contract** prevents Prompt 3 from turning into the wrong kind of deliverable.
+
+The **reasoning handover** preserves the journey from destination to reality to meaningful remaining distance, so the next agent inherits understanding rather than an activity log.
