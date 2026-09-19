@@ -61,9 +61,29 @@ fields:
       communication_projection:
         - {path: scripts/communication_projection.py, tokens: ["_current_titles", "report.get", "acceptance"]}
       renderer:
-        - {path: scripts/render_owner_status.py, tokens: ["active execution-package progress", "Overall progress"]}
+        - {path: scripts/render_owner_status.py, tokens: ["active execution-package progress", "Overall progress", "basis:"]}
       regression:
-        - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_projects_current_issue_identity_and_ep_progress", "active execution-package progress"]}
+        - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_shows_each_acceptance_status_percent_and_basis", "synthetic-progress"]}
+
+  - id: OWNER_PROGRESS_BASIS
+    human_need: "See the current progress basis and any basis change even when percentages do not move."
+    authority: "PROGRESS.progress_basis with REPO_STATE mirror reconciliation."
+    stages:
+      source_contract:
+        - {path: templates/PROGRESS.yaml, tokens: ["progress_basis:", "roadmap_revision:"]}
+      declarative_schema:
+        - {path: schemas/progress.schema.yaml, tokens: ["progress_basis", "roadmap_revision"]}
+      procedural_validator:
+        - {path: scripts/validate_progress.py, tokens: ["progress_basis", "basis_revision"]}
+      report_projection:
+        - {path: scripts/progress_projection.py, tokens: ["progress_basis"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["progress_basis"]}
+        - {path: scripts/owner_publication.py, tokens: ["progress_basis", "CONTROL_STATE_CHANGE"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Progress basis:", "roadmap basis:"]}
+      regression:
+        - {path: tests/stress/test_progress_publication.py, tokens: ["test_progress_basis_change_is_visible_without_percentage_drift", "PB-2"]}
 
   - id: OWNER_IMPLEMENTATION_DELTA
     human_need: "Know what was completed and exactly which files changed in the published work unit."
