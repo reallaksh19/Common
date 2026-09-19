@@ -229,9 +229,11 @@ Prompt 1 =
 ISSUE TASK CONTRACT
 + PROBLEM KERNEL
 + TARGET ANCHORS
++ PROBLEM WITNESS when available
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
 - CURRENT ANSWER QUARANTINE
+- WITNESS INTERPRETATION QUARANTINE
 ```
 
 A current artifact being a register, matrix, roadmap, checklist, or decision package does not make that artifact type the Prompt-1 imagination object.
@@ -239,6 +241,10 @@ A current artifact being a register, matrix, roadmap, checklist, or decision pac
 Prompt 1 must also be **method-invisible**. The future agent should receive the human/domain situation directly. Do not narrate the generator mechanics with phrases such as "later pass", "fixed independent reference", "do not inspect the repository", or "you will be held to this picture". The outer bootstrap/schema controls blindness; Prompt 1 should feel like a real practitioner problem.
 
 For `ISSUE_TASK`, the ISSUE TASK CONTRACT is mandatory: why the issue exists now, its stated starting scenario, responsible actor/job, exact owned question, non-goals/ownership boundary, and why it differs from parent/sibling issues. Do not abstract those away merely because they came from the target issue.
+
+For `ISSUE_TASK`, actively search the target for a **PROBLEM WITNESS**: benchmark case, hand-calculation case, drawing, failing input, trace, dataset, screenshot/journey, dependency case, or other concrete example that materially exposes the owned question. When one exists, Prompt 1 should normally make the future agent independently work/reproduce that witness before returning to the issue-level judgement. Keep the witness payload and reported result-as-claim; quarantine today's interpretation/recommendation. If a real witness exists, do not replace it with invented plausible values or abstract consultancy questions.
+
+A selected witness must have an **INDEPENDENT WORK PRODUCT** such as a hand calculation, derivation, comparison table, trace, reconstructed journey, dependency map, or falsifier set.
 
 When the user invokes `complex` three-pass mode, Q1–Q5 means the schema's **human Prompt-1 reasoning lenses only**. Do not create a formal relay `QSET-*`, qualification/admission gate, route/EP/digest metadata, `TO_BE_BOUND` placeholders, or evaluator requirement. Formal QSET/QUAL belongs to relay takeover certification, not three-pass prompt generation.
 
