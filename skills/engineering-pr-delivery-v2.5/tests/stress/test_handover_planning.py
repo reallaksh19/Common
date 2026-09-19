@@ -11,6 +11,7 @@ sys.path.insert(0,str(HERE.parents[1]))
 
 from test_core import good,dump
 from validate_handover_plan import validate as handover_check
+from validate_handover_generator_contract import validate as handover_generator_check
 from prepare_handover_projection import prepare as prepare_handover_projection
 from begin_github_operation import begin as begin_github_operation
 from reconcile_github_projection import reconcile as reconcile_github_projection
@@ -24,6 +25,11 @@ from handover_planning import (
 
 
 class HandoverPlanningStressTests(unittest.TestCase):
+
+    def test_handover_uses_live_standalone_three_pass_contract(self):
+        errors,_=handover_generator_check(HERE.parents[2],HERE.parents[4])
+        self.assertEqual([],errors)
+
     def test_verified_current_issue_wins_over_task_and_roadmap(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);good(root)
