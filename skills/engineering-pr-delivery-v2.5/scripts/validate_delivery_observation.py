@@ -97,10 +97,23 @@ def validate(root:Path):
     oid=ptr.get("id");opath=ptr.get("path")
     if not str(oid or "").startswith("DOBS-"):e.append("required delivery observation.id must use DOBS-* namespace")
     if not str(opath or "").strip():e.append("required delivery observation.path must be explicit")
-    elif not (root/str(opath)).exists():e.append(f"delivery observation path missing: {opath}")
-    else:
-        ce,cw=validate_file(root/str(opath),(state.get("repository") or {}).get("remote"),oid)
-        e.extend(ce);w.extend(cw)
+    pointers=[]
+    if opath:pointers.append({"id":oid,"path":opath})
+    for item in delivery.get("observations",[]) or []:
+        if not isinstance(item,dict) or not item.get("path"):continue
+        if not any(str(x.get("path"))==str(item.get("path")) for x in pointers):pointers.append(item)
+    seen_pr=set()
+    for item in pointers:
+        p=item.get("path");did=item.get("id")
+        if not (root/str(p)).exists():
+            e.append(f"delivery observation path missing: {p}")
+            continue
+        ce,cw=validate_file(root/str(p),(state.get("repository") or {}).get("remote"),did)
+        e.extend(f"{p}: {x}" for x in ce);w.extend(f"{p}: {x}" for x in cw)
+        try:obs=load_yaml(root/str(p));vehicle=obs.get("vehicle") or {};identity=(obs.get("repository"),vehicle.get("number"))
+        except Exception:continue
+        if identity in seen_pr:e.append(f"duplicate tracked delivery PR identity: {identity}")
+        seen_pr.add(identity)
     return e,w
 
 
