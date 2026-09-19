@@ -281,7 +281,7 @@ For `ISSUE_TASK`, actively search the target for a **PROBLEM WITNESS**: benchmar
 
 A selected witness must have an **INDEPENDENT WORK PRODUCT** such as a hand calculation, derivation, comparison table, trace, reconstructed journey, dependency map, or falsifier set.
 
-When the user invokes `complex` three-pass mode, Q1–Q5 means the schema's **human Prompt-1 reasoning lenses only**. Do not create a formal relay `QSET-*`, qualification/admission gate, route/EP/digest metadata, `TO_BE_BOUND` placeholders, or evaluator requirement. Formal QSET/QUAL belongs to relay takeover certification, not three-pass prompt generation.
+When the user invokes `complex` three-pass mode, Q1–Q5 means the schema's **human Prompt-1 reasoning lenses only**. If Q1–Q5 labels are shown, they must be short, natural, target-specific practitioner questions/tasks. Never surface taxonomy labels such as `PRODUCTION_PATH`, `ENGINEERING_PROBLEM`, `BOUNDARIES_INVARIANTS`, `VERIFICATION`, or `FIRST_SAFE_SLICE`, and never emit protocol metadata such as `required_output_keys`, `payload.source`, or `evidence_required`. Do not create a formal relay `QSET-*`, qualification/admission gate, route/EP/digest metadata, `TO_BE_BOUND` placeholders, or evaluator requirement. Formal QSET/QUAL belongs to relay takeover certification, not three-pass prompt generation.
 
 This bootstrap requirement sits **outside** the schema by design: a stale copy of the schema cannot be trusted to tell an agent to fetch a newer copy of itself.
 
