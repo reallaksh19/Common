@@ -586,17 +586,17 @@ Example — tab-level engineering surface:
 
 ```text
 Allowed anchors:
-EMP.1 / WRC 537 tab
-practising pressure-equipment engineer
-real vessel / attachment geometry and loads
-need a defensible local-stress assessment
+named engineering assessment surface
+practising engineer
+real geometry / loads / source inputs
+need a defensible engineering result
 must understand applicability and refusal
 must distinguish numerical evidence from engineering authority
 
 Not blind-pass anchors:
-today's gamma=5 implementation limit
+today's implementation limit
 current hidden disclosures
-current radii dead end
+current UI dead end
 specific issue numbers
 current CI outage
 ```
@@ -862,29 +862,28 @@ Do not include:
 Too generic:
 
 ```text
-How should a responsible organisation decide whether to extend a standard beyond its tabulated range?
+How should a responsible organisation decide whether to extend a governed method beyond its directly supported range?
 ```
 
 Still contaminated:
 
 ```text
-Should we choose Option 1, Option 2 or Option 3 given CAUx agreement and the current conservatism study?
+Should we choose among today's proposed options because the current benchmark looks favourable?
 ```
 
 Correct corridor:
 
 ```text
 PROBLEM KERNEL:
-- EMP.1 is a WRC 537 local-attachment assessment capability.
-- The professionally usable route is tied to a tabulated gamma condition.
-- Real vessel geometries commonly require non-tabulated gamma values.
-- WRC 537 does not itself provide the missing non-tabulated-gamma rule.
-- Extending professional-use authority therefore requires an explicit engineering basis;
-  numerical plausibility alone cannot silently create source/method authority.
+- a named professional method governs a real engineering job;
+- the directly supported domain does not cover an important real case;
+- the governing source does not supply the missing extension rule;
+- professional-use authority therefore needs an explicit engineering basis;
+- numerical plausibility or external agreement cannot silently create source/method authority.
 ```
 
-This is specific enough to identify the issue, but it does not reveal today's option list,
-benchmark conclusion, chosen interpolation coordinate, sample statistics, or recommendation.
+This is specific enough to identify the issue class without revealing today's option list,
+benchmark interpretation, implementation choice, sample statistics, or recommendation.
 
 For ISSUE_TASK, construct Prompt 1 mechanically from:
 
@@ -1360,10 +1359,10 @@ If yes, Prompt 1 is contaminated.
 Examples of quarantined leakage:
 
 ```text
-Option 1 / Option 2 / Option 3
-LINEAR_GAMMA vs LOG_GAMMA
-current CAUx percentage
-current n=57 study
+today's option set
+today's chosen numerical rule
+current benchmark percentage
+current study/sample conclusion
 current exact PR order
 current blocker/decision inventory
 current matrix/rung names
@@ -1437,10 +1436,10 @@ Passing labels must be short, natural, target-specific practitioner language.
 Examples:
 
 ```text
-Q1 — Work out what is happening in this vessel case
-Q2 — Do the calculation yourself
+Q1 — Work out what is happening in this real case
+Q2 — Do the calculation or reconstruction yourself
 Q3 — Change the case and see what breaks
-Q4 — Check your result against CAUx
+Q4 — Check your result against the independent comparator
 Q5 — Given what you learned, what is worth doing next?
 ```
 
@@ -1452,19 +1451,15 @@ If the user did not ask to see Q1–Q5 labels, prefer natural prose and do not s
 
 Read Prompt 1 as though you were the future agent receiving it with no knowledge of this schema.
 
-Fail if Prompt 1 contains process/meta language about the prompting method, including:
+Fail if Prompt 1 contains process/meta language about:
 
-```text
-Prompt 1 / Prompt 2 / Prompt 3
-later pass / next pass / third pass
-fixed reference / independent reference / baseline for later
-do not inspect / do not open the repository / issue tracker
-you will be held to this picture
-the current answer comes later
-schema / preflight / gate / quarantine
-```
+- pass sequencing;
+- later comparison mechanics;
+- repository or issue-access restrictions;
+- schema/preflight/gate/quarantine terminology;
+- preserving an answer for a future stage.
 
-Also fail if the opening spends more time explaining how to think than describing the person, job, domain situation, and stakes.
+Also fail if the opening spends more time explaining how to think than describing the person, job, domain situation, real object/case, and stakes.
 
 A passing Prompt 1 should begin inside the human/domain problem, not outside it.
 
@@ -1525,16 +1520,9 @@ For issue-level work, deleting all target-derived facts is a failure: it erases 
 
 Hiding the issue number while paraphrasing its current state is **not** blindness.
 
-Likewise, replacing proper nouns with generic nouns is not enough:
+Likewise, replacing target-specific proper nouns with generic nouns is not enough.
 
-```text
-WRC 537        → "a published standard"
-gamma          → "a parameter"
-CAUx           → "third-party software"
-EMP.1          → "a software implementation"
-```
-
-If the narrative structure and current evidence story are preserved, the answer has merely been **laundered into generic language**.
+If the narrative structure and current evidence story are preserved while only names are anonymised, the answer has merely been **laundered into generic language**.
 
 For ISSUE_TASK, preserve the PROBLEM KERNEL directly and remove the current answer instead of anonymising both.
 
@@ -1844,16 +1832,14 @@ Instead ask about the actual unresolved problem:
 
 ```text
 better:
-"You are responsible for EMP.1, a WRC 537 local-attachment assessment capability.
-Its professionally usable method basis is tied to tabulated gamma conditions,
-while real vessel geometry often lies between those conditions and the source
-itself does not provide the missing rule. An engineer now brings you a real case
-between those tabulated conditions and wants an answer they can sign. What would
-have to be true before an engineering organisation could responsibly let the
-product serve that case?"
+"You are responsible for a professional engineering capability whose governing method
+directly supports some cases but not the real case now in front of you. The source does
+not provide the missing extension rule. Work the case far enough to show exactly where
+the governed method ends, what additional assumption would be needed to continue, and
+what evidence would be required before an organisation could responsibly rely on that extension."
 ```
 
-That is issue-specific without revealing today's options or evidence conclusion.
+That is issue-specific in structure without revealing today's options or evidence conclusion.
 
 Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
 
@@ -3109,10 +3095,10 @@ For example, for a quantitative engineering benchmark issue:
 
 ```text
 Good:
-Q1 — From this vessel geometry, where does the governing method take you?
-Q2 — Can you reproduce the eight-point result yourself?
-Q3 — What changes when gamma moves away from the source-defined condition?
-Q4 — Why does the external benchmark agree, and what does that actually prove?
+Q1 — From these real inputs, where does the governing method take you?
+Q2 — Can you reproduce the reported result yourself?
+Q3 — What changes when the case moves outside the directly supported condition?
+Q4 — Why does the independent comparison agree, and what does that actually prove?
 Q5 — Given what you learned, what is actually worth doing next?
 
 Bad:
