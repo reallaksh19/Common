@@ -13,7 +13,27 @@ SPEC.loader.exec_module(MOD)
 
 SHA = "a" * 40
 
-GOOD = f"""# SCHEMA BASIS
+GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
+
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
+GENERATOR MODE:
+THREE_PASS_ONLY
+
+SCHEMA FETCH STATUS:
+LIVE_THIS_RUN
+
+SCHEMA CONTENT SHA:
+{SHA}
+
+HANDSHAKE STATUS:
+PASS
+
+# SCHEMA BASIS
+
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -242,6 +262,22 @@ class ThreePassPromptOutputTests(unittest.TestCase):
             any("machine/taxonomy surface language" in e for e in errors),
             errors,
         )
+
+    def test_missing_handshake_is_rejected(self):
+        bad = GOOD[GOOD.index("# SCHEMA BASIS"):]
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
+
+    def test_wrong_protocol_revision_is_rejected(self):
+        bad = GOOD.replace("TPG-3P-2026-09-19-R1", "TPG-STALE-REVISION", 1)
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
+
+    def test_handshake_basis_sha_mismatch_is_rejected(self):
+        other = "0" * 40
+        bad = GOOD.replace(f"SCHEMA CONTENT SHA:\n{SHA}", f"SCHEMA CONTENT SHA:\n{other}", 1)
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
 if __name__ == "__main__":
     unittest.main()
