@@ -712,6 +712,9 @@ PASS — <one short reason>
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
 
+HUMAN-IMMERSION GATE:
+PASS — <one short reason>
+
 COMPLEX Q1–Q5 COVERAGE:
 PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
@@ -927,6 +930,30 @@ The generator's job is to stay inside that band.
 
 ---
 
+# HARD GATE 0.97 — HUMAN-IMMERSION GATE
+
+Read Prompt 1 as though you were the future agent receiving it with no knowledge of this schema.
+
+Fail if Prompt 1 contains process/meta language about the prompting method, including:
+
+```text
+Prompt 1 / Prompt 2 / Prompt 3
+later pass / next pass / third pass
+fixed reference / independent reference / baseline for later
+do not inspect / do not open the repository / issue tracker
+you will be held to this picture
+the current answer comes later
+schema / preflight / gate / quarantine
+```
+
+Also fail if the opening spends more time explaining how to think than describing the person, job, domain situation, and stakes.
+
+A passing Prompt 1 should begin inside the human/domain problem, not outside it.
+
+The blindness mechanism must be invisible to the future agent.
+
+---
+
 # HARD GATE 1 — ARTIFACT-ERASURE GATE
 
 Imagine that the current issue, register, roadmap, matrix, architecture, checklist, implementation and proposed solution never existed.
@@ -1110,7 +1137,9 @@ Examples:
    what must remain responsive
 ```
 
-Prompt 1 must explicitly tell the future agent not to inspect the current repository/issue/implementation.
+The generator itself enforces blindness by controlling what information is allowed into Prompt 1.
+
+**Do not make Prompt 1 talk about that enforcement.**
 
 # PROMPT 1 — IMAGINE
 
@@ -1124,7 +1153,9 @@ It should begin from:
 - relevant domain realities;
 - the required expertise.
 
-It should explicitly tell the future agent **not to inspect the current repository, issue, roadmap, implementation, or current artifact yet**.
+Prompt 1 must **not mention** repositories, issue trackers, later passes, blind/reference mechanics, schema rules, or instructions about what the agent is forbidden to inspect.
+
+Those are generator-side controls, not part of the human prompt.
 
 Use human language and mental simulation.
 
@@ -1142,6 +1173,46 @@ For TAB_SURFACE, normally walk a real user through the surface from arrival/inpu
 For ISSUE_TASK, stay on the specific underlying issue problem and its lifecycle stage; do not drift to the whole tab.
 
 Use TARGET ANCHORS aggressively enough to make the scenario vivid, while keeping current-answer facts quarantined.
+
+### Human-immersion rule
+
+Prompt 1 should feel as though a strong practitioner has been dropped directly into the real situation.
+
+Prefer this shape:
+
+```text
+who is the person?
+→ what are they trying to accomplish?
+→ what real thing is in front of them?
+→ what makes this case difficult or consequential?
+→ what would they need to understand, decide, trust, notice, or prove?
+→ what would good handling make possible?
+```
+
+The reader should forget that a three-pass method exists.
+
+Avoid meta language such as:
+
+```text
+"This answer will be used later..."
+"This is a fixed independent reference..."
+"Do not inspect the repository..."
+"Do not open the issue tracker..."
+"Before the next pass..."
+"You will be held to this picture..."
+"Prompt 2 will..."
+"In the third pass..."
+```
+
+Also avoid procedural throat-clearing such as:
+
+```text
+"Answer from first principles."
+"Resist the urge to look at the implementation."
+"Form your own view before seeing the current answer."
+```
+
+The prompt should **cause** first-principles thinking through the situation and questions, not explain the prompting method.
 
 Good forms include:
 
@@ -1161,15 +1232,15 @@ Do not reveal the current solution form merely because you know it.
 
 Do not tell the future agent there is a register, matrix, roadmap, particular architecture, specific sequencing, or named abstraction unless that is independently part of the human requirement.
 
-### Prompt 1 must create a fixed reference picture
+### Prompt 1 must end in a human picture of success
 
-At the end require something equivalent to:
+At the end, ask naturally for something equivalent to:
 
-> **“If this were handled really well, this is what would become possible…”**
+> **“If this were handled really well, what would become possible for the person doing the work?”**
 
-Then ask for the principles underneath that picture.
+Then ask what would make that outcome trustworthy, durable, or worth defending.
 
-That answer becomes the fixed reference point for Prompt 3.
+Do not mention that the answer will become a reference for another pass. The generator retains that relationship internally.
 
 ### Complex-mode addition
 
@@ -1872,6 +1943,9 @@ PASS — <one short reason>
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
 
+HUMAN-IMMERSION GATE:
+PASS — <one short reason>
+
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
 ```
@@ -1915,9 +1989,11 @@ Therefore:
 
 **Prompt 1 — IMAGINE**
 
-Keep it blind to today's answer. Use TARGET ANCHORS, PROBLEM KERNEL where applicable, human outcome, genuine constraints, domain, and imagination object.
+Use TARGET ANCHORS, PROBLEM KERNEL where applicable, human outcome, genuine constraints, domain, and imagination object.
 
-Do not include a live issue/repository link when following it would expose the current answer.
+Do not include live current-system links or current-answer material.
+
+Do not explain this omission inside Prompt 1. The prompt should read as a complete human/domain scenario, not as a methodology instruction.
 
 **Prompt 2 — UNDERSTAND**
 
@@ -2018,6 +2094,14 @@ Specifically:
 If any lens is missing, fail.
 
 Do not accept five generic bullet questions. They must be expressed in the language of this target and its PROBLEM KERNEL.
+
+### Human-immersion check
+
+Does Prompt 1 begin inside the person's real situation and stay there?
+
+Fail if it mentions later passes, fixed references, repositories to avoid inspecting, schema mechanics, gates, quarantine, or being "held to" a future comparison.
+
+The method must be invisible in Prompt 1.
 
 ### Same-issue identity check
 
@@ -2260,7 +2344,7 @@ That already contains an answer.
 
 It should say something closer to:
 
-> Imagine a professional-quality PDF editor that must work primarily in the browser without depending on a backend. Think from first principles about what a user should be able to do, how editing should feel on phone and desktop, how a 1,000-page document should behave, what must survive save/reopen, what operations are fundamentally easy or difficult in PDF, and what architectural mistakes would trap a one-developer project later. Do not inspect the existing app yet. End by describing what would become possible if this product were done really well.
+> Imagine a professional-quality PDF editor that must work primarily in the browser without depending on a backend. Think from first principles about what a user should be able to do, how editing should feel on phone and desktop, how a 1,000-page document should behave, what must survive save/reopen, what operations are fundamentally easy or difficult in PDF, and what architectural mistakes would trap a one-developer project later. End by describing what would become possible for the person if this product were done really well.
 
 ## What a good generated Prompt 2 should feel like
 
@@ -2404,9 +2488,7 @@ It should **not** mention matrices, Core1/Core2, gates, current routing enums, o
 
 Instead it should ask:
 
-> Imagine a Grade-9 learner studying mostly alone. They meet a new topic, think they partly understand it, attempt real questions, get stuck for different reasons, sometimes need an earlier prerequisite, and eventually need to solve unfamiliar problems independently. What should an excellent self-study system do from beginning to end? How should teaching, practice, diagnosis, repair, transfer, subject boundaries, learner evidence and maintainability work for one developer using agents? Do not inspect Grade9V3 yet.
-
-The answer becomes the independent reference picture.
+> Imagine a Grade-9 learner studying mostly alone. They meet a new topic, think they partly understand it, attempt real questions, get stuck for different reasons, sometimes need an earlier prerequisite, and eventually need to solve unfamiliar problems independently. What should an excellent self-study system do from beginning to end? How should teaching, practice, diagnosis, repair, transfer, subject boundaries, learner evidence and maintainability work for one developer using agents? Stay with the learner journey and what excellent support would make possible.
 
 ## What a good generated Prompt 2 should feel like
 
@@ -2582,7 +2664,7 @@ It should **not** begin with the issue's proposed files, historical donor PRs, m
 
 It should ask something closer to:
 
-> Imagine a learner is stuck on a real worksheet question. What should a good self-study system be able to understand about that question? How should it identify the reusable learner action underneath the surface context, distinguish supporting ideas from true prerequisites, find where the idea is taught, and remain reusable across future worksheets? Do not inspect the repository or the issue implementation history yet.
+> Imagine a learner is stuck on a real worksheet question. What should a good self-study system be able to understand about that question? How should it identify the reusable learner action underneath the surface context, distinguish supporting ideas from true prerequisites, find where the idea is taught, and remain reusable across future worksheets? Stay with the learner's real question and the reusable learning problem it exposes.
 
 ## What a good generated Prompt 2 should feel like
 
@@ -2954,9 +3036,9 @@ Q5 exact first bounded change + predicted before/after verification
 
 In a qualification QSET those are repository-grounded takeover questions.
 
-In **Prompt 1**, however, the current repository/answer is still hidden.
+In **Prompt 1**, preserve the reasoning intent but translate it into a first-principles human conversation.
 
-Therefore preserve the reasoning intent, but translate it into a first-principles human conversation.
+The future agent should not be told about the hidden/current-system distinction; that separation is enforced by the generator.
 
 ## Governing rule
 
@@ -3219,7 +3301,47 @@ Prompt 3 must first state the present remaining problem and only then decide whe
 
 ---
 
-# TEN-CASE REGRESSION VALIDATION
+# APPENDIX J — HUMAN-IMMERSION REGRESSION: METHOD LANGUAGE MUST NOT LEAK INTO PROMPT 1
+
+The following Prompt-1 language is a failure even when logically correct:
+
+```text
+"This answer will be used as a fixed independent reference in a later pass."
+"Do not inspect the current repository before answering."
+"Form your view before seeing the current implementation."
+"You will be held to this picture in Prompt 3."
+```
+
+Why it fails:
+
+- it makes the agent think about the prompting workflow rather than the work;
+- it weakens mental simulation of the real person and situation;
+- it encourages abstract compliance language;
+- it makes Prompt 1 sound synthetic even when its domain content is strong.
+
+The generator should enforce the separation silently.
+
+For example, instead of:
+
+> Do not inspect the repository. Imagine independently what a good WRC 537 tab should look like.
+
+prefer:
+
+> You are the engineer responsible for signing off a local-attachment assessment on a real vessel. You have the drawing, geometry, loads and a deadline. Walk from what is in front of you to the point where you have a result you would put your name on.
+
+Instead of:
+
+> This answer becomes the fixed reference picture for a later pass.
+
+prefer:
+
+> If this were handled really well, what would become possible for the engineer, and what would make that outcome trustworthy enough to defend?
+
+The second form creates the same reasoning separation without exposing the method.
+
+---
+
+# ELEVEN-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -3235,6 +3357,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Advanced_Analysis Issue #1834 | responsible basis for non-tabulated-gamma professional use | generic standards-governance prose or leaked current options/evidence | may yield decision/evidence need without inheriting current option set |
 | Explicit complex-mode target | same target plus human Q1–Q5 depth | mechanical Q labels or generic five-question checklist | Prompt 1 covers path → reconstruction → stress test → independent check → bounded proof |
 | Stale-schema issue run | current issue problem kernel under current schema SHA | legacy TASK_ARTIFACT/register-imagination path | generation rejected before prompts; then issue kernel controls Prompt 1 |
+| Human-immersion Prompt 1 | target-specific human/domain situation | meta instructions about later passes/repository blindness | Prompt 1 is method-invisible; separation is enforced outside it |
 
 ### Critical negative control
 
@@ -3368,6 +3491,12 @@ When the user explicitly says **complex**, add one more requirement:
 > **Prompt 1 must reason through Q1–Q5 in human form: journey, concrete reconstruction, invariant/falsifier, independent check, and first bounded proof.**
 
 Complexity must deepen specificity and falsifiability; it must never become generic ceremony.
+
+Prompt 1 must also be **method-invisible**:
+
+> **The future agent should experience a real person, real job, real objects, real stakes and real questions — not instructions about the three-pass method.**
+
+Blindness is enforced by the generator, not narrated to the agent.
 
 Prompt 2 brings reality back.
 
