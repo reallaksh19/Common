@@ -102,6 +102,15 @@ def validate(root:Path):
             (delivery.get("merge_authorization") or {}).get("state"),
         ):
             if value and str(value).replace("_"," ").title() not in text and str(value) not in text:e.append(f"Owner status hides delivery state {value}")
+        carried=delivery.get("unmerged_prs") or []
+        if carried and "Unmerged PRs carried forward" not in text:e.append("Owner status hides unmerged PR carry-forward section")
+        for item in carried:
+            v=item.get("vehicle") or {};number=v.get("number");url=v.get("url")
+            if number is not None and f"PR #{number}" not in text:e.append(f"Owner status drops carried-forward PR #{number}")
+            if url and str(url) not in text:e.append(f"Owner status drops carried-forward PR URL {url}")
+            for row in item.get("correlations") or []:
+                if f"Issue #{row.get('issue_number')}" not in text:e.append(f"Owner status drops carried-forward Issue correlation #{row.get('issue_number')}")
+                if str(row.get("ep_id") or "") not in text:e.append(f"Owner status drops carried-forward EP correlation {row.get('ep_id')}")
     for key in ("protected","prohibited"):
         for subject in _subjects(scope.get(key)):
             if subject not in text:e.append(f"Owner status hides {key} scope: {subject}")
