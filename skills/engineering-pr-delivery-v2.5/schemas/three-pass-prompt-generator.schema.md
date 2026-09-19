@@ -14,20 +14,35 @@ When given a target, create **exactly three prompts** for another agent to run i
 
 Do not solve the target yourself. Your output is the three prompts.
 
-The method is the same throughout, but the generator must freeze a **preflight record** before it is allowed to draft Prompt 1.
+The method is the same throughout, but the generator must build a **visible preflight record** before it is allowed to draft Prompt 1.
 
-The preflight separates eight things that ordinary agents often collapse:
+The central safeguard is stronger than “do not inspect the code yet”:
 
-1. **Target identity** — the exact thing being discussed.
-2. **Target native deliverable** — what kind of thing this target itself is meant to leave behind.
-3. **Request mode** — what the user wants done now.
-4. **Target purpose** — why this particular target exists.
-5. **Target scope** — product, repository/system, or task/artifact.
-6. **Expertise** — what kind of expert should reason about it.
-7. **Imagination object / reality object** — what Prompt 1 may imagine and what Prompt 2 must inspect.
-8. **Final output contract** — what Prompt 3 must ultimately produce.
+> **Prompt 1 must be independent of the current solution form itself, wherever that solution form is not a genuine human requirement.**
 
-A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. **Expertise is not the object of reasoning.** A finite-element expert may be reasoning about a coordination register rather than designing a finite-element product.
+A GitHub issue may currently be a register, roadmap, checklist, matrix, architecture umbrella, or proposed implementation. Those forms belong to **current reality**. They do not automatically belong in the independent reference picture.
+
+The preflight therefore has two deliberately separated sides:
+
+1. **CURRENT REALITY — QUARANTINED FROM PROMPT 1**
+   - exact target identity;
+   - current artifact form;
+   - current stated answer / implementation / proposed solution;
+   - current-state facts.
+
+2. **BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1**
+   - underlying human problem;
+   - human outcome;
+   - genuine constraints;
+   - domain/expertise;
+   - target scope;
+   - independent imagination object.
+
+Then Prompt 2 brings the current artifact and implementation back into view.
+
+Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, close, defer, or leave unchanged** the current artifact.
+
+A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. And an issue being written as a register does **not** mean Prompt 1 should imagine an excellent register.
 
 ---
 
@@ -104,28 +119,19 @@ If current facts matter and the future agent can inspect a live repository, issu
 
 ---
 
-# MANDATORY PREFLIGHT — DO NOT GENERATE PROMPTS YET
+# MANDATORY PREFLIGHT — READ THE TARGET, THEN QUARANTINE ITS ANSWER
 
 Before drafting Prompt 1, build the following record.
 
 **This record is part of the required output. Always show it before the three prompts.**
 
-Its purpose is not decoration. It lets the user catch a wrong target interpretation before spending time running the prompts.
+Its purpose is to let the user catch a wrong interpretation before running the prompts.
 
-Do not hide it, summarize it away, or replace it with prose such as "preflight completed."
+Do not hide it, summarize it away, or replace it with prose such as “preflight completed.”
 
 ## A. Resolve the exact target
 
 If the user provides a URL to an issue, PR, repository, document, plan, register, or other live artifact, **open that exact target first**.
-
-Do not infer its purpose from:
-
-- the repository name;
-- the technical domain;
-- a title fragment;
-- nearby work;
-- prior memory;
-- or the broader product mission.
 
 Extract:
 
@@ -143,60 +149,13 @@ REPOSITORY / SYSTEM LINK:
 <canonical parent URL when available>
 ```
 
-If the target cannot be inspected and its purpose is not otherwise supplied clearly, **fail closed**: do not invent the target purpose from surrounding context.
+Do not infer the target from its repository name or nearby work.
 
-## B. Freeze the target native deliverable
+If the target cannot be inspected and its meaning is not otherwise supplied clearly, fail closed rather than inventing it.
 
-Complete:
+## B. Freeze the request mode and target scope
 
-> **“When this target succeeds, the thing it leaves behind is ______.”**
-
-Name the artifact or outcome form native to the target itself.
-
-Examples:
-
-```text
-product idea
-→ working product / product direction
-
-repository-wide review
-→ revalidated system/programme direction
-
-implementation issue
-→ bounded implementation/content change
-
-qualification issue
-→ qualification evidence / governed acceptance closure
-
-investigation issue
-→ supported finding / bounded conclusion
-
-decision issue
-→ decision-ready evidence and alternatives
-
-coordination register
-→ current live register
-
-architecture / closure umbrella
-→ revalidated architecture + qualification/closure roadmap
-
-handover task
-→ successor-ready understanding
-```
-
-Do not infer this from REQUEST MODE alone.
-
-```text
-COORDINATE ≠ always REGISTER
-REVIEW ≠ always ROADMAP
-CHANGE ≠ always CODE
-```
-
-The target's own mission/body should tell you what kind of thing it is meant to leave behind.
-
-## C. Freeze the request mode
-
-Choose the single mode that best describes what the user wants done **now**:
+Choose the single request mode that best describes what the user wants done **now**:
 
 ```text
 CONCEIVE
@@ -208,66 +167,7 @@ COORDINATE
 HANDOVER
 ```
 
-This is about the user's current assignment, not the permanent mission of the target.
-
-Examples:
-
-```text
-"Review this whole repository against first principles"
-→ REVIEW
-
-"Complete this implementation issue"
-→ CHANGE
-
-"Find out why this benchmark is wrong"
-→ INVESTIGATE
-
-"Help decide between these threshold options"
-→ DECIDE
-
-"Keep this merge/blocker register truthful"
-→ COORDINATE
-```
-
-## D. Freeze the target purpose
-
-Complete exactly:
-
-> **“This target exists so that ______.”**
-
-Describe the target itself, not a larger neighbouring product.
-
-### Purpose proximity test
-
-Ask:
-
-> **Could this TARGET PURPOSE sentence be pasted unchanged onto the parent repository, programme, or several sibling issues and still sound equally correct?**
-
-If yes, the purpose is probably too broad.
-
-Rewrite it closer to **this target's native deliverable**.
-
-Examples:
-
-```text
-Too broad:
-"so an engineer can trust shell-analysis results"
-
-Closer for an architecture/closure umbrella:
-"so the still-valid shell-analysis work is organized into dependency-ordered
-qualification boundaries from geometry through exact-head release"
-
-Too broad:
-"so learners can study Grade 9"
-
-Closer for a question-mapping issue:
-"so a real worksheet question can be traced to the reusable learner ability,
-genuine prerequisites, and teaching location it requires"
-```
-
-## E. Freeze the target scope
-
-Choose exactly one:
+Choose one target scope:
 
 ```text
 PRODUCT
@@ -275,56 +175,151 @@ REPOSITORY_SYSTEM
 TASK_ARTIFACT
 ```
 
-Scope answers **how much surrounding system belongs inside the target**.
+These describe the assignment and its width. They do **not** decide what Prompt 1 imagines.
 
-## F. Freeze the expertise
+## C. Snapshot CURRENT REALITY — then quarantine it
+
+Record what the target currently is and what answer it currently carries.
+
+```text
+CURRENT ARTIFACT FORM:
+<product / issue / register / roadmap / checklist / matrix / architecture umbrella /
+ decision record / implementation task / handover / other>
+
+CURRENT STATED ANSWER / IMPLEMENTATION:
+<brief description of the solution, structure, sequencing, abstraction, or proposal
+ that already exists>
+
+CURRENT-STATE FACTS:
+<brief facts that matter for Prompt 2: current status, known work, blockers,
+ in-flight changes, existing vocabulary, etc.>
+```
+
+This section is **REALITY-SIDE ONLY**.
+
+Do not copy its nouns, sequencing, categories, implementation abstractions, or proposed solution into Prompt 1 unless the same thing is independently a genuine human/domain constraint.
+
+Examples of quarantined current-answer vocabulary include:
+
+```text
+register
+matrix
+rung
+Core1
+page cache
+specific PR sequencing
+current architecture names
+current issue checklist
+specific owner-decision list
+existing workflow stages
+current schema fields
+```
+
+The point is not to pretend these things do not exist.
+
+The point is to meet them **after** the independent opinion has formed.
+
+## D. Recover the BLIND REFERENCE
+
+Now mentally remove the current issue text, artifact form, implementation, roadmap, checklist, and proposed solution.
+
+Ask:
+
+> **If the current target artifact had never been created, what human problem would still exist?**
 
 Complete:
 
-> **“The future agent should reason with the expertise of ______.”**
-
-Then apply this invariant:
-
-> **EXPERTISE ≠ OBJECT OF REASONING**
-
-Expertise tells the agent **how intelligently to think**.
-
-It does not decide **what it is thinking about**.
-
-Example:
-
 ```text
+UNDERLYING HUMAN PROBLEM:
+<the problem that survives even if today's issue/artifact/implementation disappears>
+
+HUMAN OUTCOME:
+<what should become possible for the person/team when that problem is handled well>
+
+GENUINE CONSTRAINTS:
+<facts that remain true regardless of today's implementation>
+
 EXPERTISE:
-senior structural / finite-element engineer
+<what kind of expert should reason about the problem>
 
 IMAGINATION OBJECT:
-excellent live engineering programme register
+"Prompt 1 must independently imagine ______."
 ```
 
-This is valid.
+The IMAGINATION OBJECT should describe the **situation/outcome/problem-solving capability**, not today's artifact form, unless that artifact form is itself explicitly required by the human goal.
 
-Do not automatically turn a domain expert into a product-design prompt for that domain.
+### Example — issue currently written as a register
 
-## G. Freeze the three prompt objects
-
-Complete all three sentences:
+Bad:
 
 ```text
-IMAGINATION OBJECT:
-"Prompt 1 must independently imagine what an excellent ______ looks like."
+UNDERLYING HUMAN PROBLEM:
+keep an excellent register
 
+IMAGINATION OBJECT:
+an excellent live register
+```
+
+Better:
+
+```text
+UNDERLYING HUMAN PROBLEM:
+after substantial work has happened, determine what genuinely remains,
+what requires judgement rather than more implementation,
+what can proceed independently, what has become historical,
+and whether the remaining path is still worth pursuing
+
+IMAGINATION OBJECT:
+excellent judgement about what genuinely remains in an evolved engineering programme
+```
+
+Prompt 2 may later discover that a live register is a useful solution.
+
+Prompt 1 must not assume that conclusion.
+
+## E. Freeze Prompt 2's REALITY OBJECT
+
+Complete:
+
+```text
 REALITY OBJECT:
 "Prompt 2 must establish what is actually true today about ______."
-
-FINAL OUTPUT CONTRACT:
-"Prompt 3 must ultimately produce ______."
 ```
 
-These three lines are construction constraints, not suggestions.
+This may explicitly include the current target artifact, repository, issue history, implementation, PRs, tests, examples, and in-flight work.
 
-## H. Build the complete preflight record
+## F. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
 
-The record must now contain:
+Complete:
+
+```text
+COMPARISON QUESTION:
+"After putting the exact Prompt-1 picture beside Prompt-2 reality,
+Prompt 3 must determine ______."
+
+HANDOVER DESTINATION:
+"The next agent must understand ______."
+```
+
+Do **not** pre-commit Prompt 3 to producing “a better register,” “a revised matrix,” “an updated roadmap,” or any other improved version of the current artifact.
+
+Prompt 3 must remain free to conclude that the current artifact should be:
+
+- preserved;
+- updated;
+- narrowed;
+- split;
+- replaced;
+- closed;
+- moved back to owning issues;
+- deferred;
+- or left unchanged.
+
+The response form should emerge **after comparison**, not be decided before it.
+
+## G. Visible PREFLIGHT RECORD
+
+The visible record must contain:
 
 ```text
 TARGET TITLE:
@@ -332,418 +327,279 @@ TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
-TARGET NATIVE DELIVERABLE:
 REQUEST MODE:
-TARGET PURPOSE:
 TARGET SCOPE:
+
+CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT ARTIFACT FORM:
+CURRENT STATED ANSWER / IMPLEMENTATION:
+CURRENT-STATE FACTS:
+
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+UNDERLYING HUMAN PROBLEM:
+HUMAN OUTCOME:
+GENUINE CONSTRAINTS:
 EXPERTISE:
-
 IMAGINATION OBJECT:
+
+PROMPT 2
 REALITY OBJECT:
-FINAL OUTPUT CONTRACT:
+
+PROMPT 3
+COMPARISON QUESTION:
+HANDOVER DESTINATION:
+
+ARTIFACT-ERASURE GATE:
+PASS — <one short reason>
+
+CURRENT-VOCABULARY GATE:
+PASS — <one short reason>
+
+PROMPT-1 OBJECT GATE:
+PASS — <one short reason>
+
+PROMPT-3 FREEDOM GATE:
+PASS — <one short reason>
 ```
 
-Do not draft Prompt 1 until every applicable field is resolved.
+Do not draft Prompt 1 until these fields and gates are resolved.
 
 ---
 
-# HARD GATE 1 — PROMPT-1 OBJECT GATE
+# HARD GATE 1 — ARTIFACT-ERASURE GATE
 
-Before generating Prompt 1, finish:
+Imagine that the current issue, register, roadmap, matrix, architecture, checklist, implementation and proposed solution never existed.
 
-> **“If Prompt 1 were answered perfectly, the answer would be an excellent example of ______.”**
+Keep only:
 
-The blank must match the frozen **IMAGINATION OBJECT**.
-
-Then compare that perfect answer with:
-
-- TARGET NATIVE DELIVERABLE;
-- REQUEST MODE;
-- TARGET PURPOSE;
-- TARGET SCOPE.
-
-If it would instead solve a larger neighbouring problem, a smaller implementation detail, or a different kind of task:
-
-> **REJECT THE DRAFT AND REGENERATE PROMPT 1.**
-
-Do not continue to Prompt 2 until this gate passes.
-
----
-
-# HARD GATE 2 — PROMPT-3 OUTPUT GATE
-
-Before emitting Prompt 3, finish:
-
-> **“If Prompt 3 were answered perfectly, its final deliverable would be ______.”**
-
-The answer must match the frozen **FINAL OUTPUT CONTRACT** **and remain the same kind of thing as the TARGET NATIVE DELIVERABLE**.
-
-Examples:
-
-```text
-PRODUCT review
-→ product gap analysis + phased roadmap
-
-REPOSITORY review
-→ current system meaning + preserved strengths + remaining programme
-
-IMPLEMENTATION change
-→ rewritten present-day task + smallest durable change
-
-INVESTIGATION
-→ verified conclusion + bounded uncertainty
-
-DECISION
-→ decision-ready evidence package
-
-COORDINATION
-→ reconciled live register + executable frontier
-
-HANDOVER
-→ successor-ready continuity package
-```
-
-If Prompt 3 would instead produce a neighbouring product redesign, an unrequested implementation, or a generic roadmap:
-
-> **REJECT THE DRAFT AND REGENERATE PROMPT 3.**
-
----
-
-# STEP 0A — APPLY THE FROZEN TARGET PURPOSE
-
-The mandatory preflight has already resolved the target identity, native deliverable, and request mode.
-
-Now use the frozen **TARGET PURPOSE** before choosing or applying the target scope.
-
-Silently complete this sentence:
-
-> **“This target exists so that ______.”**
-
-Fill the blank with the purpose of the target itself, not the broader mission of the product it happens to discuss.
-
-This is mandatory for repositories, issues, tasks, plans, registers, audits and handovers.
-
-### Purpose test
+- the human problem;
+- desired outcome;
+- genuine constraints;
+- domain;
+- scale.
 
 Ask:
 
-> If this target were completed perfectly, what would become true?
+> **Would Prompt 1 still make essentially the same sense?**
 
-Then ask:
+If no, Prompt 1 has inherited the current answer.
 
-> Would that complete the target itself, or am I accidentally describing a larger neighbouring problem?
+Reject it and rewrite.
+
+Important nuance:
+
+- For a product target, the product category may itself be part of the human request. “Browser PDF editor” can survive erasure of the **current implementation**.
+- For an issue currently expressed as a “register,” “matrix,” or “roadmap,” that artifact form usually should **not** survive unless the user explicitly requires that form.
+
+---
+
+# HARD GATE 2 — CURRENT-VOCABULARY LEAKAGE GATE
+
+Scan Prompt 1 noun-by-noun and fact-by-fact.
+
+For every important term, ask:
+
+```text
+Did this come from:
+
+A. the blind human problem / genuine domain constraint
+
+or
+
+B. the current target / repository / issue / implementation / proposed solution?
+```
+
+If B, remove it unless you can independently justify it as a genuine constraint.
+
+Hiding the issue number while paraphrasing its current state is **not** blindness.
+
+A Prompt 1 that says:
+
+```text
+recently landed work
+in-flight work
+infrastructure blockers
+owner-reserved decisions
+one living register
+stale written plans
+```
+
+because those facts came from today's issue is contaminated even if no repository name appears.
+
+---
+
+# HARD GATE 3 — PROMPT-1 OBJECT GATE
+
+Finish:
+
+> **“If Prompt 1 were answered perfectly, the answer would give us an independent picture of ______.”**
+
+The blank must match the frozen IMAGINATION OBJECT and help solve the UNDERLYING HUMAN PROBLEM.
+
+If it instead describes:
+
+- a larger neighbouring product;
+- a current artifact form;
+- a specific implementation proposal;
+- or a smaller symptom;
+
+reject Prompt 1.
+
+---
+
+# HARD GATE 4 — PROMPT-3 FREEDOM GATE
+
+Read Prompt 3 before output.
+
+Ask:
+
+> **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, closed, deferred, moved elsewhere, or left alone?**
+
+If Prompt 3 mandates a better version of today's artifact before comparison is complete, fail.
+
+Examples of failure:
+
+```text
+"Produce the reconciled register"
+when an earlier section asks whether the register is still the right instrument.
+
+"Complete the matrix"
+when the comparison may show the matrix is no longer the right remaining work.
+
+"Update the roadmap"
+when the roadmap may have become historical.
+```
+
+Prompt 3 may require a **decision and reasoning**, but must not pre-decide the survival of the current solution form.
+
+---
+
+# STEP 1 — BUILD PROMPT 1 ONLY FROM THE BLIND REFERENCE
+
+This is the most important construction rule.
+
+Allowed inputs to Prompt 1:
+
+```text
+UNDERLYING HUMAN PROBLEM
+HUMAN OUTCOME
+GENUINE CONSTRAINTS
+EXPERTISE
+IMAGINATION OBJECT
+domain facts that are genuinely independent of the current implementation
+```
+
+Forbidden inputs to Prompt 1 unless independently justified as genuine constraints:
+
+```text
+CURRENT ARTIFACT FORM
+CURRENT STATED ANSWER / IMPLEMENTATION
+CURRENT-STATE FACTS
+repository structure
+existing abstraction names
+current schemas
+current architecture
+issue checklist
+current roadmap
+file names
+PR numbers
+present blockers
+current decision list
+current solution vocabulary
+```
+
+The purpose is to let the future agent **have an opinion before meeting today's answer**.
+
+For task/issue targets, recover the human intention underneath the work item.
 
 Examples:
 
 ```text
-Issue about capability mapping
-→ exists so real questions can be traced to reusable teachable knowledge
-→ implementation/content task
+"Add three matrix rungs and capability mappings"
+→ not "imagine an excellent matrix"
+→ imagine how a learner stuck on a real question should be connected
+   to reusable knowledge, prerequisites and teaching
 
-Issue that records merge queue + blockers + owner decisions
-→ exists so the programme has one truthful current coordination register
-→ coordination/register task
+"Maintain this open-items register"
+→ not "imagine an excellent register"
+→ imagine how a competent successor should determine what genuinely remains,
+   what is decision versus executable work, and what should happen next
 
-Issue asking whether a solver threshold should change
-→ exists so an engineering decision can be made from sufficient evidence
-→ decision task
-
-Issue asking why a benchmark fails
-→ exists so the cause can be established reliably
-→ investigation task
+"Fix 900-page scrolling"
+→ not "imagine a 900-page mode"
+→ imagine what working with a very large document should feel like and
+   what must remain responsive
 ```
 
-Do **not** infer the target purpose from the amount of technical detail it contains.
-
-A coordination issue can contain deep solver details while still being a coordination issue.
-
-A handover can discuss an entire architecture while still being a handover.
-
-### How REQUEST MODE shapes the same target purpose
-
-Do not invent a second role taxonomy here. The preflight's **REQUEST MODE** is the single operation axis.
-
-Use it like this:
-
-#### CONCEIVE
-
-Prompt 1 imagines the target itself done excellently from first principles.
-
-Prompt 3 produces a conception, architecture or product direction appropriate to the target scope.
-
-#### REVIEW
-
-Prompt 1 creates an independent reference picture.
-
-Prompt 2 reconstructs current reality.
-
-Prompt 3 compares them and produces the bounded gap/programme appropriate to the target scope.
-
-#### CHANGE
-
-Prompt 1 imagines what successful completion of this specific change should make possible.
-
-Prompt 3 rewrites the present-day task and identifies the smallest durable remaining change.
-
-#### INVESTIGATE
-
-Prompt 1 imagines what a trustworthy investigation must establish.
-
-Prompt 3 produces a supported conclusion with bounded uncertainty, not an automatic implementation plan.
-
-#### DECIDE
-
-Prompt 1 imagines what evidence and trade-offs a responsible decision requires.
-
-Prompt 3 produces a decision-ready package and preserves the authority boundary.
-
-#### COORDINATE
-
-Prompt 1 imagines what an excellent live coordination/register artifact must make knowable and actionable.
-
-Prompt 3 reconciles current truth, blockers, dependencies, decisions and executable frontier.
-
-#### HANDOVER
-
-Prompt 1 imagines what a successor must know to continue safely.
-
-Prompt 3 produces successor-ready continuity, including first safe action and stale conditions.
-
-### Target-purpose anchor
-
-Carry the completed sentence:
-
-> “This target exists so that …”
-
-through all three prompts.
-
-Prompt 1 imagines that purpose done well.
-
-Prompt 2 asks whether today's reality serves that purpose.
-
-Prompt 3 asks what meaningful distance remains **for that same purpose**.
-
-Do not silently substitute the mission of a neighbouring product, repository, programme or issue.
-
----
-
-# STEP 0B — APPLY THE FROZEN TARGET SCOPE
-
-The preflight has already chosen:
-
-```text
-PRODUCT
-REPOSITORY_SYSTEM
-TASK_ARTIFACT
-```
-
-Use that scope to decide how much surrounding system belongs inside each prompt.
-
-**Request mode + target purpose come first. Scope comes after them.**
-
-A task-level coordination register may mention a whole repository but still remain task-level. A repository-level review may inspect many tasks but still be system-level.
-
-## PRODUCT LEVEL
-
-Use when the underlying question is approximately:
-
-> What should this product become?
-
-Prompt 1 should think broadly about users, experience, capabilities, architecture, scale, quality, and long-term traps.
-
-Prompt 3 should usually end in a product-level gap analysis and phased path.
-
-## REPOSITORY / SYSTEM LEVEL
-
-Use when the underlying question is approximately:
-
-> What should this whole system become, and how far has it already travelled?
-
-Prompt 1 should imagine the complete human outcome independently.
-
-Prompt 2 should reconstruct the repository as a living system, including history and current work.
-
-Prompt 3 should determine what should be preserved, what is historical, what genuinely remains, what “complete enough now” should mean, and what sequence makes sense.
-
-## TASK / ISSUE LEVEL
-
-Use when the underlying question is approximately:
-
-> What should this particular piece of work actually make possible?
-
-Prompt 1 should imagine successful completion without inheriting implementation assumptions from the issue.
-
-Prompt 2 should determine what the current repository has already solved, including changes since the issue was written.
-
-Prompt 3 should rewrite the task in today's terms and reduce it to the smallest meaningful remaining work.
-
-Do not create three different methodologies. Use the same three-pass method with different purpose and zoom.
-
-Before moving on, perform this silent check:
-
-> **If Prompt 1 were answered perfectly, would it fulfil the purpose of this target, or would it solve a larger neighbouring problem?**
-
-If it solves the larger neighbouring problem, your scope is wrong. Re-identify the target purpose before generating anything.
-
----
-
-# STEP 1 — BUILD A BLIND BRIEF FOR PROMPT 1
-
-This is the most important safeguard.
-
-Before generating Prompt 1, silently separate the user's information into two conceptual buckets:
-
-```text
-BLIND BRIEF
-- request mode
-- target-purpose sentence: "This target exists so that ..."
-- target scope
-- expertise
-- imagination object
-- human goal
-- intended users
-- desired outcomes
-- genuine constraints
-- domain
-- scale
-- non-negotiable expectations
-
-CURRENT-ANSWER CONTEXT
-- repository structure
-- existing abstraction names
-- current schemas
-- current architecture
-- current issue checklist
-- proposed implementation
-- current roadmap
-- current file names
-- current PR solutions
-```
-
-Prompt 1 should be generated from the **BLIND BRIEF** wherever possible.
-
-Do not leak CURRENT-ANSWER CONTEXT into Prompt 1 unless the information is itself a genuine human constraint.
-
-### Example of the distinction
-
-If an issue says:
-
-> “Add three new matrix rungs and a capability mapping.”
-
-do not make Prompt 1 ask whether three matrix rungs are needed.
-
-Instead recover the human intention, for example:
-
-> “A learner who gets stuck on a real question should be traceable to the underlying idea they need to learn.”
-
-Likewise, if a PDF app currently uses a page cache, do not mention page caches in Prompt 1 unless the user explicitly made that a requirement.
-
-The purpose is to let the future agent **form an opinion before meeting the current solution**, while still thinking about the correct object.
-
-Blindness does not mean broadening the target.
-
-For a coordination register, Prompt 1 should independently imagine an excellent coordination register — not independently redesign the product being coordinated.
-
-For an investigation, Prompt 1 should independently imagine what a trustworthy investigation must establish — not solve the implementation before evidence is gathered.
-
-For a decision, Prompt 1 should independently imagine what a responsible decision requires — not choose an option prematurely.
-
----
+Prompt 1 must explicitly tell the future agent not to inspect the current repository/issue/implementation.
 
 # PROMPT 1 — IMAGINE
 
-Generate a self-contained prompt that asks the future agent to reason from first principles.
+Generate a self-contained first-principles prompt from the **BLIND REFERENCE only**.
 
 It should begin from:
 
-- the target-purpose sentence;
-- the human goal;
-- the intended user;
-- desired outcomes;
+- the underlying human problem;
+- the intended human outcome;
 - genuine constraints;
-- domain realities.
+- relevant domain realities;
+- the required expertise.
 
-It should explicitly tell the future agent **not to inspect the current repository or implementation yet** when a current system exists.
+It should explicitly tell the future agent **not to inspect the current repository, issue, roadmap, implementation, or current artifact yet**.
 
-Use human language that encourages mental simulation.
+Use human language and mental simulation.
 
 Good forms include:
 
-> Imagine the person actually using this.
+> Imagine the person actually facing this situation.
 
-> Walk through what happens from the moment they begin until they succeed.
+> Walk through what they need to understand before acting.
 
-> What should the system understand?
+> What should become possible?
 
-> What should feel simple?
+> What would make the result trustworthy?
 
-> What should remain stable even as examples change?
+> What would look like progress but actually be a trap?
 
-> What mistakes would look convenient now but become expensive later?
+> What should remain true even if today's implementation were rewritten from scratch?
 
-> What would make you trust the result?
+Do not reveal the current solution form merely because you know it.
 
-Do not force the agent into the vocabulary of the current system.
+Do not tell the future agent there is a register, matrix, roadmap, particular architecture, specific sequencing, or named abstraction unless that is independently part of the human requirement.
 
-Do not tell it the current abstractions and then ask whether they are good.
+### Prompt 1 must create a fixed reference picture
 
-Do not turn Prompt 1 into an audit checklist.
+At the end require something equivalent to:
 
-### Prompt 1 must ask for an explicit reference picture
+> **“If this were handled really well, this is what would become possible…”**
 
-At the end, require the future agent to state something equivalent to:
+Then ask for the principles underneath that picture.
 
-> “If this were done really well, this is what would become possible…”
+That answer becomes the fixed reference point for Prompt 3.
 
-and then describe the important principles underneath that experience.
+### Product-level note
 
-This output becomes the reference point for Prompt 3.
+At product level, the product category itself can be part of the human goal. Prompt 1 may therefore imagine the desired product experience broadly.
 
-### Product-level emphasis
+What remains forbidden is leaking the **current product implementation**.
 
-At product level, Prompt 1 should explore the user journey, major capabilities, architecture, performance/scale, quality, extensibility, and dangerous shortcuts.
+### Repository/system-level note
 
-### Repository-level emphasis
+Imagine the desired human/system outcome independent of today's repository architecture, roadmap, phase names and implementation vocabulary.
 
-At repository level, Prompt 1 should imagine the desired end-to-end human outcome of the whole system without inheriting current repository architecture.
+### Task/issue-level note
 
-### Task-level emphasis
+Imagine what successful handling of the underlying problem would make possible.
 
-At task level, Prompt 1 should ask what successful completion of **this task's actual role** would make possible, while deliberately ignoring implementation suggestions in historical task text.
+Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
 
-Examples:
-
-- implementation task → what becomes possible after the change works;
-- investigation task → what can be known confidently;
-- decision task → what can be decided responsibly;
-- coordination/register task → what can be coordinated safely from one truthful view;
-- handover task → what the successor can understand and continue without guesswork.
-
-Do not use the surrounding product mission as a substitute for the task's purpose.
-
-### Prompt-1 object rule
-
-Prompt 1 must be about the frozen **IMAGINATION OBJECT**.
-
-The domain may shape the examples and expertise, but it must not replace the object.
-
-Before finalizing Prompt 1, restate internally:
-
-```text
-EXPERTISE:
-<who is thinking>
-
-IMAGINATION OBJECT:
-<what they are thinking about>
-```
-
-If those have accidentally collapsed into the same thing without justification, re-check the target.
+Run the ARTIFACT-ERASURE, CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
 
 ---
 
 # STEP 2 — PROMPT 2 MUST RECONSTRUCT REALITY, NOT REDESIGN IT
 
-Prompt 2 may now reveal the current system.
+Prompt 2 now deliberately brings back everything quarantined from Prompt 1: the exact target artifact, its current answer, implementation vocabulary, history, repository, tests, PRs and live state.
 
 Its subject is the frozen **REALITY OBJECT**.
 
@@ -919,228 +775,195 @@ The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replac
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Prompt 3 is constrained by the frozen **FINAL OUTPUT CONTRACT**.
+Prompt 3 must return to the **actual Prompt-1 answer** and place it beside Prompt-2 reality.
 
-It may reason broadly enough to reach a correct conclusion, but its final deliverable must be the kind of artifact required by that contract.
+It is constrained by the frozen **COMPARISON QUESTION**, not by a preselected artifact form.
 
-Prompt 3 should make the future agent answer these questions in this order.
+Tell the future agent explicitly:
 
-## A. What should be preserved?
+> Take the independent picture you produced before meeting the current answer.
 
-Before finding faults, identify what is already good enough or better than the first-principles conception.
+> Put it beside what you discovered about reality.
 
-Do not rebuild sound work because it uses different names.
+> Where evidence genuinely changed your mind, say exactly why.
 
-## B. What has become historical?
+> Otherwise keep the independent baseline.
+
+> Do not assume the current issue, register, matrix, roadmap, architecture, checklist or task breakdown deserves to survive merely because it already exists.
+
+Prompt 3 should reason in this order.
+
+## A. Return to the exact Prompt-1 picture
+
+What did we believe good handling of the underlying human problem looked like **before** seeing today's answer?
+
+Do not rewrite that picture to resemble the repository.
+
+## B. What should be preserved?
+
+Identify what reality already does well.
+
+Preserve sound mechanisms, evidence and decisions even if they use different vocabulary.
+
+## C. What has become historical?
 
 Ask:
 
 > What problem used to exist but no longer does?
 
-> Which roadmap item or issue statement describes an older project state?
+> Which issue text, roadmap item, status statement or assumption describes an earlier project state?
 
 > What has later work already made obsolete?
 
-This prevents agents from repeatedly solving yesterday's problems.
+## D. Does the current artifact still deserve to exist in its present form?
 
-## C. Is the target still serving the same purpose?
-
-First repeat the target-purpose sentence from the beginning.
+This is mandatory for issues, registers, matrices, roadmaps, checklists, architecture umbrellas, handovers and plans.
 
 Ask:
 
-> Is this still why the target exists?
+> Is today's artifact actually the right instrument for the underlying human problem now?
 
-> Has later work changed the target's meaning without changing its wording?
+Possible conclusions include:
 
-> Has the target accidentally become a container for neighbouring work?
+```text
+yes — preserve it
+yes — but narrow/update it
+split it
+replace it
+move remaining work back to owning issues
+close it because its job is done
+defer it
+leave it unchanged
+```
 
-For registers, plans, audits and handovers, the right outcome may be **reconciliation of truth**, not a product change.
+Do not prejudge the answer.
 
-For decision tasks, the right outcome may be **a decision package**, not implementation.
+## E. What is the real problem now?
 
-For investigations, the right outcome may be **a conclusion with bounded uncertainty**, not a fix.
+Given the independent picture and verified reality:
 
-Then continue.
+> What meaningful distance genuinely remains today?
 
-## D. What is the real problem now?
+Rewrite the problem in today's language.
 
-Ask:
+For task/issue work, prefer:
 
-> Given the independent ideal and today's reality, what meaningful distance still remains?
+> **“Given the current repository, the meaningful remaining work is…”**
 
-Also ask:
+when implementation work genuinely remains.
 
-> Has the original task, roadmap, or product goal changed meaning because the system has evolved?
+If the correct result is instead “decision needed,” “close this artifact,” “no change,” or “collect evidence first,” say that instead.
 
-The agent should explicitly **rediscover the current meaning of the goal**.
+## F. What deeper idea is the example exposing?
 
-## E. What deeper idea is the example exposing?
-
-Do not confuse the thing that revealed a weakness with the weakness itself.
+Do not confuse the thing that exposed a weakness with the reusable problem underneath it.
 
 Examples:
 
 ```text
 river-crossing question
-≠ automatically a river-crossing capability
+≠ automatically a river capability
 
 900-page PDF freeze
-≠ automatically a 900-page special mode
+≠ automatically a 900-page mode
+
+one stale register entry
+≠ automatically a need for a better register
 
 failed test
-≠ automatically the architectural problem
-
-old issue checkbox
-≠ automatically current work
+≠ automatically an architecture problem
 ```
 
-Ask:
+## G. What is the smallest justified response?
 
-> What reusable problem sits underneath this example?
+Valid responses include:
 
-## F. What is the smallest durable response?
-
-The valid answers depend on the target role and include:
-
-- implement or fix;
 - add;
+- fix;
 - extend;
 - simplify;
 - refactor;
 - remove;
-- reconcile stale state;
-- retire obsolete claims;
-- gather missing evidence;
-- present alternatives for owner decision;
-- update the register;
-- hand over;
+- reconcile;
+- gather evidence;
+- present a decision;
+- narrow or split the current artifact;
+- close it;
+- move work elsewhere;
 - defer;
 - preserve unchanged;
-- or **make no change yet**.
-
-Explicitly allow “no change is justified yet.”
+- or make no change yet.
 
 Do not manufacture work because a plan was requested.
 
-## G. How will reality test it?
+## H. How will reality test the conclusion?
 
-Use real examples both to shape the proposed solution and to verify it.
+Return to real examples, journeys, questions, models, failures, benchmarks or observations.
 
 Ask:
 
-> Does this help more than the single example that exposed the gap?
+> Does the conclusion survive beyond the example that exposed the issue?
 
-> Does the idea survive when the context changes?
+> What evidence would show that the chosen response helped?
 
-> Does the real user, learner, document, workflow, or task now behave better?
+> What evidence would prove the conclusion wrong?
 
 ---
 
-# DIFFERENTIATE THE END OF PROMPT 3 BY PURPOSE AND ZOOM LEVEL
+# HOW PROMPT 3 SHOULD END BY REQUEST MODE
 
-## PRODUCT LEVEL
+These are **decision duties**, not mandatory artifact forms.
 
-End with:
+## CONCEIVE
+
+Determine what should be built or become possible from first principles.
+
+## REVIEW
+
+Determine:
 
 - what should be preserved;
-- major gaps;
-- architectural or product corrections;
-- what should deliberately not be built;
-- phased path to the intended product;
-- evidence that each phase improves the real user experience.
+- what has become historical;
+- the meaningful remaining distance;
+- what “complete enough now” should mean;
+- the smallest sensible phased path;
+- what should deliberately wait or never be built.
 
-## REPOSITORY / SYSTEM LEVEL
+## CHANGE
 
-End with:
+Determine whether meaningful implementation/change work still remains.
 
-- what the system has actually become;
-- what should remain;
-- what old assumptions are obsolete;
-- what genuinely blocks the desired human outcome;
-- what “complete enough for this stage” should mean now;
-- what should happen next;
-- what should wait;
-- phased programme based on real dependencies and value.
+If yes, rewrite the task in today's terms and identify the smallest durable change.
 
-## TASK / ISSUE LEVEL — IMPLEMENTATION / CHANGE
+If no, say whether the issue should close, defer, become a decision, or move elsewhere.
 
-End with a rewritten task statement:
+## INVESTIGATE
 
-> “Given the current repository, the meaningful remaining work is…”
+Produce the best-supported conclusion, uncertainty and evidence that would overturn it.
 
-Then identify:
+Do not automatically convert a finding into implementation work.
 
-- what has already been solved;
-- the exact remaining problem;
-- the smallest durable change;
-- what should deliberately remain untouched;
-- how real evidence will verify it;
-- what should make the next agent reconsider the conclusion.
+## DECIDE
 
-The rewritten task may be much smaller than the original issue. That is often the correct result.
+State the exact decision, viable options, evidence, consequences, reversibility, uncertainty, authority boundary and what each option gates.
 
-## TASK / ISSUE LEVEL — INVESTIGATION / AUDIT
+Do not make an owner-reserved choice unless authorized.
 
-End with:
+## COORDINATE
 
-- what question the investigation needed to settle;
-- what evidence is authoritative;
-- what was reproduced or verified;
-- what explanation best fits the evidence;
-- what remains uncertain;
-- whether a change is justified;
-- what evidence would overturn the conclusion.
+Determine the truthful current state, real dependencies, decisions versus executable work, and the safe frontier.
 
-Do not invent an implementation task merely because the investigation found something interesting.
+Then decide whether the current coordination artifact should be preserved, reconciled, narrowed, split, replaced or closed.
 
-## TASK / ISSUE LEVEL — DECISION
+Do not assume “COORDINATE” means “produce a better register.”
 
-End with:
+## HANDOVER
 
-- the exact decision;
-- who owns it;
-- the viable options;
-- evidence for and against each;
-- consequences and reversibility;
-- uncertainty;
-- what work each option gates;
-- what can proceed without the decision.
+Transmit enough understanding that a successor can continue with correct judgement.
 
-Do not make the owner-reserved choice on the owner's behalf unless explicitly authorized.
+The handover must preserve reasoning, not merely operational state.
 
-## TASK / ISSUE LEVEL — COORDINATION / REGISTER
-
-End with a reconciled current picture:
-
-- what is true now;
-- what has merged;
-- what is still in flight;
-- what is stale or superseded;
-- merge/dependency order where relevant;
-- technical blockers;
-- owner-gated decisions;
-- work that can proceed without those decisions;
-- the exact current executable frontier;
-- conditions that would make the register stale again.
-
-The output should improve programme truth and continuity, not redesign the whole product.
-
-## TASK / ISSUE LEVEL — HANDOVER / CONTINUITY
-
-End with:
-
-- why the work exists;
-- current authoritative state;
-- what is complete;
-- what is unresolved;
-- current risks and decisions;
-- source evidence;
-- first safe next action;
-- stop conditions;
-- what would make the handover stale.
-
-The successor should be able to continue without needing the previous conversation.
+Run the PROMPT-3 FREEDOM GATE before accepting Prompt 3.
 
 ---
 
@@ -1299,20 +1122,38 @@ TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
-TARGET NATIVE DELIVERABLE:
 REQUEST MODE:
-TARGET PURPOSE:
 TARGET SCOPE:
-EXPERTISE:
 
+CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT ARTIFACT FORM:
+CURRENT STATED ANSWER / IMPLEMENTATION:
+CURRENT-STATE FACTS:
+
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+UNDERLYING HUMAN PROBLEM:
+HUMAN OUTCOME:
+GENUINE CONSTRAINTS:
+EXPERTISE:
 IMAGINATION OBJECT:
+
+PROMPT 2
 REALITY OBJECT:
-FINAL OUTPUT CONTRACT:
+
+PROMPT 3
+COMPARISON QUESTION:
+HANDOVER DESTINATION:
+
+ARTIFACT-ERASURE GATE:
+PASS — <one short reason>
+
+CURRENT-VOCABULARY GATE:
+PASS — <one short reason>
 
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
 
-PROMPT-3 OUTPUT GATE:
+PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
 ```
 
@@ -1380,8 +1221,8 @@ REPOSITORY / SYSTEM:
 REPOSITORY LINK:
 <canonical repository/system URL>
 
-PURPOSE:
-<this target exists so that ...>
+UNDERLYING HUMAN PROBLEM:
+<the blind problem Prompt 1 was built from>
 ```
 
 Omit only fields that genuinely do not exist.
@@ -1402,145 +1243,107 @@ The visible preflight plus the three prompt fences are the complete deliverable.
 
 # SILENT QUALITY CHECKS BEFORE OUTPUT
 
-Do not show these checks. Use them internally.
+Do not show these checks outside the visible gate results in the PREFLIGHT RECORD.
 
 ### Visible-preflight check
 
-Is the complete PREFLIGHT RECORD visible in the final generator output?
+Is the complete PREFLIGHT RECORD visible?
 
-If it is hidden, summarized as "completed", or omitted, fail.
+If it is hidden or replaced by “preflight completed,” fail.
 
 ### Copy-pasteability check
 
-Are Prompt 1, Prompt 2, and Prompt 3 each enclosed in their own clean outer text fence and directly pasteable without editing?
+Are Prompt 1, Prompt 2 and Prompt 3 each isolated in one clean outer text fence and directly pasteable without editing?
 
-If there is commentary mixed into a prompt, unresolved known placeholders, nested fences, or notes after Prompt 3, fail.
+If there is commentary mixed into a prompt, known placeholders, nested fences, or notes after Prompt 3, fail.
 
-### Native-deliverable check
+### Reality-quarantine check
 
-Does TARGET NATIVE DELIVERABLE describe the kind of thing this target itself is supposed to leave behind?
+Are CURRENT ARTIFACT FORM, CURRENT STATED ANSWER / IMPLEMENTATION, and CURRENT-STATE FACTS absent from Prompt 1 unless independently justified as genuine constraints?
 
-Does FINAL OUTPUT CONTRACT preserve that artifact form rather than mechanically mapping REQUEST MODE to a generic deliverable?
+### Artifact-erasure check
+
+If today's issue/artifact/implementation disappeared, would Prompt 1 still make essentially the same sense?
 
 If not, fail.
 
-### Purpose-proximity check
+### Current-vocabulary check
 
-Could TARGET PURPOSE be pasted unchanged onto the parent system or several sibling issues?
+Did any important Prompt-1 noun or scenario detail come from today's target rather than the blind human problem?
 
-If yes, it is probably too broad. Rewrite it closer to this target.
+If yes, remove it unless independently justified.
 
-### Preflight-completeness check
+### Human-problem check
 
-Are TARGET NATIVE DELIVERABLE, REQUEST MODE, TARGET PURPOSE, TARGET SCOPE, EXPERTISE, IMAGINATION OBJECT, REALITY OBJECT, and FINAL OUTPUT CONTRACT all resolved?
+Does UNDERLYING HUMAN PROBLEM describe what would still need solving if the current artifact had never existed?
 
-If not, do not generate prompts.
+### Prompt-1 object check
 
-### Prompt-1 object-gate check
-
-Would a perfect answer to Prompt 1 be an excellent example of the frozen IMAGINATION OBJECT?
-
-If not, reject Prompt 1.
-
-### Prompt-3 output-gate check
-
-Would a perfect answer to Prompt 3 produce the frozen FINAL OUTPUT CONTRACT?
-
-If not, reject Prompt 3.
-
-### Expertise/object separation check
-
-Did domain expertise accidentally become the object of Prompt 1?
-
-If yes, re-check the target purpose.
-
-### Target-purpose check
-
-Can you complete:
-
-> “This target exists so that …”
-
-in a way that describes the target itself rather than the surrounding product mission?
-
-If not, stop and re-identify the target purpose.
-
-### Neighbouring-problem / zoom-leak check
-
-If Prompt 1 were answered perfectly, would it satisfy this target, or would it solve a larger neighbouring problem?
-
-If it solves the larger problem, narrow Prompt 1.
-
-### Independence check
-
-Could Prompt 1 have been written without knowing the current implementation?
-
-If not, remove leaked implementation vocabulary.
-
-### Human-intent check
-
-Does Prompt 1 describe what a person should be able to achieve rather than what files or abstractions should exist?
+Would a perfect answer to Prompt 1 create the independent reference picture needed for that underlying problem?
 
 ### Reality check
 
-Does Prompt 2 force inspection of current evidence rather than trusting old issue or roadmap language?
+Does Prompt 2 force inspection of live evidence rather than trusting issue prose or old plans?
 
 ### In-flight-work check
 
-Does Prompt 2 account for relevant current PRs/work without pretending they are already merged?
+Does Prompt 2 distinguish current baseline from relevant near-future work without pretending open work is merged?
 
 ### Prompt-2/3 identity check
 
-Does Prompt 2 include the canonical target URL and repository/system URL when live inspection is possible?
+When links exist, does Prompt 2 contain the exact target and repository/system links?
 
-Does Prompt 3 independently name the target and include the canonical target URL and repository/system URL when available?
+Does Prompt 3 independently identify the exact target and repository/system?
 
-If a task/issue has both links available and Prompt 2 or Prompt 3 omits them, revise it.
-
-Do not fail Prompt 1 merely because it omits live links to preserve the independence barrier.
+Prompt 1 may omit live links to protect blindness.
 
 ### Goalpost check
 
-Does Prompt 3 explicitly return to the exact Prompt-1 conception?
+Does Prompt 3 explicitly return to the exact Prompt-1 answer?
+
+### Artifact-survival freedom check
+
+Can Prompt 3 legitimately preserve, update, narrow, split, replace, close, defer, move elsewhere or leave unchanged today's artifact?
+
+If it mandates an improved version of the artifact before comparison, fail.
 
 ### Rediscovery check
 
-Does Prompt 3 ask what the goal means **now**, rather than merely counting missing old checklist items?
+Does Prompt 3 ask what the goal/problem means **now**, rather than merely count old checklist items?
 
 ### Example-vs-problem check
 
-Does Prompt 3 force the agent to distinguish the example that exposed a weakness from the reusable problem underneath it?
+Does Prompt 3 distinguish the exposing example from the reusable problem underneath it?
 
 ### Restraint check
 
-Can Prompt 3 validly conclude “no change,” “defer,” or “leave this alone”?
+Can Prompt 3 conclude no change, close, defer, collect evidence first, or leave this alone?
 
 ### Evidence check
 
-Does Prompt 3 return to real examples to test the conclusion?
-
-### Role-fit check
-
-Does Prompt 3 produce the right kind of outcome for the target role?
-
-- implementation → bounded change;
-- investigation → trustworthy conclusion;
-- decision → decision-ready evidence;
-- coordination/register → reconciled current truth and frontier;
-- handover → successor continuity.
-
-If a coordination target ends in a product redesign, or an investigation ends in unrequested implementation, revise it.
+Does Prompt 3 return to real examples/evidence to test the conclusion?
 
 ### Handover-reasoning check
 
-Does Prompt 3 hand over the reasoning journey:
+Does Prompt 3 hand over:
 
-destination → reality → real gap → chosen move → deliberately not done → real evidence/example → unresolved → where next → what changes our mind?
+```text
+destination
+→ reality
+→ real gap
+→ chosen move
+→ deliberately not done
+→ real evidence/example
+→ unresolved
+→ where next
+→ what changes our mind
+```
 
-If the handover is mainly branch/commit/PR topology or a task checklist, fail.
+If handover is mainly branch/commit/PR topology or a task checklist, fail.
 
 Operational details may supplement the reasoning relay, never replace it.
 
-If any check fails, revise the three prompts before output.
+If any check fails, revise before output.
 
 ---
 
@@ -1874,7 +1677,7 @@ The final task may be much smaller than the historical issue. That is a successf
 
 ---
 
-# APPENDIX D — CASE STUDY: TASK LEVEL, COORDINATION / REGISTER
+# APPENDIX D — CASE STUDY: TASK LEVEL, COORDINATION TARGET
 
 ## Input example
 
@@ -1884,190 +1687,171 @@ https://github.com/reallaksh19/Advanced_Analysis/issues/1855
 
 CURRENT SYSTEM:
 https://github.com/reallaksh19/Advanced_Analysis
-
-HUMAN GOAL:
-Keep one truthful, current picture of merge order, outstanding engineering work, blockers,
-owner-gated decisions, known baseline failures, and the exact work that can safely proceed.
 ```
 
-## Frozen preflight
+## Current reality to quarantine
+
+The live issue happens to be a **register** containing merge order, open work, blockers, decisions and corrections.
+
+That fact belongs to Prompt 2.
+
+It must not automatically define Prompt 1.
+
+## Correct blind recovery
 
 ```text
-TARGET NATIVE DELIVERABLE:
-live engineering coordination register
+UNDERLYING HUMAN PROBLEM:
+A successor entering a complex engineering programme needs to determine what genuinely
+remains, what is already solved or historical, what is executable work versus a decision,
+what depends on what, and what can safely happen next without blindly continuing an old plan.
 
-REQUEST MODE:
-TARGET TITLE:
-[LAFEA REGISTER] Pending activity — merge queue, open work, and the decisions that gate it
-TARGET LINK:
-https://github.com/reallaksh19/Advanced_Analysis/issues/1855
-PARENT REPOSITORY / SYSTEM:
-reallaksh19/Advanced_Analysis
-REPOSITORY / SYSTEM LINK:
-https://github.com/reallaksh19/Advanced_Analysis
-
-
-COORDINATE
-
-TARGET PURPOSE:
-This issue exists so that the owner and replacement engineer have one verified current
-view of outstanding work, merge/dependency order, blockers, owner-gated decisions,
-corrections and safe next work.
-
-TARGET SCOPE:
-TASK_ARTIFACT
-
-EXPERTISE:
-senior structural / finite-element engineering plus engineering-programme judgement
+HUMAN OUTCOME:
+The owner and next engineer can make the correct next move from a truthful understanding
+of the programme rather than from inherited status prose.
 
 IMAGINATION OBJECT:
-an excellent live engineering programme register
-
-REALITY OBJECT:
-whether every important claim in Issue #1855 still agrees with the live repository,
-PRs, tests, workflows, issues and owner decisions
-
-FINAL OUTPUT CONTRACT:
-a reconciled live register containing current truth, merge/dependency order,
-technical blockers, owner decisions, work that can proceed, the executable frontier,
-and conditions that make the register stale
+excellent judgement about what genuinely remains and can safely happen next
+in an evolved engineering programme
 ```
 
-**Gate expectation:** a perfect Prompt-1 answer describes the register, not the shell-FEA product. Any product-design Prompt 1 FAILS.
-
-## Wrong interpretation
-
-A weak generator sees deep finite-element or solver details inside the issue and produces Prompt 1 like:
-
-> Imagine the ideal shell finite-element product. What solver, element formulation, qualification evidence and UI should it have?
-
-That is a **neighbouring product problem**.
-
-Even if answered brilliantly, it does not fulfil the purpose of the register.
-
-## Correct target-purpose sentence
-
-> This issue exists so that the owner and the next engineer have one verified, current view of what is done, what is not done, what is blocked, what can merge, what decisions are reserved to the owner, and what can safely happen next.
-
-That sentence should control all three prompts.
-
-## What a good generated Prompt 1 should feel like
-
-It should remain blind to the actual PR numbers and current failures, but think deeply about an excellent engineering register:
-
-> Imagine you are taking over a complex engineering programme with stacked changes, known failures, unresolved technical questions and owner-gated decisions. What would one trustworthy live register need to show so you could tell what is actually true, what can safely merge, what is blocked technically versus waiting on a decision, what claims have become stale, and what the first safe next action is? How should corrections remain visible without confusing current state? What evidence should support each important claim? What should make an entry stale?
-
-It should **not** redesign the engineering product itself.
-
-## What a good generated Prompt 2 should feel like
-
-It should now inspect the live issue and repository and verify the register claim-by-claim:
+Notice what is intentionally absent:
 
 ```text
-register claim
-→ live PR / branch / issue / test / workflow / evidence / owner decision
-→ current truth
+register
+specific PR stack
+specific red gates
+specific owner decisions
+current merge order
+current corrections
 ```
 
-It should reconstruct:
+Those are Prompt-2 discoveries.
 
-- actual trunk health;
-- which failures are pre-existing;
-- which PRs are stacked and in what dependency order;
-- which PRs are genuinely ready;
-- what has merged since the register was written;
-- which engineering items remain;
-- which decisions truly require the owner;
-- what work can continue without those decisions;
-- which statements in the register are stale or contradicted by current evidence.
+## What a good Prompt 1 should feel like
 
-It should distinguish current baseline from near-future baseline without crediting unmerged work as already true.
+Something closer to:
 
-## What a good generated Prompt 3 should feel like
+> Imagine taking over a long-running engineering programme after substantial work has already happened. Before spending another week, how would you determine what genuinely remains, what has become historical, what requires a human decision rather than more engineering, what can proceed independently, and whether some planned work should no longer be pursued? What evidence would you need to trust that picture, and what mistakes cause teams to keep solving yesterday's problems?
 
-It should return to the independent picture of a trustworthy engineering register and ask:
+It should **not** say:
 
-> Does this issue currently provide that truthful view?
+> Imagine an excellent live register.
 
-Then it should reconcile, not redesign:
+That would inherit today's solution form.
 
-- preserve still-correct entries;
-- retire or rewrite stale entries;
-- update merge/dependency order;
-- separate technical blockers from owner decisions;
-- expose the exact executable frontier;
-- state what is safe to carry now;
-- state what must wait;
-- state what new event would make the register stale.
+## What Prompt 2 should do
 
-Its final result should be:
+Now reveal Issue #1855 and the repository.
 
-> a better current register and handover surface,
+Inspect the register claim-by-claim, reconstruct current and near-future baseline, verify dependencies, blockers, decisions, current work and stale statements.
 
-not:
+Prompt 2 may conclude that the register is excellent, weak, stale, redundant, or no longer the right coordination surface.
 
-> a new architecture for the engineering product.
+## What Prompt 3 should do
 
-This is the canonical example of why **request mode + target purpose must be frozen before target scope**, and why **expertise must not be confused with the imagination object**.
+Return to the independent picture of sound engineering judgement.
 
+Then ask:
+
+> Given today's reality, does #1855 remain the right instrument?
+
+The result may be:
+
+- preserve it unchanged;
+- reconcile it;
+- narrow it;
+- split it;
+- close it and return work to owning issues;
+- replace it with another coordination surface;
+- or defer action.
+
+It must not be forced to “produce a better register.”
+
+This case is the canonical test for **artifact-form contamination**.
 
 ---
 
-# FOUR-CASE REGRESSION VALIDATION
+# APPENDIX E — NEGATIVE CONTROL: ISSUE #1854
 
-Before considering a future schema revision safe, mentally run these four controls:
+Issue #1854 exposed the strongest failure mode.
 
-| Case | Native deliverable | Request mode | Scope | Imagination object | Final output contract | Expected |
-| --- | --- | --- | --- | --- | --- | --- |
-| Static browser PDF editor | working product / product direction | REVIEW | PRODUCT | excellent browser PDF editor | product gap analysis + phased roadmap | PASS |
-| Overall Grade9V3 | revalidated system/programme direction | REVIEW | REPOSITORY_SYSTEM | excellent Grade-9 self-study system | current meaning of Grade 9 + programme | PASS |
-| Grade9V3 Issue #19 | bounded content/mapping change | CHANGE | TASK_ARTIFACT | excellent question-to-learning mapping | rewritten current task + smallest durable change | PASS |
-| Advanced_Analysis Issue #1855 | live coordination register | COORDINATE | TASK_ARTIFACT | excellent live engineering register | reconciled register + executable frontier | PASS |
-| Advanced_Analysis Issue #1756 | architecture + qualification/closure umbrella | REVIEW/COORDINATE | REPOSITORY_SYSTEM | excellent methodical shell qualification programme | revalidated qualification/closure roadmap | PASS |
+Its generated Prompt 1 was told, in supposedly blind form, that there was:
 
-The fourth case is the negative control for scope drift:
+- recently landed work;
+- in-flight work;
+- infrastructure blockers;
+- owner-reserved decisions;
+- pre-existing failures;
+- stale written plans;
+- and one living register.
+
+Those details were a sanitized restatement of the current issue.
+
+The Prompt 1 then explicitly said:
+
+> “The register is the thing you are imagining.”
+
+That fails this schema.
+
+A compliant preflight for #1854 would instead recover:
 
 ```text
-finite-element expertise
-≠
-permission to make Prompt 1 about designing the finite-element product
+UNDERLYING HUMAN PROBLEM:
+After a major round of product fixes, determine what genuinely remains,
+what is decision rather than implementation, what can proceed now,
+what has become historical, and whether the remaining release path is worth pursuing.
+
+IMAGINATION OBJECT:
+excellent post-change engineering judgement about the true remaining path
 ```
 
-If the generator produces a shell-FEA product-conception prompt for Issue #1855, the schema has regressed.
+The current register, gamma decision, CI failure, UI residue, hash issue and sequencing belong to Prompt 2.
 
-### Gate-by-gate expected result
+Prompt 3 must be free to decide whether the register should survive at all.
 
-```text
-CASE A — PDF EDITOR
-Prompt-1 object gate: PASS
-Prompt-3 output gate: PASS
-Neighbouring-problem risk: low because target itself is the product
-
-CASE B — OVERALL GRADE9V3
-Prompt-1 object gate: PASS only if current Grade9V3 vocabulary stays out
-Prompt-3 output gate: PASS only if result is repository/programme level
-Neighbouring-problem risk: medium — do not collapse into one issue or one subject slice
-
-CASE C — GRADE9V3 ISSUE #19
-Prompt-1 object gate: PASS only if it stays on question→learning mapping
-Prompt-3 output gate: PASS only if it rewrites today's remaining task
-Neighbouring-problem risk: high — do not broaden into overall Grade 9
-
-CASE D — ADVANCED_ANALYSIS ISSUE #1855
-Prompt-1 object gate: PASS only if it imagines an excellent live engineering register
-Prompt-3 output gate: PASS only if it yields reconciled truth + executable frontier
-Neighbouring-problem risk: critical — finite-element expertise must not broaden the object into product design
-```
+If a future schema revision again generates “imagine an excellent register” for #1854, the schema has regressed.
 
 ---
 
-# OUTPUT REGRESSION REQUIREMENTS
+# FIVE-CASE REGRESSION VALIDATION
 
-Every case study and every generated result must also pass these non-reasoning checks:
+Before considering a future schema revision safe, mentally run these controls:
+
+| Case | Prompt-1 independent object | Main contamination risk | Prompt-3 freedom requirement |
+| --- | --- | --- | --- |
+| Static browser PDF editor | excellent browser PDF experience/product | current implementation architecture | may preserve/change architecture |
+| Overall Grade9V3 | excellent Grade-9 self-study learner journey/system | Core/matrix/gate vocabulary | may redefine programme priorities |
+| Grade9V3 Issue #19 | excellent question → reusable learning need → prerequisite → teaching outcome | matrix/rung/current checklist | may shrink/close/rewrite task |
+| Advanced_Analysis Issue #1855 | excellent judgement about what genuinely remains and can safely happen next | “register” and current queue/details | may preserve/reconcile/replace/close register |
+| Advanced_Analysis Issue #1854 | excellent post-change judgement about the true remaining path | sanitized restatement of issue as blind context | may preserve/reconcile/replace/close register |
+| Advanced_Analysis Issue #1756 | excellent methodical qualification of shell capability from foundations through release | current architecture/child-roadmap form | may preserve/rewrite/split/retire roadmap |
+
+### Critical negative control
+
+The following must fail:
+
+```text
+TARGET CURRENTLY IS A REGISTER
+→ therefore Prompt 1 imagines an excellent register
+```
+
+The correct logic is:
+
+```text
+read current register
+→ recover problem behind it
+→ quarantine register form
+→ Prompt 1 imagines handling of underlying problem
+→ Prompt 2 discovers the register
+→ Prompt 3 decides whether register deserves to survive
+```
+
+### Output regression requirements
+
+Every generated result must contain:
 
 ```text
 VISIBLE PREFLIGHT RECORD
-must be present
 
 PROMPT 1
 one clean copy-pasteable text block
@@ -2082,10 +1866,10 @@ NO EXTRA NOTES
 after Prompt 3
 
 HANDOVER
-must transmit understanding, not merely operations
+reasoning continuity, not merely operations
 ```
 
-A result with excellent reasoning but missing the visible preflight, broken copy-pasteability, or an activity-log handover is a schema failure.
+A result with sophisticated reasoning but contaminated Prompt 1, hidden preflight, broken copy-pasteability, predetermined artifact survival, or activity-log handover is a schema failure.
 
 ---
 
@@ -2094,41 +1878,40 @@ A result with excellent reasoning but missing the visible preflight, broken copy
 The generator should make a future agent think in this order:
 
 ```text
-What are we really trying to achieve?
+Read the target carefully.
 
-Before seeing the existing answer,
-what would a strong answer look like?
+What answer/form does the target currently carry?
+Quarantine that.
+
+If today's artifact and implementation had never existed,
+what human problem would still remain?
+
+Before seeing today's answer,
+what would strong handling of that problem look like?
 
 What is actually true today?
 
-Given everything that has happened,
-what does the goal mean now?
+Put the independent picture beside reality.
 
-What meaningful distance still remains?
+Does today's artifact deserve to survive in its current form?
 
-What is the smallest worthwhile change?
+What meaningful distance genuinely remains?
 
-Does reality confirm that it helped?
+What is the smallest justified response?
 
-What must the next person understand?
+What real evidence confirms or challenges that conclusion?
+
+What understanding must the next person inherit?
 ```
 
-The method is constant.
+The method is constant:
 
-The **target native deliverable** preserves what kind of thing the target itself is meant to leave behind.
+> **Read the target to discover the problem behind it. Then mentally throw away the target's current answer for Prompt 1.**
 
-The **request mode** determines what operation the user wants now.
+Prompt 1 is independent not only of the code, but—where possible—of the current solution form itself.
 
-The **target purpose** determines why the target itself exists.
+Prompt 2 brings reality back.
 
-The **target scope** determines how much surrounding system belongs inside the problem.
+Prompt 3 decides what deserves to survive.
 
-The **expertise** determines how intelligently the agent reasons.
-
-The **imagination object** prevents Prompt 1 from drifting.
-
-The **reality object** keeps Prompt 2 bounded.
-
-The **final output contract** prevents Prompt 3 from turning into the wrong kind of deliverable.
-
-The **reasoning handover** preserves the journey from destination to reality to meaningful remaining distance, so the next agent inherits understanding rather than an activity log.
+The handover preserves the reasoning journey so the next agent inherits understanding, not merely activity.
