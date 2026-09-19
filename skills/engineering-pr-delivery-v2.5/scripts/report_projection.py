@@ -41,12 +41,33 @@ def _active_contract(ep:dict|None)->dict|None:
     }
 
 
+def _issue_id(node:dict)->str|None:
+    value=node.get("id",node.get("issue"))
+    return str(value) if value not in {None,""} else None
+
+
+def _current_issues(issue_graph:dict,work_package)->list[dict]:
+    out=[]
+    for node in issue_graph.get("nodes",[]) or []:
+        if not isinstance(node,dict) or str(node.get("roadmap_node"))!=str(work_package):continue
+        github=node.get("github") or {}
+        out.append({
+            "id":_issue_id(node),
+            "engineering_state":node.get("state"),
+            "github_state":node.get("github_state"),
+            "issue_number":github.get("issue_number"),
+            "issue_id":github.get("issue_id"),
+            "url":github.get("url"),
+        })
+    return sorted(out,key=lambda x:str(x.get("id")))
+
+
 def build(root:Path)->dict:
     state_path=root/"agents/relay/REPO_STATE.yaml";state=load_yaml(state_path)
     roadmap_path=root/state["roadmap"]["path"];roadmap=load_yaml(roadmap_path);progress_path=root/"agents/relay/roadmap/PROGRESS.yaml";issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
     active=state.get("active_ep") or {};ep=_maybe(root,active.get("path"));cp=_maybe(root,(state.get("last_checkpoint") or {}).get("path"));issues=load_yaml(issue_path) if issue_path.exists() else {"nodes":[],"relationships":[]}
     qptr=(cp or {}).get("quality_review") or {};qpath=qptr.get("path");qrv=_maybe(root,qpath)
-    owner_decisions=_owner_decisions(root)
+    owner_decisions=_owner_decisions(root);current_position=state.get("current_position") or {}
     projection={
         "schema_version":"relay-v2.5-report-projection",
         "generated_from":{
@@ -66,7 +87,15 @@ def build(root:Path)->dict:
         },
         "roadmap_summary":{"id":(roadmap.get("roadmap") or {}).get("id"),"revision":(roadmap.get("roadmap") or {}).get("revision"),"title":(roadmap.get("roadmap") or {}).get("title")},
         "relay_state":state.get("relay_state"),
-        "current_position":state.get("current_position") or {},
+        "current_position":current_position,
+        "current_work":{
+            "objective":current_position.get("objective"),
+            "phase":current_position.get("phase"),
+            "work_package":current_position.get("work_package"),
+            "ep_id":active.get("id"),
+            "outcome":(ep.get("outcome") if ep else {}) or {},
+            "issues":_current_issues(issues,current_position.get("work_package")),
+        },
         "progress":progress_snapshot(root),
         "execution":(state.get("status_planes") or {}).get("execution") or {},
         "quality":(state.get("status_planes") or {}).get("quality") or {},
