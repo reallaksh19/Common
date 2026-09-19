@@ -48,7 +48,7 @@ def main():
     print(render_issue_body(plan),end="")
     print("\n## Handover issue publication\n")
     strategy=plan["issue_strategy"]
-    print(f"- Handover key: `{'{'}strategy['handover_key']{'}'}`")
+    print(f"- Handover key: `{strategy['handover_key']}`")
     print(f"- Reuse rule: {strategy['reuse_rule']}")
     print(f"- Preferred relation: {strategy['relationship_preference']}")
     print(f"- Fallback relation: {strategy['relationship_fallback']}")
