@@ -278,11 +278,37 @@ The target is the **specific issue/task**, not merely the general class of probl
 
 Sibling/parent issues are context, not substitutes.
 
-For ISSUE_TASK, Prompt 1 must preserve the issue's **PROBLEM KERNEL**: the smallest set of stable facts without which it would no longer be the same issue.
+For ISSUE_TASK, Prompt 1 is anchored first by the issue's **TASK CONTRACT**, then by its **PROBLEM KERNEL**.
 
-That kernel may include named domain entities, a source/method boundary, the affected user/job, the particular authority or applicability tension, and the lifecycle stage if those facts define the issue.
+The task contract is the issue's own scenario and assignment:
 
-It must not include the issue's current proposed options, implementation recipe, present evidence interpretation, current work breakdown, or chosen artifact form merely because those appear in the issue body.
+```text
+WHY NOW
+what event/state makes this issue exist at this point in the programme?
+
+STARTING PREMISE
+what facts does the issue explicitly ask the reader to take as the starting scenario?
+
+RESPONSIBLE ACTOR / JOB
+who is actually responsible for resolving this issue-level question?
+
+OWNED QUESTION
+what exact question/change/disposition does this issue own?
+
+NON-GOALS / OWNERSHIP BOUNDARY
+what does this issue explicitly not own?
+
+ISSUE DIFFERENTIATOR
+why is this not the parent issue or a nearby sibling?
+```
+
+These premises may describe a time-specific programme state. That does **not** make them current-answer leakage.
+
+Prompt 1 may use them as the issue's **stated scenario**. Prompt 2 later verifies whether those premises are still true.
+
+The PROBLEM KERNEL then carries the smallest identity-bearing facts without which it would no longer be the same issue.
+
+Do not confuse either with the issue's current proposed answer, implementation recipe, evidence interpretation, work sequence, acceptance checklist, or chosen artifact form.
 
 #### TAB_SURFACE
 
@@ -490,6 +516,78 @@ specific issue numbers
 current CI outage
 ```
 
+### ISSUE TASK CONTRACT — mandatory for ISSUE_TASK
+
+Before abstracting the issue into an "underlying human problem", preserve the assignment the user actually selected.
+
+Extract the issue's task contract from its title, mission/problem statement, explicit scope, and explicit non-goals.
+
+Complete:
+
+```text
+WHY NOW:
+<the lifecycle event/state that makes this issue exist now>
+
+STARTING PREMISE:
+<2–6 issue-stated starting facts/scenario premises; these may be verified later in Prompt 2>
+
+RESPONSIBLE ACTOR / JOB:
+<the person/team role responsible for resolving this exact issue-level assignment>
+
+OWNED QUESTION:
+<the exact question/change/disposition this issue owns>
+
+NON-GOALS / OWNERSHIP BOUNDARY:
+<what belongs elsewhere or is explicitly not authorised here>
+
+ISSUE DIFFERENTIATOR:
+<why this issue is not its parent or nearest sibling issue>
+```
+
+### Task-contract versus current-answer partition
+
+For every important fact in the issue body, classify it before writing Prompt 1:
+
+```text
+TASK CONTRACT
+Defines the scenario/assignment.
+Allowed in Prompt 1.
+
+CURRENT ANSWER
+The issue's current proposed resolution, ordering, option set, implementation,
+disposition, or conclusion.
+Quarantine from Prompt 1.
+
+REALITY CLAIM
+A claimed current status/evidence statement that Prompt 2 must verify.
+Do not present it as verified truth in Prompt 1; if it is also a task-contract
+premise, present it only as the scenario the issue asks us to reason from.
+```
+
+This distinction is critical.
+
+A fact can be both a **task-contract premise** and a **reality claim**.
+
+Example:
+
+```text
+"The P0 fix set has landed and changed the landscape."
+```
+
+For a post-P0 reconciliation issue, that may be essential to the task contract.
+
+Prompt 1 may therefore say:
+
+> You are responsible for the programme at the point where the P0 fix round is treated as complete and the earlier sequence is no longer trusted.
+
+Prompt 2 must still verify whether that premise is actually true today.
+
+Do not solve specificity by deleting the premise.
+
+Do not solve blindness by importing the issue's proposed answer.
+
+---
+
 ### PROBLEM KERNEL — mandatory for ISSUE_TASK
 
 For issue/task-level work, TARGET ANCHORS alone are not enough.
@@ -556,7 +654,8 @@ benchmark conclusion, chosen interpolation coordinate, sample statistics, or rec
 For ISSUE_TASK, construct Prompt 1 mechanically from:
 
 ```text
-PROBLEM KERNEL
+ISSUE TASK CONTRACT
++ PROBLEM KERNEL
 + TARGET ANCHORS
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
@@ -572,12 +671,21 @@ Complete:
 TARGET ANCHORS:
 <stable, level-specific facts that make this unmistakably THIS target without leaking today's answer>
 
+ISSUE TASK CONTRACT:
+WHY NOW:
+STARTING PREMISE:
+RESPONSIBLE ACTOR / JOB:
+OWNED QUESTION:
+NON-GOALS / OWNERSHIP BOUNDARY:
+ISSUE DIFFERENTIATOR:
+
 PROBLEM KERNEL:
 <for ISSUE_TASK: 3–7 minimal identity-bearing facts that must survive blindness;
 for other levels: optional if useful>
 
 UNDERLYING HUMAN PROBLEM:
-<the problem that survives even if today's issue/artifact/implementation disappears>
+<for ISSUE_TASK: a plain-language restatement of the OWNED QUESTION that must not broaden
+beyond the ISSUE TASK CONTRACT; for other levels: the problem that survives today's implementation>
 
 HUMAN OUTCOME:
 <what should become possible for the person/team when that problem is handled well>
@@ -689,6 +797,15 @@ CURRENT ANSWER QUARANTINE:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
+
+ISSUE TASK CONTRACT
+WHY NOW:
+STARTING PREMISE:
+RESPONSIBLE ACTOR / JOB:
+OWNED QUESTION:
+NON-GOALS / OWNERSHIP BOUNDARY:
+ISSUE DIFFERENTIATOR:
+
 PROBLEM KERNEL:
 UNDERLYING HUMAN PROBLEM:
 HUMAN OUTCOME:
@@ -718,8 +835,17 @@ PASS — <one short reason>
 COMPLEX Q1–Q5 COVERAGE:
 PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
+QSET-SEPARATION GATE:
+PASS — complex mode uses human Q1–Q5 reasoning only; no formal relay QSET/admission gate
+
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
+
+TASK-CONTRACT FIDELITY GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+NEIGHBOUR-SEPARATION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 KERNEL-COVERAGE GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
@@ -851,6 +977,50 @@ The fix is to restore the PROBLEM KERNEL.
 
 ---
 
+# HARD GATE 0.8 — TASK-CONTRACT FIDELITY GATE
+
+For ISSUE_TASK, inspect every field of the ISSUE TASK CONTRACT.
+
+Ask:
+
+> **Is Prompt 1 materially situated in this exact assignment, or has it abstracted upward into a generic class of work?**
+
+Prompt 1 must preserve:
+
+- WHY NOW;
+- the load-bearing STARTING PREMISE;
+- RESPONSIBLE ACTOR / JOB;
+- OWNED QUESTION;
+- relevant NON-GOALS / OWNERSHIP BOUNDARY.
+
+If these disappear, fail.
+
+Do not replace them with generic words such as "complex programme", "responsible owner", or "remaining work" when the issue gives a more specific assignment.
+
+---
+
+# HARD GATE 0.82 — NEIGHBOUR-SEPARATION GATE
+
+For ISSUE_TASK, compare Prompt 1 with the parent and nearest sibling issues.
+
+Ask:
+
+> **Could this Prompt 1 be used unchanged for the parent issue or a nearby sibling?**
+
+If yes, it is too broad.
+
+Use ISSUE DIFFERENTIATOR to restore the exact edge.
+
+For example, #1854 must not collapse into:
+
+- #1830's whole live-product audit;
+- #1834's gamma-authority decision;
+- #1775's release implementation/evidence work.
+
+It owns the post-P0 reconciliation/closure question created by a changed programme state.
+
+---
+
 # HARD GATE 0.85 — KERNEL-COVERAGE GATE
 
 For ISSUE_TASK, inspect every PROBLEM KERNEL fact.
@@ -977,7 +1147,8 @@ Reject it and rewrite.
 Important nuance:
 
 - For a product target, the product category may itself be part of the human request. “Browser PDF editor” can survive erasure of the **current implementation**.
-- For an issue currently expressed as a “register,” “matrix,” or “roadmap,” that artifact form usually should **not** survive unless the user explicitly requires that form.
+- For ISSUE_TASK, erase the **artifact form and current answer**, but preserve the ISSUE TASK CONTRACT. Imagine the Markdown issue/register disappeared while the assignment it represents remained.
+- For an issue currently expressed as a “register,” “matrix,” or “roadmap,” that artifact form usually should **not** survive unless the task contract explicitly requires that form.
 
 ---
 
@@ -997,7 +1168,12 @@ or
 B. the current target / repository / issue / implementation / proposed solution?
 ```
 
-If B, remove it unless you can independently justify it as a genuine constraint.
+If B, remove it unless it is explicitly classified as either:
+
+- ISSUE TASK CONTRACT / PROBLEM KERNEL material for ISSUE_TASK; or
+- a genuine independent domain/human constraint.
+
+For issue-level work, deleting all target-derived facts is a failure: it erases the assignment itself.
 
 Hiding the issue number while paraphrasing its current state is **not** blindness.
 
@@ -1085,6 +1261,7 @@ Allowed inputs to Prompt 1:
 USER-REQUESTED LEVEL
 TARGET TITLE / SURFACE when it is itself part of the requested human problem
 TARGET ANCHORS
+ISSUE TASK CONTRACT for ISSUE_TASK
 PROBLEM KERNEL
 UNDERLYING HUMAN PROBLEM
 HUMAN OUTCOME
@@ -1291,18 +1468,32 @@ Do not leak today's UI arrangement, bug list, implementation limits or current b
 
 ### Task/issue-level note
 
-Issue-level Prompt 1 should be **closer to the issue than to the parent programme**, while still preceding today's answer.
+Issue-level Prompt 1 should be **closer to the issue than to the parent programme**.
 
-Construct it in this order:
+Do not start by abstracting upward to a generic human problem.
+
+Start with the ISSUE TASK CONTRACT.
+
+Construct Prompt 1 in this order:
 
 ```text
-1. Name the real domain/person affected.
-2. State the PROBLEM KERNEL concretely.
-3. Put that person into a realistic situation where the issue matters.
-4. Ask first-principles questions that could lead to multiple legitimate answers.
-5. Ask what evidence/principles would justify action.
-6. End with the independent reference picture.
+1. Put the RESPONSIBLE ACTOR into the exact WHY-NOW situation.
+2. State the STARTING PREMISE as a scenario, not as verified reality.
+3. Make the OWNED QUESTION unmistakable.
+4. State the NON-GOALS / OWNERSHIP BOUNDARY where it matters.
+5. Carry the PROBLEM KERNEL concretely.
+6. Ask first-principles questions that could lead to multiple legitimate answers.
+7. Ask what evidence/principles would justify action.
+8. End with the human/domain outcome.
 ```
+
+The actor is the person responsible for **this issue's outcome**.
+
+Do not automatically substitute the product end-user.
+
+For a coordination/closure issue, the right actor may be the engineering owner or successor deciding what truly remains.
+
+For a user-facing defect issue, the end-user may be appropriate.
 
 Do not begin by asking for the current artifact:
 
@@ -1903,6 +2094,15 @@ CURRENT ANSWER QUARANTINE:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
+
+ISSUE TASK CONTRACT
+WHY NOW:
+STARTING PREMISE:
+RESPONSIBLE ACTOR / JOB:
+OWNED QUESTION:
+NON-GOALS / OWNERSHIP BOUNDARY:
+ISSUE DIFFERENTIATOR:
+
 PROBLEM KERNEL:
 UNDERLYING HUMAN PROBLEM:
 HUMAN OUTCOME:
@@ -1923,8 +2123,17 @@ PASS — <one short reason>
 COMPLEX Q1–Q5 COVERAGE:
 PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
+QSET-SEPARATION GATE:
+PASS — complex mode uses human Q1–Q5 reasoning only; no formal relay QSET/admission gate
+
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
+
+TASK-CONTRACT FIDELITY GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+NEIGHBOUR-SEPARATION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 KERNEL-COVERAGE GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
@@ -2103,6 +2312,24 @@ Does Prompt 1 begin inside the person's real situation and stay there?
 Fail if it mentions later passes, fixed references, repositories to avoid inspecting, schema mechanics, gates, quarantine, or being "held to" a future comparison.
 
 The method must be invisible in Prompt 1.
+
+### Task-contract fidelity check
+
+For ISSUE_TASK, does Prompt 1 preserve the issue's WHY NOW, starting premise, responsible actor/job, owned question, and relevant ownership boundary?
+
+If not, fail as over-generalised.
+
+### Neighbour-separation check
+
+Could Prompt 1 serve the parent or nearest sibling issue unchanged?
+
+If yes, fail.
+
+### QSET-separation check
+
+When COMPLEX MODE is ON, is Q1–Q5 expressed only as human Prompt-1 reasoning?
+
+Reject formal `QSET-*`, route/EP/digest metadata, `TO_BE_BOUND`, qualification gates, or evaluator admission requirements.
 
 ### Same-issue identity check
 
@@ -2824,17 +3051,38 @@ The Prompt 1 then explicitly said:
 
 That fails this schema.
 
-A compliant preflight for #1854 would instead recover:
+A compliant preflight for #1854 must first preserve its task contract:
 
 ```text
-UNDERLYING HUMAN PROBLEM:
-After a major round of product fixes, determine what genuinely remains,
-what is decision rather than implementation, what can proceed now,
-what has become historical, and whether the remaining release path is worth pursuing.
+WHY NOW:
+#1854 is explicitly a post-#1831/P0 reconciliation issue because that fix round
+changed the landscape and made earlier sequencing obsolete.
 
-IMAGINATION OBJECT:
-excellent post-change engineering judgement about the true remaining path
+STARTING PREMISE:
+no new defect is being reported here; the remaining concerns already have owning issues;
+this issue is about what remains and how the changed programme should close/sequence.
+
+RESPONSIBLE ACTOR / JOB:
+the EMP.1/WRC owner or successor deciding whether more bounded-release effort is justified
+and what legitimately happens next
+
+OWNED QUESTION:
+given the post-P0 state, what genuinely remains, what kind of thing is each remainder,
+what order/dependency is real, and is further bounded-release effort worth pursuing?
+
+NON-GOALS / OWNERSHIP BOUNDARY:
+do not rediscover the whole product audit, take over child issues, or make owner-reserved
+engineering-policy decisions
+
+ISSUE DIFFERENTIATOR:
+#1830 owns the broad live-product audit; #1834 owns the gamma authority decision;
+#1775 owns release closure work; #1854 owns the post-P0 reconciliation of what remains.
 ```
+
+Then derive the PROBLEM KERNEL and human questions from that exact contract.
+
+A prompt that says only "determine what remains in an evolved engineering programme"
+is now also a failure: it has preserved the class of problem while losing #1854's assignment.
 
 The current register, gamma decision, CI failure, UI residue, hash issue and sequencing belong to Prompt 2.
 
@@ -2888,7 +3136,7 @@ PROBLEM KERNEL:
 
 A strong Prompt 1 could begin:
 
-> EMP.1/WRC has just come through a substantial round of product fixes. Before anyone spends another engineering week, imagine you are responsible for deciding what genuinely remains between the product as it now stands and a worthwhile bounded professional release. What must you establish about remaining engineering work, unresolved authority/judgement, obsolete plans, independent work, and stop/defer conditions before continuing?
+> You are taking responsibility for EMP.1/WRC at a very specific hand-off: the P0 fix issue is treated as landed, that work has changed the programme enough that the previous sequencing is no longer trusted, this issue is not reporting a new defect, and the remaining concerns already have their own owners. Your job is not to rediscover the whole product or execute those child issues. It is to decide what genuinely remains after this changed state, what kind of remainder each thing is, which dependencies are real, and whether another bounded-release push is actually worth doing. What would you need to establish before authorising any next work?
 
 That is recognisably #1854's underlying problem.
 
@@ -3037,6 +3285,18 @@ Q5 exact first bounded change + predicted before/after verification
 
 In a qualification QSET those are repository-grounded takeover questions.
 
+**That formal QSET protocol is not part of three-pass complex mode.**
+
+When the user says "complex" for this three-pass generator:
+
+- do not create `QSET-*`;
+- do not create route/EP/digest fields;
+- do not create `TO_BE_BOUND` placeholders;
+- do not add a qualification/admission gate between Prompt 2 and Prompt 3;
+- do not require an independent evaluator before Prompt 3.
+
+Complex mode uses only the **reasoning semantics** of Q1–Q5, woven into Prompt 1.
+
 In **Prompt 1**, preserve the reasoning intent but translate it into a first-principles human conversation.
 
 The future agent should not be told about the hidden/current-system distinction; that separation is enforced by the generator.
@@ -3174,6 +3434,24 @@ Translate it into a **first proof slice**:
 
 This gives Prompt 3 a disciplined seed later without contaminating Prompt 1 with current implementation assumptions.
 
+## ISSUE_TASK anchoring for complex Q1–Q5
+
+For ISSUE_TASK, every Q1–Q5 lens must answer the **OWNED QUESTION**.
+
+Do not let complex mode broaden the prompt into the product, parent programme, or end-user journey unless the issue itself owns that level.
+
+In particular:
+
+- Q1 traces the path of truth/authority relevant to this issue's decision.
+- Q2 reconstructs one concrete instance of the issue's exact assignment.
+- Q3 mutates a task-contract premise or issue-relevant assumption and protects the issue's invariant.
+- Q4 independently checks a claim that matters to resolving the owned question.
+- Q5 chooses the smallest bounded proof that would reduce uncertainty about the owned question.
+
+For a post-fix closure/reconciliation issue, Q2 should reconstruct a concrete remaining-work/disposition case, not drift into a generic product-use walkthrough.
+
+Each lens must materially use at least one ISSUE TASK CONTRACT element.
+
 ## Human weaving requirement
 
 Do not produce five disconnected exam questions.
@@ -3278,8 +3556,12 @@ LEGACY-SIGNATURE GATE = PASS
 For an ISSUE_TASK:
 
 ```text
+ISSUE TASK CONTRACT
+= why this issue exists now, its stated starting scenario, exact owned question,
+  responsible actor/job, non-goals, and sibling/parent distinction
+
 PROBLEM KERNEL
-= facts that make it this issue
+= minimal identity-bearing facts inside that task contract
 
 CURRENT ANSWER QUARANTINE
 = today's answer/options/evidence/sequence that Prompt 1 must not reveal
@@ -3342,7 +3624,82 @@ The second form creates the same reasoning separation without exposing the metho
 
 ---
 
-# ELEVEN-CASE REGRESSION VALIDATION
+# APPENDIX K — ISSUE SPECIFICITY REGRESSION: TASK CONTRACT VS GENERIC HUMANISATION
+
+Two opposite failures are possible.
+
+## Failure A — contaminated specificity
+
+Prompt 1 repeats the issue's current answer:
+
+```text
+gamma decision
+CI outage
+U-16 residue
+resultHash disposition
+current proposed sequence
+```
+
+This is specific but not independent.
+
+## Failure B — abstract independence
+
+Prompt 1 removes those facts, then broadens to:
+
+> You are responsible for deciding what genuinely remains in a complex engineering programme.
+
+This is independent but no longer sufficiently #1854-specific.
+
+## Correct corridor
+
+Preserve the **task contract**, quarantine the **current answer**.
+
+For #1854:
+
+```text
+KEEP AS SCENARIO:
+- EMP.1/WRC
+- post-P0 hand-off
+- P0 work changed the landscape enough to supersede earlier sequencing
+- no new defect is being reported by this issue
+- remaining concerns already have their own owners
+- this issue owns reconciliation of what remains and whether further bounded-release effort is worthwhile
+- this is not the parent audit, gamma decision, or release-execution issue
+
+QUARANTINE:
+- exact current item list
+- gamma evidence/options
+- CI diagnosis
+- U-16 proposal
+- resultHash diagnosis
+- current order
+- current acceptance/closure checklist
+```
+
+A strong issue-level Prompt 1 should be recognisable from the **assignment**, not from the proposed answer.
+
+## Complex-mode control
+
+If the user says `complex`, Q1–Q5 must deepen this exact task contract.
+
+They must not create a formal relay qualification package.
+
+The following is a three-pass schema failure:
+
+```text
+QUALIFICATION GATE — ANSWER QSET Q1–Q5
+schema_version: relay-v2.5-question-set
+route_key: ...
+ep_contract_digest: ...
+TO_BE_BOUND
+do not proceed to Pass 3 until evaluator PASS
+```
+
+Those belong to relay takeover qualification, not the human Prompt-1 complex reasoning mode.
+
+---
+
+# TWELVE-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -3359,6 +3716,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Explicit complex-mode target | same target plus human Q1–Q5 depth | mechanical Q labels or generic five-question checklist | Prompt 1 covers path → reconstruction → stress test → independent check → bounded proof |
 | Stale-schema issue run | current issue problem kernel under current schema SHA | legacy TASK_ARTIFACT/register-imagination path | generation rejected before prompts; then issue kernel controls Prompt 1 |
 | Human-immersion Prompt 1 | target-specific human/domain situation | meta instructions about later passes/repository blindness | Prompt 1 is method-invisible; separation is enforced outside it |
+| Issue task-contract specificity | exact issue assignment as scenario | either current-answer leakage or generic humanisation | task contract survives; current answer stays quarantined; sibling/parent drift fails |
 
 ### Critical negative control
 
@@ -3452,7 +3810,7 @@ But independence is not vagueness.
 
 The user's lot boundaries are authoritative. A tab-level request stays tab-level; a related issue becomes evidence, not a substitute target.
 
-For issue-level work, preserve the **PROBLEM KERNEL** and explicitly quarantine the current answer:
+For issue-level work, preserve the **ISSUE TASK CONTRACT** first, then its **PROBLEM KERNEL**, and explicitly quarantine the current answer:
 
 > **Erase today's answer, not the facts that make it the same issue.**
 
@@ -3460,7 +3818,8 @@ Construction rule:
 
 ```text
 Prompt 1 =
-PROBLEM KERNEL
+ISSUE TASK CONTRACT
++ PROBLEM KERNEL
 + TARGET ANCHORS
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
