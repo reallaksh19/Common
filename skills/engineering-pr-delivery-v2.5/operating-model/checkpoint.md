@@ -76,3 +76,50 @@ The join receipt must cover every approved lane exactly once, validate every lan
 The first EP uses `previous_checkpoint: NONE` with `last_checkpoint: {id: NONE, path: null}` and no predecessor join.
 
 For a terminal/idle relay, the final checkpoint uses `successor.mode: NONE`, the computed frontier is empty, and `active_ep.state: NONE`. A checkpoint or join that routes to one successor while `REPO_STATE` routes to another is invalid even when the individual files are structurally well-formed.
+
+
+## Checkpoint contract v2
+
+New checkpoints use:
+
+```yaml
+schema_version: relay-v2.5
+contract_version: 2
+```
+
+`contract_version` is checkpoint-local. It does not change the global V2.5 schema version.
+
+Historical checkpoints without `contract_version` remain readable under the legacy contract. The validator emits a migration warning but does not invalidate old custody chains solely because the field is absent. New checkpoints must not omit it.
+
+A v2 checkpoint makes the human-publication fields structural:
+
+```text
+implementation_result
+  summary
+  completed_steps[]
+  files_changed[]
+
+known_limitations[]
+remaining_work[]
+
+roadmap_reconciliation
+  result
+  status_updates[]
+  proposals[]
+  owner_decisions_required[]
+```
+
+Rules:
+
+- `implementation_result.summary` is explicit plain-language engineering outcome, even when no files changed.
+- `completed_steps[]` records only work completed on this checkpoint basis; no activity inflation.
+- `files_changed[]` is the repository-relative file set changed by the checkpoint result. Empty is valid and explicitly means no files changed.
+- `known_limitations[]` records unresolved limitations that remain true after the checkpoint.
+- `remaining_work[]` records retained work, not the authoritative forward execution sequence; EP `next_work` remains the forward-work authority.
+- roadmap reconciliation always carries all three detail arrays, even when empty.
+- `NO_ROADMAP_CHANGE` with empty detail arrays is the normal case when work changed but programme structure did not.
+- `ROADMAP_PROPOSAL` records proposed structural effects; it does not apply them.
+- `OWNER_DECISION_REQUIRED` records the decision need and basis; it does not manufacture an Owner decision.
+
+The v2 contract deliberately does not invent a second acceptance vocabulary. `acceptance_results` remains a checkpoint result list while acceptance-derived programme accounting remains authoritative in `PROGRESS.yaml`.
+
