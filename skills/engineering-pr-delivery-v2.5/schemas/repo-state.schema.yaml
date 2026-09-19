@@ -147,6 +147,18 @@ properties:
             superseded_by: {type: string, minLength: 1}
             receipt: {type: [string, 'null']}
             basis: {type: array}
+  delivery:
+    type: object
+    required: [required, provider, observation]
+    properties:
+      required: {type: boolean}
+      provider: {enum: [GITHUB, null]}
+      observation:
+        type: object
+        required: [id, path]
+        properties:
+          id: {type: [string, 'null']}
+          path: {type: [string, 'null']}
   relay_readiness:
     type: object
     required: [baton_ready, projection_ready, handover_ready, reasons]
