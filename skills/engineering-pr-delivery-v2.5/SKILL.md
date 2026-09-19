@@ -478,7 +478,6 @@ python skills/engineering-pr-delivery-v2.5/scripts/validate_zero_context_reconst
 python skills/engineering-pr-delivery-v2.5/scripts/validate_baton_readiness.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_discovery_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_question_set.py <repo-root>
-python skills/three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <current-schema-sha>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_qualification_receipt.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/validate_takeover_certification.py <repo-root>
 python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
