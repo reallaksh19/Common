@@ -95,3 +95,59 @@ Three-pass generation begins only after the handover issue URL has been verified
 `Plan for Handover, complex project` enables the standalone generator's complex mode. The artifact still contains exactly three prompts; Prompt 1 additionally exposes natural target-specific Q1–Q5. A later plain handover command returns to non-complex mode.
 
 Repository scripts must not infer chat requirements. The executing agent passes relevant user-authored session requirements explicitly to `plan_handover.py --owner-requirement ...`. Credential/secret-like values must not be published to GitHub.
+
+
+## Deterministic Owner publication cursor
+
+Owner status is not merely a renderer. Control-return publication uses a durable, derived baseline:
+
+```text
+agents/relay/publication/OWNER_PUBLICATION.yaml
+```
+
+The cursor records the normalized source-derived state that the Owner was last shown, plus source/report/view digests. It is **coordination metadata**, not engineering authority.
+
+Current truth remains in roadmap, PROGRESS, EP, checkpoint/evidence, ISSUE_GRAPH, ODR, state planes, and verified external observations.
+
+Every communication projection derives:
+
+```text
+previous published normalized baseline
+vs
+current report projection
+        ↓
+event class
+changed dimensions
+concise transitions
+publication_due
+```
+
+Supported Owner publication classes include:
+
+```text
+INITIAL_SNAPSHOT
+TASK_PROGRESS
+TASK_REGRESSION
+IMPLEMENTATION_CHANGE
+EVIDENCE_PROGRESS
+DELIVERY_OR_CUSTODY_PROGRESS
+CONTROL_STATE_CHANGE
+WAITING_OR_MONITORING
+NO_MATERIAL_PROGRESS
+```
+
+The Owner view begins with **What changed** and must not force the Owner to infer a delta from current percentages.
+
+Examples:
+
+- evidence-only movement explicitly says acceptance/progress did not move;
+- custody-only movement does not imply implementation;
+- no material movement is stated directly;
+- task regression is visible rather than hidden by aggregate percentages.
+
+Use `publish_owner_progress.py --apply` before normal control return. The command renders from one communication projection and only then records exactly that projection's normalized baseline, avoiding a recompute-after-write race.
+
+An unchanged repeat does not advance the cursor. `--force-record` is reserved for an intentional heartbeat publication.
+
+Material publication cadence is triggered by a change to accepted progress, implementation result, evidence, blocker/quality/control state, current issue/delivery/custody, roadmap disposition, Owner-decision requirement, required external/local action, or exact next-work contract. Repeated unchanged polling/retries are suppressed while autonomous work continues.
+
