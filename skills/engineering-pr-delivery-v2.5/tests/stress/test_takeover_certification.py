@@ -49,10 +49,17 @@ class TakeoverCertificationStressTests(unittest.TestCase):
             self.assertEqual([],takeover(root)[0]);self.assertEqual([],baton_readiness(root)[0]);self.assertEqual([],cold_start(root)[0])
             route=current_routes(root,load_yaml(root/"agents/relay/REPO_STATE.yaml"))[0];certified,errors=is_takeover_certified(root,route,"agent-B");self.assertTrue(certified,errors)
 
-    def test_candidate_cannot_prepare_its_own_certification(self):
+    def test_candidate_may_assemble_own_tc_when_deterministically_evaluated(self):
         with tempfile.TemporaryDirectory() as td:
-            root=Path(td);good(root);_,tc,_=attach_takeover(root,preparer="agent-B");path=root/"agents/relay/certifications/takeover/TC-1.yaml";dump(path,tc)
-            self.assertTrue(any("must not prepare its own" in x for x in takeover(root)[0]))
+            root=Path(td);good(root);attach_takeover(root,candidate="agent-B",preparer="agent-B")
+            self.assertEqual([],takeover(root)[0])
+
+    def test_candidate_cannot_be_its_own_independent_tc_evaluator(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root);_,tc,_=attach_takeover(root,candidate="agent-B",preparer="agent-B")
+            tc["evaluated_by"]={"type":"INDEPENDENT_AGENT","identity":"agent-B","basis":["candidate cannot independently evaluate itself"]}
+            path=root/"agents/relay/certifications/takeover/TC-1.yaml";dump(path,tc)
+            self.assertTrue(any("independent evaluator cannot be the candidate" in x for x in takeover(root)[0]))
 
     def test_ep_contract_change_invalidates_existing_certification(self):
         with tempfile.TemporaryDirectory() as td:
@@ -80,7 +87,8 @@ class TakeoverCertificationStressTests(unittest.TestCase):
             subprocess.check_call(["git","-C",str(root),"init","-b","main"],stdout=subprocess.DEVNULL);git(root,"config","user.email","synthetic@example.test");git(root,"config","user.name","Synthetic Relay");git(root,"add",".");git(root,"commit","-m","base")
             base=git(root,"rev-parse","HEAD");git(root,"checkout","-b","agent/test")
             ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path);ep["identity"]["base_ref"]=base;ep["git_basis"]["material_ref"]=base;ep["git_basis"]["base_observed_ref"]=base;dump(ep_path,ep);git(root,"add",str(ep_path.relative_to(root)));git(root,"commit","-m","bind material basis")
-            attach_takeover(root);out=write_ready(root,"agent-B",branch="agent/test",worktree=str(root));self.assertTrue(out["material_write_ready"],out)
+            before=write_ready(root,"agent-B",branch="agent/test",worktree=str(root));self.assertFalse(before["material_write_ready"]);self.assertFalse(before["candidate_certified"]);self.assertEqual("WRITE",before["route_material_authority"])
+            attach_takeover(root,candidate="agent-B",preparer="agent-B");out=write_ready(root,"agent-B",branch="agent/test",worktree=str(root));self.assertTrue(out["material_write_ready"],out);self.assertTrue(out["candidate_certified"]);self.assertEqual("WRITE",out["route_material_authority"])
             wrong=write_ready(root,"agent-C",branch="agent/test",worktree=str(root));self.assertFalse(wrong["material_write_ready"])
             state=load_yaml(root/"agents/relay/REPO_STATE.yaml");state["status_planes"]["stop"]={"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Synthetic stop","basis":["ODR-X"]};state["status_planes"]["execution"]["can_continue"]=False;state["status_planes"]["execution"]["material_authority"]="READ_ONLY";dump(root/"agents/relay/REPO_STATE.yaml",state);stopped=write_ready(root,"agent-B",branch="agent/test",worktree=str(root));self.assertFalse(stopped["material_write_ready"])
 
