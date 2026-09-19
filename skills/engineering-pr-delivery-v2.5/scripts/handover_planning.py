@@ -5,6 +5,7 @@ from typing import Any
 
 from relaylib import load_yaml
 from report_projection import build as build_report
+from roadmap_events import event_summary,recent_for_concepts
 from takeoverlib import digest_mapping
 
 TERMINAL_ACCEPTANCE={"COMPLETE","NA"}
@@ -305,6 +306,9 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
     handover_key=digest_mapping(identity_basis)
     parent=(contract.get("issue") or {}) if contract.get("kind")=="GITHUB_ISSUE" else {}
     incremental=_incremental_delta(root,handover_key,intent)
+    concept_refs=[x for x in (current:=report.get("current_work") or {}).get("objective"),] if False else []
+    concept_refs=[x for x in [current.get("objective"),current.get("phase")] if x]
+    recent_events=[event_summary(x) for x in recent_for_concepts(root,concept_refs,limit=8)]
     issue_strategy={
         "handover_key":handover_key,
         "body_marker":f"<!-- relay-handover-key:{handover_key} -->",
@@ -338,6 +342,7 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
         "expected_outcomes":_expected_outcomes(report),
         "text_requirements":_text_requirements(report),
         "owner_core_requirements":requirements,
+        "recent_concept_events":recent_events,
         "incremental":incremental,
         "issue_strategy":issue_strategy,
         "generator":generator,
@@ -399,6 +404,14 @@ def render_issue_body(plan:dict)->str:
     req=plan.get("text_requirements") or {};lines += ["","## Textual requirements and boundaries"]
     for key,label in (("protected","Protected"),("prohibited","Prohibited"),("owner_reserved","Owner-reserved"),("deliberate_non_goals","Non-goal"),("known_problems","Known problem")):
         for item in req.get(key) or []:lines.append(f"- {label}: {item}")
+
+    lines += ["","## Recent concept-linked material events"]
+    if plan.get("recent_concept_events"):
+        for event in plan["recent_concept_events"]:
+            refs=event.get("execution_refs") or {}
+            execution=", ".join(str(x) for x in [refs.get("work_package"),refs.get("execution_package"),refs.get("checkpoint"),refs.get("issue"),refs.get("pull_request")] if x not in {None,""})
+            lines.append(f"- **{event.get('id')} / {event.get('event_class')}** — {event.get('summary')} (execution: {execution or 'none'}; concept effect: {event.get('concept_change')})")
+    else:lines.append("- No material event is recorded for the current objective/phase concepts.")
 
     lines += ["","## Owner core requirements from this session"]
     if plan.get("owner_core_requirements"):
