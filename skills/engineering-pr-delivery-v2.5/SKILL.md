@@ -235,6 +235,8 @@ PROBLEM KERNEL
 
 A current artifact being a register, matrix, roadmap, checklist, or decision package does not make that artifact type the Prompt-1 imagination object.
 
+Prompt 1 must also be **method-invisible**. The future agent should receive the human/domain situation directly. Do not narrate the generator mechanics with phrases such as "later pass", "fixed independent reference", "do not inspect the repository", or "you will be held to this picture". The outer bootstrap/schema controls blindness; Prompt 1 should feel like a real practitioner problem.
+
 This bootstrap requirement sits **outside** the schema by design: a stale copy of the schema cannot be trusted to tell an agent to fetch a newer copy of itself.
 
 ## Engineering qualification — QSET / QUAL
