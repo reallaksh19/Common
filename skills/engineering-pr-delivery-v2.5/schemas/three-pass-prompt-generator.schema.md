@@ -81,6 +81,12 @@ and what is the smallest justified path forward?
 
 The separation between these prompts is essential. Do not collapse them into one large prompt.
 
+If the user asks for **multiple lots**, preserve the number of lots and the requested analysis level of each lot exactly.
+
+Do not replace a user-requested tab/surface review with a related issue, decision, roadmap, or repository review merely because that artifact appears important.
+
+Each lot gets its own preflight and its own three prompts.
+
 ---
 
 ## INPUT I MAY GIVE YOU
@@ -129,18 +135,67 @@ Its purpose is to let the user catch a wrong interpretation before running the p
 
 Do not hide it, summarize it away, or replace it with prose such as “preflight completed.”
 
-## A. Resolve the exact target
+## A. Freeze the USER'S LOT CONTRACT before resolving anything
 
-If the user provides a URL to an issue, PR, repository, document, plan, register, or other live artifact, **open that exact target first**.
+If the user requested one or more lots, first record exactly what they asked for.
+
+For each lot:
+
+```text
+LOT:
+<Lot 1 / Lot 2 / etc.>
+
+USER-REQUESTED LEVEL:
+<ISSUE_TASK / TAB_SURFACE / PRODUCT / REPOSITORY_SYSTEM / OTHER_EXPLICIT_LEVEL>
+
+USER-REQUESTED TARGET:
+<the thing the user actually named or described>
+
+LEVEL INTERPRETATION:
+<one sentence saying what belongs inside this level and what belongs outside it>
+```
+
+This is a **hard boundary**, not a suggestion.
+
+Examples:
+
+```text
+User asks:
+Lot 1 — issue level
+Lot 2 — tab level
+
+Valid:
+Lot 1 target = the named issue
+Lot 2 target = the named product tab / user-facing surface
+
+Invalid:
+Lot 2 target = a child issue that happens to gate the tab
+
+Invalid:
+Lot 2 target = the whole repository
+
+Invalid:
+Lot 2 target = an owner decision because it seems important
+```
+
+Related issues, roadmaps, decisions, PRs and parent programmes may become **Prompt-2 evidence**.
+
+They do not replace the user-requested target level.
+
+If the user has explicitly specified the level, do not infer a different one.
+
+## B. Resolve the exact target at that level
+
+Now resolve the target **without changing its requested level**.
 
 Extract:
 
 ```text
-TARGET TITLE:
-<exact title or stable name>
+TARGET TITLE / SURFACE:
+<exact issue title, tab/surface name, product name, or repository name>
 
 TARGET LINK:
-<canonical URL when available>
+<canonical URL when the target itself has one>
 
 PARENT REPOSITORY / SYSTEM:
 <owner/repo or parent system when applicable>
@@ -149,11 +204,37 @@ REPOSITORY / SYSTEM LINK:
 <canonical parent URL when available>
 ```
 
-Do not infer the target from its repository name or nearby work.
+### Level semantics
 
-If the target cannot be inspected and its meaning is not otherwise supplied clearly, fail closed rather than inventing it.
+#### ISSUE_TASK
 
-## B. Freeze the request mode and target scope
+The target is the specific issue/task and its underlying problem.
+
+Sibling/parent issues are context, not substitutes.
+
+#### TAB_SURFACE
+
+The target is the user-facing tab, workflow surface, panel, module, or bounded product experience.
+
+A GitHub issue describing that tab may be an important evidence source, but the issue is **not** the target.
+
+Prompt 1 should normally imagine the real person using that surface end to end.
+
+Prompt 2 should inspect the live surface plus the issues/code/tests that explain it.
+
+Prompt 3 should compare the independent tab-level experience against the live tab.
+
+#### PRODUCT
+
+The target is the whole product experience.
+
+#### REPOSITORY_SYSTEM
+
+The target is the whole repository/system/programme.
+
+If the exact target cannot be resolved at the requested level, fail closed rather than silently substituting another level.
+
+## C. Freeze request mode
 
 Choose the single request mode that best describes what the user wants done **now**:
 
@@ -167,17 +248,9 @@ COORDINATE
 HANDOVER
 ```
 
-Choose one target scope:
+REQUEST MODE does not override USER-REQUESTED LEVEL.
 
-```text
-PRODUCT
-REPOSITORY_SYSTEM
-TASK_ARTIFACT
-```
-
-These describe the assignment and its width. They do **not** decide what Prompt 1 imagines.
-
-## C. Snapshot CURRENT REALITY — then quarantine it
+## D. Snapshot CURRENT REALITY — then quarantine it
 
 Record what the target currently is and what answer it currently carries.
 
@@ -219,7 +292,7 @@ The point is not to pretend these things do not exist.
 
 The point is to meet them **after** the independent opinion has formed.
 
-## D. Recover the BLIND REFERENCE
+## E. Recover the BLIND REFERENCE
 
 Now mentally remove the current issue text, artifact form, implementation, roadmap, checklist, and proposed solution.
 
@@ -227,9 +300,61 @@ Ask:
 
 > **If the current target artifact had never been created, what human problem would still exist?**
 
+But do **not** erase the target itself.
+
+Blindness means removing today's answer, not removing the domain, user, job, method, or requested level.
+
+### TARGET ANCHORS — the specificity that Prompt 1 is allowed to keep
+
+TARGET ANCHORS are stable facts that define the requested target independently of today's implementation.
+
+Good anchors include, when genuinely applicable:
+
+- the named tab/product/method the user explicitly asked about;
+- the practising user/persona;
+- the concrete job they are trying to perform;
+- the physical/business/learning objects they bring;
+- the kind of result or decision they need;
+- the domain/source/authority boundary that would exist in any implementation;
+- the lifecycle stage explicitly defining the requested problem;
+- platform/scale constraints that are genuine requirements.
+
+Bad anchors include:
+
+- today's bug list;
+- current PR stack;
+- current blocker list;
+- current owner-decision list;
+- today's UI layout;
+- existing internal abstractions;
+- present roadmap stages;
+- implementation-specific work breakdown.
+
+Example — tab-level engineering surface:
+
+```text
+Allowed anchors:
+EMP.1 / WRC 537 tab
+practising pressure-equipment engineer
+real vessel / attachment geometry and loads
+need a defensible local-stress assessment
+must understand applicability and refusal
+must distinguish numerical evidence from engineering authority
+
+Not blind-pass anchors:
+today's gamma=5 implementation limit
+current hidden disclosures
+current radii dead end
+specific issue numbers
+current CI outage
+```
+
 Complete:
 
 ```text
+TARGET ANCHORS:
+<stable, level-specific facts that make this unmistakably THIS target without leaking today's answer>
+
 UNDERLYING HUMAN PROBLEM:
 <the problem that survives even if today's issue/artifact/implementation disappears>
 
@@ -277,7 +402,7 @@ Prompt 2 may later discover that a live register is a useful solution.
 
 Prompt 1 must not assume that conclusion.
 
-## E. Freeze Prompt 2's REALITY OBJECT
+## F. Freeze Prompt 2's REALITY OBJECT
 
 Complete:
 
@@ -288,7 +413,7 @@ REALITY OBJECT:
 
 This may explicitly include the current target artifact, repository, issue history, implementation, PRs, tests, examples, and in-flight work.
 
-## F. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
+## G. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
 
 Complete:
 
@@ -317,18 +442,22 @@ Prompt 3 must remain free to conclude that the current artifact should be:
 
 The response form should emerge **after comparison**, not be decided before it.
 
-## G. Visible PREFLIGHT RECORD
+## H. Visible PREFLIGHT RECORD
 
 The visible record must contain:
 
 ```text
-TARGET TITLE:
+LOT:
+USER-REQUESTED LEVEL:
+USER-REQUESTED TARGET:
+LEVEL INTERPRETATION:
+
+TARGET TITLE / SURFACE:
 TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
 REQUEST MODE:
-TARGET SCOPE:
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 CURRENT ARTIFACT FORM:
@@ -336,6 +465,7 @@ CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+TARGET ANCHORS:
 UNDERLYING HUMAN PROBLEM:
 HUMAN OUTCOME:
 GENUINE CONSTRAINTS:
@@ -358,11 +488,60 @@ PASS — <one short reason>
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
 
+SPECIFICITY-FLOOR GATE:
+PASS — <one short reason>
+
+LOT/LEVEL BOUNDARY GATE:
+PASS — <one short reason>
+
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
 ```
 
 Do not draft Prompt 1 until these fields and gates are resolved.
+
+---
+
+# HARD GATE 0 — LOT / LEVEL BOUNDARY GATE
+
+Before writing any prompt, compare the resolved target with the user's lot contract.
+
+Ask:
+
+> **Am I still analysing the exact level the user asked for?**
+
+If the user asked for TAB_SURFACE and the target is now a GitHub issue, decision, roadmap, or repository, fail.
+
+If the user asked for ISSUE_TASK and the target has broadened to the whole tab/product/repository, fail.
+
+Do not “improve” the user's decomposition by substituting a supposedly more important target.
+
+---
+
+# HARD GATE 0.5 — SPECIFICITY-FLOOR GATE
+
+Prompt 1 must be independent, but it must not become generic consultancy prose.
+
+Ask all of these:
+
+> **Could this Prompt 1 be pasted unchanged into ten unrelated projects in the same industry?**
+
+> **Could a competent general manager answer most of it without knowing this target domain?**
+
+> **Would the user recognise the exact requested level and job-to-be-done from Prompt 1 even though today's implementation is hidden?**
+
+If the first two are yes, or the third is no, Prompt 1 is too generic.
+
+A good Prompt 1 normally contains:
+
+- a concrete person;
+- a concrete job or decision;
+- a concrete real-world scenario;
+- target-specific domain objects/inputs/results;
+- genuine target constraints;
+- target-specific failure/trust questions.
+
+It should be **specific to the target, independent of today's answer**.
 
 ---
 
@@ -481,6 +660,9 @@ This is the most important construction rule.
 Allowed inputs to Prompt 1:
 
 ```text
+USER-REQUESTED LEVEL
+TARGET TITLE / SURFACE when it is itself part of the requested human problem
+TARGET ANCHORS
 UNDERLYING HUMAN PROBLEM
 HUMAN OUTCOME
 GENUINE CONSTRAINTS
@@ -549,6 +731,21 @@ It should explicitly tell the future agent **not to inspect the current reposito
 
 Use human language and mental simulation.
 
+### Blind does not mean generic
+
+Prompt 1 should be concrete enough that the user can immediately tell whether it is:
+
+- issue-level;
+- tab/surface-level;
+- product-level;
+- or repository/system-level.
+
+For TAB_SURFACE, normally walk a real user through the surface from arrival/input to result/refusal/review.
+
+For ISSUE_TASK, stay on the specific underlying issue problem and its lifecycle stage; do not drift to the whole tab.
+
+Use TARGET ANCHORS aggressively enough to make the scenario vivid, while keeping current-answer facts quarantined.
+
 Good forms include:
 
 > Imagine the person actually facing this situation.
@@ -586,6 +783,25 @@ What remains forbidden is leaking the **current product implementation**.
 ### Repository/system-level note
 
 Imagine the desired human/system outcome independent of today's repository architecture, roadmap, phase names and implementation vocabulary.
+
+### Tab/surface-level note
+
+Imagine the real user using that named surface end to end.
+
+Prompt 1 should normally cover:
+
+```text
+real starting situation
+→ inputs / choices
+→ interpretation / calculation / transformation
+→ result or refusal
+→ understanding of applicability
+→ review / evidence / next action
+```
+
+Use the tab's genuine domain purpose and user job.
+
+Do not leak today's UI arrangement, bug list, implementation limits or current backlog.
 
 ### Task/issue-level note
 
@@ -1104,20 +1320,29 @@ This is the same reasoning continuity used by the successful product-level and t
 
 # STRICT OUTPUT CONTRACT FOR THE GENERATOR
 
-The generator output has **four visible sections**:
+For **each requested lot**, the generator output has four visible sections:
 
 1. one **PREFLIGHT RECORD**;
 2. exactly three **copy-pasteable prompt blocks**.
 
 The preflight is metadata, **not a fourth prompt**.
 
+If the user requested two lots, output two lot sections. Do not merge them and do not invent a different second target.
+
 Output this structure and nothing else:
 
 ````markdown
+# LOT <n> — <USER-REQUESTED LEVEL>: <TARGET>
+
 ## PREFLIGHT RECORD
 
 ```text
-TARGET TITLE:
+LOT:
+USER-REQUESTED LEVEL:
+USER-REQUESTED TARGET:
+LEVEL INTERPRETATION:
+
+TARGET TITLE / SURFACE:
 TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
@@ -1244,6 +1469,22 @@ The visible preflight plus the three prompt fences are the complete deliverable.
 # SILENT QUALITY CHECKS BEFORE OUTPUT
 
 Do not show these checks outside the visible gate results in the PREFLIGHT RECORD.
+
+### Lot-count / level-fidelity check
+
+Does the output contain exactly the number of lots the user requested?
+
+Does each lot preserve the requested level exactly?
+
+If a tab-level lot became an issue-level lot, fail.
+
+### Specificity-floor check
+
+Is Prompt 1 recognisably about this exact requested target and level?
+
+Could it be pasted unchanged into many unrelated projects?
+
+If yes, fail as too generic.
 
 ### Visible-preflight check
 
@@ -1931,7 +2172,105 @@ If a future schema revision again generates “imagine an excellent register” 
 
 ---
 
-# SIX-CASE REGRESSION VALIDATION
+# APPENDIX F — MULTI-LOT REGRESSION: ISSUE LEVEL VS TAB LEVEL
+
+This case exists because a generator previously received:
+
+```text
+Lot 1 — issue level
+Lot 2 — tab level
+```
+
+and incorrectly produced:
+
+```text
+Lot 1 — Issue #1854
+Lot 2 — Issue #1834
+```
+
+That is a schema failure.
+
+## Lot 1 — ISSUE_TASK
+
+Requested target:
+
+```text
+Issue #1854
+Open-items register after the P0 product fixes
+```
+
+Prompt 1 should remain issue-level and specific to the post-fix question:
+
+> A professional engineering calculation surface has just gone through a substantial round of user-facing fixes. Before spending more engineering effort, how should a responsible owner determine what genuinely remains between today's product and a worthwhile bounded release; what is executable work versus accountable judgement; what has become historical; what can proceed independently; and what should no longer be pursued?
+
+Useful anchors may include:
+
+```text
+EMP.1 / WRC 537 programme
+post-product-fix stage
+bounded professional-use/release question
+engineering work versus accountable decision
+practising pressure-equipment context
+```
+
+Do not leak the current gamma decision, CI outage, UI residue, hash issue or current sequence into Prompt 1.
+
+## Lot 2 — TAB_SURFACE
+
+Requested target:
+
+```text
+EMP.1 / WRC 537 user-facing tab
+inside reallaksh19/Advanced_Analysis
+```
+
+Do **not** substitute Issue #1834, #1830, #1775 or any other issue as the target.
+
+Those are Prompt-2 evidence.
+
+A strong Prompt 1 should be recognisably about the actual engineering tab:
+
+> Imagine a practising pressure-equipment engineer opening a browser tool because they need a defensible WRC 537 local-stress assessment for a real vessel/attachment problem. They have geometry, thicknesses, material information and loads, but they did not write the software and should not need to know its internal architecture. Walk through what this one tab should let them understand, enter, check, calculate, refuse, review and retain before they would put the result into an engineering assessment.
+
+Then explore target-specific questions such as:
+
+- what geometry/load/source information the engineer must understand and what the tool can derive;
+- how the method's applicability should be made obvious before and during the run;
+- how load transfer, local-stress results and governing locations should be explained;
+- what the engineer sees when the method cannot honestly answer;
+- how numerical comparison evidence differs from source/method authority;
+- what makes a result current, reviewable and defensible;
+- what the tab should retain/export so another engineer can reconstruct the assessment;
+- what should be simple versus deliberately explicit in safety-relevant work.
+
+Notice the distinction:
+
+```text
+SPECIFIC:
+WRC 537
+pressure-equipment engineer
+real vessel / attachment geometry
+loads
+local stresses
+applicability
+result / refusal
+review evidence
+
+NOT CURRENT-ANSWER LEAKAGE:
+gamma=5 current implementation
+specific current UI defects
+current issue sequence
+current CI outage
+specific current PRs
+```
+
+This is the required standard:
+
+> **Blind to today's answer. Richly specific to today's requested target.**
+
+---
+
+# SEVEN-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -1943,6 +2282,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Advanced_Analysis Issue #1855 | excellent judgement about what genuinely remains and can safely happen next | “register” and current queue/details | may preserve/reconcile/replace/close register |
 | Advanced_Analysis Issue #1854 | excellent post-change judgement about the true remaining path | sanitized restatement of issue as blind context | may preserve/reconcile/replace/close register |
 | Advanced_Analysis Issue #1756 | excellent methodical qualification of shell capability from foundations through release | current architecture/child-roadmap form | may preserve/rewrite/split/retire roadmap |
+| EMP.1/WRC tab-level lot | practising engineer's end-to-end WRC 537 tab experience | related issue substitution + generic Prompt 1 | may redefine tab UX/workflow while preserving method authority |
 
 ### Critical negative control
 
@@ -2027,6 +2367,12 @@ The method is constant:
 > **Read the target to discover the problem behind it. Then mentally throw away the target's current answer for Prompt 1.**
 
 Prompt 1 is independent not only of the code, but—where possible—of the current solution form itself.
+
+But independence is not vagueness.
+
+> **Prompt 1 must be blind to today's answer while remaining richly specific to the user-requested target, level, domain and job-to-be-done.**
+
+The user's lot boundaries are authoritative. A tab-level request stays tab-level; a related issue becomes evidence, not a substitute target.
 
 Prompt 2 brings reality back.
 
