@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -189,7 +189,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -213,7 +213,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R3`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R4`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -235,6 +235,18 @@ TARGET:
 
 HUMAN GOAL:
 <what I ultimately want to achieve>
+
+USER INTENT:
+<what I want the next agent to actually accomplish across the three passes>
+
+AUTHORIZED ACTIONS:
+<explicit actions I authorize after analysis, e.g. edit files, create/update/link an issue or PR, run tests, publish a report; NONE if analysis-only>
+
+INTENT BOUNDARY:
+<what must not be done, or conditions under which an authorized action should not be taken>
+
+INTENT COMPLETION TEST:
+<what observable result would mean my intent has actually been fulfilled>
 
 USERS:
 <who this is for>
@@ -424,7 +436,109 @@ The target is the whole repository/system/programme.
 
 If the exact target cannot be resolved at the requested level, fail closed rather than silently substituting another level.
 
-## C. Freeze request mode
+## C. Freeze USER INTENT before choosing request mode
+
+The user's **intent** is not the same thing as the target, human goal, request mode, or current answer.
+
+Intent answers:
+
+> **What does the user want the next agent to actually accomplish with the three-pass reasoning?**
+
+Examples include:
+
+```text
+understand only
+review and report
+investigate and decide
+audit, then implement justified fixes
+audit, then create a GitHub issue carrying the implementation plan
+change the repository and publish the verified result
+reconcile current truth, then update/link the coordination artifact
+```
+
+Record:
+
+```text
+USER INTENT:
+<explicit operational intent in the user's own terms>
+
+INTENT TYPE:
+ANALYZE_ONLY | ANALYZE_THEN_ACT | EXECUTE_DEFINED_ACTION | DECIDE | HANDOVER
+
+AUTHORIZED ACTIONS:
+<actions explicitly authorized by the user; NONE when analysis-only>
+
+INTENT BOUNDARY:
+<actions/decisions not authorized, plus evidence/authority conditions that can legitimately stop execution>
+
+INTENT COMPLETION TEST:
+<observable state proving the user's requested intent is fulfilled>
+```
+
+### Intent preservation rule
+
+Intent is **binding across the three prompts**, but it affects each pass differently:
+
+```text
+Prompt 1
+→ understand the underlying problem independently;
+  do not contaminate the ideal with today's implementation mechanics merely because
+  the user ultimately wants action.
+
+Prompt 2
+→ inspect the live reality and establish every prerequisite needed to execute the
+  authorized intent safely and accurately.
+
+Prompt 3
+→ compare the independent picture with reality, then carry the authorized intent
+  through to completion when evidence and authority permit.
+```
+
+An explicit action request is not "manufactured work."
+
+If the user says "audit this, then create and link a GitHub issue", Prompt 3 must not silently stop at "I recommend creating an issue."
+
+It must either:
+
+1. perform the authorized action and verify the result; or
+2. state the concrete evidence, authority, capability, or contradiction that prevents it.
+
+Prompt 3 remains free to change the **implementation content** after analysis. It is not free to erase the user's operational intent.
+
+### Intent is not current-answer leakage
+
+An authorized action may be known before Prompt 1 without becoming the substantive answer to the target.
+
+For example:
+
+```text
+user intent:
+audit the reporting contract, then create an implementation issue
+
+does NOT mean Prompt 1 should assume:
+which fields are missing
+which schema must change
+which renderer design is correct
+what the issue body should prescribe
+```
+
+Prompt 1 still forms the independent reference picture.
+
+### User authority over action
+
+Explicit user authorization may permit external/repository actions in Prompt 3, but it does not authorize:
+
+- fabricating evidence;
+- bypassing genuine Owner-reserved decisions;
+- claiming an external mutation succeeded without readback;
+- inventing a target/parent relationship that does not exist;
+- making unrelated changes outside the intent boundary.
+
+For external actions, require verified readback whenever the integration supports it.
+
+---
+
+## D. Freeze request mode
 
 Choose the single request mode that best describes what the user wants done **now**:
 
@@ -440,7 +554,7 @@ HANDOVER
 
 REQUEST MODE does not override USER-REQUESTED LEVEL.
 
-## D. Detect explicit COMPLEX MODE
+## E. Detect explicit COMPLEX MODE
 
 Complex mode is **user-triggered only**.
 
@@ -481,7 +595,7 @@ It does **not** relax:
 - answer-independence;
 - copy-pasteability.
 
-## E. Snapshot CURRENT REALITY — then quarantine it
+## F. Snapshot CURRENT REALITY — then quarantine it
 
 Record what the target currently is and what answer it currently carries.
 
@@ -551,7 +665,7 @@ A target being written as a register does not make “excellent register” the 
 A request being COORDINATE does not make “register” the Prompt-1 object.
 Prompt 1 is generated from the stable problem, not from the current answer form.
 
-## F. Recover the BLIND REFERENCE
+## G. Recover the BLIND REFERENCE
 
 Now mentally remove the current issue text, artifact form, implementation, roadmap, checklist, and proposed solution.
 
@@ -994,7 +1108,7 @@ Prompt 2 may later discover that a live register is a useful solution.
 
 Prompt 1 must not assume that conclusion.
 
-## G. Freeze Prompt 2's REALITY OBJECT
+## H. Freeze Prompt 2's REALITY OBJECT
 
 Complete:
 
@@ -1005,7 +1119,11 @@ REALITY OBJECT:
 
 This may explicitly include the current target artifact, repository, issue history, implementation, PRs, tests, examples, and in-flight work.
 
-## H. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
+Prompt 2 must also establish every live prerequisite needed for the frozen USER INTENT. When the intent includes later action, inspect the current authority, target identity, writable surfaces, linkage conventions, current GitHub/repository state, validation requirements, and any existing object that the action must update or relate to.
+
+Do not execute the final authorized action in Prompt 2 unless the user explicitly defined Prompt 2 itself as the execution step. Its main job remains reality reconstruction.
+
+## I. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
 
 Complete:
 
@@ -1013,6 +1131,9 @@ Complete:
 COMPARISON QUESTION:
 "After putting the exact Prompt-1 picture beside Prompt-2 reality,
 Prompt 3 must determine ______."
+
+INTENT EXECUTION QUESTION:
+"After comparison, how will Prompt 3 fulfill the frozen USER INTENT and AUTHORIZED ACTIONS, or prove why it cannot?"
 
 HANDOVER DESTINATION:
 "The next agent must understand ______."
@@ -1034,7 +1155,7 @@ Prompt 3 must remain free to conclude that the current artifact should be:
 
 The response form should emerge **after comparison**, not be decided before it.
 
-## I. Visible PREFLIGHT RECORD
+## J. Visible PREFLIGHT RECORD
 
 The visible record must contain:
 
@@ -1048,6 +1169,12 @@ TARGET TITLE / SURFACE:
 TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
+
+USER INTENT:
+INTENT TYPE:
+AUTHORIZED ACTIONS:
+INTENT BOUNDARY:
+INTENT COMPLETION TEST:
 
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
@@ -1090,7 +1217,11 @@ REALITY OBJECT:
 
 PROMPT 3
 COMPARISON QUESTION:
+INTENT EXECUTION QUESTION:
 HANDOVER DESTINATION:
+
+INTENT-FIDELITY GATE:
+PASS — <one short reason>
 
 ARTIFACT-ERASURE GATE:
 PASS — <one short reason>
@@ -1454,6 +1585,40 @@ Also fail if the opening spends more time explaining how to think than describin
 A passing Prompt 1 should begin inside the human/domain problem, not outside it.
 
 The blindness mechanism must be invisible to the future agent.
+
+---
+
+# HARD GATE 0.98 — INTENT-FIDELITY GATE
+
+Read all three prompts together.
+
+Ask:
+
+> **If a capable agent followed these three prompts exactly, would the user's stated operational intent actually be completed?**
+
+Fail when:
+
+- an `ANALYZE_THEN_ACT` request becomes analysis/recommendation only;
+- an explicitly authorized repository/GitHub action disappears from Prompt 3;
+- Prompt 3 says what should be done but does not instruct the agent to do it;
+- Prompt 2 fails to inspect prerequisites needed for the intended action;
+- the prompts substitute a different action because it seems more interesting;
+- the action expands beyond the user's authorization boundary.
+
+Passing behavior:
+
+```text
+understand independently
+→ inspect live prerequisites
+→ revalidate
+→ execute the authorized justified action
+→ verify/read back the result
+→ report what happened and what remains
+```
+
+When the action cannot legitimately be completed, Prompt 3 must require a precise blocking explanation tied to evidence, authority or capability.
+
+This gate protects **intent**, not any predetermined technical solution.
 
 ---
 
@@ -1979,6 +2144,12 @@ REPOSITORY / SYSTEM:
 
 REPOSITORY LINK:
 <repository URL when available>
+
+USER INTENT:
+<the frozen operational intent>
+
+AUTHORIZED ACTIONS:
+<the frozen authorized action set>
 ```
 
 Do not assume the agent running Prompt 3 still has access to the original user message.
@@ -2021,6 +2192,23 @@ The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replac
 Prompt 3 must return to the **actual Prompt-1 answer** and place it beside Prompt-2 reality.
 
 It is constrained by the frozen **COMPARISON QUESTION**, not by a preselected artifact form.
+
+It is also constrained by the frozen **USER INTENT**.
+
+Artifact freedom does not mean intent freedom.
+
+If the user explicitly requested `ANALYZE_THEN_ACT` or `EXECUTE_DEFINED_ACTION`, Prompt 3 must proceed from conclusion to the authorized action when justified. It may adapt the implementation details to verified reality, but it must not downgrade execution into recommendation-only prose.
+
+For repository/GitHub actions, Prompt 3 should require:
+
+```text
+prepare the smallest justified change/action
+→ perform it
+→ read back/verify actual external or repository state
+→ report identifiers/links/evidence
+→ state anything still unresolved
+```
+
 
 Tell the future agent explicitly:
 
@@ -2188,7 +2376,9 @@ Determine whether meaningful implementation/change work still remains.
 
 If yes, rewrite the task in today's terms and identify the smallest durable change.
 
-If no, say whether the issue should close, defer, become a decision, or move elsewhere.
+When USER INTENT authorizes implementation or external/repository action, execute that smallest justified change/action and verify it rather than stopping at a recommendation.
+
+If no, say whether the issue should close, defer, become a decision, or move elsewhere; still satisfy any independent authorized coordination action the user explicitly requested unless its premise has been disproved.
 
 ## INVESTIGATE
 
@@ -2313,6 +2503,12 @@ State the gap in today's language.
 CHOSEN MOVE
 What is the smallest worthwhile response now, and why this rather than something larger?
 
+INTENT RESULT
+What did the user explicitly ask the agent to accomplish?
+Was it completed?
+If an authorized action was performed, what verified identifier/link/evidence proves it?
+If not, what exact evidence/authority/capability blocked it?
+
 DELIBERATELY NOT DONE
 What tempting work are we intentionally leaving alone, and why?
 Include work already solved, unsupported by evidence, outside authority, or unnecessary.
@@ -2375,7 +2571,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2394,7 +2590,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R3
+TPG-3P-2026-09-19-R4
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2422,6 +2618,12 @@ TARGET TITLE / SURFACE:
 TARGET LINK:
 PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
+
+USER INTENT:
+INTENT TYPE:
+AUTHORIZED ACTIONS:
+INTENT BOUNDARY:
+INTENT COMPLETION TEST:
 
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
@@ -2498,6 +2700,9 @@ PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 ANSWER-EXCLUSION GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+INTENT-FIDELITY GATE:
+PASS — <one short reason>
 
 ARTIFACT-ERASURE GATE:
 PASS — <one short reason>
@@ -2586,6 +2791,12 @@ REPOSITORY LINK:
 
 UNDERLYING HUMAN PROBLEM:
 <the blind problem Prompt 1 was built from>
+
+USER INTENT:
+<the frozen operational intent>
+
+AUTHORIZED ACTIONS:
+<the frozen authorized actions>
 ```
 
 Omit only fields that genuinely do not exist.
@@ -2789,6 +3000,19 @@ When links exist, does Prompt 2 contain the exact target and repository/system l
 Does Prompt 3 independently identify the exact target and repository/system?
 
 Prompt 1 may omit live links to protect blindness.
+
+### Intent-fidelity check
+
+Does the three-prompt sequence preserve what the user actually wants accomplished, not merely what should be understood?
+
+For `ANALYZE_THEN_ACT` / `EXECUTE_DEFINED_ACTION`:
+
+- does Prompt 2 inspect action prerequisites?
+- does Prompt 3 instruct actual execution?
+- does Prompt 3 require readback/verification?
+- can it only stop short for a concrete evidence/authority/capability reason?
+
+If not, fail.
 
 ### Goalpost check
 
@@ -3266,8 +3490,10 @@ Prompt 1 must also be **method-invisible**:
 
 Blindness is enforced by the generator, not narrated to the agent.
 
-Prompt 2 brings reality back.
+Prompt 2 brings reality back and establishes the prerequisites for the user's operational intent.
 
-Prompt 3 decides what deserves to survive.
+Prompt 3 decides what deserves to survive **and then fulfills the frozen user intent** when authorized and justified.
+
+> **Do not confuse freedom to reject today's solution with freedom to ignore the user's requested outcome or action.**
 
 The handover preserves the reasoning journey so the next agent inherits understanding, not merely activity.
