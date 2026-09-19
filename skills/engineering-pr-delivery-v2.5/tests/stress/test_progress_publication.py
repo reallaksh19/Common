@@ -231,5 +231,23 @@ class ProgressPublicationStressTests(unittest.TestCase):
             self.assertTrue(any("normalized_report_digest" in x for x in errors))
 
 
+    def test_progress_basis_change_is_visible_without_percentage_drift(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,_,progress,state=good(root)
+            publish(root,apply=True)
+            progress["progress_basis"]["id"]="PB-2"
+            state["progress"]["basis_revision"]="PB-2"
+            dump(root/"agents/relay/roadmap/PROGRESS.yaml",progress)
+            dump(root/"agents/relay/REPO_STATE.yaml",state)
+
+            result=publish(root,apply=False)
+            self.assertEqual("CONTROL_STATE_CHANGE",result["event_class"])
+            self.assertTrue(result["publication_due"])
+            self.assertIn("task",result["changed_dimensions"])
+            self.assertIn("Progress basis: PB-1 → PB-2",result["owner_status"])
+            self.assertIn("Progress basis: **PB-2**",result["owner_status"])
+            self.assertIn("Overall progress: **50%**",result["owner_status"])
+
+
 if __name__ == "__main__":
     unittest.main()
