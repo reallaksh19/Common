@@ -91,6 +91,7 @@ def build(root:Path)->dict:
         "evidence":{"state":evidence.get("state"),"summary":evidence.get("summary"),"not_run":evidence.get("not_run") or [],"acceptance":report.get("acceptance") or []},
         "quality":{"state":(report.get("quality") or {}).get("state"),"visible_risks":risks,"procedure_gaps":quality_gaps,"known_limitations":checkpoint.get("known_limitations") or [],"known_problems":contract.get("known_problems") or []},
         "roadmap":{"summary":report.get("roadmap_summary") or {},"progress":_current_titles(report.get("progress") or {}),"last_reconciliation":checkpoint.get("roadmap_reconciliation") or {}},
+        "delivery":report.get("delivery") or {},
         "decisions":{"required_now":_required_owner_decisions(report),"recorded":recorded,"reserved":scope.get("owner_reserved") or []},
         "next_work":{"steps":next_steps},
         "external_actions":external_actions,
