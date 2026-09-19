@@ -2,6 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 from report_projection import build as build_report
 from takeoverlib import digest_mapping
+from owner_publication import cursor_digest,publication_status
 
 
 def _current_titles(progress:dict)->dict:
@@ -80,7 +81,9 @@ def build(root:Path)->dict:
         if isinstance(req,dict):
             external_actions.append({**req,"action":step.get("action"),"expected_result":step.get("expected_result"),"ep_id":step.get("ep_id"),"lane_id":step.get("lane_id")})
     titles=_current_titles(report.get("progress") or {});current_work=report.get("current_work") or {}
+    change=publication_status(root,report)
     owner={
+        "change":change,
         "capability":_capability(report),
         "current_work":{**titles,"issues":current_work.get("issues") or [],"outcome":current_work.get("outcome") or {}},
         "purpose":contract.get("outcome") or {},
@@ -95,7 +98,7 @@ def build(root:Path)->dict:
     }
     return {
         "schema_version":"relay-v2.5-communication-projection",
-        "generated_from":{"report_projection_digest":digest_mapping(report),"report_sources":report.get("generated_from") or {}},
+        "generated_from":{"report_projection_digest":digest_mapping(report),"report_sources":report.get("generated_from") or {},"owner_publication_cursor_digest":cursor_digest(root)},
         "owner":owner,
         "technical":{"report":report},
     }
