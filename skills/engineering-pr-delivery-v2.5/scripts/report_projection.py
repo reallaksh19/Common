@@ -3,6 +3,7 @@ from pathlib import Path
 from relaylib import load_yaml
 from progress_projection import snapshot as progress_snapshot
 from takeoverlib import digest_mapping,yaml_digest
+from delivery_projection import snapshot as delivery_snapshot
 
 
 def _maybe(root:Path,path):
@@ -25,6 +26,7 @@ def _owner_decisions(root:Path)->list[dict]:
             "requirement_disposition":effects.get("requirement_disposition"),
             "grants_material_write_authority":effects.get("grants_material_write_authority"),
             "pending_items":effects.get("pending_items") or [],
+            "delivery_authorization":odr.get("delivery_authorization"),
         })
     return out
 
@@ -67,6 +69,7 @@ def build(root:Path)->dict:
     roadmap_path=root/state["roadmap"]["path"];roadmap=load_yaml(roadmap_path);progress_path=root/"agents/relay/roadmap/PROGRESS.yaml";issue_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
     active=state.get("active_ep") or {};ep=_maybe(root,active.get("path"));cp=_maybe(root,(state.get("last_checkpoint") or {}).get("path"));issues=load_yaml(issue_path) if issue_path.exists() else {"nodes":[],"relationships":[]}
     qptr=(cp or {}).get("quality_review") or {};qpath=qptr.get("path");qrv=_maybe(root,qpath)
+    dptr=((state.get("delivery") or {}).get("observation") or {});dpath=dptr.get("path")
     owner_decisions=_owner_decisions(root);current_position=state.get("current_position") or {}
     projection={
         "schema_version":"relay-v2.5-report-projection",
@@ -84,6 +87,8 @@ def build(root:Path)->dict:
             "checkpoint_digest":yaml_digest(root/(state.get("last_checkpoint") or {})["path"]) if (state.get("last_checkpoint") or {}).get("path") and (root/(state.get("last_checkpoint") or {})["path"]).exists() else None,
             "quality_review_id":qptr.get("id"),
             "quality_review_digest":yaml_digest(root/qpath) if qpath and (root/qpath).exists() else None,
+            "delivery_observation_id":dptr.get("id"),
+            "delivery_observation_digest":yaml_digest(root/dpath) if dpath and (root/dpath).exists() else None,
         },
         "roadmap_summary":{"id":(roadmap.get("roadmap") or {}).get("id"),"revision":(roadmap.get("roadmap") or {}).get("revision"),"title":(roadmap.get("roadmap") or {}).get("title")},
         "relay_state":state.get("relay_state"),
@@ -130,4 +135,5 @@ def build(root:Path)->dict:
             "remaining_work":cp.get("remaining_work") or [],"roadmap_reconciliation":cp.get("roadmap_reconciliation") or {},
         }
     else:projection["checkpoint"]=None
+    projection["delivery"]=delivery_snapshot(root,projection)
     return projection
