@@ -2934,7 +2934,7 @@ That is Q1–Q5 in human form.
 
 ---
 
-# EIGHT-CASE REGRESSION VALIDATION
+# NINE-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
