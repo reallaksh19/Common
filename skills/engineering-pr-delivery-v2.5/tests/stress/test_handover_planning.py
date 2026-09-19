@@ -11,6 +11,7 @@ sys.path.insert(0,str(HERE.parents[1]))
 
 from test_core import good,dump
 from validate_handover_plan import validate as handover_check
+from prepare_handover_projection import prepare as prepare_handover_projection
 from handover_planning import (
     build_handover_plan,
     parse_handover_command,
@@ -124,6 +125,69 @@ class HandoverPlanningStressTests(unittest.TestCase):
             self.assertEqual("AWAITING_HANDOVER_ISSUE_READBACK",plan["generator"]["target_status"])
             with self.assertRaises(ValueError):
                 render_generator_request(plan)
+
+
+    def test_handover_projection_prepares_create_with_stable_marker(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            result=prepare_handover_projection(root)
+            self.assertEqual("READY",result["status"])
+            self.assertEqual("CREATE_HANDOVER_ISSUE",result["action"])
+            self.assertEqual("CREATE",result["proposed_generation"]["operations"][0]["kind"])
+            body=result["proposed_generation"]["operations"][0]["desired"]["body_projection"]
+            self.assertIn(result["handover_key"],body)
+            self.assertIn("relay-operation:",body)
+            node=next(x for x in result["proposed_issue_graph"]["nodes"] if x.get("id")==result["issue_node"])
+            self.assertEqual("HANDOVER",node["role"])
+            self.assertEqual("ABSENT",node["github_state"])
+
+    def test_handover_projection_relates_new_handover_node_to_verified_source_issue(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",{
+                "schema_version":"relay-v2.5",
+                "nodes":[{
+                    "id":"ISSUE-410",
+                    "state":"ACTIVE",
+                    "github_state":"OPEN",
+                    "github":{"issue_number":410,"issue_id":"gid-410","url":"https://github.com/owner/repo/issues/410"},
+                    "roadmap_node":"WP-1",
+                }],
+                "relationships":[],
+            })
+            result=prepare_handover_projection(root)
+            self.assertEqual("READY",result["status"])
+            self.assertIn(
+                {"from":result["issue_node"],"relation":"RELATES_TO","to":"ISSUE-410"},
+                result["proposed_issue_graph"]["relationships"],
+            )
+            self.assertEqual(410,result["relationship"]["source_issue_number"])
+            self.assertEqual("UNVERIFIED",result["relationship"]["native_parent_claim"])
+
+    def test_existing_open_handover_node_is_updated_not_duplicated(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            plan=build_handover_plan(root)
+            key=plan["issue_strategy"]["handover_key"]
+            dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",{
+                "schema_version":"relay-v2.5",
+                "nodes":[{
+                    "id":"HANDOVER-EXISTING",
+                    "role":"HANDOVER",
+                    "handover_key":key,
+                    "state":"ACTIVE",
+                    "github_state":"OPEN",
+                    "github":{"issue_number":501,"issue_id":"gid-501","url":"https://github.com/owner/repo/issues/501"},
+                    "source_contract":{"kind":"ACTIVE_TASK","id":"EP-1","work_package":"WP-1"},
+                }],
+                "relationships":[],
+            })
+            result=prepare_handover_projection(root)
+            self.assertEqual("UPDATE_HANDOVER_ISSUE",result["action"])
+            self.assertEqual("PUBLISH_HANDOVER",result["proposed_generation"]["operations"][0]["kind"])
+            self.assertEqual("HANDOVER-EXISTING",result["issue_node"])
+            handover_nodes=[x for x in result["proposed_issue_graph"]["nodes"] if x.get("role")=="HANDOVER"]
+            self.assertEqual(1,len(handover_nodes))
 
     def test_multiple_equally_authoritative_current_issues_fail_closed(self):
         with tempfile.TemporaryDirectory() as td:
