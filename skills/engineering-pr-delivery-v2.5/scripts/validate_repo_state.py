@@ -57,6 +57,21 @@ def validate(repo_root:Path):
         if not _explicit(plan):errors.append("GITHUB_ISSUES projection.plan must identify current immutable generation")
         elif not (repo_root/plan).exists():errors.append(f"REPO_STATE.projection.plan does not exist: {plan}")
     elif plan not in {None,""}:errors.append("projection.plan is only valid with projection.adapter")
+    delivery=state.get("delivery")
+    if delivery is not None:
+        if not isinstance(delivery,dict):errors.append("REPO_STATE.delivery must be mapping")
+        else:
+            drequired=delivery.get("required");provider=delivery.get("provider");observation=delivery.get("observation") or {}
+            if not isinstance(drequired,bool):errors.append("REPO_STATE.delivery.required must be boolean")
+            if drequired is True:
+                if provider!="GITHUB":errors.append("required REPO_STATE.delivery currently supports provider GITHUB")
+                if not str(observation.get("id") or "").startswith("DOBS-"):errors.append("required REPO_STATE.delivery observation.id must use DOBS-* namespace")
+                opath=observation.get("path")
+                if not _explicit(opath):errors.append("required REPO_STATE.delivery observation.path must be explicit")
+                elif not (repo_root/str(opath)).exists():errors.append(f"REPO_STATE.delivery observation.path does not exist: {opath}")
+            elif drequired is False:
+                if provider not in {None,""}:errors.append("delivery.required=false must not name a provider")
+                if observation.get("id") not in {None,""} or observation.get("path") not in {None,""}:errors.append("delivery.required=false must not point at an observation")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["baton_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     if "repository_ready" in readiness:errors.append("REPO_STATE.relay_readiness.repository_ready is retired; use baton_ready for candidate-independent repository custody")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
