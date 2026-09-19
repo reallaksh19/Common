@@ -8,6 +8,8 @@ from typing import Iterable
 
 import yaml
 
+from validate_owner_field_lineage import validate as validate_owner_field_lineage
+
 
 REQUIRED_BLUEPRINT_HEADINGS = [
     "## WHEN TO APPLY",
@@ -48,6 +50,7 @@ OBJECT_SURFACES = {
     "ROADMAP_EVENTS": ["templates/ROADMAP_EVENTS.yaml", "schemas/roadmap-events.schema.yaml", "scripts/roadmap_events.py", "scripts/validate_roadmap_events.py", "scripts/append_roadmap_event.py", "operating-model/dynamic-roadmap.md"],
     "OWNER_PUBLICATION": ["templates/OWNER_PUBLICATION.yaml", "schemas/owner-publication.schema.yaml", "scripts/owner_publication.py", "scripts/validate_owner_publication.py", "scripts/publish_owner_progress.py", "operating-model/human-communication.md"],
     "DELIVERY_OBSERVATION": ["templates/DELIVERY_OBSERVATION.yaml", "schemas/delivery-observation.schema.yaml", "scripts/validate_delivery_observation.py", "scripts/delivery_projection.py", "scripts/pr_correlation.py", "scripts/validate_pr_correlation.py", "scripts/render_pr_correlation.py", "blueprints/github-delivery.md"],
+    "OWNER_FIELD_LINEAGE": ["operating-model/owner-field-lineage.yaml", "schemas/owner-field-lineage.schema.yaml", "scripts/validate_owner_field_lineage.py", "operating-model/owner-field-lineage.md"],
 }
 
 RELEASE_DOCS = {
@@ -72,7 +75,7 @@ README_REQUIRED_ENTRYPOINTS = [
     "zero_context_reconstruction.py", "validate_baton_readiness.py", "validate_takeover_certification.py",
     "material_write_ready.py", "validate_quality_review.py", "validate_human_communication.py",
     "validate_owner_change_intake.py", "render_roadmap.py", "self_consistency_audit.py",
-    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py", "append_roadmap_event.py", "publish_owner_progress.py", "render_pr_correlation.py",
+    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py", "append_roadmap_event.py", "publish_owner_progress.py", "render_pr_correlation.py", "validate_owner_field_lineage.py",
 ]
 
 SKILL_REQUIRED_ENTRYPOINTS = [
@@ -153,6 +156,10 @@ def audit(repo_root: Path) -> tuple[list[str], list[str]]:
         for rel in rels:
             if not (skill / rel).exists():
                 errors.append(f"{object_name}: missing surface {rel}")
+
+    lineage_errors,lineage_warnings=validate_owner_field_lineage(skill)
+    errors.extend(f"Owner field lineage: {item}" for item in lineage_errors)
+    warnings.extend(f"Owner field lineage: {item}" for item in lineage_warnings)
 
     blueprints = sorted((skill / "blueprints").glob("*.md"))
     if not blueprints:
