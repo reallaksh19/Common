@@ -180,14 +180,21 @@ def pending_intent(report:dict)->list[dict]:
     return out
 
 
-def _durable_ref(ep_path:str|None,section:str,item:dict)->dict:
+def _durable_ref(ep_path:str|None,section:str,item:dict,repository:str|None,material_ref:str|None)->dict:
     iid=item.get("id");source=_text(item.get("source"))
     definition=f"{ep_path}#{section}/{iid}" if ep_path and iid else ep_path
+    definition_url=None;source_url=None
+    if repository and "/" in repository and material_ref and ep_path:
+        definition_url=f"https://github.com/{repository}/blob/{material_ref}/{ep_path}"
+        if source and "://" not in source and not source.startswith("<"):
+            source_url=f"https://github.com/{repository}/blob/{material_ref}/{source}"
     return {
         "id":iid,
         "name":item.get("name"),
         "definition_path":definition,
+        "definition_url":definition_url,
         "source":source or None,
+        "source_url":source_url,
         "authority":item.get("authority"),
         "resolution":item.get("resolution"),
     }
@@ -248,14 +255,16 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
     if errors:return {"status":"ERROR","errors":errors,"work_contract":contract}
 
     ep,ep_path=_current_ep(root,report)
-    inputs=[_durable_ref(ep_path,"inputs",x) for x in _list((ep or {}).get("inputs")) if isinstance(x,dict)]
-    benchmarks=[_durable_ref(ep_path,"benchmarks",x) for x in _list((ep or {}).get("benchmarks")) if isinstance(x,dict)]
+    state=load_yaml(root/"agents/relay/REPO_STATE.yaml");repository=(state.get("repository") or {}).get("remote")
+    material_ref=(ep.get("git_basis") or {}).get("material_ref") if ep else None
+    inputs=[_durable_ref(ep_path,"inputs",x,repository,material_ref) for x in _list((ep or {}).get("inputs")) if isinstance(x,dict)]
+    benchmarks=[_durable_ref(ep_path,"benchmarks",x,repository,material_ref) for x in _list((ep or {}).get("benchmarks")) if isinstance(x,dict)]
     intent=pending_intent(report)
     identity_basis={
         "kind":contract.get("kind"),
         "id":contract.get("id"),
         "work_package":contract.get("work_package"),
-        "repository":(load_yaml(root/"agents/relay/REPO_STATE.yaml").get("repository") or {}).get("remote"),
+        "repository":repository,
     }
     handover_key=digest_mapping(identity_basis)
     parent=(contract.get("issue") or {}) if contract.get("kind")=="GITHUB_ISSUE" else {}
@@ -320,12 +329,16 @@ def render_issue_body(plan:dict)->str:
 
     lines += ["","## Inputs"]
     if plan.get("inputs"):
-        for item in plan["inputs"]:lines.append(f"- **{item.get('id')}** — definition: `{item.get('definition_path')}`; source: {item.get('source') or 'embedded/resolved at definition'}")
+        for item in plan["inputs"]:
+            url=f"; pinned file: {item.get('definition_url')}" if item.get("definition_url") else ""
+            lines.append(f"- **{item.get('id')}** — definition: `{item.get('definition_path')}`{url}; source: {item.get('source') or 'embedded/resolved at definition'}")
     else:lines.append("- None recorded for the active task.")
 
     lines += ["","## Benchmarks"]
     if plan.get("benchmarks"):
-        for item in plan["benchmarks"]:lines.append(f"- **{item.get('id')}** — definition: `{item.get('definition_path')}`; source: {item.get('source') or 'embedded/resolved at definition'}")
+        for item in plan["benchmarks"]:
+            url=f"; pinned file: {item.get('definition_url')}" if item.get("definition_url") else ""
+            lines.append(f"- **{item.get('id')}** — definition: `{item.get('definition_path')}`{url}; source: {item.get('source') or 'embedded/resolved at definition'}")
     else:lines.append("- None recorded for the active task.")
 
     outcomes=plan.get("expected_outcomes") or {};lines += ["","## Expected outcomes"]
