@@ -33,6 +33,10 @@ def validate(root:Path):
     if c.get("schema_version")!="relay-v2.5-communication-projection":e.append("communication projection schema_version mismatch")
     if (c.get("generated_from") or {}).get("report_projection_digest")!=digest_mapping(report):e.append("communication projection is not bound to its technical report projection")
     if (c.get("generated_from") or {}).get("report_sources")!=(report.get("generated_from") or {}):e.append("communication projection source bindings diverge from report projection")
+    source_work=report.get("current_work") or {};owner_work=owner.get("current_work") or {}
+    for key in ("objective","phase","work_package","ep_id"):
+        if owner_work.get(key)!=source_work.get(key):e.append(f"Owner current_work {key} diverges from source report")
+    if owner_work.get("issues")!=(source_work.get("issues") or []):e.append("Owner current issues diverge from source report")
     progress=report.get("progress") or {};cur=progress.get("current") or {};op=((owner.get("roadmap") or {}).get("progress") or {})
     expected_progress={"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")}
     for key,value in expected_progress.items():
@@ -66,9 +70,14 @@ def validate(root:Path):
         if str(item.get("reason") or "") and str(item.get("reason")) not in text:e.append(f"Owner status hides missing-evidence reason for {item.get('id')}")
     for finding in source_risks:
         if str(finding.get("statement") or "") and str(finding.get("statement")) not in text:e.append(f"Owner status hides unresolved quality risk {finding.get('id')}")
+    for issue in source_work.get("issues") or []:
+        number=issue.get("issue_number");url=issue.get("url")
+        if number is not None and f"#{number}" not in text:e.append(f"Owner status hides current issue number {number}")
+        if url and str(url) not in text:e.append(f"Owner status hides current issue URL {url}")
     for key in ("protected","prohibited"):
         for subject in _subjects(scope.get(key)):
             if subject not in text:e.append(f"Owner status hides {key} scope: {subject}")
+    if cur.get("ep_percent") is not None and f"{cur.get('ep_percent'):g}%" not in text:e.append("Owner status hides active execution-package progress")
     for step in source_steps:
         if str(step.get("action") or "") not in text or str(step.get("expected_result") or "") not in text:e.append("Owner status hides exact next-work action or expected result")
     return e,w
