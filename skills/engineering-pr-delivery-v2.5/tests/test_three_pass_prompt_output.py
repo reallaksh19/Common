@@ -67,6 +67,18 @@ CURRENT ANSWER QUARANTINE:
 today's option set
 TARGET ANCHORS:
 named domain
+WHY NOW:
+a defined lifecycle hand-off created this exact issue
+STARTING PREMISE:
+the issue starts from a changed programme state
+RESPONSIBLE ACTOR / JOB:
+owner resolving this exact issue
+OWNED QUESTION:
+what this issue specifically must decide
+NON-GOALS / OWNERSHIP BOUNDARY:
+do not absorb parent or sibling work
+ISSUE DIFFERENTIATOR:
+distinct from its parent and nearest sibling
 PROBLEM KERNEL:
 specific unresolved issue
 UNDERLYING HUMAN PROBLEM:
@@ -89,6 +101,10 @@ LOT/LEVEL BOUNDARY GATE:
 PASS — correct level
 SPECIFICITY-FLOOR GATE:
 PASS — specific
+TASK-CONTRACT FIDELITY GATE:
+PASS — exact assignment survives
+NEIGHBOUR-SEPARATION GATE:
+PASS — not parent/sibling
 KERNEL-COVERAGE GATE:
 PASS — kernel survives
 SAME-ISSUE IDENTITY GATE:
@@ -107,6 +123,8 @@ PROMPT-3 FREEDOM GATE:
 PASS — artifact may close
 COMPLEX Q1–Q5 COVERAGE:
 PASS — N/A when OFF
+QSET-SEPARATION GATE:
+PASS — no formal relay QSET
 
 ## PROMPT 1 — IMAGINE
 
@@ -160,6 +178,16 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         )
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("leaks generator/method language" in e for e in errors))
+
+    def test_formal_qset_protocol_is_rejected(self):
+        bad = GOOD + "\nQUALIFICATION GATE — ANSWER QSET Q1–Q5\nschema_version: relay-v2.5-question-set\n"
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("formal relay QSET/admission protocol" in e for e in errors))
+
+    def test_issue_task_contract_is_required(self):
+        bad = GOOD.replace("WHY NOW:", "WHY-NOT:")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("ISSUE_TASK missing WHY NOW:" in e for e in errors))
 
 if __name__ == "__main__":
     unittest.main()
