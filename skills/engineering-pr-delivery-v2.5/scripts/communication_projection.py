@@ -74,6 +74,11 @@ def build(root:Path)->dict:
     report=build_report(root);contract=report.get("active_contract") or {};scope=contract.get("scope") or {};risks,quality_gaps=_visible_quality(report);evidence=report.get("evidence") or {};checkpoint=report.get("checkpoint") or {}
     recorded=[x for x in report.get("owner_decisions",[]) or [] if isinstance(x,dict) and x.get("status")!="SUPERSEDED"]
     next_steps=_exact_next_work(report)
+    external_actions=[]
+    for step in next_steps:
+        req=step.get("execution_requirement")
+        if isinstance(req,dict):
+            external_actions.append({**req,"action":step.get("action"),"expected_result":step.get("expected_result"),"ep_id":step.get("ep_id"),"lane_id":step.get("lane_id")})
     titles=_current_titles(report.get("progress") or {});current_work=report.get("current_work") or {}
     owner={
         "capability":_capability(report),
@@ -85,6 +90,7 @@ def build(root:Path)->dict:
         "roadmap":{"summary":report.get("roadmap_summary") or {},"progress":_current_titles(report.get("progress") or {}),"last_reconciliation":checkpoint.get("roadmap_reconciliation") or {}},
         "decisions":{"required_now":_required_owner_decisions(report),"recorded":recorded,"reserved":scope.get("owner_reserved") or []},
         "next_work":{"steps":next_steps},
+        "external_actions":external_actions,
         "stop_conditions":[condition for step in next_steps for condition in (step.get("stop_if") or [])],
     }
     return {
