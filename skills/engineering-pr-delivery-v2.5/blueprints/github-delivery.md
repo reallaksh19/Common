@@ -41,3 +41,25 @@ Report what changed externally, what remains unconfirmed, PR lifecycle/head/base
 
 ## SUCCESSOR HANDOVER
 Transfer operation/generation IDs, uncertain outcomes, exact refs/run IDs, remaining reconciliation, and what must never be retried blindly.
+
+
+## PR DESCRIPTION CORRELATION
+
+When PR delivery is applicable, the PR body must contain the V2.5 correlation marker and a meaningful Issue↔EP mapping.
+
+Required shape:
+
+```text
+Issue number / ISSUE_GRAPH node
+↔ execution package id / path
+↔ roadmap work package
+↔ relationship
+↔ plain-language meaning
+```
+
+The provider-read body is normalized into `DELIVERY_OBSERVATION.description_contract`. The repository validator proves that the issue and EP converge on the same roadmap work package; string presence alone is insufficient.
+
+Run `validate_pr_correlation.py` at task close. A current active EP or latest checkpoint EP that is absent from all tracked relevant PR correlations is a delivery-contract failure.
+
+All tracked non-terminal PRs are recurring Owner-summary obligations until MERGED/CLOSED. Unknown lifecycle is carried forward conservatively until readback resolves it.
+
