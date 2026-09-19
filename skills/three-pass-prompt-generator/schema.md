@@ -1419,34 +1419,17 @@ The generator's job is to stay inside that band.
 
 When COMPLEX MODE is ON and visible Q1–Q5 headings are used, inspect each heading and the text immediately beneath it.
 
-Fail if the visible surface contains internal taxonomy labels or protocol metadata.
-
-Examples that fail:
-
-```text
-Q1 — PRODUCTION_PATH
-Q2 — ENGINEERING_PROBLEM
-Q3 — BOUNDARIES_INVARIANTS
-Q4 — VERIFICATION
-Q5 — FIRST_SAFE_SLICE
-
-required_output_keys:
-reconstruction_mode:
-payload.source:
-evidence_required:
-oracle_refs:
-step_refs:
-```
+Fail if the visible surface uses internal taxonomy identifiers, machine-field names, schema metadata, or protocol syntax.
 
 Passing labels must be short, natural, target-specific practitioner language.
 
-Examples:
+For example:
 
 ```text
 Q1 — Work out what is happening in this real case
 Q2 — Do the calculation or reconstruction yourself
 Q3 — Change the case and see what breaks
-Q4 — Check your result against the independent comparator
+Q4 — Check your result by an independent route
 Q5 — Given what you learned, what is worth doing next?
 ```
 
@@ -3088,9 +3071,9 @@ The labels Q1–Q5 are for the generator's internal coverage check, not normally
 
 ## Human-visible Q1–Q5 labels
 
-The internal Q1–Q5 semantics are **coverage categories**, not surface language.
+The internal Q1–Q5 semantics are coverage categories, not surface language.
 
-If the user explicitly asks to see `Q1` through `Q5`, keep the numbers but translate every visible heading into a short, natural, target-specific question or task.
+If the user explicitly asks to see Q1 through Q5, keep the numbers but translate every visible heading into a short, natural, target-specific question or task.
 
 Use this test:
 
@@ -3098,45 +3081,19 @@ Use this test:
 
 If no, rewrite it.
 
-For example, for a quantitative engineering benchmark issue:
+For a quantitative engineering case, good headings might be:
 
 ```text
-Good:
 Q1 — From these real inputs, where does the governing method take you?
 Q2 — Can you reproduce the reported result yourself?
 Q3 — What changes when the case moves outside the directly supported condition?
 Q4 — Why does the independent comparison agree, and what does that actually prove?
 Q5 — Given what you learned, what is actually worth doing next?
-
-Bad:
-Q1 — PRODUCTION_PATH
-Q2 — ENGINEERING_PROBLEM
-Q3 — BOUNDARIES_INVARIANTS
-Q4 — VERIFICATION
-Q5 — FIRST_SAFE_SLICE
 ```
 
-Also reject machine/protocol metadata inside Prompt 1 such as:
+Do not expose machine identifiers, schema field names, evidence-control metadata, or internal reasoning-category names in Prompt 1.
 
-```text
-anchors:
-evidence_required:
-required_output_keys:
-reconstruction_mode:
-payload.source:
-payload.values:
-oracle_refs:
-independence_requirement:
-step_refs:
-mutation.protected_invariant:
-mutation.falsifier:
-```
-
-Those concepts may guide the generator internally.
-
-They must be rewritten into ordinary practitioner language in the generated prompt.
-
-The future agent should encounter a **real question**, not a schema field.
+The future agent should encounter a real question, not a schema field.
 
 ---
 
