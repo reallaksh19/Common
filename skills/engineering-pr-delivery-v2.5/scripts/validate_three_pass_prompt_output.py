@@ -72,6 +72,13 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "CURRENT-STATE FACTS:",
     "CURRENT ANSWER QUARANTINE:",
     "TARGET ANCHORS:",
+    "PROBLEM WITNESS TYPE:",
+    "PROBLEM WITNESS SOURCE:",
+    "PROBLEM WITNESS PAYLOAD:",
+    "WITNESS CLAIM(S) TO REPRODUCE:",
+    "WHY THIS WITNESS EXPOSES THE ISSUE:",
+    "WITNESS INTERPRETATION QUARANTINE:",
+    "INDEPENDENT WORK PRODUCT:",
     "WHY NOW:",
     "STARTING PREMISE:",
     "RESPONSIBLE ACTOR / JOB:",
@@ -91,6 +98,8 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "SPECIFICITY-FLOOR GATE:",
     "TASK-CONTRACT FIDELITY GATE:",
     "NEIGHBOUR-SEPARATION GATE:",
+    "PROBLEM-WITNESS SELECTION GATE:",
+    "WITNESS-INDEPENDENCE GATE:",
     "KERNEL-COVERAGE GATE:",
     "SAME-ISSUE IDENTITY GATE:",
     "ANSWER-EXCLUSION GATE:",
@@ -223,6 +232,8 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 "CURRENT ANSWER QUARANTINE:",
                 "TASK-CONTRACT FIDELITY GATE:",
                 "NEIGHBOUR-SEPARATION GATE:",
+                "PROBLEM-WITNESS SELECTION GATE:",
+                "WITNESS-INDEPENDENCE GATE:",
                 "KERNEL-COVERAGE GATE:",
                 "SAME-ISSUE IDENTITY GATE:",
                 "ANSWER-EXCLUSION GATE:",
@@ -232,6 +243,8 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             for gate in (
                 "TASK-CONTRACT FIDELITY GATE:",
                 "NEIGHBOUR-SEPARATION GATE:",
+                "PROBLEM-WITNESS SELECTION GATE:",
+                "WITNESS-INDEPENDENCE GATE:",
                 "KERNEL-COVERAGE GATE:",
                 "SAME-ISSUE IDENTITY GATE:",
                 "ANSWER-EXCLUSION GATE:",
@@ -240,6 +253,19 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 if "PASS" not in tail:
                     errors.append(f"{label}: {gate} must PASS for ISSUE_TASK")
 
+        witness_type = _field_value(preflight, "PROBLEM WITNESS TYPE:")
+        if level == "ISSUE_TASK":
+            if not witness_type:
+                errors.append(f"{label}: ISSUE_TASK requires PROBLEM WITNESS TYPE")
+            if witness_type != "NONE":
+                for field in (
+                    "PROBLEM WITNESS SOURCE:",
+                    "PROBLEM WITNESS PAYLOAD:",
+                    "WHY THIS WITNESS EXPOSES THE ISSUE:",
+                    "INDEPENDENT WORK PRODUCT:",
+                ):
+                    if not _field_value(preflight, field):
+                        errors.append(f"{label}: selected witness requires non-empty {field}")
         complex_mode = _field_value(preflight, "COMPLEX MODE:")
         if complex_mode not in {"ON", "OFF"}:
             errors.append(f"{label}: COMPLEX MODE must be ON or OFF")
