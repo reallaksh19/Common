@@ -10,6 +10,7 @@ sys.path.insert(0,str(HERE.parents[2]/"scripts"))
 sys.path.insert(0,str(HERE.parents[1]))
 
 from test_core import good,dump
+from validate_handover_plan import validate as handover_check
 from handover_planning import (
     build_handover_plan,
     parse_handover_command,
@@ -45,6 +46,7 @@ class HandoverPlanningStressTests(unittest.TestCase):
             plan=build_handover_plan(root)
             self.assertEqual("ACTIVE_TASK",plan["work_contract"]["kind"])
             self.assertEqual("EP-1",plan["work_contract"]["id"])
+            self.assertEqual([],handover_check(root)[0])
 
     def test_roadmap_work_package_is_fallback_when_no_issue_or_active_ep_exists(self):
         with tempfile.TemporaryDirectory() as td:
@@ -102,6 +104,7 @@ class HandoverPlanningStressTests(unittest.TestCase):
             root=Path(td);good(root)
             mode=parse_handover_command("Plan for Handover , complex project")
             self.assertTrue(mode["complex_project"])
+            self.assertEqual([],handover_check(root,complex_project=True)[0])
             plan=build_handover_plan(
                 root,
                 complex_project=mode["complex_project"],
