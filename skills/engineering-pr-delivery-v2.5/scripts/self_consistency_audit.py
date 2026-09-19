@@ -44,11 +44,12 @@ OBJECT_SURFACES = {
     "COMMUNICATION_PROJECTION": ["schemas/communication-projection.schema.yaml", "scripts/communication_projection.py", "scripts/validate_human_communication.py", "scripts/render_owner_status.py", "scripts/render_technical_status.py", "operating-model/human-communication.md"],
     "OWNER_CHANGE_PROJECTION": ["schemas/owner-change-projection.schema.yaml", "scripts/owner_change_projection.py", "scripts/validate_owner_change_intake.py", "scripts/render_owner_change.py", "operating-model/owner-change-intake.md"],
     "ZERO_CONTEXT_RECONSTRUCTION": ["schemas/zero-context-reconstruction.schema.yaml", "scripts/zero_context_reconstruction.py", "scripts/validate_zero_context_reconstruction.py", "operating-model/relay-certification-matrix.md"],
+    "HANDOVER_PLAN": ["schemas/handover-plan.schema.yaml", "scripts/handover_planning.py", "scripts/validate_handover_plan.py", "scripts/plan_handover.py", "scripts/prepare_handover_projection.py", "operating-model/human-communication.md"],
 }
 
 RELEASE_DOCS = {
     "operating-model/architecture-index.md": ["operator-quick-start.md", "synthetic-relay-example.md", "self_consistency_audit.py"],
-    "operating-model/operator-quick-start.md": ["validate_relay_conformance.py", "material_write_ready.py", "prior conversation"],
+    "operating-model/operator-quick-start.md": ["validate_relay_conformance.py", "material_write_ready.py", "plan_handover.py", "prior conversation"],
     "operating-model/synthetic-relay-example.md": ["DSTEP-01", "DISC-0002", "QUAL-0002", "TC-0002", "MATERIAL_WRITE_READY"],
 }
 
@@ -68,11 +69,12 @@ README_REQUIRED_ENTRYPOINTS = [
     "zero_context_reconstruction.py", "validate_baton_readiness.py", "validate_takeover_certification.py",
     "material_write_ready.py", "validate_quality_review.py", "validate_human_communication.py",
     "validate_owner_change_intake.py", "render_roadmap.py", "self_consistency_audit.py",
+    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py",
 ]
 
 SKILL_REQUIRED_ENTRYPOINTS = [
     "validate_relay_conformance.py", "cold_start_check.py", "validate_zero_context_reconstruction.py",
-    "material_write_ready.py", "self_consistency_audit.py",
+    "material_write_ready.py", "plan_handover.py", "self_consistency_audit.py",
 ]
 
 STALE_MARKERS = {
