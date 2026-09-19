@@ -259,3 +259,37 @@ The optional cursor lives at `agents/relay/publication/OWNER_PUBLICATION.yaml`. 
 
 `plan_handover.py --apply-publication` uses this same publisher before deriving handover INTENT.
 
+
+
+## Live delivery observation
+
+A repository that currently uses a PR delivery vehicle may set:
+
+```yaml
+delivery:
+  required: true
+  provider: GITHUB
+  observation:
+    id: DOBS-0001
+    path: agents/relay/delivery/DOBS-0001.yaml
+```
+
+Validate the provider-readback evidence with:
+
+```bash
+python validate_delivery_observation.py <repo-root>
+```
+
+The observation carries PR identity/lifecycle, exact head/base, mergeability, exact-head checks, review/change-request state, and durable readback basis. `delivery_projection.py` derives review readiness and technical merge readiness and joins exact-head Owner authorization from applied ODRs.
+
+No PR needed:
+
+```text
+delivery omitted
+or delivery.required=false
+→ delivery applicability NOT_APPLICABLE
+```
+
+Unknown provider capability/state remains `UNKNOWN`. Stale-head CI must be represented as `STALE`, never PASS.
+
+An Owner merge authorization uses an applied `ODR` with `decision.kind: AUTHORIZATION` plus `delivery_authorization` for `MERGE`, exact repository, PR number and head SHA. This authorization is separate from `grants_material_write_authority`.
