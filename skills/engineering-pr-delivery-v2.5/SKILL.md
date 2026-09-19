@@ -220,61 +220,17 @@ A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/materia
 
 A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks, and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators reopen evidence and recompute current basis; YAML assertions are not authority.
 
-## Three-pass prompt-generator bootstrap
+## Three-pass prompt-generator compatibility note
 
-The three-pass prompt generator is a **standalone live-schema workflow**, not a remembered prompting pattern.
+Three-pass prompt generation is not defined in this skill.
 
-When this mode is active, the schema is the exclusive repository-local protocol for the generated artifact; the normal engineering-delivery QSET/QUAL/takeover machinery below is inactive.
-
-Canonical schema:
+Use only:
 
 ```text
-skills/three-pass-prompt-generator/schema.md
+skills/three-pass-prompt-generator/SKILL.md
 ```
 
-When a user asks to generate, regenerate, review, or apply the three-pass prompts/schema:
-
-1. **Fetch the canonical schema from current `main` in the same run.**
-2. Before reading the target, produce the schema execution handshake required by the live schema, including protocol revision `TPG-3P-2026-09-19-R3` and the actual fetched SHA.
-3. Record the same fetched content/blob SHA in the generated output's shared `SCHEMA BASIS`.
-4. Never reconstruct the generator from conversation memory, a previous generated answer, an assistant summary, an older commit, or an earlier fetched copy.
-5. Resolve targets only from user authority: current user message → earlier user-supplied target/lot → user-supplied canonical URL/name. A previous assistant guess is never target authority.
-6. Execute the fetched schema literally, including its visible preflight and all gates.
-7. Before returning the generated prompts, validate the complete draft with:
-   ```bash
-   python skills/three-pass-prompt-generator/validate.py <generated-markdown> --expected-schema-sha <fetched-content-sha>
-   ```
-8. If validation fails, do **not** return the draft. Rebuild it from the fetched current schema.
-
-The validator is deliberately structural. It rejects stale control-path signatures before prose quality is considered, including missing schema basis/preflight, retired `TASK_ARTIFACT`/target-scope machinery, register-centric blind-pass wording, missing issue problem-kernel/quarantine gates, or a Prompt 3 that predetermines a reconciled register.
-
-For `ISSUE_TASK`, the required blind-pass control is:
-
-```text
-Prompt 1 =
-ISSUE TASK CONTRACT
-+ PROBLEM KERNEL
-+ TARGET ANCHORS
-+ PROBLEM WITNESS when available
-+ HUMAN OUTCOME
-+ GENUINE CONSTRAINTS
-- CURRENT ANSWER QUARANTINE
-- WITNESS INTERPRETATION QUARANTINE
-```
-
-A current artifact being a register, matrix, roadmap, checklist, or decision package does not make that artifact type the Prompt-1 imagination object.
-
-Prompt 1 must also be **method-invisible**. The future agent should receive the human/domain situation directly. Do not narrate the generator mechanics with phrases such as "later pass", "fixed independent reference", "do not inspect the repository", or "you will be held to this picture". The outer bootstrap/schema controls blindness; Prompt 1 should feel like a real practitioner problem.
-
-For `ISSUE_TASK`, the ISSUE TASK CONTRACT is mandatory: why the issue exists now, its stated starting scenario, responsible actor/job, exact owned question, non-goals/ownership boundary, and why it differs from parent/sibling issues. Do not abstract those away merely because they came from the target issue.
-
-For `ISSUE_TASK`, actively search the target for a **PROBLEM WITNESS**: benchmark case, hand-calculation case, drawing, failing input, trace, dataset, screenshot/journey, dependency case, or other concrete example that materially exposes the owned question. When one exists, Prompt 1 should normally make the future agent independently work/reproduce that witness before returning to the issue-level judgement. Keep the witness payload and reported result-as-claim; quarantine today's interpretation/recommendation. If a real witness exists, do not replace it with invented plausible values or abstract consultancy questions.
-
-A selected witness must have an **INDEPENDENT WORK PRODUCT** such as a hand calculation, derivation, comparison table, trace, reconstructed journey, dependency map, or falsifier set.
-
-When the user invokes `complex` three-pass mode, Q1–Q5 means the schema's **human Prompt-1 reasoning lenses only**. If Q1–Q5 labels are shown, they must be short, natural, target-specific practitioner questions/tasks. Never surface taxonomy labels such as `PRODUCTION_PATH`, `ENGINEERING_PROBLEM`, `BOUNDARIES_INVARIANTS`, `VERIFICATION`, or `FIRST_SAFE_SLICE`, and never emit protocol metadata such as `required_output_keys`, `payload.source`, or `evidence_required`. Do not create a formal relay `QSET-*`, qualification/admission gate, route/EP/digest metadata, `TO_BE_BOUND` placeholders, or evaluator requirement. Formal QSET/QUAL belongs to relay takeover certification, not three-pass prompt generation.
-
-This bootstrap requirement sits **outside** the schema by design: a stale copy of the schema cannot be trusted to tell an agent to fetch a newer copy of itself.
+Do not continue reading this skill for three-pass generation.
 
 ## Engineering qualification — QSET / QUAL
 
