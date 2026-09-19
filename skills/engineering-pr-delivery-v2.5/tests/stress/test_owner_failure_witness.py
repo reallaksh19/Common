@@ -69,20 +69,35 @@ class OwnerFailureWitnessStressTests(unittest.TestCase):
 
             # Baseline CP already says no product files changed and no roadmap structure change.
             cp_path=root/"agents/relay/checkpoints/CP-1.yaml"
-            cp=load_yaml(cp_path)
-            cp["contract_version"]=2
-            cp["implementation_result"]={
-                "summary":"Repository admission basis established; no product files changed.",
-                "completed_steps":["Admission basis established."],
-                "files_changed":[],
-            }
-            cp["known_limitations"]=[]
-            cp["remaining_work"]=["Run the real local Git admission gate before product implementation."]
-            cp["roadmap_reconciliation"]={
-                "result":"NO_ROADMAP_CHANGE",
-                "status_updates":[],
-                "proposals":[],
-                "owner_decisions_required":[],
+            cp={
+                "schema_version":"relay-v2.5",
+                "contract_version":2,
+                "checkpoint_id":"CP-1",
+                "ep_id":"EP-1",
+                "roadmap_basis":{"roadmap_id":"RM-T","revision":"RM-0001"},
+                "execution_basis":{"material_ref":"abc"},
+                "implementation_result":{
+                    "summary":"Repository admission basis established; no product files changed.",
+                    "completed_steps":["Admission basis established."],
+                    "files_changed":[],
+                },
+                "acceptance_results":[],
+                "validation_results":[],
+                "quality_review":None,
+                "quality_findings":[],
+                "known_limitations":[],
+                "discoveries":[],
+                "roadmap_reconciliation":{
+                    "result":"NO_ROADMAP_CHANGE",
+                    "status_updates":[],
+                    "proposals":[],
+                    "owner_decisions_required":[],
+                },
+                "remaining_work":["Run the real local Git admission gate before product implementation."],
+                "successor":{
+                    "mode":"SERIAL","frontier_work_package":"WP-1","ep_id":"EP-1",
+                    "parallel_plan":None,"lane_id":None,"lanes":[],
+                },
             }
             dump(cp_path,cp)
             self.assertEqual([],checkpoint_check(cp_path)[0])
