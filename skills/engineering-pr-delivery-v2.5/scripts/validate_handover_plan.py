@@ -33,6 +33,11 @@ def validate(root:Path,owner_requirements:list[str]|None=None,complex_project:bo
         for index,item in enumerate(plan.get(family) or []):
             if not str(item.get("definition_path") or "").strip():e.append(f"handover {family}[{index}] requires durable definition_path")
 
+    incremental=plan.get("incremental") or {}
+    if not isinstance(incremental.get("prior_publication_present"),bool):e.append("handover incremental.prior_publication_present must be boolean")
+    for key_name in ("newly_pending","retained_pending","completed_since_prior"):
+        if not isinstance(incremental.get(key_name),list):e.append(f"handover incremental.{key_name} must be list")
+    if incremental.get("prior_publication_present") and not incremental.get("prior_issue_node"):e.append("handover incremental prior publication requires prior_issue_node")
     strategy=plan.get("issue_strategy") or {}
     key=str(strategy.get("handover_key") or "")
     if not key.startswith("sha256:"):e.append("handover issue strategy requires stable sha256 handover_key")
