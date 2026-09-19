@@ -10,6 +10,7 @@ properties:
     properties:
       agent_instance_id: {type: string, minLength: 1}
   prepared_by:
+    description: "Provenance of the TC document author/assembler. This is not certification authority and may be the candidate."
     type: object
     required: [agent_instance_id]
     properties:
