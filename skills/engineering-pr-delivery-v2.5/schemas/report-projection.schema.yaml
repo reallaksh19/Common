@@ -32,7 +32,7 @@ properties:
     required: [progress_basis, overall_percent, current, hierarchy]
   delivery:
     type: object
-    required: [applicability, provider, observation_id, observation_path, vehicle, mergeability, checks, review, ready_for_review, technical_ready_to_merge, merge_authorization]
+    required: [applicability, provider, observation_id, observation_path, vehicle, mergeability, checks, review, ready_for_review, technical_ready_to_merge, merge_authorization, unmerged_prs]
   active_contract: {type: [object, 'null']}
   owner_decisions: {type: array}
   next_work: {type: [object, 'null']}
