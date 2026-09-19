@@ -46,7 +46,7 @@ explicit Owner intent / ODR
 → executable frontier
 → semantic EP or Owner-approved parallel router
 → BATON_READY
-→ incoming candidate DISC / QUAL / TC evidence
+→ execution candidate DISC / QUAL / TC evidence
 → TAKEOVER_CERTIFIED(route,candidate)
 → live route + Git basis + MATERIAL_WRITE_READY
 → implementation / read-only reconciliation as authorized
@@ -214,11 +214,11 @@ Read `operating-model/takeover-certification.md`.
 
 ## Discovery and takeover certification
 
-EP discovery instructions use `DSTEP-*`. Incoming candidate evidence uses `DISC-*`.
+EP discovery instructions use `DSTEP-*`. Execution-candidate evidence uses `DISC-*`.
 
-A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/material basis, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton digest, required DSTEP coverage, and expected output names. `conversation_context_used` must be false.
+A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/material basis, semantic EP digest, `REPO_PROFILE` digest, predecessor-baton digest, required DSTEP coverage, and expected output names. `conversation_context_used: false` means the receipt is grounded in repository sources rather than chat authority; the candidate may be incoming or continuing.
 
-A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks, and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators reopen evidence and recompute current basis; YAML assertions are not authority.
+A `TC-*` Takeover Certification records candidate, document preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks, and final PASS/FAIL. The candidate may assemble its own TC record, including after preparing the EP; document authorship is not certification authority. Self-evaluation remains invalid, and validators reopen evidence and recompute current basis.
 
 ## Three-pass prompt-generator compatibility note
 
@@ -305,6 +305,8 @@ STOP      — true hard stop only
 ```
 
 `can_continue: true + READ_ONLY` is valid. `NOT_RUN` is evidence truth, not automatically a stop.
+
+`material_authority` is route/repository-level, not candidate-specific. Missing DISC/QUAL/TC for one candidate must not be encoded by downgrading the route to READ_ONLY; candidate-specific admission is handled by `TAKEOVER_CERTIFIED` and the live write gate.
 
 Hard stops are reserved for real inability to proceed safely:
 
