@@ -10,7 +10,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -56,7 +56,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -182,7 +182,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -206,7 +206,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R1`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R2`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -2385,7 +2385,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2404,7 +2404,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R1
+TPG-3P-2026-09-19-R2
 
 GENERATOR MODE:
 THREE_PASS_ONLY
