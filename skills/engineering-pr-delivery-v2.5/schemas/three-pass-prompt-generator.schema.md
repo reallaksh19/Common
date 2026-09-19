@@ -14,12 +14,19 @@ When given a target, create **exactly three prompts** for another agent to run i
 
 Do not solve the target yourself. Your output is the three prompts.
 
-The method is the same throughout, but two things must be identified correctly before generating prompts:
+The method is the same throughout, but the generator must freeze a **preflight record** before it is allowed to draft Prompt 1.
 
-1. **Target purpose** — why this target exists at all.
-2. **Zoom level** — how much of the surrounding system the target is responsible for.
+The preflight separates seven things that ordinary agents often collapse:
 
-A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself.
+1. **Target identity** — the exact thing being discussed.
+2. **Request mode** — what the user wants done now.
+3. **Target purpose** — why the target itself exists.
+4. **Target scope** — product, repository/system, or task/artifact.
+5. **Expertise** — what kind of expert should reason about it.
+6. **Imagination object / reality object** — what Prompt 1 may imagine and what Prompt 2 must inspect.
+7. **Final output contract** — what Prompt 3 must ultimately produce.
+
+A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. **Expertise is not the object of reasoning.** A finite-element expert may be reasoning about a coordination register rather than designing a finite-element product.
 
 ---
 
@@ -96,9 +103,233 @@ If current facts matter and the future agent can inspect a live repository, issu
 
 ---
 
-# STEP 0A — FIRST IDENTIFY WHY THE TARGET EXISTS
+# MANDATORY PREFLIGHT — DO NOT GENERATE PROMPTS YET
 
-Do this **before** choosing the zoom level.
+Before drafting Prompt 1, build the following record internally.
+
+Do not output this record to the user unless explicitly asked. But do not skip it.
+
+## A. Resolve the exact target
+
+If the user provides a URL to an issue, PR, repository, document, plan, register, or other live artifact, **open that exact target first**.
+
+Do not infer its purpose from:
+
+- the repository name;
+- the technical domain;
+- a title fragment;
+- nearby work;
+- prior memory;
+- or the broader product mission.
+
+Extract:
+
+```text
+TARGET TITLE:
+<exact title or stable name>
+
+TARGET LINK:
+<canonical URL when available>
+
+PARENT REPOSITORY / SYSTEM:
+<owner/repo or parent system when applicable>
+
+REPOSITORY / SYSTEM LINK:
+<canonical parent URL when available>
+```
+
+If the target cannot be inspected and its purpose is not otherwise supplied clearly, **fail closed**: do not invent the target purpose from surrounding context.
+
+## B. Freeze the request mode
+
+Choose the single mode that best describes what the user wants done **now**:
+
+```text
+CONCEIVE
+REVIEW
+CHANGE
+INVESTIGATE
+DECIDE
+COORDINATE
+HANDOVER
+```
+
+This is about the user's current assignment, not the permanent mission of the target.
+
+Examples:
+
+```text
+"Review this whole repository against first principles"
+→ REVIEW
+
+"Complete this implementation issue"
+→ CHANGE
+
+"Find out why this benchmark is wrong"
+→ INVESTIGATE
+
+"Help decide between these threshold options"
+→ DECIDE
+
+"Keep this merge/blocker register truthful"
+→ COORDINATE
+```
+
+## C. Freeze the target purpose
+
+Complete exactly:
+
+> **“This target exists so that ______.”**
+
+Describe the target itself, not a larger neighbouring product.
+
+## D. Freeze the target scope
+
+Choose exactly one:
+
+```text
+PRODUCT
+REPOSITORY_SYSTEM
+TASK_ARTIFACT
+```
+
+Scope answers **how much surrounding system belongs inside the target**.
+
+## E. Freeze the expertise
+
+Complete:
+
+> **“The future agent should reason with the expertise of ______.”**
+
+Then apply this invariant:
+
+> **EXPERTISE ≠ OBJECT OF REASONING**
+
+Expertise tells the agent **how intelligently to think**.
+
+It does not decide **what it is thinking about**.
+
+Example:
+
+```text
+EXPERTISE:
+senior structural / finite-element engineer
+
+IMAGINATION OBJECT:
+excellent live engineering programme register
+```
+
+This is valid.
+
+Do not automatically turn a domain expert into a product-design prompt for that domain.
+
+## F. Freeze the three prompt objects
+
+Complete all three sentences:
+
+```text
+IMAGINATION OBJECT:
+"Prompt 1 must independently imagine what an excellent ______ looks like."
+
+REALITY OBJECT:
+"Prompt 2 must establish what is actually true today about ______."
+
+FINAL OUTPUT CONTRACT:
+"Prompt 3 must ultimately produce ______."
+```
+
+These three lines are construction constraints, not suggestions.
+
+## G. Build the complete preflight record
+
+The record must now contain:
+
+```text
+TARGET TITLE:
+TARGET LINK:
+PARENT REPOSITORY / SYSTEM:
+REPOSITORY / SYSTEM LINK:
+
+REQUEST MODE:
+TARGET PURPOSE:
+TARGET SCOPE:
+EXPERTISE:
+
+IMAGINATION OBJECT:
+REALITY OBJECT:
+FINAL OUTPUT CONTRACT:
+```
+
+Do not draft Prompt 1 until every applicable field is resolved.
+
+---
+
+# HARD GATE 1 — PROMPT-1 OBJECT GATE
+
+Before generating Prompt 1, finish:
+
+> **“If Prompt 1 were answered perfectly, the answer would be an excellent example of ______.”**
+
+The blank must match the frozen **IMAGINATION OBJECT**.
+
+Then compare that perfect answer with:
+
+- REQUEST MODE;
+- TARGET PURPOSE;
+- TARGET SCOPE.
+
+If it would instead solve a larger neighbouring problem, a smaller implementation detail, or a different kind of task:
+
+> **REJECT THE DRAFT AND REGENERATE PROMPT 1.**
+
+Do not continue to Prompt 2 until this gate passes.
+
+---
+
+# HARD GATE 2 — PROMPT-3 OUTPUT GATE
+
+Before emitting Prompt 3, finish:
+
+> **“If Prompt 3 were answered perfectly, its final deliverable would be ______.”**
+
+The answer must match the frozen **FINAL OUTPUT CONTRACT**.
+
+Examples:
+
+```text
+PRODUCT review
+→ product gap analysis + phased roadmap
+
+REPOSITORY review
+→ current system meaning + preserved strengths + remaining programme
+
+IMPLEMENTATION change
+→ rewritten present-day task + smallest durable change
+
+INVESTIGATION
+→ verified conclusion + bounded uncertainty
+
+DECISION
+→ decision-ready evidence package
+
+COORDINATION
+→ reconciled live register + executable frontier
+
+HANDOVER
+→ successor-ready continuity package
+```
+
+If Prompt 3 would instead produce a neighbouring product redesign, an unrequested implementation, or a generic roadmap:
+
+> **REJECT THE DRAFT AND REGENERATE PROMPT 3.**
+
+---
+
+# STEP 0A — APPLY THE FROZEN TARGET PURPOSE
+
+The mandatory preflight has already resolved the target identity and request mode.
+
+Now use the frozen **TARGET PURPOSE** before choosing or applying the zoom level.
 
 Silently complete this sentence:
 
@@ -206,11 +437,19 @@ Do not silently substitute the mission of a neighbouring product, repository, pr
 
 ---
 
-# STEP 0B — SILENTLY DETERMINE THE ZOOM LEVEL
+# STEP 0B — APPLY THE FROZEN TARGET SCOPE
 
-After identifying the target's purpose, silently decide which zoom level best describes how much of the surrounding system the target is responsible for.
+The preflight has already chosen:
 
-**Purpose comes first. Zoom comes second.**
+```text
+PRODUCT
+REPOSITORY_SYSTEM
+TASK_ARTIFACT
+```
+
+Use that scope to decide how much surrounding system belongs inside each prompt.
+
+**Request mode + target purpose come first. Scope comes after them.**
 
 A task-level coordination register may mention a whole repository but still remain task-level. A repository-level review may inspect many tasks but still be system-level.
 
@@ -266,7 +505,11 @@ Before generating Prompt 1, silently separate the user's information into two co
 
 ```text
 BLIND BRIEF
+- request mode
 - target-purpose sentence: "This target exists so that ..."
+- target scope
+- expertise
+- imagination object
 - human goal
 - intended users
 - desired outcomes
@@ -388,13 +631,33 @@ Examples:
 
 Do not use the surrounding product mission as a substitute for the task's purpose.
 
+### Prompt-1 object rule
+
+Prompt 1 must be about the frozen **IMAGINATION OBJECT**.
+
+The domain may shape the examples and expertise, but it must not replace the object.
+
+Before finalizing Prompt 1, restate internally:
+
+```text
+EXPERTISE:
+<who is thinking>
+
+IMAGINATION OBJECT:
+<what they are thinking about>
+```
+
+If those have accidentally collapsed into the same thing without justification, re-check the target.
+
 ---
 
 # STEP 2 — PROMPT 2 MUST RECONSTRUCT REALITY, NOT REDESIGN IT
 
 Prompt 2 may now reveal the current system.
 
-Tell the future agent to inspect the live implementation and understand it on its own terms before proposing changes.
+Its subject is the frozen **REALITY OBJECT**.
+
+Tell the future agent to inspect the live implementation and understand the reality relevant to that object before proposing changes. Do not automatically broaden Prompt 2 into a full repository audit if the target only needs a bounded register, decision, investigation, or implementation reality.
 
 Depending on the target, inspect relevant:
 
@@ -565,6 +828,10 @@ The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replac
 ---
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
+
+Prompt 3 is constrained by the frozen **FINAL OUTPUT CONTRACT**.
+
+It may reason broadly enough to reach a correct conclusion, but its final deliverable must be the kind of artifact required by that contract.
 
 Prompt 3 should make the future agent answer these questions in this order.
 
@@ -898,7 +1165,9 @@ Use these headings exactly:
 Each block must:
 
 - stand on its own;
-- clearly identify the target;
+- clearly identify the frozen target;
+- preserve the same target purpose;
+- be about its frozen prompt object;
 - include the canonical target link when one exists;
 - include the repository/system link when the target is a task, issue, PR, audit, register, or handover inside a repository;
 - be ready to paste directly into another agent;
@@ -917,11 +1186,56 @@ Do not add a roadmap outside Prompt 3.
 
 Do not add explanatory prose before or after the three blocks.
 
+For Prompt 3 specifically, the identity capsule is mandatory and should be explicit:
+
+```text
+TARGET:
+<exact title/name>
+
+TARGET LINK:
+<canonical target URL>
+
+REPOSITORY / SYSTEM:
+<parent repository/system>
+
+REPOSITORY LINK:
+<canonical repository/system URL>
+
+PURPOSE:
+<this target exists so that ...>
+```
+
+Omit only fields that genuinely do not exist.
+
 ---
 
 # SILENT QUALITY CHECKS BEFORE OUTPUT
 
 Do not show these checks. Use them internally.
+
+### Preflight-completeness check
+
+Are REQUEST MODE, TARGET PURPOSE, TARGET SCOPE, EXPERTISE, IMAGINATION OBJECT, REALITY OBJECT, and FINAL OUTPUT CONTRACT all resolved?
+
+If not, do not generate prompts.
+
+### Prompt-1 object-gate check
+
+Would a perfect answer to Prompt 1 be an excellent example of the frozen IMAGINATION OBJECT?
+
+If not, reject Prompt 1.
+
+### Prompt-3 output-gate check
+
+Would a perfect answer to Prompt 3 produce the frozen FINAL OUTPUT CONTRACT?
+
+If not, reject Prompt 3.
+
+### Expertise/object separation check
+
+Did domain expertise accidentally become the object of Prompt 1?
+
+If yes, re-check the target purpose.
 
 ### Target-purpose check
 
@@ -1027,6 +1341,36 @@ Mostly client-side/static architecture.
 Built and maintained by one developer with AI-agent help.
 ```
 
+## Frozen preflight
+
+```text
+REQUEST MODE:
+REVIEW
+
+TARGET PURPOSE:
+This product exists so that users can seriously edit, inspect and save real PDFs
+in a browser-oriented environment without depending on backend infrastructure.
+
+TARGET SCOPE:
+PRODUCT
+
+EXPERTISE:
+PDF/browser architecture and document-editing product expertise
+
+IMAGINATION OBJECT:
+an excellent static/browser PDF editor experience and architecture
+
+REALITY OBJECT:
+the current PDF application's real architecture, editing journeys, performance,
+persistence, supported operations and in-flight work
+
+FINAL OUTPUT CONTRACT:
+a product-level gap analysis and phased roadmap from current reality
+toward the independent reference picture
+```
+
+**Gate expectation:** a perfect Prompt-1 answer describes the PDF product itself. PASS.
+
 ## What a good generated Prompt 1 should feel like
 
 It should **not** say:
@@ -1095,6 +1439,36 @@ The system must scale without creating a special architecture for every subject 
 Machine checks must not be mistaken for proof that material actually teaches.
 ```
 
+## Frozen preflight
+
+```text
+REQUEST MODE:
+REVIEW
+
+TARGET PURPOSE:
+This system exists so that learners can study independently, understand ideas,
+practise, recover from misunderstandings, repair prerequisites and transfer learning.
+
+TARGET SCOPE:
+REPOSITORY_SYSTEM
+
+EXPERTISE:
+learning-system, curriculum and educational-product architecture expertise
+
+IMAGINATION OBJECT:
+an excellent Grade-9 self-study system and learner journey
+
+REALITY OBJECT:
+what Grade9V3 actually provides today across teaching, practice, routing,
+feedback, subjects, evidence and current work
+
+FINAL OUTPUT CONTRACT:
+a present-day definition of what Grade 9 should mean, what is already solved,
+what genuinely remains, and an ordered programme for closing that distance
+```
+
+**Gate expectation:** a perfect Prompt-1 answer describes the learner/system outcome without inheriting Grade9V3 vocabulary. PASS.
+
 ## What a good generated Prompt 1 should feel like
 
 It should **not** mention matrices, Core1/Core2, gates, current routing enums, or the existing repository structure.
@@ -1154,6 +1528,37 @@ CURRENT SYSTEM:
 https://github.com/reallaksh19/Grade9V3
 ```
 
+## Frozen preflight
+
+```text
+REQUEST MODE:
+CHANGE
+
+TARGET PURPOSE:
+This issue exists so that a real worksheet question can be connected to the reusable
+learner ability it requires, the genuine earlier knowledge it depends on,
+and where that knowledge is taught.
+
+TARGET SCOPE:
+TASK_ARTIFACT
+
+EXPERTISE:
+learning-system and curriculum-mapping expertise
+
+IMAGINATION OBJECT:
+an excellent worksheet-question-to-learning mapping outcome
+
+REALITY OBJECT:
+what Issue #19, the current repository, later PRs and real-question evidence
+have already accomplished
+
+FINAL OUTPUT CONTRACT:
+a rewritten present-day Issue #19 containing only the meaningful remaining work
+and its smallest durable solution
+```
+
+**Gate expectation:** a perfect Prompt-1 answer explains question → reusable ability → prerequisite → teaching location, not the whole Grade-9 system. PASS.
+
 ## What a good generated Prompt 1 should feel like
 
 It should **not** begin with the issue's proposed files, historical donor PRs, matrix schema, or implementation checklist.
@@ -1209,16 +1614,47 @@ The final task may be much smaller than the historical issue. That is a successf
 
 ```text
 TARGET:
-A GitHub issue whose purpose is to be the single register of pending work for a complex engineering programme.
+https://github.com/reallaksh19/Advanced_Analysis/issues/1855
+
+CURRENT SYSTEM:
+https://github.com/reallaksh19/Advanced_Analysis
 
 HUMAN GOAL:
 Keep one truthful, current picture of merge order, outstanding engineering work, blockers,
 owner-gated decisions, known baseline failures, and the exact work that can safely proceed.
-
-CURRENT SYSTEM:
-A live engineering repository with stacked PRs, red baseline checks, several programme phases,
-and decisions reserved to the owner.
 ```
+
+## Frozen preflight
+
+```text
+REQUEST MODE:
+COORDINATE
+
+TARGET PURPOSE:
+This issue exists so that the owner and replacement engineer have one verified current
+view of outstanding work, merge/dependency order, blockers, owner-gated decisions,
+corrections and safe next work.
+
+TARGET SCOPE:
+TASK_ARTIFACT
+
+EXPERTISE:
+senior structural / finite-element engineering plus engineering-programme judgement
+
+IMAGINATION OBJECT:
+an excellent live engineering programme register
+
+REALITY OBJECT:
+whether every important claim in Issue #1855 still agrees with the live repository,
+PRs, tests, workflows, issues and owner decisions
+
+FINAL OUTPUT CONTRACT:
+a reconciled live register containing current truth, merge/dependency order,
+technical blockers, owner decisions, work that can proceed, the executable frontier,
+and conditions that make the register stale
+```
+
+**Gate expectation:** a perfect Prompt-1 answer describes the register, not the shell-FEA product. Any product-design Prompt 1 FAILS.
 
 ## Wrong interpretation
 
@@ -1298,6 +1734,29 @@ This is the canonical example of why **target purpose must be identified before 
 
 ---
 
+# FOUR-CASE REGRESSION VALIDATION
+
+Before considering a future schema revision safe, mentally run these four controls:
+
+| Case | Request mode | Scope | Imagination object | Final output contract | Expected |
+| --- | --- | --- | --- | --- | --- |
+| Static browser PDF editor | REVIEW | PRODUCT | excellent browser PDF editor | product gap analysis + phased roadmap | PASS |
+| Overall Grade9V3 | REVIEW | REPOSITORY_SYSTEM | excellent Grade-9 self-study system | current meaning of Grade 9 + programme | PASS |
+| Grade9V3 Issue #19 | CHANGE | TASK_ARTIFACT | excellent question-to-learning mapping | rewritten current task + smallest durable change | PASS |
+| Advanced_Analysis Issue #1855 | COORDINATE | TASK_ARTIFACT | excellent live engineering register | reconciled register + executable frontier | PASS |
+
+The fourth case is the negative control for scope drift:
+
+```text
+finite-element expertise
+≠
+permission to make Prompt 1 about designing the finite-element product
+```
+
+If the generator produces a shell-FEA product-conception prompt for Issue #1855, the schema has regressed.
+
+---
+
 # FINAL PRINCIPLE
 
 The generator should make a future agent think in this order:
@@ -1324,6 +1783,16 @@ What must the next person understand?
 
 The method is constant.
 
-The **target purpose** determines what kind of problem the prompts are solving.
+The **request mode** determines what operation the user wants now.
 
-The **zoom level** determines how much surrounding system belongs inside that problem.
+The **target purpose** determines why the target itself exists.
+
+The **target scope** determines how much surrounding system belongs inside the problem.
+
+The **expertise** determines how intelligently the agent reasons.
+
+The **imagination object** prevents Prompt 1 from drifting.
+
+The **reality object** keeps Prompt 2 bounded.
+
+The **final output contract** prevents Prompt 3 from turning into the wrong kind of deliverable.
