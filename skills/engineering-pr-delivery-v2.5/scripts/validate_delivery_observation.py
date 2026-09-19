@@ -53,6 +53,29 @@ def validate_file(path:Path,expected_repository:str|None=None,expected_id:str|No
     if review_state=="CLEAR":
         if review.get("unresolved_threads") not in {0,None} or review.get("change_requests") not in {0,None}:e.append("delivery review CLEAR cannot retain unresolved threads/change requests")
 
+    desc=obs.get("description_contract") or {}
+    if desc.get("marker")!="<!-- relay-pr-correlation:v1 -->":e.append("delivery description contract marker invalid")
+    if desc.get("marker_present") is not True:e.append("provider-read PR description must contain relay-pr-correlation:v1 marker")
+    if not str(desc.get("body_digest") or "").startswith("sha256:"):e.append("delivery description contract requires provider body sha256 digest")
+    correlations=desc.get("correlations")
+    if not isinstance(correlations,list) or not correlations:e.append("delivery PR description must declare at least one Issue↔EP correlation")
+    else:
+        seen=set()
+        for index,row in enumerate(correlations):
+            label=f"delivery description correlation[{index}]"
+            if not isinstance(row,dict):e.append(f"{label} must be mapping");continue
+            for key in ("issue_node","issue_number","ep_id","ep_path","work_package","relationship","meaning"):
+                if key not in row:e.append(f"{label} missing {key}")
+            if not str(row.get("issue_node") or "").strip():e.append(f"{label}.issue_node must be explicit")
+            if not isinstance(row.get("issue_number"),int) or row.get("issue_number")<1:e.append(f"{label}.issue_number must be positive integer")
+            if not str(row.get("ep_id") or "").startswith("EP-"):e.append(f"{label}.ep_id must use EP-* namespace")
+            if not str(row.get("ep_path") or "").strip():e.append(f"{label}.ep_path must be explicit")
+            if not str(row.get("work_package") or "").strip():e.append(f"{label}.work_package must be explicit")
+            if row.get("relationship") not in {"IMPLEMENTS","INTEGRATES","VERIFIES","REMEDIATES"}:e.append(f"{label}.relationship invalid: {row.get('relationship')}")
+            if not str(row.get("meaning") or "").strip():e.append(f"{label}.meaning must explain the Issue↔EP relationship")
+            key=(str(row.get("issue_node")),str(row.get("ep_id")),str(row.get("relationship")))
+            if key in seen:e.append(f"duplicate delivery description correlation {key}")
+            seen.add(key)
     basis=obs.get("readback_basis")
     if not isinstance(basis,list) or not basis or any(not str(x).strip() for x in basis):e.append("delivery observation requires durable provider readback_basis")
     return e,w
