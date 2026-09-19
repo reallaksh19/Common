@@ -15,6 +15,9 @@ SHA = "a" * 40
 
 GOOD = f"""# SCHEMA BASIS
 
+GENERATOR MODE:
+THREE_PASS_ONLY
+
 SCHEMA SOURCE:
 canonical
 
@@ -141,8 +144,8 @@ PROMPT-3 FREEDOM GATE:
 PASS — artifact may close
 COMPLEX Q1–Q5 COVERAGE:
 PASS — N/A when OFF
-QSET-SEPARATION GATE:
-PASS — no formal relay QSET
+MODE-ISOLATION GATE:
+PASS — no extra protocol stage
 
 ## PROMPT 1 — IMAGINE
 
@@ -221,6 +224,11 @@ class ThreePassPromptOutputTests(unittest.TestCase):
     def test_no_witness_may_be_explicit(self):
         no_witness = GOOD.replace("PROBLEM WITNESS TYPE:\nbenchmark", "PROBLEM WITNESS TYPE:\nNONE")
         self.assertEqual(MOD.validate_text(no_witness, SHA), [])
+
+    def test_wrong_generator_mode_is_rejected(self):
+        bad = GOOD.replace("GENERATOR MODE:\nTHREE_PASS_ONLY", "GENERATOR MODE:\nENGINEERING_DELIVERY")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("GENERATOR MODE must be THREE_PASS_ONLY" in e for e in errors))
 
 if __name__ == "__main__":
     unittest.main()
