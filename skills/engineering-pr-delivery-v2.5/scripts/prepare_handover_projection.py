@@ -130,6 +130,8 @@ def prepare(root:Path,owner_requirements:list[str]|None=None,complex_project:boo
         "relationships":[],
     }
     if kind=="CREATE":desired["title"]=f"Engineering handover — {source.get('id')}";desired["source_issue_number"]=source_issue.get("issue_number")
+    published_snapshot={"source_report_digest":plan["source_report_digest"],"intent":plan["intent"]}
+    effects=([{"node":node_id,"set_github_state":"OPEN","set_issue_number":"OBSERVED","set_issue_id":"OBSERVED","set_published_handover_snapshot":published_snapshot}] if kind=="CREATE" else [{"node":node_id,"set_published_handover_snapshot":published_snapshot}])
     operation={
         "id":oid,
         "kind":kind,
@@ -146,7 +148,7 @@ def prepare(root:Path,owner_requirements:list[str]|None=None,complex_project:boo
         "publication":{"attempt_count":0,"last_attempt_basis":[],"receipt":None,"last_error":None},
         "verification":{"status":"NOT_RUN","observed_issue_number":None,"observed_issue_id":None,"observed_github_state":None,"observed_relationships":[],"basis":[]},
         "reconciliation":{
-            "issue_graph_effects":([{"node":node_id,"set_github_state":"OPEN","set_issue_number":"OBSERVED","set_issue_id":"OBSERVED"}] if kind=="CREATE" else []),
+            "issue_graph_effects":effects,
             "complete_when":(["issue identity verified","relay-operation marker verified"] if kind=="CREATE" else ["handover body marker verified on existing issue"]),
         },
     }
