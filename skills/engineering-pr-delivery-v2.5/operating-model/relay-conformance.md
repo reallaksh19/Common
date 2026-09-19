@@ -69,7 +69,7 @@ BATON_READY
 + exact route/roadmap/material/EP/profile/predecessor/qualification bindings
 ```
 
-Self-preparation/self-certification is prohibited. Editing the EP, profile, predecessor baton, qualification evidence, roadmap basis, or material basis invalidates stale certification through digest/reference checks.
+TC document self-preparation is allowed; self-evaluation is not. The candidate may assemble its own TC record, while certification authority remains with deterministic/Owner/independent evaluation plus current evidence validation. Editing the EP, profile, predecessor baton, qualification evidence, roadmap basis, or material basis invalidates stale certification through digest/reference checks.
 
 ### PROJECTION_READY
 
@@ -97,6 +97,8 @@ AND no active hard stop
 ```
 
 It is deliberately runtime-derived and never stored as a timeless boolean. `ACTIVE` lifecycle or persisted `material_authority: WRITE` alone does not authorize an agent.
+
+Conversely, lack of candidate certification does not justify changing route-level `material_authority` to READ_ONLY. Candidate admission failure is represented by `TAKEOVER_CERTIFIED=false`; READ_ONLY is reserved for route/repository constraints such as reconciliation, drift confirmation, Owner/authority boundaries, or other non-candidate-specific write restrictions.
 
 ## Qualification boundary
 
