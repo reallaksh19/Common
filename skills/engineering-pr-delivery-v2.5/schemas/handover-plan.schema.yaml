@@ -96,7 +96,9 @@ $defs:
       id: {type: [string, 'null']}
       name: {type: [string, 'null']}
       definition_path: {type: [string, 'null']}
+      definition_url: {type: [string, 'null']}
       source: {type: [string, 'null']}
+      source_url: {type: [string, 'null']}
       authority: {}
       resolution: {}
 additionalProperties: false
