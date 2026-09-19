@@ -1,4 +1,37 @@
 ---
+
+## REQUEST MODE DISPATCH — FIRST ACTION
+
+Before applying any other section of this skill, classify the user's request.
+
+### THREE_PASS_GENERATOR
+
+Enter this mode when the user asks to use, generate from, apply, or review:
+
+```text
+skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.md
+```
+
+or explicitly asks for "3 pass", "three-pass", "Prompt 1 / Prompt 2 / Prompt 3", or complex Q1–Q5 questions under that schema.
+
+In this mode:
+
+1. fetch the current schema from `main`;
+2. set `GENERATOR MODE = THREE_PASS_ONLY`;
+3. follow that schema as the complete local protocol;
+4. use repository/issue material only as target evidence;
+5. do **not** apply the engineering-delivery certification/takeover sections of this skill;
+6. validate the generated artifact with `validate_three_pass_prompt_output.py`;
+7. return the artifact and STOP.
+
+No other section below may add stages, gates, receipts, qualification packages, route metadata, evaluator requirements, or takeover machinery to a THREE_PASS_GENERATOR artifact.
+
+### ENGINEERING_DELIVERY
+
+Use the remaining engineering-delivery protocol only when the user is actually asking to execute/manage engineering delivery rather than generate three-pass prompts.
+
+---
+
 name: engineering-pr-delivery-v2.5
 description: Roadmap-first engineering relay for durable zero-chat multi-agent delivery, with semantic execution packages, independent takeover certification, evaluated engineering qualification, calculated progress, crash-safe GitHub projection, quality evidence, and serial-by-default material execution.
 ---
@@ -199,7 +232,9 @@ A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC poi
 
 ## Three-pass prompt-generator bootstrap
 
-The three-pass prompt generator is a **live-schema workflow**, not a remembered prompting pattern.
+The three-pass prompt generator is a **standalone live-schema workflow**, not a remembered prompting pattern.
+
+When this mode is active, the schema is the exclusive repository-local protocol for the generated artifact; the normal engineering-delivery QSET/QUAL/takeover machinery below is inactive.
 
 Canonical schema:
 
