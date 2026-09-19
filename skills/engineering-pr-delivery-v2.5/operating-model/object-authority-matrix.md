@@ -59,6 +59,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `ODR.change_intake` | AUTHORITY semantic summary | Owner-intent mutation capture | roadmap revision + Owner-change projection | Before/after intent meaning; structural effects remain roadmap-revision truth |
 | `OVERALL_ROADMAP.yaml` | AUTHORITY | roadmap transaction / initialization | frontier, progress, EP admission, issue reconciliation | Objectives/phases/WPs/dependencies/lifecycle state |
 | Roadmap revision | AUTHORITY transaction | approved/factual roadmap mutation | continuity, progress basis, issue reconciliation, Owner-change projection | Exact structural mutation and resulting frontier |
+| `ROADMAP_EVENTS.yaml` | DERIVED DURABLE HISTORY INDEX | reconciled material events via `append_roadmap_event.py` | Owner roadmap, handover context, audit | Links objective/phase concepts to material execution/evidence events; cannot mutate roadmap concepts, progress, issue state, or Owner intent |
 | Roadmap continuity receipt | EVIDENCE | continuity reconciliation | EP validity, material authority | Whether an active EP survives intervening revisions |
 | Executable frontier | DERIVED | roadmap computation | serial/parallel admission, status, zero-context reconstruction | Must be recomputed; cannot be manually asserted as a competing plan |
 | `REPO_STATE.yaml` | AUTHORITY locator + checked mirrors | relay lifecycle/reconciliation | aggregate conformance, route resolution, projections | Deterministic bootstrap locator, lifecycle/routing/state planes; percentage/readiness mirrors are checked, not independent authority |
@@ -109,6 +110,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 5. Runtime Git facts participate in write readiness but cannot be replaced by stale repository assertions.
 6. A candidate's DISC/QUAL/TC evidence can admit that candidate; it cannot change the EP, roadmap, or Owner decision.
 7. Checkpoints preserve execution/evidence custody; roadmap revisions preserve planning/intent effects. Neither substitutes for the other.
+8. Roadmap events preserve material history and source links. They may propose a concept change, but only roadmap/ODR authority can apply one.
 
 ## Source-of-truth rules
 
@@ -123,6 +125,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 9. `ISSUE_GRAPH.yaml` is repository coordination truth; GitHub remains an external projection.
 10. Report, communication, Owner-change, and ZERO_CONTEXT_RECONSTRUCTION outputs are derived projections.
 11. Conversation is never custody.
+12. `ROADMAP_EVENTS.yaml` is historical context only: objective/phase links are concept references; WP/EP/issue/PR links remain execution references.
 
 ## Historical completion mapping
 
