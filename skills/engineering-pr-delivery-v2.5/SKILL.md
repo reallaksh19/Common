@@ -197,6 +197,46 @@ A Discovery Receipt is bound to candidate, exact route, roadmap/protocol/materia
 
 A `TC-*` Takeover Certification records candidate, preparer, evaluator, DISC pointer, optional QUAL pointer/digest, exact route/basis, objective checks, and final PASS/FAIL. Candidate self-preparation/self-certification is invalid. Validators reopen evidence and recompute current basis; YAML assertions are not authority.
 
+## Three-pass prompt-generator bootstrap
+
+The three-pass prompt generator is a **live-schema workflow**, not a remembered prompting pattern.
+
+Canonical schema:
+
+```text
+skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.md
+```
+
+When a user asks to generate, regenerate, review, or apply the three-pass prompts/schema:
+
+1. **Fetch the canonical schema from current `main` in the same run.**
+2. Record the fetched content/blob SHA in the generated output's shared `SCHEMA BASIS`.
+3. Never reconstruct the generator from conversation memory, a previous generated answer, an assistant summary, an older commit, or an earlier fetched copy.
+4. Resolve targets only from user authority: current user message → earlier user-supplied target/lot → user-supplied canonical URL/name. A previous assistant guess is never target authority.
+5. Execute the fetched schema literally, including its visible preflight and all gates.
+6. Before returning the generated prompts, validate the complete draft with:
+   ```bash
+   python skills/engineering-pr-delivery-v2.5/scripts/validate_three_pass_prompt_output.py <generated-markdown> --expected-schema-sha <fetched-content-sha>
+   ```
+7. If validation fails, do **not** return the draft. Rebuild it from the fetched current schema.
+
+The validator is deliberately structural. It rejects stale control-path signatures before prose quality is considered, including missing schema basis/preflight, retired `TASK_ARTIFACT`/target-scope machinery, register-centric blind-pass wording, missing issue problem-kernel/quarantine gates, or a Prompt 3 that predetermines a reconciled register.
+
+For `ISSUE_TASK`, the required blind-pass control is:
+
+```text
+Prompt 1 =
+PROBLEM KERNEL
++ TARGET ANCHORS
++ HUMAN OUTCOME
++ GENUINE CONSTRAINTS
+- CURRENT ANSWER QUARANTINE
+```
+
+A current artifact being a register, matrix, roadmap, checklist, or decision package does not make that artifact type the Prompt-1 imagination object.
+
+This bootstrap requirement sits **outside** the schema by design: a stale copy of the schema cannot be trusted to tell an agent to fetch a newer copy of itself.
+
 ## Engineering qualification — QSET / QUAL
 
 Fresh qualification is mandatory when:
