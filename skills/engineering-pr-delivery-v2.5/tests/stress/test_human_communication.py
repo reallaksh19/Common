@@ -54,6 +54,31 @@ class HumanCommunicationStressTests(unittest.TestCase):
             root=Path(td);_,ep,_,_=good(root);ep["next_work"]["steps"][0]["action"]="Run the bounded migration rehearsal.";ep["next_work"]["steps"][0]["expected_result"]="The rehearsal proves the next implementation action is safe.";dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             text=owner_status(root);self.assertIn("Run the bounded migration rehearsal.",text);self.assertIn("The rehearsal proves the next implementation action is safe.",text);self.assertEqual([],communication_check(root)[0])
 
+
+    def test_owner_view_projects_current_issue_identity_and_ep_progress(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            graph={
+                "schema_version":"relay-v2.5",
+                "nodes":[{
+                    "id":"ISSUE-1",
+                    "state":"ACTIVE",
+                    "github_state":"OPEN",
+                    "github":{"issue_number":410,"issue_id":"gid-410","url":"https://github.com/owner/repo/issues/410"},
+                    "roadmap_node":"WP-1",
+                }],
+                "relationships":[],
+            }
+            dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph)
+            projection=communication(root);work=projection["owner"]["current_work"]
+            self.assertEqual("ISSUE-1",work["issues"][0]["id"])
+            self.assertEqual(410,work["issues"][0]["issue_number"])
+            text=owner_status(root)
+            self.assertIn("Issue #410",text)
+            self.assertIn("https://github.com/owner/repo/issues/410",text)
+            self.assertIn("active execution-package progress: **50%**",text)
+            self.assertEqual([],communication_check(root)[0])
+
     def test_owner_view_rejects_internal_jargon_in_user_facing_source_text(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,ep,_,_=good(root);ep["context_capsule"]["known_problems"]=["REPO_STATE contains a confusing internal-only status."];dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
