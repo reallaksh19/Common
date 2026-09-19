@@ -167,7 +167,7 @@ def render_markdown(correlations:list[dict])->str:
     for row in correlations:
         meaning=str(row.get("meaning") or "").replace("|","\\|")
         lines.append(
-            f"| #{row.get('issue_number')} | \`{row.get('ep_id')}\` | \`{row.get('work_package')}\` | "
+            f"| #{row.get('issue_number')} | `{row.get('ep_id')}` | `{row.get('work_package')}` | "
             f"{row.get('relationship')} | {meaning} |"
         )
     lines += [
@@ -175,5 +175,5 @@ def render_markdown(correlations:list[dict])->str:
         "Correlation source:",
     ]
     for row in correlations:
-        lines.append(f"- Issue node \`{row.get('issue_node')}\` ↔ EP \`{row.get('ep_id')}\` at \`{row.get('ep_path')}\`.")
+        lines.append(f"- Issue node `{row.get('issue_node')}` ↔ EP `{row.get('ep_id')}` at `{row.get('ep_path')}`.")
     return "\n".join(lines)+"\n"
