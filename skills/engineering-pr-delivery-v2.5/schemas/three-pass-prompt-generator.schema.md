@@ -2,7 +2,7 @@
 
 > Human-executable prompt schema for generating three sequential, copy-pasteable prompts.
 >
-> This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **zoom levels** without drifting into a larger neighbouring problem.
+> This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **target scopes** without drifting into a larger neighbouring problem.
 
 ## Purpose
 
@@ -329,7 +329,7 @@ If Prompt 3 would instead produce a neighbouring product redesign, an unrequeste
 
 The mandatory preflight has already resolved the target identity and request mode.
 
-Now use the frozen **TARGET PURPOSE** before choosing or applying the zoom level.
+Now use the frozen **TARGET PURPOSE** before choosing or applying the target scope.
 
 Silently complete this sentence:
 
@@ -375,49 +375,55 @@ A coordination issue can contain deep solver details while still being a coordin
 
 A handover can discuss an entire architecture while still being a handover.
 
-### Common target roles
+### How REQUEST MODE shapes the same target purpose
 
-Choose the dominant role. More than one may apply, but one should control Prompt 1.
+Do not invent a second role taxonomy here. The preflight's **REQUEST MODE** is the single operation axis.
 
-#### IMPLEMENTATION / CHANGE
+Use it like this:
 
-The target exists to make, fix, add, remove or alter something.
+#### CONCEIVE
 
-Prompt 1 should imagine what successful completion of **that change** makes possible.
+Prompt 1 imagines the target itself done excellently from first principles.
 
-#### INVESTIGATION / AUDIT
+Prompt 3 produces a conception, architecture or product direction appropriate to the target scope.
 
-The target exists to establish what is true, why something happened, or whether a claim holds.
+#### REVIEW
 
-Prompt 1 should imagine what a trustworthy investigation would let a human know or decide.
+Prompt 1 creates an independent reference picture.
 
-#### DECISION / OWNER-GATED CHOICE
+Prompt 2 reconstructs current reality.
 
-The target exists to support a bounded choice that someone with authority must make.
+Prompt 3 compares them and produces the bounded gap/programme appropriate to the target scope.
 
-Prompt 1 should imagine what evidence, alternatives, consequences and uncertainty a responsible decision-maker would need.
+#### CHANGE
 
-Do not turn the decision task into implementing one option before the decision exists.
+Prompt 1 imagines what successful completion of this specific change should make possible.
 
-#### COORDINATION / REGISTER / PROGRAMME CONTROL
+Prompt 3 rewrites the present-day task and identifies the smallest durable remaining change.
 
-The target exists to keep current truth about multiple pieces of work: status, dependencies, merge order, blockers, decisions, stale claims and executable next work.
+#### INVESTIGATE
 
-Prompt 1 should imagine what an excellent live register would let an owner or replacement engineer understand and do safely.
+Prompt 1 imagines what a trustworthy investigation must establish.
 
-Do **not** broaden Prompt 1 into redesigning the product whose work is being coordinated.
+Prompt 3 produces a supported conclusion with bounded uncertainty, not an automatic implementation plan.
 
-#### HANDOVER / CONTINUITY
+#### DECIDE
 
-The target exists so another person or agent can continue correctly without reconstructing the programme from scratch.
+Prompt 1 imagines what evidence and trade-offs a responsible decision requires.
 
-Prompt 1 should imagine what the successor must understand, what evidence they must trust, what uncertainty must remain visible, and what the first safe action should be.
+Prompt 3 produces a decision-ready package and preserves the authority boundary.
 
-#### PRODUCT / SYSTEM CONCEPTION
+#### COORDINATE
 
-The target genuinely exists to define or rethink the product/system itself.
+Prompt 1 imagines what an excellent live coordination/register artifact must make knowable and actionable.
 
-Only here should Prompt 1 directly ask what the overall product or system should become.
+Prompt 3 reconciles current truth, blockers, dependencies, decisions and executable frontier.
+
+#### HANDOVER
+
+Prompt 1 imagines what a successor must know to continue safely.
+
+Prompt 3 produces successor-ready continuity, including first safe action and stale conditions.
 
 ### Target-purpose anchor
 
@@ -1165,16 +1171,14 @@ Use these headings exactly:
 Each block must:
 
 - stand on its own;
-- clearly identify the frozen target;
+- clearly identify the frozen target at the level appropriate to that pass;
 - preserve the same target purpose;
 - be about its frozen prompt object;
-- include the canonical target link when one exists;
-- include the repository/system link when the target is a task, issue, PR, audit, register, or handover inside a repository;
 - be ready to paste directly into another agent;
 - contain enough context for its own purpose;
 - preserve the independence barrier;
 - use human language;
-- be adapted to the selected zoom level.
+- be adapted to the selected target scope.
 
 Do not add a fourth prompt.
 
@@ -1185,6 +1189,22 @@ Do not output your private classification work.
 Do not add a roadmap outside Prompt 3.
 
 Do not add explanatory prose before or after the three blocks.
+
+### Link and identity rule by pass
+
+**Prompt 1 — IMAGINE**
+
+Preserve the target identity in neutral human terms, but do **not** require a live issue/repository link when following it would expose the current answer and contaminate the blind pass.
+
+For a task/issue, it is often better to identify the human purpose without giving the future agent a clickable path to implementation history.
+
+**Prompt 2 — UNDERSTAND**
+
+Include the canonical target link and repository/system link when available. This is the pass where live inspection begins.
+
+**Prompt 3 — REVALIDATE AND MOVE FORWARD**
+
+Include the canonical target link and repository/system link when available. This pass must be self-identifying even in a fresh conversation.
 
 For Prompt 3 specifically, the identity capsule is mandatory and should be explicit:
 
@@ -1271,11 +1291,15 @@ Does Prompt 2 force inspection of current evidence rather than trusting old issu
 
 Does Prompt 2 account for relevant current PRs/work without pretending they are already merged?
 
-### Prompt-3 identity check
+### Prompt-2/3 identity check
+
+Does Prompt 2 include the canonical target URL and repository/system URL when live inspection is possible?
 
 Does Prompt 3 independently name the target and include the canonical target URL and repository/system URL when available?
 
-If a task/issue prompt lacks either link even though both were supplied, revise it.
+If a task/issue has both links available and Prompt 2 or Prompt 3 omits them, revise it.
+
+Do not fail Prompt 1 merely because it omits live links to preserve the independence barrier.
 
 ### Goalpost check
 
@@ -1345,6 +1369,16 @@ Built and maintained by one developer with AI-agent help.
 
 ```text
 REQUEST MODE:
+TARGET TITLE:
+Static browser-based PDF editor
+TARGET LINK:
+not supplied
+PARENT REPOSITORY / SYSTEM:
+not supplied
+REPOSITORY / SYSTEM LINK:
+not supplied
+
+
 REVIEW
 
 TARGET PURPOSE:
@@ -1443,6 +1477,16 @@ Machine checks must not be mistaken for proof that material actually teaches.
 
 ```text
 REQUEST MODE:
+TARGET TITLE:
+Grade9V3 repository
+TARGET LINK:
+https://github.com/reallaksh19/Grade9V3
+PARENT REPOSITORY / SYSTEM:
+reallaksh19/Grade9V3
+REPOSITORY / SYSTEM LINK:
+https://github.com/reallaksh19/Grade9V3
+
+
 REVIEW
 
 TARGET PURPOSE:
@@ -1532,6 +1576,16 @@ https://github.com/reallaksh19/Grade9V3
 
 ```text
 REQUEST MODE:
+TARGET TITLE:
+Complete Physics/Math matrices and capability mappings for worksheet-driven study routing
+TARGET LINK:
+https://github.com/reallaksh19/Grade9V3/issues/19
+PARENT REPOSITORY / SYSTEM:
+reallaksh19/Grade9V3
+REPOSITORY / SYSTEM LINK:
+https://github.com/reallaksh19/Grade9V3
+
+
 CHANGE
 
 TARGET PURPOSE:
@@ -1628,6 +1682,16 @@ owner-gated decisions, known baseline failures, and the exact work that can safe
 
 ```text
 REQUEST MODE:
+TARGET TITLE:
+[LAFEA REGISTER] Pending activity — merge queue, open work, and the decisions that gate it
+TARGET LINK:
+https://github.com/reallaksh19/Advanced_Analysis/issues/1855
+PARENT REPOSITORY / SYSTEM:
+reallaksh19/Advanced_Analysis
+REPOSITORY / SYSTEM LINK:
+https://github.com/reallaksh19/Advanced_Analysis
+
+
 COORDINATE
 
 TARGET PURPOSE:
@@ -1729,7 +1793,7 @@ not:
 
 > a new architecture for the engineering product.
 
-This is the canonical example of why **target purpose must be identified before zoom level**.
+This is the canonical example of why **request mode + target purpose must be frozen before target scope**, and why **expertise must not be confused with the imagination object**.
 
 
 ---
@@ -1754,6 +1818,30 @@ permission to make Prompt 1 about designing the finite-element product
 ```
 
 If the generator produces a shell-FEA product-conception prompt for Issue #1855, the schema has regressed.
+
+### Gate-by-gate expected result
+
+```text
+CASE A — PDF EDITOR
+Prompt-1 object gate: PASS
+Prompt-3 output gate: PASS
+Neighbouring-problem risk: low because target itself is the product
+
+CASE B — OVERALL GRADE9V3
+Prompt-1 object gate: PASS only if current Grade9V3 vocabulary stays out
+Prompt-3 output gate: PASS only if result is repository/programme level
+Neighbouring-problem risk: medium — do not collapse into one issue or one subject slice
+
+CASE C — GRADE9V3 ISSUE #19
+Prompt-1 object gate: PASS only if it stays on question→learning mapping
+Prompt-3 output gate: PASS only if it rewrites today's remaining task
+Neighbouring-problem risk: high — do not broaden into overall Grade 9
+
+CASE D — ADVANCED_ANALYSIS ISSUE #1855
+Prompt-1 object gate: PASS only if it imagines an excellent live engineering register
+Prompt-3 output gate: PASS only if it yields reconciled truth + executable frontier
+Neighbouring-problem risk: critical — finite-element expertise must not broaden the object into product design
+```
 
 ---
 
