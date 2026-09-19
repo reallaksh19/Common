@@ -159,6 +159,15 @@ properties:
         properties:
           id: {type: [string, 'null']}
           path: {type: [string, 'null']}
+      observations:
+        type: array
+        uniqueItems: true
+        items:
+          type: object
+          required: [id, path]
+          properties:
+            id: {type: string, pattern: '^DOBS-'}
+            path: {type: string, minLength: 1}
   relay_readiness:
     type: object
     required: [baton_ready, projection_ready, handover_ready, reasons]
