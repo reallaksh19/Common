@@ -46,6 +46,7 @@ OBJECT_SURFACES = {
     "ZERO_CONTEXT_RECONSTRUCTION": ["schemas/zero-context-reconstruction.schema.yaml", "scripts/zero_context_reconstruction.py", "scripts/validate_zero_context_reconstruction.py", "operating-model/relay-certification-matrix.md"],
     "HANDOVER_PLAN": ["schemas/handover-plan.schema.yaml", "scripts/handover_planning.py", "scripts/validate_handover_plan.py", "scripts/plan_handover.py", "scripts/prepare_handover_projection.py", "operating-model/human-communication.md"],
     "ROADMAP_EVENTS": ["templates/ROADMAP_EVENTS.yaml", "schemas/roadmap-events.schema.yaml", "scripts/roadmap_events.py", "scripts/validate_roadmap_events.py", "scripts/append_roadmap_event.py", "operating-model/dynamic-roadmap.md"],
+    "OWNER_PUBLICATION": ["templates/OWNER_PUBLICATION.yaml", "schemas/owner-publication.schema.yaml", "scripts/owner_publication.py", "scripts/validate_owner_publication.py", "scripts/publish_owner_progress.py", "operating-model/human-communication.md"],
 }
 
 RELEASE_DOCS = {
@@ -56,7 +57,7 @@ RELEASE_DOCS = {
 
 AGGREGATE_REQUIRED_MODULES = [
     "validate_repo_state", "validate_repo_profile", "validate_roadmap", "validate_roadmap_events", "validate_execution_frontier",
-    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_change_intake",
+    "validate_progress", "validate_report_projection", "validate_human_communication", "validate_owner_publication", "validate_owner_change_intake",
     "validate_zero_context_reconstruction", "validate_serial_execution", "validate_parallel_plan", "validate_parallel_join",
     "validate_parallel_replan", "validate_roadmap_continuity", "validate_state_planes", "validate_projection_convergence",
     "validate_github_projection", "validate_github_generation_history", "validate_checkpoint_linkage", "validate_owner_decision",
@@ -70,12 +71,12 @@ README_REQUIRED_ENTRYPOINTS = [
     "zero_context_reconstruction.py", "validate_baton_readiness.py", "validate_takeover_certification.py",
     "material_write_ready.py", "validate_quality_review.py", "validate_human_communication.py",
     "validate_owner_change_intake.py", "render_roadmap.py", "self_consistency_audit.py",
-    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py", "append_roadmap_event.py",
+    "plan_handover.py", "validate_handover_plan.py", "prepare_handover_projection.py", "append_roadmap_event.py", "publish_owner_progress.py",
 ]
 
 SKILL_REQUIRED_ENTRYPOINTS = [
     "validate_relay_conformance.py", "cold_start_check.py", "validate_zero_context_reconstruction.py",
-    "material_write_ready.py", "plan_handover.py", "self_consistency_audit.py",
+    "material_write_ready.py", "publish_owner_progress.py", "plan_handover.py", "self_consistency_audit.py",
 ]
 
 STALE_MARKERS = {
