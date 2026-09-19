@@ -61,17 +61,31 @@ def validate(repo_root:Path):
     if delivery is not None:
         if not isinstance(delivery,dict):errors.append("REPO_STATE.delivery must be mapping")
         else:
-            drequired=delivery.get("required");provider=delivery.get("provider");observation=delivery.get("observation") or {}
+            drequired=delivery.get("required");provider=delivery.get("provider");observation=delivery.get("observation") or {};observations=delivery.get("observations") or []
             if not isinstance(drequired,bool):errors.append("REPO_STATE.delivery.required must be boolean")
+            if not isinstance(observations,list):errors.append("REPO_STATE.delivery.observations must be a list")
+            else:
+                seen_paths=set()
+                for i,item in enumerate(observations):
+                    if not isinstance(item,dict):errors.append(f"REPO_STATE.delivery.observations[{i}] must be mapping");continue
+                    oid=item.get("id");opath=item.get("path")
+                    if not str(oid or "").startswith("DOBS-"):errors.append(f"REPO_STATE.delivery.observations[{i}].id must use DOBS-* namespace")
+                    if not _explicit(opath):errors.append(f"REPO_STATE.delivery.observations[{i}].path must be explicit")
+                    elif not (repo_root/str(opath)).exists():errors.append(f"REPO_STATE.delivery.observations[{i}].path does not exist: {opath}")
+                    if opath in seen_paths:errors.append(f"duplicate REPO_STATE.delivery observation path: {opath}")
+                    seen_paths.add(opath)
             if drequired is True:
                 if provider!="GITHUB":errors.append("required REPO_STATE.delivery currently supports provider GITHUB")
                 if not str(observation.get("id") or "").startswith("DOBS-"):errors.append("required REPO_STATE.delivery observation.id must use DOBS-* namespace")
                 opath=observation.get("path")
                 if not _explicit(opath):errors.append("required REPO_STATE.delivery observation.path must be explicit")
                 elif not (repo_root/str(opath)).exists():errors.append(f"REPO_STATE.delivery observation.path does not exist: {opath}")
+                if observations and not any(str(x.get("path"))==str(opath) for x in observations if isinstance(x,dict)):
+                    errors.append("REPO_STATE.delivery primary observation must also appear in observations[] when observations[] is used")
             elif drequired is False:
                 if provider not in {None,""}:errors.append("delivery.required=false must not name a provider")
                 if observation.get("id") not in {None,""} or observation.get("path") not in {None,""}:errors.append("delivery.required=false must not point at an observation")
+                if observations:errors.append("delivery.required=false must not retain observations[]")
     readiness=state.get("relay_readiness") or {};errors+=require(readiness,["baton_ready","projection_ready","handover_ready","reasons"],"REPO_STATE.relay_readiness")
     if "repository_ready" in readiness:errors.append("REPO_STATE.relay_readiness.repository_ready is retired; use baton_ready for candidate-independent repository custody")
     policy=state.get("execution_policy") or {};mode=policy.get("mode")
