@@ -38,9 +38,10 @@ execute this sequence exactly:
 5. Only if the live fetch succeeded, enter `GENERATOR MODE = THREE_PASS_ONLY`.
 6. The generated artifact must start with the schema's required `# SCHEMA EXECUTION HANDSHAKE`.
 7. Only after the handshake basis is established may you inspect the user-named target and supporting evidence.
-8. Generate exactly the artifact required by the live schema.
-9. Validate the artifact with `skills/three-pass-prompt-generator/validate.py` using the fetched schema SHA when executable validation is available.
-10. Return the schema-defined artifact and **STOP**.
+8. Freeze the user's explicit operational intent separately from the target/problem; do not let an analyze-then-act request collapse into recommendation-only output.
+9. Generate exactly the artifact required by the live schema.
+10. Validate the artifact with `skills/three-pass-prompt-generator/validate.py` using the fetched schema SHA when executable validation is available.
+11. Return the schema-defined artifact and **STOP**.
 
 ## Isolation rule
 
