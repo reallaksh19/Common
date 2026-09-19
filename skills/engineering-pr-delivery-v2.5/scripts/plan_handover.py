@@ -11,7 +11,7 @@ from handover_planning import (
     render_generator_request,
     render_issue_body,
 )
-from render_owner_status import render as render_owner_status
+from publish_owner_progress import publish as publish_owner_progress
 
 
 def main():
@@ -20,6 +20,7 @@ def main():
     ap.add_argument("--command",default="Plan for Handover")
     ap.add_argument("--owner-requirement",action="append",default=[])
     ap.add_argument("--handover-issue-url")
+    ap.add_argument("--apply-publication",action="store_true",help="Persist the normal Owner publication baseline before deriving handover INTENT.")
     ap.add_argument("--json",action="store_true")
     a=ap.parse_args()
 
@@ -28,6 +29,7 @@ def main():
     if mode.get("status")!="READY":
         raise SystemExit(mode.get("reason") or "Invalid handover command")
 
+    publication=publish_owner_progress(root,apply=a.apply_publication)
     plan=build_handover_plan(
         root,
         owner_requirements=a.owner_requirement,
@@ -35,10 +37,12 @@ def main():
         handover_issue_url=a.handover_issue_url,
     )
     if a.json:
-        print(json.dumps({"owner_status":render_owner_status(root),"handover_plan":plan},indent=2,sort_keys=True))
+        print(json.dumps({"owner_publication":publication,"handover_plan":plan},indent=2,sort_keys=True))
         raise SystemExit(0 if plan.get("status")=="READY" else 2)
 
-    print(render_owner_status(root),end="")
+    print(publication["owner_status"],end="")
+    if not a.apply_publication:
+        print("\n> Handover planning is in dry-run publication mode; use --apply-publication for the real Owner command transaction.\n")
     print("\n# Plan for Handover\n")
     if plan.get("status")!="READY":
         for error in plan.get("errors") or ["Handover plan could not be derived."]:
