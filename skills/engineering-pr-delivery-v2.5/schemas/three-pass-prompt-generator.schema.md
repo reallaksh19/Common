@@ -2,7 +2,7 @@
 
 > Human-executable prompt schema for generating three sequential, copy-pasteable prompts.
 >
-> This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern at three different zoom levels: product, repository/system, and task/issue.
+> This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **zoom levels** without drifting into a larger neighbouring problem.
 
 ## Purpose
 
@@ -14,7 +14,12 @@ When given a target, create **exactly three prompts** for another agent to run i
 
 Do not solve the target yourself. Your output is the three prompts.
 
-The method is the same at every scale. Only the zoom level changes.
+The method is the same throughout, but two things must be identified correctly before generating prompts:
+
+1. **Target purpose** — why this target exists at all.
+2. **Zoom level** — how much of the surrounding system the target is responsible for.
+
+A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself.
 
 ---
 
@@ -91,9 +96,123 @@ If current facts matter and the future agent can inspect a live repository, issu
 
 ---
 
-# STEP 0 — SILENTLY DETERMINE THE ZOOM LEVEL
+# STEP 0A — FIRST IDENTIFY WHY THE TARGET EXISTS
 
-Before writing the three prompts, silently decide which of these best describes the target.
+Do this **before** choosing the zoom level.
+
+Silently complete this sentence:
+
+> **“This target exists so that ______.”**
+
+Fill the blank with the purpose of the target itself, not the broader mission of the product it happens to discuss.
+
+This is mandatory for repositories, issues, tasks, plans, registers, audits and handovers.
+
+### Purpose test
+
+Ask:
+
+> If this target were completed perfectly, what would become true?
+
+Then ask:
+
+> Would that complete the target itself, or am I accidentally describing a larger neighbouring problem?
+
+Examples:
+
+```text
+Issue about capability mapping
+→ exists so real questions can be traced to reusable teachable knowledge
+→ implementation/content task
+
+Issue that records merge queue + blockers + owner decisions
+→ exists so the programme has one truthful current coordination register
+→ coordination/register task
+
+Issue asking whether a solver threshold should change
+→ exists so an engineering decision can be made from sufficient evidence
+→ decision task
+
+Issue asking why a benchmark fails
+→ exists so the cause can be established reliably
+→ investigation task
+```
+
+Do **not** infer the target purpose from the amount of technical detail it contains.
+
+A coordination issue can contain deep solver details while still being a coordination issue.
+
+A handover can discuss an entire architecture while still being a handover.
+
+### Common target roles
+
+Choose the dominant role. More than one may apply, but one should control Prompt 1.
+
+#### IMPLEMENTATION / CHANGE
+
+The target exists to make, fix, add, remove or alter something.
+
+Prompt 1 should imagine what successful completion of **that change** makes possible.
+
+#### INVESTIGATION / AUDIT
+
+The target exists to establish what is true, why something happened, or whether a claim holds.
+
+Prompt 1 should imagine what a trustworthy investigation would let a human know or decide.
+
+#### DECISION / OWNER-GATED CHOICE
+
+The target exists to support a bounded choice that someone with authority must make.
+
+Prompt 1 should imagine what evidence, alternatives, consequences and uncertainty a responsible decision-maker would need.
+
+Do not turn the decision task into implementing one option before the decision exists.
+
+#### COORDINATION / REGISTER / PROGRAMME CONTROL
+
+The target exists to keep current truth about multiple pieces of work: status, dependencies, merge order, blockers, decisions, stale claims and executable next work.
+
+Prompt 1 should imagine what an excellent live register would let an owner or replacement engineer understand and do safely.
+
+Do **not** broaden Prompt 1 into redesigning the product whose work is being coordinated.
+
+#### HANDOVER / CONTINUITY
+
+The target exists so another person or agent can continue correctly without reconstructing the programme from scratch.
+
+Prompt 1 should imagine what the successor must understand, what evidence they must trust, what uncertainty must remain visible, and what the first safe action should be.
+
+#### PRODUCT / SYSTEM CONCEPTION
+
+The target genuinely exists to define or rethink the product/system itself.
+
+Only here should Prompt 1 directly ask what the overall product or system should become.
+
+### Target-purpose anchor
+
+Carry the completed sentence:
+
+> “This target exists so that …”
+
+through all three prompts.
+
+Prompt 1 imagines that purpose done well.
+
+Prompt 2 asks whether today's reality serves that purpose.
+
+Prompt 3 asks what meaningful distance remains **for that same purpose**.
+
+Do not silently substitute the mission of a neighbouring product, repository, programme or issue.
+
+---
+
+# STEP 0B — SILENTLY DETERMINE THE ZOOM LEVEL
+
+After identifying the target's purpose, silently decide which zoom level best describes how much of the surrounding system the target is responsible for.
+
+**Purpose comes first. Zoom comes second.**
+
+A task-level coordination register may mention a whole repository but still remain task-level. A repository-level review may inspect many tasks but still be system-level.
 
 ## PRODUCT LEVEL
 
@@ -129,7 +248,13 @@ Prompt 2 should determine what the current repository has already solved, includ
 
 Prompt 3 should rewrite the task in today's terms and reduce it to the smallest meaningful remaining work.
 
-Do not create three different methodologies. Use the same three-pass method with different zoom.
+Do not create three different methodologies. Use the same three-pass method with different purpose and zoom.
+
+Before moving on, perform this silent check:
+
+> **If Prompt 1 were answered perfectly, would it fulfil the purpose of this target, or would it solve a larger neighbouring problem?**
+
+If it solves the larger neighbouring problem, your scope is wrong. Re-identify the target purpose before generating anything.
 
 ---
 
@@ -141,6 +266,7 @@ Before generating Prompt 1, silently separate the user's information into two co
 
 ```text
 BLIND BRIEF
+- target-purpose sentence: "This target exists so that ..."
 - human goal
 - intended users
 - desired outcomes
@@ -179,7 +305,15 @@ Instead recover the human intention, for example:
 
 Likewise, if a PDF app currently uses a page cache, do not mention page caches in Prompt 1 unless the user explicitly made that a requirement.
 
-The purpose is to let the future agent **form an opinion before meeting the current solution**.
+The purpose is to let the future agent **form an opinion before meeting the current solution**, while still thinking about the correct object.
+
+Blindness does not mean broadening the target.
+
+For a coordination register, Prompt 1 should independently imagine an excellent coordination register — not independently redesign the product being coordinated.
+
+For an investigation, Prompt 1 should independently imagine what a trustworthy investigation must establish — not solve the implementation before evidence is gathered.
+
+For a decision, Prompt 1 should independently imagine what a responsible decision requires — not choose an option prematurely.
 
 ---
 
@@ -189,6 +323,7 @@ Generate a self-contained prompt that asks the future agent to reason from first
 
 It should begin from:
 
+- the target-purpose sentence;
 - the human goal;
 - the intended user;
 - desired outcomes;
@@ -241,7 +376,17 @@ At repository level, Prompt 1 should imagine the desired end-to-end human outcom
 
 ### Task-level emphasis
 
-At task level, Prompt 1 should ask what successful completion would make possible, while deliberately ignoring implementation suggestions in the historical task text.
+At task level, Prompt 1 should ask what successful completion of **this task's actual role** would make possible, while deliberately ignoring implementation suggestions in historical task text.
+
+Examples:
+
+- implementation task → what becomes possible after the change works;
+- investigation task → what can be known confidently;
+- decision task → what can be decided responsibly;
+- coordination/register task → what can be coordinated safely from one truthful view;
+- handover task → what the successor can understand and continue without guesswork.
+
+Do not use the surrounding product mission as a substitute for the task's purpose.
 
 ---
 
@@ -265,7 +410,7 @@ Depending on the target, inspect relevant:
 
 Tell it not to rely only on documentation or issue prose when actual code or data can answer the question.
 
-Tell it to follow **real journeys**, not merely list folders.
+Tell it to follow **real journeys appropriate to the target's purpose**, not merely list folders.
 
 Examples:
 
@@ -290,6 +435,45 @@ open document
 → interact
 → modify
 → save
+```
+
+For coordination/register work, Prompt 2 should trace claims such as:
+
+```text
+register statement
+→ live issue / PR / branch / test / workflow / decision
+→ still true, stale, superseded, blocked, or unresolved
+```
+
+For decision work, trace:
+
+```text
+decision to be made
+→ alternatives
+→ evidence
+→ uncertainty
+→ consequence of each choice
+→ authority boundary
+```
+
+For investigation work, trace:
+
+```text
+claim or symptom
+→ evidence source
+→ reproduction
+→ competing explanations
+→ conclusion and remaining uncertainty
+```
+
+For handover work, trace:
+
+```text
+what successor is told
+→ source of truth
+→ current validity
+→ first safe action
+→ stale condition
 ```
 
 Prompt 2 should encourage the agent to discover:
@@ -369,7 +553,27 @@ Ask:
 
 This prevents agents from repeatedly solving yesterday's problems.
 
-## C. What is the real problem now?
+## C. Is the target still serving the same purpose?
+
+First repeat the target-purpose sentence from the beginning.
+
+Ask:
+
+> Is this still why the target exists?
+
+> Has later work changed the target's meaning without changing its wording?
+
+> Has the target accidentally become a container for neighbouring work?
+
+For registers, plans, audits and handovers, the right outcome may be **reconciliation of truth**, not a product change.
+
+For decision tasks, the right outcome may be **a decision package**, not implementation.
+
+For investigations, the right outcome may be **a conclusion with bounded uncertainty**, not a fix.
+
+Then continue.
+
+## D. What is the real problem now?
 
 Ask:
 
@@ -381,7 +585,7 @@ Also ask:
 
 The agent should explicitly **rediscover the current meaning of the goal**.
 
-## D. What deeper idea is the example exposing?
+## E. What deeper idea is the example exposing?
 
 Do not confuse the thing that revealed a weakness with the weakness itself.
 
@@ -405,15 +609,22 @@ Ask:
 
 > What reusable problem sits underneath this example?
 
-## E. What is the smallest durable change?
+## F. What is the smallest durable response?
 
-The valid answers include:
+The valid answers depend on the target role and include:
 
+- implement or fix;
 - add;
 - extend;
 - simplify;
 - refactor;
 - remove;
+- reconcile stale state;
+- retire obsolete claims;
+- gather missing evidence;
+- present alternatives for owner decision;
+- update the register;
+- hand over;
 - defer;
 - preserve unchanged;
 - or **make no change yet**.
@@ -422,7 +633,7 @@ Explicitly allow “no change is justified yet.”
 
 Do not manufacture work because a plan was requested.
 
-## F. How will reality test it?
+## G. How will reality test it?
 
 Use real examples both to shape the proposed solution and to verify it.
 
@@ -436,7 +647,7 @@ Ask:
 
 ---
 
-# DIFFERENTIATE THE END OF PROMPT 3 BY ZOOM LEVEL
+# DIFFERENTIATE THE END OF PROMPT 3 BY PURPOSE AND ZOOM LEVEL
 
 ## PRODUCT LEVEL
 
@@ -462,7 +673,7 @@ End with:
 - what should wait;
 - phased programme based on real dependencies and value.
 
-## TASK / ISSUE LEVEL
+## TASK / ISSUE LEVEL — IMPLEMENTATION / CHANGE
 
 End with a rewritten task statement:
 
@@ -478,6 +689,68 @@ Then identify:
 - what should make the next agent reconsider the conclusion.
 
 The rewritten task may be much smaller than the original issue. That is often the correct result.
+
+## TASK / ISSUE LEVEL — INVESTIGATION / AUDIT
+
+End with:
+
+- what question the investigation needed to settle;
+- what evidence is authoritative;
+- what was reproduced or verified;
+- what explanation best fits the evidence;
+- what remains uncertain;
+- whether a change is justified;
+- what evidence would overturn the conclusion.
+
+Do not invent an implementation task merely because the investigation found something interesting.
+
+## TASK / ISSUE LEVEL — DECISION
+
+End with:
+
+- the exact decision;
+- who owns it;
+- the viable options;
+- evidence for and against each;
+- consequences and reversibility;
+- uncertainty;
+- what work each option gates;
+- what can proceed without the decision.
+
+Do not make the owner-reserved choice on the owner's behalf unless explicitly authorized.
+
+## TASK / ISSUE LEVEL — COORDINATION / REGISTER
+
+End with a reconciled current picture:
+
+- what is true now;
+- what has merged;
+- what is still in flight;
+- what is stale or superseded;
+- merge/dependency order where relevant;
+- technical blockers;
+- owner-gated decisions;
+- work that can proceed without those decisions;
+- the exact current executable frontier;
+- conditions that would make the register stale again.
+
+The output should improve programme truth and continuity, not redesign the whole product.
+
+## TASK / ISSUE LEVEL — HANDOVER / CONTINUITY
+
+End with:
+
+- why the work exists;
+- current authoritative state;
+- what is complete;
+- what is unresolved;
+- current risks and decisions;
+- source evidence;
+- first safe next action;
+- stop conditions;
+- what would make the handover stale.
+
+The successor should be able to continue without needing the previous conversation.
 
 ---
 
@@ -615,6 +888,22 @@ Do not add explanatory prose before or after the three blocks.
 
 Do not show these checks. Use them internally.
 
+### Target-purpose check
+
+Can you complete:
+
+> “This target exists so that …”
+
+in a way that describes the target itself rather than the surrounding product mission?
+
+If not, stop and re-identify the target purpose.
+
+### Neighbouring-problem / zoom-leak check
+
+If Prompt 1 were answered perfectly, would it satisfy this target, or would it solve a larger neighbouring problem?
+
+If it solves the larger problem, narrow Prompt 1.
+
 ### Independence check
 
 Could Prompt 1 have been written without knowing the current implementation?
@@ -652,6 +941,18 @@ Can Prompt 3 validly conclude “no change,” “defer,” or “leave this alo
 ### Evidence check
 
 Does Prompt 3 return to real examples to test the conclusion?
+
+### Role-fit check
+
+Does Prompt 3 produce the right kind of outcome for the target role?
+
+- implementation → bounded change;
+- investigation → trustworthy conclusion;
+- decision → decision-ready evidence;
+- coordination/register → reconciled current truth and frontier;
+- handover → successor continuity.
+
+If a coordination target ends in a product redesign, or an investigation ends in unrequested implementation, revise it.
 
 ### Handover check
 
@@ -858,6 +1159,102 @@ It should identify what is already solved, what should remain untouched, the sma
 
 The final task may be much smaller than the historical issue. That is a successful outcome, not a failure.
 
+
+---
+
+# APPENDIX D — CASE STUDY: TASK LEVEL, COORDINATION / REGISTER
+
+## Input example
+
+```text
+TARGET:
+A GitHub issue whose purpose is to be the single register of pending work for a complex engineering programme.
+
+HUMAN GOAL:
+Keep one truthful, current picture of merge order, outstanding engineering work, blockers,
+owner-gated decisions, known baseline failures, and the exact work that can safely proceed.
+
+CURRENT SYSTEM:
+A live engineering repository with stacked PRs, red baseline checks, several programme phases,
+and decisions reserved to the owner.
+```
+
+## Wrong interpretation
+
+A weak generator sees deep finite-element or solver details inside the issue and produces Prompt 1 like:
+
+> Imagine the ideal shell finite-element product. What solver, element formulation, qualification evidence and UI should it have?
+
+That is a **neighbouring product problem**.
+
+Even if answered brilliantly, it does not fulfil the purpose of the register.
+
+## Correct target-purpose sentence
+
+> This issue exists so that the owner and the next engineer have one verified, current view of what is done, what is not done, what is blocked, what can merge, what decisions are reserved to the owner, and what can safely happen next.
+
+That sentence should control all three prompts.
+
+## What a good generated Prompt 1 should feel like
+
+It should remain blind to the actual PR numbers and current failures, but think deeply about an excellent engineering register:
+
+> Imagine you are taking over a complex engineering programme with stacked changes, known failures, unresolved technical questions and owner-gated decisions. What would one trustworthy live register need to show so you could tell what is actually true, what can safely merge, what is blocked technically versus waiting on a decision, what claims have become stale, and what the first safe next action is? How should corrections remain visible without confusing current state? What evidence should support each important claim? What should make an entry stale?
+
+It should **not** redesign the engineering product itself.
+
+## What a good generated Prompt 2 should feel like
+
+It should now inspect the live issue and repository and verify the register claim-by-claim:
+
+```text
+register claim
+→ live PR / branch / issue / test / workflow / evidence / owner decision
+→ current truth
+```
+
+It should reconstruct:
+
+- actual trunk health;
+- which failures are pre-existing;
+- which PRs are stacked and in what dependency order;
+- which PRs are genuinely ready;
+- what has merged since the register was written;
+- which engineering items remain;
+- which decisions truly require the owner;
+- what work can continue without those decisions;
+- which statements in the register are stale or contradicted by current evidence.
+
+It should distinguish current baseline from near-future baseline without crediting unmerged work as already true.
+
+## What a good generated Prompt 3 should feel like
+
+It should return to the independent picture of a trustworthy engineering register and ask:
+
+> Does this issue currently provide that truthful view?
+
+Then it should reconcile, not redesign:
+
+- preserve still-correct entries;
+- retire or rewrite stale entries;
+- update merge/dependency order;
+- separate technical blockers from owner decisions;
+- expose the exact executable frontier;
+- state what is safe to carry now;
+- state what must wait;
+- state what new event would make the register stale.
+
+Its final result should be:
+
+> a better current register and handover surface,
+
+not:
+
+> a new architecture for the engineering product.
+
+This is the canonical example of why **target purpose must be identified before zoom level**.
+
+
 ---
 
 # FINAL PRINCIPLE
@@ -886,4 +1283,6 @@ What must the next person understand?
 
 The method is constant.
 
-Only the zoom level changes.
+The **target purpose** determines what kind of problem the prompts are solving.
+
+The **zoom level** determines how much surrounding system belongs inside that problem.
