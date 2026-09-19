@@ -112,6 +112,20 @@ def render_projection(c:dict)->str:
         for reason in (delivery.get("technical_ready_to_merge") or {}).get("reasons") or []:lines.append(f"  - Technical readiness: {reason}")
         auth_reason=(delivery.get("merge_authorization") or {}).get("reason")
         if auth_reason:lines.append(f"  - Authorization: {auth_reason}")
+        carried=delivery.get("unmerged_prs") or []
+        lines.append("- Unmerged PRs carried forward:")
+        if not carried:
+            lines.append("  - none")
+        for item in carried:
+            v=item.get("vehicle") or {};num=v.get("number");url=v.get("url");life=str(v.get("lifecycle") or "UNKNOWN").replace("_"," ").title()
+            head=(v.get("head") or {}).get("sha") or "unknown"
+            lines.append(f"  - PR #{num if num is not None else 'unknown'} — **{life}** — head `{head}`{f' — {url}' if url else ''}")
+            correlations=item.get("correlations") or []
+            if correlations:
+                for row in correlations:
+                    lines.append(f"    - Issue #{row.get('issue_number')} ↔ {row.get('ep_id')} / {row.get('work_package')} — {row.get('relationship')}: {row.get('meaning')}")
+            else:
+                lines.append("    - Issue↔EP description correlation is not available.")
     actions=o.get("external_actions") or [];lines += ["","## Action required outside this environment"]
     if actions:
         for idx,item in enumerate(actions,1):
