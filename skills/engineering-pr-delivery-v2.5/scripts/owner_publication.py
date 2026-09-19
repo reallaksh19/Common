@@ -259,7 +259,11 @@ def classify_baseline(previous: dict | None, current: dict) -> dict:
         ):
             event = "CONTROL_STATE_CHANGE"
         elif diff["dimensions"]["execution"]:
-            event = "WAITING_OR_MONITORING"
+            execution = now["execution"]
+            if execution.get("state") == "WAITING" or not bool(execution.get("can_continue")):
+                event = "WAITING_OR_MONITORING"
+            else:
+                event = "CONTROL_STATE_CHANGE"
         else:
             event = "NO_MATERIAL_PROGRESS"
 
