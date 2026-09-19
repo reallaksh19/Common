@@ -101,6 +101,8 @@ CURRENT-VOCABULARY GATE:
 PASS — clean
 PROMPT-1 OBJECT GATE:
 PASS — correct object
+HUMAN-IMMERSION GATE:
+PASS — human/domain scenario only
 PROMPT-3 FREEDOM GATE:
 PASS — artifact may close
 COMPLEX Q1–Q5 COVERAGE:
@@ -150,6 +152,14 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         errors = MOD.validate_text(GOOD, "b" * 40)
         self.assertTrue(any("does not match expected current SHA" in e for e in errors))
 
+
+    def test_prompt1_method_language_is_rejected(self):
+        bad = GOOD.replace(
+            "Think independently about the specific unresolved domain problem.",
+            "This answer will be used as a fixed independent reference in a later pass. Do not inspect the current repository before answering.",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("leaks generator/method language" in e for e in errors))
 
 if __name__ == "__main__":
     unittest.main()
