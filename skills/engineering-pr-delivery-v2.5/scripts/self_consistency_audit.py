@@ -163,7 +163,7 @@ def audit(repo_root: Path) -> tuple[list[str], list[str]]:
     errors.extend(f"Owner field lineage: {item}" for item in lineage_errors)
     warnings.extend(f"Owner field lineage: {item}" for item in lineage_warnings)
 
-    generator_errors,generator_warnings=validate_handover_generator_contract(skill,repo)
+    generator_errors,generator_warnings=validate_handover_generator_contract(skill,repo_root)
     errors.extend(f"Handover generator binding: {item}" for item in generator_errors)
     warnings.extend(f"Handover generator binding: {item}" for item in generator_warnings)
 
