@@ -576,3 +576,37 @@ python skills/engineering-pr-delivery-v2.5/scripts/self_consistency_audit.py .
 The scoped workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must execute compilation, the self-consistency audit, root unit discovery, and dedicated `tests/stress/` discovery. Compilation alone is not test evidence. See `operating-model/ci-evidence-correction.md`.
 
 A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product, engineering calculation, release, or human UX acceptance.
+
+
+### OWNER PROGRESS PUBLICATION — CONTROL RETURN
+
+Before returning control to the Owner after a material work unit, use the canonical publisher:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py <repo-root> --apply
+```
+
+The publisher compares current source-derived report truth with the last durable Owner publication baseline at:
+
+```text
+agents/relay/publication/OWNER_PUBLICATION.yaml
+```
+
+The cursor is **derived coordination state only**. It records what source-derived state was last shown; it does not define what is currently true.
+
+A publication is materially due after a change to accepted task progress, implementation result, evidence, quality/blocker/control state, current issue/delivery/custody, roadmap disposition, required Owner decision, external/local obligation, or exact next-work contract.
+
+Repeated unchanged polling/retries do not advance the cursor. If control is returned with no material change, render the explicit `NO_MATERIAL_PROGRESS` Owner status; do not manufacture progress. Use `--force-record` only for an intentional heartbeat that should itself become the new publication receipt.
+
+The Owner view must expose the deterministic delta before the normal current-state sections. It must explicitly say when acceptance/progress and implementation/files did not move.
+
+`Plan for Handover` begins with this same publication transaction. Use:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/plan_handover.py <repo-root> \
+  --command "Plan for Handover" \
+  --apply-publication \
+  --owner-requirement "<relevant user-authored requirement>"
+```
+
+The handover INTENT is derived only after that baseline has been published.
