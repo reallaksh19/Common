@@ -308,5 +308,10 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("INTENT-FIDELITY GATE must PASS" in e for e in errors), errors)
 
+    def test_intent_boundary_is_required(self):
+        bad = GOOD.replace("INTENT BOUNDARY:\ndo not expand beyond the issue\n", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("preflight missing INTENT BOUNDARY:" in e for e in errors), errors)
+
 if __name__ == "__main__":
     unittest.main()
