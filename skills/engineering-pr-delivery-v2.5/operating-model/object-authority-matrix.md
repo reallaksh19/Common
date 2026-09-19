@@ -66,10 +66,10 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `REPO_PROFILE.yaml` | AUTHORITY repository metadata | repository admission | discovery, EP/takeover digests | Repository discovery/profile facts only |
 | Execution Package (`EP`) | AUTHORITY for current slice | outgoing relay owner | semantic EP validator, baton readiness, discovery, qualification, progress/report | One-WP forward contract; may not redefine Owner intent or roadmap topology |
 | `DSTEP-*` | AUTHORITY discovery requirement inside EP | EP preparer | incoming `DISC-*` | Exact repository-only questions/outputs candidate must resolve |
-| Discovery Receipt (`DISC-*`) | EVIDENCE | incoming candidate | TC validation / takeover certification | Candidate-specific observed discovery; `conversation_context_used` must be false |
-| Qualification Question Set (`QSET-*`) | AUTHORITY evaluation criteria | outgoing preparer | candidate + QUAL validator | Fresh Q1–Q5 criteria bound to current route/EP; candidate cannot prepare its own set |
+| Discovery Receipt (`DISC-*`) | EVIDENCE | execution candidate | TC validation / takeover certification | Candidate-specific observed discovery from repository sources; candidate may be incoming or continuing |
+| Qualification Question Set (`QSET-*`) | AUTHORITY evaluation criteria | outgoing/authorized preparer | candidate + QUAL validator | Fresh Q1–Q5 criteria bound to current route/EP; candidate cannot prepare its own set |
 | Qualification Receipt (`QUAL-*`) | EVIDENCE | candidate answers + independent/deterministic evaluator | TC validation | Evaluated engineering understanding on exact QSET/EP basis |
-| Takeover Certification (`TC-*`) | EVIDENCE / admission record | independent evaluator / deterministic checks | `TAKEOVER_CERTIFIED`, material write gate | Route/candidate admission only; cannot change EP/roadmap |
+| Takeover Certification (`TC-*`) | EVIDENCE / admission record | candidate or other recorder + independent/Owner/deterministic evaluator | `TAKEOVER_CERTIFIED`, material write gate | `prepared_by` is provenance only; evaluator/basis supplies certification authority; cannot change EP/roadmap |
 | `BATON_READY` | DERIVED | baton-readiness validator | handover readiness, takeover admission | Candidate-independent completeness of repository baton |
 | `TAKEOVER_CERTIFIED(route,candidate)` | DERIVED | current DISC/QUAL/TC + baton/basis validation | live write gate | Candidate/route-specific; stale evidence invalidates it |
 | `PROJECTION_READY` | DERIVED | projection convergence | handover readiness | Required external projection currentness only |
