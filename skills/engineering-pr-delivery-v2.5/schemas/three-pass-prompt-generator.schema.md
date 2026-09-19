@@ -89,6 +89,50 @@ Each lot gets its own preflight and its own three prompts.
 
 ---
 
+# SCHEMA EXECUTION BASIS — PROVE FRESHNESS BEFORE TARGET REASONING
+
+Before resolving any target or lot, establish which schema is actually controlling this generation.
+
+Canonical schema:
+
+```text
+skills/engineering-pr-delivery-v2.5/schemas/three-pass-prompt-generator.schema.md
+```
+
+When this generator is invoked from the canonical GitHub repository/URL, you **must fetch the file from current `main` during this generation**.
+
+Memory, a previous conversation, a previous fetched copy, a prior assistant summary, or an older commit is not an acceptable basis.
+
+Record:
+
+```text
+SCHEMA SOURCE:
+<canonical URL/path or explicitly user-supplied schema text>
+
+SCHEMA REF:
+<main / explicit user-supplied revision>
+
+SCHEMA CONTENT SHA:
+<actual content/blob SHA when fetched from GitHub; otherwise USER_SUPPLIED_TEXT>
+
+SCHEMA FETCH STATUS:
+LIVE_THIS_RUN | USER_SUPPLIED_TEXT
+
+SCHEMA COMPATIBILITY:
+PASS | FAIL
+```
+
+Rules:
+
+- canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
+- user explicitly supplies the schema text itself → `USER_SUPPLIED_TEXT` is allowed;
+- never silently fall back from a failed live fetch to memory;
+- if the required basis cannot be established, **stop and do not generate Prompt 1–3**.
+
+The schema basis is shared across all lots in one generator run.
+
+---
+
 ## INPUT I MAY GIVE YOU
 
 I may provide some or all of:
@@ -183,6 +227,28 @@ Related issues, roadmaps, decisions, PRs and parent programmes may become **Prom
 They do not replace the user-requested target level.
 
 If the user has explicitly specified the level, do not infer a different one.
+
+### Target authority order
+
+Resolve each lot's target from user authority in this order:
+
+```text
+1. explicit target in the current user message;
+2. explicit target previously supplied by the user in this conversation;
+3. explicit lot/target definition already established by the user;
+4. canonical target URL or named surface supplied by the user;
+5. otherwise fail closed.
+```
+
+Never use any of the following as target authority:
+
+- a previous assistant guess;
+- a target chosen by an earlier generated answer;
+- a nearby issue that appears more important;
+- a schema case study/example;
+- prior model memory.
+
+A later user instruction such as “focus on Lot 1” preserves the previously user-established Lot-1 target unless the user changes it.
 
 ## B. Resolve the exact target at that level
 
@@ -313,7 +379,23 @@ CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 <brief facts that matter for Prompt 2: current status, known work, blockers,
  in-flight changes, existing vocabulary, etc.>
+
+CURRENT ANSWER QUARANTINE:
+<for ISSUE_TASK: 3–10 concrete answer-side facts that Prompt 1 must not reveal;
+for other levels: include when useful>
 ```
+
+For ISSUE_TASK, `CURRENT ANSWER QUARANTINE` is mandatory.
+
+It should name the actual answer-side material that creates contamination risk, for example:
+
+- today's option set;
+- current benchmark/evidence conclusion;
+- current implementation recipe;
+- current work sequence;
+- current blocker/decision inventory;
+- current acceptance checklist;
+- current artifact-specific solution structure.
 
 This section is **REALITY-SIDE ONLY**.
 
@@ -338,6 +420,18 @@ current schema fields
 The point is not to pretend these things do not exist.
 
 The point is to meet them **after** the independent opinion has formed.
+
+Apply these invariants:
+
+```text
+CURRENT ARTIFACT FORM ≠ IMAGINATION OBJECT
+REQUEST MODE         ≠ IMAGINATION OBJECT
+CURRENT ANSWER       ≠ PROBLEM KERNEL
+```
+
+A target being written as a register does not make “excellent register” the Prompt-1 object.
+A request being COORDINATE does not make “register” the Prompt-1 object.
+Prompt 1 is generated from the stable problem, not from the current answer form.
 
 ## F. Recover the BLIND REFERENCE
 
@@ -459,6 +553,19 @@ PROBLEM KERNEL:
 This is specific enough to identify the issue, but it does not reveal today's option list,
 benchmark conclusion, chosen interpolation coordinate, sample statistics, or recommendation.
 
+For ISSUE_TASK, construct Prompt 1 mechanically from:
+
+```text
+PROBLEM KERNEL
++ TARGET ANCHORS
++ HUMAN OUTCOME
++ GENUINE CONSTRAINTS
+- CURRENT ANSWER QUARANTINE
+```
+
+Do not solve contamination by anonymising the quarantined facts.
+Remove them.
+
 Complete:
 
 ```text
@@ -578,6 +685,7 @@ CURRENT REALITY — QUARANTINED FROM PROMPT 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
+CURRENT ANSWER QUARANTINE:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
@@ -610,11 +718,14 @@ PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
 
-SAME-ISSUE IDENTITY GATE:
-PASS — <one short reason>
+KERNEL-COVERAGE GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
-ANSWER-RECONSTRUCTION GATE:
-PASS — <one short reason>
+SAME-ISSUE IDENTITY GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+ANSWER-EXCLUSION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 LOT/LEVEL BOUNDARY GATE:
 PASS — <one short reason>
@@ -624,6 +735,46 @@ PASS — <one short reason>
 ```
 
 Do not draft Prompt 1 until these fields and gates are resolved.
+
+---
+
+# HARD GATE -2 — SCHEMA FRESHNESS GATE
+
+Before any target reasoning, verify the SCHEMA EXECUTION BASIS.
+
+If the canonical repository/URL is the source:
+
+```text
+SCHEMA FETCH STATUS must equal LIVE_THIS_RUN
+SCHEMA CONTENT SHA must be populated from that fetch
+SCHEMA COMPATIBILITY must equal PASS
+```
+
+If this cannot be proven, stop.
+
+Do not generate prompts from remembered schema rules.
+
+---
+
+# HARD GATE -1 — LEGACY-SIGNATURE REJECTION GATE
+
+Before emitting the final generated artifact, scan the artifact itself for retired active instructions.
+
+The following are legacy signatures when they appear as active schema fields/instructions:
+
+```text
+TARGET SCOPE:
+TASK_ARTIFACT
+TARGET NATIVE DELIVERABLE
+FINAL OUTPUT CONTRACT
+PROMPT-3 OUTPUT GATE
+"The register is the thing you are imagining"
+"imagine an excellent live register"
+```
+
+If any appear as active construction/output language, **reject the generation and rebuild from the current schema**.
+
+Quoted discussion of a legacy failure inside this schema's appendices is not itself a failure; the check applies to the generated deliverable.
 
 ---
 
@@ -697,15 +848,34 @@ The fix is to restore the PROBLEM KERNEL.
 
 ---
 
-# HARD GATE 0.9 — ANSWER-RECONSTRUCTION GATE
+# HARD GATE 0.85 — KERNEL-COVERAGE GATE
 
-For ISSUE_TASK, ask the opposite question:
+For ISSUE_TASK, inspect every PROBLEM KERNEL fact.
 
-> **From Prompt 1 alone, could a domain-aware person reconstruct today's proposed answer, option set, current evidence conclusion, implementation recipe, or backlog sequence?**
+Ask:
+
+> **Is this fact materially present in Prompt 1, either explicitly or naturally in the scenario?**
+
+Every load-bearing kernel fact must survive.
+
+If any kernel fact disappears, Prompt 1 is drifting toward generic class-level advice.
+
+Do not repair missing identity by adding today's answer.
+Restore only the missing kernel fact.
+
+---
+
+# HARD GATE 0.9 — ANSWER-EXCLUSION GATE
+
+For ISSUE_TASK, inspect every CURRENT ANSWER QUARANTINE item.
+
+Ask:
+
+> **Can a reader learn or reconstruct this quarantined fact from Prompt 1?**
 
 If yes, Prompt 1 is contaminated.
 
-Examples of leakage:
+Examples of quarantined leakage:
 
 ```text
 Option 1 / Option 2 / Option 3
@@ -713,11 +883,15 @@ LINEAR_GAMMA vs LOG_GAMMA
 current CAUx percentage
 current n=57 study
 current exact PR order
+current blocker/decision inventory
 current matrix/rung names
 current proposed file/schema changes
 ```
 
-Prompt 1 should expose the **question worth answering**, not the repository's current answer to it.
+Prompt 1 should expose the **question worth answering**, not today's repository answer.
+
+Do not merely replace leaked proper nouns with generic nouns.
+Remove the answer-side fact.
 
 ---
 
@@ -726,8 +900,14 @@ Prompt 1 should expose the **question worth answering**, not the repository's cu
 An issue-level Prompt 1 passes only if **both** are true:
 
 ```text
+KERNEL-COMPLETE:
+The load-bearing PROBLEM KERNEL survives.
+
 RECOGNISABLE:
-The underlying issue is identifiable from its problem kernel.
+The underlying issue is identifiable from that kernel.
+
+ANSWER-EXCLUDED:
+CURRENT ANSWER QUARANTINE does not leak.
 
 NOT PRE-SOLVED:
 The current answer/options/evidence interpretation cannot be reconstructed.
@@ -893,6 +1073,7 @@ Forbidden inputs to Prompt 1 unless independently justified as genuine constrain
 CURRENT ARTIFACT FORM
 CURRENT STATED ANSWER / IMPLEMENTATION
 CURRENT-STATE FACTS
+CURRENT ANSWER QUARANTINE
 repository structure
 existing abstraction names
 current schemas
@@ -1076,8 +1257,8 @@ That is issue-specific without revealing today's options or evidence conclusion.
 
 Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
 
-Run the SAME-ISSUE IDENTITY, ANSWER-RECONSTRUCTION, ARTIFACT-ERASURE,
-CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
+Run the KERNEL-COVERAGE, SAME-ISSUE IDENTITY, ANSWER-EXCLUSION,
+ARTIFACT-ERASURE, CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
 
 ---
 
@@ -1299,7 +1480,17 @@ Ask:
 
 > What has later work already made obsolete?
 
-## D. Does the current artifact still deserve to exist in its present form?
+## D. First determine today's remaining problem; then decide the artifact's disposition
+
+Do not start by assuming the artifact needs reconciliation.
+
+First ask:
+
+> **Given the independent Prompt-1 picture and verified reality, what is the actual remaining problem today?**
+
+Only after stating that problem independently, ask:
+
+> **Does the current artifact still deserve to exist in its present form as the instrument for that problem?**
 
 This is mandatory for issues, registers, matrices, roadmaps, checklists, architecture umbrellas, handovers and plans.
 
@@ -1588,7 +1779,9 @@ This is the same reasoning continuity used by the successful product-level and t
 
 # STRICT OUTPUT CONTRACT FOR THE GENERATOR
 
-For **each requested lot**, the generator output has four visible sections:
+The complete generator output begins with one shared **SCHEMA BASIS** section.
+
+Then, for **each requested lot**, output four visible sections:
 
 1. one **PREFLIGHT RECORD**;
 2. exactly three **copy-pasteable prompt blocks**.
@@ -1600,6 +1793,18 @@ If the user requested two lots, output two lot sections. Do not merge them and d
 Output this structure and nothing else:
 
 ````markdown
+# SCHEMA BASIS
+
+```text
+SCHEMA SOURCE:
+SCHEMA REF:
+SCHEMA CONTENT SHA:
+SCHEMA FETCH STATUS:
+SCHEMA COMPATIBILITY:
+LEGACY-SIGNATURE GATE:
+PASS — no retired active construction signature appears in this deliverable
+```
+
 # LOT <n> — <USER-REQUESTED LEVEL>: <TARGET>
 
 ## PREFLIGHT RECORD
@@ -1616,11 +1821,13 @@ PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
 REQUEST MODE:
+COMPLEX MODE: ON | OFF
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
+CURRENT ANSWER QUARANTINE:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
@@ -1641,13 +1848,19 @@ HANDOVER DESTINATION:
 LOT/LEVEL BOUNDARY GATE:
 PASS — <one short reason>
 
+COMPLEX Q1–Q5 COVERAGE:
+PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
+
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
+
+KERNEL-COVERAGE GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 SAME-ISSUE IDENTITY GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
-ANSWER-RECONSTRUCTION GATE:
+ANSWER-EXCLUSION GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 ARTIFACT-ERASURE GATE:
@@ -1743,7 +1956,7 @@ Do not add:
 - implementation notes after Prompt 3;
 - a second summary of how you applied the schema.
 
-The visible preflight plus the three prompt fences are the complete deliverable.
+The shared SCHEMA BASIS plus each lot's visible preflight and three prompt fences are the complete deliverable.
 
 ---
 
@@ -1766,6 +1979,18 @@ Is Prompt 1 recognisably about this exact requested target and level?
 Could it be pasted unchanged into many unrelated projects?
 
 If yes, fail as too generic.
+
+### Schema-freshness check
+
+When canonical GitHub is the schema source, is `SCHEMA FETCH STATUS = LIVE_THIS_RUN` with a real current content SHA?
+
+If not, fail before evaluating prompts.
+
+### Legacy-signature check
+
+Does the generated deliverable contain any retired active field/instruction listed by the LEGACY-SIGNATURE REJECTION GATE?
+
+If yes, fail and regenerate from current schema.
 
 ### Visible-preflight check
 
@@ -1800,11 +2025,17 @@ For ISSUE_TASK, after removing the title/number, is the particular issue still d
 
 If not, restore the PROBLEM KERNEL.
 
-### Answer-reconstruction check
+### Kernel-coverage check
 
-For ISSUE_TASK, can Prompt 1 reveal today's option set, evidence conclusion, implementation recipe or sequence?
+For ISSUE_TASK, does every load-bearing PROBLEM KERNEL fact materially survive into Prompt 1?
 
-If yes, remove those answer-side facts.
+If not, the prompt is too generic.
+
+### Answer-exclusion check
+
+For ISSUE_TASK, does any CURRENT ANSWER QUARANTINE fact leak into Prompt 1 directly or through generic paraphrase?
+
+If yes, remove it.
 
 ### Goldilocks-corridor check
 
@@ -2934,7 +3165,61 @@ That is Q1–Q5 in human form.
 
 ---
 
-# NINE-CASE REGRESSION VALIDATION
+# APPENDIX I — CONTROL-PLANE REGRESSION: STALE-SCHEMA ISSUE FAILURE
+
+This regression exists because a generated Lot 1 once emitted an obsolete pattern despite the canonical schema having already changed.
+
+Failure signatures included:
+
+```text
+COORDINATE / TASK_ARTIFACT
+no visible preflight
+"The register is the thing you are imagining"
+Prompt 3: "Produce the reconciled register"
+```
+
+That is not merely weak wording.
+
+It is evidence that the generator executed a stale schema/control path.
+
+## Required prevention
+
+Before any prompt:
+
+```text
+SCHEMA FETCH STATUS = LIVE_THIS_RUN
+SCHEMA CONTENT SHA   = current fetched SHA
+LEGACY-SIGNATURE GATE = PASS
+```
+
+For an ISSUE_TASK:
+
+```text
+PROBLEM KERNEL
+= facts that make it this issue
+
+CURRENT ANSWER QUARANTINE
+= today's answer/options/evidence/sequence that Prompt 1 must not reveal
+
+KERNEL-COVERAGE GATE
+= every load-bearing kernel fact survives
+
+ANSWER-EXCLUSION GATE
+= every quarantined answer-side fact stays out
+```
+
+For Issue #1854, the kernel is the **post-P0 closure problem** in EMP.1/WRC:
+the product state has materially changed, the question is what genuinely remains before more bounded professional-release effort is worthwhile, and remaining matters may be engineering, accountable disposition, historical work, or work no longer worth pursuing.
+
+The current gamma item, CI outage, UI residue, hash disposition, exact ordering, and acceptance checklist are Prompt-2 reality and belong in CURRENT ANSWER QUARANTINE.
+
+A Prompt 1 about “an excellent register” fails even if beautifully written.
+
+Prompt 3 must first state the present remaining problem and only then decide whether the current register should be preserved, changed, split, replaced or closed.
+
+---
+
+# TEN-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -2949,6 +3234,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | EMP.1/WRC tab-level lot | practising engineer's end-to-end WRC 537 tab experience | related issue substitution + generic Prompt 1 | may redefine tab UX/workflow while preserving method authority |
 | Advanced_Analysis Issue #1834 | responsible basis for non-tabulated-gamma professional use | generic standards-governance prose or leaked current options/evidence | may yield decision/evidence need without inheriting current option set |
 | Explicit complex-mode target | same target plus human Q1–Q5 depth | mechanical Q labels or generic five-question checklist | Prompt 1 covers path → reconstruction → stress test → independent check → bounded proof |
+| Stale-schema issue run | current issue problem kernel under current schema SHA | legacy TASK_ARTIFACT/register-imagination path | generation rejected before prompts; then issue kernel controls Prompt 1 |
 
 ### Critical negative control
 
@@ -3002,7 +3288,9 @@ A result with sophisticated reasoning but contaminated Prompt 1, hidden prefligh
 The generator should make a future agent think in this order:
 
 ```text
-Read the target carefully.
+Prove the current schema basis first.
+
+Read the user-authoritative target carefully.
 
 What answer/form does the target currently carry?
 Quarantine that.
@@ -3040,9 +3328,20 @@ But independence is not vagueness.
 
 The user's lot boundaries are authoritative. A tab-level request stays tab-level; a related issue becomes evidence, not a substitute target.
 
-For issue-level work, preserve the **PROBLEM KERNEL**:
+For issue-level work, preserve the **PROBLEM KERNEL** and explicitly quarantine the current answer:
 
 > **Erase today's answer, not the facts that make it the same issue.**
+
+Construction rule:
+
+```text
+Prompt 1 =
+PROBLEM KERNEL
++ TARGET ANCHORS
++ HUMAN OUTCOME
++ GENUINE CONSTRAINTS
+- CURRENT ANSWER QUARANTINE
+```
 
 The issue-level blind pass must live inside the Goldilocks corridor:
 
