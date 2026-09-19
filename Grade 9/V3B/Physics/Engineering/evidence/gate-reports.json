@@ -1,0 +1,62 @@
+[
+  {
+    "topic": "THERMODYNAMICS-INITIAL",
+    "closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-TH-FIRST-LAW",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-SYSTEM"
+    ],
+    "held_gates": [],
+    "structure": "STRUCTURE_CHECKED",
+    "authoring": "DESIGN_PREVIEW_ONLY",
+    "subject_review": "NOT_RUN",
+    "release_authorized": false
+  },
+  {
+    "topic": "THERMODYNAMICS-WITH-CYCLE",
+    "closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-TH-CYCLE",
+      "PHY-TH-FIRST-LAW",
+      "PHY-TH-PV-WORK",
+      "PHY-TH-SYSTEM"
+    ],
+    "held_gates": [],
+    "structure": "STRUCTURE_CHECKED",
+    "authoring": "DESIGN_PREVIEW_ONLY",
+    "subject_review": "NOT_RUN",
+    "release_authorized": false
+  },
+  {
+    "topic": "GRAVITY-RESEARCH-BOUNDED",
+    "closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-GR-APPROX",
+      "PHY-GR-NEWTON",
+      "PHY-GR-POTENTIAL"
+    ],
+    "held_gates": [],
+    "structure": "STRUCTURE_CHECKED",
+    "authoring": "DESIGN_PREVIEW_ONLY",
+    "subject_review": "NOT_RUN",
+    "release_authorized": false
+  },
+  {
+    "topic": "GRAVITY-ADVANCED-HELD",
+    "closure": [
+      "PHY-ENERGY-UNITS",
+      "PHY-GR-APPROX",
+      "PHY-GR-NEWTON",
+      "PHY-GR-POTENTIAL",
+      "PHY-GR-RELATIVITY"
+    ],
+    "held_gates": [
+      "PHY-GR-RELATIVITY"
+    ],
+    "structure": "STRUCTURE_CHECKED",
+    "authoring": "BLOCKED_SCOPE",
+    "subject_review": "NOT_RUN",
+    "release_authorized": false
+  }
+]

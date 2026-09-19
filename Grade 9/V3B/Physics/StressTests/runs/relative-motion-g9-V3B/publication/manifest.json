@@ -1,0 +1,260 @@
+{
+  "basis_digest": "e27cbd273f502bb4af65dd448527fbfb14a06d7098ff2637928caa9fa8b7d546",
+  "runtime_digest": "6550d3045cf083861181a2b9bd0b1bede910c1aa1e77443b5e7dc63692d2c690",
+  "files": [
+    {
+      "path": "CORE1A.html",
+      "sha256": "79a3c67278f1f019895f6a26cf4c80d7d4b44b9049473a66c295e516cb0951af"
+    },
+    {
+      "path": "CORE1B.html",
+      "sha256": "48b78503540ea4b59d3a15bfa8a569801490e23de4679842c16d939e75886d11"
+    },
+    {
+      "path": "CORE2A.html",
+      "sha256": "36cc943ec38b230cc4a89300c6fe47678aa1f85b70522e93c7d542c8dfe8e6b5"
+    },
+    {
+      "path": "CORE2B.html",
+      "sha256": "daf39ee36e5fb306b49975597d7810628020c13678a8c06afacfda4d14722e75"
+    },
+    {
+      "path": "OWNER_BOARD.html",
+      "sha256": "f03909c6fbc0d0cfe80fd542a2db7d63bfaff9eab3179711e5a66abf44bf1e6a"
+    },
+    {
+      "path": "evidence.json",
+      "sha256": "9445d315a1a9dbeae37b3eeb4f0fdad7c996a4e23b7996b801c696645d3471b6"
+    },
+    {
+      "path": "figures/2ff565e79e90641416f20f16.svg",
+      "sha256": "3560018751c4adc6628d45e5ad502f3834d34b0c523ba6bf2adc14814153559c"
+    },
+    {
+      "path": "figures/3fa11ab0389090bb698432be.svg",
+      "sha256": "60830f15d31df0e3c867c7a0f526ec7542ba9edd6a3b950ac895567b83d62a5d"
+    },
+    {
+      "path": "figures/3ffc99676ad796731f54c9fa.svg",
+      "sha256": "79915886523d0d5d5d49d7b9d0b51998a4f8f32168c69e3764e722046dd51dd4"
+    },
+    {
+      "path": "figures/4bccaacbd71c4fbb2f805768.svg",
+      "sha256": "a0c6c3e6f2f266223df2dc6bffcf08b5ae0afb7dae263c287ec4fe48ee44e44f"
+    },
+    {
+      "path": "figures/9a178953c6e17a9d47eed5d0.svg",
+      "sha256": "e43111d0671a31d7fac3ed9c2ddf872aa5e0a77ab4c2b1343932a95732cd52eb"
+    },
+    {
+      "path": "figures/ac16c0233e1e76e4ebb673c4.svg",
+      "sha256": "d3bc554b4ed6287ece284bc0116994dc131dcac0e7ab1a87b4214a192631dfb4"
+    },
+    {
+      "path": "figures/b10876d10baea3d4d53fea65.svg",
+      "sha256": "be734ff00251e849376e19dbf1bf7b9fad16cb01559eba71af05e4216de86ee4"
+    },
+    {
+      "path": "figures/bb5b9dd0a7a1537d6c16bd07.svg",
+      "sha256": "f3e7bd5e43cc2877602cd5718122b51ab417b164ba2c67e37ee2cd2ad04509bb"
+    },
+    {
+      "path": "figures/ce68b2bc4e9b1e7d9d4463a8.svg",
+      "sha256": "50733dab139726f105780cc7ddb33e13fd344d01927bec085b67d8fc28338114"
+    },
+    {
+      "path": "figures/f05452aed8d8c8f20d814bd0.svg",
+      "sha256": "5d6a79b5f6f72d6856032abae77fd8df013470f2a94166084865be5464be511c"
+    },
+    {
+      "path": "inputs/baseline.json",
+      "sha256": "0c904174c9d8202dbdb5bbcaf1af8e8c8656ee3ba388028cc2255c65ebfd4712"
+    },
+    {
+      "path": "inputs/plan.json",
+      "sha256": "e40dfad00a62539ae0b52b34e132e1f0b1d83a5664df293c53f03f5149149aa5"
+    },
+    {
+      "path": "inputs/sources/sources/source.json",
+      "sha256": "43aa7a4b1b98f8dd71ecb20823e83a45c64cd4f637061ab3807ddae6d50ed0af"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Acceptance-and-Regression.md",
+      "sha256": "6d442422ed9eb81b69aa3703093d9581fe67bdc0c1777fb3c70cb4da8e1d7170"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Agent-Execution.md",
+      "sha256": "ad7f4cffb3567c334936a879bb94a9f622f050eb325715f6da721f8c4b982b2d"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Production-Blueprint.md",
+      "sha256": "c5ecdbec8475cade3ce112b738a14a7eaa65fafadba2632b6dd77731caf3022b"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Production-Rules.json",
+      "sha256": "9c664cfb08a25f4363e797cf77a638b862f10da405ec36489b87450c70188262"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Research-and-Minimum-Criteria.md",
+      "sha256": "27734e915b090292a3724ba0ed039a3d54e2fbbbc92267d03dc1d2598cf53c1a"
+    },
+    {
+      "path": "runtime/Physics/Blueprint/V3B-Revision-Validation.md",
+      "sha256": "4a2be3f93223a3f3c73053034325a3b65b5c0c8cddf10a334bc83fc828d43044"
+    },
+    {
+      "path": "runtime/Physics/CoreContracts.json",
+      "sha256": "abdce93b4cc735d8ef29082c4a664a11f2b39997145fd60c0ffb45a9c5d9616a"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/V3B-Publication-Input.md",
+      "sha256": "35d51350d26a28d9350b68bfcacf1e6f914ff3007741a956b45d27d38dd53c0d"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/V3B-Runtime-Map.md",
+      "sha256": "5bdfe584ea9919aad60910950dfd073b95acdceffe88bae8f4d40ee24b76da87"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/__init__.py",
+      "sha256": "0b381d5ad3f21175ac2ce92aa6e58468b8676ec7006cc9afd5ce98d3ac3474a4"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/audit.py",
+      "sha256": "07ed537738deaed4bbe3fd9a1ccc7cc82185351d3244e92fa6b3fe38c2c164df"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/cli.py",
+      "sha256": "4df10987268263e2b8974687c089988cc26a44b4836b5779229255e869986f62"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/compose.py",
+      "sha256": "21c7ca08f21e45427daf1d35dd102d95d8b0e501f25ed526daa2a6d8e373bcb2"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/figures.py",
+      "sha256": "1dabaa77078c4ae1def1552aad8d4170928e12d198c04b99831c0590ba56c759"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/host.py",
+      "sha256": "10be9764fbbe7ccb86e72e9b26386902c4ab56e4b41a11818ac1efa79c19c1f2"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/inputs.py",
+      "sha256": "e76f1b02b9ae91e54da0b3b445bc4f99ed03e2cbe9557fa9d5964041f7b77d38"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/science.py",
+      "sha256": "73b5246bee402e5ca58ca06805ed3cf22c8769ef78fa5f0b01a81dd0518ba9c1"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/publication_host/storage.py",
+      "sha256": "0145c8d584607c95343dd0587cb9ec2551de8f90326c6c2aff475783a8db8193"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/run.py",
+      "sha256": "339b0d36c1c68c74e466071a88354b0ec865d9125946ec7226b7129a828a8ccd"
+    },
+    {
+      "path": "runtime/Physics/ProductionKit/validator.py",
+      "sha256": "0187de6feb5133d24b80b89d48f9402fef4665072fa12dd97d94bd8748eea9a5"
+    },
+    {
+      "path": "runtime/Shared/policies/mode-profiles.json",
+      "sha256": "1def1e8b7864866ec2c978b46d6953b9faa8e370b4b8151f55dba00789d48af6"
+    },
+    {
+      "path": "runtime/Shared/roles/CLAIM_REVIEW.md",
+      "sha256": "8a7b6d01397ab30cfb39a1e5ec1f5d5db672573c0451b0c5f5437743bb887c0c"
+    },
+    {
+      "path": "runtime/Shared/roles/CONTENT_REVIEW.md",
+      "sha256": "028bec944153ea725b41987fee22bcd3208c98cad0127e55e258ea3ea3a97b33"
+    },
+    {
+      "path": "runtime/Shared/roles/CORE1.md",
+      "sha256": "b461d2210c11dd845f9558ac9ccdfa7c1db5913630c5988b88edcb63aa9b61fb"
+    },
+    {
+      "path": "runtime/Shared/roles/CORE1A.md",
+      "sha256": "787010b38ae7c13d941b69671a8d30ccba3335e424520e2839bfbb916acd3265"
+    },
+    {
+      "path": "runtime/Shared/roles/CORE2.md",
+      "sha256": "f70068f58f5136746d0979756b8a5e915339742e81794e9ad4cf054c51f72a56"
+    },
+    {
+      "path": "runtime/Shared/roles/CORE2A.md",
+      "sha256": "ff02929fadb6f4bbef8262b3680c4976ae0fc0393f5297db4bedb4e272712f0a"
+    },
+    {
+      "path": "runtime/Shared/roles/PRACTICE_REVIEW.md",
+      "sha256": "2c80cfe49fa69ffe226080141a77b4a9c5574148b330e9132147e1cda766d75e"
+    },
+    {
+      "path": "runtime/Shared/run.py",
+      "sha256": "52f2b54f820d87b914e52e5226d6ea33eac3cbd626dcea783462a187c472c2c5"
+    },
+    {
+      "path": "runtime/Shared/v3b/__init__.py",
+      "sha256": "dc87a83242811f630a9809d21ce47e5ea20bc2ffc867267dad54e471d714d25b"
+    },
+    {
+      "path": "runtime/Shared/v3b/answers.py",
+      "sha256": "6e419611113bfa96a6a5756a46a1d6ee6f65993b8f4d307182481ba978996384"
+    },
+    {
+      "path": "runtime/Shared/v3b/assimilation.py",
+      "sha256": "b8cf8386c375c54635f9f3cdbe0d7f57abbd4129349629da9e9c2b2eb93764d5"
+    },
+    {
+      "path": "runtime/Shared/v3b/cli.py",
+      "sha256": "2a111155c503e1b58d6ff8622836ddb695bc8047775c397288fe4c54d7b95c63"
+    },
+    {
+      "path": "runtime/Shared/v3b/contracts.py",
+      "sha256": "89f304422b9eb3cef27f9d69b477a43629e68bfe06c714bf6edab6b4872ecdda"
+    },
+    {
+      "path": "runtime/Shared/v3b/intelligence.py",
+      "sha256": "420f8b021a22593795ab351fbddc5b82c66d185aec7592368ab6d9ff5395e434"
+    },
+    {
+      "path": "runtime/Shared/v3b/owner.py",
+      "sha256": "7a2bf5b5f3b9b20154932ac381f506a1d7391c0409dca1733cc7b78b7054ecd9"
+    },
+    {
+      "path": "runtime/Shared/v3b/practice.py",
+      "sha256": "d9fc21670c7a7a6af0579da164f7c3418d044870e25a92ba7ba995cf95dd44d8"
+    },
+    {
+      "path": "runtime/Shared/v3b/publication.py",
+      "sha256": "518a98bcd378578f4260aa62a35bd3cea02b102bf50ac93e8e1ff44a3d4a4814"
+    },
+    {
+      "path": "runtime/Shared/v3b/question_sources.py",
+      "sha256": "4b24251ac32cb8534d6611ef33d6dd01678c9aac715e47484accd1c45b233232"
+    },
+    {
+      "path": "runtime/Shared/v3b/receipts.py",
+      "sha256": "37f49a90a375e8774c0c9d6b0787e39677a7a0332d7c0f7a256e32cbd35c2293"
+    },
+    {
+      "path": "runtime/Shared/v3b/relay.py",
+      "sha256": "68d3f7bb8336dc03539943e3b0721785c6080cb4b624650c15eaf26759fb15c5"
+    },
+    {
+      "path": "runtime/Shared/v3b/routing.py",
+      "sha256": "2b23f5400bb5313233f5f7dbdcb98c4ba2e2859f683c577d6022007ad950026b"
+    },
+    {
+      "path": "runtime/Shared/v3b/sources.py",
+      "sha256": "b0e5aefb5b0dc9c6b5478064aaa338ad67523ac92783fd0fdfaf4b26fc560ff6"
+    },
+    {
+      "path": "runtime/Shared/v3b/state.py",
+      "sha256": "54d4abc555290ec55afea0d21ba84e81fdc08d0ff7fa2d5b3b45c929cfbfba64"
+    }
+  ],
+  "release_authorized": false,
+  "portable_scope": "EXACT_INPUTS_AND_PUBLISH_VERIFY_COMMANDS; NOT_QUALIFIED_AUTHORING_RESTART"
+}

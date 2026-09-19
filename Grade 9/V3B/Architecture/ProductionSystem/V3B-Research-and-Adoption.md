@@ -1,0 +1,43 @@
+# Research and repository adoption record — V3B
+
+Read date: 2026-09-16. These are bounded source findings and resulting design decisions. They do not prove this system improves learning, works for every topic, or produces expert work from every agent. Most recommendations below are architectural inferences; their project-specific effectiveness must be tested.
+
+## External evidence and its design consequence
+
+| Source inspected | Relevant finding | Decision / limit |
+|---|---|---|
+| [IES: Organizing Instruction and Study to Improve Student Learning](https://ies.ed.gov/ncee/wwc/practiceguide/1) | Recommends combining worked examples with problem solving, linking graphical/verbal and concrete/abstract representations, and using retrieval and explanatory questions; evidence strength varies by recommendation. | Store explanation, representation, retrieval/transfer purpose and self-help together. This supports useful teaching components, not a universal page count, fixed hint count or agent workflow. |
+| [PhET: What Levels of Guidance Promote Engaged Exploration?](https://phet.colorado.edu/publications/PERC_Interview_Guidance.pdf) | Simulation interviews found that guidance and simulation design affected exploration; highly directive instructions could narrow the activity. | Offer bounded help and meaningful choices in B. This context-specific result does not imply that beginners should receive no explanations or that static worksheets reproduce simulation outcomes. |
+| [EDM 2025: Using Large Multimodal Models to Extract Knowledge Components](https://educationaldatamining.org/EDM2025/proceedings/2025.EDM.long-papers.170/2025.EDM.long-papers.170.pdf) | Investigates automated knowledge-component extraction; reports major preprocessing/mapping losses and limitations in evaluating detailed components. | AI may propose microtopics, but source mapping, diagrams and granularity need review. More generated labels are not proof of a better curriculum or learner model. |
+| [1EdTech CASE](https://www.1edtech.org/standards/case/about) | Provides stable competency identifiers and relationships across frameworks. | Keep capability IDs and curriculum mappings separate; plan an optional interoperability adapter rather than duplicating content per curriculum. No CASE conformance is claimed. |
+| [1EdTech QTI](https://www.1edtech.org/standards/qti) | Exchanges rich assessment items, tests and results, including response/scoring structures. | Separate question identity, full prompt/figures, answer/rubric and results. QTI is an exchange model, not scientific validation or a source licence. |
+| [W3C PROV overview](https://www.w3.org/TR/prov-overview/) | Models provenance involving entities, activities and responsible agents. | Distinguish original resources, adaptations, producers and review activities. Provenance makes lineage inspectable; it does not prove truth. |
+| [W3C MathML 3](https://www.w3.org/TR/MathML3/) | Separates presentation-oriented and content-oriented mathematics and their connections. | Keep equation meaning, assumptions and source identity alongside rendered notation. Valid markup and equivalent-looking notation are not mathematical-equivalence evidence. This is a design reference, not a claim that MathML 3 is the latest specification. |
+
+## Curriculum and topic-source findings
+
+- [CBSE Grade 9 Standard Science 2026–27](https://cbseacademic.nic.in/web_material/CurriculumMain27/SecPart1/ScienceSt_SecP1_2026-27.pdf), Motion section: one-dimensional kinematics, graphs and elementary circular motion. Bind the current year and track explicitly.
+- [CBSE Grade 9 optional Advanced Science 2026–27](https://cbseacademic.nic.in/web_material/CurriculumMain27/SecPart1/ScienceAd_SecP1_2026-27.pdf), chapter 2: reference frames, relative-motion activity and graphical vector operations. This supports an Advanced seed; it does not certify all quantitative relative-velocity extensions as prescribed assessment.
+- [NCERT Motion in a Straight Line](https://ncert.nic.in/textbook/pdf/keph102.pdf) and [Motion in a Plane](https://ncert.nic.in/textbook/pdf/keph103.pdf): useful higher-grade source starting points for velocity/frame and vector reasoning. Topic-level relevance was inspected; each adopted equation/question still needs exact locator and source reconciliation during production.
+- [CBSE competency-based Grade 9 Science items](https://cbseacademic.nic.in/cbe/documents/SAS_Science-Class-9.pdf): historical motion items have stable printed question identifiers. Candidate question source only; current-scope alignment, answer completeness and rights must be checked per item. This task does not import the bank.
+- [PhET Vector Addition](https://phet.colorado.edu/en/simulations/vector-addition): a relevant representation/exploration candidate. Landing-page topic verified; the interactive simulation was not executed or evaluated with a learner here.
+
+An attempted full-text fetch of the older CMU Learning Factors Analysis paper failed; no detailed conclusion in these documents depends on reading that paper. OpenStax's science landing page returned no substantive text, and the IUPAC Gold Book fetch failed. They are not represented as verified topic sources in the seed. Future Mathematics/Chemistry source registries require actual source inspection.
+
+## Repository basis and deliberate adoption boundaries
+
+Current V3B basis read: PR #364 at `3522024f5048b1f26a00bc29c6db9bc4d4a9afbc`; main `fed57820909f4984a97d67437340df952b73a5ab`. Local current blueprint, rule catalogue, Core/packet contracts, publication inputs and runtime map were read. The two available original pasted files were inspected for packet, inference and agent-reuse concerns; the later attachment is absent locally. Current visible owner requirements supersede older readiness-driven study assumptions.
+
+| Reference and pinned head | What was inspected / useful | Treatment in this proposal |
+|---|---|---|
+| [Physics PR350](https://github.com/reallaksh19/Common/pull/350), `4db3c541c835feb8ca6dde6ee79afc8c1d3b8fb6` | Blueprint README, technical-gates v2 description, technical-teaching-unit v3 schema; current routing/scope, absence-versus-unknown, canonical expert state, meaningful learner transformation, verification and repair | Adapt these distinctions to the guide/library. Keep V3B's research-friendly draft policy. Do not claim that V2's seven-core compiler or all contracts have been ported. |
+| [Mathematics PR351](https://github.com/reallaksh19/Common/pull/351), `3af2d879e21d169da6a97340501afc0298178669` | Canonical six-Core architecture: separate study differentiation and learner adaptation; provider semantics; substantive teaching units | Basis for proposed subject crosswalk. Mathematical validators and production quality were not rerun. |
+| [Chemistry PR362](https://github.com/reallaksh19/Common/pull/362), `23d859a8fa0d07e0790d323767dc7fd08f396c5d` | LearningBlueprint README: blind grounding/reveal, equation anatomy, representation selection and transfer eligibility; PR is closed | Preserve useful packet/transfer ideas. Earlier Core1A learner-readiness dependence conflicts with the owner's later rule and is not adopted. Current successor Chemistry architecture needs a separate implementation review. |
+| [Physics registry PR383](https://github.com/reallaksh19/Common/pull/383), `e92481f6e03a8bb49a55f568b03cba7c12fb942a` | File inventory shows existing technical-gate registry/schema work | Do not create a competing title registry. Proposed library adds teaching substance and source-selection routes; import decisions require record-level review later. |
+| [Relative-motion PR391](https://github.com/reallaksh19/Common/pull/391), `0210ac3f7619c8caf9230d3ba5a177266b4ca668` | Thin V2 stress invocation/custody record; compiler authority and held Mathematics prerequisite demands | New prompt is complementary: actual learner outputs, positive flexibility controls, profile differences, final layout and restart/extension. Its architecture receipt is not a learner-book PASS. No CI result is independently reproduced here. |
+
+These are targeted architecture readings, not complete PR code reviews. No parent or sibling files are changed or merged. The obsolete PR-delivery and Grade 9 workflow skills do not govern this task, per the owner's explicit instruction.
+
+## Evidence still needed
+
+The proposed library must show better first-pass content and lower repair load on held-out topics, not just schema validity. The prompt must be executed by a new production agent. Its expected checks must be compared with actual detectors; absent detectors remain issues. Real learner benefit, transfer, retention and broad subject scalability remain unmeasured.

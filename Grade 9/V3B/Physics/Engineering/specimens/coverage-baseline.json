@@ -1,0 +1,97 @@
+{
+  "id": "THERMO-SPECIMEN-COVERAGE",
+  "version": "1.0.0",
+  "scope": "Six selected energy-bookkeeping obligations for four design specimens; not all 54 registry obligations or a full syllabus.",
+  "assets": [
+    {
+      "id": "SYSTEM",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    },
+    {
+      "id": "SIGNS",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    },
+    {
+      "id": "RELATION",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    },
+    {
+      "id": "REPRESENTATION",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    },
+    {
+      "id": "REASONING",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    },
+    {
+      "id": "CHECK",
+      "applicable_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ],
+      "required_cores": [
+        "CORE1A",
+        "CORE1B",
+        "CORE2A",
+        "CORE2B"
+      ]
+    }
+  ]
+}

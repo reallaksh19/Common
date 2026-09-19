@@ -1,0 +1,17 @@
+{
+  "basis_digest": "260c4adcee2c03f556c636be18f50910f2d63495d7aa554ccf3d7e7717279e0e",
+  "runtime_digest": "251a3639838e85067ce33ad3697a8f95980d695e12b0b1840b1c8740eeaddde7",
+  "archive_sha256": "8a29808cbf36113835c9b5b9ee05f39faf78d80396f9d311521e964c449db19a",
+  "archive_bytes": 103320,
+  "files_including_manifest": 56,
+  "products": [
+    "CORE1A",
+    "CORE1B",
+    "CORE2A",
+    "CORE2B"
+  ],
+  "full_page_browser_review": "NOT_RUN_NO_BROWSER_EXECUTABLE",
+  "standalone_svg_inspection": "PERFORMED_BY_AUTHOR_NOT_INDEPENDENT",
+  "independent_academic_review": "NOT_RUN",
+  "learner_release_authorized": false
+}

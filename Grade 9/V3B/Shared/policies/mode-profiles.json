@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "authority": "STARTING_PROFILES_REQUIRE_EXPLICIT_OWNER_MODE",
+  "modes": {
+    "STARTER": {
+      "learning_purpose": "FIRST_STUDY",
+      "source_selection": "FIRST_PER_SUBTOPIC",
+      "allowed_support": [
+        "GUIDED",
+        "OPTIONAL_HINTS"
+      ],
+      "max_novelty": "NEAR_TRANSFER",
+      "required_generated_slots": {
+        "DIRECT": 1
+      },
+      "hint_visibility": "VISIBLE_TECHNICAL"
+    },
+    "PRACTICE": {
+      "learning_purpose": "PRACTICE",
+      "source_selection": "ALL_ELIGIBLE",
+      "allowed_support": [
+        "OPTIONAL_HINTS",
+        "INDEPENDENT"
+      ],
+      "max_novelty": "STRUCTURAL_VARIATION",
+      "required_generated_slots": {
+        "NEAR_TRANSFER": 1
+      },
+      "hint_visibility": "OPTIONAL_AFTER_ATTEMPT"
+    },
+    "REVISION": {
+      "learning_purpose": "REVISION",
+      "source_selection": "REPRESENTATIVE_PER_SUBTOPIC",
+      "allowed_support": [
+        "OPTIONAL_HINTS",
+        "INDEPENDENT"
+      ],
+      "max_novelty": "STRUCTURAL_VARIATION",
+      "required_generated_slots": {},
+      "hint_visibility": "OPTIONAL_AFTER_ATTEMPT"
+    },
+    "COMPETITION": {
+      "learning_purpose": "COMPETITIVE_EXAM",
+      "source_selection": "REPRESENTATIVE_PER_SUBTOPIC",
+      "allowed_support": [
+        "OPTIONAL_HINTS",
+        "INDEPENDENT"
+      ],
+      "max_novelty": "MIXED_SYNTHESIS",
+      "required_generated_slots": {
+        "NEAR_TRANSFER": 1,
+        "STRUCTURAL_VARIATION": 1
+      },
+      "hint_visibility": "OPTIONAL_AFTER_ATTEMPT",
+      "benchmark_policy": "REQUIRED",
+      "minimum_distinct_benchmarks": 2
+    }
+  },
+  "invariants": [
+    "MODE_MUST_BE_OWNER_SELECTED",
+    "PERCENTAGE_CANNOT_SELECT_MODE",
+    "LEARNING_PURPOSE_AND_PRACTICE_MODE_ARE_SEPARATE",
+    "SUPPORT_CAN_BE_OWNER_ADJUSTED",
+    "SOURCE_ON_ATTEMPT_PAGE",
+    "MAX_TWO_PAGES_PER_QUESTION",
+    "BENCHMARK_NEVER_CURRICULUM_AUTHORITY",
+    "MACHINE_COMPLETION_NEVER_HUMAN_RELEASE"
+  ]
+}

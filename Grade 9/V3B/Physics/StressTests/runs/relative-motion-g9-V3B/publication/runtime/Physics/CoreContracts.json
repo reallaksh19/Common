@@ -1,0 +1,52 @@
+{
+  "subject": "Physics",
+  "contract_version": "1.3.0",
+  "equation_semantic_fields": [
+    "model_assumptions",
+    "axis_and_sign",
+    "dimensions",
+    "physical_interpretation"
+  ],
+  "validator_ids": [
+    "CONSTANT_ACCELERATION_VELOCITY",
+    "CONSTANT_ACCELERATION_INITIAL_VELOCITY",
+    "CONSTANT_ACCELERATION_EVENT_TIME",
+    "SPEED_FROM_COMPONENTS",
+    "APEX_STATE"
+  ],
+  "risks": [
+    "velocity versus acceleration",
+    "component versus magnitude",
+    "diagram arrow semantics",
+    "model applicability"
+  ],
+  "basis": "1232ecaf6061b38fd692c25662d2af9936d921aa",
+  "core_roles": {
+    "CORE1": "CONNECTED_SEMANTIC_INTELLIGENCE",
+    "CORE2": "SOURCE_QUESTION_AND_DEMAND_INTELLIGENCE",
+    "CORE1A": "DIFFICULT_CONCEPT_ASSIMILATION",
+    "CORE2A": "OWNER_DIRECTED_PRACTICE"
+  },
+  "source_truth": "ORIGINAL_EVIDENCE_WITH_EXACT_PROVENANCE",
+  "renderer_authority": "COMPOSITION_ONLY",
+  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED",
+  "six_core_contract_ref": "Engineering/CORE_CONTRACTS.md",
+  "engineering_gate_ref": "Engineering/registry.json",
+  "engineering_adoption_head": "f2f22f0cea1c31ebf09da10241db8be0fde39789",
+  "legacy_core_roles_status": "FOUR_CORE_RUNTIME_ONLY",
+  "learner_product_roles": {
+    "CORE1": "EXISTING_BASIC_NOTES",
+    "CORE2": "EXISTING_FROZEN_QUESTIONS_AND_HINTS",
+    "CORE1A": "DECLARATIVE_STUDY",
+    "CORE1B": "CONCEPTUAL_SELF_TUTOR",
+    "CORE2A": "SOLUTION_APPRENTICESHIP",
+    "CORE2B": "APPLICATION_AND_TRANSFER_TUTOR"
+  },
+  "production_blueprint_ref": "Blueprint/V3B-Production-Blueprint.md",
+  "production_rule_catalogue_ref": "Blueprint/V3B-Production-Rules.json",
+  "production_acceptance_ref": "Blueprint/V3B-Acceptance-and-Regression.md",
+  "production_runtime_enforcement": "PARTIAL_PUBLICATION_HOST",
+  "production_entrypoint": "ProductionKit/run.py publish",
+  "production_host_coverage_ref": "ProductionKit/V3B-Runtime-Map.md",
+  "research_and_minimum_criteria_ref": "Blueprint/V3B-Research-and-Minimum-Criteria.md"
+}
