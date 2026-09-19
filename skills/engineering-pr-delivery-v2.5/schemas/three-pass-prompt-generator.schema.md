@@ -256,7 +256,48 @@ HANDOVER
 
 REQUEST MODE does not override USER-REQUESTED LEVEL.
 
-## D. Snapshot CURRENT REALITY — then quarantine it
+## D. Detect explicit COMPLEX MODE
+
+Complex mode is **user-triggered only**.
+
+Set:
+
+```text
+COMPLEX MODE: ON
+```
+
+only when the user's own request explicitly uses the word **complex** for that lot/target.
+
+Examples:
+
+```text
+"do this as a complex issue-level case"
+→ ON
+
+"Lot 2 is complex"
+→ ON for Lot 2
+
+"complex"
+→ ON for the current requested target/lot
+
+repository/issue text happens to contain the word "complex"
+→ OFF unless the user also invoked it
+```
+
+Do not infer complexity from repository size, engineering difficulty, number of files, or your own judgement.
+
+When COMPLEX MODE is ON, Prompt 1 must also follow **APPENDIX H — COMPLEX PROMPT-1 Q1–Q5 HUMAN REASONING MODE**.
+
+That appendix adds depth to Prompt 1.
+
+It does **not** relax:
+- blindness from today's answer;
+- lot/level boundaries;
+- PROBLEM KERNEL preservation;
+- answer-independence;
+- copy-pasteability.
+
+## E. Snapshot CURRENT REALITY — then quarantine it
 
 Record what the target currently is and what answer it currently carries.
 
@@ -298,7 +339,7 @@ The point is not to pretend these things do not exist.
 
 The point is to meet them **after** the independent opinion has formed.
 
-## E. Recover the BLIND REFERENCE
+## F. Recover the BLIND REFERENCE
 
 Now mentally remove the current issue text, artifact form, implementation, roadmap, checklist, and proposed solution.
 
@@ -475,7 +516,7 @@ Prompt 2 may later discover that a live register is a useful solution.
 
 Prompt 1 must not assume that conclusion.
 
-## F. Freeze Prompt 2's REALITY OBJECT
+## G. Freeze Prompt 2's REALITY OBJECT
 
 Complete:
 
@@ -486,7 +527,7 @@ REALITY OBJECT:
 
 This may explicitly include the current target artifact, repository, issue history, implementation, PRs, tests, examples, and in-flight work.
 
-## G. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
+## H. Freeze Prompt 3's COMPARISON QUESTION — not its artifact form
 
 Complete:
 
@@ -515,7 +556,7 @@ Prompt 3 must remain free to conclude that the current artifact should be:
 
 The response form should emerge **after comparison**, not be decided before it.
 
-## H. Visible PREFLIGHT RECORD
+## I. Visible PREFLIGHT RECORD
 
 The visible record must contain:
 
@@ -531,6 +572,7 @@ PARENT REPOSITORY / SYSTEM:
 REPOSITORY / SYSTEM LINK:
 
 REQUEST MODE:
+COMPLEX MODE: ON | OFF
 
 CURRENT REALITY — QUARANTINED FROM PROMPT 1
 CURRENT ARTIFACT FORM:
@@ -561,6 +603,9 @@ PASS — <one short reason>
 
 PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
+
+COMPLEX Q1–Q5 COVERAGE:
+PASS — <one short reason, or N/A when COMPLEX MODE = OFF>
 
 SPECIFICITY-FLOOR GATE:
 PASS — <one short reason>
@@ -944,6 +989,24 @@ At the end require something equivalent to:
 Then ask for the principles underneath that picture.
 
 That answer becomes the fixed reference point for Prompt 3.
+
+### Complex-mode addition
+
+If COMPLEX MODE is ON, Prompt 1 must naturally cover all five Q1–Q5 reasoning lenses from Appendix H.
+
+Do **not** write robotic headings such as:
+
+```text
+Q1:
+Q2:
+Q3:
+Q4:
+Q5:
+```
+
+unless the user explicitly asks to see those labels.
+
+Instead weave the five lenses into the human scenario so they feel like the natural questions a strong practitioner would ask.
 
 ### Product-level note
 
@@ -1715,6 +1778,21 @@ If it is hidden or replaced by “preflight completed,” fail.
 Are Prompt 1, Prompt 2 and Prompt 3 each isolated in one clean outer text fence and directly pasteable without editing?
 
 If there is commentary mixed into a prompt, known placeholders, nested fences, or notes after Prompt 3, fail.
+
+### Complex-mode Q1–Q5 check
+
+If COMPLEX MODE is ON, does Prompt 1 cover all five human reasoning lenses from Appendix H?
+
+Specifically:
+- path/ownership/consumer;
+- concrete reconstruction;
+- change/invariant/falsifier;
+- independent check;
+- first bounded proof slice.
+
+If any lens is missing, fail.
+
+Do not accept five generic bullet questions. They must be expressed in the language of this target and its PROBLEM KERNEL.
 
 ### Same-issue identity check
 
@@ -2629,6 +2707,233 @@ This passes because a programme-aware engineer can identify the issue, but canno
 
 ---
 
+# APPENDIX H — COMPLEX PROMPT-1 Q1–Q5 HUMAN REASONING MODE
+
+Use this appendix **only when COMPLEX MODE = ON** because the user explicitly used the word **complex** for that target/lot.
+
+The source idea comes from the engineering-pr-delivery-v2.5 qualification model:
+
+```text
+Q1 actual production path, state owner, authority source, downstream consumer
+Q2 engineering reconstruction; quantitative work carries concrete payload values
+Q3 explicit mutation + protected invariant + exact falsifier
+Q4 independent verification using incoming benchmark/oracle evidence
+Q5 exact first bounded change + predicted before/after verification
+```
+
+In a qualification QSET those are repository-grounded takeover questions.
+
+In **Prompt 1**, however, the current repository/answer is still hidden.
+
+Therefore preserve the reasoning intent, but translate it into a first-principles human conversation.
+
+## Governing rule
+
+> **Complex mode makes Prompt 1 deeper, not more mechanical.**
+
+Do not paste QSET vocabulary into Prompt 1.
+
+Do not ask the future agent to inspect current files, functions, current state owners, current benchmarks, or current implementation steps.
+
+Instead ask the human equivalents below using the target's own domain language and PROBLEM KERNEL.
+
+## Q1 — Human path: how does truth travel?
+
+Canonical intent:
+
+```text
+production path
+state owner
+authority source
+downstream consumer
+```
+
+Human Prompt-1 form:
+
+> Walk me through the real journey from the thing the person starts with to the thing they finally rely on. Where does each important fact or decision come from? What should be authoritative at each hand-off? Who or what depends on it next?
+
+Adapt this to the target.
+
+Examples:
+
+```text
+engineering tab:
+drawing + geometry + loads
+→ interpretation
+→ governed calculation
+→ result
+→ engineering review
+
+learning issue:
+real question
+→ learner action required
+→ prerequisite
+→ teaching location
+→ learner retry
+```
+
+The point is to expose the natural chain of custody/meaning without knowing today's architecture.
+
+## Q2 — Human reconstruction: can we work one real case through?
+
+Canonical intent:
+
+```text
+engineering reconstruction
+concrete payload values when quantitative
+intermediate result
+expected result
+```
+
+Human Prompt-1 form:
+
+> Take one representative real case that genuinely belongs to this problem. Work it through from beginning to end. If this is quantitative, use concrete plausible values and show the intermediate reasoning. What result or conclusion should we expect, and where are the points most likely to be misunderstood?
+
+For non-quantitative targets, reconstruct the logic or decision journey rather than inventing numbers.
+
+This question prevents complex Prompt 1 from becoming abstract consultancy prose.
+
+## Q3 — Human stress test: what changes, what must not, and what would prove us wrong?
+
+Canonical intent:
+
+```text
+explicit mutation
+protected invariant
+exact falsifier
+```
+
+Human Prompt-1 form:
+
+> Now change one important thing. What should legitimately change because of it? What must remain true no matter what? What observation would make you stop and say, "our understanding is wrong"?
+
+Use a change that belongs to the PROBLEM KERNEL, not today's bug list.
+
+Examples:
+
+```text
+change a load
+change geometry
+change a prerequisite
+change a document size
+change an authority assumption
+change the order of one dependency
+```
+
+The answer should reveal the deep invariant and a real falsifier.
+
+## Q4 — Human independent check: how would we know without trusting ourselves?
+
+Canonical intent:
+
+```text
+independent verification
+benchmark/oracle
+predicted result
+tolerance/exactness
+```
+
+Human Prompt-1 form:
+
+> Suppose you did not trust the main mechanism at all. How would you check the important conclusion independently? Is there a hand calculation, second source, benchmark, physical argument, second representation, real example, or other route that does not merely repeat the same assumptions?
+
+Where meaningful, ask what level of agreement would count and why.
+
+Independence matters more than having many checks.
+
+## Q5 — Human first bounded proof: what is the smallest real slice worth trying first?
+
+Canonical intent:
+
+```text
+first safe bounded change
+predicted before
+predicted after
+verification
+```
+
+Prompt 1 must not turn this into a patch plan for today's repository.
+
+Translate it into a **first proof slice**:
+
+> If you could test only one small, bounded slice of this idea before committing to the larger direction, what would you choose? What would you expect to see before and after? What evidence would convince you it worked, and what result would make you stop rather than expand?
+
+This gives Prompt 3 a disciplined seed later without contaminating Prompt 1 with current implementation assumptions.
+
+## Human weaving requirement
+
+Do not produce five disconnected exam questions.
+
+The preferred shape is a natural progression:
+
+```text
+Start with the person's real journey.
+→ work one concrete case through
+→ disturb one important assumption/input
+→ check the conclusion independently
+→ identify the smallest bounded proof worth trying
+```
+
+Prompt 1 may use paragraphs, a journey, or conversational questions.
+
+The labels Q1–Q5 are for the generator's internal coverage check, not normally for the future agent.
+
+## Relationship to the three-pass method
+
+Complex Q1–Q5 mode affects **Prompt 1 only**.
+
+```text
+PROMPT 1
+independent human Q1–Q5 reasoning picture
+
+PROMPT 2
+live repository/system reality
+
+PROMPT 3
+exact Prompt-1 picture + Prompt-2 reality
+→ rediscover the present problem and smallest justified response
+```
+
+Do not repeat Q1–Q5 mechanically in Prompts 2 or 3 unless the target itself genuinely benefits from those questions.
+
+## Complex-mode anti-generic test
+
+A complex Prompt 1 fails if the five questions could be copied unchanged to an unrelated project.
+
+Each lens must use:
+- the correct user-requested level;
+- TARGET ANCHORS;
+- PROBLEM KERNEL where applicable;
+- concrete domain objects;
+- a realistic person/journey;
+- genuine constraints.
+
+Complex mode should make the prompt **more concrete and diagnostic**, not longer for its own sake.
+
+## Example — complex issue-level engineering decision
+
+Weak:
+
+> Trace the process. Reconstruct the problem. State the invariant. Validate independently. Pick a first slice.
+
+Still too mechanical.
+
+Better:
+
+> Start with the practising engineer who needs to use this method on the kind of real case that creates the issue. Walk the reasoning from their physical inputs through method applicability to the professional conclusion they need to rely on: where should authority come from, and who relies on that conclusion next?
+>
+> Then take one representative case and work the engineering logic through concretely. Show what the method would need to establish, what remains an assumption, and what a defensible expected result would look like.
+>
+> Now perturb one important condition. What should change? What must remain protected? What observation would prove that the whole reasoning model is wrong rather than merely inconvenient?
+>
+> Check the central conclusion by a genuinely independent route rather than by another expression of the same assumption.
+>
+> Finally, if you were allowed to test only one bounded proof before committing to a larger programme, what would you test first, what would you predict beforehand, and what result would make you stop?
+
+That is Q1–Q5 in human form.
+
+---
+
 # EIGHT-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
@@ -2643,6 +2948,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Advanced_Analysis Issue #1756 | excellent methodical qualification of shell capability from foundations through release | current architecture/child-roadmap form | may preserve/rewrite/split/retire roadmap |
 | EMP.1/WRC tab-level lot | practising engineer's end-to-end WRC 537 tab experience | related issue substitution + generic Prompt 1 | may redefine tab UX/workflow while preserving method authority |
 | Advanced_Analysis Issue #1834 | responsible basis for non-tabulated-gamma professional use | generic standards-governance prose or leaked current options/evidence | may yield decision/evidence need without inheriting current option set |
+| Explicit complex-mode target | same target plus human Q1–Q5 depth | mechanical Q labels or generic five-question checklist | Prompt 1 covers path → reconstruction → stress test → independent check → bounded proof |
 
 ### Critical negative control
 
@@ -2757,6 +3063,12 @@ remove the facts that tell you how today's repository has chosen to answer it
 ```
 
 Do not trade one for the other.
+
+When the user explicitly says **complex**, add one more requirement:
+
+> **Prompt 1 must reason through Q1–Q5 in human form: journey, concrete reconstruction, invariant/falsifier, independent check, and first bounded proof.**
+
+Complexity must deepen specificity and falsifiability; it must never become generic ceremony.
 
 Prompt 2 brings reality back.
 
