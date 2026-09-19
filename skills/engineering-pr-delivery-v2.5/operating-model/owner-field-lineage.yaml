@@ -19,11 +19,11 @@ fields:
       procedural_validator:
         - {path: scripts/validate_ep_semantics.py, tokens: ["outcome"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: ["_active_contract", ""outcome""]}
+        - {path: scripts/report_projection.py, tokens: ["_active_contract", "outcome"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""purpose":contract.get("outcome")", ""outcome":current_work.get("outcome")"]}
+        - {path: scripts/communication_projection.py, tokens: ["contract.get", "current_work.get", "outcome"]}
       renderer:
-        - {path: scripts/render_owner_status.py, tokens: ["## What this work is for", "purpose=o.get("purpose")"]}
+        - {path: scripts/render_owner_status.py, tokens: ["## What this work is for", "purpose=o.get"]}
       regression:
         - {path: tests/stress/test_human_communication.py, tokens: ["owner", "purpose"]}
 
@@ -38,11 +38,11 @@ fields:
       procedural_validator:
         - {path: scripts/validate_issue_graph.py, tokens: ["github_state", "roadmap_node"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: ["_current_issues", ""issues""]}
+        - {path: scripts/report_projection.py, tokens: ["_current_issues", "issues"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""issues":current_work.get("issues")"]}
+        - {path: scripts/communication_projection.py, tokens: ["current_work.get", "issues"]}
       renderer:
-        - {path: scripts/render_owner_status.py, tokens: ["Issue #", "current.get("issues")"]}
+        - {path: scripts/render_owner_status.py, tokens: ["Issue #", "current.get", "issues"]}
       regression:
         - {path: tests/stress/test_human_communication.py, tokens: ["test_owner_view_projects_current_issue_identity_and_ep_progress", "Issue #410"]}
 
@@ -57,9 +57,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_progress.py, tokens: ["PROGRESS.execution_packages", "acceptance_criteria", "mirror"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: ["progress_projection", ""progress""]}
+        - {path: scripts/report_projection.py, tokens: ["progress_projection", "progress"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: ["_current_titles", ""acceptance":report.get("acceptance")"]}
+        - {path: scripts/communication_projection.py, tokens: ["_current_titles", "report.get", "acceptance"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["active execution-package progress", "Overall progress"]}
       regression:
@@ -76,9 +76,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_checkpoint.py, tokens: ["CP v2 implementation_result.summary", "completed_steps", "files_changed"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""implementation_result":cp.get("implementation_result")"]}
+        - {path: scripts/report_projection.py, tokens: ["implementation_result", "cp.get"]}
       communication_projection:
-        - {path: scripts/owner_publication.py, tokens: ["_implementation_state", ""files_changed"", ""completed_steps""]}
+        - {path: scripts/owner_publication.py, tokens: ["_implementation_state", "files_changed", "completed_steps"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["Completed steps recorded now", "Files changed in the current checkpoint result"]}
       regression:
@@ -95,9 +95,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_state_planes.py, tokens: ["NOT_RUN", "cause", "reason"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""evidence":planes.get("evidence")"]}
+        - {path: scripts/report_projection.py, tokens: ["planes.get", "evidence"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""not_run":evidence.get("not_run")"]}
+        - {path: scripts/communication_projection.py, tokens: ["evidence.get", "not_run"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["Evidence state", "not_run"]}
       regression:
@@ -114,9 +114,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_checkpoint.py, tokens: ["known_limitations"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""known_limitations":cp.get("known_limitations")"]}
+        - {path: scripts/report_projection.py, tokens: ["cp.get", "known_limitations"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""known_limitations":checkpoint.get("known_limitations")"]}
+        - {path: scripts/communication_projection.py, tokens: ["checkpoint.get", "known_limitations"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["known_limitations"]}
       regression:
@@ -133,9 +133,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_checkpoint.py, tokens: ["RECONCILIATION_RESULTS", "roadmap_reconciliation"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""roadmap_reconciliation":cp.get("roadmap_reconciliation")"]}
+        - {path: scripts/report_projection.py, tokens: ["cp.get", "roadmap_reconciliation"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""last_reconciliation":checkpoint.get("roadmap_reconciliation")"]}
+        - {path: scripts/communication_projection.py, tokens: ["checkpoint.get", "last_reconciliation", "roadmap_reconciliation"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["Last checkpoint roadmap reconciliation", "Roadmap revision"]}
       regression:
@@ -152,7 +152,7 @@ fields:
       procedural_validator:
         - {path: scripts/validate_ep_semantics.py, tokens: ["execution_requirement", "requires command or executable instruction"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""next_work":(ep.get("next_work")"]}
+        - {path: scripts/report_projection.py, tokens: ["ep.get", "next_work"]}
       communication_projection:
         - {path: scripts/communication_projection.py, tokens: ["external_actions", "execution_requirement"]}
       renderer:
@@ -171,9 +171,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_ep_semantics.py, tokens: ["next_work.steps", "expected_result"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: [""next_work":(ep.get("next_work")"]}
+        - {path: scripts/report_projection.py, tokens: ["ep.get", "next_work"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: ["_exact_next_work", ""next_work":{"steps":next_steps}"]}
+        - {path: scripts/communication_projection.py, tokens: ["_exact_next_work", "next_work", "next_steps"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["## What happens next", "expected_result"]}
       regression:
@@ -192,7 +192,7 @@ fields:
       report_projection:
         - {path: scripts/owner_publication.py, tokens: ["normalize_report", "classify_baseline", "NO_MATERIAL_PROGRESS"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: ["publication_status", ""change":change"]}
+        - {path: scripts/communication_projection.py, tokens: ["publication_status", "change"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["## What changed", "No material engineering"]}
       regression:
@@ -211,7 +211,7 @@ fields:
       report_projection:
         - {path: scripts/delivery_projection.py, tokens: ["technical_ready_to_merge", "merge_authorization", "ready_for_review"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+        - {path: scripts/communication_projection.py, tokens: ["report.get", "delivery"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["## Delivery", "technically ready to merge", "merge authorization"]}
       regression:
@@ -230,7 +230,7 @@ fields:
       report_projection:
         - {path: scripts/delivery_projection.py, tokens: ["unmerged_prs", "_carry_forward"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+        - {path: scripts/communication_projection.py, tokens: ["report.get", "delivery"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["Unmerged PRs carried forward", "correlations"]}
       regression:
@@ -247,9 +247,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_pr_correlation.py, tokens: ["validate_correlation_rows", "task-close checkpoint EP"]}
       report_projection:
-        - {path: scripts/delivery_projection.py, tokens: ["correlations_for_observation", ""correlations""]}
+        - {path: scripts/delivery_projection.py, tokens: ["correlations_for_observation", "correlations"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: [""delivery":report.get("delivery")"]}
+        - {path: scripts/communication_projection.py, tokens: ["report.get", "delivery"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["Issue #", " ↔ ", "relationship"]}
       regression:
@@ -266,9 +266,9 @@ fields:
       procedural_validator:
         - {path: scripts/validate_owner_decision.py, tokens: ["delivery_authorization", "must not grant material write authority"]}
       report_projection:
-        - {path: scripts/report_projection.py, tokens: ["_owner_decisions", ""delivery_authorization":odr.get("delivery_authorization")"]}
+        - {path: scripts/report_projection.py, tokens: ["_owner_decisions", "delivery_authorization", "odr.get"]}
       communication_projection:
-        - {path: scripts/communication_projection.py, tokens: ["_required_owner_decisions", ""decisions""]}
+        - {path: scripts/communication_projection.py, tokens: ["_required_owner_decisions", "decisions"]}
       renderer:
         - {path: scripts/render_owner_status.py, tokens: ["## Decisions for you", "merge authorization"]}
       regression:
