@@ -8,7 +8,7 @@ from takeoverlib import digest_mapping
 from owner_publication import cursor_digest,publication_status
 
 FORBIDDEN_OWNER_TOKENS=("BATON_READY","TAKEOVER_CERTIFIED","MATERIAL_WRITE_READY","GHGEN-","GHOP-","QSET-","QUAL-","DISC-","QRV-","ODR-","REPO_STATE","material_authority")
-OWNER_HEADINGS=("## What can happen now","## What changed","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Action required outside this environment","## Decisions for you","## What happens next","## What would stop progress")
+OWNER_HEADINGS=("## What can happen now","## What changed","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Delivery","## Action required outside this environment","## Decisions for you","## What happens next","## What would stop progress")
 
 
 def _subjects(items):
@@ -48,6 +48,7 @@ def validate(root:Path):
     expected_progress={"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")}
     for key,value in expected_progress.items():
         if op.get(key)!=value:e.append(f"Owner progress {key} diverges from source report")
+    if (owner.get("delivery") or {})!=(report.get("delivery") or {}):e.append("Owner delivery vector diverges from source report")
     evidence=report.get("evidence") or {};oe=owner.get("evidence") or {}
     if oe.get("state")!=evidence.get("state") or oe.get("summary")!=evidence.get("summary"):e.append("Owner evidence summary diverges from source report")
     if oe.get("not_run")!=(evidence.get("not_run") or []):e.append("Owner view must preserve every NOT_RUN evidence item")
@@ -87,6 +88,20 @@ def validate(root:Path):
         number=issue.get("issue_number");url=issue.get("url")
         if number is not None and f"#{number}" not in text:e.append(f"Owner status hides current issue number {number}")
         if url and str(url) not in text:e.append(f"Owner status hides current issue URL {url}")
+    delivery=report.get("delivery") or {}
+    if delivery.get("applicability")=="APPLICABLE":
+        vehicle=delivery.get("vehicle") or {};number=vehicle.get("number");url=vehicle.get("url")
+        if number is not None and f"PR #{number}" not in text:e.append("Owner status hides current PR number")
+        if url and str(url) not in text:e.append("Owner status hides current PR URL")
+        for value in (
+            (delivery.get("checks") or {}).get("state"),
+            (delivery.get("mergeability") or {}).get("state"),
+            (delivery.get("review") or {}).get("state"),
+            (delivery.get("ready_for_review") or {}).get("state"),
+            (delivery.get("technical_ready_to_merge") or {}).get("state"),
+            (delivery.get("merge_authorization") or {}).get("state"),
+        ):
+            if value and str(value).replace("_"," ").title() not in text and str(value) not in text:e.append(f"Owner status hides delivery state {value}")
     for key in ("protected","prohibited"):
         for subject in _subjects(scope.get(key)):
             if subject not in text:e.append(f"Owner status hides {key} scope: {subject}")
