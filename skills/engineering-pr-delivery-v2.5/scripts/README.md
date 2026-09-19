@@ -236,3 +236,26 @@ python render_roadmap.py <repo-root>
 ```
 
 `ROADMAP_EVENTS.yaml` is a source-bound historical index. Objective/phase ids are concept refs; work package / EP / checkpoint / issue / PR belong in execution refs. Events may record or propose concept impact but cannot apply concept-roadmap changes without the governing roadmap revision.
+
+
+## Owner progress publication
+
+```bash
+# Render current delta/current state without changing the baseline.
+python publish_owner_progress.py <repo-root>
+
+# Normal control-return publication.
+python publish_owner_progress.py <repo-root> --apply
+
+# Explicit heartbeat/no-material-progress receipt.
+python publish_owner_progress.py <repo-root> --apply --force-record
+
+python validate_owner_publication.py <repo-root>
+```
+
+The optional cursor lives at `agents/relay/publication/OWNER_PUBLICATION.yaml`. It stores only the last source-derived normalized report baseline plus publication/source digests. It is derived coordination state and cannot replace roadmap, progress, EP, checkpoint/evidence, issue, Owner-decision, or provider truth.
+
+`communication_projection.py` compares the cursor baseline with current report truth. `render_owner_status.py` exposes that comparison under **What changed**. A no-change render is explicit and does not advance the cursor unless the operator intentionally uses `--force-record`.
+
+`plan_handover.py --apply-publication` uses this same publisher before deriving handover INTENT.
+
