@@ -12,6 +12,9 @@ sys.path.insert(0,str(HERE.parents[1]))
 from test_core import good,dump
 from validate_handover_plan import validate as handover_check
 from prepare_handover_projection import prepare as prepare_handover_projection
+from begin_github_operation import begin as begin_github_operation
+from reconcile_github_projection import reconcile as reconcile_github_projection
+from validate_github_projection import validate as github_projection_check
 from handover_planning import (
     build_handover_plan,
     parse_handover_command,
@@ -192,6 +195,56 @@ class HandoverPlanningStressTests(unittest.TestCase):
             self.assertEqual("HANDOVER-EXISTING",result["issue_node"])
             handover_nodes=[x for x in result["proposed_issue_graph"]["nodes"] if x.get("role")=="HANDOVER"]
             self.assertEqual(1,len(handover_nodes))
+
+
+    def test_verified_handover_publication_snapshot_drives_incremental_delta(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,_,progress,_=good(root)
+            prepared=prepare_handover_projection(root,apply=True)
+            self.assertEqual("READY",prepared["status"])
+            self.assertTrue(prepared["applied"])
+            self.assertEqual([],github_projection_check(root)[0])
+
+            begun=begin_github_operation(root,["synthetic-pre-write-basis"],apply=True)
+            self.assertEqual("OK",begun["status"])
+            observation={
+                "schema_version":"relay-v2.5-github-observation",
+                "generation_id":prepared["generation_id"],
+                "operation_id":prepared["operation_id"],
+                "candidate_basis":["synthetic-pre-write-basis"],
+                "publication":{"attempted":True,"receipt":"synthetic-create-receipt","error":None},
+                "readback":{
+                    "performed":True,
+                    "found":True,
+                    "issue_number":501,
+                    "issue_id":"gid-501",
+                    "github_state":"OPEN",
+                    "marker_present":True,
+                    "relationships":[],
+                    "body_digest":"synthetic-body",
+                    "basis":["synthetic-provider-readback"],
+                },
+                "result":"VERIFIED",
+                "reason":"Synthetic provider readback matches the prepared handover CREATE operation.",
+            }
+            obs_path=root/"agents/relay/projection/HANDOVER_OBSERVATION.yaml"
+            dump(obs_path,observation)
+            reconciled=reconcile_github_projection(root,obs_path,apply=True)
+            self.assertEqual("OK",reconciled["status"])
+            self.assertEqual([],github_projection_check(root)[0])
+
+            baseline=build_handover_plan(root)
+            self.assertTrue(baseline["incremental"]["prior_publication_present"])
+            self.assertEqual(501,baseline["incremental"]["prior_issue_number"])
+            self.assertEqual([],baseline["incremental"]["completed_since_prior"])
+
+            progress["acceptance_criteria"][0].update({"status":"COMPLETE","earned_weight":100,"percent":100})
+            dump(root/"agents/relay/roadmap/PROGRESS.yaml",progress)
+            changed=build_handover_plan(root)
+            completed={x["id"] for x in changed["incremental"]["completed_since_prior"]}
+            self.assertIn("AC:AC-1",completed)
+            self.assertIn("Changes since prior handover",render_issue_body(changed))
+            self.assertIn("AC:AC-1",render_issue_body(changed))
 
     def test_multiple_equally_authoritative_current_issues_fail_closed(self):
         with tempfile.TemporaryDirectory() as td:
