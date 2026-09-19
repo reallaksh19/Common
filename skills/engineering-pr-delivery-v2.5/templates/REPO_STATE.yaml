@@ -76,9 +76,13 @@ projection:
 delivery:
   required: false
   provider: null
+  # Primary/current delivery vehicle for the active slice.
   observation:
     id: null
     path: null
+  # All currently tracked PR observations. Non-terminal PRs here are carried
+  # forward in every Owner summary until MERGED/CLOSED.
+  observations: []
 relay_readiness:
   baton_ready: true
   projection_ready: false
