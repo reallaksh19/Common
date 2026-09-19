@@ -511,6 +511,37 @@ Its closing job is to explain, in plain language:
 
 # STEP 3 — PROMPT 3 MUST REUSE THE EXACT PASS-1 IDEAL
 
+Prompt 3 must also be **self-identifying**.
+
+At its top, include the concrete target references again:
+
+```text
+TARGET:
+<issue/task/product/repository name>
+
+TARGET LINK:
+<canonical issue/task/PR/document URL when available>
+
+REPOSITORY / SYSTEM:
+<repository or parent system name when applicable>
+
+REPOSITORY LINK:
+<repository URL when available>
+```
+
+Do not assume the agent running Prompt 3 still has access to the original user message.
+
+If the target is an issue inside a repository, Prompt 3 should normally contain **both**:
+
+- the issue URL;
+- the repository URL.
+
+If the target is the repository itself, one repository URL is enough.
+
+If the target has no URL, use the clearest stable identifier available.
+
+
+
 Prompt 3 must explicitly tell the future agent to return to the **actual answer it produced for Prompt 1**.
 
 Do not let it quietly rewrite the ideal after seeing the repository.
@@ -528,6 +559,8 @@ Tell it:
 This is the anti-goalpost-moving rule.
 
 If the three prompts are likely to be run in separate conversations, Prompt 3 should instruct the user to paste or attach the outputs of Prompt 1 and Prompt 2 before running it. If they are expected to run in one continuous conversation, simply tell the agent to use its prior two outputs.
+
+The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replace the target identity and links.
 
 ---
 
@@ -866,6 +899,8 @@ Each block must:
 
 - stand on its own;
 - clearly identify the target;
+- include the canonical target link when one exists;
+- include the repository/system link when the target is a task, issue, PR, audit, register, or handover inside a repository;
 - be ready to paste directly into another agent;
 - contain enough context for its own purpose;
 - preserve the independence barrier;
@@ -921,6 +956,12 @@ Does Prompt 2 force inspection of current evidence rather than trusting old issu
 ### In-flight-work check
 
 Does Prompt 2 account for relevant current PRs/work without pretending they are already merged?
+
+### Prompt-3 identity check
+
+Does Prompt 3 independently name the target and include the canonical target URL and repository/system URL when available?
+
+If a task/issue prompt lacks either link even though both were supplied, revise it.
 
 ### Goalpost check
 
