@@ -208,9 +208,15 @@ REPOSITORY / SYSTEM LINK:
 
 #### ISSUE_TASK
 
-The target is the specific issue/task and its underlying problem.
+The target is the **specific issue/task**, not merely the general class of problem it belongs to.
 
 Sibling/parent issues are context, not substitutes.
+
+For ISSUE_TASK, Prompt 1 must preserve the issue's **PROBLEM KERNEL**: the smallest set of stable facts without which it would no longer be the same issue.
+
+That kernel may include named domain entities, a source/method boundary, the affected user/job, the particular authority or applicability tension, and the lifecycle stage if those facts define the issue.
+
+It must not include the issue's current proposed options, implementation recipe, present evidence interpretation, current work breakdown, or chosen artifact form merely because those appear in the issue body.
 
 #### TAB_SURFACE
 
@@ -349,11 +355,78 @@ specific issue numbers
 current CI outage
 ```
 
+### PROBLEM KERNEL — mandatory for ISSUE_TASK
+
+For issue/task-level work, TARGET ANCHORS alone are not enough.
+
+Extract the **minimum identity-bearing facts that make this issue this issue**.
+
+Complete:
+
+> **“If I remove any one of these facts, I may be talking about a different sibling issue.”**
+
+A good PROBLEM KERNEL usually contains 3–7 facts.
+
+Possible kernel facts:
+
+- the exact named method/product/domain entity central to the issue;
+- the exact kind of user/job affected;
+- the particular source/authority/applicability boundary at stake;
+- the specific input/output or lifecycle tension;
+- the stage of the programme if the issue only exists because earlier work already happened;
+- the safety/trust invariant that makes this issue materially different from nearby work.
+
+The kernel is **not** a disguised issue summary.
+
+Do not include:
+
+- current option lists;
+- current recommendation;
+- current benchmark numbers unless the number itself defines the problem;
+- current proposed implementation;
+- current PR/branch sequence;
+- current bug inventory;
+- current acceptance checklist;
+- present evidence conclusions that Prompt 2 is supposed to verify.
+
+### Example — issue-level engineering decision
+
+Too generic:
+
+```text
+How should a responsible organisation decide whether to extend a standard beyond its tabulated range?
+```
+
+Still contaminated:
+
+```text
+Should we choose Option 1, Option 2 or Option 3 given CAUx agreement and the current conservatism study?
+```
+
+Correct corridor:
+
+```text
+PROBLEM KERNEL:
+- EMP.1 is a WRC 537 local-attachment assessment capability.
+- The professionally usable route is tied to a tabulated gamma condition.
+- Real vessel geometries commonly require non-tabulated gamma values.
+- WRC 537 does not itself provide the missing non-tabulated-gamma rule.
+- Extending professional-use authority therefore requires an explicit engineering basis;
+  numerical plausibility alone cannot silently create source/method authority.
+```
+
+This is specific enough to identify the issue, but it does not reveal today's option list,
+benchmark conclusion, chosen interpolation coordinate, sample statistics, or recommendation.
+
 Complete:
 
 ```text
 TARGET ANCHORS:
 <stable, level-specific facts that make this unmistakably THIS target without leaking today's answer>
+
+PROBLEM KERNEL:
+<for ISSUE_TASK: 3–7 minimal identity-bearing facts that must survive blindness;
+for other levels: optional if useful>
 
 UNDERLYING HUMAN PROBLEM:
 <the problem that survives even if today's issue/artifact/implementation disappears>
@@ -466,6 +539,7 @@ CURRENT-STATE FACTS:
 
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
+PROBLEM KERNEL:
 UNDERLYING HUMAN PROBLEM:
 HUMAN OUTCOME:
 GENUINE CONSTRAINTS:
@@ -489,6 +563,12 @@ PROMPT-1 OBJECT GATE:
 PASS — <one short reason>
 
 SPECIFICITY-FLOOR GATE:
+PASS — <one short reason>
+
+SAME-ISSUE IDENTITY GATE:
+PASS — <one short reason>
+
+ANSWER-RECONSTRUCTION GATE:
 PASS — <one short reason>
 
 LOT/LEVEL BOUNDARY GATE:
@@ -542,6 +622,83 @@ A good Prompt 1 normally contains:
 - target-specific failure/trust questions.
 
 It should be **specific to the target, independent of today's answer**.
+
+For ISSUE_TASK, genericness is not cured by adding more abstract questions. It is cured by restoring the PROBLEM KERNEL.
+
+---
+
+# HARD GATE 0.75 — SAME-ISSUE IDENTITY GATE
+
+For ISSUE_TASK only, remove the issue number/title from Prompt 1 and ask:
+
+> **Could a domain-aware person familiar with the programme distinguish this issue from its sibling issues?**
+
+They do not need to guess the exact GitHub number.
+
+But they should be able to say what *particular unresolved problem* this prompt is about.
+
+If Prompt 1 collapses to something like:
+
+- “how should engineering decisions be made?”;
+- “how should a register work?”;
+- “how should qualification be governed?”;
+- “how should a learner system map knowledge?”;
+
+without the identity-bearing tension of the issue, fail.
+
+The fix is **not** to restore today's solution.
+
+The fix is to restore the PROBLEM KERNEL.
+
+---
+
+# HARD GATE 0.9 — ANSWER-RECONSTRUCTION GATE
+
+For ISSUE_TASK, ask the opposite question:
+
+> **From Prompt 1 alone, could a domain-aware person reconstruct today's proposed answer, option set, current evidence conclusion, implementation recipe, or backlog sequence?**
+
+If yes, Prompt 1 is contaminated.
+
+Examples of leakage:
+
+```text
+Option 1 / Option 2 / Option 3
+LINEAR_GAMMA vs LOG_GAMMA
+current CAUx percentage
+current n=57 study
+current exact PR order
+current matrix/rung names
+current proposed file/schema changes
+```
+
+Prompt 1 should expose the **question worth answering**, not the repository's current answer to it.
+
+---
+
+# HARD GATE 0.95 — ISSUE GOLDILOCKS CORRIDOR
+
+An issue-level Prompt 1 passes only if **both** are true:
+
+```text
+RECOGNISABLE:
+The underlying issue is identifiable from its problem kernel.
+
+NOT PRE-SOLVED:
+The current answer/options/evidence interpretation cannot be reconstructed.
+```
+
+Think of the allowed information band as:
+
+```text
+too generic
+    ↓
+[ problem kernel + domain truth + human outcome ]
+    ↑
+too contaminated
+```
+
+The generator's job is to stay inside that band.
 
 ---
 
@@ -663,6 +820,7 @@ Allowed inputs to Prompt 1:
 USER-REQUESTED LEVEL
 TARGET TITLE / SURFACE when it is itself part of the requested human problem
 TARGET ANCHORS
+PROBLEM KERNEL
 UNDERLYING HUMAN PROBLEM
 HUMAN OUTCOME
 GENUINE CONSTRAINTS
@@ -805,11 +963,45 @@ Do not leak today's UI arrangement, bug list, implementation limits or current b
 
 ### Task/issue-level note
 
-Imagine what successful handling of the underlying problem would make possible.
+Issue-level Prompt 1 should be **closer to the issue than to the parent programme**, while still preceding today's answer.
+
+Construct it in this order:
+
+```text
+1. Name the real domain/person affected.
+2. State the PROBLEM KERNEL concretely.
+3. Put that person into a realistic situation where the issue matters.
+4. Ask first-principles questions that could lead to multiple legitimate answers.
+5. Ask what evidence/principles would justify action.
+6. End with the independent reference picture.
+```
+
+Do not begin by asking for the current artifact:
+
+```text
+bad:  "Imagine an excellent decision package."
+bad:  "Imagine an excellent register."
+bad:  "Imagine an excellent matrix."
+```
+
+Instead ask about the actual unresolved problem:
+
+```text
+better:
+"EMP.1 uses WRC 537 for local-attachment assessment. Its professionally usable
+method basis is tied to tabulated gamma conditions, while real vessel geometry
+often lies between those conditions and the source itself does not provide the
+missing rule. Before looking at how this repository has tried to resolve that,
+what would have to be true before an engineering organisation could responsibly
+let the product serve those non-tabulated cases?"
+```
+
+That is issue-specific without revealing today's options or evidence conclusion.
 
 Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
 
-Run the ARTIFACT-ERASURE, CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
+Run the SAME-ISSUE IDENTITY, ANSWER-RECONSTRUCTION, ARTIFACT-ERASURE,
+CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
 
 ---
 
@@ -1497,6 +1689,27 @@ If it is hidden or replaced by “preflight completed,” fail.
 Are Prompt 1, Prompt 2 and Prompt 3 each isolated in one clean outer text fence and directly pasteable without editing?
 
 If there is commentary mixed into a prompt, known placeholders, nested fences, or notes after Prompt 3, fail.
+
+### Same-issue identity check
+
+For ISSUE_TASK, after removing the title/number, is the particular issue still distinguishable from sibling issues?
+
+If not, restore the PROBLEM KERNEL.
+
+### Answer-reconstruction check
+
+For ISSUE_TASK, can Prompt 1 reveal today's option set, evidence conclusion, implementation recipe or sequence?
+
+If yes, remove those answer-side facts.
+
+### Goldilocks-corridor check
+
+Is the issue-level Prompt 1 simultaneously:
+
+- recognisable as this issue; and
+- not pre-solved by today's issue text?
+
+Both must pass.
 
 ### Reality-quarantine check
 
@@ -2199,21 +2412,36 @@ Issue #1854
 Open-items register after the P0 product fixes
 ```
 
-Prompt 1 should remain issue-level and specific to the post-fix question:
+This issue is unusually easy to over-generalise because its present form is a register.
 
-> A professional engineering calculation surface has just gone through a substantial round of user-facing fixes. Before spending more engineering effort, how should a responsible owner determine what genuinely remains between today's product and a worthwhile bounded release; what is executable work versus accountable judgement; what has become historical; what can proceed independently; and what should no longer be pursued?
+The blind pass must preserve its **post-P0 closure problem**, not the register form.
 
-Useful anchors may include:
+A compliant kernel is closer to:
 
 ```text
-EMP.1 / WRC 537 programme
-post-product-fix stage
-bounded professional-use/release question
-engineering work versus accountable decision
-practising pressure-equipment context
+PROBLEM KERNEL:
+- The target is the EMP.1 / WRC 537 professional product programme.
+- A substantive P0 product-fix round has just changed what is true.
+- The question is what genuinely remains before further bounded professional-release work is worthwhile.
+- Some remaining matters may be executable engineering; others may require accountable disposition rather than implementation.
+- Earlier sequencing may have become historical because the product changed.
 ```
 
-Do not leak the current gamma decision, CI outage, UI residue, hash issue or current sequence into Prompt 1.
+A strong Prompt 1 could begin:
+
+> EMP.1/WRC has just come through a substantial round of product fixes. Before anyone spends another engineering week, imagine you are responsible for deciding what genuinely remains between the product as it now stands and a worthwhile bounded professional release. What must you establish about remaining engineering work, unresolved authority/judgement, obsolete plans, independent work, and stop/defer conditions before continuing?
+
+That is recognisably #1854's underlying problem.
+
+It does **not** reveal today's gamma item, CI outage, UI residue, hash issue, current sequence, or acceptance list.
+
+The following is too generic and should fail:
+
+> How should a responsible owner determine what remains in a complex engineering programme?
+
+The following is contaminated and should also fail:
+
+> Given the gamma decision, CI outage, U-16 residue and resultHash issue, what order should the remaining work take?
 
 ## Lot 2 — TAB_SURFACE
 
@@ -2270,7 +2498,71 @@ This is the required standard:
 
 ---
 
-# SEVEN-CASE REGRESSION VALIDATION
+# APPENDIX G — ISSUE-LEVEL SPECIFICITY CONTROL: #1834
+
+This case protects against **laundered generalisation**.
+
+A weak generator reads Issue #1834, strips its proper nouns, and produces:
+
+> A published standard has discrete tabulated values. Real equipment lies between them.
+> How should a responsible decision package be built?
+
+That is not genuinely blind.
+
+It is the current issue narrative rewritten generically.
+
+It also loses the issue's identity.
+
+## Correct PROBLEM KERNEL
+
+```text
+- EMP.1 is a WRC 537 local-attachment assessment capability for pressure-equipment work.
+- Professional-use applicability is tied to tabulated gamma conditions.
+- Real vessel geometry commonly requires non-tabulated gamma values.
+- WRC 537 does not itself supply the missing non-tabulated-gamma rule.
+- The unresolved engineering problem is what basis, if any, could justify serving such cases
+  without pretending that numerical plausibility creates WRC source/method authority.
+```
+
+## What Prompt 1 may know
+
+It may know those kernel facts.
+
+They are the problem.
+
+It may also use stable domain distinctions such as:
+
+```text
+source/method fidelity
+numerical validity
+conservatism
+independent qualification
+organisation-owned policy
+professional-use authority
+fail-closed refusal
+```
+
+## What Prompt 1 must not know
+
+```text
+current Option 1 / 2 / 3
+LINEAR_GAMMA
+LOG_GAMMA
+current sample size/statistics
+current CAUx agreement percentage
+current repository recommendation
+current downstream issue sequence
+```
+
+## Strong Prompt-1 direction
+
+> EMP.1 is intended to support WRC 537 local-attachment assessment for real pressure-equipment work. The professional-use basis is tied to tabulated gamma conditions, but real vessel geometry commonly falls between those conditions and the source itself does not provide the missing rule. Before looking at how the current repository has approached that gap, reason from engineering first principles: what would have to be true before an organisation could responsibly let the product serve non-tabulated-gamma cases? What separate claims would need support—numerical behaviour, conservatism, source fidelity, independent qualification, organisation-owned policy and professional-use authority? When is refusal the correct answer? What evidence would change your position?
+
+This passes because a programme-aware engineer can identify the issue, but cannot infer today's chosen options or evidence conclusion.
+
+---
+
+# EIGHT-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -2283,6 +2575,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Advanced_Analysis Issue #1854 | excellent post-change judgement about the true remaining path | sanitized restatement of issue as blind context | may preserve/reconcile/replace/close register |
 | Advanced_Analysis Issue #1756 | excellent methodical qualification of shell capability from foundations through release | current architecture/child-roadmap form | may preserve/rewrite/split/retire roadmap |
 | EMP.1/WRC tab-level lot | practising engineer's end-to-end WRC 537 tab experience | related issue substitution + generic Prompt 1 | may redefine tab UX/workflow while preserving method authority |
+| Advanced_Analysis Issue #1834 | responsible basis for non-tabulated-gamma professional use | generic standards-governance prose or leaked current options/evidence | may yield decision/evidence need without inheriting current option set |
 
 ### Critical negative control
 
@@ -2373,6 +2666,18 @@ But independence is not vagueness.
 > **Prompt 1 must be blind to today's answer while remaining richly specific to the user-requested target, level, domain and job-to-be-done.**
 
 The user's lot boundaries are authoritative. A tab-level request stays tab-level; a related issue becomes evidence, not a substitute target.
+
+For issue-level work, preserve the **PROBLEM KERNEL**:
+
+> **Erase today's answer, not the facts that make it the same issue.**
+
+The issue-level blind pass must live inside the Goldilocks corridor:
+
+```text
+recognisable as this issue
+but
+not reconstructable as today's answer
+```
 
 Prompt 2 brings reality back.
 
