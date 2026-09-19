@@ -212,6 +212,42 @@ def _requirements_safe(requirements:list[str])->tuple[list[str],list[str]]:
     return safe,errors
 
 
+
+def _previous_handover_snapshot(root:Path,handover_key:str)->dict:
+    graph_path=root/"agents/relay/roadmap/ISSUE_GRAPH.yaml"
+    if not graph_path.exists():return {}
+    graph=load_yaml(graph_path);matches=[]
+    for node in graph.get("nodes",[]) or []:
+        if not isinstance(node,dict):continue
+        if node.get("role")!="HANDOVER" or node.get("handover_key")!=handover_key:continue
+        if node.get("github_state")!="OPEN":continue
+        matches.append(node)
+    if len(matches)!=1:return {}
+    node=matches[0];snapshot=node.get("published_handover_snapshot") or {}
+    return {
+        "issue_node":node.get("id",node.get("issue")),
+        "issue_number":(node.get("github") or {}).get("issue_number"),
+        "issue_url":(node.get("github") or {}).get("url"),
+        "snapshot":snapshot if isinstance(snapshot,dict) else {},
+    }
+
+
+def _incremental_delta(root:Path,handover_key:str,current_intent:list[dict])->dict:
+    prior=_previous_handover_snapshot(root,handover_key);snapshot=prior.get("snapshot") or {}
+    previous=[x for x in snapshot.get("intent",[]) or [] if isinstance(x,dict)]
+    old={str(x.get("id")):x for x in previous if x.get("id")}
+    new={str(x.get("id")):x for x in current_intent if x.get("id")}
+    return {
+        "prior_publication_present":bool(snapshot),
+        "prior_issue_node":prior.get("issue_node"),
+        "prior_issue_number":prior.get("issue_number"),
+        "prior_issue_url":prior.get("issue_url"),
+        "prior_source_report_digest":snapshot.get("source_report_digest"),
+        "newly_pending":[new[k] for k in sorted(new.keys()-old.keys())],
+        "retained_pending":[new[k] for k in sorted(new.keys()&old.keys())],
+        "completed_since_prior":[old[k] for k in sorted(old.keys()-new.keys())],
+    }
+
 def _expected_outcomes(report:dict)->dict:
     contract=report.get("active_contract") or {};outcome=contract.get("outcome") or {}
     return {
@@ -268,6 +304,7 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
     }
     handover_key=digest_mapping(identity_basis)
     parent=(contract.get("issue") or {}) if contract.get("kind")=="GITHUB_ISSUE" else {}
+    incremental=_incremental_delta(root,handover_key,intent)
     issue_strategy={
         "handover_key":handover_key,
         "body_marker":f"<!-- relay-handover-key:{handover_key} -->",
@@ -301,6 +338,7 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
         "expected_outcomes":_expected_outcomes(report),
         "text_requirements":_text_requirements(report),
         "owner_core_requirements":requirements,
+        "incremental":incremental,
         "issue_strategy":issue_strategy,
         "generator":generator,
     }
@@ -326,6 +364,17 @@ def render_issue_body(plan:dict)->str:
             lines.append(f"  - Why pending: {item.get('why_it_remains')}")
             lines.append(f"  - Done when: {item.get('done_when')}")
     else:lines.append("- No pending items remain on the derived current-work basis.")
+
+    delta=plan.get("incremental") or {};lines += ["","## Changes since prior handover"]
+    if delta.get("prior_publication_present"):
+        if delta.get("completed_since_prior"):
+            lines.append("Completed/dispositioned since the prior verified handover:")
+            for item in delta["completed_since_prior"]:lines.append(f"- {item.get('id')}: {item.get('what_remains')}")
+        if delta.get("newly_pending"):
+            lines.append("Newly pending since the prior verified handover:")
+            for item in delta["newly_pending"]:lines.append(f"- {item.get('id')}: {item.get('what_remains')}")
+        if not delta.get("completed_since_prior") and not delta.get("newly_pending"):lines.append("- Pending INTENT is unchanged from the prior verified handover publication.")
+    else:lines.append("- Initial handover publication for this ownership boundary.")
 
     lines += ["","## Inputs"]
     if plan.get("inputs"):
