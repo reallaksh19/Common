@@ -516,6 +516,149 @@ specific issue numbers
 current CI outage
 ```
 
+### PROBLEM WITNESS — use the real case when one exists
+
+A strong Prompt 1 should not default to abstract questions when the target already contains a concrete example that exposes the problem.
+
+A **PROBLEM WITNESS** is a real, target-relevant object that a capable practitioner can independently work, inspect, reproduce, calculate, trace, compare, or reason through.
+
+Examples:
+
+```text
+engineering:
+benchmark case
+hand-calculation case
+drawing
+geometry + loads
+calculation trace
+test specimen
+reported result
+
+software:
+minimal failing input
+request/response pair
+stack trace
+performance trace
+corrupt file
+reproduction case
+
+UX:
+real user journey
+screenshot
+recorded task
+failed interaction
+
+data:
+representative dataset
+specific row/set
+unexpected output
+edge case
+
+learning:
+actual student question
+wrong answer
+worked exercise
+
+coordination / decision:
+one real disputed dependency
+one decision with concrete downstream outcomes
+one status claim whose truth changes the plan
+```
+
+The witness is valuable because it lets Prompt 1 ask the future agent to **do the real work**, not merely discuss principles.
+
+#### Epistemic-role classification
+
+For each concrete fact/example discovered in the target, classify its role:
+
+```text
+TASK CONTRACT
+Defines the assignment/scenario.
+May shape Prompt 1.
+
+PROBLEM WITNESS — INPUT / RAW EVIDENCE
+A concrete case, source payload, observation, drawing, dataset, benchmark input,
+reported output, or reproducible phenomenon that exposes the problem.
+May shape Prompt 1.
+
+WITNESS CLAIM TO REPRODUCE
+A reported result attached to the witness.
+Prompt 1 may state it as a claim to independently reproduce or falsify.
+Do not state it as already-proven truth.
+
+DOMAIN CONSTRAINT
+A stable source/physics/business/learning constraint.
+May shape Prompt 1.
+
+CURRENT INTERPRETATION / ANSWER
+Today's explanation, option set, recommendation, chosen method, proposed sequence,
+implementation recipe, or disposition.
+Quarantine from Prompt 1.
+
+REALITY CLAIM
+A present-state claim Prompt 2 must verify.
+May enter Prompt 1 only when it is also TASK CONTRACT or PROBLEM WITNESS material,
+and then only in the appropriate epistemic form.
+```
+
+This role classification is more important than whether the information came from the current issue.
+
+Do **not** use the crude rule:
+
+```text
+came from current issue
+→ hide it
+```
+
+Use:
+
+```text
+what role does this information play?
+```
+
+A benchmark payload can be current issue evidence and still be exactly the right Prompt-1 witness.
+
+A current recommendation about what the benchmark means is answer-side material and must remain quarantined.
+
+#### Witness record
+
+When a usable witness exists, record:
+
+```text
+PROBLEM WITNESS TYPE:
+<benchmark / handcalc / drawing / failing example / dataset / trace / journey / dependency case / other>
+
+PROBLEM WITNESS SOURCE:
+<what concrete source/case is being used>
+
+PROBLEM WITNESS PAYLOAD:
+<the exact inputs, observations, reported outputs, or source facts needed to work the case>
+
+WITNESS CLAIM(S) TO REPRODUCE:
+<reported result(s) the future agent should independently reproduce/falsify;
+NONE if there is no reported result>
+
+WHY THIS WITNESS EXPOSES THE ISSUE:
+<one short explanation connecting the case to the OWNED QUESTION>
+
+WITNESS INTERPRETATION QUARANTINE:
+<today's explanation/recommendation/conclusion about what the witness means>
+
+INDEPENDENT WORK PRODUCT:
+<the concrete output Prompt 1 should demand: hand calc, derivation, comparison table,
+trace, reconstructed journey, dependency map, falsifier set, etc.>
+```
+
+If multiple witnesses exist, select the smallest one or small set that best exposes the issue.
+
+Do not choose a witness merely because it is dramatic.
+
+Choose it because independently working it materially helps answer the target's OWNED QUESTION.
+
+If the target provides a real usable witness, do not replace it with invented "plausible" values.
+
+---
+
 ### ISSUE TASK CONTRACT — mandatory for ISSUE_TASK
 
 Before abstracting the issue into an "underlying human problem", preserve the assignment the user actually selected.
@@ -553,6 +696,10 @@ TASK CONTRACT
 Defines the scenario/assignment.
 Allowed in Prompt 1.
 
+PROBLEM WITNESS
+Concrete input/raw evidence/reported output that exposes the problem.
+Allowed in Prompt 1 as material to independently work or reproduce.
+
 CURRENT ANSWER
 The issue's current proposed resolution, ordering, option set, implementation,
 disposition, or conclusion.
@@ -560,8 +707,9 @@ Quarantine from Prompt 1.
 
 REALITY CLAIM
 A claimed current status/evidence statement that Prompt 2 must verify.
-Do not present it as verified truth in Prompt 1; if it is also a task-contract
-premise, present it only as the scenario the issue asks us to reason from.
+Do not present it as verified truth in Prompt 1 unless it is also a task-contract
+premise. If it is a witness claim, present it as something to reproduce/falsify,
+not as an accepted conclusion.
 ```
 
 This distinction is critical.
@@ -615,7 +763,9 @@ Do not include:
 
 - current option lists;
 - current recommendation;
-- current benchmark numbers unless the number itself defines the problem;
+- current benchmark **interpretations/recommendations**;
+- benchmark numbers may appear when they are part of a selected PROBLEM WITNESS,
+  but reported results must be framed as claims to reproduce/falsify rather than accepted conclusions;
 - current proposed implementation;
 - current PR/branch sequence;
 - current bug inventory;
@@ -657,9 +807,11 @@ For ISSUE_TASK, construct Prompt 1 mechanically from:
 ISSUE TASK CONTRACT
 + PROBLEM KERNEL
 + TARGET ANCHORS
++ PROBLEM WITNESS when available
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
 - CURRENT ANSWER QUARANTINE
+- WITNESS INTERPRETATION QUARANTINE
 ```
 
 Do not solve contamination by anonymising the quarantined facts.
@@ -670,6 +822,15 @@ Complete:
 ```text
 TARGET ANCHORS:
 <stable, level-specific facts that make this unmistakably THIS target without leaking today's answer>
+
+PROBLEM WITNESS:
+PROBLEM WITNESS TYPE:
+PROBLEM WITNESS SOURCE:
+PROBLEM WITNESS PAYLOAD:
+WITNESS CLAIM(S) TO REPRODUCE:
+WHY THIS WITNESS EXPOSES THE ISSUE:
+WITNESS INTERPRETATION QUARANTINE:
+INDEPENDENT WORK PRODUCT:
 
 ISSUE TASK CONTRACT:
 WHY NOW:
@@ -714,7 +875,7 @@ IMAGINATION OBJECT:
 an excellent live register
 ```
 
-Better:
+Better only when no stronger concrete witness exists:
 
 ```text
 UNDERLYING HUMAN PROBLEM:
@@ -722,10 +883,21 @@ after substantial work has happened, determine what genuinely remains,
 what requires judgement rather than more implementation,
 what can proceed independently, what has become historical,
 and whether the remaining path is still worth pursuing
-
-IMAGINATION OBJECT:
-excellent judgement about what genuinely remains in an evolved engineering programme
 ```
+
+Stronger when the issue contains a real discriminating case:
+
+```text
+PROBLEM WITNESS:
+a concrete benchmark / calculation / dependency case that exposes why one unresolved
+question changes the value or ordering of the remaining work
+
+INDEPENDENT WORK PRODUCT:
+work that case transparently, identify the actual technical/authority boundary,
+then use what was learned to reason about which downstream work is rational
+```
+
+Do not prefer abstract programme judgement over a concrete witness that can make the underlying issue understandable.
 
 Prompt 2 may later discover that a live register is a useful solution.
 
@@ -798,6 +970,15 @@ CURRENT ANSWER QUARANTINE:
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
 
+PROBLEM WITNESS
+PROBLEM WITNESS TYPE:
+PROBLEM WITNESS SOURCE:
+PROBLEM WITNESS PAYLOAD:
+WITNESS CLAIM(S) TO REPRODUCE:
+WHY THIS WITNESS EXPOSES THE ISSUE:
+WITNESS INTERPRETATION QUARANTINE:
+INDEPENDENT WORK PRODUCT:
+
 ISSUE TASK CONTRACT
 WHY NOW:
 STARTING PREMISE:
@@ -845,6 +1026,12 @@ TASK-CONTRACT FIDELITY GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 NEIGHBOUR-SEPARATION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+PROBLEM-WITNESS SELECTION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+WITNESS-INDEPENDENCE GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 KERNEL-COVERAGE GATE:
@@ -1021,6 +1208,57 @@ It owns the post-P0 reconciliation/closure question created by a changed program
 
 ---
 
+# HARD GATE 0.83 — PROBLEM-WITNESS SELECTION GATE
+
+For ISSUE_TASK, ask:
+
+> **Does the target contain a concrete benchmark, case, trace, example, dataset, drawing, observed output, user journey, dependency case, or other witness that materially exposes the owned question?**
+
+If yes:
+
+- select it explicitly;
+- retain enough real payload to let the future agent work it;
+- do not replace real values with invented plausible values;
+- require a concrete INDEPENDENT WORK PRODUCT from it.
+
+If a strong witness exists and Prompt 1 ignores it in favour of abstract consultancy questions, fail.
+
+If no usable witness exists, record:
+
+```text
+PROBLEM WITNESS TYPE: NONE
+```
+
+and proceed from the task contract/kernel.
+
+---
+
+# HARD GATE 0.84 — WITNESS-INDEPENDENCE GATE
+
+If Prompt 1 uses a witness, separate:
+
+```text
+raw/input/source facts
+reported outputs to reproduce
+today's interpretation/recommendation
+```
+
+Prompt 1 may provide the first two.
+
+The second must be framed as:
+
+> reproduce, verify, explain, or falsify this reported result
+
+—not:
+
+> accept this result and reason from its conclusion.
+
+The third remains quarantined.
+
+Fail if the witness merely launders today's recommendation into Prompt 1.
+
+---
+
 # HARD GATE 0.85 — KERNEL-COVERAGE GATE
 
 For ISSUE_TASK, inspect every PROBLEM KERNEL fact.
@@ -1091,7 +1329,7 @@ Think of the allowed information band as:
 ```text
 too generic
     ↓
-[ problem kernel + domain truth + human outcome ]
+[ task contract + problem kernel + concrete witness + domain truth + human outcome ]
     ↑
 too contaminated
 ```
@@ -1263,6 +1501,8 @@ TARGET TITLE / SURFACE when it is itself part of the requested human problem
 TARGET ANCHORS
 ISSUE TASK CONTRACT for ISSUE_TASK
 PROBLEM KERNEL
+PROBLEM WITNESS for ISSUE_TASK when one exists
+INDEPENDENT WORK PRODUCT for ISSUE_TASK when a witness is selected
 UNDERLYING HUMAN PROBLEM
 HUMAN OUTCOME
 GENUINE CONSTRAINTS
@@ -1322,13 +1562,39 @@ The generator itself enforces blindness by controlling what information is allow
 
 Generate a self-contained first-principles prompt from the **BLIND REFERENCE only**.
 
-It should begin from:
+It should begin from the strongest available concrete footing:
 
-- the underlying human problem;
+- for ISSUE_TASK with a usable PROBLEM WITNESS: the real case/object and the practitioner who must work it;
+- otherwise: the underlying human problem;
 - the intended human outcome;
 - genuine constraints;
 - relevant domain realities;
 - the required expertise.
+
+When a witness exists, prefer verbs such as:
+
+```text
+calculate
+derive
+reconstruct
+trace
+compare
+reproduce
+falsify
+explain
+work the case
+```
+
+over:
+
+```text
+consider
+discuss
+imagine principles
+think about
+```
+
+Prompt 1 should make the future agent **do the substantive work** that reveals the issue.
 
 Prompt 1 must **not mention** repositories, issue trackers, later passes, blind/reference mechanics, schema rules, or instructions about what the agent is forbidden to inspect.
 
@@ -1482,9 +1748,12 @@ Construct Prompt 1 in this order:
 3. Make the OWNED QUESTION unmistakable.
 4. State the NON-GOALS / OWNERSHIP BOUNDARY where it matters.
 5. Carry the PROBLEM KERNEL concretely.
-6. Ask first-principles questions that could lead to multiple legitimate answers.
-7. Ask what evidence/principles would justify action.
-8. End with the human/domain outcome.
+6. If a PROBLEM WITNESS exists, give the future agent the real case/payload and require
+   the INDEPENDENT WORK PRODUCT before asking for broader judgement.
+7. Make reported witness outputs claims to reproduce/falsify, not accepted conclusions.
+8. Ask first-principles questions that emerge from what the witness teaches.
+9. Return explicitly to the OWNED QUESTION.
+10. End with the human/domain outcome.
 ```
 
 The actor is the person responsible for **this issue's outcome**.
@@ -1520,8 +1789,10 @@ That is issue-specific without revealing today's options or evidence conclusion.
 
 Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
 
-Run the KERNEL-COVERAGE, SAME-ISSUE IDENTITY, ANSWER-EXCLUSION,
-ARTIFACT-ERASURE, CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
+Run the TASK-CONTRACT FIDELITY, NEIGHBOUR-SEPARATION,
+PROBLEM-WITNESS SELECTION, WITNESS-INDEPENDENCE, KERNEL-COVERAGE,
+SAME-ISSUE IDENTITY, ANSWER-EXCLUSION, ARTIFACT-ERASURE,
+CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
 
 ---
 
@@ -2095,6 +2366,15 @@ CURRENT ANSWER QUARANTINE:
 BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
 TARGET ANCHORS:
 
+PROBLEM WITNESS
+PROBLEM WITNESS TYPE:
+PROBLEM WITNESS SOURCE:
+PROBLEM WITNESS PAYLOAD:
+WITNESS CLAIM(S) TO REPRODUCE:
+WHY THIS WITNESS EXPOSES THE ISSUE:
+WITNESS INTERPRETATION QUARANTINE:
+INDEPENDENT WORK PRODUCT:
+
 ISSUE TASK CONTRACT
 WHY NOW:
 STARTING PREMISE:
@@ -2133,6 +2413,12 @@ TASK-CONTRACT FIDELITY GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 NEIGHBOUR-SEPARATION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+PROBLEM-WITNESS SELECTION GATE:
+PASS — <one short reason, or N/A outside ISSUE_TASK>
+
+WITNESS-INDEPENDENCE GATE:
 PASS — <one short reason, or N/A outside ISSUE_TASK>
 
 KERNEL-COVERAGE GATE:
@@ -2312,6 +2598,22 @@ Does Prompt 1 begin inside the person's real situation and stay there?
 Fail if it mentions later passes, fixed references, repositories to avoid inspecting, schema mechanics, gates, quarantine, or being "held to" a future comparison.
 
 The method must be invisible in Prompt 1.
+
+### Problem-witness check
+
+For ISSUE_TASK, did the target contain a real benchmark/example/trace/dataset/drawing/journey/dependency case that materially exposes the issue?
+
+If yes, does Prompt 1 actually use it and demand a concrete independent work product?
+
+If not, fail as abstract.
+
+### Witness-independence check
+
+Are reported witness outputs framed as claims to reproduce/falsify rather than truths to inherit?
+
+Is today's interpretation/recommendation still quarantined?
+
+If not, fail as contaminated.
 
 ### Task-contract fidelity check
 
@@ -3324,7 +3626,7 @@ downstream consumer
 
 Human Prompt-1 form:
 
-> Walk me through the real journey from the thing the person starts with to the thing they finally rely on. Where does each important fact or decision come from? What should be authoritative at each hand-off? Who or what depends on it next?
+> Start with the selected PROBLEM WITNESS when one exists. Trace the real path from its physical/business/learning inputs to the result or decision that matters. Where does each important quantity, fact or authority come from? What is source-defined, what is derived, what is assumed, and who relies on the result next?
 
 Adapt this to the target.
 
@@ -3361,9 +3663,11 @@ expected result
 
 Human Prompt-1 form:
 
-> Take one representative real case that genuinely belongs to this problem. Work it through from beginning to end. If this is quantitative, use concrete plausible values and show the intermediate reasoning. What result or conclusion should we expect, and where are the points most likely to be misunderstood?
+> Work the selected real witness through from beginning to end. If it is quantitative, use the actual retained payload when available and show intermediate reasoning. If a reported output exists, reproduce or falsify it independently. Identify exactly where source-defined reasoning ends and any extra assumption begins.
 
-For non-quantitative targets, reconstruct the logic or decision journey rather than inventing numbers.
+If no real witness exists, then choose one representative case and use plausible values.
+
+For non-quantitative targets, reconstruct the actual example/dependency/journey rather than inventing a generic scenario.
 
 This question prevents complex Prompt 1 from becoming abstract consultancy prose.
 
@@ -3380,6 +3684,8 @@ exact falsifier
 Human Prompt-1 form:
 
 > Now change one important thing. What should legitimately change because of it? What must remain true no matter what? What observation would make you stop and say, "our understanding is wrong"?
+
+When a witness exists, mutate one of its load-bearing inputs, assumptions, authority conditions, or dependencies.
 
 Use a change that belongs to the PROBLEM KERNEL, not today's bug list.
 
@@ -3409,13 +3715,15 @@ tolerance/exactness
 
 Human Prompt-1 form:
 
-> Suppose you did not trust the main mechanism at all. How would you check the important conclusion independently? Is there a hand calculation, second source, benchmark, physical argument, second representation, real example, or other route that does not merely repeat the same assumptions?
+> Check the witness by a genuinely independent route. If the witness itself is an external benchmark, first build your own transparent calculation/derivation and only then compare against the benchmark. Recalculate any reported agreement yourself. Explain what the comparison supports and, separately, what it cannot establish.
+
+Possible independent routes include a hand calculation, second source, benchmark, physical argument, second representation, real example, or separately derived dependency analysis.
 
 Where meaningful, ask what level of agreement would count and why.
 
 Independence matters more than having many checks.
 
-## Q5 — Human first bounded proof: what is the smallest real slice worth trying first?
+## Q5 — Human discriminating next step: what is the smallest no-regret or uncertainty-reducing move?
 
 Canonical intent:
 
@@ -3428,11 +3736,28 @@ verification
 
 Prompt 1 must not turn this into a patch plan for today's repository.
 
-Translate it into a **first proof slice**:
+Translate it according to the issue type.
 
-> If you could test only one small, bounded slice of this idea before committing to the larger direction, what would you choose? What would you expect to see before and after? What evidence would convince you it worked, and what result would make you stop rather than expand?
+For implementation/technical-proof issues, it may be a **first bounded proof**.
 
-This gives Prompt 3 a disciplined seed later without contaminating Prompt 1 with current implementation assumptions.
+For decision, coordination, sequencing, or closure issues, it may instead be the **smallest no-regret action or discriminating evidence step**:
+
+> Given what the independent witness taught you, what is the smallest next move that either reduces uncertainty about the OWNED QUESTION or produces value under all plausible dispositions? What would you predict before doing it? What result would make you proceed, wait, narrow, move work elsewhere, or stop?
+
+Valid Q5 conclusions include:
+
+```text
+another calculation
+a deliberately discriminating benchmark
+collect one missing piece of evidence
+prepare an owner decision
+do work useful under either outcome
+wait
+defer
+no further technical work yet
+```
+
+Do not manufacture implementation merely because Q5 asks for a next step.
 
 ## ISSUE_TASK anchoring for complex Q1–Q5
 
@@ -3442,15 +3767,16 @@ Do not let complex mode broaden the prompt into the product, parent programme, o
 
 In particular:
 
-- Q1 traces the path of truth/authority relevant to this issue's decision.
-- Q2 reconstructs one concrete instance of the issue's exact assignment.
-- Q3 mutates a task-contract premise or issue-relevant assumption and protects the issue's invariant.
-- Q4 independently checks a claim that matters to resolving the owned question.
-- Q5 chooses the smallest bounded proof that would reduce uncertainty about the owned question.
+- Q1 traces the truth/authority path through the selected witness and ties it to this issue's decision.
+- Q2 independently reconstructs the witness using its real payload when available.
+- Q3 mutates a witness input/assumption or task-contract premise and protects the issue's invariant.
+- Q4 independently checks the witness/report and separates evidence from authority/conclusion.
+- Q5 returns to the OWNED QUESTION and chooses the smallest no-regret or uncertainty-reducing move.
 
-For a post-fix closure/reconciliation issue, Q2 should reconstruct a concrete remaining-work/disposition case, not drift into a generic product-use walkthrough.
+For a coordination/decision issue with a technical witness, do **not** force Q2 to be a generic programme case.
+Work the technical witness first if understanding it is what makes the coordination/decision question intelligible.
 
-Each lens must materially use at least one ISSUE TASK CONTRACT element.
+Each lens must materially connect back to the ISSUE TASK CONTRACT.
 
 ## Human weaving requirement
 
@@ -3459,11 +3785,13 @@ Do not produce five disconnected exam questions.
 The preferred shape is a natural progression:
 
 ```text
-Start with the person's real journey.
-→ work one concrete case through
-→ disturb one important assumption/input
-→ check the conclusion independently
-→ identify the smallest bounded proof worth trying
+Start with the concrete problem witness.
+→ trace how the real inputs become a result/decision
+→ independently work/reconstruct the witness
+→ disturb one important input/assumption
+→ check the reported result/conclusion independently
+→ return to the issue's OWNED QUESTION
+→ identify the smallest no-regret or uncertainty-reducing move
 ```
 
 Prompt 1 may use paragraphs, a journey, or conversational questions.
@@ -3497,12 +3825,14 @@ Each lens must use:
 - TARGET ANCHORS;
 - PROBLEM KERNEL where applicable;
 - concrete domain objects;
+- the selected PROBLEM WITNESS when one exists;
+- a concrete INDEPENDENT WORK PRODUCT;
 - a realistic person/journey;
 - genuine constraints.
 
 Complex mode should make the prompt **more concrete and diagnostic**, not longer for its own sake.
 
-## Example — complex issue-level engineering decision
+## Example — complex issue-level engineering decision with a benchmark witness
 
 Weak:
 
@@ -3510,19 +3840,23 @@ Weak:
 
 Still too mechanical.
 
+Also weak:
+
+> How should a responsible organisation decide whether to continue a release programme?
+
+Too abstract when the issue already contains a real engineering case.
+
 Better:
 
-> Start with the practising engineer who needs to use this method on the kind of real case that creates the issue. Walk the reasoning from their physical inputs through method applicability to the professional conclusion they need to rely on: where should authority come from, and who relies on that conclusion next?
+> Start with the retained real-vessel benchmark case that creates the tension. Reconstruct its physical geometry, loads, nondimensional parameters and governing-source path. Work the calculation transparently as far as the source permits. If the source does not specify a required non-tabulated step, stop and identify the exact missing rule before exploring any extra assumption.
 >
-> Then take one representative case and work the engineering logic through concretely. Show what the method would need to establish, what remains an assumption, and what a defensible expected result would look like.
+> Then independently reproduce the reported external-software comparison. Recalculate the differences and governing location yourself. Explain separately what close numerical agreement supports and what it cannot establish about source/method authority.
 >
-> Now perturb one important condition. What should change? What must remain protected? What observation would prove that the whole reasoning model is wrong rather than merely inconvenient?
+> Perturb the case across meaningful input/authority conditions. Identify the invariant and a real falsifier.
 >
-> Check the central conclusion by a genuinely independent route rather than by another expression of the same assumption.
->
-> Finally, if you were allowed to test only one bounded proof before committing to a larger programme, what would you test first, what would you predict beforehand, and what result would make you stop?
+> Finally return to the issue-level decision: given what this concrete case taught you, which downstream work is no-regret, which is conditional on an owner disposition, what evidence would most reduce uncertainty, and when is doing nothing yet the correct next move?
 
-That is Q1–Q5 in human form.
+That is Q1–Q5 in human form because the concrete witness drives the reasoning rather than decorating it.
 
 ---
 
@@ -3699,7 +4033,74 @@ Those belong to relay takeover qualification, not the human Prompt-1 complex rea
 
 ---
 
-# TWELVE-CASE REGRESSION VALIDATION
+# APPENDIX L — CONCRETE-WITNESS REGRESSION: BENCHMARK BEFORE ABSTRACT JUDGEMENT
+
+Issue #1854 exposed a deeper failure after task-contract specificity was added.
+
+A prompt can preserve the exact assignment and still be too abstract:
+
+> You are responsible for deciding what remains after the P0 hand-off. Which work is still worthwhile?
+
+That is recognisably #1854, but it does not force the agent to understand the technical fact that makes the gating decision consequential.
+
+## Required correction
+
+When a real issue contains a concrete witness that exposes the problem, Prompt 1 should normally make the future agent work that witness first.
+
+For #1854 / #1834 / #1772, the witness includes the real-vessel CAUx case:
+
+```text
+Do = 1844 mm
+T_nominal = 22 mm
+corrosion = 3 mm
+T_same_state = 19 mm
+Rm = 912.5 mm
+gamma = 48.026315...
+recovery = Au..Dl
+
+reported comparison:
+8/8 within frozen 3%
+worst ≈ 2.04% at Cu
+governing = Du in both
+```
+
+The reported comparison is **not** an answer to accept.
+
+It is a claim to independently reproduce.
+
+A strong Prompt 1 should therefore require:
+
+```text
+source/input reconstruction
+→ independent hand/transparent calculation
+→ explicit point where source-defined method ends
+→ stress/mutation/falsifier
+→ independent reproduction of the CAUx comparison
+→ what agreement does and does not establish
+→ return to #1854's sequencing/decision question
+→ identify no-regret vs decision-dependent work
+```
+
+## What remains quarantined
+
+Even though the witness is current issue evidence, these remain answer-side:
+
+```text
+Option 1 / 2 / 3
+current recommendation
+LINEAR_GAMMA chosen because of current study
+current proposed release sequence
+current acceptance checklist
+current conclusion about what the owner should choose
+```
+
+The invariant is:
+
+> **Use the real example that exposes the problem; quarantine today's interpretation of that example.**
+
+---
+
+# THIRTEEN-CASE REGRESSION VALIDATION
 
 Before considering a future schema revision safe, mentally run these controls:
 
@@ -3717,6 +4118,7 @@ Before considering a future schema revision safe, mentally run these controls:
 | Stale-schema issue run | current issue problem kernel under current schema SHA | legacy TASK_ARTIFACT/register-imagination path | generation rejected before prompts; then issue kernel controls Prompt 1 |
 | Human-immersion Prompt 1 | target-specific human/domain situation | meta instructions about later passes/repository blindness | Prompt 1 is method-invisible; separation is enforced outside it |
 | Issue task-contract specificity | exact issue assignment as scenario | either current-answer leakage or generic humanisation | task contract survives; current answer stays quarantined; sibling/parent drift fails |
+| Concrete-witness issue | real benchmark/example plus issue question | abstract judgement despite a usable witness, or accepting reported result as truth | Prompt 1 independently works the witness, then returns to the owned question |
 
 ### Critical negative control
 
@@ -3810,7 +4212,7 @@ But independence is not vagueness.
 
 The user's lot boundaries are authoritative. A tab-level request stays tab-level; a related issue becomes evidence, not a substitute target.
 
-For issue-level work, preserve the **ISSUE TASK CONTRACT** first, then its **PROBLEM KERNEL**, and explicitly quarantine the current answer:
+For issue-level work, preserve the **ISSUE TASK CONTRACT**, then its **PROBLEM KERNEL**, and—when one exists—the **PROBLEM WITNESS** that makes the issue concrete. Explicitly quarantine the current answer and the current interpretation of that witness:
 
 > **Erase today's answer, not the facts that make it the same issue.**
 
@@ -3821,9 +4223,11 @@ Prompt 1 =
 ISSUE TASK CONTRACT
 + PROBLEM KERNEL
 + TARGET ANCHORS
++ PROBLEM WITNESS when available
 + HUMAN OUTCOME
 + GENUINE CONSTRAINTS
 - CURRENT ANSWER QUARANTINE
+- WITNESS INTERPRETATION QUARANTINE
 ```
 
 The issue-level blind pass must live inside the Goldilocks corridor:
@@ -3848,7 +4252,7 @@ Do not trade one for the other.
 
 When the user explicitly says **complex**, add one more requirement:
 
-> **Prompt 1 must reason through Q1–Q5 in human form: journey, concrete reconstruction, invariant/falsifier, independent check, and first bounded proof.**
+> **Prompt 1 must reason through Q1–Q5 in human form: trace the real witness/path, independently reconstruct it, stress/falsify it, verify it independently, then return to the issue's owned question and choose the smallest no-regret or uncertainty-reducing move.**
 
 Complexity must deepen specificity and falsifiability; it must never become generic ceremony.
 
