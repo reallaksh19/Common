@@ -1,5 +1,49 @@
 # Three-Pass Prompt Generator Schema
 
+## EXECUTION HANDSHAKE — MUST BE THE FIRST VISIBLE OUTPUT
+
+Before reading the target issue/product/system, prove that this exact live schema was fetched.
+
+When invoked from the canonical GitHub URL, the generated artifact must begin exactly with:
+
+```text
+# SCHEMA EXECUTION HANDSHAKE
+
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
+GENERATOR MODE:
+THREE_PASS_ONLY
+
+SCHEMA FETCH STATUS:
+LIVE_THIS_RUN
+
+SCHEMA CONTENT SHA:
+<actual current blob/content SHA from the live fetch>
+
+HANDSHAKE STATUS:
+PASS
+```
+
+Only after that handshake may target reasoning begin.
+
+If the live schema cannot be fetched or its SHA cannot be established, output only:
+
+```text
+# SCHEMA EXECUTION HANDSHAKE
+HANDSHAKE STATUS:
+FAIL
+```
+
+and stop.
+
+A generation that starts with Prompt 1, target analysis, issue anchors, or any other prose before this handshake is invalid.
+
+The handshake is execution proof, not decorative metadata.
+
+---
+
+
 > Human-executable prompt schema for generating three sequential, copy-pasteable prompts.
 >
 > This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **target scopes** without drifting into a larger neighbouring problem.
@@ -11,6 +55,9 @@ When this file is invoked directly by path or URL to create three-pass prompts, 
 Set:
 
 ```text
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
 GENERATOR MODE:
 THREE_PASS_ONLY
 ```
@@ -131,9 +178,12 @@ When this generator is invoked from the canonical GitHub repository/URL, you **m
 
 Memory, a previous conversation, a previous fetched copy, a prior assistant summary, or an older commit is not an acceptable basis.
 
-Record:
+Record after the execution handshake:
 
 ```text
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
 
@@ -155,6 +205,9 @@ PASS | FAIL
 
 Rules:
 
+- the execution handshake must appear before `# SCHEMA BASIS`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R1`;
+- handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
 - user explicitly supplies the schema text itself → `USER_SUPPLIED_TEXT` is allowed;
@@ -1106,23 +1159,15 @@ Do not generate prompts from remembered schema rules.
 
 # HARD GATE -1 — LEGACY-SIGNATURE REJECTION GATE
 
-Before emitting the final generated artifact, scan the artifact itself for retired active instructions.
+Before emitting the final artifact, reject any output that:
 
-The following are legacy signatures when they appear as active schema fields/instructions:
+- makes the current artifact form the Prompt-1 imagination object merely because it exists today;
+- narrates repository-blindness or three-pass mechanics inside Prompt 1;
+- inserts an extra certification/admission/question stage between the three prompts;
+- exposes internal machine/taxonomy fields as visible Q1–Q5 language;
+- predetermines in Prompt 3 that the current artifact must survive.
 
-```text
-TARGET SCOPE:
-TASK_ARTIFACT
-TARGET NATIVE DELIVERABLE
-FINAL OUTPUT CONTRACT
-PROMPT-3 OUTPUT GATE
-"The register is the thing you are imagining"
-"imagine an excellent live register"
-```
-
-If any appear as active construction/output language, **reject the generation and rebuild from the current schema**.
-
-Quoted discussion of a legacy failure inside this schema's appendices is not itself a failure; the check applies to the generated deliverable.
+The executable validator owns the exact legacy signature list. Do not reproduce those signatures inside this schema.
 
 ---
 
@@ -1230,13 +1275,7 @@ If yes, it is too broad.
 
 Use ISSUE DIFFERENTIATOR to restore the exact edge.
 
-For example, #1854 must not collapse into:
-
-- #1830's whole live-product audit;
-- #1834's gamma-authority decision;
-- #1775's release implementation/evidence work.
-
-It owns the post-P0 reconciliation/closure question created by a changed programme state.
+For example, an issue-level prompt must remain distinguishable from its parent audit, a sibling authority decision, and downstream release-execution work.
 
 ---
 
@@ -1541,22 +1580,9 @@ Ask:
 
 > **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, closed, deferred, moved elsewhere, or left alone?**
 
-If Prompt 3 mandates a better version of today's artifact before comparison is complete, fail.
+Fail if Prompt 3 mandates a better version of today's artifact before comparison is complete.
 
-Examples of failure:
-
-```text
-"Produce the reconciled register"
-when an earlier section asks whether the register is still the right instrument.
-
-"Complete the matrix"
-when the comparison may show the matrix is no longer the right remaining work.
-
-"Update the roadmap"
-when the roadmap may have become historical.
-```
-
-Prompt 3 may require a **decision and reasoning**, but must not pre-decide the survival of the current solution form.
+Prompt 3 may require a decision and reasoning, but must not pre-decide the survival of the current solution form.
 
 ---
 
@@ -1699,52 +1725,23 @@ who is the person?
 → what are they trying to accomplish?
 → what real thing is in front of them?
 → what makes this case difficult or consequential?
-→ what would they need to understand, decide, trust, notice, or prove?
+→ what would they need to understand, calculate, decide, trust, notice, or prove?
 → what would good handling make possible?
 ```
 
 The reader should forget that a three-pass method exists.
 
-Avoid meta language such as:
+Do not narrate:
 
-```text
-"This answer will be used later..."
-"This is a fixed independent reference..."
-"Do not inspect the repository..."
-"Do not open the issue tracker..."
-"Before the next pass..."
-"You will be held to this picture..."
-"Prompt 2 will..."
-"In the third pass..."
-```
+- pass sequencing;
+- future comparison mechanics;
+- repository/issue-access restrictions;
+- schema/preflight/gate terminology;
+- instructions about preserving an answer for a later stage.
 
-Also avoid procedural throat-clearing such as:
+Do not begin with procedural advice about how to think.
 
-```text
-"Answer from first principles."
-"Resist the urge to look at the implementation."
-"Form your own view before seeing the current answer."
-```
-
-The prompt should **cause** first-principles thinking through the situation and questions, not explain the prompting method.
-
-Good forms include:
-
-> Imagine the person actually facing this situation.
-
-> Walk through what they need to understand before acting.
-
-> What should become possible?
-
-> What would make the result trustworthy?
-
-> What would look like progress but actually be a trap?
-
-> What should remain true even if today's implementation were rewritten from scratch?
-
-Do not reveal the current solution form merely because you know it.
-
-Do not tell the future agent there is a register, matrix, roadmap, particular architecture, specific sequencing, or named abstraction unless that is independently part of the human requirement.
+Cause first-principles reasoning through the real situation, concrete object and questions.
 
 ### Prompt 1 must end in a human picture of success
 
@@ -2235,7 +2232,7 @@ Determine the truthful current state, real dependencies, decisions versus execut
 
 Then decide whether the current coordination artifact should be preserved, reconciled, narrowed, split, replaced or closed.
 
-Do not assume “COORDINATE” means “produce a better register.”
+Do not assume “COORDINATE” means force a better version of the current artifact.
 
 ## HANDOVER
 
@@ -2384,7 +2381,7 @@ This is the same reasoning continuity used by the successful product-level and t
 
 # STRICT OUTPUT CONTRACT FOR THE GENERATOR
 
-The complete generator output begins with one shared **SCHEMA BASIS** section.
+The complete generator output begins with the mandatory **SCHEMA EXECUTION HANDSHAKE**, followed by one shared **SCHEMA BASIS** section.
 
 Then, for **each requested lot**, output four visible sections:
 
@@ -2398,9 +2395,31 @@ If the user requested two lots, output two lot sections. Do not merge them and d
 Output this structure and nothing else:
 
 ````markdown
+# SCHEMA EXECUTION HANDSHAKE
+
+```text
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
+GENERATOR MODE:
+THREE_PASS_ONLY
+
+SCHEMA FETCH STATUS:
+LIVE_THIS_RUN
+
+SCHEMA CONTENT SHA:
+<actual live fetched SHA>
+
+HANDSHAKE STATUS:
+PASS
+```
+
 # SCHEMA BASIS
 
 ```text
+PROTOCOL REVISION:
+TPG-3P-2026-09-19-R1
+
 GENERATOR MODE:
 THREE_PASS_ONLY
 
@@ -2845,818 +2864,8 @@ If any check fails, revise before output.
 
 ---
 
-# APPENDIX A — CASE STUDY: PRODUCT LEVEL
+# COMPLEX MODE — Q1–Q5 HUMAN REASONING
 
-## Input example
-
-```text
-TARGET:
-A static, browser-based PDF editor.
-
-HUMAN GOAL:
-A strong PDF editor usable by an individual without operating a backend service.
-
-USERS:
-Personal and professional users on phone and desktop.
-
-IMPORTANT EXPECTATIONS:
-Page insertion/deletion/reordering, headers/footers, rotation, text overlay,
-large-PDF handling, annotations/comments, non-flattened saving, OCR,
-inline text editing where practical, APIs for integration.
-
-CONSTRAINTS:
-Mostly client-side/static architecture.
-Built and maintained by one developer with AI-agent help.
-```
-
-## Frozen preflight
-
-```text
-TARGET TITLE:
-Static browser-based PDF editor
-
-TARGET LINK:
-not supplied
-
-PARENT REPOSITORY / SYSTEM:
-not supplied
-
-REPOSITORY / SYSTEM LINK:
-not supplied
-
-REQUEST MODE:
-REVIEW
-
-
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
-
-CURRENT ARTIFACT FORM:
-existing browser PDF editor/product implementation
-
-CURRENT STATED ANSWER / IMPLEMENTATION:
-not supplied in the blind brief; inspect the real application/repository only in Prompt 2
-
-CURRENT-STATE FACTS:
-an existing implementation is being reviewed, but its architecture and abstractions
-must not shape Prompt 1
-
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
-
-UNDERLYING HUMAN PROBLEM:
-Users need to seriously edit, inspect and save real PDFs in a browser-oriented environment
-without having to operate backend infrastructure.
-
-HUMAN OUTCOME:
-A personal or professional user can open a real PDF, understand it, modify it confidently,
-work with large documents, save it and reopen it without the tool becoming fragile or misleading.
-
-GENUINE CONSTRAINTS:
-primarily client-side/static; phone and desktop; one developer with AI assistance;
-real PDF semantics and large-document behaviour matter
-
-EXPERTISE:
-PDF/browser architecture and document-editing product expertise
-
-IMAGINATION OBJECT:
-an excellent static/browser PDF editing experience and the principles needed to sustain it
-
-PROMPT 2
-
-REALITY OBJECT:
-the current PDF application's real user journeys, architecture, performance, persistence,
-supported operations, tests and in-flight work
-
-PROMPT 3
-
-COMPARISON QUESTION:
-what meaningful distance remains between the independent PDF-editor picture and today's
-application, and what is the smallest sensible phased path from here?
-
-HANDOVER DESTINATION:
-the next agent should understand the intended user experience, what reality taught us,
-the real remaining gaps, what should not be built, and what evidence should change direction
-
-ARTIFACT-ERASURE GATE:
-PASS — the Prompt-1 picture survives removal of the current implementation
-
-CURRENT-VOCABULARY GATE:
-PASS — no current library, cache, schema or architecture name is required
-
-PROMPT-1 OBJECT GATE:
-PASS — the answer independently defines the PDF experience being sought
-
-PROMPT-3 FREEDOM GATE:
-PASS — current architecture may be preserved, changed, simplified or replaced
-```
-
-## What a good generated Prompt 1 should feel like
-
-It should **not** say:
-
-> “Evaluate whether PDF.js plus pdf-lib plus an IndexedDB page cache is the right architecture.”
-
-That already contains an answer.
-
-It should say something closer to:
-
-> Imagine a professional-quality PDF editor that must work primarily in the browser without depending on a backend. Think from first principles about what a user should be able to do, how editing should feel on phone and desktop, how a 1,000-page document should behave, what must survive save/reopen, what operations are fundamentally easy or difficult in PDF, and what architectural mistakes would trap a one-developer project later. End by describing what would become possible for the person if this product were done really well.
-
-## What a good generated Prompt 2 should feel like
-
-It should now introduce the repository/application and ask the agent to follow real journeys such as:
-
-```text
-open large PDF
-→ navigate
-→ edit
-→ reorder
-→ annotate
-→ save
-→ reopen
-```
-
-It should inspect current code, dependencies, rendering, document mutation, persistence, mobile/desktop UI, tests, issues and active PRs.
-
-It should explain what the app has actually become without redesigning it yet.
-
-## What a good generated Prompt 3 should feel like
-
-It should explicitly return to the original first-principles PDF picture and ask:
-
-> Which parts of the existing app already satisfy it?
-
-> Which historical limitations are already gone?
-
-> Which real user journeys still break?
-
-> Is a visible symptom such as slow scrolling actually a rendering/lifecycle problem underneath?
-
-> What is the smallest durable change?
-
-Then it should produce a product-level phased path and explicitly say what should **not** be built yet.
-
----
-
-# APPENDIX B — CASE STUDY: REPOSITORY / SYSTEM LEVEL
-
-## Input example
-
-```text
-TARGET:
-https://github.com/reallaksh19/Grade9V3
-
-HUMAN GOAL:
-A serious self-study learning system for Grade-9 learners, eventually spanning Physics,
-Mathematics and Chemistry, maintained by one developer with agent help.
-
-USERS:
-Learners studying independently from real curriculum material, worksheets and questions.
-
-CONSTRAINTS:
-The system must scale without creating a special architecture for every subject or topic.
-Machine checks must not be mistaken for proof that material actually teaches.
-```
-
-## Frozen preflight
-
-```text
-TARGET TITLE:
-Grade9V3 repository
-
-TARGET LINK:
-https://github.com/reallaksh19/Grade9V3
-
-PARENT REPOSITORY / SYSTEM:
-reallaksh19/Grade9V3
-
-REPOSITORY / SYSTEM LINK:
-https://github.com/reallaksh19/Grade9V3
-
-REQUEST MODE:
-REVIEW
-
-
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
-
-CURRENT ARTIFACT FORM:
-existing self-study repository/system
-
-CURRENT STATED ANSWER / IMPLEMENTATION:
-the repository already has its own products, routing, schemas, matrices, gates,
-subject boundaries and programme history; all of that belongs to Prompt 2
-
-CURRENT-STATE FACTS:
-the current system is a living implementation with recent work and subject-specific progress
-
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
-
-UNDERLYING HUMAN PROBLEM:
-A Grade-9 learner studying mostly alone needs to understand new ideas, practise them,
-recover from misunderstanding or missing prerequisites, and eventually handle unfamiliar work.
-
-HUMAN OUTCOME:
-The learner can move from first exposure to independent application with useful diagnosis
-and repair when they get stuck.
-
-GENUINE CONSTRAINTS:
-multiple subjects; one developer with agents; maintainability across topics matters;
-machine checks are not proof that material actually teaches
-
-EXPERTISE:
-learning-system, curriculum and educational-product architecture expertise
-
-IMAGINATION OBJECT:
-an excellent Grade-9 self-study learner journey and system
-
-PROMPT 2
-
-REALITY OBJECT:
-what Grade9V3 actually provides today across teaching, practice, routing, feedback,
-subjects, evidence, repository architecture and current work
-
-PROMPT 3
-
-COMPARISON QUESTION:
-what should Grade 9 mean now, what is already solved, what genuinely remains,
-and what programme makes sense from today's reality?
-
-HANDOVER DESTINATION:
-the next agent should understand the learner destination, what the repository has become,
-the real remaining distance, deliberate boundaries and evidence needed to change direction
-
-ARTIFACT-ERASURE GATE:
-PASS — Prompt 1 still works if all current Core/matrix/gate architecture disappears
-
-CURRENT-VOCABULARY GATE:
-PASS — current Grade9V3 vocabulary is withheld from Prompt 1
-
-PROMPT-1 OBJECT GATE:
-PASS — the answer defines the learner/system outcome independently
-
-PROMPT-3 FREEDOM GATE:
-PASS — current architecture and programme priorities may be preserved or changed
-```
-
-## What a good generated Prompt 1 should feel like
-
-It should **not** mention matrices, Core1/Core2, gates, current routing enums, or the existing repository structure.
-
-Instead it should ask:
-
-> Imagine a Grade-9 learner studying mostly alone. They meet a new topic, think they partly understand it, attempt real questions, get stuck for different reasons, sometimes need an earlier prerequisite, and eventually need to solve unfamiliar problems independently. What should an excellent self-study system do from beginning to end? How should teaching, practice, diagnosis, repair, transfer, subject boundaries, learner evidence and maintainability work for one developer using agents? Stay with the learner journey and what excellent support would make possible.
-
-## What a good generated Prompt 2 should feel like
-
-It should now inspect the live repository and discover:
-
-- what the six products actually do;
-- how subject-neutral and subject-specific concerns are separated;
-- what Grade 9 currently means;
-- what Physics, Mathematics and Chemistry genuinely contain;
-- how routing and learner feedback actually behave;
-- what has been proven by tests versus real questions versus real learners;
-- what recent PRs have already changed;
-- what active issues still represent current reality.
-
-It should follow learner journeys rather than merely summarize directories.
-
-## What a good generated Prompt 3 should feel like
-
-It should return to the exact learner experience imagined in Prompt 1 and ask:
-
-> What should survive?
-
-> What architecture or roadmap concern used to matter but no longer does?
-
-> What really prevents Grade 9 from feeling complete today?
-
-> Is the missing thing architecture, content, routing, academic review, learner evidence, or something else?
-
-> What should “complete enough for Grade 9” mean now?
-
-It should then produce a phased repo-level path based on learner value and real dependency, not on old phase labels alone.
-
----
-
-# APPENDIX C — CASE STUDY: TASK / ISSUE LEVEL
-
-## Input example
-
-```text
-TARGET:
-https://github.com/reallaksh19/Grade9V3/issues/19
-
-HUMAN GOAL:
-Make real Physics/Mathematics worksheet questions traceable to the reusable ideas a learner
-must know, their genuine prerequisites, and where those ideas are taught.
-
-CURRENT SYSTEM:
-https://github.com/reallaksh19/Grade9V3
-```
-
-## Frozen preflight
-
-```text
-LOT:
-single lot
-
-USER-REQUESTED LEVEL:
-ISSUE_TASK
-
-USER-REQUESTED TARGET:
-Grade9V3 Issue #19
-
-LEVEL INTERPRETATION:
-stay on the question-to-learning mapping problem owned by this issue;
-do not broaden to overall Grade9V3
-
-TARGET TITLE / SURFACE:
-Complete Physics/Math matrices and capability mappings for worksheet-driven study routing
-
-TARGET LINK:
-https://github.com/reallaksh19/Grade9V3/issues/19
-
-PARENT REPOSITORY / SYSTEM:
-reallaksh19/Grade9V3
-
-REPOSITORY / SYSTEM LINK:
-https://github.com/reallaksh19/Grade9V3
-
-REQUEST MODE:
-CHANGE
-
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
-
-CURRENT ARTIFACT FORM:
-GitHub implementation/content-mapping issue
-
-CURRENT STATED ANSWER / IMPLEMENTATION:
-the issue is expressed through matrices, capabilities, prerequisite closure,
-rungs/microtopics and a historical implementation checklist
-
-CURRENT-STATE FACTS:
-later repository work may already have satisfied or changed parts of the issue
-
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
-
-TARGET ANCHORS:
-real Physics/Mathematics worksheet questions;
-self-study learner who gets stuck;
-reusable learner ability;
-genuine prerequisite;
-where the idea is taught
-
-PROBLEM KERNEL:
-- a real worksheet question should resolve to the reusable learner action it requires;
-- supporting ideas must be distinguished from genuine prerequisites;
-- the learner must be able to reach where the needed idea is taught or repaired;
-- the mapping must generalise across questions rather than create one concept per surface context.
-
-UNDERLYING HUMAN PROBLEM:
-when a learner is stuck on a real worksheet question, the system needs to identify
-what reusable ability is actually missing, what earlier understanding is genuinely required,
-and where that understanding can be learned
-
-HUMAN OUTCOME:
-real questions reliably lead a learner to the right reusable knowledge and prerequisite repair
-
-GENUINE CONSTRAINTS:
-the mapping must remain reusable across future questions;
-prerequisites must be genuine;
-surface context must not become a capability by itself
-
-EXPERTISE:
-learning-system and curriculum-mapping expertise
-
-IMAGINATION OBJECT:
-an excellent question → reusable learning need → prerequisite → teaching outcome
-
-PROMPT 2
-
-REALITY OBJECT:
-what Issue #19, the current repository, later PRs and real-question evidence
-have already accomplished
-
-PROMPT 3
-
-COMPARISON QUESTION:
-given today's repository, what meaningful work under Issue #19 genuinely remains,
-if any, and what is the smallest durable response?
-
-HANDOVER DESTINATION:
-the next agent should understand the learner problem, what is already solved,
-the real remaining gap, the reusable idea exposed by real questions,
-and what evidence would justify changing course
-
-LOT/LEVEL BOUNDARY GATE:
-PASS — the target remains Issue #19, not overall Grade9V3
-
-SPECIFICITY-FLOOR GATE:
-PASS — the prompt is specifically about worksheet-question-to-learning mapping
-
-SAME-ISSUE IDENTITY GATE:
-PASS — a Grade9V3-aware reader can distinguish this from sibling content/routing issues
-
-ANSWER-RECONSTRUCTION GATE:
-PASS — matrices, rungs, schema fields and current implementation recipe are withheld
-
-ARTIFACT-ERASURE GATE:
-PASS — Prompt 1 still works if matrices, rungs and the issue checklist disappear
-
-CURRENT-VOCABULARY GATE:
-PASS — current implementation vocabulary is quarantined
-
-PROMPT-1 OBJECT GATE:
-PASS — the answer independently defines the question-to-learning outcome
-
-PROMPT-3 FREEDOM GATE:
-PASS — Issue #19 may shrink, close, defer, change form or require bounded implementation
-```
-
-## What a good generated Prompt 1 should feel like
-
-It should **not** begin with the issue's proposed files, historical donor PRs, matrix schema, or implementation checklist.
-
-It should ask something closer to:
-
-> Imagine a learner is stuck on a real worksheet question. What should a good self-study system be able to understand about that question? How should it identify the reusable learner action underneath the surface context, distinguish supporting ideas from true prerequisites, find where the idea is taught, and remain reusable across future worksheets? Stay with the learner's real question and the reusable learning problem it exposes.
-
-## What a good generated Prompt 2 should feel like
-
-It should now read the live issue, comments, current repository, related PRs and present subject content.
-
-It should ask:
-
-> Which parts of the original problem are already solved?
-
-> What changed after the issue was written?
-
-> Which current or recent PRs alter the near-future baseline?
-
-> What real questions have exposed gaps?
-
-> Which apparent gaps are deliberate boundaries?
-
-It must not assume the original checklist is today's work.
-
-## What a good generated Prompt 3 should feel like
-
-It should return to the exact learner-centered conception from Prompt 1 and rewrite the task:
-
-> “Given the current repository, the meaningful remaining work under this issue is…”
-
-It should distinguish the exposing example from the reusable problem underneath it.
-
-For example:
-
-```text
-river-crossing question
-→ may expose reusable vector composition/component reasoning
-→ should not automatically create a river-specific capability
-```
-
-It should identify what is already solved, what should remain untouched, the smallest durable remaining change, how at least two real questions will test it, and what the next agent needs to understand.
-
-The final task may be much smaller than the historical issue. That is a successful outcome, not a failure.
-
-
----
-
-# APPENDIX D — CASE STUDY: TASK LEVEL, COORDINATION TARGET
-
-## Input example
-
-```text
-TARGET:
-https://github.com/reallaksh19/Advanced_Analysis/issues/1855
-
-CURRENT SYSTEM:
-https://github.com/reallaksh19/Advanced_Analysis
-```
-
-## Current reality to quarantine
-
-The live issue happens to be a **register** containing merge order, open work, blockers, decisions and corrections.
-
-That fact belongs to Prompt 2.
-
-It must not automatically define Prompt 1.
-
-## Correct blind recovery
-
-```text
-UNDERLYING HUMAN PROBLEM:
-A successor entering a complex engineering programme needs to determine what genuinely
-remains, what is already solved or historical, what is executable work versus a decision,
-what depends on what, and what can safely happen next without blindly continuing an old plan.
-
-HUMAN OUTCOME:
-The owner and next engineer can make the correct next move from a truthful understanding
-of the programme rather than from inherited status prose.
-
-IMAGINATION OBJECT:
-excellent judgement about what genuinely remains and can safely happen next
-in an evolved engineering programme
-```
-
-Notice what is intentionally absent:
-
-```text
-register
-specific PR stack
-specific red gates
-specific owner decisions
-current merge order
-current corrections
-```
-
-Those are Prompt-2 discoveries.
-
-## What a good Prompt 1 should feel like
-
-Something closer to:
-
-> Imagine taking over a long-running engineering programme after substantial work has already happened. Before spending another week, how would you determine what genuinely remains, what has become historical, what requires a human decision rather than more engineering, what can proceed independently, and whether some planned work should no longer be pursued? What evidence would you need to trust that picture, and what mistakes cause teams to keep solving yesterday's problems?
-
-It should **not** say:
-
-> Imagine an excellent live register.
-
-That would inherit today's solution form.
-
-## What Prompt 2 should do
-
-Now reveal Issue #1855 and the repository.
-
-Inspect the register claim-by-claim, reconstruct current and near-future baseline, verify dependencies, blockers, decisions, current work and stale statements.
-
-Prompt 2 may conclude that the register is excellent, weak, stale, redundant, or no longer the right coordination surface.
-
-## What Prompt 3 should do
-
-Return to the independent picture of sound engineering judgement.
-
-Then ask:
-
-> Given today's reality, does #1855 remain the right instrument?
-
-The result may be:
-
-- preserve it unchanged;
-- reconcile it;
-- narrow it;
-- split it;
-- close it and return work to owning issues;
-- replace it with another coordination surface;
-- or defer action.
-
-It must not be forced to “produce a better register.”
-
-This case is the canonical test for **artifact-form contamination**.
-
----
-
-# APPENDIX E — NEGATIVE CONTROL: ISSUE #1854
-
-Issue #1854 exposed the strongest failure mode.
-
-Its generated Prompt 1 was told, in supposedly blind form, that there was:
-
-- recently landed work;
-- in-flight work;
-- infrastructure blockers;
-- owner-reserved decisions;
-- pre-existing failures;
-- stale written plans;
-- and one living register.
-
-Those details were a sanitized restatement of the current issue.
-
-The Prompt 1 then explicitly said:
-
-> “The register is the thing you are imagining.”
-
-That fails this schema.
-
-A compliant preflight for #1854 must first preserve its task contract:
-
-```text
-WHY NOW:
-#1854 is explicitly a post-#1831/P0 reconciliation issue because that fix round
-changed the landscape and made earlier sequencing obsolete.
-
-STARTING PREMISE:
-no new defect is being reported here; the remaining concerns already have owning issues;
-this issue is about what remains and how the changed programme should close/sequence.
-
-RESPONSIBLE ACTOR / JOB:
-the EMP.1/WRC owner or successor deciding whether more bounded-release effort is justified
-and what legitimately happens next
-
-OWNED QUESTION:
-given the post-P0 state, what genuinely remains, what kind of thing is each remainder,
-what order/dependency is real, and is further bounded-release effort worth pursuing?
-
-NON-GOALS / OWNERSHIP BOUNDARY:
-do not rediscover the whole product audit, take over child issues, or make owner-reserved
-engineering-policy decisions
-
-ISSUE DIFFERENTIATOR:
-#1830 owns the broad live-product audit; #1834 owns the gamma authority decision;
-#1775 owns release closure work; #1854 owns the post-P0 reconciliation of what remains.
-```
-
-Then derive the PROBLEM KERNEL and human questions from that exact contract.
-
-A prompt that says only "determine what remains in an evolved engineering programme"
-is now also a failure: it has preserved the class of problem while losing #1854's assignment.
-
-The current register, gamma decision, CI failure, UI residue, hash issue and sequencing belong to Prompt 2.
-
-Prompt 3 must be free to decide whether the register should survive at all.
-
-If a future schema revision again generates “imagine an excellent register” for #1854, the schema has regressed.
-
----
-
-# APPENDIX F — MULTI-LOT REGRESSION: ISSUE LEVEL VS TAB LEVEL
-
-This case exists because a generator previously received:
-
-```text
-Lot 1 — issue level
-Lot 2 — tab level
-```
-
-and incorrectly produced:
-
-```text
-Lot 1 — Issue #1854
-Lot 2 — Issue #1834
-```
-
-That is a schema failure.
-
-## Lot 1 — ISSUE_TASK
-
-Requested target:
-
-```text
-Issue #1854
-Open-items register after the P0 product fixes
-```
-
-This issue is unusually easy to over-generalise because its present form is a register.
-
-The blind pass must preserve its **post-P0 closure problem**, not the register form.
-
-A compliant kernel is closer to:
-
-```text
-PROBLEM KERNEL:
-- The target is the EMP.1 / WRC 537 professional product programme.
-- A substantive P0 product-fix round has just changed what is true.
-- The question is what genuinely remains before further bounded professional-release work is worthwhile.
-- Some remaining matters may be executable engineering; others may require accountable disposition rather than implementation.
-- Earlier sequencing may have become historical because the product changed.
-```
-
-A strong Prompt 1 could begin:
-
-> You are taking responsibility for EMP.1/WRC at a very specific hand-off: the P0 fix issue is treated as landed, that work has changed the programme enough that the previous sequencing is no longer trusted, this issue is not reporting a new defect, and the remaining concerns already have their own owners. Your job is not to rediscover the whole product or execute those child issues. It is to decide what genuinely remains after this changed state, what kind of remainder each thing is, which dependencies are real, and whether another bounded-release push is actually worth doing. What would you need to establish before authorising any next work?
-
-That is recognisably #1854's underlying problem.
-
-It does **not** reveal today's gamma item, CI outage, UI residue, hash issue, current sequence, or acceptance list.
-
-The following is too generic and should fail:
-
-> How should a responsible owner determine what remains in a complex engineering programme?
-
-The following is contaminated and should also fail:
-
-> Given the gamma decision, CI outage, U-16 residue and resultHash issue, what order should the remaining work take?
-
-## Lot 2 — TAB_SURFACE
-
-Requested target:
-
-```text
-EMP.1 / WRC 537 user-facing tab
-inside reallaksh19/Advanced_Analysis
-```
-
-Do **not** substitute Issue #1834, #1830, #1775 or any other issue as the target.
-
-Those are Prompt-2 evidence.
-
-A strong Prompt 1 should be recognisably about the actual engineering tab:
-
-> Imagine a practising pressure-equipment engineer opening a browser tool because they need a defensible WRC 537 local-stress assessment for a real vessel/attachment problem. They have geometry, thicknesses, material information and loads, but they did not write the software and should not need to know its internal architecture. Walk through what this one tab should let them understand, enter, check, calculate, refuse, review and retain before they would put the result into an engineering assessment.
-
-Then explore target-specific questions such as:
-
-- what geometry/load/source information the engineer must understand and what the tool can derive;
-- how the method's applicability should be made obvious before and during the run;
-- how load transfer, local-stress results and governing locations should be explained;
-- what the engineer sees when the method cannot honestly answer;
-- how numerical comparison evidence differs from source/method authority;
-- what makes a result current, reviewable and defensible;
-- what the tab should retain/export so another engineer can reconstruct the assessment;
-- what should be simple versus deliberately explicit in safety-relevant work.
-
-Notice the distinction:
-
-```text
-SPECIFIC:
-WRC 537
-pressure-equipment engineer
-real vessel / attachment geometry
-loads
-local stresses
-applicability
-result / refusal
-review evidence
-
-NOT CURRENT-ANSWER LEAKAGE:
-gamma=5 current implementation
-specific current UI defects
-current issue sequence
-current CI outage
-specific current PRs
-```
-
-This is the required standard:
-
-> **Blind to today's answer. Richly specific to today's requested target.**
-
----
-
-# APPENDIX G — ISSUE-LEVEL SPECIFICITY CONTROL: #1834
-
-This case protects against **laundered generalisation**.
-
-A weak generator reads Issue #1834, strips its proper nouns, and produces:
-
-> A published standard has discrete tabulated values. Real equipment lies between them.
-> How should a responsible decision package be built?
-
-That is not genuinely blind.
-
-It is the current issue narrative rewritten generically.
-
-It also loses the issue's identity.
-
-## Correct PROBLEM KERNEL
-
-```text
-- EMP.1 is a WRC 537 local-attachment assessment capability for pressure-equipment work.
-- Professional-use applicability is tied to tabulated gamma conditions.
-- Real vessel geometry commonly requires non-tabulated gamma values.
-- WRC 537 does not itself supply the missing non-tabulated-gamma rule.
-- The unresolved engineering problem is what basis, if any, could justify serving such cases
-  without pretending that numerical plausibility creates WRC source/method authority.
-```
-
-## What Prompt 1 may know
-
-It may know those kernel facts.
-
-They are the problem.
-
-It may also use stable domain distinctions such as:
-
-```text
-source/method fidelity
-numerical validity
-conservatism
-independent qualification
-organisation-owned policy
-professional-use authority
-fail-closed refusal
-```
-
-## What Prompt 1 must not know
-
-```text
-current Option 1 / 2 / 3
-LINEAR_GAMMA
-LOG_GAMMA
-current sample size/statistics
-current CAUx agreement percentage
-current repository recommendation
-current downstream issue sequence
-```
-
-## Strong Prompt-1 direction
-
-> You are responsible for a WRC 537 local-attachment assessment capability used on real pressure-equipment work. The professional-use basis is tied to tabulated gamma conditions, but a practising engineer brings a vessel whose geometry lies between those conditions and still needs a defensible answer. The source does not provide the missing rule. What would have to be true before your organisation could responsibly let the product serve this case? What separate claims would need support—numerical behaviour, conservatism, source fidelity, independent qualification, organisation-owned policy and professional-use authority? When is refusal the correct answer? What evidence would change your position?
-
-This passes because a programme-aware engineer can identify the issue, but cannot infer today's chosen options or evidence conclusion.
-
----
-
-# APPENDIX H — COMPLEX PROMPT-1 Q1–Q5 HUMAN REASONING MODE
 
 Use this appendix **only when COMPLEX MODE = ON** because the user explicitly used the word **complex** for that target/lot.
 
@@ -4000,355 +3209,11 @@ That is Q1–Q5 in human form because the concrete witness drives the reasoning 
 
 ---
 
-# APPENDIX I — CONTROL-PLANE REGRESSION: STALE-SCHEMA ISSUE FAILURE
+# REGRESSION OWNERSHIP
 
-This regression exists because a generated Lot 1 once emitted an obsolete pattern despite the canonical schema having already changed.
+Historical target-specific regressions, stale-output examples and exact forbidden signatures belong in executable tests and validators, not in this production schema.
 
-Failure signatures included:
-
-```text
-COORDINATE / TASK_ARTIFACT
-no visible preflight
-"The register is the thing you are imagining"
-Prompt 3: "Produce the reconciled register"
-```
-
-That is not merely weak wording.
-
-It is evidence that the generator executed a stale schema/control path.
-
-## Required prevention
-
-Before any prompt:
-
-```text
-SCHEMA FETCH STATUS = LIVE_THIS_RUN
-SCHEMA CONTENT SHA   = current fetched SHA
-LEGACY-SIGNATURE GATE = PASS
-```
-
-For an ISSUE_TASK:
-
-```text
-ISSUE TASK CONTRACT
-= why this issue exists now, its stated starting scenario, exact owned question,
-  responsible actor/job, non-goals, and sibling/parent distinction
-
-PROBLEM KERNEL
-= minimal identity-bearing facts inside that task contract
-
-CURRENT ANSWER QUARANTINE
-= today's answer/options/evidence/sequence that Prompt 1 must not reveal
-
-KERNEL-COVERAGE GATE
-= every load-bearing kernel fact survives
-
-ANSWER-EXCLUSION GATE
-= every quarantined answer-side fact stays out
-```
-
-For Issue #1854, the kernel is the **post-P0 closure problem** in EMP.1/WRC:
-the product state has materially changed, the question is what genuinely remains before more bounded professional-release effort is worthwhile, and remaining matters may be engineering, accountable disposition, historical work, or work no longer worth pursuing.
-
-The current gamma item, CI outage, UI residue, hash disposition, exact ordering, and acceptance checklist are Prompt-2 reality and belong in CURRENT ANSWER QUARANTINE.
-
-A Prompt 1 about “an excellent register” fails even if beautifully written.
-
-Prompt 3 must first state the present remaining problem and only then decide whether the current register should be preserved, changed, split, replaced or closed.
-
----
-
-# APPENDIX J — HUMAN-IMMERSION REGRESSION: METHOD LANGUAGE MUST NOT LEAK INTO PROMPT 1
-
-The following Prompt-1 language is a failure even when logically correct:
-
-```text
-"This answer will be used as a fixed independent reference in a later pass."
-"Do not inspect the current repository before answering."
-"Form your view before seeing the current implementation."
-"You will be held to this picture in Prompt 3."
-```
-
-Why it fails:
-
-- it makes the agent think about the prompting workflow rather than the work;
-- it weakens mental simulation of the real person and situation;
-- it encourages abstract compliance language;
-- it makes Prompt 1 sound synthetic even when its domain content is strong.
-
-The generator should enforce the separation silently.
-
-For example, instead of:
-
-> Do not inspect the repository. Imagine independently what a good WRC 537 tab should look like.
-
-prefer:
-
-> You are the engineer responsible for signing off a local-attachment assessment on a real vessel. You have the drawing, geometry, loads and a deadline. Walk from what is in front of you to the point where you have a result you would put your name on.
-
-Instead of:
-
-> This answer becomes the fixed reference picture for a later pass.
-
-prefer:
-
-> If this were handled really well, what would become possible for the engineer, and what would make that outcome trustworthy enough to defend?
-
-The second form creates the same reasoning separation without exposing the method.
-
----
-
-# APPENDIX K — ISSUE SPECIFICITY REGRESSION: TASK CONTRACT VS GENERIC HUMANISATION
-
-Two opposite failures are possible.
-
-## Failure A — contaminated specificity
-
-Prompt 1 repeats the issue's current answer:
-
-```text
-gamma decision
-CI outage
-U-16 residue
-resultHash disposition
-current proposed sequence
-```
-
-This is specific but not independent.
-
-## Failure B — abstract independence
-
-Prompt 1 removes those facts, then broadens to:
-
-> You are responsible for deciding what genuinely remains in a complex engineering programme.
-
-This is independent but no longer sufficiently #1854-specific.
-
-## Correct corridor
-
-Preserve the **task contract**, quarantine the **current answer**.
-
-For #1854:
-
-```text
-KEEP AS SCENARIO:
-- EMP.1/WRC
-- post-P0 hand-off
-- P0 work changed the landscape enough to supersede earlier sequencing
-- no new defect is being reported by this issue
-- remaining concerns already have their own owners
-- this issue owns reconciliation of what remains and whether further bounded-release effort is worthwhile
-- this is not the parent audit, gamma decision, or release-execution issue
-
-QUARANTINE:
-- exact current item list
-- gamma evidence/options
-- CI diagnosis
-- U-16 proposal
-- resultHash diagnosis
-- current order
-- current acceptance/closure checklist
-```
-
-A strong issue-level Prompt 1 should be recognisable from the **assignment**, not from the proposed answer.
-
-## Complex-mode control
-
-If the user says `complex`, Q1–Q5 must deepen this exact task contract **inside Prompt 1**.
-
-A generated artifact fails if it inserts any additional stage, gate, question package,
-routing/certification metadata, or evaluator requirement between Prompt 2 and Prompt 3.
-
-The three-pass shape remains exactly:
-
-```text
-Prompt 1 — includes Q1–Q5 reasoning
-Prompt 2
-Prompt 3
-STOP
-```
-
----
-
-# APPENDIX L — CONCRETE-WITNESS REGRESSION: BENCHMARK BEFORE ABSTRACT JUDGEMENT
-
-Issue #1854 exposed a deeper failure after task-contract specificity was added.
-
-A prompt can preserve the exact assignment and still be too abstract:
-
-> You are responsible for deciding what remains after the P0 hand-off. Which work is still worthwhile?
-
-That is recognisably #1854, but it does not force the agent to understand the technical fact that makes the gating decision consequential.
-
-## Required correction
-
-When a real issue contains a concrete witness that exposes the problem, Prompt 1 should normally make the future agent work that witness first.
-
-For #1854 / #1834 / #1772, the witness includes the real-vessel CAUx case:
-
-```text
-Do = 1844 mm
-T_nominal = 22 mm
-corrosion = 3 mm
-T_same_state = 19 mm
-Rm = 912.5 mm
-gamma = 48.026315...
-recovery = Au..Dl
-
-reported comparison:
-8/8 within frozen 3%
-worst ≈ 2.04% at Cu
-governing = Du in both
-```
-
-The reported comparison is **not** an answer to accept.
-
-It is a claim to independently reproduce.
-
-A strong Prompt 1 should therefore require:
-
-```text
-source/input reconstruction
-→ independent hand/transparent calculation
-→ explicit point where source-defined method ends
-→ stress/mutation/falsifier
-→ independent reproduction of the CAUx comparison
-→ what agreement does and does not establish
-→ return to #1854's sequencing/decision question
-→ identify no-regret vs decision-dependent work
-```
-
-## What remains quarantined
-
-Even though the witness is current issue evidence, these remain answer-side:
-
-```text
-Option 1 / 2 / 3
-current recommendation
-LINEAR_GAMMA chosen because of current study
-current proposed release sequence
-current acceptance checklist
-current conclusion about what the owner should choose
-```
-
-The invariant is:
-
-> **Use the real example that exposes the problem; quarantine today's interpretation of that example.**
-
----
-
-# APPENDIX M — HUMAN-Q-LABEL REGRESSION: INTERNAL TAXONOMY MUST NOT SURFACE
-
-A complex Prompt 1 can contain the right reasoning and still feel wrong if it exposes internal taxonomy.
-
-Failure:
-
-```text
-Q1 — PRODUCTION_PATH
-Q2 — ENGINEERING_PROBLEM
-Q3 — BOUNDARIES_INVARIANTS
-Q4 — VERIFICATION
-Q5 — FIRST_SAFE_SLICE
-```
-
-The same failure often carries machine fields such as:
-
-```text
-required_output_keys:
-payload.source:
-reconstruction_mode:
-evidence_required:
-oracle_refs:
-step_refs:
-```
-
-This turns a practitioner prompt into an assessment form.
-
-Correct:
-
-```text
-Q1 — From this vessel geometry, where does WRC 537 take you?
-Q2 — Can you reproduce the eight-point result yourself?
-Q3 — What changes when gamma moves away from the source-defined condition?
-Q4 — Why does CAUx agree, and what does that agreement actually prove?
-Q5 — Given what you learned, what is actually worth doing next?
-```
-
-The internal semantic coverage is unchanged.
-
-Only the surface language changes.
-
-Rule:
-
-> **reason with categories internally; speak in the target domain externally.**
-
----
-
-# FOURTEEN-CASE REGRESSION VALIDATION
-
-Before considering a future schema revision safe, mentally run these controls:
-
-| Case | Prompt-1 independent object | Main contamination risk | Prompt-3 freedom requirement |
-| --- | --- | --- | --- |
-| Static browser PDF editor | excellent browser PDF experience/product | current implementation architecture | may preserve/change architecture |
-| Overall Grade9V3 | excellent Grade-9 self-study learner journey/system | Core/matrix/gate vocabulary | may redefine programme priorities |
-| Grade9V3 Issue #19 | excellent question → reusable learning need → prerequisite → teaching outcome | matrix/rung/current checklist | may shrink/close/rewrite task |
-| Advanced_Analysis Issue #1855 | excellent judgement about what genuinely remains and can safely happen next | “register” and current queue/details | may preserve/reconcile/replace/close register |
-| Advanced_Analysis Issue #1854 | excellent post-change judgement about the true remaining path | sanitized restatement of issue as blind context | may preserve/reconcile/replace/close register |
-| Advanced_Analysis Issue #1756 | excellent methodical qualification of shell capability from foundations through release | current architecture/child-roadmap form | may preserve/rewrite/split/retire roadmap |
-| EMP.1/WRC tab-level lot | practising engineer's end-to-end WRC 537 tab experience | related issue substitution + generic Prompt 1 | may redefine tab UX/workflow while preserving method authority |
-| Advanced_Analysis Issue #1834 | responsible basis for non-tabulated-gamma professional use | generic standards-governance prose or leaked current options/evidence | may yield decision/evidence need without inheriting current option set |
-| Explicit complex-mode target | same target plus human Q1–Q5 depth | mechanical Q labels or generic five-question checklist | Prompt 1 covers path → reconstruction → stress test → independent check → bounded proof |
-| Stale-schema issue run | current issue problem kernel under current schema SHA | legacy TASK_ARTIFACT/register-imagination path | generation rejected before prompts; then issue kernel controls Prompt 1 |
-| Human-immersion Prompt 1 | target-specific human/domain situation | meta instructions about later passes/repository blindness | Prompt 1 is method-invisible; separation is enforced outside it |
-| Issue task-contract specificity | exact issue assignment as scenario | either current-answer leakage or generic humanisation | task contract survives; current answer stays quarantined; sibling/parent drift fails |
-| Concrete-witness issue | real benchmark/example plus issue question | abstract judgement despite a usable witness, or accepting reported result as truth | Prompt 1 independently works the witness, then returns to the owned question |
-| Human Q1–Q5 surface | complex target with visible Q labels | taxonomy headings / protocol metadata | labels read like natural target-specific practitioner questions |
-
-### Critical negative control
-
-The following must fail:
-
-```text
-TARGET CURRENTLY IS A REGISTER
-→ therefore Prompt 1 imagines an excellent register
-```
-
-The correct logic is:
-
-```text
-read current register
-→ recover problem behind it
-→ quarantine register form
-→ Prompt 1 imagines handling of underlying problem
-→ Prompt 2 discovers the register
-→ Prompt 3 decides whether register deserves to survive
-```
-
-### Output regression requirements
-
-Every generated result must contain:
-
-```text
-VISIBLE PREFLIGHT RECORD
-
-PROMPT 1
-one clean copy-pasteable text block
-
-PROMPT 2
-one clean copy-pasteable text block
-
-PROMPT 3
-one clean copy-pasteable text block
-
-NO EXTRA NOTES
-after Prompt 3
-
-HANDOVER
-reasoning continuity, not merely operations
-```
-
-A result with sophisticated reasoning but contaminated Prompt 1, hidden preflight, broken copy-pasteability, predetermined artifact survival, or activity-log handover is a schema failure.
+The production schema must remain target-neutral so it cannot supply stale answer-side context for the very target it is asked to generate.
 
 ---
 
