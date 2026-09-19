@@ -12,7 +12,7 @@ This is the stable navigation map for the released V2.5 control model. It points
 | Recover a repository with no chat | `operator-quick-start.md` | `scripts/cold_start_check.py`, `scripts/zero_context_reconstruction.py` |
 | See a repository-neutral relay walkthrough | `synthetic-relay-example.md` | stress tests under `tests/stress/` |
 | Understand authority ownership | `object-authority-matrix.md` | `scripts/self_consistency_audit.py` |
-| Understand roadmap/frontier | `roadmap-first-model.md`, `execution-frontier.md` | `scripts/validate_roadmap.py`, `scripts/validate_execution_frontier.py` |
+| Understand roadmap/frontier | `roadmap-first-model.md`, `dynamic-roadmap.md`, `execution-frontier.md` | `scripts/validate_roadmap.py`, `scripts/validate_roadmap_events.py`, `scripts/validate_execution_frontier.py` |
 | Author/validate an EP | `execution-package.md` | `scripts/validate_ep_semantics.py` |
 | Prove baton/takeover/write readiness | `takeover-certification.md` | `scripts/validate_baton_readiness.py`, `scripts/validate_takeover_certification.py`, `scripts/material_write_ready.py` |
 | Run phase/material-boundary qualification | `phase-transition.md` | `scripts/validate_question_set.py`, `scripts/validate_qualification_receipt.py` |
@@ -77,7 +77,7 @@ GHGEN-*  GitHub projection generation
 GHOP-*   GitHub projection operation
 ```
 
-Parallel plan/join/replan, drift, roadmap revision/continuity, progress basis, issue graph, repository state, and repository profile retain their documented namespaces.
+Parallel plan/join/replan, drift, roadmap revision/continuity, progress basis, issue graph, repository state, and repository profile retain their documented namespaces. `EVT-*` identifies material roadmap-event ledger entries; these are history/index records, not roadmap authority.
 
 ## Enforcement layers
 
