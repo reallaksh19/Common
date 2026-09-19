@@ -1,0 +1,18 @@
+schema_version: relay-v2.5-owner-publication
+publication:
+  id: PUB-0001
+  sequence: 1
+  event_class: INITIAL_SNAPSHOT
+  changed_dimensions: []
+  owner_view_digest: sha256:<digest>
+  report_projection_digest: sha256:<digest>
+  normalized_report_digest: sha256:<digest>
+source:
+  report_sources: {}
+  roadmap_revision: RM-0001
+  progress_basis: PB-0001
+  checkpoint_id: null
+  ep_id: EP-0001
+baseline:
+  digest: sha256:<digest>
+  report: {}
