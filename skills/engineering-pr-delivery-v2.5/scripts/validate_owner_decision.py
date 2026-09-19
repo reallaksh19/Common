@@ -27,6 +27,21 @@ def validate_file(path:Path):
         if effects.get("grants_material_write_authority") is not False:e.append("DEFERRAL must not grant material write authority")
         if not effects.get("pending_items"):e.append("DEFERRAL must name at least one pending item")
     if disposition=="SATISFIED" and effects.get("pending_items"):e.append("SATISFIED requirement disposition must not retain pending_items")
+    auth=odr.get("delivery_authorization")
+    if auth is not None:
+        if kind!="AUTHORIZATION":e.append("delivery_authorization is valid only for decision.kind AUTHORIZATION")
+        if not isinstance(auth,dict):e.append("delivery_authorization must be mapping or null")
+        else:
+            if auth.get("action")!="MERGE":e.append("delivery_authorization.action must be MERGE")
+            if auth.get("provider")!="GITHUB":e.append("delivery_authorization.provider must be GITHUB")
+            if auth.get("vehicle")!="PULL_REQUEST":e.append("delivery_authorization.vehicle must be PULL_REQUEST")
+            if not str(auth.get("repository") or "").strip():e.append("delivery_authorization.repository must be explicit")
+            if not isinstance(auth.get("number"),int) or auth.get("number")<1:e.append("delivery_authorization.number must be positive integer")
+            if not str(auth.get("head_sha") or "").strip():e.append("delivery_authorization.head_sha must be explicit exact PR head")
+            if auth.get("disposition") not in {"GRANTED","REVOKED"}:e.append("delivery_authorization.disposition invalid")
+            if effects.get("grants_material_write_authority") is not False:e.append("delivery merge authorization must not grant material write authority")
+    elif kind=="AUTHORIZATION":
+        w.append("AUTHORIZATION decision has no structured delivery_authorization; it does not grant merge authority")
     if odr.get("status") not in STATUSES:e.append("ODR.status invalid")
     return e,w
 
