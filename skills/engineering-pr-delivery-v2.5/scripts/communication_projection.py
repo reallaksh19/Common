@@ -13,7 +13,7 @@ def _current_titles(progress:dict)->dict:
             if str(ph.get("id"))==str(cur.get("phase")):out["phase_title"]=ph.get("title")
             for wp in ph.get("work_packages",[]) or []:
                 if str(wp.get("id"))==str(cur.get("work_package")):out["work_package_title"]=wp.get("title")
-    out.update({"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")})
+    out.update({"progress_basis":progress.get("progress_basis") or {},"overall_percent":progress.get("overall_percent"),"phase_percent":cur.get("phase_percent"),"work_package_percent":cur.get("work_package_percent"),"ep_percent":cur.get("ep_percent")})
     return out
 
 
