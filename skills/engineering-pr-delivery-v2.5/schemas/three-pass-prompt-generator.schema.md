@@ -1316,12 +1316,13 @@ Instead ask about the actual unresolved problem:
 
 ```text
 better:
-"EMP.1 uses WRC 537 for local-attachment assessment. Its professionally usable
-method basis is tied to tabulated gamma conditions, while real vessel geometry
-often lies between those conditions and the source itself does not provide the
-missing rule. Before looking at how this repository has tried to resolve that,
-what would have to be true before an engineering organisation could responsibly
-let the product serve those non-tabulated cases?"
+"You are responsible for EMP.1, a WRC 537 local-attachment assessment capability.
+Its professionally usable method basis is tied to tabulated gamma conditions,
+while real vessel geometry often lies between those conditions and the source
+itself does not provide the missing rule. An engineer now brings you a real case
+between those tabulated conditions and wants an answer they can sign. What would
+have to be true before an engineering organisation could responsibly let the
+product serve that case?"
 ```
 
 That is issue-specific without revealing today's options or evidence conclusion.
@@ -3014,7 +3015,7 @@ current downstream issue sequence
 
 ## Strong Prompt-1 direction
 
-> EMP.1 is intended to support WRC 537 local-attachment assessment for real pressure-equipment work. The professional-use basis is tied to tabulated gamma conditions, but real vessel geometry commonly falls between those conditions and the source itself does not provide the missing rule. Before looking at how the current repository has approached that gap, reason from engineering first principles: what would have to be true before an organisation could responsibly let the product serve non-tabulated-gamma cases? What separate claims would need support—numerical behaviour, conservatism, source fidelity, independent qualification, organisation-owned policy and professional-use authority? When is refusal the correct answer? What evidence would change your position?
+> You are responsible for a WRC 537 local-attachment assessment capability used on real pressure-equipment work. The professional-use basis is tied to tabulated gamma conditions, but a practising engineer brings a vessel whose geometry lies between those conditions and still needs a defensible answer. The source does not provide the missing rule. What would have to be true before your organisation could responsibly let the product serve this case? What separate claims would need support—numerical behaviour, conservatism, source fidelity, independent qualification, organisation-owned policy and professional-use authority? When is refusal the correct answer? What evidence would change your position?
 
 This passes because a programme-aware engineer can identify the issue, but cannot infer today's chosen options or evidence conclusion.
 
