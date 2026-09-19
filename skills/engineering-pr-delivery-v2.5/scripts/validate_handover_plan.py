@@ -33,6 +33,13 @@ def validate(root:Path,owner_requirements:list[str]|None=None,complex_project:bo
         for index,item in enumerate(plan.get(family) or []):
             if not str(item.get("definition_path") or "").strip():e.append(f"handover {family}[{index}] requires durable definition_path")
 
+    recent_events=plan.get("recent_concept_events")
+    if not isinstance(recent_events,list):e.append("handover recent_concept_events must be list")
+    else:
+        for index,event in enumerate(recent_events):
+            if not isinstance(event,dict):e.append(f"handover recent_concept_events[{index}] must be mapping");continue
+            if not str(event.get("id") or "").startswith("EVT-"):e.append(f"handover recent_concept_events[{index}] requires EVT-* id")
+            if not isinstance(event.get("concept_refs"),list) or not event.get("concept_refs"):e.append(f"handover recent_concept_events[{index}] requires concept refs")
     incremental=plan.get("incremental") or {}
     if not isinstance(incremental.get("prior_publication_present"),bool):e.append("handover incremental.prior_publication_present must be boolean")
     for key_name in ("newly_pending","retained_pending","completed_since_prior"):
