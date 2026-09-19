@@ -42,6 +42,10 @@ def render_projection(c:dict)->str:
     if details.get("files_changed"):lines.append(f"- Files changed in the current checkpoint result: {', '.join(str(x) for x in details.get('files_changed') or [])}.")
     ev_change=details.get("evidence_state") or {}
     if ev_change.get("from")!=ev_change.get("to"):lines.append(f"- Evidence state: {ev_change.get('from') or 'none'} → {ev_change.get('to') or 'none'}.")
+    basis_change=details.get("progress_basis") or {}
+    if basis_change.get("from")!=basis_change.get("to"):
+        before=basis_change.get("from") or {};after=basis_change.get("to") or {}
+        lines.append(f"- Progress basis: {before.get('id') or 'none'} → {after.get('id') or 'none'}; roadmap basis: {before.get('roadmap_revision') or 'none'} → {after.get('roadmap_revision') or 'none'}.")
     rm_change=details.get("roadmap_revision") or {}
     if rm_change.get("from")!=rm_change.get("to"):lines.append(f"- Roadmap revision: {rm_change.get('from') or 'none'} → {rm_change.get('to') or 'none'}.")
     if details.get("issue_change"):lines.append("- Current issue/coordination identity or state changed.")
@@ -75,6 +79,10 @@ def render_projection(c:dict)->str:
     acceptance=ev.get("acceptance") or []
     if acceptance:
         done=sum(1 for item in acceptance if isinstance(item,dict) and item.get("percent")==100);lines.append(f"Acceptance: {done} of {len(acceptance)} criteria are complete on the recorded progress basis.")
+        for item in acceptance:
+            if not isinstance(item,dict):continue
+            basis=", ".join(str(x) for x in (item.get("basis") or [])) or "none recorded"
+            lines.append(f"- {item.get('id')}: **{str(item.get('status') or 'UNKNOWN').replace('_',' ').title()}** — {_pct(item.get('percent'))}; basis: {basis}.")
     quality=o.get("quality") or {};lines += ["","## Quality and known risks",f"Quality state: **{str(quality.get('state') or 'unknown').replace('_',' ').title()}**."]
     risks=quality.get("visible_risks") or []
     if risks:
@@ -86,7 +94,7 @@ def render_projection(c:dict)->str:
         for gap in quality["procedure_gaps"]:lines.append(f"- {gap.get('procedure')}: {gap.get('reason')}")
     for limitation in quality.get("known_limitations") or []:lines.append(f"- Known limitation: {_text(limitation,['statement','description','reason'])}")
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
-    recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
+    recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};pb=progress.get("progress_basis") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Progress basis: **{pb.get('id') or 'unknown'}** on roadmap revision **{pb.get('roadmap_revision') or roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
     delivery=o.get("delivery") or {};lines += ["","## Delivery"]
     if delivery.get("applicability")=="NOT_APPLICABLE":
