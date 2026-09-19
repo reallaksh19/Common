@@ -138,6 +138,8 @@ CURRENT-VOCABULARY GATE:
 PASS — clean
 PROMPT-1 OBJECT GATE:
 PASS — correct object
+HUMAN-Q-LABEL GATE:
+PASS — no machine labels
 HUMAN-IMMERSION GATE:
 PASS — human/domain scenario only
 PROMPT-3 FREEDOM GATE:
@@ -229,6 +231,17 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         bad = GOOD.replace("GENERATOR MODE:\nTHREE_PASS_ONLY", "GENERATOR MODE:\nENGINEERING_DELIVERY")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("GENERATOR MODE must be THREE_PASS_ONLY" in e for e in errors))
+
+    def test_machine_q_labels_are_rejected(self):
+        bad = GOOD.replace(
+            "Think independently about the specific unresolved domain problem.",
+            "Q1 — PRODUCTION_PATH\nrequired_output_keys: production_entrypoint, authority_source",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(
+            any("machine/taxonomy surface language" in e for e in errors),
+            errors,
+        )
 
 if __name__ == "__main__":
     unittest.main()
