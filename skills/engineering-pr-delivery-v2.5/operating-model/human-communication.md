@@ -151,3 +151,38 @@ An unchanged repeat does not advance the cursor. `--force-record` is reserved fo
 
 Material publication cadence is triggered by a change to accepted progress, implementation result, evidence, blocker/quality/control state, current issue/delivery/custody, roadmap disposition, Owner-decision requirement, required external/local action, or exact next-work contract. Repeated unchanged polling/retries are suppressed while autonomous work continues.
 
+
+
+## Live PR delivery/readiness
+
+When the current slice has a pull-request delivery vehicle, Owner communication must project a **vector**, not a single "ready" label.
+
+Provider external reality is recorded as evidence in a current `DELIVERY_OBSERVATION` referenced by optional `REPO_STATE.delivery`.
+
+The Owner delivery section keeps these dimensions independent:
+
+```text
+PR identity / URL
+lifecycle: DRAFT | OPEN | CLOSED | MERGED | UNKNOWN
+head / base
+exact-head checks
+mergeability / conflict
+review / change-request state
+ready for review
+technical ready to merge
+merge authorization
+```
+
+Rules:
+
+- mergeable does not mean ready for review;
+- green checks on an older head do not count as current PASS;
+- ready for review does not mean engineering acceptance is complete;
+- technical readiness does not grant merge authority;
+- merge authorization comes only from an applied Owner `ODR` with structured `delivery_authorization` bound to the exact repository / PR / head SHA;
+- a head change makes an older grant stale;
+- when provider review/check data cannot be observed, report `UNKNOWN` rather than infer success.
+
+`technical_ready_to_merge` is derived from current acceptance/evidence plus current provider lifecycle/check/mergeability/review facts. It returns `YES | NO | UNKNOWN` with reasons.
+
+The delivery observation is evidence, not roadmap authority and not authorization.
