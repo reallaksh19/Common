@@ -1,0 +1,48 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, required_stages, fields]
+properties:
+  schema_version: {const: relay-v2.5-owner-field-lineage}
+  required_stages:
+    type: array
+    minItems: 7
+    uniqueItems: true
+    items:
+      enum: [source_contract, declarative_schema, procedural_validator, report_projection, communication_projection, renderer, regression]
+  fields:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, human_need, authority, stages]
+      properties:
+        id: {type: string, pattern: '^OWNER_'}
+        human_need: {type: string, minLength: 1}
+        authority: {type: string, minLength: 1}
+        stages:
+          type: object
+          required: [source_contract, declarative_schema, procedural_validator, report_projection, communication_projection, renderer, regression]
+          additionalProperties: false
+          properties:
+            source_contract: {$ref: '#/$defs/surfaces'}
+            declarative_schema: {$ref: '#/$defs/surfaces'}
+            procedural_validator: {$ref: '#/$defs/surfaces'}
+            report_projection: {$ref: '#/$defs/surfaces'}
+            communication_projection: {$ref: '#/$defs/surfaces'}
+            renderer: {$ref: '#/$defs/surfaces'}
+            regression: {$ref: '#/$defs/surfaces'}
+$defs:
+  surfaces:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [path, tokens]
+      properties:
+        path: {type: string, minLength: 1}
+        tokens:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, minLength: 1}
+additionalProperties: false
