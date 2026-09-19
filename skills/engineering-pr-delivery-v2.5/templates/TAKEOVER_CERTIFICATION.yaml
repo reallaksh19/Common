@@ -1,9 +1,9 @@
 schema_version: relay-v2.5-takeover-certification
 id: TC-0001
 candidate:
-  agent_instance_id: "<incoming-agent-instance>"
+  agent_instance_id: "<execution-candidate-agent-instance>"
 prepared_by:
-  agent_instance_id: "<outgoing-agent-instance>"
+  agent_instance_id: "<receipt-author-agent-instance; may equal candidate>"
 evaluated_by:
   type: DETERMINISTIC_VALIDATOR
   identity: validate_takeover_certification.py
