@@ -12,7 +12,7 @@ properties:
       owner_publication_cursor_digest: {type: [string, 'null']}
   owner:
     type: object
-    required: [change, capability, current_work, purpose, scope, evidence, quality, roadmap, decisions, next_work, external_actions, stop_conditions]
+    required: [change, capability, current_work, purpose, scope, evidence, quality, roadmap, delivery, decisions, next_work, external_actions, stop_conditions]
     properties:
       change:
         type: object
@@ -52,6 +52,9 @@ properties:
       roadmap:
         type: object
         required: [summary, progress, last_reconciliation]
+      delivery:
+        type: object
+        required: [applicability, provider, observation_id, observation_path, vehicle, mergeability, checks, review, ready_for_review, technical_ready_to_merge, merge_authorization]
       decisions:
         type: object
         required: [required_now, recorded, reserved]
