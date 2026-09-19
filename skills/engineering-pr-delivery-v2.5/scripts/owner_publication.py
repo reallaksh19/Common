@@ -76,6 +76,7 @@ def normalize_report(report: dict) -> dict:
     return {
         "task": {
             "acceptance": _acceptance_state(report),
+            "progress_basis": copy.deepcopy(progress.get("progress_basis") or {}),
             "overall_percent": progress.get("overall_percent"),
             "phase_percent": current.get("phase_percent"),
             "work_package_percent": current.get("work_package_percent"),
@@ -142,6 +143,7 @@ def _details(previous: dict | None, current: dict) -> dict:
     if previous is None:
         return {
             "acceptance_transitions": [],
+            "progress_basis": {"from": None, "to": copy.deepcopy(current["task"].get("progress_basis") or {})},
             "completed_steps": current["implementation"]["completed_steps"],
             "files_changed": current["implementation"]["files_changed"],
             "evidence_state": {"from": None, "to": current["evidence"]["plane"].get("state")},
@@ -152,6 +154,10 @@ def _details(previous: dict | None, current: dict) -> dict:
         }
     return {
         "acceptance_transitions": _acceptance_transitions(previous, current),
+        "progress_basis": {
+            "from": copy.deepcopy(previous["task"].get("progress_basis") or {}),
+            "to": copy.deepcopy(current["task"].get("progress_basis") or {}),
+        },
         "completed_steps": (
             current["implementation"]["completed_steps"]
             if previous["implementation"] != current["implementation"]
@@ -255,6 +261,8 @@ def classify_baseline(previous: dict | None, current: dict) -> dict:
             event = "IMPLEMENTATION_CHANGE"
         elif diff["dimensions"]["evidence"]:
             event = "EVIDENCE_PROGRESS"
+        elif diff["dimensions"]["task"]:
+            event = "CONTROL_STATE_CHANGE"
         elif diff["dimensions"]["delivery_or_custody"] or diff["dimensions"]["issues"]:
             event = "DELIVERY_OR_CUSTODY_PROGRESS"
         elif (
