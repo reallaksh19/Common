@@ -198,10 +198,21 @@ python plan_handover.py <repo-root> --command "Plan for Handover, complex projec
 
 python validate_handover_plan.py <repo-root>
 python validate_handover_plan.py <repo-root> --complex-project
+
+# Prepare the immutable GitHub generation + handover ISSUE_GRAPH node.
+python prepare_handover_projection.py <repo-root>
+python prepare_handover_projection.py <repo-root> --apply
+
+# Then use the existing crash-safe transaction:
+python github_projection_next.py <repo-root>
+python begin_github_operation.py <repo-root> --basis "<durable pre-write basis>" --apply
+# perform exactly the returned provider action, read it back,
+# write GITHUB_OBSERVATION, then:
+python reconcile_github_projection.py <observation.yaml> <repo-root> --apply
 ```
 
 `handover_planning.py` derives a non-authoritative handover plan from the current report projection and active EP. It resolves the work contract by verified current issue -> active EP -> current roadmap WP, derives pending INTENT, records durable input/benchmark definition paths, retains relevant user-authored session requirements supplied by the executing agent, and creates a stable ownership-boundary key for incremental GitHub issue reuse.
 
-The planner never directly mutates GitHub. Use existing GHGEN/GHOP operations for create/update/link publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
+`prepare_handover_projection.py` converts the derived plan into a CREATE or PUBLISH_HANDOVER GHOP. It reuses an existing open handover ISSUE_GRAPH node with the same stable handover key, otherwise proposes a new HANDOVER coordination node. It refuses to prepare over active unreconciled projection work and never claims native parentage before provider readback. The planner/preparer never directly calls GitHub. Use existing GHGEN/GHOP operations for publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
 
 Complex handover mode changes only the generator request: exactly three prompts remain, with visible Q1–Q5 inside Prompt 1 according to the freshly fetched standalone schema.
