@@ -118,6 +118,18 @@ python activate_github_generation.py <generation.yaml> <repo-root> [--apply]
 
 GitHub is an external coordination projection, never roadmap authority. `GHGEN-*` files are immutable desired generations containing stable `GHOP-*` operations. Before an external write, `begin_github_operation.py --apply` persists `ATTEMPTED_UNCONFIRMED`; then perform the provider call; then produce/read back a `GITHUB_OBSERVATION`; finally reconcile it. A timeout or missing connector response therefore cannot justify blind retry. `ISSUE_GRAPH.github_state` is last verified external reality (`ABSENT | OPEN | CLOSED | UNKNOWN`). Native parent/sub-issue success may be claimed only when the integration can create and read back that native relationship; a body link is not equivalent.
 
+## Three-pass prompt output validation
+
+```bash
+python validate_three_pass_prompt_output.py <generated-markdown> --expected-schema-sha <current-schema-sha>
+```
+
+This validator checks generated three-pass prompt Markdown before it is returned or handed off. It validates the current schema basis, visible preflight, issue-level problem-kernel/current-answer separation, legacy control-path rejection, and Prompt-3 artifact freedom.
+
+Prompt 1 is also required to be **method-invisible**. The validator rejects generator/meta language such as “later pass”, “fixed independent reference”, “do not inspect the repository”, repository-deferral phrasing, and similar wording that pulls the future agent out of the real human/domain situation.
+
+This is intentionally a focused authoring-artifact validator rather than part of aggregate relay-state conformance.
+
 ## Other focused diagnostics
 
 ```bash
