@@ -183,3 +183,25 @@ Checkpoint evidence is bound to exact `execution_basis.material_ref`. Generated 
 The scoped CI must explicitly execute the self-consistency audit, root unit discovery, and the dedicated `tests/stress/` discovery; compiling stress modules is not execution evidence. See `../operating-model/ci-evidence-correction.md`.
 
 PyYAML is required. Procedural semantic/cross-object validators are the enforcement layer today; declarative schemas/templates are contract aids.
+
+
+## Plan for Handover command
+
+Focused command/validator:
+
+```bash
+python plan_handover.py <repo-root> --command "Plan for Handover" \
+  --owner-requirement "<user-authored requirement>"
+
+python plan_handover.py <repo-root> --command "Plan for Handover, complex project" \
+  --owner-requirement "<user-authored requirement>"
+
+python validate_handover_plan.py <repo-root>
+python validate_handover_plan.py <repo-root> --complex-project
+```
+
+`handover_planning.py` derives a non-authoritative handover plan from the current report projection and active EP. It resolves the work contract by verified current issue -> active EP -> current roadmap WP, derives pending INTENT, records durable input/benchmark definition paths, retains relevant user-authored session requirements supplied by the executing agent, and creates a stable ownership-boundary key for incremental GitHub issue reuse.
+
+The planner never directly mutates GitHub. Use existing GHGEN/GHOP operations for create/update/link publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
+
+Complex handover mode changes only the generator request: exactly three prompts remain, with visible Q1–Q5 inside Prompt 1 according to the freshly fetched standalone schema.
