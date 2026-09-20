@@ -199,6 +199,25 @@ fields:
       regression:
         - {path: tests/stress/test_progress_handover.py, tokens: ["test_handover_renders_objective_phase_wp_step_acceptance_and_next_work", "Implement the bounded synthetic result"]}
 
+  - id: OWNER_STATUS_HEARTBEAT
+    human_need: "Receive a progress status by minute 25 of every active task unless the Owner explicitly overrides that cadence."
+    authority: "V2.5 default 25-minute policy + explicit Owner override in EP report contract."
+    stages:
+      source_contract:
+        - {path: templates/EP.yaml, tokens: ["status_publication:", "default_after_minutes: 25", "owner_override: null"]}
+      declarative_schema:
+        - {path: schemas/execution-package.schema.yaml, tokens: ["status_publication", "default_after_minutes", "owner_override"]}
+      procedural_validator:
+        - {path: scripts/validate_ep_semantics.py, tokens: ["status_publication.default_after_minutes must be 25", "owner_override"]}
+      report_projection:
+        - {path: scripts/report_projection.py, tokens: ["status_publication", "default_after_minutes"]}
+      communication_projection:
+        - {path: scripts/communication_projection.py, tokens: ["_status_cadence", "effective_after_minutes"]}
+      renderer:
+        - {path: scripts/render_owner_status.py, tokens: ["Owner status heartbeat", "minutes"]}
+      regression:
+        - {path: tests/stress/test_progress_publication.py, tokens: ["test_default_owner_status_heartbeat_is_25_minutes", "test_owner_can_override_status_heartbeat_interval"]}
+
   - id: OWNER_PUBLICATION_DELTA
     human_need: "Know what changed since the last meaningful Owner publication, including explicit no-material-progress."
     authority: "Current report truth compared with derived OWNER_PUBLICATION baseline."
