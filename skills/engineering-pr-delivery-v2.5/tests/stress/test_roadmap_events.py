@@ -14,6 +14,7 @@ from test_core import good,dump
 from append_roadmap_event import append_event
 from handover_planning import build_handover_plan,render_issue_body
 from render_roadmap import render as render_roadmap
+from render_owner_status import render as render_owner_status
 from validate_roadmap_events import validate as roadmap_events_check
 
 
@@ -129,6 +130,16 @@ class RoadmapEventStressTests(unittest.TestCase):
             self.assertIn("## Recent concept-linked material events",text)
             self.assertIn("EVT-1 / ENGINEERING_DISCOVERY",text)
 
+
+    def test_new_execution_work_is_visible_in_owner_roadmap_before_admission(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            dump(root/"event.yaml",event())
+            append_event(root,root/"event.yaml",apply=True)
+            text=render_owner_status(root)
+            self.assertIn("## Newly discovered work",text)
+            self.assertIn("EVT-1",text)
+            self.assertIn("NO_CONCEPT_CHANGE",text)
 
 if __name__=="__main__":
     unittest.main()
