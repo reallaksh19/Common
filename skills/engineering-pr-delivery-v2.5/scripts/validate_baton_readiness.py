@@ -18,6 +18,7 @@ from validate_ep_staleness import validate as ep_staleness
 from validate_report_contract import validate as report_contract
 from validate_parallel_plan import validate as parallel_plan
 from validate_question_set import validate as question_sets
+from takeoverlib import current_routes
 
 
 def baton_prerequisite_errors(root:Path)->list[str]:
@@ -31,6 +32,11 @@ def baton_prerequisite_errors(root:Path)->list[str]:
         try:ce,_=check(root)
         except Exception as exc:ce=[str(exc)]
         errors.extend(f"{name}: {x}" for x in ce)
+    for route in current_routes(root,state):
+        ep=load_yaml(root/str(route.get("ep_path")))
+        qb=ep.get("qualification_boundary") or {}
+        if qb.get("required") is True and (qb.get("question_policy") or "DEFAULT")=="SUPPRESSED_BY_OWNER":
+            errors.append(f"qualification questions suppressed by Owner for {route.get('ep_id')}; baton/takeover readiness remains false until qualification is satisfied or becomes not applicable")
     if state.get("chat_context_required") is not False:errors.append("chat context is required")
     return errors
 
