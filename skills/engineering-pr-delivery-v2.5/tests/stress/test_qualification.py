@@ -9,7 +9,7 @@ from takeoverlib import current_routes,yaml_digest
 from validate_question_set import validate as question_sets
 from validate_qualification_receipt import validate as qualifications
 from validate_takeover_certification import validate as takeover
-from validate_baton_readiness import validate as baton
+from validate_baton_readiness import validate as baton,baton_prerequisite_errors
 from validate_ep_semantics import validate as ep_semantics
 
 
@@ -108,5 +108,35 @@ class QualificationStressTests(unittest.TestCase):
             self.assertEqual([],question_sets(root)[0])
             attach_takeover(root,candidate="agent-B",preparer="agent-B")
             self.assertEqual([],takeover(root)[0])
+
+    def test_owner_no_questions_suppresses_qset_without_faking_readiness(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path)
+            ep["qualification_boundary"]={
+                "required":True,"trigger":"PHASE_CHANGED","from_phase":"PHASE-0","to_phase":"PHASE-1",
+                "changed_dimensions":["PRODUCTION_PATH"],"basis":["fresh phase qualification would normally be required"],
+                "question_policy":"SUPPRESSED_BY_OWNER","question_policy_basis":["OWNER: Proceed next, No Q1 to Q5"],
+                "not_applicable_reason":None,"question_set":None,
+            }
+            dump(ep_path,ep)
+            self.assertEqual([],ep_semantics(root)[0])
+            self.assertEqual([],question_sets(root)[0])
+            errors=baton_prerequisite_errors(root)
+            self.assertTrue(any("qualification questions suppressed by Owner" in x for x in errors),errors)
+
+    def test_owner_suppression_cannot_reference_qset(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path)
+            ep["qualification_boundary"]={
+                "required":True,"trigger":"PHASE_CHANGED","from_phase":"PHASE-0","to_phase":"PHASE-1",
+                "changed_dimensions":["PRODUCTION_PATH"],"basis":["required"],
+                "question_policy":"SUPPRESSED_BY_OWNER","question_policy_basis":["OWNER: Proceed next, No Qs"],
+                "not_applicable_reason":None,
+                "question_set":{"id":"QSET-ILLEGAL","path":"agents/relay/certifications/qualification/QSET-ILLEGAL.yaml"},
+            }
+            dump(ep_path,ep)
+            self.assertTrue(any("SUPPRESSED_BY_OWNER cannot create/reference QSET" in x for x in ep_semantics(root)[0]))
 
 if __name__=="__main__":unittest.main()
