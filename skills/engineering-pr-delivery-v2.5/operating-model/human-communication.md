@@ -46,6 +46,22 @@ The Owner view must never hide or soften away:
 
 Quality severity alone does not become a hard stop in communication. A non-blocking quality risk remains visible as a risk, while execution-stop language is reserved for the STOP plane / valid hard-stop mapping.
 
+## Environment-blocked local-agent delegation
+
+An external/local execution requirement is incomplete unless the Owner can immediately delegate it.
+
+The Owner view must expose:
+
+- the exact copy-pasteable local-agent prompt;
+- whether it was published as a current-issue comment or sub-issue;
+- that provider readback is required;
+- where the local result must be posted;
+- the 30- or 60-minute response-check timer and why that interval fits the task;
+- what the agent will do when the timer fires;
+- what happens if no response is present.
+
+A local/browser/tool limitation is therefore not merely `NOT_RUN`; it becomes a bounded, observable delegation with a return path.
+
 ## Plain-language boundary
 
 The Owner view should avoid relay-internal object jargon where ordinary language carries the same meaning. It may name stable identifiers when they materially help traceability, but it must not require the Owner to understand internal terms such as EP, QRV, GHOP, or QSET in order to know capability, risk, evidence, decisions, and next work.
