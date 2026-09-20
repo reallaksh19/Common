@@ -216,4 +216,25 @@ class HumanCommunicationStressTests(unittest.TestCase):
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertTrue(any("after_minutes must be 30 or 60" in x for x in ep_semantics(root)[0]))
 
+    def test_owner_control_return_has_canonical_roadmap_macro(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            text=owner_status(root)
+            for expected in (
+                "# Owner Roadmap",
+                "## Executive state",
+                "Overall progress:",
+                "Current phase:",
+                "Current work:",
+                "Current issue:",
+                "Current PR:",
+                "Roadmap disposition:",
+                "## Phase status",
+                "## Active work",
+                "## Newly discovered work",
+                "## Recommended forward sequence",
+                "## Roadmap revision history",
+            ):
+                self.assertIn(expected,text)
+
 if __name__=="__main__":unittest.main()
