@@ -195,7 +195,7 @@ fields:
       communication_projection:
         - {path: scripts/communication_projection.py, tokens: ["_exact_next_work", "next_work", "next_steps"]}
       renderer:
-        - {path: scripts/render_owner_status.py, tokens: ["## What happens next", "expected_result"]}
+        - {path: scripts/render_owner_status.py, tokens: ["## Recommended forward sequence", "expected_result"]}
       regression:
         - {path: tests/stress/test_progress_handover.py, tokens: ["test_handover_renders_objective_phase_wp_step_acceptance_and_next_work", "Implement the bounded synthetic result"]}
 
@@ -309,6 +309,6 @@ fields:
       communication_projection:
         - {path: scripts/communication_projection.py, tokens: ["_required_owner_decisions", "decisions"]}
       renderer:
-        - {path: scripts/render_owner_status.py, tokens: ["## Decisions for you", "merge authorization"]}
+        - {path: scripts/render_owner_status.py, tokens: ["## Owner decisions", "merge authorization"]}
       regression:
         - {path: tests/stress/test_delivery_readiness.py, tokens: ["test_applied_owner_authorization_is_exact_pr_head_bound"]}
