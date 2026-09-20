@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -193,7 +193,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -217,7 +217,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-21-R8`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-21-R9`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -1784,13 +1784,19 @@ Prompt 3 may require a decision and reasoning, but must not pre-decide the survi
 
 ---
 
-# HARD GATE 4.1 — PROMPT-3 STEP-BACK / ROADMAP-SYNTHESIS GATE
+# HARD GATE 4.1 — PROMPT-3 CONTEXT / STEP-BACK GATE
 
-For targets that sit inside a programme, repository, product roadmap, task graph or issue family, Prompt 3 must widen context after Prompt 2 without widening ownership.
+Prompt 3 must not invent missing Prompt-1 or Prompt-2 results.
+
+It must require the future agent to use the actual outputs, retrieve durable references when available, or explicitly regenerate a missing pass from its original inputs before reconciliation.
+
+Prompt 1 must be treated as an **independent baseline, not immutable truth**.
+
+For targets inside a programme, repository, product roadmap, task graph or issue family, Prompt 3 must then widen context without widening ownership.
 
 It must make the future agent:
 
-- recover the Prompt-1 destination;
+- recover the actual Prompt-1 independent baseline;
 - inspect the relevant larger capability/roadmap landscape;
 - distinguish completed, active, deferred and neighbouring work;
 - preserve ownership boundaries;
@@ -1798,29 +1804,29 @@ It must make the future agent:
 
 Fail if Prompt 3 lets PR statistics, commit counts, changed-file counts, branch ahead/behind numbers, CI-run counts, test counts or percentage-complete determine product/system direction.
 
-The keyword **STEP BACK** should appear as a visible reasoning pivot in the generated Prompt 3 when natural, but the gate is satisfied by the behavior above, not by the word alone.
-
 > **STEP BACK widens understanding, not ownership.**
 
 ---
 
-# HARD GATE 4.2 — PROMPT-3 RECONCILIATION GATE
+# HARD GATE 4.2 — PROMPT-3 RECONCILIATION / GAP-INDEPENDENCE GATE
 
 Prompt 3 must reconcile:
 
 ```text
-PROMPT-1 DESTINATION
+PROMPT-1 INDEPENDENT BASELINE
 ×
 PROMPT-2 VERIFIED REALITY
 ×
 CURRENT ROADMAP / TASK MODEL
 ```
 
-It must not define reconciliation as making those representations agree.
+It must not define reconciliation as making those representations agree. Any of the three may need revision.
 
-Require the future agent to expose contradictions, already-solved work, stale roadmap assumptions, ownership mismatches, genuinely missing capabilities and evidence gaps.
+Before inherited solution candidates are allowed to influence the answer, Prompt 3 must require a **solution-neutral independent current-gap statement**.
 
-The keyword **RECONCILE** should appear as a visible reasoning pivot when natural, but the gate is satisfied only when the prompt asks which representation should change.
+Historical candidates from an issue, roadmap, handover or prior agent output must be treated as hypotheses to test against that independently discovered gap, not as a next-work queue.
+
+Require the future agent to expose contradictions, already-solved work, Prompt-1 assumptions defeated by reality, stale roadmap assumptions, ownership mismatches, genuinely missing capabilities and evidence gaps.
 
 > **RECONCILE does not mean harmonize.**
 
@@ -1828,39 +1834,42 @@ The keyword **RECONCILE** should appear as a visible reasoning pivot when natura
 
 # HARD GATE 4.3 — PROMPT-3 TECHNICAL-CRITIQUE / PROOF GATE
 
-For every material technical conclusion that would cause an `ADD`, `REVISE`, `SPLIT`, `REPLACE` or implementation change, Prompt 3 must demand a **claim-specific proof obligation before scope is admitted**.
+For every material technical conclusion that would cause an `ADD`, `REVISE`, `SPLIT`, `REPLACE` or implementation change, Prompt 3 must demand a **claim-specific proof obligation before capability scope is admitted**.
 
-The proof obligation must cover:
+The proof obligation must distinguish:
 
 ```text
 claim / invariant
-falsifier
+gap witness
 current observation
 required observation
-measurement or executable oracle
 existing-model-first attempt
+disproof condition
+measurement or executable oracle
 after-change proof
 regression / invariant check
 pressure test when generality is claimed
 ```
 
+The **gap witness** is the case that can expose the alleged deficiency.
+
+The **disproof condition** is the result that would prove the proposed architecture/capability unnecessary, mis-scoped or incorrectly owned.
+
 Quantitative proof is mandatory when the claimed property is meaningfully quantitative. When it is not, require a reproducible executable oracle rather than invented numbers.
 
 The future agent must explicitly try to prove the proposed change unnecessary by attempting the stronger case with the existing model first.
 
-If the current system passes the falsifier without the proposed addition, Prompt 3 must require the proposal to be withdrawn or narrowed.
+If the current system satisfies the witness and the disproof condition is met without the proposed addition, Prompt 3 must require the proposal to be withdrawn or narrowed.
 
-If the claim cannot yet be measured or executed, it must remain an unproved hypothesis / evidence task rather than implementation scope.
+If the claim cannot yet be measured or executed, it may justify a bounded **PROBE / EVIDENCE TASK**, but the hypothesized product capability must not be counted as admitted scope merely because investigation was admitted.
 
 Do not accept LOC, commit count, PR count, issue count, number of tests, CI-run count or percentage-complete as proof of technical value.
-
-The visible pivot should use **CRITIQUE THE CLAIM** rather than generic critique language when natural. The gate is satisfied by adversarial falsification behavior, not by the heading alone.
 
 > **CRITIQUE THE CLAIM means try to disprove it.**
 
 ---
 
-# HARD GATE 4.4 — PROMPT-3 DECISION GATE
+# HARD GATE 4.4 — PROMPT-3 DECISION / EVIDENCE-SYMMETRY GATE
 
 Prompt 3 must postpone disposition until after step-back, reconciliation and technical critique.
 
@@ -1878,7 +1887,13 @@ REMOVE / CLOSE
 LEAVE UNCHANGED
 ```
 
-The keyword **DECIDE** should appear as a visible reasoning pivot when natural, but the gate is satisfied only when the prompt chooses the smallest evidence-supported move and permits fixture/proof work, evidence collection, ownership transfer or no change instead of forcing implementation.
+Evidence is required in both directions:
+
+- additions/architecture changes require a proved deficiency;
+- narrowing/removal/closure/ownership transfer require positive evidence that the obligation is satisfied, invalid, superseded, incorrectly owned or unnecessary;
+- preservation requires evidence that the current boundary still serves the destination.
+
+The prompt must permit a probe/evidence task, fixture/proof strengthening, ownership transfer or no change instead of forcing implementation.
 
 Delivery mechanics come after this decision.
 
@@ -2344,9 +2359,11 @@ The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replac
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Prompt 3 must return to the **actual Prompt-1 answer** and place it beside Prompt-2 reality.
+Prompt 3 must use the **actual Prompt-1 result** as an independent baseline and place it beside Prompt-2 verified reality.
 
-It is constrained by the frozen **COMPARISON QUESTION** and **USER INTENT**, not by a preselected artifact form.
+Prompt 1 is deliberately independent, but it is not infallible. Verified reality or a stronger falsifier may show that one of its assumptions should change.
+
+Prompt 3 is constrained by the frozen **COMPARISON QUESTION** and **USER INTENT**, not by a preselected artifact form.
 
 Artifact freedom does not mean intent freedom.
 
@@ -2364,11 +2381,11 @@ prepare the smallest justified change/action
 
 Tell the future agent explicitly:
 
-> Take the independent picture you produced in Prompt 1.
+> Use Prompt 1 as the independent reference picture, not as an infallible specification.
 
-> Put it beside the reality you established in Prompt 2.
+> Put it beside the verified reality established in Prompt 2.
 
-> Where evidence genuinely changed your mind, say exactly why. Otherwise keep the independent baseline.
+> Where evidence genuinely changes either picture, say exactly why.
 
 > Do not assume the current issue, register, matrix, roadmap, architecture, checklist, candidate-work list or task breakdown deserves to survive merely because it already exists.
 
@@ -2390,17 +2407,30 @@ EXECUTE IF AUTHORIZED
 
 The four pivots mean different things. Do not collapse them into generic "think critically" prose.
 
-## A. RETURN TO DESTINATION
+## A. CONTEXT INTEGRITY / RETURN TO DESTINATION
 
-Recover the exact Prompt-1 destination before choosing work.
+Before reasoning from Prompt 1 or Prompt 2, verify that their actual outputs are available.
+
+Use this order:
+
+1. use the actual Prompt-1 and Prompt-2 outputs from the current three-pass execution when present;
+2. otherwise retrieve their durable published artifacts/references when available;
+3. if either result is unavailable, regenerate only that missing pass from its original inputs and explicitly state that it was regenerated;
+4. never silently substitute the historical issue, roadmap, current implementation or the agent's recollection for a missing Prompt-1/Prompt-2 result.
+
+Then recover the Prompt-1 destination.
 
 Ask:
 
-> What were we ultimately trying to make possible before today's implementation, issue text, PR state and candidate-work list were allowed to shape the answer?
+> What were we trying to make possible before today's implementation, issue text, PR state and candidate-work list were allowed to shape the answer?
 
-Do not rewrite the destination to resemble the repository.
+Treat that answer as the **independent baseline**.
 
-Preserve mechanisms, evidence and decisions from Prompt 2 only when they genuinely satisfy part of that destination.
+Do not rewrite it merely to resemble the repository.
+
+Do not preserve it merely because Prompt 1 said it. If verified reality or a stronger falsifier defeats one of its assumptions, revise that assumption explicitly and explain the evidence.
+
+> **Prompt 1 is the independent baseline, not immutable truth.**
 
 ## B. STEP BACK — widen understanding, not ownership
 
@@ -2408,7 +2438,7 @@ Before choosing the next task or technical solution, step back from the immediat
 
 Inspect the **relevant larger capability and roadmap landscape**:
 
-- the Prompt-1 destination;
+- the Prompt-1 independent baseline;
 - what Prompt 2 proved already exists;
 - relevant roadmap themes and task decomposition;
 - completed, active, deferred and neighbouring capabilities;
@@ -2423,12 +2453,12 @@ Use neighbouring work to understand the system. Do not absorb neighbouring owner
 
 Do not let repository/PR telemetry become a capability model. PR state, branch divergence, commit count, changed-file count, CI-run count, test-file count or percentage-complete may locate evidence or constrain delivery, but they do not establish what the system should become.
 
-## C. RECONCILE — destination × reality × roadmap
+## C. RECONCILE — baseline × reality × roadmap
 
 Now reconcile:
 
 ```text
-PROMPT-1 DESTINATION
+PROMPT-1 INDEPENDENT BASELINE
 ×
 PROMPT-2 VERIFIED REALITY
 ×
@@ -2437,19 +2467,37 @@ CURRENT ROADMAP / TASK MODEL
 
 Reconciliation does **not** mean forcing these three pictures to agree.
 
-Explain the important differences and decide which representation should change.
+Any of the three may need to change.
+
+Explain the important differences and determine which representation should change.
 
 Identify:
 
 - capabilities already good enough and not worth reopening;
 - meaningful destination gaps that remain;
+- Prompt-1 assumptions invalidated by verified reality;
 - roadmap items whose wording, scope or ownership no longer matches reality;
 - tasks already made obsolete by later work;
 - work that belongs to another owner;
-- new ideas exposed by Prompt 1 or live evidence that the roadmap does not currently represent;
 - uncertainty caused by missing evidence rather than by missing architecture.
 
-Restate the real problem **as it exists now**, independently of the historical checklist.
+### Independent current-gap statement
+
+Before reading, selecting or ranking inherited solution candidates, write a solution-neutral statement:
+
+> **Given the independent baseline and verified reality, the meaningful current gap is...**
+
+or, when appropriate:
+
+> **No material capability gap is currently proved; the remaining need is evidence / delivery / ownership / no action.**
+
+This statement must be derived **before** inherited candidate architectures are allowed to shape the answer.
+
+Only after the independent current-gap statement exists may Prompt 3 inspect historical candidate ideas from the issue, roadmap, handover or prior agent output.
+
+Treat those candidates as hypotheses to test against the independently discovered gap, **not as a next-work queue**.
+
+A candidate may be rejected, narrowed, transferred, deferred or made obsolete by the reconciliation.
 
 For each material roadmap/capability item, the eventual disposition may be:
 
@@ -2465,13 +2513,9 @@ REMOVE / CLOSE
 LEAVE UNCHANGED
 ```
 
-Do not make the disposition yet merely because one sounds plausible. Material additions or architecture changes must first survive **CRITIQUE THE CLAIM**.
+Do not make the disposition yet merely because one sounds plausible. Material changes must survive **CRITIQUE THE CLAIM**.
 
-`ADD` has a high bar. A newly discovered idea may enter the roadmap only when it closes a meaningful destination gap that is not already adequately represented, has the correct owner/boundary, creates more value than complexity, and survives the technical challenge below.
-
-Ask what existing roadmap item becomes less important, changes ownership or can disappear if the new idea is accepted. New scope is not free.
-
-> **RECONCILE does not mean harmonize. It means explain the contradiction and determine what should change.**
+> **RECONCILE does not mean harmonize. It means expose the contradiction, state the gap independently, and determine what should change.**
 
 ## D. CRITIQUE THE CLAIM — try to prove the proposed change unnecessary
 
@@ -2489,27 +2533,31 @@ For every technical conclusion that would materially change roadmap scope or imp
 CLAIM / INVARIANT
 What exact system property is claimed to be missing or wrong?
 
-FALSIFIER
-What concrete input, operation, case or state transition exposes the claimed weakness?
+GAP WITNESS
+What concrete input, operation, case or state transition would expose the alleged deficiency?
 
 CURRENT OBSERVATION
-What does the live system actually produce?
+What does the live system actually produce for that witness?
 
 REQUIRED OBSERVATION
-What should a correct system produce?
+What must a sufficient system produce?
+
+EXISTING-MODEL-FIRST ATTEMPT
+Can the stronger witness already be represented and proved using the current
+model, fixture, adapter, schema or runtime without adding architecture?
+
+DISPROOF CONDITION
+What result would prove the proposed architecture/capability unnecessary,
+mis-scoped or incorrectly owned?
 
 MEASUREMENT / EXECUTABLE ORACLE
 How are current and required observations compared?
 Use counts, identities, cardinalities, equalities, deltas, tolerances,
 state transitions, browser observations or another claim-appropriate oracle.
 
-EXISTING-MODEL-FIRST ATTEMPT
-Can the stronger case already be represented and proved using the current model,
-fixture, adapter, schema or runtime without adding architecture?
-
 AFTER-CHANGE PROOF
-If a change is still required, what before/after evidence proves that it closes
-exactly the measured gap?
+Only if the existing model actually fails: what before/after evidence proves
+that the smallest change closes exactly the measured gap?
 
 REGRESSION / INVARIANT CHECK
 Which already-proved contracts must remain unchanged?
@@ -2518,6 +2566,11 @@ PRESSURE TEST
 When a primitive is claimed to be reusable, what unrelated-domain or materially
 different case challenges that generality?
 ```
+
+Do not overload one word to mean both sides of the test:
+
+- the **GAP WITNESS** is the case that can expose the alleged deficiency;
+- the **DISPROOF CONDITION** is the outcome that defeats the proposed architecture or scope.
 
 Prefer explicit state relations when they fit the claim, for example:
 
@@ -2537,11 +2590,30 @@ When it is not naturally numerical, use a reproducible executable oracle rather 
 
 Do **not** accept LOC, commit count, PR count, issue count, number of tests, CI-run count or percentage-complete as proof of technical value. Test counts alone do not prove the invariant; the tests must exercise the claimed property.
 
-If the current system passes the falsifier without the proposed addition, treat that as evidence **against adding architecture** and withdraw or narrow the proposal.
+### Probe/evidence task is not capability admission
 
-If the claim cannot yet be measured or executed, classify it as an **unproved hypothesis / evidence task**, not as admitted implementation scope.
+An unproved technical hypothesis may justify a bounded **PROBE / EVIDENCE TASK** whose purpose is to execute the gap witness.
 
-Do not enumerate attractive candidate architectures before falsification unless the target itself requires comparison of named alternatives. Discover the missing primitive from the failing invariant, not the other way around.
+That does **not** mean the hypothesized product capability has been added to the roadmap denominator or accepted as required architecture.
+
+Use this progression:
+
+```text
+HYPOTHESIS
+→ PROBE / EVIDENCE TASK
+→ execute gap witness
+→ either NO PROVED GAP
+   or PROVED GAP
+→ only then consider capability ADD / REVISE / REPLACE
+```
+
+If the current system satisfies the witness and the disproof condition is met without the proposed addition, treat that as evidence **against adding architecture** and withdraw or narrow the proposal.
+
+If the claim cannot yet be measured or executed, keep it as an **unproved hypothesis / evidence task**, not admitted product capability.
+
+Do not enumerate attractive candidate architectures before the independent current-gap statement and technical challenge unless the target itself requires comparison of named alternatives.
+
+Discover the missing primitive from the failing invariant, not the other way around.
 
 Do not confuse the example that exposed a weakness with the reusable problem underneath it:
 
@@ -2559,7 +2631,7 @@ failed test
 ≠ automatically an architecture problem
 ```
 
-> **CRITIQUE THE CLAIM does not mean produce objections. It means try to disprove the claim with a concrete falsifier and claim-appropriate proof.**
+> **CRITIQUE THE CLAIM does not mean produce objections. It means try to disprove the claim with a gap witness, existing-model-first attempt, explicit disproof condition and claim-appropriate proof.**
 
 ## E. DECIDE — smallest justified movement
 
@@ -2581,15 +2653,23 @@ LEAVE UNCHANGED
 
 Then identify the **smallest worthwhile next move**.
 
+The evidence burden is symmetric:
+
+- **ADD / REVISE / REPLACE / material implementation** require a proved deficiency, not architectural preference;
+- **NARROW / REMOVE / CLOSE / transfer ownership** require positive evidence that the obligation is already satisfied, invalid, superseded, incorrectly owned, or unnecessary for the destination;
+- **DEFER** requires a reason the capability may be valid but is not currently evidence-supported or urgent;
+- **LEAVE UNCHANGED / PRESERVE** requires evidence that the current boundary still serves the destination.
+
 Valid next moves include:
 
+- run a bounded probe/evidence task without admitting a new capability;
 - strengthen a fixture or proof rather than architecture;
-- add, fix, extend, simplify or refactor a bounded capability;
+- add, fix, extend, simplify or refactor a bounded capability after a proved gap;
 - move work to the correct owner;
 - reconcile a roadmap/task decomposition;
 - gather one discriminating piece of evidence;
 - present an owner decision;
-- close or remove historical work;
+- close or remove historical work on positive evidence;
 - defer;
 - preserve unchanged;
 - or make no change yet.
@@ -2604,7 +2684,7 @@ Before accepting the decision, return to the real witness and ask:
 
 > What previously proved capability must remain unchanged?
 
-> If the existing model already satisfies the stronger witness, are we correctly choosing fixture/proof work instead of new architecture?
+> If the existing model already satisfies the stronger witness, are we correctly choosing proof/evidence work or no architecture change?
 
 Only after this decision should delivery mechanics determine **how** the chosen move can be executed.
 
@@ -2874,7 +2954,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2893,7 +2973,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY

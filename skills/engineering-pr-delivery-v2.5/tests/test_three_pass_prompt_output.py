@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R8
+TPG-3P-2026-09-21-R9
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -203,11 +203,13 @@ Inspect current reality.
 
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Return to the exact Prompt-1 destination and put it beside Prompt-2 verified reality.
+Use the actual Prompt-1 and Prompt-2 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.
+Treat Prompt-1 as the independent baseline, not immutable truth; verified evidence may revise it.
 STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.
-RECONCILE — compare destination, verified reality, and the roadmap; do not force them to agree.
-CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.
-DECIDE — preserve, revise, add, defer, remove, or leave unchanged; choose the smallest evidence-supported move.
+RECONCILE — compare the baseline, verified reality, and the roadmap; state the independent current gap before inherited candidate solutions are considered.
+CRITIQUE THE CLAIM — define a GAP WITNESS and DISPROOF CONDITION, require quantitative or executable proof, try the stronger case with the existing model first, and withdraw or narrow architecture that proves unnecessary.
+A PROBE / EVIDENCE TASK may investigate an unproved hypothesis without admitting the hypothesized capability as product scope.
+DECIDE — preserve, revise, add, defer, remove, or leave unchanged; require positive evidence for narrowing, removal, closure, or ownership transfer and choose the smallest evidence-supported move.
 At completion report:
 THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
 FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
@@ -300,7 +302,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-21-R8", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-21-R9", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -311,7 +313,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-21-R8")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-21-R9")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
@@ -340,43 +342,69 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("roadmap/task landscape" in e for e in errors), errors)
 
-    def test_prompt3_requires_technical_falsifier(self):
-        bad = GOOD.replace("CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n", "CRITIQUE THE CLAIM — consider evidence before adding architecture.\n")
-        errors = MOD.validate_text(bad, SHA)
-        self.assertTrue(any("falsifier" in e for e in errors), errors)
-
-    def test_prompt3_requires_quantitative_or_executable_proof(self):
-        bad = GOOD.replace("CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n", "CRITIQUE THE CLAIM — state the falsifier; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n")
-        errors = MOD.validate_text(bad, SHA)
-        self.assertTrue(any("quantitative or executable" in e for e in errors), errors)
-
     def test_prompt3_requires_ownership_discipline(self):
-        bad = GOOD.replace("STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.\n", "STEP BACK — inspect the relevant roadmap/task landscape.\n")
+        bad = GOOD.replace("ownership boundaries", "scope boundaries").replace("ownership transfer", "scope transfer").replace("not ownership", "not scope")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("ownership" in e for e in errors), errors)
 
-    def test_prompt3_requires_prompt1_prompt2_reconciliation(self):
-        bad = GOOD.replace("Return to the exact Prompt-1 destination and put it beside Prompt-2 verified reality.\n", "Return to the destination and current reality.\n")
+    def test_prompt3_requires_cold_start_context_integrity(self):
+        bad = GOOD.replace("Use the actual Prompt-1 and Prompt-2 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.\n", "Use Prompt-1 and Prompt-2.\n")
         errors = MOD.validate_text(bad, SHA)
-        self.assertTrue(any("Prompt-1 destination" in e for e in errors), errors)
+        self.assertTrue(any("cold-start handling" in e for e in errors), errors)
+
+    def test_prompt3_treats_prompt1_as_revisable_baseline(self):
+        bad = GOOD.replace("Treat Prompt-1 as the independent baseline, not immutable truth; verified evidence may revise it.\n", "Treat Prompt-1 as the independent baseline.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("revise the Prompt-1 baseline" in e for e in errors), errors)
+
+    def test_prompt3_requires_independent_gap_before_candidates(self):
+        bad = GOOD.replace("state the independent current gap before inherited candidate solutions are considered", "review inherited candidate solutions")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("current gap independently" in e for e in errors), errors)
+
+    def test_prompt3_requires_gap_witness(self):
+        bad = GOOD.replace("define a GAP WITNESS and DISPROOF CONDITION, ", "define a DISPROOF CONDITION, ")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("gap witness" in e for e in errors), errors)
+
+    def test_prompt3_requires_disproof_condition(self):
+        bad = GOOD.replace("define a GAP WITNESS and DISPROOF CONDITION, ", "define a GAP WITNESS, ")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("disprove the proposed architecture" in e for e in errors), errors)
+
+    def test_prompt3_requires_quantitative_or_executable_proof(self):
+        bad = GOOD.replace("require quantitative or executable proof, ", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("quantitative or executable" in e for e in errors), errors)
 
     def test_prompt3_requires_existing_model_first(self):
-        bad = GOOD.replace("try the stronger case with the existing model first and ", "")
+        bad = GOOD.replace("try the stronger case with the existing model first, and ", "")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("existing/current model first" in e for e in errors), errors)
 
     def test_prompt3_requires_withdrawal_when_architecture_unnecessary(self):
-        bad = GOOD.replace(" and withdraw or narrow architecture that proves unnecessary", "")
+        bad = GOOD.replace("and withdraw or narrow architecture that proves unnecessary", "")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("proposed architecture is not justified" in e for e in errors), errors)
 
+    def test_prompt3_distinguishes_probe_from_capability_admission(self):
+        bad = GOOD.replace("A PROBE / EVIDENCE TASK may investigate an unproved hypothesis without admitting the hypothesized capability as product scope.\n", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("probe/evidence task from capability admission" in e for e in errors), errors)
+
+    def test_prompt3_requires_positive_evidence_for_removal(self):
+        bad = GOOD.replace("require positive evidence for narrowing, removal, closure, or ownership transfer and ", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("positive evidence" in e for e in errors), errors)
+
     def test_prompt3_keywords_do_not_replace_behavior(self):
         bad = GOOD.replace(
-            "CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n",
+            "CRITIQUE THE CLAIM — define a GAP WITNESS and DISPROOF CONDITION, require quantitative or executable proof, try the stronger case with the existing model first, and withdraw or narrow architecture that proves unnecessary.\n",
             "CRITIQUE THE CLAIM — think critically about the proposed architecture.\n",
         )
         errors = MOD.validate_text(bad, SHA)
-        self.assertTrue(any("falsifier" in e for e in errors), errors)
+        self.assertTrue(any("gap witness" in e for e in errors), errors)
+        self.assertTrue(any("disprove the proposed architecture" in e for e in errors), errors)
         self.assertTrue(any("existing/current model first" in e for e in errors), errors)
 
     def test_prompt1_rejects_repository_identity_even_inside_prohibition(self):
