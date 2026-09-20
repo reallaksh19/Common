@@ -468,7 +468,7 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: Prompt 3 must allow verified evidence to revise the Prompt-1 baseline")
             if "reconcil" not in prompt3_lower and "compare" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must reconcile baseline, reality, and roadmap rather than merely summarize them")
-            if "independent" not in prompt3_lower or "gap" not in prompt3_lower:
+            if "independent current gap" not in prompt3_lower and "current gap independently" not in prompt3_lower and "gap independently" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must state the current gap independently before choosing inherited candidates")
             if (
                 "candidate" not in prompt3_lower
