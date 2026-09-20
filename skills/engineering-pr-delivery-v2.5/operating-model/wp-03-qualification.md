@@ -15,7 +15,7 @@ semantic EP
   -> TAKEOVER_CERTIFIED(route,candidate)
 ```
 
-Qualification is required on `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`.
+Qualification is required on `PHASE_CHANGED` or `MATERIAL_QUALIFICATION_BOUNDARY_CHANGED`, except when the current task carries the standalone three-pass terminal disposition `THREE_PASS_COMPLETE`. In that case `qualification_boundary.required=false`, `not_applicable_reason=THREE_PASS_COMPLETE`, and no QSET/QUAL is created.
 
 ## Delivered objects
 
@@ -41,6 +41,12 @@ Q4 references incoming benchmark/oracle IDs and requires an independent method, 
 Q5 references actual incoming implementation steps and requires the first bounded change, predicted before/after observations and exact verification.
 
 Every question is bound to current incoming-EP IDs and the exact route/EP digest.
+
+## Three-pass terminal non-applicability
+
+When Prompt 3 of the standalone three-pass workflow completed the current task's reasoning sequence, another qualification questionnaire is redundant and prohibited.
+
+The EP must retain an explicit `THREE_PASS_COMPLETE` basis. This is a question-set exemption only. It does not make the candidate write-ready and does not substitute for current DISC/TC, tests, benchmarks, Owner decisions, external/local execution evidence or source authority.
 
 ## Route and staleness binding
 
