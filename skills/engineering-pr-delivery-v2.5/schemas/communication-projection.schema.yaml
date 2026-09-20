@@ -12,7 +12,7 @@ properties:
       owner_publication_cursor_digest: {type: [string, 'null']}
   owner:
     type: object
-    required: [change, capability, current_work, purpose, scope, evidence, quality, roadmap, delivery, decisions, next_work, external_actions, stop_conditions]
+    required: [change, status_cadence, capability, current_work, purpose, scope, evidence, quality, roadmap, delivery, decisions, next_work, external_actions, stop_conditions]
     properties:
       change:
         type: object
@@ -30,6 +30,14 @@ properties:
           previous_sequence: {type: [integer, 'null']}
           cursor_path: {type: string, minLength: 1}
           cursor_present: {type: boolean}
+      status_cadence:
+        type: object
+        required: [default_after_minutes, required, effective_after_minutes, owner_override]
+        properties:
+          default_after_minutes: {const: 25}
+          required: {type: boolean}
+          effective_after_minutes: {type: [integer, 'null']}
+          owner_override: {type: [object, 'null']}
       capability:
         type: object
         required: [summary, can_continue, material_authority, active_stop]
