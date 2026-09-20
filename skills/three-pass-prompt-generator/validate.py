@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-20-R6"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-21-R7"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -125,6 +125,8 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "IMAGINATION OBJECT:",
     "REALITY OBJECT:",
     "COMPARISON QUESTION:",
+    "ROADMAP SYNTHESIS QUESTION:",
+    "TECHNICAL PROOF QUESTION:",
     "INTENT EXECUTION QUESTION:",
     "HANDOVER DESTINATION:",
     "LOT/LEVEL BOUNDARY GATE:",
@@ -144,6 +146,8 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "PROMPT-1 REPOSITORY-IDENTITY GATE:",
     "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
+    "PROMPT-3 ROADMAP-SYNTHESIS GATE:",
+    "PROMPT-3 TECHNICAL-PROOF GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
     "MODE-ISOLATION GATE:",
 )
@@ -350,9 +354,16 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             errors.append(f"{label}: AUTHORIZED ACTIONS must be explicit; use NONE for analysis-only")
         if not intent_completion:
             errors.append(f"{label}: INTENT COMPLETION TEST must be substantive")
-        intent_gate_value = _field_value(preflight, "INTENT-FIDELITY GATE:")
-        if not intent_gate_value.startswith("PASS"):
-            errors.append(f"{label}: INTENT-FIDELITY GATE must PASS")
+        for question_field in ("ROADMAP SYNTHESIS QUESTION:", "TECHNICAL PROOF QUESTION:"):
+            if not _field_value(preflight, question_field):
+                errors.append(f"{label}: {question_field} must be substantive")
+        for gate_field in (
+            "INTENT-FIDELITY GATE:",
+            "PROMPT-3 ROADMAP-SYNTHESIS GATE:",
+            "PROMPT-3 TECHNICAL-PROOF GATE:",
+        ):
+            if not _field_value(preflight, gate_field).startswith("PASS"):
+                errors.append(f"{label}: {gate_field} must PASS")
 
         if level == "ISSUE_TASK":
             for field in (
@@ -437,6 +448,13 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: Prompt 3 must carry THREE_PASS_COMPLETE terminal disposition")
             if "FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE" not in prompt3:
                 errors.append(f"{label}: Prompt 3 must mark follow-on qualification question set NOT_APPLICABLE")
+            prompt3_lower = prompt3.lower()
+            if "roadmap" not in prompt3_lower and "task landscape" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must explicitly challenge the relevant roadmap/task landscape")
+            if "falsif" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must include a falsifier for material technical claims")
+            if "quantitative" not in prompt3_lower and "executable" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must require quantitative or executable technical proof")
             for phrase in (
                 "produce the reconciled register",
                 "your deliverable is a better current register",
