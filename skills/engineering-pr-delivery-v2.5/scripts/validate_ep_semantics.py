@@ -37,6 +37,46 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
         if value is not None and not _text_list(value):e.append(f"{label}.outcome.{key} must contain explicit non-placeholder text")
     context=ep.get("context_capsule") or {}
     for key in ("product_goal","roadmap_position","why_this_work_exists","current_architecture","current_implementation_state"):_require_text(e,context,key,f"{label}.context_capsule")
+    roadmap_src=ep.get("roadmap_source") or {}
+    admission=roadmap_src.get("task_admission")
+    if not isinstance(admission,dict):
+        e.append(f"{label}.roadmap_source.task_admission is required")
+    else:
+        disposition=admission.get("disposition")
+        allowed={"MAPPED_EXISTING_WP","REVISED_EXISTING_WP","ADDED_EXECUTION_WP","CREATED_ROADMAP"}
+        if disposition not in allowed:e.append(f"{label}.roadmap_source.task_admission.disposition invalid: {disposition}")
+        searched=admission.get("searched_paths");basis=admission.get("basis")
+        if not _text_list(searched) or not searched:e.append(f"{label}.roadmap_source.task_admission.searched_paths must prove roadmap discovery")
+        if not _text_list(basis) or not basis:e.append(f"{label}.roadmap_source.task_admission.basis must contain durable mapping/revision basis")
+        try:
+            state=load_yaml(root/"agents/relay/REPO_STATE.yaml")
+            roadmap_path=str((state.get("roadmap") or {}).get("path") or "")
+            roadmap=load_yaml(root/roadmap_path) if roadmap_path else {}
+            if roadmap_path and isinstance(searched,list) and roadmap_path not in searched:
+                e.append(f"{label}.roadmap_source.task_admission.searched_paths must include current roadmap path {roadmap_path}")
+            wp=str(roadmap_src.get("work_package") or "")
+            hierarchy=[]
+            for obj in roadmap.get("objectives",[]) or []:
+                for phase in obj.get("phases",[]) or []:
+                    for item in phase.get("work_packages",[]) or []:
+                        if str(item.get("id"))==wp:hierarchy.append((str(obj.get("id")),str(phase.get("id"))))
+            if not hierarchy:
+                e.append(f"{label}.roadmap_source.work_package {wp} is not present in current roadmap")
+            elif (str(roadmap_src.get("objective")),str(roadmap_src.get("phase"))) not in hierarchy:
+                e.append(f"{label}.roadmap_source objective/phase/work_package do not map to one current roadmap hierarchy")
+            if disposition in {"ADDED_EXECUTION_WP","REVISED_EXISTING_WP"}:
+                record=((roadmap.get("roadmap") or {}).get("revision_record"))
+                if not _text(record) or not (root/str(record)).exists():
+                    e.append(f"{label}.roadmap_source.task_admission {disposition} requires current roadmap revision_record")
+                else:
+                    revision=load_yaml(root/str(record));changes=revision.get("changes") or {}
+                    key="added" if disposition=="ADDED_EXECUTION_WP" else "changed"
+                    if wp not in [str(x) for x in (changes.get(key) or [])]:
+                        e.append(f"{label}.roadmap_source.task_admission {disposition} requires WP {wp} in revision changes.{key}")
+            if disposition=="CREATED_ROADMAP" and not roadmap:
+                e.append(f"{label}.roadmap_source.task_admission CREATED_ROADMAP requires a current roadmap")
+        except Exception as exc:
+            e.append(f"{label}.roadmap_source.task_admission could not verify current roadmap: {exc}")
     discovery=ep.get("repository_discovery")
     if not isinstance(discovery,list) or not discovery:e.append(f"{label}.repository_discovery must contain executable discovery steps")
     else:
