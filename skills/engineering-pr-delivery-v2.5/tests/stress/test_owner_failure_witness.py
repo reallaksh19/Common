@@ -150,6 +150,12 @@ class OwnerFailureWitnessStressTests(unittest.TestCase):
                 "blocks":["product implementation start"],
                 "success_condition":"The command exits successfully against the admitted revision.",
                 "clears":["repository-admission gate","product implementation may begin"],
+                "delegation":{
+                    "mode":"LOCAL_AGENT",
+                    "prompt":"In a real Git checkout at the admitted revision, run ./tools/verify-admission --require-git. Do not change product files. Post the exact command, exit status and TEST-1 evidence back to this issue.",
+                    "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
+                    "response_check":{"timer_required":True,"timer_title":"Admission gate response","after_minutes":30,"selection_reason":"This is a single bounded local Git verification.","on_due":"Check the current work issue for TEST-1 evidence and reconcile.","on_no_response":"Report WAITING and recheck only if useful."},
+                },
             }
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
 
