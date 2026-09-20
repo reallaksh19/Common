@@ -26,6 +26,14 @@ The layers answer different questions:
 
 Do not collapse these layers.
 
+## Mandatory task admission
+
+Every executable task must first search and reconcile the roadmap.
+
+`NO_CONCEPT_CHANGE` answers only whether Owner-level concept intent changed. It does not answer whether the execution topology in `OVERALL_ROADMAP.yaml` needs a new/revised work package.
+
+Every active EP therefore records a `task_admission` disposition: mapped existing WP, revised existing WP, added execution WP, or created roadmap.
+
 ## Concept layer
 
 In the current V2.5 roadmap shape, objectives and phases are the concept-level anchors.
@@ -69,8 +77,9 @@ WP completed
 
 new benchmark task discovered under an existing verification concept
 → engineering discovery event
-→ new execution work may be needed
 → concept roadmap unchanged
+→ if no existing WP owns the work, add/revise an execution WP through a roadmap revision
+→ reconcile progress/frontier/issues before execution
 
 Owner adds a materially new desired capability
 → concept change proposed/applied through normal roadmap/ODR authority
