@@ -248,7 +248,7 @@ properties:
   acceptance: {type: array, minItems: 1}
   report_contract:
     type: object
-    required: [sections, payloads]
+    required: [status_publication, sections, payloads]
     properties:
       status_publication:
         type: object
