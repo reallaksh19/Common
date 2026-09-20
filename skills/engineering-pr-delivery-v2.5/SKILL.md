@@ -389,6 +389,33 @@ UNKNOWN
 
 `DISJOINT` may preserve writes. `WITHIN_QUALIFIED_BOUNDARY` requires durable qualification and confirmation; pending confirmation is READ_ONLY. `OVERLAPPING | UNKNOWN` withhold WRITE until reconciliation. Commit count is never safety evidence.
 
+## Environment-blocked work — delegate, publish, and check back
+
+When an authorized next action cannot execute in the current environment — for example Python cannot launch the required `.mjs` tooling, a browser/UI check needs a real desktop/browser session, or a local Git/runtime dependency is unavailable — do not stop at `NOT_RUN` and do not ask the Owner to reconstruct the task.
+
+Represent the blocked action as `next_work.steps[].execution_requirement` and include a `delegation` contract.
+
+The executing agent must:
+
+1. create a complete copy-pasteable prompt for a local agent with the exact repository/ref/basis, working directory, command or instruction, boundaries, expected evidence, success condition and response format;
+2. publish that prompt to the **current work issue**:
+   - use a COMMENT for a bounded one-shot validation/check;
+   - use a SUB_ISSUE when the delegated work has multiple steps, its own lifecycle, or needs independently trackable follow-up;
+   - if native sub-issue creation/readback is unavailable, fall back to a verified issue COMMENT rather than claiming an unverified relationship;
+3. read back the GitHub publication before claiming delegation exists;
+4. require the local agent to post its result/evidence back to that same issue/sub-issue location;
+5. create a one-time response-check timer:
+   - **30 minutes** for a short direct command, focused browser check, or small verification expected to finish quickly;
+   - **60 minutes** for setup/build/install/manual UI or multi-step local verification;
+   - for longer work, use 60 minutes as the first check and re-evaluate from actual progress rather than scheduling an unbounded polling loop;
+6. when the timer fires, read the issue/sub-issue:
+   - if evidence is present, validate it and resume/reconcile the blocked work;
+   - if no response is present, report WAITING truthfully and schedule another check only when it remains useful.
+
+If timer/scheduling capability is genuinely unavailable, do not claim a timer exists. Publish the intended 30/60-minute check interval and surface `TIMER_UNAVAILABLE` to the Owner.
+
+The local-agent prompt is an execution handoff, not a new qualification questionnaire.
+
 ## State planes
 
 `REPO_STATE` carries independent planes:
