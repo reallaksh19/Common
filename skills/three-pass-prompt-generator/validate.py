@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-19-R4"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-20-R5"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -389,6 +389,10 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         p3 = lot.find(PROMPT_HEADINGS[2])
         if p3 >= 0:
             prompt3 = lot[p3:]
+            if "THREE_PASS_COMPLETE" not in prompt3:
+                errors.append(f"{label}: Prompt 3 must carry THREE_PASS_COMPLETE terminal disposition")
+            if "FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE" not in prompt3:
+                errors.append(f"{label}: Prompt 3 must mark follow-on qualification question set NOT_APPLICABLE")
             for phrase in (
                 "produce the reconciled register",
                 "your deliverable is a better current register",
