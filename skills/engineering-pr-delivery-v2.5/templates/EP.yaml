@@ -131,6 +131,9 @@ qualification_boundary:
   to_phase: null
   changed_dimensions: []
   basis: []
+  # Set to THREE_PASS_COMPLETE only when the current task carries the completed
+  # standalone three-pass terminal disposition. In that case QSET/QUAL are N/A.
+  not_applicable_reason: null
   question_set: null
 quality:
   applicable:
