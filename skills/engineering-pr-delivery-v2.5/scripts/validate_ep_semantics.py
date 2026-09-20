@@ -195,6 +195,18 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
                     for tid in _items(req.get("expected_evidence")):
                         if tid not in test_ids:e.append(f"{rl}.expected_evidence references unknown validation id {tid}")
         if orders and orders!=list(range(1,len(orders)+1)):e.append(f"{label}.next_work.steps order must be contiguous starting at 1")
+    qb=ep.get("qualification_boundary") or {}
+    q_required=qb.get("required")
+    q_na=qb.get("not_applicable_reason")
+    if q_na is not None:
+        if q_na!="THREE_PASS_COMPLETE":e.append(f"{label}.qualification_boundary.not_applicable_reason invalid: {q_na}")
+        if q_required is not False:e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE requires required=false")
+        if qb.get("question_set") not in (None,{}):e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE cannot reference QSET")
+        basis=qb.get("basis")
+        if not _text_list(basis) or not basis:e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE requires explicit basis")
+        elif not any("THREE_PASS_COMPLETE" in str(x) for x in basis):e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE basis must carry THREE_PASS_COMPLETE marker")
+    elif q_required is True and qb.get("question_set") in (None,{}):
+        e.append(f"{label}.qualification_boundary required=true requires question_set")
     for i,ac in enumerate(_items(ep.get("acceptance"))):
         if isinstance(ac,dict):_require_text(e,ac,"description",f"{label}.acceptance[{i}]")
     for i,test in enumerate(_items(ep.get("validation"))):
