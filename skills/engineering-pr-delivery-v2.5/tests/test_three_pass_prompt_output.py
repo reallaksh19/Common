@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -194,6 +194,9 @@ Inspect current reality.
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
 First determine today's remaining problem, then decide the artifact's disposition.
+At completion report:
+THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
+FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
 """
 
 STALE = """Reworked.
@@ -283,7 +286,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-19-R4", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-20-R5", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -294,7 +297,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-19-R4")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-20-R5")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
@@ -312,6 +315,11 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         bad = GOOD.replace("INTENT BOUNDARY:\ndo not expand beyond the issue\n", "")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("preflight missing INTENT BOUNDARY:" in e for e in errors), errors)
+
+    def test_prompt3_requires_three_pass_terminal_disposition(self):
+        bad = GOOD.replace("THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE\nFOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("THREE_PASS_COMPLETE terminal disposition" in e for e in errors), errors)
 
 if __name__ == "__main__":
     unittest.main()
