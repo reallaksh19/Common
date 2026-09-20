@@ -153,8 +153,11 @@ Required macro sections are:
 ```text
 Executive state
 Phase status
+Concept roadmap
 Active work
+Completed work log
 Newly discovered work
+Blocked / waiting
 What changed
 Roadmap and progress
 Delivery
