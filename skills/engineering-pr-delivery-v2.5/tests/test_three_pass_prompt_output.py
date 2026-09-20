@@ -333,5 +333,17 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("repository leak score must be 0" in e for e in errors), errors)
 
+    def test_prompt1_repository_leak_formula_rejects_multiple_forms(self):
+        variants = (
+            "Do not refer to the repository reallaksh19/Common.",
+            "Without opening the repo, reason about the problem.",
+            "Ignore the current GitHub repository before answering.",
+            "Do not inspect https://github.com/example/repo before answering.",
+        )
+        for phrase in variants:
+            bad = GOOD.replace("Think independently about the specific unresolved domain problem.", f"Think independently about the specific unresolved domain problem. {phrase}")
+            errors = MOD.validate_text(bad, SHA)
+            self.assertTrue(any("repository leak score must be 0" in e for e in errors), (phrase, errors))
+
 if __name__ == "__main__":
     unittest.main()
