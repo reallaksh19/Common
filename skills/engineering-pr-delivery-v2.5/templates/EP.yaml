@@ -182,6 +182,9 @@ validation:
 failure_and_stop_conditions:
   hard_stop_categories: [OWNER_DECISION_REQUIRED, ESSENTIAL_INPUT_MISSING, AUTHORITY_VIOLATION, PROTECTED_INVARIANT_FAILURE, WRITE_COLLISION, SUPERSEDED_EP, ROADMAP_CONFLICT, REPOSITORY_STATE_CONFLICT, UNSAFE_ENGINEERING_RESULT]
 report_contract:
+  status_publication:
+    default_after_minutes: 25
+    owner_override: null
   sections: [Executive state, Overall / phase / EP progress, Work completed, Files changed, Acceptance matrix, Tests and evidence, Quality findings, Known limitations, Owner decisions required, GitHub issue changes, Roadmap changes, Exact next actions, Successor EP, Qualification Q1-Q5 when applicable]
   payloads:
     - {id: RPT-STATE, section: Executive state, sources: [REPO_STATE], required_fields: [relay_state, current_position, execution_state, material_authority, stop]}
