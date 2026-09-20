@@ -166,6 +166,22 @@ TERMINAL     — roadmap work is complete
 
 Material execution is **serial by default**. Do not infer parallelism from apparent independence.
 
+## Mandatory task status heartbeat
+
+For every active task, publish an Owner progress status at **minute 25 from task start** unless the Owner explicitly overrides the cadence.
+
+At task start:
+
+1. create a one-time 25-minute status timer;
+2. continue work normally;
+3. publish material events immediately when they occur;
+4. if the task is still active when the timer fires, run the Owner publication path with `--force-record` so even no-change state is visible;
+5. if the task completed earlier, its completion publication satisfies the requirement and the timer may be cancelled.
+
+Owner overrides may set another interval or disable the time-based heartbeat for that task. The override must be explicit and attributable to the Owner.
+
+Missing timer capability must be reported as `STATUS_TIMER_UNAVAILABLE`; never pretend a timer was scheduled.
+
 ## Dynamic roadmap
 
 The roadmap is concept/outcome authority, not a task diary. In the current hierarchy, objectives and phases are the concept-level anchors; work packages are execution units.
