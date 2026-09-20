@@ -194,6 +194,26 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
                         if not _text_list(req.get(key)) or not req.get(key):e.append(f"{rl}.{key} must contain explicit values")
                     for tid in _items(req.get("expected_evidence")):
                         if tid not in test_ids:e.append(f"{rl}.expected_evidence references unknown validation id {tid}")
+                    delegation=req.get("delegation")
+                    if not isinstance(delegation,dict):e.append(f"{rl}.delegation must be a mapping")
+                    else:
+                        dl=f"{rl}.delegation"
+                        if delegation.get("mode")!="LOCAL_AGENT":e.append(f"{dl}.mode must be LOCAL_AGENT")
+                        _require_text(e,delegation,"prompt",dl)
+                        publication=delegation.get("publication")
+                        if not isinstance(publication,dict):e.append(f"{dl}.publication must be a mapping")
+                        else:
+                            if publication.get("target")!="CURRENT_WORK_ISSUE":e.append(f"{dl}.publication.target must be CURRENT_WORK_ISSUE")
+                            if publication.get("method") not in {"COMMENT","SUB_ISSUE"}:e.append(f"{dl}.publication.method must be COMMENT or SUB_ISSUE")
+                            if publication.get("local_result_update")!="SAME_LOCATION":e.append(f"{dl}.publication.local_result_update must be SAME_LOCATION")
+                            if publication.get("readback_required") is not True:e.append(f"{dl}.publication.readback_required must be true")
+                        check=delegation.get("response_check")
+                        if not isinstance(check,dict):e.append(f"{dl}.response_check must be a mapping")
+                        else:
+                            if check.get("timer_required") is not True:e.append(f"{dl}.response_check.timer_required must be true")
+                            _require_text(e,check,"timer_title",f"{dl}.response_check")
+                            if check.get("after_minutes") not in {30,60}:e.append(f"{dl}.response_check.after_minutes must be 30 or 60")
+                            for key in ("selection_reason","on_due","on_no_response"):_require_text(e,check,key,f"{dl}.response_check")
         if orders and orders!=list(range(1,len(orders)+1)):e.append(f"{label}.next_work.steps order must be contiguous starting at 1")
     qb=ep.get("qualification_boundary") or {}
     q_required=qb.get("required")
