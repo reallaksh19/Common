@@ -249,5 +249,26 @@ class ProgressPublicationStressTests(unittest.TestCase):
             self.assertIn("Overall progress: **50%**",result["owner_status"])
 
 
+    def test_default_owner_status_heartbeat_is_25_minutes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            from communication_projection import build as communication
+            cadence=communication(root)["owner"]["status_cadence"]
+            self.assertTrue(cadence["required"])
+            self.assertEqual(25,cadence["effective_after_minutes"])
+            self.assertIn("25 minutes",publish(root,apply=False)["owner_status"])
+
+    def test_owner_can_override_status_heartbeat_interval(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["report_contract"]["status_publication"]={
+                "default_after_minutes":25,
+                "owner_override":{"source":"OWNER","mode":"INTERVAL","after_minutes":40,"basis":["Owner requested 40-minute status cadence for this task."]},
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            from communication_projection import build as communication
+            cadence=communication(root)["owner"]["status_cadence"]
+            self.assertEqual(40,cadence["effective_after_minutes"])
+
 if __name__ == "__main__":
     unittest.main()
