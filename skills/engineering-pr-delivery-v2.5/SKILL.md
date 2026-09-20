@@ -324,6 +324,33 @@ skills/three-pass-prompt-generator/SKILL.md
 
 Do not continue reading this skill for three-pass generation.
 
+## Owner progression without Q1–Q5
+
+The following Owner phrases are semantic aliases, case-insensitive and punctuation-insensitive:
+
+```text
+Proceed next, No Qs
+Proceed next No Qs
+Proceed next, No Q1 to Q5
+Proceed next No Q1 to Q5
+Proceed next, No Q1-Q5
+```
+
+Meaning:
+
+```text
+continue the authorized task
++ do not create, refresh or display Q1–Q5 for this progression step
+```
+
+If a completed standalone three-pass sequence already carries `THREE_PASS_COMPLETE`, QSET/QUAL is genuinely not applicable.
+
+Otherwise, when fresh qualification is still required, record `question_policy: SUPPRESSED_BY_OWNER`, explicit Owner basis, and no question-set reference.
+
+This is a defer/suppress command, not a PASS. Safe read-only, coordination, evidence-gathering or other non-material work may continue, but `BATON_READY`, `TAKEOVER_CERTIFIED`, and material WRITE remain unavailable when they depend on unsatisfied qualification.
+
+Do not respond to these commands by asking another set of questions.
+
 ## Engineering qualification — QSET / QUAL
 
 Fresh qualification is mandatory when:
