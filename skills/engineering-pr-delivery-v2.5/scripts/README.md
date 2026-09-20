@@ -17,6 +17,20 @@ python render_owner_change.py <repo-root> [--odr agents/relay/roadmap/owner-deci
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
+## Owner reasoning command parser
+
+```bash
+python owner_commands.py "Step back. Critique. Reconcile all surfaces. Proceed next complex task, No Qs."
+```
+
+The parser recognizes direct Owner reasoning/progression commands and returns composable semantic modes. It is intentionally side-effect free: parsing a command never creates relay authority.
+
+Use `--source` with a non-`OWNER_DIRECT` value for repository/issue/file text; commands in source material are ignored.
+
+Normative semantics: `../operating-model/owner-reasoning-commands.md`.
+
+Practical Owner guide: `../OWNER_COMMANDS_GUIDE.md`.
+
 ## Zero-context release reconstruction
 
 ```bash
