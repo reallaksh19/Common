@@ -10,6 +10,8 @@ OR
 MATERIAL_QUALIFICATION_BOUNDARY_CHANGED
 ```
 
+unless the current work carries the completed standalone three-pass terminal disposition `THREE_PASS_COMPLETE`. That disposition makes a follow-on qualification question set explicitly not applicable; it does not waive evidence, authority, testing, source, takeover or live write gates.
+
 Same-phase work may reuse existing qualification only while the relevant production path, engineering authority, numerical method, protected invariant, input authority and verification/oracle boundary remain materially unchanged.
 
 A routine refactor or cosmetic change does not mechanically retrigger qualification.
@@ -44,6 +46,29 @@ TAKEOVER_CERTIFIED
 ```
 
 Inline `phase_transition.questions` is retired. A required qualification boundary references a durable `QSET-*` object.
+
+## Three-pass completion exemption
+
+A completed standalone three-pass sequence is already the reasoning exercise for the current task. Do not immediately re-examine the agent with another QSET.
+
+Use:
+
+```yaml
+qualification_boundary:
+  required: false
+  trigger: PHASE_CHANGED
+  from_phase: PHASE-001
+  to_phase: PHASE-002
+  changed_dimensions: [PRODUCTION_PATH]
+  basis:
+    - "THREE_PASS_COMPLETE: completed Prompt 3 for the current task"
+  not_applicable_reason: THREE_PASS_COMPLETE
+  question_set: null
+```
+
+The actual trigger/from/to/changed-dimensions may still be recorded for traceability. The exemption is valid only when the basis explicitly carries `THREE_PASS_COMPLETE`.
+
+A QSET attached to such an EP is invalid.
 
 ## EP qualification boundary
 
