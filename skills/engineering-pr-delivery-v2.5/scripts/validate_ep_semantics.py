@@ -217,6 +217,15 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
         if orders and orders!=list(range(1,len(orders)+1)):e.append(f"{label}.next_work.steps order must be contiguous starting at 1")
     qb=ep.get("qualification_boundary") or {}
     q_required=qb.get("required")
+    q_policy=qb.get("question_policy") or "DEFAULT"
+    if q_policy not in {"DEFAULT","SUPPRESSED_BY_OWNER"}:
+        e.append(f"{label}.qualification_boundary.question_policy invalid: {q_policy}")
+    if q_policy=="SUPPRESSED_BY_OWNER":
+        if q_required is not True:e.append(f"{label}.qualification_boundary SUPPRESSED_BY_OWNER is only valid when qualification remains required")
+        if qb.get("question_set") not in (None,{}):e.append(f"{label}.qualification_boundary SUPPRESSED_BY_OWNER cannot create/reference QSET")
+        pb=qb.get("question_policy_basis")
+        if not _text_list(pb) or not pb:e.append(f"{label}.qualification_boundary SUPPRESSED_BY_OWNER requires explicit Owner basis")
+        elif not any("OWNER" in str(x).upper() for x in pb):e.append(f"{label}.qualification_boundary suppression basis must be attributable to OWNER")
     q_na=qb.get("not_applicable_reason")
     if q_na is not None:
         if q_na!="THREE_PASS_COMPLETE":e.append(f"{label}.qualification_boundary.not_applicable_reason invalid: {q_na}")
@@ -225,7 +234,7 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
         basis=qb.get("basis")
         if not _text_list(basis) or not basis:e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE requires explicit basis")
         elif not any("THREE_PASS_COMPLETE" in str(x) for x in basis):e.append(f"{label}.qualification_boundary THREE_PASS_COMPLETE basis must carry THREE_PASS_COMPLETE marker")
-    elif q_required is True and qb.get("question_set") in (None,{}):
+    elif q_required is True and q_policy!="SUPPRESSED_BY_OWNER" and qb.get("question_set") in (None,{}):
         e.append(f"{label}.qualification_boundary required=true requires question_set")
     for i,ac in enumerate(_items(ep.get("acceptance"))):
         if isinstance(ac,dict):_require_text(e,ac,"description",f"{label}.acceptance[{i}]")
