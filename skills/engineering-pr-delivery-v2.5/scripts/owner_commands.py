@@ -117,6 +117,31 @@ def _matches(value: str, patterns: tuple[str, ...]) -> bool:
     return any(re.search(pattern, value, flags=re.IGNORECASE) for pattern in patterns)
 
 
+_NEGATION_HEADS = {
+    "PROJECT_REANCHOR": ("step back", "reassess from the roadmap"),
+    "ADVERSARIAL_REASSESSMENT": ("critique", "challenge", "stress-test", "stress test", "reassess critically"),
+    "END_TO_END_TRACE": ("trace",),
+    "EVIDENCE_FIRST_VERIFICATION": ("prove",),
+    "ACCIDENTAL_COMPLEXITY_REDUCTION": ("simplify",),
+    "MINIMAL_REPRODUCER": ("reduce",),
+    "CROSS_SURFACE_PARITY": ("reconcile",),
+    "SCENARIO_EXERCISE": ("scenario", "run scenario", "run a scenario"),
+    "INTERFACE_BOUNDARY_AUDIT": ("boundary check", "boundary-check", "check boundaries", "audit boundaries"),
+    "NORMATIVE_CONTRACT_CLEANUP": ("normalize",),
+}
+
+
+def _explicitly_negated(value: str, mode: str) -> bool:
+    heads = _NEGATION_HEADS.get(mode, ())
+    for head in heads:
+        escaped = re.escape(head)
+        if re.search(rf"\b(?:do\s+not|don't|dont|never)\s+(?:please\s+)?{escaped}\b", value):
+            return True
+        if re.search(rf"\b{escaped}\s+nothing\b", value):
+            return True
+    return False
+
+
 def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]:
     if source != OWNER_DIRECT:
         return {
@@ -139,7 +164,7 @@ def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]
         modes.append("QUESTION_SUPPRESSION")
 
     for mode, patterns in _PATTERNS:
-        if _matches(value, patterns):
+        if _matches(value, patterns) and not _explicitly_negated(value, mode):
             modes.append(mode)
 
     # Stable semantic ordering: frame -> reasoning -> analysis tools -> progression -> interaction.
