@@ -47,6 +47,14 @@ TAKEOVER_CERTIFIED
 
 Inline `phase_transition.questions` is retired. A required qualification boundary references a durable `QSET-*` object.
 
+## Owner-suppressed questions
+
+An Owner may explicitly say `Proceed next, No Qs` or `Proceed next, No Q1 to Q5`.
+
+When qualification would otherwise be required, this suppresses QSET creation/refresh/display for the current progression step but does not satisfy qualification.
+
+Use `question_policy: SUPPRESSED_BY_OWNER` with explicit Owner basis and no question-set reference. Baton/takeover/write readiness that depends on qualification remains false.
+
 ## Three-pass completion exemption
 
 A completed standalone three-pass sequence is already the reasoning exercise for the current task. Do not immediately re-examine the agent with another QSET.
