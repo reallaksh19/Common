@@ -142,6 +142,30 @@ This time-based heartbeat is additional to event-driven publication. A material 
 
 If the execution environment cannot create a timer, state `STATUS_TIMER_UNAVAILABLE`, record the 25-minute due interval, and do not claim the timer exists.
 
+## Canonical Owner Roadmap control return
+
+The normal Owner-facing publication is a generated roadmap/status projection, not free-form agent prose.
+
+Every control return begins with `# Owner Roadmap` and includes the programme-level view before low-level relay detail.
+
+Required macro sections are:
+
+```text
+Executive state
+Phase status
+Active work
+Newly discovered work
+What changed
+Roadmap and progress
+Delivery
+Blocked / external action state
+Owner decisions
+Recommended forward sequence
+Roadmap revision history
+```
+
+The agent may append technical detail after that projection. It may not substitute a custom summary that omits calculated progress or roadmap/delivery context.
+
 ## Deterministic Owner publication cursor
 
 Owner status is not merely a renderer. Control-return publication uses a durable, derived baseline:
