@@ -230,8 +230,11 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "Current PR:",
                 "Roadmap disposition:",
                 "## Phase status",
+                "## Concept roadmap",
                 "## Active work",
+                "## Completed work log",
                 "## Newly discovered work",
+                "## Blocked / waiting",
                 "## Recommended forward sequence",
                 "## Roadmap revision history",
             ):
