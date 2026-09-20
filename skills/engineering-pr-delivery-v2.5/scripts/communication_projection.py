@@ -71,6 +71,17 @@ def _capability(report:dict)->dict:
     return {"summary":summary,"can_continue":bool(ex.get("can_continue")),"material_authority":authority,"active_stop":stop if stop.get("active") else None}
 
 
+def _status_cadence(contract:dict)->dict:
+    policy=contract.get("status_publication") or {"default_after_minutes":25,"owner_override":None}
+    default=25
+    override=policy.get("owner_override") if isinstance(policy,dict) else None
+    if isinstance(override,dict) and override.get("mode")=="DISABLED":
+        return {"default_after_minutes":default,"required":False,"effective_after_minutes":None,"owner_override":override}
+    if isinstance(override,dict) and override.get("mode")=="INTERVAL":
+        return {"default_after_minutes":default,"required":True,"effective_after_minutes":override.get("after_minutes"),"owner_override":override}
+    return {"default_after_minutes":default,"required":True,"effective_after_minutes":default,"owner_override":None}
+
+
 def build(root:Path)->dict:
     report=build_report(root);contract=report.get("active_contract") or {};scope=contract.get("scope") or {};risks,quality_gaps=_visible_quality(report);evidence=report.get("evidence") or {};checkpoint=report.get("checkpoint") or {}
     recorded=[x for x in report.get("owner_decisions",[]) or [] if isinstance(x,dict) and x.get("status")!="SUPERSEDED"]
@@ -84,6 +95,7 @@ def build(root:Path)->dict:
     change=publication_status(root,report)
     owner={
         "change":change,
+        "status_cadence":_status_cadence(contract),
         "capability":_capability(report),
         "current_work":{**titles,"issues":current_work.get("issues") or [],"outcome":current_work.get("outcome") or {}},
         "purpose":contract.get("outcome") or {},
