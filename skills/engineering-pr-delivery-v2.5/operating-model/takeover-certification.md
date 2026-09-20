@@ -82,6 +82,8 @@ A PASS receipt is bound to candidate, exact route, roadmap revision, protocol ba
 
 ## Qualification (`QSET-*` / `QUAL-*`)
 
+When the EP carries `not_applicable_reason: THREE_PASS_COMPLETE`, follow-on QSET/QUAL is not applicable and TC uses qualification `NOT_REQUIRED`. All other takeover checks remain in force.
+
 When `EP.qualification_boundary.required: true`, the outgoing baton contains a durable `QSET-*`. The candidate answers Q1-Q5 from repository state and an independent/deterministic evaluator produces `QUAL-*`.
 
 The strong engineering contract is documented in `phase-transition.md`.
