@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -142,6 +142,10 @@ REALITY OBJECT:
 current truth
 COMPARISON QUESTION:
 what remains now
+ROADMAP SYNTHESIS QUESTION:
+what the relevant roadmap should preserve, revise, add, defer, or remove
+TECHNICAL PROOF QUESTION:
+which falsifier and quantitative or executable oracle proves a material technical gap
 INTENT EXECUTION QUESTION:
 how to fulfill the authorized action after comparison
 HANDOVER DESTINATION:
@@ -180,6 +184,10 @@ HUMAN-IMMERSION GATE:
 PASS — human/domain scenario only
 PROMPT-3 FREEDOM GATE:
 PASS — artifact may close
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — roadmap is a revisable hypothesis, not the destination
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — material technical changes require a falsifier and claim-specific proof
 COMPLEX Q1–Q5 COVERAGE:
 PASS — N/A when OFF
 MODE-ISOLATION GATE:
@@ -196,6 +204,8 @@ Inspect current reality.
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
 First determine today's remaining problem, then decide the artifact's disposition.
+Challenge the relevant roadmap/task landscape rather than treating it as the destination.
+For any material technical change, state the falsifier and require quantitative or executable proof before adding architecture.
 At completion report:
 THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
 FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
@@ -288,7 +298,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-20-R6", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-21-R7", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -299,7 +309,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-20-R6")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-21-R7")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
@@ -322,6 +332,21 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         bad = GOOD.replace("THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE\nFOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE", "")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("THREE_PASS_COMPLETE terminal disposition" in e for e in errors), errors)
+
+    def test_prompt3_requires_roadmap_synthesis(self):
+        bad = GOOD.replace("Challenge the relevant roadmap/task landscape rather than treating it as the destination.\n", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("roadmap/task landscape" in e for e in errors), errors)
+
+    def test_prompt3_requires_technical_falsifier(self):
+        bad = GOOD.replace("For any material technical change, state the falsifier and require quantitative or executable proof before adding architecture.\n", "For any material technical change, consider evidence before adding architecture.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("falsifier" in e for e in errors), errors)
+
+    def test_prompt3_requires_quantitative_or_executable_proof(self):
+        bad = GOOD.replace("For any material technical change, state the falsifier and require quantitative or executable proof before adding architecture.\n", "For any material technical change, state the falsifier before adding architecture.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("quantitative or executable" in e for e in errors), errors)
 
     def test_prompt1_rejects_repository_identity_even_inside_prohibition(self):
         bad = GOOD.replace("Think independently about the specific unresolved domain problem.", "Think independently about the specific unresolved domain problem. Do not refer to the repository reallaksh19/Common.")
