@@ -132,6 +132,9 @@ def validate(root:Path):
     for route in current_routes(root,state):
         ep=load_yaml(root/str(route.get("ep_path")));qb=ep.get("qualification_boundary") or {}
         if qb.get("required") is not True:continue
+        if (qb.get("question_policy") or "DEFAULT")=="SUPPRESSED_BY_OWNER":
+            w.append(f"EP {route.get('ep_id')} qualification questions are suppressed by explicit Owner command; qualification remains unsatisfied")
+            continue
         ref=qb.get("question_set") or {};path=ref.get("path")
         if not path:e.append(f"EP {route.get('ep_id')} qualification boundary requires question_set.path");continue
         qp=root/str(path)
