@@ -86,6 +86,17 @@ class OwnerCommandTests(unittest.TestCase):
         self.assertEqual([],self.modes("Read the traceability documentation and simplify nothing."))
         self.assertNotIn("END_TO_END_TRACE",self.modes("The traceability matrix is current."))
 
+    def test_explicit_negation_does_not_activate_reasoning_mode(self):
+        cases={
+            "Do not critique this plan.":"ADVERSARIAL_REASSESSMENT",
+            "Do not simplify the design.":"ACCIDENTAL_COMPLEXITY_REDUCTION",
+            "Never trace this path.":"END_TO_END_TRACE",
+            "Simplify nothing.":"ACCIDENTAL_COMPLEXITY_REDUCTION",
+        }
+        for phrase,mode in cases.items():
+            with self.subTest(phrase=phrase):
+                self.assertNotIn(mode,self.modes(phrase))
+
     def test_parser_never_creates_durable_authority(self):
         result=MOD.parse_owner_command("Critique. Prove it.")
         self.assertFalse(result["durable_authority_created"])
