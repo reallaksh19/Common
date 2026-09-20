@@ -722,8 +722,11 @@ The canonical block must expose at least:
 - current issue and current PR;
 - roadmap disposition;
 - phase status;
+- concept roadmap;
 - active work;
+- completed work log;
 - newly discovered work;
+- blocked / waiting state;
 - material delta;
 - evidence/quality;
 - PR readiness/mergeability;
