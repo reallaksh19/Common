@@ -182,6 +182,37 @@ Owner overrides may set another interval or disable the time-based heartbeat for
 
 Missing timer capability must be reported as `STATUS_TIMER_UNAVAILABLE`; never pretend a timer was scheduled.
 
+## Task → roadmap admission gate
+
+Every incoming task must be reconciled to roadmap authority **before an executable EP is accepted**.
+
+The agent must:
+
+1. search for the current V2.5 roadmap from `REPO_STATE.roadmap.path` and inspect any existing roadmap/history needed to understand the task;
+2. determine whether the task:
+   - maps to an existing work package;
+   - requires revising an existing work package;
+   - requires adding a new execution work package under an existing concept;
+   - or arrives in a repository with no usable roadmap and therefore requires roadmap creation/bootstrap;
+3. update/create the roadmap when the task is not already represented;
+4. reconcile Progress Basis, issue projection, frontier and active EP continuity when the roadmap changes;
+5. record `roadmap_source.task_admission` in the EP with the disposition, searched paths and durable basis.
+
+Allowed dispositions:
+
+```text
+MAPPED_EXISTING_WP
+REVISED_EXISTING_WP
+ADDED_EXECUTION_WP
+CREATED_ROADMAP
+```
+
+Silence is invalid.
+
+`NO_CONCEPT_CHANGE` does **not** mean `NO_ROADMAP_UPDATE`. A newly discovered execution task can leave Owner intent/objective/phase unchanged while still requiring a new or revised work package in `OVERALL_ROADMAP.yaml`.
+
+If no V2.5 roadmap exists, first search for existing repository planning/roadmap material that may need reconciliation. If no usable authority exists, use the safe bootstrap path and reconcile it into a DETAILED executable roadmap; do not fabricate an executable EP directly from the user's sentence.
+
 ## Dynamic roadmap
 
 The roadmap is concept/outcome authority, not a task diary. In the current hierarchy, objectives and phases are the concept-level anchors; work packages are execution units.
