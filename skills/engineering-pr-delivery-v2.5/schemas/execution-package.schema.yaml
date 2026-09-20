@@ -179,6 +179,11 @@ properties:
       to_phase: {type: string}
       changed_dimensions: {type: array}
       basis: {type: array}
+      question_policy:
+        enum: [DEFAULT, SUPPRESSED_BY_OWNER]
+      question_policy_basis:
+        type: array
+        items: {type: string, minLength: 1}
       not_applicable_reason:
         type: [string, 'null']
         enum: [THREE_PASS_COMPLETE, null]
