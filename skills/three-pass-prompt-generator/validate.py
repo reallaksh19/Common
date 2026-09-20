@@ -363,7 +363,7 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             "PROMPT-3 TECHNICAL-PROOF GATE:",
         ):
             if not _field_value(preflight, gate_field).startswith("PASS"):
-                errors.append(f"{label}: {gate_field} must PASS")
+                errors.append(f"{label}: {gate_field[:-1]} must PASS")
 
         if level == "ISSUE_TASK":
             for field in (
