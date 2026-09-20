@@ -113,6 +113,35 @@ Three-pass generation begins only after the handover issue URL has been verified
 Repository scripts must not infer chat requirements. The executing agent passes relevant user-authored session requirements explicitly to `plan_handover.py --owner-requirement ...`. Credential/secret-like values must not be published to GitHub.
 
 
+## Mandatory 25-minute task heartbeat
+
+Every active task has a default Owner status heartbeat at **minute 25 from task start**.
+
+At task start, the executing agent must create a one-time status timer for 25 minutes unless the Owner explicitly overrides the cadence.
+
+If the task completes before minute 25, the normal completion/control-return publication satisfies the obligation and the pending heartbeat may be cancelled.
+
+If the task is still active at minute 25, publish Owner status even when nothing materially changed:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py <repo-root> --apply --force-record
+```
+
+A no-change heartbeat is valid and must say `NO_MATERIAL_PROGRESS`; do not invent progress merely because the timer fired.
+
+Owner override semantics:
+
+```text
+INTERVAL <N minutes>  → use the Owner-specified first-status interval
+DISABLED              → no time-based heartbeat for that task
+```
+
+The override must be explicitly attributable to the Owner. Silence is not an override.
+
+This time-based heartbeat is additional to event-driven publication. A material event should still be published promptly rather than waiting for minute 25.
+
+If the execution environment cannot create a timer, state `STATUS_TIMER_UNAVAILABLE`, record the 25-minute due interval, and do not claim the timer exists.
+
 ## Deterministic Owner publication cursor
 
 Owner status is not merely a renderer. Control-return publication uses a durable, derived baseline:
