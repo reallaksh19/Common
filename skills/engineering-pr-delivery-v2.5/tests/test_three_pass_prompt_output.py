@@ -336,7 +336,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("THREE_PASS_COMPLETE terminal disposition" in e for e in errors), errors)
 
     def test_prompt3_requires_roadmap_synthesis(self):
-        bad = GOOD.replace("STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.\n", "")
+        bad = GOOD.replace("roadmap/task landscape", "surrounding context").replace("the roadmap", "the current plan")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("roadmap/task landscape" in e for e in errors), errors)
 
