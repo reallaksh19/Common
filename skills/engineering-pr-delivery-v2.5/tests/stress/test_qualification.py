@@ -10,6 +10,7 @@ from validate_question_set import validate as question_sets
 from validate_qualification_receipt import validate as qualifications
 from validate_takeover_certification import validate as takeover
 from validate_baton_readiness import validate as baton
+from validate_ep_semantics import validate as ep_semantics
 
 
 def questions(mode="QUANTITATIVE"):
@@ -87,5 +88,25 @@ class QualificationStressTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,qual,_=build(root);qual["answers"][0]["response"]="Changed after TC issuance";dump(root/"agents/relay/certifications/qualification/QUAL-1.yaml",qual)
             self.assertTrue(any("receipt_digest" in x for x in takeover(root)[0]))
+
+    def test_three_pass_complete_makes_follow_on_qset_not_applicable(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);good(root)
+            ep_path=root/"agents/relay/execution-packages/EP-1.yaml";ep=load_yaml(ep_path)
+            ep["qualification_boundary"]={
+                "required":False,
+                "trigger":"PHASE_CHANGED",
+                "from_phase":"PHASE-0",
+                "to_phase":"PHASE-1",
+                "changed_dimensions":["PRODUCTION_PATH"],
+                "basis":["THREE_PASS_COMPLETE: completed standalone Prompt 3 for current task"],
+                "not_applicable_reason":"THREE_PASS_COMPLETE",
+                "question_set":None,
+            }
+            dump(ep_path,ep)
+            self.assertEqual([],ep_semantics(root)[0])
+            self.assertEqual([],question_sets(root)[0])
+            attach_takeover(root,candidate="agent-B",preparer="agent-B")
+            self.assertEqual([],takeover(root)[0])
 
 if __name__=="__main__":unittest.main()
