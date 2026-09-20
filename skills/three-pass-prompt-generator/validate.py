@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-20-R5"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-20-R6"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -141,6 +141,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "CURRENT-VOCABULARY GATE:",
     "PROMPT-1 OBJECT GATE:",
     "HUMAN-Q-LABEL GATE:",
+    "PROMPT-1 REPOSITORY-IDENTITY GATE:",
     "HUMAN-IMMERSION GATE:",
     "PROMPT-3 FREEDOM GATE:",
     "COMPLEX Q1–Q5 COVERAGE:",
@@ -200,6 +201,46 @@ def _lot_blocks(text: str) -> list[str]:
         blocks.append(text[start:end])
     return blocks
 
+
+def _repo_identity_candidates(preflight: str) -> tuple[list[str], list[str]]:
+    raw=[]
+    for field in ("REPOSITORY / SYSTEM LINK:","PARENT REPOSITORY / SYSTEM:","TARGET LINK:"):
+        value=(_field_value(preflight,field) or "").strip()
+        if value:raw.append(value)
+    exact=[];slugs=[]
+    for value in raw:
+        if value not in exact:exact.append(value)
+        m=re.search(r"github\.com/([^/\s]+/[^/#?\s]+)",value,re.I)
+        if m:
+            slug=m.group(1).rstrip("/")
+            if slug not in slugs:slugs.append(slug)
+            leaf=slug.split("/")[-1]
+            if leaf and leaf not in exact:exact.append(leaf)
+        elif "/" in value and not value.startswith(("http://","https://")):
+            slug=value.strip("/")
+            if slug not in slugs:slugs.append(slug)
+            leaf=slug.split("/")[-1]
+            if leaf and leaf not in exact:exact.append(leaf)
+    return exact,slugs
+
+def _prompt1_repository_leak_score(prompt1: str, preflight: str) -> tuple[int,list[str]]:
+    hits=[];low=prompt1.lower()
+    exact,slugs=_repo_identity_candidates(preflight)
+    for value in exact+slugs:
+        if not value:continue
+        if "/" in value or value.startswith(("http://","https://")):
+            if value.lower() in low:hits.append(value)
+        elif value in prompt1:
+            hits.append(value)
+    meta_patterns=(
+        r"\bdo\s+not\s+(?:inspect|open|read|use|refer\s+to|look\s+at)\b[^\n.]{0,80}\brepo(?:sitory)?\b",
+        r"\bwithout\s+(?:opening|inspecting|reading|using|referring\s+to)\b[^\n.]{0,80}\brepo(?:sitory)?\b",
+        r"\bbefore\s+(?:opening|inspecting|reading|looking\s+at)\b[^\n.]{0,80}\brepo(?:sitory)?\b",
+        r"\bignore\b[^\n.]{0,60}\brepo(?:sitory)?\b",
+    )
+    for pat in meta_patterns:
+        if re.search(pat,prompt1,re.I):hits.append(pat)
+    return len(hits),hits
 
 def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str]:
     errors: list[str] = []
@@ -376,6 +417,9 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[1], p1 + 1)
             prompt1 = lot[p1:p2 if p2 >= 0 else len(lot)]
+            leak_score,leak_hits=_prompt1_repository_leak_score(prompt1,preflight)
+            if leak_score:
+                errors.append(f"{label}: Prompt 1 repository leak score must be 0; got {leak_score}: {leak_hits}")
             prompt1_lower = prompt1.lower()
             if "register is the thing" in prompt1_lower:
                 errors.append(f"{label}: Prompt 1 is artifact-form anchored to a register")
