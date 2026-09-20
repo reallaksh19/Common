@@ -193,6 +193,30 @@ Do not hand-edit earlier events to make history look cleaner. Correct later know
 
 Git/source history is still the strongest protection against malicious rewriting; the append producer supplies the normal protocol path.
 
+## Mandatory task-to-roadmap admission
+
+Before an executable task/EP is accepted, the agent must search the current roadmap and classify the task:
+
+```text
+MAPPED_EXISTING_WP
+REVISED_EXISTING_WP
+ADDED_EXECUTION_WP
+CREATED_ROADMAP
+```
+
+"Concept unchanged" is **not** equivalent to "roadmap file unchanged."
+
+Because work packages are currently stored in `OVERALL_ROADMAP.yaml`:
+
+- a newly discovered execution task that maps cleanly to an existing WP requires no new WP;
+- a task that changes an existing WP requires an `EXECUTION_DERIVED_STATUS` or other valid roadmap revision recording that WP under `changes.changed`;
+- a genuinely new execution WP under an existing concept requires a roadmap revision recording it under `changes.added`, even when `concept_change: NO_CONCEPT_CHANGE`;
+- a repository with no usable roadmap must be bootstrapped/reconciled before executable work begins.
+
+The EP's `roadmap_source.task_admission` is the machine-readable proof.
+
+A `NEW_EXECUTION_WORK` event may temporarily describe discovered work before it is executable, but that work must not become an active EP until task admission resolves it into the roadmap.
+
 ## Relationship to roadmap revisions
 
 The normal decision flow is:
