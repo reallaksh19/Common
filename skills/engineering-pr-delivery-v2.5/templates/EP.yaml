@@ -123,6 +123,22 @@ next_work:
       stop_if: ["<condition requiring reconciliation before continuing>"]
       # Set this only when the evidence-producing next action must execute outside
       # the current environment. EP next_work remains the action authority.
+      #
+      # Every EXECREQ must include delegation:
+      #   mode: LOCAL_AGENT
+      #   prompt: "<copy-pasteable local-agent prompt with exact basis/action/evidence>"
+      #   publication:
+      #     target: CURRENT_WORK_ISSUE
+      #     method: COMMENT | SUB_ISSUE
+      #     local_result_update: SAME_LOCATION
+      #     readback_required: true
+      #   response_check:
+      #     timer_required: true
+      #     timer_title: "<short task-specific check title>"
+      #     after_minutes: 30 | 60
+      #     selection_reason: "<why 30 or 60 minutes fits this task>"
+      #     on_due: "<check the issue/sub-issue for the local-agent result and reconcile>"
+      #     on_no_response: "<report waiting truthfully; reschedule only if still useful>"
       execution_requirement: null
 qualification_boundary:
   required: false
