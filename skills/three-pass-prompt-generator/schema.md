@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -122,7 +122,11 @@ The preflight therefore has two deliberately separated sides:
 
 Then Prompt 2 brings the current artifact and implementation back into view.
 
-Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, close, defer, or leave unchanged** the current artifact.
+Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, add, close, defer, or leave unchanged** the current artifact.
+
+Prompt 3 must also step back far enough to challenge the **relevant roadmap/task landscape** around the target. Treat that roadmap/task system as a hypothesis about how to reach the Prompt-1 destination, not as the definition of the destination. Prompt-2 delivery telemetry such as PR counts, commit counts, branch ahead/behind state, changed-file counts, CI-run counts, or percent-complete may locate evidence or constrain delivery, but they are not product/system capabilities and must not drive the technical direction.
+
+When Prompt 1 or live evidence reveals a genuinely missing idea, Prompt 3 may propose an **ADD** to the roadmap/task landscape, but only when the idea closes a meaningful destination gap that is not already represented and survives a concrete falsifier/proof obligation.
 
 A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. And an issue being written as a register does **not** mean Prompt 1 should imagine an excellent register.
 
@@ -189,7 +193,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -213,7 +217,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-20-R6`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-21-R7`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -1132,6 +1136,12 @@ COMPARISON QUESTION:
 "After putting the exact Prompt-1 picture beside Prompt-2 reality,
 Prompt 3 must determine ______."
 
+ROADMAP SYNTHESIS QUESTION:
+"After destination and reality are compared, what should the relevant roadmap/task landscape preserve, revise, narrow, split, replace, add, defer, remove/close, or leave unchanged?"
+
+TECHNICAL PROOF QUESTION:
+"What claim-specific falsifier and quantitative or executable proof must be satisfied before any material technical roadmap change or implementation is justified?"
+
 INTENT EXECUTION QUESTION:
 "After comparison, how will Prompt 3 fulfill the frozen USER INTENT and AUTHORIZED ACTIONS, or prove why it cannot?"
 
@@ -1148,7 +1158,8 @@ Prompt 3 must remain free to conclude that the current artifact should be:
 - narrowed;
 - split;
 - replaced;
-- closed;
+- **added to only when a newly proved gap is not already represented**;
+- closed/removed when historical or unnecessary;
 - moved back to owning issues;
 - deferred;
 - or left unchanged.
@@ -1217,6 +1228,8 @@ REALITY OBJECT:
 
 PROMPT 3
 COMPARISON QUESTION:
+ROADMAP SYNTHESIS QUESTION:
+TECHNICAL PROOF QUESTION:
 INTENT EXECUTION QUESTION:
 HANDOVER DESTINATION:
 
@@ -1270,6 +1283,12 @@ PASS — <one short reason>
 
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
+
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — <one short reason showing that relevant roadmap/task items are treated as revisable hypotheses, not as the destination>
+
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
 Do not draft Prompt 1 until these fields and gates are resolved.
@@ -1757,7 +1776,7 @@ Read Prompt 3 before output.
 
 Ask:
 
-> **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, closed, deferred, moved elsewhere, or left alone?**
+> **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, added to, closed, deferred, moved elsewhere, or left alone?**
 
 Fail if Prompt 3 mandates a better version of today's artifact before comparison is complete.
 
@@ -1765,6 +1784,69 @@ Prompt 3 may require a decision and reasoning, but must not pre-decide the survi
 
 ---
 
+# HARD GATE 4.1 — PROMPT-3 ROADMAP-SYNTHESIS GATE
+
+For targets that sit inside a programme, repository, product roadmap, task graph, or issue family, Prompt 3 must inspect the **relevant larger plan** after Prompt 2.
+
+Ask:
+
+> **Does Prompt 3 treat the roadmap/task list as a hypothesis about how to reach the Prompt-1 destination, rather than as the definition of the destination?**
+
+> **Can Prompt 3 discover a valuable missing idea from Prompt 1 or live evidence and ADD it only when the gap is real, not already represented, correctly owned, and worth the added complexity?**
+
+> **Can it also demote, narrow, split, replace, defer, remove/close, or leave unchanged roadmap work that no longer earns its place?**
+
+The target/lot boundary still governs ownership. Looking at the larger roadmap is context for judgement, not permission to absorb neighbouring work.
+
+Fail if Prompt 3 lets PR statistics, commit counts, changed-file counts, branch ahead/behind numbers, CI-run counts, or percentage-complete determine product/system direction. Those are delivery/custody facts only.
+
+---
+
+# HARD GATE 4.2 — PROMPT-3 TECHNICAL-PROOF GATE
+
+For every material technical conclusion that would cause an ADD, REVISE, SPLIT, REPLACE, or implementation change, Prompt 3 must demand a **claim-specific proof obligation before scope is admitted**.
+
+The proof obligation must answer:
+
+```text
+CLAIM / INVARIANT
+What exact system property is claimed to be missing or wrong?
+
+FALSIFIER
+What concrete input, operation, case, or state transition would prove the claim false or expose the weakness?
+
+CURRENT OBSERVATION
+What does the live system actually produce?
+
+REQUIRED OBSERVATION
+What should a correct system produce?
+
+MEASUREMENT / EXECUTABLE ORACLE
+How are current and required observations compared?
+Use counts, identities, cardinalities, equalities, deltas, tolerances, state transitions,
+browser observations, or another claim-appropriate oracle.
+
+EXISTING-MODEL-FIRST ATTEMPT
+Can the stronger case already be expressed correctly without new architecture?
+
+AFTER-CHANGE PROOF
+If a change is made, what before/after evidence shows that it closes exactly the measured gap?
+
+REGRESSION / INVARIANT CHECK
+Which previously proved contracts must remain unchanged?
+```
+
+Quantitative proof is mandatory when the claimed property is meaningfully quantitative. When it is not, use an executable, reproducible oracle rather than invented numbers.
+
+Do **not** accept LOC, commit count, PR count, issue count, number of test files, CI-run count, or percentage-complete as proof of technical value. Test counts alone also do not prove the claimed invariant; the tests must exercise the relevant property.
+
+If the existing system passes the falsifier without the proposed addition, Prompt 3 must treat that as evidence **against adding architecture** and withdraw or narrow the proposal.
+
+If the claim cannot yet be measured or executed, classify it as an **unproved hypothesis / evidence task**, not as admitted implementation scope.
+
+Do not enumerate attractive candidate architectures before falsification unless the target itself requires comparing named alternatives. Discover the missing primitive from the failing invariant, not the other way around.
+
+---
 # STEP 1 — BUILD PROMPT 1 ONLY FROM THE BLIND REFERENCE
 
 This is the most important construction rule.
@@ -2315,7 +2397,73 @@ leave it unchanged
 
 Do not prejudge the answer.
 
-## E. What is the real problem now?
+## E. Challenge the relevant roadmap/task landscape
+
+After establishing today's remaining problem, step back and inspect the relevant roadmap, task list, issue family, decision records, ownership boundaries, completed work and deferred work.
+
+Treat that plan as a **hypothesis about how to reach the Prompt-1 destination**.
+
+For each material capability/task, use the disposition that best fits the evidence:
+
+```text
+PRESERVE
+REVISE
+NARROW
+SPLIT
+REPLACE
+ADD
+DEFER
+REMOVE / CLOSE
+LEAVE UNCHANGED
+```
+
+ADD has a high bar. Add a new roadmap/task idea only when Prompt-1 reasoning or verified live evidence exposes a meaningful destination gap that:
+
+- is not already adequately represented;
+- has a concrete witness/falsifier or discriminating use case;
+- has a clear owner/boundary;
+- creates more value than complexity;
+- and survives the technical-proof gate below.
+
+Ask what existing roadmap item becomes less important, changes ownership, or can disappear if the new idea is accepted. New scope is not free.
+
+Do not let repository/PR telemetry become a capability model. PR state, branch divergence, commit/file counts and CI history may constrain **delivery**, but they do not establish what the system should become.
+
+## F. Technically challenge every material change
+
+Do not accept architectural prose as proof.
+
+For every technical conclusion that would materially change roadmap scope or implementation, establish:
+
+1. the exact falsifiable claim/invariant;
+2. a concrete input/operation/state transition that tests it;
+3. the current observed result;
+4. the required result;
+5. a claim-appropriate quantitative or executable oracle;
+6. an **existing-model-first** attempt;
+7. if changed, before/after proof that exactly the measured gap closed;
+8. regression evidence for previously proved invariants;
+9. when the primitive is intended to be reusable, at least one unrelated-domain or materially different pressure test where appropriate.
+
+Prefer equations and state relations when they fit the claim, for example:
+
+```text
+undo(state_after) == state_before
+delta(unrelated_instance) == 0
+rejected_operation -> delta(canonical_state) == 0
+expected_relationship_cardinality == observed_relationship_cardinality
+abs(observed - required) <= justified_tolerance
+```
+
+These are examples of proof forms, not required architecture.
+
+When the property is quantitative, prove it quantitatively. When it is not, use reproducible executable evidence rather than fake precision.
+
+If the current system satisfies the proof obligation without new architecture, withdraw the proposed addition.
+
+If evidence is not yet sufficient to run the proof, the next move is evidence collection or a bounded hypothesis—not implementation admission.
+
+## G. What is the real problem now?
 
 Given the independent picture and verified reality:
 
@@ -2331,7 +2479,7 @@ when implementation work genuinely remains.
 
 If the correct result is instead “decision needed,” “close this artifact,” “no change,” or “collect evidence first,” say that instead.
 
-## F. What deeper idea is the example exposing?
+## H. What deeper idea is the example exposing?
 
 Do not confuse the thing that exposed a weakness with the reusable problem underneath it.
 
@@ -2351,7 +2499,7 @@ failed test
 ≠ automatically an architecture problem
 ```
 
-## G. What is the smallest justified response?
+## I. What is the smallest justified response?
 
 Valid responses include:
 
@@ -2373,7 +2521,7 @@ Valid responses include:
 
 Do not manufacture work because a plan was requested.
 
-## H. How will reality test the conclusion?
+## J. How will reality test the conclusion?
 
 Return to real examples, journeys, questions, models, failures, benchmarks or observations.
 
@@ -2631,7 +2779,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2650,7 +2798,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R7
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2726,6 +2874,8 @@ REALITY OBJECT:
 
 PROMPT 3
 COMPARISON QUESTION:
+ROADMAP SYNTHESIS QUESTION:
+TECHNICAL PROOF QUESTION:
 INTENT EXECUTION QUESTION:
 HANDOVER DESTINATION:
 
@@ -2782,6 +2932,12 @@ PASS — <one short reason>
 
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
+
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — <one short reason showing that relevant roadmap/task items are treated as revisable hypotheses, not as the destination>
+
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
 ## PROMPT 1 — IMAGINE
@@ -3494,7 +3650,9 @@ What meaningful distance genuinely remains?
 
 What is the smallest justified response?
 
-What real evidence confirms or challenges that conclusion?
+What claim-specific falsifier or proof confirms or challenges that conclusion?
+
+What should the relevant roadmap/task landscape preserve, revise, narrow, split, replace, add, defer, remove/close, or leave unchanged?
 
 What understanding must the next person inherit?
 ```
