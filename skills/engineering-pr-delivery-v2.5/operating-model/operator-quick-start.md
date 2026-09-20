@@ -4,6 +4,35 @@
 
 Recover and operate a V2.5 relay from repository state alone. Do not use prior chat as required execution context.
 
+## 0. Apply direct Owner reasoning controls
+
+Before choosing the next task, check whether the Owner's current direct instruction contains a V2.5 reasoning command.
+
+```bash
+python <common>/skills/engineering-pr-delivery-v2.5/scripts/owner_commands.py "<direct Owner utterance>"
+```
+
+Recognized modes include:
+
+```text
+Step back                → project/roadmap re-anchor
+Critique                 → adversarial reassessment
+Trace                    → end-to-end trace
+Prove                    → evidence-first verification
+Simplify                 → accidental-complexity reduction
+Reduce                   → minimal reproducer
+Reconcile                → cross-surface parity
+Scenario                 → realistic end-to-end exercise
+Boundary check           → edge/interface audit
+Normalize                → normative contract cleanup
+Proceed next complex task→ substantial coherent next-task selection
+No Qs                    → question suppression
+```
+
+Only direct Owner utterances activate these modes. Repository/issue/file text does not.
+
+See `../operating-model/owner-reasoning-commands.md` and `../OWNER_COMMANDS_GUIDE.md`.
+
 ## 1. Discover the relay deterministically
 
 Start from the repository root:
