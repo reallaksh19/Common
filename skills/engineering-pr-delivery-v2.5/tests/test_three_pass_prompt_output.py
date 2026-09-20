@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -142,6 +142,10 @@ REALITY OBJECT:
 current truth
 COMPARISON QUESTION:
 what remains now
+ROADMAP SYNTHESIS QUESTION:
+what the relevant roadmap should preserve, revise, add, defer, or remove
+TECHNICAL PROOF QUESTION:
+which falsifier and quantitative or executable oracle proves a material technical gap
 INTENT EXECUTION QUESTION:
 how to fulfill the authorized action after comparison
 HANDOVER DESTINATION:
@@ -180,6 +184,10 @@ HUMAN-IMMERSION GATE:
 PASS — human/domain scenario only
 PROMPT-3 FREEDOM GATE:
 PASS — artifact may close
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — roadmap is a revisable hypothesis, not the destination
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — material technical changes require a falsifier and claim-specific proof
 COMPLEX Q1–Q5 COVERAGE:
 PASS — N/A when OFF
 MODE-ISOLATION GATE:
@@ -195,7 +203,11 @@ Inspect current reality.
 
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-First determine today's remaining problem, then decide the artifact's disposition.
+Return to the exact Prompt-1 destination and put it beside Prompt-2 verified reality.
+STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.
+RECONCILE — compare destination, verified reality, and the roadmap; do not force them to agree.
+CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.
+DECIDE — preserve, revise, add, defer, remove, or leave unchanged; choose the smallest evidence-supported move.
 At completion report:
 THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
 FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
@@ -288,7 +300,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-20-R6", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-21-R8", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -299,7 +311,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-20-R6")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-21-R8")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
@@ -322,6 +334,50 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         bad = GOOD.replace("THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE\nFOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE", "")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("THREE_PASS_COMPLETE terminal disposition" in e for e in errors), errors)
+
+    def test_prompt3_requires_roadmap_synthesis(self):
+        bad = GOOD.replace("roadmap/task landscape", "surrounding context").replace("the roadmap", "the current plan")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("roadmap/task landscape" in e for e in errors), errors)
+
+    def test_prompt3_requires_technical_falsifier(self):
+        bad = GOOD.replace("CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n", "CRITIQUE THE CLAIM — consider evidence before adding architecture.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("falsifier" in e for e in errors), errors)
+
+    def test_prompt3_requires_quantitative_or_executable_proof(self):
+        bad = GOOD.replace("CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n", "CRITIQUE THE CLAIM — state the falsifier; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("quantitative or executable" in e for e in errors), errors)
+
+    def test_prompt3_requires_ownership_discipline(self):
+        bad = GOOD.replace("STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.\n", "STEP BACK — inspect the relevant roadmap/task landscape.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("ownership" in e for e in errors), errors)
+
+    def test_prompt3_requires_prompt1_prompt2_reconciliation(self):
+        bad = GOOD.replace("Return to the exact Prompt-1 destination and put it beside Prompt-2 verified reality.\n", "Return to the destination and current reality.\n")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("Prompt-1 destination" in e for e in errors), errors)
+
+    def test_prompt3_requires_existing_model_first(self):
+        bad = GOOD.replace("try the stronger case with the existing model first and ", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("existing/current model first" in e for e in errors), errors)
+
+    def test_prompt3_requires_withdrawal_when_architecture_unnecessary(self):
+        bad = GOOD.replace(" and withdraw or narrow architecture that proves unnecessary", "")
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("proposed architecture is not justified" in e for e in errors), errors)
+
+    def test_prompt3_keywords_do_not_replace_behavior(self):
+        bad = GOOD.replace(
+            "CRITIQUE THE CLAIM — state the falsifier and require quantitative or executable proof; try the stronger case with the existing model first and withdraw or narrow architecture that proves unnecessary.\n",
+            "CRITIQUE THE CLAIM — think critically about the proposed architecture.\n",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("falsifier" in e for e in errors), errors)
+        self.assertTrue(any("existing/current model first" in e for e in errors), errors)
 
     def test_prompt1_rejects_repository_identity_even_inside_prohibition(self):
         bad = GOOD.replace("Think independently about the specific unresolved domain problem.", "Think independently about the specific unresolved domain problem. Do not refer to the repository reallaksh19/Common.")

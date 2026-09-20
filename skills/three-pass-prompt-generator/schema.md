@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -122,7 +122,11 @@ The preflight therefore has two deliberately separated sides:
 
 Then Prompt 2 brings the current artifact and implementation back into view.
 
-Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, close, defer, or leave unchanged** the current artifact.
+Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, add, close, defer, or leave unchanged** the current artifact.
+
+Prompt 3 must also step back far enough to challenge the **relevant roadmap/task landscape** around the target. Treat that roadmap/task system as a hypothesis about how to reach the Prompt-1 destination, not as the definition of the destination. Prompt-2 delivery telemetry such as PR counts, commit counts, branch ahead/behind state, changed-file counts, CI-run counts, or percent-complete may locate evidence or constrain delivery, but they are not product/system capabilities and must not drive the technical direction.
+
+When Prompt 1 or live evidence reveals a genuinely missing idea, Prompt 3 may propose an **ADD** to the roadmap/task landscape, but only when the idea closes a meaningful destination gap that is not already represented and survives a concrete falsifier/proof obligation.
 
 A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. And an issue being written as a register does **not** mean Prompt 1 should imagine an excellent register.
 
@@ -189,7 +193,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -213,7 +217,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-20-R6`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-21-R8`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -1132,6 +1136,12 @@ COMPARISON QUESTION:
 "After putting the exact Prompt-1 picture beside Prompt-2 reality,
 Prompt 3 must determine ______."
 
+ROADMAP SYNTHESIS QUESTION:
+"After destination and reality are compared, what should the relevant roadmap/task landscape preserve, revise, narrow, split, replace, add, defer, remove/close, or leave unchanged?"
+
+TECHNICAL PROOF QUESTION:
+"What claim-specific falsifier and quantitative or executable proof must be satisfied before any material technical roadmap change or implementation is justified?"
+
 INTENT EXECUTION QUESTION:
 "After comparison, how will Prompt 3 fulfill the frozen USER INTENT and AUTHORIZED ACTIONS, or prove why it cannot?"
 
@@ -1148,7 +1158,8 @@ Prompt 3 must remain free to conclude that the current artifact should be:
 - narrowed;
 - split;
 - replaced;
-- closed;
+- **added to only when a newly proved gap is not already represented**;
+- closed/removed when historical or unnecessary;
 - moved back to owning issues;
 - deferred;
 - or left unchanged.
@@ -1217,6 +1228,8 @@ REALITY OBJECT:
 
 PROMPT 3
 COMPARISON QUESTION:
+ROADMAP SYNTHESIS QUESTION:
+TECHNICAL PROOF QUESTION:
 INTENT EXECUTION QUESTION:
 HANDOVER DESTINATION:
 
@@ -1270,6 +1283,12 @@ PASS — <one short reason>
 
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
+
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — <one short reason showing that relevant roadmap/task items are treated as revisable hypotheses, not as the destination>
+
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
 Do not draft Prompt 1 until these fields and gates are resolved.
@@ -1757,11 +1776,111 @@ Read Prompt 3 before output.
 
 Ask:
 
-> **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, closed, deferred, moved elsewhere, or left alone?**
+> **Can the agent still conclude, based on evidence, that today's artifact should be preserved, changed, narrowed, split, replaced, added to, closed, deferred, moved elsewhere, or left alone?**
 
 Fail if Prompt 3 mandates a better version of today's artifact before comparison is complete.
 
 Prompt 3 may require a decision and reasoning, but must not pre-decide the survival of the current solution form.
+
+---
+
+# HARD GATE 4.1 — PROMPT-3 STEP-BACK / ROADMAP-SYNTHESIS GATE
+
+For targets that sit inside a programme, repository, product roadmap, task graph or issue family, Prompt 3 must widen context after Prompt 2 without widening ownership.
+
+It must make the future agent:
+
+- recover the Prompt-1 destination;
+- inspect the relevant larger capability/roadmap landscape;
+- distinguish completed, active, deferred and neighbouring work;
+- preserve ownership boundaries;
+- treat the roadmap/task model as a revisable hypothesis rather than the destination.
+
+Fail if Prompt 3 lets PR statistics, commit counts, changed-file counts, branch ahead/behind numbers, CI-run counts, test counts or percentage-complete determine product/system direction.
+
+The keyword **STEP BACK** should appear as a visible reasoning pivot in the generated Prompt 3 when natural, but the gate is satisfied by the behavior above, not by the word alone.
+
+> **STEP BACK widens understanding, not ownership.**
+
+---
+
+# HARD GATE 4.2 — PROMPT-3 RECONCILIATION GATE
+
+Prompt 3 must reconcile:
+
+```text
+PROMPT-1 DESTINATION
+×
+PROMPT-2 VERIFIED REALITY
+×
+CURRENT ROADMAP / TASK MODEL
+```
+
+It must not define reconciliation as making those representations agree.
+
+Require the future agent to expose contradictions, already-solved work, stale roadmap assumptions, ownership mismatches, genuinely missing capabilities and evidence gaps.
+
+The keyword **RECONCILE** should appear as a visible reasoning pivot when natural, but the gate is satisfied only when the prompt asks which representation should change.
+
+> **RECONCILE does not mean harmonize.**
+
+---
+
+# HARD GATE 4.3 — PROMPT-3 TECHNICAL-CRITIQUE / PROOF GATE
+
+For every material technical conclusion that would cause an `ADD`, `REVISE`, `SPLIT`, `REPLACE` or implementation change, Prompt 3 must demand a **claim-specific proof obligation before scope is admitted**.
+
+The proof obligation must cover:
+
+```text
+claim / invariant
+falsifier
+current observation
+required observation
+measurement or executable oracle
+existing-model-first attempt
+after-change proof
+regression / invariant check
+pressure test when generality is claimed
+```
+
+Quantitative proof is mandatory when the claimed property is meaningfully quantitative. When it is not, require a reproducible executable oracle rather than invented numbers.
+
+The future agent must explicitly try to prove the proposed change unnecessary by attempting the stronger case with the existing model first.
+
+If the current system passes the falsifier without the proposed addition, Prompt 3 must require the proposal to be withdrawn or narrowed.
+
+If the claim cannot yet be measured or executed, it must remain an unproved hypothesis / evidence task rather than implementation scope.
+
+Do not accept LOC, commit count, PR count, issue count, number of tests, CI-run count or percentage-complete as proof of technical value.
+
+The visible pivot should use **CRITIQUE THE CLAIM** rather than generic critique language when natural. The gate is satisfied by adversarial falsification behavior, not by the heading alone.
+
+> **CRITIQUE THE CLAIM means try to disprove it.**
+
+---
+
+# HARD GATE 4.4 — PROMPT-3 DECISION GATE
+
+Prompt 3 must postpone disposition until after step-back, reconciliation and technical critique.
+
+The final decision space must remain capable of:
+
+```text
+PRESERVE
+REVISE
+NARROW
+SPLIT
+REPLACE
+ADD
+DEFER
+REMOVE / CLOSE
+LEAVE UNCHANGED
+```
+
+The keyword **DECIDE** should appear as a visible reasoning pivot when natural, but the gate is satisfied only when the prompt chooses the smallest evidence-supported move and permits fixture/proof work, evidence collection, ownership transfer or no change instead of forcing implementation.
+
+Delivery mechanics come after this decision.
 
 ---
 
@@ -2227,13 +2346,11 @@ The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replac
 
 Prompt 3 must return to the **actual Prompt-1 answer** and place it beside Prompt-2 reality.
 
-It is constrained by the frozen **COMPARISON QUESTION**, not by a preselected artifact form.
-
-It is also constrained by the frozen **USER INTENT**.
+It is constrained by the frozen **COMPARISON QUESTION** and **USER INTENT**, not by a preselected artifact form.
 
 Artifact freedom does not mean intent freedom.
 
-If the user explicitly requested `ANALYZE_THEN_ACT` or `EXECUTE_DEFINED_ACTION`, Prompt 3 must proceed from conclusion to the authorized action when justified. It may adapt the implementation details to verified reality, but it must not downgrade execution into recommendation-only prose.
+If the user explicitly requested `ANALYZE_THEN_ACT` or `EXECUTE_DEFINED_ACTION`, Prompt 3 must proceed from conclusion to the authorized action when justified. It may adapt implementation details to verified reality, but it must not downgrade execution into recommendation-only prose.
 
 For repository/GitHub actions, Prompt 3 should require:
 
@@ -2245,97 +2362,188 @@ prepare the smallest justified change/action
 → state anything still unresolved
 ```
 
-
 Tell the future agent explicitly:
 
-> Take the independent picture you produced before meeting the current answer.
+> Take the independent picture you produced in Prompt 1.
 
-> Put it beside what you discovered about reality.
+> Put it beside the reality you established in Prompt 2.
 
-> Where evidence genuinely changed your mind, say exactly why.
+> Where evidence genuinely changed your mind, say exactly why. Otherwise keep the independent baseline.
 
-> Otherwise keep the independent baseline.
+> Do not assume the current issue, register, matrix, roadmap, architecture, checklist, candidate-work list or task breakdown deserves to survive merely because it already exists.
 
-> Do not assume the current issue, register, matrix, roadmap, architecture, checklist or task breakdown deserves to survive merely because it already exists.
-
-Prompt 3 should reason in this order.
-
-## A. Return to the exact Prompt-1 picture
-
-What did we believe good handling of the underlying human problem looked like **before** seeing today's answer?
-
-Do not rewrite that picture to resemble the repository.
-
-## B. What should be preserved?
-
-Identify what reality already does well.
-
-Preserve sound mechanisms, evidence and decisions even if they use different vocabulary.
-
-## C. What has become historical?
-
-Ask:
-
-> What problem used to exist but no longer does?
-
-> Which issue text, roadmap item, status statement or assumption describes an earlier project state?
-
-> What has later work already made obsolete?
-
-## D. First determine today's remaining problem; then decide the artifact's disposition
-
-Do not start by assuming the artifact needs reconciliation.
-
-First ask:
-
-> **Given the independent Prompt-1 picture and verified reality, what is the actual remaining problem today?**
-
-Only after stating that problem independently, ask:
-
-> **Does the current artifact still deserve to exist in its present form as the instrument for that problem?**
-
-This is mandatory for issues, registers, matrices, roadmaps, checklists, architecture umbrellas, handovers and plans.
-
-Ask:
-
-> Is today's artifact actually the right instrument for the underlying human problem now?
-
-Possible conclusions include:
+Prompt 3 should use the following **visible reasoning pivots**. The keywords are deliberate mode changes, not decorative headings:
 
 ```text
-yes — preserve it
-yes — but narrow/update it
-split it
-replace it
-move remaining work back to owning issues
-close it because its job is done
-defer it
-leave it unchanged
+RETURN TO DESTINATION
+        ↓
+STEP BACK
+        ↓
+RECONCILE
+        ↓
+CRITIQUE THE CLAIM
+        ↓
+DECIDE
+        ↓
+EXECUTE IF AUTHORIZED
 ```
 
-Do not prejudge the answer.
+The four pivots mean different things. Do not collapse them into generic "think critically" prose.
 
-## E. What is the real problem now?
+## A. RETURN TO DESTINATION
 
-Given the independent picture and verified reality:
+Recover the exact Prompt-1 destination before choosing work.
 
-> What meaningful distance genuinely remains today?
+Ask:
 
-Rewrite the problem in today's language.
+> What were we ultimately trying to make possible before today's implementation, issue text, PR state and candidate-work list were allowed to shape the answer?
 
-For task/issue work, prefer:
+Do not rewrite the destination to resemble the repository.
 
-> **“Given the current repository, the meaningful remaining work is…”**
+Preserve mechanisms, evidence and decisions from Prompt 2 only when they genuinely satisfy part of that destination.
 
-when implementation work genuinely remains.
+## B. STEP BACK — widen understanding, not ownership
 
-If the correct result is instead “decision needed,” “close this artifact,” “no change,” or “collect evidence first,” say that instead.
+Before choosing the next task or technical solution, step back from the immediate issue, PR, branch, current implementation and inherited candidate list.
 
-## F. What deeper idea is the example exposing?
+Inspect the **relevant larger capability and roadmap landscape**:
 
-Do not confuse the thing that exposed a weakness with the reusable problem underneath it.
+- the Prompt-1 destination;
+- what Prompt 2 proved already exists;
+- relevant roadmap themes and task decomposition;
+- completed, active, deferred and neighbouring capabilities;
+- ownership boundaries and dependencies;
+- historical ideas that may already be obsolete or superseded.
 
-Examples:
+Treat the roadmap/task system as a **hypothesis about how to reach the destination**, not as the definition of the destination.
+
+Use neighbouring work to understand the system. Do not absorb neighbouring ownership merely because you inspected it.
+
+> **STEP BACK widens understanding, not ownership.**
+
+Do not let repository/PR telemetry become a capability model. PR state, branch divergence, commit count, changed-file count, CI-run count, test-file count or percentage-complete may locate evidence or constrain delivery, but they do not establish what the system should become.
+
+## C. RECONCILE — destination × reality × roadmap
+
+Now reconcile:
+
+```text
+PROMPT-1 DESTINATION
+×
+PROMPT-2 VERIFIED REALITY
+×
+CURRENT ROADMAP / TASK MODEL
+```
+
+Reconciliation does **not** mean forcing these three pictures to agree.
+
+Explain the important differences and decide which representation should change.
+
+Identify:
+
+- capabilities already good enough and not worth reopening;
+- meaningful destination gaps that remain;
+- roadmap items whose wording, scope or ownership no longer matches reality;
+- tasks already made obsolete by later work;
+- work that belongs to another owner;
+- new ideas exposed by Prompt 1 or live evidence that the roadmap does not currently represent;
+- uncertainty caused by missing evidence rather than by missing architecture.
+
+Restate the real problem **as it exists now**, independently of the historical checklist.
+
+For each material roadmap/capability item, the eventual disposition may be:
+
+```text
+PRESERVE
+REVISE
+NARROW
+SPLIT
+REPLACE
+ADD
+DEFER
+REMOVE / CLOSE
+LEAVE UNCHANGED
+```
+
+Do not make the disposition yet merely because one sounds plausible. Material additions or architecture changes must first survive **CRITIQUE THE CLAIM**.
+
+`ADD` has a high bar. A newly discovered idea may enter the roadmap only when it closes a meaningful destination gap that is not already adequately represented, has the correct owner/boundary, creates more value than complexity, and survives the technical challenge below.
+
+Ask what existing roadmap item becomes less important, changes ownership or can disappear if the new idea is accepted. New scope is not free.
+
+> **RECONCILE does not mean harmonize. It means explain the contradiction and determine what should change.**
+
+## D. CRITIQUE THE CLAIM — try to prove the proposed change unnecessary
+
+Do not accept architectural prose as proof.
+
+Critique **every material technical conclusion**, including the agent's own new idea.
+
+The default challenge is:
+
+> **Try to prove the proposed change unnecessary. First attempt the stronger case using the existing model.**
+
+For every technical conclusion that would materially change roadmap scope or implementation, establish:
+
+```text
+CLAIM / INVARIANT
+What exact system property is claimed to be missing or wrong?
+
+FALSIFIER
+What concrete input, operation, case or state transition exposes the claimed weakness?
+
+CURRENT OBSERVATION
+What does the live system actually produce?
+
+REQUIRED OBSERVATION
+What should a correct system produce?
+
+MEASUREMENT / EXECUTABLE ORACLE
+How are current and required observations compared?
+Use counts, identities, cardinalities, equalities, deltas, tolerances,
+state transitions, browser observations or another claim-appropriate oracle.
+
+EXISTING-MODEL-FIRST ATTEMPT
+Can the stronger case already be represented and proved using the current model,
+fixture, adapter, schema or runtime without adding architecture?
+
+AFTER-CHANGE PROOF
+If a change is still required, what before/after evidence proves that it closes
+exactly the measured gap?
+
+REGRESSION / INVARIANT CHECK
+Which already-proved contracts must remain unchanged?
+
+PRESSURE TEST
+When a primitive is claimed to be reusable, what unrelated-domain or materially
+different case challenges that generality?
+```
+
+Prefer explicit state relations when they fit the claim, for example:
+
+```text
+undo(state_after) == state_before
+delta(unrelated_instance) == 0
+rejected_operation -> delta(canonical_state) == 0
+expected_relationship_cardinality == observed_relationship_cardinality
+abs(observed - required) <= justified_tolerance
+```
+
+These are examples of proof forms, not required architecture.
+
+When the claimed property is meaningfully quantitative, prove it quantitatively.
+
+When it is not naturally numerical, use a reproducible executable oracle rather than inventing numbers.
+
+Do **not** accept LOC, commit count, PR count, issue count, number of tests, CI-run count or percentage-complete as proof of technical value. Test counts alone do not prove the invariant; the tests must exercise the claimed property.
+
+If the current system passes the falsifier without the proposed addition, treat that as evidence **against adding architecture** and withdraw or narrow the proposal.
+
+If the claim cannot yet be measured or executed, classify it as an **unproved hypothesis / evidence task**, not as admitted implementation scope.
+
+Do not enumerate attractive candidate architectures before falsification unless the target itself requires comparison of named alternatives. Discover the missing primitive from the failing invariant, not the other way around.
+
+Do not confuse the example that exposed a weakness with the reusable problem underneath it:
 
 ```text
 river-crossing question
@@ -2351,39 +2559,74 @@ failed test
 ≠ automatically an architecture problem
 ```
 
-## G. What is the smallest justified response?
+> **CRITIQUE THE CLAIM does not mean produce objections. It means try to disprove the claim with a concrete falsifier and claim-appropriate proof.**
 
-Valid responses include:
+## E. DECIDE — smallest justified movement
 
-- add;
-- fix;
-- extend;
-- simplify;
-- refactor;
-- remove;
-- reconcile;
-- gather evidence;
-- present a decision;
-- narrow or split the current artifact;
-- close it;
-- move work elsewhere;
+Only after STEP BACK, RECONCILE and CRITIQUE THE CLAIM should Prompt 3 decide.
+
+For each material capability/task/artifact, choose the evidence-supported disposition:
+
+```text
+PRESERVE
+REVISE
+NARROW
+SPLIT
+REPLACE
+ADD
+DEFER
+REMOVE / CLOSE
+LEAVE UNCHANGED
+```
+
+Then identify the **smallest worthwhile next move**.
+
+Valid next moves include:
+
+- strengthen a fixture or proof rather than architecture;
+- add, fix, extend, simplify or refactor a bounded capability;
+- move work to the correct owner;
+- reconcile a roadmap/task decomposition;
+- gather one discriminating piece of evidence;
+- present an owner decision;
+- close or remove historical work;
 - defer;
 - preserve unchanged;
 - or make no change yet.
 
-Do not manufacture work because a plan was requested.
+Do not manufacture implementation because the user asked for a plan.
 
-## H. How will reality test the conclusion?
+Before accepting the decision, return to the real witness and ask:
 
-Return to real examples, journeys, questions, models, failures, benchmarks or observations.
+> Does the conclusion survive the example that exposed the issue?
 
-Ask:
+> What observation would prove the chosen response unnecessary or wrong?
 
-> Does the conclusion survive beyond the example that exposed the issue?
+> What previously proved capability must remain unchanged?
 
-> What evidence would show that the chosen response helped?
+> If the existing model already satisfies the stronger witness, are we correctly choosing fixture/proof work instead of new architecture?
 
-> What evidence would prove the conclusion wrong?
+Only after this decision should delivery mechanics determine **how** the chosen move can be executed.
+
+Delivery mechanics must never determine **what the system should become**.
+
+## F. EXECUTE IF AUTHORIZED — then verify delivery truth
+
+If the frozen USER INTENT authorizes implementation or external/repository action, execute the smallest justified move when evidence and authority permit.
+
+Then:
+
+```text
+perform
+→ test / verify
+→ read back the actual repository or external state
+→ report identifiers / links / evidence
+→ state unresolved delivery constraints
+```
+
+Keep delivery constraints separate from technical direction.
+
+A merge conflict, stale branch, missing write authority or CI failure may block execution or publication. It does not retroactively prove that a different architecture or roadmap direction is correct.
 
 ---
 
@@ -2631,7 +2874,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2650,7 +2893,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R6
+TPG-3P-2026-09-21-R8
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2726,6 +2969,8 @@ REALITY OBJECT:
 
 PROMPT 3
 COMPARISON QUESTION:
+ROADMAP SYNTHESIS QUESTION:
+TECHNICAL PROOF QUESTION:
 INTENT EXECUTION QUESTION:
 HANDOVER DESTINATION:
 
@@ -2782,6 +3027,12 @@ PASS — <one short reason>
 
 PROMPT-3 FREEDOM GATE:
 PASS — <one short reason>
+
+PROMPT-3 ROADMAP-SYNTHESIS GATE:
+PASS — <one short reason showing that relevant roadmap/task items are treated as revisable hypotheses, not as the destination>
+
+PROMPT-3 TECHNICAL-PROOF GATE:
+PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
 ## PROMPT 1 — IMAGINE
@@ -3494,7 +3745,9 @@ What meaningful distance genuinely remains?
 
 What is the smallest justified response?
 
-What real evidence confirms or challenges that conclusion?
+What claim-specific falsifier or proof confirms or challenges that conclusion?
+
+What should the relevant roadmap/task landscape preserve, revise, narrow, split, replace, add, defer, remove/close, or leave unchanged?
 
 What understanding must the next person inherit?
 ```
