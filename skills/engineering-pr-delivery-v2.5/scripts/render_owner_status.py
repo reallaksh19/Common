@@ -21,9 +21,58 @@ def _scope_line(item):
 
 
 def render_projection(c:dict)->str:
-    o=c["owner"];cap=o["capability"];progress=(o.get("roadmap") or {}).get("progress") or {};roadmap=(o.get("roadmap") or {}).get("summary") or {}
-    lines=["# Owner status","","## What can happen now",f"{cap.get('summary')}",f"Overall progress: **{_pct(progress.get('overall_percent'))}**."]
+    o=c["owner"];cap=o["capability"];rmap=o.get("roadmap") or {};progress=rmap.get("progress") or {};roadmap=rmap.get("summary") or {}
+    current=o.get("current_work") or {};delivery=o.get("delivery") or {};recon=rmap.get("last_reconciliation") or {}
     phase=progress.get("phase_title") or progress.get("phase");wp=progress.get("work_package_title") or progress.get("work_package")
+    issues=current.get("issues") or [];issue=issues[0] if issues else {};vehicle=delivery.get("vehicle") or {}
+    pb=progress.get("progress_basis") or {};roadmap_disposition=str(recon.get("result") or "NOT_RECONCILED").replace("_"," ").title()
+    issue_label=f"#{issue.get('issue_number')}" if issue.get("issue_number") is not None else "not mapped"
+    pr_label=f"#{vehicle.get('number')}" if vehicle.get("number") is not None else "not observed"
+    pr_state=str(vehicle.get("lifecycle") or "UNKNOWN").replace("_"," ").title()
+    lines=[
+        "# Owner Roadmap","",
+        f"Roadmap revision: **{roadmap.get('revision') or 'unknown'}**",
+        f"Progress basis: **{pb.get('id') or 'unknown'}**",
+        "",
+        "## Executive state",
+        f"Overall progress: **{_pct(progress.get('overall_percent'))}**.",
+        f"Current phase: **{phase or 'unknown'}** — **{_pct(progress.get('phase_percent'))}**.",
+        f"Current work: **{wp or 'unknown'}** — **{_pct(progress.get('work_package_percent'))}**.",
+        f"Current issue: **{issue_label}**.",
+        f"Current PR: **{pr_label} — {pr_state}**.",
+        f"Roadmap disposition: **{roadmap_disposition}**.",
+        "",
+        "## Phase status",
+        "| Phase | State | Progress | Current / next |",
+        "| --- | --- | ---: | --- |",
+    ]
+    cur_phase=str(progress.get("phase") or "")
+    for obj in progress.get("hierarchy") or []:
+        for ph in obj.get("phases") or []:
+            marker="current" if str(ph.get("id"))==cur_phase else ""
+            lines.append(f"| {ph.get('title') or ph.get('id')} | {str(ph.get('state') or 'UNKNOWN').replace('_',' ').title()} | {_pct(ph.get('percent'))} | {marker} |")
+    lines += ["","## Active work","| WP | Issue | State | Acceptance / progress | Delivery |","| --- | --- | --- | ---: | --- |"]
+    cur_wp=str(progress.get("work_package") or "")
+    added=False
+    for obj in progress.get("hierarchy") or []:
+        for ph in obj.get("phases") or []:
+            for row in ph.get("work_packages") or []:
+                if str(row.get("id"))!=cur_wp and str(row.get("state") or "").upper() not in {"ACTIVE","BLOCKED"}:continue
+                ilabel=issue_label if str(row.get("id"))==cur_wp else "—"
+                dlabel=f"PR {pr_label} / {pr_state}" if str(row.get("id"))==cur_wp and vehicle else "—"
+                lines.append(f"| {row.get('id')} — {row.get('title') or ''} | {ilabel} | {str(row.get('state') or 'UNKNOWN').replace('_',' ').title()} | {_pct(row.get('percent'))} | {dlabel} |")
+                added=True
+    if not added:lines.append("| — | — | No active roadmap work | — | — |")
+    events=rmap.get("recent_events") or []
+    discovered=[e for e in events if isinstance(e,dict) and e.get("follow_up")=="NEW_EXECUTION_WORK"]
+    lines += ["","## Newly discovered work"]
+    if discovered:
+        for e in discovered[-5:]:
+            xr=e.get("execution_refs") or {}
+            lines.append(f"- {e.get('id')}: {e.get('summary')} — current execution ref: {xr.get('work_package') or 'not yet mapped'}; concept effect: {e.get('concept_change')}.")
+    else:lines.append("- No unresolved newly discovered execution work is recorded in the recent material-event window.")
+    lines += ["","## What can happen now",f"{cap.get('summary')}"]
+
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
     cadence=o.get("status_cadence") or {}
     if cadence.get("required"):
@@ -56,7 +105,7 @@ def render_projection(c:dict)->str:
     if details.get("issue_change"):lines.append("- Current issue/coordination identity or state changed.")
     if details.get("stop_change"):lines.append("- Active stop/blocker state changed.")
     if details.get("next_work_change"):lines.append("- Exact next-work contract changed.")
-    current=o.get("current_work") or {};purpose=o.get("purpose") or {};lines += ["","## What this work is for"]
+    purpose=o.get("purpose") or {};lines += ["","## What this work is for"]
     current_wp=current.get("work_package_title") or current.get("work_package");current_ep=current.get("ep_id")
     if current_wp:lines.append(f"- Current work: **{current_wp}**{f' / {current_ep}' if current_ep else ''}.")
     for issue in current.get("issues") or []:
@@ -101,7 +150,7 @@ def render_projection(c:dict)->str:
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
     recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};pb=progress.get("progress_basis") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Progress basis: **{pb.get('id') or 'unknown'}** on roadmap revision **{pb.get('roadmap_revision') or roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
-    delivery=o.get("delivery") or {};lines += ["","## Delivery"]
+    lines += ["","## Delivery"]
     if delivery.get("applicability")=="NOT_APPLICABLE":
         lines.append("- No pull-request delivery vehicle is currently required.")
     else:
@@ -164,16 +213,23 @@ def render_projection(c:dict)->str:
                 for row in str(delegation.get("prompt") or "").splitlines():
                     lines.append(f"     {row}")
     else:lines.append("- No action outside the current environment is presently required.")
-    decisions=o.get("decisions") or {};required=decisions.get("required_now") or [];lines += ["","## Decisions for you"]
+    decisions=o.get("decisions") or {};required=decisions.get("required_now") or [];lines += ["","## Owner decisions"]
     if required:
         for item in required:lines.append(f"- {item.get('reason')}")
     else:lines.append("- No Owner decision is currently required to continue the already-authorized slice.")
-    lines += ["","## What happens next"]
+    lines += ["","## Recommended forward sequence"]
     steps=(o.get("next_work") or {}).get("steps") or []
     if steps:
         for idx,step in enumerate(steps,1):
             lane=f" ({step.get('lane_id')})" if step.get("lane_id") else "";lines.append(f"{idx}. {step.get('action')}{lane} → {step.get('expected_result')}")
     else:lines.append("- No active material next step is authorized; do not invent work.")
+    lines += ["","## Roadmap revision history"]
+    revisions=[e for e in events if isinstance(e,dict) and (e.get("event_class")=="ROADMAP_REVISION" or (e.get("roadmap_revision") or {}).get("id"))]
+    if revisions:
+        for e in revisions[-5:]:
+            rr=e.get("roadmap_revision") or {}
+            lines.append(f"- {rr.get('id') or e.get('id')}: {e.get('summary')}")
+    else:lines.append(f"- Current revision {roadmap.get('revision') or 'unknown'}; no additional revision event is present in the recent event window.")
     lines += ["","## What would stop progress"]
     active_stop=cap.get("active_stop")
     if active_stop:lines.append(f"- Current stop: {active_stop.get('reason') or active_stop.get('category')}")
