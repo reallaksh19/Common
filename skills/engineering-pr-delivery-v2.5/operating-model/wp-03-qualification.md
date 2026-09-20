@@ -42,6 +42,17 @@ Q5 references actual incoming implementation steps and requires the first bounde
 
 Every question is bound to current incoming-EP IDs and the exact route/EP digest.
 
+## Owner suppression / proceed without questions
+
+`Proceed next, No Qs` and `Proceed next, No Q1 to Q5` suppress the question transaction for the current progression step.
+
+This differs from `THREE_PASS_COMPLETE`:
+
+- `THREE_PASS_COMPLETE` → follow-on QSET is **not applicable**;
+- Owner suppression without three-pass completion → qualification may remain **required but unsatisfied**.
+
+The latter may continue non-material/read-only work but cannot claim qualification/takeover/write readiness.
+
 ## Three-pass terminal non-applicability
 
 When Prompt 3 of the standalone three-pass workflow completed the current task's reasoning sequence, another qualification questionnaire is redundant and prohibited.
