@@ -147,6 +147,17 @@ def render_projection(c:dict)->str:
             lines.append(f"   - Currently prevents: {', '.join(str(x) for x in (item.get('blocks') or []))}")
             lines.append(f"   - Success condition: {item.get('success_condition')}")
             lines.append(f"   - Success clears: {', '.join(str(x) for x in (item.get('clears') or []))}")
+            delegation=item.get("delegation") or {}
+            if delegation:
+                publication=delegation.get("publication") or {};check=delegation.get("response_check") or {}
+                method=str(publication.get("method") or "COMMENT").replace("_"," ").title()
+                lines.append(f"   - Local-agent handoff: publish as **{method}** on the current work issue; local result returns to the same location; provider readback required.")
+                lines.append(f"   - Response check: create timer **{check.get('timer_title')}** for {check.get('after_minutes')} minutes — {check.get('selection_reason')}")
+                lines.append(f"   - When timer is due: {check.get('on_due')}")
+                lines.append(f"   - If no response: {check.get('on_no_response')}")
+                lines.append("   - Copy-paste prompt for the local agent:")
+                for row in str(delegation.get("prompt") or "").splitlines():
+                    lines.append(f"     {row}")
     else:lines.append("- No action outside the current environment is presently required.")
     decisions=o.get("decisions") or {};required=decisions.get("required_now") or [];lines += ["","## Decisions for you"]
     if required:
