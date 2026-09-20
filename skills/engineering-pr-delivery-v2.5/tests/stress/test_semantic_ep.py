@@ -77,4 +77,55 @@ class SemanticExecutionPackageStressTests(unittest.TestCase):
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertTrue(any("requires current roadmap revision_record" in x for x in semantic_ep(root)[0]))
 
+    def test_status_publication_is_mandatory_and_defaults_to_25_minutes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["report_contract"].pop("status_publication")
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("status_publication is required" in x for x in semantic_ep(root)[0]))
+
+    def test_owner_may_override_status_cadence_explicitly(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["report_contract"]["status_publication"]["owner_override"]={
+                "source":"OWNER","mode":"INTERVAL","after_minutes":40,
+                "basis":["OWNER explicitly requested first status after 40 minutes for this task."],
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertEqual([],semantic_ep(root)[0])
+
+    def test_owner_no_questions_suppresses_qset_without_claiming_qualification_pass(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["qualification_boundary"]={
+                "required":True,
+                "trigger":"PHASE_CHANGED",
+                "from_phase":"PHASE-0",
+                "to_phase":"PHASE-1",
+                "changed_dimensions":["PRODUCTION_PATH"],
+                "basis":["Phase transition would ordinarily require fresh qualification."],
+                "question_policy":"SUPPRESSED_BY_OWNER",
+                "question_policy_basis":["OWNER: Proceed next, No Q1 to Q5"],
+                "not_applicable_reason":None,
+                "question_set":None,
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertEqual([],semantic_ep(root)[0])
+
+    def test_owner_no_questions_cannot_attach_qset(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["qualification_boundary"]={
+                "required":True,
+                "trigger":"PHASE_CHANGED","from_phase":"PHASE-0","to_phase":"PHASE-1",
+                "changed_dimensions":["PRODUCTION_PATH"],
+                "basis":["Phase transition."],
+                "question_policy":"SUPPRESSED_BY_OWNER",
+                "question_policy_basis":["OWNER: Proceed next, No Qs"],
+                "not_applicable_reason":None,
+                "question_set":{"id":"QSET-1","path":"agents/relay/certifications/qualification/QSET-1.yaml"},
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("SUPPRESSED_BY_OWNER cannot create/reference QSET" in x for x in semantic_ep(root)[0]))
+
 if __name__=="__main__":unittest.main()
