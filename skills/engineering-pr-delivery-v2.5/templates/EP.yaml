@@ -22,6 +22,12 @@ roadmap_source:
   phase: PHASE-001
   work_package: WP-001
   generated_from_frontier: true
+  task_admission:
+    disposition: MAPPED_EXISTING_WP
+    searched_paths:
+      - agents/relay/roadmap/OVERALL_ROADMAP.yaml
+    basis:
+      - "<why this task maps to this existing WP, or the revision/create evidence>"
 outcome:
   user_visible:
     - "<observable user-facing result or NA rationale>"
