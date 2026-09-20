@@ -343,7 +343,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("roadmap/task landscape" in e for e in errors), errors)
 
     def test_prompt3_requires_ownership_discipline(self):
-        bad = GOOD.replace("STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.\n", "STEP BACK — inspect the relevant roadmap/task landscape.\n")
+        bad = GOOD.replace("ownership boundaries", "scope boundaries").replace("ownership transfer", "scope transfer").replace("not ownership", "not scope")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("ownership" in e for e in errors), errors)
 
