@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -189,7 +189,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -213,7 +213,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-19-R4`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-20-R5`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -2410,6 +2410,30 @@ Run the PROMPT-3 FREEDOM GATE before accepting Prompt 3.
 
 ---
 
+# POST-THREE-PASS TERMINAL RULE — NO FOLLOW-ON QUALIFICATION QUESTIONS
+
+Completing Prompt 3 completes the three-pass reasoning sequence, regardless of whether Prompt 1 used visible Q1–Q5 / complex reasoning.
+
+Prompt 3 must instruct the future agent to finish its response with:
+
+```text
+THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
+FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
+```
+
+After that disposition:
+
+- do not ask another qualification questionnaire;
+- do not create a follow-on `QSET-*` merely to re-test the reasoning already exercised by the three passes;
+- do not insert an extra admission/exam stage after Prompt 3;
+- if a downstream execution workflow needs a machine-readable basis, carry `THREE_PASS_COMPLETE` forward as the reason the extra qualification question set is not applicable.
+
+This does **not** mean evidence, authorization, tests, source authority, Owner decisions, local execution, or write-safety checks may be skipped. It only removes redundant post-three-pass questioning.
+
+A separate qualification exercise may occur only when the user explicitly asks for one as a new task.
+
+---
+
 # RESTRAINT IS A FIRST-CLASS REQUIREMENT
 
 All three generated prompts should encourage restraint.
@@ -2571,7 +2595,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2590,7 +2614,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-19-R4
+TPG-3P-2026-09-20-R5
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2815,6 +2839,8 @@ Do not add:
 The shared SCHEMA BASIS plus each lot's visible preflight and three prompt fences are the complete deliverable.
 
 After Prompt 3, STOP. Do not append any admission/qualification/certification block, evaluator request, fourth stage, or extra question package.
+
+Each generated Prompt 3 must itself instruct its future agent to emit the terminal disposition `THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE` and `FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE` when that pass is finished.
 
 ---
 
