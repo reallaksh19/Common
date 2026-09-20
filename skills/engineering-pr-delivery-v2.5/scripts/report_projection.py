@@ -40,6 +40,7 @@ def _active_contract(ep:dict|None)->dict|None:
         "known_problems":context.get("known_problems") or [],
         "deliberate_non_goals":context.get("deliberate_non_goals") or [],
         "quality_router":ep.get("quality") or {},
+        "status_publication":((ep.get("report_contract") or {}).get("status_publication") or {"default_after_minutes":25,"owner_override":None}),
     }
 
 
