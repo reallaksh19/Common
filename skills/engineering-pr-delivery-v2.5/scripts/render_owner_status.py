@@ -25,6 +25,11 @@ def render_projection(c:dict)->str:
     lines=["# Owner status","","## What can happen now",f"{cap.get('summary')}",f"Overall progress: **{_pct(progress.get('overall_percent'))}**."]
     phase=progress.get("phase_title") or progress.get("phase");wp=progress.get("work_package_title") or progress.get("work_package")
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
+    cadence=o.get("status_cadence") or {}
+    if cadence.get("required"):
+        lines.append(f"Owner status heartbeat: **{cadence.get('effective_after_minutes') or 25} minutes** from task start unless the task completes earlier.")
+    else:
+        lines.append("Owner status heartbeat: **disabled by explicit Owner override** for this task.")
     change=o.get("change") or {};details=change.get("details") or {};event=str(change.get("event_class") or "UNKNOWN").replace("_"," ").title()
     lines += ["","## What changed",f"Publication event: **{event}**."]
     if change.get("event_class")=="INITIAL_SNAPSHOT":
