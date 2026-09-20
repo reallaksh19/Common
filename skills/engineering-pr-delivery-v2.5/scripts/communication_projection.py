@@ -3,6 +3,7 @@ from pathlib import Path
 from report_projection import build as build_report
 from takeoverlib import digest_mapping
 from owner_publication import cursor_digest,publication_status
+from roadmap_events import load_events
 
 
 def _current_titles(progress:dict)->dict:
@@ -92,6 +93,10 @@ def build(root:Path)->dict:
         if isinstance(req,dict):
             external_actions.append({**req,"action":step.get("action"),"expected_result":step.get("expected_result"),"ep_id":step.get("ep_id"),"lane_id":step.get("lane_id")})
     titles=_current_titles(report.get("progress") or {});current_work=report.get("current_work") or {}
+    try:
+        recent_events=(load_events(root).get("events") or [])[-12:]
+    except Exception:
+        recent_events=[]
     change=publication_status(root,report)
     owner={
         "change":change,
@@ -102,7 +107,12 @@ def build(root:Path)->dict:
         "scope":{"protected":scope.get("protected") or [],"prohibited":scope.get("prohibited") or [],"owner_reserved":scope.get("owner_reserved") or [],"deliberate_non_goals":contract.get("deliberate_non_goals") or []},
         "evidence":{"state":evidence.get("state"),"summary":evidence.get("summary"),"not_run":evidence.get("not_run") or [],"acceptance":report.get("acceptance") or []},
         "quality":{"state":(report.get("quality") or {}).get("state"),"visible_risks":risks,"procedure_gaps":quality_gaps,"known_limitations":checkpoint.get("known_limitations") or [],"known_problems":contract.get("known_problems") or []},
-        "roadmap":{"summary":report.get("roadmap_summary") or {},"progress":_current_titles(report.get("progress") or {}),"last_reconciliation":checkpoint.get("roadmap_reconciliation") or {}},
+        "roadmap":{
+            "summary":report.get("roadmap_summary") or {},
+            "progress":{**_current_titles(report.get("progress") or {}),"hierarchy":(report.get("progress") or {}).get("hierarchy") or []},
+            "last_reconciliation":checkpoint.get("roadmap_reconciliation") or {},
+            "recent_events":recent_events,
+        },
         "delivery":report.get("delivery") or {},
         "decisions":{"required_now":_required_owner_decisions(report),"recorded":recorded,"reserved":scope.get("owner_reserved") or []},
         "next_work":{"steps":next_steps},
