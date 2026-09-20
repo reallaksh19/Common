@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-21-R7"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-21-R8"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -451,10 +451,22 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             prompt3_lower = prompt3.lower()
             if "roadmap" not in prompt3_lower and "task landscape" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must explicitly challenge the relevant roadmap/task landscape")
+            if "ownership" not in prompt3_lower and "owner" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must widen context without silently widening ownership")
+            if "prompt-1" not in prompt3_lower or "prompt-2" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must reconcile Prompt-1 destination with Prompt-2 verified reality")
+            if "reconcil" not in prompt3_lower and "compare" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must reconcile destination, reality, and roadmap rather than merely summarize them")
             if "falsif" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must include a falsifier for material technical claims")
             if "quantitative" not in prompt3_lower and "executable" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must require quantitative or executable technical proof")
+            if "existing model" not in prompt3_lower and "existing-model" not in prompt3_lower and "current model" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must attempt the stronger case with the existing/current model first")
+            if "withdraw" not in prompt3_lower and "narrow" not in prompt3_lower and "unnecessary" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must say what happens when the proposed architecture is not justified")
+            if "preserve" not in prompt3_lower or "add" not in prompt3_lower or "defer" not in prompt3_lower:
+                errors.append(f"{label}: Prompt 3 must preserve a broad evidence-supported decision space")
             for phrase in (
                 "produce the reconciled register",
                 "your deliverable is a better current register",
