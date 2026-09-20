@@ -62,4 +62,19 @@ class SemanticExecutionPackageStressTests(unittest.TestCase):
             root=Path(td);_,_,_,state=good(root);state["relay_protocol"]["basis_ref"]="<pinned Common SHA>";dump(root/"agents/relay/REPO_STATE.yaml",state)
             self.assertTrue(any("basis_ref" in x for x in repo_state(root)[0]))
 
+    def test_missing_task_roadmap_admission_fails(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["roadmap_source"].pop("task_admission")
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("task_admission is required" in x for x in semantic_ep(root)[0]))
+
+    def test_added_execution_wp_requires_revision_evidence(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["roadmap_source"]["task_admission"]["disposition"]="ADDED_EXECUTION_WP"
+            ep["roadmap_source"]["task_admission"]["basis"]=["Engineering discovery required a new execution WP."]
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("requires current roadmap revision_record" in x for x in semantic_ep(root)[0]))
+
 if __name__=="__main__":unittest.main()
