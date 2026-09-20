@@ -318,6 +318,26 @@ OR
 MATERIAL_QUALIFICATION_BOUNDARY_CHANGED
 ```
 
+**except when the current task carries the completed standalone three-pass terminal disposition**:
+
+```text
+THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
+FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
+```
+
+For that case, the incoming EP records:
+
+```yaml
+qualification_boundary:
+  required: false
+  not_applicable_reason: THREE_PASS_COMPLETE
+  basis:
+    - "THREE_PASS_COMPLETE: <durable task/issue/session basis>"
+  question_set: null
+```
+
+Do not create a `QSET-*` or `QUAL-*` after a completed three-pass sequence, whether Prompt 1 used visible Q1–Q5 or not. The three-pass exemption removes redundant questioning only; DISC/TC, evidence, Owner authority, source authority, tests, local execution and `MATERIAL_WRITE_READY` still apply.
+
 A same-phase material boundary change includes material change in production path, engineering authority, numerical method, protected invariant, input authority, or verification/oracle class.
 
 Inline `phase_transition.questions` is retired. A required EP boundary references a durable `QSET-*` bound to the exact route and EP contract digest.
