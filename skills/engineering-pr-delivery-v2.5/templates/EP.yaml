@@ -147,6 +147,14 @@ qualification_boundary:
   to_phase: null
   changed_dimensions: []
   basis: []
+  # DEFAULT creates/uses QSET when qualification is required.
+  # SUPPRESSED_BY_OWNER is selected by commands such as:
+  #   Proceed next, No Qs
+  #   Proceed next, No Q1 to Q5
+  # It suppresses QSET creation/display for this progression step but does NOT
+  # satisfy required qualification or grant takeover/write readiness.
+  question_policy: DEFAULT
+  question_policy_basis: []
   # Set to THREE_PASS_COMPLETE only when the current task carries the completed
   # standalone three-pass terminal disposition. In that case QSET/QUAL are N/A.
   not_applicable_reason: null
