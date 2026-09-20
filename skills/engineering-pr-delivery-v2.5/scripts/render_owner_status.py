@@ -51,6 +51,11 @@ def render_projection(c:dict)->str:
         for ph in obj.get("phases") or []:
             marker="current" if str(ph.get("id"))==cur_phase else ""
             lines.append(f"| {ph.get('title') or ph.get('id')} | {str(ph.get('state') or 'UNKNOWN').replace('_',' ').title()} | {_pct(ph.get('percent'))} | {marker} |")
+    lines += ["","## Concept roadmap","| Concept | State | Progress | Current focus |","| --- | --- | ---: | --- |"]
+    cur_obj=str(progress.get("objective") or "")
+    for obj in progress.get("hierarchy") or []:
+        focus=", ".join(str(ph.get("title") or ph.get("id")) for ph in (obj.get("phases") or []) if str(ph.get("id"))==cur_phase) or ("current" if str(obj.get("id"))==cur_obj else "—")
+        lines.append(f"| {obj.get('id')} — {obj.get('title') or ''} | {str(obj.get('state') or 'UNKNOWN').replace('_',' ').title()} | {_pct(obj.get('percent'))} | {focus} |")
     lines += ["","## Active work","| WP | Issue | State | Acceptance / progress | Delivery |","| --- | --- | --- | ---: | --- |"]
     cur_wp=str(progress.get("work_package") or "")
     added=False
@@ -63,6 +68,17 @@ def render_projection(c:dict)->str:
                 lines.append(f"| {row.get('id')} — {row.get('title') or ''} | {ilabel} | {str(row.get('state') or 'UNKNOWN').replace('_',' ').title()} | {_pct(row.get('percent'))} | {dlabel} |")
                 added=True
     if not added:lines.append("| — | — | No active roadmap work | — | — |")
+    lines += ["","## Completed work log","| WP | Result |","| --- | --- |"]
+    completed=[]
+    for obj in progress.get("hierarchy") or []:
+        for ph in obj.get("phases") or []:
+            for row in ph.get("work_packages") or []:
+                if str(row.get("state") or "").upper()=="COMPLETE" or row.get("percent")==100:
+                    completed.append(row)
+    if completed:
+        for row in completed[-10:]:
+            lines.append(f"| {row.get('id')} — {row.get('title') or ''} | Complete — {_pct(row.get('percent'))} |")
+    else:lines.append("| — | No completed work package is present on the current progress basis. |")
     events=rmap.get("recent_events") or []
     discovered=[e for e in events if isinstance(e,dict) and e.get("follow_up")=="NEW_EXECUTION_WORK"]
     lines += ["","## Newly discovered work"]
@@ -71,6 +87,13 @@ def render_projection(c:dict)->str:
             xr=e.get("execution_refs") or {}
             lines.append(f"- {e.get('id')}: {e.get('summary')} — current execution ref: {xr.get('work_package') or 'not yet mapped'}; concept effect: {e.get('concept_change')}.")
     else:lines.append("- No unresolved newly discovered execution work is recorded in the recent material-event window.")
+    lines += ["","## Blocked / waiting"]
+    active_stop=cap.get("active_stop")
+    ext=o.get("external_actions") or [];not_run=(o.get("evidence") or {}).get("not_run") or []
+    if active_stop:lines.append(f"- Active stop: {active_stop.get('reason') or active_stop.get('category')}")
+    for item in ext:lines.append(f"- External/local action: {item.get('action')} — blocks {', '.join(str(x) for x in (item.get('blocks') or []))}.")
+    for item in not_run:lines.append(f"- Evidence not run: {_text(item,['reason','summary'])}")
+    if not active_stop and not ext and not not_run:lines.append("- No current blocker, waiting external action, or NOT_RUN evidence is recorded.")
     lines += ["","## What can happen now",f"{cap.get('summary')}"]
 
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
