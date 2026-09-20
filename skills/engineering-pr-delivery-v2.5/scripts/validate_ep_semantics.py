@@ -233,7 +233,25 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
         if isinstance(test,dict):
             _require_text(e,test,"method",f"{label}.validation[{i}]")
             if not _text_list(test.get("proves")) or not test.get("proves"):e.append(f"{label}.validation[{i}].proves must map to acceptance ids")
-    report=ep.get("report_contract") or {};sections=report.get("sections") or [];payloads=report.get("payloads")
+    report=ep.get("report_contract") or {}
+    cadence=report.get("status_publication")
+    if cadence is not None:
+        if not isinstance(cadence,dict):e.append(f"{label}.report_contract.status_publication must be a mapping")
+        else:
+            if cadence.get("default_after_minutes")!=25:e.append(f"{label}.report_contract.status_publication.default_after_minutes must be 25")
+            override=cadence.get("owner_override")
+            if override is not None:
+                cl=f"{label}.report_contract.status_publication.owner_override"
+                if not isinstance(override,dict):e.append(f"{cl} must be a mapping or null")
+                else:
+                    if override.get("source")!="OWNER":e.append(f"{cl}.source must be OWNER")
+                    mode=override.get("mode")
+                    if mode not in {"DISABLED","INTERVAL"}:e.append(f"{cl}.mode must be DISABLED or INTERVAL")
+                    after=override.get("after_minutes")
+                    if mode=="INTERVAL" and (not isinstance(after,int) or after<1):e.append(f"{cl}.after_minutes must be a positive integer for INTERVAL")
+                    if mode=="DISABLED" and after not in {None,0}:e.append(f"{cl}.after_minutes must be null for DISABLED")
+                    if not _text_list(override.get("basis")) or not override.get("basis"):e.append(f"{cl}.basis must contain explicit Owner basis")
+    sections=report.get("sections") or [];payloads=report.get("payloads")
     if not isinstance(payloads,list):e.append(f"{label}.report_contract.payloads must be a list")
     else:
         by_section={}
