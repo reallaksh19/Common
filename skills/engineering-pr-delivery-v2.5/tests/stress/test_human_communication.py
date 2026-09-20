@@ -123,6 +123,12 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "blocks":["product implementation start"],
                 "success_condition":"The command exits successfully against the admitted revision.",
                 "clears":["repository-admission gate","product implementation may begin"],
+                "delegation":{
+                    "mode":"LOCAL_AGENT",
+                    "prompt":"Open the repository at the admitted revision. Run the required local verification exactly as stated. Do not modify unrelated files. Post the command, exit status, key output and evidence result back to the same GitHub issue location.",
+                    "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
+                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":30,"selection_reason":"This is one bounded command expected to complete quickly.","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
+                },
             }
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertEqual([],ep_semantics(root)[0])
@@ -136,6 +142,10 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "product implementation start",
                 "repository-admission gate",
                 "product implementation may begin",
+                "Local-agent handoff",
+                "Local verification response",
+                "30 minutes",
+                "Copy-paste prompt for the local agent",
             ):self.assertIn(expected,text)
 
     def test_external_execution_requirement_needs_command_or_instruction(self):
@@ -155,6 +165,12 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "blocks":["acceptance evidence"],
                 "success_condition":"The required validation completes.",
                 "clears":["acceptance evidence gap"],
+                "delegation":{
+                    "mode":"LOCAL_AGENT",
+                    "prompt":"Open the repository at the admitted revision. Run the required local verification exactly as stated. Do not modify unrelated files. Post the command, exit status, key output and evidence result back to the same GitHub issue location.",
+                    "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
+                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":60,"selection_reason":"This is This external runner may require setup before the check completes.","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
+                },
             }
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertTrue(any("requires command or executable instruction" in x for x in ep_semantics(root)[0]))
@@ -163,5 +179,41 @@ class HumanCommunicationStressTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);_,ep,_,_=good(root);ep["context_capsule"]["known_problems"]=["REPO_STATE contains a confusing internal-only status."];dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
             self.assertTrue(any("relay-internal jargon" in x for x in communication_check(root)[0]))
+
+    def test_external_execution_requirement_requires_local_agent_delegation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            ep["next_work"]["steps"][0]["execution_requirement"]={
+                "id":"EXECREQ-1","type":"LOCAL_ENVIRONMENT","actor":"AUTHORIZED_OPERATOR",
+                "environment":{"kind":"BROWSER_UI","description":"A local browser session."},
+                "instruction":"Open the UI and exercise the required workflow.",
+                "working_directory":"REPOSITORY_ROOT","required_basis":["current EP material_ref"],
+                "unavailable_here_reason":"No browser UI is available in this environment.",
+                "expected_evidence":["TEST-1"],"blocks":["UI acceptance"],"success_condition":"The workflow is verified.",
+                "clears":["UI acceptance gap"],
+            }
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("delegation must be a mapping" in x for x in ep_semantics(root)[0]))
+
+    def test_delegation_response_timer_is_bounded_to_30_or_60_minutes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);_,ep,_,_=good(root)
+            req={
+                "id":"EXECREQ-1","type":"LOCAL_ENVIRONMENT","actor":"AUTHORIZED_OPERATOR",
+                "environment":{"kind":"BROWSER_UI","description":"A local browser session."},
+                "instruction":"Open the UI and exercise the required workflow.",
+                "working_directory":"REPOSITORY_ROOT","required_basis":["current EP material_ref"],
+                "unavailable_here_reason":"No browser UI is available in this environment.",
+                "expected_evidence":["TEST-1"],"blocks":["UI acceptance"],"success_condition":"The workflow is verified.",
+                "clears":["UI acceptance gap"],
+                "delegation":{
+                    "mode":"LOCAL_AGENT","prompt":"Run the browser verification and post evidence to the same issue.",
+                    "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
+                    "response_check":{"timer_required":True,"timer_title":"Browser verification response","after_minutes":45,"selection_reason":"Invalid interval for regression.","on_due":"Check the issue.","on_no_response":"Report waiting."},
+                },
+            }
+            ep["next_work"]["steps"][0]["execution_requirement"]=req
+            dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
+            self.assertTrue(any("after_minutes must be 30 or 60" in x for x in ep_semantics(root)[0]))
 
 if __name__=="__main__":unittest.main()
