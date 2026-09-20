@@ -284,9 +284,11 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
             if not _text_list(test.get("proves")) or not test.get("proves"):e.append(f"{label}.validation[{i}].proves must map to acceptance ids")
     report=ep.get("report_contract") or {}
     cadence=report.get("status_publication")
-    if cadence is not None:
-        if not isinstance(cadence,dict):e.append(f"{label}.report_contract.status_publication must be a mapping")
-        else:
+    if cadence is None:
+        e.append(f"{label}.report_contract.status_publication is required")
+    elif not isinstance(cadence,dict):
+        e.append(f"{label}.report_contract.status_publication must be a mapping")
+    else:
             if cadence.get("default_after_minutes")!=25:e.append(f"{label}.report_contract.status_publication.default_after_minutes must be 25")
             override=cadence.get("owner_override")
             if override is not None:
