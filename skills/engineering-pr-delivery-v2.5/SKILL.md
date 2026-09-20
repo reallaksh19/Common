@@ -699,6 +699,43 @@ The scoped workflow `.github/workflows/engineering-pr-delivery-v2.5.yml` must ex
 A green generic workflow proves only that the repository-neutral protocol suite executed successfully; it does not substitute for downstream product, engineering calculation, release, or human UX acceptance.
 
 
+## Canonical control-return response
+
+For every normal V2.5 control return, the user-facing response must begin with the exact source-derived Owner projection produced by:
+
+```bash
+python skills/engineering-pr-delivery-v2.5/scripts/publish_owner_progress.py <repo-root> --apply
+```
+
+The canonical first heading is:
+
+```text
+# Owner Roadmap
+```
+
+Do **not** replace this block with a hand-written narrative, even when the narrative is technically correct.
+
+The canonical block must expose at least:
+
+- roadmap revision and Progress Basis;
+- executive state with overall / phase / WP progress;
+- current issue and current PR;
+- roadmap disposition;
+- phase status;
+- active work;
+- newly discovered work;
+- material delta;
+- evidence/quality;
+- PR readiness/mergeability;
+- local/external actions;
+- Owner decisions;
+- recommended forward sequence;
+- roadmap revision history.
+
+Additional technical commentary may follow the canonical block, but may not replace or precede it.
+
+A response that only reports relay objects, commits, QSET/DISC/TC state, retries, monitoring or NOT_RUN evidence is **not a complete Owner status**.
+
 ### OWNER PROGRESS PUBLICATION — CONTROL RETURN
 
 Before returning control to the Owner after a material work unit, use the canonical publisher:
