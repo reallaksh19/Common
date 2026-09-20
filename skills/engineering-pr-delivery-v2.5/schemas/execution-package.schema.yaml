@@ -155,6 +155,9 @@ properties:
       to_phase: {type: string}
       changed_dimensions: {type: array}
       basis: {type: array}
+      not_applicable_reason:
+        type: [string, 'null']
+        enum: [THREE_PASS_COMPLETE, null]
       question_set:
         type: object
         required: [id, path]
