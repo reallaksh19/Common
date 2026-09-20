@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R5
+TPG-3P-2026-09-20-R6
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R5
+TPG-3P-2026-09-20-R6
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -189,7 +189,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R5
+TPG-3P-2026-09-20-R6
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -213,7 +213,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-20-R5`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-20-R6`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -1568,6 +1568,42 @@ If the user did not ask to see Q1–Q5 labels, prefer natural prose and do not s
 
 ---
 
+# HARD GATE 0.966 — PROMPT-1 REPOSITORY-IDENTITY GATE
+
+Prompt 1 must not reveal or discuss the repository identity.
+
+Compute conceptually:
+
+```text
+PROMPT_1_REPOSITORY_LEAK_SCORE =
+    repository URL/path occurrences
+  + owner/repository slug occurrences
+  + exact repository-name occurrences
+  + repository-deferral/meta phrases
+
+Required result:
+0
+```
+
+This applies even when the repository identity appears inside a prohibition.
+
+Fail examples:
+
+```text
+"Do not inspect owner/repo."
+"Do not refer to the repository."
+"Without opening the repo..."
+"Ignore the current GitHub repository..."
+```
+
+Those phrases still expose the method and repository context.
+
+Prompt 1 must live entirely inside the human/domain problem. Repository identity and inspection mechanics belong to Prompt 2.
+
+The product/domain name may still appear when it is a genuine human-facing identity independent of the repository name.
+
+---
+
 # HARD GATE 0.97 — HUMAN-IMMERSION GATE
 
 Read Prompt 1 as though you were the future agent receiving it with no knowledge of this schema.
@@ -2595,7 +2631,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R5
+TPG-3P-2026-09-20-R6
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2614,7 +2650,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-20-R5
+TPG-3P-2026-09-20-R6
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2902,6 +2938,18 @@ Specifically:
 If any lens is missing, fail.
 
 Do not accept five generic bullet questions. They must be expressed in the language of this target and its PROBLEM KERNEL.
+
+### Prompt-1 repository-leak formula check
+
+Derive the actual repository identity from the preflight and require:
+
+```text
+PROMPT_1_REPOSITORY_LEAK_SCORE = 0
+```
+
+Count repository URL/path, owner/repo slug, exact repository-name leakage, and meta/prohibition language about opening, inspecting, referring to, or avoiding the repository.
+
+Do not treat "do not refer to repo X" as safe; the repository was still revealed.
 
 ### Human-immersion check
 
