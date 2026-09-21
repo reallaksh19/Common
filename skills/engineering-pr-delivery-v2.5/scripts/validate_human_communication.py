@@ -84,7 +84,7 @@ def validate(root:Path):
         if oid and oid not in text:e.append(f"Owner status hides pending control {oid}")
         if str(item.get("summary") or "") and str(item.get("summary")) not in text:e.append(f"Owner status hides pending-control summary {oid}")
         for boundary in item.get("must_resolve_before") or []:
-            label=str(boundary).replace("_"," ").title()
+            label=str(boundary).replace("_"," ").title().replace("Pr ","PR ")
             if label not in text:e.append(f"Owner status hides pending-control boundary {oid}: {boundary}")
     for item in expected_known:
         oid=str(item.get("id") or "")
