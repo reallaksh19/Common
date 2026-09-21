@@ -37,6 +37,7 @@ takeover_admissions: []
 # custody identifies who currently owns material execution on a route. At most one
 # ACTIVE lease is allowed per route.
 execution_custody:
+  enforced: true
   leases: []
 
 # Durable control obligations survive cold starts and timer wakes. These records
