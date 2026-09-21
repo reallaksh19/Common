@@ -79,8 +79,9 @@ properties:
             path: {type: string, minLength: 1}
   execution_custody:
     type: object
-    required: [leases]
+    required: [enforced, leases]
     properties:
+      enforced: {type: boolean}
       leases:
         type: array
         items:
