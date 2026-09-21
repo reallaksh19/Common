@@ -12,6 +12,20 @@ The execution candidate may be a new successor or the same custodian continuing 
 
 The first fact is repository-wide. The second is route/candidate-specific. The third is runtime-only because branch, worktree, HEAD and base drift can change after certification.
 
+A **fresh process is not automatically an execution candidate**. Status, heartbeat, timer, delegation-check, and other observer roles remain read-only and do not create DISC/QUAL/TC. Candidate admission begins only when that agent is intentionally taking material execution.
+
+Where `REPO_STATE.execution_custody.enforced=true`, certification and custody are separate:
+
+```text
+TAKEOVER_CERTIFIED(route,candidate)
+= candidate has valid admission evidence
+
+ACTIVE_EXECUTOR(route)
+= exactly one candidate currently owns material execution custody
+```
+
+A candidate may be certified yet unable to write because another candidate owns the ACTIVE lease.
+
 ## Canonical predicates
 
 ```text
@@ -54,6 +68,7 @@ AND current drift/continuity permits WRITE
 AND material_authority == WRITE
 AND execution can continue
 AND no hard stop is active
+AND, when execution custody is enforced, candidate == ACTIVE_EXECUTOR(route)
 ```
 
 `MATERIAL_WRITE_READY` is deliberately derived by `material_write_ready.py`; it is not a durable boolean in `REPO_STATE.yaml`.
@@ -195,6 +210,14 @@ python skills/engineering-pr-delivery-v2.5/scripts/material_write_ready.py \
 For parallel work, live branch/worktree resolution must identify exactly one approved lane. The gate rejects wrong candidate/route, stale DISC/QUAL/TC, branch mismatch, invalid material ancestry, unqualified base drift, READ_ONLY/NONE **route-level** material authority, `can_continue: false`, or an active hard stop.
 
 Candidate admission and route material authority are separate dimensions. A missing candidate admission must not be represented by changing repository-wide `material_authority` to READ_ONLY; `TAKEOVER_CERTIFIED(route,candidate)` already carries that candidate-specific failure.
+
+### Bounded Owner exception
+
+An APPLIED bounded Owner execution override may allow an isolated corrective branch to continue before named deferrable controls such as candidate admission or route reconciliation are complete. The runtime result is `PASS_WITH_OWNER_OVERRIDE`, never ordinary `PASS`.
+
+The override must be bound to repository, branch, starting base SHA, allowed write paths and OPEN `PEND-*` obligations. It never changes the active route, never certifies the candidate, and never clears the pending obligations. Its recorded `PR_READY | MERGE | CHECKPOINT | RELEASE` boundaries remain blocked.
+
+Hard stops, protected-invariant failures, unsafe results, write collisions, invalid base ancestry, non-deferrable drift, and execution-custody conflicts are not bypassed by this mechanism.
 
 If the base moved, a drift receipt preserves write readiness only if it validates for WRITE and its `to_base` equals the currently observed base.
 
