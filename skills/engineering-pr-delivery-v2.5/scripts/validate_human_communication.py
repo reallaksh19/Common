@@ -8,7 +8,7 @@ from takeoverlib import digest_mapping
 from owner_publication import cursor_digest,publication_status
 
 FORBIDDEN_OWNER_TOKENS=("BATON_READY","TAKEOVER_CERTIFIED","MATERIAL_WRITE_READY","GHGEN-","GHOP-","QSET-","QUAL-","DISC-","QRV-","ODR-","REPO_STATE","material_authority")
-OWNER_HEADINGS=("# Owner Roadmap","## Executive state","## Phase status","## Concept roadmap","## Active work","## Completed work log","## Newly discovered work","## Blocked / waiting","## What can happen now","## What changed","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Delivery","## Action required outside this environment","## Owner decisions","## Recommended forward sequence","## Roadmap revision history","## What would stop progress")
+OWNER_HEADINGS=("# Owner Roadmap","## Executive state","## Phase status","## Concept roadmap","## Active work","## Completed work log","## Newly discovered work","## Blocked / waiting","## Deferred validations / known issues / delegated checks","## What can happen now","## What changed","## What this work is for","## What will not change without authority","## Evidence and confidence","## Quality and known risks","## Roadmap and progress","## Delivery","## Action required outside this environment","## Owner decisions","## Recommended forward sequence","## Roadmap revision history","## What would stop progress")
 
 
 def _subjects(items):
