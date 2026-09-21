@@ -39,6 +39,7 @@ def validate(repo_root:Path):
     if custody is not None:
         if not isinstance(custody,dict):errors.append("REPO_STATE.execution_custody must be a mapping")
         else:
+            if not isinstance(custody.get("enforced"),bool):errors.append("REPO_STATE.execution_custody.enforced must be boolean")
             leases=custody.get("leases")
             if not isinstance(leases,list):errors.append("REPO_STATE.execution_custody.leases must be a list")
             else:
