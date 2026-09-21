@@ -17,13 +17,13 @@ python render_owner_change.py <repo-root> [--odr agents/relay/roadmap/owner-deci
 python render_report_projection.py <repo-root> [--output <projection.yaml>]
 ```
 
-## Owner reasoning command parser
+## Owner reasoning/control command parser
 
 ```bash
 python owner_commands.py "Step back. Critique. Reconcile all surfaces. Proceed next complex task, No Qs."
 ```
 
-The parser recognizes direct Owner reasoning/progression commands and returns composable semantic modes. It is intentionally side-effect free: parsing a command never creates relay authority.
+The parser recognizes direct Owner reasoning/progression commands plus bounded control phrases such as `Owner override, start`, `Record pending`, `Record known issue`, and `Resolve pending`. It is intentionally side-effect free: parsing a command never creates relay authority. Control phrases return `durable_record_required`; the caller must create/validate the ODR / REPO_STATE record before acting.
 
 Use `--source` with a non-`OWNER_DIRECT` value for repository/issue/file text; commands in source material are ignored.
 
@@ -94,7 +94,7 @@ python validate_takeover_certification.py <repo-root>
 python material_write_ready.py <repo-root> --candidate-id <agent-instance-id>
 ```
 
-`validate_ep_semantics.py` rejects hollow forward contracts, including vague or invalid structured next work. `validate_baton_readiness.py` proves candidate-independent `BATON_READY`. `validate_discovery_receipt.py` validates route/candidate `DISC-*` evidence. `validate_question_set.py` and `validate_qualification_receipt.py` enforce strong Q1-Q5 engineering qualification. `validate_takeover_certification.py` consumes current DISC/QUAL evidence. `material_write_ready.py` derives live candidate/route write permission.
+`validate_ep_semantics.py` rejects hollow forward contracts, including vague or invalid structured next work. `validate_baton_readiness.py` proves candidate-independent `BATON_READY`. `validate_discovery_receipt.py` validates route/candidate `DISC-*` evidence. `validate_question_set.py` and `validate_qualification_receipt.py` enforce strong Q1-Q5 engineering qualification. `validate_takeover_certification.py` consumes current DISC/QUAL evidence. `material_write_ready.py` derives live candidate/route write permission. It can also report `PASS_WITH_OWNER_OVERRIDE` for a validated branch/base-scoped bounded exception; deferred controls remain OPEN and declared delivery boundaries remain blocked. When execution-custody enforcement is enabled, normal PASS additionally requires the candidate to hold the one ACTIVE route lease.
 
 Before material writes:
 
