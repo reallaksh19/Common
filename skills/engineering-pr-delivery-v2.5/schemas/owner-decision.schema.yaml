@@ -36,10 +36,11 @@ properties:
       disposition: {enum: [GRANTED, REVOKED]}
       scope:
         type: object
-        required: [repository, branch, allowed_write_paths]
+        required: [repository, branch, base_sha, allowed_write_paths]
         properties:
           repository: {type: string, minLength: 1}
           branch: {type: string, minLength: 1}
+          base_sha: {type: string, minLength: 7}
           route_key: {type: [string, 'null']}
           issues: {type: array, items: {type: integer, minimum: 1}, uniqueItems: true}
           pull_requests: {type: array, items: {type: integer, minimum: 1}, uniqueItems: true}
