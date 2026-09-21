@@ -23,6 +23,7 @@ execution_override: null
 #   scope:
 #     repository: "<owner/repo>"
 #     branch: "fix/example"
+#     base_sha: "<starting-base-sha>"
 #     route_key: null
 #     issues: [123]
 #     pull_requests: [456]
