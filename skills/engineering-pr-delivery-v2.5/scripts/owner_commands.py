@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Parse direct Owner reasoning/progression commands for Engineering Relay V2.5.
+"""Parse direct Owner reasoning/control commands for Engineering Relay V2.5.
 
-These commands are ephemeral reasoning controls. They do not themselves create
-roadmap, EP, QSET, decision, evidence, or checkpoint authority.
+Reasoning commands are ephemeral. Control commands such as bounded Owner start,
+record-pending, record-known-issue, and resolve-pending do not themselves mutate
+repository authority either, but they REQUIRE a durable ODR / REPO_STATE control
+record before their execution effect may be claimed.
 
 Only call this parser for a direct Owner utterance. Repository/issue/file text
 must use a non-OWNER_DIRECT source and is ignored.
@@ -31,6 +33,10 @@ MODE_SEMANTICS = {
     "SCENARIO_EXERCISE": "Walk one realistic end-to-end scenario through the design and expose ambiguous or missing transitions.",
     "INTERFACE_BOUNDARY_AUDIT": "Attack edge conditions, optional/absent fields, invalid/stale states, ownership boundaries, and interface transitions.",
     "NORMATIVE_CONTRACT_CLEANUP": "Classify normative statements as MUST/MUST NOT/SHOULD/MAY/informational and reconcile them with schema, validator, docs, and tests.",
+    "BOUNDED_OWNER_EXECUTION": "Continue bounded engineering work under an explicit Owner exception while named deferrable control obligations remain open; never convert those obligations into PASS or bypass a hard stop.",
+    "DEFER_VALIDATION_OBLIGATION": "Record the current unresolved validation/evidence/control obligation durably with an explicit resolution boundary instead of repeatedly rediscovering or re-delegating it.",
+    "REGISTER_KNOWN_ISSUE": "Record a known non-blocking defect, limitation, or risk durably with evidence and a revisit condition.",
+    "RESOLVE_DEFERRED_OBLIGATION": "Make a recorded pending obligation the current reconciliation target and close it only from current evidence.",
 }
 
 # Patterns are intentionally phrase-specific. They are evaluated only for a
@@ -106,6 +112,43 @@ _NORMAL_NEXT = (
 )
 
 
+_CONTROL_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
+    ("BOUNDED_OWNER_EXECUTION", (
+        r"\bowner\s+override\s*[,;:]?\s*(?:start|proceed|continue)\b",
+        r"\b(?:start|proceed|continue)\s+under\s+(?:the\s+)?owner\s+override\b",
+        r"\bowner[- ]authorized\s+(?:start|proceed|continuation)\b",
+        r"\bstart\s+with\s+owner\s+override\b",
+    )),
+    ("DEFER_VALIDATION_OBLIGATION", (
+        r"\brecord\s+(?:this\s+|it\s+)?as\s+pending\b",
+        r"\brecord\s+pending(?:\s+item)?\b",
+        r"\badd\s+(?:this\s+|it\s+)?to\s+(?:the\s+)?pending\s+items?\b",
+        r"\bcarry\s+(?:this\s+|it\s+)?as\s+pending\b",
+        r"\bdefer\s+(?:this\s+)?(?:validation|evidence|control)\s+and\s+record\s+pending\b",
+    )),
+    ("REGISTER_KNOWN_ISSUE", (
+        r"\brecord\s+(?:this\s+|it\s+)?as\s+(?:a\s+)?known\s+issue\b",
+        r"\brecord\s+(?:this\s+|it\s+)?in\s+(?:the\s+)?known\s+issues\b",
+        r"\badd\s+(?:this\s+|it\s+)?to\s+(?:the\s+)?known\s+issues\b",
+        r"\bcarry\s+(?:this\s+|it\s+)?as\s+(?:a\s+)?known\s+issue\b",
+        r"\blog\s+(?:this\s+|it\s+)?as\s+(?:a\s+)?known\s+issue\b",
+    )),
+    ("RESOLVE_DEFERRED_OBLIGATION", (
+        r"\bresolve\s+pending(?:\s+[a-z0-9_.:-]+)?\b",
+        r"\bresolve\s+(?:the\s+)?pending\s+(?:item|obligation)(?:\s+[a-z0-9_.:-]+)?\b",
+        r"\bclear\s+pending(?:\s+[a-z0-9_.:-]+)?\b",
+        r"\bclose\s+pending(?:\s+[a-z0-9_.:-]+)?\b",
+    )),
+]
+
+_CONTROL_MODES = {
+    "BOUNDED_OWNER_EXECUTION",
+    "DEFER_VALIDATION_OBLIGATION",
+    "REGISTER_KNOWN_ISSUE",
+    "RESOLVE_DEFERRED_OBLIGATION",
+}
+
+
 def _normalize(text: str) -> str:
     value = str(text or "").lower()
     value = value.replace("’", "'").replace("–", "-").replace("—", "-")
@@ -167,7 +210,11 @@ def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]
         if _matches(value, patterns) and not _explicitly_negated(value, mode):
             modes.append(mode)
 
-    # Stable semantic ordering: frame -> reasoning -> analysis tools -> progression -> interaction.
+    for mode, patterns in _CONTROL_PATTERNS:
+        if _matches(value, patterns):
+            modes.append(mode)
+
+    # Stable semantic ordering: frame -> reasoning -> analysis tools -> durable control intent -> progression -> interaction.
     order = [
         "PROJECT_REANCHOR",
         "ADVERSARIAL_REASSESSMENT",
@@ -179,17 +226,25 @@ def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]
         "MINIMAL_REPRODUCER",
         "ACCIDENTAL_COMPLEXITY_REDUCTION",
         "EVIDENCE_FIRST_VERIFICATION",
+        "BOUNDED_OWNER_EXECUTION",
+        "DEFER_VALIDATION_OBLIGATION",
+        "REGISTER_KNOWN_ISSUE",
+        "RESOLVE_DEFERRED_OBLIGATION",
         "NORMAL_NEXT",
         "COMPLEX_NEXT",
         "QUESTION_SUPPRESSION",
     ]
     modes = [mode for mode in order if mode in set(modes)]
 
+    pending_ids = sorted(set(re.findall(r"\bPEND-[A-Z0-9_.-]+\b", str(text or ""), flags=re.IGNORECASE)))
+    durable_required = [mode for mode in modes if mode in _CONTROL_MODES]
     return {
         "status": "READY" if modes else "NO_COMMAND",
         "source": source,
         "modes": modes,
         "semantics": {mode: MODE_SEMANTICS[mode] for mode in modes},
+        "references": {"pending_ids": pending_ids},
+        "durable_record_required": durable_required,
         "durable_authority_created": False,
     }
 
