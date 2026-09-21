@@ -100,6 +100,16 @@ def render_projection(c:dict)->str:
     for item in ext:lines.append(f"- External/local action: {item.get('action')} — blocks {', '.join(str(x) for x in (item.get('blocks') or []))}.")
     for item in not_run:lines.append(f"- Evidence not run: {_text(item,['reason','summary'])}")
     if not active_stop and not pending_controls and not delegations and not ext and not not_run:lines.append("- No current blocker, pending control, waiting external action, or NOT_RUN evidence is recorded.")
+    lines += ["","## Deferred validations / known issues / delegated checks"]
+    known_controls=control.get("known_issues") or []
+    if not pending_controls and not known_controls and not delegations:
+        lines.append("- No OPEN carried-forward control obligation is recorded.")
+    for item in pending_controls:
+        lines.append(f"- {item.get('id')} — pending validation: {item.get('summary')}; allowed before resolution: {', '.join(str(x).replace('_',' ').title() for x in (item.get('allowed_before_resolution') or []))}; must resolve before: {', '.join(str(x).replace('_',' ').title() for x in (item.get('must_resolve_before') or []))}.")
+    for item in known_controls:
+        lines.append(f"- {item.get('id')} — known issue: {item.get('summary')}; revisit when: {item.get('revisit_when') or 'explicitly scheduled'}.")
+    for item in delegations:
+        lines.append(f"- {item.get('id')} — delegated check: {item.get('summary')}; monitor role: read-only; success condition: {item.get('success_condition')}.")
     lines += ["","## What can happen now",f"{cap.get('summary')}"]
     overrides=control.get("active_execution_overrides") or []
     if overrides:
