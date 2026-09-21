@@ -2,7 +2,7 @@
 
 A practical cheat sheet for steering agents in complex coding, engineering, and schema/blueprint projects.
 
-These commands are intended to be typed directly by the Owner. They are **reasoning controls**, not new process artifacts.
+These commands are intended to be typed directly by the Owner. Most are **reasoning controls**. Four additional control phrases express bounded execution/defer/record intent; they require validated durable V2.5 state and are never authority merely because the words were typed.
 
 ## Quick reference
 
@@ -21,6 +21,10 @@ These commands are intended to be typed directly by the Owner. They are **reason
 | architecture sounds good but may fail in real use | `Run scenario` |
 | edge cases / stale state / optional fields are risky | `Boundary check` |
 | a blueprint/spec has vague "should/may/must" language | `Normalize the contract` |
+| a deferrable validation/custody gate is blocking bounded coding you explicitly want to start | `Owner override, start` |
+| the same unresolved validation/evidence item must survive handover without stopping every fresh agent | `Record pending` |
+| a known non-blocking defect/risk should survive handover without becoming today's blocker | `Record known issue` |
+| an inherited pending gate has reached its resolution boundary | `Resolve pending <PEND-id>` |
 
 ## My recommended power commands
 
@@ -53,6 +57,114 @@ Proceed next complex task, No Qs.
 ```text
 Critique. Prove it.
 ```
+
+## Owner control phrases for blocker loops
+
+### Continue bounded coding without falsifying a gate
+
+Use:
+
+```text
+Owner override, start.
+Record this validation/custody blocker as pending until PR-ready.
+```
+
+Common variants:
+
+```text
+Owner override: proceed
+Owner override continue
+Start under Owner override
+Proceed under the Owner override
+Owner-authorized start
+Start with Owner override
+```
+
+This does not mean "ignore validation". The agent must create/validate an APPLIED bounded execution override plus an OPEN `PEND-*` record. The result remains visibly pending and the recorded readiness/merge/checkpoint/release boundary stays blocked.
+
+### Carry a validation obligation forward
+
+Use any of:
+
+```text
+Record as pending
+Record this as pending
+Record pending
+Record pending item
+Add this to pending items
+Carry it as pending
+Defer this validation and record pending
+```
+
+A fresh agent must consume the existing PEND record instead of creating another candidate/certification/delegation loop.
+
+### Carry a non-blocking known issue
+
+Use any of:
+
+```text
+Record as a known issue
+Record this in known issues
+Add it to the known issues
+Carry this as known issue
+Log this as a known issue
+```
+
+Known issues require a revisit condition. They are not a place to hide validation that must resolve before a named boundary.
+
+### Resolve inherited pending work
+
+Use:
+
+```text
+Resolve pending PEND-...
+Resolve the pending item
+Clear pending PEND-...
+Close pending PEND-...
+```
+
+The agent must re-run/reconcile the actual obligation. `SATISFIED` requires current evidence.
+
+### What the agent should reconstruct on a cold start
+
+```text
+current roadmap / route
++ active execution custody
++ APPLIED Owner execution overrides
++ OPEN PEND-* deferred validations
++ OPEN KI-* known issues
++ OPEN DLG-* delegated checks
++ each item's allowed work and resolution boundary
+```
+
+A fresh status/timer/observer agent stays read-only. It does not become a new execution candidate just because it is a new process.
+
+### Grade9V3 corrective-branch example
+
+For the #162 pointer-click-dedupe case, a suitable Owner command is:
+
+```text
+Owner override, start.
+Record V2.5 route/custody reconciliation as pending until PR-ready.
+Continue the bounded #162 pointer-dedupe implementation on draft PR #180.
+Do not replace the #169 serial route, mark the PR ready, or merge until the pending item is resolved.
+```
+
+The durable truth should remain:
+
+```text
+IMPLEMENTATION              ALLOWED within recorded branch/path scope
+PRODUCT TESTING             ALLOWED
+DRAFT PR UPDATES            ALLOWED
+V2.5 ROUTE RECONCILIATION   OPEN / NOT PASS
+PR_READY                    BLOCKED by PEND
+MERGE                       BLOCKED by PEND
+ACTIVE #169 SERIAL ROUTE    UNCHANGED
+```
+
+For the #173 fresh-agent loop, the important rule is different: a heartbeat/delegation timer is a **read-only monitor**. If the delegated condition is already satisfied/superseded, it terminates. It does not invent another candidate identity or restart DISC/QUAL/TC.
+
+---
 
 ---
 
@@ -373,6 +485,18 @@ Proceed next complex task
 
 No Qs
     changes the INTERACTION MODE
+
+Owner override, start
+    changes the BOUNDED EXECUTION CONTROL STATE after durable recording
+
+Record pending
+    carries an UNRESOLVED CONTROL OBLIGATION forward
+
+Record known issue
+    carries a NON-BLOCKING KNOWN RISK forward
+
+Resolve pending
+    changes the CURRENT RECONCILIATION TARGET
 ```
 
 ## One caution
