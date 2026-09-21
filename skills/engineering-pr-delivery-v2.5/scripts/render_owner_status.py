@@ -6,6 +6,9 @@ from communication_projection import build
 
 
 def _pct(value):return "not calculated" if value is None else f"{value:g}%" if isinstance(value,(int,float)) else str(value)
+def _control_label(value):
+    text=str(value or "").replace("_"," ").title()
+    return text.replace("Pr ","PR ").replace(" Pr"," PR")
 def _text(item,keys):
     if isinstance(item,str):return item
     if not isinstance(item,dict):return str(item)
@@ -105,7 +108,7 @@ def render_projection(c:dict)->str:
     if not pending_controls and not known_controls and not delegations:
         lines.append("- No OPEN carried-forward control obligation is recorded.")
     for item in pending_controls:
-        lines.append(f"- {item.get('id')} — pending validation: {item.get('summary')}; allowed before resolution: {', '.join(str(x).replace('_',' ').title() for x in (item.get('allowed_before_resolution') or []))}; must resolve before: {', '.join(str(x).replace('_',' ').title() for x in (item.get('must_resolve_before') or []))}.")
+        lines.append(f"- {item.get('id')} — pending validation: {item.get('summary')}; allowed before resolution: {', '.join(_control_label(x) for x in (item.get('allowed_before_resolution') or []))}; must resolve before: {', '.join(_control_label(x) for x in (item.get('must_resolve_before') or []))}.")
     for item in known_controls:
         lines.append(f"- {item.get('id')} — known issue: {item.get('summary')}; revisit when: {item.get('revisit_when') or 'explicitly scheduled'}.")
     for item in delegations:
@@ -114,7 +117,7 @@ def render_projection(c:dict)->str:
     overrides=control.get("active_execution_overrides") or []
     if overrides:
         blocks=sorted({str(x) for row in overrides for x in (row.get("blocks") or [])})
-        lines.append(f"A recorded bounded Owner execution override is active. It permits only its declared scope and does not mark deferred controls PASS. Blocked boundaries remain: {', '.join(x.replace('_',' ').title() for x in blocks) or 'none recorded'}.")
+        lines.append(f"A recorded bounded Owner execution override is active. It permits only its declared scope and does not mark deferred controls PASS. Blocked boundaries remain: {', '.join(_control_label(x) for x in blocks) or 'none recorded'}.")
 
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
     cadence=o.get("status_cadence") or {}
@@ -285,7 +288,7 @@ def render_projection(c:dict)->str:
     if active_stop:lines.append(f"- Current stop: {active_stop.get('reason') or active_stop.get('category')}")
     boundary_blockers=control.get("boundary_blockers") or {}
     for boundary,ids in boundary_blockers.items():
-        if ids:lines.append(f"- Pending controls {', '.join(str(x) for x in ids)} must resolve before {str(boundary).replace('_',' ').title()}.")
+        if ids:lines.append(f"- Pending controls {', '.join(str(x) for x in ids)} must resolve before {_control_label(boundary)}.")
     stop_conditions=o.get("stop_conditions") or []
     if stop_conditions:
         for condition in stop_conditions:lines.append(f"- {condition}")
