@@ -48,7 +48,7 @@ class HumanCommunicationStressTests(unittest.TestCase):
             root=Path(td);_,_,_,s=good(root);s["status_planes"]["execution"]={"state":"WAITING","can_continue":False,"material_authority":"READ_ONLY","next_action":"Wait for product-direction decision."};s["status_planes"]["stop"]={"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Choose whether the accepted behavior should change before implementation continues.","basis":["owner-intent-boundary"]};dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertEqual([],communication_check(root)[0]);text=owner_status(root)
             self.assertIn("Choose whether the accepted behavior should change",text)
-            self.assertIn("## Decisions for you",text)
+            self.assertIn("## Owner decisions",text)
 
     def test_missing_evidence_cannot_be_hidden(self):
         with tempfile.TemporaryDirectory() as td:
