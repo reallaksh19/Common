@@ -49,6 +49,14 @@ def validate(root:Path):
     for key,value in expected_progress.items():
         if op.get(key)!=value:e.append(f"Owner progress {key} diverges from source report")
     if (owner.get("delivery") or {})!=(report.get("delivery") or {}):e.append("Owner delivery vector diverges from source report")
+    control=owner.get("control") or {};source_obligations=[x for x in (report.get("control_obligations") or []) if isinstance(x,dict) and x.get("state")=="OPEN"]
+    expected_pending=[x for x in source_obligations if x.get("kind")=="DEFERRED_VALIDATION"]
+    expected_known=[x for x in source_obligations if x.get("kind")=="KNOWN_ISSUE"]
+    expected_delegations=[x for x in source_obligations if x.get("kind")=="DELEGATION"]
+    if control.get("pending_validations")!=expected_pending:e.append("Owner control projection drops or changes OPEN deferred validations")
+    if control.get("known_issues")!=expected_known:e.append("Owner control projection drops or changes OPEN known issues")
+    if control.get("delegations")!=expected_delegations:e.append("Owner control projection drops or changes OPEN delegations")
+    if (control.get("execution_custody") or {})!=(report.get("execution_custody") or {"enforced":False,"leases":[]}):e.append("Owner control projection execution custody diverges from source report")
     evidence=report.get("evidence") or {};oe=owner.get("evidence") or {}
     if oe.get("state")!=evidence.get("state") or oe.get("summary")!=evidence.get("summary"):e.append("Owner evidence summary diverges from source report")
     if oe.get("not_run")!=(evidence.get("not_run") or []):e.append("Owner view must preserve every NOT_RUN evidence item")
@@ -71,6 +79,21 @@ def validate(root:Path):
     for finding in source_risks:
         if str(finding.get("statement")) not in statements:e.append(f"Owner view hides unresolved quality finding {finding.get('id')}")
     text=render_owner(root)
+    for item in expected_pending:
+        oid=str(item.get("id") or "")
+        if oid and oid not in text:e.append(f"Owner status hides pending control {oid}")
+        if str(item.get("summary") or "") and str(item.get("summary")) not in text:e.append(f"Owner status hides pending-control summary {oid}")
+        for boundary in item.get("must_resolve_before") or []:
+            label=str(boundary).replace("_"," ").title()
+            if label not in text:e.append(f"Owner status hides pending-control boundary {oid}: {boundary}")
+    for item in expected_known:
+        oid=str(item.get("id") or "")
+        if oid and oid not in text:e.append(f"Owner status hides known issue {oid}")
+        if str(item.get("summary") or "") and str(item.get("summary")) not in text:e.append(f"Owner status hides known-issue summary {oid}")
+    for item in expected_delegations:
+        oid=str(item.get("id") or "")
+        if oid and oid not in text:e.append(f"Owner status hides delegation {oid}")
+        if "read-only" not in text.lower():e.append("Owner status must identify delegated monitor work as read-only")
     for heading in OWNER_HEADINGS:
         if heading not in text:e.append(f"Owner status missing required section {heading}")
     for token in FORBIDDEN_OWNER_TOKENS:
