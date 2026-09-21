@@ -1,8 +1,11 @@
-# Owner reasoning commands — V2.5
+# Owner reasoning and control commands — V2.5
 
-These commands are **direct Owner reasoning controls**. They change how the agent reasons, frames the task, selects work, or proves a claim.
+Direct Owner phrases fall into two classes:
 
-They do **not** themselves create roadmap, EP, QSET, ODR, checkpoint, evidence, or GitHub authority.
+- **reasoning controls** change how the agent frames, tests, selects, or proves work and are ephemeral;
+- **control commands** express Owner execution/defer/record intent and require durable V2.5 state before they have any execution effect.
+
+The parser only recognizes intent. It never creates authority by itself. A control command is not effective until the agent records and validates the required ODR / REPO_STATE control state.
 
 The deterministic parser is:
 
@@ -44,6 +47,153 @@ Use parser source `OWNER_DIRECT` only for the Owner's current instruction.
 | `Scenario` / `Run scenario` | `SCENARIO_EXERCISE` | Walk one realistic journey end to end and expose missing/ambiguous transitions. |
 | `Boundary check` | `INTERFACE_BOUNDARY_AUDIT` | Attack edge conditions, optional/absent fields, stale/invalid state, and ownership/interface transitions. |
 | `Normalize` | `NORMATIVE_CONTRACT_CLEANUP` | Separate MUST/MUST NOT/SHOULD/MAY/informational statements and reconcile enforcement. |
+| `Owner override, start` | `BOUNDED_OWNER_EXECUTION` | Authorize only bounded work while explicitly named deferrable controls remain OPEN; does not make them PASS. |
+| `Record pending` | `DEFER_VALIDATION_OBLIGATION` | Persist an unresolved validation/evidence/control item with allowed work and a mandatory resolution boundary. |
+| `Record known issue` | `REGISTER_KNOWN_ISSUE` | Persist a non-blocking known defect/limitation/risk with evidence and a revisit condition. |
+| `Resolve pending <id>` | `RESOLVE_DEFERRED_OBLIGATION` | Make one inherited PEND item the current reconciliation target; close it only from current evidence. |
+
+## Durable Owner control commands
+
+These commands intentionally differ from `Step back`, `Critique`, `Trace`, and similar reasoning modes.
+
+### BOUNDED_OWNER_EXECUTION — Owner override, start
+
+Accepted phrase variants include:
+
+```text
+Owner override, start
+Owner override: proceed
+Owner override continue
+Start under Owner override
+Proceed under the Owner override
+Owner-authorized start
+Start with Owner override
+```
+
+The command means:
+
+```text
+Owner intent
+→ classify the current failure
+→ if it is explicitly DEFERRABLE
+→ create/update an APPLIED AUTHORIZATION ODR
+→ bind repository + branch + starting base SHA + allowed paths
+→ bind one or more OPEN PEND-* obligations
+→ declare allowed pre-resolution actions
+→ declare boundaries still blocked
+→ validate the durable record
+→ only then continue bounded work
+```
+
+It does **not** mean:
+
+```text
+failed gate = PASS
+ignore validation
+replace the current roadmap route
+silently acquire serial custody
+mark PR ready
+merge
+checkpoint/release through an unresolved required boundary
+```
+
+The structured override may defer only supported control classes such as candidate admission, route reconciliation, local validation environment, or evidence collection. It cannot override an active hard stop, protected-invariant failure, write collision, unsafe engineering result, invalid/stale base binding, or execution-custody conflict.
+
+When the live write gate proceeds through this path, it reports `PASS_WITH_OWNER_OVERRIDE`, not `PASS`, and carries the OPEN PEND ids plus blocked boundaries.
+
+### DEFER_VALIDATION_OBLIGATION — Record pending
+
+Accepted variants include:
+
+```text
+Record as pending
+Record this as pending
+Record pending
+Record pending item
+Add this to pending items
+Carry it as pending
+Defer this validation and record pending
+```
+
+Create or update one durable `PEND-*` / `DEFERRED_VALIDATION` control obligation. It must say:
+
+- what remains unproved/unreconciled;
+- current evidence/failure;
+- scope;
+- what may continue before resolution;
+- `must_resolve_before` boundary such as `PR_READY | MERGE | CHECKPOINT | RELEASE`;
+- an executable/reproducible resolution condition.
+
+Do not create a duplicate PEND item merely because a new agent sees the same failure. Consume the existing OPEN obligation.
+
+### REGISTER_KNOWN_ISSUE — Record known issue
+
+Accepted variants include:
+
+```text
+Record as a known issue
+Record this in known issues
+Add it to the known issues
+Carry this as known issue
+Log this as a known issue
+```
+
+Create/update a `KI-*` / `KNOWN_ISSUE` item only for a known non-blocking defect, limitation, or risk. It needs evidence and a `revisit_when` condition. A known issue is not a substitute for a validation that must resolve before a named delivery boundary.
+
+### RESOLVE_DEFERRED_OBLIGATION — Resolve pending
+
+Accepted variants include:
+
+```text
+Resolve pending
+Resolve pending PEND-...
+Resolve the pending item
+Clear pending PEND-...
+Close pending PEND-...
+```
+
+Re-read the current evidence and transition the referenced PEND lifecycle only when justified:
+
+```text
+OPEN → SATISFIED
+OPEN → SUPERSEDED
+OPEN → CANCELLED
+```
+
+`SATISFIED` requires resolution evidence. Never close the item because an agent wishes to move on.
+
+## Cold-start control rule
+
+Before a fresh agent treats a validator failure, route mismatch, qualification condition, local-tool limitation, or external evidence gap as a new blocker, it MUST read:
+
+```text
+active APPLIED Owner execution overrides
+OPEN DEFERRED_VALIDATION obligations
+OPEN KNOWN_ISSUE items
+OPEN DELEGATION items
+execution custody
+their allowed actions and mandatory resolution boundaries
+```
+
+Then classify its role:
+
+```text
+OBSERVE / STATUS / TIMER / MONITOR
+→ read-only
+→ no new candidate identity
+→ no DISC / QUAL / TC
+→ no material write
+→ no recursive delegation
+
+EXECUTE / TAKEOVER
+→ use normal candidate certification
+→ acquire/verify execution custody where enforced
+→ run the live write gate
+```
+
+If the exact failure is already an OPEN PEND item and the current action is allowed before its boundary, do not stop again, ask the Owner again, create another PEND, or restart certification. Continue only inside the recorded scope.
+
+If its mandatory boundary has been reached, the pending obligation becomes the current reconciliation target.
 
 ## Qualitative meaning of COMPLEX_NEXT
 
@@ -270,7 +420,7 @@ Step back. Critique. Proceed next complex task, No Qs.
 
 ## Durable-state rule
 
-Reasoning commands are ephemeral.
+Reasoning commands are ephemeral. Owner control commands are not authority by themselves; they require validated durable state before any execution effect is claimed.
 
 If they discover a material consequence, record that consequence through the existing V2.5 authority model:
 
