@@ -27,6 +27,39 @@ def validate_file(path:Path):
         if effects.get("grants_material_write_authority") is not False:e.append("DEFERRAL must not grant material write authority")
         if not effects.get("pending_items"):e.append("DEFERRAL must name at least one pending item")
     if disposition=="SATISFIED" and effects.get("pending_items"):e.append("SATISFIED requirement disposition must not retain pending_items")
+    override=odr.get("execution_override")
+    if override is not None:
+        if kind!="AUTHORIZATION":e.append("execution_override is valid only for decision.kind AUTHORIZATION")
+        if not isinstance(override,dict):e.append("execution_override must be mapping or null")
+        else:
+            if override.get("disposition") not in {"GRANTED","REVOKED"}:e.append("execution_override.disposition invalid")
+            scope=override.get("scope") or {}
+            e+=require(scope,["repository","branch","allowed_write_paths"],"ODR.execution_override.scope")
+            if not str(scope.get("repository") or "").strip():e.append("execution_override.scope.repository must be explicit")
+            if not str(scope.get("branch") or "").strip():e.append("execution_override.scope.branch must be explicit")
+            paths=scope.get("allowed_write_paths")
+            if not isinstance(paths,list) or not paths or any(not str(x).strip() for x in paths):e.append("execution_override.scope.allowed_write_paths must be a non-empty explicit list")
+            defers=override.get("defers")
+            allowed_defers={"CANDIDATE_ADMISSION","ROUTE_RECONCILIATION","LOCAL_VALIDATION_ENVIRONMENT","EVIDENCE_COLLECTION"}
+            if not isinstance(defers,list) or not defers:e.append("execution_override.defers must be a non-empty list")
+            elif any(x not in allowed_defers for x in defers):e.append("execution_override.defers contains unsupported/non-deferrable control")
+            allows=override.get("allows")
+            allowed_actions={"BOUNDED_PRODUCT_WRITES","TESTS","DRAFT_PR_UPDATES"}
+            if not isinstance(allows,list) or not allows:e.append("execution_override.allows must be a non-empty list")
+            elif any(x not in allowed_actions for x in allows):e.append("execution_override.allows contains unsupported action")
+            blocks=override.get("blocks")
+            allowed_blocks={"PR_READY","MERGE","CHECKPOINT","RELEASE"}
+            if not isinstance(blocks,list) or not blocks:e.append("execution_override.blocks must be a non-empty list")
+            elif any(x not in allowed_blocks for x in blocks):e.append("execution_override.blocks contains unsupported boundary")
+            pending=override.get("pending_obligations")
+            if not isinstance(pending,list) or not pending or any(not str(x).startswith("PEND-") for x in pending):
+                e.append("execution_override.pending_obligations must name at least one PEND-* obligation")
+            if override.get("disposition")=="GRANTED":
+                if effects.get("grants_material_write_authority") is not True:e.append("GRANTED execution_override requires effects.grants_material_write_authority=true")
+                if "BOUNDED_PRODUCT_WRITES" in (allows or []) and not {"PR_READY","MERGE"}.issubset(set(blocks or [])):
+                    e.append("bounded product-write override must keep PR_READY and MERGE blocked")
+            if override.get("disposition")=="REVOKED" and effects.get("grants_material_write_authority") is not False:
+                e.append("REVOKED execution_override must not grant material write authority")
     auth=odr.get("delivery_authorization")
     if auth is not None:
         if kind!="AUTHORIZATION":e.append("delivery_authorization is valid only for decision.kind AUTHORIZATION")
@@ -40,8 +73,8 @@ def validate_file(path:Path):
             if not str(auth.get("head_sha") or "").strip():e.append("delivery_authorization.head_sha must be explicit exact PR head")
             if auth.get("disposition") not in {"GRANTED","REVOKED"}:e.append("delivery_authorization.disposition invalid")
             if effects.get("grants_material_write_authority") is not False:e.append("delivery merge authorization must not grant material write authority")
-    elif kind=="AUTHORIZATION":
-        w.append("AUTHORIZATION decision has no structured delivery_authorization; it does not grant merge authority")
+    elif kind=="AUTHORIZATION" and override is None:
+        w.append("AUTHORIZATION decision has no structured delivery_authorization or execution_override; it grants no structured execution/delivery authority")
     if odr.get("status") not in STATUSES:e.append("ODR.status invalid")
     return e,w
 
