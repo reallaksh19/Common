@@ -43,6 +43,26 @@ The stop plane is either inactive or names one true category:
 
 An active stop requires a plain-language reason and durable basis, requires `can_continue:false`, and forbids `material_authority: WRITE`. If stop is inactive, category is `NONE`.
 
+## Durable control obligations
+
+`REPO_STATE.control_obligations[]` carries cross-session control state that is neither task progress nor a replacement for the four status planes:
+
+```text
+PEND-*  DEFERRED_VALIDATION
+KI-*    KNOWN_ISSUE
+DLG-*   DELEGATION
+```
+
+Lifecycle is explicit: `OPEN | SATISFIED | SUPERSEDED | CANCELLED` and `EXPIRED` only where the object permits it. SATISFIED requires evidence.
+
+A PEND item states what may continue before resolution and what boundary must still stop: `PR_READY | MERGE | CHECKPOINT | RELEASE`. Re-observing the same failure does not create a second blocker or second PEND item.
+
+A DLG item is monitored read-only. A timer callback consumes the same DLG lifecycle and terminates when the item is no longer OPEN.
+
+## Execution custody
+
+Candidate admission proves qualification; execution custody identifies the active material writer. When `execution_custody.enforced=true`, each material route has at most one ACTIVE lease. A second certified candidate does not receive write permission until custody is explicitly transferred/released.
+
 ## Human language
 
 Render independently: execution state, whether useful work can continue, material authority, quality state/findings, evidence state/not-run items, and hard-stop state. Avoid the generic word `blocked` when a more precise state is available.
