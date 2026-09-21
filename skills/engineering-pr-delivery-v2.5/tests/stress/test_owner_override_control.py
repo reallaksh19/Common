@@ -19,6 +19,8 @@ from validate_repo_state import validate as repo_state
 from validate_owner_decision import validate_file as owner_decision
 from communication_projection import build as communication
 from render_owner_status import render as owner_status
+from zero_context_reconstruction import build as reconstruct
+from validate_zero_context_reconstruction import validate as zero_context
 
 
 def git(root:Path,*args)->str:
@@ -134,6 +136,12 @@ class OwnerOverrideControlStressTests(unittest.TestCase):
             self.assertIn("read-only",text)
             self.assertIn("PR Ready",text)
             self.assertIn("Merge",text)
+            z=reconstruct(root)
+            self.assertEqual(state["control_obligations"],z["control_obligations"])
+            self.assertEqual(state.get("execution_custody") or {"enforced":False,"leases":[]},z["execution_custody"])
+            self.assertEqual([],zero_context(root)[0])
+            route=z["routes"][0]
+            self.assertEqual(["PEND-1","KI-1","DLG-1"],[x["id"] for x in route["control_obligations"]])
 
     def test_satisfied_pending_requires_resolution_evidence(self):
         with tempfile.TemporaryDirectory() as td:
