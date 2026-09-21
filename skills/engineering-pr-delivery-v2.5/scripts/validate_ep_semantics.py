@@ -239,6 +239,8 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
                     else:
                         dl=f"{rl}.delegation"
                         if delegation.get("mode")!="LOCAL_AGENT":e.append(f"{dl}.mode must be LOCAL_AGENT")
+                        if not str(delegation.get("control_obligation_id") or "").startswith("DLG-"):e.append(f"{dl}.control_obligation_id must use DLG-* namespace")
+                        if delegation.get("monitor_role")!="READ_ONLY":e.append(f"{dl}.monitor_role must be READ_ONLY")
                         _require_text(e,delegation,"prompt",dl)
                         publication=delegation.get("publication")
                         if not isinstance(publication,dict):e.append(f"{dl}.publication must be a mapping")
@@ -253,6 +255,7 @@ def validate_ep_data(root:Path,ep:dict,label:str="EP"):
                             if check.get("timer_required") is not True:e.append(f"{dl}.response_check.timer_required must be true")
                             _require_text(e,check,"timer_title",f"{dl}.response_check")
                             if check.get("after_minutes") not in {30,60}:e.append(f"{dl}.response_check.after_minutes must be 30 or 60")
+                            if check.get("terminate_when")!="CONTROL_OBLIGATION_NOT_OPEN":e.append(f"{dl}.response_check.terminate_when must be CONTROL_OBLIGATION_NOT_OPEN")
                             for key in ("selection_reason","on_due","on_no_response"):_require_text(e,check,key,f"{dl}.response_check")
         if orders and orders!=list(range(1,len(orders)+1)):e.append(f"{label}.next_work.steps order must be contiguous starting at 1")
     qb=ep.get("qualification_boundary") or {}
