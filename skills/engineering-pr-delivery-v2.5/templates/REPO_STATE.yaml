@@ -32,6 +32,47 @@ predecessor_replan:
   id: null
   path: null
 takeover_admissions: []
+
+# Optional execution-custody layer. Certification proves a candidate is qualified;
+# custody identifies who currently owns material execution on a route. At most one
+# ACTIVE lease is allowed per route.
+execution_custody:
+  leases: []
+
+# Durable control obligations survive cold starts and timer wakes. These records
+# must never be silently converted to PASS; lifecycle transitions require evidence.
+control_obligations: []
+# Examples:
+# - id: PEND-0123-001
+#   kind: DEFERRED_VALIDATION
+#   state: OPEN
+#   summary: "Reconcile route custody before PR readiness."
+#   source: "ODR-0012"
+#   scope: {route_key: null, ep_id: EP-0010, branch: fix/example, issues: [123], pull_requests: [456]}
+#   evidence: ["workflow:12345"]
+#   must_resolve_before: [PR_READY, MERGE]
+#   allowed_before_resolution: [BOUNDED_PRODUCT_WRITES, TESTS, DRAFT_PR_UPDATES]
+#   resolution_condition: "Current route/custody validates on the exact PR head."
+#
+# - id: KI-0123-001
+#   kind: KNOWN_ISSUE
+#   state: OPEN
+#   summary: "Known non-blocking limitation."
+#   source: "issue #123"
+#   scope: {route_key: null, ep_id: EP-0010, branch: fix/example, issues: [123], pull_requests: [456]}
+#   evidence: []
+#   revisit_when: "A consumer reaches this boundary."
+#
+# - id: DLG-0123-001
+#   kind: DELEGATION
+#   state: OPEN
+#   summary: "External browser verification."
+#   source: "EP-0010 next_work"
+#   scope: {route_key: SERIAL:EP-0010, ep_id: EP-0010, branch: fix/example, issues: [123], pull_requests: [456]}
+#   evidence: []
+#   success_condition: "The delegated browser evidence is posted and validated."
+#   monitor_role: READ_ONLY
+
 # Compatibility/location mirrors only. PROGRESS.yaml is authoritative and
 # validate_progress.py requires these values to agree with the derived source rows.
 progress:
