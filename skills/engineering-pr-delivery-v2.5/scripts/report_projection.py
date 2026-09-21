@@ -27,6 +27,7 @@ def _owner_decisions(root:Path)->list[dict]:
             "grants_material_write_authority":effects.get("grants_material_write_authority"),
             "pending_items":effects.get("pending_items") or [],
             "delivery_authorization":odr.get("delivery_authorization"),
+            "execution_override":odr.get("execution_override"),
         })
     return out
 
@@ -110,6 +111,8 @@ def build(root:Path)->dict:
         "projection":state.get("projection") or {},
         "relay_readiness":state.get("relay_readiness") or {},
         "takeover_admissions":state.get("takeover_admissions") or [],
+        "execution_custody":state.get("execution_custody") or {"enforced":False,"leases":[]},
+        "control_obligations":state.get("control_obligations") or [],
         "active_contract":_active_contract(ep),
         "owner_decisions":owner_decisions,
         "next_work":(ep.get("next_work") if ep else None),
