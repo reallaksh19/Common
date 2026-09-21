@@ -29,5 +29,40 @@ properties:
       number: {type: integer, minimum: 1}
       head_sha: {type: string, minLength: 1}
       disposition: {enum: [GRANTED, REVOKED]}
+  execution_override:
+    type: [object, 'null']
+    required: [disposition, scope, defers, allows, blocks, pending_obligations]
+    properties:
+      disposition: {enum: [GRANTED, REVOKED]}
+      scope:
+        type: object
+        required: [repository, branch, allowed_write_paths]
+        properties:
+          repository: {type: string, minLength: 1}
+          branch: {type: string, minLength: 1}
+          route_key: {type: [string, 'null']}
+          issues: {type: array, items: {type: integer, minimum: 1}, uniqueItems: true}
+          pull_requests: {type: array, items: {type: integer, minimum: 1}, uniqueItems: true}
+          allowed_write_paths: {type: array, items: {type: string, minLength: 1}, minItems: 1, uniqueItems: true}
+      defers:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {enum: [CANDIDATE_ADMISSION, ROUTE_RECONCILIATION, LOCAL_VALIDATION_ENVIRONMENT, EVIDENCE_COLLECTION]}
+      allows:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {enum: [BOUNDED_PRODUCT_WRITES, TESTS, DRAFT_PR_UPDATES]}
+      blocks:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {enum: [PR_READY, MERGE, CHECKPOINT, RELEASE]}
+      pending_obligations:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, pattern: '^PEND-'}
   status: {enum: [CAPTURED, APPLIED, SUPERSEDED]}
 additionalProperties: true
