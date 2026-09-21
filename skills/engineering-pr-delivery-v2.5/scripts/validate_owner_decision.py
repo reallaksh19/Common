@@ -34,9 +34,10 @@ def validate_file(path:Path):
         else:
             if override.get("disposition") not in {"GRANTED","REVOKED"}:e.append("execution_override.disposition invalid")
             scope=override.get("scope") or {}
-            e+=require(scope,["repository","branch","allowed_write_paths"],"ODR.execution_override.scope")
+            e+=require(scope,["repository","branch","base_sha","allowed_write_paths"],"ODR.execution_override.scope")
             if not str(scope.get("repository") or "").strip():e.append("execution_override.scope.repository must be explicit")
             if not str(scope.get("branch") or "").strip():e.append("execution_override.scope.branch must be explicit")
+            if len(str(scope.get("base_sha") or "").strip())<7:e.append("execution_override.scope.base_sha must be explicit")
             paths=scope.get("allowed_write_paths")
             if not isinstance(paths,list) or not paths or any(not str(x).strip() for x in paths):e.append("execution_override.scope.allowed_write_paths must be a non-empty explicit list")
             defers=override.get("defers")
