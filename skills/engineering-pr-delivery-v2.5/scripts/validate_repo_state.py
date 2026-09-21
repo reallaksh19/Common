@@ -44,7 +44,11 @@ def validate(repo_root:Path):
             if not isinstance(leases,list):errors.append("REPO_STATE.execution_custody.leases must be a list")
             else:
                 active_by_route={}
-                live_routes={route_key(r):r for r in current_routes(repo_root,state)}
+                try:
+                    live_routes={route_key(r):r for r in current_routes(repo_root,state)}
+                except Exception as exc:
+                    live_routes={}
+                    warnings.append(f"execution custody route comparison deferred until current route is valid: {exc}")
                 for i,lease in enumerate(leases):
                     label=f"REPO_STATE.execution_custody.leases[{i}]"
                     if not isinstance(lease,dict):errors.append(f"{label} must be a mapping");continue
