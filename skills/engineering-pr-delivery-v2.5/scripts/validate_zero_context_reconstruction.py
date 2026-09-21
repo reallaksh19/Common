@@ -18,13 +18,27 @@ def validate(root: Path):
         e.append("zero-context reconstruction requires chat_context_required=false")
     lifecycle=d.get("relay_state")
     routes=d.get("routes") or []
+    if d.get("control_obligations")!=(state.get("control_obligations") or []):
+        e.append("zero-context reconstruction drops or changes control_obligations")
+    if d.get("execution_custody")!=(state.get("execution_custody") or {"enforced":False,"leases":[]}):
+        e.append("zero-context reconstruction drops or changes execution_custody")
     if lifecycle in {"ACTIVE","PARALLEL"}:
         if not routes:e.append(f"{lifecycle} repository must expose at least one reconstructable execution route")
         for route in routes:
             label=f"route {route.get('route_key')}"
-            required=("roadmap_position","why_task_exists","current_task","input_authority_editability","benchmarks_oracles","scope","quality_obligations","evidence","tests_required","acceptance","first_implementation_action","stale_conditions","next_work")
+            required=("roadmap_position","why_task_exists","current_task","input_authority_editability","benchmarks_oracles","scope","quality_obligations","evidence","tests_required","acceptance","first_implementation_action","stale_conditions","next_work","control_obligations","execution_custody")
             for key in required:
-                if not _nonempty(route.get(key)):e.append(f"{label}: {key} is not reconstructable from repository state")
+                if key=="control_obligations":
+                    if not isinstance(route.get(key),list):e.append(f"{label}: control_obligations is not reconstructable from repository state")
+                elif key=="execution_custody":
+                    if not isinstance(route.get(key),dict):e.append(f"{label}: execution_custody is not reconstructable from repository state")
+                elif not _nonempty(route.get(key)):e.append(f"{label}: {key} is not reconstructable from repository state")
+            for item in route.get("control_obligations") or []:
+                if item.get("kind")=="DEFERRED_VALIDATION":
+                    if not item.get("must_resolve_before") or not item.get("allowed_before_resolution"):
+                        e.append(f"{label}: OPEN pending control {item.get('id')} lacks continuation/resolution boundary")
+                if item.get("kind")=="DELEGATION" and item.get("monitor_role")!="READ_ONLY":
+                    e.append(f"{label}: OPEN delegation {item.get('id')} must reconstruct as READ_ONLY")
             scope=route.get("scope") or {}
             for key in ("allowed","protected","prohibited"):
                 if not _nonempty(scope.get(key)):e.append(f"{label}: scope.{key} must be explicit for zero-context takeover")
