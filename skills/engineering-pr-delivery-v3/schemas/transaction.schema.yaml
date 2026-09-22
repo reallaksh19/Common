@@ -4,7 +4,8 @@ required: [schema_version, id, command, actor, status, created_at, updated_at, o
 properties:
   schema_version: {const: relay-v3-transaction}
   id: {type: string, pattern: '^TX-'}
-  command: {enum: [ACTIVATE_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL]}
+  command:
+    enum: [ACTIVATE_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, PUBLISH_HANDOVER, EXPORT_LOCAL_EXECUTION, SYNC_DELIVERY, CLOSE_TASK]
   actor: {type: string, minLength: 1}
   status: {enum: [PREPARED, APPLYING, COMMITTED, ROLLED_BACK, RECOVERY_REQUIRED]}
   created_at: {type: string, format: date-time}
