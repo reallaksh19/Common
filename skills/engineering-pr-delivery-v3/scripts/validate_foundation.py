@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from transactionlib import incomplete_transactions
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 
 
@@ -18,6 +19,17 @@ def _load(path: Path, label: str, errors: list[str]):
 def validate_authority(repo_root: Path) -> list[str]:
     """Validate durable present-authority objects only."""
     errors: list[str] = []
+    pending = incomplete_transactions(repo_root)
+    for path, manifest, error in pending:
+        if error == "MISSING_MANIFEST":
+            errors.append(f"TRANSACTION {path.parent.name}: incomplete staging directory has no manifest; recovery required")
+        elif error:
+            errors.append(f"TRANSACTION {path}: invalid/incomplete manifest: {error}")
+        else:
+            errors.append(
+                f"TRANSACTION {manifest.get('id')}: status {manifest.get('status')} requires recovery before authority can be used"
+            )
+
     relay = repo_root / "relay"
     state_path = relay / "STATE.yaml"
     state = _load(state_path, "STATE", errors)
