@@ -29,7 +29,13 @@ def _accepted_checkpoint(cp: dict[str, Any]) -> bool:
     ) and (cp.get("quality") or {}).get("result") == "CLEAR"
 
 
-def _progress(root: Path, roadmap: dict[str, Any]) -> tuple[float, list[str], list[str]]:
+def _progress(
+    root: Path,
+    roadmap: dict[str, Any],
+    *,
+    checkpoint_override: dict[str, Any] | None = None,
+    ep_override: dict[str, Any] | None = None,
+) -> tuple[float, list[str], list[str]]:
     wp_rows = roadmap.get("work_packages") or []
     weights = {str(row.get("id")): float(row.get("weight") or 0) for row in wp_rows if isinstance(row, dict)}
     accepted: set[str] = set()
@@ -43,6 +49,16 @@ def _progress(root: Path, roadmap: dict[str, Any]) -> tuple[float, list[str], li
         if not ep_path.exists():
             continue
         ep = load_yaml(ep_path)
+        wp = str((ep or {}).get("work_package") or "")
+        if wp in weights:
+            accepted.add(wp)
+    if checkpoint_override and _accepted_checkpoint(checkpoint_override):
+        ep_id = checkpoint_override.get("ep")
+        if ep_override and ep_override.get("id") == ep_id:
+            ep = ep_override
+        else:
+            ep_path = root / "relay/WORK" / f"{ep_id}.yaml"
+            ep = _load_optional(ep_path)
         wp = str((ep or {}).get("work_package") or "")
         if wp in weights:
             accepted.add(wp)
@@ -94,15 +110,25 @@ def _owner_merge_authorized(controls: dict[str, Any]) -> bool:
     )
 
 
-def build(root: Path, base_ref: str | None = None) -> dict[str, Any]:
+def build(
+    root: Path,
+    base_ref: str | None = None,
+    *,
+    state_override: dict[str, Any] | None = None,
+    roadmap_override: dict[str, Any] | None = None,
+    ep_override: dict[str, Any] | None = None,
+    lease_override: dict[str, Any] | None = None,
+    checkpoint_override: dict[str, Any] | None = None,
+    controls_override: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     authority_errors = validate_authority(root)
     if authority_errors:
         raise RuntimeError("invalid V3 authority: " + "; ".join(authority_errors[:8]))
 
     relay = root / "relay"
-    state = load_yaml(relay / "STATE.yaml")
+    state = state_override or load_yaml(relay / "STATE.yaml")
     roadmap_path = root / str((state.get("roadmap") or {}).get("path"))
-    roadmap = load_yaml(roadmap_path)
+    roadmap = roadmap_override or load_yaml(roadmap_path)
     roadmap_errors = validate_schema("roadmap", roadmap, "ROADMAP")
     if roadmap_errors:
         raise RuntimeError("invalid V3 roadmap: " + "; ".join(roadmap_errors[:8]))
@@ -113,10 +139,23 @@ def build(root: Path, base_ref: str | None = None) -> dict[str, Any]:
     ep_id = execution.get("ep")
     lease_id = execution.get("lease")
     checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
-    ep = _load_optional(relay / "WORK" / f"{ep_id}.yaml") if ep_id else None
-    lease = _load_optional(relay / "LEASES" / f"{lease_id}.yaml") if lease_id else None
-    checkpoint = _load_optional(relay / "CHECKPOINTS" / f"{checkpoint_id}.yaml") if checkpoint_id else None
-    controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
+
+    if ep_id and ep_override and ep_override.get("id") == ep_id:
+        ep = ep_override
+    else:
+        ep = _load_optional(relay / "WORK" / f"{ep_id}.yaml") if ep_id else None
+
+    if lease_id and lease_override and lease_override.get("id") == lease_id:
+        lease = lease_override
+    else:
+        lease = _load_optional(relay / "LEASES" / f"{lease_id}.yaml") if lease_id else None
+
+    if checkpoint_id and checkpoint_override and checkpoint_override.get("id") == checkpoint_id:
+        checkpoint = checkpoint_override
+    else:
+        checkpoint = _load_optional(relay / "CHECKPOINTS" / f"{checkpoint_id}.yaml") if checkpoint_id else None
+
+    controls = controls_override or load_yaml(root / str((state.get("controls") or {}).get("path")))
 
     coordination_head = _git(root, "rev-parse", "HEAD")
     if ep:
@@ -165,7 +204,12 @@ def build(root: Path, base_ref: str | None = None) -> dict[str, Any]:
             "dependency_digest": empty,
         }
 
-    accepted_progress, completed_work, remaining_work = _progress(root, roadmap)
+    accepted_progress, completed_work, remaining_work = _progress(
+        root,
+        roadmap,
+        checkpoint_override=checkpoint_override,
+        ep_override=ep_override or ep,
+    )
     scope = ep.get("scope") if ep else {}
     cp_validation = (checkpoint or {}).get("validation") or {}
     groups = _control_groups(controls)
