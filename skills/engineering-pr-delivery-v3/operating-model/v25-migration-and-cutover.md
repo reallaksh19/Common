@@ -48,15 +48,18 @@ Cutover is not ready until the repository has a valid native V3 lifecycle in `AC
 
 ## Phase D — cutover proof
 
-`protocol_cutover.py assess` checks six independent conditions:
+`protocol_cutover.py assess` checks seven independent conditions:
 1. full V3 conformance PASS;
 2. legacy tree digest unchanged from migration inventory;
 3. source V2.5 REPO_STATE validation PASS;
 4. migration control RESOLVED;
-5. native V3 lifecycle ready;
-6. protocol selector still in prepared V2.5 state.
+5. **#421 roadmap-intelligence continuity control RESOLVED with evidence**;
+6. native V3 lifecycle ready;
+7. protocol selector still in prepared V2.5 state.
 
-All six must PASS.
+The continuity control exists because V3 execution simplification must not silently retire the stronger V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress reconciliation, discovery, Owner-delta, and handover intelligence. TASK_SNAPSHOT and IMPROVEMENT_VIEW remain generated projections; they are not substitutes for those governed mechanisms.
+
+All seven must PASS.
 
 ## Phase E — direct Owner activation
 
@@ -74,9 +77,15 @@ The activation transaction:
 
 It does not modify `agents/relay/**`.
 
+## Relationship to #421
+
+While `V2_5 / PREPARED`, V2.5 remains the live protocol and #421 may ship its projection-only phases first. That allows PROJECT/TASK/IMPROVEMENT read models and richer handover to improve without prematurely switching execution authority.
+
+V3 activation is intentionally unavailable until #421 continuity is evidenced. This keeps migration V2.5-first rather than forcing the handover refinement to wait for, or accidentally weaken itself around, full V3 execution cutover.
+
 ## Post-cutover invariant
 
-After V3 activation, the cutover-time legacy digest becomes immutable history evidence.
+After an eventual V3 activation, the cutover-time legacy digest becomes immutable history evidence under the then-approved continuity contract.
 
 If any file under `agents/relay/**` changes, `protocol_cutover.py validate` fails and `protocol_default.py` refuses to select either skill automatically.
 
