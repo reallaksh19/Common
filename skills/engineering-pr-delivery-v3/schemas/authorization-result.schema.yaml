@@ -4,7 +4,7 @@ required: [schema_version, action, allowed, basis, blocking_controls, reason_cod
 properties:
   schema_version: {const: relay-v3-authorization-result}
   action:
-    enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK]
+    enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK, PROTOCOL_CUTOVER]
   allowed: {type: boolean}
   basis:
     type: array
