@@ -895,32 +895,45 @@ def reconcile_roadmap(
 
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
+    event_basis = [tx_id, *list(reconciliation.get("basis") or [])]
+    if change_delta is not None:
+        event_basis.append(str(change_delta.get("id")))
     events.append(_event(
         event_id,
         "ROADMAP_RECONCILED",
         actor,
         str(after.get("revision")),
-        [tx_id, *list(reconciliation.get("basis") or [])],
+        event_basis,
         {
             "disposition": disposition,
             "from_revision": current.get("revision"),
             "to_revision": after.get("revision"),
             "ep": (state.get("execution") or {}).get("ep"),
             "checkpoint": (state.get("accepted") or {}).get("checkpoint"),
+            "change_delta": (change_delta or {}).get("id"),
         },
     ))
+
+    replacements = {
+        roadmap_path: yaml_bytes(after),
+        "relay/STATE.yaml": yaml_bytes(new_state),
+        _snapshot_path(new_state): yaml_bytes(snapshot),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    if change_delta is not None and change_target is not None:
+        applied_delta = copy.deepcopy(change_delta)
+        applied_delta["application"]["status"] = "APPLIED"
+        applied_delta["application"]["roadmap_before"] = str(current.get("revision"))
+        applied_delta["application"]["roadmap_after"] = str(after.get("revision"))
+        applied_delta["application"]["event"] = event_id
+        replacements[change_target] = yaml_bytes(applied_delta)
 
     return execute(
         root,
         tx_id=tx_id,
         command="RECONCILE_ROADMAP",
         actor=actor,
-        replacements={
-            roadmap_path: yaml_bytes(after),
-            "relay/STATE.yaml": yaml_bytes(new_state),
-            _snapshot_path(new_state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
