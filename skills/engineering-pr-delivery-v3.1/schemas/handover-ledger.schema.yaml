@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, authority, generated_from, parent_issue, handover_issue, current_frontier, parent_progress, ep_index, pending_items, known_issues, offloads, delivery, records, next]
+required: [schema_version, authority, generated_from, parent_issue, handover_issue, current_frontier, parent_progress, ep_index, pending_items, known_issues, offloads, accepted_truth, material, negative_knowledge, accountability, active_change, delivery, records, next]
 properties:
   schema_version: {const: relay-v3.1-handover-ledger}
   authority: {const: DERIVED_PROVIDER_PROJECTION}
