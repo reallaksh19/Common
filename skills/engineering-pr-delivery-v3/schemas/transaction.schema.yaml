@@ -5,7 +5,7 @@ properties:
   schema_version: {const: relay-v3-transaction}
   id: {type: string, pattern: '^TX-'}
   command:
-    enum: [ACTIVATE_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, PUBLISH_HANDOVER, EXPORT_LOCAL_EXECUTION, SYNC_DELIVERY, CLOSE_TASK]
+    enum: [ACTIVATE_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, PUBLISH_HANDOVER, EXPORT_LOCAL_EXECUTION, SYNC_DELIVERY, CLOSE_TASK, PLAN_HANDOVER]
   actor: {type: string, minLength: 1}
   status: {enum: [PREPARED, APPLYING, COMMITTED, ROLLED_BACK, RECOVERY_REQUIRED]}
   created_at: {type: string, format: date-time}
