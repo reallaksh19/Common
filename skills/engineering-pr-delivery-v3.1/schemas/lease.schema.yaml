@@ -76,6 +76,16 @@ properties:
         type: array
         uniqueItems: true
         items: {type: string, minLength: 1}
+  custody:
+    type: object
+    additionalProperties: false
+    required: [epoch, granted_at, renewed_at, recovery_after_seconds, recovery_policy]
+    properties:
+      epoch: {type: integer, minimum: 1}
+      granted_at: {type: string, format: date-time}
+      renewed_at: {type: string, format: date-time}
+      recovery_after_seconds: {type: integer, minimum: 60}
+      recovery_policy: {enum: [MANUAL_ONLY, TAKEOVER_AFTER_EXPIRY]}
   state: {enum: [ACTIVE, RELEASED, REVOKED, INVALIDATED]}
   invalidation:
     type: object
