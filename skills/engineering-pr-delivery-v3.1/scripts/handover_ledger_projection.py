@@ -302,9 +302,13 @@ def build(
                 "application": (delta.get("application") or {}).get("status"),
             }
 
-    accepted_head = ((checkpoints.get(str(current_ep)) or {}).get("material_result") or {}).get("head")
-    if accepted_head is None:
-        accepted_head = ((checkpoints.get(str((state.get("accepted") or {}).get("checkpoint"))) or {}).get("material_result") or {}).get("head")
+    accepted_checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
+    accepted_checkpoint = None
+    if accepted_checkpoint_id:
+        accepted_path = root / "relay/CHECKPOINTS" / f"{accepted_checkpoint_id}.yaml"
+        if accepted_path.exists():
+            accepted_checkpoint = load_yaml(accepted_path)
+    accepted_head = ((accepted_checkpoint or {}).get("material_result") or {}).get("head")
     working_head = (snapshot.get("material") or {}).get("head")
     task_checklist = list((task.get("current_task_progress") or {}).get("checklist") or [])
     completed = [row.get("id") for row in task_checklist if row.get("state") == "COMPLETE"]
@@ -353,7 +357,7 @@ def build(
         "known_issues": list(task.get("known_issues") or []),
         "offloads": offloads,
         "accepted_truth": {
-            "checkpoint": (state.get("accepted") or {}).get("checkpoint"),
+            "checkpoint": accepted_checkpoint_id,
             "accepted_head": accepted_head,
             "acceptance": list((task.get("current_task_progress") or {}).get("checklist") or []),
         },
@@ -377,7 +381,7 @@ def build(
             "completed": completed,
             "partial": partial,
             "remaining": remaining,
-            "acceptance_movement": {"checkpoint": (state.get("accepted") or {}).get("checkpoint")},
+            "acceptance_movement": {"checkpoint": accepted_checkpoint_id},
             "value_added": list((task.get("improvement_vs_original_issue") or {}).get("items") or []),
             "continuation_reason": frontier.get("continuation") or "UNKNOWN",
         },
