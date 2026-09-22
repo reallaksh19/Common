@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from v3lib import load_events, load_yaml, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 
 
 def _load(path: Path, label: str, errors: list[str]):
@@ -16,11 +16,7 @@ def _load(path: Path, label: str, errors: list[str]):
 
 
 def validate_authority(repo_root: Path) -> list[str]:
-    """Validate only durable present-authority objects.
-
-    Generated snapshots and append-only history are intentionally excluded so
-    execution authorization cannot be coupled to derived-view/history freshness.
-    """
+    """Validate durable present-authority objects only."""
     errors: list[str] = []
     relay = repo_root / "relay"
     state_path = relay / "STATE.yaml"
@@ -30,7 +26,17 @@ def validate_authority(repo_root: Path) -> list[str]:
 
     errors.extend(validate_schema("state", state, "STATE"))
 
-    controls_ref = ((state.get("controls") or {}).get("path"))
+    roadmap_ref = (state.get("roadmap") or {}).get("path")
+    roadmap = None
+    if roadmap_ref:
+        roadmap = _load(repo_root / str(roadmap_ref), "ROADMAP", errors)
+        if isinstance(roadmap, dict):
+            errors.extend(validate_schema("roadmap", roadmap, "ROADMAP"))
+            if roadmap.get("revision") != (state.get("roadmap") or {}).get("revision"):
+                errors.append("ROADMAP.revision does not match STATE.roadmap.revision")
+
+    controls_ref = (state.get("controls") or {}).get("path")
+    controls = None
     if controls_ref:
         controls = _load(repo_root / str(controls_ref), "CONTROLS", errors)
         if isinstance(controls, dict):
@@ -48,6 +54,8 @@ def validate_authority(repo_root: Path) -> list[str]:
     ep_id = execution.get("ep")
     lease_id = execution.get("lease")
     route = execution.get("route")
+    ep = None
+    lease = None
 
     if ep_id:
         ep_path = relay / "WORK" / f"{ep_id}.yaml"
@@ -56,6 +64,10 @@ def validate_authority(repo_root: Path) -> list[str]:
             errors.extend(validate_schema("ep", ep, "EP"))
             if ep.get("id") != ep_id:
                 errors.append(f"EP.id {ep.get('id')} does not match STATE.execution.ep {ep_id}")
+            if isinstance(roadmap, dict):
+                wp_ids = {str(row.get("id")) for row in roadmap.get("work_packages") or [] if isinstance(row, dict)}
+                if str(ep.get("work_package")) not in wp_ids:
+                    errors.append("EP.work_package is not present in authoritative ROADMAP")
 
     if lease_id:
         lease_path = relay / "LEASES" / f"{lease_id}.yaml"
@@ -71,7 +83,7 @@ def validate_authority(repo_root: Path) -> list[str]:
             if execution.get("lifecycle") == "ACTIVE" and lease.get("state") != "ACTIVE":
                 errors.append("ACTIVE STATE requires referenced LEASE.state ACTIVE")
 
-    checkpoint_id = ((state.get("accepted") or {}).get("checkpoint"))
+    checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
     if checkpoint_id:
         cp_path = relay / "CHECKPOINTS" / f"{checkpoint_id}.yaml"
         checkpoint = _load(cp_path, "CHECKPOINT", errors)
@@ -86,29 +98,57 @@ def validate_authority(repo_root: Path) -> list[str]:
 
 
 def validate(repo_root: Path) -> list[str]:
-    """Validate durable authority plus derived snapshot and append-only history."""
+    """Validate durable authority plus generated snapshot and append-only history."""
     errors = validate_authority(repo_root)
     relay = repo_root / "relay"
     state = _load(relay / "STATE.yaml", "STATE", errors)
     if not isinstance(state, dict):
         return errors or ["STATE: expected mapping"]
 
+    roadmap_ref = (state.get("roadmap") or {}).get("path")
+    roadmap = _load(repo_root / str(roadmap_ref), "ROADMAP", errors) if roadmap_ref else None
     execution = state.get("execution") or {}
-    checkpoint_id = ((state.get("accepted") or {}).get("checkpoint"))
+    ep_id = execution.get("ep")
+    lease_id = execution.get("lease")
+    checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
+    ep = _load(relay / "WORK" / f"{ep_id}.yaml", "EP", errors) if ep_id else None
+    lease = _load(relay / "LEASES" / f"{lease_id}.yaml", "LEASE", errors) if lease_id else None
 
-    snapshot_ref = ((state.get("generated") or {}).get("snapshot"))
+    snapshot_ref = (state.get("generated") or {}).get("snapshot")
     if snapshot_ref:
         snapshot = _load(repo_root / str(snapshot_ref), "SNAPSHOT", errors)
         if isinstance(snapshot, dict):
             errors.extend(validate_schema("snapshot", snapshot, "SNAPSHOT"))
-            if (snapshot.get("generated_from") or {}).get("roadmap_revision") != (
-                (state.get("roadmap") or {}).get("revision")
-            ):
+            generated = snapshot.get("generated_from") or {}
+            if generated.get("roadmap_revision") != (state.get("roadmap") or {}).get("revision"):
                 errors.append("SNAPSHOT roadmap revision disagrees with STATE authority")
+            if generated.get("state_digest") != canonical_digest(state):
+                errors.append("SNAPSHOT state digest disagrees with STATE authority")
+            if isinstance(roadmap, dict):
+                owner = snapshot.get("owner") or {}
+                expected_owner = roadmap.get("owner") or {}
+                for key in ("outcome", "current_goal"):
+                    if owner.get(key) != expected_owner.get(key):
+                        errors.append(f"SNAPSHOT.owner.{key} disagrees with ROADMAP authority")
             sexec = snapshot.get("execution") or {}
             for key in ("lifecycle", "ep", "lease"):
                 if sexec.get(key) != execution.get(key):
                     errors.append(f"SNAPSHOT.execution.{key} disagrees with STATE authority")
+            if isinstance(ep, dict):
+                if sexec.get("work_package") != ep.get("work_package"):
+                    errors.append("SNAPSHOT.execution.work_package disagrees with EP authority")
+                scope = snapshot.get("scope") or {}
+                escope = ep.get("scope") or {}
+                if scope.get("allowed_writes") != (escope.get("write") or []):
+                    errors.append("SNAPSHOT.scope.allowed_writes disagrees with EP authority")
+                if scope.get("protected") != (escope.get("protect") or []):
+                    errors.append("SNAPSHOT.scope.protected disagrees with EP authority")
+                if scope.get("prohibited") != (escope.get("prohibit") or []):
+                    errors.append("SNAPSHOT.scope.prohibited disagrees with EP authority")
+            if isinstance(lease, dict):
+                expected_executor = ((lease.get("executor") or {}).get("id"))
+                if sexec.get("executor") != expected_executor:
+                    errors.append("SNAPSHOT.execution.executor disagrees with LEASE authority")
             if (snapshot.get("evidence") or {}).get("latest_checkpoint") != checkpoint_id:
                 errors.append("SNAPSHOT latest checkpoint disagrees with STATE authority")
 
