@@ -173,6 +173,62 @@ class V25MigrationTests(unittest.TestCase):
             self.assertFalse(report["bootstrap"]["creates_native_history"])
             self.assertFalse((root / "relay").exists())
 
+    def test_legacy_inventory_ignores_clean_autocrlf_checkout_representation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            _, digest_before = legacy_inventory(root)
+
+            subprocess.run(["git", "-C", str(root), "config", "core.autocrlf", "true"], check=True)
+            crlf_paths = [
+                "agents/relay/REPO_PROFILE.yaml",
+                "agents/relay/REPO_STATE.yaml",
+            ]
+            for rel in crlf_paths:
+                subprocess.run(["git", "-C", str(root), "checkout-index", "-f", "--", rel], check=True)
+                path = root / rel
+                raw = path.read_bytes()
+                if b"\r\n" not in raw:
+                    path.write_bytes(raw.replace(b"\n", b"\r\n"))
+                self.assertEqual(
+                    0,
+                    subprocess.run(["git", "-C", str(root), "diff", "--quiet", "--", rel]).returncode,
+                )
+                self.assertIn(b"\r\n", path.read_bytes())
+
+            _, digest_after = legacy_inventory(root)
+            self.assertEqual(digest_before, digest_after)
+
+            report = build_report(root)
+            entry = next(
+                row for row in report["legacy_inventory"]["entries"]
+                if row["path"] == "agents/relay/REPO_STATE.yaml"
+            )
+            self.assertEqual(entry["digest"], report["source"]["state_digest"])
+
+    def test_legacy_inventory_still_detects_staged_and_unstaged_content_changes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            _, digest_before = legacy_inventory(root)
+
+            profile = root / "agents/relay/REPO_PROFILE.yaml"
+            with profile.open("ab") as fh:
+                fh.write(b"\n# unstaged legacy mutation\n")
+            _, unstaged_digest = legacy_inventory(root)
+            self.assertNotEqual(digest_before, unstaged_digest)
+
+            subprocess.run(["git", "-C", str(root), "add", "agents/relay/REPO_PROFILE.yaml"], check=True)
+            self.assertEqual(
+                0,
+                subprocess.run(
+                    ["git", "-C", str(root), "diff", "--quiet", "--", "agents/relay/REPO_PROFILE.yaml"]
+                ).returncode,
+            )
+            _, staged_digest = legacy_inventory(root)
+            self.assertEqual(unstaged_digest, staged_digest)
+            self.assertNotEqual(digest_before, staged_digest)
+
     def test_bootstrap_is_non_destructive_and_keeps_v25_selected(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
