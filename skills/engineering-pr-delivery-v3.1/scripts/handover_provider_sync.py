@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import urllib.error
@@ -10,6 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
+from handover_ledger_projection import render_ledger, render_parent_summary
 from relay_tx import _assert_event_ids_available, _event
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
@@ -17,7 +19,8 @@ from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 
 START = "<!-- relay-v3.1:start -->"
 END = "<!-- relay-v3.1:end -->"
-Client = Callable[[str, str, str, dict[str, Any] | None], dict[str, Any]]
+CASE_MARKER_PREFIX = "<!-- relay-v3.1:case "
+Client = Callable[[str, str, str, dict[str, Any] | None], Any]
 
 
 def _now() -> str:
@@ -26,6 +29,10 @@ def _now() -> str:
 
 def _marked(content: str) -> str:
     return f"{START}\n{content.strip()}\n{END}"
+
+
+def _case_marker(repository: str, number: int) -> str:
+    return f"{CASE_MARKER_PREFIX}parent={repository}#{number} -->"
 
 
 def _replace_marked(body: str, content: str) -> str:
@@ -49,7 +56,7 @@ def _extract_marked(body: str) -> str | None:
     return (body or "")[start:end + len(END)]
 
 
-def _github_json(method: str, url: str, token: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+def _github_json(method: str, url: str, token: str, payload: dict[str, Any] | None = None) -> Any:
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
     request = urllib.request.Request(
         url,
@@ -72,16 +79,111 @@ def _github_json(method: str, url: str, token: str, payload: dict[str, Any] | No
     except urllib.error.URLError as exc:
         raise TransactionError(f"GitHub provider request failed: {exc.reason}") from exc
     try:
-        value = json.loads(raw)
+        return json.loads(raw)
     except json.JSONDecodeError as exc:
         raise TransactionError("GitHub provider returned invalid JSON") from exc
-    if not isinstance(value, dict):
-        raise TransactionError("GitHub provider returned a non-object response")
-    return value
 
 
 def _issue_url(api_base: str, repository: str, number: int) -> str:
     return f"{api_base.rstrip('/')}/repos/{repository}/issues/{number}"
+
+
+def _subissues_url(api_base: str, repository: str, number: int) -> str:
+    return f"{_issue_url(api_base, repository, number)}/sub_issues"
+
+
+def _relay_candidates(rows: Any, repository: str, parent_number: int) -> list[dict[str, Any]]:
+    if not isinstance(rows, list):
+        raise TransactionError("GitHub sub-issue readback must be a list")
+    marker = _case_marker(repository, parent_number)
+    prefix = f"[Relay] #{parent_number}"
+    result = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        title = str(row.get("title") or "")
+        body = str(row.get("body") or "")
+        if marker in body or title.startswith(prefix):
+            result.append(row)
+    return result
+
+
+def _identity(issue: dict[str, Any], repository: str) -> dict[str, Any]:
+    number = issue.get("number")
+    if not isinstance(number, int):
+        raise TransactionError("Relay issue provider response has no issue number")
+    return {
+        "repository": repository,
+        "number": number,
+        "url": str(issue.get("html_url") or f"https://github.com/{repository}/issues/{number}"),
+    }
+
+
+def _ensure_handover_issue(
+    *,
+    parent: dict[str, Any],
+    requested: dict[str, Any] | None,
+    token: str,
+    api_base: str,
+    client: Client,
+) -> tuple[dict[str, Any], bool]:
+    repository = str(parent.get("repository") or "")
+    parent_number = int(parent.get("number"))
+    rows = client("GET", _subissues_url(api_base, repository, parent_number), token, None)
+    candidates = _relay_candidates(rows, repository, parent_number)
+    if len(candidates) > 1:
+        refs = ", ".join(f"#{row.get('number')}" for row in candidates)
+        raise TransactionError(f"MULTIPLE_RELAY_ISSUES: {repository}#{parent_number} has {refs}")
+
+    if isinstance(requested, dict):
+        requested_number = int(requested.get("number"))
+        if candidates and int(candidates[0].get("number")) != requested_number:
+            raise TransactionError(
+                f"RELAY_ISSUE_IDENTITY_MISMATCH: projection expects #{requested_number}, "
+                f"parent is linked to #{candidates[0].get('number')}"
+            )
+        issue = client("GET", _issue_url(api_base, repository, requested_number), token, None)
+        if not isinstance(issue, dict):
+            raise TransactionError("requested Relay issue provider readback is invalid")
+        if not candidates:
+            issue_id = issue.get("id")
+            if not isinstance(issue_id, int):
+                raise TransactionError("requested Relay issue has no provider id for sub-issue attachment")
+            client(
+                "POST",
+                _subissues_url(api_base, repository, parent_number),
+                token,
+                {"sub_issue_id": issue_id},
+            )
+        return _identity(issue, repository), False
+
+    if candidates:
+        return _identity(candidates[0], repository), False
+
+    title = f"[Relay] #{parent_number} — {str(parent.get('title') or 'continuation ledger')}"
+    body = "\n".join([
+        _case_marker(repository, parent_number),
+        "",
+        "Generated Engineering Relay case file. Repository Relay objects remain engineering authority.",
+    ])
+    created = client(
+        "POST",
+        f"{api_base.rstrip('/')}/repos/{repository}/issues",
+        token,
+        {"title": title, "body": body},
+    )
+    if not isinstance(created, dict):
+        raise TransactionError("GitHub Relay issue creation returned an invalid response")
+    issue_id = created.get("id")
+    if not isinstance(issue_id, int):
+        raise TransactionError("created Relay issue has no provider id")
+    client(
+        "POST",
+        _subissues_url(api_base, repository, parent_number),
+        token,
+        {"sub_issue_id": issue_id},
+    )
+    return _identity(created, repository), True
 
 
 def _sync_issue(
@@ -95,12 +197,16 @@ def _sync_issue(
 ) -> dict[str, Any]:
     url = _issue_url(api_base, repository, number)
     before = client("GET", url, token, None)
+    if not isinstance(before, dict):
+        raise TransactionError("GitHub issue readback must be an object")
     before_body = str(before.get("body") or "")
     desired_body = _replace_marked(before_body, desired_content)
     updated = desired_body != before_body
     if updated:
         client("PATCH", url, token, {"body": desired_body})
     after = client("GET", url, token, None)
+    if not isinstance(after, dict):
+        raise TransactionError("GitHub issue readback must be an object")
     after_body = str(after.get("body") or "")
     if _extract_marked(after_body) != _marked(desired_content):
         raise TransactionError(
@@ -136,13 +242,8 @@ def sync_handover_provider(
     ledger_path = ledger_path or (root / "relay/GENERATED/HANDOVER_LEDGER.yaml")
     ledger_markdown_path = ledger_markdown_path or (root / "relay/GENERATED/HANDOVER_LEDGER.md")
     parent_summary_path = parent_summary_path or (root / "relay/GENERATED/PARENT_RELAY_SUMMARY.md")
-    for path, label in (
-        (ledger_path, "HANDOVER_LEDGER"),
-        (ledger_markdown_path, "HANDOVER_LEDGER.md"),
-        (parent_summary_path, "PARENT_RELAY_SUMMARY.md"),
-    ):
-        if not path.exists():
-            raise TransactionError(f"{label} is missing: {path}")
+    if not ledger_path.exists():
+        raise TransactionError(f"HANDOVER_LEDGER is missing: {ledger_path}")
 
     ledger = load_yaml(ledger_path)
     errors = validate_schema("handover-ledger", ledger, "HANDOVER_LEDGER")
@@ -150,10 +251,21 @@ def sync_handover_provider(
         raise TransactionError("; ".join(errors))
 
     parent = ledger.get("parent_issue") or {}
-    handover = ledger.get("handover_issue") or {}
-    parent_content = parent_summary_path.read_text(encoding="utf-8")
-    handover_content = ledger_markdown_path.read_text(encoding="utf-8")
+    handover_identity, created = _ensure_handover_issue(
+        parent=parent,
+        requested=ledger.get("handover_issue"),
+        token=token,
+        api_base=api_base,
+        client=client,
+    )
+    resolved_ledger = copy.deepcopy(ledger)
+    resolved_ledger["handover_issue"] = handover_identity
+    errors = validate_schema("handover-ledger", resolved_ledger, "HANDOVER_LEDGER")
+    if errors:
+        raise TransactionError("; ".join(errors))
 
+    parent_content = render_parent_summary(resolved_ledger)
+    handover_content = render_ledger(resolved_ledger)
     parent_readback = _sync_issue(
         repository=str(parent.get("repository")),
         number=int(parent.get("number")),
@@ -163,8 +275,8 @@ def sync_handover_provider(
         client=client,
     )
     handover_readback = _sync_issue(
-        repository=str(handover.get("repository")),
-        number=int(handover.get("number")),
+        repository=handover_identity["repository"],
+        number=int(handover_identity["number"]),
         desired_content=handover_content,
         token=token,
         api_base=api_base,
@@ -199,6 +311,7 @@ def sync_handover_provider(
         ],
         {
             "handover_issue": f"{handover_readback['repository']}#{handover_readback['issue_number']}",
+            "handover_issue_created": created,
             "parent_updated": parent_readback["updated"],
             "handover_updated": handover_readback["updated"],
         },
@@ -210,6 +323,9 @@ def sync_handover_provider(
         command="SYNC_HANDOVER_LEDGER",
         actor=actor,
         replacements={
+            str(ledger_path.relative_to(root)): yaml_bytes(resolved_ledger),
+            str(ledger_markdown_path.relative_to(root)): render_ledger(resolved_ledger).encode("utf-8"),
+            str(parent_summary_path.relative_to(root)): render_parent_summary(resolved_ledger).encode("utf-8"),
             "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml": yaml_bytes(status),
             "relay/EVENTS.jsonl": jsonl_bytes(events),
         },
