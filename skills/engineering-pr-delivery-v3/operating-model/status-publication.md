@@ -22,7 +22,7 @@ The default policy combines:
 
 Default volume triggers are 300 changed material lines, 5 touched material files, 3 created material files, or 3 commits since the previous publication cursor.
 
-Generated/vendor/build/lock-file paths are excluded by policy.
+Relay coordination metadata plus generated/vendor/build/lock-file paths are excluded by policy, so publishing a cursor cannot create fresh publication debt.
 
 ## Child-local cursor
 

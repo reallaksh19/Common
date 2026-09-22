@@ -35,7 +35,8 @@ hard_triggers:
 
 exclusions:
   paths:
-    - relay/GENERATED/**
+    - relay/**
+    - agents/relay/**
     - build/**
     - dist/**
     - vendor/**
