@@ -1,0 +1,55 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, selected_protocol, status, legacy, v3, cutover]
+properties:
+  schema_version: {const: relay-v3-protocol-selection}
+  selected_protocol: {enum: [V2_5, V3]}
+  status: {enum: [PREPARED, ACTIVE, ROLLED_BACK]}
+  legacy:
+    type: object
+    additionalProperties: false
+    required: [root, tree_digest, policy]
+    properties:
+      root: {const: agents/relay}
+      tree_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      policy: {enum: [LIVE_COMPATIBILITY, READ_ONLY_HISTORY]}
+  v3:
+    type: object
+    additionalProperties: false
+    required: [state_path, validation]
+    properties:
+      state_path: {const: relay/STATE.yaml}
+      validation: {enum: [PENDING, PASS, FAIL]}
+  cutover:
+    type: object
+    additionalProperties: false
+    required: [owner_authorized, owner_basis, legacy_freeze_digest, readiness_digest, activated_at]
+    properties:
+      owner_authorized: {type: boolean}
+      owner_basis:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [direct_utterance_digest, session_timestamp]
+        properties:
+          direct_utterance_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          session_timestamp: {type: string, format: date-time}
+      legacy_freeze_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      readiness_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      activated_at: {type: [string, 'null'], format: date-time}
+allOf:
+  - if:
+      properties: {selected_protocol: {const: V3}, status: {const: ACTIVE}}
+    then:
+      properties:
+        legacy:
+          properties: {policy: {const: READ_ONLY_HISTORY}}
+        v3:
+          properties: {validation: {const: PASS}}
+        cutover:
+          properties:
+            owner_authorized: {const: true}
+            legacy_freeze_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+            owner_basis: {type: object}
+            readiness_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+            activated_at: {type: string, format: date-time}
+additionalProperties: false

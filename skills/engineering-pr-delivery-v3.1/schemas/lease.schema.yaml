@@ -1,0 +1,154 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, route, executor, basis, authority, admission, state, invalidation]
+properties:
+  schema_version: {const: relay-v3-lease}
+  id: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  route: {type: string, minLength: 1}
+  executor:
+    type: object
+    additionalProperties: false
+    required: [id]
+    properties:
+      id: {type: string, minLength: 1}
+  basis:
+    type: object
+    additionalProperties: false
+    required: [ep_id, ep_digest, material_base, predecessor_checkpoint, protocol_basis]
+    properties:
+      ep_id: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      ep_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      material_base: {type: string, minLength: 7}
+      predecessor_checkpoint: {type: [string, 'null'], pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      protocol_basis: {type: string, minLength: 1}
+  authority:
+    type: object
+    additionalProperties: false
+    required: [actions]
+    properties:
+      actions:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK]
+  admission:
+    type: object
+    additionalProperties: false
+    required: [method, result, repository_only, qualification]
+    properties:
+      method: {enum: [DETERMINISTIC, QUALIFIED, OWNER_OVERRIDE]}
+      result: {const: PASS}
+      repository_only: {type: boolean}
+      qualification:
+        type: object
+        additionalProperties: false
+        required: [required, qset, evaluator, result, evidence]
+        properties:
+          required: {type: boolean}
+          qset: {type: [string, 'null']}
+          evaluator: {type: [string, 'null']}
+          result: {type: [string, 'null'], enum: [PASS, null]}
+          evidence:
+            type: array
+            uniqueItems: true
+            items: {type: string, minLength: 1}
+      owner_basis:
+        type: object
+        additionalProperties: false
+        required: [direct_utterance_digest, session_timestamp]
+        properties:
+          direct_utterance_digest: {type: string, minLength: 1}
+          session_timestamp: {type: string, format: date-time}
+  scope:
+    type: object
+    additionalProperties: false
+    required: [ep_or_task, branch, allowed_writes, prohibited]
+    properties:
+      ep_or_task: {type: string, minLength: 1}
+      branch: {type: string, minLength: 1}
+      allowed_writes:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      prohibited:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  state: {enum: [ACTIVE, RELEASED, REVOKED, INVALIDATED]}
+  invalidation:
+    type: object
+    additionalProperties: false
+    required: [reasons]
+    properties:
+      reasons:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {const: OWNER_OVERRIDE}
+    then:
+      required: [scope]
+      properties:
+        admission:
+          required: [owner_basis]
+          properties:
+            repository_only: {const: false}
+        authority:
+          properties:
+            actions:
+              not:
+                contains: {enum: [MERGE, RELEASE]}
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {enum: [DETERMINISTIC, QUALIFIED]}
+    then:
+      properties:
+        admission:
+          properties:
+            repository_only: {const: true}
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: true}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: string, minLength: 1}
+                evaluator: {type: string, minLength: 1}
+                result: {const: PASS}
+                evidence:
+                  type: array
+                  minItems: 1
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: false}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: 'null'}
+                evaluator: {type: 'null'}
+                result: {type: 'null'}
+                evidence:
+                  maxItems: 0
+additionalProperties: false

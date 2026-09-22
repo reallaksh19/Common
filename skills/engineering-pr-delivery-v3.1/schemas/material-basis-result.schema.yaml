@@ -1,0 +1,54 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, material_basis, coordination_basis, sensitivity, drift]
+properties:
+  schema_version: {const: relay-v3-material-basis}
+  material_basis:
+    type: object
+    additionalProperties: false
+    required: [base, head, tree_digest, relevant_paths_digest, dependency_digest, ancestry_valid]
+    properties:
+      base: {type: string, minLength: 7}
+      head: {type: string, minLength: 7}
+      tree_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      ancestry_valid: {type: boolean}
+  coordination_basis:
+    type: object
+    additionalProperties: false
+    required: [head]
+    properties:
+      head: {type: string, minLength: 7}
+  sensitivity:
+    type: object
+    additionalProperties: false
+    required: [patterns, dependency_patterns]
+    properties:
+      patterns:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      dependency_patterns:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  drift:
+    type: object
+    additionalProperties: false
+    required: [classification, from_base, to_base, changed_paths, sensitive_matches, reason]
+    properties:
+      classification: {enum: [DISJOINT, RELEVANT, UNKNOWN]}
+      from_base: {type: string, minLength: 7}
+      to_base: {type: [string, 'null']}
+      changed_paths:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      sensitive_matches:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      reason: {type: string, minLength: 1}
+additionalProperties: false
