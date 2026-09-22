@@ -24,6 +24,7 @@ from relay_tx import (
     export_local_execution,
     publish_handover,
     release_lease,
+    reconcile_roadmap,
     resolve_control,
     sync_delivery,
 )
@@ -49,6 +50,52 @@ def add_open_control(root: Path) -> None:
         "resolution": {"condition": "Evidence supplied.", "evidence": []},
     })
     dump(path, controls)
+
+
+def accept_current_checkpoint_and_reconcile(root: Path, base_ref: str) -> None:
+    _, _, _, _, template, *_ = base_objects()
+    checkpoint = copy.deepcopy(template)
+    checkpoint["id"] = "CP-TA-011"
+    checkpoint["ep"] = "EP-TA-011"
+    ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+    current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+    checkpoint["material_result"] = {
+        "head": current_material["head"],
+        "relevant_paths_digest": current_material["relevant_paths_digest"],
+        "dependency_digest": current_material["dependency_digest"],
+    }
+    incoming = root / "close-checkpoint.yaml"
+    dump(incoming, checkpoint)
+    accept_checkpoint(
+        root,
+        tx_id="TX-CLOSE-CP",
+        event_id="EVT-CLOSE-CP",
+        actor="agent-x",
+        checkpoint_path=incoming,
+        base_ref=base_ref,
+    )
+
+    state = load_yaml(root / "relay/STATE.yaml")
+    roadmap_path = root / str((state.get("roadmap") or {}).get("path"))
+    roadmap = load_yaml(roadmap_path)
+    reconciliation = {
+        "schema_version": "relay-v3.1-roadmap-reconciliation",
+        "authority": "PROPOSED_RECONCILIATION",
+        "expected_revision": roadmap["revision"],
+        "disposition": "NO_CHANGE",
+        "basis": ["Current EP acceptance is complete; no concept change is required."],
+        "roadmap_after": roadmap,
+    }
+    reconciliation_path = root / "close-roadmap-reconciliation.yaml"
+    dump(reconciliation_path, reconciliation)
+    reconcile_roadmap(
+        root,
+        tx_id="TX-CLOSE-ROADMAP",
+        event_id="EVT-CLOSE-ROADMAP",
+        actor="agent-x",
+        reconciliation_path=reconciliation_path,
+        base_ref=base_ref,
+    )
 
 
 def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") -> Path:
@@ -77,6 +124,60 @@ def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") 
 
 
 class RelayTransactionalCommandTests(unittest.TestCase):
+    def test_different_executor_requires_handover_or_explicit_recovery_takeover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            with self.assertRaisesRegex(TransactionError, "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR"):
+                activate_lease(
+                    root,
+                    tx_id="TX-TAKEOVER-DENIED",
+                    event_id="EVT-TAKEOVER-DENIED",
+                    lease_id="LEASE-TA-011-02",
+                    executor_id="agent-y",
+                    actor="agent-y",
+                    method="DETERMINISTIC",
+                    qualification=None,
+                    owner_basis=None,
+                    branch=None,
+                    base_ref=base_ref,
+                )
+
+    def test_explicit_recovery_takeover_invalidates_abandoned_lease_and_keeps_same_ep(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            result = activate_lease(
+                root,
+                tx_id="TX-TAKEOVER-RECOVERY",
+                event_id="EVT-TAKEOVER-RECOVERY",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+                recovery_takeover=True,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            old_lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
+            new_lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            self.assertEqual("EP-TA-011", state["execution"]["ep"])
+            self.assertEqual("LEASE-TA-011-02", state["execution"]["lease"])
+            self.assertEqual("INVALIDATED", old_lease["state"])
+            self.assertIn("RECOVERY_TAKEOVER_BY:LEASE-TA-011-02", old_lease["invalidation"]["reasons"])
+            self.assertEqual("ACTIVE", new_lease["state"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            revoked = [item for item in events if item["event_id"] == "EVT-TAKEOVER-RECOVERY-REL"][0]
+            granted = [item for item in events if item["event_id"] == "EVT-TAKEOVER-RECOVERY"][0]
+            self.assertEqual("LEASE_REVOKED", revoked["type"])
+            self.assertEqual("RECOVERY", revoked["details"]["continuation"])
+            self.assertEqual("RECOVERY", granted["details"]["continuation"])
+
     def test_graceful_release_refuses_to_drop_unfinished_custody_without_handover(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -166,7 +267,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     replacements={"relay/ROADMAP/ROADMAP.yaml": yaml_bytes(roadmap)},
                 )
 
-    def test_activate_lease_transfers_exclusive_custody_and_snapshot(self):
+    def test_explicit_recovery_takeover_transfers_exclusive_custody_and_snapshot(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -182,13 +283,14 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 owner_basis=None,
                 branch=None,
                 base_ref=base_ref,
+                recovery_takeover=True,
             )
             self.assertEqual("COMMITTED", result["status"])
             old = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
             new = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
             state = load_yaml(root / "relay/STATE.yaml")
             snapshot = load_yaml(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml")
-            self.assertEqual("RELEASED", old["state"])
+            self.assertEqual("INVALIDATED", old["state"])
             self.assertEqual("ACTIVE", new["state"])
             self.assertEqual("agent-y", new["executor"]["id"])
             self.assertEqual("LEASE-TA-011-02", state["execution"]["lease"])
@@ -499,6 +601,15 @@ class RelayTransactionalCommandTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
+            with self.assertRaisesRegex(TransactionError, "CURRENT_EP_CHECKPOINT_REQUIRED"):
+                close_task(
+                    root,
+                    tx_id="TX-CLOSE-NO-CURRENT-CP",
+                    event_id="EVT-CLOSE-NO-CURRENT-CP",
+                    actor="owner",
+                )
+
+            accept_current_checkpoint_and_reconcile(root, base_ref)
             observation = configure_delivery(root, base_ref, lifecycle="OPEN")
             sync_delivery(
                 root,
@@ -557,6 +668,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     owner_basis=None,
                     branch=None,
                     base_ref=base_ref,
+                    recovery_takeover=True,
                     fail_after=1,
                 )
             errors = validate_authority(root)

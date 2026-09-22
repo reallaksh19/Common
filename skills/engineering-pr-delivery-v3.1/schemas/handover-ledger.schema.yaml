@@ -35,13 +35,14 @@ properties:
   current_frontier:
     type: object
     additionalProperties: false
-    required: [ep, work_package, lease, executor, status]
+    required: [ep, work_package, lease, executor, status, continuation]
     properties:
       ep: {type: [string, 'null']}
       work_package: {type: [string, 'null']}
       lease: {type: [string, 'null']}
       executor: {type: [string, 'null']}
       status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
+      continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
   parent_progress:
     type: object
     required: [complete, partial, pending, blocked, deferred, not_applicable, unknown, total]
@@ -55,7 +56,7 @@ properties:
         ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
-        continuation: {enum: [CURRENT, NONE, RECOVERY_REQUIRED, UNKNOWN]}
+        continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
         checkpoint: {type: [string, 'null']}
         lease: {type: [string, 'null']}
         executor: {type: [string, 'null']}

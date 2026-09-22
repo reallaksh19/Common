@@ -32,6 +32,10 @@ COMMAND_TARGET_PATTERNS = {
         "relay/STATE.yaml",
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
     ],
+    "SYNC_HANDOVER_LEDGER": [
+        "relay/EVENTS.jsonl",
+        "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml",
+    ],
     "FREEZE_LEGACY_CUTOVER": [
         "relay/EVENTS.jsonl",
         "relay/PROTOCOL_SELECTION.yaml",
