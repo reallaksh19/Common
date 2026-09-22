@@ -12,7 +12,7 @@ The CLI surface is:
 
 ```bash
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root>
+python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py HANDOVER <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
@@ -39,8 +39,8 @@ CLOSE_TASK
 
 The evaluator applies:
 1. durable V3 authority validity;
-2. current lifecycle and EP;
-3. current ACTIVE lease where the action requires one;
+2. current lifecycle and EP for execution-plane actions;
+3. current ACTIVE lease only where execution custody is required;
 4. lease/EP/route/material-base binding;
 5. action authority;
 6. requested write path against EP write/protected scope;
@@ -79,3 +79,16 @@ EP material sensitivity
 An execution Owner override is deliberately not merge/release authority. `MERGE` and `RELEASE` require explicit durable Owner action authority represented by an OPEN `OWNER` control whose source is `OWNER` and whose `permits` contains the requested action.
 
 This is a V3-2/3 representation of explicit delivery authority. Later transactional command work may introduce a more specialized durable representation, but it must preserve the same semantic separation.
+
+
+## Post-execution handover and delivery
+
+Execution custody and handover/delivery coordination are deliberately separate.
+
+- `MATERIAL_WRITE`, `TEST`, and `CHECKPOINT` require active execution custody.
+- `CHECKPOINT` also requires a current base ref so relevant drift is re-evaluated at acceptance time.
+- `HANDOVER` and `LOCAL_EXECUTION_EXPORT` may run after lease release when an accepted checkpoint supplies the work context.
+- `DRAFT_PR_UPDATE` and `PR_READY` do not require an active execution lease; they require the relevant delivery vehicle, and `PR_READY` additionally requires accepted checkpoint/quality truth.
+- `MERGE` and `RELEASE` continue to require explicit Owner delivery authority.
+
+This prevents the delivery/handover planes from being re-coupled to material execution custody.

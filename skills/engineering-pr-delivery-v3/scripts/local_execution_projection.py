@@ -22,6 +22,16 @@ def build(
     checkpoint: dict[str, Any] | None,
 ) -> dict[str, Any]:
     execution = snapshot.get("execution") or {}
+    checkpoint_handoff = (checkpoint or {}).get("handoff") or {}
+    ep_scope = (ep or {}).get("scope") or {}
+    snapshot_scope = snapshot.get("scope") or {}
+    scope = snapshot_scope
+    if ep is not None and execution.get("ep") is None:
+        scope = {
+            "allowed_writes": list(ep_scope.get("write") or []),
+            "protected": list(ep_scope.get("protect") or []),
+            "prohibited": list(ep_scope.get("prohibit") or []),
+        }
     package = {
         "schema_version": "relay-v3-local-execution",
         "authority": "DERIVED_EXECUTION_PACKAGE",
@@ -32,16 +42,16 @@ def build(
         "project": {
             "outcome": (snapshot.get("owner") or {}).get("outcome"),
             "roadmap_revision": (snapshot.get("generated_from") or {}).get("roadmap_revision"),
-            "work_package": execution.get("work_package"),
+            "work_package": (ep or {}).get("work_package") or execution.get("work_package"),
         },
         "execution": {
-            "ep": execution.get("ep"),
+            "ep": (ep or {}).get("id") or execution.get("ep"),
             "lease": execution.get("lease"),
             "executor": execution.get("executor"),
             "branch": _branch(root),
         },
         "material": snapshot.get("material") or {},
-        "scope": snapshot.get("scope") or {},
+        "scope": scope,
         "acceptance": list((ep or {}).get("acceptance") or []),
         "controls": snapshot.get("controls") or {},
         "checkpoint": {
@@ -49,7 +59,11 @@ def build(
             "handoff": (checkpoint or {}).get("handoff") if checkpoint else None,
         },
         "next": {
-            "first_action": (snapshot.get("next") or {}).get("immediate_material_action"),
+            "first_action": (
+                (snapshot.get("next") or {}).get("immediate_material_action")
+                or checkpoint_handoff.get("first_successor_action")
+                or ((ep or {}).get("next") or {}).get("first_action")
+            ),
             "stop_conditions": list((snapshot.get("next") or {}).get("stop_conditions") or []),
         },
         "delivery_boundary": {

@@ -9,6 +9,7 @@ from typing import Any
 
 from handover_projection import render as render_handover
 from lease_admission import build_native_lease
+from material_basis import inspect as inspect_material_basis
 from local_execution_projection import build as build_local_execution
 from relay_can import evaluate as can_action
 from snapshot_projection import build as build_snapshot
@@ -70,8 +71,14 @@ def _snapshot_path(state: dict[str, Any]) -> str:
     return value
 
 
-def _require_action(root: Path, action: str) -> None:
-    result = can_action(root, action)
+def _require_action(
+    root: Path,
+    action: str,
+    *,
+    path: str | None = None,
+    base_ref: str | None = None,
+) -> None:
+    result = can_action(root, action, path=path, base_ref=base_ref)
     if not result["allowed"]:
         raise TransactionError(f"{action} denied: {', '.join(result['reason_codes'])}")
 
@@ -229,6 +236,7 @@ def accept_checkpoint(
     base_ref: str,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
+    _require_action(root, "CHECKPOINT", base_ref=base_ref)
     state, _ = _authority(root)
     checkpoint = load_yaml(checkpoint_path)
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
@@ -244,6 +252,29 @@ def accept_checkpoint(
     active_ep = (state.get("execution") or {}).get("ep")
     if active_ep and checkpoint.get("ep") != active_ep:
         raise TransactionError("checkpoint EP does not match active execution EP")
+    ep = _current_ep(root, state)
+    if not isinstance(ep, dict):
+        raise TransactionError("checkpoint acceptance requires the current authoritative EP")
+
+    expected_ac_ids = [str(item.get("id")) for item in ep.get("acceptance") or []]
+    observed_ac_ids = [str(item.get("id")) for item in checkpoint.get("acceptance") or []]
+    if len(observed_ac_ids) != len(set(observed_ac_ids)):
+        raise TransactionError("checkpoint acceptance contains duplicate criterion ids")
+    if set(observed_ac_ids) != set(expected_ac_ids) or len(observed_ac_ids) != len(expected_ac_ids):
+        raise TransactionError("checkpoint acceptance ids must exactly match the current EP acceptance contract")
+
+    expected_quality = str((ep.get("quality_policy") or {}).get("level") or "")
+    if (checkpoint.get("quality") or {}).get("policy") != expected_quality:
+        raise TransactionError("checkpoint quality policy must match the current EP quality policy")
+
+    material = inspect_material_basis(root, ep, base_ref)
+    current_material = material["material_basis"]
+    observed_material = checkpoint.get("material_result") or {}
+    for key in ("head", "relevant_paths_digest", "dependency_digest"):
+        if observed_material.get(key) != current_material.get(key):
+            raise TransactionError(
+                f"checkpoint material_result.{key} does not match current material basis"
+            )
 
     cp_id = str(checkpoint.get("id"))
     target = f"relay/CHECKPOINTS/{cp_id}.yaml"
@@ -379,6 +410,8 @@ def export_local_execution(
     snapshot = build_snapshot(root, base_ref)
     ep = _current_ep(root, state)
     checkpoint = _current_checkpoint(root, state)
+    if ep is None and isinstance(checkpoint, dict) and checkpoint.get("ep"):
+        ep = load_yaml(root / "relay/WORK" / f"{checkpoint['ep']}.yaml")
     package = build_local_execution(root, snapshot, ep, checkpoint)
     events = _events(root)
     _assert_event_ids_available(events, [event_id])

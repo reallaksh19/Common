@@ -28,15 +28,9 @@ ACTIONS = {
     "PROTOCOL_CUTOVER",
 }
 EXECUTION_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT"}
-LEASE_ACTIONS = {
-    "MATERIAL_WRITE",
-    "TEST",
-    "CHECKPOINT",
-    "HANDOVER",
-    "LOCAL_EXECUTION_EXPORT",
-    "DRAFT_PR_UPDATE",
-    "PR_READY",
-}
+LEASE_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT"}
+WORK_CONTEXT_ACTIONS = {"HANDOVER", "LOCAL_EXECUTION_EXPORT"}
+DELIVERY_VEHICLE_ACTIONS = {"DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE"}
 DELIVERY_OWNER_ACTIONS = {"MERGE", "RELEASE"}
 CHECKPOINT_ACTIONS = {"PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 QUALITY_ACTIONS = {"PR_READY", "MERGE", "RELEASE"}
@@ -144,11 +138,14 @@ def evaluate(
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
 
-    if action in EXECUTION_ACTIONS | LEASE_ACTIONS:
+    if action in EXECUTION_ACTIONS:
         if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or not ep:
             reasons.append("NO_ACTIVE_EXECUTION")
         if not lease or lease.get("state") != "ACTIVE":
             reasons.append("NO_ACTIVE_LEASE")
+
+    if action in WORK_CONTEXT_ACTIONS and not ep and not checkpoint:
+        reasons.append("WORK_CONTEXT_REQUIRED")
 
     if lease and ep:
         if lease.get("route") != execution.get("route"):
@@ -176,6 +173,7 @@ def evaluate(
                 reasons.append("PATH_PROTECTED")
             basis.append(f"path:{path}")
 
+    if action in {"MATERIAL_WRITE", "CHECKPOINT"}:
         if not base_ref:
             reasons.append("BASE_REF_REQUIRED")
         elif ep:
@@ -209,17 +207,19 @@ def evaluate(
     if action in QUALITY_ACTIONS and not _quality_clear(checkpoint):
         reasons.append("QUALITY_NOT_CLEAR")
 
-    if action in DELIVERY_OWNER_ACTIONS:
+    if action in DELIVERY_VEHICLE_ACTIONS:
         delivery = state.get("delivery") or {}
         vehicle = delivery.get("primary_vehicle")
         if delivery.get("required") is not True or not isinstance(vehicle, dict):
             reasons.append("DELIVERY_VEHICLE_REQUIRED")
-        elif action == "MERGE" and vehicle.get("kind") != "PULL_REQUEST":
+        elif action in {"DRAFT_PR_UPDATE", "PR_READY", "MERGE"} and vehicle.get("kind") != "PULL_REQUEST":
             reasons.append("DELIVERY_VEHICLE_REQUIRED")
         else:
             basis.append(
                 f"delivery:{vehicle.get('provider')}:{vehicle.get('kind')}:{vehicle.get('number')}"
             )
+
+    if action in DELIVERY_OWNER_ACTIONS:
         if lease and (lease.get("admission") or {}).get("method") == "OWNER_OVERRIDE":
             reasons.append("OWNER_OVERRIDE_DELIVERY_FORBIDDEN")
         if not _owner_authorizes(controls, action):

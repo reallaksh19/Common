@@ -60,13 +60,15 @@ V3 uses action-specific authorization instead of one global readiness boolean:
 
 ```bash
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root>
+python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py HANDOVER <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
 ```
 
 `MATERIAL_WRITE` is isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
+
+`CHECKPOINT` also re-evaluates live material basis/drift and is accepted only when the checkpoint material result and acceptance IDs match the current EP exactly. Handover/local-execution and PR coordination remain usable after execution custody is released when accepted checkpoint/delivery context exists; they are not artificially coupled to an ACTIVE lease.
 
 `MERGE` and `RELEASE` remain separate delivery transitions and require their own delivery conditions and explicit Owner authority. An `OWNER_OVERRIDE` execution lease never implies merge/release permission.
 

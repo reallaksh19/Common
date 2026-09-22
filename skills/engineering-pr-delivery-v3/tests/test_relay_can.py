@@ -232,6 +232,52 @@ class RelayCanTests(unittest.TestCase):
             self.assertFalse(merge["allowed"], merge)
             self.assertIn("OWNER_OVERRIDE_DELIVERY_FORBIDDEN", merge["reason_codes"])
 
+    def test_checkpoint_requires_live_base_ref(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            denied = evaluate(root, "CHECKPOINT")
+            self.assertFalse(denied["allowed"], denied)
+            self.assertIn("BASE_REF_REQUIRED", denied["reason_codes"])
+
+            allowed = evaluate(root, "CHECKPOINT", base_ref="base")
+            self.assertTrue(allowed["allowed"], allowed)
+
+    def test_handover_and_pr_ready_do_not_require_active_execution_lease(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            state_path = root / "relay/STATE.yaml"
+            state = yaml.safe_load(state_path.read_text(encoding="utf-8"))
+            state["execution"] = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+            state["delivery"] = {
+                "required": True,
+                "primary_vehicle": {"provider": "GITHUB", "kind": "PULL_REQUEST", "number": 419},
+            }
+            dump(state_path, state)
+
+            lease_path = root / "relay/LEASES/LEASE-TA-011-01.yaml"
+            lease = yaml.safe_load(lease_path.read_text(encoding="utf-8"))
+            lease["state"] = "RELEASED"
+            dump(lease_path, lease)
+
+            handover = evaluate(root, "HANDOVER")
+            self.assertTrue(handover["allowed"], handover)
+            local_export = evaluate(root, "LOCAL_EXECUTION_EXPORT")
+            self.assertTrue(local_export["allowed"], local_export)
+            draft_update = evaluate(root, "DRAFT_PR_UPDATE")
+            self.assertTrue(draft_update["allowed"], draft_update)
+            pr_ready = evaluate(root, "PR_READY")
+            self.assertTrue(pr_ready["allowed"], pr_ready)
+
+    def test_pr_ready_requires_pull_request_delivery_vehicle(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            result = evaluate(root, "PR_READY")
+            self.assertFalse(result["allowed"], result)
+            self.assertIn("DELIVERY_VEHICLE_REQUIRED", result["reason_codes"])
+
     def test_merge_requires_explicit_owner_delivery_authority(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

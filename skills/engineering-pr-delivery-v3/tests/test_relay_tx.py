@@ -15,6 +15,7 @@ for entry in (SCRIPTS, TESTS):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
+from material_basis import inspect as inspect_material_basis
 from relay_tx import (
     accept_checkpoint,
     activate_lease,
@@ -141,6 +142,13 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             checkpoint = copy.deepcopy(template)
             checkpoint["id"] = "CP-TA-011"
             checkpoint["ep"] = "EP-TA-011"
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["material_result"] = {
+                "head": current_material["head"],
+                "relevant_paths_digest": current_material["relevant_paths_digest"],
+                "dependency_digest": current_material["dependency_digest"],
+            }
             incoming = root / "incoming-checkpoint.yaml"
             dump(incoming, checkpoint)
 
@@ -170,6 +178,89 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
 
+    def test_checkpoint_respects_action_control_and_material_binding(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            _, _, _, _, template, *_ = base_objects()
+            checkpoint = copy.deepcopy(template)
+            checkpoint["id"] = "CP-TA-011"
+            checkpoint["ep"] = "EP-TA-011"
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["material_result"] = {
+                "head": current_material["head"],
+                "relevant_paths_digest": current_material["relevant_paths_digest"],
+                "dependency_digest": current_material["dependency_digest"],
+            }
+            incoming = root / "incoming-checkpoint.yaml"
+            dump(incoming, checkpoint)
+
+            controls_path = root / "relay/CONTROLS/controls.yaml"
+            controls = load_yaml(controls_path)
+            controls["controls"].append({
+                "id": "CTRL-BLOCK-CP",
+                "kind": "QUALITY",
+                "state": "OPEN",
+                "source": {"type": "VALIDATOR", "ref": "synthetic"},
+                "condition": "Checkpoint is blocked for the synthetic test.",
+                "blocks": ["CHECKPOINT"],
+                "permits": ["TEST"],
+                "resolution": {"condition": "Synthetic blocker clears.", "evidence": []},
+            })
+            dump(controls_path, controls)
+            with self.assertRaisesRegex(TransactionError, "CHECKPOINT denied"):
+                accept_checkpoint(
+                    root,
+                    tx_id="TX-CP-BLOCKED",
+                    event_id="EVT-CP-BLOCKED",
+                    actor="agent-x",
+                    checkpoint_path=incoming,
+                    base_ref=base_ref,
+                )
+
+            controls["controls"] = []
+            dump(controls_path, controls)
+            checkpoint["material_result"]["head"] = "deadbeef"
+            dump(incoming, checkpoint)
+            with self.assertRaisesRegex(TransactionError, "material_result.head"):
+                accept_checkpoint(
+                    root,
+                    tx_id="TX-CP-STALE",
+                    event_id="EVT-CP-STALE",
+                    actor="agent-x",
+                    checkpoint_path=incoming,
+                    base_ref=base_ref,
+                )
+
+    def test_checkpoint_acceptance_ids_must_match_ep_contract(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            _, _, _, _, template, *_ = base_objects()
+            checkpoint = copy.deepcopy(template)
+            checkpoint["id"] = "CP-TA-011"
+            checkpoint["ep"] = "EP-TA-011"
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["material_result"] = {
+                "head": current_material["head"],
+                "relevant_paths_digest": current_material["relevant_paths_digest"],
+                "dependency_digest": current_material["dependency_digest"],
+            }
+            checkpoint["acceptance"][0]["id"] = "AC-WRONG"
+            incoming = root / "incoming-checkpoint.yaml"
+            dump(incoming, checkpoint)
+            with self.assertRaisesRegex(TransactionError, "exactly match"):
+                accept_checkpoint(
+                    root,
+                    tx_id="TX-CP-AC-MISMATCH",
+                    event_id="EVT-CP-AC-MISMATCH",
+                    actor="agent-x",
+                    checkpoint_path=incoming,
+                    base_ref=base_ref,
+                )
+
     def test_failed_checkpoint_is_not_accepted(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -178,6 +269,13 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             checkpoint = copy.deepcopy(template)
             checkpoint["id"] = "CP-TA-011"
             checkpoint["ep"] = "EP-TA-011"
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["material_result"] = {
+                "head": current_material["head"],
+                "relevant_paths_digest": current_material["relevant_paths_digest"],
+                "dependency_digest": current_material["dependency_digest"],
+            }
             checkpoint["acceptance"][0]["result"] = "FAIL"
             incoming = root / "incoming-checkpoint.yaml"
             dump(incoming, checkpoint)
@@ -191,6 +289,35 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
             self.assertFalse((root / "relay/CHECKPOINTS/CP-TA-011.yaml").exists())
+
+    def test_local_execution_after_lease_release_uses_checkpoint_ep_context(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            historical_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            historical_ep["id"] = "EP-TA-010"
+            dump(root / "relay/WORK/EP-TA-010.yaml", historical_ep)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-LOCAL",
+                event_id="EVT-RELEASE-LOCAL",
+                actor="agent-x",
+            )
+            result = export_local_execution(
+                root,
+                tx_id="TX-LOCAL-IDLE",
+                event_id="EVT-LOCAL-IDLE",
+                actor="agent-x",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            package = load_yaml(root / "relay/GENERATED/LOCAL_EXECUTION.yaml")
+            self.assertEqual("EP-TA-010", package["execution"]["ep"])
+            self.assertTrue(package["checkpoint"]["handoff"])
+            self.assertEqual(
+                "Read CURRENT_SNAPSHOT and EP.",
+                package["next"]["first_action"],
+            )
 
     def test_control_resolution_changes_control_event_and_snapshot_together(self):
         with tempfile.TemporaryDirectory() as td:
