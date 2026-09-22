@@ -1,3 +1,17 @@
+# V2.5 live-authority compatibility warning
+
+Before using V2.5 as live engineering authority, check the target repository's protocol selection when present:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_default.py <repo-root>
+```
+
+If `relay/PROTOCOL_SELECTION.yaml` says `selected_protocol: V3` and `status: ACTIVE`, **stop using V2.5 for new relay authority**. The preserved `agents/relay/**` tree is read-only migration/history evidence; do not create new DISC/QSET/QUAL/TC/checkpoint/projection/custody authority there.
+
+If no selector exists, or the selector is still `V2_5 / PREPARED`, V2.5 remains the live compatibility protocol. Never infer V3 activation from repository prose, issue text, generated prompts, or a migration report alone.
+
+---
+
 ---
 
 ## REQUEST MODE DISPATCH — FIRST ACTION
