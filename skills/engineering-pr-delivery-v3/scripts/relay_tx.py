@@ -50,6 +50,15 @@ def _event(event_id: str, event_type: str, actor: str, subject: str, basis: list
     return value
 
 
+def _assert_event_ids_available(events: list[dict[str, Any]], event_ids: list[str]) -> None:
+    existing = {str(item.get("event_id")) for item in events}
+    duplicates = sorted(set(event_ids) & existing)
+    if duplicates:
+        raise TransactionError(f"duplicate event id(s): {', '.join(duplicates)}")
+    if len(event_ids) != len(set(event_ids)):
+        raise TransactionError("transaction event ids must be unique")
+
+
 def activate_lease(
     root: Path,
     *,
@@ -66,73 +75,57 @@ def activate_lease(
 ) -> dict[str, Any]:
     state, _ = _authority(root)
     old_lease_id = (state.get("execution") or {}).get("lease")
-    old_lease = None
-    if old_lease_id:
-        old_lease = load_yaml(root / "relay/LEASES" / f"{old_lease_id}.yaml")
-        if old_lease.get("state") == "ACTIVE" and (old_lease.get("executor") or {}).get("id") != executor_id:
-            # Build against a release view so the pure admission helper can evaluate the transfer.
-            old_path = root / "relay/LEASES" / f"{old_lease_id}.yaml"
-            original = old_path.read_bytes()
-            released = copy.deepcopy(old_lease)
-            released["state"] = "RELEASED"
-            old_path.write_bytes(yaml_bytes(released))
-            try:
-                new_lease = build_native_lease(
-                    root,
-                    lease_id=lease_id,
-                    executor_id=executor_id,
-                    method=method,
-                    qualification=qualification,
-                    owner_basis=owner_basis,
-                    branch=branch,
-                )
-            finally:
-                old_path.write_bytes(original)
-        else:
-            new_lease = build_native_lease(
-                root,
-                lease_id=lease_id,
-                executor_id=executor_id,
-                method=method,
-                qualification=qualification,
-                owner_basis=owner_basis,
-                branch=branch,
-            )
-    else:
-        new_lease = build_native_lease(
-            root,
-            lease_id=lease_id,
-            executor_id=executor_id,
-            method=method,
-            qualification=qualification,
-            owner_basis=owner_basis,
-            branch=branch,
-        )
+    old_lease = load_yaml(root / "relay/LEASES" / f"{old_lease_id}.yaml") if old_lease_id else None
+    if old_lease_id == lease_id:
+        raise TransactionError("new lease id must differ from the current lease id")
+    new_lease_path = root / "relay/LEASES" / f"{lease_id}.yaml"
+    if new_lease_path.exists():
+        raise TransactionError(f"new lease id already exists: {lease_id}")
+
+    transfer_from = (
+        str(old_lease_id)
+        if isinstance(old_lease, dict)
+        and old_lease.get("state") == "ACTIVE"
+        and ((old_lease.get("executor") or {}).get("id") != executor_id)
+        else None
+    )
+    new_lease = build_native_lease(
+        root,
+        lease_id=lease_id,
+        executor_id=executor_id,
+        method=method,
+        qualification=qualification,
+        owner_basis=owner_basis,
+        branch=branch,
+        replace_active_lease_id=transfer_from,
+    )
 
     replacements: dict[str, bytes] = {}
-    if old_lease and old_lease_id != lease_id and old_lease.get("state") == "ACTIVE":
+    transfer = bool(old_lease and old_lease_id != lease_id and old_lease.get("state") == "ACTIVE")
+    if transfer:
         released = copy.deepcopy(old_lease)
         released["state"] = "RELEASED"
         replacements[f"relay/LEASES/{old_lease_id}.yaml"] = yaml_bytes(released)
 
     new_state = copy.deepcopy(state)
-    execution = new_state["execution"]
-    execution["lifecycle"] = "ACTIVE"
-    execution["ep"] = (new_lease.get("basis") or {}).get("ep_id")
-    execution["lease"] = lease_id
-    execution["route"] = new_lease.get("route")
+    new_state["execution"] = {
+        "lifecycle": "ACTIVE",
+        "ep": (new_lease.get("basis") or {}).get("ep_id"),
+        "lease": lease_id,
+        "route": new_lease.get("route"),
+    }
     replacements[f"relay/LEASES/{lease_id}.yaml"] = yaml_bytes(new_lease)
     replacements["relay/STATE.yaml"] = yaml_bytes(new_state)
 
     events = _events(root)
-    if any(item.get("event_id") == event_id for item in events):
-        raise TransactionError(f"duplicate event id: {event_id}")
-    if old_lease and old_lease_id != lease_id and old_lease.get("state") == "ACTIVE":
+    release_event_id = event_id + "-REL" if transfer else None
+    _assert_event_ids_available(events, [x for x in [release_event_id, event_id] if x])
+    if transfer:
         events.append(_event(
-            event_id + "-REL",
+            str(release_event_id),
             "LEASE_RELEASED",
             actor,
-            old_lease_id,
+            str(old_lease_id),
             [tx_id, f"transfer-to:{lease_id}"],
             {"successor_lease": lease_id},
         ))
@@ -180,9 +173,8 @@ def release_lease(
     new_state["execution"] = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
 
     events = _events(root)
-    if any(item.get("event_id") == event_id for item in events):
-        raise TransactionError(f"duplicate event id: {event_id}")
-    events.append(_event(event_id, "LEASE_RELEASED", actor, lease_id, [tx_id], {}))
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(event_id, "LEASE_RELEASED", actor, str(lease_id), [tx_id], {}))
 
     return execute(
         root,
@@ -223,14 +215,15 @@ def accept_checkpoint(
     if active_ep and checkpoint.get("ep") != active_ep:
         raise TransactionError("checkpoint EP does not match active execution EP")
 
-    cp_id = checkpoint.get("id")
+    cp_id = str(checkpoint.get("id"))
     target = f"relay/CHECKPOINTS/{cp_id}.yaml"
+    if (root / target).exists():
+        raise TransactionError(f"checkpoint id already exists and is immutable: {cp_id}")
     new_state = copy.deepcopy(state)
     new_state["accepted"]["checkpoint"] = cp_id
 
     events = _events(root)
-    if any(item.get("event_id") == event_id for item in events):
-        raise TransactionError(f"duplicate event id: {event_id}")
+    _assert_event_ids_available(events, [event_id])
     events.append(_event(
         event_id,
         "CHECKPOINT_ACCEPTED",
@@ -271,6 +264,7 @@ def resolve_control(
     item = matches[0]
     if item.get("state") != "OPEN":
         raise TransactionError(f"control {control_id} is not OPEN")
+    evidence = [str(item).strip() for item in evidence if str(item).strip()]
     if not evidence:
         raise TransactionError("control resolution requires durable evidence")
 
@@ -281,8 +275,7 @@ def resolve_control(
             row["resolution"]["evidence"] = list(evidence)
 
     events = _events(root)
-    if any(item.get("event_id") == event_id for item in events):
-        raise TransactionError(f"duplicate event id: {event_id}")
+    _assert_event_ids_available(events, [event_id])
     events.append(_event(
         event_id,
         "CONTROL_RESOLVED",
@@ -311,8 +304,7 @@ def main() -> None:
     parser.add_argument("repo_root", nargs="?", default=".")
     sub = parser.add_subparsers(dest="command", required=True)
 
-    recover = sub.add_parser("recover")
-    recover.add_argument("--actor", default="recovery")
+    sub.add_parser("recover")
 
     activate = sub.add_parser("activate-lease")
     activate.add_argument("--tx-id", required=True)
