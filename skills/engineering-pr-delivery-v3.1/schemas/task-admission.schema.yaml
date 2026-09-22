@@ -1,0 +1,56 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, roadmap, ep, lease, delivery]
+properties:
+  schema_version: {const: relay-v3.1-task-admission}
+  roadmap:
+    type: object
+    additionalProperties: false
+    required: [disposition, new_revision, basis, work_package]
+    properties:
+      disposition: {enum: [MAPPED_EXISTING_WP, REVISED_EXISTING_WP, ADDED_EXECUTION_WP]}
+      new_revision: {type: string, minLength: 1}
+      basis:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      work_package:
+        type: object
+        additionalProperties: false
+        required: [id, title, weight, state, depends_on]
+        properties:
+          id: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+          title: {type: string, minLength: 1}
+          weight: {type: number, exclusiveMinimum: 0}
+          state: {const: ACTIVE}
+          depends_on:
+            type: array
+            uniqueItems: true
+            items: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  ep: {type: object}
+  lease:
+    type: object
+    additionalProperties: false
+    required: [id, executor_id, method]
+    properties:
+      id: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      executor_id: {type: string, minLength: 1}
+      method: {enum: [DETERMINISTIC, QUALIFIED, OWNER_OVERRIDE]}
+      qualification: {type: [object, 'null']}
+      owner_basis: {type: [object, 'null']}
+      branch: {type: [string, 'null']}
+  delivery:
+    type: object
+    additionalProperties: false
+    required: [required, primary_vehicle]
+    properties:
+      required: {type: boolean}
+      primary_vehicle:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [provider, kind, number]
+        properties:
+          provider: {type: string, minLength: 1}
+          kind: {enum: [ISSUE, PULL_REQUEST]}
+          number: {type: integer, minimum: 1}
+additionalProperties: false

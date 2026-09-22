@@ -1,0 +1,30 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, request_id, status, observed_head, environment, command_results, failures, artifacts]
+properties:
+  schema_version: {const: relay-v3.1-local-execution-result}
+  authority: {const: EXTERNAL_EXECUTION_EVIDENCE}
+  request_id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  status: {enum: [PASS, FAIL, BLOCKED, NOT_RUN_ENVIRONMENT, NOT_RUN_INFRASTRUCTURE, HEAD_MISMATCH]}
+  observed_head: {type: string, minLength: 7}
+  environment:
+    type: object
+    minProperties: 1
+  command_results:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [step_id, status, exit_code, summary]
+      properties:
+        step_id: {type: string, minLength: 1}
+        status: {enum: [PASS, FAIL, BLOCKED, NOT_RUN]}
+        exit_code: {type: [integer, 'null']}
+        summary: {type: string, minLength: 1}
+  failures:
+    type: array
+    items: {type: string, minLength: 1}
+  artifacts:
+    type: array
+    items: {type: string, minLength: 1}
+additionalProperties: false

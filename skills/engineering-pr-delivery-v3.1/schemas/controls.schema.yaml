@@ -1,0 +1,50 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, controls]
+properties:
+  schema_version: {const: relay-v3.1-controls}
+  controls:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, kind, state, source, condition, blocks, permits, resolution]
+      properties:
+        id: {type: string, pattern: '^CTRL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        kind: {enum: [PROTOCOL, COLLISION, DEPENDENCY, DELIVERY, QUALITY, OWNER]}
+        state: {enum: [OPEN, RESOLVED, SUPERSEDED]}
+        source:
+          type: object
+          additionalProperties: false
+          required: [type, ref]
+          properties:
+            type: {enum: [OWNER, REPOSITORY, PROVIDER, VALIDATOR]}
+            ref: {type: string, minLength: 1}
+        condition: {type: string, minLength: 1}
+        blocks:
+          type: array
+          uniqueItems: true
+          items:
+            enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK, PROTOCOL_CUTOVER]
+        permits:
+          type: array
+          uniqueItems: true
+          items:
+            enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK, PROTOCOL_CUTOVER]
+        tracking:
+          type: object
+          additionalProperties: false
+          required: [kind, id]
+          properties:
+            kind: {enum: [PENDING, KNOWN_ISSUE]}
+            id: {type: string, pattern: '^(PEND|KI)-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        resolution:
+          type: object
+          additionalProperties: false
+          required: [condition, evidence]
+          properties:
+            condition: {type: string, minLength: 1}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+additionalProperties: false

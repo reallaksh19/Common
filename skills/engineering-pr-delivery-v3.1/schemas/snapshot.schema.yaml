@@ -1,0 +1,126 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, generated_from, owner, programme, execution, scope, material, evidence, controls, delivery, next, handoff]
+properties:
+  schema_version: {const: relay-v3.1-snapshot}
+  authority: {const: DERIVED_READ_MODEL}
+  generated_from:
+    type: object
+    additionalProperties: false
+    required: [roadmap_revision, state_digest, material_basis, coordination_head]
+    properties:
+      roadmap_revision: {type: string, minLength: 1}
+      state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      material_basis:
+        type: object
+        additionalProperties: false
+        required: [head, tree_digest, relevant_paths_digest, dependency_digest]
+        properties:
+          head: {type: string, minLength: 7}
+          tree_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      coordination_head: {type: string, minLength: 7}
+  owner:
+    type: object
+    additionalProperties: false
+    required: [outcome, current_goal]
+    properties:
+      outcome: {type: string, minLength: 1}
+      current_goal: {type: string, minLength: 1}
+  programme:
+    type: object
+    additionalProperties: false
+    required: [accepted_progress, completed_work, remaining_work]
+    properties:
+      accepted_progress: {type: number, minimum: 0, maximum: 100}
+      completed_work:
+        type: array
+        uniqueItems: true
+        items: {type: string, pattern: '^WP-'}
+      remaining_work:
+        type: array
+        uniqueItems: true
+        items: {type: string, pattern: '^WP-'}
+  execution:
+    type: object
+    additionalProperties: false
+    required: [lifecycle, work_package, ep, lease, executor]
+    properties:
+      lifecycle: {enum: [ACTIVE, PARALLEL, IDLE, TERMINAL, INITIALIZING]}
+      work_package: {type: [string, 'null']}
+      ep: {type: [string, 'null']}
+      lease: {type: [string, 'null']}
+      executor: {type: [string, 'null']}
+  scope:
+    type: object
+    additionalProperties: false
+    required: [allowed_writes, protected, prohibited]
+    properties:
+      allowed_writes:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      protected:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      prohibited:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  material:
+    type: object
+    additionalProperties: false
+    required: [base, head, relevant_paths_digest, dependency_digest]
+    properties:
+      base: {type: string, minLength: 7}
+      head: {type: string, minLength: 7}
+      relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  evidence:
+    type: object
+    additionalProperties: false
+    required: [latest_checkpoint, latest_material_validation]
+    properties:
+      latest_checkpoint: {type: [string, 'null']}
+      latest_material_validation: {type: object}
+  controls:
+    type: object
+    additionalProperties: false
+    required: [execution_blockers, handover_blockers, delivery_blockers, informational]
+    properties:
+      execution_blockers: {type: array, items: {type: string}}
+      handover_blockers: {type: array, items: {type: string}}
+      delivery_blockers: {type: array, items: {type: string}}
+      informational: {type: array, items: {type: string}}
+  delivery:
+    type: object
+    additionalProperties: false
+    required: [issue, pr, lifecycle, merge_authorized]
+    properties:
+      issue: {type: [integer, string, 'null']}
+      pr: {type: [integer, string, 'null']}
+      lifecycle: {type: string, minLength: 1}
+      merge_authorized: {type: boolean}
+  next:
+    type: object
+    additionalProperties: false
+    required: [immediate_material_action, delivery_action, stop_conditions]
+    properties:
+      immediate_material_action: {type: [string, 'null']}
+      delivery_action: {type: [string, 'null']}
+      stop_conditions:
+        type: array
+        items: {type: string, minLength: 1}
+  handoff:
+    type: object
+    additionalProperties: false
+    required: [zero_context_takeover_possible, reconstruction_sources]
+    properties:
+      zero_context_takeover_possible: {type: boolean}
+      reconstruction_sources:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+additionalProperties: false

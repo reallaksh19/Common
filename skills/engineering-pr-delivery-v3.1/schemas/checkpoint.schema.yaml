@@ -1,0 +1,78 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, ep, material_result, acceptance, validation, quality, known_limitations, discoveries, handoff]
+properties:
+  schema_version: {const: relay-v3.1-checkpoint}
+  id: {type: string, pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  material_result:
+    type: object
+    additionalProperties: false
+    required: [head, relevant_paths_digest, dependency_digest]
+    properties:
+      head: {type: string, minLength: 7}
+      relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  acceptance:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, result, evidence]
+      properties:
+        id: {type: string, pattern: '^AC-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        result: {enum: [PASS, FAIL]}
+        evidence:
+          type: array
+          minItems: 1
+          items: {type: string, minLength: 1}
+  validation:
+    type: object
+    additionalProperties: false
+    required: [focused_tests, spec_delivery, full_guardrails]
+    properties:
+      focused_tests: {enum: [PASS, FAIL, NOT_APPLICABLE]}
+      spec_delivery: {enum: [PASS, FAIL, NOT_APPLICABLE]}
+      full_guardrails: {enum: [PASS, FAIL, NOT_APPLICABLE]}
+  quality:
+    type: object
+    additionalProperties: false
+    required: [policy, result]
+    properties:
+      policy: {enum: [LOW, STANDARD, HIGH_RISK, CRITICAL]}
+      result: {enum: [CLEAR, BLOCKED]}
+  known_limitations:
+    type: array
+    items: {type: string, minLength: 1}
+  discoveries:
+    type: array
+    items: {type: string, minLength: 1}
+  handoff:
+    type: object
+    additionalProperties: false
+    required: [what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action]
+    properties:
+      what_changed:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      what_is_true_now:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      what_remains_uncertain:
+        type: array
+        items: {type: string, minLength: 1}
+      do_not_break:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      attempted_and_rejected:
+        type: array
+        items: {type: string, minLength: 1}
+      resume_from:
+        type: array
+        items: {type: string, minLength: 1}
+      first_successor_action: {type: string, minLength: 1}
+additionalProperties: false

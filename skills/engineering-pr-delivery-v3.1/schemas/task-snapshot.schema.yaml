@@ -1,0 +1,111 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, source_protocol, identity, purpose, lineage, parent_issue, parent_issue_progress, current_task_progress, offloads, pending_items, known_issues, improvement_vs_original_issue, scope, inputs, benchmarks, execution, material, acceptance, controls, knowledge_state, negative_knowledge, next, reconstruction_sources]
+properties:
+  schema_version: {const: relay-v3.1-task-snapshot}
+  authority: {const: DERIVED_READ_MODEL}
+  source_protocol: {enum: [V2_5, V3_1]}
+  identity:
+    type: object
+    required: [work_package, ep, issue, delivery_vehicle]
+  purpose:
+    type: object
+    required: [programme_outcome, current_goal, task_outcome, why_this_task_exists]
+  lineage:
+    type: object
+    required: [predecessor_checkpoint, upstream_dependencies, roadmap_admission]
+  parent_issue:
+    type: object
+    additionalProperties: false
+    required: [repository, number, title, state, url, baseline, current, updates, disposition, relationships]
+    properties:
+      repository: {type: [string, 'null']}
+      number: {type: [integer, 'null'], minimum: 1}
+      title: {type: [string, 'null']}
+      state: {type: [string, 'null']}
+      url: {type: [string, 'null']}
+      baseline: {type: [object, 'null']}
+      current: {type: [object, 'null']}
+      updates: {type: array}
+      disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+      relationships: {type: array}
+  parent_issue_progress:
+    type: object
+    additionalProperties: false
+    required: [checklist, summary]
+    properties:
+      checklist: {type: array}
+      summary:
+        type: object
+        additionalProperties: false
+        required: [complete, partial, pending, blocked, deferred, not_applicable, unknown, total]
+        properties:
+          complete: {type: integer, minimum: 0}
+          partial: {type: integer, minimum: 0}
+          pending: {type: integer, minimum: 0}
+          blocked: {type: integer, minimum: 0}
+          deferred: {type: integer, minimum: 0}
+          not_applicable: {type: integer, minimum: 0}
+          unknown: {type: integer, minimum: 0}
+          total: {type: integer, minimum: 0}
+  current_task_progress:
+    type: object
+    additionalProperties: false
+    required: [checklist, summary]
+    properties:
+      checklist: {type: array}
+      summary:
+        type: object
+        additionalProperties: false
+        required: [complete, partial, pending, blocked, total]
+        properties:
+          complete: {type: integer, minimum: 0}
+          partial: {type: integer, minimum: 0}
+          pending: {type: integer, minimum: 0}
+          blocked: {type: integer, minimum: 0}
+          total: {type: integer, minimum: 0}
+  offloads: {type: array}
+  pending_items: {type: array}
+  known_issues: {type: array}
+  improvement_vs_original_issue:
+    type: object
+    additionalProperties: false
+    required: [baseline_digest, items]
+    properties:
+      baseline_digest: {type: [string, 'null']}
+      items: {type: array}
+  scope:
+    type: object
+    required: [write, read, protected, prohibited]
+  inputs: {type: array}
+  benchmarks: {type: array}
+  benchmark_debt:
+    type: object
+    required: [required_missing, stale, optional]
+  execution:
+    type: object
+    required: [lifecycle, lease_or_custody, executor, route, branch]
+  material:
+    type: object
+    required: [base, current_head]
+  acceptance: {type: array}
+  controls:
+    type: object
+    required: [material_write, checkpoint, handover, pr_ready, merge, release]
+  knowledge_state:
+    type: object
+    required: [known_true, known_false, unknown, assumptions]
+  negative_knowledge: {type: array}
+  preserve:
+    type: object
+    required: [accepted_do_not_reopen]
+  history:
+    type: object
+    required: [recent_events]
+  next:
+    type: object
+    required: [immediate_action, next_value_frontier, stop_conditions]
+  reconstruction_sources:
+    type: array
+    minItems: 1
+additionalProperties: false

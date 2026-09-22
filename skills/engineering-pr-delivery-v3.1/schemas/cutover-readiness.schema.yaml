@@ -1,0 +1,25 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, assessed_at, ready, checks, basis]
+properties:
+  schema_version: {const: relay-v3.1-cutover-readiness}
+  authority: {const: DERIVED_CUTOVER_READINESS}
+  assessed_at: {type: string, format: date-time}
+  ready: {type: boolean}
+  checks:
+    type: object
+    additionalProperties: false
+    required: [v3_conformance, legacy_digest_unchanged, source_validation, migration_control_resolved, roadmap_intelligence_continuity, native_lifecycle_ready, protocol_selection_prepared]
+    properties:
+      v3_conformance: {enum: [PASS, FAIL]}
+      legacy_digest_unchanged: {enum: [PASS, FAIL]}
+      source_validation: {enum: [PASS, FAIL]}
+      migration_control_resolved: {enum: [PASS, FAIL]}
+      roadmap_intelligence_continuity: {enum: [PASS, FAIL]}
+      native_lifecycle_ready: {enum: [PASS, FAIL]}
+      protocol_selection_prepared: {enum: [PASS, FAIL]}
+  basis:
+    type: array
+    minItems: 1
+    items: {type: string, minLength: 1}
+additionalProperties: false
