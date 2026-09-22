@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, roadmap, execution, accepted, controls, delivery, generated]
 properties:
-  schema_version: {const: relay-v3}
+  schema_version: {const: relay-v3.1}
   roadmap:
     type: object
     additionalProperties: false

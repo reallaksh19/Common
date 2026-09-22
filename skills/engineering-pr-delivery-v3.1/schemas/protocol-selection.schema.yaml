@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, selected_protocol, status, legacy, v3, cutover]
 properties:
-  schema_version: {const: relay-v3-protocol-selection}
+  schema_version: {const: relay-v3.1-protocol-selection}
   selected_protocol: {enum: [V2_5, V3]}
   status: {enum: [PREPARED, ACTIVE, ROLLED_BACK]}
   legacy:

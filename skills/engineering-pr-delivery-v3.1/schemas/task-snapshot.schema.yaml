@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, source_protocol, identity, purpose, lineage, parent_issue, parent_issue_progress, current_task_progress, offloads, pending_items, known_issues, improvement_vs_original_issue, scope, inputs, benchmarks, execution, material, acceptance, controls, knowledge_state, negative_knowledge, next, reconstruction_sources]
 properties:
-  schema_version: {const: relay-v3-task-snapshot}
+  schema_version: {const: relay-v3.1-task-snapshot}
   authority: {const: DERIVED_READ_MODEL}
   source_protocol: {enum: [V2_5, V3]}
   identity:

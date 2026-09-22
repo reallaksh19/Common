@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, source_protocol, native_lease, may_authorize_v3_actions, route, executor, basis, qualification, source_evidence, validation]
 properties:
-  schema_version: {const: relay-v3-v25-lease-view}
+  schema_version: {const: relay-v3.1-v25-lease-view}
   authority: {const: DERIVED_COMPATIBILITY_VIEW}
   source_protocol: {const: '2.5'}
   native_lease: {const: false}

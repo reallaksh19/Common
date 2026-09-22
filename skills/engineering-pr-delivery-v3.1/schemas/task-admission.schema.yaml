@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, roadmap, ep, lease, delivery]
 properties:
-  schema_version: {const: relay-v3-task-admission}
+  schema_version: {const: relay-v3.1-task-admission}
   roadmap:
     type: object
     additionalProperties: false
