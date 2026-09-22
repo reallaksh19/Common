@@ -537,7 +537,7 @@ def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]
 
     handover_mechanism = V25_ROOT / "scripts/handover_planning.py"
     task_identity = task.get("identity") or {}
-    task_present = bool(task_identity.get("ep") or task_identity.get("work_package"))
+    task_present = bool(task_identity.get("ep"))
     intelligence = bool(task.get("inputs") or task.get("benchmarks") or (task.get("history") or {}).get("recent_events") or (task.get("acceptance") or []))
     # An idle repository may legitimately have no current task-local intelligence.
     # Continuity means the handover mechanism remains available and, when a task
