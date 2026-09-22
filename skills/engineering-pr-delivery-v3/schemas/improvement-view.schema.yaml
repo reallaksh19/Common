@@ -1,0 +1,24 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, source_protocol, task, checkpoint, from, to, improvement, roadmap_effect, not_improved, still_not_proved, new_questions, reconstruction_sources]
+properties:
+  schema_version: {const: relay-v3-improvement-view}
+  authority: {const: DERIVED_READ_MODEL}
+  source_protocol: {enum: [V2_5, V3]}
+  task: {type: [string, 'null']}
+  checkpoint: {type: [string, 'null']}
+  from: {type: object}
+  to: {type: object}
+  improvement:
+    type: object
+    required: [capability_added, capability_strengthened, evidence_added, understanding_improved, downstream_unlocked, controls_resolved, controls_created]
+  roadmap_effect:
+    type: object
+    required: [concept_change, execution_disposition, roadmap_revision]
+  not_improved: {type: array}
+  still_not_proved: {type: array}
+  new_questions: {type: array}
+  reconstruction_sources:
+    type: array
+    minItems: 1
+additionalProperties: false
