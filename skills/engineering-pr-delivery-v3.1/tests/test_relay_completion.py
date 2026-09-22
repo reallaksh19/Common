@@ -28,6 +28,7 @@ from relay_tx import (
 )
 from test_handover_context import install_standalone, target_observation
 from test_relay_can import WRITE_PATH, prepare_git
+from test_relay_tx import accept_current_checkpoint_and_reconcile
 from test_v3_foundation import DIGEST, dump
 from transactionlib import TransactionError
 from v3lib import load_events, load_yaml
@@ -154,26 +155,7 @@ class RelayCompletionTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             install_standalone(root)
-            state = load_yaml(root / "relay/STATE.yaml")
-            roadmap = load_yaml(root / state["roadmap"]["path"])
-            reconciliation = {
-                "schema_version": "relay-v3.1-roadmap-reconciliation",
-                "authority": "PROPOSED_RECONCILIATION",
-                "expected_revision": roadmap["revision"],
-                "disposition": "NO_CHANGE",
-                "basis": ["No roadmap concept change is required for this clean handover."],
-                "roadmap_after": roadmap,
-            }
-            reconciliation_path = root / "handover-roadmap-reconciliation.yaml"
-            dump(reconciliation_path, reconciliation)
-            reconcile_roadmap(
-                root,
-                tx_id="TX-HANDOVER-ROADMAP",
-                event_id="EVT-HANDOVER-ROADMAP",
-                actor="agent-x",
-                reconciliation_path=reconciliation_path,
-                base_ref=base_ref,
-            )
+            accept_current_checkpoint_and_reconcile(root, base_ref)
             plan_handover(
                 root,
                 tx_id="TX-HANDOVER-OFFER",
