@@ -4,7 +4,7 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 through V3-6 IMPLEMENTED / NOT YET DEFAULT.**
+**V3-1 through V3-7 IMPLEMENTED / NOT YET DEFAULT.**
 
 V2.5 remains the active compatibility protocol while V3 is introduced incrementally. Do not silently reinterpret an existing V2.5 repository as V3.
 
@@ -144,7 +144,41 @@ Key semantics:
 - mixed before/after state is rolled back;
 - an external/unknown target mutation is never auto-overwritten during recovery.
 
+## Plan for Handover / three-pass integration
+
+V3 does not redefine the standalone three-pass protocol. It freezes relay truth into:
+
+```text
+relay/GENERATED/HANDOVER_CONTEXT.yaml
+relay/GENERATED/THREE_PASS_REQUEST.yaml
+relay/GENERATED/THREE_PASS_REQUEST.md
+```
+
+Generation requires an action-authorized HANDOVER and a normalized provider-readback target.
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/plan_handover.py . \
+  --tx-id TX-HANDOVER-001 \
+  --event-id EVT-HANDOVER-001 \
+  --actor agent-A \
+  --target-observation provider-target.yaml \
+  --base-ref origin/main \
+  --complex
+```
+
+The context is structurally partitioned:
+- `blind_context` — programme/local responsibility and stable constraints for Prompt 0.5 / Prompt 1;
+- `reality_context` — active execution/material/control/delivery truth reserved for Prompt 2 onward;
+- `accumulated_learning` — accepted checkpoint history/learning, not action authority.
+
+The request points to the canonical standalone launcher/schema/validator and requires a fresh current-`main` schema fetch at actual prompt-generation time. It never caches or reproduces the five-prompt schema. Complex mode preserves visible Q1–Q5 in Prompt 1 exactly as required by the live standalone schema.
+
+A failed/unverified handover plan can deny HANDOVER but does not itself deny MATERIAL_WRITE.
+
+See `operating-model/three-pass-integration.md`. The richer handover-content redesign tracked separately in Common issue #420 remains separately owned.
+
 ## Architectural invariant
+
 
 **Execution safety is synchronous. Handover quality is deterministically derivable. Delivery synchronization may be eventually consistent until the requested delivery action requires it.**
 
