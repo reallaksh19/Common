@@ -203,7 +203,7 @@ class RelayCanTests(unittest.TestCase):
                 "method": "OWNER_OVERRIDE",
                 "result": "PASS",
                 "repository_only": False,
-                "qualification": {"required": False, "qset": None, "evaluator": None, "result": None},
+                "qualification": {"required": False, "qset": None, "evaluator": None, "result": None, "evidence": []},
                 "owner_basis": {
                     "direct_utterance_digest": DIGEST,
                     "session_timestamp": "2026-09-22T03:29:06Z",
