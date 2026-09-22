@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import re
@@ -49,10 +50,30 @@ def schema(name: str) -> dict[str, Any]:
     return load_yaml(SCHEMAS / f"{name}.schema.yaml")
 
 
+def _native_v3_compat(value: Any, name: str) -> Any:
+    """Return an in-memory V3->V3.1 compatibility view without rewriting repository truth."""
+    if not isinstance(value, dict):
+        return value
+    version = str(value.get("schema_version") or "")
+    if version == "relay-v3":
+        compatible_version = "relay-v3.1"
+    elif version.startswith("relay-v3-"):
+        compatible_version = "relay-v3.1-" + version[len("relay-v3-"):]
+    else:
+        return value
+
+    compatible = copy.deepcopy(value)
+    compatible["schema_version"] = compatible_version
+    if name == "protocol-selection" and compatible.get("selected_protocol") == "V3":
+        compatible["selected_protocol"] = "V3_1"
+    return compatible
+
+
 def validate_schema(name: str, value: Any, label: str) -> list[str]:
     validator = Draft202012Validator(schema(name), format_checker=FormatChecker())
+    candidate = _native_v3_compat(value, name)
     errors = []
-    for error in sorted(validator.iter_errors(value), key=lambda item: list(item.path)):
+    for error in sorted(validator.iter_errors(candidate), key=lambda item: list(item.path)):
         where = ".".join(str(part) for part in error.path)
         errors.append(f"{label}{'.' + where if where else ''}: {error.message}")
     return errors

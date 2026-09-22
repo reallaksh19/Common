@@ -123,7 +123,9 @@ def _protocol_state(root: Path) -> tuple[bool, str]:
     selection = load_yaml(selection_path)
     selected = str(selection.get("selected_protocol") or "")
     status = str(selection.get("status") or "")
-    return selected == "V3_1" and status == "ACTIVE", f"{selected}:{status}"
+    live = selected in {"V3", "V3_1"} and status == "ACTIVE"
+    suffix = ":COMPATIBLE_NATIVE_CORE" if selected == "V3" and live else ""
+    return live, f"{selected}:{status}{suffix}"
 
 
 def evaluate(

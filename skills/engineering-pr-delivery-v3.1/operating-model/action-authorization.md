@@ -18,6 +18,12 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py PR_READY <repo-r
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root>
 ```
 
+## Native-core compatibility
+
+`relay.can(action)` evaluates the stable native safety core. A repository whose durable selector is `V3 / ACTIVE` is a supported compatibility basis for current V3.1 tooling when the native foundation and frozen legacy-history invariants validate. The selector is not rewritten just to consume a newer implementation.
+
+Implementation-version drift is diagnostic coordination information, not a reason to deny ordinary product work. `PROTOCOL_NOT_ACTIVE` remains appropriate for genuinely legacy/staged states such as `V2_5 / PREPARED`, not for an already-active native V3 repository.
+
 ## Stable action vocabulary
 
 ```text

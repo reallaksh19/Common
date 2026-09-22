@@ -2,7 +2,11 @@
 
 ## Purpose
 
-Migration preserves V2.5 engineering history while moving **present authority** to the smaller V3 model.
+This document governs **V2.5 -> native Relay** cutover only.
+
+An already-active native `V3 / ACTIVE` repository MUST NOT be routed back through this migration flow merely to consume current V3.1 tooling. Current V3.1 treats that state as a compatible native core, preserves the selector/history as-is, and establishes newer semantics prospectively on their natural transitions.
+
+Migration preserves V2.5 engineering history while moving **present authority** to the smaller native model.
 
 The migration invariant is:
 
