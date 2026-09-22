@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -32,6 +33,10 @@ OWNER_OVERRIDE_ACTIONS = [
 
 class AdmissionError(RuntimeError):
     pass
+
+
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _current(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any] | None]:
@@ -69,6 +74,9 @@ def build_native_lease(
     state_override: dict[str, Any] | None = None,
     ep_override: dict[str, Any] | None = None,
     current_lease_override: dict[str, Any] | None = None,
+    custody_epoch: int | None = None,
+    recovery_after_seconds: int = 3600,
+    recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
 ) -> dict[str, Any]:
     if state_override is not None or ep_override is not None:
         if not isinstance(state_override, dict) or not isinstance(ep_override, dict):
@@ -131,6 +139,18 @@ def build_native_lease(
         }
 
     execution = state.get("execution") or {}
+    if recovery_after_seconds < 60:
+        raise AdmissionError("recovery_after_seconds must be at least 60")
+    if recovery_policy not in {"MANUAL_ONLY", "TAKEOVER_AFTER_EXPIRY"}:
+        raise AdmissionError("unsupported recovery_policy")
+    if custody_epoch is None:
+        current_epoch = execution.get("custody_epoch")
+        if current_epoch is None:
+            current_epoch = ((current_lease or {}).get("custody") or {}).get("epoch") or 0
+        custody_epoch = int(current_epoch) + 1
+    if custody_epoch < 1:
+        raise AdmissionError("custody_epoch must be positive")
+    now = _now()
     ep_basis = ep.get("basis") or {}
     lease: dict[str, Any] = {
         "schema_version": "relay-v3.1-lease",
@@ -152,6 +172,13 @@ def build_native_lease(
             "result": "PASS",
             "repository_only": method != "OWNER_OVERRIDE",
             "qualification": q,
+        },
+        "custody": {
+            "epoch": int(custody_epoch),
+            "granted_at": now,
+            "renewed_at": now,
+            "recovery_after_seconds": int(recovery_after_seconds),
+            "recovery_policy": recovery_policy,
         },
         "state": "ACTIVE",
         "invalidation": {"reasons": []},
