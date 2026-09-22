@@ -267,7 +267,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     replacements={"relay/ROADMAP/ROADMAP.yaml": yaml_bytes(roadmap)},
                 )
 
-    def test_activate_lease_transfers_exclusive_custody_and_snapshot(self):
+    def test_explicit_recovery_takeover_transfers_exclusive_custody_and_snapshot(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -283,13 +283,14 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 owner_basis=None,
                 branch=None,
                 base_ref=base_ref,
+                recovery_takeover=True,
             )
             self.assertEqual("COMMITTED", result["status"])
             old = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
             new = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
             state = load_yaml(root / "relay/STATE.yaml")
             snapshot = load_yaml(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml")
-            self.assertEqual("RELEASED", old["state"])
+            self.assertEqual("INVALIDATED", old["state"])
             self.assertEqual("ACTIVE", new["state"])
             self.assertEqual("agent-y", new["executor"]["id"])
             self.assertEqual("LEASE-TA-011-02", state["execution"]["lease"])
@@ -667,6 +668,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     owner_basis=None,
                     branch=None,
                     base_ref=base_ref,
+                    recovery_takeover=True,
                     fail_after=1,
                 )
             errors = validate_authority(root)
