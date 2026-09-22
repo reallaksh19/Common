@@ -10,6 +10,8 @@ If `relay/PROTOCOL_SELECTION.yaml` says `selected_protocol: V3` and `status: ACT
 
 If no selector exists, or the selector is still `V2_5 / PREPARED`, V2.5 remains the live compatibility protocol. Never infer V3 activation from repository prose, issue text, generated prompts, or a migration report alone.
 
+Common #421 explicitly preserves V2.5 roadmap admission/reconciliation, `ROADMAP_EVENTS`, checkpoints, progress, discovery, Owner-delta publication, and handover intelligence while generated TASK_SNAPSHOT / IMPROVEMENT_VIEW projections are introduced. A staged V3 execution model must not bypass or retire those mechanisms before the #421 continuity gate is satisfied.
+
 ---
 
 ---
