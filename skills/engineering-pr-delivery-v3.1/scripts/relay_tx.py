@@ -1163,6 +1163,12 @@ def main() -> None:
     else:
         result = close_task(root, tx_id=args.tx_id, event_id=args.event_id, actor=args.actor)
     print(f"{result['id']}: {result['status']}")
+    if args.command == "local-execution":
+        request_path = root / "relay/GENERATED/LOCAL_EXECUTION.md"
+        if not request_path.exists():
+            raise TransactionError("LOCAL_EXECUTION committed without recipient-ready Markdown artifact")
+        print()
+        print(request_path.read_text(encoding="utf-8"), end="")
 
 
 if __name__ == "__main__":

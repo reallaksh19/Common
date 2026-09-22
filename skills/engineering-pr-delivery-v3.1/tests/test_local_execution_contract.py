@@ -46,6 +46,8 @@ class LocalExecutionContractTests(unittest.TestCase):
             self.assertIn("HEAD_MISMATCH", rendered)
             self.assertIn("python -m unittest tests.test_signed_pdf", rendered)
             self.assertEqual("python -m unittest tests.test_signed_pdf", request["steps"][0]["command"])
+            self.assertIn("Return exactly this contract", rendered)
+            self.assertIn("originating owner resumes responsibility", rendered)
 
             result = {
                 "schema_version": "relay-v3.1-local-execution-result",

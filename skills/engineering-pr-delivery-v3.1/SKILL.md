@@ -337,6 +337,8 @@ LOCAL_EXECUTION_EXPORT materializes both relay/GENERATED/LOCAL_EXECUTION.yaml an
 
 The Markdown artifact is the minimum runnable packet to present to the recipient in the same interaction. A pointer to an earlier issue/PR comment is not a substitute for the runnable packet.
 
+The `relay_tx.py local-execution` command prints the committed Markdown packet immediately after the transaction result so the caller cannot mistake a successful export for completion of the communication step. When exact commands are already known, pass every one with repeated `--command`; do not downgrade known executable steps into generic prose.
+
 A bounded local helper does not inherit task custody. LOCAL_EXECUTION_RETURNED records returned external execution evidence; the originating owner resumes responsibility and decides how that evidence affects checkpoint, controls, roadmap, or delivery.
 
 ## Graceful custody release
