@@ -38,6 +38,19 @@ class LeaseAdmissionTests(unittest.TestCase):
             self.assertNotIn("MERGE", lease["authority"]["actions"])
             self.assertEqual([], validate_schema("lease", lease, "LEASE"))
 
+
+    def test_lease_id_path_traversal_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            with self.assertRaisesRegex(AdmissionError, "unsafe characters"):
+                build_native_lease(
+                    root,
+                    lease_id="LEASE-../ESCAPE",
+                    executor_id="agent-x",
+                    method="DETERMINISTIC",
+                )
+
     def test_required_qualification_rejects_deterministic_admission(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
