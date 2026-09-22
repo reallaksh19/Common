@@ -373,7 +373,7 @@ class V25MigrationTests(unittest.TestCase):
             self.assertEqual([], validate_selection(root))
             default = resolve_default(root)
             self.assertEqual("V3", default["selected_protocol"])
-            self.assertEqual("skills/engineering-pr-delivery-v3/SKILL.md", default["skill"])
+            self.assertEqual("skills/engineering-pr-delivery-v3.1/SKILL.md", default["skill"])
             self.assertTrue((root / "relay/MIGRATION/V25_DEPRECATION.md").exists())
 
     def test_post_cutover_legacy_mutation_invalidates_selection(self):

@@ -30,7 +30,7 @@ class LeaseAdmissionTests(unittest.TestCase):
                 executor_id="agent-x",
                 method="DETERMINISTIC",
             )
-            self.assertEqual("relay-v3-lease", lease["schema_version"])
+            self.assertEqual("relay-v3.1-lease", lease["schema_version"])
             self.assertEqual("DETERMINISTIC", lease["admission"]["method"])
             self.assertFalse(lease["admission"]["qualification"]["required"])
             self.assertEqual([], lease["admission"]["qualification"]["evidence"])

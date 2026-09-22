@@ -55,9 +55,9 @@ class MaterialBasisTests(unittest.TestCase):
             _, base_ref = prepare_git(root)
             before = inspect(root, self._ep(root), base_ref)
 
-            target = root / "skills/engineering-pr-delivery-v3/scripts/new_feature.py"
+            target = root / "skills/engineering-pr-delivery-v3.1/scripts/new_feature.py"
             target.write_text("VALUE = 2\n", encoding="utf-8")
-            git(root, "add", "skills/engineering-pr-delivery-v3/scripts/new_feature.py")
+            git(root, "add", "skills/engineering-pr-delivery-v3.1/scripts/new_feature.py")
             git(root, "commit", "-m", "material change")
             material_commit = git(root, "rev-parse", "HEAD")
             after = inspect(root, self._ep(root), base_ref)

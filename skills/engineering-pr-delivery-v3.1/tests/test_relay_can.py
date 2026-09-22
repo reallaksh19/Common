@@ -20,7 +20,7 @@ from validate_foundation import validate
 from test_v3_foundation import DIGEST, dump, materialize
 
 
-WRITE_PATH = "skills/engineering-pr-delivery-v3/scripts/new_feature.py"
+WRITE_PATH = "skills/engineering-pr-delivery-v3.1/scripts/new_feature.py"
 
 
 def git(root: Path, *args: str) -> str:
@@ -29,8 +29,8 @@ def git(root: Path, *args: str) -> str:
 
 def prepare_git(root: Path) -> tuple[str, str]:
     materialize(root)
-    (root / "skills/engineering-pr-delivery-v3/scripts").mkdir(parents=True, exist_ok=True)
-    (root / "skills/engineering-pr-delivery-v3/scripts/base.py").write_text("VALUE = 1\n", encoding="utf-8")
+    (root / "skills/engineering-pr-delivery-v3.1/scripts").mkdir(parents=True, exist_ok=True)
+    (root / "skills/engineering-pr-delivery-v3.1/scripts/base.py").write_text("VALUE = 1\n", encoding="utf-8")
     (root / "deps").mkdir(parents=True, exist_ok=True)
     (root / "deps/compiler.py").write_text("VERSION = 1\n", encoding="utf-8")
     (root / "docs").mkdir(parents=True, exist_ok=True)
@@ -212,7 +212,7 @@ class RelayCanTests(unittest.TestCase):
             lease["scope"] = {
                 "ep_or_task": "EP-TA-011",
                 "branch": "v3/issue-418-foundation",
-                "allowed_writes": ["skills/engineering-pr-delivery-v3/**"],
+                "allowed_writes": ["skills/engineering-pr-delivery-v3.1/**"],
                 "prohibited": ["MERGE", "RELEASE"],
             }
             dump(lease_path, lease)
@@ -283,7 +283,7 @@ class RelayCanTests(unittest.TestCase):
             root = Path(td)
             prepare_git(root)
             dump(root / "relay/PROTOCOL_SELECTION.yaml", {
-                "schema_version": "relay-v3-protocol-selection",
+                "schema_version": "relay-v3.1-protocol-selection",
                 "selected_protocol": "V2_5",
                 "status": "PREPARED",
                 "legacy": {"root": "agents/relay", "tree_digest": "sha256:" + ("a" * 64), "policy": "LIVE_COMPATIBILITY"},

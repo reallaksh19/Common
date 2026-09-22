@@ -311,7 +311,7 @@ class IntelligenceProjectionTests(unittest.TestCase):
             prepare_active_legacy(root)
             stage_v3(root)
             observation = {
-                "schema_version": "relay-v3-parent-issue-observation",
+                "schema_version": "relay-v3.1-parent-issue-observation",
                 "authority": "DERIVED_PROVIDER_OBSERVATION",
                 "provider": "GITHUB",
                 "repository": "example/repo",

@@ -39,7 +39,7 @@ def install_standalone(root: Path) -> None:
 
 def target_observation(root: Path, *, kind: str = "ISSUE", number: int = 418) -> Path:
     target = {
-        "schema_version": "relay-v3-handover-target",
+        "schema_version": "relay-v3.1-handover-target",
         "authority": "PROVIDER_READBACK",
         "provider": "GITHUB",
         "repository": "example/project",

@@ -28,7 +28,7 @@ def dump(path: Path, value) -> None:
 
 def base_objects():
     roadmap = {
-        "schema_version": "relay-v3-roadmap",
+        "schema_version": "relay-v3.1-roadmap",
         "revision": "RM-0012",
         "title": "Synthetic V3 roadmap",
         "owner": {
@@ -41,7 +41,7 @@ def base_objects():
         ],
     }
     state = {
-        "schema_version": "relay-v3",
+        "schema_version": "relay-v3.1",
         "roadmap": {"revision": "RM-0012", "path": "relay/ROADMAP/ROADMAP.yaml"},
         "execution": {
             "lifecycle": "ACTIVE",
@@ -55,7 +55,7 @@ def base_objects():
         "generated": {"snapshot": "relay/GENERATED/CURRENT_SNAPSHOT.yaml"},
     }
     ep = {
-        "schema_version": "relay-v3-ep",
+        "schema_version": "relay-v3.1-ep",
         "id": "EP-TA-011",
         "work_package": "WP-TA-109",
         "outcome": {"statement": "Deliver one bounded V3 foundation slice."},
@@ -63,10 +63,10 @@ def base_objects():
             "predecessor_checkpoint": "CP-TA-010",
             "material_base": "85e59a93d469",
             "protocol_basis": "Common#418",
-            "semantic_dependencies": [{"path": "skills/engineering-pr-delivery-v3", "reason": "Protocol source"}],
+            "semantic_dependencies": [{"path": "skills/engineering-pr-delivery-v3.1", "reason": "Protocol source"}],
         },
         "scope": {
-            "write": ["skills/engineering-pr-delivery-v3/**"],
+            "write": ["skills/engineering-pr-delivery-v3.1/**"],
             "read": ["skills/engineering-pr-delivery-v2.5/**"],
             "protect": ["skills/three-pass-prompt-generator/**"],
             "prohibit": ["Do not make V3 the default protocol in this slice."],
@@ -82,7 +82,7 @@ def base_objects():
         "next": {"first_action": "Validate schemas.", "stop_conditions": ["Authority ambiguity"]},
     }
     lease = {
-        "schema_version": "relay-v3-lease",
+        "schema_version": "relay-v3.1-lease",
         "id": "LEASE-TA-011-01",
         "route": "SERIAL:EP-TA-011",
         "executor": {"id": "agent-x"},
@@ -104,7 +104,7 @@ def base_objects():
         "invalidation": {"reasons": []},
     }
     checkpoint = {
-        "schema_version": "relay-v3-checkpoint",
+        "schema_version": "relay-v3.1-checkpoint",
         "id": "CP-TA-010",
         "ep": "EP-TA-010",
         "material_result": {
@@ -127,9 +127,9 @@ def base_objects():
             "first_successor_action": "Read CURRENT_SNAPSHOT and EP.",
         },
     }
-    controls = {"schema_version": "relay-v3-controls", "controls": []}
+    controls = {"schema_version": "relay-v3.1-controls", "controls": []}
     snapshot = {
-        "schema_version": "relay-v3-snapshot",
+        "schema_version": "relay-v3.1-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "generated_from": {
             "roadmap_revision": "RM-0012",
@@ -156,7 +156,7 @@ def base_objects():
             "executor": "agent-x",
         },
         "scope": {
-            "allowed_writes": ["skills/engineering-pr-delivery-v3/**"],
+            "allowed_writes": ["skills/engineering-pr-delivery-v3.1/**"],
             "protected": ["skills/three-pass-prompt-generator/**"],
             "prohibited": ["Do not make V3 the default protocol in this slice."],
         },
@@ -192,7 +192,7 @@ def base_objects():
         },
     }
     event = {
-        "schema_version": "relay-v3-event",
+        "schema_version": "relay-v3.1-event",
         "event_id": "EVT-0001",
         "type": "EP_CREATED",
         "timestamp": "2026-09-22T03:20:57Z",
@@ -303,7 +303,7 @@ class V3FoundationTests(unittest.TestCase):
         lease["scope"] = {
             "ep_or_task": "EP-TA-011",
             "branch": "v3/test",
-            "allowed_writes": ["skills/engineering-pr-delivery-v3/**"],
+            "allowed_writes": ["skills/engineering-pr-delivery-v3.1/**"],
             "prohibited": ["MERGE", "RELEASE"],
         }
         lease["authority"]["actions"].append("MERGE")

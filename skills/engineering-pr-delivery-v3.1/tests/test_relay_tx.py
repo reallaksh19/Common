@@ -61,7 +61,7 @@ def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") 
     dump(state_path, state)
     dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", build_snapshot(root, base_ref))
     observation = {
-        "schema_version": "relay-v3-delivery-status",
+        "schema_version": "relay-v3.1-delivery-status",
         "authority": "PROVIDER_READBACK",
         "vehicle": {"provider": "GITHUB", "kind": "PULL_REQUEST", "number": 419},
         "observed_at": "2026-09-22T03:57:35Z",
@@ -92,7 +92,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             new_ep = copy.deepcopy(source_ep)
             new_ep["id"] = "EP-TA-012"
             request = {
-                "schema_version": "relay-v3-task-admission",
+                "schema_version": "relay-v3.1-task-admission",
                 "roadmap": {
                     "disposition": "MAPPED_EXISTING_WP",
                     "new_revision": "RM-0013",
@@ -431,7 +431,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", handover["status"])
             text = (root / "relay/GENERATED/HANDOVER.md").read_text(encoding="utf-8")
-            self.assertIn("Engineering Relay V3 Handover", text)
+            self.assertIn("Engineering Relay V3.1 Handover", text)
             self.assertIn("Reconstruction sources", text)
 
             local = export_local_execution(

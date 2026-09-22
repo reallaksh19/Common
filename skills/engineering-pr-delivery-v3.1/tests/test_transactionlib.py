@@ -60,7 +60,7 @@ class TransactionJournalTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             materialize(root)
-            outside = root.parent / "relay-v3-outside.txt"
+            outside = root.parent / "relay-v3.1-outside.txt"
             if outside.exists():
                 outside.unlink()
             with self.assertRaisesRegex((TransactionError, ValueError), "escapes repository root"):
@@ -69,7 +69,7 @@ class TransactionJournalTests(unittest.TestCase):
                     tx_id="TX-SAFE-001",
                     command="RESOLVE_CONTROL",
                     actor="agent-x",
-                    replacements={"../relay-v3-outside.txt": b"escape"},
+                    replacements={"../relay-v3.1-outside.txt": b"escape"},
                 )
             self.assertFalse(outside.exists())
 
