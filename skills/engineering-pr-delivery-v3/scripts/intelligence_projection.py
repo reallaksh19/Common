@@ -369,11 +369,17 @@ def _v3_task(root: Path, base_ref: str | None) -> dict[str, Any]:
     return task
 
 
-def build_task(root: Path, base_ref: str | None = None) -> dict[str, Any]:
+def _use_v3_source(root: Path) -> bool:
     selection = resolve_protocol(root)
     if selection.get("selected_protocol") == "V3" and selection.get("status") == "ACTIVE":
-        return _v3_task(root, base_ref)
-    return _v25_task(root)
+        return True
+    if (root / V25_STATE).exists():
+        return False
+    return (root / "relay/STATE.yaml").exists()
+
+
+def build_task(root: Path, base_ref: str | None = None) -> dict[str, Any]:
+    return _v3_task(root, base_ref) if _use_v3_source(root) else _v25_task(root)
 
 
 def _v25_improvement(root: Path) -> dict[str, Any]:
@@ -459,10 +465,7 @@ def _v3_improvement(root: Path) -> dict[str, Any]:
 
 
 def build_improvement(root: Path) -> dict[str, Any]:
-    selection = resolve_protocol(root)
-    if selection.get("selected_protocol") == "V3" and selection.get("status") == "ACTIVE":
-        return _v3_improvement(root)
-    return _v25_improvement(root)
+    return _v3_improvement(root) if _use_v3_source(root) else _v25_improvement(root)
 
 
 def _run_v25(root: Path, script: str) -> tuple[bool, str]:
