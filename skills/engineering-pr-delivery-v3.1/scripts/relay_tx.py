@@ -24,6 +24,43 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _parse_timestamp(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def _custody_epoch(state: dict[str, Any]) -> int | None:
+    value = (state.get("execution") or {}).get("custody_epoch")
+    return int(value) if value is not None else None
+
+
+def _require_expected_custody_epoch(state: dict[str, Any], expected: int | None) -> None:
+    execution = state.get("execution") or {}
+    current = _custody_epoch(state)
+    if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or current is None:
+        return
+    if expected is None:
+        raise TransactionError("CUSTODY_EPOCH_REQUIRED")
+    if int(expected) != current:
+        raise TransactionError(f"STALE_CUSTODY_EPOCH: expected {expected}, current {current}")
+
+
+def _recovery_eligible(lease: dict[str, Any], observed_at: str | None = None) -> tuple[bool, str]:
+    custody = lease.get("custody") or {}
+    if not custody:
+        return True, "LEGACY_EXPLICIT_RECOVERY"
+    if custody.get("recovery_policy") != "TAKEOVER_AFTER_EXPIRY":
+        return False, "RECOVERY_POLICY_MANUAL_ONLY"
+    renewed = str(custody.get("renewed_at") or "")
+    seconds = int(custody.get("recovery_after_seconds") or 0)
+    if not renewed or seconds < 60:
+        return False, "RECOVERY_METADATA_INVALID"
+    observed = _parse_timestamp(observed_at) if observed_at else datetime.now(timezone.utc)
+    expires = _parse_timestamp(renewed).timestamp() + seconds
+    if observed.timestamp() < expires:
+        return False, "PREDECESSOR_LEASE_NOT_EXPIRED"
+    return True, "LEASE_EXPIRED"
+
+
 def _authority(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     errors = validate_authority(root)
     if errors:
@@ -79,8 +116,15 @@ def _require_action(
     *,
     path: str | None = None,
     base_ref: str | None = None,
+    expected_custody_epoch: int | None = None,
 ) -> None:
-    result = can_action(root, action, path=path, base_ref=base_ref)
+    result = can_action(
+        root,
+        action,
+        path=path,
+        base_ref=base_ref,
+        expected_custody_epoch=expected_custody_epoch,
+    )
     if not result["allowed"]:
         raise TransactionError(f"{action} denied: {', '.join(result['reason_codes'])}")
 
