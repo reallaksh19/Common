@@ -1,0 +1,44 @@
+schema_version: relay-v3-status-publication-policy
+enabled: true
+score_threshold: 10
+
+volume_triggers:
+  material_lines_changed: 300
+  material_files_touched: 5
+  material_files_created: 3
+  material_commits: 3
+
+weights:
+  material_lines_per_100: 1
+  material_file_touched: 1
+  material_file_created: 2
+  acceptance_state_change: 5
+  benchmark_state_change: 5
+  public_contract_change: 8
+  pending_known_issue_change: 5
+  parent_issue_change: 10
+  roadmap_reconciliation_request: 10
+  offload_change: 5
+
+hard_triggers:
+  acceptance_state_changed: true
+  benchmark_state_changed: true
+  pending_known_issue_changed: true
+  parent_issue_changed: true
+  roadmap_reconciliation_requested: true
+  public_contract_changed: true
+  offload_changed: true
+  before_checkpoint: true
+  before_handover: true
+  before_pr_ready: true
+  before_task_exit: true
+
+exclusions:
+  paths:
+    - relay/GENERATED/**
+    - build/**
+    - dist/**
+    - vendor/**
+    - node_modules/**
+    - '**/*.lock'
+    - '**/__pycache__/**'

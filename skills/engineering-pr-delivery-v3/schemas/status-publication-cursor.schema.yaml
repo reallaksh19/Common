@@ -1,0 +1,41 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, ep, published_at, material_base, head, file_metrics, normalized, prepared_actions, policy_digest]
+properties:
+  schema_version: {const: relay-v3-status-publication-cursor}
+  ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  published_at: {type: string, format: date-time}
+  material_base: {type: string, minLength: 7}
+  head: {type: string, minLength: 7}
+  file_metrics:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [path, status, changed_lines, fingerprint]
+      properties:
+        path: {type: string, minLength: 1}
+        status: {type: string, minLength: 1}
+        changed_lines: {type: integer, minimum: 0}
+        fingerprint: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  normalized:
+    type: object
+    additionalProperties: false
+    required: [acceptance, benchmarks, pending, known_issues, offloads, parent_contract_digest, parent_updates, roadmap_revision]
+    properties:
+      acceptance: {type: array, items: {type: string}}
+      benchmarks: {type: array, items: {type: string}}
+      pending: {type: array, items: {type: string}}
+      known_issues: {type: array, items: {type: string}}
+      offloads: {type: array, items: {type: string}}
+      parent_contract_digest: {type: [string, 'null']}
+      parent_updates: {type: array, items: {type: string}}
+      roadmap_revision: {type: [string, 'null']}
+  prepared_actions:
+    type: object
+    additionalProperties:
+      type: string
+      minLength: 7
+  policy_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  note: {type: [string, 'null']}
+additionalProperties: false
