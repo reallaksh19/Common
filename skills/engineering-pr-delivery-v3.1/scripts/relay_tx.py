@@ -1532,6 +1532,10 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--owner-session-timestamp")
     parser.add_argument("--branch")
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--expected-custody-epoch", type=int)
+    parser.add_argument("--recovery-observed-at")
+    parser.add_argument("--recovery-after-seconds", type=int, default=3600)
+    parser.add_argument("--recovery-policy", choices=["MANUAL_ONLY", "TAKEOVER_AFTER_EXPIRY"], default="TAKEOVER_AFTER_EXPIRY")
     parser.add_argument(
         "--recovery-takeover",
         action="store_true",
@@ -1567,12 +1571,21 @@ def main() -> None:
     activate = sub.add_parser("activate-lease")
     _add_start_args(activate)
 
+    renew = sub.add_parser("renew-lease")
+    renew.add_argument("--tx-id", required=True)
+    renew.add_argument("--event-id", required=True)
+    renew.add_argument("--actor", required=True)
+    renew.add_argument("--expected-custody-epoch", type=int, required=True)
+    renew.add_argument("--base-ref", required=True)
+    renew.add_argument("--renewed-at")
+
     release = sub.add_parser("release-lease")
     release.add_argument("--tx-id", required=True)
     release.add_argument("--event-id", required=True)
     release.add_argument("--actor", required=True)
     release.add_argument("--reason", choices=["HANDOFF", "ADMINISTRATIVE"], default="HANDOFF")
     release.add_argument("--base-ref")
+    release.add_argument("--expected-custody-epoch", type=int)
 
     checkpoint = sub.add_parser("checkpoint")
     checkpoint.add_argument("--tx-id", required=True)
@@ -1580,12 +1593,14 @@ def main() -> None:
     checkpoint.add_argument("--actor", required=True)
     checkpoint.add_argument("--checkpoint", required=True)
     checkpoint.add_argument("--base-ref", required=True)
+    checkpoint.add_argument("--expected-custody-epoch", type=int)
     accept_cp = sub.add_parser("accept-checkpoint")
     accept_cp.add_argument("--tx-id", required=True)
     accept_cp.add_argument("--event-id", required=True)
     accept_cp.add_argument("--actor", required=True)
     accept_cp.add_argument("--checkpoint", required=True)
     accept_cp.add_argument("--base-ref", required=True)
+    accept_cp.add_argument("--expected-custody-epoch", type=int)
 
     control = sub.add_parser("resolve-control")
     control.add_argument("--tx-id", required=True)
@@ -1594,6 +1609,7 @@ def main() -> None:
     control.add_argument("--control-id", required=True)
     control.add_argument("--evidence", action="append", default=[])
     control.add_argument("--base-ref", required=True)
+    control.add_argument("--expected-custody-epoch", type=int)
 
     roadmap = sub.add_parser("reconcile-roadmap")
     roadmap.add_argument("--tx-id", required=True)
@@ -1601,12 +1617,15 @@ def main() -> None:
     roadmap.add_argument("--actor", required=True)
     roadmap.add_argument("--reconciliation", required=True)
     roadmap.add_argument("--base-ref", required=True)
+    roadmap.add_argument("--expected-custody-epoch", type=int)
+    roadmap.add_argument("--change-delta")
 
     handover = sub.add_parser("handover")
     handover.add_argument("--tx-id", required=True)
     handover.add_argument("--event-id", required=True)
     handover.add_argument("--actor", required=True)
     handover.add_argument("--base-ref", required=True)
+    handover.add_argument("--expected-custody-epoch", type=int)
 
     local = sub.add_parser("local-execution")
     local.add_argument("--tx-id", required=True)
@@ -1615,6 +1634,7 @@ def main() -> None:
     local.add_argument("--base-ref", required=True)
     local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
     local.add_argument("--command", action="append", default=[], help="Exact local command to run; repeat for multiple commands.")
+    local.add_argument("--expected-custody-epoch", type=int)
 
     local_result = sub.add_parser("local-execution-result")
     local_result.add_argument("--tx-id", required=True)
@@ -1633,6 +1653,52 @@ def main() -> None:
     close.add_argument("--event-id", required=True)
     close.add_argument("--actor", required=True)
     close.add_argument("--parent-issue-observation")
+    close.add_argument("--expected-custody-epoch", type=int)
+
+    recovery_done = sub.add_parser("recovery-reconstructed")
+    recovery_done.add_argument("--tx-id", required=True)
+    recovery_done.add_argument("--event-id", required=True)
+    recovery_done.add_argument("--actor", required=True)
+    recovery_done.add_argument("--expected-custody-epoch", type=int, required=True)
+    recovery_done.add_argument("--evidence", action="append", default=[])
+
+    change_record = sub.add_parser("record-change")
+    change_record.add_argument("--tx-id", required=True)
+    change_record.add_argument("--event-id", required=True)
+    change_record.add_argument("--actor", required=True)
+    change_record.add_argument("--change-id", required=True)
+    change_record.add_argument("--statement", required=True)
+    change_record.add_argument("--basis", action="append", default=[])
+    change_record.add_argument("--process", choices=["PROMPT_1", "OWNER"], default="PROMPT_1")
+    change_record.add_argument("--expected-custody-epoch", type=int)
+
+    change_verify = sub.add_parser("verify-change")
+    change_verify.add_argument("--tx-id", required=True)
+    change_verify.add_argument("--event-id", required=True)
+    change_verify.add_argument("--actor", required=True)
+    change_verify.add_argument("--change-id", required=True)
+    change_verify.add_argument("--status", choices=["CONFIRMED", "REJECTED"], required=True)
+    change_verify.add_argument("--evidence", action="append", default=[])
+    change_verify.add_argument("--falsifier", action="append", default=[])
+    change_verify.add_argument("--expected-custody-epoch", type=int)
+
+    change_propose = sub.add_parser("propose-change")
+    change_propose.add_argument("--tx-id", required=True)
+    change_propose.add_argument("--event-id", required=True)
+    change_propose.add_argument("--actor", required=True)
+    change_propose.add_argument("--change-id", required=True)
+    change_propose.add_argument("--proposal", required=True)
+    change_propose.add_argument("--authorization-required", choices=["NONE", "OWNER"], required=True)
+    change_propose.add_argument("--expected-custody-epoch", type=int)
+
+    change_authorize = sub.add_parser("authorize-change")
+    change_authorize.add_argument("--tx-id", required=True)
+    change_authorize.add_argument("--event-id", required=True)
+    change_authorize.add_argument("--actor", required=True)
+    change_authorize.add_argument("--change-id", required=True)
+    change_authorize.add_argument("--decision", choices=["GRANT", "DENY"], required=True)
+    change_authorize.add_argument("--owner-utterance-digest", required=True)
+    change_authorize.add_argument("--owner-session-timestamp", required=True)
 
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
@@ -1694,6 +1760,20 @@ def main() -> None:
             branch=args.branch,
             base_ref=args.base_ref,
             recovery_takeover=args.recovery_takeover,
+            expected_custody_epoch=args.expected_custody_epoch,
+            recovery_observed_at=args.recovery_observed_at,
+            recovery_after_seconds=args.recovery_after_seconds,
+            recovery_policy=args.recovery_policy,
+        )
+    elif args.command == "renew-lease":
+        result = renew_lease(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            expected_custody_epoch=args.expected_custody_epoch,
+            base_ref=args.base_ref,
+            renewed_at=args.renewed_at,
         )
     elif args.command == "release-lease":
         result = release_lease(
@@ -1703,6 +1783,7 @@ def main() -> None:
             actor=args.actor,
             reason=args.reason,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command in {"checkpoint", "accept-checkpoint"}:
         result = accept_checkpoint(
@@ -1712,6 +1793,7 @@ def main() -> None:
             actor=args.actor,
             checkpoint_path=Path(args.checkpoint),
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "resolve-control":
         result = resolve_control(
@@ -1722,6 +1804,7 @@ def main() -> None:
             control_id=args.control_id,
             evidence=args.evidence,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "reconcile-roadmap":
         result = reconcile_roadmap(
@@ -1731,6 +1814,8 @@ def main() -> None:
             actor=args.actor,
             reconciliation_path=Path(args.reconciliation),
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
+            change_delta_path=Path(args.change_delta) if args.change_delta else None,
         )
     elif args.command == "handover":
         result = publish_handover(
@@ -1739,6 +1824,7 @@ def main() -> None:
             event_id=args.event_id,
             actor=args.actor,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "local-execution":
         result = export_local_execution(
@@ -1749,6 +1835,7 @@ def main() -> None:
             base_ref=args.base_ref,
             mode=args.mode,
             commands=args.command,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "local-execution-result":
         result = accept_local_execution_result(
@@ -1757,6 +1844,61 @@ def main() -> None:
             event_id=args.event_id,
             actor=args.actor,
             result_path=Path(args.result),
+        )
+    elif args.command == "recovery-reconstructed":
+        result = record_recovery_reconstructed(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            evidence=args.evidence,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "record-change":
+        result = record_change_hypothesis(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            statement=args.statement,
+            basis=args.basis,
+            process=args.process,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "verify-change":
+        result = verify_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            status=args.status,
+            evidence=args.evidence,
+            falsifiers_checked=args.falsifier,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "propose-change":
+        result = propose_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            proposal_path=Path(args.proposal),
+            authorization_required=args.authorization_required,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "authorize-change":
+        result = authorize_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            granted=args.decision == "GRANT",
+            direct_utterance_digest=args.owner_utterance_digest,
+            session_timestamp=args.owner_session_timestamp,
         )
     elif args.command == "sync-delivery":
         result = sync_delivery(
@@ -1777,6 +1919,7 @@ def main() -> None:
                 if args.parent_issue_observation
                 else None
             ),
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     print(f"{result['id']}: {result['status']}")
     if args.command == "local-execution":
