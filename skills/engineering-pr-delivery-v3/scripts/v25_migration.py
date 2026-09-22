@@ -265,7 +265,7 @@ def _initial_snapshot(
             groups["execution_blockers"].append(cid)
         if blocks & {"HANDOVER", "LOCAL_EXECUTION_EXPORT"}:
             groups["handover_blockers"].append(cid)
-        if blocks & {"DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}:
+        if blocks & {"DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK", "PROTOCOL_CUTOVER"}:
             groups["delivery_blockers"].append(cid)
 
     snapshot = {
