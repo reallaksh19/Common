@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from handover_projection import render as render_handover
+from intelligence_projection import build_improvement, build_task
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
 from local_execution_projection import build as build_local_execution
@@ -573,7 +574,9 @@ def publish_handover(
     state, _ = _authority(root)
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
-    handover = render_handover(snapshot, checkpoint).encode("utf-8")
+    task_snapshot = build_task(root, base_ref)
+    improvement_view = build_improvement(root)
+    handover = render_handover(snapshot, checkpoint, task_snapshot, improvement_view).encode("utf-8")
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
     events.append(_event(

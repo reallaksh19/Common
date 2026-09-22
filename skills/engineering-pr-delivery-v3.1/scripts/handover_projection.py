@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 
-def render(snapshot: dict[str, Any], checkpoint: dict[str, Any] | None) -> str:
+def render(snapshot: dict[str, Any], checkpoint: dict[str, Any] | None, task_snapshot: dict[str, Any] | None = None, improvement_view: dict[str, Any] | None = None) -> str:
     owner = snapshot.get("owner") or {}
     programme = snapshot.get("programme") or {}
     execution = snapshot.get("execution") or {}
@@ -61,6 +61,31 @@ def render(snapshot: dict[str, Any], checkpoint: dict[str, Any] | None) -> str:
         lines.append(f"- First successor action: {handoff.get('first_successor_action') or 'unknown'}")
     else:
         lines.append("- No accepted checkpoint handoff is available.")
+
+    if task_snapshot:
+        current = (task_snapshot.get("current_task_progress") or {}).get("summary") or {}
+        parent = (task_snapshot.get("parent_issue_progress") or {}).get("summary") or {}
+        lines += [
+            "",
+            "## Quantitative status",
+            f"- Current task: complete={current.get('complete', 0)}, partial={current.get('partial', 0)}, pending={current.get('pending', 0)}, blocked={current.get('blocked', 0)}, total={current.get('total', 0)}",
+            f"- Parent issue: complete={parent.get('complete', 0)}, partial={parent.get('partial', 0)}, pending={parent.get('pending', 0)}, blocked={parent.get('blocked', 0)}, deferred={parent.get('deferred', 0)}, total={parent.get('total', 0)}",
+        ]
+
+    if improvement_view:
+        improvement = improvement_view.get("improvement") or {}
+        lines += [
+            "",
+            "## Value added by this runner",
+            f"- Capability added: {improvement.get('capability_added') or []}",
+            f"- Capability strengthened: {improvement.get('capability_strengthened') or []}",
+            f"- Evidence added: {improvement.get('evidence_added') or []}",
+            f"- Understanding improved: {improvement.get('understanding_improved') or []}",
+            f"- Downstream unlocked: {improvement.get('downstream_unlocked') or []}",
+            f"- Not improved: {improvement_view.get('not_improved') or []}",
+            f"- Still not proved: {improvement_view.get('still_not_proved') or []}",
+            f"- New questions: {improvement_view.get('new_questions') or []}",
+        ]
 
     lines += [
         "",
