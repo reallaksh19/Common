@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from v3lib import load_yaml, validate_schema
-from validate_foundation import validate as validate_foundation
+from validate_foundation import validate_authority
 
 
 ACTIONS = {
@@ -100,6 +100,21 @@ def _quality_clear(checkpoint: dict[str, Any] | None) -> bool:
     return isinstance(checkpoint, dict) and (checkpoint.get("quality") or {}).get("result") == "CLEAR"
 
 
+def _result(action: str, allowed: bool, basis: list[str], blocking_controls: list[str], reasons: list[str]) -> dict[str, Any]:
+    result = {
+        "schema_version": "relay-v3-authorization-result",
+        "action": action,
+        "allowed": allowed,
+        "basis": list(dict.fromkeys(x for x in basis if x)),
+        "blocking_controls": list(dict.fromkeys(blocking_controls)),
+        "reason_codes": list(dict.fromkeys(reasons)) or ["ALLOW"],
+    }
+    errors = validate_schema("authorization-result", result, "AUTHORIZATION_RESULT")
+    if errors:
+        raise RuntimeError("; ".join(errors))
+    return result
+
+
 def evaluate(
     root: Path,
     action: str,
@@ -111,17 +126,15 @@ def evaluate(
     if action not in ACTIONS:
         raise ValueError(f"unknown action: {action}")
 
-    foundation_errors = validate_foundation(root)
-    if foundation_errors:
-        return {
-            "schema_version": "relay-v3-authorization-result",
-            "action": action,
-            "allowed": False,
-            "basis": ["foundation validation failed"],
-            "blocking_controls": [],
-            "reason_codes": ["INVALID_FOUNDATION"],
-            "errors": foundation_errors,
-        }
+    authority_errors = validate_authority(root)
+    if authority_errors:
+        return _result(
+            action,
+            False,
+            ["authority validation failed", *authority_errors[:5]],
+            [],
+            ["INVALID_FOUNDATION"],
+        )
 
     state, ep, lease, controls, checkpoint = _load_current(root)
     reasons: list[str] = []
@@ -182,6 +195,16 @@ def evaluate(
         reasons.append("QUALITY_NOT_CLEAR")
 
     if action in DELIVERY_OWNER_ACTIONS:
+        delivery = state.get("delivery") or {}
+        vehicle = delivery.get("primary_vehicle")
+        if delivery.get("required") is not True or not isinstance(vehicle, dict):
+            reasons.append("DELIVERY_VEHICLE_REQUIRED")
+        elif action == "MERGE" and vehicle.get("kind") != "PULL_REQUEST":
+            reasons.append("DELIVERY_VEHICLE_REQUIRED")
+        else:
+            basis.append(
+                f"delivery:{vehicle.get('provider')}:{vehicle.get('kind')}:{vehicle.get('number')}"
+            )
         if lease and (lease.get("admission") or {}).get("method") == "OWNER_OVERRIDE":
             reasons.append("OWNER_OVERRIDE_DELIVERY_FORBIDDEN")
         if not _owner_authorizes(controls, action):
@@ -195,22 +218,8 @@ def evaluate(
         reasons.append("CONTROL_BLOCKS_ACTION")
 
     reasons = list(dict.fromkeys(reasons))
-    blocking_controls = list(dict.fromkeys(blocking_controls))
     allowed = not reasons
-    if allowed:
-        reasons = ["ALLOW"]
-    result = {
-        "schema_version": "relay-v3-authorization-result",
-        "action": action,
-        "allowed": allowed,
-        "basis": list(dict.fromkeys(x for x in basis if x and not x.endswith(":None"))),
-        "blocking_controls": blocking_controls,
-        "reason_codes": reasons,
-    }
-    schema_errors = validate_schema("authorization-result", result, "AUTHORIZATION_RESULT")
-    if schema_errors:
-        raise RuntimeError("; ".join(schema_errors))
-    return result
+    return _result(action, allowed, basis, blocking_controls, ["ALLOW"] if allowed else reasons)
 
 
 def main() -> None:
@@ -218,7 +227,11 @@ def main() -> None:
     parser.add_argument("action", choices=sorted(ACTIONS))
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--path", help="Repository-relative material path for MATERIAL_WRITE.")
-    parser.add_argument("--drift", choices=["NONE", "DISJOINT", "RELEVANT", "UNKNOWN"], help="Observed drift classification; V3-3 will derive this mechanically.")
+    parser.add_argument(
+        "--drift",
+        choices=["NONE", "DISJOINT", "RELEVANT", "UNKNOWN"],
+        help="Observed drift classification; V3-3 will derive this mechanically.",
+    )
     args = parser.parse_args()
     result = evaluate(Path(args.repo_root).resolve(), args.action, path=args.path, drift=args.drift)
     print(json.dumps(result, indent=2))
