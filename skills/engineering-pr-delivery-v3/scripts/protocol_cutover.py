@@ -9,6 +9,7 @@ from typing import Any
 import yaml
 
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
+from intelligence_projection import assess_continuity
 from v25_migration import INTELLIGENCE_CONTINUITY_CONTROL, MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from validate_foundation import validate as validate_v3
@@ -68,11 +69,21 @@ def assess(root: Path) -> dict[str, Any]:
         if isinstance(continuity_report, dict)
         else ["continuity report missing"]
     )
+    recomputed_continuity = None
+    recomputed_continuity_error = None
+    try:
+        recomputed_continuity = assess_continuity(root)
+    except Exception as exc:
+        recomputed_continuity_error = str(exc)
+
     continuity_report_ready = (
         isinstance(continuity_report, dict)
         and not continuity_report_errors
         and continuity_report.get("ready") is True
         and ((continuity_report.get("source") or {}).get("legacy_tree_digest") == expected_legacy_digest)
+        and isinstance(recomputed_continuity, dict)
+        and recomputed_continuity.get("ready") is True
+        and canonical_digest(continuity_report) == canonical_digest(recomputed_continuity)
     )
     continuity_resolved = (
         len(continuity_rows) == 1
@@ -113,6 +124,8 @@ def assess(root: Path) -> dict[str, Any]:
         f"roadmap_intelligence_evidence={len(((continuity_rows[0].get('resolution') or {}).get('evidence') or [])) if len(continuity_rows) == 1 else 0}",
         f"intelligence_continuity_report={'PASS' if continuity_report_ready else 'FAIL'}",
         f"intelligence_continuity_errors={len(continuity_report_errors)}",
+        f"intelligence_continuity_recomputed={'PASS' if isinstance(recomputed_continuity, dict) and recomputed_continuity.get('ready') is True else 'FAIL'}",
+        f"intelligence_continuity_recompute_error={recomputed_continuity_error or ''}",
     ]
     basis.extend(f"v3:{item}" for item in v3_errors[:8])
     readiness = {
