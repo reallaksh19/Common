@@ -3,7 +3,7 @@ type: object
 required: [schema_version, id, command, actor, status, created_at, updated_at, operations, applied]
 properties:
   schema_version: {const: relay-v3-transaction}
-  id: {type: string, pattern: '^TX-'}
+  id: {type: string, pattern: '^TX-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   command:
     enum: [ACTIVATE_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, PUBLISH_HANDOVER, EXPORT_LOCAL_EXECUTION, SYNC_DELIVERY, CLOSE_TASK, PLAN_HANDOVER, BOOTSTRAP_V3_MIGRATION, ACTIVATE_PROTOCOL_CUTOVER]
   actor: {type: string, minLength: 1}
