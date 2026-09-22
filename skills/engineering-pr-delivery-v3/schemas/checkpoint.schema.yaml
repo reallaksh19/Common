@@ -3,8 +3,8 @@ type: object
 required: [schema_version, id, ep, material_result, acceptance, validation, quality, known_limitations, discoveries, handoff]
 properties:
   schema_version: {const: relay-v3-checkpoint}
-  id: {type: string, pattern: '^CP-'}
-  ep: {type: string, pattern: '^EP-'}
+  id: {type: string, pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   material_result:
     type: object
     additionalProperties: false
@@ -21,7 +21,7 @@ properties:
       additionalProperties: false
       required: [id, result, evidence]
       properties:
-        id: {type: string, pattern: '^AC-'}
+        id: {type: string, pattern: '^AC-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         result: {enum: [PASS, FAIL]}
         evidence:
           type: array
