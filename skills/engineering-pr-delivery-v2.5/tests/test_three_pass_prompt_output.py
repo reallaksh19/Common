@@ -138,7 +138,7 @@ EXPERTISE:
 domain expert
 IMAGINATION OBJECT:
 independent handling of the problem
-PROGRAMME ORIENTATION OBJECT:
+PROGRAMME IMAGINATION OBJECT:
 recover project goal, roadmap position, governing issue and subordinate local task
 REALITY OBJECT:
 current truth
@@ -197,9 +197,9 @@ PASS — N/A when OFF
 MODE-ISOLATION GATE:
 PASS — no extra protocol stage
 
-## PROMPT 0.5 — ORIENT TO PROGRAMME
+## PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-Recover the original roadmap and large-project goal first, identify the governing issue, then summarize the ongoing local task in only a few lines. State that local task and PR state are subordinate evidence, not the destination.
+Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.
 
 ## PROMPT 1 — IMAGINE
 
@@ -229,7 +229,7 @@ FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
 
 STALE = """Reworked.
 
-# PROMPT 0.5 — ORIENT TO PROGRAMME
+# PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
 Latest PR is the project goal.
 
@@ -264,7 +264,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_is_required(self):
         bad = GOOD.replace(
-            "## PROMPT 0.5 — ORIENT TO PROGRAMME\n\nRecover the original roadmap and large-project goal first, identify the governing issue, then summarize the ongoing local task in only a few lines. State that local task and PR state are subordinate evidence, not the destination.\n\n",
+            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThink independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.\n\n",
             "",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -280,7 +280,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_rejects_local_task_as_destination(self):
         bad = GOOD.replace(
-            "Recover the original roadmap and large-project goal first, identify the governing issue, then summarize the ongoing local task in only a few lines. State that local task and PR state are subordinate evidence, not the destination.",
+            "Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.",
             "Summarize the ongoing local task and latest PR.",
         )
         errors = MOD.validate_text(bad, SHA)
