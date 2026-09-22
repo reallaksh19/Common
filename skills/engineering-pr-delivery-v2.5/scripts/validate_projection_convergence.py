@@ -5,7 +5,7 @@ from pathlib import Path
 from relaylib import load_yaml, print_result, require
 
 PROJECTION_STATES={"NOT_REQUIRED","PENDING","PUBLISHED_UNCONFIRMED","IN_SYNC","STALE"}
-SUPERSEDED_DISPOSITIONS={"SUPERSEDED_BEFORE_PUBLICATION","SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED","SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED"}
+SUPERSEDED_DISPOSITIONS={"SUPERSEDED_BEFORE_PUBLICATION","SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED","SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED","SUPERSEDED_AFTER_VERIFIED_PUBLICATION"}
 NONE_VALUES={None,""}
 
 
@@ -39,7 +39,7 @@ def _validate_superseded(projection,e):
         disposition=item.get("disposition")
         if disposition not in SUPERSEDED_DISPOSITIONS:e.append(f"{p}.disposition invalid: {disposition}")
         if disposition in {"SUPERSEDED_BEFORE_PUBLICATION","SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED"} and item.get("receipt") not in NONE_VALUES:e.append(f"{p} {disposition} cannot invent a publication receipt")
-        if disposition=="SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED" and not str(item.get("receipt") or "").strip():e.append(f"{p} after-publication supersession requires receipt")
+        if disposition in {"SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED","SUPERSEDED_AFTER_VERIFIED_PUBLICATION"} and not str(item.get("receipt") or "").strip():e.append(f"{p} published supersession requires receipt")
         if not isinstance(item.get("basis"),list) or not item.get("basis"):e.append(f"{p}.basis must contain durable supersession evidence")
     valid_targets=ids|({current} if current else set())
     for oid,item in entries.items():
