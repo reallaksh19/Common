@@ -4,11 +4,11 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 through V3-8 IMPLEMENTED. DEFAULT SELECTION IS PER-REPOSITORY AND REQUIRES EXPLICIT CUTOVER.**
+**V3-1 through V3-8 core implementation is present. DEFAULT CUTOVER IS GATED BY #421 INTELLIGENCE-CONTINUITY EVIDENCE.**
 
 Repositories with no explicit protocol selection remain on V2.5 compatibility behavior. Do not silently reinterpret an existing V2.5 repository as V3.
 
-A repository becomes V3-default only after its own `relay/PROTOCOL_SELECTION.yaml` is transactionally activated with passing cutover readiness and direct Owner cutover basis.
+A repository becomes V3-default only after its own `relay/PROTOCOL_SELECTION.yaml` is transactionally activated with passing cutover readiness, direct Owner cutover basis, and resolved `CTRL-V25-INTELLIGENCE-CONTINUITY` evidence proving the #421 roadmap/event/checkpoint/progress semantics are not being retired.
 
 ## V3 architecture
 
@@ -220,7 +220,8 @@ Readiness requires:
 - source V2.5 REPO_STATE validation PASS;
 - migration reconciliation control RESOLVED;
 - native lifecycle in `ACTIVE | IDLE | TERMINAL`;
-- prepared V2.5-selected protocol state.
+- prepared V2.5-selected protocol state;
+- #421 continuity evidence showing roadmap admission, ROADMAP_EVENTS, checkpoint/progress reconciliation, discovery, Owner-delta and handover intelligence remain governed across cutover.
 
 Activation additionally requires direct Owner basis:
 
