@@ -11,6 +11,7 @@ from handover_projection import render as render_handover
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
 from local_execution_projection import build as build_local_execution
+from render_local_execution_request import render as render_local_execution_request
 from relay_can import _protocol_state, evaluate as can_action
 from snapshot_projection import build as build_snapshot
 from transactionlib import TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
@@ -535,6 +536,7 @@ def export_local_execution(
     event_id: str,
     actor: str,
     base_ref: str,
+    mode: str = "VALIDATE_ONLY",
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     _require_action(root, "LOCAL_EXECUTION_EXPORT")
@@ -544,7 +546,8 @@ def export_local_execution(
     checkpoint = _current_checkpoint(root, state)
     if ep is None and isinstance(checkpoint, dict) and checkpoint.get("ep"):
         ep = load_yaml(root / "relay/WORK" / f"{checkpoint['ep']}.yaml")
-    package = build_local_execution(root, snapshot, ep, checkpoint)
+    package = build_local_execution(root, snapshot, ep, checkpoint, mode=mode)
+    request_md = render_local_execution_request(package).encode("utf-8")
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
     events.append(_event(
@@ -553,7 +556,14 @@ def export_local_execution(
         actor,
         str((state.get("execution") or {}).get("ep") or "relay"),
         [tx_id, _snapshot_path(state)],
-        {"artifact": "relay/GENERATED/LOCAL_EXECUTION.yaml"},
+        {
+            "artifacts": [
+                "relay/GENERATED/LOCAL_EXECUTION.yaml",
+                "relay/GENERATED/LOCAL_EXECUTION.md",
+            ],
+            "request_id": (package.get("request") or {}).get("id"),
+            "mode": mode,
+        },
     ))
     return execute(
         root,
@@ -563,11 +573,74 @@ def export_local_execution(
         replacements={
             _snapshot_path(state): yaml_bytes(snapshot),
             "relay/GENERATED/LOCAL_EXECUTION.yaml": yaml_bytes(package),
+            "relay/GENERATED/LOCAL_EXECUTION.md": request_md,
             "relay/EVENTS.jsonl": jsonl_bytes(events),
         },
         fail_after=fail_after,
     )
 
+
+def accept_local_execution_result(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    result_path: Path,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    package_path = root / "relay/GENERATED/LOCAL_EXECUTION.yaml"
+    if not package_path.exists():
+        raise TransactionError("local execution result requires an exported LOCAL_EXECUTION package")
+    package = load_yaml(package_path)
+    package_errors = validate_schema("local-execution", package, "LOCAL_EXECUTION")
+    if package_errors:
+        raise TransactionError("; ".join(package_errors))
+
+    result = load_yaml(result_path)
+    result_errors = validate_schema("local-execution-result", result, "LOCAL_EXECUTION_RESULT")
+    if result_errors:
+        raise TransactionError("; ".join(result_errors))
+
+    request = package.get("request") or {}
+    if result.get("request_id") != request.get("id"):
+        raise TransactionError("local execution result request_id does not match the active exported request")
+
+    required_head = str(((request.get("exact_basis") or {}).get("material_head")) or "")
+    observed_head = str(result.get("observed_head") or "")
+    status = str(result.get("status") or "")
+    if status == "HEAD_MISMATCH":
+        if observed_head == required_head:
+            raise TransactionError("HEAD_MISMATCH result must report a different observed_head")
+    elif observed_head != required_head:
+        raise TransactionError("local execution result observed_head does not match the exported exact basis")
+
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "LOCAL_EXECUTION_RETURNED",
+        actor,
+        str(request.get("id")),
+        [tx_id, str(request.get("id")), str((package.get("generated_from") or {}).get("snapshot_digest"))],
+        {
+            "status": status,
+            "observed_head": observed_head,
+            "required_head": required_head,
+        },
+    ))
+
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="IMPORT_LOCAL_EXECUTION_RESULT",
+        actor=actor,
+        replacements={
+            "relay/GENERATED/LOCAL_EXECUTION_RESULT.yaml": yaml_bytes(result),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
 
 def sync_delivery(
     root: Path,
@@ -751,6 +824,13 @@ def main() -> None:
     local.add_argument("--event-id", required=True)
     local.add_argument("--actor", required=True)
     local.add_argument("--base-ref", required=True)
+    local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
+
+    local_result = sub.add_parser("local-execution-result")
+    local_result.add_argument("--tx-id", required=True)
+    local_result.add_argument("--event-id", required=True)
+    local_result.add_argument("--actor", required=True)
+    local_result.add_argument("--result", required=True)
 
     delivery = sub.add_parser("sync-delivery")
     delivery.add_argument("--tx-id", required=True)
@@ -859,6 +939,15 @@ def main() -> None:
             event_id=args.event_id,
             actor=args.actor,
             base_ref=args.base_ref,
+            mode=args.mode,
+        )
+    elif args.command == "local-execution-result":
+        result = accept_local_execution_result(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            result_path=Path(args.result),
         )
     elif args.command == "sync-delivery":
         result = sync_delivery(
