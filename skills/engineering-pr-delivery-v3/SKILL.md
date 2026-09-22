@@ -281,3 +281,19 @@ While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5
 The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
 
 `plan_handover.py` atomically materializes the current TASK_SNAPSHOT and IMPROVEMENT_VIEW with HANDOVER_CONTEXT and binds their digests into accumulated learning. Prompt/handover consumers may use them for reconstruction and negative knowledge, but they grant no new action authority.
+
+
+## Parent-issue-relative task snapshots
+
+`TASK_SNAPSHOT` is an issue-relative execution read model rather than merely an EP dump. A provider-normalized parent issue observation can be supplied to the task/handover projector to expose:
+
+- parent issue identity, current state, original baseline digest, and relevant issue/comment updates;
+- a parent-issue acceptance checklist with COMPLETE / PARTIAL / PENDING / BLOCKED / DEFERRED / NOT_APPLICABLE / UNKNOWN states;
+- a separate current-task checklist derived from EP acceptance and checkpoint evidence;
+- planned local/third-party offloads declared by the EP;
+- Owner-facing `PEND-*` and `KI-*` tracking IDs mapped to internal action-scoped `CTRL-*` controls;
+- evidence-bound value-add entries compared with the frozen original issue baseline.
+
+The parent-issue observation is provider-derived context and never grants write, checkpoint, merge, or release authority.
+
+A migrated repository in `V2_5 / PREPARED` may use staged V3 for migration, continuity projection and handover preparation, but live V3 execution/delivery actions fail with `PROTOCOL_NOT_ACTIVE`. After `V3 / ACTIVE`, V2.5 is read-only history and current task snapshots derive from native V3 truth.

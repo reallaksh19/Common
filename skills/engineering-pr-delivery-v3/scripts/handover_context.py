@@ -119,6 +119,7 @@ def build_context(
     base_ref: str,
     target: dict[str, Any],
     complex_mode: bool,
+    parent_issue_observation: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     revision = _standalone_contract(root)
@@ -137,7 +138,7 @@ def build_context(
     context_wp_id = execution.get("work_package") or ((context_ep or {}).get("work_package"))
     wp = _wp_row(roadmap, context_wp_id)
     handoff = (checkpoint or {}).get("handoff") or {}
-    task_snapshot = build_task(root, base_ref)
+    task_snapshot = build_task(root, base_ref, parent_issue_observation)
     improvement_view = build_improvement(root)
     task_identity = task_snapshot.get("identity") or {}
     task_ep = task_identity.get("ep") or context_ep_id

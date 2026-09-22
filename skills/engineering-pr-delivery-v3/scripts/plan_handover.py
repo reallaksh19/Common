@@ -21,6 +21,7 @@ def plan_handover(
     target_path: Path,
     base_ref: str,
     complex_mode: bool,
+    parent_issue_observation: dict | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -37,8 +38,9 @@ def plan_handover(
         base_ref=base_ref,
         target=target,
         complex_mode=complex_mode,
+        parent_issue_observation=parent_issue_observation,
     )
-    task_snapshot = build_task(root, base_ref)
+    task_snapshot = build_task(root, base_ref, parent_issue_observation)
     improvement_view = build_improvement(root)
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
@@ -102,6 +104,7 @@ def main() -> None:
     parser.add_argument("--actor", required=True)
     parser.add_argument("--target-observation", required=True)
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--parent-issue-observation")
     parser.add_argument("--complex", action="store_true")
     args = parser.parse_args()
     result = plan_handover(
@@ -112,6 +115,7 @@ def main() -> None:
         target_path=Path(args.target_observation),
         base_ref=args.base_ref,
         complex_mode=args.complex,
+        parent_issue_observation=(load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None),
     )
     print(f"{result['id']}: {result['status']}")
 
