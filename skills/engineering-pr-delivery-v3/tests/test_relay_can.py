@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-import copy
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
@@ -21,9 +23,47 @@ from test_v3_foundation import DIGEST, dump, materialize
 WRITE_PATH = "skills/engineering-pr-delivery-v3/scripts/new_feature.py"
 
 
+def git(root: Path, *args: str) -> str:
+    return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+
+
+def prepare_git(root: Path) -> tuple[str, str]:
+    materialize(root)
+    (root / "skills/engineering-pr-delivery-v3/scripts").mkdir(parents=True, exist_ok=True)
+    (root / "skills/engineering-pr-delivery-v3/scripts/base.py").write_text("VALUE = 1\n", encoding="utf-8")
+    (root / "deps").mkdir(parents=True, exist_ok=True)
+    (root / "deps/compiler.py").write_text("VERSION = 1\n", encoding="utf-8")
+    (root / "docs").mkdir(parents=True, exist_ok=True)
+    (root / "docs/unrelated.md").write_text("base\n", encoding="utf-8")
+
+    subprocess.check_call(["git", "-C", str(root), "init", "-b", "exec"], stdout=subprocess.DEVNULL)
+    git(root, "config", "user.email", "relay@example.test")
+    git(root, "config", "user.name", "Relay Test")
+    git(root, "add", ".")
+    git(root, "commit", "-m", "material base")
+    base_sha = git(root, "rev-parse", "HEAD")
+    git(root, "branch", "base")
+
+    ep_path = root / "relay/WORK/EP-TA-011.yaml"
+    ep = yaml.safe_load(ep_path.read_text(encoding="utf-8"))
+    ep["basis"]["material_base"] = base_sha
+    ep["basis"]["semantic_dependencies"] = [
+        {"path": "deps/compiler.py", "reason": "Compiler semantics affect the EP."}
+    ]
+    dump(ep_path, ep)
+
+    lease_path = root / "relay/LEASES/LEASE-TA-011-01.yaml"
+    lease = yaml.safe_load(lease_path.read_text(encoding="utf-8"))
+    lease["basis"]["material_base"] = base_sha
+    dump(lease_path, lease)
+
+    git(root, "add", "relay/WORK/EP-TA-011.yaml", "relay/LEASES/LEASE-TA-011-01.yaml")
+    git(root, "commit", "-m", "coordination config")
+    return base_sha, "base"
+
+
 def add_control(root: Path, control: dict) -> None:
     path = root / "relay/CONTROLS/controls.yaml"
-    import yaml
     controls = yaml.safe_load(path.read_text(encoding="utf-8"))
     controls["controls"].append(control)
     dump(path, controls)
@@ -42,29 +82,45 @@ def owner_authority(action: str) -> dict:
     }
 
 
+def advance_base(root: Path, path: str, content: str) -> str:
+    git(root, "checkout", "base")
+    target = root / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8")
+    git(root, "add", path)
+    git(root, "commit", "-m", f"base changes {path}")
+    sha = git(root, "rev-parse", "HEAD")
+    git(root, "checkout", "exec")
+    return sha
+
+
 class RelayCanTests(unittest.TestCase):
     def test_material_write_allows_disjoint_drift(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
-            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift="DISJOINT")
+            prepare_git(root)
+            advance_base(root, "docs/unrelated.md", "unrelated base change\n")
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertTrue(result["allowed"], result)
             self.assertEqual(["ALLOW"], result["reason_codes"])
+            self.assertTrue(any(item == "drift:DISJOINT" for item in result["basis"]), result)
 
     def test_stale_generated_snapshot_does_not_block_material_write(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            *_, snapshot, _ = materialize(root)
+            prepare_git(root)
+            snapshot_path = root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml"
+            snapshot = yaml.safe_load(snapshot_path.read_text(encoding="utf-8"))
             snapshot["execution"]["ep"] = "EP-STALE"
-            dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", snapshot)
+            dump(snapshot_path, snapshot)
             self.assertTrue(validate(root))
-            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift="NONE")
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertTrue(result["allowed"], result)
 
     def test_delivery_only_control_does_not_block_material_write(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
+            prepare_git(root)
             add_control(root, {
                 "id": "CTRL-PROJECTION",
                 "kind": "DELIVERY",
@@ -75,13 +131,13 @@ class RelayCanTests(unittest.TestCase):
                 "permits": ["MATERIAL_WRITE", "TEST"],
                 "resolution": {"condition": "Projection converges.", "evidence": []},
             })
-            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift="DISJOINT")
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertTrue(result["allowed"], result)
 
     def test_write_collision_blocks_material_write(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
+            prepare_git(root)
             add_control(root, {
                 "id": "CTRL-COLLISION",
                 "kind": "COLLISION",
@@ -92,29 +148,46 @@ class RelayCanTests(unittest.TestCase):
                 "permits": ["READ", "ANALYZE"],
                 "resolution": {"condition": "Exclusive ownership restored.", "evidence": []},
             })
-            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift="DISJOINT")
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertFalse(result["allowed"], result)
             self.assertIn("CONTROL_BLOCKS_ACTION", result["reason_codes"])
             self.assertEqual(["CTRL-COLLISION"], result["blocking_controls"])
 
-    def test_relevant_and_unknown_drift_block_material_write(self):
-        for drift, expected in (("RELEVANT", "DRIFT_RELEVANT"), ("UNKNOWN", "DRIFT_UNKNOWN")):
-            with self.subTest(drift=drift), tempfile.TemporaryDirectory() as td:
-                root = Path(td)
-                materialize(root)
-                result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift=drift)
-                self.assertFalse(result["allowed"], result)
-                self.assertIn(expected, result["reason_codes"])
+    def test_relevant_dependency_drift_blocks_material_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            advance_base(root, "deps/compiler.py", "VERSION = 2\n")
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertFalse(result["allowed"], result)
+            self.assertIn("DRIFT_RELEVANT", result["reason_codes"])
+            self.assertTrue(any(item == "drift:RELEVANT" for item in result["basis"]), result)
+
+    def test_unknown_drift_blocks_material_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="does-not-exist")
+            self.assertFalse(result["allowed"], result)
+            self.assertIn("DRIFT_UNKNOWN", result["reason_codes"])
+
+    def test_missing_base_ref_blocks_material_write(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH)
+            self.assertFalse(result["allowed"], result)
+            self.assertIn("BASE_REF_REQUIRED", result["reason_codes"])
 
     def test_protected_or_out_of_scope_path_is_denied(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
+            prepare_git(root)
             result = evaluate(
                 root,
                 "MATERIAL_WRITE",
                 path="skills/three-pass-prompt-generator/schema.md",
-                drift="NONE",
+                base_ref="base",
             )
             self.assertFalse(result["allowed"], result)
             self.assertIn("PATH_OUTSIDE_EP_WRITE_SCOPE", result["reason_codes"])
@@ -123,8 +196,7 @@ class RelayCanTests(unittest.TestCase):
     def test_owner_override_allows_bounded_write_but_not_merge(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
-            import yaml
+            prepare_git(root)
             lease_path = root / "relay/LEASES/LEASE-TA-011-01.yaml"
             lease = yaml.safe_load(lease_path.read_text(encoding="utf-8"))
             lease["admission"] = {
@@ -145,7 +217,7 @@ class RelayCanTests(unittest.TestCase):
             }
             dump(lease_path, lease)
 
-            write = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, drift="NONE")
+            write = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertTrue(write["allowed"], write)
 
             state_path = root / "relay/STATE.yaml"
@@ -163,8 +235,7 @@ class RelayCanTests(unittest.TestCase):
     def test_merge_requires_explicit_owner_delivery_authority(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
-            import yaml
+            prepare_git(root)
             state_path = root / "relay/STATE.yaml"
             state = yaml.safe_load(state_path.read_text(encoding="utf-8"))
             state["delivery"] = {
@@ -185,7 +256,7 @@ class RelayCanTests(unittest.TestCase):
     def test_merge_requires_delivery_vehicle(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
-            materialize(root)
+            prepare_git(root)
             add_control(root, owner_authority("MERGE"))
             result = evaluate(root, "MERGE")
             self.assertFalse(result["allowed"], result)
