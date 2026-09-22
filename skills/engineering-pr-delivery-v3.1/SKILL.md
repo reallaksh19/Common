@@ -4,11 +4,19 @@ Engineering Relay V3.1 is a self-contained protocol line. Its implementation liv
 
 ## Status
 
-**V3.1 is opt-in and MUST NOT silently replace V3 or V2.5.**
+V3.1 is the current implementation/guideline over a stable native Relay core. It MUST NOT silently replace V2.5 authority, but an already-cut-over `V3 / ACTIVE` repository does **not** require another protocol migration merely to use current V3.1 tooling.
 
-The protocol selector value for this skill is `V3_1`. A repository uses V3.1 only after its own `relay/PROTOCOL_SELECTION.yaml` explicitly selects `V3_1 / ACTIVE` with the applicable readiness and Owner authority. Merely having this directory present grants no authority and changes no repository protocol.
+Supported native execution bases are:
 
-The V3.1 delta focuses on relay continuity at actor boundaries: recipient-ready local execution, typed result return, graceful custody release, human-readable quantitative/value summaries, roadmap reconciliation, and parent-issue lineage.
+```text
+V3_1 / ACTIVE  -> native current selector
+V3   / ACTIVE  -> compatible native core; current V3.1 tooling may operate without rewriting the selector
+V2_5 / PREPARED or legacy-default -> legacy/staged semantics; live native mutations remain blocked until the existing cutover completes
+```
+
+Compatibility is read-time and prospective. Existing V3 roadmap/EP/checkpoint/control/event truth is not rewritten. V3.1-only state, such as custody epochs, is established naturally on the next relevant native transition. The repository's implementation-version label and exact Common commit are **not product acceptance criteria** by themselves.
+
+The V3.1 delta focuses on relay continuity at actor boundaries: recipient-ready local execution, typed result return, graceful custody release, human-readable quantitative/value summaries, roadmap reconciliation, parent-issue lineage, and stale-runner fencing.
 
 ## V3.1 architecture
 
@@ -54,6 +62,30 @@ V3.1 adds value at transitions without redefining accepted engineering truth:
 - parent-issue transfer/split/supersession/linkage remains provider-derived lineage, not execution authority.
 
 See `operating-model/v31-delta.md`.
+
+## Safety kernel vs coordination quality
+
+Relay is supporting infrastructure, not the programme roadmap. Normal engineering should be blocked only by conditions that can corrupt or mis-authorize work:
+
+- invalid durable authority / interrupted transaction;
+- no valid current work identity or execution custody where required;
+- stale custody epoch;
+- write outside governed scope or into protected scope;
+- relevant/unknown material drift at write/checkpoint boundaries;
+- invalid checkpoint/material evidence;
+- explicit Owner authority missing for merge/release or intent-bearing change.
+
+The following are coordination-quality concerns and MUST NOT become ordinary `MATERIAL_WRITE` blockers merely because they are stale or absent:
+
+- GitHub Relay/Handover projection freshness;
+- parent summary freshness;
+- provider readback not required by the requested action;
+- implementation-version or Common commit drift;
+- handover readiness when no handover is being attempted;
+- successor qualification when no successor is being admitted;
+- generated status/read-model freshness.
+
+Repair or regenerate those at their natural boundary. Do not promote a tooling/enabler issue above the current programme roadmap frontier.
 
 ## Foundation validation
 
