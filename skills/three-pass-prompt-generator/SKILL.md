@@ -66,7 +66,7 @@ Repository and issue files for the **user's target** may of course be inspected 
 
 When the user requests complex Q1–Q5, those are the five human reasoning lenses defined by the live standalone schema.
 
-They remain inside Prompt 1; Prompt 0.5 and Prompt 2.5 are separate schema-defined bridge prompts, not Q1–Q5 stages.
+They remain inside Prompt 1. Prompt 0.5 is the separate global independent-thinking pass and Prompt 2.5 is the separate integrated reality+reconciliation bridge; neither is a Q1–Q5 stage.
 
 Do not create any extra workflow stage, machine metadata block, or evaluator requirement beyond the five schema-defined prompts.
 
@@ -78,4 +78,4 @@ If the canonical schema cannot be fetched from current `main`, do not reconstruc
 
 Return only the schema handshake failure required by the schema and stop.
 
-If an output begins with target analysis or Prompt 1 before proving the live schema handshake, that run is invalid.
+If an output begins with target analysis, Prompt 0.5, or Prompt 1 before proving the live schema handshake, that run is invalid.
