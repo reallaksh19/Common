@@ -21,6 +21,7 @@ from test_v25_migration import init_legacy_repo
 from v25_migration import bootstrap, legacy_inventory
 from v3lib import load_yaml
 
+# test_v25_migration imports legacy helpers and temporarily prepends V2.5 scripts.\n# Restore V3 script precedence so this module cannot contaminate later V3 test imports.\nif str(SCRIPTS) in sys.path:\n    sys.path.remove(str(SCRIPTS))\nsys.path.insert(0, str(SCRIPTS))\n
 
 def dump(path: Path, value) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
