@@ -100,6 +100,14 @@ CURRENT ANSWER QUARANTINE:
 today's option set
 TARGET ANCHORS:
 named domain
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+deliver the larger user capability safely and coherently
+GOVERNING ISSUE:
+the bounded issue that connects the local work to the roadmap goal
+GOVERNING ISSUE ROLE:
+make the relevant capability trustworthy at programme level
+LOCAL TASK CONTEXT:
+the current local task is one bounded instrument inside that governing issue
 PROBLEM WITNESS TYPE:
 benchmark
 PROBLEM WITNESS SOURCE:
@@ -139,7 +147,7 @@ domain expert
 IMAGINATION OBJECT:
 independent handling of the problem
 PROGRAMME IMAGINATION OBJECT:
-recover project goal, roadmap position, governing issue and subordinate local task
+independently imagine the larger value from project goal through governing issue with local task subordinate
 REALITY OBJECT:
 current truth
 BRIDGE RECONCILIATION QUESTION:
