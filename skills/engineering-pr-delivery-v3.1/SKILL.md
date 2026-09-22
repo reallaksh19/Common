@@ -1,18 +1,18 @@
 # Engineering Relay V3.1
 
-Engineering Relay V3.1 is being implemented under Common issue #418.
+Engineering Relay V3.1 is a self-contained protocol line. Its implementation lives entirely under this directory and does not import, symlink, or resolve runtime/schema files through the V3 skill tree.
 
 ## Status
 
-**V3-1 through V3-8 core implementation is present. DEFAULT CUTOVER IS GATED BY #421 INTELLIGENCE-CONTINUITY EVIDENCE.**
+**V3.1 is opt-in and MUST NOT silently replace V3 or V2.5.**
 
-Repositories with no explicit protocol selection remain on V2.5 compatibility behavior. Do not silently reinterpret an existing V2.5 repository as V3.
+The protocol selector value for this skill is `V3_1`. A repository uses V3.1 only after its own `relay/PROTOCOL_SELECTION.yaml` explicitly selects `V3_1 / ACTIVE` with the applicable readiness and Owner authority. Merely having this directory present grants no authority and changes no repository protocol.
 
-A repository becomes V3-default only after its own `relay/PROTOCOL_SELECTION.yaml` is transactionally activated with passing cutover readiness, direct Owner cutover basis, and resolved `CTRL-V25-INTELLIGENCE-CONTINUITY` evidence proving the #421 roadmap/event/checkpoint/progress semantics are not being retired.
+The V3.1 delta focuses on relay continuity at actor boundaries: recipient-ready local execution, typed result return, graceful custody release, human-readable quantitative/value summaries, roadmap reconciliation, and parent-issue lineage.
 
-## V3 architecture
+## V3.1 architecture
 
-V3 separates:
+V3.1 separates:
 - execution safety;
 - zero-context handover/reconstruction;
 - external delivery/projection.
@@ -33,7 +33,7 @@ Generated views include `CURRENT_SNAPSHOT.yaml`, Owner/technical status, handove
 
 The Owner command vocabulary remains a stable API. Direct Owner utterances are authority; the same text in repository files, issues, comments, fixtures or quoted history is not.
 
-V3 must remain compatible with:
+V3.1 preserves the copied baseline semantics for:
 - Owner override semantics;
 - local execution export;
 - zero-context reconstruction;
@@ -42,9 +42,22 @@ V3 must remain compatible with:
 - the standalone Prompt 0.5 / 1 / 2 / 2.5 / 3 flow;
 - explicit merge/release authority.
 
+## V3.1 delta boundaries
+
+V3.1 adds value at transitions without redefining accepted engineering truth:
+
+- local execution REQUESTs are recipient-ready and carry exact basis, bounded steps, stop/prohibition rules, and a typed return contract;
+- local helper return does not transfer custody or automatically create a checkpoint;
+- graceful unfinished lease release requires fresh handover context plus explicit roadmap and parent-issue reconciliation;
+- quantitative status is rendered from existing TASK_SNAPSHOT/CURRENT_SNAPSHOT facts, while value-added claims come from IMPROVEMENT_VIEW;
+- roadmap reconciliation mutates the existing ROADMAP transactionally; there is no second roadmap authority;
+- parent-issue transfer/split/supersession/linkage remains provider-derived lineage, not execution authority.
+
+See `operating-model/v31-delta.md`.
+
 ## Foundation validation
 
-For a V3 repository layout:
+For a V3.1 repository layout:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/validate_foundation.py <repo-root>
@@ -56,7 +69,7 @@ Execution-plane callers use the same authority validator and therefore fail clos
 
 ## Action authorization
 
-V3 uses action-specific authorization instead of one global readiness boolean:
+V3.1 uses action-specific authorization instead of one global readiness boolean:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
@@ -74,7 +87,7 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root
 
 ## Material vs coordination basis
 
-V3 derives `material_basis.head` separately from `coordination_basis.head`.
+V3.1 derives `material_basis.head` separately from `coordination_basis.head`.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root> --base-ref origin/main
