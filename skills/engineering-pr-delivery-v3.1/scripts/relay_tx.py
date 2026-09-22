@@ -561,6 +561,85 @@ def resolve_control(
     )
 
 
+def reconcile_roadmap(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    reconciliation_path: Path,
+    base_ref: str,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    roadmap_path = str((state.get("roadmap") or {}).get("path"))
+    current = load_yaml(root / roadmap_path)
+
+    reconciliation = load_yaml(reconciliation_path)
+    errors = validate_schema("roadmap-reconciliation", reconciliation, "ROADMAP_RECONCILIATION")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    if reconciliation.get("expected_revision") != current.get("revision"):
+        raise TransactionError("roadmap reconciliation expected_revision does not match current ROADMAP")
+
+    after = reconciliation.get("roadmap_after") or {}
+    errors = validate_schema("roadmap", after, "ROADMAP_AFTER")
+    if errors:
+        raise TransactionError("; ".join(errors))
+
+    disposition = str(reconciliation.get("disposition") or "")
+    if disposition in {"NO_CHANGE", "OWNER_DECISION_REQUIRED"}:
+        if canonical_digest(after) != canonical_digest(current):
+            raise TransactionError(f"{disposition} cannot mutate ROADMAP")
+    elif after.get("revision") == current.get("revision"):
+        raise TransactionError("a roadmap-changing reconciliation requires a new ROADMAP revision")
+
+    ep = _current_ep(root, state)
+    if isinstance(ep, dict):
+        work_package = str(ep.get("work_package") or "")
+        after_ids = {str(row.get("id")) for row in after.get("work_packages") or [] if isinstance(row, dict)}
+        if work_package and work_package not in after_ids:
+            raise TransactionError("roadmap reconciliation cannot orphan the current EP work package")
+
+    new_state = copy.deepcopy(state)
+    new_state["roadmap"]["revision"] = after.get("revision")
+    snapshot = build_snapshot(
+        root,
+        base_ref,
+        state_override=new_state,
+        roadmap_override=after,
+        ep_override=ep,
+    )
+
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "ROADMAP_RECONCILED",
+        actor,
+        str(after.get("revision")),
+        [tx_id, *list(reconciliation.get("basis") or [])],
+        {
+            "disposition": disposition,
+            "from_revision": current.get("revision"),
+            "to_revision": after.get("revision"),
+        },
+    ))
+
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECONCILE_ROADMAP",
+        actor=actor,
+        replacements={
+            roadmap_path: yaml_bytes(after),
+            "relay/STATE.yaml": yaml_bytes(new_state),
+            _snapshot_path(new_state): yaml_bytes(snapshot),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
 def publish_handover(
     root: Path,
     *,
@@ -887,6 +966,13 @@ def main() -> None:
     control.add_argument("--evidence", action="append", default=[])
     control.add_argument("--base-ref", required=True)
 
+    roadmap = sub.add_parser("reconcile-roadmap")
+    roadmap.add_argument("--tx-id", required=True)
+    roadmap.add_argument("--event-id", required=True)
+    roadmap.add_argument("--actor", required=True)
+    roadmap.add_argument("--reconciliation", required=True)
+    roadmap.add_argument("--base-ref", required=True)
+
     handover = sub.add_parser("handover")
     handover.add_argument("--tx-id", required=True)
     handover.add_argument("--event-id", required=True)
@@ -1003,6 +1089,15 @@ def main() -> None:
             actor=args.actor,
             control_id=args.control_id,
             evidence=args.evidence,
+            base_ref=args.base_ref,
+        )
+    elif args.command == "reconcile-roadmap":
+        result = reconcile_roadmap(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            reconciliation_path=Path(args.reconciliation),
             base_ref=args.base_ref,
         )
     elif args.command == "handover":
