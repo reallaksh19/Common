@@ -21,7 +21,21 @@ def _safe_token(value: Any) -> str:
     return text or "current"
 
 
-def _steps(ep: dict[str, Any] | None, first_action: str | None) -> list[dict[str, Any]]:
+def _steps(
+    ep: dict[str, Any] | None,
+    first_action: str | None,
+    commands: list[str] | None,
+) -> list[dict[str, Any]]:
+    explicit = [str(x).strip() for x in (commands or []) if str(x).strip()]
+    if explicit:
+        return [{
+            "id": f"STEP-CMD-{index}",
+            "instruction": "Run this exact caller-supplied command and capture its result.",
+            "command": command,
+            "working_directory": ".",
+            "expected_result": "Capture exit status and concise output; do not silently repair failures.",
+        } for index, command in enumerate(explicit, 1)]
+
     result: list[dict[str, Any]] = []
     for ac in (ep or {}).get("acceptance") or []:
         if not isinstance(ac, dict):
@@ -34,8 +48,8 @@ def _steps(ep: dict[str, Any] | None, first_action: str | None) -> list[dict[str
             if evidence.get("test"):
                 result.append({
                     "id": f"{ac_id}-TEST-{index}",
-                    "instruction": f"Run required test evidence for {ac_id}: {statement}",
-                    "command": str(evidence["test"]),
+                    "instruction": f"Satisfy test evidence for {ac_id}: {statement}. Test requirement: {evidence['test']}",
+                    "command": None,
                     "working_directory": ".",
                     "expected_result": "The required test evidence passes and its output is captured.",
                 })
@@ -65,6 +79,7 @@ def build(
     checkpoint: dict[str, Any] | None,
     *,
     mode: str = "VALIDATE_ONLY",
+    commands: list[str] | None = None,
 ) -> dict[str, Any]:
     if mode not in {"VALIDATE_ONLY", "BOUNDED_EXECUTION"}:
         raise ValueError(f"unsupported local execution mode: {mode}")
@@ -151,7 +166,7 @@ def build(
                 "Compare the observed HEAD with request.exact_basis.material_head before running any validation step.",
                 "If the HEAD differs, do not continue; return HEAD_MISMATCH with the observed HEAD.",
             ],
-            "steps": _steps(ep, first_action),
+            "steps": _steps(ep, first_action, commands),
             "success_conditions": [
                 "Every requested step is attempted on the exact material head or an explicit non-run status is returned.",
                 "The result packet contains the required evidence fields and no unrequested product-state change is made.",

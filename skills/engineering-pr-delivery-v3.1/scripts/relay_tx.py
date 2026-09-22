@@ -712,6 +712,7 @@ def export_local_execution(
     actor: str,
     base_ref: str,
     mode: str = "VALIDATE_ONLY",
+    commands: list[str] | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     _require_action(root, "LOCAL_EXECUTION_EXPORT")
@@ -721,7 +722,7 @@ def export_local_execution(
     checkpoint = _current_checkpoint(root, state)
     if ep is None and isinstance(checkpoint, dict) and checkpoint.get("ep"):
         ep = load_yaml(root / "relay/WORK" / f"{checkpoint['ep']}.yaml")
-    package = build_local_execution(root, snapshot, ep, checkpoint, mode=mode)
+    package = build_local_execution(root, snapshot, ep, checkpoint, mode=mode, commands=commands)
     request_md = render_local_execution_request(package).encode("utf-8")
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
@@ -1009,6 +1010,7 @@ def main() -> None:
     local.add_argument("--actor", required=True)
     local.add_argument("--base-ref", required=True)
     local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
+    local.add_argument("--command", action="append", default=[], help="Exact local command to run; repeat for multiple commands.")
 
     local_result = sub.add_parser("local-execution-result")
     local_result.add_argument("--tx-id", required=True)
@@ -1140,6 +1142,7 @@ def main() -> None:
             actor=args.actor,
             base_ref=args.base_ref,
             mode=args.mode,
+            commands=args.command,
         )
     elif args.command == "local-execution-result":
         result = accept_local_execution_result(
