@@ -41,8 +41,9 @@ properties:
       work_package: {type: [string, 'null']}
       lease: {type: [string, 'null']}
       executor: {type: [string, 'null']}
+      custody_epoch: {type: [integer, 'null'], minimum: 0}
       status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
-      continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
+      continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
   parent_progress:
     type: object
     required: [complete, partial, pending, blocked, deferred, not_applicable, unknown, total]
@@ -56,10 +57,11 @@ properties:
         ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
-        continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
+        continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
         checkpoint: {type: [string, 'null']}
         lease: {type: [string, 'null']}
         executor: {type: [string, 'null']}
+        custody_epoch: {type: [integer, 'null'], minimum: 0}
         basis:
           type: array
           items: {type: string, minLength: 1}
@@ -73,6 +75,21 @@ properties:
       required: [origin_ep]
       properties:
         origin_ep: {type: string}
+  accepted_truth:
+    type: object
+    additionalProperties: true
+  material:
+    type: object
+    additionalProperties: true
+  negative_knowledge:
+    type: object
+    additionalProperties: true
+  accountability:
+    type: object
+    additionalProperties: true
+  active_change:
+    type: [object, 'null']
+    additionalProperties: true
   delivery:
     type: object
     additionalProperties: true
