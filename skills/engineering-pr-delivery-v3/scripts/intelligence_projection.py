@@ -64,6 +64,125 @@ def _scope(rows: Any, *keys: str) -> list[str]:
     return out
 
 
+def _load_parent_issue_observation(value: dict[str, Any] | None) -> dict[str, Any] | None:
+    if value is None:
+        return None
+    errors = validate_schema("parent-issue-observation", value, "PARENT_ISSUE_OBSERVATION")
+    if errors:
+        raise ProjectionError("; ".join(errors))
+    return value
+
+
+def _progress_summary(rows: list[dict[str, Any]], parent: bool) -> dict[str, int]:
+    keys = (
+        ("complete", "partial", "pending", "blocked", "deferred", "not_applicable", "unknown")
+        if parent else ("complete", "partial", "pending", "blocked")
+    )
+    result = {key: 0 for key in keys}
+    mapping = {
+        "COMPLETE": "complete", "PASS": "complete",
+        "PARTIAL": "partial",
+        "PENDING": "pending", "NOT_PROVED": "pending",
+        "BLOCKED": "blocked", "FAIL": "blocked",
+        "DEFERRED": "deferred",
+        "NOT_APPLICABLE": "not_applicable", "NA": "not_applicable",
+        "UNKNOWN": "unknown",
+    }
+    for row in rows:
+        bucket = mapping.get(str(row.get("state") or "UNKNOWN"), "unknown" if parent else "pending")
+        if bucket in result:
+            result[bucket] += 1
+    result["total"] = len(rows)
+    return result
+
+
+def _tracked_items(controls: dict[str, Any] | None, kind: str) -> list[dict[str, Any]]:
+    result = []
+    for row in (controls or {}).get("controls") or []:
+        if not isinstance(row, dict) or row.get("state") != "OPEN":
+            continue
+        tracking = row.get("tracking") or {}
+        if tracking.get("kind") != kind:
+            continue
+        result.append({
+            "id": tracking.get("id"),
+            "control_ref": row.get("id"),
+            "status": "OPEN",
+            "statement": row.get("condition"),
+            "trace_refs": [str((row.get("source") or {}).get("ref"))],
+            "affects": list(row.get("blocks") or []),
+            "resolve_when": (row.get("resolution") or {}).get("condition"),
+        })
+    return result
+
+
+def _issue_sections(
+    observation: dict[str, Any] | None,
+    ep: dict[str, Any] | None,
+    acceptance: list[dict[str, Any]],
+    checkpoint: dict[str, Any] | None,
+    controls: dict[str, Any] | None,
+) -> dict[str, Any]:
+    obs = _load_parent_issue_observation(observation)
+    ep_issue = (ep or {}).get("parent_issue") or {}
+    baseline = (obs or {}).get("baseline") or ep_issue.get("baseline")
+    current = (obs or {}).get("current_contract")
+    parent = {
+        "repository": (obs or {}).get("repository") or ep_issue.get("repository"),
+        "number": (obs or {}).get("issue_number") or ep_issue.get("number"),
+        "title": (obs or {}).get("title") or ep_issue.get("title"),
+        "state": (obs or {}).get("state"),
+        "url": (obs or {}).get("url") or ep_issue.get("url"),
+        "baseline": baseline,
+        "current": current,
+        "updates": list((obs or {}).get("updates") or []),
+    }
+    parent_rows = []
+    for row in ((current or {}).get("acceptance_items") or (baseline or {}).get("acceptance_items") or []):
+        parent_rows.append({
+            "id": row.get("id"),
+            "statement": row.get("statement"),
+            "state": row.get("state") or "UNKNOWN",
+            "evidence": list(row.get("evidence") or []),
+            "trace_refs": list(row.get("provider_refs") or []),
+        })
+    task_rows = [{
+        "id": row.get("id"),
+        "statement": row.get("statement"),
+        "state": "COMPLETE" if row.get("state") == "PASS" else "BLOCKED" if row.get("state") == "FAIL" else "PENDING",
+        "evidence": list(row.get("evidence") or []),
+    } for row in acceptance]
+
+    cp_id = (checkpoint or {}).get("id") or (checkpoint or {}).get("checkpoint_id")
+    handoff = (checkpoint or {}).get("handoff") or {}
+    baseline_digest = (baseline or {}).get("body_digest")
+    changes = list(handoff.get("what_changed") or [])
+    legacy_summary = ((checkpoint or {}).get("implementation_result") or {}).get("summary")
+    if legacy_summary and not changes:
+        changes = [legacy_summary]
+    improvements = []
+    if cp_id and baseline_digest:
+        for index, change in enumerate(changes, 1):
+            improvements.append({
+                "id": f"IMP-{cp_id}-{index:03d}",
+                "status": "ACCEPTED",
+                "type": "EVIDENCE_BOUND_VALUE_ADD",
+                "original_expectation": f"Parent issue baseline {baseline_digest}",
+                "improvement": str(change),
+                "evidence": [str(cp_id)],
+                "project_value": str(change),
+            })
+    return {
+        "parent_issue": parent,
+        "parent_issue_progress": {"checklist": parent_rows, "summary": _progress_summary(parent_rows, True)},
+        "current_task_progress": {"checklist": task_rows, "summary": _progress_summary(task_rows, False)},
+        "offloads": list((ep or {}).get("offloads") or []),
+        "pending_items": _tracked_items(controls, "PENDING"),
+        "known_issues": _tracked_items(controls, "KNOWN_ISSUE"),
+        "improvement_vs_original_issue": {"baseline_digest": baseline_digest, "items": improvements},
+    }
+
+
 def _v25_checkpoint(root: Path, state: dict[str, Any]) -> tuple[dict[str, Any] | None, str | None, str | None]:
     ref = state.get("last_checkpoint") or {}
     cid, path = ref.get("id"), ref.get("path")
@@ -154,7 +273,7 @@ def _v3_controls(root: Path, state: dict[str, Any]) -> dict[str, list[str]]:
     return result
 
 
-def _v25_task(root: Path) -> dict[str, Any]:
+def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
     state = load_yaml(root / V25_STATE)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
     progress = _load(root / V25_PROGRESS) or {}
@@ -265,6 +384,7 @@ def _v25_task(root: Path) -> dict[str, Any]:
     if checkpoint_path:
         sources.append(checkpoint_path)
 
+    issue_sections = _issue_sections(parent_issue_observation, None, acceptance, checkpoint, None)
     task = {
         "schema_version": "relay-v3-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -281,6 +401,7 @@ def _v25_task(root: Path) -> dict[str, Any]:
             "upstream_dependencies": _strings((wp or {}).get("depends_on")),
             "roadmap_admission": {"disposition": disposition, "revision": source.get("roadmap_revision") or (state.get("roadmap") or {}).get("revision"), "basis": _strings(admission.get("basis"))},
         },
+        **issue_sections,
         "scope": {
             "write": _scope(scope.get("allowed"), "path"),
             "read": _scope(scope.get("allowed_reads"), "path"),
@@ -311,7 +432,7 @@ def _v25_task(root: Path) -> dict[str, Any]:
     return task
 
 
-def _v3_task(root: Path, base_ref: str | None) -> dict[str, Any]:
+def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
     state = load_yaml(root / "relay/STATE.yaml")
     project = build_project_snapshot(root, base_ref)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
@@ -332,6 +453,8 @@ def _v3_task(root: Path, base_ref: str | None) -> dict[str, Any]:
         "evidence": _strings((cp_accept.get(str(row.get("id"))) or {}).get("evidence")),
     } for row in (ep or {}).get("acceptance") or [] if isinstance(row, dict)]
     handoff = (checkpoint or {}).get("handoff") or {}
+    native_controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
+    issue_sections = _issue_sections(parent_issue_observation, ep, acceptance, checkpoint, native_controls)
     task = {
         "schema_version": "relay-v3-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -348,6 +471,7 @@ def _v3_task(root: Path, base_ref: str | None) -> dict[str, Any]:
             "upstream_dependencies": _strings((wp or {}).get("depends_on")),
             "roadmap_admission": {"disposition": "MIGRATED_EXISTING_WP" if (root / MIGRATION_REPORT).exists() else "MAPPED_EXISTING_WP", "revision": (state.get("roadmap") or {}).get("revision"), "basis": ["relay/ROADMAP/ROADMAP.yaml"]},
         },
+        **issue_sections,
         "scope": {"write": _strings(((ep or {}).get("scope") or {}).get("write")), "read": _strings(((ep or {}).get("scope") or {}).get("read")), "protected": _strings(((ep or {}).get("scope") or {}).get("protect")), "prohibited": _strings(((ep or {}).get("scope") or {}).get("prohibit"))},
         "inputs": [],
         "benchmarks": [],
@@ -378,8 +502,8 @@ def _use_v3_source(root: Path) -> bool:
     return (root / "relay/STATE.yaml").exists()
 
 
-def build_task(root: Path, base_ref: str | None = None) -> dict[str, Any]:
-    return _v3_task(root, base_ref) if _use_v3_source(root) else _v25_task(root)
+def build_task(root: Path, base_ref: str | None = None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
+    return _v3_task(root, base_ref, parent_issue_observation) if _use_v3_source(root) else _v25_task(root, parent_issue_observation)
 
 
 def _v25_improvement(root: Path) -> dict[str, Any]:
@@ -585,17 +709,19 @@ def main() -> None:
     parser.add_argument("--output")
     parser.add_argument("--task-output")
     parser.add_argument("--improvement-output")
+    parser.add_argument("--parent-issue-observation")
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
+    parent_issue_observation = load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None
     if args.kind == "task":
-        _write(root, args.output, build_task(root, args.base_ref))
+        _write(root, args.output, build_task(root, args.base_ref, parent_issue_observation))
         return
     if args.kind == "improvement":
         _write(root, args.output, build_improvement(root))
         return
     report = assess_continuity(root, args.base_ref)
     if args.task_output:
-        _write(root, args.task_output, build_task(root, args.base_ref))
+        _write(root, args.task_output, build_task(root, args.base_ref, parent_issue_observation))
     if args.improvement_output:
         _write(root, args.improvement_output, build_improvement(root))
     _write(root, args.output, report)

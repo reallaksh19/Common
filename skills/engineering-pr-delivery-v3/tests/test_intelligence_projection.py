@@ -310,7 +310,34 @@ class IntelligenceProjectionTests(unittest.TestCase):
             root = Path(td)
             prepare_active_legacy(root)
             stage_v3(root)
-            task = build_task(root)
+            observation = {
+                "schema_version": "relay-v3-parent-issue-observation",
+                "authority": "DERIVED_PROVIDER_OBSERVATION",
+                "provider": "GITHUB",
+                "repository": "example/repo",
+                "issue_number": 175,
+                "title": "Parent issue",
+                "url": "https://github.com/example/repo/issues/175",
+                "state": "OPEN",
+                "observed_at": "2026-09-22T09:00:00Z",
+                "baseline": {
+                    "observed_at": "2026-09-21T00:00:00Z",
+                    "body_digest": "sha256:" + ("b" * 64),
+                    "acceptance_items": [
+                        {"id": "PI-175-01", "statement": "Generated learner shell exists."},
+                        {"id": "PI-175-02", "statement": "Bespoke explorer is mounted."},
+                    ],
+                },
+                "current_contract": {
+                    "body_digest": "sha256:" + ("c" * 64),
+                    "acceptance_items": [
+                        {"id": "PI-175-01", "statement": "Generated learner shell exists.", "state": "COMPLETE", "evidence": ["CP-CONT-001"], "provider_refs": ["issue-175"]},
+                        {"id": "PI-175-02", "statement": "Bespoke explorer is mounted.", "state": "PENDING", "evidence": [], "provider_refs": ["issue-175"]},
+                    ],
+                },
+                "updates": [{"ref": "issuecomment-1", "type": "STATUS", "summary": "Host parity accepted.", "effect": ["PI-175-01 COMPLETE"]}],
+            }
+            task = build_task(root, parent_issue_observation=observation)
             self.assertEqual("DERIVED_READ_MODEL", task["authority"])
             self.assertEqual("V2_5", task["source_protocol"])
             self.assertEqual("EP-CONT-001", task["identity"]["ep"])
@@ -318,6 +345,10 @@ class IntelligenceProjectionTests(unittest.TestCase):
             self.assertEqual(["src/continuity.py"], task["scope"]["write"])
             self.assertEqual("EVT-CONT-001", task["history"]["recent_events"][0]["id"])
             self.assertEqual("REJECTED", task["negative_knowledge"][0]["result"])
+            self.assertEqual(175, task["parent_issue"]["number"])
+            self.assertEqual(1, task["parent_issue_progress"]["summary"]["complete"])
+            self.assertEqual(1, task["parent_issue_progress"]["summary"]["pending"])
+            self.assertEqual("COMPLETE", task["current_task_progress"]["checklist"][0]["state"])
 
     def test_evidence_only_checkpoint_does_not_fake_capability_progress(self):
         with tempfile.TemporaryDirectory() as td:
