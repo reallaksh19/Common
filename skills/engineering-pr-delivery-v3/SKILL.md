@@ -4,7 +4,7 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 through V3-5 IMPLEMENTED / NOT YET DEFAULT.**
+**V3-1 through V3-6 IMPLEMENTED / NOT YET DEFAULT.**
 
 V2.5 remains the active compatibility protocol while V3 is introduced incrementally. Do not silently reinterpret an existing V2.5 repository as V3.
 
@@ -25,7 +25,7 @@ The durable core is:
 - action-scoped controls;
 - append-only event history.
 
-Generated views include `CURRENT_SNAPSHOT.yaml`, Owner/technical status, handover prose and provider projection.
+Generated views include `CURRENT_SNAPSHOT.yaml`, Owner/technical status, handover prose, local-execution packages and provider projection.
 
 ## Owner compatibility
 
@@ -48,15 +48,9 @@ For a V3 repository layout:
 python skills/engineering-pr-delivery-v3/scripts/validate_foundation.py <repo-root>
 ```
 
-Full foundation validation checks durable authority, canonical roadmap consistency, generated snapshot agreement, and append-only event history.
+Full validation checks durable authority, canonical roadmap consistency, generated snapshot agreement, append-only event history, and whether an interrupted relay transaction requires recovery.
 
-Execution-plane callers that must not depend on derived-view/history freshness use:
-
-```bash
-python skills/engineering-pr-delivery-v3/scripts/validate_foundation.py <repo-root> --authority-only
-```
-
-Generated snapshot disagreement remains a full-conformance failure; the snapshot never overrides authority.
+Execution-plane callers use the same authority validator and therefore fail closed while a transaction is incomplete. Generated snapshot freshness itself remains outside the MATERIAL_WRITE predicate.
 
 ## Action authorization
 
@@ -70,9 +64,9 @@ python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-roo
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
 ```
 
-`MATERIAL_WRITE` is intentionally isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
+`MATERIAL_WRITE` is isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
 
-`MERGE` and `RELEASE` remain separate delivery transitions and require an accepted checkpoint, clear required quality, a declared delivery vehicle, and explicit Owner delivery authority. An `OWNER_OVERRIDE` execution lease never implies merge/release permission.
+`MERGE` and `RELEASE` remain separate delivery transitions and require their own delivery conditions and explicit Owner authority. An `OWNER_OVERRIDE` execution lease never implies merge/release permission.
 
 ## Material vs coordination basis
 
@@ -81,8 +75,6 @@ V3 derives `material_basis.head` separately from `coordination_basis.head`.
 ```bash
 python skills/engineering-pr-delivery-v3/scripts/material_basis.py <repo-root> --base-ref origin/main
 ```
-
-The material sensitivity set is derived from EP write/read/protected paths, semantic dependencies, and path-shaped acceptance dependencies.
 
 Base movement is classified mechanically:
 
@@ -104,13 +96,7 @@ authority: DERIVED_READ_MODEL
 
 It is generated from ROADMAP / STATE / EP / LEASE / CHECKPOINT / CONTROLS; it never supplies missing authority.
 
-```bash
-python skills/engineering-pr-delivery-v3/scripts/generate_snapshot.py <repo-root> --base-ref origin/main --apply
-```
-
 Accepted progress is derived from current roadmap weights plus accepted checkpoints. Coordination, PR opening, projection refreshes and handover publication earn no accepted progress.
-
-Owner and technical status are downstream views of the generated snapshot.
 
 ## Native admission and V2.5 compatibility
 
@@ -127,25 +113,40 @@ An EP may explicitly require qualification through `admission_policy`. QUALIFIED
 
 `OWNER_OVERRIDE` represents bounded direct Owner execution authority without fabricating normal qualification and structurally excludes MERGE/RELEASE authority.
 
-V3-5 admission building is intentionally pure: it emits a valid lease object but does not persist/activate it. V3-6 owns atomic LEASE + STATE mutation.
+Existing V2.5 evidence remains readable through a non-authoritative compatibility view. It is never rewritten into fictitious V3 events or promoted directly into live V3 action authority.
 
-Existing V2.5 evidence remains readable through:
+## Transactional commands
+
+Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`. Each command records before/after digests, staged after-images, recoverable before-images and a manifest.
+
+A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted `PREPARED`, `APPLYING` or `RECOVERY_REQUIRED` transaction makes current authority unusable until recovery.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/v25_lease_view.py . \
-  --route-key SERIAL:EP-0001 \
-  --candidate-id legacy-agent
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . recover
+
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . start ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . checkpoint ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . handover ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . local-execution ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . sync-delivery ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . close ...
 ```
 
-The compatibility reader runs the live V2.5 takeover validator and emits only:
+Key semantics:
+- lease transfer releases old custody, grants new custody, updates STATE, refreshes CURRENT_SNAPSHOT and appends EVENTS in one transaction;
+- accepted checkpoints are immutable and update STATE/snapshot/events together;
+- resolved controls update controls/snapshot/events together;
+- handover and local-execution packages are generated downstream views, never authority;
+- delivery sync accepts only a matching provider-readback vehicle;
+- close requires completed provider delivery when delivery is required;
+- recovery confirms a commit only if every target matches its staged after-image;
+- mixed before/after state is rolled back;
+- an external/unknown target mutation is never auto-overwritten during recovery.
 
-```yaml
-authority: DERIVED_COMPATIBILITY_VIEW
-native_lease: false
-may_authorize_v3_actions: false
-```
+## Architectural invariant
 
-It never rewrites V2.5 DISC/QUAL/TC evidence into native V3 events or live write authority.
+**Execution safety is synchronous. Handover quality is deterministically derivable. Delivery synchronization may be eventually consistent until the requested delivery action requires it.**
 
 See:
 - `operating-model/authority-model.md`
@@ -153,4 +154,4 @@ See:
 - `operating-model/material-basis-and-drift.md`
 - `operating-model/current-snapshot.md`
 - `operating-model/lease-admission-and-v25-compat.md`
-- schemas under `schemas/`.
+- schemas and scripts under this skill.
