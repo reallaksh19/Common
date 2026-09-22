@@ -4,9 +4,11 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 through V3-7 IMPLEMENTED / NOT YET DEFAULT.**
+**V3-1 through V3-8 IMPLEMENTED. DEFAULT SELECTION IS PER-REPOSITORY AND REQUIRES EXPLICIT CUTOVER.**
 
-V2.5 remains the active compatibility protocol while V3 is introduced incrementally. Do not silently reinterpret an existing V2.5 repository as V3.
+Repositories with no explicit protocol selection remain on V2.5 compatibility behavior. Do not silently reinterpret an existing V2.5 repository as V3.
+
+A repository becomes V3-default only after its own `relay/PROTOCOL_SELECTION.yaml` is transactionally activated with passing cutover readiness and direct Owner cutover basis.
 
 ## V3 architecture
 
@@ -176,6 +178,68 @@ The request points to the canonical standalone launcher/schema/validator and req
 A failed/unverified handover plan can deny HANDOVER but does not itself deny MATERIAL_WRITE.
 
 See `operating-model/three-pass-integration.md`. The richer handover-content redesign tracked separately in Common issue #420 remains separately owned.
+
+## V2.5 migration and protocol cutover
+
+V3 migration is non-destructive. The original `agents/relay/**` tree is inventoried and hashed before V3 authority is created.
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/v25_migration.py <repo-root> report
+
+python skills/engineering-pr-delivery-v3/scripts/v25_migration.py <repo-root> bootstrap \
+  --tx-id TX-MIGRATE-001 \
+  --event-id EVT-MIGRATE-001 \
+  --actor migration-agent \
+  --owner-outcome "<explicit Owner outcome>" \
+  --current-goal "<explicit current goal>"
+```
+
+Bootstrap creates only present-day V3 `INITIALIZING` authority, a generated migration report, one migration-reconciliation control, and a prepared protocol selector. It does **not** translate legacy DISC/QSET/QUAL/TC/checkpoint/projection objects into fictitious V3 events or native acceptance.
+
+Protocol selection is resolved mechanically:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_default.py <repo-root>
+```
+
+Semantics:
+- no selector → V2.5 compatibility remains the default;
+- `V2_5 / PREPARED` → V3 is staged, but V2.5 remains live;
+- `V3 / ACTIVE` → V3 is the live/default relay; V2.5 becomes read-only history;
+- invalid selection/history digest → fail closed; do not guess a protocol.
+
+Before cutover:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> assess
+```
+
+Readiness requires:
+- full V3 conformance;
+- unchanged legacy-tree digest;
+- source V2.5 REPO_STATE validation PASS;
+- migration reconciliation control RESOLVED;
+- native lifecycle in `ACTIVE | IDLE | TERMINAL`;
+- prepared V2.5-selected protocol state.
+
+Activation additionally requires direct Owner basis:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> activate \
+  --tx-id TX-CUTOVER-001 \
+  --event-id EVT-CUTOVER-001 \
+  --actor owner \
+  --owner-utterance-digest sha256:<digest-of-current-direct-owner-cutover-utterance> \
+  --owner-session-timestamp <RFC3339-time>
+```
+
+After V3 activation, the preserved V2.5 tree is bound by its cutover digest. Any change under `agents/relay/**` makes protocol-selection validation fail until explicitly reconciled.
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> validate
+```
+
+See `operating-model/v25-migration-and-cutover.md`.
 
 ## Architectural invariant
 
