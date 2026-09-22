@@ -128,7 +128,7 @@ A canonical mutation is considered complete only when the transaction is `COMMIT
 ```bash
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . recover
 
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . start ...
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . checkpoint ...
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . handover ...
@@ -297,3 +297,10 @@ The continuity control may be resolved only after the generated continuity asses
 The parent-issue observation is provider-derived context and never grants write, checkpoint, merge, or release authority.
 
 A migrated repository in `V2_5 / PREPARED` may use staged V3 for migration, continuity projection and handover preparation, but live V3 execution/delivery actions fail with `PROTOCOL_NOT_ACTIVE`. After `V3 / ACTIVE`, V2.5 is read-only history and current task snapshots derive from native V3 truth.
+
+
+### Canonical task admission
+
+New work from an `IDLE` V3 repository must enter through `relay_tx.py admit-task`. The transaction atomically applies the governed roadmap disposition, creates the EP, grants the first lease, moves STATE to ACTIVE, appends OWNER_TASK_ADMITTED / EP_CREATED / LEASE_GRANTED events, and regenerates CURRENT_SNAPSHOT.
+
+The generic transaction layer enforces semantic target constraints for critical commands. In particular, `ACTIVATE_LEASE` cannot create or rewrite roadmap/EP authority, and `RESOLVE_CONTROL` cannot rewrite protocol selection or migration reports. This prevents an atomically journaled transaction from masquerading as a different authority transition.

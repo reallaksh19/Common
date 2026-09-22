@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import shutil
+from fnmatch import fnmatch
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,29 @@ from typing import Any
 import yaml
 
 from v3lib import load_yaml, repo_path, require_identifier, validate_schema
+
+
+COMMAND_TARGET_PATTERNS = {
+    "ACTIVATE_LEASE": [
+        "relay/EVENTS.jsonl",
+        "relay/STATE.yaml",
+        "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+        "relay/LEASES/LEASE-*.yaml",
+    ],
+    "RESOLVE_CONTROL": [
+        "relay/EVENTS.jsonl",
+        "relay/CONTROLS/controls.yaml",
+        "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    ],
+    "ADMIT_TASK": [
+        "relay/EVENTS.jsonl",
+        "relay/ROADMAP/ROADMAP.yaml",
+        "relay/STATE.yaml",
+        "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+        "relay/WORK/EP-*.yaml",
+        "relay/LEASES/LEASE-*.yaml",
+    ],
+}
 
 
 class TransactionError(RuntimeError):
@@ -70,6 +94,20 @@ def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | Non
     return out
 
 
+def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> None:
+    patterns = COMMAND_TARGET_PATTERNS.get(command)
+    if not patterns:
+        return
+    invalid = [
+        path for path in replacements
+        if not any(fnmatch(path, pattern) for pattern in patterns)
+    ]
+    if invalid:
+        raise TransactionError(
+            f"{command} cannot mutate target(s): {', '.join(sorted(invalid))}"
+        )
+
+
 def _prepare(
     root: Path,
     *,
@@ -84,6 +122,7 @@ def _prepare(
         raise TransactionError(str(exc)) from exc
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
+    _validate_command_targets(command, replacements)
     tx_dir = repo_path(root, f"relay/TRANSACTIONS/{tx_id}", "transaction directory")
     manifest_path = tx_dir / "manifest.yaml"
     if tx_dir.exists():

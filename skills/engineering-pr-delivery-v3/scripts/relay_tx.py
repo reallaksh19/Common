@@ -11,7 +11,7 @@ from handover_projection import render as render_handover
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
 from local_execution_projection import build as build_local_execution
-from relay_can import evaluate as can_action
+from relay_can import _protocol_state, evaluate as can_action
 from snapshot_projection import build as build_snapshot
 from transactionlib import TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
 from v3lib import load_events, load_yaml, require_identifier, validate_schema
@@ -91,6 +91,138 @@ def _current_checkpoint(root: Path, state: dict[str, Any]) -> dict[str, Any] | N
 def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     ep_id = (state.get("execution") or {}).get("ep")
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
+
+
+def admit_task(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    admission_path: Path,
+    base_ref: str,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    live_v3, protocol_state = _protocol_state(root)
+    if not live_v3:
+        raise TransactionError(f"ADMIT_TASK denied: PROTOCOL_NOT_ACTIVE ({protocol_state})")
+
+    state, _ = _authority(root)
+    execution = state.get("execution") or {}
+    if execution.get("lifecycle") != "IDLE" or any(execution.get(key) for key in ("ep", "lease", "route")):
+        raise TransactionError("ADMIT_TASK requires an IDLE repository with no active EP/lease/route")
+
+    admission = load_yaml(admission_path)
+    errors = validate_schema("task-admission", admission, "TASK_ADMISSION")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    ep = admission.get("ep") or {}
+    errors = validate_schema("ep", ep, "EP")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    try:
+        require_identifier(str(ep.get("id")), "EP-", "ep_id")
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
+
+    roadmap_path = root / str((state.get("roadmap") or {}).get("path"))
+    roadmap = load_yaml(roadmap_path)
+    rplan = admission["roadmap"]
+    wp = copy.deepcopy(rplan["work_package"])
+    wp_id = str(wp.get("id"))
+    if str(ep.get("work_package")) != wp_id:
+        raise TransactionError("EP work_package must match admitted roadmap work package")
+    if rplan["new_revision"] == roadmap.get("revision"):
+        raise TransactionError("ADMIT_TASK requires a new roadmap revision")
+
+    work_packages = copy.deepcopy(roadmap.get("work_packages") or [])
+    existing_index = next((i for i, item in enumerate(work_packages) if str(item.get("id")) == wp_id), None)
+    disposition = rplan["disposition"]
+    if disposition == "ADDED_EXECUTION_WP":
+        if existing_index is not None:
+            raise TransactionError("ADDED_EXECUTION_WP requires a new work package id")
+        work_packages.append(wp)
+    elif existing_index is None:
+        raise TransactionError(f"{disposition} requires an existing work package")
+    elif disposition == "MAPPED_EXISTING_WP":
+        existing = work_packages[existing_index]
+        for key in ("id", "title", "weight", "depends_on"):
+            if existing.get(key) != wp.get(key):
+                raise TransactionError("MAPPED_EXISTING_WP cannot silently revise the work package contract")
+        existing["state"] = "ACTIVE"
+    else:
+        work_packages[existing_index] = wp
+
+    if any(item.get("state") == "ACTIVE" and item.get("id") != wp_id for item in work_packages):
+        raise TransactionError("serial ADMIT_TASK cannot create a second ACTIVE work package")
+
+    ep_path = root / "relay/WORK" / f"{ep['id']}.yaml"
+    lease_spec = admission["lease"]
+    lease_id = str(lease_spec["id"])
+    lease_path = root / "relay/LEASES" / f"{lease_id}.yaml"
+    if ep_path.exists() or lease_path.exists():
+        raise TransactionError("ADMIT_TASK refuses to overwrite an existing EP or lease")
+
+    new_roadmap = copy.deepcopy(roadmap)
+    new_roadmap["revision"] = rplan["new_revision"]
+    new_roadmap["work_packages"] = work_packages
+
+    route = f"SERIAL:{ep['id']}"
+    provisional_state = copy.deepcopy(state)
+    provisional_state["roadmap"]["revision"] = rplan["new_revision"]
+    provisional_state["execution"] = {
+        "lifecycle": "ACTIVE",
+        "ep": ep["id"],
+        "lease": lease_id,
+        "route": route,
+    }
+    provisional_state["delivery"] = copy.deepcopy(admission["delivery"])
+
+    lease = build_native_lease(
+        root,
+        lease_id=lease_id,
+        executor_id=lease_spec["executor_id"],
+        method=lease_spec["method"],
+        qualification=lease_spec.get("qualification"),
+        owner_basis=lease_spec.get("owner_basis"),
+        branch=lease_spec.get("branch"),
+        state_override=provisional_state,
+        ep_override=ep,
+        current_lease_override=None,
+    )
+    snapshot = build_snapshot(
+        root,
+        base_ref,
+        state_override=provisional_state,
+        roadmap_override=new_roadmap,
+        ep_override=ep,
+        lease_override=lease,
+    )
+
+    events = _events(root)
+    ids = [event_id + "-OWNER", event_id + "-EP", event_id + "-LEASE"]
+    _assert_event_ids_available(events, ids)
+    events.extend([
+        _event(ids[0], "OWNER_TASK_ADMITTED", actor, wp_id, [tx_id, disposition, *rplan["basis"]], {"roadmap_revision": rplan["new_revision"]}),
+        _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
+        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route], {"executor": lease_spec["executor_id"], "method": lease_spec["method"]}),
+    ])
+
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="ADMIT_TASK",
+        actor=actor,
+        replacements={
+            str((state.get("roadmap") or {}).get("path")): yaml_bytes(new_roadmap),
+            "relay/STATE.yaml": yaml_bytes(provisional_state),
+            f"relay/WORK/{ep['id']}.yaml": yaml_bytes(ep),
+            f"relay/LEASES/{lease_id}.yaml": yaml_bytes(lease),
+            _snapshot_path(provisional_state): yaml_bytes(snapshot),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
 
 
 def activate_lease(
@@ -561,6 +693,13 @@ def main() -> None:
 
     sub.add_parser("recover")
 
+    admit_task_parser = sub.add_parser("admit-task")
+    admit_task_parser.add_argument("--tx-id", required=True)
+    admit_task_parser.add_argument("--event-id", required=True)
+    admit_task_parser.add_argument("--actor", required=True)
+    admit_task_parser.add_argument("--admission", required=True)
+    admit_task_parser.add_argument("--base-ref", required=True)
+
     admit = sub.add_parser("admit")
     admit.add_argument("--lease-id", required=True)
     admit.add_argument("--executor-id", required=True)
@@ -629,6 +768,18 @@ def main() -> None:
     if args.command == "recover":
         for result in recover_all(root):
             print(f"{result['id']}: {result['status']}")
+        return
+
+    if args.command == "admit-task":
+        result = admit_task(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            admission_path=Path(args.admission),
+            base_ref=args.base_ref,
+        )
+        print(f"{result['id']}: {result['status']}")
         return
 
     if args.command == "admit":
