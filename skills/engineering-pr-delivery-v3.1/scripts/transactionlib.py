@@ -26,6 +26,12 @@ COMMAND_TARGET_PATTERNS = {
         "relay/CONTROLS/controls.yaml",
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
     ],
+    "RECONCILE_ROADMAP": [
+        "relay/EVENTS.jsonl",
+        "relay/ROADMAP/ROADMAP.yaml",
+        "relay/STATE.yaml",
+        "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    ],
     "FREEZE_LEGACY_CUTOVER": [
         "relay/EVENTS.jsonl",
         "relay/PROTOCOL_SELECTION.yaml",
