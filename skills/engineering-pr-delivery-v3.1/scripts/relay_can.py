@@ -35,6 +35,7 @@ DELIVERY_OWNER_ACTIONS = {"MERGE", "RELEASE"}
 CHECKPOINT_ACTIONS = {"PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 QUALITY_ACTIONS = {"PR_READY", "MERGE", "RELEASE"}
 LIVE_V3_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
+FENCED_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT", "HANDOVER", "LOCAL_EXECUTION_EXPORT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 
 
 def _load_current(root: Path) -> tuple[dict[str, Any], dict[str, Any] | None, dict[str, Any] | None, dict[str, Any], dict[str, Any] | None]:
@@ -131,6 +132,7 @@ def evaluate(
     *,
     path: str | None = None,
     base_ref: str | None = None,
+    expected_custody_epoch: int | None = None,
 ) -> dict[str, Any]:
     action = action.upper()
     if action not in ACTIONS:
@@ -155,6 +157,13 @@ def evaluate(
         reasons.append("PROTOCOL_NOT_ACTIVE")
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
+    current_epoch = execution.get("custody_epoch")
+    if action in FENCED_ACTIONS and execution.get("lifecycle") in {"ACTIVE", "PARALLEL"} and current_epoch is not None:
+        basis.append(f"custody_epoch:{current_epoch}")
+        if expected_custody_epoch is None:
+            reasons.append("CUSTODY_EPOCH_REQUIRED")
+        elif int(expected_custody_epoch) != int(current_epoch):
+            reasons.append("STALE_CUSTODY_EPOCH")
 
     if action in EXECUTION_ACTIONS:
         if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or not ep:
@@ -264,8 +273,15 @@ def main() -> None:
         "--base-ref",
         help="Current base branch/ref. MATERIAL_WRITE uses it to derive DISJOINT/RELEVANT/UNKNOWN drift mechanically.",
     )
+    parser.add_argument("--expected-custody-epoch", type=int)
     args = parser.parse_args()
-    result = evaluate(Path(args.repo_root).resolve(), args.action, path=args.path, base_ref=args.base_ref)
+    result = evaluate(
+        Path(args.repo_root).resolve(),
+        args.action,
+        path=args.path,
+        base_ref=args.base_ref,
+        expected_custody_epoch=args.expected_custody_epoch,
+    )
     print(json.dumps(result, indent=2))
     raise SystemExit(0 if result["allowed"] else 1)
 
