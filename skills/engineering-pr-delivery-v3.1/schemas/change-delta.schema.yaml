@@ -42,7 +42,7 @@ properties:
         type: array
         items: {type: string, minLength: 1}
   proposal:
-    type: object
+    type: [object, 'null']
     additionalProperties: false
     required: [disposition, source, retain, transfer, proposed_target, rationale]
     properties:
@@ -65,7 +65,7 @@ properties:
     additionalProperties: false
     required: [required, status, owner_basis]
     properties:
-      required: {enum: [NONE, OWNER]}
+      required: {enum: [UNKNOWN, NONE, OWNER]}
       status: {enum: [PENDING, GRANTED, DENIED, NOT_REQUIRED]}
       owner_basis:
         type: [object, 'null']
