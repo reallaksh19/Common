@@ -1,0 +1,47 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, source_protocol, native_lease, may_authorize_v3_actions, route, executor, basis, qualification, source_evidence, validation]
+properties:
+  schema_version: {const: relay-v3-v25-lease-view}
+  authority: {const: DERIVED_COMPATIBILITY_VIEW}
+  source_protocol: {const: '2.5'}
+  native_lease: {const: false}
+  may_authorize_v3_actions: {const: false}
+  route: {type: string, minLength: 1}
+  executor: {type: string, minLength: 1}
+  basis:
+    type: object
+    additionalProperties: false
+    required: [ep_id, material_ref, roadmap_revision, protocol_basis]
+    properties:
+      ep_id: {type: string, minLength: 1}
+      material_ref: {type: string, minLength: 1}
+      roadmap_revision: {type: string, minLength: 1}
+      protocol_basis: {type: string, minLength: 1}
+  qualification:
+    type: object
+    additionalProperties: false
+    required: [required, status, receipt]
+    properties:
+      required: {type: boolean}
+      status: {enum: [NOT_REQUIRED, PASS]}
+      receipt: {type: [string, 'null']}
+  source_evidence:
+    type: object
+    additionalProperties: false
+    required: [discovery, qualification, certification]
+    properties:
+      discovery: {type: string, minLength: 1}
+      qualification: {type: [string, 'null']}
+      certification: {type: string, minLength: 1}
+  validation:
+    type: object
+    additionalProperties: false
+    required: [status, basis]
+    properties:
+      status: {enum: [PASS, FAIL]}
+      basis:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+additionalProperties: false
