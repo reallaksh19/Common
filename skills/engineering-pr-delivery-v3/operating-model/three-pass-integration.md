@@ -121,3 +121,20 @@ handover readiness != execution safety
 V3-7 provides the relay-to-generator boundary: frozen basis, provider target, visibility partitions, accumulated checkpoint learning, and exact live-generator binding.
 
 The richer handover reasoning/content redesign tracked in Common issue #420 remains separately owned. V3-7 does not silently redefine Prompt 0.5 / 1 / 2 / 2.5 / 3.
+
+
+## Refinement boundary with #421 and #420
+
+This adapter is the baseline V3 relay-to-generator boundary. Common #421 refines the handover input without changing authority ownership:
+
+```text
+PROJECT_SNAPSHOT
++ TASK_SNAPSHOT
++ relevant IMPROVEMENT_VIEW(S)
++ live provider target
+→ #420 five-prompt reasoning
+```
+
+Roadmap mutation remains a Relay operation. Prompt 2.5 may recommend roadmap reconciliation; Prompt 3 may return a semantic delta. Neither prompt directly writes authoritative roadmap/progress truth. Relay/checkpoint tooling performs the governed reconciliation and then regenerates projections.
+
+The richer projections are intentionally V2.5-first: they may be generated from current V2.5 roadmap/event/checkpoint/progress intelligence before V3 becomes the selected execution protocol.
