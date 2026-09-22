@@ -16,6 +16,7 @@ from validate_foundation import validate as validate_v3
 
 READINESS_PATH = "relay/MIGRATION/CUTOVER_READINESS.yaml"
 DEPRECATION_PATH = "relay/MIGRATION/V25_DEPRECATION.md"
+INTELLIGENCE_CONTINUITY_PATH = "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml"
 
 
 class CutoverError(RuntimeError):
@@ -60,10 +61,24 @@ def assess(root: Path) -> dict[str, Any]:
         item for item in controls.get("controls") or []
         if isinstance(item, dict) and item.get("id") == INTELLIGENCE_CONTINUITY_CONTROL
     ]
+    continuity_report_path = root / INTELLIGENCE_CONTINUITY_PATH
+    continuity_report = load_yaml(continuity_report_path) if continuity_report_path.exists() else None
+    continuity_report_errors = (
+        validate_schema("intelligence-continuity", continuity_report, "INTELLIGENCE_CONTINUITY")
+        if isinstance(continuity_report, dict)
+        else ["continuity report missing"]
+    )
+    continuity_report_ready = (
+        isinstance(continuity_report, dict)
+        and not continuity_report_errors
+        and continuity_report.get("ready") is True
+        and ((continuity_report.get("source") or {}).get("legacy_tree_digest") == expected_legacy_digest)
+    )
     continuity_resolved = (
         len(continuity_rows) == 1
         and continuity_rows[0].get("state") == "RESOLVED"
         and bool(((continuity_rows[0].get("resolution") or {}).get("evidence") or []))
+        and continuity_report_ready
     )
 
     lifecycle = str((state.get("execution") or {}).get("lifecycle") or "")
@@ -96,6 +111,8 @@ def assess(root: Path) -> dict[str, Any]:
         f"migration_control={migration_rows[0].get('state') if len(migration_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
         f"roadmap_intelligence_continuity={continuity_rows[0].get('state') if len(continuity_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
         f"roadmap_intelligence_evidence={len(((continuity_rows[0].get('resolution') or {}).get('evidence') or [])) if len(continuity_rows) == 1 else 0}",
+        f"intelligence_continuity_report={'PASS' if continuity_report_ready else 'FAIL'}",
+        f"intelligence_continuity_errors={len(continuity_report_errors)}",
     ]
     basis.extend(f"v3:{item}" for item in v3_errors[:8])
     readiness = {
