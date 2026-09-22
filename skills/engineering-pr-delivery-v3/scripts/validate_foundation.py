@@ -5,7 +5,7 @@ import argparse
 from pathlib import Path
 
 from transactionlib import incomplete_transactions
-from v3lib import canonical_digest, load_events, load_yaml, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, repo_path, require_identifier, validate_schema
 
 
 def _load(path: Path, label: str, errors: list[str]):
@@ -13,6 +13,25 @@ def _load(path: Path, label: str, errors: list[str]):
         return load_yaml(path)
     except Exception as exc:
         errors.append(f"{label}: cannot load {path}: {exc}")
+        return None
+
+
+def _repo_load(repo_root: Path, relative: str, label: str, errors: list[str]):
+    try:
+        path = repo_path(repo_root, relative, label)
+    except ValueError as exc:
+        errors.append(f"{label}: {exc}")
+        return None
+    return _load(path, label, errors)
+
+
+def _safe_id(value, prefix: str, label: str, errors: list[str]):
+    if value in {None, ""}:
+        return None
+    try:
+        return require_identifier(str(value), prefix, label)
+    except ValueError as exc:
+        errors.append(f"{label}: {exc}")
         return None
 
 
@@ -41,7 +60,7 @@ def validate_authority(repo_root: Path) -> list[str]:
     roadmap_ref = (state.get("roadmap") or {}).get("path")
     roadmap = None
     if roadmap_ref:
-        roadmap = _load(repo_root / str(roadmap_ref), "ROADMAP", errors)
+        roadmap = _repo_load(repo_root, str(roadmap_ref), "ROADMAP", errors)
         if isinstance(roadmap, dict):
             errors.extend(validate_schema("roadmap", roadmap, "ROADMAP"))
             if roadmap.get("revision") != (state.get("roadmap") or {}).get("revision"):
@@ -50,7 +69,7 @@ def validate_authority(repo_root: Path) -> list[str]:
     controls_ref = (state.get("controls") or {}).get("path")
     controls = None
     if controls_ref:
-        controls = _load(repo_root / str(controls_ref), "CONTROLS", errors)
+        controls = _repo_load(repo_root, str(controls_ref), "CONTROLS", errors)
         if isinstance(controls, dict):
             errors.extend(validate_schema("controls", controls, "CONTROLS"))
             for index, control in enumerate(controls.get("controls") or []):
@@ -69,6 +88,7 @@ def validate_authority(repo_root: Path) -> list[str]:
     ep = None
     lease = None
 
+    ep_id = _safe_id(ep_id, "EP-", "STATE.execution.ep", errors)
     if ep_id:
         ep_path = relay / "WORK" / f"{ep_id}.yaml"
         ep = _load(ep_path, "EP", errors)
@@ -81,6 +101,7 @@ def validate_authority(repo_root: Path) -> list[str]:
                 if str(ep.get("work_package")) not in wp_ids:
                     errors.append("EP.work_package is not present in authoritative ROADMAP")
 
+    lease_id = _safe_id(lease_id, "LEASE-", "STATE.execution.lease", errors)
     if lease_id:
         lease_path = relay / "LEASES" / f"{lease_id}.yaml"
         lease = _load(lease_path, "LEASE", errors)
@@ -95,7 +116,7 @@ def validate_authority(repo_root: Path) -> list[str]:
             if execution.get("lifecycle") == "ACTIVE" and lease.get("state") != "ACTIVE":
                 errors.append("ACTIVE STATE requires referenced LEASE.state ACTIVE")
 
-    checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
+    checkpoint_id = _safe_id((state.get("accepted") or {}).get("checkpoint"), "CP-", "STATE.accepted.checkpoint", errors)
     if checkpoint_id:
         cp_path = relay / "CHECKPOINTS" / f"{checkpoint_id}.yaml"
         checkpoint = _load(cp_path, "CHECKPOINT", errors)
@@ -118,17 +139,17 @@ def validate(repo_root: Path) -> list[str]:
         return errors or ["STATE: expected mapping"]
 
     roadmap_ref = (state.get("roadmap") or {}).get("path")
-    roadmap = _load(repo_root / str(roadmap_ref), "ROADMAP", errors) if roadmap_ref else None
+    roadmap = _repo_load(repo_root, str(roadmap_ref), "ROADMAP", errors) if roadmap_ref else None
     execution = state.get("execution") or {}
-    ep_id = execution.get("ep")
-    lease_id = execution.get("lease")
-    checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
+    ep_id = _safe_id(execution.get("ep"), "EP-", "STATE.execution.ep", errors)
+    lease_id = _safe_id(execution.get("lease"), "LEASE-", "STATE.execution.lease", errors)
+    checkpoint_id = _safe_id((state.get("accepted") or {}).get("checkpoint"), "CP-", "STATE.accepted.checkpoint", errors)
     ep = _load(relay / "WORK" / f"{ep_id}.yaml", "EP", errors) if ep_id else None
     lease = _load(relay / "LEASES" / f"{lease_id}.yaml", "LEASE", errors) if lease_id else None
 
     snapshot_ref = (state.get("generated") or {}).get("snapshot")
     if snapshot_ref:
-        snapshot = _load(repo_root / str(snapshot_ref), "SNAPSHOT", errors)
+        snapshot = _repo_load(repo_root, str(snapshot_ref), "SNAPSHOT", errors)
         if isinstance(snapshot, dict):
             errors.extend(validate_schema("snapshot", snapshot, "SNAPSHOT"))
             generated = snapshot.get("generated_from") or {}
