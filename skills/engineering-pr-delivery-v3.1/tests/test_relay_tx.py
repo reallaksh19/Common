@@ -77,6 +77,20 @@ def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") 
 
 
 class RelayTransactionalCommandTests(unittest.TestCase):
+    def test_graceful_release_refuses_to_drop_unfinished_custody_without_handover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            with self.assertRaisesRegex(TransactionError, "HANDOVER_CONTEXT"):
+                release_lease(
+                    root,
+                    tx_id="TX-RELEASE-NO-HANDOVER",
+                    event_id="EVT-RELEASE-NO-HANDOVER",
+                    actor="agent-x",
+                    reason="HANDOFF",
+                    base_ref=base_ref,
+                )
+
     def test_admit_task_atomically_moves_idle_repository_to_active_execution(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -86,6 +100,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 tx_id="TX-RELEASE-BEFORE-ADMIT",
                 event_id="EVT-RELEASE-BEFORE-ADMIT",
                 actor="agent-x",
+                reason="ADMINISTRATIVE",
             )
 
             source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
@@ -195,6 +210,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 tx_id="TX-RELEASE-001",
                 event_id="EVT-RELEASE-001",
                 actor="agent-x",
+                reason="ADMINISTRATIVE",
             )
             self.assertEqual("COMMITTED", result["status"])
             lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
@@ -377,6 +393,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 tx_id="TX-RELEASE-LOCAL",
                 event_id="EVT-RELEASE-LOCAL",
                 actor="agent-x",
+                reason="ADMINISTRATIVE",
             )
             result = export_local_execution(
                 root,

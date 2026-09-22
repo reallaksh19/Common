@@ -309,3 +309,27 @@ The generic transaction layer enforces semantic target constraints for critical 
 ### Legacy cutover freeze
 
 Do not rewrite the bootstrap V2.5 migration digest when legacy authority legitimately changes during `V2_5 / PREPARED`. Before cutover, run `protocol_cutover.py freeze` to bind the final live V2.5 tree. Continuity and post-cutover immutability are checked against that explicit freeze digest; the bootstrap digest remains historical migration evidence.
+
+## V3.1 communication boundary
+
+V3.1 distinguishes three outward communication modes:
+
+- **STATUS** — report what is true.
+- **REQUEST** — another actor is expected to perform bounded work.
+- **HANDOVER** — continuation responsibility is being released or transferred.
+
+A REQUEST MUST NOT be satisfied with status prose alone. When another actor is expected to act, emit a recipient-ready action contract containing purpose, exact basis, bounded steps, success conditions, stop conditions, prohibited actions, and the required return contract.
+
+LOCAL_EXECUTION_EXPORT materializes both relay/GENERATED/LOCAL_EXECUTION.yaml and relay/GENERATED/LOCAL_EXECUTION.md.
+
+The Markdown artifact is the minimum runnable packet to present to the recipient in the same interaction. A pointer to an earlier issue/PR comment is not a substitute for the runnable packet.
+
+A bounded local helper does not inherit task custody. LOCAL_EXECUTION_RETURNED records returned external execution evidence; the originating owner resumes responsibility and decides how that evidence affects checkpoint, controls, roadmap, or delivery.
+
+## Graceful custody release
+
+A normal unfinished RELEASE_LEASE uses reason HANDOFF and MUST be backed by a fresh, committed HANDOVER_CONTEXT / HANDOVER_PLANNED basis matching the current STATE, EP, lease, and material reality.
+
+Administrative recovery may use reason ADMINISTRATIVE; this is explicitly non-graceful and MUST NOT be represented as a successful handover.
+
+Accepted checkpoint semantics are unchanged. V3.1 does not create or weaken a checkpoint merely to permit retirement.

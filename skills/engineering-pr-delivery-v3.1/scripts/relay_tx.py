@@ -15,7 +15,7 @@ from render_local_execution_request import render as render_local_execution_requ
 from relay_can import _protocol_state, evaluate as can_action
 from snapshot_projection import build as build_snapshot
 from transactionlib import TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
-from v3lib import load_events, load_yaml, require_identifier, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, require_identifier, validate_schema
 from validate_foundation import validate_authority
 
 
@@ -92,6 +92,52 @@ def _current_checkpoint(root: Path, state: dict[str, Any]) -> dict[str, Any] | N
 def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     ep_id = (state.get("execution") or {}).get("ep")
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
+
+
+def _require_fresh_handover(
+    root: Path,
+    state: dict[str, Any],
+    *,
+    base_ref: str | None,
+) -> str:
+    context_path = root / "relay/GENERATED/HANDOVER_CONTEXT.yaml"
+    if not context_path.exists():
+        raise TransactionError("graceful lease release requires a fresh HANDOVER_CONTEXT")
+
+    context = load_yaml(context_path)
+    errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
+    if errors:
+        raise TransactionError("; ".join(errors))
+
+    frozen = context.get("frozen_basis") or {}
+    execution = state.get("execution") or {}
+    if frozen.get("lease") != execution.get("lease") or frozen.get("ep") != execution.get("ep"):
+        raise TransactionError("HANDOVER_STALE: handover EP/lease does not match current execution")
+    if frozen.get("state_digest") != canonical_digest(state):
+        raise TransactionError("HANDOVER_STALE: handover state digest does not match current authority")
+
+    ep = _current_ep(root, state)
+    if isinstance(ep, dict):
+        if not base_ref:
+            raise TransactionError("graceful lease release requires --base-ref to verify handover material freshness")
+        inspected = inspect_material_basis(root, ep, base_ref)["material_basis"]
+        for key, frozen_key in (
+            ("head", "material_head"),
+            ("relevant_paths_digest", "relevant_paths_digest"),
+            ("dependency_digest", "dependency_digest"),
+        ):
+            if inspected.get(key) != frozen.get(frozen_key):
+                raise TransactionError(f"HANDOVER_STALE: {frozen_key} no longer matches current material reality")
+
+    digest = canonical_digest(context)
+    planned = any(
+        item.get("type") == "HANDOVER_PLANNED"
+        and digest in (item.get("basis") or [])
+        for item in _events(root)
+    )
+    if not planned:
+        raise TransactionError("graceful lease release requires a committed HANDOVER_PLANNED event for the current context")
+    return digest
 
 
 def admit_task(
@@ -322,8 +368,13 @@ def release_lease(
     tx_id: str,
     event_id: str,
     actor: str,
+    reason: str = "HANDOFF",
+    base_ref: str | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
+    if reason not in {"HANDOFF", "ADMINISTRATIVE"}:
+        raise TransactionError("lease release reason must be HANDOFF or ADMINISTRATIVE")
+
     state, _ = _authority(root)
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
@@ -334,6 +385,10 @@ def release_lease(
     if lease.get("state") != "ACTIVE":
         raise TransactionError("current lease is not ACTIVE")
 
+    handover_digest = None
+    if reason == "HANDOFF":
+        handover_digest = _require_fresh_handover(root, state, base_ref=base_ref)
+
     released = copy.deepcopy(lease)
     released["state"] = "RELEASED"
     new_state = copy.deepcopy(state)
@@ -342,7 +397,21 @@ def release_lease(
 
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
-    events.append(_event(event_id, "LEASE_RELEASED", actor, str(lease_id), [tx_id], {}))
+    basis = [tx_id, f"reason:{reason}"]
+    if handover_digest:
+        basis.append(handover_digest)
+    events.append(_event(
+        event_id,
+        "LEASE_RELEASED",
+        actor,
+        str(lease_id),
+        basis,
+        {
+            "reason": reason,
+            "graceful": reason == "HANDOFF",
+            "handover_context_digest": handover_digest,
+        },
+    ))
 
     return execute(
         root,
@@ -791,6 +860,8 @@ def main() -> None:
     release.add_argument("--tx-id", required=True)
     release.add_argument("--event-id", required=True)
     release.add_argument("--actor", required=True)
+    release.add_argument("--reason", choices=["HANDOFF", "ADMINISTRATIVE"], default="HANDOFF")
+    release.add_argument("--base-ref")
 
     checkpoint = sub.add_parser("checkpoint")
     checkpoint.add_argument("--tx-id", required=True)
@@ -904,7 +975,14 @@ def main() -> None:
             base_ref=args.base_ref,
         )
     elif args.command == "release-lease":
-        result = release_lease(root, tx_id=args.tx_id, event_id=args.event_id, actor=args.actor)
+        result = release_lease(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            reason=args.reason,
+            base_ref=args.base_ref,
+        )
     elif args.command in {"checkpoint", "accept-checkpoint"}:
         result = accept_checkpoint(
             root,
