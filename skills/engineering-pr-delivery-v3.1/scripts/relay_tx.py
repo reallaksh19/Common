@@ -966,6 +966,323 @@ def publish_handover(
     )
 
 
+
+def record_recovery_reconstructed(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    evidence: list[str],
+    expected_custody_epoch: int,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    execution = state.get("execution") or {}
+    lease_id = execution.get("lease")
+    events = _events(root)
+    started = any(
+        item.get("type") == "RECOVERY_STARTED"
+        and str((item.get("details") or {}).get("successor_lease") or item.get("subject")) == str(lease_id)
+        for item in events
+    )
+    if not started:
+        raise TransactionError("RECOVERY_RECONSTRUCTED requires a RECOVERY_STARTED event for the current lease")
+    evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    if not evidence:
+        raise TransactionError("RECOVERY_RECONSTRUCTED requires durable reconstruction evidence")
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "RECOVERY_RECONSTRUCTED",
+        actor,
+        str(lease_id),
+        [tx_id, *evidence, f"custody_epoch:{expected_custody_epoch}"],
+        {
+            "ep": execution.get("ep"),
+            "custody_epoch": expected_custody_epoch,
+            "evidence_count": len(evidence),
+        },
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECORD_RECOVERY_RECONSTRUCTED",
+        actor=actor,
+        replacements={"relay/EVENTS.jsonl": jsonl_bytes(events)},
+        fail_after=fail_after,
+    )
+
+
+def record_change_hypothesis(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    statement: str,
+    basis: list[str],
+    process: str = "PROMPT_1",
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    try:
+        require_identifier(change_id, "CHANGE-", "change_id")
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
+    if process not in {"PROMPT_1", "OWNER"}:
+        raise TransactionError("change hypothesis process must be PROMPT_1 or OWNER")
+    statement = statement.strip()
+    basis = [str(item).strip() for item in basis if str(item).strip()]
+    if not statement or not basis:
+        raise TransactionError("change hypothesis requires statement and durable basis")
+    target = root / "relay/CHANGES" / f"{change_id}.yaml"
+    if target.exists():
+        raise TransactionError(f"change delta already exists: {change_id}")
+    ep = _current_ep(root, state)
+    parent = (ep or {}).get("parent_issue") or {}
+    delta = {
+        "schema_version": "relay-v3.1-change-delta",
+        "id": change_id,
+        "authority": "GOVERNED_CHANGE_DELTA",
+        "hypothesis": {
+            "statement": statement,
+            "discovered_by": {"process": process, "actor": actor},
+            "basis": basis,
+        },
+        "verification": {
+            "status": "PENDING",
+            "verified_by": None,
+            "evidence": [],
+            "falsifiers_checked": [],
+        },
+        "proposal": None,
+        "authorization": {
+            "required": "UNKNOWN",
+            "status": "PENDING",
+            "owner_basis": None,
+        },
+        "application": {
+            "status": "NOT_APPLIED",
+            "expected_roadmap_revision": str((state.get("roadmap") or {}).get("revision")),
+            "expected_state_digest": canonical_digest(state),
+            "roadmap_before": None,
+            "roadmap_after": None,
+            "source_issue": parent.get("number"),
+            "target_issue": None,
+            "event": None,
+        },
+    }
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_HYPOTHESIS_RECORDED",
+        actor,
+        change_id,
+        [tx_id, *basis],
+        {"process": process, "ep": (ep or {}).get("id"), "work_package": (ep or {}).get("work_package")},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECORD_CHANGE_HYPOTHESIS",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(delta),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def verify_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    status: str,
+    evidence: list[str],
+    falsifiers_checked: list[str],
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    if (delta.get("verification") or {}).get("status") != "PENDING":
+        raise TransactionError("change delta verification is not PENDING")
+    status = status.upper()
+    if status not in {"CONFIRMED", "REJECTED"}:
+        raise TransactionError("change verification status must be CONFIRMED or REJECTED")
+    evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    falsifiers_checked = [str(item).strip() for item in falsifiers_checked if str(item).strip()]
+    if status == "CONFIRMED" and not evidence:
+        raise TransactionError("confirmed change verification requires durable evidence")
+    updated = copy.deepcopy(delta)
+    updated["verification"] = {
+        "status": status,
+        "verified_by": {"process": "PROMPT_2", "actor": actor},
+        "evidence": evidence,
+        "falsifiers_checked": falsifiers_checked,
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_VERIFIED" if status == "CONFIRMED" else "CHANGE_REJECTED",
+        actor,
+        change_id,
+        [tx_id, *evidence, *falsifiers_checked],
+        {"status": status},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="VERIFY_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def propose_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    proposal_path: Path,
+    authorization_required: str,
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    if (delta.get("verification") or {}).get("status") != "CONFIRMED":
+        raise TransactionError("Prompt 2.5 proposal requires CONFIRMED verification")
+    if delta.get("proposal") is not None:
+        raise TransactionError("change delta already has a proposal")
+    proposal = load_yaml(proposal_path)
+    if not isinstance(proposal, dict):
+        raise TransactionError("change proposal must be a mapping")
+    authorization_required = authorization_required.upper()
+    if authorization_required not in {"NONE", "OWNER"}:
+        raise TransactionError("authorization_required must be NONE or OWNER")
+    updated = copy.deepcopy(delta)
+    updated["proposal"] = proposal
+    updated["authorization"] = {
+        "required": authorization_required,
+        "status": "NOT_REQUIRED" if authorization_required == "NONE" else "PENDING",
+        "owner_basis": None,
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_DELTA_PROPOSED",
+        actor,
+        change_id,
+        [tx_id, str(proposal.get("disposition"))],
+        {"disposition": proposal.get("disposition"), "authorization_required": authorization_required},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="PROPOSE_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def authorize_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    granted: bool,
+    direct_utterance_digest: str,
+    session_timestamp: str,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    authorization = delta.get("authorization") or {}
+    if authorization.get("required") != "OWNER" or authorization.get("status") != "PENDING":
+        raise TransactionError("change delta is not awaiting Owner authorization")
+    if not direct_utterance_digest.strip() or not session_timestamp.strip():
+        raise TransactionError("Owner authorization requires direct utterance digest and session timestamp")
+    updated = copy.deepcopy(delta)
+    updated["authorization"] = {
+        "required": "OWNER",
+        "status": "GRANTED" if granted else "DENIED",
+        "owner_basis": {
+            "direct_utterance_digest": direct_utterance_digest,
+            "session_timestamp": session_timestamp,
+        },
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_AUTHORIZED",
+        actor,
+        change_id,
+        [tx_id, direct_utterance_digest],
+        {"status": updated["authorization"]["status"]},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="AUTHORIZE_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
 def export_local_execution(
     root: Path,
     *,
