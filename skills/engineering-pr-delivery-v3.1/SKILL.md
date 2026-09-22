@@ -130,7 +130,7 @@ An EP may explicitly require qualification through `admission_policy`. QUALIFIED
 
 `OWNER_OVERRIDE` represents bounded direct Owner execution authority without fabricating normal qualification and structurally excludes MERGE/RELEASE authority.
 
-Existing V2.5 evidence remains readable through a non-authoritative compatibility view. It is never rewritten into fictitious V3 events or promoted directly into live V3 action authority.
+Existing V2.5 evidence remains readable through a non-authoritative compatibility view. It is never rewritten into fictitious V3.1 events or promoted directly into live V3.1 action authority.
 
 ## Transactional commands
 
@@ -196,7 +196,7 @@ See `operating-model/three-pass-integration.md`. The richer handover-content red
 
 ## V2.5 migration and protocol cutover
 
-V3 migration is non-destructive. The original `agents/relay/**` tree is inventoried and hashed before V3 authority is created.
+V3.1 migration is non-destructive. The original `agents/relay/**` tree is inventoried and hashed before V3.1 authority is created.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/v25_migration.py <repo-root> report
@@ -209,7 +209,7 @@ python skills/engineering-pr-delivery-v3.1/scripts/v25_migration.py <repo-root> 
   --current-goal "<explicit current goal>"
 ```
 
-Bootstrap creates only present-day V3 `INITIALIZING` authority, a generated migration report, one migration-reconciliation control, and a prepared protocol selector. It does **not** translate legacy DISC/QSET/QUAL/TC/checkpoint/projection objects into fictitious V3 events or native acceptance.
+Bootstrap creates only present-day V3 `INITIALIZING` authority, a generated migration report, one migration-reconciliation control, and a prepared protocol selector. It does **not** translate legacy DISC/QSET/QUAL/TC/checkpoint/projection objects into fictitious V3.1 events or native acceptance.
 
 Protocol selection is resolved mechanically:
 
@@ -219,8 +219,8 @@ python skills/engineering-pr-delivery-v3.1/scripts/protocol_default.py <repo-roo
 
 Semantics:
 - no selector → V2.5 compatibility remains the default;
-- `V2_5 / PREPARED` → V3 is staged, but V2.5 remains live;
-- `V3 / ACTIVE` → V3 is the live/default relay; V2.5 becomes read-only history;
+- `V2_5 / PREPARED` → V3.1 is staged, but V2.5 remains live;
+- `V3_1 / ACTIVE` → V3.1 is the live/default relay; V2.5 becomes read-only history;
 - invalid selection/history digest → fail closed; do not guess a protocol.
 
 Before cutover:
@@ -249,7 +249,7 @@ python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-roo
   --owner-session-timestamp <RFC3339-time>
 ```
 
-After V3 activation, the preserved V2.5 tree is bound by its cutover digest. Any change under `agents/relay/**` makes protocol-selection validation fail until explicitly reconciled.
+After V3.1 activation, the preserved V2.5 tree is bound by its cutover digest. Any change under `agents/relay/**` makes protocol-selection validation fail until explicitly reconciled.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-root> validate
@@ -289,7 +289,7 @@ python skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py <r
   --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml
 ```
 
-While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5 authority. After `V3 / ACTIVE`, they derive from native V3 authority. Merely creating the files never changes protocol selection, custody, acceptance, roadmap authority or progress.
+While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5 authority. After `V3_1 / ACTIVE`, they derive from native V3.1 authority. Merely creating the files never changes protocol selection, custody, acceptance, roadmap authority or progress.
 
 The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
 
@@ -309,12 +309,12 @@ The continuity control may be resolved only after the generated continuity asses
 
 The parent-issue observation is provider-derived context and never grants write, checkpoint, merge, or release authority.
 
-A migrated repository in `V2_5 / PREPARED` may use staged V3 for migration, continuity projection and handover preparation, but live V3 execution/delivery actions fail with `PROTOCOL_NOT_ACTIVE`. After `V3 / ACTIVE`, V2.5 is read-only history and current task snapshots derive from native V3 truth.
+A migrated repository in `V2_5 / PREPARED` may use staged V3.1 for migration, continuity projection and handover preparation, but live V3.1 execution/delivery actions fail with `PROTOCOL_NOT_ACTIVE`. After `V3_1 / ACTIVE`, V2.5 is read-only history and current task snapshots derive from native V3 truth.
 
 
 ### Canonical task admission
 
-New work from an `IDLE` V3 repository must enter through `relay_tx.py admit-task`. The transaction atomically applies the governed roadmap disposition, creates the EP, grants the first lease, moves STATE to ACTIVE, appends OWNER_TASK_ADMITTED / EP_CREATED / LEASE_GRANTED events, and regenerates CURRENT_SNAPSHOT.
+New work from an `IDLE` V3.1 repository must enter through `relay_tx.py admit-task`. The transaction atomically applies the governed roadmap disposition, creates the EP, grants the first lease, moves STATE to ACTIVE, appends OWNER_TASK_ADMITTED / EP_CREATED / LEASE_GRANTED events, and regenerates CURRENT_SNAPSHOT.
 
 The generic transaction layer enforces semantic target constraints for critical commands. In particular, `ACTIVATE_LEASE` cannot create or rewrite roadmap/EP authority, and `RESOLVE_CONTROL` cannot rewrite protocol selection or migration reports. This prevents an atomically journaled transaction from masquerading as a different authority transition.
 
