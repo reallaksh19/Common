@@ -111,7 +111,7 @@ A GitHub issue may currently be a register, roadmap, checklist, matrix, architec
 
 The preflight therefore has two deliberately separated sides:
 
-1. **CURRENT REALITY — QUARANTINED FROM PROMPT 1**
+1. **CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1**
    - exact target identity;
    - current artifact form;
    - current stated answer / implementation / proposed solution;
@@ -1099,6 +1099,27 @@ IMAGINATION OBJECT:
 
 The IMAGINATION OBJECT should describe the **situation/outcome/problem-solving capability**, not today's artifact form, unless that artifact form is itself explicitly required by the human goal.
 
+For the wider Prompt 0.5, also complete:
+
+```text
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+<the durable original destination or large-project outcome, not today's completion percentage/status>
+
+GOVERNING ISSUE:
+<the issue/capability responsibility that connects the local work to the larger goal>
+
+GOVERNING ISSUE ROLE:
+<why this governing issue matters to the large-project outcome>
+
+LOCAL TASK CONTEXT:
+<2–5 lines describing the ongoing or last local task's purpose and boundary only; exclude PR/branch/status/current solution detail>
+
+PROGRAMME IMAGINATION OBJECT:
+"Prompt 0.5 must independently imagine, from the project level, ______."
+```
+
+The PROGRAMME IMAGINATION OBJECT must be broader than the local task but still relevant to the governing issue. It should expose larger value, reframing, missing capability, simplification or project-level assumptions that a task/PR-first reading could miss.
+
 ### Example — issue currently written as a register
 
 Bad:
@@ -1217,14 +1238,20 @@ INTENT COMPLETION TEST:
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
 
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 CURRENT ANSWER QUARANTINE:
 
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1
 TARGET ANCHORS:
+
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+GOVERNING ISSUE:
+GOVERNING ISSUE ROLE:
+LOCAL TASK CONTEXT:
+<2–5 lines describing purpose/scope only; no current PR/branch/status/solution detail>
 
 PROBLEM WITNESS
 PROBLEM WITNESS TYPE:
@@ -1936,6 +1963,42 @@ Delivery mechanics come after this decision.
 
 ---
 
+# STEP 0.5 — BUILD PROMPT 0.5 FROM THE PROGRAMME-LEVEL BLIND REFERENCE
+
+Prompt 0.5 is the first independent-thinking pass and deliberately works at a wider aperture than Prompt 1.
+
+Allowed inputs to Prompt 0.5:
+
+```text
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL
+GOVERNING ISSUE
+GOVERNING ISSUE ROLE
+LOCAL TASK CONTEXT — purpose/scope only, 2–5 lines
+HUMAN OUTCOME
+GENUINE CONSTRAINTS
+domain facts independent of today's implementation
+PROGRAMME IMAGINATION OBJECT
+```
+
+Forbidden inputs to Prompt 0.5 unless independently justified as genuine constraints:
+
+```text
+current PR/branch state
+current task status
+commit counts / changed-file counts / CI telemetry
+current implementation
+current proposed answer
+current acceptance checklist
+current work sequence
+present blockers
+current roadmap status/progress
+repository architecture or internal abstraction names
+```
+
+Prompt 0.5 must form a broad independent opinion about what the project → governing-issue → local-task chain should make possible before meeting today's answer.
+
+---
+
 # STEP 1 — BUILD PROMPT 1 ONLY FROM THE BLIND REFERENCE
 
 This is the most important construction rule.
@@ -1943,6 +2006,9 @@ This is the most important construction rule.
 Allowed inputs to Prompt 1:
 
 ```text
+PROGRAMME-LEVEL INDEPENDENT PICTURE distilled from Prompt 0.5
+GOVERNING ISSUE and GOVERNING ISSUE ROLE
+LOCAL TASK CONTEXT — purpose/scope only
 USER-REQUESTED LEVEL
 TARGET TITLE / SURFACE when it is itself part of the requested human problem
 TARGET ANCHORS
@@ -1979,6 +2045,8 @@ current solution vocabulary
 ```
 
 The purpose is to let the future agent **have an opinion before meeting today's answer**.
+
+Prompt 0.5 supplies the wider project-level independent picture. Prompt 1 must narrow from that picture into the governing issue and local task rather than restarting from the latest PR/task status.
 
 For task/issue targets, recover the human intention underneath the work item.
 
@@ -3122,14 +3190,20 @@ INTENT COMPLETION TEST:
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
 
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 CURRENT ANSWER QUARANTINE:
 
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1
 TARGET ANCHORS:
+
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+GOVERNING ISSUE:
+GOVERNING ISSUE ROLE:
+LOCAL TASK CONTEXT:
+<2–5 lines describing purpose/scope only; no current PR/branch/status/solution detail>
 
 PROBLEM WITNESS
 PROBLEM WITNESS TYPE:
@@ -3155,8 +3229,14 @@ GENUINE CONSTRAINTS:
 EXPERTISE:
 IMAGINATION OBJECT:
 
+PROMPT 0.5
+PROGRAMME IMAGINATION OBJECT:
+
 PROMPT 2
 REALITY OBJECT:
+
+PROMPT 2.5
+BRIDGE RECONCILIATION QUESTION:
 
 PROMPT 3
 COMPARISON QUESTION:
@@ -3270,7 +3350,7 @@ Therefore:
 - no nested fenced code blocks inside a prompt fence;
 - if a prompt needs a diagram, table, template, or mini-structure, express it as plain indented text inside the outer fence;
 - no placeholders that the user must manually replace when the information is already known;
-- Prompt 0.5, Prompt 2, Prompt 2.5 and Prompt 3 must contain the actual target/repository links when available;
+- Prompt 2, Prompt 2.5 and Prompt 3 must contain the actual target/repository links when available;
 - Prompt 3 must contain the actual identity capsule, not instructions saying to add one later.
 
 ### Pass-specific identity rule
