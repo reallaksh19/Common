@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
 TESTS = ROOT / "tests"
 V25_SCRIPTS = ROOT.parent / "engineering-pr-delivery-v2.5" / "scripts"
-for entry in (SCRIPTS, TESTS, V25_SCRIPTS):
+for entry in (TESTS, SCRIPTS):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
@@ -21,7 +21,13 @@ from test_v25_migration import init_legacy_repo
 from v25_migration import bootstrap, legacy_inventory
 from v3lib import load_yaml
 
-# test_v25_migration imports legacy helpers and temporarily prepends V2.5 scripts.\n# Restore V3 script precedence so this module cannot contaminate later V3 test imports.\nif str(SCRIPTS) in sys.path:\n    sys.path.remove(str(SCRIPTS))\nsys.path.insert(0, str(SCRIPTS))\n
+# test_v25_migration temporarily prepends V2.5 scripts while importing its legacy fixture helper.
+# Remove that global path mutation immediately so later V3 tests cannot resolve V2.5 modules by name.
+while str(V25_SCRIPTS) in sys.path:
+    sys.path.remove(str(V25_SCRIPTS))
+while str(SCRIPTS) in sys.path:
+    sys.path.remove(str(SCRIPTS))
+sys.path.insert(0, str(SCRIPTS))
 
 def dump(path: Path, value) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
