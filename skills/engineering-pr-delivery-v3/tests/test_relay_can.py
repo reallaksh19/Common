@@ -300,6 +300,45 @@ class RelayCanTests(unittest.TestCase):
             handover = evaluate(root, "HANDOVER")
             self.assertTrue(handover["allowed"], handover)
 
+    def test_enabled_status_policy_blocks_write_until_child_status_is_published(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            from status_publication import apply as publish_status, load_policy
+
+            policy, _ = load_policy(root)
+            config = root / "relay/CONFIG/status-publication.yaml"
+            config.parent.mkdir(parents=True, exist_ok=True)
+            dump(config, policy)
+
+            denied = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertFalse(denied["allowed"], denied)
+            self.assertIn("STATUS_PUBLICATION_DUE", denied["reason_codes"])
+
+            publish_status(root, policy_path=str(config), note="Initial task status published.")
+            allowed = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertTrue(allowed["allowed"], allowed)
+
+    def test_checkpoint_status_preparation_is_required_once_per_head(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            from status_publication import apply as publish_status, load_policy
+
+            policy, _ = load_policy(root)
+            config = root / "relay/CONFIG/status-publication.yaml"
+            config.parent.mkdir(parents=True, exist_ok=True)
+            dump(config, policy)
+            publish_status(root, policy_path=str(config), note="Initial task status published.")
+
+            denied = evaluate(root, "CHECKPOINT", base_ref="base")
+            self.assertFalse(denied["allowed"], denied)
+            self.assertIn("STATUS_PUBLICATION_DUE", denied["reason_codes"])
+
+            publish_status(root, policy_path=str(config), action="CHECKPOINT", note="Pre-checkpoint status published.")
+            allowed = evaluate(root, "CHECKPOINT", base_ref="base")
+            self.assertTrue(allowed["allowed"], allowed)
+
     def test_merge_requires_explicit_owner_delivery_authority(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

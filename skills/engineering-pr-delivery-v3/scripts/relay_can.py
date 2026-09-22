@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from material_basis import inspect as inspect_material_basis
+from status_publication import StatusPublicationError, evaluate as evaluate_status_publication
 from v3lib import load_yaml, validate_schema
 from validate_foundation import validate_authority
 
@@ -35,6 +36,7 @@ DELIVERY_OWNER_ACTIONS = {"MERGE", "RELEASE"}
 CHECKPOINT_ACTIONS = {"PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 QUALITY_ACTIONS = {"PR_READY", "MERGE", "RELEASE"}
 LIVE_V3_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
+STATUS_GATED_ACTIONS = {"MATERIAL_WRITE", "CHECKPOINT", "HANDOVER", "PR_READY", "CLOSE_TASK"}
 
 
 def _load_current(root: Path) -> tuple[dict[str, Any], dict[str, Any] | None, dict[str, Any] | None, dict[str, Any], dict[str, Any] | None]:
@@ -155,6 +157,30 @@ def evaluate(
         reasons.append("PROTOCOL_NOT_ACTIVE")
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
+
+    publication_policy = root / "relay/CONFIG/status-publication.yaml"
+    if publication_policy.exists() and action in STATUS_GATED_ACTIONS:
+        try:
+            publication = evaluate_status_publication(
+                root,
+                policy_path=str(publication_policy),
+                action=action if action != "MATERIAL_WRITE" else None,
+                base_ref=base_ref,
+            )
+        except StatusPublicationError as exc:
+            reasons.append("STATUS_PUBLICATION_INVALID")
+            basis.append(f"status_publication_error:{exc}")
+        else:
+            basis.extend([
+                f"status_publication_score:{publication.get('score')}",
+                f"status_publication_cursor:{publication.get('cursor')}",
+            ])
+            if publication.get("publication_due"):
+                reasons.append("STATUS_PUBLICATION_DUE")
+                basis.extend(
+                    f"status_publication_reason:{reason}"
+                    for reason in publication.get("reasons") or []
+                )
 
     if action in EXECUTION_ACTIONS:
         if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or not ep:

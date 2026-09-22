@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relay V3 Status Publication Policy</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#162033;background:#f6f8fb}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1180px;margin:0 auto;padding:28px}.hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:22px}.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#667085;font-weight:700}.hero h1{margin:6px 0 8px;font-size:30px}.hero p{margin:0;max-width:760px;color:#475467;line-height:1.5}.badge{background:#e8f3ff;color:#175cd3;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}.grid{display:grid;grid-template-columns:1.12fr .88fr;gap:18px}.card{background:white;border:1px solid #e4e7ec;border-radius:14px;padding:18px;box-shadow:0 1px 2px rgba(16,24,40,.04);margin-bottom:18px}.card h2{font-size:17px;margin:0 0 6px}.card .sub{font-size:13px;color:#667085;margin-bottom:16px}.row{display:grid;grid-template-columns:1fr 130px;gap:12px;align-items:center;padding:9px 0;border-top:1px solid #f0f2f5}.row:first-of-type{border-top:0}.row label{font-size:13px}.row input[type=number],textarea{width:100%;border:1px solid #d0d5dd;border-radius:8px;padding:8px 10px;font:inherit;background:white}.toggle{display:flex;justify-content:flex-end}.toggle input{width:18px;height:18px}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid #d0d5dd;background:white;color:#344054;border-radius:9px;padding:9px 12px;font-weight:650;cursor:pointer}.btn.primary{background:#175cd3;color:white;border-color:#175cd3}.score{display:flex;align-items:baseline;gap:8px}.score strong{font-size:34px}.due{color:#b42318}.clear{color:#067647}.reason{font-size:12px;padding:6px 8px;background:#f2f4f7;border-radius:7px;display:inline-block;margin:4px 4px 0 0}.sim-grid{display:grid;grid-template-columns:1fr 90px;gap:8px}.yaml{min-height:360px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.45}.hint{font-size:12px;color:#667085}.section-title{margin:18px 0 8px;font-size:13px;font-weight:750;color:#344054}.full{grid-column:1/-1}@media(max-width:850px){.grid{grid-template-columns:1fr}.hero{flex-direction:column}.row{grid-template-columns:1fr 110px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Engineering Relay V3</div>
+      <h1>Status publication policy</h1>
+      <p>Configure event-driven and change-budget publication. No timer is required. This page exports YAML; the checked-in repository policy remains authoritative.</p>
+    </div>
+    <div class="badge">Child-local • no sibling dependency</div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Publication boundary</h2>
+        <div class="sub">Any hard trigger, any enabled volume threshold, or weighted score at/above the threshold requires publication.</div>
+        <div class="row"><label>Policy enabled</label><div class="toggle"><input id="enabled" type="checkbox" checked></div></div>
+        <div class="row"><label>Weighted score threshold</label><input id="score_threshold" type="number" min="0" step="1" value="10"></div>
+        <div class="section-title">Volume triggers</div>
+        <div class="row"><label>Material changed lines</label><input id="v_lines" type="number" min="1" value="300"></div>
+        <div class="row"><label>Material files touched</label><input id="v_files" type="number" min="1" value="5"></div>
+        <div class="row"><label>Material files created</label><input id="v_created" type="number" min="1" value="3"></div>
+        <div class="row"><label>Material commits</label><input id="v_commits" type="number" min="1" value="3"></div>
+      </div>
+
+      <div class="card">
+        <h2>Hard semantic triggers</h2>
+        <div class="sub">These publish immediately regardless of the weighted score.</div>
+        <div id="hard"></div>
+      </div>
+
+      <div class="card">
+        <h2>Weights</h2>
+        <div class="sub">Weights only affect the change-budget score; they do not change hard-trigger behavior.</div>
+        <div id="weights"></div>
+      </div>
+
+      <div class="card">
+        <h2>Excluded paths</h2>
+        <div class="sub">One glob per line. Generated/vendor/build churn should normally stay out of status debt.</div>
+        <textarea id="exclusions" rows="8">relay/**
+agents/relay/**
+build/**
+dist/**
+vendor/**
+node_modules/**
+**/*.lock
+**/__pycache__/**</textarea>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <h2>Live simulator</h2>
+        <div class="sub">Use this to tune the policy before exporting it.</div>
+        <div class="sim-grid">
+          <label>Changed lines</label><input id="s_lines" type="number" min="0" value="0">
+          <label>Files touched</label><input id="s_files" type="number" min="0" value="0">
+          <label>Files created</label><input id="s_created" type="number" min="0" value="0">
+          <label>Commits</label><input id="s_commits" type="number" min="0" value="0">
+          <label>Acceptance changes</label><input id="s_accept" type="number" min="0" value="0">
+          <label>Benchmark changes</label><input id="s_bench" type="number" min="0" value="0">
+          <label>PEND/KI changes</label><input id="s_pending" type="number" min="0" value="0">
+          <label>Offload changes</label><input id="s_offload" type="number" min="0" value="0">
+        </div>
+        <div class="row"><label>Parent issue changed</label><div class="toggle"><input id="s_parent" type="checkbox"></div></div>
+        <div class="row"><label>Public/API/schema contract changed</label><div class="toggle"><input id="s_public" type="checkbox"></div></div>
+        <div class="row"><label>Roadmap reconciliation requested</label><div class="toggle"><input id="s_roadmap" type="checkbox"></div></div>
+        <div class="section-title">Result</div>
+        <div class="score"><strong id="score">0</strong><span id="decision" class="clear">NO PUBLICATION DUE</span></div>
+        <div id="reasons"></div>
+      </div>
+
+      <div class="card">
+        <h2>Repository YAML</h2>
+        <div class="sub">Save as <code>relay/CONFIG/status-publication.yaml</code>.</div>
+        <textarea id="yaml" class="yaml" spellcheck="false"></textarea>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn primary" id="copy">Copy YAML</button>
+          <button class="btn" id="download">Download YAML</button>
+          <button class="btn" id="reset">Reset defaults</button>
+        </div>
+        <p class="hint">The UI does not publish status and does not grant authority. It only produces policy configuration.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const hardDefs=[
+["acceptance_state_changed","Acceptance state changed"],
+["benchmark_state_changed","Benchmark/oracle state changed"],
+["pending_known_issue_changed","PEND/KI changed"],
+["parent_issue_changed","Parent issue contract/update changed"],
+["roadmap_reconciliation_requested","Roadmap reconciliation requested"],
+["public_contract_changed","Public/API/schema contract changed"],
+["offload_changed","Offload created/returned/changed"],
+["before_checkpoint","Before checkpoint"],
+["before_handover","Before handover"],
+["before_pr_ready","Before PR ready"],
+["before_task_exit","Before task exit"]
+];
+const weightDefs=[
+["material_lines_per_100","Changed lines / 100",1],
+["material_file_touched","File touched",1],
+["material_file_created","File created",2],
+["acceptance_state_change","Acceptance change",5],
+["benchmark_state_change","Benchmark change",5],
+["public_contract_change","Public/API/schema change",8],
+["pending_known_issue_change","PEND/KI change",5],
+["parent_issue_change","Parent issue change",10],
+["roadmap_reconciliation_request","Roadmap reconciliation request",10],
+["offload_change","Offload change",5]
+];
+const hard=document.getElementById("hard");
+hardDefs.forEach(([id,label])=>hard.insertAdjacentHTML("beforeend",`<div class="row"><label>${label}</label><div class="toggle"><input id="h_${id}" type="checkbox" checked></div></div>`));
+const weights=document.getElementById("weights");
+weightDefs.forEach(([id,label,val])=>weights.insertAdjacentHTML("beforeend",`<div class="row"><label>${label}</label><input id="w_${id}" type="number" min="0" step="0.5" value="${val}"></div>`));
+const ids=[...document.querySelectorAll("input,textarea")];
+const n=id=>Number(document.getElementById(id).value||0);
+const b=id=>document.getElementById(id).checked;
+function config(){
+ const hard={};hardDefs.forEach(([id])=>hard[id]=b("h_"+id));
+ const weights={};weightDefs.forEach(([id])=>weights[id]=n("w_"+id));
+ return {
+  schema_version:"relay-v3-status-publication-policy",
+  enabled:b("enabled"),score_threshold:n("score_threshold"),
+  volume_triggers:{material_lines_changed:n("v_lines"),material_files_touched:n("v_files"),material_files_created:n("v_created"),material_commits:n("v_commits")},
+  weights,hard_triggers:hard,
+  exclusions:{paths:document.getElementById("exclusions").value.split(/\n/).map(x=>x.trim()).filter(Boolean)}
+ };
+}
+function yamlQuote(s){return /[:#{}\[\],&*!|>'"%@\x60\s]/.test(s)?JSON.stringify(s):s}
+function toYaml(c){
+ let y=`schema_version: ${c.schema_version}\nenabled: ${c.enabled}\nscore_threshold: ${c.score_threshold}\n\nvolume_triggers:\n`;
+ Object.entries(c.volume_triggers).forEach(([k,v])=>y+=`  ${k}: ${v}\n`);
+ y+="\nweights:\n";Object.entries(c.weights).forEach(([k,v])=>y+=`  ${k}: ${v}\n`);
+ y+="\nhard_triggers:\n";Object.entries(c.hard_triggers).forEach(([k,v])=>y+=`  ${k}: ${v}\n`);
+ y+="\nexclusions:\n  paths:\n";c.exclusions.paths.forEach(v=>y+=`    - ${yamlQuote(v)}\n`);return y;
+}
+function simulate(){
+ const c=config(),w=c.weights,reasons=[];
+ const score=(n("s_lines")/100)*w.material_lines_per_100+n("s_files")*w.material_file_touched+n("s_created")*w.material_file_created+n("s_accept")*w.acceptance_state_change+n("s_bench")*w.benchmark_state_change+n("s_pending")*w.pending_known_issue_change+n("s_offload")*w.offload_change+(b("s_parent")?w.parent_issue_change:0)+(b("s_public")?w.public_contract_change:0)+(b("s_roadmap")?w.roadmap_reconciliation_request:0);
+ if(n("s_lines")>=c.volume_triggers.material_lines_changed)reasons.push("lines threshold");
+ if(n("s_files")>=c.volume_triggers.material_files_touched)reasons.push("files threshold");
+ if(n("s_created")>=c.volume_triggers.material_files_created)reasons.push("created-files threshold");
+ if(n("s_commits")>=c.volume_triggers.material_commits)reasons.push("commit threshold");
+ if(n("s_accept")&&c.hard_triggers.acceptance_state_changed)reasons.push("acceptance hard trigger");
+ if(n("s_bench")&&c.hard_triggers.benchmark_state_changed)reasons.push("benchmark hard trigger");
+ if(n("s_pending")&&c.hard_triggers.pending_known_issue_changed)reasons.push("PEND/KI hard trigger");
+ if(n("s_offload")&&c.hard_triggers.offload_changed)reasons.push("offload hard trigger");
+ if(b("s_parent")&&c.hard_triggers.parent_issue_changed)reasons.push("parent issue hard trigger");
+ if(b("s_public")&&c.hard_triggers.public_contract_changed)reasons.push("public contract hard trigger");
+ if(b("s_roadmap")&&c.hard_triggers.roadmap_reconciliation_requested)reasons.push("roadmap hard trigger");
+ if(score>=c.score_threshold)reasons.push("weighted score threshold");
+ document.getElementById("score").textContent=score.toFixed(1);
+ const due=c.enabled&&reasons.length>0, d=document.getElementById("decision");d.textContent=due?"PUBLICATION DUE":"NO PUBLICATION DUE";d.className=due?"due":"clear";
+ document.getElementById("reasons").innerHTML=reasons.map(x=>`<span class="reason">${x}</span>`).join("");
+ document.getElementById("yaml").value=toYaml(c);
+}
+ids.forEach(el=>el.addEventListener("input",simulate));
+document.getElementById("copy").onclick=async()=>{await navigator.clipboard.writeText(document.getElementById("yaml").value);document.getElementById("copy").textContent="Copied";setTimeout(()=>document.getElementById("copy").textContent="Copy YAML",900)};
+document.getElementById("download").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([document.getElementById("yaml").value],{type:"text/yaml"}));a.download="status-publication.yaml";a.click();URL.revokeObjectURL(a.href)};
+document.getElementById("reset").onclick=()=>location.reload();
+simulate();
+</script>
+</body>
+</html>

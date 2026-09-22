@@ -1,0 +1,78 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, enabled, score_threshold, volume_triggers, weights, hard_triggers, exclusions]
+properties:
+  schema_version: {const: relay-v3-status-publication-policy}
+  enabled: {type: boolean}
+  score_threshold: {type: number, minimum: 0}
+  volume_triggers:
+    type: object
+    additionalProperties: false
+    required: [material_lines_changed, material_files_touched, material_files_created, material_commits]
+    properties:
+      material_lines_changed: {type: [integer, 'null'], minimum: 1}
+      material_files_touched: {type: [integer, 'null'], minimum: 1}
+      material_files_created: {type: [integer, 'null'], minimum: 1}
+      material_commits: {type: [integer, 'null'], minimum: 1}
+  weights:
+    type: object
+    additionalProperties: false
+    required:
+      - material_lines_per_100
+      - material_file_touched
+      - material_file_created
+      - acceptance_state_change
+      - benchmark_state_change
+      - public_contract_change
+      - pending_known_issue_change
+      - parent_issue_change
+      - roadmap_reconciliation_request
+      - offload_change
+    properties:
+      material_lines_per_100: {type: number, minimum: 0}
+      material_file_touched: {type: number, minimum: 0}
+      material_file_created: {type: number, minimum: 0}
+      acceptance_state_change: {type: number, minimum: 0}
+      benchmark_state_change: {type: number, minimum: 0}
+      public_contract_change: {type: number, minimum: 0}
+      pending_known_issue_change: {type: number, minimum: 0}
+      parent_issue_change: {type: number, minimum: 0}
+      roadmap_reconciliation_request: {type: number, minimum: 0}
+      offload_change: {type: number, minimum: 0}
+  hard_triggers:
+    type: object
+    additionalProperties: false
+    required:
+      - acceptance_state_changed
+      - benchmark_state_changed
+      - pending_known_issue_changed
+      - parent_issue_changed
+      - roadmap_reconciliation_requested
+      - public_contract_changed
+      - offload_changed
+      - before_checkpoint
+      - before_handover
+      - before_pr_ready
+      - before_task_exit
+    properties:
+      acceptance_state_changed: {type: boolean}
+      benchmark_state_changed: {type: boolean}
+      pending_known_issue_changed: {type: boolean}
+      parent_issue_changed: {type: boolean}
+      roadmap_reconciliation_requested: {type: boolean}
+      public_contract_changed: {type: boolean}
+      offload_changed: {type: boolean}
+      before_checkpoint: {type: boolean}
+      before_handover: {type: boolean}
+      before_pr_ready: {type: boolean}
+      before_task_exit: {type: boolean}
+  exclusions:
+    type: object
+    additionalProperties: false
+    required: [paths]
+    properties:
+      paths:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+additionalProperties: false
