@@ -60,6 +60,9 @@ COMMAND_TARGET_PATTERNS = {
     "SYNC_HANDOVER_LEDGER": [
         "relay/EVENTS.jsonl",
         "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml",
+        "relay/GENERATED/HANDOVER_LEDGER.yaml",
+        "relay/GENERATED/HANDOVER_LEDGER.md",
+        "relay/GENERATED/PARENT_RELAY_SUMMARY.md",
     ],
     "FREEZE_LEGACY_CUTOVER": [
         "relay/EVENTS.jsonl",
