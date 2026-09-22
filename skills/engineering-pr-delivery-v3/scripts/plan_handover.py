@@ -5,9 +5,10 @@ import argparse
 from pathlib import Path
 
 from handover_context import build_context, build_request, render_request
+from intelligence_projection import build_improvement, build_task
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
-from v3lib import load_events, load_yaml, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from relay_tx import _event, _assert_event_ids_available
 
 
@@ -37,6 +38,14 @@ def plan_handover(
         target=target,
         complex_mode=complex_mode,
     )
+    task_snapshot = build_task(root, base_ref)
+    improvement_view = build_improvement(root)
+    task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
+    improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
+    if canonical_digest(task_snapshot) != task_meta.get("digest"):
+        raise TransactionError("task snapshot changed while freezing handover context")
+    if canonical_digest(improvement_view) != improvement_meta.get("digest"):
+        raise TransactionError("improvement view changed while freezing handover context")
     request = build_request(context)
     request_md = render_request(request).encode("utf-8")
 
@@ -51,7 +60,13 @@ def plan_handover(
         "HANDOVER_PLANNED",
         actor,
         target["url"],
-        [tx_id, target["provider_ref"], request["handover_context"]["digest"]],
+        [
+            tx_id,
+            target["provider_ref"],
+            request["handover_context"]["digest"],
+            task_meta["digest"],
+            improvement_meta["digest"],
+        ],
         {
             "complex_mode": bool(complex_mode),
             "prompt_count": len(request["generator"]["prompt_sequence"]),
@@ -67,6 +82,8 @@ def plan_handover(
         replacements={
             snapshot_path: yaml_bytes(snapshot),
             "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
+            str(task_meta["path"]): yaml_bytes(task_snapshot),
+            str(improvement_meta["path"]): yaml_bytes(improvement_view),
             "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
             "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
             "relay/EVENTS.jsonl": jsonl_bytes(events),
