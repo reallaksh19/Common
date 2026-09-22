@@ -74,14 +74,7 @@ properties:
     additionalProperties: false
     required: [id, purpose, mode, exact_basis, preflight, steps, success_conditions, stop_conditions, prohibited_actions]
     properties:
-      id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*    type: object
-    additionalProperties: false
-    required: [merge_authorized, delivery_lifecycle]
-    properties:
-      merge_authorized: {type: boolean}
-      delivery_lifecycle: {type: string, minLength: 1}
-additionalProperties: false
-}
+      id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       purpose: {type: string, minLength: 1}
       mode: {enum: [VALIDATE_ONLY, BOUNDED_EXECUTION]}
       exact_basis:
@@ -127,14 +120,7 @@ additionalProperties: false
     additionalProperties: false
     required: [request_id, allowed_results, required_fields, resume_owner]
     properties:
-      request_id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*    type: object
-    additionalProperties: false
-    required: [merge_authorized, delivery_lifecycle]
-    properties:
-      merge_authorized: {type: boolean}
-      delivery_lifecycle: {type: string, minLength: 1}
-additionalProperties: false
-}
+      request_id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       allowed_results:
         type: array
         minItems: 6
