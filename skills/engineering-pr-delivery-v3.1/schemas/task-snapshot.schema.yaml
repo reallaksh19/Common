@@ -17,7 +17,7 @@ properties:
   parent_issue:
     type: object
     additionalProperties: false
-    required: [repository, number, title, state, url, baseline, current, updates, disposition, relationships]
+    required: [repository, number, title, state, url, baseline, current, updates, disposition, relationships, handover_ledger]
     properties:
       repository: {type: [string, 'null']}
       number: {type: [integer, 'null'], minimum: 1}
@@ -29,6 +29,14 @@ properties:
       updates: {type: array}
       disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
       relationships: {type: array}
+      handover_ledger:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [repository, issue_number, url]
+        properties:
+          repository: {type: string}
+          issue_number: {type: integer, minimum: 1}
+          url: {type: string}
   parent_issue_progress:
     type: object
     additionalProperties: false
