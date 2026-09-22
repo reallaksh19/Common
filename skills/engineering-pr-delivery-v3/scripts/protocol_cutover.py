@@ -9,7 +9,7 @@ from typing import Any
 import yaml
 
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
-from v25_migration import MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory
+from v25_migration import INTELLIGENCE_CONTINUITY_CONTROL, MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from validate_foundation import validate as validate_v3
 
@@ -56,6 +56,16 @@ def assess(root: Path) -> dict[str, Any]:
     ]
     migration_resolved = len(migration_rows) == 1 and migration_rows[0].get("state") == "RESOLVED"
 
+    continuity_rows = [
+        item for item in controls.get("controls") or []
+        if isinstance(item, dict) and item.get("id") == INTELLIGENCE_CONTINUITY_CONTROL
+    ]
+    continuity_resolved = (
+        len(continuity_rows) == 1
+        and continuity_rows[0].get("state") == "RESOLVED"
+        and bool(((continuity_rows[0].get("resolution") or {}).get("evidence") or []))
+    )
+
     lifecycle = str((state.get("execution") or {}).get("lifecycle") or "")
     lifecycle_ready = lifecycle in {"ACTIVE", "IDLE", "TERMINAL"}
 
@@ -72,6 +82,7 @@ def assess(root: Path) -> dict[str, Any]:
         "legacy_digest_unchanged": "PASS" if live_legacy_digest == expected_legacy_digest else "FAIL",
         "source_validation": "PASS" if source_validation and not report_errors else "FAIL",
         "migration_control_resolved": "PASS" if migration_resolved else "FAIL",
+        "roadmap_intelligence_continuity": "PASS" if continuity_resolved else "FAIL",
         "native_lifecycle_ready": "PASS" if lifecycle_ready else "FAIL",
         "protocol_selection_prepared": "PASS" if selection_prepared else "FAIL",
     }
@@ -83,6 +94,8 @@ def assess(root: Path) -> dict[str, Any]:
         f"legacy_live={live_legacy_digest}",
         f"lifecycle={lifecycle}",
         f"migration_control={migration_rows[0].get('state') if len(migration_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
+        f"roadmap_intelligence_continuity={continuity_rows[0].get('state') if len(continuity_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
+        f"roadmap_intelligence_evidence={len(((continuity_rows[0].get('resolution') or {}).get('evidence') or [])) if len(continuity_rows) == 1 else 0}",
     ]
     basis.extend(f"v3:{item}" for item in v3_errors[:8])
     readiness = {
