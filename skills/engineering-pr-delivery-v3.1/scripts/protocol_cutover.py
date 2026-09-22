@@ -331,7 +331,8 @@ def validate_selection(root: Path) -> list[str]:
     if errors:
         return errors
 
-    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
+    selected = str(selection.get("selected_protocol") or "")
+    if selected in {"V3", "V3_1"} and selection.get("status") == "ACTIVE":
         v3_errors = validate_v3(root)
         errors.extend(f"V3_CONFORMANCE: {item}" for item in v3_errors)
         try:
@@ -341,14 +342,14 @@ def validate_selection(root: Path) -> list[str]:
             return errors
         expected = str(((selection.get("cutover") or {}).get("legacy_freeze_digest")) or "")
         if not expected:
-            errors.append("LEGACY_HISTORY: active V3.1 selection has no frozen legacy digest")
+            errors.append(f"LEGACY_HISTORY: active {selected} selection has no frozen legacy digest")
             return errors
         if live_digest != expected:
             errors.append(
-                f"LEGACY_HISTORY: agents/relay tree changed after V3.1 cutover: expected {expected}, got {live_digest}"
+                f"LEGACY_HISTORY: agents/relay tree changed after native cutover: expected {expected}, got {live_digest}"
             )
         if not (root / DEPRECATION_PATH).exists():
-            errors.append("V3_ACTIVE: V2.5 deprecation notice is missing")
+            errors.append("NATIVE_ACTIVE: V2.5 deprecation notice is missing")
     return errors
 
 
