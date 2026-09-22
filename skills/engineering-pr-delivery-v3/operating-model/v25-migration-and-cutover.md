@@ -46,11 +46,24 @@ While the selector is `V2_5 / PREPARED`:
 
 Cutover is not ready until the repository has a valid native V3 lifecycle in `ACTIVE`, `IDLE`, or `TERMINAL` and the migration control is RESOLVED with durable reconciliation evidence.
 
-## Phase D — cutover proof
+## Phase D — freeze and cutover proof
+
+The bootstrap migration digest is immutable historical evidence. V2.5 may legitimately continue evolving while the selector is `V2_5 / PREPARED`.
+
+When live V2.5 authority is ready to stop changing, freeze the final legacy basis explicitly:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> freeze \
+  --tx-id TX-FREEZE-001 \
+  --event-id EVT-FREEZE-001 \
+  --actor migration-agent
+```
+
+The freeze stores `cutover.legacy_freeze_digest` without rewriting the bootstrap migration inventory. Any subsequent V2.5 mutation makes cutover readiness fail until a new explicit freeze is recorded.
 
 `protocol_cutover.py assess` checks seven independent conditions:
 1. full V3 conformance PASS;
-2. legacy tree digest unchanged from migration inventory;
+2. live legacy tree digest unchanged from the explicit cutover freeze;
 3. source V2.5 REPO_STATE validation PASS;
 4. migration control RESOLVED;
 5. **#421 roadmap-intelligence continuity control RESOLVED with evidence**;
@@ -85,7 +98,7 @@ V3 activation is intentionally unavailable until #421 continuity is evidenced. T
 
 ## Post-cutover invariant
 
-After an eventual V3 activation, the cutover-time legacy digest becomes immutable history evidence under the then-approved continuity contract.
+After V3 activation, the explicit cutover freeze digest becomes immutable history evidence. The original bootstrap digest remains preserved separately as migration-history evidence.
 
 If any file under `agents/relay/**` changes, `protocol_cutover.py validate` fails and `protocol_default.py` refuses to select either skill automatically.
 
@@ -110,3 +123,32 @@ invalid selector or changed legacy history
 ```
 
 Default selection is therefore an explicit repository fact, not a guess based on which skill directory exists.
+
+## #421 continuity evidence workflow
+
+Before resolving `CTRL-V25-INTELLIGENCE-CONTINUITY`, generate the repository's derived continuity evidence against the still-live V2.5 authority:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py . continuity \
+  --base-ref origin/main \
+  --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \
+  --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml
+```
+
+The assessment must report `ready: true` and all of these checks must PASS:
+
+- preserved legacy-tree digest before/after projection generation;
+- task roadmap-admission disposition remains visible;
+- V2.5 ROADMAP_EVENTS validation passes;
+- V2.5 checkpoint/progress reconciliation remains valid;
+- repository-discovery intelligence remains available;
+- Owner-delta publication mechanisms remain available;
+- handover intelligence is present in the task read model;
+- generated task/improvement views remain explicitly non-authoritative.
+
+Only then may the continuity control be resolved with durable evidence pointing to the generated report. Cutover assessment does not trust that resolution blindly: it revalidates the report schema, requires `ready: true`, and requires `source.legacy_tree_digest` to equal the original migration inventory digest.
+
+A missing report, a stale/wrong legacy digest, or a report with any failed continuity check keeps `roadmap_intelligence_continuity: FAIL` even if the control row says `RESOLVED`.
+
+TASK_SNAPSHOT and IMPROVEMENT_VIEW are disposable projections. Handover planning regenerates them transactionally and binds their digests into HANDOVER_CONTEXT; neither file can grant lease, checkpoint, roadmap, progress, merge or release authority.

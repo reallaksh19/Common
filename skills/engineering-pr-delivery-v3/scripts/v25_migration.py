@@ -426,6 +426,7 @@ def bootstrap(
         "cutover": {
             "owner_authorized": False,
             "owner_basis": None,
+            "legacy_freeze_digest": None,
             "readiness_digest": None,
             "activated_at": None,
         },

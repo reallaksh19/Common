@@ -23,7 +23,7 @@ properties:
   cutover:
     type: object
     additionalProperties: false
-    required: [owner_authorized, owner_basis, readiness_digest, activated_at]
+    required: [owner_authorized, owner_basis, legacy_freeze_digest, readiness_digest, activated_at]
     properties:
       owner_authorized: {type: boolean}
       owner_basis:
@@ -33,6 +33,7 @@ properties:
         properties:
           direct_utterance_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
           session_timestamp: {type: string, format: date-time}
+      legacy_freeze_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
       readiness_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
       activated_at: {type: [string, 'null'], format: date-time}
 allOf:
@@ -47,6 +48,7 @@ allOf:
         cutover:
           properties:
             owner_authorized: {const: true}
+            legacy_freeze_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
             owner_basis: {type: object}
             readiness_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
             activated_at: {type: string, format: date-time}

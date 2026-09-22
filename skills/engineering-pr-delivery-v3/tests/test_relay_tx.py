@@ -19,6 +19,7 @@ from material_basis import inspect as inspect_material_basis
 from relay_tx import (
     accept_checkpoint,
     activate_lease,
+    admit_task,
     close_task,
     export_local_execution,
     publish_handover,
@@ -29,7 +30,7 @@ from relay_tx import (
 from snapshot_projection import build as build_snapshot
 from test_relay_can import prepare_git
 from test_v3_foundation import base_objects, dump
-from transactionlib import TransactionError
+from transactionlib import TransactionError, execute, yaml_bytes
 from v3lib import load_events, load_yaml
 from validate_foundation import validate, validate_authority
 
@@ -76,6 +77,80 @@ def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") 
 
 
 class RelayTransactionalCommandTests(unittest.TestCase):
+    def test_admit_task_atomically_moves_idle_repository_to_active_execution(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-BEFORE-ADMIT",
+                event_id="EVT-RELEASE-BEFORE-ADMIT",
+                actor="agent-x",
+            )
+
+            source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            new_ep = copy.deepcopy(source_ep)
+            new_ep["id"] = "EP-TA-012"
+            request = {
+                "schema_version": "relay-v3-task-admission",
+                "roadmap": {
+                    "disposition": "MAPPED_EXISTING_WP",
+                    "new_revision": "RM-0013",
+                    "basis": ["Owner selected the next bounded task."],
+                    "work_package": {
+                        "id": "WP-TA-109",
+                        "title": "Current work",
+                        "weight": 50,
+                        "state": "ACTIVE",
+                        "depends_on": ["WP-TA-108"],
+                    },
+                },
+                "ep": new_ep,
+                "lease": {
+                    "id": "LEASE-TA-012-01",
+                    "executor_id": "agent-z",
+                    "method": "DETERMINISTIC",
+                },
+                "delivery": {"required": False, "primary_vehicle": None},
+            }
+            request_path = root / "task-admission.yaml"
+            dump(request_path, request)
+            result = admit_task(
+                root,
+                tx_id="TX-ADMIT-001",
+                event_id="EVT-ADMIT-001",
+                actor="owner",
+                admission_path=request_path,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("ACTIVE", state["execution"]["lifecycle"])
+            self.assertEqual("EP-TA-012", state["execution"]["ep"])
+            self.assertEqual("LEASE-TA-012-01", state["execution"]["lease"])
+            self.assertEqual("RM-0013", state["roadmap"]["revision"])
+            self.assertTrue((root / "relay/WORK/EP-TA-012.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            ids = {row["event_id"] for row in events}
+            self.assertTrue({"EVT-ADMIT-001-OWNER", "EVT-ADMIT-001-EP", "EVT-ADMIT-001-LEASE"}.issubset(ids))
+            self.assertEqual([], validate(root))
+
+    def test_critical_transaction_command_cannot_mutate_unowned_authority(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            roadmap = load_yaml(root / "relay/ROADMAP/ROADMAP.yaml")
+            roadmap["revision"] = "RM-ILLEGAL"
+            with self.assertRaisesRegex(TransactionError, "ACTIVATE_LEASE cannot mutate"):
+                execute(
+                    root,
+                    tx_id="TX-ILLEGAL-TARGET",
+                    command="ACTIVATE_LEASE",
+                    actor="agent-x",
+                    replacements={"relay/ROADMAP/ROADMAP.yaml": yaml_bytes(roadmap)},
+                )
+
     def test_activate_lease_transfers_exclusive_custody_and_snapshot(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

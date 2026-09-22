@@ -5,9 +5,10 @@ import argparse
 from pathlib import Path
 
 from handover_context import build_context, build_request, render_request
+from intelligence_projection import build_improvement, build_task
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
-from v3lib import load_events, load_yaml, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from relay_tx import _event, _assert_event_ids_available
 
 
@@ -20,6 +21,7 @@ def plan_handover(
     target_path: Path,
     base_ref: str,
     complex_mode: bool,
+    parent_issue_observation: dict | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -36,7 +38,16 @@ def plan_handover(
         base_ref=base_ref,
         target=target,
         complex_mode=complex_mode,
+        parent_issue_observation=parent_issue_observation,
     )
+    task_snapshot = build_task(root, base_ref, parent_issue_observation)
+    improvement_view = build_improvement(root)
+    task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
+    improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
+    if canonical_digest(task_snapshot) != task_meta.get("digest"):
+        raise TransactionError("task snapshot changed while freezing handover context")
+    if canonical_digest(improvement_view) != improvement_meta.get("digest"):
+        raise TransactionError("improvement view changed while freezing handover context")
     request = build_request(context)
     request_md = render_request(request).encode("utf-8")
 
@@ -51,7 +62,13 @@ def plan_handover(
         "HANDOVER_PLANNED",
         actor,
         target["url"],
-        [tx_id, target["provider_ref"], request["handover_context"]["digest"]],
+        [
+            tx_id,
+            target["provider_ref"],
+            request["handover_context"]["digest"],
+            task_meta["digest"],
+            improvement_meta["digest"],
+        ],
         {
             "complex_mode": bool(complex_mode),
             "prompt_count": len(request["generator"]["prompt_sequence"]),
@@ -67,6 +84,8 @@ def plan_handover(
         replacements={
             snapshot_path: yaml_bytes(snapshot),
             "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
+            str(task_meta["path"]): yaml_bytes(task_snapshot),
+            str(improvement_meta["path"]): yaml_bytes(improvement_view),
             "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
             "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
             "relay/EVENTS.jsonl": jsonl_bytes(events),
@@ -85,6 +104,7 @@ def main() -> None:
     parser.add_argument("--actor", required=True)
     parser.add_argument("--target-observation", required=True)
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--parent-issue-observation")
     parser.add_argument("--complex", action="store_true")
     args = parser.parse_args()
     result = plan_handover(
@@ -95,6 +115,7 @@ def main() -> None:
         target_path=Path(args.target_observation),
         base_ref=args.base_ref,
         complex_mode=args.complex,
+        parent_issue_observation=(load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None),
     )
     print(f"{result['id']}: {result['status']}")
 

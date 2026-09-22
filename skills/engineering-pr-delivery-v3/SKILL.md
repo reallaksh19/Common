@@ -128,7 +128,7 @@ A canonical mutation is considered complete only when the transaction is `COMMIT
 ```bash
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . recover
 
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit ...
+python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . start ...
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . checkpoint ...
 python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . handover ...
@@ -256,3 +256,56 @@ See:
 - `operating-model/current-snapshot.md`
 - `operating-model/lease-admission-and-v25-compat.md`
 - schemas and scripts under this skill.
+
+## Task intelligence and #421 continuity
+
+V3 keeps engineering truth authoritative exactly once. These are **generated read models**, never execution or acceptance authority:
+
+- `relay-v3-task-snapshot` — task-local purpose, lineage, scope, inputs/benchmarks, evidence, controls, negative knowledge and next action.
+- `relay-v3-improvement-view` — evidence-bound capability/evidence/understanding/downstream change between task basis and accepted checkpoint.
+- `relay-v3-intelligence-continuity` — cutover proof that V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress, discovery, Owner-delta and handover intelligence remain represented without changing the preserved legacy tree.
+
+Generate or inspect them with:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> task --base-ref origin/main --output relay/GENERATED/tasks/<EP>.snapshot.yaml
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> improvement --output relay/GENERATED/improvements/<CP>.improvement.yaml
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> continuity --base-ref origin/main \
+  --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \
+  --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml
+```
+
+While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5 authority. After `V3 / ACTIVE`, they derive from native V3 authority. Merely creating the files never changes protocol selection, custody, acceptance, roadmap authority or progress.
+
+The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
+
+`plan_handover.py` atomically materializes the current TASK_SNAPSHOT and IMPROVEMENT_VIEW with HANDOVER_CONTEXT and binds their digests into accumulated learning. Prompt/handover consumers may use them for reconstruction and negative knowledge, but they grant no new action authority.
+
+
+## Parent-issue-relative task snapshots
+
+`TASK_SNAPSHOT` is an issue-relative execution read model rather than merely an EP dump. A provider-normalized parent issue observation can be supplied to the task/handover projector to expose:
+
+- parent issue identity, current state, original baseline digest, and relevant issue/comment updates;
+- a parent-issue acceptance checklist with COMPLETE / PARTIAL / PENDING / BLOCKED / DEFERRED / NOT_APPLICABLE / UNKNOWN states;
+- a separate current-task checklist derived from EP acceptance and checkpoint evidence;
+- planned local/third-party offloads declared by the EP;
+- Owner-facing `PEND-*` and `KI-*` tracking IDs mapped to internal action-scoped `CTRL-*` controls;
+- evidence-bound value-add entries compared with the frozen original issue baseline.
+
+The parent-issue observation is provider-derived context and never grants write, checkpoint, merge, or release authority.
+
+A migrated repository in `V2_5 / PREPARED` may use staged V3 for migration, continuity projection and handover preparation, but live V3 execution/delivery actions fail with `PROTOCOL_NOT_ACTIVE`. After `V3 / ACTIVE`, V2.5 is read-only history and current task snapshots derive from native V3 truth.
+
+
+### Canonical task admission
+
+New work from an `IDLE` V3 repository must enter through `relay_tx.py admit-task`. The transaction atomically applies the governed roadmap disposition, creates the EP, grants the first lease, moves STATE to ACTIVE, appends OWNER_TASK_ADMITTED / EP_CREATED / LEASE_GRANTED events, and regenerates CURRENT_SNAPSHOT.
+
+The generic transaction layer enforces semantic target constraints for critical commands. In particular, `ACTIVATE_LEASE` cannot create or rewrite roadmap/EP authority, and `RESOLVE_CONTROL` cannot rewrite protocol selection or migration reports. This prevents an atomically journaled transaction from masquerading as a different authority transition.
+
+
+### Legacy cutover freeze
+
+Do not rewrite the bootstrap V2.5 migration digest when legacy authority legitimately changes during `V2_5 / PREPARED`. Before cutover, run `protocol_cutover.py freeze` to bind the final live V2.5 tree. Continuity and post-cutover immutability are checked against that explicit freeze digest; the bootstrap digest remains historical migration evidence.

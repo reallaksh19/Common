@@ -163,6 +163,13 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("Foundation schema established.", learning["what_changed"])
             self.assertIn("V2.5 remains live.", learning["do_not_break"])
             self.assertEqual("Read CURRENT_SNAPSHOT and EP.", learning["first_successor_action"])
+            self.assertEqual("V3", learning["task_snapshot"]["source_protocol"])
+            self.assertEqual("EP-TA-011", learning["task_snapshot"]["ep"])
+            self.assertEqual("WP-TA-109", learning["task_snapshot"]["work_package"])
+            self.assertTrue(learning["task_snapshot"]["digest"].startswith("sha256:"))
+            self.assertEqual("V3", learning["improvement_view"]["source_protocol"])
+            self.assertEqual("CP-TA-010", learning["improvement_view"]["checkpoint"])
+            self.assertTrue(learning["improvement_view"]["digest"].startswith("sha256:"))
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
@@ -197,6 +204,14 @@ class HandoverContextTests(unittest.TestCase):
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
             request = load_yaml(root / "relay/GENERATED/THREE_PASS_REQUEST.yaml")
             request_text = (root / "relay/GENERATED/THREE_PASS_REQUEST.md").read_text(encoding="utf-8")
+            task_meta = context["accumulated_learning"]["task_snapshot"]
+            improvement_meta = context["accumulated_learning"]["improvement_view"]
+            task_snapshot = load_yaml(root / task_meta["path"])
+            improvement_view = load_yaml(root / improvement_meta["path"])
+            self.assertEqual("DERIVED_READ_MODEL", task_snapshot["authority"])
+            self.assertEqual("DERIVED_READ_MODEL", improvement_view["authority"])
+            self.assertEqual(task_meta["ep"], task_snapshot["identity"]["ep"])
+            self.assertEqual(improvement_meta["checkpoint"], improvement_view["checkpoint"])
             self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
             self.assertEqual("PROVIDER_READBACK", context["target"]["authority"])
             self.assertEqual("DERIVED_GENERATOR_REQUEST", request["authority"])

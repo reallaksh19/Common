@@ -18,7 +18,7 @@ for entry in (SCRIPTS, V25_SCRIPTS):
 
 import bootstrap_relay as v25_bootstrap
 
-from protocol_cutover import CutoverError, activate, assess, validate_selection
+from protocol_cutover import CutoverError, activate, assess, freeze_legacy, validate_selection
 from protocol_default import resolve as resolve_default
 from snapshot_projection import build as build_snapshot
 from v25_migration import (
@@ -129,9 +129,26 @@ def make_cutover_ready(root: Path) -> None:
     continuity = [x for x in controls["controls"] if x["id"] == INTELLIGENCE_CONTINUITY_CONTROL][0]
     continuity["state"] = "RESOLVED"
     continuity["resolution"]["evidence"] = [
-        "Common#421 synthetic continuity proof: roadmap admission, ROADMAP_EVENTS, checkpoint/progress reconciliation, Owner delta and handover intelligence remain governed."
+        "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml: ready=true; Common#421 continuity proof."
     ]
     dump(controls_path, controls)
+
+    freeze_result = freeze_legacy(
+        root,
+        tx_id="TX-FREEZE-001",
+        event_id="EVT-FREEZE-001",
+        actor="migration-agent",
+    )
+    if freeze_result["status"] != "COMMITTED":
+        raise AssertionError(freeze_result)
+
+    # Generate the continuity proof from live preserved V2.5 authority instead of
+    # manufacturing a schema-valid PASS document. This mirrors the real cutover path.
+    from intelligence_projection import assess_continuity
+    continuity_report = assess_continuity(root)
+    if continuity_report.get("ready") is not True:
+        raise AssertionError(continuity_report)
+    dump(root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml", continuity_report)
 
     dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", build_snapshot(root))
 
@@ -249,6 +266,76 @@ class V25MigrationTests(unittest.TestCase):
                     owner_utterance_digest=OWNER_DIGEST,
                     owner_session_timestamp=OWNER_TIME,
                 )
+
+    def test_resolved_continuity_control_without_report_still_blocks_cutover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            (root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml").unlink()
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+            self.assertTrue(any("intelligence_continuity_report=FAIL" in item for item in readiness["basis"]))
+
+    def test_continuity_report_must_bind_exact_preserved_legacy_digest(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            path = root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml"
+            report = load_yaml(path)
+            report["source"]["legacy_tree_digest"] = "sha256:" + ("0" * 64)
+            dump(path, report)
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+
+    def test_forged_ready_continuity_report_cannot_clear_cutover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            path = root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml"
+            report = load_yaml(path)
+            report["projections"]["task_snapshot_digest"] = "sha256:" + ("c" * 64)
+            report["evidence"] = ["Forged but schema-valid continuity report."]
+            dump(path, report)
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+            self.assertTrue(any("intelligence_continuity_recomputed=PASS" in item for item in readiness["basis"]))
+            self.assertTrue(any("intelligence_continuity_report=FAIL" in item for item in readiness["basis"]))
+
+    def test_cutover_freeze_preserves_bootstrap_digest_and_binds_latest_live_legacy(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            selection_before = load_yaml(root / "relay/PROTOCOL_SELECTION.yaml")
+            bootstrap_digest = selection_before["legacy"]["tree_digest"]
+
+            profile = root / "agents/relay/REPO_PROFILE.yaml"
+            profile.write_text(profile.read_text(encoding="utf-8") + "\n# legitimate pre-cutover V2.5 evolution\n", encoding="utf-8")
+            _, live_digest = legacy_inventory(root)
+            self.assertNotEqual(bootstrap_digest, live_digest)
+
+            result = freeze_legacy(
+                root,
+                tx_id="TX-FREEZE-CHANGED",
+                event_id="EVT-FREEZE-CHANGED",
+                actor="migration-agent",
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            selection_after = load_yaml(root / "relay/PROTOCOL_SELECTION.yaml")
+            self.assertEqual(bootstrap_digest, selection_after["legacy"]["tree_digest"])
+            self.assertEqual(live_digest, selection_after["cutover"]["legacy_freeze_digest"])
 
     def test_ready_cutover_requires_owner_basis_and_activates_v3(self):
         with tempfile.TemporaryDirectory() as td:

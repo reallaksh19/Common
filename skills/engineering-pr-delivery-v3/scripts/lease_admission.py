@@ -66,8 +66,16 @@ def build_native_lease(
     owner_basis: dict[str, str] | None = None,
     branch: str | None = None,
     replace_active_lease_id: str | None = None,
+    state_override: dict[str, Any] | None = None,
+    ep_override: dict[str, Any] | None = None,
+    current_lease_override: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    state, ep, current_lease = _current(root)
+    if state_override is not None or ep_override is not None:
+        if not isinstance(state_override, dict) or not isinstance(ep_override, dict):
+            raise AdmissionError("state_override and ep_override must be supplied together")
+        state, ep, current_lease = state_override, ep_override, current_lease_override
+    else:
+        state, ep, current_lease = _current(root)
     method = method.upper()
     if method not in {"DETERMINISTIC", "QUALIFIED", "OWNER_OVERRIDE"}:
         raise AdmissionError(f"unsupported admission method: {method}")
