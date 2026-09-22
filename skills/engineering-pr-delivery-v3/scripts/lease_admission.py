@@ -65,6 +65,7 @@ def build_native_lease(
     qualification: dict[str, Any] | None = None,
     owner_basis: dict[str, str] | None = None,
     branch: str | None = None,
+    replace_active_lease_id: str | None = None,
 ) -> dict[str, Any]:
     state, ep, current_lease = _current(root)
     method = method.upper()
@@ -75,10 +76,13 @@ def build_native_lease(
     if not executor_id.strip():
         raise AdmissionError("executor_id must be explicit")
 
+    current_lease_id = str((current_lease or {}).get("id") or "")
+    current_executor = str(((current_lease or {}).get("executor") or {}).get("id") or "")
     if (
         isinstance(current_lease, dict)
         and current_lease.get("state") == "ACTIVE"
-        and (current_lease.get("executor") or {}).get("id") != executor_id
+        and current_executor != executor_id
+        and current_lease_id != str(replace_active_lease_id or "")
     ):
         raise AdmissionError(
             "exclusive route already has an ACTIVE lease for another executor; release/transfer is required"
@@ -172,7 +176,7 @@ def build_native_lease(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Build one native V3 lease admission object. V3-6 owns atomic activation/persistence."
+        description="Build one native V3 lease admission object. Transactional activation is owned by relay_tx.py."
     )
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--lease-id", required=True)
