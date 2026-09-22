@@ -16,15 +16,15 @@ properties:
     required: [lifecycle, ep, lease, route]
     properties:
       lifecycle: {enum: [ACTIVE, PARALLEL, IDLE, TERMINAL, INITIALIZING]}
-      ep: {type: [string, 'null'], pattern: '^EP-'}
-      lease: {type: [string, 'null'], pattern: '^LEASE-'}
+      ep: {type: [string, 'null'], pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      lease: {type: [string, 'null'], pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       route: {type: [string, 'null'], minLength: 1}
   accepted:
     type: object
     additionalProperties: false
     required: [checkpoint]
     properties:
-      checkpoint: {type: [string, 'null'], pattern: '^CP-'}
+      checkpoint: {type: [string, 'null'], pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   controls:
     type: object
     additionalProperties: false
@@ -61,9 +61,9 @@ allOf:
       properties:
         execution:
           properties:
-            ep: {type: string, pattern: '^EP-'}
-            lease: {type: string, pattern: '^LEASE-'}
-            route: {type: string, pattern: '^SERIAL:EP-'}
+            ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+            lease: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+            route: {type: string, pattern: '^SERIAL:EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   - if:
       properties:
         execution:
