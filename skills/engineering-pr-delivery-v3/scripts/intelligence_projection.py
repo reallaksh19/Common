@@ -501,9 +501,29 @@ def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]
 
     progress_ok, progress_basis = _run_v25(root, "validate_progress.py")
     cp = state.get("last_checkpoint") or {}
-    cp_exists = cp.get("id") in {None, "", "NONE"} or bool(cp.get("path") and (root / str(cp.get("path"))).exists())
-    checks["checkpoint_progress"] = "PASS" if progress_ok and cp_exists else "FAIL"
-    evidence.append(f"{progress_basis}; checkpoint={cp.get('id')} exists={cp_exists}")
+    cp_id = cp.get("id")
+    cp_path = cp.get("path")
+    cp_exists = cp_id in {None, "", "NONE"} or bool(cp_path and (root / str(cp_path)).exists())
+    checkpoint_ok = True
+    checkpoint_basis = "checkpoint=NONE"
+    if cp_id not in {None, "", "NONE"}:
+        if not cp_exists:
+            checkpoint_ok = False
+            checkpoint_basis = f"checkpoint={cp_id} missing"
+        else:
+            validator = V25_ROOT / "scripts" / "validate_checkpoint.py"
+            proc = subprocess.run(
+                [sys.executable, str(validator), str((root / str(cp_path)).resolve())],
+                cwd=V25_ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
+            checkpoint_ok = proc.returncode == 0
+            tail = " | ".join(x.strip() for x in proc.stdout.splitlines()[-4:] if x.strip())
+            checkpoint_basis = f"validate_checkpoint.py exit={proc.returncode}" + (f": {tail}" if tail else "")
+    checks["checkpoint_progress"] = "PASS" if progress_ok and cp_exists and checkpoint_ok else "FAIL"
+    evidence.append(f"{progress_basis}; {checkpoint_basis}; checkpoint={cp_id} exists={cp_exists}")
 
     ep = _load(root / str((state.get("active_ep") or {}).get("path"))) if (state.get("active_ep") or {}).get("path") else None
     history_discovery = int(((migration.get("legacy_inventory") or {}).get("category_counts") or {}).get("DISCOVERY", 0))
