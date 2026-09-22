@@ -95,6 +95,36 @@ def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
 
 
+def _require_final_reconciliation(
+    root: Path,
+    state: dict[str, Any],
+    *,
+    parent_issue_observation: dict[str, Any] | None = None,
+) -> None:
+    execution = state.get("execution") or {}
+    active_ep_id = execution.get("ep")
+    checkpoint = _current_checkpoint(root, state)
+    if not isinstance(checkpoint, dict):
+        raise TransactionError("CLOSE_TASK requires an accepted checkpoint")
+    checkpoint_ep = checkpoint.get("ep")
+    if active_ep_id and checkpoint_ep != active_ep_id:
+        raise TransactionError("CURRENT_EP_CHECKPOINT_REQUIRED before CLOSE_TASK")
+
+    improvement = build_improvement(root)
+    roadmap_effect = improvement.get("roadmap_effect") or {}
+    if roadmap_effect.get("concept_change") == "UNKNOWN":
+        raise TransactionError("ROADMAP_RECONCILIATION_REQUIRED before CLOSE_TASK")
+
+    ep_id = active_ep_id or checkpoint_ep
+    ep = load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
+    parent_basis = (ep or {}).get("parent_issue") or {}
+    if parent_basis.get("number"):
+        task = build_task(root, parent_issue_observation=parent_issue_observation)
+        parent = task.get("parent_issue") or {}
+        if parent.get("disposition") == "UNKNOWN":
+            raise TransactionError("PARENT_ISSUE_RECONCILIATION_REQUIRED before CLOSE_TASK")
+
+
 def _require_fresh_handover(
     root: Path,
     state: dict[str, Any],
@@ -308,6 +338,7 @@ def activate_lease(
     owner_basis: dict[str, str] | None,
     branch: str | None,
     base_ref: str,
+    recovery_takeover: bool = False,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
@@ -315,7 +346,8 @@ def activate_lease(
         require_identifier(lease_id, "LEASE-", "lease_id")
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
-    old_lease_id = (state.get("execution") or {}).get("lease")
+    execution = state.get("execution") or {}
+    old_lease_id = execution.get("lease")
     old_lease = load_yaml(root / "relay/LEASES" / f"{old_lease_id}.yaml") if old_lease_id else None
     if old_lease_id == lease_id:
         raise TransactionError("new lease id must differ from the current lease id")
@@ -323,13 +355,26 @@ def activate_lease(
     if new_lease_path.exists():
         raise TransactionError(f"new lease id already exists: {lease_id}")
 
-    transfer_from = (
-        str(old_lease_id)
-        if isinstance(old_lease, dict)
-        and old_lease.get("state") == "ACTIVE"
-        and ((old_lease.get("executor") or {}).get("id") != executor_id)
-        else None
-    )
+    old_active = isinstance(old_lease, dict) and old_lease.get("state") == "ACTIVE"
+    old_executor = str(((old_lease or {}).get("executor") or {}).get("id") or "")
+    different_executor = bool(old_active and old_executor != executor_id)
+    continuation = "NEW"
+    handover_digest = None
+
+    if different_executor:
+        try:
+            handover_digest = _require_fresh_handover(root, state, base_ref=base_ref)
+        except TransactionError as exc:
+            if not recovery_takeover:
+                raise TransactionError(
+                    "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
+                    "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
+                ) from exc
+            continuation = "RECOVERY"
+        else:
+            continuation = "HANDOFF"
+
+    transfer_from = str(old_lease_id) if different_executor else None
     new_lease = build_native_lease(
         root,
         lease_id=lease_id,
@@ -342,11 +387,20 @@ def activate_lease(
     )
 
     replacements: dict[str, bytes] = {}
-    transfer = bool(old_lease and old_lease_id != lease_id and old_lease.get("state") == "ACTIVE")
+    transfer = bool(old_active and old_lease_id != lease_id)
+    predecessor_event_type = None
     if transfer:
-        released = copy.deepcopy(old_lease)
-        released["state"] = "RELEASED"
-        replacements[f"relay/LEASES/{old_lease_id}.yaml"] = yaml_bytes(released)
+        predecessor = copy.deepcopy(old_lease)
+        if different_executor and continuation == "RECOVERY":
+            predecessor["state"] = "INVALIDATED"
+            reasons = list((predecessor.get("invalidation") or {}).get("reasons") or [])
+            reasons.append(f"RECOVERY_TAKEOVER_BY:{lease_id}")
+            predecessor["invalidation"] = {"reasons": list(dict.fromkeys(reasons))}
+            predecessor_event_type = "LEASE_REVOKED"
+        else:
+            predecessor["state"] = "RELEASED"
+            predecessor_event_type = "LEASE_RELEASED"
+        replacements[f"relay/LEASES/{old_lease_id}.yaml"] = yaml_bytes(predecessor)
 
     new_state = copy.deepcopy(state)
     new_state["execution"] = {
@@ -361,29 +415,42 @@ def activate_lease(
     replacements[_snapshot_path(new_state)] = yaml_bytes(snapshot)
 
     events = _events(root)
-    release_event_id = event_id + "-REL" if transfer else None
-    _assert_event_ids_available(events, [x for x in [release_event_id, event_id] if x])
+    predecessor_event_id = event_id + "-REL" if transfer else None
+    _assert_event_ids_available(events, [x for x in [predecessor_event_id, event_id] if x])
     if transfer:
+        basis = [tx_id, f"successor-lease:{lease_id}", f"continuation:{continuation}"]
+        if handover_digest:
+            basis.append(handover_digest)
         events.append(_event(
-            str(release_event_id),
-            "LEASE_RELEASED",
+            str(predecessor_event_id),
+            str(predecessor_event_type),
             actor,
             str(old_lease_id),
-            [tx_id, f"transfer-to:{lease_id}"],
-            {"successor_lease": lease_id},
+            basis,
+            {
+                "successor_lease": lease_id,
+                "successor_executor": executor_id,
+                "continuation": continuation,
+                "predecessor_handover": bool(handover_digest),
+            },
         ))
     events.append(_event(
         event_id,
         "LEASE_GRANTED",
         actor,
         lease_id,
-        [tx_id, str(new_lease.get("route"))],
-        {"executor": executor_id, "method": method},
+        [tx_id, str(new_lease.get("route")), f"continuation:{continuation}"],
+        {
+            "executor": executor_id,
+            "method": method,
+            "continuation": continuation,
+            "predecessor_lease": old_lease_id if transfer else None,
+            "predecessor_handover": bool(handover_digest),
+        },
     ))
     replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
 
     return execute(root, tx_id=tx_id, command="ACTIVATE_LEASE", actor=actor, replacements=replacements, fail_after=fail_after)
-
 
 def release_lease(
     root: Path,
@@ -867,10 +934,17 @@ def close_task(
     tx_id: str,
     event_id: str,
     actor: str,
+    parent_issue_observation: dict[str, Any] | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     _require_action(root, "CLOSE_TASK")
     state, _ = _authority(root)
+    _require_final_reconciliation(
+        root,
+        state,
+        parent_issue_observation=parent_issue_observation,
+    )
+
     delivery = state.get("delivery") or {}
     vehicle = delivery.get("primary_vehicle")
     if delivery.get("required") is True:
@@ -908,18 +982,24 @@ def close_task(
     release_event_id = event_id + "-REL" if lease and lease.get("state") == "ACTIVE" else None
     _assert_event_ids_available(events, [x for x in [release_event_id, event_id] if x])
     if release_event_id:
-        events.append(_event(str(release_event_id), "LEASE_RELEASED", actor, str(lease_id), [tx_id, "close-task"], {}))
+        events.append(_event(str(release_event_id), "LEASE_RELEASED", actor, str(lease_id), [tx_id, "close-task"], {
+            "reason": "CLOSE_TASK",
+            "graceful": True,
+        }))
     events.append(_event(
         event_id,
         "TASK_CLOSED",
         actor,
         str((state.get("accepted") or {}).get("checkpoint") or "relay"),
         [tx_id],
-        {"delivery_required": bool(delivery.get("required"))},
+        {
+            "delivery_required": bool(delivery.get("required")),
+            "roadmap_reconciled": True,
+            "parent_issue_reconciled": True,
+        },
     ))
     replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
     return execute(root, tx_id=tx_id, command="CLOSE_TASK", actor=actor, replacements=replacements, fail_after=fail_after)
-
 
 def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tx-id", required=True)
@@ -933,6 +1013,11 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--owner-session-timestamp")
     parser.add_argument("--branch")
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument(
+        "--recovery-takeover",
+        action="store_true",
+        help="Explicitly invalidate abandoned predecessor custody when no valid handover exists.",
+    )
 
 
 def main() -> None:
@@ -1028,6 +1113,7 @@ def main() -> None:
     close.add_argument("--tx-id", required=True)
     close.add_argument("--event-id", required=True)
     close.add_argument("--actor", required=True)
+    close.add_argument("--parent-issue-observation")
 
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
@@ -1088,6 +1174,7 @@ def main() -> None:
             owner_basis=owner_basis,
             branch=args.branch,
             base_ref=args.base_ref,
+            recovery_takeover=args.recovery_takeover,
         )
     elif args.command == "release-lease":
         result = release_lease(
@@ -1161,7 +1248,17 @@ def main() -> None:
             observation_path=Path(args.observation),
         )
     else:
-        result = close_task(root, tx_id=args.tx_id, event_id=args.event_id, actor=args.actor)
+        result = close_task(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            parent_issue_observation=(
+                load_yaml(Path(args.parent_issue_observation))
+                if args.parent_issue_observation
+                else None
+            ),
+        )
     print(f"{result['id']}: {result['status']}")
     if args.command == "local-execution":
         request_path = root / "relay/GENERATED/LOCAL_EXECUTION.md"
