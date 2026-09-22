@@ -1,6 +1,6 @@
 # Standalone Three-Pass Prompt Generator
 
-Use this package when the task is to **generate five prompts** under the three-pass method (ORIENT → IMAGINE → UNDERSTAND → RECONCILE → REVALIDATE AND MOVE FORWARD).
+Use this package when the task is to **generate five prompts** under the three-pass method (GLOBAL IMAGINE → LOCAL IMAGINE → UNDERSTAND → RECONCILE → REVALIDATE AND MOVE FORWARD).
 
 Canonical entrypoint:
 
