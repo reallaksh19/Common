@@ -277,6 +277,34 @@ class V25MigrationTests(unittest.TestCase):
                     owner_session_timestamp=OWNER_TIME,
                 )
 
+    def test_resolved_continuity_control_without_report_still_blocks_cutover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            (root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml").unlink()
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+            self.assertTrue(any("intelligence_continuity_report=FAIL" in item for item in readiness["basis"]))
+
+    def test_continuity_report_must_bind_exact_preserved_legacy_digest(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            path = root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml"
+            report = load_yaml(path)
+            report["source"]["legacy_tree_digest"] = "sha256:" + ("0" * 64)
+            dump(path, report)
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+
     def test_ready_cutover_requires_owner_basis_and_activates_v3(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
