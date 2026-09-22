@@ -361,6 +361,56 @@ Parent issue changes use the existing disposition vocabulary. Status-only truth 
 
 See `operating-model/parent-handover-ledger.md`.
 
+
+## Custody fencing, recovery, and accepted handover
+
+New V3.1 custody is fenced by a monotonic `custody_epoch`. Once an active STATE carries an epoch, every state-changing execution action MUST present the current expected epoch. Missing or stale epochs fail closed. A recovery takeover increments the epoch, so a predecessor that later returns cannot mutate the work using stale custody.
+
+Leases carry `granted_at`, `renewed_at`, `recovery_after_seconds`, and a recovery policy. V3.1 does not run a polling daemon. Recovery eligibility is evaluated on demand when a different executor attempts explicit recovery. `TAKEOVER_AFTER_EXPIRY` permits recovery only after the persisted horizon; `MANUAL_ONLY` does not infer abandonment from time.
+
+The active runner may renew custody transactionally:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
+  --tx-id TX-... --event-id EVT-... --actor agent-A \
+  --expected-custody-epoch 7 --base-ref origin/main
+```
+
+Clean responsibility transfer is two-sided. `HANDOVER_PLANNED/HANDOVER_PUBLISHED` prepare and expose the frozen continuation basis; they do not themselves prove that another runner accepted responsibility. When the successor validates that fresh basis and activates its lease, the same custody transaction emits `HANDOVER_ACCEPTED` and advances the epoch. Until then the derived Relay ledger may show `HANDOFF_PENDING`.
+
+Recovery is semantically distinct. An expiry-eligible explicit takeover emits `RECOVERY_STARTED`, invalidates predecessor custody, preserves the same EP where the work identity is unchanged, advances the epoch, and grants successor custody. After the successor reconstructs unaccepted material/evidence it records `RECOVERY_RECONSTRUCTED` with durable evidence. Do not represent recovery as a successful predecessor handover.
+
+Legacy V3.1 repositories without epoch/liveness fields remain readable. Explicit recovery remains available for such legacy custody, but newly issued leases use fenced custody.
+
+## Governed continuous improvement / Change Delta
+
+Prompt 1 reasoning is not roadmap authority. Continuous improvement uses one governed `CHANGE-*` object:
+
+```text
+Prompt 1 / Owner
+  -> CHANGE_HYPOTHESIS_RECORDED
+Prompt 2
+  -> CHANGE_VERIFIED or CHANGE_REJECTED
+Prompt 2.5
+  -> CHANGE_DELTA_PROPOSED
+required authority
+  -> CHANGE_AUTHORIZED
+Relay / Prompt 3
+  -> ROADMAP_RECONCILED + Change Delta APPLIED
+```
+
+Use the transactional commands `record-change`, `verify-change`, `propose-change`, and `authorize-change`. A confirmed proposal that requires Owner authority cannot be applied until direct Owner basis is recorded. `reconcile-roadmap --change-delta ...` validates the expected roadmap revision and STATE digest and atomically records the roadmap result in the Change Delta. Rejected hypotheses remain historical learning rather than silently disappearing.
+
+Do not create a new GitHub issue merely because Prompt 1 generated a hypothesis. A new issue is justified only when authorized reconciliation establishes an independently governable obligation (for example SPLIT/TRANSFER).
+
+## Relay issue materialization
+
+The existing Handover ledger is the single derived Relay Envelope; do not create a parallel work/change/handover token.
+
+Provider sync ensures one active Relay case-file sub-issue per governed parent. If the projected Relay issue is absent, sync reads the parent's sub-issues, reuses the one matching the deterministic Relay marker/title, or creates and attaches one when none exists. More than one matching Relay sub-issue is a fail-closed `MULTIPLE_RELAY_ISSUES` condition.
+
+The generated Relay envelope exposes the current frontier/custody epoch, accepted checkpoint/head versus working head, pending/KI/offloads, negative knowledge, accountability, active Change Delta, delivery state, history, exact next action, and stop conditions. GitHub remains a provider projection; repository authority and events remain reconstructable truth.
+
 ## V3.1 communication boundary
 
 V3.1 distinguishes three outward communication modes:
