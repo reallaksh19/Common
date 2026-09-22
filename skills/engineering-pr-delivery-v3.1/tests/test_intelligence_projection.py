@@ -336,6 +336,18 @@ class IntelligenceProjectionTests(unittest.TestCase):
                     ],
                 },
                 "updates": [{"ref": "issuecomment-1", "type": "STATUS", "summary": "Host parity accepted.", "effect": ["PI-175-01 COMPLETE"]}],
+                "disposition": "TRANSFER",
+                "relationships": [{
+                    "type": "TRANSFERS_TO",
+                    "target": {
+                        "repository": "example/repo",
+                        "issue_number": 176,
+                        "url": "https://github.com/example/repo/issues/176",
+                    },
+                    "scope": ["Bespoke explorer follow-up"],
+                    "acceptance_items": ["PI-175-02"],
+                    "provider_refs": ["issue-176"],
+                }],
             }
             task = build_task(root, parent_issue_observation=observation)
             self.assertEqual("DERIVED_READ_MODEL", task["authority"])
@@ -346,6 +358,8 @@ class IntelligenceProjectionTests(unittest.TestCase):
             self.assertEqual("EVT-CONT-001", task["history"]["recent_events"][0]["id"])
             self.assertEqual("REJECTED", task["negative_knowledge"][0]["result"])
             self.assertEqual(175, task["parent_issue"]["number"])
+            self.assertEqual("TRANSFER", task["parent_issue"]["disposition"])
+            self.assertEqual("TRANSFERS_TO", task["parent_issue"]["relationships"][0]["type"])
             self.assertEqual(1, task["parent_issue_progress"]["summary"]["complete"])
             self.assertEqual(1, task["parent_issue_progress"]["summary"]["pending"])
             self.assertEqual("COMPLETE", task["current_task_progress"]["checklist"][0]["state"])

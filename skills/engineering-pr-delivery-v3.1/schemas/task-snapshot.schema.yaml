@@ -17,7 +17,7 @@ properties:
   parent_issue:
     type: object
     additionalProperties: false
-    required: [repository, number, title, state, url, baseline, current, updates]
+    required: [repository, number, title, state, url, baseline, current, updates, disposition, relationships]
     properties:
       repository: {type: [string, 'null']}
       number: {type: [integer, 'null'], minimum: 1}
@@ -27,6 +27,8 @@ properties:
       baseline: {type: [object, 'null']}
       current: {type: [object, 'null']}
       updates: {type: array}
+      disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+      relationships: {type: array}
   parent_issue_progress:
     type: object
     additionalProperties: false

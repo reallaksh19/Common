@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, authority, provider, repository, issue_number, title, url, state, observed_at, baseline, current_contract, updates]
+required: [schema_version, authority, provider, repository, issue_number, title, url, state, observed_at, baseline, current_contract, updates, disposition, relationships]
 properties:
   schema_version: {const: relay-v3.1-parent-issue-observation}
   authority: {const: DERIVED_PROVIDER_OBSERVATION}
@@ -45,6 +45,45 @@ properties:
             state: {enum: [COMPLETE, PARTIAL, PENDING, BLOCKED, DEFERRED, NOT_APPLICABLE, UNKNOWN]}
             evidence: {type: array, items: {type: string, minLength: 1}}
             provider_refs: {type: array, items: {type: string, minLength: 1}}
+  disposition:
+    enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]
+  relationships:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [type, target, scope, acceptance_items, provider_refs]
+      properties:
+        type:
+          enum: [RELATED_TO, BLOCKED_BY, FOLLOW_UP, SUPERSEDES, SUPERSEDED_BY, TRANSFERS_TO, SPLIT_INTO]
+        target:
+          type: object
+          additionalProperties: false
+          required: [repository, issue_number, url]
+          properties:
+            repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [ref, type, summary, effect]
+      properties:
+        ref: {type: string, minLength: 1}
+        type: {enum: [REQUIREMENT, DECISION, STATUS, DEPENDENCY, ACCEPTANCE, DELIVERY, COMMENT]}
+        summary: {type: string, minLength: 1}
+        effect: {type: array, items: {type: string, minLength: 1}}
+additionalProperties: false
+}
+            issue_number: {type: integer, minimum: 1}
+            url: {type: string, format: uri}
+        scope:
+          type: array
+          items: {type: string, minLength: 1}
+        acceptance_items:
+          type: array
+          items: {type: string, minLength: 1}
+        provider_refs:
+          type: array
+          items: {type: string, minLength: 1}
   updates:
     type: array
     items:

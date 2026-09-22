@@ -136,6 +136,8 @@ def _issue_sections(
         "baseline": baseline,
         "current": current,
         "updates": list((obs or {}).get("updates") or []),
+        "disposition": (obs or {}).get("disposition") or "UNKNOWN",
+        "relationships": list((obs or {}).get("relationships") or []),
     }
     parent_rows = []
     for row in ((current or {}).get("acceptance_items") or (baseline or {}).get("acceptance_items") or []):
