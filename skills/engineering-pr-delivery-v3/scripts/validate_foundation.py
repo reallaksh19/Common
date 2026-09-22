@@ -15,7 +15,12 @@ def _load(path: Path, label: str, errors: list[str]):
         return None
 
 
-def validate(repo_root: Path) -> list[str]:
+def validate_authority(repo_root: Path) -> list[str]:
+    """Validate only durable present-authority objects.
+
+    Generated snapshots and append-only history are intentionally excluded so
+    execution authorization cannot be coupled to derived-view/history freshness.
+    """
     errors: list[str] = []
     relay = repo_root / "relay"
     state_path = relay / "STATE.yaml"
@@ -26,7 +31,6 @@ def validate(repo_root: Path) -> list[str]:
     errors.extend(validate_schema("state", state, "STATE"))
 
     controls_ref = ((state.get("controls") or {}).get("path"))
-    controls = None
     if controls_ref:
         controls = _load(repo_root / str(controls_ref), "CONTROLS", errors)
         if isinstance(controls, dict):
@@ -45,7 +49,6 @@ def validate(repo_root: Path) -> list[str]:
     lease_id = execution.get("lease")
     route = execution.get("route")
 
-    ep = None
     if ep_id:
         ep_path = relay / "WORK" / f"{ep_id}.yaml"
         ep = _load(ep_path, "EP", errors)
@@ -54,7 +57,6 @@ def validate(repo_root: Path) -> list[str]:
             if ep.get("id") != ep_id:
                 errors.append(f"EP.id {ep.get('id')} does not match STATE.execution.ep {ep_id}")
 
-    lease = None
     if lease_id:
         lease_path = relay / "LEASES" / f"{lease_id}.yaml"
         lease = _load(lease_path, "LEASE", errors)
@@ -70,7 +72,6 @@ def validate(repo_root: Path) -> list[str]:
                 errors.append("ACTIVE STATE requires referenced LEASE.state ACTIVE")
 
     checkpoint_id = ((state.get("accepted") or {}).get("checkpoint"))
-    checkpoint = None
     if checkpoint_id:
         cp_path = relay / "CHECKPOINTS" / f"{checkpoint_id}.yaml"
         checkpoint = _load(cp_path, "CHECKPOINT", errors)
@@ -80,6 +81,20 @@ def validate(repo_root: Path) -> list[str]:
                 errors.append(
                     f"CHECKPOINT.id {checkpoint.get('id')} does not match STATE.accepted.checkpoint {checkpoint_id}"
                 )
+
+    return errors
+
+
+def validate(repo_root: Path) -> list[str]:
+    """Validate durable authority plus derived snapshot and append-only history."""
+    errors = validate_authority(repo_root)
+    relay = repo_root / "relay"
+    state = _load(relay / "STATE.yaml", "STATE", errors)
+    if not isinstance(state, dict):
+        return errors or ["STATE: expected mapping"]
+
+    execution = state.get("execution") or {}
+    checkpoint_id = ((state.get("accepted") or {}).get("checkpoint"))
 
     snapshot_ref = ((state.get("generated") or {}).get("snapshot"))
     if snapshot_ref:
@@ -112,8 +127,14 @@ def validate(repo_root: Path) -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validate Engineering Relay V3 foundation objects and authority links.")
     parser.add_argument("repo_root", nargs="?", default=".")
+    parser.add_argument(
+        "--authority-only",
+        action="store_true",
+        help="Validate durable present-authority objects only; ignore generated snapshot/history freshness.",
+    )
     args = parser.parse_args()
-    errors = validate(Path(args.repo_root).resolve())
+    validator = validate_authority if args.authority_only else validate
+    errors = validator(Path(args.repo_root).resolve())
     if errors:
         for error in errors:
             print(f"FAIL: {error}")
