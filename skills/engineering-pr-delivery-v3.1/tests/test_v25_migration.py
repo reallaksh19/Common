@@ -396,7 +396,7 @@ class V25MigrationTests(unittest.TestCase):
             dump(path, value)
 
             errors = validate_selection(root)
-            self.assertTrue(any("changed after V3 cutover" in item for item in errors), errors)
+            self.assertTrue(any("changed after V3.1 cutover" in item for item in errors), errors)
             default = resolve_default(root)
             self.assertEqual("INVALID", default["status"])
             self.assertIsNone(default["skill"])
