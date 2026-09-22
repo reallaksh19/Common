@@ -10,7 +10,7 @@ properties:
       additionalProperties: false
       required: [id, kind, state, source, condition, blocks, permits, resolution]
       properties:
-        id: {type: string, pattern: '^CTRL-'}
+        id: {type: string, pattern: '^CTRL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         kind: {enum: [PROTOCOL, COLLISION, DEPENDENCY, DELIVERY, QUALITY, OWNER]}
         state: {enum: [OPEN, RESOLVED, SUPERSEDED]}
         source:
