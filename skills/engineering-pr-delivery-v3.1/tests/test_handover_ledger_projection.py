@@ -138,7 +138,8 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertEqual("ACTIVE", by_ep["EP-TA-011"]["status"])
             self.assertEqual("RECOVERY_REQUIRED", by_ep["EP-TA-009"]["status"])
             self.assertEqual("COMPLETE", by_ep["EP-TA-008"]["status"])
-            self.assertEqual("RECOVERY_REQUIRED", by_ep["EP-TA-009"]["continuation"])
+            self.assertEqual("RECOVERY", by_ep["EP-TA-009"]["continuation"])
+            self.assertEqual("NEW", by_ep["EP-TA-011"]["continuation"])
 
             self.assertEqual(["PEND-001"], [row["id"] for row in ledger["pending_items"]])
             self.assertEqual(["KI-001"], [row["id"] for row in ledger["known_issues"]])
