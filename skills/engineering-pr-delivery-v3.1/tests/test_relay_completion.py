@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import sys
+from datetime import datetime, timedelta
 import tempfile
 import unittest
 from pathlib import Path
@@ -68,6 +69,8 @@ class RelayCompletionTests(unittest.TestCase):
             )
             self.assertTrue(current["allowed"], current)
 
+            current_lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            renewal_basis = current_lease["custody"]["renewed_at"]
             renewed = renew_lease(
                 root,
                 tx_id="TX-RENEW-1",
@@ -75,9 +78,12 @@ class RelayCompletionTests(unittest.TestCase):
                 actor="agent-x",
                 expected_custody_epoch=1,
                 base_ref=base_ref,
-                renewed_at="2026-09-22T00:00:00Z",
+                renewed_at=renewal_basis,
             )
             self.assertEqual("COMMITTED", renewed["status"])
+            renewal_dt = datetime.fromisoformat(renewal_basis.replace("Z", "+00:00"))
+            early_observation = (renewal_dt + timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
+            eligible_observation = (renewal_dt + timedelta(minutes=61)).isoformat().replace("+00:00", "Z")
 
             with self.assertRaisesRegex(TransactionError, "RECOVERY_NOT_ELIGIBLE"):
                 activate_lease(
@@ -94,7 +100,7 @@ class RelayCompletionTests(unittest.TestCase):
                     base_ref=base_ref,
                     recovery_takeover=True,
                     expected_custody_epoch=1,
-                    recovery_observed_at="2026-09-22T00:30:00Z",
+                    recovery_observed_at=early_observation,
                 )
 
             recovered = activate_lease(
@@ -111,7 +117,7 @@ class RelayCompletionTests(unittest.TestCase):
                 base_ref=base_ref,
                 recovery_takeover=True,
                 expected_custody_epoch=1,
-                recovery_observed_at="2026-09-22T01:01:00Z",
+                recovery_observed_at=eligible_observation,
             )
             self.assertEqual("COMMITTED", recovered["status"])
             state = load_yaml(root / "relay/STATE.yaml")
