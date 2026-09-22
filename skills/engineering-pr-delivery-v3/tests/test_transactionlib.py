@@ -41,6 +41,38 @@ class TransactionJournalTests(unittest.TestCase):
             self.assertEqual("after-b", b.read_text(encoding="utf-8"))
             self.assertEqual([], incomplete_transactions(root))
 
+
+    def test_transaction_id_path_traversal_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            with self.assertRaisesRegex(TransactionError, "unsafe characters"):
+                execute(
+                    root,
+                    tx_id="TX-../ESCAPE",
+                    command="RESOLVE_CONTROL",
+                    actor="agent-x",
+                    replacements={"alpha.txt": b"after"},
+                )
+            self.assertFalse((root.parent / "ESCAPE").exists())
+
+    def test_transaction_target_path_escape_is_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            outside = root.parent / "relay-v3-outside.txt"
+            if outside.exists():
+                outside.unlink()
+            with self.assertRaisesRegex((TransactionError, ValueError), "escapes repository root"):
+                execute(
+                    root,
+                    tx_id="TX-SAFE-001",
+                    command="RESOLVE_CONTROL",
+                    actor="agent-x",
+                    replacements={"../relay-v3-outside.txt": b"escape"},
+                )
+            self.assertFalse(outside.exists())
+
     def test_interrupted_mixed_transaction_blocks_authority_then_rolls_back(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
