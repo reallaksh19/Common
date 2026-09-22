@@ -70,3 +70,20 @@ python skills/engineering-pr-delivery-v3/scripts/generate_snapshot.py <repo-root
 ```
 
 The write uses a temporary file followed by replacement so an incomplete YAML document is not published as the current snapshot.
+
+
+## Project snapshot role and #421 task projections
+
+The V3 `CURRENT_SNAPSHOT.yaml` defined here is the **project/programme first-read model**. It answers where the programme is, what is accepted/active, broad blocker state, delivery state, and the current frontier.
+
+It is not intended to absorb task-local benchmark state, negative knowledge, accepted do-not-reopen guidance, or improvement classification.
+
+Common #421 owns the complementary generated projections:
+
+```text
+PROJECT_SNAPSHOT / CURRENT_SNAPSHOT
+TASK_SNAPSHOT
+IMPROVEMENT_VIEW
+```
+
+All remain `DERIVED_READ_MODEL` surfaces. #421 must derive them from governed roadmap/EP/checkpoint/progress/control/event/provider truth rather than creating competing lifecycle authority.
