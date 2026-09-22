@@ -3,8 +3,8 @@ type: object
 required: [schema_version, id, work_package, outcome, basis, scope, acceptance, quality_policy, next]
 properties:
   schema_version: {const: relay-v3-ep}
-  id: {type: string, pattern: '^EP-'}
-  work_package: {type: string, pattern: '^WP-'}
+  id: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   outcome:
     type: object
     additionalProperties: false
@@ -16,7 +16,7 @@ properties:
     additionalProperties: false
     required: [predecessor_checkpoint, material_base, protocol_basis, semantic_dependencies]
     properties:
-      predecessor_checkpoint: {type: [string, 'null'], pattern: '^CP-'}
+      predecessor_checkpoint: {type: [string, 'null'], pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       material_base: {type: string, minLength: 7}
       protocol_basis: {type: string, minLength: 1}
       semantic_dependencies:
@@ -59,7 +59,7 @@ properties:
       additionalProperties: false
       required: [id, statement, evidence_requirements]
       properties:
-        id: {type: string, pattern: '^AC-'}
+        id: {type: string, pattern: '^AC-[A-Za-z0-9][A-Za-z0-9._-]*$'}
         statement: {type: string, minLength: 1}
         evidence_requirements:
           type: array
