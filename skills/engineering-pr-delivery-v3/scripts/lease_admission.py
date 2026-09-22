@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from v3lib import canonical_digest, load_yaml, validate_schema
+from v3lib import canonical_digest, load_yaml, require_identifier, validate_schema
 from validate_foundation import validate_authority
 
 
@@ -71,8 +71,10 @@ def build_native_lease(
     method = method.upper()
     if method not in {"DETERMINISTIC", "QUALIFIED", "OWNER_OVERRIDE"}:
         raise AdmissionError(f"unsupported admission method: {method}")
-    if not lease_id.startswith("LEASE-"):
-        raise AdmissionError("lease_id must use LEASE-* namespace")
+    try:
+        require_identifier(lease_id, "LEASE-", "lease_id")
+    except ValueError as exc:
+        raise AdmissionError(str(exc)) from exc
     if not executor_id.strip():
         raise AdmissionError("executor_id must be explicit")
 
