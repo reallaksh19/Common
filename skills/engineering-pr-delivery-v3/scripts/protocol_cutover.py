@@ -9,7 +9,7 @@ from typing import Any
 import yaml
 
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
-from v25_migration import INTELLIGENCE_CONTINUITY_CONTROL, MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory
+from v25_migration import INTELLIGENCE_CONTINUITY_CONTROL, MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory, validate_v25_repo_state
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from validate_foundation import validate as validate_v3
 
@@ -37,6 +37,71 @@ def _load_required(root: Path, rel: str) -> dict[str, Any]:
     return value
 
 
+def freeze_legacy(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+) -> dict[str, Any]:
+    selection = _load_required(root, PROTOCOL_SELECTION)
+    selection_errors = validate_schema("protocol-selection", selection, "PROTOCOL_SELECTION")
+    if selection_errors:
+        raise CutoverError("; ".join(selection_errors))
+    if selection.get("selected_protocol") != "V2_5" or selection.get("status") != "PREPARED":
+        raise CutoverError("legacy cutover freeze requires V2_5 / PREPARED")
+
+    source_status, source_basis = validate_v25_repo_state(root)
+    if source_status != "PASS":
+        raise CutoverError("cannot freeze invalid live V2.5 authority: " + "; ".join(source_basis[-5:]))
+
+    _, freeze_digest = legacy_inventory(root)
+    new_selection = {
+        **selection,
+        "cutover": {
+            **selection["cutover"],
+            "legacy_freeze_digest": freeze_digest,
+        },
+    }
+    selection_errors = validate_schema("protocol-selection", new_selection, "PROTOCOL_SELECTION")
+    if selection_errors:
+        raise CutoverError("; ".join(selection_errors))
+
+    events, event_errors = load_events(root / "relay/EVENTS.jsonl")
+    if event_errors:
+        raise CutoverError("; ".join(event_errors[:8]))
+    if any(item.get("event_id") == event_id for item in events):
+        raise CutoverError(f"duplicate event id: {event_id}")
+    event = {
+        "schema_version": "relay-v3-event",
+        "event_id": event_id,
+        "type": "LEGACY_CUTOVER_FROZEN",
+        "timestamp": _now(),
+        "actor": actor,
+        "subject": "V2.5",
+        "basis": [freeze_digest, *source_basis[-4:]],
+        "details": {
+            "bootstrap_digest": (selection.get("legacy") or {}).get("tree_digest"),
+            "freeze_digest": freeze_digest,
+        },
+    }
+    event_errors = validate_schema("event", event, "EVENT")
+    if event_errors:
+        raise CutoverError("; ".join(event_errors))
+    events.append(event)
+
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="FREEZE_LEGACY_CUTOVER",
+        actor=actor,
+        replacements={
+            PROTOCOL_SELECTION: yaml_bytes(new_selection),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+    )
+
+
 def assess(root: Path) -> dict[str, Any]:
     report = _load_required(root, MIGRATION_REPORT)
     selection = _load_required(root, PROTOCOL_SELECTION)
@@ -48,8 +113,10 @@ def assess(root: Path) -> dict[str, Any]:
     v3_errors = validate_v3(root)
 
     _, live_legacy_digest = legacy_inventory(root)
-    expected_legacy_digest = str((report.get("source") or {}).get("legacy_tree_digest") or "")
-    source_validation = (report.get("validation") or {}).get("repo_state") == "PASS"
+    bootstrap_legacy_digest = str((report.get("source") or {}).get("legacy_tree_digest") or "")
+    freeze_legacy_digest = str(((selection.get("cutover") or {}).get("legacy_freeze_digest")) or "")
+    source_status, source_basis = validate_v25_repo_state(root)
+    source_validation = source_status == "PASS"
 
     migration_rows = [
         item for item in controls.get("controls") or []
@@ -84,7 +151,8 @@ def assess(root: Path) -> dict[str, Any]:
         isinstance(continuity_report, dict)
         and not continuity_report_errors
         and continuity_report.get("ready") is True
-        and ((continuity_report.get("source") or {}).get("legacy_tree_digest") == expected_legacy_digest)
+        and bool(freeze_legacy_digest)
+        and ((continuity_report.get("source") or {}).get("legacy_tree_digest") == freeze_legacy_digest)
         and isinstance(recomputed_continuity, dict)
         and recomputed_continuity.get("ready") is True
         and canonical_digest(continuity_report) == canonical_digest(recomputed_continuity)
@@ -104,13 +172,14 @@ def assess(root: Path) -> dict[str, Any]:
         and selection.get("selected_protocol") == "V2_5"
         and selection.get("status") == "PREPARED"
         and (selection.get("legacy") or {}).get("policy") == "LIVE_COMPATIBILITY"
-        and (selection.get("legacy") or {}).get("tree_digest") == expected_legacy_digest
+        and (selection.get("legacy") or {}).get("tree_digest") == bootstrap_legacy_digest
+        and bool(freeze_legacy_digest)
     )
 
     checks = {
         "v3_conformance": "PASS" if not v3_errors else "FAIL",
-        "legacy_digest_unchanged": "PASS" if live_legacy_digest == expected_legacy_digest else "FAIL",
-        "source_validation": "PASS" if source_validation and not report_errors else "FAIL",
+        "legacy_digest_unchanged": "PASS" if freeze_legacy_digest and live_legacy_digest == freeze_legacy_digest else "FAIL",
+        "source_validation": "PASS" if source_validation else "FAIL",
         "migration_control_resolved": "PASS" if migration_resolved else "FAIL",
         "roadmap_intelligence_continuity": "PASS" if continuity_resolved else "FAIL",
         "native_lifecycle_ready": "PASS" if lifecycle_ready else "FAIL",
@@ -120,8 +189,10 @@ def assess(root: Path) -> dict[str, Any]:
         f"v3_conformance_errors={len(v3_errors)}",
         f"migration_report_errors={len(report_errors)}",
         f"protocol_selection_errors={len(selection_errors)}",
-        f"legacy_expected={expected_legacy_digest}",
+        f"legacy_bootstrap={bootstrap_legacy_digest}",
+        f"legacy_freeze={freeze_legacy_digest or 'MISSING'}",
         f"legacy_live={live_legacy_digest}",
+        f"source_validation={source_status}",
         f"lifecycle={lifecycle}",
         f"migration_control={migration_rows[0].get('state') if len(migration_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
         f"roadmap_intelligence_continuity={continuity_rows[0].get('state') if len(continuity_rows) == 1 else 'MISSING_OR_AMBIGUOUS'}",
@@ -197,6 +268,7 @@ def activate(
             "validation": "PASS",
         },
         "cutover": {
+            **selection["cutover"],
             "owner_authorized": True,
             "owner_basis": {
                 "direct_utterance_digest": owner_utterance_digest,
@@ -226,7 +298,7 @@ V3 became the selected relay protocol at {new_selection['cutover']['activated_at
 The preserved V2.5 tree remains at `agents/relay/**` with cutover digest:
 
 ```text
-{new_selection['legacy']['tree_digest']}
+{new_selection['cutover']['legacy_freeze_digest']}
 ```
 
 After cutover:
@@ -267,7 +339,10 @@ def validate_selection(root: Path) -> list[str]:
         except Exception as exc:
             errors.append(f"LEGACY_HISTORY: {exc}")
             return errors
-        expected = str((selection.get("legacy") or {}).get("tree_digest") or "")
+        expected = str(((selection.get("cutover") or {}).get("legacy_freeze_digest")) or "")
+        if not expected:
+            errors.append("LEGACY_HISTORY: active V3 selection has no frozen legacy digest")
+            return errors
         if live_digest != expected:
             errors.append(
                 f"LEGACY_HISTORY: agents/relay tree changed after V3 cutover: expected {expected}, got {live_digest}"
@@ -284,6 +359,11 @@ def main() -> None:
 
     sub.add_parser("assess")
 
+    freeze_parser = sub.add_parser("freeze")
+    freeze_parser.add_argument("--tx-id", required=True)
+    freeze_parser.add_argument("--event-id", required=True)
+    freeze_parser.add_argument("--actor", required=True)
+
     activate_parser = sub.add_parser("activate")
     activate_parser.add_argument("--tx-id", required=True)
     activate_parser.add_argument("--event-id", required=True)
@@ -299,6 +379,15 @@ def main() -> None:
         value = assess(root)
         print(yaml.safe_dump(value, sort_keys=False), end="")
         raise SystemExit(0 if value["ready"] else 1)
+    if args.command == "freeze":
+        result = freeze_legacy(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+        )
+        print(f"{result['id']}: {result['status']}")
+        return
     if args.command == "validate":
         errors = validate_selection(root)
         for error in errors:

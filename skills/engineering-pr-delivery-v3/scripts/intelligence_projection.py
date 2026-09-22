@@ -12,7 +12,7 @@ import yaml
 
 from protocol_default import resolve as resolve_protocol
 from snapshot_projection import build as build_project_snapshot
-from v25_migration import MIGRATION_REPORT, V25_ROOT, legacy_inventory
+from v25_migration import MIGRATION_REPORT, PROTOCOL_SELECTION, V25_ROOT, legacy_inventory
 from v3lib import canonical_digest, load_yaml, validate_schema
 
 
@@ -605,7 +605,9 @@ def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]
         raise ProjectionError("V3 migration report is required before continuity assessment")
     state = load_yaml(root / V25_STATE)
     before_entries, before = legacy_inventory(root)
-    expected = str((migration.get("source") or {}).get("legacy_tree_digest") or "")
+    selection = _load(root / PROTOCOL_SELECTION) or {}
+    freeze_digest = str(((selection.get("cutover") or {}).get("legacy_freeze_digest")) or "")
+    expected = freeze_digest or str((migration.get("source") or {}).get("legacy_tree_digest") or "")
     task = build_task(root, base_ref)
     improvement = build_improvement(root)
     _, after = legacy_inventory(root)
