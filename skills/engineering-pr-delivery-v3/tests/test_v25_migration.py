@@ -22,6 +22,7 @@ from protocol_cutover import CutoverError, activate, assess, validate_selection
 from protocol_default import resolve as resolve_default
 from snapshot_projection import build as build_snapshot
 from v25_migration import (
+    INTELLIGENCE_CONTINUITY_CONTROL,
     MIGRATION_CONTROL,
     MigrationError,
     bootstrap,
@@ -120,10 +121,15 @@ def make_cutover_ready(root: Path) -> None:
 
     controls_path = root / "relay/CONTROLS/controls.yaml"
     controls = load_yaml(controls_path)
-    row = [x for x in controls["controls"] if x["id"] == MIGRATION_CONTROL][0]
-    row["state"] = "RESOLVED"
-    row["resolution"]["evidence"] = [
+    migration = [x for x in controls["controls"] if x["id"] == MIGRATION_CONTROL][0]
+    migration["state"] = "RESOLVED"
+    migration["resolution"]["evidence"] = [
         "Synthetic reconciliation established native V3 present authority without importing legacy receipts."
+    ]
+    continuity = [x for x in controls["controls"] if x["id"] == INTELLIGENCE_CONTINUITY_CONTROL][0]
+    continuity["state"] = "RESOLVED"
+    continuity["resolution"]["evidence"] = [
+        "Common#421 synthetic continuity proof: roadmap admission, ROADMAP_EVENTS, checkpoint/progress reconciliation, Owner delta and handover intelligence remain governed."
     ]
     dump(controls_path, controls)
 
@@ -206,6 +212,39 @@ class V25MigrationTests(unittest.TestCase):
                     root,
                     tx_id="TX-CUTOVER-BLOCKED",
                     event_id="EVT-CUTOVER-BLOCKED",
+                    actor="owner",
+                    owner_utterance_digest=OWNER_DIGEST,
+                    owner_session_timestamp=OWNER_TIME,
+                )
+
+
+    def test_cutover_remains_blocked_without_421_intelligence_continuity(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+
+            state_path = root / "relay/STATE.yaml"
+            state = load_yaml(state_path)
+            state["execution"] = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+            dump(state_path, state)
+
+            controls_path = root / "relay/CONTROLS/controls.yaml"
+            controls = load_yaml(controls_path)
+            migration = [x for x in controls["controls"] if x["id"] == MIGRATION_CONTROL][0]
+            migration["state"] = "RESOLVED"
+            migration["resolution"]["evidence"] = ["Native V3 present authority reconciled."]
+            dump(controls_path, controls)
+            dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", build_snapshot(root))
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+            with self.assertRaisesRegex(CutoverError, "roadmap_intelligence_continuity"):
+                activate(
+                    root,
+                    tx_id="TX-CUTOVER-NO-421",
+                    event_id="EVT-CUTOVER-NO-421",
                     actor="owner",
                     owner_utterance_digest=OWNER_DIGEST,
                     owner_session_timestamp=OWNER_TIME,
