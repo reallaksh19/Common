@@ -319,6 +319,7 @@ def admit_task(
         "ep": ep["id"],
         "lease": lease_id,
         "route": route,
+        "custody_epoch": 1,
     }
     provisional_state["delivery"] = copy.deepcopy(admission["delivery"])
 
@@ -333,6 +334,9 @@ def admit_task(
         state_override=provisional_state,
         ep_override=ep,
         current_lease_override=None,
+        custody_epoch=1,
+        recovery_after_seconds=int(lease_spec.get("recovery_after_seconds") or 3600),
+        recovery_policy=str(lease_spec.get("recovery_policy") or "TAKEOVER_AFTER_EXPIRY"),
     )
     snapshot = build_snapshot(
         root,
@@ -349,7 +353,12 @@ def admit_task(
     events.extend([
         _event(ids[0], "OWNER_TASK_ADMITTED", actor, wp_id, [tx_id, disposition, *rplan["basis"]], {"roadmap_revision": rplan["new_revision"]}),
         _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
-        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route], {"executor": lease_spec["executor_id"], "method": lease_spec["method"]}),
+        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
+            "executor": lease_spec["executor_id"],
+            "method": lease_spec["method"],
+            "continuation": "NEW",
+            "custody_epoch": 1,
+        }),
     ])
 
     return execute(
@@ -383,9 +392,14 @@ def activate_lease(
     branch: str | None,
     base_ref: str,
     recovery_takeover: bool = False,
+    expected_custody_epoch: int | None = None,
+    recovery_observed_at: str | None = None,
+    recovery_after_seconds: int = 3600,
+    recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     try:
         require_identifier(lease_id, "LEASE-", "lease_id")
     except ValueError as exc:
@@ -414,11 +428,18 @@ def activate_lease(
                     "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
                     "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
                 ) from exc
+            eligible, recovery_basis = _recovery_eligible(old_lease or {}, recovery_observed_at)
+            if not eligible:
+                raise TransactionError(f"RECOVERY_NOT_ELIGIBLE: {recovery_basis}") from exc
             continuation = "RECOVERY"
         else:
             continuation = "HANDOFF"
 
     transfer_from = str(old_lease_id) if different_executor else None
+    current_epoch = _custody_epoch(state)
+    if current_epoch is None:
+        current_epoch = int(((old_lease or {}).get("custody") or {}).get("epoch") or 0)
+    new_epoch = current_epoch + 1
     new_lease = build_native_lease(
         root,
         lease_id=lease_id,
@@ -428,6 +449,9 @@ def activate_lease(
         owner_basis=owner_basis,
         branch=branch,
         replace_active_lease_id=transfer_from,
+        custody_epoch=new_epoch,
+        recovery_after_seconds=recovery_after_seconds,
+        recovery_policy=recovery_policy,
     )
 
     replacements: dict[str, bytes] = {}
@@ -452,6 +476,7 @@ def activate_lease(
         "ep": (new_lease.get("basis") or {}).get("ep_id"),
         "lease": lease_id,
         "route": new_lease.get("route"),
+        "custody_epoch": new_epoch,
     }
     replacements[f"relay/LEASES/{lease_id}.yaml"] = yaml_bytes(new_lease)
     replacements["relay/STATE.yaml"] = yaml_bytes(new_state)
@@ -460,7 +485,14 @@ def activate_lease(
 
     events = _events(root)
     predecessor_event_id = event_id + "-REL" if transfer else None
-    _assert_event_ids_available(events, [x for x in [predecessor_event_id, event_id] if x])
+    transition_event_id = (
+        event_id + "-HANDOVER"
+        if continuation == "HANDOFF"
+        else event_id + "-RECOVERY"
+        if continuation == "RECOVERY"
+        else None
+    )
+    _assert_event_ids_available(events, [x for x in [predecessor_event_id, transition_event_id, event_id] if x])
     if transfer:
         basis = [tx_id, f"successor-lease:{lease_id}", f"continuation:{continuation}"]
         if handover_digest:
@@ -476,6 +508,37 @@ def activate_lease(
                 "successor_executor": executor_id,
                 "continuation": continuation,
                 "predecessor_handover": bool(handover_digest),
+                "custody_epoch_before": current_epoch,
+                "custody_epoch_after": new_epoch,
+            },
+        ))
+    if continuation == "HANDOFF":
+        events.append(_event(
+            str(transition_event_id),
+            "HANDOVER_ACCEPTED",
+            actor,
+            lease_id,
+            [tx_id, str(old_lease_id), str(handover_digest), f"custody_epoch:{new_epoch}"],
+            {
+                "predecessor_lease": old_lease_id,
+                "successor_lease": lease_id,
+                "successor_executor": executor_id,
+                "custody_epoch": new_epoch,
+            },
+        ))
+    elif continuation == "RECOVERY":
+        events.append(_event(
+            str(transition_event_id),
+            "RECOVERY_STARTED",
+            actor,
+            lease_id,
+            [tx_id, str(old_lease_id), f"custody_epoch:{new_epoch}"],
+            {
+                "predecessor_lease": old_lease_id,
+                "successor_lease": lease_id,
+                "successor_executor": executor_id,
+                "custody_epoch": new_epoch,
+                "predecessor_handover": False,
             },
         ))
     events.append(_event(
@@ -490,11 +553,62 @@ def activate_lease(
             "continuation": continuation,
             "predecessor_lease": old_lease_id if transfer else None,
             "predecessor_handover": bool(handover_digest),
+            "custody_epoch": new_epoch,
         },
     ))
     replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
 
     return execute(root, tx_id=tx_id, command="ACTIVATE_LEASE", actor=actor, replacements=replacements, fail_after=fail_after)
+
+
+def renew_lease(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    expected_custody_epoch: int,
+    base_ref: str,
+    renewed_at: str | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    execution = state.get("execution") or {}
+    lease_id = execution.get("lease")
+    if not lease_id:
+        raise TransactionError("no active lease to renew")
+    lease = load_yaml(root / "relay/LEASES" / f"{lease_id}.yaml")
+    if lease.get("state") != "ACTIVE":
+        raise TransactionError("current lease is not ACTIVE")
+    custody = lease.get("custody") or {}
+    if int(custody.get("epoch") or -1) != int(expected_custody_epoch):
+        raise TransactionError("lease custody epoch does not match STATE")
+    renewed = copy.deepcopy(lease)
+    renewed["custody"]["renewed_at"] = renewed_at or _now()
+    snapshot = build_snapshot(root, base_ref, lease_override=renewed)
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "LEASE_RENEWED",
+        actor,
+        str(lease_id),
+        [tx_id, f"custody_epoch:{expected_custody_epoch}"],
+        {"renewed_at": renewed["custody"]["renewed_at"], "custody_epoch": expected_custody_epoch},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RENEW_LEASE",
+        actor=actor,
+        replacements={
+            f"relay/LEASES/{lease_id}.yaml": yaml_bytes(renewed),
+            _snapshot_path(state): yaml_bytes(snapshot),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
 
 def release_lease(
     root: Path,
@@ -504,12 +618,14 @@ def release_lease(
     actor: str,
     reason: str = "HANDOFF",
     base_ref: str | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     if reason not in {"HANDOFF", "ADMINISTRATIVE"}:
         raise TransactionError("lease release reason must be HANDOFF or ADMINISTRATIVE")
 
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
     if not lease_id:
@@ -526,7 +642,10 @@ def release_lease(
     released = copy.deepcopy(lease)
     released["state"] = "RELEASED"
     new_state = copy.deepcopy(state)
-    new_state["execution"] = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+    new_execution = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+    if execution.get("custody_epoch") is not None:
+        new_execution["custody_epoch"] = int(execution["custody_epoch"])
+    new_state["execution"] = new_execution
     snapshot = build_snapshot(root, state_override=new_state)
 
     events = _events(root)
