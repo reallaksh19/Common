@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from handover_context import build_context, build_request, render_request
+from relay_can import evaluate as can_action
+from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
+from v3lib import load_events, load_yaml, validate_schema
+from relay_tx import _event, _assert_event_ids_available
+
+
+def plan_handover(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    target_path: Path,
+    base_ref: str,
+    complex_mode: bool,
+    fail_after: int | None = None,
+):
+    allowed = can_action(root, "HANDOVER")
+    if not allowed["allowed"]:
+        raise TransactionError(f"HANDOVER denied: {', '.join(allowed['reason_codes'])}")
+
+    target = load_yaml(target_path)
+    errors = validate_schema("handover-target", target, "HANDOVER_TARGET")
+    if errors:
+        raise TransactionError("; ".join(errors))
+
+    context, snapshot = build_context(
+        root,
+        base_ref=base_ref,
+        target=target,
+        complex_mode=complex_mode,
+    )
+    request = build_request(context)
+    request_md = render_request(request).encode("utf-8")
+
+    state = load_yaml(root / "relay/STATE.yaml")
+    snapshot_path = str((state.get("generated") or {}).get("snapshot"))
+    events, event_errors = load_events(root / "relay/EVENTS.jsonl")
+    if event_errors:
+        raise TransactionError("; ".join(event_errors[:8]))
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "HANDOVER_PLANNED",
+        actor,
+        target["url"],
+        [tx_id, target["provider_ref"], request["handover_context"]["digest"]],
+        {
+            "complex_mode": bool(complex_mode),
+            "prompt_count": len(request["generator"]["prompt_sequence"]),
+            "generator_mode": request["generator"]["mode"],
+        },
+    ))
+
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="PLAN_HANDOVER",
+        actor=actor,
+        replacements={
+            snapshot_path: yaml_bytes(snapshot),
+            "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
+            "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
+            "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Freeze V3 relay truth and create a verified request for the standalone current three-pass generator."
+    )
+    parser.add_argument("repo_root", nargs="?", default=".")
+    parser.add_argument("--tx-id", required=True)
+    parser.add_argument("--event-id", required=True)
+    parser.add_argument("--actor", required=True)
+    parser.add_argument("--target-observation", required=True)
+    parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--complex", action="store_true")
+    args = parser.parse_args()
+    result = plan_handover(
+        Path(args.repo_root).resolve(),
+        tx_id=args.tx_id,
+        event_id=args.event_id,
+        actor=args.actor,
+        target_path=Path(args.target_observation),
+        base_ref=args.base_ref,
+        complex_mode=args.complex,
+    )
+    print(f"{result['id']}: {result['status']}")
+
+
+if __name__ == "__main__":
+    main()

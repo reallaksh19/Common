@@ -1,0 +1,31 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, revision, title, owner, work_packages]
+properties:
+  schema_version: {const: relay-v3-roadmap}
+  revision: {type: string, minLength: 1}
+  title: {type: string, minLength: 1}
+  owner:
+    type: object
+    additionalProperties: false
+    required: [outcome, current_goal]
+    properties:
+      outcome: {type: string, minLength: 1}
+      current_goal: {type: string, minLength: 1}
+  work_packages:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, title, weight, state, depends_on]
+      properties:
+        id: {type: string, pattern: '^WP-'}
+        title: {type: string, minLength: 1}
+        weight: {type: number, exclusiveMinimum: 0}
+        state: {enum: [PLANNED, ACTIVE, BLOCKED, COMPLETE]}
+        depends_on:
+          type: array
+          uniqueItems: true
+          items: {type: string, pattern: '^WP-'}
+additionalProperties: false

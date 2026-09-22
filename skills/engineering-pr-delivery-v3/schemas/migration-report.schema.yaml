@@ -1,0 +1,71 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, source_protocol, generated_at, source, validation, legacy_inventory, current, bootstrap]
+properties:
+  schema_version: {const: relay-v3-migration-report}
+  authority: {const: DERIVED_MIGRATION_REPORT}
+  source_protocol: {const: '2.5'}
+  generated_at: {type: string, format: date-time}
+  source:
+    type: object
+    additionalProperties: false
+    required: [root, state_path, state_digest, roadmap_path, legacy_tree_digest]
+    properties:
+      root: {type: string, minLength: 1}
+      state_path: {const: agents/relay/REPO_STATE.yaml}
+      state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      roadmap_path: {type: string, minLength: 1}
+      legacy_tree_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  validation:
+    type: object
+    additionalProperties: false
+    required: [repo_state, basis]
+    properties:
+      repo_state: {enum: [PASS, FAIL]}
+      basis:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+  legacy_inventory:
+    type: object
+    additionalProperties: false
+    required: [file_count, category_counts, entries]
+    properties:
+      file_count: {type: integer, minimum: 1}
+      category_counts:
+        type: object
+        additionalProperties: {type: integer, minimum: 0}
+      entries:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [path, digest, category]
+          properties:
+            path: {type: string, minLength: 1}
+            digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+            category: {type: string, minLength: 1}
+            schema_version: {type: [string, 'null']}
+  current:
+    type: object
+    additionalProperties: false
+    required: [relay_state, active_ep, last_checkpoint, roadmap_revision, execution_policy, delivery_required]
+    properties:
+      relay_state: {enum: [INITIALIZING, ACTIVE, PARALLEL, IDLE, TERMINAL]}
+      active_ep: {type: [string, 'null']}
+      last_checkpoint: {type: [string, 'null']}
+      roadmap_revision: {type: string, minLength: 1}
+      execution_policy: {type: string, minLength: 1}
+      delivery_required: {type: boolean}
+  bootstrap:
+    type: object
+    additionalProperties: false
+    required: [allowed, lifecycle, preserves_legacy_tree, creates_native_history, reason]
+    properties:
+      allowed: {type: boolean}
+      lifecycle: {const: INITIALIZING}
+      preserves_legacy_tree: {const: true}
+      creates_native_history: {const: false}
+      reason: {type: string, minLength: 1}
+additionalProperties: false
