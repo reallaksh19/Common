@@ -323,6 +323,44 @@ The generic transaction layer enforces semantic target constraints for critical 
 
 Do not rewrite the bootstrap V2.5 migration digest when legacy authority legitimately changes during `V2_5 / PREPARED`. Before cutover, run `protocol_cutover.py freeze` to bind the final live V2.5 tree. Continuity and post-cutover immutability are checked against that explicit freeze digest; the bootstrap digest remains historical migration evidence.
 
+
+## Parent issue / Handover ledger synchronization
+
+A governed parent issue SHOULD have exactly one dedicated `[Relay Handover]` child/sub-issue. The parent remains the compact goal/acceptance summary; the Handover issue is the generated operational ledger.
+
+Generate the provider projections with:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/handover_ledger_projection.py . \
+  --parent-observation parent-issue.yaml \
+  --base-ref origin/main \
+  --output relay/GENERATED/HANDOVER_LEDGER.yaml \
+  --ledger-markdown relay/GENERATED/HANDOVER_LEDGER.md \
+  --parent-summary relay/GENERATED/PARENT_RELAY_SUMMARY.md
+```
+
+The Handover ledger reuses existing V3.1 truth rather than creating duplicate authority:
+
+- EP/checkpoint/lease state -> EP index and current frontier;
+- tracked controls -> pending items and known issues;
+- EP `offloads` -> local/helper work;
+- CURRENT snapshot -> delivery/PR state;
+- EVENTS -> handover/recovery chronology.
+
+If a historical EP has no accepted completion checkpoint and its lease is RELEASED/REVOKED/INVALIDATED, the ledger exposes it as `RECOVERY_REQUIRED`. No final message from the previous agent is required for this projection.
+
+Responsibility is explicit:
+
+- **Owner decides** intent-bearing goal/scope/priority changes.
+- **Active agent discovers and produces canonical evidence**.
+- **Relay records, projects, synchronizes, and reads provider state back**.
+- **Local/helper agents return bounded evidence only**.
+- **Prompt 0.5/1/2/2.5 reason/propose; Prompt 3 executes only already-authorized reconciliation**.
+
+Parent issue changes use the existing disposition vocabulary. Status-only truth may be synchronized by Relay. Intent-bearing UPDATE/TRANSFER/SPLIT/SUPERSEDE/CLOSE changes require Owner authority when they alter governing intent. Transfers preserve old/new issue lineage and each target parent has its own Handover ledger.
+
+See `operating-model/parent-handover-ledger.md`.
+
 ## V3.1 communication boundary
 
 V3.1 distinguishes three outward communication modes:
