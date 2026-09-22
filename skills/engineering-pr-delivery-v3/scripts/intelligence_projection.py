@@ -536,9 +536,17 @@ def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]
     evidence.append("owner delta mechanisms=" + ",".join(x.name for x in owner_mechanisms if x.exists()))
 
     handover_mechanism = V25_ROOT / "scripts/handover_planning.py"
+    task_identity = task.get("identity") or {}
+    task_present = bool(task_identity.get("ep") or task_identity.get("work_package"))
     intelligence = bool(task.get("inputs") or task.get("benchmarks") or (task.get("history") or {}).get("recent_events") or (task.get("acceptance") or []))
-    checks["handover_intelligence"] = "PASS" if handover_mechanism.exists() and intelligence else "FAIL"
-    evidence.append(f"handover planner={handover_mechanism.exists()} task_intelligence={intelligence}")
+    # An idle repository may legitimately have no current task-local intelligence.
+    # Continuity means the handover mechanism remains available and, when a task
+    # exists, the task projection actually carries durable intelligence.
+    handover_preserved = handover_mechanism.exists() and (not task_present or intelligence)
+    checks["handover_intelligence"] = "PASS" if handover_preserved else "FAIL"
+    evidence.append(
+        f"handover planner={handover_mechanism.exists()} task_present={task_present} task_intelligence={intelligence}"
+    )
 
     derived = task.get("authority") == "DERIVED_READ_MODEL" and improvement.get("authority") == "DERIVED_READ_MODEL" and before == after
     checks["generated_projection_non_authority"] = "PASS" if derived else "FAIL"
