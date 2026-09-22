@@ -25,7 +25,7 @@ properties:
       disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
       relationships: {type: array}
   handover_issue:
-    type: object
+    type: [object, 'null']
     additionalProperties: false
     required: [repository, number, url]
     properties:
