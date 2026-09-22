@@ -1,9 +1,17 @@
 from __future__ import annotations
 
 import copy
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = ROOT / "scripts"
+TESTS = ROOT / "tests"
+for entry in (SCRIPTS, TESTS):
+    if str(entry) not in sys.path:
+        sys.path.insert(0, str(entry))
 
 from relay_tx import reconcile_roadmap
 from test_relay_can import prepare_git
