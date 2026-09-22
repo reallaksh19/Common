@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,31 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 HERE = Path(__file__).resolve().parents[1]
 SCHEMAS = HERE / "schemas"
+_SAFE_ID_SUFFIX = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+
+
+def require_identifier(value: str, prefix: str, label: str) -> str:
+    text = str(value or "")
+    if not text.startswith(prefix):
+        raise ValueError(f"{label} must use {prefix}* namespace")
+    suffix = text[len(prefix):]
+    if not _SAFE_ID_SUFFIX.fullmatch(suffix):
+        raise ValueError(f"{label} contains unsafe characters")
+    return text
+
+
+def repo_path(root: Path, relative: str, label: str) -> Path:
+    raw = Path(str(relative))
+    if raw.is_absolute():
+        raise ValueError(f"{label} must be repository-relative")
+    root_resolved = root.resolve()
+    candidate = (root_resolved / raw).resolve()
+    try:
+        candidate.relative_to(root_resolved)
+    except ValueError as exc:
+        raise ValueError(f"{label} escapes repository root") from exc
+    return candidate
+
 
 
 def load_yaml(path: Path) -> Any:
