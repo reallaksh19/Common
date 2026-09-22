@@ -123,7 +123,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "GENUINE CONSTRAINTS:",
     "EXPERTISE:",
     "IMAGINATION OBJECT:",
-    "PROGRAMME ORIENTATION OBJECT:",
+    "PROGRAMME IMAGINATION OBJECT:",
     "REALITY OBJECT:",
     "BRIDGE RECONCILIATION QUESTION:",
     "COMPARISON QUESTION:",
@@ -155,7 +155,7 @@ REQUIRED_PREFLIGHT_FIELDS = (
 )
 
 PROMPT_HEADINGS = (
-    "## PROMPT 0.5 — ORIENT TO PROGRAMME",
+    "## PROMPT 0.5 — IMAGINE FROM PROGRAMME",
     "## PROMPT 1 — IMAGINE",
     "## PROMPT 2 — UNDERSTAND",
     "## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION",
@@ -441,18 +441,22 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             prompt05 = lot[p05:p1]
             prompt05_lower = prompt05.lower()
             if "roadmap" not in prompt05_lower and "large-project" not in prompt05_lower and "large project" not in prompt05_lower and "project goal" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must recover the original roadmap / large-project goal")
+                errors.append(f"{label}: Prompt 0.5 must start from the original roadmap / large-project goal")
             if "governing issue" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must identify the governing issue")
+                errors.append(f"{label}: Prompt 0.5 must reason through the governing issue")
             if (
                 "ongoing" not in prompt05_lower
                 and "last task" not in prompt05_lower
                 and "local task" not in prompt05_lower
                 and "current task" not in prompt05_lower
             ):
-                errors.append(f"{label}: Prompt 0.5 must summarize the ongoing/last local task")
+                errors.append(f"{label}: Prompt 0.5 must carry the ongoing/last local task as subordinate context")
             if "subordinate" not in prompt05_lower and "not the destination" not in prompt05_lower:
                 errors.append(f"{label}: Prompt 0.5 must explicitly subordinate local task/PR state to the larger goal")
+            if "independent" not in prompt05_lower and "imagin" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must be an independent-thinking/imagination pass, not only orientation")
+            if "non-obvious" not in prompt05_lower and "refram" not in prompt05_lower and "hypoth" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must ask for non-obvious value hypotheses or reframing")
 
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[2], p1 + 1)
