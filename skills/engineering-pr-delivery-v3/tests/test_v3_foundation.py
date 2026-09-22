@@ -98,7 +98,7 @@ def base_objects():
             "method": "DETERMINISTIC",
             "result": "PASS",
             "repository_only": True,
-            "qualification": {"required": False, "qset": None, "evaluator": None, "result": None},
+            "qualification": {"required": False, "qset": None, "evaluator": None, "result": None, "evidence": []},
         },
         "state": "ACTIVE",
         "invalidation": {"reasons": []},
@@ -275,7 +275,7 @@ class V3FoundationTests(unittest.TestCase):
             "method": "OWNER_OVERRIDE",
             "result": "PASS",
             "repository_only": False,
-            "qualification": {"required": False, "qset": None, "evaluator": None, "result": None},
+            "qualification": {"required": False, "qset": None, "evaluator": None, "result": None, "evidence": []},
             "owner_basis": {
                 "direct_utterance_digest": DIGEST,
                 "session_timestamp": "2026-09-22T03:20:57Z",
