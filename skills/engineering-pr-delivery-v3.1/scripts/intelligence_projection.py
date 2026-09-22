@@ -550,6 +550,34 @@ def _v25_improvement(root: Path) -> dict[str, Any]:
     return view
 
 
+def _v31_roadmap_effect(root: Path, state: dict[str, Any]) -> dict[str, Any]:
+    events_path = root / "relay/EVENTS.jsonl"
+    rows: list[dict[str, Any]] = []
+    if events_path.exists():
+        for raw in events_path.read_text(encoding="utf-8").splitlines():
+            if not raw.strip():
+                continue
+            try:
+                row = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if row.get("type") == "ROADMAP_RECONCILED":
+                rows.append(row)
+    if not rows:
+        return {
+            "concept_change": "UNKNOWN",
+            "execution_disposition": "PRESERVE",
+            "roadmap_revision": (state.get("roadmap") or {}).get("revision"),
+        }
+    latest = rows[-1]
+    disposition = str((latest.get("details") or {}).get("disposition") or "UNKNOWN")
+    return {
+        "concept_change": "NO_CONCEPT_CHANGE" if disposition == "NO_CHANGE" else "RECONCILED",
+        "execution_disposition": disposition,
+        "roadmap_revision": (state.get("roadmap") or {}).get("revision"),
+    }
+
+
 def _v3_improvement(root: Path) -> dict[str, Any]:
     state = load_yaml(root / "relay/STATE.yaml")
     cp_id = (state.get("accepted") or {}).get("checkpoint")
@@ -576,7 +604,7 @@ def _v3_improvement(root: Path) -> dict[str, Any]:
             "controls_resolved": [],
             "controls_created": [],
         },
-        "roadmap_effect": {"concept_change": "UNKNOWN", "execution_disposition": "PRESERVE", "roadmap_revision": (state.get("roadmap") or {}).get("revision")},
+        "roadmap_effect": _v31_roadmap_effect(root, state),
         "not_improved": [] if accepted and handoff.get("what_changed") else ["No capability improvement is inferred without accepted checkpoint evidence."],
         "still_not_proved": _strings((checkpoint or {}).get("known_limitations")) + _strings(handoff.get("what_remains_uncertain")),
         "new_questions": [],
