@@ -345,8 +345,9 @@ def validate_selection(root: Path) -> list[str]:
             errors.append(f"LEGACY_HISTORY: active {selected} selection has no frozen legacy digest")
             return errors
         if live_digest != expected:
+            phase = "V3.1 cutover" if selected == "V3_1" else "native V3 cutover"
             errors.append(
-                f"LEGACY_HISTORY: agents/relay tree changed after native cutover: expected {expected}, got {live_digest}"
+                f"LEGACY_HISTORY: agents/relay tree changed after {phase}: expected {expected}, got {live_digest}"
             )
         if not (root / DEPRECATION_PATH).exists():
             errors.append("NATIVE_ACTIVE: V2.5 deprecation notice is missing")
