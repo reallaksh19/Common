@@ -190,7 +190,7 @@ def inspect(root: Path, ep: dict[str, Any], base_ref: str | None) -> dict[str, A
     dependency_records = _tree_records(root, material_head, dependency_patterns)
 
     result = {
-        "schema_version": "relay-v3-material-basis",
+        "schema_version": "relay-v3.1-material-basis",
         "material_basis": {
             "base": material_base,
             "head": material_head,

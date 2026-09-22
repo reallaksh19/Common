@@ -14,7 +14,7 @@ def render(snapshot: dict[str, Any], checkpoint: dict[str, Any] | None) -> str:
     handoff = (checkpoint or {}).get("handoff") or {}
 
     lines = [
-        "# Engineering Relay V3 Handover",
+        "# Engineering Relay V3.1 Handover",
         "",
         "## Programme",
         f"- Outcome: {owner.get('outcome') or 'unknown'}",

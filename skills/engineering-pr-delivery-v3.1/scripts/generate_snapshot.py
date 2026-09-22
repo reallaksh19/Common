@@ -12,7 +12,7 @@ from v3lib import load_yaml
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate Engineering Relay V3 CURRENT_SNAPSHOT from canonical authority.")
+    parser = argparse.ArgumentParser(description="Generate Engineering Relay V3.1 CURRENT_SNAPSHOT from canonical authority.")
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--base-ref", help="Current base ref for active material-basis inspection.")
     parser.add_argument("--apply", action="store_true", help="Write STATE.generated.snapshot atomically after successful generation.")

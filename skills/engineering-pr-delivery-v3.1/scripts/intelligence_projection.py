@@ -386,7 +386,7 @@ def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None
 
     issue_sections = _issue_sections(parent_issue_observation, None, acceptance, checkpoint, None)
     task = {
-        "schema_version": "relay-v3-task-snapshot",
+        "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "source_protocol": "V2_5",
         "identity": {"work_package": wp_id, "ep": ep_id, "issue": None, "delivery_vehicle": None},
@@ -456,7 +456,7 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
     native_controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
     issue_sections = _issue_sections(parent_issue_observation, ep, acceptance, checkpoint, native_controls)
     task = {
-        "schema_version": "relay-v3-task-snapshot",
+        "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "source_protocol": "V3",
         "identity": {"work_package": wp_id, "ep": ep_id, "issue": (project.get("delivery") or {}).get("issue"), "delivery_vehicle": (project.get("delivery") or {}).get("pr") or (project.get("delivery") or {}).get("issue")},
@@ -522,7 +522,7 @@ def _v25_improvement(root: Path) -> dict[str, Any]:
     disposition = {"NO_ROADMAP_CHANGE": "PRESERVE", "STATUS_UPDATE": "CLOSE_WP", "ROADMAP_PROPOSAL": "REVISE_WP", "OWNER_DECISION_REQUIRED": "OTHER"}.get(str(recon.get("result") or ""), "OTHER")
     capability = [str(summary)] if accepted and changed and summary else []
     view = {
-        "schema_version": "relay-v3-improvement-view",
+        "schema_version": "relay-v3.1-improvement-view",
         "authority": "DERIVED_READ_MODEL",
         "source_protocol": "V2_5",
         "task": ep_id,
@@ -560,7 +560,7 @@ def _v3_improvement(root: Path) -> dict[str, Any]:
     accepted = bool(acceptance) and all(x.get("result") == "PASS" for x in acceptance)
     handoff = (checkpoint or {}).get("handoff") or {}
     view = {
-        "schema_version": "relay-v3-improvement-view",
+        "schema_version": "relay-v3.1-improvement-view",
         "authority": "DERIVED_READ_MODEL",
         "source_protocol": "V3",
         "task": ep_id,
@@ -679,7 +679,7 @@ def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]
     evidence.append(f"derived views task={task.get('authority')} improvement={improvement.get('authority')} legacy_unchanged={before == after}")
 
     report = {
-        "schema_version": "relay-v3-intelligence-continuity",
+        "schema_version": "relay-v3.1-intelligence-continuity",
         "authority": "DERIVED_CONTINUITY_ASSESSMENT",
         "ready": all(x == "PASS" for x in checks.values()),
         "source": {"protocol": "V2_5", "legacy_tree_digest": before, "roadmap_revision": (state.get("roadmap") or {}).get("revision")},

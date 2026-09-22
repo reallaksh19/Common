@@ -153,7 +153,7 @@ def build_context(
     evidence_count = len(improvement.get("evidence_added") or [])
 
     context = {
-        "schema_version": "relay-v3-handover-context",
+        "schema_version": "relay-v3.1-handover-context",
         "authority": "DERIVED_HANDOVER_INPUT",
         "frozen_at": _now(),
         "frozen_basis": {
@@ -262,7 +262,7 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
     target = context["target"]
     generator = context["generator_contract"]
     request = {
-        "schema_version": "relay-v3-three-pass-request",
+        "schema_version": "relay-v3.1-three-pass-request",
         "authority": "DERIVED_GENERATOR_REQUEST",
         "target": target,
         "handover_context": {

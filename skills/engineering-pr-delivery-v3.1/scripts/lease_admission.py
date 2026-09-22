@@ -133,7 +133,7 @@ def build_native_lease(
     execution = state.get("execution") or {}
     ep_basis = ep.get("basis") or {}
     lease: dict[str, Any] = {
-        "schema_version": "relay-v3-lease",
+        "schema_version": "relay-v3.1-lease",
         "id": lease_id,
         "route": execution.get("route"),
         "executor": {"id": executor_id},

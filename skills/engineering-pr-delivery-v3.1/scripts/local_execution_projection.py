@@ -33,7 +33,7 @@ def build(
             "prohibited": list(ep_scope.get("prohibit") or []),
         }
     package = {
-        "schema_version": "relay-v3-local-execution",
+        "schema_version": "relay-v3.1-local-execution",
         "authority": "DERIVED_EXECUTION_PACKAGE",
         "generated_from": {
             "state_digest": (snapshot.get("generated_from") or {}).get("state_digest"),

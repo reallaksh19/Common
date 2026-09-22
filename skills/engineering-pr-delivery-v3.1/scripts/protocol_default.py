@@ -10,7 +10,7 @@ from v3lib import load_yaml
 
 
 V25_SKILL = "skills/engineering-pr-delivery-v2.5/SKILL.md"
-V3_SKILL = "skills/engineering-pr-delivery-v3/SKILL.md"
+V3_SKILL = "skills/engineering-pr-delivery-v3.1/SKILL.md"
 
 
 def resolve(root: Path) -> dict:

@@ -73,7 +73,7 @@ def freeze_legacy(
     if any(item.get("event_id") == event_id for item in events):
         raise CutoverError(f"duplicate event id: {event_id}")
     event = {
-        "schema_version": "relay-v3-event",
+        "schema_version": "relay-v3.1-event",
         "event_id": event_id,
         "type": "LEGACY_CUTOVER_FROZEN",
         "timestamp": _now(),
@@ -204,7 +204,7 @@ def assess(root: Path) -> dict[str, Any]:
     ]
     basis.extend(f"v3:{item}" for item in v3_errors[:8])
     readiness = {
-        "schema_version": "relay-v3-cutover-readiness",
+        "schema_version": "relay-v3.1-cutover-readiness",
         "authority": "DERIVED_CUTOVER_READINESS",
         "assessed_at": _now(),
         "ready": all(value == "PASS" for value in checks.values()),
@@ -219,7 +219,7 @@ def assess(root: Path) -> dict[str, Any]:
 
 def _event(event_id: str, actor: str, readiness: dict[str, Any], selection: dict[str, Any]) -> dict[str, Any]:
     value = {
-        "schema_version": "relay-v3-event",
+        "schema_version": "relay-v3.1-event",
         "event_id": event_id,
         "type": "PROTOCOL_CUTOVER_ACTIVATED",
         "timestamp": _now(),
@@ -353,7 +353,7 @@ def validate_selection(root: Path) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Assess, activate, and validate Engineering Relay V3 protocol cutover.")
+    parser = argparse.ArgumentParser(description="Assess, activate, and validate Engineering Relay V3.1 protocol cutover.")
     parser.add_argument("repo_root", nargs="?", default=".")
     sub = parser.add_subparsers(dest="command", required=True)
 
