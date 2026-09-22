@@ -34,6 +34,7 @@ DELIVERY_VEHICLE_ACTIONS = {"DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE"}
 DELIVERY_OWNER_ACTIONS = {"MERGE", "RELEASE"}
 CHECKPOINT_ACTIONS = {"PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 QUALITY_ACTIONS = {"PR_READY", "MERGE", "RELEASE"}
+LIVE_V3_ACTIONS = {"MATERIAL_WRITE", "TEST", "CHECKPOINT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"}
 
 
 def _load_current(root: Path) -> tuple[dict[str, Any], dict[str, Any] | None, dict[str, Any] | None, dict[str, Any], dict[str, Any] | None]:
@@ -111,6 +112,19 @@ def _result(action: str, allowed: bool, basis: list[str], blocking_controls: lis
     return result
 
 
+def _protocol_state(root: Path) -> tuple[bool, str]:
+    selection_path = root / "relay/PROTOCOL_SELECTION.yaml"
+    legacy_state = root / "agents/relay/REPO_STATE.yaml"
+    if not selection_path.exists():
+        if legacy_state.exists():
+            return False, "V2_5:LEGACY_DEFAULT"
+        return True, "V3:NATIVE_NO_SELECTOR"
+    selection = load_yaml(selection_path)
+    selected = str(selection.get("selected_protocol") or "")
+    status = str(selection.get("status") or "")
+    return selected == "V3" and status == "ACTIVE", f"{selected}:{status}"
+
+
 def evaluate(
     root: Path,
     action: str,
@@ -135,6 +149,10 @@ def evaluate(
     state, ep, lease, controls, checkpoint = _load_current(root)
     reasons: list[str] = []
     basis: list[str] = []
+    live_v3, protocol_state = _protocol_state(root)
+    basis.append(f"protocol:{protocol_state}")
+    if action in LIVE_V3_ACTIONS and not live_v3:
+        reasons.append("PROTOCOL_NOT_ACTIVE")
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
 

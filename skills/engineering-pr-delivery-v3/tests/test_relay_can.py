@@ -278,6 +278,28 @@ class RelayCanTests(unittest.TestCase):
             self.assertFalse(result["allowed"], result)
             self.assertIn("DELIVERY_VEHICLE_REQUIRED", result["reason_codes"])
 
+    def test_prepared_selector_cannot_authorize_live_v3_execution(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            dump(root / "relay/PROTOCOL_SELECTION.yaml", {
+                "schema_version": "relay-v3-protocol-selection",
+                "selected_protocol": "V2_5",
+                "status": "PREPARED",
+                "legacy": {"root": "agents/relay", "tree_digest": "sha256:" + ("a" * 64), "policy": "LIVE_COMPATIBILITY"},
+                "v3": {"state_path": "relay/STATE.yaml", "validation": "PENDING"},
+                "cutover": {"owner_authorized": False, "owner_basis": None, "readiness_digest": None, "activated_at": None},
+            })
+            (root / "agents/relay").mkdir(parents=True, exist_ok=True)
+            (root / "agents/relay/REPO_STATE.yaml").write_text("schema_version: relay-v2.5\n", encoding="utf-8")
+
+            write = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertFalse(write["allowed"], write)
+            self.assertIn("PROTOCOL_NOT_ACTIVE", write["reason_codes"])
+
+            handover = evaluate(root, "HANDOVER")
+            self.assertTrue(handover["allowed"], handover)
+
     def test_merge_requires_explicit_owner_delivery_authority(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
