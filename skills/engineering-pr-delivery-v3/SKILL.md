@@ -256,3 +256,28 @@ See:
 - `operating-model/current-snapshot.md`
 - `operating-model/lease-admission-and-v25-compat.md`
 - schemas and scripts under this skill.
+
+## Task intelligence and #421 continuity
+
+V3 keeps engineering truth authoritative exactly once. These are **generated read models**, never execution or acceptance authority:
+
+- `relay-v3-task-snapshot` — task-local purpose, lineage, scope, inputs/benchmarks, evidence, controls, negative knowledge and next action.
+- `relay-v3-improvement-view` — evidence-bound capability/evidence/understanding/downstream change between task basis and accepted checkpoint.
+- `relay-v3-intelligence-continuity` — cutover proof that V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress, discovery, Owner-delta and handover intelligence remain represented without changing the preserved legacy tree.
+
+Generate or inspect them with:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> task --base-ref origin/main --output relay/GENERATED/tasks/<EP>.snapshot.yaml
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> improvement --output relay/GENERATED/improvements/<CP>.improvement.yaml
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> continuity --base-ref origin/main \
+  --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \
+  --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml
+```
+
+While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5 authority. After `V3 / ACTIVE`, they derive from native V3 authority. Merely creating the files never changes protocol selection, custody, acceptance, roadmap authority or progress.
+
+The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
+
+`plan_handover.py` atomically materializes the current TASK_SNAPSHOT and IMPROVEMENT_VIEW with HANDOVER_CONTEXT and binds their digests into accumulated learning. Prompt/handover consumers may use them for reconstruction and negative knowledge, but they grant no new action authority.
