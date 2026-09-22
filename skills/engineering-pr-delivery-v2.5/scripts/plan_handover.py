@@ -61,9 +61,13 @@ def main():
     print("\n## Three-pass generation\n")
     generator=plan["generator"]
     print(f"- Mode: {generator['mode']}")
+    print(f"- Prompt count: {generator['prompt_count']}")
+    print("- Prompt 0.5: global independent thinking (project goal -> governing issue -> local task).")
+    print("- Prompt 1: local independent thinking (governing issue -> local task).")
+    print("- Prompt 2.5: integrated reality refresh + reconciliation/direction.")
     print(f"- Complex mode: {'ON' if generator['complex_mode'] else 'OFF'}")
     if generator["complex_mode"]:
-        print("- Prompt 1 must visibly include Q1 through Q5 in natural target-specific language; total prompt count remains exactly three.")
+        print("- Prompt 1 must visibly include Q1 through Q5 in natural target-specific language; total prompt count remains exactly five.")
     if generator.get("target"):
         print("\n```text")
         print(render_generator_request(plan),end="")

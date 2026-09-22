@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -51,7 +51,7 @@ The handshake is execution proof, not decorative metadata.
 ---
 
 
-> Human-executable prompt schema for generating three sequential, copy-pasteable prompts.
+> Human-executable prompt schema for generating five sequential, copy-pasteable prompts inside the three-pass method.
 >
 > This is intentionally a Markdown schema rather than a JSON Schema. Its job is to make an ordinary agent reliably produce the same reasoning pattern across different **target purposes** and **target scopes** without drifting into a larger neighbouring problem.
 
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -74,9 +74,9 @@ While `GENERATOR MODE = THREE_PASS_ONLY`:
 - use this file and the user-named target evidence;
 - do not import, merge, or apply sibling/parent workflow protocols merely because this schema lives inside a larger skill directory;
 - do not add takeover, certification, qualification, admission, execution-package, routing, digest, or evaluator machinery;
-- do not create any fourth stage, gate, question package, receipt, or protocol between the three prompts;
+- do not create any additional stage, gate, question package, receipt, or protocol beyond the five schema-defined prompts;
 - the user's phrase **"complex questions Q1 to Q5"** means only the five Prompt-1 reasoning lenses defined in this file;
-- after the required schema basis, preflight, Prompt 1, Prompt 2 and Prompt 3 are complete and validated, **STOP**.
+- after the required schema basis, preflight, Prompt 0.5, Prompt 1, Prompt 2, Prompt 2.5 and Prompt 3 are complete and validated, **STOP**.
 
 Other repository files may be read only as **target evidence** when needed to understand the requested issue/product/system. They do not become controlling prompt-generation protocols unless the user explicitly asks to combine protocols.
 
@@ -88,37 +88,48 @@ This mode lock exists because prompt generation and engineering-delivery executi
 
 ## Purpose
 
-When given a target, create **exactly three prompts** for another agent to run in sequence:
+When given a target, create **exactly five prompts** for another agent to run in sequence:
 
-1. **IMAGINE** — form an independent picture of what good should look like before seeing the existing answer.
+0.5. **IMAGINE FROM PROGRAMME** — think independently at the broader project level: start from the original roadmap / large-project goal, reason through what the governing issue should make possible in service of that goal, then bring in the ongoing or last local task only as a short subordinate context. This is the more global independent-thinking pass.
+1. **IMAGINE** — think independently at the tighter issue/local level: start from the governing issue and reason down into the local task, witness and bounded responsibility. This is the more local independent-thinking pass, still blind to the current implementation/PR answer.
 2. **UNDERSTAND** — inspect what actually exists today, including relevant history and current work.
-3. **REVALIDATE AND MOVE FORWARD** — return to the exact independent picture, compare it with reality, rediscover what the goal means now, and identify the smallest meaningful path forward.
+2.5. **RECONCILE REALITY AND DIRECTION** — combine the reality-reconstruction intent of Prompt 2 with the comparison/decision intent of Prompt 3: re-check live truth, compare it with the independent picture and programme hierarchy, and state the evidence-supported direction.
+3. **REVALIDATE AND MOVE FORWARD** — revalidate the Prompt-2.5 synthesis against current evidence, then execute the smallest justified authorized move and leave a strong handover.
 
-Do not solve the target yourself. Your output is the three prompts.
+Do not solve the target yourself. Your output is the five prompts.
 
-The method is the same throughout, but the generator must build a **visible preflight record** before it is allowed to draft Prompt 1.
+The method is the same throughout, but the generator must build a **visible preflight record** before it is allowed to draft Prompt 0.5 or Prompt 1.
 
 The central safeguard is stronger than “do not inspect the code yet”:
 
-> **Prompt 1 must be independent of the current solution form itself, wherever that solution form is not a genuine human requirement.**
+> **Prompt 0.5 and Prompt 1 must both be independent of the current solution form itself, wherever that solution form is not a genuine human requirement.**
+
+Prompt 0.5 has the wider aperture: project goal → governing issue → local task.
+Prompt 1 has the tighter aperture: governing issue → local task / concrete issue witness.
 
 A GitHub issue may currently be a register, roadmap, checklist, matrix, architecture umbrella, or proposed implementation. Those forms belong to **current reality**. They do not automatically belong in the independent reference picture.
 
 The preflight therefore has two deliberately separated sides:
 
-1. **CURRENT REALITY — QUARANTINED FROM PROMPT 1**
+1. **CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1**
    - exact target identity;
    - current artifact form;
    - current stated answer / implementation / proposed solution;
    - current-state facts.
 
-2. **BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1**
+2. **BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1**
+   - original roadmap / large-project goal;
+   - governing issue responsibility and stable programme relationship;
+   - local-task identity/purpose in only the minimum few lines needed for scope;
    - underlying human problem;
    - human outcome;
    - genuine constraints;
    - domain/expertise;
    - target scope;
-   - independent imagination object.
+   - programme-level imagination object for Prompt 0.5;
+   - issue/local imagination object for Prompt 1.
+
+Current PR state, branch state, task status, current implementation choices and inherited solution proposals remain reality-side material for Prompt 2 unless independently required as a genuine constraint.
 
 Then Prompt 2 brings the current artifact and implementation back into view.
 
@@ -144,13 +155,23 @@ I will give you a target. It may be:
 
 Your job is **not to solve the target**.
 
-Your job is to create **exactly three separate, copy-pasteable prompts** that I can run one after another with a capable agent.
+Your job is to create **exactly five separate, copy-pasteable prompts** that I can run one after another with a capable agent.
 
-The three prompts must create this reasoning sequence:
+The five prompts must create this reasoning sequence:
 
 ```text
+PROMPT 0.5 — IMAGINE FROM PROGRAMME
+Starting from the original large-project / roadmap destination,
+what should the governing issue make possible, and what larger value,
+missing capability or wrong assumption becomes visible when the local task
+is treated as only a small subordinate slice?
+
+        ↓
+
 PROMPT 1 — IMAGINE
-What should good look like before seeing the current answer?
+Starting from the governing issue and then the local task,
+what should good look like at this tighter issue level without
+letting the current PR/task answer dominate the thinking?
 
         ↓
 
@@ -159,19 +180,25 @@ What is actually true today?
 
         ↓
 
+PROMPT 2.5 — RECONCILE REALITY AND DIRECTION
+Re-check live reality and, in the same prompt, compare it with
+the independent picture and programme hierarchy.
+What meaningful gap and direction survive?
+
+        ↓
+
 PROMPT 3 — REVALIDATE AND MOVE FORWARD
-Given the same independent ideal and today's reality,
-what does the goal mean now, what meaningful gap remains,
-and what is the smallest justified path forward?
+Revalidate the Prompt-2.5 synthesis against current evidence,
+then perform the smallest justified authorized move and hand over.
 ```
 
-The separation between these prompts is essential. Do not collapse them into one large prompt.
+The separation between these five prompts is essential. Do not collapse them into one large prompt.
 
 If the user asks for **multiple lots**, preserve the number of lots and the requested analysis level of each lot exactly.
 
 Do not replace a user-requested tab/surface review with a related issue, decision, roadmap, or repository review merely because that artifact appears important.
 
-Each lot gets its own preflight and its own three prompts.
+Each lot gets its own preflight and its own five prompts.
 
 ---
 
@@ -193,7 +220,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -217,13 +244,13 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-21-R9`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-22-R10`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
 - user explicitly supplies the schema text itself → `USER_SUPPLIED_TEXT` is allowed;
 - never silently fall back from a failed live fetch to memory;
-- if the required basis cannot be established, **stop and do not generate Prompt 1–3**.
+- if the required basis cannot be established, **stop and do not generate Prompt 0.5–3**.
 
 The schema basis is shared across all lots in one generator run.
 
@@ -241,7 +268,7 @@ HUMAN GOAL:
 <what I ultimately want to achieve>
 
 USER INTENT:
-<what I want the next agent to actually accomplish across the three passes>
+<what I want the next agent to actually accomplish across the five prompts of the three-pass method>
 
 AUTHORIZED ACTIONS:
 <explicit actions I authorize after analysis, e.g. edit files, create/update/link an issue or PR, run tests, publish a report; NONE if analysis-only>
@@ -281,7 +308,7 @@ If current facts matter and the future agent can inspect a live repository, issu
 
 Before drafting Prompt 1, build the following record.
 
-**This record is part of the required output. Always show it before the three prompts.**
+**This record is part of the required output. Always show it before the five prompts.**
 
 Its purpose is to let the user catch a wrong target, wrong level, over-generalised problem kernel, or leaked current answer before running the prompts.
 
@@ -1072,6 +1099,27 @@ IMAGINATION OBJECT:
 
 The IMAGINATION OBJECT should describe the **situation/outcome/problem-solving capability**, not today's artifact form, unless that artifact form is itself explicitly required by the human goal.
 
+For the wider Prompt 0.5, also complete:
+
+```text
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+<the durable original destination or large-project outcome, not today's completion percentage/status>
+
+GOVERNING ISSUE:
+<the issue/capability responsibility that connects the local work to the larger goal>
+
+GOVERNING ISSUE ROLE:
+<why this governing issue matters to the large-project outcome>
+
+LOCAL TASK CONTEXT:
+<2–5 lines describing the ongoing or last local task's purpose and boundary only; exclude PR/branch/status/current solution detail>
+
+PROGRAMME IMAGINATION OBJECT:
+"Prompt 0.5 must independently imagine, from the project level, ______."
+```
+
+The PROGRAMME IMAGINATION OBJECT must be broader than the local task but still relevant to the governing issue. It should expose larger value, reframing, missing capability, simplification or project-level assumptions that a task/PR-first reading could miss.
+
 ### Example — issue currently written as a register
 
 Bad:
@@ -1190,14 +1238,20 @@ INTENT COMPLETION TEST:
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
 
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 CURRENT ANSWER QUARANTINE:
 
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1
 TARGET ANCHORS:
+
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+GOVERNING ISSUE:
+GOVERNING ISSUE ROLE:
+LOCAL TASK CONTEXT:
+<2–5 lines describing purpose/scope only; no current PR/branch/status/solution detail>
 
 PROBLEM WITNESS
 PROBLEM WITNESS TYPE:
@@ -1223,8 +1277,14 @@ GENUINE CONSTRAINTS:
 EXPERTISE:
 IMAGINATION OBJECT:
 
+PROMPT 0.5
+PROGRAMME IMAGINATION OBJECT:
+
 PROMPT 2
 REALITY OBJECT:
+
+PROMPT 2.5
+BRIDGE RECONCILIATION QUESTION:
 
 PROMPT 3
 COMPARISON QUESTION:
@@ -1813,9 +1873,13 @@ Fail if Prompt 3 lets PR statistics, commit counts, changed-file counts, branch 
 Prompt 3 must reconcile:
 
 ```text
+PROMPT-0.5 PROGRAMME-LEVEL INDEPENDENT PICTURE
+×
 PROMPT-1 INDEPENDENT BASELINE
 ×
 PROMPT-2 VERIFIED REALITY
+×
+PROMPT-2.5 INTEGRATED SYNTHESIS
 ×
 CURRENT ROADMAP / TASK MODEL
 ```
@@ -1899,6 +1963,42 @@ Delivery mechanics come after this decision.
 
 ---
 
+# STEP 0.5 — BUILD PROMPT 0.5 FROM THE PROGRAMME-LEVEL BLIND REFERENCE
+
+Prompt 0.5 is the first independent-thinking pass and deliberately works at a wider aperture than Prompt 1.
+
+Allowed inputs to Prompt 0.5:
+
+```text
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL
+GOVERNING ISSUE
+GOVERNING ISSUE ROLE
+LOCAL TASK CONTEXT — purpose/scope only, 2–5 lines
+HUMAN OUTCOME
+GENUINE CONSTRAINTS
+domain facts independent of today's implementation
+PROGRAMME IMAGINATION OBJECT
+```
+
+Forbidden inputs to Prompt 0.5 unless independently justified as genuine constraints:
+
+```text
+current PR/branch state
+current task status
+commit counts / changed-file counts / CI telemetry
+current implementation
+current proposed answer
+current acceptance checklist
+current work sequence
+present blockers
+current roadmap status/progress
+repository architecture or internal abstraction names
+```
+
+Prompt 0.5 must form a broad independent opinion about what the project → governing-issue → local-task chain should make possible before meeting today's answer.
+
+---
+
 # STEP 1 — BUILD PROMPT 1 ONLY FROM THE BLIND REFERENCE
 
 This is the most important construction rule.
@@ -1906,6 +2006,9 @@ This is the most important construction rule.
 Allowed inputs to Prompt 1:
 
 ```text
+PROGRAMME-LEVEL INDEPENDENT PICTURE distilled from Prompt 0.5
+GOVERNING ISSUE and GOVERNING ISSUE ROLE
+LOCAL TASK CONTEXT — purpose/scope only
 USER-REQUESTED LEVEL
 TARGET TITLE / SURFACE when it is itself part of the requested human problem
 TARGET ANCHORS
@@ -1943,6 +2046,8 @@ current solution vocabulary
 
 The purpose is to let the future agent **have an opinion before meeting today's answer**.
 
+Prompt 0.5 supplies the wider project-level independent picture. Prompt 1 must narrow from that picture into the governing issue and local task rather than restarting from the latest PR/task status.
+
 For task/issue targets, recover the human intention underneath the work item.
 
 Examples:
@@ -1968,9 +2073,47 @@ The generator itself enforces blindness by controlling what information is allow
 
 **Do not make Prompt 1 talk about that enforcement.**
 
+# PROMPT 0.5 — IMAGINE FROM PROGRAMME
+
+Generate a self-contained **independent-thinking prompt at the broader project level**.
+
+Prompt 0.5 must reason in this order:
+
+```text
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL
+→ GOVERNING ISSUE in service of that goal
+→ ONGOING OR LAST LOCAL TASK as only a short subordinate slice
+```
+
+The ordering is mandatory. The local task is context, not the destination.
+
+Prompt 0.5 must be generated from the blind reference, not from current PR/task status or implementation choices. Give the future agent enough stable context to understand the original project destination, the governing issue's responsibility, and a 2–5 line description of the local task's purpose. Do not give branch/PR status, current solution details, current acceptance checklist, current work sequence, or inherited proposed answer.
+
+Make the future agent think independently about the **larger value** of this chain. It should ask, in project/domain language:
+
+- If the large-project goal were served exceptionally well, what capability or human outcome would exist?
+- What must the governing issue contribute to that destination, regardless of today's local implementation?
+- What important opportunity, missing capability, simplification, risk, or wrong assumption may be invisible when attention starts from the latest task?
+- Is the local task actually the right expression of the governing issue's need, or only one possible instrument?
+- What would a strong successor notice from the project level that someone staring at the latest PR could miss?
+- What project-level hypothesis is worth carrying down into the issue-level Prompt 1?
+
+Prompt 0.5 must end with a concise **PROGRAMME-LEVEL INDEPENDENT PICTURE** containing:
+- the large-project outcome that matters;
+- the governing issue's role in achieving it;
+- 2–4 non-obvious project/issue-level value hypotheses or reframings;
+- the local task in only a few lines, explicitly subordinate to those larger goals;
+- assumptions or questions that Prompt 1 should examine at tighter resolution.
+
+Prompt 0.5 is imaginative and independent. It is not a repository-status report, PR summary, or factual orientation pass.
+
+---
+
 # PROMPT 1 — IMAGINE
 
 Generate a self-contained first-principles prompt from the **BLIND REFERENCE only**.
+
+Prompt 1 is the **more local independent-thinking pass**. Start from the governing issue, then reason down into the local task / concrete witness. Use Prompt 0.5's broader project-level hypotheses as context to challenge the local framing, but do not convert Prompt 1 into a project-wide redesign.
 
 It should begin from the strongest available concrete footing:
 
@@ -2296,6 +2439,38 @@ Its closing job is to explain, in plain language:
 
 ---
 
+# STEP 2.5 — PROMPT 2.5 MUST RECONCILE REALITY AND DIRECTION
+
+Prompt 2.5 is an integrated bridge. It deliberately combines the essential intent of Prompt 2 and Prompt 3 without replacing either one.
+
+It must:
+- use the actual Prompt-0.5 orientation, Prompt-1 independent picture and Prompt-2 reality reconstruction;
+- re-read or re-check the live repository/issue/PR/evidence state needed for any material conclusion, so it does not reconcile against stale Prompt-2 facts;
+- compare the independent picture with verified reality and the programme/roadmap hierarchy;
+- state the **independent current gap** before selecting inherited solution candidates;
+- distinguish capability gaps from delivery, evidence, ownership, sequencing or no-action conditions;
+- test inherited issue/roadmap/PR proposals as hypotheses rather than treating them as a queue;
+- identify the evidence-supported direction that Prompt 3 should revalidate and, when authorized, execute;
+- leave final external/repository action and terminal handover to Prompt 3 unless the user explicitly defines Prompt 2.5 itself as an execution step.
+
+Prompt 2.5 must therefore contain both:
+1. fresh-enough reality reconstruction; and
+2. baseline × reality × roadmap reconciliation.
+
+Its closing output should include:
+
+```text
+PROGRAMME-LEVEL INDEPENDENT PICTURE
+VERIFIED REALITY REFRESH
+INDEPENDENT CURRENT GAP
+CANDIDATES TESTED
+EVIDENCE-SUPPORTED DIRECTION
+DISPROOF / CHANGE-MIND CONDITIONS
+WHAT PROMPT 3 MUST REVALIDATE
+```
+
+---
+
 # STEP 3 — PROMPT 3 MUST REUSE THE EXACT PASS-1 IDEAL
 
 Prompt 3 must also be **self-identifying**.
@@ -2335,15 +2510,15 @@ If the target has no URL, use the clearest stable identifier available.
 
 
 
-Prompt 3 must explicitly tell the future agent to return to the **actual answer it produced for Prompt 1**.
+Prompt 3 must explicitly tell the future agent to return to the **actual Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs**.
 
 Do not let it quietly rewrite the ideal after seeing the repository.
 
 Tell it:
 
-> Take the independent picture you produced in Prompt 1.
+> Recover the programme hierarchy from Prompt 0.5 and the independent picture from Prompt 1.
 
-> Put it beside the reality you discovered in Prompt 2.
+> Put them beside the reality you discovered in Prompt 2 and the integrated synthesis from Prompt 2.5.
 
 > Where evidence from reality genuinely changed your mind, explain exactly why.
 
@@ -2351,15 +2526,15 @@ Tell it:
 
 This is the anti-goalpost-moving rule.
 
-If the three prompts are likely to be run in separate conversations, Prompt 3 should instruct the user to paste or attach the outputs of Prompt 1 and Prompt 2 before running it. If they are expected to run in one continuous conversation, simply tell the agent to use its prior two outputs.
+If the five prompts are likely to be run in separate conversations, Prompt 3 should instruct the user to paste or attach the outputs of Prompt 0.5, Prompt 1, Prompt 2 and Prompt 2.5 before running it. If they are expected to run in one continuous conversation, simply tell the agent to use its prior four outputs.
 
-The Prompt-1 and Prompt-2 outputs are supporting context; they do **not** replace the target identity and links.
+The Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs are supporting context; they do **not** replace the target identity and links.
 
 ---
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Prompt 3 must use the **actual Prompt-1 result** as an independent baseline and place it beside Prompt-2 verified reality.
+Prompt 3 must use the **actual Prompt-0.5 programme-level independent picture, Prompt-1 independent result, Prompt-2 verified reality and Prompt-2.5 integrated synthesis**.
 
 Prompt 1 is deliberately independent, but it is not infallible. Verified reality or a stronger falsifier may show that one of its assumptions should change.
 
@@ -2383,7 +2558,7 @@ Tell the future agent explicitly:
 
 > Use Prompt 1 as the independent reference picture, not as an infallible specification.
 
-> Put it beside the verified reality established in Prompt 2.
+> Put it beside the programme hierarchy from Prompt 0.5, the verified reality established in Prompt 2, and the evidence-supported direction produced in Prompt 2.5.
 
 > Where evidence genuinely changes either picture, say exactly why.
 
@@ -2413,10 +2588,10 @@ Before reasoning from Prompt 1 or Prompt 2, verify that their actual outputs are
 
 Use this order:
 
-1. use the actual Prompt-1 and Prompt-2 outputs from the current three-pass execution when present;
+1. use the actual Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs from the current three-pass execution when present;
 2. otherwise retrieve their durable published artifacts/references when available;
-3. if either result is unavailable, regenerate only that missing pass from its original inputs and explicitly state that it was regenerated;
-4. never silently substitute the historical issue, roadmap, current implementation or the agent's recollection for a missing Prompt-1/Prompt-2 result.
+3. if any result is unavailable, regenerate only that missing prompt from its original inputs and explicitly state that it was regenerated;
+4. never silently substitute the historical issue, roadmap, current implementation or the agent's recollection for a missing Prompt-0.5/Prompt-1/Prompt-2/Prompt-2.5 result.
 
 Then recover the Prompt-1 destination.
 
@@ -2458,9 +2633,13 @@ Do not let repository/PR telemetry become a capability model. PR state, branch d
 Now reconcile:
 
 ```text
+PROMPT-0.5 PROGRAMME-LEVEL INDEPENDENT PICTURE
+×
 PROMPT-1 INDEPENDENT BASELINE
 ×
 PROMPT-2 VERIFIED REALITY
+×
+PROMPT-2.5 INTEGRATED SYNTHESIS
 ×
 CURRENT ROADMAP / TASK MODEL
 ```
@@ -2954,7 +3133,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -2973,7 +3152,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -3011,14 +3190,20 @@ INTENT COMPLETION TEST:
 REQUEST MODE:
 COMPLEX MODE: ON | OFF
 
-CURRENT REALITY — QUARANTINED FROM PROMPT 1
+CURRENT REALITY — QUARANTINED FROM PROMPTS 0.5 AND 1
 CURRENT ARTIFACT FORM:
 CURRENT STATED ANSWER / IMPLEMENTATION:
 CURRENT-STATE FACTS:
 CURRENT ANSWER QUARANTINE:
 
-BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1
+BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1
 TARGET ANCHORS:
+
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+GOVERNING ISSUE:
+GOVERNING ISSUE ROLE:
+LOCAL TASK CONTEXT:
+<2–5 lines describing purpose/scope only; no current PR/branch/status/solution detail>
 
 PROBLEM WITNESS
 PROBLEM WITNESS TYPE:
@@ -3044,8 +3229,14 @@ GENUINE CONSTRAINTS:
 EXPERTISE:
 IMAGINATION OBJECT:
 
+PROMPT 0.5
+PROGRAMME IMAGINATION OBJECT:
+
 PROMPT 2
 REALITY OBJECT:
+
+PROMPT 2.5
+BRIDGE RECONCILIATION QUESTION:
 
 PROMPT 3
 COMPARISON QUESTION:
@@ -3115,6 +3306,12 @@ PROMPT-3 TECHNICAL-PROOF GATE:
 PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
+## PROMPT 0.5 — IMAGINE FROM PROGRAMME
+
+```text
+<complete Prompt 0.5 text only>
+```
+
 ## PROMPT 1 — IMAGINE
 
 ```text
@@ -3127,6 +3324,12 @@ PASS — <one short reason showing that material technical changes require a cla
 <complete Prompt 2 text only>
 ```
 
+## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION
+
+```text
+<complete Prompt 2.5 text only>
+```
+
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
 ```text
@@ -3136,7 +3339,7 @@ PASS — <one short reason showing that material technical changes require a cla
 
 ### Copy-pasteability rules
 
-Each of the three prompt fences must be directly pasteable into another agent **without editing**.
+Each of the five prompt fences must be directly pasteable into another agent **without editing**.
 
 Therefore:
 
@@ -3147,10 +3350,14 @@ Therefore:
 - no nested fenced code blocks inside a prompt fence;
 - if a prompt needs a diagram, table, template, or mini-structure, express it as plain indented text inside the outer fence;
 - no placeholders that the user must manually replace when the information is already known;
-- Prompt 2 and Prompt 3 must contain the actual target/repository links when available;
+- Prompt 2, Prompt 2.5 and Prompt 3 must contain the actual target/repository links when available;
 - Prompt 3 must contain the actual identity capsule, not instructions saying to add one later.
 
 ### Pass-specific identity rule
+
+**Prompt 0.5 — IMAGINE FROM PROGRAMME**
+
+Use the stable original roadmap / large-project goal, governing issue responsibility and only a short local-task purpose capsule. Ask for independent project-level reasoning and non-obvious value hypotheses. Do **not** include current PR/branch/task status or current solution material. Explicitly subordinate the local task to the project and governing-issue goals.
 
 **Prompt 1 — IMAGINE**
 
@@ -3163,6 +3370,10 @@ Do not explain this omission inside Prompt 1. The prompt should read as a comple
 **Prompt 2 — UNDERSTAND**
 
 Include the exact target and repository/system links when available.
+
+**Prompt 2.5 — RECONCILE REALITY AND DIRECTION**
+
+Include enough target/repository identity to re-check live evidence. Require both a reality refresh and comparison against Prompt 0.5 + Prompt 1 + Prompt 2 before stating the current gap and evidence-supported direction.
 
 **Prompt 3 — REVALIDATE AND MOVE FORWARD**
 
@@ -3197,15 +3408,15 @@ Omit only fields that genuinely do not exist.
 
 Do not add:
 
-- a fourth prompt;
+- a sixth prompt;
 - explanatory prose before the preflight;
 - commentary between prompt blocks;
 - implementation notes after Prompt 3;
 - a second summary of how you applied the schema.
 
-The shared SCHEMA BASIS plus each lot's visible preflight and three prompt fences are the complete deliverable.
+The shared SCHEMA BASIS plus each lot's visible preflight and five prompt fences are the complete deliverable.
 
-After Prompt 3, STOP. Do not append any admission/qualification/certification block, evaluator request, fourth stage, or extra question package.
+After Prompt 3, STOP. Do not append any admission/qualification/certification block, evaluator request, sixth stage, or extra question package.
 
 Each generated Prompt 3 must itself instruct its future agent to emit the terminal disposition `THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE` and `FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE` when that pass is finished.
 
@@ -3251,7 +3462,7 @@ If it is hidden or replaced by “preflight completed,” fail.
 
 ### Copy-pasteability check
 
-Are Prompt 1, Prompt 2 and Prompt 3 each isolated in one clean outer text fence and directly pasteable without editing?
+Are Prompt 0.5, Prompt 1, Prompt 2, Prompt 2.5 and Prompt 3 each isolated in one clean outer text fence and directly pasteable without editing?
 
 If there is commentary mixed into a prompt, known placeholders, nested fences, or notes after Prompt 3, fail.
 
@@ -3732,18 +3943,26 @@ The future agent should encounter a real question, not a schema field.
 Complex Q1–Q5 mode affects **Prompt 1 only**.
 
 ```text
+PROMPT 0.5
+independent global reasoning:
+project / roadmap goal → governing issue → short subordinate local-task context
+
 PROMPT 1
 independent human Q1–Q5 reasoning picture
 
 PROMPT 2
 live repository/system reality
 
+PROMPT 2.5
+fresh reality + Prompt-1 baseline + programme hierarchy
+→ integrated current-gap and direction synthesis
+
 PROMPT 3
-exact Prompt-1 picture + Prompt-2 reality
-→ rediscover the present problem and smallest justified response
+revalidate Prompt-2.5 against current evidence
+→ execute the smallest justified authorized response and hand over
 ```
 
-Do not repeat Q1–Q5 mechanically in Prompts 2 or 3 unless the target itself genuinely benefits from those questions.
+Do not repeat Q1–Q5 mechanically in Prompts 0.5, 2, 2.5 or 3 unless the target itself genuinely benefits from those questions.
 
 ## Complex-mode anti-generic test
 

@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-21-R9
+TPG-3P-2026-09-22-R10
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -100,6 +100,14 @@ CURRENT ANSWER QUARANTINE:
 today's option set
 TARGET ANCHORS:
 named domain
+ORIGINAL ROADMAP / LARGE-PROJECT GOAL:
+deliver the larger user capability safely and coherently
+GOVERNING ISSUE:
+the bounded issue that connects the local work to the roadmap goal
+GOVERNING ISSUE ROLE:
+make the relevant capability trustworthy at programme level
+LOCAL TASK CONTEXT:
+the current local task is one bounded instrument inside that governing issue
 PROBLEM WITNESS TYPE:
 benchmark
 PROBLEM WITNESS SOURCE:
@@ -138,8 +146,12 @@ EXPERTISE:
 domain expert
 IMAGINATION OBJECT:
 independent handling of the problem
+PROGRAMME IMAGINATION OBJECT:
+independently imagine the larger value from project goal through governing issue with local task subordinate
 REALITY OBJECT:
 current truth
+BRIDGE RECONCILIATION QUESTION:
+refresh live reality and reconcile Prompt-1 baseline against programme hierarchy
 COMPARISON QUESTION:
 what remains now
 ROADMAP SYNTHESIS QUESTION:
@@ -193,6 +205,10 @@ PASS — N/A when OFF
 MODE-ISOLATION GATE:
 PASS — no extra protocol stage
 
+## PROMPT 0.5 — IMAGINE FROM PROGRAMME
+
+Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.
+
 ## PROMPT 1 — IMAGINE
 
 Think independently about the specific unresolved domain problem.
@@ -201,9 +217,13 @@ Think independently about the specific unresolved domain problem.
 
 Inspect current reality.
 
+## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION
+
+Use Prompt-1 and Prompt-2 together. Refresh live reality, reconcile it against the programme roadmap hierarchy, state the independent current gap, and identify the evidence-supported direction for Prompt 3.
+
 ## PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Use the actual Prompt-1 and Prompt-2 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.
+Use the actual Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.
 Treat Prompt-1 as the independent baseline, not immutable truth; verified evidence may revise it.
 STEP BACK — inspect the relevant roadmap/task landscape and ownership boundaries; widen understanding, not ownership.
 RECONCILE — compare the baseline, verified reality, and the roadmap; state the independent current gap before inherited candidate solutions are considered.
@@ -217,6 +237,10 @@ FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
 
 STALE = """Reworked.
 
+# PROMPT 0.5 — IMAGINE FROM PROGRAMME
+
+Latest PR is the project goal.
+
 # PROMPT 1 — IMAGINE
 
 The register is the thing you are imagining.
@@ -224,6 +248,10 @@ The register is the thing you are imagining.
 # PROMPT 2 — UNDERSTAND
 
 Inspect it.
+
+# PROMPT 2.5 — RECONCILE REALITY AND DIRECTION
+
+Repeat the latest task.
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
@@ -241,6 +269,38 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertIn("SCHEMA BASIS", joined)
         self.assertIn("legacy active signature", joined)
         self.assertIn("at least one '# LOT ...' section", joined)
+
+    def test_prompt05_is_required(self):
+        bad = GOOD.replace(
+            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThink independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.\n\n",
+            "",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("PROMPT 0.5" in e or "Prompt 0.5" in e for e in errors), errors)
+
+    def test_prompt25_is_required(self):
+        bad = GOOD.replace(
+            "## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION\n\nUse Prompt-1 and Prompt-2 together. Refresh live reality, reconcile it against the programme roadmap hierarchy, state the independent current gap, and identify the evidence-supported direction for Prompt 3.\n\n",
+            "",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("PROMPT 2.5" in e or "Prompt 2.5" in e for e in errors), errors)
+
+    def test_prompt05_rejects_local_task_as_destination(self):
+        bad = GOOD.replace(
+            "Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.",
+            "Summarize the ongoing local task and latest PR.",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("Prompt 0.5" in e for e in errors), errors)
+
+    def test_prompt25_must_refresh_and_reconcile(self):
+        bad = GOOD.replace(
+            "Use Prompt-1 and Prompt-2 together. Refresh live reality, reconcile it against the programme roadmap hierarchy, state the independent current gap, and identify the evidence-supported direction for Prompt 3.",
+            "Summarize Prompt-2.",
+        )
+        errors = MOD.validate_text(bad, SHA)
+        self.assertTrue(any("Prompt 2.5" in e for e in errors), errors)
 
     def test_wrong_schema_sha_is_rejected(self):
         errors = MOD.validate_text(GOOD, "b" * 40)
@@ -302,7 +362,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-21-R9", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-22-R10", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -313,7 +373,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-21-R9")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-22-R10")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
@@ -348,7 +408,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("ownership" in e for e in errors), errors)
 
     def test_prompt3_requires_cold_start_context_integrity(self):
-        bad = GOOD.replace("Use the actual Prompt-1 and Prompt-2 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.\n", "Use Prompt-1 and Prompt-2.\n")
+        bad = GOOD.replace("Use the actual Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs; retrieve or explicitly regenerate a missing result rather than inventing it.\n", "Use Prompt-1 and Prompt-2.\n")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("cold-start handling" in e for e in errors), errors)
 

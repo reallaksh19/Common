@@ -122,7 +122,7 @@ Issue publication uses the existing GHGEN/GHOP transaction. Prefer a provider-na
 
 Three-pass generation begins only after the handover issue URL has been verified by provider readback. Follow the live compatibility redirect to `skills/three-pass-prompt-generator/SKILL.md` and `schema.md`; V2.5 does not cache or reproduce that protocol.
 
-`Plan for Handover, complex project` enables the standalone generator's complex mode. The artifact still contains exactly three prompts; Prompt 1 additionally exposes natural target-specific Q1–Q5. A later plain handover command returns to non-complex mode.
+`Plan for Handover, complex project` enables the standalone generator's complex mode. The artifact contains exactly five prompts: Prompt 0.5 performs global independent thinking from project goal → governing issue → local task; Prompt 1 performs tighter independent thinking from governing issue → local task; Prompt 2 reconstructs reality; Prompt 2.5 combines reality refresh with reconciliation/direction; Prompt 3 revalidates, acts when authorized, and hands over. Complex mode additionally exposes natural target-specific Q1–Q5 inside Prompt 1. A later plain handover command returns to non-complex mode.
 
 Repository scripts must not infer chat requirements. The executing agent passes relevant user-authored session requirements explicitly to `plan_handover.py --owner-requirement ...`. Credential/secret-like values must not be published to GitHub.
 
