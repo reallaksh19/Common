@@ -19,6 +19,7 @@ properties:
       ep: {type: [string, 'null'], pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       lease: {type: [string, 'null'], pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
       route: {type: [string, 'null'], minLength: 1}
+      custody_epoch: {type: integer, minimum: 0}
   accepted:
     type: object
     additionalProperties: false

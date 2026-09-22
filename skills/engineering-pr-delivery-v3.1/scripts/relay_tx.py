@@ -24,6 +24,43 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _parse_timestamp(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def _custody_epoch(state: dict[str, Any]) -> int | None:
+    value = (state.get("execution") or {}).get("custody_epoch")
+    return int(value) if value is not None else None
+
+
+def _require_expected_custody_epoch(state: dict[str, Any], expected: int | None) -> None:
+    execution = state.get("execution") or {}
+    current = _custody_epoch(state)
+    if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or current is None:
+        return
+    if expected is None:
+        raise TransactionError("CUSTODY_EPOCH_REQUIRED")
+    if int(expected) != current:
+        raise TransactionError(f"STALE_CUSTODY_EPOCH: expected {expected}, current {current}")
+
+
+def _recovery_eligible(lease: dict[str, Any], observed_at: str | None = None) -> tuple[bool, str]:
+    custody = lease.get("custody") or {}
+    if not custody:
+        return True, "LEGACY_EXPLICIT_RECOVERY"
+    if custody.get("recovery_policy") != "TAKEOVER_AFTER_EXPIRY":
+        return False, "RECOVERY_POLICY_MANUAL_ONLY"
+    renewed = str(custody.get("renewed_at") or "")
+    seconds = int(custody.get("recovery_after_seconds") or 0)
+    if not renewed or seconds < 60:
+        return False, "RECOVERY_METADATA_INVALID"
+    observed = _parse_timestamp(observed_at) if observed_at else datetime.now(timezone.utc)
+    expires = _parse_timestamp(renewed).timestamp() + seconds
+    if observed.timestamp() < expires:
+        return False, "PREDECESSOR_LEASE_NOT_EXPIRED"
+    return True, "LEASE_EXPIRED"
+
+
 def _authority(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     errors = validate_authority(root)
     if errors:
@@ -79,8 +116,15 @@ def _require_action(
     *,
     path: str | None = None,
     base_ref: str | None = None,
+    expected_custody_epoch: int | None = None,
 ) -> None:
-    result = can_action(root, action, path=path, base_ref=base_ref)
+    result = can_action(
+        root,
+        action,
+        path=path,
+        base_ref=base_ref,
+        expected_custody_epoch=expected_custody_epoch,
+    )
     if not result["allowed"]:
         raise TransactionError(f"{action} denied: {', '.join(result['reason_codes'])}")
 
@@ -275,6 +319,7 @@ def admit_task(
         "ep": ep["id"],
         "lease": lease_id,
         "route": route,
+        "custody_epoch": 1,
     }
     provisional_state["delivery"] = copy.deepcopy(admission["delivery"])
 
@@ -289,6 +334,9 @@ def admit_task(
         state_override=provisional_state,
         ep_override=ep,
         current_lease_override=None,
+        custody_epoch=1,
+        recovery_after_seconds=int(lease_spec.get("recovery_after_seconds") or 3600),
+        recovery_policy=str(lease_spec.get("recovery_policy") or "TAKEOVER_AFTER_EXPIRY"),
     )
     snapshot = build_snapshot(
         root,
@@ -305,7 +353,12 @@ def admit_task(
     events.extend([
         _event(ids[0], "OWNER_TASK_ADMITTED", actor, wp_id, [tx_id, disposition, *rplan["basis"]], {"roadmap_revision": rplan["new_revision"]}),
         _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
-        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route], {"executor": lease_spec["executor_id"], "method": lease_spec["method"]}),
+        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
+            "executor": lease_spec["executor_id"],
+            "method": lease_spec["method"],
+            "continuation": "NEW",
+            "custody_epoch": 1,
+        }),
     ])
 
     return execute(
@@ -339,9 +392,14 @@ def activate_lease(
     branch: str | None,
     base_ref: str,
     recovery_takeover: bool = False,
+    expected_custody_epoch: int | None = None,
+    recovery_observed_at: str | None = None,
+    recovery_after_seconds: int = 3600,
+    recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     try:
         require_identifier(lease_id, "LEASE-", "lease_id")
     except ValueError as exc:
@@ -370,11 +428,18 @@ def activate_lease(
                     "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
                     "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
                 ) from exc
+            eligible, recovery_basis = _recovery_eligible(old_lease or {}, recovery_observed_at)
+            if not eligible:
+                raise TransactionError(f"RECOVERY_NOT_ELIGIBLE: {recovery_basis}") from exc
             continuation = "RECOVERY"
         else:
             continuation = "HANDOFF"
 
     transfer_from = str(old_lease_id) if different_executor else None
+    current_epoch = _custody_epoch(state)
+    if current_epoch is None:
+        current_epoch = int(((old_lease or {}).get("custody") or {}).get("epoch") or 0)
+    new_epoch = current_epoch + 1
     new_lease = build_native_lease(
         root,
         lease_id=lease_id,
@@ -384,6 +449,9 @@ def activate_lease(
         owner_basis=owner_basis,
         branch=branch,
         replace_active_lease_id=transfer_from,
+        custody_epoch=new_epoch,
+        recovery_after_seconds=recovery_after_seconds,
+        recovery_policy=recovery_policy,
     )
 
     replacements: dict[str, bytes] = {}
@@ -408,6 +476,7 @@ def activate_lease(
         "ep": (new_lease.get("basis") or {}).get("ep_id"),
         "lease": lease_id,
         "route": new_lease.get("route"),
+        "custody_epoch": new_epoch,
     }
     replacements[f"relay/LEASES/{lease_id}.yaml"] = yaml_bytes(new_lease)
     replacements["relay/STATE.yaml"] = yaml_bytes(new_state)
@@ -416,7 +485,14 @@ def activate_lease(
 
     events = _events(root)
     predecessor_event_id = event_id + "-REL" if transfer else None
-    _assert_event_ids_available(events, [x for x in [predecessor_event_id, event_id] if x])
+    transition_event_id = (
+        event_id + "-HANDOVER"
+        if continuation == "HANDOFF"
+        else event_id + "-RECOVERY"
+        if continuation == "RECOVERY"
+        else None
+    )
+    _assert_event_ids_available(events, [x for x in [predecessor_event_id, transition_event_id, event_id] if x])
     if transfer:
         basis = [tx_id, f"successor-lease:{lease_id}", f"continuation:{continuation}"]
         if handover_digest:
@@ -432,6 +508,37 @@ def activate_lease(
                 "successor_executor": executor_id,
                 "continuation": continuation,
                 "predecessor_handover": bool(handover_digest),
+                "custody_epoch_before": current_epoch,
+                "custody_epoch_after": new_epoch,
+            },
+        ))
+    if continuation == "HANDOFF":
+        events.append(_event(
+            str(transition_event_id),
+            "HANDOVER_ACCEPTED",
+            actor,
+            lease_id,
+            [tx_id, str(old_lease_id), str(handover_digest), f"custody_epoch:{new_epoch}"],
+            {
+                "predecessor_lease": old_lease_id,
+                "successor_lease": lease_id,
+                "successor_executor": executor_id,
+                "custody_epoch": new_epoch,
+            },
+        ))
+    elif continuation == "RECOVERY":
+        events.append(_event(
+            str(transition_event_id),
+            "RECOVERY_STARTED",
+            actor,
+            lease_id,
+            [tx_id, str(old_lease_id), f"custody_epoch:{new_epoch}"],
+            {
+                "predecessor_lease": old_lease_id,
+                "successor_lease": lease_id,
+                "successor_executor": executor_id,
+                "custody_epoch": new_epoch,
+                "predecessor_handover": False,
             },
         ))
     events.append(_event(
@@ -446,11 +553,66 @@ def activate_lease(
             "continuation": continuation,
             "predecessor_lease": old_lease_id if transfer else None,
             "predecessor_handover": bool(handover_digest),
+            "custody_epoch": new_epoch,
         },
     ))
     replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
 
     return execute(root, tx_id=tx_id, command="ACTIVATE_LEASE", actor=actor, replacements=replacements, fail_after=fail_after)
+
+
+def renew_lease(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    expected_custody_epoch: int,
+    base_ref: str,
+    renewed_at: str | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    execution = state.get("execution") or {}
+    lease_id = execution.get("lease")
+    if not lease_id:
+        raise TransactionError("no active lease to renew")
+    lease = load_yaml(root / "relay/LEASES" / f"{lease_id}.yaml")
+    if lease.get("state") != "ACTIVE":
+        raise TransactionError("current lease is not ACTIVE")
+    custody = lease.get("custody") or {}
+    if int(custody.get("epoch") or -1) != int(expected_custody_epoch):
+        raise TransactionError("lease custody epoch does not match STATE")
+    next_renewed_at = renewed_at or _now()
+    previous_renewed_at = str(custody.get("renewed_at") or "")
+    if previous_renewed_at and _parse_timestamp(next_renewed_at) < _parse_timestamp(previous_renewed_at):
+        raise TransactionError("LEASE_RENEWAL_TIME_REGRESSION")
+    renewed = copy.deepcopy(lease)
+    renewed["custody"]["renewed_at"] = next_renewed_at
+    snapshot = build_snapshot(root, base_ref, lease_override=renewed)
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "LEASE_RENEWED",
+        actor,
+        str(lease_id),
+        [tx_id, f"custody_epoch:{expected_custody_epoch}"],
+        {"renewed_at": renewed["custody"]["renewed_at"], "custody_epoch": expected_custody_epoch},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RENEW_LEASE",
+        actor=actor,
+        replacements={
+            f"relay/LEASES/{lease_id}.yaml": yaml_bytes(renewed),
+            _snapshot_path(state): yaml_bytes(snapshot),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
 
 def release_lease(
     root: Path,
@@ -460,12 +622,14 @@ def release_lease(
     actor: str,
     reason: str = "HANDOFF",
     base_ref: str | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     if reason not in {"HANDOFF", "ADMINISTRATIVE"}:
         raise TransactionError("lease release reason must be HANDOFF or ADMINISTRATIVE")
 
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
     if not lease_id:
@@ -482,7 +646,10 @@ def release_lease(
     released = copy.deepcopy(lease)
     released["state"] = "RELEASED"
     new_state = copy.deepcopy(state)
-    new_state["execution"] = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+    new_execution = {"lifecycle": "IDLE", "ep": None, "lease": None, "route": None}
+    if execution.get("custody_epoch") is not None:
+        new_execution["custody_epoch"] = int(execution["custody_epoch"])
+    new_state["execution"] = new_execution
     snapshot = build_snapshot(root, state_override=new_state)
 
     events = _events(root)
@@ -526,10 +693,12 @@ def accept_checkpoint(
     actor: str,
     checkpoint_path: Path,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "CHECKPOINT", base_ref=base_ref)
+    _require_action(root, "CHECKPOINT", base_ref=base_ref, expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     checkpoint = load_yaml(checkpoint_path)
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
     if errors:
@@ -611,9 +780,11 @@ def resolve_control(
     control_id: str,
     evidence: list[str],
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, controls = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     matches = [item for item in controls.get("controls") or [] if item.get("id") == control_id]
     if len(matches) != 1:
         raise TransactionError(f"expected one control {control_id}; found {len(matches)}")
@@ -658,11 +829,37 @@ def reconcile_roadmap(
     actor: str,
     reconciliation_path: Path,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
+    change_delta_path: Path | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     roadmap_path = str((state.get("roadmap") or {}).get("path"))
     current = load_yaml(root / roadmap_path)
+
+    change_delta = None
+    change_target = None
+    if change_delta_path is not None:
+        change_delta = load_yaml(change_delta_path)
+        errors = validate_schema("change-delta", change_delta, "CHANGE_DELTA")
+        if errors:
+            raise TransactionError("; ".join(errors))
+        if (change_delta.get("verification") or {}).get("status") != "CONFIRMED":
+            raise TransactionError("CHANGE_DELTA must be CONFIRMED before roadmap application")
+        authorization = change_delta.get("authorization") or {}
+        if authorization.get("required") == "OWNER" and authorization.get("status") != "GRANTED":
+            raise TransactionError("CHANGE_DELTA requires granted Owner authority")
+        if authorization.get("required") == "NONE" and authorization.get("status") != "NOT_REQUIRED":
+            raise TransactionError("CHANGE_DELTA authorization state is inconsistent")
+        application = change_delta.get("application") or {}
+        if application.get("status") != "NOT_APPLIED":
+            raise TransactionError("CHANGE_DELTA is already applied or deferred")
+        if application.get("expected_roadmap_revision") != (state.get("roadmap") or {}).get("revision"):
+            raise TransactionError("CHANGE_DELTA expected roadmap revision is stale")
+        if application.get("expected_state_digest") != canonical_digest(state):
+            raise TransactionError("CHANGE_DELTA expected state digest is stale")
+        change_target = f"relay/CHANGES/{change_delta['id']}.yaml"
 
     reconciliation = load_yaml(reconciliation_path)
     errors = validate_schema("roadmap-reconciliation", reconciliation, "ROADMAP_RECONCILIATION")
@@ -702,32 +899,45 @@ def reconcile_roadmap(
 
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
+    event_basis = [tx_id, *list(reconciliation.get("basis") or [])]
+    if change_delta is not None:
+        event_basis.append(str(change_delta.get("id")))
     events.append(_event(
         event_id,
         "ROADMAP_RECONCILED",
         actor,
         str(after.get("revision")),
-        [tx_id, *list(reconciliation.get("basis") or [])],
+        event_basis,
         {
             "disposition": disposition,
             "from_revision": current.get("revision"),
             "to_revision": after.get("revision"),
             "ep": (state.get("execution") or {}).get("ep"),
             "checkpoint": (state.get("accepted") or {}).get("checkpoint"),
+            "change_delta": (change_delta or {}).get("id"),
         },
     ))
+
+    replacements = {
+        roadmap_path: yaml_bytes(after),
+        "relay/STATE.yaml": yaml_bytes(new_state),
+        _snapshot_path(new_state): yaml_bytes(snapshot),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    if change_delta is not None and change_target is not None:
+        applied_delta = copy.deepcopy(change_delta)
+        applied_delta["application"]["status"] = "APPLIED"
+        applied_delta["application"]["roadmap_before"] = str(current.get("revision"))
+        applied_delta["application"]["roadmap_after"] = str(after.get("revision"))
+        applied_delta["application"]["event"] = event_id
+        replacements[change_target] = yaml_bytes(applied_delta)
 
     return execute(
         root,
         tx_id=tx_id,
         command="RECONCILE_ROADMAP",
         actor=actor,
-        replacements={
-            roadmap_path: yaml_bytes(after),
-            "relay/STATE.yaml": yaml_bytes(new_state),
-            _snapshot_path(new_state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -738,10 +948,12 @@ def publish_handover(
     event_id: str,
     actor: str,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "HANDOVER")
+    _require_action(root, "HANDOVER", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
     task_snapshot = build_task(root, base_ref)
@@ -771,6 +983,323 @@ def publish_handover(
     )
 
 
+
+def record_recovery_reconstructed(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    evidence: list[str],
+    expected_custody_epoch: int,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    execution = state.get("execution") or {}
+    lease_id = execution.get("lease")
+    events = _events(root)
+    started = any(
+        item.get("type") == "RECOVERY_STARTED"
+        and str((item.get("details") or {}).get("successor_lease") or item.get("subject")) == str(lease_id)
+        for item in events
+    )
+    if not started:
+        raise TransactionError("RECOVERY_RECONSTRUCTED requires a RECOVERY_STARTED event for the current lease")
+    evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    if not evidence:
+        raise TransactionError("RECOVERY_RECONSTRUCTED requires durable reconstruction evidence")
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "RECOVERY_RECONSTRUCTED",
+        actor,
+        str(lease_id),
+        [tx_id, *evidence, f"custody_epoch:{expected_custody_epoch}"],
+        {
+            "ep": execution.get("ep"),
+            "custody_epoch": expected_custody_epoch,
+            "evidence_count": len(evidence),
+        },
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECORD_RECOVERY_RECONSTRUCTED",
+        actor=actor,
+        replacements={"relay/EVENTS.jsonl": jsonl_bytes(events)},
+        fail_after=fail_after,
+    )
+
+
+def record_change_hypothesis(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    statement: str,
+    basis: list[str],
+    process: str = "PROMPT_1",
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    try:
+        require_identifier(change_id, "CHANGE-", "change_id")
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
+    if process not in {"PROMPT_1", "OWNER"}:
+        raise TransactionError("change hypothesis process must be PROMPT_1 or OWNER")
+    statement = statement.strip()
+    basis = [str(item).strip() for item in basis if str(item).strip()]
+    if not statement or not basis:
+        raise TransactionError("change hypothesis requires statement and durable basis")
+    target = root / "relay/CHANGES" / f"{change_id}.yaml"
+    if target.exists():
+        raise TransactionError(f"change delta already exists: {change_id}")
+    ep = _current_ep(root, state)
+    parent = (ep or {}).get("parent_issue") or {}
+    delta = {
+        "schema_version": "relay-v3.1-change-delta",
+        "id": change_id,
+        "authority": "GOVERNED_CHANGE_DELTA",
+        "hypothesis": {
+            "statement": statement,
+            "discovered_by": {"process": process, "actor": actor},
+            "basis": basis,
+        },
+        "verification": {
+            "status": "PENDING",
+            "verified_by": None,
+            "evidence": [],
+            "falsifiers_checked": [],
+        },
+        "proposal": None,
+        "authorization": {
+            "required": "UNKNOWN",
+            "status": "PENDING",
+            "owner_basis": None,
+        },
+        "application": {
+            "status": "NOT_APPLIED",
+            "expected_roadmap_revision": str((state.get("roadmap") or {}).get("revision")),
+            "expected_state_digest": canonical_digest(state),
+            "roadmap_before": None,
+            "roadmap_after": None,
+            "source_issue": parent.get("number"),
+            "target_issue": None,
+            "event": None,
+        },
+    }
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_HYPOTHESIS_RECORDED",
+        actor,
+        change_id,
+        [tx_id, *basis],
+        {"process": process, "ep": (ep or {}).get("id"), "work_package": (ep or {}).get("work_package")},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECORD_CHANGE_HYPOTHESIS",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(delta),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def verify_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    status: str,
+    evidence: list[str],
+    falsifiers_checked: list[str],
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    if (delta.get("verification") or {}).get("status") != "PENDING":
+        raise TransactionError("change delta verification is not PENDING")
+    status = status.upper()
+    if status not in {"CONFIRMED", "REJECTED"}:
+        raise TransactionError("change verification status must be CONFIRMED or REJECTED")
+    evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    falsifiers_checked = [str(item).strip() for item in falsifiers_checked if str(item).strip()]
+    if status == "CONFIRMED" and not evidence:
+        raise TransactionError("confirmed change verification requires durable evidence")
+    updated = copy.deepcopy(delta)
+    updated["verification"] = {
+        "status": status,
+        "verified_by": {"process": "PROMPT_2", "actor": actor},
+        "evidence": evidence,
+        "falsifiers_checked": falsifiers_checked,
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_VERIFIED" if status == "CONFIRMED" else "CHANGE_REJECTED",
+        actor,
+        change_id,
+        [tx_id, *evidence, *falsifiers_checked],
+        {"status": status},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="VERIFY_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def propose_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    proposal_path: Path,
+    authorization_required: str,
+    expected_custody_epoch: int | None = None,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    if (delta.get("verification") or {}).get("status") != "CONFIRMED":
+        raise TransactionError("Prompt 2.5 proposal requires CONFIRMED verification")
+    if delta.get("proposal") is not None:
+        raise TransactionError("change delta already has a proposal")
+    proposal = load_yaml(proposal_path)
+    if not isinstance(proposal, dict):
+        raise TransactionError("change proposal must be a mapping")
+    authorization_required = authorization_required.upper()
+    if authorization_required not in {"NONE", "OWNER"}:
+        raise TransactionError("authorization_required must be NONE or OWNER")
+    updated = copy.deepcopy(delta)
+    updated["proposal"] = proposal
+    updated["authorization"] = {
+        "required": authorization_required,
+        "status": "NOT_REQUIRED" if authorization_required == "NONE" else "PENDING",
+        "owner_basis": None,
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_DELTA_PROPOSED",
+        actor,
+        change_id,
+        [tx_id, str(proposal.get("disposition"))],
+        {"disposition": proposal.get("disposition"), "authorization_required": authorization_required},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="PROPOSE_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
+
+def authorize_change_delta(
+    root: Path,
+    *,
+    tx_id: str,
+    event_id: str,
+    actor: str,
+    change_id: str,
+    granted: bool,
+    direct_utterance_digest: str,
+    session_timestamp: str,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    path = root / "relay/CHANGES" / f"{change_id}.yaml"
+    delta = load_yaml(path)
+    errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    authorization = delta.get("authorization") or {}
+    if authorization.get("required") != "OWNER" or authorization.get("status") != "PENDING":
+        raise TransactionError("change delta is not awaiting Owner authorization")
+    if not direct_utterance_digest.strip() or not session_timestamp.strip():
+        raise TransactionError("Owner authorization requires direct utterance digest and session timestamp")
+    updated = copy.deepcopy(delta)
+    updated["authorization"] = {
+        "required": "OWNER",
+        "status": "GRANTED" if granted else "DENIED",
+        "owner_basis": {
+            "direct_utterance_digest": direct_utterance_digest,
+            "session_timestamp": session_timestamp,
+        },
+    }
+    errors = validate_schema("change-delta", updated, "CHANGE_DELTA")
+    if errors:
+        raise TransactionError("; ".join(errors))
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    events.append(_event(
+        event_id,
+        "CHANGE_AUTHORIZED",
+        actor,
+        change_id,
+        [tx_id, direct_utterance_digest],
+        {"status": updated["authorization"]["status"]},
+    ))
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="AUTHORIZE_CHANGE_DELTA",
+        actor=actor,
+        replacements={
+            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+            "relay/EVENTS.jsonl": jsonl_bytes(events),
+        },
+        fail_after=fail_after,
+    )
+
 def export_local_execution(
     root: Path,
     *,
@@ -780,10 +1309,12 @@ def export_local_execution(
     base_ref: str,
     mode: str = "VALIDATE_ONLY",
     commands: list[str] | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "LOCAL_EXECUTION_EXPORT")
+    _require_action(root, "LOCAL_EXECUTION_EXPORT", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     snapshot = build_snapshot(root, base_ref)
     ep = _current_ep(root, state)
     checkpoint = _current_checkpoint(root, state)
@@ -935,10 +1466,12 @@ def close_task(
     event_id: str,
     actor: str,
     parent_issue_observation: dict[str, Any] | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "CLOSE_TASK")
+    _require_action(root, "CLOSE_TASK", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     _require_final_reconciliation(
         root,
         state,
@@ -966,7 +1499,10 @@ def close_task(
     lease_id = execution.get("lease")
     lease = load_yaml(root / "relay/LEASES" / f"{lease_id}.yaml") if lease_id else None
     new_state = copy.deepcopy(state)
-    new_state["execution"] = {"lifecycle": "TERMINAL", "ep": None, "lease": None, "route": None}
+    terminal_execution = {"lifecycle": "TERMINAL", "ep": None, "lease": None, "route": None}
+    if execution.get("custody_epoch") is not None:
+        terminal_execution["custody_epoch"] = int(execution["custody_epoch"])
+    new_state["execution"] = terminal_execution
     snapshot = build_snapshot(root, state_override=new_state)
 
     replacements: dict[str, bytes] = {
@@ -1013,6 +1549,10 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--owner-session-timestamp")
     parser.add_argument("--branch")
     parser.add_argument("--base-ref", required=True)
+    parser.add_argument("--expected-custody-epoch", type=int)
+    parser.add_argument("--recovery-observed-at")
+    parser.add_argument("--recovery-after-seconds", type=int, default=3600)
+    parser.add_argument("--recovery-policy", choices=["MANUAL_ONLY", "TAKEOVER_AFTER_EXPIRY"], default="TAKEOVER_AFTER_EXPIRY")
     parser.add_argument(
         "--recovery-takeover",
         action="store_true",
@@ -1048,12 +1588,21 @@ def main() -> None:
     activate = sub.add_parser("activate-lease")
     _add_start_args(activate)
 
+    renew = sub.add_parser("renew-lease")
+    renew.add_argument("--tx-id", required=True)
+    renew.add_argument("--event-id", required=True)
+    renew.add_argument("--actor", required=True)
+    renew.add_argument("--expected-custody-epoch", type=int, required=True)
+    renew.add_argument("--base-ref", required=True)
+    renew.add_argument("--renewed-at")
+
     release = sub.add_parser("release-lease")
     release.add_argument("--tx-id", required=True)
     release.add_argument("--event-id", required=True)
     release.add_argument("--actor", required=True)
     release.add_argument("--reason", choices=["HANDOFF", "ADMINISTRATIVE"], default="HANDOFF")
     release.add_argument("--base-ref")
+    release.add_argument("--expected-custody-epoch", type=int)
 
     checkpoint = sub.add_parser("checkpoint")
     checkpoint.add_argument("--tx-id", required=True)
@@ -1061,12 +1610,14 @@ def main() -> None:
     checkpoint.add_argument("--actor", required=True)
     checkpoint.add_argument("--checkpoint", required=True)
     checkpoint.add_argument("--base-ref", required=True)
+    checkpoint.add_argument("--expected-custody-epoch", type=int)
     accept_cp = sub.add_parser("accept-checkpoint")
     accept_cp.add_argument("--tx-id", required=True)
     accept_cp.add_argument("--event-id", required=True)
     accept_cp.add_argument("--actor", required=True)
     accept_cp.add_argument("--checkpoint", required=True)
     accept_cp.add_argument("--base-ref", required=True)
+    accept_cp.add_argument("--expected-custody-epoch", type=int)
 
     control = sub.add_parser("resolve-control")
     control.add_argument("--tx-id", required=True)
@@ -1075,6 +1626,7 @@ def main() -> None:
     control.add_argument("--control-id", required=True)
     control.add_argument("--evidence", action="append", default=[])
     control.add_argument("--base-ref", required=True)
+    control.add_argument("--expected-custody-epoch", type=int)
 
     roadmap = sub.add_parser("reconcile-roadmap")
     roadmap.add_argument("--tx-id", required=True)
@@ -1082,12 +1634,15 @@ def main() -> None:
     roadmap.add_argument("--actor", required=True)
     roadmap.add_argument("--reconciliation", required=True)
     roadmap.add_argument("--base-ref", required=True)
+    roadmap.add_argument("--expected-custody-epoch", type=int)
+    roadmap.add_argument("--change-delta")
 
     handover = sub.add_parser("handover")
     handover.add_argument("--tx-id", required=True)
     handover.add_argument("--event-id", required=True)
     handover.add_argument("--actor", required=True)
     handover.add_argument("--base-ref", required=True)
+    handover.add_argument("--expected-custody-epoch", type=int)
 
     local = sub.add_parser("local-execution")
     local.add_argument("--tx-id", required=True)
@@ -1096,6 +1651,7 @@ def main() -> None:
     local.add_argument("--base-ref", required=True)
     local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
     local.add_argument("--command", action="append", default=[], help="Exact local command to run; repeat for multiple commands.")
+    local.add_argument("--expected-custody-epoch", type=int)
 
     local_result = sub.add_parser("local-execution-result")
     local_result.add_argument("--tx-id", required=True)
@@ -1114,6 +1670,52 @@ def main() -> None:
     close.add_argument("--event-id", required=True)
     close.add_argument("--actor", required=True)
     close.add_argument("--parent-issue-observation")
+    close.add_argument("--expected-custody-epoch", type=int)
+
+    recovery_done = sub.add_parser("recovery-reconstructed")
+    recovery_done.add_argument("--tx-id", required=True)
+    recovery_done.add_argument("--event-id", required=True)
+    recovery_done.add_argument("--actor", required=True)
+    recovery_done.add_argument("--expected-custody-epoch", type=int, required=True)
+    recovery_done.add_argument("--evidence", action="append", default=[])
+
+    change_record = sub.add_parser("record-change")
+    change_record.add_argument("--tx-id", required=True)
+    change_record.add_argument("--event-id", required=True)
+    change_record.add_argument("--actor", required=True)
+    change_record.add_argument("--change-id", required=True)
+    change_record.add_argument("--statement", required=True)
+    change_record.add_argument("--basis", action="append", default=[])
+    change_record.add_argument("--process", choices=["PROMPT_1", "OWNER"], default="PROMPT_1")
+    change_record.add_argument("--expected-custody-epoch", type=int)
+
+    change_verify = sub.add_parser("verify-change")
+    change_verify.add_argument("--tx-id", required=True)
+    change_verify.add_argument("--event-id", required=True)
+    change_verify.add_argument("--actor", required=True)
+    change_verify.add_argument("--change-id", required=True)
+    change_verify.add_argument("--status", choices=["CONFIRMED", "REJECTED"], required=True)
+    change_verify.add_argument("--evidence", action="append", default=[])
+    change_verify.add_argument("--falsifier", action="append", default=[])
+    change_verify.add_argument("--expected-custody-epoch", type=int)
+
+    change_propose = sub.add_parser("propose-change")
+    change_propose.add_argument("--tx-id", required=True)
+    change_propose.add_argument("--event-id", required=True)
+    change_propose.add_argument("--actor", required=True)
+    change_propose.add_argument("--change-id", required=True)
+    change_propose.add_argument("--proposal", required=True)
+    change_propose.add_argument("--authorization-required", choices=["NONE", "OWNER"], required=True)
+    change_propose.add_argument("--expected-custody-epoch", type=int)
+
+    change_authorize = sub.add_parser("authorize-change")
+    change_authorize.add_argument("--tx-id", required=True)
+    change_authorize.add_argument("--event-id", required=True)
+    change_authorize.add_argument("--actor", required=True)
+    change_authorize.add_argument("--change-id", required=True)
+    change_authorize.add_argument("--decision", choices=["GRANT", "DENY"], required=True)
+    change_authorize.add_argument("--owner-utterance-digest", required=True)
+    change_authorize.add_argument("--owner-session-timestamp", required=True)
 
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
@@ -1175,6 +1777,20 @@ def main() -> None:
             branch=args.branch,
             base_ref=args.base_ref,
             recovery_takeover=args.recovery_takeover,
+            expected_custody_epoch=args.expected_custody_epoch,
+            recovery_observed_at=args.recovery_observed_at,
+            recovery_after_seconds=args.recovery_after_seconds,
+            recovery_policy=args.recovery_policy,
+        )
+    elif args.command == "renew-lease":
+        result = renew_lease(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            expected_custody_epoch=args.expected_custody_epoch,
+            base_ref=args.base_ref,
+            renewed_at=args.renewed_at,
         )
     elif args.command == "release-lease":
         result = release_lease(
@@ -1184,6 +1800,7 @@ def main() -> None:
             actor=args.actor,
             reason=args.reason,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command in {"checkpoint", "accept-checkpoint"}:
         result = accept_checkpoint(
@@ -1193,6 +1810,7 @@ def main() -> None:
             actor=args.actor,
             checkpoint_path=Path(args.checkpoint),
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "resolve-control":
         result = resolve_control(
@@ -1203,6 +1821,7 @@ def main() -> None:
             control_id=args.control_id,
             evidence=args.evidence,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "reconcile-roadmap":
         result = reconcile_roadmap(
@@ -1212,6 +1831,8 @@ def main() -> None:
             actor=args.actor,
             reconciliation_path=Path(args.reconciliation),
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
+            change_delta_path=Path(args.change_delta) if args.change_delta else None,
         )
     elif args.command == "handover":
         result = publish_handover(
@@ -1220,6 +1841,7 @@ def main() -> None:
             event_id=args.event_id,
             actor=args.actor,
             base_ref=args.base_ref,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "local-execution":
         result = export_local_execution(
@@ -1230,6 +1852,7 @@ def main() -> None:
             base_ref=args.base_ref,
             mode=args.mode,
             commands=args.command,
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "local-execution-result":
         result = accept_local_execution_result(
@@ -1238,6 +1861,61 @@ def main() -> None:
             event_id=args.event_id,
             actor=args.actor,
             result_path=Path(args.result),
+        )
+    elif args.command == "recovery-reconstructed":
+        result = record_recovery_reconstructed(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            evidence=args.evidence,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "record-change":
+        result = record_change_hypothesis(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            statement=args.statement,
+            basis=args.basis,
+            process=args.process,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "verify-change":
+        result = verify_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            status=args.status,
+            evidence=args.evidence,
+            falsifiers_checked=args.falsifier,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "propose-change":
+        result = propose_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            proposal_path=Path(args.proposal),
+            authorization_required=args.authorization_required,
+            expected_custody_epoch=args.expected_custody_epoch,
+        )
+    elif args.command == "authorize-change":
+        result = authorize_change_delta(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            change_id=args.change_id,
+            granted=args.decision == "GRANT",
+            direct_utterance_digest=args.owner_utterance_digest,
+            session_timestamp=args.owner_session_timestamp,
         )
     elif args.command == "sync-delivery":
         result = sync_delivery(
@@ -1258,6 +1936,7 @@ def main() -> None:
                 if args.parent_issue_observation
                 else None
             ),
+            expected_custody_epoch=args.expected_custody_epoch,
         )
     print(f"{result['id']}: {result['status']}")
     if args.command == "local-execution":

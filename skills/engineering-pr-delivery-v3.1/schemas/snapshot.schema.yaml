@@ -52,6 +52,7 @@ properties:
       ep: {type: [string, 'null']}
       lease: {type: [string, 'null']}
       executor: {type: [string, 'null']}
+      custody_epoch: {type: [integer, 'null'], minimum: 0}
   scope:
     type: object
     additionalProperties: false

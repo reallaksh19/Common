@@ -131,3 +131,64 @@ SPLIT follows the same rule but retains governed work in both issues. SUPERSEDE 
 The Handover ledger must be reconstructable without a final action from the disappearing agent. The next process derives EP status from durable EP/lease/checkpoint/event state. If an EP is no longer current/owned and has no accepted completion checkpoint, the projection exposes `RECOVERY_REQUIRED` rather than hiding it.
 
 This projection does not itself decide process liveness; it makes loss of custody visible once canonical custody state is updated/recovered.
+
+## Custody and continuation protocol
+
+The Relay issue is a current case file, not custody authority. New native custody uses a monotonic epoch plus persisted liveness metadata. An active mutation carrying an old epoch is rejected after a successor takeover.
+
+```text
+ACTIVE epoch 17 / agent-A
+        |
+        | clean frozen handover accepted
+        v
+ACTIVE epoch 18 / agent-B / HANDOFF
+
+or
+
+ACTIVE epoch 17 / agent-A
+        |
+        | no valid handover + recovery eligible
+        v
+RECOVERY_STARTED
+        |
+        v
+ACTIVE epoch 18 / agent-B / RECOVERY
+        |
+        v
+RECOVERY_RECONSTRUCTED
+```
+
+No background monitor is required. Time-based recovery is evaluated only when takeover is requested. A platform-provided authoritative termination signal may be used in future, but silence alone is never treated as proof while a non-expired lease remains valid.
+
+`HANDOVER_PUBLISHED` means a continuation packet is available. `HANDOVER_ACCEPTED` means a successor actually assumed custody. The Relay projection may therefore expose `HANDOFF_PENDING` without claiming responsibility moved.
+
+## Continuous-improvement record
+
+A Prompt-1 challenge is persisted as a Change Delta hypothesis rather than immediately editing roadmap/provider truth. Prompt 2 supplies verification/rejection evidence, Prompt 2.5 supplies the proposed issue/roadmap disposition, and required Owner authority is recorded independently. Only the authorized reconciliation mutates the roadmap and marks the Change Delta APPLIED.
+
+This preserves:
+
+- the previous governing basis;
+- what was independently challenged;
+- verification evidence/falsifiers;
+- the proposed NO_CHANGE/UPDATE/LINK/TRANSFER/SPLIT/SUPERSEDE/CLOSE consequence;
+- who/what authorized an intent-bearing change;
+- the before/after roadmap revision and application event.
+
+The Relay issue shows the active non-applied Change Delta as current coordination information. It does not make the proposal authoritative.
+
+## Exactly one Relay case file
+
+Provider synchronization owns Relay-case-file materialization:
+
+1. read the parent issue's native sub-issues;
+2. identify matching Relay issues using the deterministic case marker/title;
+3. fail closed if more than one matches;
+4. reuse the sole existing Relay issue when present;
+5. otherwise create and attach one;
+6. render the current Relay envelope;
+7. update only Relay-managed blocks;
+8. read both issues back and persist provider readback.
+
+A transfer/split/supersession target is a new governed parent and therefore receives its own Relay issue. The source Relay issue remains historical and preserves lineage.
+

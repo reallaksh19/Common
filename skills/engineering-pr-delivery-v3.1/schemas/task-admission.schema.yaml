@@ -39,6 +39,8 @@ properties:
       qualification: {type: [object, 'null']}
       owner_basis: {type: [object, 'null']}
       branch: {type: [string, 'null']}
+      recovery_after_seconds: {type: integer, minimum: 60}
+      recovery_policy: {enum: [MANUAL_ONLY, TAKEOVER_AFTER_EXPIRY]}
   delivery:
     type: object
     additionalProperties: false

@@ -1,0 +1,90 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, id, authority, hypothesis, verification, proposal, authorization, application]
+properties:
+  schema_version: {const: relay-v3.1-change-delta}
+  id: {type: string, pattern: '^CHANGE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  authority: {const: GOVERNED_CHANGE_DELTA}
+  hypothesis:
+    type: object
+    additionalProperties: false
+    required: [statement, discovered_by, basis]
+    properties:
+      statement: {type: string, minLength: 1}
+      discovered_by:
+        type: object
+        additionalProperties: false
+        required: [process, actor]
+        properties:
+          process: {enum: [PROMPT_1, OWNER]}
+          actor: {type: string, minLength: 1}
+      basis:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+  verification:
+    type: object
+    additionalProperties: false
+    required: [status, verified_by, evidence, falsifiers_checked]
+    properties:
+      status: {enum: [PENDING, CONFIRMED, REJECTED, UNKNOWN]}
+      verified_by:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [process, actor]
+        properties:
+          process: {const: PROMPT_2}
+          actor: {type: string, minLength: 1}
+      evidence:
+        type: array
+        items: {type: string, minLength: 1}
+      falsifiers_checked:
+        type: array
+        items: {type: string, minLength: 1}
+  proposal:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [disposition, source, retain, transfer, proposed_target, rationale]
+    properties:
+      disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE]}
+      source:
+        type: object
+        additionalProperties: false
+        required: [work_package, parent_issue]
+        properties:
+          work_package: {type: [string, 'null']}
+          parent_issue: {type: [integer, 'null'], minimum: 1}
+      retain: {type: object, additionalProperties: true}
+      transfer: {type: object, additionalProperties: true}
+      proposed_target:
+        type: [object, 'null']
+        additionalProperties: true
+      rationale: {type: string, minLength: 1}
+  authorization:
+    type: object
+    additionalProperties: false
+    required: [required, status, owner_basis]
+    properties:
+      required: {enum: [UNKNOWN, NONE, OWNER]}
+      status: {enum: [PENDING, GRANTED, DENIED, NOT_REQUIRED]}
+      owner_basis:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [direct_utterance_digest, session_timestamp]
+        properties:
+          direct_utterance_digest: {type: string, minLength: 1}
+          session_timestamp: {type: string, format: date-time}
+  application:
+    type: object
+    additionalProperties: false
+    required: [status, expected_roadmap_revision, expected_state_digest, roadmap_before, roadmap_after, source_issue, target_issue, event]
+    properties:
+      status: {enum: [NOT_APPLIED, APPLIED, DEFERRED]}
+      expected_roadmap_revision: {type: string, minLength: 1}
+      expected_state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      roadmap_before: {type: [string, 'null']}
+      roadmap_after: {type: [string, 'null']}
+      source_issue: {type: [integer, 'null'], minimum: 1}
+      target_issue: {type: [integer, 'null'], minimum: 1}
+      event: {type: [string, 'null']}
+additionalProperties: false

@@ -254,6 +254,7 @@ def build(
             "ep": ep_id,
             "lease": lease_id,
             "executor": executor,
+            "custody_epoch": execution.get("custody_epoch"),
         },
         "scope": {
             "allowed_writes": list((scope or {}).get("write") or []),

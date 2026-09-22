@@ -15,11 +15,20 @@ from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 RECORD_TYPES = {
     "EP_CREATED",
     "LEASE_GRANTED",
+    "LEASE_RENEWED",
     "LEASE_RELEASED",
     "LEASE_REVOKED",
     "CHECKPOINT_ACCEPTED",
     "HANDOVER_PLANNED",
     "HANDOVER_PUBLISHED",
+    "HANDOVER_ACCEPTED",
+    "RECOVERY_STARTED",
+    "RECOVERY_RECONSTRUCTED",
+    "CHANGE_HYPOTHESIS_RECORDED",
+    "CHANGE_VERIFIED",
+    "CHANGE_REJECTED",
+    "CHANGE_DELTA_PROPOSED",
+    "CHANGE_AUTHORIZED",
     "LOCAL_EXECUTION_EXPORTED",
     "LOCAL_EXECUTION_RETURNED",
     "ROADMAP_RECONCILED",
@@ -94,6 +103,7 @@ def _lease_continuation(
     lease: dict[str, Any] | None,
     events: list[dict[str, Any]],
     *,
+    ep_id: str | None = None,
     fallback_recovery: bool = False,
 ) -> str:
     if fallback_recovery:
@@ -101,14 +111,19 @@ def _lease_continuation(
     lease_id = str((lease or {}).get("id") or "")
     if not lease_id:
         return "UNKNOWN"
-    for event in reversed(events):
+    grant_index = None
+    continuation = "NEW"
+    for index, event in enumerate(events):
         if event.get("type") != "LEASE_GRANTED" or str(event.get("subject")) != lease_id:
             continue
+        grant_index = index
         value = str((event.get("details") or {}).get("continuation") or "")
-        if value in {"NEW", "HANDOFF", "RECOVERY"}:
-            return value
-        return "NEW"
-    return "NEW"
+        continuation = value if value in {"NEW", "HANDOFF", "RECOVERY"} else "NEW"
+    if continuation == "NEW" and ep_id and grant_index is not None:
+        for event in events[grant_index + 1:]:
+            if event.get("type") == "HANDOVER_PUBLISHED" and str(event.get("subject")) == str(ep_id):
+                return "HANDOFF_PENDING"
+    return continuation
 
 
 def _ep_status(
@@ -121,12 +136,12 @@ def _ep_status(
     events: list[dict[str, Any]],
 ) -> tuple[str, str]:
     if ep_id == current_ep and lease and lease.get("id") == current_lease and lease.get("state") == "ACTIVE":
-        return "ACTIVE", _lease_continuation(lease, events)
+        return "ACTIVE", _lease_continuation(lease, events, ep_id=ep_id)
     if _checkpoint_complete(checkpoint):
-        return "COMPLETE", _lease_continuation(lease, events)
+        return "COMPLETE", _lease_continuation(lease, events, ep_id=ep_id)
     if lease and lease.get("state") in {"RELEASED", "REVOKED", "INVALIDATED"}:
         return "RECOVERY_REQUIRED", "RECOVERY"
-    return "UNKNOWN", _lease_continuation(lease, events)
+    return "UNKNOWN", _lease_continuation(lease, events, ep_id=ep_id)
 
 
 def build(
@@ -139,7 +154,15 @@ def build(
     parent = task.get("parent_issue") or {}
     ledger_ref = parent.get("handover_ledger")
     if not isinstance(ledger_ref, dict):
-        raise ProjectionError("parent issue observation must identify one handover_ledger issue")
+        provider_status_path = root / "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml"
+        if provider_status_path.exists():
+            provider_status = load_yaml(provider_status_path)
+            observed_parent = provider_status.get("parent") or {}
+            if (
+                observed_parent.get("repository") == parent.get("repository")
+                and observed_parent.get("issue_number") == parent.get("number")
+            ):
+                ledger_ref = provider_status.get("handover")
 
     repository = str(parent.get("repository") or "")
     number = parent.get("number")
@@ -202,6 +225,7 @@ def build(
         checkpoint_id = (checkpoint or {}).get("id")
         lease_id = (lease or {}).get("id")
         executor = ((lease or {}).get("executor") or {}).get("id")
+        custody_epoch = ((lease or {}).get("custody") or {}).get("epoch")
         basis = [ep_paths[ep_id]]
         if checkpoint_id:
             basis.append(f"relay/CHECKPOINTS/{checkpoint_id}.yaml")
@@ -216,6 +240,7 @@ def build(
             "checkpoint": checkpoint_id,
             "lease": lease_id,
             "executor": executor,
+            "custody_epoch": custody_epoch,
             "basis": basis,
         })
 
@@ -229,6 +254,7 @@ def build(
             "checkpoint": None,
             "lease": current_lease,
             "executor": (task.get("execution") or {}).get("executor"),
+            "custody_epoch": current_execution.get("custody_epoch"),
         }
 
     offloads: list[dict[str, Any]] = []
@@ -257,6 +283,39 @@ def build(
             "basis": [str(x) for x in event.get("basis") or []],
         })
 
+    change_rows = []
+    for path, delta in _load_yaml_files(root / "relay/CHANGES"):
+        if delta.get("schema_version") != "relay-v3.1-change-delta":
+            continue
+        source_issue = ((delta.get("application") or {}).get("source_issue"))
+        if source_issue in {None, number}:
+            change_rows.append((path, delta))
+    active_change = None
+    for path, delta in change_rows:
+        if (delta.get("application") or {}).get("status") != "APPLIED":
+            active_change = {
+                "id": delta.get("id"),
+                "path": str(path.relative_to(root)),
+                "verification": (delta.get("verification") or {}).get("status"),
+                "disposition": ((delta.get("proposal") or {}).get("disposition") if isinstance(delta.get("proposal"), dict) else None),
+                "authorization": (delta.get("authorization") or {}).get("status"),
+                "application": (delta.get("application") or {}).get("status"),
+            }
+
+    accepted_checkpoint_id = (state.get("accepted") or {}).get("checkpoint")
+    accepted_checkpoint = None
+    if accepted_checkpoint_id:
+        accepted_path = root / "relay/CHECKPOINTS" / f"{accepted_checkpoint_id}.yaml"
+        if accepted_path.exists():
+            accepted_checkpoint = load_yaml(accepted_path)
+    accepted_head = ((accepted_checkpoint or {}).get("material_result") or {}).get("head")
+    working_head = (snapshot.get("material") or {}).get("head")
+    task_checklist = list((task.get("current_task_progress") or {}).get("checklist") or [])
+    completed = [row.get("id") for row in task_checklist if row.get("state") == "COMPLETE"]
+    partial = [row.get("id") for row in task_checklist if row.get("state") == "PARTIAL"]
+    remaining = [row.get("id") for row in task_checklist if row.get("state") not in {"COMPLETE", "PARTIAL"}]
+    negative = list(task.get("negative_knowledge") or [])
+
     ledger = {
         "schema_version": "relay-v3.1-handover-ledger",
         "authority": "DERIVED_PROVIDER_PROJECTION",
@@ -274,16 +333,21 @@ def build(
             "disposition": str(parent.get("disposition") or "UNKNOWN"),
             "relationships": list(parent.get("relationships") or []),
         },
-        "handover_issue": {
-            "repository": str(ledger_ref.get("repository")),
-            "number": int(ledger_ref.get("issue_number")),
-            "url": str(ledger_ref.get("url")),
-        },
+        "handover_issue": (
+            {
+                "repository": str(ledger_ref.get("repository")),
+                "number": int(ledger_ref.get("issue_number")),
+                "url": str(ledger_ref.get("url")),
+            }
+            if isinstance(ledger_ref, dict)
+            else None
+        ),
         "current_frontier": {
             "ep": frontier.get("ep"),
             "work_package": frontier.get("work_package"),
             "lease": frontier.get("lease"),
             "executor": frontier.get("executor"),
+            "custody_epoch": frontier.get("custody_epoch"),
             "status": frontier.get("status") or "UNKNOWN",
             "continuation": frontier.get("continuation") or "UNKNOWN",
         },
@@ -292,6 +356,36 @@ def build(
         "pending_items": list(task.get("pending_items") or []),
         "known_issues": list(task.get("known_issues") or []),
         "offloads": offloads,
+        "accepted_truth": {
+            "checkpoint": accepted_checkpoint_id,
+            "accepted_head": accepted_head,
+            "acceptance": list((task.get("current_task_progress") or {}).get("checklist") or []),
+        },
+        "material": {
+            "accepted_head": accepted_head,
+            "working_head": working_head,
+            "status": (
+                "UNACCEPTED_DELTA_PRESENT"
+                if accepted_head and working_head and accepted_head != working_head
+                else "AT_ACCEPTED_HEAD"
+                if accepted_head and working_head and accepted_head == working_head
+                else "UNKNOWN"
+            ),
+        },
+        "negative_knowledge": {
+            "rejected_approaches": negative,
+            "accepted_do_not_reopen": list(((task.get("preserve") or {}).get("accepted_do_not_reopen") or [])),
+        },
+        "accountability": {
+            "scope_received": [row.get("id") for row in task_checklist],
+            "completed": completed,
+            "partial": partial,
+            "remaining": remaining,
+            "acceptance_movement": {"checkpoint": accepted_checkpoint_id},
+            "value_added": list((task.get("improvement_vs_original_issue") or {}).get("items") or []),
+            "continuation_reason": frontier.get("continuation") or "UNKNOWN",
+        },
+        "active_change": active_change,
         "delivery": dict(snapshot.get("delivery") or {}),
         "records": records,
         "next": {
@@ -307,7 +401,7 @@ def build(
 
 def render_ledger(ledger: dict[str, Any]) -> str:
     parent = ledger["parent_issue"]
-    handover = ledger["handover_issue"]
+    handover = ledger.get("handover_issue") or {}
     frontier = ledger["current_frontier"]
     progress = ledger["parent_progress"]
     lines = [
@@ -318,7 +412,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "## Parent",
         f"- Parent: {parent['repository']}#{parent['number']} — {parent['title']}",
         f"- Parent URL: {parent['url']}",
-        f"- Handover ledger: {handover['repository']}#{handover['number']} ({handover['url']})",
+        f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
         f"- Issue disposition: {parent['disposition']}",
         "",
         "## Current frontier",
@@ -328,6 +422,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         f"- Continuation: {frontier.get('continuation')}",
         f"- Lease: {frontier.get('lease') or 'NONE'}",
         f"- Executor: {frontier.get('executor') or 'NONE'}",
+        f"- Custody epoch: {frontier.get('custody_epoch') if frontier.get('custody_epoch') is not None else 'LEGACY/UNKNOWN'}",
         "",
         "## Parent progress",
         f"- Complete={progress.get('complete', 0)}; partial={progress.get('partial', 0)}; pending={progress.get('pending', 0)}; blocked={progress.get('blocked', 0)}; deferred={progress.get('deferred', 0)}; unknown={progress.get('unknown', 0)}; total={progress.get('total', 0)}",
@@ -358,6 +453,28 @@ def render_ledger(ledger: dict[str, Any]) -> str:
     section("Pending", ledger["pending_items"])
     section("Known issues", ledger["known_issues"])
     section("Local / delegated work", ledger["offloads"])
+    lines += [
+        "",
+        "## Accepted engineering truth",
+        f"- Checkpoint: {(ledger.get('accepted_truth') or {}).get('checkpoint') or 'none'}",
+        f"- Accepted head: {(ledger.get('accepted_truth') or {}).get('accepted_head') or 'unknown'}",
+        "",
+        "## Current material",
+        f"- Working head: {(ledger.get('material') or {}).get('working_head') or 'unknown'}",
+        f"- Acceptance state: {(ledger.get('material') or {}).get('status') or 'UNKNOWN'}",
+        "",
+        "## Negative knowledge",
+        f"- Rejected/failed: {len((ledger.get('negative_knowledge') or {}).get('rejected_approaches') or [])}",
+        f"- Accepted do-not-reopen: {len((ledger.get('negative_knowledge') or {}).get('accepted_do_not_reopen') or [])}",
+        "",
+        "## Accountability",
+        f"- Completed: {(ledger.get('accountability') or {}).get('completed') or []}",
+        f"- Partial: {(ledger.get('accountability') or {}).get('partial') or []}",
+        f"- Remaining: {(ledger.get('accountability') or {}).get('remaining') or []}",
+        "",
+        "## Current change activity",
+        f"- {(ledger.get('active_change') or {}).get('id') or 'none'} — verification={(ledger.get('active_change') or {}).get('verification') or '-'}; authorization={(ledger.get('active_change') or {}).get('authorization') or '-'}; application={(ledger.get('active_change') or {}).get('application') or '-'}",
+    ]
 
     delivery = ledger.get("delivery") or {}
     lines += [
@@ -390,7 +507,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
 
 def render_parent_summary(ledger: dict[str, Any]) -> str:
     parent = ledger["parent_issue"]
-    handover = ledger["handover_issue"]
+    handover = ledger.get("handover_issue") or {}
     frontier = ledger["current_frontier"]
     progress = ledger["parent_progress"]
     active_offloads = [
@@ -401,7 +518,7 @@ def render_parent_summary(ledger: dict[str, Any]) -> str:
     return "\n".join([
         "## Relay",
         "",
-        f"- Handover ledger: {handover['repository']}#{handover['number']} ({handover['url']})",
+        f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
         f"- Current frontier: {frontier.get('ep') or 'NONE'} — {frontier.get('status')} / {frontier.get('continuation')}",
         f"- Progress: complete={progress.get('complete', 0)}, partial={progress.get('partial', 0)}, pending={progress.get('pending', 0)}, blocked={progress.get('blocked', 0)}, total={progress.get('total', 0)}",
         f"- Open pending: {len(ledger['pending_items'])}",

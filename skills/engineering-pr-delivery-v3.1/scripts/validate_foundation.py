@@ -115,6 +115,13 @@ def validate_authority(repo_root: Path) -> list[str]:
                 errors.append("LEASE.basis.ep_id does not match STATE.execution.ep")
             if execution.get("lifecycle") == "ACTIVE" and lease.get("state") != "ACTIVE":
                 errors.append("ACTIVE STATE requires referenced LEASE.state ACTIVE")
+            state_epoch = execution.get("custody_epoch")
+            lease_epoch = ((lease.get("custody") or {}).get("epoch"))
+            if state_epoch is not None:
+                if lease_epoch is None:
+                    errors.append("epoch-aware STATE requires referenced LEASE.custody.epoch")
+                elif int(state_epoch) != int(lease_epoch):
+                    errors.append("LEASE.custody.epoch does not match STATE.execution.custody_epoch")
 
     checkpoint_id = _safe_id((state.get("accepted") or {}).get("checkpoint"), "CP-", "STATE.accepted.checkpoint", errors)
     if checkpoint_id:
@@ -167,6 +174,8 @@ def validate(repo_root: Path) -> list[str]:
             for key in ("lifecycle", "ep", "lease"):
                 if sexec.get(key) != execution.get(key):
                     errors.append(f"SNAPSHOT.execution.{key} disagrees with STATE authority")
+            if execution.get("custody_epoch") is not None and sexec.get("custody_epoch") != execution.get("custody_epoch"):
+                errors.append("SNAPSHOT.execution.custody_epoch disagrees with STATE authority")
             if isinstance(ep, dict):
                 if sexec.get("work_package") != ep.get("work_package"):
                     errors.append("SNAPSHOT.execution.work_package disagrees with EP authority")
