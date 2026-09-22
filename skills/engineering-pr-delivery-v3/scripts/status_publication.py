@@ -189,6 +189,26 @@ def _diff_list(before: list[str], after: list[str]) -> int:
     return len(set(before) ^ set(after))
 
 
+def _derived_base_ref(root: Path) -> str | None:
+    state_path = root / "relay/STATE.yaml"
+    if not state_path.exists():
+        return None
+    state = load_yaml(state_path)
+    ep_id = ((state.get("execution") or {}).get("ep"))
+    if not ep_id:
+        cp_id = ((state.get("accepted") or {}).get("checkpoint"))
+        if cp_id:
+            checkpoint = load_yaml(root / "relay/CHECKPOINTS" / f"{cp_id}.yaml")
+            ep_id = checkpoint.get("ep")
+    if not ep_id:
+        return None
+    ep_path = root / "relay/WORK" / f"{ep_id}.yaml"
+    if not ep_path.exists():
+        return None
+    ep = load_yaml(ep_path)
+    return str((ep.get("basis") or {}).get("material_base") or "") or None
+
+
 def evaluate(
     root: Path,
     *,
@@ -196,6 +216,7 @@ def evaluate(
     parent_issue_observation: dict[str, Any] | None = None,
     signals_path: str | None = None,
     action: str | None = None,
+    base_ref: str | None = None,
 ) -> dict[str, Any]:
     root = root.resolve()
     policy, resolved_policy = load_policy(root, policy_path)
@@ -211,7 +232,11 @@ def evaluate(
             "cursor": None,
         }
 
-    task = build_task(root, parent_issue_observation=parent_issue_observation)
+    resolved_base_ref = base_ref or _derived_base_ref(root)
+    try:
+        task = build_task(root, resolved_base_ref, parent_issue_observation)
+    except Exception as exc:
+        raise StatusPublicationError(f"cannot build task snapshot for status publication: {exc}") from exc
     ep_id = str((task.get("identity") or {}).get("ep") or "")
     if not ep_id.startswith("EP-"):
         return {
@@ -379,6 +404,7 @@ def apply(
     parent_issue_observation: dict[str, Any] | None = None,
     signals_path: str | None = None,
     action: str | None = None,
+    base_ref: str | None = None,
     note: str | None = None,
 ) -> dict[str, Any]:
     result = evaluate(
@@ -387,6 +413,7 @@ def apply(
         parent_issue_observation=parent_issue_observation,
         signals_path=signals_path,
         action=action,
+        base_ref=base_ref,
     )
     payload = result.pop("_cursor_payload", None)
     if payload is None:
@@ -410,6 +437,7 @@ def main() -> None:
     parser.add_argument("--parent-issue-observation")
     parser.add_argument("--signals")
     parser.add_argument("--action", choices=sorted(ACTION_TRIGGER))
+    parser.add_argument("--base-ref")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--note")
     args = parser.parse_args()
@@ -422,6 +450,7 @@ def main() -> None:
         parent_issue_observation=parent,
         signals_path=args.signals,
         action=args.action,
+        base_ref=args.base_ref,
         **({"note": args.note} if args.apply else {}),
     )
     result.pop("_cursor_payload", None)

@@ -165,6 +165,7 @@ def evaluate(
                 root,
                 policy_path=str(publication_policy),
                 action=action if action != "MATERIAL_WRITE" else None,
+                base_ref=base_ref,
             )
         except StatusPublicationError as exc:
             reasons.append("STATUS_PUBLICATION_INVALID")

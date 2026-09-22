@@ -39,7 +39,7 @@ The cursor records the last published material/task projection, not accepted eng
 ## Evaluate
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/status_publication.py <repo-root>
+python skills/engineering-pr-delivery-v3/scripts/status_publication.py <repo-root> --base-ref origin/main
 ```
 
 A due result exits non-zero and explains the exact triggers and score.
