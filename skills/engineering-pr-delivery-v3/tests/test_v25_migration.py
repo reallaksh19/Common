@@ -305,6 +305,24 @@ class V25MigrationTests(unittest.TestCase):
             self.assertFalse(readiness["ready"], readiness)
             self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
 
+    def test_forged_ready_continuity_report_cannot_clear_cutover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            make_cutover_ready(root)
+            path = root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml"
+            report = load_yaml(path)
+            report["projections"]["task_snapshot_digest"] = "sha256:" + ("c" * 64)
+            report["evidence"] = ["Forged but schema-valid continuity report."]
+            dump(path, report)
+
+            readiness = assess(root)
+            self.assertFalse(readiness["ready"], readiness)
+            self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
+            self.assertTrue(any("intelligence_continuity_recomputed=PASS" in item for item in readiness["basis"]))
+            self.assertTrue(any("intelligence_continuity_report=FAIL" in item for item in readiness["basis"]))
+
     def test_ready_cutover_requires_owner_basis_and_activates_v3(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
