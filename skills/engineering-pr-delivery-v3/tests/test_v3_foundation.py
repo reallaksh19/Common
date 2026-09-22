@@ -14,7 +14,7 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from v3lib import validate_schema
+from v3lib import canonical_digest, validate_schema
 from validate_foundation import validate
 
 
@@ -27,6 +27,19 @@ def dump(path: Path, value) -> None:
 
 
 def base_objects():
+    roadmap = {
+        "schema_version": "relay-v3-roadmap",
+        "revision": "RM-0012",
+        "title": "Synthetic V3 roadmap",
+        "owner": {
+            "outcome": "Simplify relay execution.",
+            "current_goal": "Land V3 foundation.",
+        },
+        "work_packages": [
+            {"id": "WP-TA-108", "title": "Accepted predecessor", "weight": 50, "state": "COMPLETE", "depends_on": []},
+            {"id": "WP-TA-109", "title": "Current work", "weight": 50, "state": "ACTIVE", "depends_on": ["WP-TA-108"]},
+        ],
+    }
     state = {
         "schema_version": "relay-v3",
         "roadmap": {"revision": "RM-0012", "path": "relay/ROADMAP/ROADMAP.yaml"},
@@ -120,7 +133,7 @@ def base_objects():
         "authority": "DERIVED_READ_MODEL",
         "generated_from": {
             "roadmap_revision": "RM-0012",
-            "state_digest": DIGEST,
+            "state_digest": canonical_digest(state),
             "material_basis": {
                 "head": "1234567890abc",
                 "tree_digest": DIGEST,
@@ -145,7 +158,7 @@ def base_objects():
         "scope": {
             "allowed_writes": ["skills/engineering-pr-delivery-v3/**"],
             "protected": ["skills/three-pass-prompt-generator/**"],
-            "prohibited": ["Do not switch default protocol."],
+            "prohibited": ["Do not make V3 the default protocol in this slice."],
         },
         "material": {
             "base": "85e59a93d469",
@@ -160,17 +173,20 @@ def base_objects():
             "delivery_blockers": [],
             "informational": [],
         },
-        "delivery": {"issue": 418, "pr": None, "lifecycle": "NOT_REQUIRED", "merge_authorized": False},
+        "delivery": {"issue": None, "pr": None, "lifecycle": "NOT_REQUIRED", "merge_authorized": False},
         "next": {
-            "immediate_material_action": "Implement relay.can(action).",
+            "immediate_material_action": "Validate schemas.",
             "delivery_action": None,
-            "stop_conditions": ["Authority disagreement"],
+            "stop_conditions": ["Authority ambiguity"],
         },
         "handoff": {
             "zero_context_takeover_possible": True,
             "reconstruction_sources": [
+                "relay/ROADMAP/ROADMAP.yaml",
                 "relay/STATE.yaml",
+                "relay/CONTROLS/controls.yaml",
                 "relay/WORK/EP-TA-011.yaml",
+                "relay/LEASES/LEASE-TA-011-01.yaml",
                 "relay/CHECKPOINTS/CP-TA-010.yaml",
             ],
         },
@@ -185,11 +201,12 @@ def base_objects():
         "basis": ["Common#418"],
         "details": {},
     }
-    return state, ep, lease, checkpoint, controls, snapshot, event
+    return roadmap, state, ep, lease, checkpoint, controls, snapshot, event
 
 
 def materialize(root: Path):
-    state, ep, lease, checkpoint, controls, snapshot, event = base_objects()
+    roadmap, state, ep, lease, checkpoint, controls, snapshot, event = base_objects()
+    dump(root / "relay/ROADMAP/ROADMAP.yaml", roadmap)
     dump(root / "relay/STATE.yaml", state)
     dump(root / "relay/WORK/EP-TA-011.yaml", ep)
     dump(root / "relay/LEASES/LEASE-TA-011-01.yaml", lease)
@@ -197,7 +214,7 @@ def materialize(root: Path):
     dump(root / "relay/CONTROLS/controls.yaml", controls)
     dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", snapshot)
     (root / "relay/EVENTS.jsonl").write_text(json.dumps(event) + "\n", encoding="utf-8")
-    return state, ep, lease, checkpoint, controls, snapshot, event
+    return roadmap, state, ep, lease, checkpoint, controls, snapshot, event
 
 
 class V3FoundationTests(unittest.TestCase):
@@ -207,6 +224,14 @@ class V3FoundationTests(unittest.TestCase):
             materialize(root)
             self.assertEqual([], validate(root))
 
+    def test_missing_roadmap_is_authority_failure(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            (root / "relay/ROADMAP/ROADMAP.yaml").unlink()
+            errors = validate(root)
+            self.assertTrue(any("ROADMAP: cannot load" in item for item in errors), errors)
+
     def test_snapshot_disagreement_fails(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -215,6 +240,15 @@ class V3FoundationTests(unittest.TestCase):
             dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", snapshot)
             errors = validate(root)
             self.assertTrue(any("SNAPSHOT.execution.ep disagrees" in item for item in errors), errors)
+
+    def test_snapshot_state_digest_disagreement_fails(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            *_, snapshot, _ = materialize(root)
+            snapshot["generated_from"]["state_digest"] = DIGEST
+            dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", snapshot)
+            errors = validate(root)
+            self.assertTrue(any("state digest disagrees" in item for item in errors), errors)
 
     def test_control_cannot_block_and_permit_same_action(self):
         with tempfile.TemporaryDirectory() as td:
@@ -235,7 +269,7 @@ class V3FoundationTests(unittest.TestCase):
             self.assertTrue(any("both blocked and permitted" in item for item in errors), errors)
 
     def test_owner_override_cannot_grant_merge(self):
-        _, _, lease, *_ = base_objects()
+        _, _, _, lease, *_ = base_objects()
         lease = copy.deepcopy(lease)
         lease["admission"] = {
             "method": "OWNER_OVERRIDE",
@@ -258,14 +292,14 @@ class V3FoundationTests(unittest.TestCase):
         self.assertTrue(errors)
 
     def test_high_risk_ep_requires_independent_review(self):
-        _, ep, *_ = base_objects()
+        _, _, ep, *_ = base_objects()
         ep = copy.deepcopy(ep)
         ep["quality_policy"] = {"level": "HIGH_RISK", "independent_review": "OPTIONAL"}
         errors = validate_schema("ep", ep, "EP")
         self.assertTrue(errors)
 
     def test_idle_state_rejects_active_execution_pointers(self):
-        state, *_ = base_objects()
+        _, state, *_ = base_objects()
         state = copy.deepcopy(state)
         state["execution"]["lifecycle"] = "IDLE"
         errors = validate_schema("state", state, "STATE")
