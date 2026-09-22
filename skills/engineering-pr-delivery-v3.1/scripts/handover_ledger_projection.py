@@ -90,6 +90,27 @@ def _selected_lease(leases: list[dict[str, Any]]) -> dict[str, Any] | None:
     return leases[-1] if leases else None
 
 
+def _lease_continuation(
+    lease: dict[str, Any] | None,
+    events: list[dict[str, Any]],
+    *,
+    fallback_recovery: bool = False,
+) -> str:
+    if fallback_recovery:
+        return "RECOVERY"
+    lease_id = str((lease or {}).get("id") or "")
+    if not lease_id:
+        return "UNKNOWN"
+    for event in reversed(events):
+        if event.get("type") != "LEASE_GRANTED" or str(event.get("subject")) != lease_id:
+            continue
+        value = str((event.get("details") or {}).get("continuation") or "")
+        if value in {"NEW", "HANDOFF", "RECOVERY"}:
+            return value
+        return "NEW"
+    return "NEW"
+
+
 def _ep_status(
     ep_id: str,
     *,
@@ -97,14 +118,15 @@ def _ep_status(
     current_lease: str | None,
     checkpoint: dict[str, Any] | None,
     lease: dict[str, Any] | None,
+    events: list[dict[str, Any]],
 ) -> tuple[str, str]:
     if ep_id == current_ep and lease and lease.get("id") == current_lease and lease.get("state") == "ACTIVE":
-        return "ACTIVE", "CURRENT"
+        return "ACTIVE", _lease_continuation(lease, events)
     if _checkpoint_complete(checkpoint):
-        return "COMPLETE", "NONE"
+        return "COMPLETE", _lease_continuation(lease, events)
     if lease and lease.get("state") in {"RELEASED", "REVOKED", "INVALIDATED"}:
-        return "RECOVERY_REQUIRED", "RECOVERY_REQUIRED"
-    return "UNKNOWN", "UNKNOWN"
+        return "RECOVERY_REQUIRED", "RECOVERY"
+    return "UNKNOWN", _lease_continuation(lease, events)
 
 
 def build(
@@ -175,6 +197,7 @@ def build(
             current_lease=str(current_lease) if current_lease else None,
             checkpoint=checkpoint,
             lease=lease,
+            events=events,
         )
         checkpoint_id = (checkpoint or {}).get("id")
         lease_id = (lease or {}).get("id")
@@ -202,6 +225,7 @@ def build(
             "ep": current_ep,
             "work_package": (task.get("identity") or {}).get("work_package"),
             "status": "UNKNOWN",
+            "continuation": "UNKNOWN",
             "checkpoint": None,
             "lease": current_lease,
             "executor": (task.get("execution") or {}).get("executor"),
@@ -261,6 +285,7 @@ def build(
             "lease": frontier.get("lease"),
             "executor": frontier.get("executor"),
             "status": frontier.get("status") or "UNKNOWN",
+            "continuation": frontier.get("continuation") or "UNKNOWN",
         },
         "parent_progress": dict((task.get("parent_issue_progress") or {}).get("summary") or {}),
         "ep_index": ep_index,
@@ -300,6 +325,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         f"- EP: {frontier.get('ep') or 'NONE'}",
         f"- Work package: {frontier.get('work_package') or 'NONE'}",
         f"- Status: {frontier.get('status')}",
+        f"- Continuation: {frontier.get('continuation')}",
         f"- Lease: {frontier.get('lease') or 'NONE'}",
         f"- Executor: {frontier.get('executor') or 'NONE'}",
         "",
@@ -376,7 +402,7 @@ def render_parent_summary(ledger: dict[str, Any]) -> str:
         "## Relay",
         "",
         f"- Handover ledger: {handover['repository']}#{handover['number']} ({handover['url']})",
-        f"- Current frontier: {frontier.get('ep') or 'NONE'} — {frontier.get('status')}",
+        f"- Current frontier: {frontier.get('ep') or 'NONE'} — {frontier.get('status')} / {frontier.get('continuation')}",
         f"- Progress: complete={progress.get('complete', 0)}, partial={progress.get('partial', 0)}, pending={progress.get('pending', 0)}, blocked={progress.get('blocked', 0)}, total={progress.get('total', 0)}",
         f"- Open pending: {len(ledger['pending_items'])}",
         f"- Known issues: {len(ledger['known_issues'])}",
