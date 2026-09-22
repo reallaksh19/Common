@@ -44,7 +44,7 @@ FAIL
 
 and stop.
 
-A generation that starts with Prompt 1, target analysis, issue anchors, or any other prose before this handshake is invalid.
+A generation that starts with Prompt 0.5, Prompt 1, target analysis, issue anchors, or any other prose before this handshake is invalid.
 
 The handshake is execution proof, not decorative metadata.
 
@@ -133,11 +133,13 @@ Current PR state, branch state, task status, current implementation choices and 
 
 Then Prompt 2 brings the current artifact and implementation back into view.
 
-Prompt 3 compares the exact Prompt-1 reference picture with Prompt-2 reality and is free to **preserve, revise, narrow, split, replace, add, close, defer, or leave unchanged** the current artifact.
+Prompt 2.5 combines a fresh reality check with reconciliation: it places the Prompt-0.5 programme-level independent picture and Prompt-1 local independent picture beside Prompt-2 verified reality and the relevant roadmap/task landscape, then states the evidence-supported current gap and direction.
 
-Prompt 3 must also step back far enough to challenge the **relevant roadmap/task landscape** around the target. Treat that roadmap/task system as a hypothesis about how to reach the Prompt-1 destination, not as the definition of the destination. Prompt-2 delivery telemetry such as PR counts, commit counts, branch ahead/behind state, changed-file counts, CI-run counts, or percent-complete may locate evidence or constrain delivery, but they are not product/system capabilities and must not drive the technical direction.
+Prompt 3 revalidates that Prompt-2.5 synthesis against current evidence and is free to **preserve, revise, narrow, split, replace, add, close, defer, or leave unchanged** the current artifact before carrying out any authorized action and handing over.
 
-When Prompt 1 or live evidence reveals a genuinely missing idea, Prompt 3 may propose an **ADD** to the roadmap/task landscape, but only when the idea closes a meaningful destination gap that is not already represented and survives a concrete falsifier/proof obligation.
+Prompt 2.5 and Prompt 3 must step back far enough to challenge the **relevant roadmap/task landscape** around the target. Treat that roadmap/task system as a hypothesis about how to reach the independent destination, not as the definition of the destination. Delivery telemetry such as PR counts, commit counts, branch ahead/behind state, changed-file counts, CI-run counts, or percent-complete may locate evidence or constrain delivery, but they are not product/system capabilities and must not drive the technical direction.
+
+When Prompt 0.5, Prompt 1, or live evidence reveals a genuinely missing idea, Prompt 2.5 may identify it as a candidate direction and Prompt 3 may propose or execute an **ADD** only when the idea closes a meaningful destination gap that is not already represented and survives a concrete falsifier/proof obligation.
 
 A task can mention an entire product without being a product-level task. A register about a solver programme is not the same thing as the solver programme itself. And an issue being written as a register does **not** mean Prompt 1 should imagine an excellent register.
 
