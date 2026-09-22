@@ -21,6 +21,26 @@ COMMAND_TARGET_PATTERNS = {
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
         "relay/LEASES/LEASE-*.yaml",
     ],
+    "RENEW_LEASE": [
+        "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
+        "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    ],
+    "RECORD_RECOVERY_RECONSTRUCTED": [
+        "relay/EVENTS.jsonl",
+    ],
+    "RECORD_CHANGE_HYPOTHESIS": [
+        "relay/EVENTS.jsonl",
+        "relay/CHANGES/CHANGE-*.yaml",
+    ],
+    "VERIFY_CHANGE_DELTA": [
+        "relay/EVENTS.jsonl",
+        "relay/CHANGES/CHANGE-*.yaml",
+    ],
+    "AUTHORIZE_CHANGE_DELTA": [
+        "relay/EVENTS.jsonl",
+        "relay/CHANGES/CHANGE-*.yaml",
+    ],
     "RESOLVE_CONTROL": [
         "relay/EVENTS.jsonl",
         "relay/CONTROLS/controls.yaml",
@@ -31,6 +51,7 @@ COMMAND_TARGET_PATTERNS = {
         "relay/ROADMAP/ROADMAP.yaml",
         "relay/STATE.yaml",
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+        "relay/CHANGES/CHANGE-*.yaml",
     ],
     "SYNC_HANDOVER_LEDGER": [
         "relay/EVENTS.jsonl",
