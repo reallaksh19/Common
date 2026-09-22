@@ -232,6 +232,25 @@ class V3FoundationTests(unittest.TestCase):
             errors = validate(root)
             self.assertTrue(any("ROADMAP: cannot load" in item for item in errors), errors)
 
+
+    def test_state_object_id_path_traversal_is_rejected_before_lookup(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, state, *_ = materialize(root)
+            state["execution"]["ep"] = "EP-../../outside"
+            dump(root / "relay/STATE.yaml", state)
+            errors = validate(root)
+            self.assertTrue(any("unsafe characters" in item or "does not match" in item for item in errors), errors)
+
+    def test_state_authority_path_cannot_escape_repository(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, state, *_ = materialize(root)
+            state["roadmap"]["path"] = "../outside-roadmap.yaml"
+            dump(root / "relay/STATE.yaml", state)
+            errors = validate(root)
+            self.assertTrue(any("escapes repository root" in item for item in errors), errors)
+
     def test_snapshot_disagreement_fails(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
