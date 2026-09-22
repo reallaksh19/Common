@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from material_basis import inspect as inspect_material_basis
 from v3lib import load_yaml, validate_schema
 from validate_foundation import validate_authority
 
@@ -120,7 +121,7 @@ def evaluate(
     action: str,
     *,
     path: str | None = None,
-    drift: str | None = None,
+    base_ref: str | None = None,
 ) -> dict[str, Any]:
     action = action.upper()
     if action not in ACTIONS:
@@ -173,17 +174,30 @@ def evaluate(
             if any(_matches(path, pattern) for pattern in ((ep.get("scope") or {}).get("protect") or [])):
                 reasons.append("PATH_PROTECTED")
             basis.append(f"path:{path}")
-        if drift is None:
-            reasons.append("DRIFT_REQUIRED")
-        else:
-            drift = drift.upper()
-            basis.append(f"drift:{drift}")
-            if drift == "RELEVANT":
-                reasons.append("DRIFT_RELEVANT")
-            elif drift == "UNKNOWN":
-                reasons.append("DRIFT_UNKNOWN")
-            elif drift not in {"NONE", "DISJOINT"}:
-                reasons.append("DRIFT_UNKNOWN")
+
+        if not base_ref:
+            reasons.append("BASE_REF_REQUIRED")
+        elif ep:
+            try:
+                material = inspect_material_basis(root, ep, base_ref)
+            except Exception as exc:
+                reasons.append("MATERIAL_BASIS_INVALID")
+                basis.append(f"material_basis_error:{exc}")
+            else:
+                mb = material["material_basis"]
+                drift = material["drift"]
+                basis.extend([
+                    f"material_head:{mb.get('head')}",
+                    f"coordination_head:{(material.get('coordination_basis') or {}).get('head')}",
+                    f"drift:{drift.get('classification')}",
+                    f"base_ref:{base_ref}",
+                ])
+                if mb.get("ancestry_valid") is not True:
+                    reasons.append("MATERIAL_BASIS_INVALID")
+                if drift.get("classification") == "RELEVANT":
+                    reasons.append("DRIFT_RELEVANT")
+                elif drift.get("classification") == "UNKNOWN":
+                    reasons.append("DRIFT_UNKNOWN")
 
     if action in CHECKPOINT_ACTIONS:
         if not _checkpoint_accepted(checkpoint):
@@ -228,12 +242,11 @@ def main() -> None:
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--path", help="Repository-relative material path for MATERIAL_WRITE.")
     parser.add_argument(
-        "--drift",
-        choices=["NONE", "DISJOINT", "RELEVANT", "UNKNOWN"],
-        help="Observed drift classification; V3-3 will derive this mechanically.",
+        "--base-ref",
+        help="Current base branch/ref. MATERIAL_WRITE uses it to derive DISJOINT/RELEVANT/UNKNOWN drift mechanically.",
     )
     args = parser.parse_args()
-    result = evaluate(Path(args.repo_root).resolve(), args.action, path=args.path, drift=args.drift)
+    result = evaluate(Path(args.repo_root).resolve(), args.action, path=args.path, base_ref=args.base_ref)
     print(json.dumps(result, indent=2))
     raise SystemExit(0 if result["allowed"] else 1)
 
