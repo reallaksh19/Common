@@ -1,0 +1,43 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, action, allowed, basis, blocking_controls, reason_codes]
+properties:
+  schema_version: {const: relay-v3-authorization-result}
+  action:
+    enum: [READ, ANALYZE, MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, LOCAL_EXECUTION_EXPORT, DRAFT_PR_UPDATE, PR_READY, MERGE, RELEASE, CLOSE_TASK]
+  allowed: {type: boolean}
+  basis:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  blocking_controls:
+    type: array
+    uniqueItems: true
+    items: {type: string, pattern: '^CTRL-'}
+  reason_codes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      enum:
+        - ALLOW
+        - INVALID_FOUNDATION
+        - NO_ACTIVE_EXECUTION
+        - NO_ACTIVE_LEASE
+        - LEASE_ROUTE_MISMATCH
+        - LEASE_EP_MISMATCH
+        - ACTION_NOT_IN_LEASE_AUTHORITY
+        - PATH_REQUIRED
+        - PATH_OUTSIDE_EP_WRITE_SCOPE
+        - PATH_PROTECTED
+        - MATERIAL_BASIS_MISMATCH
+        - DRIFT_REQUIRED
+        - DRIFT_RELEVANT
+        - DRIFT_UNKNOWN
+        - CONTROL_BLOCKS_ACTION
+        - CHECKPOINT_REQUIRED
+        - CHECKPOINT_NOT_ACCEPTED
+        - QUALITY_NOT_CLEAR
+        - OWNER_DELIVERY_AUTHORITY_REQUIRED
+        - OWNER_OVERRIDE_DELIVERY_FORBIDDEN
+additionalProperties: false
