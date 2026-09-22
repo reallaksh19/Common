@@ -458,7 +458,7 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
     task = {
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
-        "source_protocol": "V3",
+        "source_protocol": "V3_1",
         "identity": {"work_package": wp_id, "ep": ep_id, "issue": (project.get("delivery") or {}).get("issue"), "delivery_vehicle": (project.get("delivery") or {}).get("pr") or (project.get("delivery") or {}).get("issue")},
         "purpose": {
             "programme_outcome": (roadmap.get("owner") or {}).get("outcome"),
@@ -495,7 +495,7 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
 
 def _use_v3_source(root: Path) -> bool:
     selection = resolve_protocol(root)
-    if selection.get("selected_protocol") == "V3" and selection.get("status") == "ACTIVE":
+    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
         return True
     if (root / V25_STATE).exists():
         return False
@@ -562,7 +562,7 @@ def _v3_improvement(root: Path) -> dict[str, Any]:
     view = {
         "schema_version": "relay-v3.1-improvement-view",
         "authority": "DERIVED_READ_MODEL",
-        "source_protocol": "V3",
+        "source_protocol": "V3_1",
         "task": ep_id,
         "checkpoint": cp_id,
         "from": {"predecessor_checkpoint": ((ep or {}).get("basis") or {}).get("predecessor_checkpoint"), "material_basis": ((ep or {}).get("basis") or {}).get("material_base")},
@@ -602,7 +602,7 @@ def _run_v25(root: Path, script: str) -> tuple[bool, str]:
 def assess_continuity(root: Path, base_ref: str | None = None) -> dict[str, Any]:
     migration = _load(root / MIGRATION_REPORT)
     if not migration:
-        raise ProjectionError("V3 migration report is required before continuity assessment")
+        raise ProjectionError("V3.1 migration report is required before continuity assessment")
     state = load_yaml(root / V25_STATE)
     before_entries, before = legacy_inventory(root)
     selection = _load(root / PROTOCOL_SELECTION) or {}

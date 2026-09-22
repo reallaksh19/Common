@@ -224,14 +224,14 @@ def _event(event_id: str, actor: str, readiness: dict[str, Any], selection: dict
         "type": "PROTOCOL_CUTOVER_ACTIVATED",
         "timestamp": _now(),
         "actor": actor,
-        "subject": "V3",
+        "subject": "V3_1",
         "basis": [
             canonical_digest(readiness),
             str((selection.get("legacy") or {}).get("tree_digest")),
         ],
         "details": {
             "legacy_policy": "READ_ONLY_HISTORY",
-            "selected_protocol": "V3",
+            "selected_protocol": "V3_1",
         },
     }
     errors = validate_schema("event", value, "EVENT")
@@ -252,12 +252,12 @@ def activate(
     readiness = assess(root)
     if readiness["ready"] is not True:
         failed = [key for key, value in readiness["checks"].items() if value != "PASS"]
-        raise CutoverError("V3 cutover is not ready: " + ", ".join(failed))
+        raise CutoverError("V3.1 cutover is not ready: " + ", ".join(failed))
 
     selection = _load_required(root, PROTOCOL_SELECTION)
     new_selection = {
         **selection,
-        "selected_protocol": "V3",
+        "selected_protocol": "V3_1",
         "status": "ACTIVE",
         "legacy": {
             **selection["legacy"],
@@ -293,7 +293,7 @@ def activate(
 
 Status: **READ_ONLY_HISTORY**
 
-V3 became the selected relay protocol at {new_selection['cutover']['activated_at']}.
+V3.1 became the selected relay protocol at {new_selection['cutover']['activated_at']}.
 
 The preserved V2.5 tree remains at `agents/relay/**` with cutover digest:
 
@@ -303,9 +303,9 @@ The preserved V2.5 tree remains at `agents/relay/**` with cutover digest:
 
 After cutover:
 - existing V2.5 files remain inspectable as migration/history evidence;
-- new relay authority must be written through V3 objects and commands;
+- new relay authority must be written through V3.1 objects and commands;
 - do not append new DISC/QSET/QUAL/TC/checkpoint/projection authority to the legacy tree;
-- any change to the preserved legacy tree invalidates V3 cutover conformance until explicitly reconciled.
+- any change to the preserved legacy tree invalidates V3.1 cutover conformance until explicitly reconciled.
 """
 
     return execute(
@@ -331,7 +331,7 @@ def validate_selection(root: Path) -> list[str]:
     if errors:
         return errors
 
-    if selection.get("selected_protocol") == "V3" and selection.get("status") == "ACTIVE":
+    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
         v3_errors = validate_v3(root)
         errors.extend(f"V3_CONFORMANCE: {item}" for item in v3_errors)
         try:
@@ -341,11 +341,11 @@ def validate_selection(root: Path) -> list[str]:
             return errors
         expected = str(((selection.get("cutover") or {}).get("legacy_freeze_digest")) or "")
         if not expected:
-            errors.append("LEGACY_HISTORY: active V3 selection has no frozen legacy digest")
+            errors.append("LEGACY_HISTORY: active V3.1 selection has no frozen legacy digest")
             return errors
         if live_digest != expected:
             errors.append(
-                f"LEGACY_HISTORY: agents/relay tree changed after V3 cutover: expected {expected}, got {live_digest}"
+                f"LEGACY_HISTORY: agents/relay tree changed after V3.1 cutover: expected {expected}, got {live_digest}"
             )
         if not (root / DEPRECATION_PATH).exists():
             errors.append("V3_ACTIVE: V2.5 deprecation notice is missing")

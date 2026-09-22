@@ -118,11 +118,11 @@ def _protocol_state(root: Path) -> tuple[bool, str]:
     if not selection_path.exists():
         if legacy_state.exists():
             return False, "V2_5:LEGACY_DEFAULT"
-        return True, "V3:NATIVE_NO_SELECTOR"
+        return True, "V3_1:NATIVE_NO_SELECTOR"
     selection = load_yaml(selection_path)
     selected = str(selection.get("selected_protocol") or "")
     status = str(selection.get("status") or "")
-    return selected == "V3" and status == "ACTIVE", f"{selected}:{status}"
+    return selected == "V3_1" and status == "ACTIVE", f"{selected}:{status}"
 
 
 def evaluate(

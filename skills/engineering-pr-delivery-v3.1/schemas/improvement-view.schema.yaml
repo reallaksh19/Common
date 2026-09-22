@@ -4,7 +4,7 @@ required: [schema_version, authority, source_protocol, task, checkpoint, from, t
 properties:
   schema_version: {const: relay-v3.1-improvement-view}
   authority: {const: DERIVED_READ_MODEL}
-  source_protocol: {enum: [V2_5, V3]}
+  source_protocol: {enum: [V2_5, V3_1]}
   task: {type: [string, 'null']}
   checkpoint: {type: [string, 'null']}
   from: {type: object}

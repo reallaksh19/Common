@@ -4,7 +4,7 @@ required: [schema_version, authority, source_protocol, identity, purpose, lineag
 properties:
   schema_version: {const: relay-v3.1-task-snapshot}
   authority: {const: DERIVED_READ_MODEL}
-  source_protocol: {enum: [V2_5, V3]}
+  source_protocol: {enum: [V2_5, V3_1]}
   identity:
     type: object
     required: [work_package, ep, issue, delivery_vehicle]

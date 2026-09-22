@@ -10,7 +10,7 @@ from v3lib import load_yaml
 
 
 V25_SKILL = "skills/engineering-pr-delivery-v2.5/SKILL.md"
-V3_SKILL = "skills/engineering-pr-delivery-v3.1/SKILL.md"
+V31_SKILL = "skills/engineering-pr-delivery-v3.1/SKILL.md"
 
 
 def resolve(root: Path) -> dict:
@@ -20,7 +20,7 @@ def resolve(root: Path) -> dict:
             "selected_protocol": "V2_5",
             "skill": V25_SKILL,
             "status": "LEGACY_DEFAULT",
-            "warning": "No protocol selection exists; use V2.5 compatibility behavior. V3 must not be inferred.",
+            "warning": "No protocol selection exists; use V2.5 compatibility behavior. V3.1 must not be inferred.",
         }
     errors = validate_selection(root)
     if errors:
@@ -31,10 +31,10 @@ def resolve(root: Path) -> dict:
             "warning": "Protocol selection is invalid: " + "; ".join(errors[:5]),
         }
     selection = load_yaml(selection_path)
-    if selection.get("selected_protocol") == "V3" and selection.get("status") == "ACTIVE":
+    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
         return {
-            "selected_protocol": "V3",
-            "skill": V3_SKILL,
+            "selected_protocol": "V3_1",
+            "skill": V31_SKILL,
             "status": "ACTIVE",
             "warning": "V2.5 is read-only migration history; do not create new V2.5 relay authority.",
         }
@@ -42,7 +42,7 @@ def resolve(root: Path) -> dict:
         "selected_protocol": "V2_5",
         "skill": V25_SKILL,
         "status": "PREPARED",
-        "warning": "V3 is staged but not activated. Continue using V2.5 authority until explicit cutover.",
+        "warning": "V3.1 is staged but not activated. Continue using V2.5 authority until explicit cutover.",
     }
 
 

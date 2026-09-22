@@ -163,11 +163,11 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("Foundation schema established.", learning["what_changed"])
             self.assertIn("V2.5 remains live.", learning["do_not_break"])
             self.assertEqual("Read CURRENT_SNAPSHOT and EP.", learning["first_successor_action"])
-            self.assertEqual("V3", learning["task_snapshot"]["source_protocol"])
+            self.assertEqual("V3_1", learning["task_snapshot"]["source_protocol"])
             self.assertEqual("EP-TA-011", learning["task_snapshot"]["ep"])
             self.assertEqual("WP-TA-109", learning["task_snapshot"]["work_package"])
             self.assertTrue(learning["task_snapshot"]["digest"].startswith("sha256:"))
-            self.assertEqual("V3", learning["improvement_view"]["source_protocol"])
+            self.assertEqual("V3_1", learning["improvement_view"]["source_protocol"])
             self.assertEqual("CP-TA-010", learning["improvement_view"]["checkpoint"])
             self.assertTrue(learning["improvement_view"]["digest"].startswith("sha256:"))
 

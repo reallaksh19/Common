@@ -3,7 +3,7 @@ type: object
 required: [schema_version, selected_protocol, status, legacy, v3, cutover]
 properties:
   schema_version: {const: relay-v3.1-protocol-selection}
-  selected_protocol: {enum: [V2_5, V3]}
+  selected_protocol: {enum: [V2_5, V3_1]}
   status: {enum: [PREPARED, ACTIVE, ROLLED_BACK]}
   legacy:
     type: object
@@ -38,7 +38,7 @@ properties:
       activated_at: {type: [string, 'null'], format: date-time}
 allOf:
   - if:
-      properties: {selected_protocol: {const: V3}, status: {const: ACTIVE}}
+      properties: {selected_protocol: {const: V3_1}, status: {const: ACTIVE}}
     then:
       properties:
         legacy:
