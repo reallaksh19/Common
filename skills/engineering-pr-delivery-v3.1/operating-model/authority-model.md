@@ -1,4 +1,4 @@
-# Engineering Relay V3 authority model
+# Engineering Relay V3.1 authority model
 
 Issue #418 defines the V3 architecture. This document records the V3-1 authority boundary implemented by the foundational schemas and validator.
 

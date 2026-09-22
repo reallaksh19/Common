@@ -60,13 +60,13 @@ One control may appear in more than one group when its declared blocked actions 
 For ACTIVE work, live material basis needs the current base ref:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/generate_snapshot.py <repo-root> --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/generate_snapshot.py <repo-root> --base-ref origin/main
 ```
 
 To replace the path declared by `STATE.generated.snapshot` only after a successful build:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/generate_snapshot.py <repo-root> --base-ref origin/main --apply
+python skills/engineering-pr-delivery-v3.1/scripts/generate_snapshot.py <repo-root> --base-ref origin/main --apply
 ```
 
 The write uses a temporary file followed by replacement so an incomplete YAML document is not published as the current snapshot.

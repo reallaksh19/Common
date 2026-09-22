@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, assessed_at, ready, checks, basis]
 properties:
-  schema_version: {const: relay-v3-cutover-readiness}
+  schema_version: {const: relay-v3.1-cutover-readiness}
   authority: {const: DERIVED_CUTOVER_READINESS}
   assessed_at: {type: string, format: date-time}
   ready: {type: boolean}

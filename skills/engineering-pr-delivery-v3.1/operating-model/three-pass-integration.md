@@ -1,6 +1,6 @@
 # V3 Plan for Handover and standalone three-pass integration
 
-Engineering Relay V3 supplies a **frozen engineering input** to the standalone three-pass prompt generator. It does not own or reproduce the prompt schema.
+Engineering Relay V3.1 supplies a **frozen engineering input** to the standalone three-pass prompt generator. It does not own or reproduce the prompt schema.
 
 Canonical standalone surfaces:
 

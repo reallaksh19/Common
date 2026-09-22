@@ -1,6 +1,6 @@
-# Engineering Relay V3
+# Engineering Relay V3.1
 
-Engineering Relay V3 is being implemented under Common issue #418.
+Engineering Relay V3.1 is being implemented under Common issue #418.
 
 ## Status
 
@@ -47,7 +47,7 @@ V3 must remain compatible with:
 For a V3 repository layout:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/validate_foundation.py <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/validate_foundation.py <repo-root>
 ```
 
 Full validation checks durable authority, canonical roadmap consistency, generated snapshot agreement, append-only event history, and whether an interrupted relay transaction requires recovery.
@@ -59,11 +59,11 @@ Execution-plane callers use the same authority validator and therefore fail clos
 V3 uses action-specific authorization instead of one global readiness boolean:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py HANDOVER <repo-root>
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-root>
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py HANDOVER <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py PR_READY <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root>
 ```
 
 `MATERIAL_WRITE` is isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
@@ -77,7 +77,7 @@ python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
 V3 derives `material_basis.head` separately from `coordination_basis.head`.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/material_basis.py <repo-root> --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root> --base-ref origin/main
 ```
 
 Base movement is classified mechanically:
@@ -107,7 +107,7 @@ Accepted progress is derived from current roadmap weights plus accepted checkpoi
 Normal V3 admission is one lease transaction rather than a DISC/QSET/QUAL/TC chain.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/lease_admission.py . \
+python skills/engineering-pr-delivery-v3.1/scripts/lease_admission.py . \
   --lease-id LEASE-001 \
   --executor-id agent-A \
   --method DETERMINISTIC
@@ -126,15 +126,15 @@ Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`. Each command rec
 A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted `PREPARED`, `APPLYING` or `RECOVERY_REQUIRED` transaction makes current authority unusable until recovery.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . recover
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . recover
 
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . start ...
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . checkpoint ...
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . handover ...
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . local-execution ...
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . sync-delivery ...
-python skills/engineering-pr-delivery-v3/scripts/relay_tx.py . close ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . handover ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . local-execution ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . sync-delivery ...
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . close ...
 ```
 
 Key semantics:
@@ -161,7 +161,7 @@ relay/GENERATED/THREE_PASS_REQUEST.md
 Generation requires an action-authorized HANDOVER and a normalized provider-readback target.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/plan_handover.py . \
+python skills/engineering-pr-delivery-v3.1/scripts/plan_handover.py . \
   --tx-id TX-HANDOVER-001 \
   --event-id EVT-HANDOVER-001 \
   --actor agent-A \
@@ -186,9 +186,9 @@ See `operating-model/three-pass-integration.md`. The richer handover-content red
 V3 migration is non-destructive. The original `agents/relay/**` tree is inventoried and hashed before V3 authority is created.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/v25_migration.py <repo-root> report
+python skills/engineering-pr-delivery-v3.1/scripts/v25_migration.py <repo-root> report
 
-python skills/engineering-pr-delivery-v3/scripts/v25_migration.py <repo-root> bootstrap \
+python skills/engineering-pr-delivery-v3.1/scripts/v25_migration.py <repo-root> bootstrap \
   --tx-id TX-MIGRATE-001 \
   --event-id EVT-MIGRATE-001 \
   --actor migration-agent \
@@ -201,7 +201,7 @@ Bootstrap creates only present-day V3 `INITIALIZING` authority, a generated migr
 Protocol selection is resolved mechanically:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/protocol_default.py <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/protocol_default.py <repo-root>
 ```
 
 Semantics:
@@ -213,7 +213,7 @@ Semantics:
 Before cutover:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> assess
+python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-root> assess
 ```
 
 Readiness requires:
@@ -228,7 +228,7 @@ Readiness requires:
 Activation additionally requires direct Owner basis:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> activate \
+python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-root> activate \
   --tx-id TX-CUTOVER-001 \
   --event-id EVT-CUTOVER-001 \
   --actor owner \
@@ -239,7 +239,7 @@ python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root>
 After V3 activation, the preserved V2.5 tree is bound by its cutover digest. Any change under `agents/relay/**` makes protocol-selection validation fail until explicitly reconciled.
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> validate
+python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-root> validate
 ```
 
 See `operating-model/v25-migration-and-cutover.md`.
@@ -261,16 +261,16 @@ See:
 
 V3 keeps engineering truth authoritative exactly once. These are **generated read models**, never execution or acceptance authority:
 
-- `relay-v3-task-snapshot` — task-local purpose, lineage, scope, inputs/benchmarks, evidence, controls, negative knowledge and next action.
-- `relay-v3-improvement-view` — evidence-bound capability/evidence/understanding/downstream change between task basis and accepted checkpoint.
-- `relay-v3-intelligence-continuity` — cutover proof that V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress, discovery, Owner-delta and handover intelligence remain represented without changing the preserved legacy tree.
+- `relay-v3.1-task-snapshot` — task-local purpose, lineage, scope, inputs/benchmarks, evidence, controls, negative knowledge and next action.
+- `relay-v3.1-improvement-view` — evidence-bound capability/evidence/understanding/downstream change between task basis and accepted checkpoint.
+- `relay-v3.1-intelligence-continuity` — cutover proof that V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress, discovery, Owner-delta and handover intelligence remain represented without changing the preserved legacy tree.
 
 Generate or inspect them with:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> task --base-ref origin/main --output relay/GENERATED/tasks/<EP>.snapshot.yaml
-python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> improvement --output relay/GENERATED/improvements/<CP>.improvement.yaml
-python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py <repo-root> continuity --base-ref origin/main \
+python skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py <repo-root> task --base-ref origin/main --output relay/GENERATED/tasks/<EP>.snapshot.yaml
+python skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py <repo-root> improvement --output relay/GENERATED/improvements/<CP>.improvement.yaml
+python skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py <repo-root> continuity --base-ref origin/main \
   --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
   --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \
   --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml

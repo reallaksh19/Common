@@ -11,11 +11,11 @@ relay.can(action)
 The CLI surface is:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py HANDOVER <repo-root>
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-root>
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py HANDOVER <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py PR_READY <repo-root>
+python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root>
 ```
 
 ## Stable action vocabulary

@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, controls]
 properties:
-  schema_version: {const: relay-v3-controls}
+  schema_version: {const: relay-v3.1-controls}
   controls:
     type: array
     items:

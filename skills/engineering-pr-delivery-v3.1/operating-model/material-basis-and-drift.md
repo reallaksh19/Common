@@ -55,7 +55,7 @@ classifies as:
 ## CLI
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/material_basis.py <repo-root> --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root> --base-ref origin/main
 ```
 
 `relay_can.py MATERIAL_WRITE` consumes the same mechanical classifier. The caller supplies the identity of the current base ref, not a subjective drift verdict.

@@ -53,7 +53,7 @@ The bootstrap migration digest is immutable historical evidence. V2.5 may legiti
 When live V2.5 authority is ready to stop changing, freeze the final legacy basis explicitly:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> freeze \
+python skills/engineering-pr-delivery-v3.1/scripts/protocol_cutover.py <repo-root> freeze \
   --tx-id TX-FREEZE-001 \
   --event-id EVT-FREEZE-001 \
   --actor migration-agent
@@ -129,7 +129,7 @@ Default selection is therefore an explicit repository fact, not a guess based on
 Before resolving `CTRL-V25-INTELLIGENCE-CONTINUITY`, generate the repository's derived continuity evidence against the still-live V2.5 authority:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py . continuity \
+python skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py . continuity \
   --base-ref origin/main \
   --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
   --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \

@@ -14,7 +14,7 @@ Methods:
 Example:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/lease_admission.py . \
+python skills/engineering-pr-delivery-v3.1/scripts/lease_admission.py . \
   --lease-id LEASE-001 \
   --executor-id agent-A \
   --method DETERMINISTIC
@@ -23,7 +23,7 @@ python skills/engineering-pr-delivery-v3/scripts/lease_admission.py . \
 For qualified work:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/lease_admission.py . \
+python skills/engineering-pr-delivery-v3.1/scripts/lease_admission.py . \
   --lease-id LEASE-002 \
   --executor-id agent-B \
   --method QUALIFIED \
