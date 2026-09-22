@@ -309,3 +309,30 @@ The generic transaction layer enforces semantic target constraints for critical 
 ### Legacy cutover freeze
 
 Do not rewrite the bootstrap V2.5 migration digest when legacy authority legitimately changes during `V2_5 / PREPARED`. Before cutover, run `protocol_cutover.py freeze` to bind the final live V2.5 tree. Continuity and post-cutover immutability are checked against that explicit freeze digest; the bootstrap digest remains historical migration evidence.
+
+
+## Event / change-budget status publication
+
+Repositories can enable deterministic, timer-free status publication with:
+
+```
+relay/CONFIG/status-publication.yaml
+```
+
+Start from:
+
+```
+skills/engineering-pr-delivery-v3/config/status-publication.default.yaml
+```
+
+or edit/export it from:
+
+```
+skills/engineering-pr-delivery-v3/ui/status-publication-policy.html
+```
+
+Each EP has an independent cursor at `relay/PUBLICATION/<EP-ID>.status.yaml`. Sibling agents do not share publication state.
+
+When an enabled policy reports publication debt, `relay.can(MATERIAL_WRITE)` denies with `STATUS_PUBLICATION_DUE`. Policies can also require a fresh publication before CHECKPOINT, HANDOVER, PR_READY and CLOSE_TASK. Publish the actual Owner/task status first, then record exactly that child baseline with `status_publication.py --apply`.
+
+This replaces elapsed-time heartbeat rules with semantic events, material-volume thresholds and a configurable weighted change budget. See `operating-model/status-publication.md`.

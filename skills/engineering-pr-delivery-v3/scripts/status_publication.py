@@ -365,10 +365,7 @@ def evaluate(
             "head": head,
             "file_metrics": current_files,
             "normalized": normalized,
-            "prepared_actions": {
-                **((cursor or {}).get("prepared_actions") or {}),
-                **({action_name: head} if trigger else {}),
-            },
+            "prepared_actions": ({action_name: head} if trigger else {}),
             "policy_digest": canonical_digest(policy),
             "note": None,
         },
