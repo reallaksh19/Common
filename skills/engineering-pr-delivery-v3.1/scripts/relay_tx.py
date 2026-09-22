@@ -584,8 +584,12 @@ def renew_lease(
     custody = lease.get("custody") or {}
     if int(custody.get("epoch") or -1) != int(expected_custody_epoch):
         raise TransactionError("lease custody epoch does not match STATE")
+    next_renewed_at = renewed_at or _now()
+    previous_renewed_at = str(custody.get("renewed_at") or "")
+    if previous_renewed_at and _parse_timestamp(next_renewed_at) < _parse_timestamp(previous_renewed_at):
+        raise TransactionError("LEASE_RENEWAL_TIME_REGRESSION")
     renewed = copy.deepcopy(lease)
-    renewed["custody"]["renewed_at"] = renewed_at or _now()
+    renewed["custody"]["renewed_at"] = next_renewed_at
     snapshot = build_snapshot(root, base_ref, lease_override=renewed)
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
