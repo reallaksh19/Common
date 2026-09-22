@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, vehicle, observed_at, provider_ref, lifecycle, checks, review, mergeability]
 properties:
-  schema_version: {const: relay-v3-delivery-status}
+  schema_version: {const: relay-v3.1-delivery-status}
   authority: {const: PROVIDER_READBACK}
   vehicle:
     type: object

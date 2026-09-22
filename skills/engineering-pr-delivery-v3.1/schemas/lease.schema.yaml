@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, id, route, executor, basis, authority, admission, state, invalidation]
 properties:
-  schema_version: {const: relay-v3-lease}
+  schema_version: {const: relay-v3.1-lease}
   id: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   route: {type: string, minLength: 1}
   executor:

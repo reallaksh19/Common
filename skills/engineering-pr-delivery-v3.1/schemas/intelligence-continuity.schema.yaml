@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, ready, source, projections, checks, evidence]
 properties:
-  schema_version: {const: relay-v3-intelligence-continuity}
+  schema_version: {const: relay-v3.1-intelligence-continuity}
   authority: {const: DERIVED_CONTINUITY_ASSESSMENT}
   ready: {type: boolean}
   source:

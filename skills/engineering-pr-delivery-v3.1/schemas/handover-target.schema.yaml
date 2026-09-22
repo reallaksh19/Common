@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, provider, repository, kind, number, title, url, state, observed_at, provider_ref]
 properties:
-  schema_version: {const: relay-v3-handover-target}
+  schema_version: {const: relay-v3.1-handover-target}
   authority: {const: PROVIDER_READBACK}
   provider: {const: GITHUB}
   repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}

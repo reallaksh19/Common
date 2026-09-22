@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, source_protocol, generated_at, source, validation, legacy_inventory, current, bootstrap]
 properties:
-  schema_version: {const: relay-v3-migration-report}
+  schema_version: {const: relay-v3.1-migration-report}
   authority: {const: DERIVED_MIGRATION_REPORT}
   source_protocol: {const: '2.5'}
   generated_at: {type: string, format: date-time}

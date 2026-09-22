@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, generated_from, project, execution, material, scope, acceptance, controls, checkpoint, next, delivery_boundary]
 properties:
-  schema_version: {const: relay-v3-local-execution}
+  schema_version: {const: relay-v3.1-local-execution}
   authority: {const: DERIVED_EXECUTION_PACKAGE}
   generated_from:
     type: object

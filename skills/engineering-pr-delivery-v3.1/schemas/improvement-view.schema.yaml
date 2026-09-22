@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, authority, source_protocol, task, checkpoint, from, to, improvement, roadmap_effect, not_improved, still_not_proved, new_questions, reconstruction_sources]
 properties:
-  schema_version: {const: relay-v3-improvement-view}
+  schema_version: {const: relay-v3.1-improvement-view}
   authority: {const: DERIVED_READ_MODEL}
   source_protocol: {enum: [V2_5, V3]}
   task: {type: [string, 'null']}

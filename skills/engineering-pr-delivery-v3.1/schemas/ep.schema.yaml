@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, id, work_package, outcome, basis, scope, acceptance, quality_policy, next]
 properties:
-  schema_version: {const: relay-v3-ep}
+  schema_version: {const: relay-v3.1-ep}
   id: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   outcome:

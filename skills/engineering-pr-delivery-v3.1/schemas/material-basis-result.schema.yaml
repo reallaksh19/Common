@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, material_basis, coordination_basis, sensitivity, drift]
 properties:
-  schema_version: {const: relay-v3-material-basis}
+  schema_version: {const: relay-v3.1-material-basis}
   material_basis:
     type: object
     additionalProperties: false

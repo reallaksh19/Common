@@ -2,7 +2,7 @@ $schema: https://json-schema.org/draft/2020-12/schema
 type: object
 required: [schema_version, event_id, type, timestamp, actor, subject, basis, details]
 properties:
-  schema_version: {const: relay-v3-event}
+  schema_version: {const: relay-v3.1-event}
   event_id: {type: string, pattern: '^EVT-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   type:
     enum: [OWNER_TASK_ADMITTED, EP_CREATED, LEASE_GRANTED, MATERIAL_WRITE_STARTED, MATERIAL_VALIDATED, CHECKPOINT_ACCEPTED, NEW_SCOPE_DISCOVERED, LEASE_RELEASED, LEASE_REVOKED, CONTROL_RESOLVED, HANDOVER_PUBLISHED, HANDOVER_PLANNED, LOCAL_EXECUTION_EXPORTED, DELIVERY_SYNCED, TASK_CLOSED, MIGRATION_BOOTSTRAPPED, LEGACY_CUTOVER_FROZEN, PROTOCOL_CUTOVER_ACTIVATED, PR_OPENED, PR_MERGED]
