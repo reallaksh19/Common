@@ -9,7 +9,6 @@ from typing import Any
 import yaml
 
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
-from intelligence_projection import assess_continuity
 from v25_migration import INTELLIGENCE_CONTINUITY_CONTROL, MIGRATION_CONTROL, MIGRATION_REPORT, PROTOCOL_SELECTION, legacy_inventory
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from validate_foundation import validate as validate_v3
@@ -72,6 +71,11 @@ def assess(root: Path) -> dict[str, Any]:
     recomputed_continuity = None
     recomputed_continuity_error = None
     try:
+        # Import lazily: intelligence_projection resolves protocol selection through
+        # protocol_default, which itself imports validate_selection from this module.
+        # Deferring this import avoids a module-initialization cycle while still
+        # independently re-proving continuity at cutover assessment time.
+        from intelligence_projection import assess_continuity
         recomputed_continuity = assess_continuity(root)
     except Exception as exc:
         recomputed_continuity_error = str(exc)
