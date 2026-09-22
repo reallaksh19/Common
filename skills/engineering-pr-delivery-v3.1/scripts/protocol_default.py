@@ -31,12 +31,25 @@ def resolve(root: Path) -> dict:
             "warning": "Protocol selection is invalid: " + "; ".join(errors[:5]),
         }
     selection = load_yaml(selection_path)
-    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
+    selected = str(selection.get("selected_protocol") or "")
+    if selected == "V3_1" and selection.get("status") == "ACTIVE":
         return {
             "selected_protocol": "V3_1",
+            "repository_protocol": "V3_1",
             "skill": V31_SKILL,
             "status": "ACTIVE",
             "warning": "V2.5 is read-only migration history; do not create new V2.5 relay authority.",
+        }
+    if selected == "V3" and selection.get("status") == "ACTIVE":
+        return {
+            "selected_protocol": "V3_1",
+            "repository_protocol": "V3",
+            "skill": V31_SKILL,
+            "status": "ACTIVE",
+            "warning": (
+                "Repository authority remains native V3. Current V3.1 tooling is using the compatible native core "
+                "without rewriting accepted history or requiring a protocol migration."
+            ),
         }
     return {
         "selected_protocol": "V2_5",
@@ -51,8 +64,9 @@ def main() -> None:
     parser.add_argument("repo_root", nargs="?", default=".")
     args = parser.parse_args()
     value = resolve(Path(args.repo_root).resolve())
-    for key in ("selected_protocol", "skill", "status", "warning"):
-        print(f"{key}: {value.get(key)}")
+    for key in ("selected_protocol", "repository_protocol", "skill", "status", "warning"):
+        if key in value:
+            print(f"{key}: {value.get(key)}")
     raise SystemExit(0 if value["status"] != "INVALID" else 1)
 
 
