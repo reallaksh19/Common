@@ -37,6 +37,10 @@ COMMAND_TARGET_PATTERNS = {
         "relay/EVENTS.jsonl",
         "relay/CHANGES/CHANGE-*.yaml",
     ],
+    "PROPOSE_CHANGE_DELTA": [
+        "relay/EVENTS.jsonl",
+        "relay/CHANGES/CHANGE-*.yaml",
+    ],
     "AUTHORIZE_CHANGE_DELTA": [
         "relay/EVENTS.jsonl",
         "relay/CHANGES/CHANGE-*.yaml",
