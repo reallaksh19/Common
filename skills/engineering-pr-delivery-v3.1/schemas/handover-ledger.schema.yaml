@@ -1,0 +1,98 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, generated_from, parent_issue, handover_issue, current_frontier, parent_progress, ep_index, pending_items, known_issues, offloads, delivery, records, next]
+properties:
+  schema_version: {const: relay-v3.1-handover-ledger}
+  authority: {const: DERIVED_PROVIDER_PROJECTION}
+  generated_from:
+    type: object
+    additionalProperties: false
+    required: [state_digest, task_snapshot_digest, roadmap_revision]
+    properties:
+      state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      task_snapshot_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      roadmap_revision: {type: string, minLength: 1}
+  parent_issue:
+    type: object
+    additionalProperties: false
+    required: [repository, number, title, url, state, disposition, relationships]
+    properties:
+      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+      state: {enum: [OPEN, CLOSED, UNKNOWN]}
+      disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+      relationships: {type: array}
+  handover_issue:
+    type: object
+    additionalProperties: false
+    required: [repository, number, url]
+    properties:
+      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      number: {type: integer, minimum: 1}
+      url: {type: string, format: uri}
+  current_frontier:
+    type: object
+    additionalProperties: false
+    required: [ep, work_package, lease, executor, status]
+    properties:
+      ep: {type: [string, 'null']}
+      work_package: {type: [string, 'null']}
+      lease: {type: [string, 'null']}
+      executor: {type: [string, 'null']}
+      status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
+  parent_progress:
+    type: object
+    required: [complete, partial, pending, blocked, deferred, not_applicable, unknown, total]
+  ep_index:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [ep, work_package, status, continuation, checkpoint, lease, executor, basis]
+      properties:
+        ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
+        continuation: {enum: [CURRENT, NONE, RECOVERY_REQUIRED, UNKNOWN]}
+        checkpoint: {type: [string, 'null']}
+        lease: {type: [string, 'null']}
+        executor: {type: [string, 'null']}
+        basis:
+          type: array
+          items: {type: string, minLength: 1}
+  pending_items: {type: array}
+  known_issues: {type: array}
+  offloads:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [origin_ep]
+      properties:
+        origin_ep: {type: string}
+  delivery:
+    type: object
+    additionalProperties: true
+  records:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [event_id, type, timestamp, actor, subject, basis]
+      properties:
+        event_id: {type: string}
+        type: {type: string}
+        timestamp: {type: string}
+        actor: {type: string}
+        subject: {type: string}
+        basis: {type: array}
+  next:
+    type: object
+    additionalProperties: false
+    required: [action, stop_conditions]
+    properties:
+      action: {type: [string, 'null']}
+      stop_conditions: {type: array}
+additionalProperties: false

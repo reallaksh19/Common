@@ -61,18 +61,7 @@ properties:
           additionalProperties: false
           required: [repository, issue_number, url]
           properties:
-            repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [ref, type, summary, effect]
-      properties:
-        ref: {type: string, minLength: 1}
-        type: {enum: [REQUIREMENT, DECISION, STATUS, DEPENDENCY, ACCEPTANCE, DELIVERY, COMMENT]}
-        summary: {type: string, minLength: 1}
-        effect: {type: array, items: {type: string, minLength: 1}}
-additionalProperties: false
-}
+            repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
             issue_number: {type: integer, minimum: 1}
             url: {type: string, format: uri}
         scope:
@@ -84,6 +73,14 @@ additionalProperties: false
         provider_refs:
           type: array
           items: {type: string, minLength: 1}
+  handover_ledger:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [repository, issue_number, url]
+    properties:
+      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      issue_number: {type: integer, minimum: 1}
+      url: {type: string, format: uri}
   updates:
     type: array
     items:
