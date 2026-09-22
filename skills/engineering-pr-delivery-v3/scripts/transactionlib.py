@@ -10,7 +10,7 @@ from typing import Any
 
 import yaml
 
-from v3lib import load_yaml, validate_schema
+from v3lib import load_yaml, repo_path, require_identifier, validate_schema
 
 
 class TransactionError(RuntimeError):
@@ -78,18 +78,20 @@ def _prepare(
     actor: str,
     replacements: dict[str, bytes],
 ) -> tuple[Path, dict[str, Any]]:
-    if not tx_id.startswith("TX-"):
-        raise TransactionError("transaction id must use TX-* namespace")
+    try:
+        require_identifier(tx_id, "TX-", "transaction id")
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
-    tx_dir = root / "relay/TRANSACTIONS" / tx_id
+    tx_dir = repo_path(root, f"relay/TRANSACTIONS/{tx_id}", "transaction directory")
     manifest_path = tx_dir / "manifest.yaml"
     if tx_dir.exists():
         raise TransactionError(f"transaction already exists: {tx_id}")
 
     operations = []
     for index, (relative, after_bytes) in enumerate(sorted(replacements.items())):
-        target = root / relative
+        target = repo_path(root, relative, "transaction target")
         before_exists = target.exists()
         before_digest = _digest_path(target)
         staged_rel = f"relay/TRANSACTIONS/{tx_id}/staged/{index:03d}.after"
@@ -151,7 +153,7 @@ def execute(
 
     try:
         for index, operation in enumerate(manifest["operations"], 1):
-            target = root / operation["path"]
+            target = repo_path(root, operation["path"], "transaction target")
             current = _digest_path(target)
             if current != operation["before_digest"]:
                 manifest["status"] = "RECOVERY_REQUIRED"
@@ -160,7 +162,7 @@ def execute(
                 raise TransactionError(
                     f"precondition changed for {operation['path']}: expected {operation['before_digest']}, got {current}"
                 )
-            staged = root / operation["staged_path"]
+            staged = repo_path(root, operation["staged_path"], "transaction staged path")
             _atomic_write_bytes(target, staged.read_bytes())
             manifest["applied"].append(operation["path"])
             manifest["updated_at"] = _now()
@@ -187,7 +189,7 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
 
     states = []
     for operation in manifest["operations"]:
-        digest = _digest_path(root / operation["path"])
+        digest = _digest_path(repo_path(root, operation["path"], "transaction target"))
         if digest == operation["after_digest"]:
             states.append("AFTER")
         elif digest == operation["before_digest"]:
@@ -220,9 +222,9 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
         )
 
     for operation in reversed(manifest["operations"]):
-        target = root / operation["path"]
+        target = repo_path(root, operation["path"], "transaction target")
         if operation["before_exists"]:
-            backup = root / str(operation["backup_path"])
+            backup = repo_path(root, str(operation["backup_path"]), "transaction backup path")
             if not backup.exists():
                 raise TransactionError(f"cannot rollback {operation['path']}: backup is missing")
             _atomic_write_bytes(target, backup.read_bytes())
