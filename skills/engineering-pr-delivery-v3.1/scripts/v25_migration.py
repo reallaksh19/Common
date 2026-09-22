@@ -81,6 +81,37 @@ def _schema_version(path: Path) -> str | None:
     return str(value.get("schema_version")) if isinstance(value, dict) and value.get("schema_version") else None
 
 
+def _legacy_file_bytes(root: Path, path: Path, rel: str) -> bytes:
+    """Hash repository-canonical bytes for clean tracked files.
+
+    Working-tree text can be materialized with platform-specific EOLs (for
+    example CRLF under core.autocrlf=true) while Git still considers the file
+    unchanged. Frozen legacy history must bind repository content, not checkout
+    presentation. Staged changes remain visible through the index blob; real
+    unstaged edits and untracked files are hashed from the working tree.
+    """
+    tracked = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "--error-unmatch", "--", rel],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    ).returncode == 0
+    if not tracked:
+        return path.read_bytes()
+
+    unstaged = subprocess.run(
+        ["git", "-C", str(root), "diff", "--quiet", "--", rel],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    ).returncode != 0
+    if unstaged:
+        return path.read_bytes()
+
+    try:
+        return subprocess.check_output(["git", "-C", str(root), "show", f":{rel}"])
+    except subprocess.CalledProcessError:
+        return path.read_bytes()
+
+
 def legacy_inventory(root: Path) -> tuple[list[dict[str, Any]], str]:
     base = root / V25_TREE
     if not base.exists():
@@ -90,7 +121,7 @@ def legacy_inventory(root: Path) -> tuple[list[dict[str, Any]], str]:
         rel = path.relative_to(root).as_posix()
         entries.append({
             "path": rel,
-            "digest": _sha256_bytes(path.read_bytes()),
+            "digest": _sha256_bytes(_legacy_file_bytes(root, path, rel)),
             "category": _category(rel),
             "schema_version": _schema_version(path),
         })
@@ -138,7 +169,7 @@ def build_report(root: Path) -> dict[str, Any]:
         "source": {
             "root": str(root),
             "state_path": V25_STATE,
-            "state_digest": _sha256_bytes(state_path.read_bytes()),
+            "state_digest": _sha256_bytes(_legacy_file_bytes(root, state_path, V25_STATE)),
             "roadmap_path": roadmap_ref,
             "legacy_tree_digest": tree_digest,
         },
