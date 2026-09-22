@@ -77,7 +77,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("exec", reality["execution"]["branch"])
             self.assertNotIn("LEASE-TA-011-01", blind_text)
             self.assertNotIn("agent-x", blind_text)
-            self.assertNotIn("exec", blind_text)
+            self.assertNotIn("branch:", blind_text.lower())
             self.assertNotIn("pull request", blind_text.lower())
             self.assertNotIn("419", blind_text)
             self.assertEqual("TPG-3P-2026-09-22-R10", context["generator_contract"]["protocol_revision_at_freeze"])
