@@ -39,12 +39,7 @@ def _atomic_write_bytes(path: Path, data: bytes) -> None:
 
 
 def _atomic_write_yaml(path: Path, value: Any) -> None:
-    payload = yaml.safe_dump(value, sort_keys=False).encode("utf-8")
-    _atomic_write_bytes(path, payload)
-
-
-def _manifest_path(root: Path, tx_id: str) -> Path:
-    return root / "relay/TRANSACTIONS" / tx_id / "manifest.yaml"
+    _atomic_write_bytes(path, yaml.safe_dump(value, sort_keys=False).encode("utf-8"))
 
 
 def load_manifest(path: Path) -> dict[str, Any]:
@@ -60,7 +55,11 @@ def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | Non
     if not base.exists():
         return []
     out = []
-    for path in sorted(base.glob("TX-*/manifest.yaml")):
+    for tx_dir in sorted(path for path in base.glob("TX-*") if path.is_dir()):
+        path = tx_dir / "manifest.yaml"
+        if not path.exists():
+            out.append((path, None, "MISSING_MANIFEST"))
+            continue
         try:
             manifest = load_manifest(path)
         except Exception as exc:
@@ -81,18 +80,20 @@ def _prepare(
 ) -> tuple[Path, dict[str, Any]]:
     if not tx_id.startswith("TX-"):
         raise TransactionError("transaction id must use TX-* namespace")
-    tx_dir = root / "relay/TRANSACTIONS" / tx_id
-    manifest_path = tx_dir / "manifest.yaml"
-    if manifest_path.exists():
-        raise TransactionError(f"transaction already exists: {tx_id}")
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
+    tx_dir = root / "relay/TRANSACTIONS" / tx_id
+    manifest_path = tx_dir / "manifest.yaml"
+    if tx_dir.exists():
+        raise TransactionError(f"transaction already exists: {tx_id}")
 
     operations = []
     for index, (relative, after_bytes) in enumerate(sorted(replacements.items())):
         target = root / relative
+        before_exists = target.exists()
+        before_digest = _digest_path(target)
         staged_rel = f"relay/TRANSACTIONS/{tx_id}/staged/{index:03d}.after"
-        backup_rel = f"relay/TRANSACTIONS/{tx_id}/backups/{index:03d}.before" if target.exists() else None
+        backup_rel = f"relay/TRANSACTIONS/{tx_id}/backups/{index:03d}.before" if before_exists else None
         staged = root / staged_rel
         staged.parent.mkdir(parents=True, exist_ok=True)
         staged.write_bytes(after_bytes)
@@ -102,8 +103,8 @@ def _prepare(
             shutil.copyfile(target, backup)
         operations.append({
             "path": relative,
-            "before_exists": target.exists(),
-            "before_digest": _digest_path(target),
+            "before_exists": before_exists,
+            "before_digest": before_digest,
             "after_digest": _digest_bytes(after_bytes),
             "staged_path": staged_rel,
             "backup_path": backup_rel,
@@ -205,8 +206,19 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
         _atomic_write_yaml(manifest_path, manifest)
         return manifest
 
-    # Any mixed/unknown state rolls back to the captured before-images.
     basis = [f"{operation['path']}={state}" for operation, state in zip(manifest["operations"], states)]
+    if any(state == "OTHER" for state in states):
+        manifest["status"] = "RECOVERY_REQUIRED"
+        manifest["recovery"] = {
+            "strategy": "ROLLBACK",
+            "basis": basis + ["Automatic rollback refused because at least one target matches neither before nor after digest."],
+        }
+        manifest["updated_at"] = _now()
+        _atomic_write_yaml(manifest_path, manifest)
+        raise TransactionError(
+            "transaction recovery found external/unknown target changes; manual reconciliation is required"
+        )
+
     for operation in reversed(manifest["operations"]):
         target = root / operation["path"]
         if operation["before_exists"]:
@@ -218,10 +230,7 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
             target.unlink()
 
     manifest["status"] = "ROLLED_BACK"
-    manifest["recovery"] = {
-        "strategy": "ROLLBACK",
-        "basis": basis,
-    }
+    manifest["recovery"] = {"strategy": "ROLLBACK", "basis": basis}
     manifest["updated_at"] = _now()
     _atomic_write_yaml(manifest_path, manifest)
     return manifest
@@ -230,6 +239,19 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
 def recover_all(root: Path) -> list[dict[str, Any]]:
     results = []
     for path, manifest, error in incomplete_transactions(root):
+        if error == "MISSING_MANIFEST":
+            tx_dir = path.parent
+            tx_id = tx_dir.name
+            shutil.rmtree(tx_dir)
+            results.append({
+                "id": tx_id,
+                "status": "ROLLED_BACK",
+                "recovery": {
+                    "strategy": "ROLLBACK",
+                    "basis": ["Transaction had no manifest; canonical targets had not entered the apply phase."],
+                },
+            })
+            continue
         if error:
             raise TransactionError(f"cannot parse transaction manifest {path}: {error}")
         results.append(recover(root, path))
