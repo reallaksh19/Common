@@ -4,7 +4,7 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 + V3-2 + V3-3 IMPLEMENTED / NOT YET DEFAULT.**
+**V3-1 through V3-4 IMPLEMENTED / NOT YET DEFAULT.**
 
 V2.5 remains the active compatibility protocol while V3 is introduced incrementally. Do not silently reinterpret an existing V2.5 repository as V3.
 
@@ -48,7 +48,7 @@ For a V3 repository layout:
 python skills/engineering-pr-delivery-v3/scripts/validate_foundation.py <repo-root>
 ```
 
-Full foundation validation checks durable authority, generated snapshot agreement, and append-only event history.
+Full foundation validation checks durable authority, canonical roadmap consistency, generated snapshot agreement, and append-only event history.
 
 Execution-plane callers that must not depend on derived-view/history freshness use:
 
@@ -101,8 +101,34 @@ UNKNOWN   -> MATERIAL_WRITE denied
 
 A coordination-only commit may advance `coordination_basis.head` without changing `material_basis.head` or relevant/dependency digests.
 
+## Current snapshot and status views
+
+`CURRENT_SNAPSHOT.yaml` is a generated first-read model and MUST declare:
+
+```yaml
+authority: DERIVED_READ_MODEL
+```
+
+It is generated from ROADMAP / STATE / EP / LEASE / CHECKPOINT / CONTROLS; it never supplies missing authority.
+
+For active execution:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/generate_snapshot.py <repo-root> --base-ref origin/main --apply
+```
+
+Accepted progress is derived from current roadmap weights plus accepted checkpoints. Coordination, PR opening, projection refreshes and handover publication earn no accepted progress.
+
+Owner and technical status are downstream views of the generated snapshot:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/render_owner_status.py relay/GENERATED/CURRENT_SNAPSHOT.yaml
+python skills/engineering-pr-delivery-v3/scripts/render_technical_status.py relay/GENERATED/CURRENT_SNAPSHOT.yaml
+```
+
 See:
 - `operating-model/authority-model.md`
 - `operating-model/action-authorization.md`
 - `operating-model/material-basis-and-drift.md`
+- `operating-model/current-snapshot.md`
 - schemas under `schemas/`.
