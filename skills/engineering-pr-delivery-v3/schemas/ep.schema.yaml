@@ -82,6 +82,13 @@ properties:
     properties:
       level: {enum: [LOW, STANDARD, HIGH_RISK, CRITICAL]}
       independent_review: {enum: [OPTIONAL, REQUIRED]}
+  admission_policy:
+    type: object
+    additionalProperties: false
+    required: [qualification]
+    properties:
+      qualification: {enum: [NOT_REQUIRED, REQUIRED]}
+      question_policy: {enum: [NONE, Q1_Q5, CUSTOM]}
   next:
     type: object
     additionalProperties: false
