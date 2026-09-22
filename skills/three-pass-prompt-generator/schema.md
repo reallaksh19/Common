@@ -90,19 +90,22 @@ This mode lock exists because prompt generation and engineering-delivery executi
 
 When given a target, create **exactly five prompts** for another agent to run in sequence:
 
-0.5. **ORIENT TO PROGRAMME** — recover the original roadmap / large-project goal first, then the governing issue, then summarize the ongoing or last local task in only a few lines so local PR/task state cannot become the destination.
-1. **IMAGINE** — form an independent issue-level picture of what good should look like, informed by the programme goal and governing issue but not anchored to the local PR/task solution.
+0.5. **IMAGINE FROM PROGRAMME** — think independently at the broader project level: start from the original roadmap / large-project goal, reason through what the governing issue should make possible in service of that goal, then bring in the ongoing or last local task only as a short subordinate context. This is the more global independent-thinking pass.
+1. **IMAGINE** — think independently at the tighter issue/local level: start from the governing issue and reason down into the local task, witness and bounded responsibility. This is the more local independent-thinking pass, still blind to the current implementation/PR answer.
 2. **UNDERSTAND** — inspect what actually exists today, including relevant history and current work.
 2.5. **RECONCILE REALITY AND DIRECTION** — combine the reality-reconstruction intent of Prompt 2 with the comparison/decision intent of Prompt 3: re-check live truth, compare it with the independent picture and programme hierarchy, and state the evidence-supported direction.
 3. **REVALIDATE AND MOVE FORWARD** — revalidate the Prompt-2.5 synthesis against current evidence, then execute the smallest justified authorized move and leave a strong handover.
 
 Do not solve the target yourself. Your output is the five prompts.
 
-The method is the same throughout, but the generator must build a **visible preflight record** before it is allowed to draft Prompt 1.
+The method is the same throughout, but the generator must build a **visible preflight record** before it is allowed to draft Prompt 0.5 or Prompt 1.
 
 The central safeguard is stronger than “do not inspect the code yet”:
 
-> **Prompt 1 must be independent of the current solution form itself, wherever that solution form is not a genuine human requirement.**
+> **Prompt 0.5 and Prompt 1 must both be independent of the current solution form itself, wherever that solution form is not a genuine human requirement.**
+
+Prompt 0.5 has the wider aperture: project goal → governing issue → local task.
+Prompt 1 has the tighter aperture: governing issue → local task / concrete issue witness.
 
 A GitHub issue may currently be a register, roadmap, checklist, matrix, architecture umbrella, or proposed implementation. Those forms belong to **current reality**. They do not automatically belong in the independent reference picture.
 
@@ -114,13 +117,19 @@ The preflight therefore has two deliberately separated sides:
    - current stated answer / implementation / proposed solution;
    - current-state facts.
 
-2. **BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPT 1**
+2. **BLIND REFERENCE — THE ONLY SIDE ALLOWED TO SHAPE PROMPTS 0.5 AND 1**
+   - original roadmap / large-project goal;
+   - governing issue responsibility and stable programme relationship;
+   - local-task identity/purpose in only the minimum few lines needed for scope;
    - underlying human problem;
    - human outcome;
    - genuine constraints;
    - domain/expertise;
    - target scope;
-   - independent imagination object.
+   - programme-level imagination object for Prompt 0.5;
+   - issue/local imagination object for Prompt 1.
+
+Current PR state, branch state, task status, current implementation choices and inherited solution proposals remain reality-side material for Prompt 2 unless independently required as a genuine constraint.
 
 Then Prompt 2 brings the current artifact and implementation back into view.
 
@@ -151,16 +160,18 @@ Your job is to create **exactly five separate, copy-pasteable prompts** that I c
 The five prompts must create this reasoning sequence:
 
 ```text
-PROMPT 0.5 — ORIENT TO PROGRAMME
-What is the original large-project / roadmap destination,
-which governing issue owns the present slice,
-and what is the ongoing or last local task in only a few lines?
+PROMPT 0.5 — IMAGINE FROM PROGRAMME
+Starting from the original large-project / roadmap destination,
+what should the governing issue make possible, and what larger value,
+missing capability or wrong assumption becomes visible when the local task
+is treated as only a small subordinate slice?
 
         ↓
 
 PROMPT 1 — IMAGINE
-Within that programme/issue boundary, what should good look like
-without letting the local PR/task answer dominate the thinking?
+Starting from the governing issue and then the local task,
+what should good look like at this tighter issue level without
+letting the current PR/task answer dominate the thinking?
 
         ↓
 
@@ -1240,7 +1251,7 @@ EXPERTISE:
 IMAGINATION OBJECT:
 
 PROMPT 0.5
-PROGRAMME ORIENTATION OBJECT:
+PROGRAMME IMAGINATION OBJECT:
 
 PROMPT 2
 REALITY OBJECT:
@@ -1835,7 +1846,7 @@ Fail if Prompt 3 lets PR statistics, commit counts, changed-file counts, branch 
 Prompt 3 must reconcile:
 
 ```text
-PROMPT-0.5 PROGRAMME / ISSUE ORIENTATION
+PROMPT-0.5 PROGRAMME-LEVEL INDEPENDENT PICTURE
 ×
 PROMPT-1 INDEPENDENT BASELINE
 ×
@@ -1994,39 +2005,47 @@ The generator itself enforces blindness by controlling what information is allow
 
 **Do not make Prompt 1 talk about that enforcement.**
 
-# PROMPT 0.5 — ORIENT TO PROGRAMME
+# PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-Generate a self-contained orientation prompt that deliberately widens the incoming agent's aperture before independent issue reasoning.
+Generate a self-contained **independent-thinking prompt at the broader project level**.
 
-Prompt 0.5 must make the future agent reconstruct the hierarchy in this order:
+Prompt 0.5 must reason in this order:
 
 ```text
 ORIGINAL ROADMAP / LARGE-PROJECT GOAL
-→ current roadmap position / major capability objective
-→ GOVERNING ISSUE that owns the present bounded responsibility
-→ ONGOING OR LAST LOCAL TASK / PR in only a few lines
+→ GOVERNING ISSUE in service of that goal
+→ ONGOING OR LAST LOCAL TASK as only a short subordinate slice
 ```
 
-The ordering is mandatory. Do not begin from the latest PR, branch, commit, checklist or handover note and work outward.
+The ordering is mandatory. The local task is context, not the destination.
 
-Require the future agent to inspect the durable roadmap/project authority and relevant issue hierarchy, then produce a short **SCOPE LADDER** containing:
+Prompt 0.5 must be generated from the blind reference, not from current PR/task status or implementation choices. Give the future agent enough stable context to understand the original project destination, the governing issue's responsibility, and a 2–5 line description of the local task's purpose. Do not give branch/PR status, current solution details, current acceptance checklist, current work sequence, or inherited proposed answer.
 
-- the original large-project goal / north star;
-- the current roadmap objective or phase relevant to this target;
-- the governing issue and why it exists in service of that larger goal;
-- the target issue/task responsibility boundary;
-- a 2–5 line local-task snapshot covering only the ongoing or most recent task/PR and its status;
-- one sentence stating explicitly that local task/PR state is subordinate evidence, not the definition of the destination.
+Make the future agent think independently about the **larger value** of this chain. It should ask, in project/domain language:
 
-Prompt 0.5 may inspect repository, roadmap, issue and PR state. Its purpose is orientation, not solution selection.
+- If the large-project goal were served exceptionally well, what capability or human outcome would exist?
+- What must the governing issue contribute to that destination, regardless of today's local implementation?
+- What important opportunity, missing capability, simplification, risk, or wrong assumption may be invisible when attention starts from the latest task?
+- Is the local task actually the right expression of the governing issue's need, or only one possible instrument?
+- What would a strong successor notice from the project level that someone staring at the latest PR could miss?
+- What project-level hypothesis is worth carrying down into the issue-level Prompt 1?
 
-It must end by handing Prompt 1 a programme-and-issue context capsule that preserves the large goal and governing issue while preventing local/last-task state from dominating independent reasoning.
+Prompt 0.5 must end with a concise **PROGRAMME-LEVEL INDEPENDENT PICTURE** containing:
+- the large-project outcome that matters;
+- the governing issue's role in achieving it;
+- 2–4 non-obvious project/issue-level value hypotheses or reframings;
+- the local task in only a few lines, explicitly subordinate to those larger goals;
+- assumptions or questions that Prompt 1 should examine at tighter resolution.
+
+Prompt 0.5 is imaginative and independent. It is not a repository-status report, PR summary, or factual orientation pass.
 
 ---
 
 # PROMPT 1 — IMAGINE
 
 Generate a self-contained first-principles prompt from the **BLIND REFERENCE only**.
+
+Prompt 1 is the **more local independent-thinking pass**. Start from the governing issue, then reason down into the local task / concrete witness. Use Prompt 0.5's broader project-level hypotheses as context to challenge the local framing, but do not convert Prompt 1 into a project-wide redesign.
 
 It should begin from the strongest available concrete footing:
 
@@ -2373,7 +2392,7 @@ Prompt 2.5 must therefore contain both:
 Its closing output should include:
 
 ```text
-PROGRAMME / ISSUE ORIENTATION
+PROGRAMME-LEVEL INDEPENDENT PICTURE
 VERIFIED REALITY REFRESH
 INDEPENDENT CURRENT GAP
 CANDIDATES TESTED
@@ -2447,7 +2466,7 @@ The Prompt-0.5, Prompt-1, Prompt-2 and Prompt-2.5 outputs are supporting context
 
 # PROMPT 3 — REVALIDATE AND MOVE FORWARD
 
-Prompt 3 must use the **actual Prompt-0.5 programme orientation, Prompt-1 independent result, Prompt-2 verified reality and Prompt-2.5 integrated synthesis**.
+Prompt 3 must use the **actual Prompt-0.5 programme-level independent picture, Prompt-1 independent result, Prompt-2 verified reality and Prompt-2.5 integrated synthesis**.
 
 Prompt 1 is deliberately independent, but it is not infallible. Verified reality or a stronger falsifier may show that one of its assumptions should change.
 
@@ -2546,7 +2565,7 @@ Do not let repository/PR telemetry become a capability model. PR state, branch d
 Now reconcile:
 
 ```text
-PROMPT-0.5 PROGRAMME / ISSUE ORIENTATION
+PROMPT-0.5 PROGRAMME-LEVEL INDEPENDENT PICTURE
 ×
 PROMPT-1 INDEPENDENT BASELINE
 ×
@@ -3207,7 +3226,7 @@ PROMPT-3 TECHNICAL-PROOF GATE:
 PASS — <one short reason showing that material technical changes require a claim-specific falsifier and quantitative or executable proof; delivery telemetry cannot substitute>
 ```
 
-## PROMPT 0.5 — ORIENT TO PROGRAMME
+## PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
 ```text
 <complete Prompt 0.5 text only>
@@ -3256,9 +3275,9 @@ Therefore:
 
 ### Pass-specific identity rule
 
-**Prompt 0.5 — ORIENT TO PROGRAMME**
+**Prompt 0.5 — IMAGINE FROM PROGRAMME**
 
-Include the durable roadmap / large-project goal, relevant roadmap position, governing issue, target responsibility boundary, and only a short ongoing/last-task snapshot. Explicitly subordinate local PR/task state to the project and issue goals.
+Use the stable original roadmap / large-project goal, governing issue responsibility and only a short local-task purpose capsule. Ask for independent project-level reasoning and non-obvious value hypotheses. Do **not** include current PR/branch/task status or current solution material. Explicitly subordinate the local task to the project and governing-issue goals.
 
 **Prompt 1 — IMAGINE**
 
@@ -3845,7 +3864,8 @@ Complex Q1–Q5 mode affects **Prompt 1 only**.
 
 ```text
 PROMPT 0.5
-project / roadmap goal → governing issue → short local-task snapshot
+independent global reasoning:
+project / roadmap goal → governing issue → short subordinate local-task context
 
 PROMPT 1
 independent human Q1–Q5 reasoning picture
