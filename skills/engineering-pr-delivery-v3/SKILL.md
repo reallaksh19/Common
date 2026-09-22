@@ -4,7 +4,7 @@ Engineering Relay V3 is being implemented under Common issue #418.
 
 ## Status
 
-**V3-1 + V3-2 IMPLEMENTED / NOT YET DEFAULT.**
+**V3-1 + V3-2 + V3-3 IMPLEMENTED / NOT YET DEFAULT.**
 
 V2.5 remains the active compatibility protocol while V3 is introduced incrementally. Do not silently reinterpret an existing V2.5 repository as V3.
 
@@ -63,20 +63,46 @@ Generated snapshot disagreement remains a full-conformance failure; the snapshot
 V3 uses action-specific authorization instead of one global readiness boolean:
 
 ```bash
-python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --drift DISJOINT
+python skills/engineering-pr-delivery-v3/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py CHECKPOINT <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py HANDOVER <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py PR_READY <repo-root>
 python skills/engineering-pr-delivery-v3/scripts/relay_can.py MERGE <repo-root>
 ```
 
-`MATERIAL_WRITE` is intentionally isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
-
-Until V3-3 implements mechanical semantic drift classification, callers must supply `NONE | DISJOINT | RELEVANT | UNKNOWN`; only `NONE` and `DISJOINT` satisfy the drift component.
+`MATERIAL_WRITE` is intentionally isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
 
 `MERGE` and `RELEASE` remain separate delivery transitions and require an accepted checkpoint, clear required quality, a declared delivery vehicle, and explicit Owner delivery authority. An `OWNER_OVERRIDE` execution lease never implies merge/release permission.
+
+## Material vs coordination basis
+
+V3 derives:
+
+```text
+material_basis.head
+coordination_basis.head
+```
+
+rather than binding engineering evidence to generic Git HEAD.
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/material_basis.py <repo-root> --base-ref origin/main
+```
+
+The material sensitivity set is derived from EP write/read/protected paths, semantic dependencies, and path-shaped acceptance dependencies.
+
+Base movement is classified mechanically:
+
+```text
+DISJOINT  -> execution may continue
+RELEVANT  -> MATERIAL_WRITE denied
+UNKNOWN   -> MATERIAL_WRITE denied
+```
+
+A coordination-only commit may advance `coordination_basis.head` without changing `material_basis.head` or relevant/dependency digests.
 
 See:
 - `operating-model/authority-model.md`
 - `operating-model/action-authorization.md`
+- `operating-model/material-basis-and-drift.md`
 - schemas under `schemas/`.
