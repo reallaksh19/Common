@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class V31IsolationTests(unittest.TestCase):
     def test_v31_does_not_link_back_to_v3_skill_tree(self):
-        forbidden = "skills/engineering-pr-delivery-v3/"
+        forbidden = "skills/" + "engineering-pr-delivery-v3/"
         offenders = []
         for path in ROOT.rglob("*"):
             if not path.is_file() or path.is_symlink():
