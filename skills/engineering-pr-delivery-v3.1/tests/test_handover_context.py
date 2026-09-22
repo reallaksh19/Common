@@ -96,6 +96,7 @@ class HandoverContextTests(unittest.TestCase):
                 tx_id="TX-RELEASE-HANDOVER",
                 event_id="EVT-RELEASE-HANDOVER",
                 actor="agent-x",
+                reason="ADMINISTRATIVE",
             )
 
             target = load_yaml(target_observation(root))
