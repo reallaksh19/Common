@@ -110,3 +110,32 @@ invalid selector or changed legacy history
 ```
 
 Default selection is therefore an explicit repository fact, not a guess based on which skill directory exists.
+
+## #421 continuity evidence workflow
+
+Before resolving `CTRL-V25-INTELLIGENCE-CONTINUITY`, generate the repository's derived continuity evidence against the still-live V2.5 authority:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/intelligence_projection.py . continuity \
+  --base-ref origin/main \
+  --task-output relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-output relay/GENERATED/improvements/<CP>.improvement.yaml \
+  --output relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml
+```
+
+The assessment must report `ready: true` and all of these checks must PASS:
+
+- preserved legacy-tree digest before/after projection generation;
+- task roadmap-admission disposition remains visible;
+- V2.5 ROADMAP_EVENTS validation passes;
+- V2.5 checkpoint/progress reconciliation remains valid;
+- repository-discovery intelligence remains available;
+- Owner-delta publication mechanisms remain available;
+- handover intelligence is present in the task read model;
+- generated task/improvement views remain explicitly non-authoritative.
+
+Only then may the continuity control be resolved with durable evidence pointing to the generated report. Cutover assessment does not trust that resolution blindly: it revalidates the report schema, requires `ready: true`, and requires `source.legacy_tree_digest` to equal the original migration inventory digest.
+
+A missing report, a stale/wrong legacy digest, or a report with any failed continuity check keeps `roadmap_intelligence_continuity: FAIL` even if the control row says `RESOLVED`.
+
+TASK_SNAPSHOT and IMPROVEMENT_VIEW are disposable projections. Handover planning regenerates them transactionally and binds their digests into HANDOVER_CONTEXT; neither file can grant lease, checkpoint, roadmap, progress, merge or release authority.
