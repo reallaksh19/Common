@@ -139,7 +139,15 @@ def build(
     parent = task.get("parent_issue") or {}
     ledger_ref = parent.get("handover_ledger")
     if not isinstance(ledger_ref, dict):
-        raise ProjectionError("parent issue observation must identify one handover_ledger issue")
+        provider_status_path = root / "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml"
+        if provider_status_path.exists():
+            provider_status = load_yaml(provider_status_path)
+            observed_parent = provider_status.get("parent") or {}
+            if (
+                observed_parent.get("repository") == parent.get("repository")
+                and observed_parent.get("issue_number") == parent.get("number")
+            ):
+                ledger_ref = provider_status.get("handover")
 
     repository = str(parent.get("repository") or "")
     number = parent.get("number")
@@ -274,11 +282,15 @@ def build(
             "disposition": str(parent.get("disposition") or "UNKNOWN"),
             "relationships": list(parent.get("relationships") or []),
         },
-        "handover_issue": {
-            "repository": str(ledger_ref.get("repository")),
-            "number": int(ledger_ref.get("issue_number")),
-            "url": str(ledger_ref.get("url")),
-        },
+        "handover_issue": (
+            {
+                "repository": str(ledger_ref.get("repository")),
+                "number": int(ledger_ref.get("issue_number")),
+                "url": str(ledger_ref.get("url")),
+            }
+            if isinstance(ledger_ref, dict)
+            else None
+        ),
         "current_frontier": {
             "ep": frontier.get("ep"),
             "work_package": frontier.get("work_package"),
@@ -307,7 +319,7 @@ def build(
 
 def render_ledger(ledger: dict[str, Any]) -> str:
     parent = ledger["parent_issue"]
-    handover = ledger["handover_issue"]
+    handover = ledger.get("handover_issue") or {}
     frontier = ledger["current_frontier"]
     progress = ledger["parent_progress"]
     lines = [
@@ -318,7 +330,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "## Parent",
         f"- Parent: {parent['repository']}#{parent['number']} — {parent['title']}",
         f"- Parent URL: {parent['url']}",
-        f"- Handover ledger: {handover['repository']}#{handover['number']} ({handover['url']})",
+        f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
         f"- Issue disposition: {parent['disposition']}",
         "",
         "## Current frontier",
@@ -390,7 +402,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
 
 def render_parent_summary(ledger: dict[str, Any]) -> str:
     parent = ledger["parent_issue"]
-    handover = ledger["handover_issue"]
+    handover = ledger.get("handover_issue") or {}
     frontier = ledger["current_frontier"]
     progress = ledger["parent_progress"]
     active_offloads = [
@@ -401,7 +413,7 @@ def render_parent_summary(ledger: dict[str, Any]) -> str:
     return "\n".join([
         "## Relay",
         "",
-        f"- Handover ledger: {handover['repository']}#{handover['number']} ({handover['url']})",
+        f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
         f"- Current frontier: {frontier.get('ep') or 'NONE'} — {frontier.get('status')} / {frontier.get('continuation')}",
         f"- Progress: complete={progress.get('complete', 0)}, partial={progress.get('partial', 0)}, pending={progress.get('pending', 0)}, blocked={progress.get('blocked', 0)}, total={progress.get('total', 0)}",
         f"- Open pending: {len(ledger['pending_items'])}",
