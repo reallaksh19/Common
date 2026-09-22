@@ -148,6 +148,26 @@ class RelayCompletionTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             install_standalone(root)
+            state = load_yaml(root / "relay/STATE.yaml")
+            roadmap = load_yaml(root / state["roadmap"]["path"])
+            reconciliation = {
+                "schema_version": "relay-v3.1-roadmap-reconciliation",
+                "authority": "PROPOSED_RECONCILIATION",
+                "expected_revision": roadmap["revision"],
+                "disposition": "NO_CHANGE",
+                "basis": ["No roadmap concept change is required for this clean handover."],
+                "roadmap_after": roadmap,
+            }
+            reconciliation_path = root / "handover-roadmap-reconciliation.yaml"
+            dump(reconciliation_path, reconciliation)
+            reconcile_roadmap(
+                root,
+                tx_id="TX-HANDOVER-ROADMAP",
+                event_id="EVT-HANDOVER-ROADMAP",
+                actor="agent-x",
+                reconciliation_path=reconciliation_path,
+                base_ref=base_ref,
+            )
             plan_handover(
                 root,
                 tx_id="TX-HANDOVER-OFFER",
