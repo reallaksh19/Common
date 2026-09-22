@@ -82,7 +82,7 @@ def build_view(
     basis = tc.get("basis") or {}
     route = tc.get("route") or {}
     view = {
-        "schema_version": "relay-v3-v25-lease-view",
+        "schema_version": "relay-v3.1-v25-lease-view",
         "authority": "DERIVED_COMPATIBILITY_VIEW",
         "source_protocol": "2.5",
         "native_lease": False,

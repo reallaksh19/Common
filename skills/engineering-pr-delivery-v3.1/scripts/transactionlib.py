@@ -61,7 +61,7 @@ def _digest_path(path: Path) -> str | None:
 
 def _atomic_write_bytes(path: Path, data: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_name(path.name + ".tmp-relay-v3")
+    temp = path.with_name(path.name + ".tmp-relay-v3.1")
     temp.write_bytes(data)
     os.replace(temp, path)
 
@@ -158,7 +158,7 @@ def _prepare(
 
     now = _now()
     manifest = {
-        "schema_version": "relay-v3-transaction",
+        "schema_version": "relay-v3.1-transaction",
         "id": tx_id,
         "command": command,
         "actor": actor,

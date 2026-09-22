@@ -131,7 +131,7 @@ def build_report(root: Path) -> dict[str, Any]:
     status, basis = validate_v25_repo_state(root)
     counts = Counter(item["category"] for item in entries)
     report = {
-        "schema_version": "relay-v3-migration-report",
+        "schema_version": "relay-v3.1-migration-report",
         "authority": "DERIVED_MIGRATION_REPORT",
         "source_protocol": "2.5",
         "generated_at": _now(),
@@ -220,7 +220,7 @@ def _legacy_work_packages(root: Path, state: dict[str, Any]) -> tuple[str, list[
 
 def _event(event_id: str, actor: str, report: dict[str, Any]) -> dict[str, Any]:
     value = {
-        "schema_version": "relay-v3-event",
+        "schema_version": "relay-v3.1-event",
         "event_id": event_id,
         "type": "MIGRATION_BOOTSTRAPPED",
         "timestamp": _now(),
@@ -269,7 +269,7 @@ def _initial_snapshot(
             groups["delivery_blockers"].append(cid)
 
     snapshot = {
-        "schema_version": "relay-v3-snapshot",
+        "schema_version": "relay-v3.1-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "generated_from": {
             "roadmap_revision": roadmap["revision"],
@@ -344,7 +344,7 @@ def bootstrap(
     state25 = load_yaml(root / V25_STATE)
     title, work_packages = _legacy_work_packages(root, state25)
     roadmap = {
-        "schema_version": "relay-v3-roadmap",
+        "schema_version": "relay-v3.1-roadmap",
         "revision": str((state25.get("roadmap") or {}).get("revision")),
         "title": title,
         "owner": {
@@ -360,7 +360,7 @@ def bootstrap(
         raise MigrationError("; ".join(errors))
 
     controls = {
-        "schema_version": "relay-v3-controls",
+        "schema_version": "relay-v3.1-controls",
         "controls": [
             {
                 "id": MIGRATION_CONTROL,
@@ -395,7 +395,7 @@ def bootstrap(
         raise MigrationError("; ".join(errors))
 
     state = {
-        "schema_version": "relay-v3",
+        "schema_version": "relay-v3.1",
         "roadmap": {
             "revision": roadmap["revision"],
             "path": "relay/ROADMAP/ROADMAP.yaml",
@@ -411,7 +411,7 @@ def bootstrap(
         raise MigrationError("; ".join(errors))
 
     selection = {
-        "schema_version": "relay-v3-protocol-selection",
+        "schema_version": "relay-v3.1-protocol-selection",
         "selected_protocol": "V2_5",
         "status": "PREPARED",
         "legacy": {

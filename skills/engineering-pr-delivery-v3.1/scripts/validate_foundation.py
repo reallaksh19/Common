@@ -198,7 +198,7 @@ def validate(repo_root: Path) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Validate Engineering Relay V3 foundation objects and authority links.")
+    parser = argparse.ArgumentParser(description="Validate Engineering Relay V3.1 foundation objects and authority links.")
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument(
         "--authority-only",

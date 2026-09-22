@@ -99,7 +99,7 @@ def _quality_clear(checkpoint: dict[str, Any] | None) -> bool:
 
 def _result(action: str, allowed: bool, basis: list[str], blocking_controls: list[str], reasons: list[str]) -> dict[str, Any]:
     result = {
-        "schema_version": "relay-v3-authorization-result",
+        "schema_version": "relay-v3.1-authorization-result",
         "action": action,
         "allowed": allowed,
         "basis": list(dict.fromkeys(x for x in basis if x)),
@@ -256,7 +256,7 @@ def evaluate(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate one Engineering Relay V3 action against current authoritative state.")
+    parser = argparse.ArgumentParser(description="Evaluate one Engineering Relay V3.1 action against current authoritative state.")
     parser.add_argument("action", choices=sorted(ACTIONS))
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--path", help="Repository-relative material path for MATERIAL_WRITE.")

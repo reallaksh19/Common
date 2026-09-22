@@ -231,7 +231,7 @@ def build(
         reconstruction_sources.append(f"relay/CHECKPOINTS/{checkpoint_id}.yaml")
 
     snapshot = {
-        "schema_version": "relay-v3-snapshot",
+        "schema_version": "relay-v3.1-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "generated_from": {
             "roadmap_revision": roadmap.get("revision"),

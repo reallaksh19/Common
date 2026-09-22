@@ -40,7 +40,7 @@ def _events(root: Path) -> list[dict[str, Any]]:
 
 def _event(event_id: str, event_type: str, actor: str, subject: str, basis: list[str], details: dict[str, Any]) -> dict[str, Any]:
     value = {
-        "schema_version": "relay-v3-event",
+        "schema_version": "relay-v3.1-event",
         "event_id": event_id,
         "type": event_type,
         "timestamp": _now(),
@@ -687,7 +687,7 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Engineering Relay V3 transactional command surface.")
+    parser = argparse.ArgumentParser(description="Engineering Relay V3.1 transactional command surface.")
     parser.add_argument("repo_root", nargs="?", default=".")
     sub = parser.add_subparsers(dest="command", required=True)
 
