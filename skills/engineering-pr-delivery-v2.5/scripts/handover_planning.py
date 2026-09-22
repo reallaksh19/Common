@@ -325,6 +325,7 @@ def build_handover_plan(root:Path,owner_requirements:list[str]|None=None,complex
         "canonical_launcher":"skills/three-pass-prompt-generator/SKILL.md",
         "canonical_schema":"skills/three-pass-prompt-generator/schema.md",
         "mode":"THREE_PASS_ONLY",
+        "prompt_count":5,
         "complex_mode":bool(complex_project),
         "visible_q1_q5":bool(complex_project),
         "target_status":"READY" if handover_issue_url else "AWAITING_HANDOVER_ISSUE_READBACK",
@@ -457,6 +458,9 @@ INTENT COMPLETION TEST:
 Every INTENT item is accepted/verified or explicitly dispositioned by current authority.
 
 IMPORTANT EXPECTATIONS:
-Use the handover issue as the target. Inspect live repository/issue/PR/evidence state in Prompt 2 and Prompt 3. Do not trust stale issue prose over repository authority.
+Generate all five schema-defined prompts.
+Prompt 0.5 must think independently at the broader project level: original roadmap / large-project goal → governing issue → local task only as short subordinate context.
+Prompt 1 must think independently at the tighter local level: governing issue → local task / concrete issue witness, without inheriting the current PR/task answer.
+Inspect live repository/issue/PR/evidence state in Prompt 2, refresh and reconcile it again in Prompt 2.5, and revalidate it in Prompt 3. Do not trust stale issue prose over repository authority.
 {mode_line}
 """

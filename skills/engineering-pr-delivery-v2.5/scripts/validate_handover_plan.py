@@ -55,6 +55,7 @@ def validate(root:Path,owner_requirements:list[str]|None=None,complex_project:bo
 
     generator=plan.get("generator") or {}
     if generator.get("mode")!="THREE_PASS_ONLY":e.append("handover generator mode must remain THREE_PASS_ONLY")
+    if generator.get("prompt_count")!=5:e.append("handover generator must request exactly five prompts")
     if bool(generator.get("visible_q1_q5"))!=bool(generator.get("complex_mode")):e.append("visible Q1-Q5 must track complex handover mode exactly")
     if complex_project and generator.get("complex_mode") is not True:e.append("complex project handover must enable generator complex mode")
     if not complex_project and generator.get("complex_mode") is not False:e.append("plain handover must not inherit complex mode")

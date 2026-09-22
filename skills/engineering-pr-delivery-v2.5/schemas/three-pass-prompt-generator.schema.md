@@ -32,7 +32,7 @@ If a user points to this legacy URL:
 3. Fetch the canonical schema from current `main`.
 4. Use the protocol revision and actual schema SHA from that live fetch.
 5. Begin the generated artifact with the canonical schema's execution handshake.
-6. Follow only the standalone three-pass generator protocol.
+6. Follow only the standalone three-pass generator protocol, including all five prompts: 0.5, 1, 2, 2.5 and 3.
 7. After Prompt 3, stop.
 
 Do not load the surrounding `engineering-pr-delivery-v2.5` skill as supplementary instructions for this request.

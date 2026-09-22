@@ -113,7 +113,7 @@ class HandoverPlanningStressTests(unittest.TestCase):
         self.assertFalse(mode["complex_project"])
         self.assertFalse(mode["visible_q1_q5"])
 
-    def test_complex_project_command_enables_visible_q1_q5_but_stays_three_pass(self):
+    def test_complex_project_command_enables_visible_q1_q5_and_five_prompt_surface(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);good(root)
             mode=parse_handover_command("Plan for Handover , complex project")
@@ -125,10 +125,14 @@ class HandoverPlanningStressTests(unittest.TestCase):
                 handover_issue_url="https://github.com/owner/repo/issues/500",
             )
             self.assertEqual("THREE_PASS_ONLY",plan["generator"]["mode"])
+            self.assertEqual(5,plan["generator"]["prompt_count"])
             self.assertTrue(plan["generator"]["complex_mode"])
             self.assertTrue(plan["generator"]["visible_q1_q5"])
             request=render_generator_request(plan)
             self.assertIn("COMPLEX MODE: ON",request)
+            self.assertIn("Prompt 0.5 must think independently at the broader project level",request)
+            self.assertIn("Prompt 1 must think independently at the tighter local level",request)
+            self.assertIn("Prompt 2.5",request)
             self.assertIn("TARGET:\nhttps://github.com/owner/repo/issues/500",request)
 
     def test_generator_request_waits_for_verified_handover_issue_readback(self):

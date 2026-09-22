@@ -96,12 +96,14 @@ properties:
       - canonical_launcher
       - canonical_schema
       - mode
+      - prompt_count
       - complex_mode
       - visible_q1_q5
       - target_status
       - authorized_actions_rule
     properties:
       mode: {const: THREE_PASS_ONLY}
+      prompt_count: {const: 5}
       complex_mode: {type: boolean}
       visible_q1_q5: {type: boolean}
       target_status: {enum: [READY, AWAITING_HANDOVER_ISSUE_READBACK]}

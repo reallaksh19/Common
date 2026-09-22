@@ -1,6 +1,6 @@
 # Three-Pass Prompt Generator — Standalone Launcher
 
-This skill exists only to generate the three sequential prompts defined by its canonical schema.
+This skill exists only to generate the five sequential prompts defined by its canonical three-pass schema.
 
 It is deliberately isolated from engineering-delivery, takeover, certification, qualification, execution-package, relay, and admission workflows.
 
@@ -24,7 +24,7 @@ When the user asks to create, regenerate, review, or apply three-pass prompts, i
 ```text
 3 pass
 three-pass
-Prompt 1 / Prompt 2 / Prompt 3
+Prompt 0.5 / Prompt 1 / Prompt 2 / Prompt 2.5 / Prompt 3
 complex Q1 to Q5
 complex Q1–Q5
 ```
@@ -66,9 +66,9 @@ Repository and issue files for the **user's target** may of course be inspected 
 
 When the user requests complex Q1–Q5, those are the five human reasoning lenses defined by the live standalone schema.
 
-They remain inside Prompt 1.
+They remain inside Prompt 1. Prompt 0.5 is the separate global independent-thinking pass and Prompt 2.5 is the separate integrated reality+reconciliation bridge; neither is a Q1–Q5 stage.
 
-Do not create any extra workflow stage, machine metadata block, evaluator requirement, or fourth stage.
+Do not create any extra workflow stage, machine metadata block, or evaluator requirement beyond the five schema-defined prompts.
 
 If visible Q1–Q5 headings are requested, write them in natural target-specific practitioner language.
 
@@ -78,4 +78,4 @@ If the canonical schema cannot be fetched from current `main`, do not reconstruc
 
 Return only the schema handshake failure required by the schema and stop.
 
-If an output begins with target analysis or Prompt 1 before proving the live schema handshake, that run is invalid.
+If an output begins with target analysis, Prompt 0.5, or Prompt 1 before proving the live schema handshake, that run is invalid.

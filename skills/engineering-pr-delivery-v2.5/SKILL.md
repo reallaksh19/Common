@@ -56,13 +56,13 @@ skills/three-pass-prompt-generator/schema.md
 
 and obey the live schema revision/SHA. Do not reconstruct it from this skill.
 
-If the command includes the explicit word **complex** (for example `Plan for Handover, complex project`), set complex mode ON. The final artifact still has exactly three prompts; Prompt 1 additionally shows visible target-specific Q1–Q5 as required by the live standalone schema. Plain `Plan for Handover` does not inherit complex mode.
+If the command includes the explicit word **complex** (for example `Plan for Handover, complex project`), set complex mode ON. The final artifact has exactly five prompts: Prompt 0.5 (global independent thinking: project → governing issue → local task), Prompt 1 (local independent thinking: governing issue → local task), Prompt 2, Prompt 2.5, and Prompt 3. Prompt 1 additionally shows visible target-specific Q1–Q5 as required by the live standalone schema. Plain `Plan for Handover` does not inherit complex mode.
 
 The GitHub issue publication performed inside this compound transaction must not recursively trigger another full `Plan for Handover` transaction.
 
 ### THREE_PASS_GENERATOR
 
-If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 1 / Prompt 2 / Prompt 3, or requests complex Q1–Q5 under the three-pass method **and this is not the `Plan for Handover` combined command above**:
+If the user asks for three-pass prompt generation, names the legacy three-pass schema path, asks for Prompt 0.5 / Prompt 1 / Prompt 2 / Prompt 2.5 / Prompt 3, or requests complex Q1–Q5 under the three-pass method **and this is not the `Plan for Handover` combined command above**:
 
 **leave this skill immediately.**
 

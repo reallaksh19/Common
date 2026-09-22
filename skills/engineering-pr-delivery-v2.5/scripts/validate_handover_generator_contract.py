@@ -63,6 +63,7 @@ def validate(skill_root:Path,repo_root:Path|None=None):
         "skills/three-pass-prompt-generator/SKILL.md",
         "skills/three-pass-prompt-generator/schema.md",
         '"mode":"THREE_PASS_ONLY"',
+        '"prompt_count":5',
         '"complex_mode":bool(complex_project)',
         '"visible_q1_q5":bool(complex_project)',
     ):
@@ -72,7 +73,7 @@ def validate(skill_root:Path,repo_root:Path|None=None):
         "PLAN_FOR_HANDOVER — COMBINED CONTROL TRANSACTION",
         "fetch current `main`",
         "live schema revision/SHA",
-        "exactly three prompts",
+        "exactly five prompts",
         "Q1–Q5",
     ):
         if token not in engineering:e.append(f"engineering skill missing handover-generator control: {token}")
@@ -88,8 +89,10 @@ def validate(skill_root:Path,repo_root:Path|None=None):
     for token in (
         "# SCHEMA EXECUTION HANDSHAKE",
         "THREE_PASS_ONLY",
+        "## PROMPT 0.5 — IMAGINE FROM PROGRAMME",
         "## PROMPT 1 — IMAGINE",
         "## PROMPT 2 — UNDERSTAND",
+        "## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION",
         "## PROMPT 3 — REVALIDATE AND MOVE FORWARD",
         "COMPLEX Q1–Q5 COVERAGE:",
     ):

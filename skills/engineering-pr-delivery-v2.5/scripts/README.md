@@ -229,7 +229,7 @@ python reconcile_github_projection.py <observation.yaml> <repo-root> --apply
 
 `prepare_handover_projection.py` converts the derived plan into a CREATE or PUBLISH_HANDOVER GHOP. It reuses an existing open handover ISSUE_GRAPH node with the same stable handover key, otherwise proposes a new HANDOVER coordination node. It refuses to prepare over active unreconciled projection work and never claims native parentage before provider readback. The planner/preparer never directly calls GitHub. Use existing GHGEN/GHOP operations for publication and provider readback. Only after the handover issue URL is verified should the planner be rerun with `--handover-issue-url`; that produces the target packet for the live standalone three-pass generator.
 
-Complex handover mode changes only the generator request: exactly three prompts remain, with visible Q1–Q5 inside Prompt 1 according to the freshly fetched standalone schema.
+Complex handover mode changes only the Prompt-1 Q1–Q5 visibility. The standalone three-pass artifact now always contains exactly five prompts: Prompt 0.5 global independent thinking, Prompt 1 local independent thinking, Prompt 2 reality reconstruction, Prompt 2.5 integrated reality+reconciliation, and Prompt 3 final revalidation/action/handover.
 
 
 ## Dynamic roadmap event ledger
