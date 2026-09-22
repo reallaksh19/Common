@@ -100,7 +100,8 @@ def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> N
         return
     invalid = [
         path for path in replacements
-        if not any(fnmatch(path, pattern) for pattern in patterns)
+        if path.startswith("relay/")
+        and not any(fnmatch(path, pattern) for pattern in patterns)
     ]
     if invalid:
         raise TransactionError(

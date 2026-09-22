@@ -22,6 +22,7 @@ properties:
       enum:
         - ALLOW
         - INVALID_FOUNDATION
+        - PROTOCOL_NOT_ACTIVE
         - NO_ACTIVE_EXECUTION
         - NO_ACTIVE_LEASE
         - LEASE_ROUTE_MISMATCH
