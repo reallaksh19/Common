@@ -46,11 +46,24 @@ While the selector is `V2_5 / PREPARED`:
 
 Cutover is not ready until the repository has a valid native V3 lifecycle in `ACTIVE`, `IDLE`, or `TERMINAL` and the migration control is RESOLVED with durable reconciliation evidence.
 
-## Phase D — cutover proof
+## Phase D — freeze and cutover proof
+
+The bootstrap migration digest is immutable historical evidence. V2.5 may legitimately continue evolving while the selector is `V2_5 / PREPARED`.
+
+When live V2.5 authority is ready to stop changing, freeze the final legacy basis explicitly:
+
+```bash
+python skills/engineering-pr-delivery-v3/scripts/protocol_cutover.py <repo-root> freeze \
+  --tx-id TX-FREEZE-001 \
+  --event-id EVT-FREEZE-001 \
+  --actor migration-agent
+```
+
+The freeze stores `cutover.legacy_freeze_digest` without rewriting the bootstrap migration inventory. Any subsequent V2.5 mutation makes cutover readiness fail until a new explicit freeze is recorded.
 
 `protocol_cutover.py assess` checks seven independent conditions:
 1. full V3 conformance PASS;
-2. legacy tree digest unchanged from migration inventory;
+2. live legacy tree digest unchanged from the explicit cutover freeze;
 3. source V2.5 REPO_STATE validation PASS;
 4. migration control RESOLVED;
 5. **#421 roadmap-intelligence continuity control RESOLVED with evidence**;
@@ -85,7 +98,7 @@ V3 activation is intentionally unavailable until #421 continuity is evidenced. T
 
 ## Post-cutover invariant
 
-After an eventual V3 activation, the cutover-time legacy digest becomes immutable history evidence under the then-approved continuity contract.
+After V3 activation, the explicit cutover freeze digest becomes immutable history evidence. The original bootstrap digest remains preserved separately as migration-history evidence.
 
 If any file under `agents/relay/**` changes, `protocol_cutover.py validate` fails and `protocol_default.py` refuses to select either skill automatically.
 

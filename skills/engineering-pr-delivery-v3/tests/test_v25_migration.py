@@ -18,7 +18,7 @@ for entry in (SCRIPTS, V25_SCRIPTS):
 
 import bootstrap_relay as v25_bootstrap
 
-from protocol_cutover import CutoverError, activate, assess, validate_selection
+from protocol_cutover import CutoverError, activate, assess, freeze_legacy, validate_selection
 from protocol_default import resolve as resolve_default
 from snapshot_projection import build as build_snapshot
 from v25_migration import (
@@ -132,6 +132,15 @@ def make_cutover_ready(root: Path) -> None:
         "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml: ready=true; Common#421 continuity proof."
     ]
     dump(controls_path, controls)
+
+    freeze_result = freeze_legacy(
+        root,
+        tx_id="TX-FREEZE-001",
+        event_id="EVT-FREEZE-001",
+        actor="migration-agent",
+    )
+    if freeze_result["status"] != "COMMITTED":
+        raise AssertionError(freeze_result)
 
     # Generate the continuity proof from live preserved V2.5 authority instead of
     # manufacturing a schema-valid PASS document. This mirrors the real cutover path.
@@ -303,6 +312,30 @@ class V25MigrationTests(unittest.TestCase):
             self.assertEqual("FAIL", readiness["checks"]["roadmap_intelligence_continuity"])
             self.assertTrue(any("intelligence_continuity_recomputed=PASS" in item for item in readiness["basis"]))
             self.assertTrue(any("intelligence_continuity_report=FAIL" in item for item in readiness["basis"]))
+
+    def test_cutover_freeze_preserves_bootstrap_digest_and_binds_latest_live_legacy(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            init_legacy_repo(root)
+            bootstrap_v3(root)
+            selection_before = load_yaml(root / "relay/PROTOCOL_SELECTION.yaml")
+            bootstrap_digest = selection_before["legacy"]["tree_digest"]
+
+            profile = root / "agents/relay/REPO_PROFILE.yaml"
+            profile.write_text(profile.read_text(encoding="utf-8") + "\n# legitimate pre-cutover V2.5 evolution\n", encoding="utf-8")
+            _, live_digest = legacy_inventory(root)
+            self.assertNotEqual(bootstrap_digest, live_digest)
+
+            result = freeze_legacy(
+                root,
+                tx_id="TX-FREEZE-CHANGED",
+                event_id="EVT-FREEZE-CHANGED",
+                actor="migration-agent",
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            selection_after = load_yaml(root / "relay/PROTOCOL_SELECTION.yaml")
+            self.assertEqual(bootstrap_digest, selection_after["legacy"]["tree_digest"])
+            self.assertEqual(live_digest, selection_after["cutover"]["legacy_freeze_digest"])
 
     def test_ready_cutover_requires_owner_basis_and_activates_v3(self):
         with tempfile.TemporaryDirectory() as td:

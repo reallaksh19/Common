@@ -304,3 +304,8 @@ A migrated repository in `V2_5 / PREPARED` may use staged V3 for migration, cont
 New work from an `IDLE` V3 repository must enter through `relay_tx.py admit-task`. The transaction atomically applies the governed roadmap disposition, creates the EP, grants the first lease, moves STATE to ACTIVE, appends OWNER_TASK_ADMITTED / EP_CREATED / LEASE_GRANTED events, and regenerates CURRENT_SNAPSHOT.
 
 The generic transaction layer enforces semantic target constraints for critical commands. In particular, `ACTIVATE_LEASE` cannot create or rewrite roadmap/EP authority, and `RESOLVE_CONTROL` cannot rewrite protocol selection or migration reports. This prevents an atomically journaled transaction from masquerading as a different authority transition.
+
+
+### Legacy cutover freeze
+
+Do not rewrite the bootstrap V2.5 migration digest when legacy authority legitimately changes during `V2_5 / PREPARED`. Before cutover, run `protocol_cutover.py freeze` to bind the final live V2.5 tree. Continuity and post-cutover immutability are checked against that explicit freeze digest; the bootstrap digest remains historical migration evidence.
