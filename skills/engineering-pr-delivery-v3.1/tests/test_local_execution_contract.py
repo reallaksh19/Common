@@ -30,6 +30,7 @@ class LocalExecutionContractTests(unittest.TestCase):
                 event_id="EVT-LOCAL-CONTRACT",
                 actor="agent-x",
                 base_ref=base_ref,
+                commands=["python -m unittest tests.test_signed_pdf"],
             )
             self.assertEqual("COMMITTED", tx["status"])
 
@@ -43,6 +44,8 @@ class LocalExecutionContractTests(unittest.TestCase):
             self.assertIn("Local Execution Request", rendered)
             self.assertIn(request["exact_basis"]["material_head"], rendered)
             self.assertIn("HEAD_MISMATCH", rendered)
+            self.assertIn("python -m unittest tests.test_signed_pdf", rendered)
+            self.assertEqual("python -m unittest tests.test_signed_pdf", request["steps"][0]["command"])
 
             result = {
                 "schema_version": "relay-v3.1-local-execution-result",
