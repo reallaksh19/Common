@@ -13,7 +13,7 @@ from local_execution_projection import build as build_local_execution
 from relay_can import evaluate as can_action
 from snapshot_projection import build as build_snapshot
 from transactionlib import TransactionError, execute, jsonl_bytes, recover_all, yaml_bytes
-from v3lib import load_events, load_yaml, validate_schema
+from v3lib import load_events, load_yaml, require_identifier, validate_schema
 from validate_foundation import validate_authority
 
 
@@ -102,6 +102,10 @@ def activate_lease(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    try:
+        require_identifier(lease_id, "LEASE-", "lease_id")
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
     old_lease_id = (state.get("execution") or {}).get("lease")
     old_lease = load_yaml(root / "relay/LEASES" / f"{old_lease_id}.yaml") if old_lease_id else None
     if old_lease_id == lease_id:
