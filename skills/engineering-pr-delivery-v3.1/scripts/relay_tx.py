@@ -689,10 +689,12 @@ def accept_checkpoint(
     actor: str,
     checkpoint_path: Path,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "CHECKPOINT", base_ref=base_ref)
+    _require_action(root, "CHECKPOINT", base_ref=base_ref, expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     checkpoint = load_yaml(checkpoint_path)
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
     if errors:
@@ -774,9 +776,11 @@ def resolve_control(
     control_id: str,
     evidence: list[str],
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, controls = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     matches = [item for item in controls.get("controls") or [] if item.get("id") == control_id]
     if len(matches) != 1:
         raise TransactionError(f"expected one control {control_id}; found {len(matches)}")
@@ -821,11 +825,37 @@ def reconcile_roadmap(
     actor: str,
     reconciliation_path: Path,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
+    change_delta_path: Path | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     roadmap_path = str((state.get("roadmap") or {}).get("path"))
     current = load_yaml(root / roadmap_path)
+
+    change_delta = None
+    change_target = None
+    if change_delta_path is not None:
+        change_delta = load_yaml(change_delta_path)
+        errors = validate_schema("change-delta", change_delta, "CHANGE_DELTA")
+        if errors:
+            raise TransactionError("; ".join(errors))
+        if (change_delta.get("verification") or {}).get("status") != "CONFIRMED":
+            raise TransactionError("CHANGE_DELTA must be CONFIRMED before roadmap application")
+        authorization = change_delta.get("authorization") or {}
+        if authorization.get("required") == "OWNER" and authorization.get("status") != "GRANTED":
+            raise TransactionError("CHANGE_DELTA requires granted Owner authority")
+        if authorization.get("required") == "NONE" and authorization.get("status") != "NOT_REQUIRED":
+            raise TransactionError("CHANGE_DELTA authorization state is inconsistent")
+        application = change_delta.get("application") or {}
+        if application.get("status") != "NOT_APPLIED":
+            raise TransactionError("CHANGE_DELTA is already applied or deferred")
+        if application.get("expected_roadmap_revision") != (state.get("roadmap") or {}).get("revision"):
+            raise TransactionError("CHANGE_DELTA expected roadmap revision is stale")
+        if application.get("expected_state_digest") != canonical_digest(state):
+            raise TransactionError("CHANGE_DELTA expected state digest is stale")
+        change_target = f"relay/CHANGES/{change_delta['id']}.yaml"
 
     reconciliation = load_yaml(reconciliation_path)
     errors = validate_schema("roadmap-reconciliation", reconciliation, "ROADMAP_RECONCILIATION")
@@ -901,10 +931,12 @@ def publish_handover(
     event_id: str,
     actor: str,
     base_ref: str,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "HANDOVER")
+    _require_action(root, "HANDOVER", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
     task_snapshot = build_task(root, base_ref)
@@ -943,10 +975,12 @@ def export_local_execution(
     base_ref: str,
     mode: str = "VALIDATE_ONLY",
     commands: list[str] | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "LOCAL_EXECUTION_EXPORT")
+    _require_action(root, "LOCAL_EXECUTION_EXPORT", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     snapshot = build_snapshot(root, base_ref)
     ep = _current_ep(root, state)
     checkpoint = _current_checkpoint(root, state)
@@ -1098,10 +1132,12 @@ def close_task(
     event_id: str,
     actor: str,
     parent_issue_observation: dict[str, Any] | None = None,
+    expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
-    _require_action(root, "CLOSE_TASK")
+    _require_action(root, "CLOSE_TASK", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
     _require_final_reconciliation(
         root,
         state,
@@ -1129,7 +1165,10 @@ def close_task(
     lease_id = execution.get("lease")
     lease = load_yaml(root / "relay/LEASES" / f"{lease_id}.yaml") if lease_id else None
     new_state = copy.deepcopy(state)
-    new_state["execution"] = {"lifecycle": "TERMINAL", "ep": None, "lease": None, "route": None}
+    terminal_execution = {"lifecycle": "TERMINAL", "ep": None, "lease": None, "route": None}
+    if execution.get("custody_epoch") is not None:
+        terminal_execution["custody_epoch"] = int(execution["custody_epoch"])
+    new_state["execution"] = terminal_execution
     snapshot = build_snapshot(root, state_override=new_state)
 
     replacements: dict[str, bytes] = {
