@@ -23,6 +23,7 @@ V25_TREE = "agents/relay"
 MIGRATION_REPORT = "relay/MIGRATION/V25_REPORT.yaml"
 PROTOCOL_SELECTION = "relay/PROTOCOL_SELECTION.yaml"
 MIGRATION_CONTROL = "CTRL-MIGRATION-RECONCILE"
+INTELLIGENCE_CONTINUITY_CONTROL = "CTRL-V25-INTELLIGENCE-CONTINUITY"
 
 
 class MigrationError(RuntimeError):
@@ -360,19 +361,34 @@ def bootstrap(
 
     controls = {
         "schema_version": "relay-v3-controls",
-        "controls": [{
-            "id": MIGRATION_CONTROL,
-            "kind": "PROTOCOL",
-            "state": "OPEN",
-            "source": {"type": "VALIDATOR", "ref": MIGRATION_REPORT},
-            "condition": "Legacy V2.5 intent/evidence has not yet been reconciled into native V3 execution authority.",
-            "blocks": ["MATERIAL_WRITE", "TEST", "CHECKPOINT", "HANDOVER", "LOCAL_EXECUTION_EXPORT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"],
-            "permits": ["READ", "ANALYZE"],
-            "resolution": {
-                "condition": "Native V3 roadmap/frontier/EP/lease/checkpoint disposition is established without rewriting V2.5 history.",
-                "evidence": [],
+        "controls": [
+            {
+                "id": MIGRATION_CONTROL,
+                "kind": "PROTOCOL",
+                "state": "OPEN",
+                "source": {"type": "VALIDATOR", "ref": MIGRATION_REPORT},
+                "condition": "Legacy V2.5 intent/evidence has not yet been reconciled into native V3 execution authority.",
+                "blocks": ["MATERIAL_WRITE", "TEST", "CHECKPOINT", "HANDOVER", "LOCAL_EXECUTION_EXPORT", "DRAFT_PR_UPDATE", "PR_READY", "MERGE", "RELEASE", "CLOSE_TASK"],
+                "permits": ["READ", "ANALYZE"],
+                "resolution": {
+                    "condition": "Native V3 roadmap/frontier/EP/lease/checkpoint disposition is established without rewriting V2.5 history.",
+                    "evidence": [],
+                },
             },
-        }],
+            {
+                "id": INTELLIGENCE_CONTINUITY_CONTROL,
+                "kind": "PROTOCOL",
+                "state": "OPEN",
+                "source": {"type": "REPOSITORY", "ref": "Common#421"},
+                "condition": "V3 cutover must not retire V2.5 roadmap admission, ROADMAP_EVENTS, checkpoint/progress reconciliation, discovery, Owner-delta, or handover intelligence before continuity is proven.",
+                "blocks": ["PROTOCOL_CUTOVER"],
+                "permits": ["READ", "ANALYZE"],
+                "resolution": {
+                    "condition": "Common#421 continuity acceptance is evidenced: governed roadmap/event/checkpoint/progress intelligence remains semantically intact across the selected V3 authority boundary.",
+                    "evidence": [],
+                },
+            },
+        ],
     }
     errors = validate_schema("controls", controls, "CONTROLS")
     if errors:
