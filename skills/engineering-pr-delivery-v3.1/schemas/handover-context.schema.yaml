@@ -88,7 +88,7 @@ properties:
   accumulated_learning:
     type: object
     additionalProperties: false
-    required: [checkpoint, discoveries, known_limitations, what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action, task_snapshot, improvement_view]
+    required: [checkpoint, discoveries, known_limitations, what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action, task_snapshot, improvement_view, parent_issue]
     properties:
       checkpoint: {type: [string, 'null']}
       discoveries: {type: array, items: {type: string}}
@@ -111,6 +111,15 @@ properties:
           ep: {type: [string, 'null']}
           work_package: {type: [string, 'null']}
           next_action: {type: [string, 'null']}
+      parent_issue:
+        type: object
+        additionalProperties: false
+        required: [repository, number, disposition, relationships]
+        properties:
+          repository: {type: [string, 'null']}
+          number: {type: [integer, 'null'], minimum: 1}
+          disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+          relationships: {type: array}
       improvement_view:
         type: object
         additionalProperties: false

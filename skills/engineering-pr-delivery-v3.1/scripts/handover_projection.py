@@ -65,6 +65,14 @@ def render(snapshot: dict[str, Any], checkpoint: dict[str, Any] | None, task_sna
     if task_snapshot:
         current = (task_snapshot.get("current_task_progress") or {}).get("summary") or {}
         parent = (task_snapshot.get("parent_issue_progress") or {}).get("summary") or {}
+        parent_issue = task_snapshot.get("parent_issue") or {}
+        lines += [
+            "",
+            "## Parent issue lineage",
+            f"- Issue: {parent_issue.get('repository') or 'unknown'}#{parent_issue.get('number') or 'NONE'}",
+            f"- Disposition: {parent_issue.get('disposition') or 'UNKNOWN'}",
+            f"- Relationships: {parent_issue.get('relationships') or []}",
+        ]
         lines += [
             "",
             "## Quantitative status",

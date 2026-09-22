@@ -234,6 +234,12 @@ def build_context(
                 "capability_change": capability_change,
                 "evidence_count": evidence_count,
             },
+            "parent_issue": {
+                "repository": (task_snapshot.get("parent_issue") or {}).get("repository"),
+                "number": (task_snapshot.get("parent_issue") or {}).get("number"),
+                "disposition": (task_snapshot.get("parent_issue") or {}).get("disposition") or "UNKNOWN",
+                "relationships": list((task_snapshot.get("parent_issue") or {}).get("relationships") or []),
+            },
         },
         "generator_contract": {
             "canonical_launcher": LAUNCHER,
