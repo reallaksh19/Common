@@ -127,11 +127,14 @@ def build_context(
 
     execution = snapshot.get("execution") or {}
     ep_id = execution.get("ep")
-    ep = load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
     lease_id = execution.get("lease")
     checkpoint_id = (snapshot.get("evidence") or {}).get("latest_checkpoint")
     checkpoint = load_yaml(root / "relay/CHECKPOINTS" / f"{checkpoint_id}.yaml") if checkpoint_id else None
-    wp = _wp_row(roadmap, execution.get("work_package"))
+
+    context_ep_id = ep_id or ((checkpoint or {}).get("ep"))
+    context_ep = load_yaml(root / "relay/WORK" / f"{context_ep_id}.yaml") if context_ep_id else None
+    context_wp_id = execution.get("work_package") or ((context_ep or {}).get("work_package"))
+    wp = _wp_row(roadmap, context_wp_id)
     handoff = (checkpoint or {}).get("handoff") or {}
 
     context = {
@@ -159,12 +162,16 @@ def build_context(
                 "roadmap_title": roadmap.get("title"),
             },
             "local_responsibility": {
-                "work_package": execution.get("work_package"),
+                "work_package": context_wp_id,
                 "title": (wp or {}).get("title"),
-                "outcome": (wp or {}).get("title"),
-                "acceptance_statements": [],
+                "outcome": ((context_ep or {}).get("outcome") or {}).get("statement") or (wp or {}).get("title"),
+                "acceptance_statements": [
+                    str(item.get("statement"))
+                    for item in ((context_ep or {}).get("acceptance") or [])
+                    if isinstance(item, dict) and str(item.get("statement") or "").strip()
+                ],
             },
-            "stable_constraints": list(((ep or {}).get("scope") or {}).get("prohibit") or []),
+            "stable_constraints": list(((context_ep or {}).get("scope") or {}).get("prohibit") or []),
         },
         "reality_context": {
             "execution": {

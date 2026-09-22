@@ -19,6 +19,7 @@ for entry in (SCRIPTS, TESTS):
 from handover_context import build_context, build_request, render_request, validate_visibility
 from plan_handover import plan_handover
 from relay_can import evaluate as can_action
+from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
 from test_v3_foundation import dump
 from transactionlib import TransactionError
@@ -81,6 +82,40 @@ class HandoverContextTests(unittest.TestCase):
             self.assertNotIn("pull request", blind_text.lower())
             self.assertNotIn("419", blind_text)
             self.assertEqual("TPG-3P-2026-09-22-R10", context["generator_contract"]["protocol_revision_at_freeze"])
+
+    def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            historical_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            historical_ep["id"] = "EP-TA-010"
+            dump(root / "relay/WORK/EP-TA-010.yaml", historical_ep)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-HANDOVER",
+                event_id="EVT-RELEASE-HANDOVER",
+                actor="agent-x",
+            )
+
+            target = load_yaml(target_observation(root))
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=True,
+            )
+            self.assertEqual("IDLE", context["reality_context"]["execution"]["lifecycle"])
+            self.assertIsNone(context["reality_context"]["execution"]["ep"])
+            self.assertEqual("WP-TA-109", context["blind_context"]["local_responsibility"]["work_package"])
+            self.assertIn(
+                "Foundation objects validate deterministically.",
+                context["blind_context"]["local_responsibility"]["acceptance_statements"],
+            )
+            self.assertIn(
+                "Do not make V3 the default protocol in this slice.",
+                context["blind_context"]["stable_constraints"],
+            )
 
     def test_complex_request_preserves_exact_five_prompt_contract_and_q1_q5(self):
         with tempfile.TemporaryDirectory() as td:
