@@ -48,7 +48,7 @@ class HumanCommunicationStressTests(unittest.TestCase):
             root=Path(td);_,_,_,s=good(root);s["status_planes"]["execution"]={"state":"WAITING","can_continue":False,"material_authority":"READ_ONLY","next_action":"Wait for product-direction decision."};s["status_planes"]["stop"]={"active":True,"category":"OWNER_DECISION_REQUIRED","reason":"Choose whether the accepted behavior should change before implementation continues.","basis":["owner-intent-boundary"]};dump(root/"agents/relay/REPO_STATE.yaml",s)
             self.assertEqual([],communication_check(root)[0]);text=owner_status(root)
             self.assertIn("Choose whether the accepted behavior should change",text)
-            self.assertIn("## Decisions for you",text)
+            self.assertIn("## Owner decisions",text)
 
     def test_missing_evidence_cannot_be_hidden(self):
         with tempfile.TemporaryDirectory() as td:
@@ -124,10 +124,10 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "success_condition":"The command exits successfully against the admitted revision.",
                 "clears":["repository-admission gate","product implementation may begin"],
                 "delegation":{
-                    "mode":"LOCAL_AGENT",
+                    "mode":"LOCAL_AGENT","control_obligation_id":"DLG-TEST-1","monitor_role":"READ_ONLY",
                     "prompt":"Open the repository at the admitted revision. Run the required local verification exactly as stated. Do not modify unrelated files. Post the command, exit status, key output and evidence result back to the same GitHub issue location.",
                     "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
-                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":30,"selection_reason":"This is one bounded command expected to complete quickly.","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
+                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":30,"selection_reason":"This is one bounded command expected to complete quickly.","terminate_when":"CONTROL_OBLIGATION_NOT_OPEN","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
                 },
             }
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
@@ -166,10 +166,10 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "success_condition":"The required validation completes.",
                 "clears":["acceptance evidence gap"],
                 "delegation":{
-                    "mode":"LOCAL_AGENT",
+                    "mode":"LOCAL_AGENT","control_obligation_id":"DLG-TEST-1","monitor_role":"READ_ONLY",
                     "prompt":"Open the repository at the admitted revision. Run the required local verification exactly as stated. Do not modify unrelated files. Post the command, exit status, key output and evidence result back to the same GitHub issue location.",
                     "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
-                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":60,"selection_reason":"This is This external runner may require setup before the check completes.","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
+                    "response_check":{"timer_required":True,"timer_title":"Local verification response","after_minutes":60,"selection_reason":"This is This external runner may require setup before the check completes.","terminate_when":"CONTROL_OBLIGATION_NOT_OPEN","on_due":"Read the current work issue for the local-agent result and reconcile the evidence.","on_no_response":"Report WAITING truthfully and schedule another check only if it remains useful."},
                 },
             }
             dump(root/"agents/relay/execution-packages/EP-1.yaml",ep)
@@ -207,9 +207,9 @@ class HumanCommunicationStressTests(unittest.TestCase):
                 "expected_evidence":["TEST-1"],"blocks":["UI acceptance"],"success_condition":"The workflow is verified.",
                 "clears":["UI acceptance gap"],
                 "delegation":{
-                    "mode":"LOCAL_AGENT","prompt":"Run the browser verification and post evidence to the same issue.",
+                    "mode":"LOCAL_AGENT","control_obligation_id":"DLG-TEST-1","monitor_role":"READ_ONLY","prompt":"Run the browser verification and post evidence to the same issue.",
                     "publication":{"target":"CURRENT_WORK_ISSUE","method":"COMMENT","local_result_update":"SAME_LOCATION","readback_required":True},
-                    "response_check":{"timer_required":True,"timer_title":"Browser verification response","after_minutes":45,"selection_reason":"Invalid interval for regression.","on_due":"Check the issue.","on_no_response":"Report waiting."},
+                    "response_check":{"timer_required":True,"timer_title":"Browser verification response","after_minutes":45,"selection_reason":"Invalid interval for regression.","terminate_when":"CONTROL_OBLIGATION_NOT_OPEN","on_due":"Check the issue.","on_no_response":"Report waiting."},
                 },
             }
             ep["next_work"]["steps"][0]["execution_requirement"]=req

@@ -12,6 +12,26 @@ effects:
 # Optional only for decision.kind: AUTHORIZATION when the Owner explicitly
 # grants/revokes a delivery action. This is separate from material write authority.
 delivery_authorization: null
+# Optional only for decision.kind: AUTHORIZATION when the Owner explicitly
+# permits bounded engineering work while named DEFERRABLE control obligations
+# remain open. This does not mark those obligations PASS and cannot override a
+# hard stop or protected-invariant failure.
+execution_override: null
+# Example:
+# execution_override:
+#   disposition: GRANTED
+#   scope:
+#     repository: "<owner/repo>"
+#     branch: "fix/example"
+#     base_sha: "<starting-base-sha>"
+#     route_key: null
+#     issues: [123]
+#     pull_requests: [456]
+#     allowed_write_paths: ["src/**", "tests/**"]
+#   defers: [ROUTE_RECONCILIATION]
+#   allows: [BOUNDED_PRODUCT_WRITES, TESTS, DRAFT_PR_UPDATES]
+#   blocks: [PR_READY, MERGE, CHECKPOINT]
+#   pending_obligations: [PEND-0456-001]
 # Example:
 # delivery_authorization:
 #   action: MERGE

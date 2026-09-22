@@ -28,7 +28,10 @@ Neither generated view is authority. Both are disposable projections and must be
 - what changed in roadmap/progress at the last checkpoint;
 - whether an Owner decision is genuinely required now;
 - what happens next;
-- what currently stops progress, if anything.
+- what currently stops progress, if anything;
+- which deferred validations remain OPEN, what work is still allowed, and which delivery/checkpoint boundaries they block;
+- which known issues are intentionally carried forward;
+- which delegated checks remain OPEN and are read-only monitoring work.
 
 The Owner view must not invent urgency. A choice reserved to the Owner is not the same as an Owner decision required now. `OWNER_DECISION_REQUIRED` is shown only when current repository truth actually requires an Owner decision to proceed.
 
@@ -42,13 +45,18 @@ The Owner view must never hide or soften away:
 - protected, prohibited, and deliberate non-goal scope;
 - known limitations/problems;
 - roadmap/progress reconciliation;
-- exact ordered next work.
+- exact ordered next work;
+- OPEN `PEND-*`, `KI-*`, and `DLG-*` control obligations;
+- active bounded Owner execution overrides and their blocked boundaries;
+- execution custody when enforcement is enabled.
 
 Quality severity alone does not become a hard stop in communication. A non-blocking quality risk remains visible as a risk, while execution-stop language is reserved for the STOP plane / valid hard-stop mapping.
 
 ## Environment-blocked local-agent delegation
 
 An external/local execution requirement is incomplete unless the Owner can immediately delegate it.
+
+Every such delegation must be bound to one durable `DLG-*` control obligation. Repeated observation of the same unresolved external action must reuse/update that DLG rather than publish another logically identical handoff.
 
 The Owner view must expose:
 
@@ -58,9 +66,15 @@ The Owner view must expose:
 - where the local result must be posted;
 - the 30- or 60-minute response-check timer and why that interval fits the task;
 - what the agent will do when the timer fires;
-- what happens if no response is present.
+- what happens if no response is present;
+- the DLG id and current lifecycle state;
+- that the timer callback is a **READ_ONLY monitor** and terminates when the DLG is no longer OPEN.
 
 A local/browser/tool limitation is therefore not merely `NOT_RUN`; it becomes a bounded, observable delegation with a return path.
+
+When the response timer fires, it must first read the DLG lifecycle. If the obligation is `SATISFIED | SUPERSEDED | CANCELLED | EXPIRED`, the timer terminates without restarting the engineering transaction. While OPEN, it may inspect evidence and publish waiting/status truth only. It must not create a candidate identity, DISC/QUAL/TC, execution custody, product writes, or another delegation.
+
+This prevents timer callbacks from recursively becoming replacement engineers.
 
 ## Plain-language boundary
 
@@ -119,6 +133,8 @@ Every active task has a default Owner status heartbeat at **minute 25 from task 
 
 At task start, the executing agent must create a one-time status timer for 25 minutes unless the Owner explicitly overrides the cadence.
 
+The heartbeat timer is also a **read-only status monitor**, not an execution handoff. Bind it to the current task/work identity. When it wakes, first verify that the task is still active; if the task completed, was superseded, or was cancelled, terminate the timer. The heartbeat must never create a new candidate, takeover certification, execution custody, product write, or delegated subtask merely because a fresh process handled the callback.
+
 If the task completes before minute 25, the normal completion/control-return publication satisfies the obligation and the pending heartbeat may be cancelled.
 
 If the task is still active at minute 25, publish Owner status even when nothing materially changed:
@@ -158,6 +174,7 @@ Active work
 Completed work log
 Newly discovered work
 Blocked / waiting
+Deferred validations / known issues / delegated checks
 What changed
 Roadmap and progress
 Delivery
@@ -179,7 +196,7 @@ agents/relay/publication/OWNER_PUBLICATION.yaml
 
 The cursor records the normalized source-derived state that the Owner was last shown, plus source/report/view digests. It is **coordination metadata**, not engineering authority.
 
-Current truth remains in roadmap, PROGRESS, EP, checkpoint/evidence, ISSUE_GRAPH, ODR, state planes, and verified external observations.
+Current truth remains in roadmap, PROGRESS, EP, checkpoint/evidence, ISSUE_GRAPH, ODR, REPO_STATE control obligations/execution custody, state planes, and verified external observations.
 
 Every communication projection derives:
 

@@ -12,7 +12,7 @@ properties:
       owner_publication_cursor_digest: {type: [string, 'null']}
   owner:
     type: object
-    required: [change, status_cadence, capability, current_work, purpose, scope, evidence, quality, roadmap, delivery, decisions, next_work, external_actions, stop_conditions]
+    required: [change, status_cadence, capability, current_work, purpose, scope, evidence, quality, control, roadmap, delivery, decisions, next_work, external_actions, stop_conditions]
     properties:
       change:
         type: object
@@ -58,6 +58,16 @@ properties:
       quality:
         type: object
         required: [state, visible_risks, procedure_gaps, known_limitations, known_problems]
+      control:
+        type: object
+        required: [pending_validations, known_issues, delegations, boundary_blockers, active_execution_overrides, execution_custody]
+        properties:
+          pending_validations: {type: array}
+          known_issues: {type: array}
+          delegations: {type: array}
+          boundary_blockers: {type: object}
+          active_execution_overrides: {type: array}
+          execution_custody: {type: object}
       roadmap:
         type: object
         required: [summary, progress, last_reconciliation]

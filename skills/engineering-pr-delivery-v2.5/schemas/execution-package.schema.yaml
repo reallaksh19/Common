@@ -162,9 +162,11 @@ properties:
                   items: {type: string, minLength: 1}
                 delegation:
                   type: object
-                  required: [mode, prompt, publication, response_check]
+                  required: [mode, control_obligation_id, monitor_role, prompt, publication, response_check]
                   properties:
                     mode: {const: LOCAL_AGENT}
+                    control_obligation_id: {type: string, pattern: '^DLG-'}
+                    monitor_role: {const: READ_ONLY}
                     prompt: {type: string, minLength: 1}
                     publication:
                       type: object
@@ -176,9 +178,10 @@ properties:
                         readback_required: {const: true}
                     response_check:
                       type: object
-                      required: [timer_required, timer_title, after_minutes, selection_reason, on_due, on_no_response]
+                      required: [timer_required, timer_title, after_minutes, selection_reason, terminate_when, on_due, on_no_response]
                       properties:
                         timer_required: {const: true}
+                        terminate_when: {const: CONTROL_OBLIGATION_NOT_OPEN}
                         timer_title: {type: string, minLength: 1}
                         after_minutes: {enum: [30, 60]}
                         selection_reason: {type: string, minLength: 1}

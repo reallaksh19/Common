@@ -132,6 +132,8 @@ next_work:
       #
       # Every EXECREQ must include delegation:
       #   mode: LOCAL_AGENT
+      #   control_obligation_id: DLG-<stable-id>
+      #   monitor_role: READ_ONLY
       #   prompt: "<copy-pasteable local-agent prompt with exact basis/action/evidence>"
       #   publication:
       #     target: CURRENT_WORK_ISSUE
@@ -143,6 +145,7 @@ next_work:
       #     timer_title: "<short task-specific check title>"
       #     after_minutes: 30 | 60
       #     selection_reason: "<why 30 or 60 minutes fits this task>"
+      #     terminate_when: CONTROL_OBLIGATION_NOT_OPEN
       #     on_due: "<check the issue/sub-issue for the local-agent result and reconcile>"
       #     on_no_response: "<report waiting truthfully; reschedule only if still useful>"
       execution_requirement: null

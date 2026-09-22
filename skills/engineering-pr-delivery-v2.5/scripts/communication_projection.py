@@ -60,6 +60,30 @@ def _required_owner_decisions(report:dict)->list[dict]:
     return out
 
 
+def _control_state(report:dict)->dict:
+    obligations=[x for x in (report.get("control_obligations") or []) if isinstance(x,dict)]
+    open_items=[x for x in obligations if x.get("state")=="OPEN"]
+    pending=[x for x in open_items if x.get("kind")=="DEFERRED_VALIDATION"]
+    known=[x for x in open_items if x.get("kind")=="KNOWN_ISSUE"]
+    delegations=[x for x in open_items if x.get("kind")=="DELEGATION"]
+    blockers={boundary:[x.get("id") for x in pending if boundary in (x.get("must_resolve_before") or [])]
+              for boundary in ("PR_READY","MERGE","CHECKPOINT","RELEASE")}
+    overrides=[]
+    for row in report.get("owner_decisions",[]) or []:
+        if not isinstance(row,dict) or row.get("status")!="APPLIED":continue
+        override=row.get("execution_override")
+        if isinstance(override,dict) and override.get("disposition")=="GRANTED":
+            overrides.append({"odr_id":row.get("id"),**override})
+    return {
+        "pending_validations":pending,
+        "known_issues":known,
+        "delegations":delegations,
+        "boundary_blockers":blockers,
+        "active_execution_overrides":overrides,
+        "execution_custody":report.get("execution_custody") or {"enforced":False,"leases":[]},
+    }
+
+
 def _capability(report:dict)->dict:
     ex=report.get("execution") or {};stop=report.get("stop") or {};relay=report.get("relay_state");authority=ex.get("material_authority")
     if stop.get("active"):
@@ -98,6 +122,7 @@ def build(root:Path)->dict:
     except Exception:
         recent_events=[]
     change=publication_status(root,report)
+    control=_control_state(report)
     owner={
         "change":change,
         "status_cadence":_status_cadence(contract),
@@ -107,6 +132,7 @@ def build(root:Path)->dict:
         "scope":{"protected":scope.get("protected") or [],"prohibited":scope.get("prohibited") or [],"owner_reserved":scope.get("owner_reserved") or [],"deliberate_non_goals":contract.get("deliberate_non_goals") or []},
         "evidence":{"state":evidence.get("state"),"summary":evidence.get("summary"),"not_run":evidence.get("not_run") or [],"acceptance":report.get("acceptance") or []},
         "quality":{"state":(report.get("quality") or {}).get("state"),"visible_risks":risks,"procedure_gaps":quality_gaps,"known_limitations":checkpoint.get("known_limitations") or [],"known_problems":contract.get("known_problems") or []},
+        "control":control,
         "roadmap":{
             "summary":report.get("roadmap_summary") or {},
             "progress":{**_current_titles(report.get("progress") or {}),"hierarchy":(report.get("progress") or {}).get("hierarchy") or []},

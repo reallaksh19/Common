@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 from relaylib import load_yaml,print_result,require
+from takeoverlib import current_routes,route_key
 
 RELAY_STATES={"INITIALIZING","ACTIVE","PARALLEL","IDLE","TERMINAL"}
 NONE_IDS={None,"","NONE"}
@@ -31,6 +32,82 @@ def validate(repo_root:Path):
     last=state.get("last_checkpoint") or {}; errors+=require(last,["id","path"],"REPO_STATE.last_checkpoint")
     admissions=state.get("takeover_admissions")
     if not isinstance(admissions,list):errors.append("REPO_STATE.takeover_admissions must be a list")
+
+    # Execution custody is distinct from candidate certification. Certification says a
+    # candidate is qualified; an ACTIVE custody lease says who currently owns writes.
+    custody=state.get("execution_custody")
+    if custody is not None:
+        if not isinstance(custody,dict):errors.append("REPO_STATE.execution_custody must be a mapping")
+        else:
+            if not isinstance(custody.get("enforced"),bool):errors.append("REPO_STATE.execution_custody.enforced must be boolean")
+            leases=custody.get("leases")
+            if not isinstance(leases,list):errors.append("REPO_STATE.execution_custody.leases must be a list")
+            else:
+                active_by_route={}
+                try:
+                    live_routes={route_key(r):r for r in current_routes(repo_root,state)}
+                except Exception as exc:
+                    live_routes={}
+                    warnings.append(f"execution custody route comparison deferred until current route is valid: {exc}")
+                for i,lease in enumerate(leases):
+                    label=f"REPO_STATE.execution_custody.leases[{i}]"
+                    if not isinstance(lease,dict):errors.append(f"{label} must be a mapping");continue
+                    errors+=require(lease,["route_key","candidate","state","branch","source"],label)
+                    rkey=str(lease.get("route_key") or "")
+                    candidate=lease.get("candidate") or {};cid=str(candidate.get("agent_instance_id") or "")
+                    if not rkey:errors.append(f"{label}.route_key must be explicit")
+                    if not cid:errors.append(f"{label}.candidate.agent_instance_id must be explicit")
+                    if lease.get("state") not in {"ACTIVE","RELEASED","SUPERSEDED"}:errors.append(f"{label}.state invalid")
+                    if not _explicit(lease.get("branch")):errors.append(f"{label}.branch must be explicit")
+                    if not _explicit(lease.get("source")):errors.append(f"{label}.source must be explicit")
+                    if lease.get("state")=="ACTIVE":
+                        active_by_route.setdefault(rkey,[]).append(lease)
+                        route=live_routes.get(rkey)
+                        if route is None:errors.append(f"{label} ACTIVE route is not a current execution route: {rkey}")
+                        elif str(route.get("branch"))!=str(lease.get("branch")):errors.append(f"{label}.branch does not match current route branch")
+                for rkey,items in active_by_route.items():
+                    if len(items)>1:errors.append(f"REPO_STATE.execution_custody has multiple ACTIVE executors for {rkey}")
+
+    obligations=state.get("control_obligations")
+    if obligations is not None:
+        if not isinstance(obligations,list):errors.append("REPO_STATE.control_obligations must be a list")
+        else:
+            seen_ids=set();all_ids=set()
+            for item in obligations:
+                if isinstance(item,dict) and item.get("id"):all_ids.add(str(item.get("id")))
+            for i,item in enumerate(obligations):
+                label=f"REPO_STATE.control_obligations[{i}]"
+                if not isinstance(item,dict):errors.append(f"{label} must be a mapping");continue
+                errors+=require(item,["id","kind","state","summary","source","scope","evidence"],label)
+                oid=str(item.get("id") or "");kind=item.get("kind");ostate=item.get("state")
+                if oid in seen_ids:errors.append(f"duplicate control obligation id: {oid}")
+                seen_ids.add(oid)
+                if not str(item.get("summary") or "").strip():errors.append(f"{label}.summary must be explicit")
+                if not str(item.get("source") or "").strip():errors.append(f"{label}.source must be explicit")
+                if not isinstance(item.get("scope"),dict):errors.append(f"{label}.scope must be a mapping")
+                if not isinstance(item.get("evidence"),list):errors.append(f"{label}.evidence must be a list")
+                if ostate not in {"OPEN","SATISFIED","SUPERSEDED","CANCELLED","EXPIRED"}:errors.append(f"{label}.state invalid")
+                supersedes=item.get("supersedes")
+                if supersedes not in {None,""} and str(supersedes) not in all_ids:errors.append(f"{label}.supersedes references unknown control obligation: {supersedes}")
+                if kind=="DEFERRED_VALIDATION":
+                    if not oid.startswith("PEND-"):errors.append(f"{label}.id must use PEND-* for DEFERRED_VALIDATION")
+                    boundaries=item.get("must_resolve_before")
+                    allowed=item.get("allowed_before_resolution")
+                    if not isinstance(boundaries,list) or not boundaries:errors.append(f"{label}.must_resolve_before must be non-empty")
+                    if not isinstance(allowed,list) or not allowed:errors.append(f"{label}.allowed_before_resolution must be non-empty")
+                    if not str(item.get("resolution_condition") or "").strip():errors.append(f"{label}.resolution_condition is required")
+                    if ostate=="EXPIRED":errors.append(f"{label} DEFERRED_VALIDATION cannot use EXPIRED; use OPEN/SATISFIED/SUPERSEDED/CANCELLED")
+                elif kind=="KNOWN_ISSUE":
+                    if not oid.startswith("KI-"):errors.append(f"{label}.id must use KI-* for KNOWN_ISSUE")
+                    if ostate=="OPEN" and not str(item.get("revisit_when") or "").strip():errors.append(f"{label}.revisit_when is required while known issue is OPEN")
+                    if ostate=="EXPIRED":errors.append(f"{label} KNOWN_ISSUE cannot use EXPIRED")
+                elif kind=="DELEGATION":
+                    if not oid.startswith("DLG-"):errors.append(f"{label}.id must use DLG-* for DELEGATION")
+                    if item.get("monitor_role")!="READ_ONLY":errors.append(f"{label}.monitor_role must be READ_ONLY")
+                    if not str(item.get("success_condition") or "").strip():errors.append(f"{label}.success_condition is required")
+                else:
+                    errors.append(f"{label}.kind invalid: {kind}")
+                if ostate=="SATISFIED" and not item.get("evidence"):errors.append(f"{label} SATISFIED requires resolution evidence")
 
     join=state.get("predecessor_join") or {};join_id=join.get("id");join_path=join.get("path")
     if bool(join_id)!=bool(join_path):errors.append("REPO_STATE.predecessor_join requires both id and path or neither")
@@ -114,6 +191,8 @@ def validate(repo_root:Path):
         if active.get("path") not in {None,""}:errors.append(f"relay_state {relay_state} requires active_ep.path null/empty")
         if active.get("continuity_receipt") not in NONE_IDS:errors.append(f"relay_state {relay_state} must not expose active_ep.continuity_receipt")
         if isinstance(admissions,list) and admissions:errors.append(f"relay_state {relay_state} must not retain active takeover_admissions")
+        if isinstance(custody,dict) and any(isinstance(x,dict) and x.get("state")=="ACTIVE" for x in (custody.get("leases") or [])):
+            errors.append(f"relay_state {relay_state} must not retain ACTIVE execution custody")
     return errors,warnings
 
 def main():

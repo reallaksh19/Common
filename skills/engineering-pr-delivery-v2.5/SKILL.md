@@ -375,6 +375,10 @@ Reconcile                        → CROSS_SURFACE_PARITY
 Scenario / Run scenario          → SCENARIO_EXERCISE
 Boundary check                   → INTERFACE_BOUNDARY_AUDIT
 Normalize                        → NORMATIVE_CONTRACT_CLEANUP
+Owner override, start             → BOUNDED_OWNER_EXECUTION
+Record pending                    → DEFER_VALIDATION_OBLIGATION
+Record known issue                → REGISTER_KNOWN_ISSUE
+Resolve pending <id>              → RESOLVE_DEFERRED_OBLIGATION
 ```
 
 These commands are case/punctuation tolerant and intentionally composable.
@@ -458,9 +462,59 @@ Do not change direction merely to appear critical.
 - `Boundary check`: attack edge states and ownership/interface transitions.
 - `Normalize`: classify MUST/MUST NOT/SHOULD/MAY/informational statements and reconcile enforcement.
 
-These are **ephemeral reasoning controls**, not new relay authority objects.
+The reasoning commands are **ephemeral reasoning controls**, not new relay authority objects.
 
-If the reasoning finds a material consequence, record that consequence through the existing V2.5 authority model (event, roadmap admission/revision, ODR, EP, evidence, checkpoint, progress). Do not create a parallel "critique/trace/reconcile" state plane.
+The four control commands are different: the parser only recognizes the Owner's current intent. `Owner override, start`, `Record pending`, `Record known issue`, and `Resolve pending` require validated durable ODR / REPO_STATE control state before any execution effect is claimed. The utterance itself is never a PASS or write token.
+
+If reasoning or control handling finds a material consequence, record that consequence through the existing V2.5 authority model. Do not create a parallel "critique/trace/reconcile" state plane.
+
+### Owner execution/defer controls
+
+Canonical meanings:
+
+```text
+Owner override, start
+→ authorize only bounded work while named deferrable controls remain OPEN
+→ requires APPLIED AUTHORIZATION ODR + OPEN PEND-* records
+→ result may be PASS_WITH_OWNER_OVERRIDE, never ordinary PASS
+→ PR-ready/merge/checkpoint/release remain blocked exactly as recorded
+
+Record pending
+→ persist a PEND-* DEFERRED_VALIDATION item
+→ state allowed work + mandatory resolution boundary + resolution condition
+
+Record known issue
+→ persist a KI-* non-blocking known defect/limitation/risk
+→ keep evidence + revisit condition
+
+Resolve pending <id>
+→ make the inherited PEND item current
+→ SATISFIED only from resolution evidence
+```
+
+Accepted natural variants are case/punctuation tolerant and are defined in the Owner command contract.
+
+### Fresh-agent role boundary
+
+A new process/session is not automatically a new material-execution candidate.
+
+Before candidate creation, classify the role:
+
+```text
+OBSERVE / STATUS / HEARTBEAT / TIMER / DELEGATION CHECK
+→ READ ONLY
+→ do not create DISC/QUAL/TC
+→ do not acquire custody
+→ do not create product writes
+→ do not recursively delegate
+
+EXECUTE / TAKEOVER
+→ certify the actual candidate
+→ acquire/verify current execution custody when enforcement is enabled
+→ run the live write gate
+```
+
+Before treating a repeated gate failure as new work, read OPEN `PEND-*`, `KI-*`, `DLG-*`, APPLIED execution overrides, and current execution custody. If the same failure is already a pending obligation and the current action is allowed before its recorded boundary, consume that state rather than recreating certification/delegation.
 
 Normative details:
 
@@ -571,6 +625,19 @@ python skills/engineering-pr-delivery-v2.5/scripts/inspect_git_context.py <repo-
 
 Every EP declares expected branch, material ref, base branch, observed base ref, `RECHECK_BEFORE_WRITE`, and optional drift receipt.
 
+Normal `MATERIAL_WRITE_READY` remains candidate-specific and live-route/Git dependent. When `execution_custody.enforced=true`, certification is not enough: the candidate must also hold the one ACTIVE custody lease for that route.
+
+A bounded Owner exception can produce `PASS_WITH_OWNER_OVERRIDE` only when:
+
+- one APPLIED execution override matches repository + branch + starting base SHA;
+- every referenced `PEND-*` obligation exists and remains OPEN;
+- the override explicitly defers every control failure being bypassed;
+- `BOUNDED_PRODUCT_WRITES` is explicitly allowed;
+- route-level material authority remains WRITE and `can_continue=true`;
+- no active hard stop, protected-invariant failure, custody conflict, unsafe result, or non-deferrable Git/drift failure exists.
+
+The override does not modify the active route, does not certify the candidate, and does not clear the PEND item. Its declared boundaries remain blocked.
+
 Base drift classifications:
 
 ```text
@@ -586,24 +653,28 @@ UNKNOWN
 
 When an authorized next action cannot execute in the current environment — for example Python cannot launch the required `.mjs` tooling, a browser/UI check needs a real desktop/browser session, or a local Git/runtime dependency is unavailable — do not stop at `NOT_RUN` and do not ask the Owner to reconstruct the task.
 
-Represent the blocked action as `next_work.steps[].execution_requirement` and include a `delegation` contract.
+Represent the blocked action as `next_work.steps[].execution_requirement` and include a `delegation` contract bound to one durable OPEN `DLG-*` control obligation.
 
 The executing agent must:
 
-1. create a complete copy-pasteable prompt for a local agent with the exact repository/ref/basis, working directory, command or instruction, boundaries, expected evidence, success condition and response format;
-2. publish that prompt to the **current work issue**:
+1. create/reuse one stable `DLG-*` obligation with the delegation success condition and `monitor_role: READ_ONLY`; do not create a duplicate delegation for the same unresolved action;
+2. create a complete copy-pasteable prompt for a local agent with the exact repository/ref/basis, working directory, command or instruction, boundaries, expected evidence, success condition and response format;
+3. publish that prompt to the **current work issue**:
    - use a COMMENT for a bounded one-shot validation/check;
    - use a SUB_ISSUE when the delegated work has multiple steps, its own lifecycle, or needs independently trackable follow-up;
    - if native sub-issue creation/readback is unavailable, fall back to a verified issue COMMENT rather than claiming an unverified relationship;
-3. read back the GitHub publication before claiming delegation exists;
-4. require the local agent to post its result/evidence back to that same issue/sub-issue location;
-5. create a one-time response-check timer:
+4. read back the GitHub publication before claiming delegation exists;
+5. require the local agent to post its result/evidence back to that same issue/sub-issue location;
+6. create a one-time response-check timer bound to that same DLG id. The timer is a **READ_ONLY monitor**, not a material executor:
    - **30 minutes** for a short direct command, focused browser check, or small verification expected to finish quickly;
    - **60 minutes** for setup/build/install/manual UI or multi-step local verification;
    - for longer work, use 60 minutes as the first check and re-evaluate from actual progress rather than scheduling an unbounded polling loop;
-6. when the timer fires, read the issue/sub-issue:
-   - if evidence is present, validate it and resume/reconcile the blocked work;
-   - if no response is present, report WAITING truthfully and schedule another check only when it remains useful.
+7. when the timer fires:
+   - first read the durable DLG lifecycle;
+   - if it is not OPEN, terminate/cancel the timer and do nothing else;
+   - if OPEN, read the issue/sub-issue and validate returned evidence;
+   - the timer callback MUST NOT create a candidate, DISC/QUAL/TC, execution custody, product write, or recursive delegation;
+   - if no response is present, report WAITING truthfully and reschedule the **same DLG** only when it remains useful.
 
 If timer/scheduling capability is genuinely unavailable, do not claim a timer exists. Publish the intended 30/60-minute check interval and surface `TIMER_UNAVAILABLE` to the Owner.
 

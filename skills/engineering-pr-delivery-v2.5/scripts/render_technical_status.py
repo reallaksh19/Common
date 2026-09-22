@@ -9,9 +9,22 @@ def _label(v):return str(v or "UNKNOWN").replace("_"," ").title()
 def _pct(v):return "NA" if v is None else f"{v:g}%" if isinstance(v,(int,float)) else str(v)
 
 def render(root:Path)->str:
-    c=build(root);r=(c.get("technical") or {}).get("report") or {};src=(c.get("generated_from") or {}).get("report_sources") or {};p=r.get("progress") or {};cur=p.get("current") or {};ex=r.get("execution") or {};ev=r.get("evidence") or {};q=r.get("quality") or {};st=r.get("stop") or {};ready=r.get("relay_readiness") or {};contract=r.get("active_contract") or {};scope=contract.get("scope") or {};cp=r.get("checkpoint") or {};qrv=cp.get("quality_review") or {}
+    c=build(root);r=(c.get("technical") or {}).get("report") or {};src=(c.get("generated_from") or {}).get("report_sources") or {};p=r.get("progress") or {};cur=p.get("current") or {};ex=r.get("execution") or {};ev=r.get("evidence") or {};q=r.get("quality") or {};st=r.get("stop") or {};ready=r.get("relay_readiness") or {};contract=r.get("active_contract") or {};scope=contract.get("scope") or {};cp=r.get("checkpoint") or {};qrv=cp.get("quality_review") or {};control=(c.get("owner") or {}).get("control") or {}
     lines=["# Technical status","",f"Report projection digest: `{(c.get('generated_from') or {}).get('report_projection_digest')}`",f"Roadmap revision: `{src.get('roadmap_revision')}` | Progress basis: `{src.get('progress_basis')}`",f"Relay lifecycle: **{_label(r.get('relay_state'))}**",f"Current position: `{cur.get('objective')}` → `{cur.get('phase')}` → `{cur.get('work_package')}` → `{cur.get('ep_id') or 'NONE'}`",f"Progress: overall {_pct(p.get('overall_percent'))} | phase {_pct(cur.get('phase_percent'))} | work package {_pct(cur.get('work_package_percent'))} | EP {_pct(cur.get('ep_percent'))}","", "## Execution and readiness",f"- State: **{_label(ex.get('state'))}**; can continue: **{'YES' if ex.get('can_continue') else 'NO'}**; material authority: **{_label(ex.get('material_authority'))}**",f"- Stop: **{'ACTIVE' if st.get('active') else 'NONE'}** — {st.get('category') or 'NONE'} {st.get('reason') or ''}".rstrip(),f"- Baton ready: **{'YES' if ready.get('baton_ready') else 'NO'}**; projection ready: **{'YES' if ready.get('projection_ready') else 'NO'}**; handover ready: **{'YES' if ready.get('handover_ready') else 'NO'}**",f"- Certified takeover admissions: **{len(r.get('takeover_admissions') or [])}**",f"- External projection: **{_label((r.get('projection') or {}).get('state'))}**"]
     lines += ["","## Evidence and quality",f"- Evidence: **{_label(ev.get('state'))}** — {ev.get('summary') or ''}",f"- Quality state: **{_label(q.get('state'))}**"]
+    lines += ["","## Control obligations and execution custody"]
+    pending=control.get("pending_validations") or [];known=control.get("known_issues") or [];delegations=control.get("delegations") or [];overrides=control.get("active_execution_overrides") or [];custody=control.get("execution_custody") or {}
+    lines.append(f"- Custody enforcement: **{'ON' if custody.get('enforced') else 'OFF'}**")
+    for lease in custody.get("leases") or []:
+        if isinstance(lease,dict):lines.append(f"- Custody {lease.get('route_key')}: {lease.get('state')} → {(lease.get('candidate') or {}).get('agent_instance_id')} on {lease.get('branch')}; source={lease.get('source')}")
+    if not pending:lines.append("- Open deferred validations: none")
+    for item in pending:lines.append(f"- Pending {item.get('id')}: {item.get('summary')} | allowed={item.get('allowed_before_resolution') or []} | must_resolve_before={item.get('must_resolve_before') or []} | condition={item.get('resolution_condition')}")
+    if not known:lines.append("- Open known issues: none")
+    for item in known:lines.append(f"- Known issue {item.get('id')}: {item.get('summary')} | revisit_when={item.get('revisit_when')}")
+    if not delegations:lines.append("- Open delegations: none")
+    for item in delegations:lines.append(f"- Delegation {item.get('id')}: {item.get('summary')} | monitor={item.get('monitor_role')} | success={item.get('success_condition')}")
+    if not overrides:lines.append("- Active bounded Owner execution overrides: none")
+    for item in overrides:lines.append(f"- Owner override {item.get('odr_id')}: defers={item.get('defers') or []} allows={item.get('allows') or []} blocks={item.get('blocks') or []} pending={item.get('pending_obligations') or []}")
     if ev.get("not_run"):
         for item in ev["not_run"]:lines.append(f"- NOT_RUN `{item.get('id')}`: {item.get('reason')} ({item.get('cause')})")
     if qrv:

@@ -64,6 +64,8 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | Executable frontier | DERIVED | roadmap computation | serial/parallel admission, status, zero-context reconstruction | Must be recomputed; cannot be manually asserted as a competing plan |
 | `REPO_STATE.yaml` | AUTHORITY locator + checked mirrors | relay lifecycle/reconciliation | aggregate conformance, route resolution, projections | Deterministic bootstrap locator, lifecycle/routing/state planes; percentage/readiness mirrors are checked, not independent authority |
 | `REPO_STATE.relay_protocol` | AUTHORITY binding | bootstrap/admission | repo-state/profile validation | Pins protocol version and non-placeholder Common basis |
+| `REPO_STATE.control_obligations[]` | AUTHORITY control state | Owner/control reconciliation | cold start, communication, bounded override resolution | Carries OPEN/SATISFIED/SUPERSEDED/CANCELLED pending validations, known issues and delegations; cannot turn missing evidence into PASS |
+| `REPO_STATE.execution_custody` | AUTHORITY execution custody | takeover/custody transaction | live material-write gate | Identifies the one ACTIVE material executor per route when enforced; separate from candidate qualification |
 | `REPO_PROFILE.yaml` | AUTHORITY repository metadata | repository admission | discovery, EP/takeover digests | Repository discovery/profile facts only |
 | Execution Package (`EP`) | AUTHORITY for current slice | outgoing relay owner | semantic EP validator, baton readiness, discovery, qualification, progress/report | One-WP forward contract; may not redefine Owner intent or roadmap topology |
 | `DSTEP-*` | AUTHORITY discovery requirement inside EP | EP preparer | incoming `DISC-*` | Exact repository-only questions/outputs candidate must resolve |
@@ -91,6 +93,7 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 | `DELIVERY_OBSERVATION` (`DOBS-*`) | EVIDENCE | provider PR/check/review/body readback | delivery projection, PR-correlation validation, report/Owner status | Current PR identity/lifecycle/head/base/checks/mergeability/review facts plus provider-read Issue↔EP description declarations; never roadmap or merge authority |
 | Delivery readiness projection | DERIVED | DOBS + acceptance/evidence + ODR | Owner status / delivery review | Separates ready-for-review, technical-ready-to-merge and merge authorization; cannot authorize merge |
 | `ODR.delivery_authorization` | AUTHORITY | explicit Owner authorization | delivery projection | Exact repository/PR/head MERGE grant or revocation only; separate from material write authority |
+| `ODR.execution_override` | AUTHORITY bounded execution exception | explicit Owner authorization | control-state resolver + live material-write gate | Branch/base/path-scoped continuation through named deferrable controls; referenced PEND items remain OPEN and declared readiness/merge/checkpoint/release boundaries stay blocked |
 | Report projection | DERIVED | roadmap/progress/EP/CP/issue/QRV/state | status/handover/communication | Structured derived report only |
 | Communication projection | DERIVED | report projection | `TECHNICAL_STATUS.md`, `OWNER_STATUS.md` | One shared human communication source; never writable truth |
 | `TECHNICAL_STATUS.md` | NON_AUTHORITY DERIVED VIEW | technical renderer | engineers/agents | Detailed protocol/source view |
@@ -113,6 +116,8 @@ Generated Markdown, GitHub state, and chat never override repository authority o
 4a. Delivery observations record provider PR/check/review/body reality only. Their Issue↔EP rows are validated against ISSUE_GRAPH and EP truth; body strings alone are not authority. Merge authorization is never inferred from provider state and comes only from applied Owner ODR authority.
 5. Runtime Git facts participate in write readiness but cannot be replaced by stale repository assertions.
 6. A candidate's DISC/QUAL/TC evidence can admit that candidate; it cannot change the EP, roadmap, or Owner decision.
+6a. Candidate admission does not imply active execution custody. When custody enforcement is enabled, only the ACTIVE lease holder may pass normal material write readiness.
+6b. A bounded Owner execution override never converts a deferred gate to PASS; it only authorizes the declared pre-boundary actions while its PEND obligations remain OPEN.
 7. Checkpoints preserve execution/evidence custody; roadmap revisions preserve planning/intent effects. Neither substitutes for the other.
 8. Roadmap events preserve material history and source links. They may propose a concept change, but only roadmap/ODR authority can apply one.
 

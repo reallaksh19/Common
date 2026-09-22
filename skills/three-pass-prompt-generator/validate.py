@@ -484,7 +484,7 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: Prompt 3 must require quantitative or executable technical proof")
             if "existing model" not in prompt3_lower and "existing-model" not in prompt3_lower and "current model" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must attempt the stronger case with the existing/current model first")
-            if "withdraw" not in prompt3_lower and "narrow" not in prompt3_lower and "unnecessary" not in prompt3_lower:
+            if "withdraw" not in prompt3_lower and "narrow architecture" not in prompt3_lower and "unnecessary architecture" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must say what happens when the proposed architecture is not justified")
             if ("probe" not in prompt3_lower and "evidence task" not in prompt3_lower) or "capability" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must distinguish a probe/evidence task from capability admission")

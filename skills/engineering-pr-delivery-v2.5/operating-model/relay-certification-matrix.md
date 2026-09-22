@@ -51,8 +51,12 @@ For every active execution route Agent C must be able to answer from repository 
 10. What tests and acceptance criteria are required?
 11. What is the exact first implementation action and what makes the EP stale?
 12. What happens next after the current slice?
+13. Which OPEN deferred validations, known issues and delegated checks survive from prior agents, what may continue before they resolve, and which boundaries still block?
+14. Who owns current material execution custody, if custody enforcement is enabled?
 
 `zero_context_reconstruction.py` derives this reconstruction from authority objects and current route state. `validate_zero_context_reconstruction.py` rejects a repository that cannot answer the required material questions or still requires conversation context.
+
+A fresh observer/status/timer process does not become a material-execution candidate merely because it is new. It first reconstructs OPEN control obligations and execution custody. Re-observing a recorded PEND/DLG item does not justify creating another certification or delegation transaction.
 
 ## Lifecycle certification matrix
 

@@ -6,6 +6,9 @@ from communication_projection import build
 
 
 def _pct(value):return "not calculated" if value is None else f"{value:g}%" if isinstance(value,(int,float)) else str(value)
+def _control_label(value):
+    text=str(value or "").replace("_"," ").title()
+    return text.replace("Pr ","PR ").replace(" Pr"," PR")
 def _text(item,keys):
     if isinstance(item,str):return item
     if not isinstance(item,dict):return str(item)
@@ -22,7 +25,7 @@ def _scope_line(item):
 
 def render_projection(c:dict)->str:
     o=c["owner"];cap=o["capability"];rmap=o.get("roadmap") or {};progress=rmap.get("progress") or {};roadmap=rmap.get("summary") or {}
-    current=o.get("current_work") or {};delivery=o.get("delivery") or {};recon=rmap.get("last_reconciliation") or {}
+    current=o.get("current_work") or {};delivery=o.get("delivery") or {};recon=rmap.get("last_reconciliation") or {};control=o.get("control") or {}
     phase=progress.get("phase_title") or progress.get("phase");wp=progress.get("work_package_title") or progress.get("work_package")
     issues=current.get("issues") or [];issue=issues[0] if issues else {};vehicle=delivery.get("vehicle") or {}
     pb=progress.get("progress_basis") or {};roadmap_disposition=str(recon.get("result") or "NOT_RECONCILED").replace("_"," ").title()
@@ -90,11 +93,31 @@ def render_projection(c:dict)->str:
     lines += ["","## Blocked / waiting"]
     active_stop=cap.get("active_stop")
     ext=o.get("external_actions") or [];not_run=(o.get("evidence") or {}).get("not_run") or []
+    pending_controls=control.get("pending_validations") or [];delegations=control.get("delegations") or []
     if active_stop:lines.append(f"- Active stop: {active_stop.get('reason') or active_stop.get('category')}")
+    for item in pending_controls:
+        boundaries=", ".join(str(x).replace("_"," ").title() for x in (item.get("must_resolve_before") or [])) or "a later boundary"
+        allowed=", ".join(str(x).replace("_"," ").title() for x in (item.get("allowed_before_resolution") or [])) or "read-only work"
+        lines.append(f"- Pending control {item.get('id')}: {item.get('summary')} — may continue: {allowed}; must resolve before: {boundaries}.")
+    for item in delegations:lines.append(f"- Delegated check {item.get('id')}: {item.get('summary')} — monitoring is read-only until its success condition is met.")
     for item in ext:lines.append(f"- External/local action: {item.get('action')} — blocks {', '.join(str(x) for x in (item.get('blocks') or []))}.")
     for item in not_run:lines.append(f"- Evidence not run: {_text(item,['reason','summary'])}")
-    if not active_stop and not ext and not not_run:lines.append("- No current blocker, waiting external action, or NOT_RUN evidence is recorded.")
+    if not active_stop and not pending_controls and not delegations and not ext and not not_run:lines.append("- No current blocker, pending control, waiting external action, or NOT_RUN evidence is recorded.")
+    lines += ["","## Deferred validations / known issues / delegated checks"]
+    known_controls=control.get("known_issues") or []
+    if not pending_controls and not known_controls and not delegations:
+        lines.append("- No OPEN carried-forward control obligation is recorded.")
+    for item in pending_controls:
+        lines.append(f"- {item.get('id')} — pending validation: {item.get('summary')}; allowed before resolution: {', '.join(_control_label(x) for x in (item.get('allowed_before_resolution') or []))}; must resolve before: {', '.join(_control_label(x) for x in (item.get('must_resolve_before') or []))}.")
+    for item in known_controls:
+        lines.append(f"- {item.get('id')} — known issue: {item.get('summary')}; revisit when: {item.get('revisit_when') or 'explicitly scheduled'}.")
+    for item in delegations:
+        lines.append(f"- {item.get('id')} — delegated check: {item.get('summary')}; monitor role: read-only; success condition: {item.get('success_condition')}.")
     lines += ["","## What can happen now",f"{cap.get('summary')}"]
+    overrides=control.get("active_execution_overrides") or []
+    if overrides:
+        blocks=sorted({str(x) for row in overrides for x in (row.get("blocks") or [])})
+        lines.append(f"A recorded bounded Owner execution override is active. It permits only its declared scope and does not mark deferred controls PASS. Blocked boundaries remain: {', '.join(_control_label(x) for x in blocks) or 'none recorded'}.")
 
     if phase or wp:lines.append(f"Current roadmap position: **{phase or 'current phase'}** → **{wp or 'current work package'}**.")
     cadence=o.get("status_cadence") or {}
@@ -171,6 +194,7 @@ def render_projection(c:dict)->str:
         for gap in quality["procedure_gaps"]:lines.append(f"- {gap.get('procedure')}: {gap.get('reason')}")
     for limitation in quality.get("known_limitations") or []:lines.append(f"- Known limitation: {_text(limitation,['statement','description','reason'])}")
     for problem in quality.get("known_problems") or []:lines.append(f"- Known problem: {_text(problem,['statement','description','reason'])}")
+    for item in control.get("known_issues") or []:lines.append(f"- Known issue {item.get('id')}: {item.get('summary')} — revisit when: {item.get('revisit_when') or 'explicitly scheduled'}.")
     recon=(o.get("roadmap") or {}).get("last_reconciliation") or {};pb=progress.get("progress_basis") or {};lines += ["","## Roadmap and progress",f"Roadmap: **{roadmap.get('title') or roadmap.get('id') or 'current roadmap'}**, revision **{roadmap.get('revision') or 'unknown'}**.",f"Progress basis: **{pb.get('id') or 'unknown'}** on roadmap revision **{pb.get('roadmap_revision') or roadmap.get('revision') or 'unknown'}**.",f"Current phase progress: **{_pct(progress.get('phase_percent'))}**; current work-package progress: **{_pct(progress.get('work_package_percent'))}**; active execution-package progress: **{_pct(progress.get('ep_percent'))}**."]
     if recon:lines.append(f"Last checkpoint roadmap reconciliation: **{str(recon.get('result') or 'recorded').replace('_',' ').title()}**.")
     lines += ["","## Delivery"]
@@ -194,6 +218,11 @@ def render_projection(c:dict)->str:
         authorization=(delivery.get("merge_authorization") or {}).get("state") or "UNKNOWN"
         lines.append(f"- Exact-head checks: **{str(checks).replace('_',' ').title()}**; mergeability: **{str(merge).replace('_',' ').title()}**; review state: **{str(review).replace('_',' ').title()}**.")
         lines.append(f"- Ready for review: **{ready}**; technically ready to merge: **{technical}**; merge authorization: **{str(authorization).replace('_',' ').title()}**.")
+        boundary_blockers=control.get("boundary_blockers") or {}
+        if boundary_blockers.get("PR_READY"):
+            lines.append(f"- PR-ready is blocked by pending controls: {', '.join(str(x) for x in boundary_blockers.get('PR_READY') or [])}.")
+        if boundary_blockers.get("MERGE"):
+            lines.append(f"- Merge is blocked by pending controls: {', '.join(str(x) for x in boundary_blockers.get('MERGE') or [])}.")
         for reason in (delivery.get("technical_ready_to_merge") or {}).get("reasons") or []:lines.append(f"  - Technical readiness: {reason}")
         auth_reason=(delivery.get("merge_authorization") or {}).get("reason")
         if auth_reason:lines.append(f"  - Authorization: {auth_reason}")
@@ -231,6 +260,7 @@ def render_projection(c:dict)->str:
                 lines.append(f"   - Local-agent handoff: publish as **{method}** on the current work issue; local result returns to the same location; provider readback required.")
                 lines.append(f"   - Response check: create timer **{check.get('timer_title')}** for {check.get('after_minutes')} minutes — {check.get('selection_reason')}")
                 lines.append(f"   - When timer is due: {check.get('on_due')}")
+                lines.append("   - Timer role: **read-only monitor**. It must not create a new candidate, DISC/QUAL/TC cycle, product write, or recursive delegation.")
                 lines.append(f"   - If no response: {check.get('on_no_response')}")
                 lines.append("   - Copy-paste prompt for the local agent:")
                 for row in str(delegation.get("prompt") or "").splitlines():
@@ -256,6 +286,9 @@ def render_projection(c:dict)->str:
     lines += ["","## What would stop progress"]
     active_stop=cap.get("active_stop")
     if active_stop:lines.append(f"- Current stop: {active_stop.get('reason') or active_stop.get('category')}")
+    boundary_blockers=control.get("boundary_blockers") or {}
+    for boundary,ids in boundary_blockers.items():
+        if ids:lines.append(f"- Pending controls {', '.join(str(x) for x in ids)} must resolve before {_control_label(boundary)}.")
     stop_conditions=o.get("stop_conditions") or []
     if stop_conditions:
         for condition in stop_conditions:lines.append(f"- {condition}")

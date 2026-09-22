@@ -112,6 +112,21 @@ def _route_summary(root: Path, state: dict, route: dict, report: dict) -> dict:
         "stale_conditions": stale,
         "next_work": next_work,
         "projection_state": state.get("projection") or {},
+        "control_obligations": [
+            x for x in (state.get("control_obligations") or [])
+            if isinstance(x,dict) and x.get("state")=="OPEN"
+            and (
+                not ((x.get("scope") or {}).get("route_key"))
+                or str((x.get("scope") or {}).get("route_key"))==route_key(route)
+            )
+        ],
+        "execution_custody": {
+            "enforced": bool((state.get("execution_custody") or {}).get("enforced")),
+            "active_lease": next((
+                x for x in ((state.get("execution_custody") or {}).get("leases") or [])
+                if isinstance(x,dict) and x.get("state")=="ACTIVE" and str(x.get("route_key"))==route_key(route)
+            ), None),
+        },
     }
 
 
@@ -148,6 +163,8 @@ def build(root: Path) -> dict:
         "projection": report.get("projection") or {},
         "relay_readiness": report.get("relay_readiness") or {},
         "owner_decisions": report.get("owner_decisions") or [],
+        "control_obligations": state.get("control_obligations") or [],
+        "execution_custody": state.get("execution_custody") or {"enforced": False, "leases": []},
         "routes": routes,
         "no_active_work": inactive_reason,
     }
