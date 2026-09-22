@@ -69,6 +69,7 @@ If repository state advances again before convergence, do not publish every inte
 SUPERSEDED_BEFORE_PUBLICATION
 SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED
 SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED
+SUPERSEDED_AFTER_VERIFIED_PUBLICATION
 ```
 
 The middle state records the important case where an external mutation may have occurred but no connector receipt exists. It must not fabricate a receipt.
@@ -90,9 +91,9 @@ history:
 publish/reconcile: GHGEN-3 only
 ```
 
-If an obsolete generation had already been published but not confirmed, retain its receipt as `SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED`; do not retry it. If only an attempt is known, retain `SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED` without a receipt.
+If an obsolete generation had already been published but not confirmed, retain its receipt as `SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED`; do not retry it. If only an attempt is known, retain `SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED` without a receipt. If the predecessor was already verified and therefore occupied `projection.observed`, convergence of its successor moves that predecessor into history as `SUPERSEDED_AFTER_VERIFIED_PUBLICATION` with its verified receipt and makes the newly verified generation the current `projection.observed`.
 
-When the newest generation fully verifies, transition to `IN_SYNC`. For `GITHUB_ISSUES`, all generation operations must be `VERIFIED|SUPERSEDED`, and `ISSUE_GRAPH` must reflect every declared reconciliation effect.
+When the newest generation fully verifies, transition to `IN_SYNC`. For `GITHUB_ISSUES`, all generation operations must be `VERIFIED|SUPERSEDED`, `projection.observed` must identify the current verified generation, and `ISSUE_GRAPH` must reflect every declared reconciliation effect.
 
 ## Readiness
 

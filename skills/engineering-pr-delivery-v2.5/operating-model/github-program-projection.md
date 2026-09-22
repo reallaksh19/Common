@@ -185,9 +185,10 @@ Top-level projection history preserves whether the old generation was:
 SUPERSEDED_BEFORE_PUBLICATION
 SUPERSEDED_AFTER_ATTEMPT_UNCONFIRMED
 SUPERSEDED_AFTER_PUBLICATION_UNCONFIRMED
+SUPERSEDED_AFTER_VERIFIED_PUBLICATION
 ```
 
-A previously confirmed generation may instead become `projection.observed` while the new desired generation is `STALE` relative to the external surface.
+A previously confirmed generation becomes `projection.observed` while the new desired generation is `STALE` relative to the external surface. When the new generation verifies, reconciliation archives that verified predecessor as `SUPERSEDED_AFTER_VERIFIED_PUBLICATION` with its receipt and replaces `projection.observed` with the newly verified generation.
 
 `validate_github_generation_history.py` walks this chain and rejects missing history, cycles, or historical operations that remain retryable.
 
