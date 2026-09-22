@@ -133,32 +133,13 @@ def make_cutover_ready(root: Path) -> None:
     ]
     dump(controls_path, controls)
 
-    _, legacy_digest = legacy_inventory(root)
-    dump(root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml", {
-        "schema_version": "relay-v3-intelligence-continuity",
-        "authority": "DERIVED_CONTINUITY_ASSESSMENT",
-        "ready": True,
-        "source": {
-            "protocol": "V2_5",
-            "legacy_tree_digest": legacy_digest,
-            "roadmap_revision": state["roadmap"]["revision"],
-        },
-        "projections": {
-            "task_snapshot_digest": "sha256:" + ("a" * 64),
-            "improvement_view_digest": "sha256:" + ("b" * 64),
-        },
-        "checks": {
-            "legacy_history_preserved": "PASS",
-            "roadmap_admission": "PASS",
-            "roadmap_events": "PASS",
-            "checkpoint_progress": "PASS",
-            "discovery": "PASS",
-            "owner_delta": "PASS",
-            "handover_intelligence": "PASS",
-            "generated_projection_non_authority": "PASS",
-        },
-        "evidence": ["Synthetic continuity report bound to preserved legacy digest."],
-    })
+    # Generate the continuity proof from live preserved V2.5 authority instead of
+    # manufacturing a schema-valid PASS document. This mirrors the real cutover path.
+    from intelligence_projection import assess_continuity
+    continuity_report = assess_continuity(root)
+    if continuity_report.get("ready") is not True:
+        raise AssertionError(continuity_report)
+    dump(root / "relay/GENERATED/INTELLIGENCE_CONTINUITY.yaml", continuity_report)
 
     dump(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml", build_snapshot(root))
 
