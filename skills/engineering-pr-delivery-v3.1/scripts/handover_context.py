@@ -288,11 +288,11 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
         "user_input": {
             "target": target["url"],
             "human_goal": blind["programme"]["outcome"],
-            "user_intent": "Generate the current standalone five-prompt handover for the provider-verified target using the frozen V3 handover context.",
+            "user_intent": "Generate the current standalone five-prompt handover for the provider-verified target using frozen V3.1 context, preserving value-added relay continuity and explicit coordination consequences.",
             "authorized_actions": "This handover package grants no new action authority. Prompt 3 must revalidate live relay.can(action) and explicit Owner authority before acting.",
-            "intent_boundary": "Use blind_context for Prompts 0.5/1; quarantine reality_context until Prompt 2; treat accumulated_learning as accepted/history context rather than present action authority.",
-            "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, and validates the artifact against that live schema.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence.",
+            "intent_boundary": "Use blind_context for Prompts 0.5/1; quarantine reality_context until Prompt 2; treat accumulated_learning as accepted/history context rather than present action authority. Do not invent a parallel roadmap, issue model, checkpoint, or status system.",
+            "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, validates the artifact, and leaves a recipient-ready continuation when another actor must act.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 should reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
         },
     }
     errors = validate_schema("three-pass-request", request, "THREE_PASS_REQUEST")
