@@ -645,6 +645,8 @@ def reconcile_roadmap(
             "disposition": disposition,
             "from_revision": current.get("revision"),
             "to_revision": after.get("revision"),
+            "ep": (state.get("execution") or {}).get("ep"),
+            "checkpoint": (state.get("accepted") or {}).get("checkpoint"),
         },
     ))
 

@@ -125,6 +125,12 @@ def _issue_sections(
 ) -> dict[str, Any]:
     obs = _load_parent_issue_observation(observation)
     ep_issue = (ep or {}).get("parent_issue") or {}
+    if obs and ep_issue:
+        if (
+            obs.get("repository") != ep_issue.get("repository")
+            or obs.get("issue_number") != ep_issue.get("number")
+        ):
+            raise ProjectionError("parent issue observation does not match the current EP parent_issue")
     baseline = (obs or {}).get("baseline") or ep_issue.get("baseline")
     current = (obs or {}).get("current_contract")
     parent = {
@@ -552,7 +558,12 @@ def _v25_improvement(root: Path) -> dict[str, Any]:
     return view
 
 
-def _v31_roadmap_effect(root: Path, state: dict[str, Any]) -> dict[str, Any]:
+def _v31_roadmap_effect(
+    root: Path,
+    state: dict[str, Any],
+    ep_id: str | None,
+    checkpoint_id: str | None,
+) -> dict[str, Any]:
     events_path = root / "relay/EVENTS.jsonl"
     rows: list[dict[str, Any]] = []
     if events_path.exists():
@@ -564,7 +575,9 @@ def _v31_roadmap_effect(root: Path, state: dict[str, Any]) -> dict[str, Any]:
             except json.JSONDecodeError:
                 continue
             if row.get("type") == "ROADMAP_RECONCILED":
-                rows.append(row)
+                details = row.get("details") or {}
+                if details.get("ep") == ep_id and details.get("checkpoint") == checkpoint_id:
+                    rows.append(row)
     if not rows:
         return {
             "concept_change": "UNKNOWN",
@@ -606,7 +619,7 @@ def _v3_improvement(root: Path) -> dict[str, Any]:
             "controls_resolved": [],
             "controls_created": [],
         },
-        "roadmap_effect": _v31_roadmap_effect(root, state),
+        "roadmap_effect": _v31_roadmap_effect(root, state, ep_id, cp_id),
         "not_improved": [] if accepted and handoff.get("what_changed") else ["No capability improvement is inferred without accepted checkpoint evidence."],
         "still_not_proved": _strings((checkpoint or {}).get("known_limitations")) + _strings(handoff.get("what_remains_uncertain")),
         "new_questions": [],
