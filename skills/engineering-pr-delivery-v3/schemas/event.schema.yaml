@@ -1,0 +1,17 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, event_id, type, timestamp, actor, subject, basis, details]
+properties:
+  schema_version: {const: relay-v3-event}
+  event_id: {type: string, pattern: '^EVT-'}
+  type:
+    enum: [OWNER_TASK_ADMITTED, EP_CREATED, LEASE_GRANTED, MATERIAL_WRITE_STARTED, MATERIAL_VALIDATED, CHECKPOINT_ACCEPTED, NEW_SCOPE_DISCOVERED, LEASE_RELEASED, LEASE_REVOKED, PR_OPENED, PR_MERGED, HANDOVER_PUBLISHED]
+  timestamp: {type: string, format: date-time}
+  actor: {type: string, minLength: 1}
+  subject: {type: string, minLength: 1}
+  basis:
+    type: array
+    minItems: 1
+    items: {type: string, minLength: 1}
+  details: {type: object}
+additionalProperties: false
