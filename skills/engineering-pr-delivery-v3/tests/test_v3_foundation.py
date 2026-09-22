@@ -93,7 +93,7 @@ def base_objects():
             "predecessor_checkpoint": "CP-TA-010",
             "protocol_basis": "Common#418",
         },
-        "authority": {"actions": ["READ", "ANALYZE", "MATERIAL_WRITE", "TEST"]},
+        "authority": {"actions": ["READ", "ANALYZE", "MATERIAL_WRITE", "TEST", "CHECKPOINT", "HANDOVER", "LOCAL_EXECUTION_EXPORT", "DRAFT_PR_UPDATE"]},
         "admission": {
             "method": "DETERMINISTIC",
             "result": "PASS",
