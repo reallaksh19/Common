@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-21-R9"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-22-R10"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -123,7 +123,9 @@ REQUIRED_PREFLIGHT_FIELDS = (
     "GENUINE CONSTRAINTS:",
     "EXPERTISE:",
     "IMAGINATION OBJECT:",
+    "PROGRAMME ORIENTATION OBJECT:",
     "REALITY OBJECT:",
+    "BRIDGE RECONCILIATION QUESTION:",
     "COMPARISON QUESTION:",
     "ROADMAP SYNTHESIS QUESTION:",
     "TECHNICAL PROOF QUESTION:",
@@ -153,8 +155,10 @@ REQUIRED_PREFLIGHT_FIELDS = (
 )
 
 PROMPT_HEADINGS = (
+    "## PROMPT 0.5 — ORIENT TO PROGRAMME",
     "## PROMPT 1 — IMAGINE",
     "## PROMPT 2 — UNDERSTAND",
+    "## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION",
     "## PROMPT 3 — REVALIDATE AND MOVE FORWARD",
 )
 
@@ -334,8 +338,16 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             if lot.count(heading) != 1:
                 errors.append(f"{label}: must contain exactly one {heading!r}")
 
-        p1 = lot.find(PROMPT_HEADINGS[0])
-        preflight = lot[:p1 if p1 >= 0 else len(lot)]
+        prompt_positions = [lot.find(h) for h in PROMPT_HEADINGS]
+        if any(pos < 0 for pos in prompt_positions):
+            # Missing headings are already reported above.
+            pass
+        elif prompt_positions != sorted(prompt_positions):
+            errors.append(f"{label}: prompt order must be 0.5 -> 1 -> 2 -> 2.5 -> 3")
+
+        p05 = lot.find(PROMPT_HEADINGS[0])
+        p1 = lot.find(PROMPT_HEADINGS[1])
+        preflight = lot[:p05 if p05 >= 0 else (p1 if p1 >= 0 else len(lot))]
 
         for field in REQUIRED_PREFLIGHT_FIELDS:
             if field not in preflight:
@@ -425,8 +437,25 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             if "PASS" not in qset_tail:
                 errors.append(f"{label}: MODE-ISOLATION GATE must PASS when complex mode is ON")
 
+        if p05 >= 0 and p1 >= 0:
+            prompt05 = lot[p05:p1]
+            prompt05_lower = prompt05.lower()
+            if "roadmap" not in prompt05_lower and "large-project" not in prompt05_lower and "large project" not in prompt05_lower and "project goal" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must recover the original roadmap / large-project goal")
+            if "governing issue" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must identify the governing issue")
+            if (
+                "ongoing" not in prompt05_lower
+                and "last task" not in prompt05_lower
+                and "local task" not in prompt05_lower
+                and "current task" not in prompt05_lower
+            ):
+                errors.append(f"{label}: Prompt 0.5 must summarize the ongoing/last local task")
+            if "subordinate" not in prompt05_lower and "not the destination" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must explicitly subordinate local task/PR state to the larger goal")
+
         if p1 >= 0:
-            p2 = lot.find(PROMPT_HEADINGS[1], p1 + 1)
+            p2 = lot.find(PROMPT_HEADINGS[2], p1 + 1)
             prompt1 = lot[p1:p2 if p2 >= 0 else len(lot)]
             leak_score,leak_hits=_prompt1_repository_leak_score(prompt1,preflight)
             if leak_score:
@@ -441,7 +470,23 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 if phrase in prompt1_lower:
                     errors.append(f"{label}: Prompt 1 exposes machine/taxonomy surface language: {phrase!r}")
 
-        p3 = lot.find(PROMPT_HEADINGS[2])
+        p25 = lot.find(PROMPT_HEADINGS[3])
+        p3 = lot.find(PROMPT_HEADINGS[4])
+
+        if p25 >= 0:
+            prompt25 = lot[p25:p3 if p3 >= 0 else len(lot)]
+            prompt25_lower = prompt25.lower()
+            if "prompt-1" not in prompt25_lower or "prompt-2" not in prompt25_lower:
+                errors.append(f"{label}: Prompt 2.5 must combine Prompt-1 baseline with Prompt-2 reality")
+            if "reconcil" not in prompt25_lower and "compare" not in prompt25_lower:
+                errors.append(f"{label}: Prompt 2.5 must reconcile reality and direction")
+            if "reality" not in prompt25_lower and "live" not in prompt25_lower:
+                errors.append(f"{label}: Prompt 2.5 must refresh or re-check live reality")
+            if "gap" not in prompt25_lower:
+                errors.append(f"{label}: Prompt 2.5 must state the current gap")
+            if "roadmap" not in prompt25_lower and "programme" not in prompt25_lower and "project" not in prompt25_lower:
+                errors.append(f"{label}: Prompt 2.5 must reconcile against the programme/roadmap hierarchy")
+
         if p3 >= 0:
             prompt3 = lot[p3:]
             if "THREE_PASS_COMPLETE" not in prompt3:
@@ -453,10 +498,11 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: Prompt 3 must explicitly challenge the relevant roadmap/task landscape")
             if "ownership" not in prompt3_lower and "owner" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must widen context without silently widening ownership")
-            if "prompt-1" not in prompt3_lower or "prompt-2" not in prompt3_lower:
-                errors.append(f"{label}: Prompt 3 must use both Prompt-1 and Prompt-2 results")
+            for required_prompt_ref in ("prompt-0.5", "prompt-1", "prompt-2", "prompt-2.5"):
+                if required_prompt_ref not in prompt3_lower:
+                    errors.append(f"{label}: Prompt 3 must use the actual {required_prompt_ref} result")
             if "regenerat" not in prompt3_lower and "retrieve" not in prompt3_lower and "actual output" not in prompt3_lower:
-                errors.append(f"{label}: Prompt 3 must define cold-start handling for unavailable Prompt-1/Prompt-2 results")
+                errors.append(f"{label}: Prompt 3 must define cold-start handling for unavailable Prompt-0.5/Prompt-1/Prompt-2/Prompt-2.5 results")
             if "baseline" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must treat Prompt-1 as an independent baseline")
             if (
@@ -504,7 +550,7 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Validate structural conformance of generated three-pass prompt Markdown."
+        description="Validate structural conformance of generated five-prompt three-pass Markdown."
     )
     parser.add_argument("path", help="Generated Markdown file")
     parser.add_argument("--expected-schema-sha", default=None)
