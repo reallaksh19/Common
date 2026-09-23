@@ -883,17 +883,19 @@ def accept_checkpoint(
         {"material_head": (checkpoint.get("material_result") or {}).get("head")},
     ))
 
+    replacements = {
+        target: yaml_bytes(checkpoint),
+        "relay/STATE.yaml": yaml_bytes(new_state),
+        _snapshot_path(new_state): yaml_bytes(snapshot),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
     return execute(
         root,
         tx_id=tx_id,
         command="ACCEPT_CHECKPOINT",
         actor=actor,
-        replacements={
-            target: yaml_bytes(checkpoint),
-            "relay/STATE.yaml": yaml_bytes(new_state),
-            _snapshot_path(new_state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -934,16 +936,18 @@ def resolve_control(
     events.append(_event(event_id, "CONTROL_RESOLVED", actor, control_id, [tx_id, *evidence], {}))
     controls_path = str((state.get("controls") or {}).get("path"))
 
+    replacements = {
+        controls_path: yaml_bytes(new_controls),
+        _snapshot_path(state): yaml_bytes(snapshot),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
     return execute(
         root,
         tx_id=tx_id,
         command="RESOLVE_CONTROL",
         actor=actor,
-        replacements={
-            controls_path: yaml_bytes(new_controls),
-            _snapshot_path(state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1059,6 +1063,7 @@ def reconcile_roadmap(
         applied_delta["application"]["event"] = event_id
         replacements[change_target] = yaml_bytes(applied_delta)
 
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
     return execute(
         root,
         tx_id=tx_id,
@@ -1113,16 +1118,18 @@ def publish_handover(
             "context_digest": context_digest,
         },
     ))
+    replacements = {
+        _snapshot_path(state): yaml_bytes(snapshot),
+        "relay/GENERATED/HANDOVER.md": handover,
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
     return execute(
         root,
         tx_id=tx_id,
         command="PUBLISH_HANDOVER",
         actor=actor,
-        replacements={
-            _snapshot_path(state): yaml_bytes(snapshot),
-            "relay/GENERATED/HANDOVER.md": handover,
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1165,12 +1172,14 @@ def record_recovery_reconstructed(
             "evidence_count": len(evidence),
         },
     ))
+    replacements = {"relay/EVENTS.jsonl": jsonl_bytes(events)}
+    _add_automatic_liveness(root, state, actor, replacements)
     return execute(
         root,
         tx_id=tx_id,
         command="RECORD_RECOVERY_RECONSTRUCTED",
         actor=actor,
-        replacements={"relay/EVENTS.jsonl": jsonl_bytes(events)},
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1250,15 +1259,17 @@ def record_change_hypothesis(
         [tx_id, *basis],
         {"process": process, "ep": (ep or {}).get("id"), "work_package": (ep or {}).get("work_package")},
     ))
+    replacements = {
+        f"relay/CHANGES/{change_id}.yaml": yaml_bytes(delta),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements)
     return execute(
         root,
         tx_id=tx_id,
         command="RECORD_CHANGE_HYPOTHESIS",
         actor=actor,
-        replacements={
-            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(delta),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1312,15 +1323,17 @@ def verify_change_delta(
         [tx_id, *evidence, *falsifiers_checked],
         {"status": status},
     ))
+    replacements = {
+        f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements)
     return execute(
         root,
         tx_id=tx_id,
         command="VERIFY_CHANGE_DELTA",
         actor=actor,
-        replacements={
-            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1374,15 +1387,17 @@ def propose_change_delta(
         [tx_id, str(proposal.get("disposition"))],
         {"disposition": proposal.get("disposition"), "authorization_required": authorization_required},
     ))
+    replacements = {
+        f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements)
     return execute(
         root,
         tx_id=tx_id,
         command="PROPOSE_CHANGE_DELTA",
         actor=actor,
-        replacements={
-            f"relay/CHANGES/{change_id}.yaml": yaml_bytes(updated),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1492,17 +1507,19 @@ def export_local_execution(
             "return_sub_issue": (package.get("provider_return") or {}).get("target_sub_issue"),
         },
     ))
+    replacements = {
+        _snapshot_path(state): yaml_bytes(snapshot),
+        "relay/GENERATED/LOCAL_EXECUTION.yaml": yaml_bytes(package),
+        "relay/GENERATED/LOCAL_EXECUTION.md": request_md,
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
     return execute(
         root,
         tx_id=tx_id,
         command="EXPORT_LOCAL_EXECUTION",
         actor=actor,
-        replacements={
-            _snapshot_path(state): yaml_bytes(snapshot),
-            "relay/GENERATED/LOCAL_EXECUTION.yaml": yaml_bytes(package),
-            "relay/GENERATED/LOCAL_EXECUTION.md": request_md,
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -1618,15 +1635,17 @@ def sync_delivery(
         [tx_id, str(observation.get("provider_ref"))],
         {"lifecycle": observation.get("lifecycle")},
     ))
+    replacements = {
+        "relay/GENERATED/DELIVERY_STATUS.yaml": yaml_bytes(observation),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements)
     return execute(
         root,
         tx_id=tx_id,
         command="SYNC_DELIVERY",
         actor=actor,
-        replacements={
-            "relay/GENERATED/DELIVERY_STATUS.yaml": yaml_bytes(observation),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
