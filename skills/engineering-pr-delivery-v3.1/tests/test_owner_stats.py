@@ -78,5 +78,62 @@ class OwnerStatsTests(unittest.TestCase):
         self.assertIn("UNACCEPTED_DELTA_PRESENT", text)
 
 
+    def test_blocked_selected_frontier_is_not_rendered_as_fallback_or_sole_action(self):
+        snapshot = {
+            "generated_from": {"roadmap_revision": "RM-BLOCKED"},
+            "owner": {"outcome": "Outcome", "current_goal": "Respect programme selection"},
+            "programme": {"programme_progress": 50.0, "accepted_progress": 40.0},
+            "execution": {"ep": "EP-A", "lease": "LEASE-A"},
+            "evidence": {"latest_checkpoint": "CP-A"},
+            "material": {"head": "abc1234"},
+            "next": {
+                "immediate_material_action": "Resolve the selected frontier blocker.",
+                "delivery_action": "none",
+            },
+        }
+        task = {
+            "parent_issue_progress": {"checklist": []},
+            "current_task_progress": {"checklist": []},
+            "pending_items": [],
+            "known_issues": [],
+            "offloads": [],
+        }
+        reconciliation = {
+            "parents": [
+                {
+                    "ref": "example/project#10",
+                    "title": "Selected but blocked",
+                    "ownership": "BLOCKED",
+                },
+                {
+                    "ref": "example/project#9",
+                    "title": "Owner deferred",
+                    "ownership": "DEFERRED",
+                },
+            ],
+            "selected_frontier": "example/project#10",
+            "selected_frontier_ownership": "BLOCKED",
+            "executable_frontier": None,
+            "alternate_live_frontiers": [],
+            "programme_frontier": [],
+            "execution_blocked": ["example/project#10"],
+            "acceptance_debt": [],
+            "delivery_governance_debt": [],
+            "deferred_or_future": ["example/project#9"],
+        }
+
+        text = render(snapshot, task, reconciliation)
+        self.assertIn("Selected execution frontier: example/project#10", text)
+        self.assertIn("Selected frontier ownership: BLOCKED", text)
+        self.assertIn("Executable frontier: none", text)
+        self.assertIn("Deferred / future: ['example/project#9']", text)
+        self.assertIn("Automatic fallback from a blocked selected frontier: NO", text)
+        self.assertIn("Frontier switch authority: Owner/programme reselection required", text)
+        self.assertIn("SELECTED_BUT_EXECUTION_BLOCKED", text)
+        self.assertIn("do not fall through to alternate/deferred work", text)
+        self.assertIn("blocker does not grant programme reselection authority", text)
+        self.assertNotIn("only legitimate action", text.lower())
+
+
 if __name__ == "__main__":
     unittest.main()

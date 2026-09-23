@@ -1,7 +1,7 @@
 {
   "schema_version": "relay-v3.1",
   "roadmap": {
-    "revision": "RM.438.2",
+    "revision": "RM.438.3",
     "path": "relay/ROADMAP/ROADMAP.yaml"
   },
   "execution": {
@@ -12,7 +12,7 @@
     "custody_epoch": 1
   },
   "accepted": {
-    "checkpoint": "CP.438.3"
+    "checkpoint": "CP.438.4"
   },
   "controls": {
     "path": "relay/CONTROLS/controls.yaml"
@@ -22,7 +22,7 @@
     "primary_vehicle": {
       "provider": "GITHUB",
       "kind": "PULL_REQUEST",
-      "number": 437
+      "number": 439
     }
   },
   "generated": {
