@@ -16,7 +16,7 @@ from relay_tx import accept_local_execution_result, export_local_execution
 from test_relay_can import prepare_git
 from test_v3_foundation import dump
 from transactionlib import TransactionError
-from v3lib import load_events, load_yaml
+from v3lib import canonical_digest, load_events, load_yaml
 
 
 class LocalExecutionContractTests(unittest.TestCase):
@@ -72,9 +72,43 @@ class LocalExecutionContractTests(unittest.TestCase):
             self.assertEqual("COMMITTED", returned["status"])
             persisted = load_yaml(root / "relay/GENERATED/LOCAL_EXECUTION_RESULT.yaml")
             self.assertEqual("PASS", persisted["status"])
+            first_digest = canonical_digest(result)
+            first_evidence = (
+                root
+                / "relay/EVIDENCE/local"
+                / request["id"]
+                / f"{first_digest.split(':', 1)[-1]}.yaml"
+            )
+            self.assertTrue(first_evidence.exists())
+            self.assertEqual("PASS", load_yaml(first_evidence)["status"])
+
+            second = dict(result)
+            second["status"] = "FAIL"
+            second["failures"] = ["synthetic second return"]
+            second_path = root / "local-result-second.yaml"
+            dump(second_path, second)
+            second_returned = accept_local_execution_result(
+                root,
+                tx_id="TX-LOCAL-RETURN-SECOND",
+                event_id="EVT-LOCAL-RETURN-SECOND",
+                actor="local-agent",
+                result_path=second_path,
+            )
+            self.assertEqual("COMMITTED", second_returned["status"])
+            self.assertEqual("PASS", load_yaml(first_evidence)["status"])
+            self.assertEqual(
+                "FAIL",
+                load_yaml(root / "relay/GENERATED/LOCAL_EXECUTION_RESULT.yaml")["status"],
+            )
+
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
-            self.assertIn("LOCAL_EXECUTION_RETURNED", [row["type"] for row in events])
+            returned_events = [row for row in events if row["type"] == "LOCAL_EXECUTION_RETURNED"]
+            self.assertEqual(2, len(returned_events))
+            for row in returned_events:
+                evidence_path = (row.get("details") or {}).get("evidence_path")
+                self.assertTrue(evidence_path)
+                self.assertTrue((root / evidence_path).exists())
 
     def test_non_mismatch_result_cannot_return_from_wrong_head(self):
         with tempfile.TemporaryDirectory() as td:
