@@ -1,0 +1,100 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.1",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Establish Common#438 as a real self-hosted V3.1 execution with durable interruption recovery and no retroactive execution history."
+  },
+  "basis": {
+    "predecessor_checkpoint": null,
+    "material_base": "93f480c5578885d71c9fefbdc2912c7b76945051",
+    "protocol_basis": "Common#438 / PR#437 self-hosting bootstrap; prior commits are provenance only",
+    "semantic_dependencies": [
+      {
+        "path": ".github/workflows/engineering-pr-delivery-v3.1.yml",
+        "reason": "V3.1 required-check behavior is part of bootstrap acceptance."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/**"
+    ],
+    "read": [],
+    "protect": [],
+    "prohibit": [
+      "Do not rewrite pre-bootstrap PR#437 history as governed Relay execution.",
+      "Do not weaken programme-selection, custody, material-scope/drift, checkpoint, or Owner-authority invariants."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.1",
+      "statement": "The live Common authority tree reconstructs WP.438, EP.438.1, LEASE.438.1, custody epoch, blockers, and legal next action from durable state.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.2",
+      "statement": "Deleting relay/GENERATED/** does not change authoritative programme selection, current custody, blockers, or the legal next boundary action.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.3",
+      "statement": "A successor can recover after predecessor loss with a higher custody epoch and the stale predecessor is fenced.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T09:33:42Z",
+      "body_digest": "sha256:c4421f2edb1529e325d6365084697eff5b4ed00f8bb0637bda5a9bdf06b1cf93",
+      "acceptance_items": [
+        {
+          "id": "SELFHOST-1",
+          "statement": "Common#438 has a real native V3.1 execution trail rather than GitHub-only traceability."
+        },
+        {
+          "id": "SELFHOST-2",
+          "statement": "An interrupted agent can be replaced using durable Relay state without relying on chat history."
+        },
+        {
+          "id": "SELFHOST-3",
+          "statement": "Earlier commits remain pre-bootstrap provenance and are not rewritten into the new identity lineage."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Add and run the live Common self-hosting reconstruction/recovery proof, then resolve the bootstrap proof control.",
+    "stop_conditions": [
+      "Owner/programme selection moves away from WP.438.",
+      "V3.1 authority validation fails.",
+      "Relevant or unknown material drift appears."
+    ]
+  }
+}

@@ -284,9 +284,11 @@ def _initial_snapshot(
         },
         "owner": dict(roadmap["owner"]),
         "programme": {
+            "programme_progress": 0.0,
             "accepted_progress": 0.0,
             "completed_work": [],
             "remaining_work": [row["id"] for row in roadmap["work_packages"]],
+            "evidence_backed_work": [],
         },
         "execution": {
             "lifecycle": "INITIALIZING",

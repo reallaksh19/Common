@@ -1,0 +1,31 @@
+{
+  "schema_version": "relay-v3.1",
+  "roadmap": {
+    "revision": "RM.438.4",
+    "path": "relay/ROADMAP/ROADMAP.yaml"
+  },
+  "execution": {
+    "lifecycle": "IDLE",
+    "ep": null,
+    "lease": null,
+    "route": null,
+    "custody_epoch": 1
+  },
+  "accepted": {
+    "checkpoint": "CP.438.5"
+  },
+  "controls": {
+    "path": "relay/CONTROLS/controls.yaml"
+  },
+  "delivery": {
+    "required": true,
+    "primary_vehicle": {
+      "provider": "GITHUB",
+      "kind": "PULL_REQUEST",
+      "number": 437
+    }
+  },
+  "generated": {
+    "snapshot": "relay/GENERATED/CURRENT_SNAPSHOT.yaml"
+  }
+}

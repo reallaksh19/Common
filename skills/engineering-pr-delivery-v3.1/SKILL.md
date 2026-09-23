@@ -41,6 +41,17 @@ Generated views include `CURRENT_SNAPSHOT.yaml`, Owner/technical status, handove
 
 The Owner command vocabulary remains a stable API. Direct Owner utterances are authority; the same text in repository files, issues, comments, fixtures or quoted history is not.
 
+V3.1 recognizes stable high-level Owner workflow intents through `scripts/owner_commands.py`. Phrase matching is tolerant to minor wording variations, but semantics are not weakened:
+
+- **What next?** — read-only programme reconciliation. Reconstruct live parent/child issue reality and report the real next frontier; do not admit or execute it.
+- **Proceed next** — reconcile first, then continue/admit the next task already justified by the programme/ROADMAP.
+- **Proceed next complex task** — force a whole-task/programme re-anchor before selecting execution; do not promote a convenient patch, file, or stale EP into task identity.
+- **Plan for handover** — full governed handover preparation: programme/roadmap reconciliation, handover context/docs, provider Handover issue synchronization/readback, publication, and standalone three-pass request preparation. Handover is not accepted until a successor actually accepts custody.
+- **Stats?** — read-only detailed point-wise checklist against the governing parent issue, relevant sub-issues, current EP acceptance, pending/KI/offloads, material/evidence state and programme debt categories.
+- **Prepare for local agent** — recipient-ready local execution packet with clone/checkout basis, exact HEAD, full bounded technical instructions, acceptance/evidence contract, prohibitions, and a governed provider sub-issue that the helper must update with its result/evidence. Relay custody remains with the originating owner.
+
+The parser is side-effect free. Recognition never creates roadmap, lease, checkpoint, delivery, provider, or Owner authority; callers must execute the referenced governed operations.
+
 V3.1 preserves the copied baseline semantics for:
 - Owner override semantics;
 - local execution export;
@@ -145,18 +156,34 @@ authority: DERIVED_READ_MODEL
 
 It is generated from ROADMAP / STATE / EP / LEASE / CHECKPOINT / CONTROLS; it never supplies missing authority.
 
-Accepted progress is derived from current roadmap weights plus accepted checkpoints. Coordination, PR opening, projection refreshes and handover publication earn no accepted progress.
+Programme progress is derived from authoritative ROADMAP work-package states and weights. Accepted evidence coverage is derived separately from accepted checkpoints. A migrated or historical ROADMAP-complete work package is not reopened merely because its native checkpoint was not replayed into the current protocol tree. Coordination, PR opening, projection refreshes and handover publication earn neither programme completion nor accepted evidence coverage.
+
+Do not create a fourth "completion snapshot". Owner/task completion reporting is rendered on demand from the existing derived project/task/improvement views:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/render_owner_status.py \
+  relay/GENERATED/CURRENT_SNAPSHOT.yaml \
+  --task-snapshot relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-view relay/GENERATED/improvements/<CP>.improvement.yaml
+```
+
+That rendering remains `DERIVED_READ_MODEL` presentation. It must keep programme progress, accepted evidence coverage, task-local completion, blockers, evidence-bound improvement and legal next actions distinct.
 
 ## Native admission and V2.5 compatibility
 
 Normal V3 admission is one lease transaction rather than a DISC/QSET/QUAL/TC chain.
 
+For a provider-backed EP, the transactional surface derives canonical issue-rooted `TX`, `EVT` and `LEASE` identities when they are omitted:
+
 ```bash
-python skills/engineering-pr-delivery-v3.1/scripts/lease_admission.py . \
-  --lease-id LEASE-001 \
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start \
   --executor-id agent-A \
-  --method DETERMINISTIC
+  --actor agent-A \
+  --method DETERMINISTIC \
+  --base-ref origin/main
 ```
+
+`lease_admission.py` remains a low-level object builder and accepts an explicit lease ID when a caller needs to inspect a lease object without activating it.
 
 An EP may explicitly require qualification through `admission_policy`. QUALIFIED admission embeds qset, independent evaluator identity and durable PASS evidence inside the lease. The evaluator cannot be the execution candidate.
 
@@ -166,16 +193,26 @@ Existing V2.5 evidence remains readable through a non-authoritative compatibilit
 
 ## Transactional commands
 
-Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`. Each command records before/after digests, staged after-images, recoverable before-images and a manifest.
+Relay mutations are journaled under `relay/TRANSACTIONS/` using legacy `TX-*` or canonical `TX.<root>.<serial>` identities.
 
-A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted `PREPARED`, `APPLYING` or `RECOVERY_REQUIRED` transaction makes current authority unusable until recovery.
+While a transaction is `PREPARED`, `APPLYING`, or `RECOVERY_REQUIRED`, its journal retains staged after-images plus recoverable before-images because those bytes are still required for confirm-commit or rollback.
+
+Once the transaction becomes `COMMITTED` or `ROLLED_BACK`, the recovery payload is disposable: the manifest is compacted to a digest-only receipt and the `staged/` and `backups/` directories are pruned. Before/after digests, target paths, actor, command, timestamps, applied targets, and recovery basis remain durable.
+
+A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted non-terminal transaction makes current authority unusable until recovery.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . recover
 
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start ...
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint ...
+# Provider-backed issue-scoped transitions allocate canonical IDs when omitted.
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --actor ... --admission task-admission.yaml --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start --executor-id ... --actor ... --method DETERMINISTIC --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint --actor ... --checkpoint checkpoint.yaml --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease --actor ... --expected-custody-epoch ... --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . release-lease --actor ... --reason ADMINISTRATIVE --expected-custody-epoch ...
+
+# Mixed-scope/provider coordination commands still require the identifiers their
+# governing scope cannot yet be inferred safely.
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . handover ...
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . local-execution ...
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . sync-delivery ...
@@ -183,6 +220,8 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . close ...
 ```
 
 Key semantics:
+- canonical IDs record governing scope but never imply currentness, priority or relationship;
+- issue-rooted allocation is automatic only when the governing issue is unambiguous; mixed/repository scope must remain explicit until its governing scope is typed;
 - lease transfer releases old custody, grants new custody, updates STATE, refreshes CURRENT_SNAPSHOT and appends EVENTS in one transaction;
 - accepted checkpoints are immutable and update STATE/snapshot/events together;
 - resolved controls update controls/snapshot/events together;
@@ -250,10 +289,13 @@ python skills/engineering-pr-delivery-v3.1/scripts/protocol_default.py <repo-roo
 ```
 
 Semantics:
-- no selector → V2.5 compatibility remains the default;
-- `V2_5 / PREPARED` → V3.1 is staged, but V2.5 remains live;
-- `V3_1 / ACTIVE` → V3.1 is the live/default relay; V2.5 becomes read-only history;
-- invalid selection/history digest → fail closed; do not guess a protocol.
+- authority identity is `LEGACY` vs `NATIVE`; `V2_5` / `V3` / `V3_1` are compatibility/tooling metadata, not programme state;
+- no selector + only `agents/relay/REPO_STATE.yaml` → `LEGACY / LEGACY_DEFAULT`;
+- no selector + only `relay/STATE.yaml` → `NATIVE / ACTIVE` using current V3.1-compatible tooling without a migration ceremony;
+- no selector + both durable authority trees → `INVALID`; fail closed rather than guess;
+- `V2_5 / PREPARED` → LEGACY remains live while native authority is staged;
+- `V3 / ACTIVE` or `V3_1 / ACTIVE` → NATIVE is live; accepted history is not rewritten merely to consume current tooling;
+- invalid selection/history digest → fail closed.
 
 Before cutover:
 
@@ -294,7 +336,10 @@ See `operating-model/v25-migration-and-cutover.md`.
 
 **Execution safety is synchronous. Handover quality is deterministically derivable. Delivery synchronization may be eventually consistent until the requested delivery action requires it.**
 
+Optimisation is governed by the architecture preservation contract. Generated/read-model machinery may be removed, merged or regenerated only when destructive reconstruction and safety-decision tests continue to prove the durable programme/authority/acceptance/history kernel.
+
 See:
+- `operating-model/architecture-preservation-contract.md`
 - `operating-model/authority-model.md`
 - `operating-model/action-authorization.md`
 - `operating-model/material-basis-and-drift.md`
@@ -325,7 +370,7 @@ While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5
 
 The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
 
-`plan_handover.py` atomically materializes the current TASK_SNAPSHOT and IMPROVEMENT_VIEW with HANDOVER_CONTEXT and binds their digests into accumulated learning. Prompt/handover consumers may use them for reconstruction and negative knowledge, but they grant no new action authority.
+`plan_handover.py` derives the current TASK_SNAPSHOT and IMPROVEMENT_VIEW on demand, freezes those exact read models **inside** HANDOVER_CONTEXT, and binds their digests into accumulated learning. It no longer persists separate handover-only task/improvement files that must remain synchronized with the context. The standalone intelligence projection CLI remains available when a human/tool explicitly wants those views as separate diagnostic artifacts. None of these projections grants new action authority.
 
 
 ## Parent-issue-relative task snapshots
@@ -398,9 +443,20 @@ See `operating-model/parent-handover-ledger.md`.
 
 New V3.1 custody is fenced by a monotonic `custody_epoch`. Once an active STATE carries an epoch, every state-changing execution action MUST present the current expected epoch. Missing or stale epochs fail closed. A recovery takeover increments the epoch, so a predecessor that later returns cannot mutate the work using stale custody.
 
-Leases carry `granted_at`, `renewed_at`, `recovery_after_seconds`, and a recovery policy. V3.1 does not run a polling daemon. Recovery eligibility is evaluated on demand when a different executor attempts explicit recovery. `TAKEOVER_AFTER_EXPIRY` permits recovery only after the persisted horizon; `MANUAL_ONLY` does not infer abandonment from time.
+Newly issued leases default to a **300-second inactivity horizon**. Relay does not require a polling daemon or a separate manual heartbeat loop. Meaningful governed activity performed by the current lease executor renews `custody.renewed_at` transactionally with that action. When a material basis is available, renewal also captures a non-authoritative `activity_basis` containing digests of the current sensitive worktree and semantic-dependency worktree.
 
-The active runner may renew custody transactionally:
+This liveness basis is deliberately distinct from checkpoint/material authority:
+
+- it may observe uncommitted sensitive work so recovery does not race an active writer;
+- it never proves acceptance or changes programme progress;
+- it never changes the custody epoch;
+- ordinary commands may mutate only `renewed_at` and `activity_basis` on the current executor's ACTIVE lease; they cannot use liveness renewal to rewrite lease authority.
+
+For `TAKEOVER_AFTER_EXPIRY`, explicit recovery after the inactivity horizon is allowed only when the sensitive worktree/dependency digests still match the predecessor's last activity basis. If sensitive material changed after the last recorded activity, timeout alone is insufficient and recovery fails with `UNACCEPTED_MATERIAL_ACTIVITY_PRESENT`.
+
+A provider/session termination observation may establish stronger abandonment evidence before the timeout. `--recovery-observation` accepts a schema-validated observation bound to the exact predecessor lease, executor, custody epoch and observation time, with a terminal state of `TERMINATED`, `CANCELLED`, or `FAILED`. A stale, mismatched, or non-terminal observation cannot invalidate custody.
+
+The explicit `renew-lease` command remains available for diagnostics/compatibility, but normal active runners should not need heartbeat ceremony:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
@@ -410,9 +466,9 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
 
 Clean responsibility transfer is two-sided. `HANDOVER_PLANNED/HANDOVER_PUBLISHED` prepare and expose the frozen continuation basis; they do not themselves prove that another runner accepted responsibility. When the successor validates that fresh basis and activates its lease, the same custody transaction emits `HANDOVER_ACCEPTED` and advances the epoch. Until then the derived Relay ledger may show `HANDOFF_PENDING`.
 
-Recovery is semantically distinct. An expiry-eligible explicit takeover emits `RECOVERY_STARTED`, invalidates predecessor custody, preserves the same EP where the work identity is unchanged, advances the epoch, and grants successor custody. After the successor reconstructs unaccepted material/evidence it records `RECOVERY_RECONSTRUCTED` with durable evidence. Do not represent recovery as a successful predecessor handover.
+Recovery remains semantically distinct. An eligible explicit takeover emits `RECOVERY_STARTED`, invalidates predecessor custody, preserves the same EP only when programme reconciliation still says that work is real, advances the epoch, and grants successor custody. After the successor reconstructs unaccepted material/evidence it records `RECOVERY_RECONSTRUCTED` with durable evidence. Do not represent recovery as a successful predecessor handover.
 
-Legacy V3.1 repositories without epoch/liveness fields remain readable. Explicit recovery remains available for such legacy custody, but newly issued leases use fenced custody.
+Legacy native repositories without complete epoch/liveness fields remain readable and are not partially upgraded as a side effect of unrelated commands. Explicit legacy recovery remains available; newly issued leases use fenced five-minute liveness.
 
 ## Governed continuous improvement / Change Delta
 

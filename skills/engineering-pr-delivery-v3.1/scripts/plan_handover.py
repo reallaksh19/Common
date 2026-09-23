@@ -6,22 +6,26 @@ from pathlib import Path
 
 from handover_context import build_context, build_request, render_request
 from intelligence_projection import build_improvement, build_task
+from lease_liveness import active_lease_renewal
+from programme_reconciliation import assess_boundary, require_boundary_ready
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
-from relay_tx import _event, _assert_event_ids_available
+from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
 
 
 def plan_handover(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     target_path: Path,
     base_ref: str,
     complex_mode: bool,
     parent_issue_observation: dict | None = None,
+    programme_issue_observations: list[dict] | None = None,
+    selected_programme_ref: str | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -33,15 +37,55 @@ def plan_handover(
     if errors:
         raise TransactionError("; ".join(errors))
 
+    # Resolve all programme-boundary semantics through the canonical assessment.
+    # A single live parent observation is sufficient for cheap continuation;
+    # an explicit ordered parent set may switch the programme frontier.
+    task_snapshot = build_task(root, base_ref, None)
+    task_parent = task_snapshot.get("parent_issue") or {}
+    governing_issue = task_parent.get("number")
+    governing_issue = int(governing_issue) if governing_issue is not None else None
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+    try:
+        programme_assessment = require_boundary_ready(
+            assess_boundary(
+                task_parent,
+                programme_issue_observations,
+                boundary="HANDOVER",
+                current_observation=parent_issue_observation,
+                selected_frontier_ref=selected_programme_ref,
+            )
+        )
+    except (RuntimeError, ValueError) as exc:
+        raise TransactionError(str(exc)) from exc
+
+    effective_parent_observation = programme_assessment.get("selected_observation")
+    programme_reconciliation = programme_assessment["reconciliation"]
+    if effective_parent_observation is not None:
+        task_snapshot = build_task(root, base_ref, effective_parent_observation)
+
+    improvement_view = build_improvement(root)
     context, snapshot = build_context(
         root,
         base_ref=base_ref,
         target=target,
         complex_mode=complex_mode,
-        parent_issue_observation=parent_issue_observation,
+        parent_issue_observation=effective_parent_observation,
+        programme_reconciliation=programme_reconciliation,
+        task_snapshot_override=task_snapshot,
+        improvement_view_override=improvement_view,
     )
-    task_snapshot = build_task(root, base_ref, parent_issue_observation)
-    improvement_view = build_improvement(root)
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
     if canonical_digest(task_snapshot) != task_meta.get("digest"):
@@ -68,28 +112,38 @@ def plan_handover(
             request["handover_context"]["digest"],
             task_meta["digest"],
             improvement_meta["digest"],
+            canonical_digest(programme_reconciliation),
         ],
         {
             "complex_mode": bool(complex_mode),
             "prompt_count": len(request["generator"]["prompt_sequence"]),
             "generator_mode": request["generator"]["mode"],
+            "programme_parent_count": len(programme_reconciliation.get("parents") or []),
+            "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
+            "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
+            "programme_continuation": programme_assessment.get("continuation"),
+            "next_programme_frontier": programme_assessment.get("next_frontier"),
         },
     ))
+
+    replacements = {
+        snapshot_path: yaml_bytes(snapshot),
+        "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
+        "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
+        "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    renewal = active_lease_renewal(root, state, actor, base_ref=base_ref)
+    if renewal is not None:
+        lease_path, renewed_lease = renewal
+        replacements[lease_path] = yaml_bytes(renewed_lease)
 
     return execute(
         root,
         tx_id=tx_id,
         command="PLAN_HANDOVER",
         actor=actor,
-        replacements={
-            snapshot_path: yaml_bytes(snapshot),
-            "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
-            str(task_meta["path"]): yaml_bytes(task_snapshot),
-            str(improvement_meta["path"]): yaml_bytes(improvement_view),
-            "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
-            "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -99,12 +153,28 @@ def main() -> None:
         description="Freeze V3 relay truth and create a verified request for the standalone current three-pass generator."
     )
     parser.add_argument("repo_root", nargs="?", default=".")
-    parser.add_argument("--tx-id", required=True)
-    parser.add_argument("--event-id", required=True)
+    parser.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current task parent issue.",
+    )
+    parser.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current task parent issue.",
+    )
     parser.add_argument("--actor", required=True)
     parser.add_argument("--target-observation", required=True)
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--parent-issue-observation")
+    parser.add_argument(
+        "--programme-issue-observation",
+        action="append",
+        default=[],
+        help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
+    )
+    parser.add_argument(
+        "--selected-programme-ref",
+        help="Explicit Owner/ROADMAP selected programme parent ref.",
+    )
     parser.add_argument("--complex", action="store_true")
     args = parser.parse_args()
     result = plan_handover(
@@ -116,6 +186,8 @@ def main() -> None:
         base_ref=args.base_ref,
         complex_mode=args.complex,
         parent_issue_observation=(load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None),
+        programme_issue_observations=[load_yaml(Path(path)) for path in args.programme_issue_observation],
+        selected_programme_ref=args.selected_programme_ref,
     )
     print(f"{result['id']}: {result['status']}")
 

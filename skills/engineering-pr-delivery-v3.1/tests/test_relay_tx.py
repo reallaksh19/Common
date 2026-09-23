@@ -16,6 +16,7 @@ for entry in (SCRIPTS, TESTS):
         sys.path.insert(0, str(entry))
 
 from material_basis import inspect as inspect_material_basis
+from plan_handover import plan_handover
 from relay_tx import (
     accept_checkpoint,
     activate_lease,
@@ -24,11 +25,18 @@ from relay_tx import (
     export_local_execution,
     publish_handover,
     release_lease,
+    renew_lease,
     reconcile_roadmap,
     resolve_control,
     sync_delivery,
 )
 from snapshot_projection import build as build_snapshot
+from test_handover_context import (
+    install_parent_issue,
+    install_standalone,
+    parent_issue_observation,
+    target_observation,
+)
 from test_relay_can import prepare_git
 from test_v3_foundation import base_objects, dump
 from transactionlib import TransactionError, execute, yaml_bytes
@@ -178,6 +186,77 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual("RECOVERY", revoked["details"]["continuation"])
             self.assertEqual("RECOVERY", granted["details"]["continuation"])
 
+    def test_recovery_refuses_to_resurrect_provider_completed_parent(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            closed = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="CLOSED",
+                disposition="CLOSE",
+                acceptance_state="COMPLETE",
+            )
+
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_FRONTIER_MISMATCH"):
+                activate_lease(
+                    root,
+                    tx_id="TX-RECOVERY-STALE-PARENT",
+                    event_id="EVT-RECOVERY-STALE-PARENT",
+                    lease_id="LEASE-TA-011-02",
+                    executor_id="agent-y",
+                    actor="agent-y",
+                    method="DETERMINISTIC",
+                    qualification=None,
+                    owner_basis=None,
+                    branch=None,
+                    base_ref=base_ref,
+                    recovery_takeover=True,
+                    programme_issue_observations=[closed],
+                )
+
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("LEASE-TA-011-01", state["execution"]["lease"])
+            self.assertFalse((root / "relay/LEASES/LEASE-TA-011-02.yaml").exists())
+
+    def test_recovery_can_resume_only_when_parent_remains_in_programme_frontier(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            live = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            result = activate_lease(
+                root,
+                tx_id="TX-RECOVERY-LIVE-PARENT",
+                event_id="EVT-RECOVERY-LIVE-PARENT",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+                recovery_takeover=True,
+                programme_issue_observations=[live],
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
+            self.assertEqual(
+                ["example/project#1771"],
+                started["details"]["programme_frontier"],
+            )
+
     def test_graceful_release_refuses_to_drop_unfinished_custody_without_handover(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -203,6 +282,17 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 actor="agent-x",
                 reason="ADMINISTRATIVE",
             )
+
+            roadmap_path = root / "relay/ROADMAP/ROADMAP.yaml"
+            roadmap = load_yaml(roadmap_path)
+            roadmap["work_packages"].append({
+                "id": "WP-OTHER-ACTIVE",
+                "title": "Separate unfinished programme obligation",
+                "weight": 10,
+                "state": "ACTIVE",
+                "depends_on": [],
+            })
+            dump(roadmap_path, roadmap)
 
             source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
             new_ep = copy.deepcopy(source_ep)
@@ -245,12 +335,212 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual("EP-TA-012", state["execution"]["ep"])
             self.assertEqual("LEASE-TA-012-01", state["execution"]["lease"])
             self.assertEqual("RM-0013", state["roadmap"]["revision"])
+            admitted_roadmap = load_yaml(root / "relay/ROADMAP/ROADMAP.yaml")
+            self.assertEqual(
+                {"WP-TA-109", "WP-OTHER-ACTIVE"},
+                {
+                    item["id"]
+                    for item in admitted_roadmap["work_packages"]
+                    if item["state"] == "ACTIVE"
+                },
+            )
             self.assertTrue((root / "relay/WORK/EP-TA-012.yaml").exists())
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
             ids = {row["event_id"] for row in events}
             self.assertTrue({"EVT-ADMIT-001-OWNER", "EVT-ADMIT-001-EP", "EVT-ADMIT-001-LEASE"}.issubset(ids))
             self.assertEqual([], validate(root))
+
+    def test_provider_backed_admission_can_allocate_execution_identities(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-BEFORE-CANONICAL-ADMIT",
+                event_id="EVT-RELEASE-BEFORE-CANONICAL-ADMIT",
+                actor="agent-x",
+                reason="ADMINISTRATIVE",
+            )
+
+            source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            new_ep = copy.deepcopy(source_ep)
+            new_ep.pop("id", None)
+            request = {
+                "schema_version": "relay-v3.1-task-admission",
+                "roadmap": {
+                    "disposition": "MAPPED_EXISTING_WP",
+                    "new_revision": "RM-0013",
+                    "basis": ["Owner selected the provider-backed task."],
+                    "work_package": {
+                        "id": "WP-TA-109",
+                        "title": "Current work",
+                        "weight": 50,
+                        "state": "ACTIVE",
+                        "depends_on": ["WP-TA-108"],
+                    },
+                },
+                "ep": new_ep,
+                "lease": {
+                    "executor_id": "agent-z",
+                    "method": "DETERMINISTIC",
+                },
+                "delivery": {"required": False, "primary_vehicle": None},
+            }
+            request_path = root / "canonical-task-admission.yaml"
+            dump(request_path, request)
+            live = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            result = admit_task(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="owner",
+                admission_path=request_path,
+                base_ref=base_ref,
+                programme_issue_observations=[live],
+                selected_programme_ref="example/project#1771",
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("EP.1771.1", state["execution"]["ep"])
+            self.assertEqual("LEASE.1771.1", state["execution"]["lease"])
+            self.assertTrue((root / "relay/WORK/EP.1771.1.yaml").exists())
+            self.assertTrue((root / "relay/LEASES/LEASE.1771.1.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                row["event_id"]
+                for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(["EVT.1771.1", "EVT.1771.2", "EVT.1771.3"], canonical)
+
+    def test_provider_backed_admission_requires_selected_parent_to_be_live_frontier(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-BEFORE-PARENT-ADMIT",
+                event_id="EVT-RELEASE-BEFORE-PARENT-ADMIT",
+                actor="agent-x",
+                reason="ADMINISTRATIVE",
+            )
+
+            source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            new_ep = copy.deepcopy(source_ep)
+            new_ep["id"] = "EP-TA-012"
+            request = {
+                "schema_version": "relay-v3.1-task-admission",
+                "roadmap": {
+                    "disposition": "MAPPED_EXISTING_WP",
+                    "new_revision": "RM-0013",
+                    "basis": ["Owner selected a provider-backed next task after programme reconciliation."],
+                    "work_package": {
+                        "id": "WP-TA-109",
+                        "title": "Current work",
+                        "weight": 50,
+                        "state": "ACTIVE",
+                        "depends_on": ["WP-TA-108"],
+                    },
+                },
+                "ep": new_ep,
+                "lease": {
+                    "id": "LEASE-TA-012-01",
+                    "executor_id": "agent-z",
+                    "method": "DETERMINISTIC",
+                },
+                "delivery": {"required": False, "primary_vehicle": None},
+            }
+            request_path = root / "parent-task-admission.yaml"
+            dump(request_path, request)
+
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_RECONCILIATION_REQUIRED"):
+                admit_task(
+                    root,
+                    tx_id="TX-PARENT-ADMIT-MISSING",
+                    event_id="EVT-PARENT-ADMIT-MISSING",
+                    actor="owner",
+                    admission_path=request_path,
+                    base_ref=base_ref,
+                )
+
+            closed = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="CLOSED",
+                disposition="CLOSE",
+                acceptance_state="COMPLETE",
+            )
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_FRONTIER_MISMATCH"):
+                admit_task(
+                    root,
+                    tx_id="TX-PARENT-ADMIT-CLOSED",
+                    event_id="EVT-PARENT-ADMIT-CLOSED",
+                    actor="owner",
+                    admission_path=request_path,
+                    base_ref=base_ref,
+                    programme_issue_observations=[closed],
+                )
+
+            live = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+            other_live = parent_issue_observation(
+                baseline=baseline,
+                number=1775,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_SELECTION_REQUIRED"):
+                admit_task(
+                    root,
+                    tx_id="TX-PARENT-ADMIT-AMBIGUOUS",
+                    event_id="EVT-PARENT-ADMIT-AMBIGUOUS",
+                    actor="owner",
+                    admission_path=request_path,
+                    base_ref=base_ref,
+                    programme_issue_observations=[live, other_live],
+                )
+
+            result = admit_task(
+                root,
+                tx_id="TX-PARENT-ADMIT-LIVE",
+                event_id="EVT-PARENT-ADMIT-LIVE",
+                actor="owner",
+                admission_path=request_path,
+                base_ref=base_ref,
+                programme_issue_observations=[live, other_live],
+                selected_programme_ref="example/project#1771",
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            admitted = [row for row in events if row["type"] == "OWNER_TASK_ADMITTED"][-1]
+            self.assertEqual(
+                ["example/project#1771", "example/project#1775"],
+                admitted["details"]["programme_frontier"],
+            )
+            self.assertEqual(
+                "example/project#1771",
+                admitted["details"]["selected_programme_frontier"],
+            )
 
     def test_critical_transaction_command_cannot_mutate_unowned_authority(self):
         with tempfile.TemporaryDirectory() as td:
@@ -302,6 +592,63 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertIn("EVT-ACTIVATE-001-REL", ids)
             self.assertIn("EVT-ACTIVATE-001", ids)
             self.assertEqual([], validate(root))
+
+    def test_provider_backed_custody_maintenance_can_allocate_transition_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            activated = activate_lease(
+                root,
+                tx_id="TX-CUSTODY-SETUP",
+                event_id="EVT-CUSTODY-SETUP",
+                lease_id="LEASE-CUSTODY-SETUP",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", activated["status"])
+
+            renewed = renew_lease(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                expected_custody_epoch=1,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", renewed["status"])
+            self.assertEqual("TX.1771.1", renewed["id"])
+
+            released = release_lease(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                reason="ADMINISTRATIVE",
+                expected_custody_epoch=1,
+            )
+            self.assertEqual("COMMITTED", released["status"])
+            self.assertEqual("TX.1771.2", released["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("IDLE", state["execution"]["lifecycle"])
+
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                (row["event_id"], row["type"])
+                for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(
+                [("EVT.1771.1", "LEASE_RENEWED"), ("EVT.1771.2", "LEASE_RELEASED")],
+                canonical,
+            )
 
     def test_release_lease_atomically_enters_idle_state_and_refreshes_snapshot(self):
         with tempfile.TemporaryDirectory() as td:
@@ -454,6 +801,46 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
 
+    def test_provider_backed_checkpoint_can_allocate_acceptance_identities(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            _, _, _, _, template, *_ = base_objects()
+            checkpoint = copy.deepcopy(template)
+            checkpoint.pop("id", None)
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["ep"] = "EP-TA-011"
+            checkpoint["material_result"] = {
+                "head": material["head"],
+                "relevant_paths_digest": material["relevant_paths_digest"],
+                "dependency_digest": material["dependency_digest"],
+            }
+            incoming = root / "canonical-checkpoint.yaml"
+            dump(incoming, checkpoint)
+
+            result = accept_checkpoint(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                checkpoint_path=incoming,
+                base_ref=base_ref,
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("CP.1771.1", state["accepted"]["checkpoint"])
+            self.assertTrue((root / "relay/CHECKPOINTS/CP.1771.1.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            accepted = [row for row in events if row["type"] == "CHECKPOINT_ACCEPTED"][-1]
+            self.assertEqual("EVT.1771.1", accepted["event_id"])
+            self.assertEqual("CP.1771.1", accepted["subject"])
+
     def test_failed_checkpoint_is_not_accepted(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -518,10 +905,11 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             add_open_control(root)
+            install_parent_issue(root, number=1771)
             result = resolve_control(
                 root,
-                tx_id="TX-CONTROL-001",
-                event_id="EVT-CONTROL-001",
+                tx_id=None,
+                event_id=None,
                 actor="agent-x",
                 control_id="CTRL-TEST-001",
                 evidence=["provider readback PASS"],
@@ -534,13 +922,26 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual(["provider readback PASS"], row["resolution"]["evidence"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
-            self.assertIn("EVT-CONTROL-001", [item["event_id"] for item in events])
+            self.assertIn("EVT.1771.1", [item["event_id"] for item in events])
+            self.assertEqual("TX.1771.1", result["id"])
             self.assertEqual([], validate(root))
 
     def test_handover_and_local_execution_are_generated_downstream_views(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
+            install_standalone(root)
+            accept_current_checkpoint_and_reconcile(root, base_ref)
+            planned = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-PLAN-001",
+                event_id="EVT-HANDOVER-PLAN-001",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+            self.assertEqual("COMMITTED", planned["status"])
             handover = publish_handover(
                 root,
                 tx_id="TX-HANDOVER-001",
@@ -572,14 +973,19 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             observation = configure_delivery(root, base_ref)
+            install_parent_issue(root, number=1771)
             result = sync_delivery(
                 root,
-                tx_id="TX-DELIVERY-001",
-                event_id="EVT-DELIVERY-001",
+                tx_id=None,
+                event_id=None,
                 actor="provider-sync",
                 observation_path=observation,
             )
             self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            events, event_errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], event_errors)
+            self.assertIn("EVT.1771.1", [item["event_id"] for item in events])
             persisted = load_yaml(root / "relay/GENERATED/DELIVERY_STATUS.yaml")
             self.assertEqual("PROVIDER_READBACK", persisted["authority"])
             self.assertEqual("MERGED", persisted["lifecycle"])

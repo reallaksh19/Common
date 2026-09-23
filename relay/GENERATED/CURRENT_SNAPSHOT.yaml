@@ -1,0 +1,84 @@
+{
+  "schema_version": "relay-v3.1-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "generated_from": {
+    "roadmap_revision": "RM.438.4",
+    "state_digest": "sha256:dd4b0154092e83b5099173a7a6eba784a96957156c724f6b3d93cb2ceb4320db",
+    "material_basis": {
+      "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+      "tree_digest": "sha256:f3367800c6dac405f78f62873ebcd723296124ebf8f7bdbfbad1fc7d7af9a098",
+      "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
+      "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+    },
+    "coordination_head": "45feb46f7bac959a5fd6a3893d80dad51f53575f"
+  },
+  "owner": {
+    "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
+    "current_goal": "Remove unsupported PARALLEL execution lifecycle surface and document why the remaining simplification candidates are retained."
+  },
+  "programme": {
+    "programme_progress": 0,
+    "accepted_progress": 100,
+    "completed_work": [],
+    "remaining_work": [
+      "WP.438"
+    ],
+    "evidence_backed_work": [
+      "WP.438"
+    ]
+  },
+  "execution": {
+    "lifecycle": "IDLE",
+    "work_package": null,
+    "ep": null,
+    "lease": null,
+    "executor": null,
+    "custody_epoch": 1
+  },
+  "scope": {
+    "allowed_writes": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "material": {
+    "base": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+  },
+  "evidence": {
+    "latest_checkpoint": "CP.438.5",
+    "latest_material_validation": {
+      "focused_tests": "PASS",
+      "spec_delivery": "PASS",
+      "full_guardrails": "PASS"
+    }
+  },
+  "controls": {
+    "execution_blockers": [],
+    "handover_blockers": [],
+    "delivery_blockers": [],
+    "informational": []
+  },
+  "delivery": {
+    "issue": 438,
+    "pr": 437,
+    "lifecycle": "DRAFT",
+    "merge_authorized": false
+  },
+  "next": {
+    "immediate_material_action": null,
+    "delivery_action": "PR #439 and PR #441 are merged into the #437 branch. PR #437 remains the unmerged delivery vehicle to main; no merge authority is inferred for it.",
+    "stop_conditions": []
+  },
+  "handoff": {
+    "zero_context_takeover_possible": true,
+    "reconstruction_sources": [
+      "relay/ROADMAP/ROADMAP.yaml",
+      "relay/STATE.yaml",
+      "relay/CONTROLS/controls.yaml",
+      "relay/CHECKPOINTS/CP.438.5.yaml",
+      "relay/EVENTS.jsonl"
+    ]
+  }
+}

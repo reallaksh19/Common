@@ -9,6 +9,7 @@ from typing import Any
 
 from snapshot_projection import build as build_snapshot
 from intelligence_projection import build_improvement, build_task
+from programme_reconciliation import build as build_programme_reconciliation
 from v3lib import canonical_digest, load_yaml, validate_schema
 
 
@@ -83,6 +84,7 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
 
     for token in (
         "lease-",
+        "lease.",
         "pull_request",
         "pull request",
         "pr #",
@@ -120,6 +122,9 @@ def build_context(
     target: dict[str, Any],
     complex_mode: bool,
     parent_issue_observation: dict[str, Any] | None = None,
+    programme_reconciliation: dict[str, Any] | None = None,
+    task_snapshot_override: dict[str, Any] | None = None,
+    improvement_view_override: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     revision = _standalone_contract(root)
@@ -138,19 +143,19 @@ def build_context(
     context_wp_id = execution.get("work_package") or ((context_ep or {}).get("work_package"))
     wp = _wp_row(roadmap, context_wp_id)
     handoff = (checkpoint or {}).get("handoff") or {}
-    task_snapshot = build_task(root, base_ref, parent_issue_observation)
-    improvement_view = build_improvement(root)
+    task_snapshot = task_snapshot_override or build_task(root, base_ref, parent_issue_observation)
+    improvement_view = improvement_view_override or build_improvement(root)
     task_identity = task_snapshot.get("identity") or {}
-    task_ep = task_identity.get("ep") or context_ep_id
-    task_path = f"relay/GENERATED/tasks/{task_ep or 'current'}.snapshot.yaml"
-    improvement_cp = improvement_view.get("checkpoint") or checkpoint_id
-    improvement_path = f"relay/GENERATED/improvements/{improvement_cp or 'current'}.improvement.yaml"
     improvement = improvement_view.get("improvement") or {}
     capability_change = bool(
         improvement.get("capability_added")
         or improvement.get("capability_strengthened")
     )
     evidence_count = len(improvement.get("evidence_added") or [])
+    reconciliation = programme_reconciliation or build_programme_reconciliation(
+        [],
+        current_parent_ref=None,
+    )
 
     context = {
         "schema_version": "relay-v3.1-handover-context",
@@ -175,6 +180,7 @@ def build_context(
                 "current_goal": (snapshot.get("owner") or {}).get("current_goal"),
                 "roadmap_revision": (snapshot.get("generated_from") or {}).get("roadmap_revision"),
                 "roadmap_title": roadmap.get("title"),
+                "reconciliation": reconciliation,
             },
             "local_responsibility": {
                 "work_package": context_wp_id,
@@ -219,20 +225,20 @@ def build_context(
             "resume_from": list(handoff.get("resume_from") or []),
             "first_successor_action": handoff.get("first_successor_action"),
             "task_snapshot": {
-                "path": task_path,
                 "digest": canonical_digest(task_snapshot),
                 "source_protocol": task_snapshot.get("source_protocol"),
                 "ep": task_identity.get("ep"),
                 "work_package": task_identity.get("work_package"),
                 "next_action": (task_snapshot.get("next") or {}).get("immediate_action"),
+                "value": task_snapshot,
             },
             "improvement_view": {
-                "path": improvement_path,
                 "digest": canonical_digest(improvement_view),
                 "source_protocol": improvement_view.get("source_protocol"),
                 "checkpoint": improvement_view.get("checkpoint"),
                 "capability_change": capability_change,
                 "evidence_count": evidence_count,
+                "value": improvement_view,
             },
             "parent_issue": {
                 "repository": (task_snapshot.get("parent_issue") or {}).get("repository"),
@@ -292,7 +298,7 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "authorized_actions": "This handover package grants no new action authority. Prompt 3 must revalidate live relay.can(action) and explicit Owner authority before acting.",
             "intent_boundary": "Use blind_context for Prompts 0.5/1; quarantine reality_context until Prompt 2; treat accumulated_learning as accepted/history context rather than present action authority. Do not invent a parallel roadmap, issue model, checkpoint, or status system.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, validates the artifact, and leaves a recipient-ready continuation when another actor must act.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 should reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Treat blind_context.programme.reconciliation as the ordered parent-set programme basis: distinguish programme frontier, execution blockers, acceptance debt, delivery/governance debt, and deferred/future work before selecting any implementation. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 must not continue the old EP mechanically when programme reconciliation changes ownership; reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
         },
     }
     errors = validate_schema("three-pass-request", request, "THREE_PASS_REQUEST")

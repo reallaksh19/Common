@@ -1,0 +1,59 @@
+{
+  "schema_version": "relay-v3.1-transaction",
+  "id": "TX.438.8",
+  "command": "ADMIT_TASK",
+  "actor": "owner",
+  "status": "COMMITTED",
+  "created_at": "2026-09-23T11:38:30Z",
+  "updated_at": "2026-09-23T11:38:32Z",
+  "operations": [
+    {
+      "path": "relay/STATE.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:147c9b8969f03fc17de8c9d38e43b0c0599385b5e1e9c7891d4eb690d13a80dd",
+      "after_digest": "sha256:c4b6bd50dfe09d4d50514f0290edcb9eab80ae42f00fd581f9ebaf2bb4815693"
+    },
+    {
+      "path": "relay/WORK/EP.438.3.yaml",
+      "before_exists": false,
+      "before_digest": null,
+      "after_digest": "sha256:e6a44eefba18ce25fb6c7d14ab4e384884d30cef642d594fe78d1d8d01bc51e1"
+    },
+    {
+      "path": "relay/LEASES/LEASE.438.3.yaml",
+      "before_exists": false,
+      "before_digest": null,
+      "after_digest": "sha256:10e8a3f7b0cd581f0fa38e9d870a96744cf75eed4e45c193e97a78251bdb9232"
+    },
+    {
+      "path": "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:b3eb136ebf7eba9906c77f5df339eec8e29cda83bf24ba17f06c2cc69fea7bbd",
+      "after_digest": "sha256:d4d8c8b499c787b62f155b83b3c8428c4a1198e8a4734c8d1cc16af91cc86a8c"
+    },
+    {
+      "path": "relay/EVENTS.jsonl",
+      "before_exists": true,
+      "before_digest": "sha256:052877dc0c75c262f25283e1e27aaac0e462a95f07101ef5ce5aad35d48b7281",
+      "after_digest": "sha256:827b9c866deb2be29050b7e00acacc0533679f36f08d9b1fb1c9535a8cd4d61c"
+    }
+  ],
+  "applied": [
+    "relay/STATE.yaml",
+    "relay/WORK/EP.438.3.yaml",
+    "relay/LEASES/LEASE.438.3.yaml",
+    "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    "relay/EVENTS.jsonl"
+  ],
+  "identity_reservations": [
+    "AC.438.8",
+    "EP.438.3",
+    "EVT.438.22",
+    "EVT.438.23",
+    "EVT.438.24",
+    "LEASE.438.3",
+    "TX.438.8",
+    "WP.438"
+  ],
+  "payload_state": "PRUNED"
+}

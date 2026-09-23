@@ -1,0 +1,29 @@
+{
+  "schema_version": "relay-v3.1-controls",
+  "controls": [
+    {
+      "id": "CTRL-SELFHOST-438-001",
+      "kind": "QUALITY",
+      "state": "RESOLVED",
+      "source": {
+        "type": "VALIDATOR",
+        "ref": "Common#438:self-hosting-bootstrap"
+      },
+      "condition": "The live Common self-hosting authority has not yet passed destructive reconstruction and fenced successor recovery.",
+      "blocks": [
+        "CHECKPOINT",
+        "HANDOVER"
+      ],
+      "permits": [],
+      "resolution": {
+        "condition": "Live self-hosting reconstruction/recovery test passes against the Common#438 authority tree.",
+        "evidence": [
+          "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py",
+          "GitHub Actions validate-v3-1-foundation PASS: https://github.com/reallaksh19/Common/actions/runs/35846689487/job/107134439033",
+          "GitHub Actions PR validate-v3-1-foundation PASS: https://github.com/reallaksh19/Common/actions/runs/35846684954/job/107134425117",
+          "exact material head 2e06e0f03d98ecaedfa5951639b12d6b62e3b60e"
+        ]
+      }
+    }
+  ]
+}

@@ -31,17 +31,22 @@ properties:
   programme:
     type: object
     additionalProperties: false
-    required: [accepted_progress, completed_work, remaining_work]
+    required: [programme_progress, accepted_progress, completed_work, remaining_work, evidence_backed_work]
     properties:
+      programme_progress: {type: number, minimum: 0, maximum: 100}
       accepted_progress: {type: number, minimum: 0, maximum: 100}
       completed_work:
         type: array
         uniqueItems: true
-        items: {type: string, pattern: '^WP-'}
+        items: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
       remaining_work:
         type: array
         uniqueItems: true
-        items: {type: string, pattern: '^WP-'}
+        items: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
+      evidence_backed_work:
+        type: array
+        uniqueItems: true
+        items: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
   execution:
     type: object
     additionalProperties: false

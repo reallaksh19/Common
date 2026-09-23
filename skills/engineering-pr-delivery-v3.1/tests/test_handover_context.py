@@ -21,9 +21,9 @@ from plan_handover import plan_handover
 from relay_can import evaluate as can_action
 from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
-from test_v3_foundation import dump
+from test_v3_foundation import DIGEST, dump
 from transactionlib import TransactionError
-from v3lib import load_events, load_yaml
+from v3lib import canonical_digest, load_events, load_yaml
 from validate_foundation import validate
 
 
@@ -54,6 +54,65 @@ def target_observation(root: Path, *, kind: str = "ISSUE", number: int = 418) ->
     path = root / "provider-target.yaml"
     dump(path, target)
     return path
+
+
+def install_parent_issue(root: Path, *, number: int = 1771) -> dict:
+    baseline = {
+        "observed_at": "2026-09-22T00:00:00Z",
+        "body_digest": DIGEST,
+        "acceptance_items": [
+            {"id": "PI-1", "statement": "Deliver the bounded provider-backed task."},
+        ],
+    }
+    ep_path = root / "relay/WORK/EP-TA-011.yaml"
+    ep = load_yaml(ep_path)
+    ep["parent_issue"] = {
+        "provider": "GITHUB",
+        "repository": "example/project",
+        "number": number,
+        "title": "Provider-backed programme task",
+        "url": f"https://github.com/example/project/issues/{number}",
+        "baseline": baseline,
+    }
+    dump(ep_path, ep)
+    return baseline
+
+
+def parent_issue_observation(
+    *,
+    baseline: dict,
+    number: int = 1771,
+    state: str = "OPEN",
+    disposition: str = "NO_CHANGE",
+    acceptance_state: str | None = None,
+) -> dict:
+    acceptance_state = acceptance_state or ("COMPLETE" if state == "CLOSED" else "PENDING")
+    return {
+        "schema_version": "relay-v3.1-parent-issue-observation",
+        "authority": "DERIVED_PROVIDER_OBSERVATION",
+        "provider": "GITHUB",
+        "repository": "example/project",
+        "issue_number": number,
+        "title": "Provider-backed programme task",
+        "url": f"https://github.com/example/project/issues/{number}",
+        "state": state,
+        "observed_at": "2026-09-23T00:30:00Z",
+        "baseline": baseline,
+        "current_contract": {
+            "body_digest": DIGEST,
+            "acceptance_items": [{
+                "id": "PI-1",
+                "statement": "Deliver the bounded provider-backed task.",
+                "state": acceptance_state,
+                "evidence": ["provider-readback"] if acceptance_state == "COMPLETE" else [],
+                "provider_refs": [f"issue-{number}"],
+            }],
+        },
+        "updates": [],
+        "disposition": disposition,
+        "relationships": [],
+        "handover_ledger": None,
+    }
 
 
 class HandoverContextTests(unittest.TestCase):
@@ -207,12 +266,16 @@ class HandoverContextTests(unittest.TestCase):
             request_text = (root / "relay/GENERATED/THREE_PASS_REQUEST.md").read_text(encoding="utf-8")
             task_meta = context["accumulated_learning"]["task_snapshot"]
             improvement_meta = context["accumulated_learning"]["improvement_view"]
-            task_snapshot = load_yaml(root / task_meta["path"])
-            improvement_view = load_yaml(root / improvement_meta["path"])
+            task_snapshot = task_meta["value"]
+            improvement_view = improvement_meta["value"]
             self.assertEqual("DERIVED_READ_MODEL", task_snapshot["authority"])
             self.assertEqual("DERIVED_READ_MODEL", improvement_view["authority"])
             self.assertEqual(task_meta["ep"], task_snapshot["identity"]["ep"])
             self.assertEqual(improvement_meta["checkpoint"], improvement_view["checkpoint"])
+            self.assertEqual(task_meta["digest"], canonical_digest(task_snapshot))
+            self.assertEqual(improvement_meta["digest"], canonical_digest(improvement_view))
+            self.assertFalse((root / "relay/GENERATED/tasks").exists())
+            self.assertFalse((root / "relay/GENERATED/improvements").exists())
             self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
             self.assertEqual("PROVIDER_READBACK", context["target"]["authority"])
             self.assertEqual("DERIVED_GENERATOR_REQUEST", request["authority"])
@@ -223,6 +286,162 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual([], errors)
             self.assertIn("EVT-HANDOVER-PLAN-001", [item["event_id"] for item in events])
             self.assertEqual([], validate(root))
+
+    def test_parent_backed_handover_allocates_bookkeeping_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root)
+            observation = parent_issue_observation(
+                baseline=baseline,
+                state="OPEN",
+                disposition="NO_CHANGE",
+            )
+
+            result = plan_handover(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+                parent_issue_observation=observation,
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            planned = [row for row in events if row["type"] == "HANDOVER_PLANNED"][-1]
+            self.assertEqual("EVT.1771.1", planned["event_id"])
+
+    def test_parent_backed_handover_requires_live_programme_observation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            install_parent_issue(root)
+
+            write_before = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
+            self.assertTrue(write_before["allowed"], write_before)
+
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_CURRENTNESS_REQUIRED"):
+                plan_handover(
+                    root,
+                    tx_id="TX-HANDOVER-CURRENTNESS-MISSING",
+                    event_id="EVT-HANDOVER-CURRENTNESS-MISSING",
+                    actor="agent-x",
+                    target_path=target_observation(root),
+                    base_ref=base_ref,
+                    complex_mode=False,
+                )
+
+            write_after = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
+            self.assertTrue(write_after["allowed"], write_after)
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_closed_or_changed_parent_requires_programme_reconciliation_before_handover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root)
+            observation = parent_issue_observation(
+                baseline=baseline,
+                state="CLOSED",
+                disposition="CLOSE",
+            )
+
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_RECONCILIATION_REQUIRED"):
+                plan_handover(
+                    root,
+                    tx_id="TX-HANDOVER-STALE-PARENT",
+                    event_id="EVT-HANDOVER-STALE-PARENT",
+                    actor="agent-x",
+                    target_path=target_observation(root),
+                    base_ref=base_ref,
+                    complex_mode=False,
+                    parent_issue_observation=observation,
+                )
+
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_stale_current_parent_can_handover_after_explicit_programme_reconciliation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root, number=1771)
+            completed = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="CLOSED",
+                disposition="CLOSE",
+                acceptance_state="COMPLETE",
+            )
+            next_parent = parent_issue_observation(
+                baseline=baseline,
+                number=1772,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-PROGRAMME-RECONCILED",
+                event_id="EVT-HANDOVER-PROGRAMME-RECONCILED",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=True,
+                programme_issue_observations=[completed, next_parent],
+            )
+            self.assertEqual("COMMITTED", result["status"])
+
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            reconciliation = context["blind_context"]["programme"]["reconciliation"]
+            self.assertEqual("READY", reconciliation["status"])
+            self.assertEqual(
+                ["example/project#1772"],
+                reconciliation["programme_frontier"],
+            )
+            self.assertEqual(
+                "LANDED",
+                reconciliation["ordered_roadmap"][0]["ownership"],
+            )
+            self.assertEqual(
+                "STILL_REAL",
+                reconciliation["ordered_roadmap"][1]["ownership"],
+            )
+
+    def test_open_unchanged_parent_can_plan_handover(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root)
+            observation = parent_issue_observation(
+                baseline=baseline,
+                state="OPEN",
+                disposition="NO_CHANGE",
+            )
+
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-CURRENT-PARENT",
+                event_id="EVT-HANDOVER-CURRENT-PARENT",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+                parent_issue_observation=observation,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertTrue((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
 
     def test_unverified_target_fails_without_changing_execution_authority(self):
         with tempfile.TemporaryDirectory() as td:

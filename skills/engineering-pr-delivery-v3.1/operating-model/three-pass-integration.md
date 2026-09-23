@@ -125,15 +125,22 @@ The richer handover reasoning/content redesign tracked in Common issue #420 rema
 
 ## Refinement boundary with #421 and #420
 
-This adapter is the baseline V3 relay-to-generator boundary. Common #421 refines the handover input without changing authority ownership:
+This adapter is the baseline V3 relay-to-generator boundary. Common #421 refines the handover input without changing authority ownership.
+
+At handover freeze time, the richer task/improvement read models are derived and embedded in `HANDOVER_CONTEXT.yaml` rather than persisted again as separate synchronized files:
 
 ```text
 PROJECT_SNAPSHOT
-+ TASK_SNAPSHOT
-+ relevant IMPROVEMENT_VIEW(S)
++ derived TASK_SNAPSHOT
++ derived relevant IMPROVEMENT_VIEW
 + live provider target
-→ #420 five-prompt reasoning
+        ↓ freeze exact values + digests
+HANDOVER_CONTEXT
+        ↓
+#420 five-prompt reasoning
 ```
+
+The task/improvement projectors remain callable on demand for diagnostics, status rendering, or migration continuity proof; handover itself no longer depends on separate `relay/GENERATED/tasks/**` or `relay/GENERATED/improvements/**` artifacts.
 
 Roadmap mutation remains a Relay operation. Prompt 2.5 may recommend roadmap reconciliation; Prompt 3 may return a semantic delta. Neither prompt directly writes authoritative roadmap/progress truth. Relay/checkpoint tooling performs the governed reconciliation and then regenerates projections.
 

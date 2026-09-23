@@ -36,6 +36,7 @@ class LeaseAdmissionTests(unittest.TestCase):
             self.assertEqual([], lease["admission"]["qualification"]["evidence"])
             self.assertIn("MATERIAL_WRITE", lease["authority"]["actions"])
             self.assertNotIn("MERGE", lease["authority"]["actions"])
+            self.assertEqual(300, lease["custody"]["recovery_after_seconds"])
             self.assertEqual([], validate_schema("lease", lease, "LEASE"))
 
 

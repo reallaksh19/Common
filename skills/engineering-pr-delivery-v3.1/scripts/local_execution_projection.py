@@ -15,6 +15,18 @@ def _branch(root: Path) -> str:
     ).strip()
     return value or "DETACHED"
 
+def _origin_url(root: Path) -> str | None:
+    try:
+        value = subprocess.check_output(
+            ["git", "-C", str(root), "remote", "get-url", "origin"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+    return value or None
+
+
 
 def _safe_token(value: Any) -> str:
     text = re.sub(r"[^A-Za-z0-9._-]+", "-", str(value or "current")).strip("-")
@@ -80,6 +92,8 @@ def build(
     *,
     mode: str = "VALIDATE_ONLY",
     commands: list[str] | None = None,
+    return_sub_issue: str | None = None,
+    request_id: str | None = None,
 ) -> dict[str, Any]:
     if mode not in {"VALIDATE_ONLY", "BOUNDED_EXECUTION"}:
         raise ValueError(f"unsupported local execution mode: {mode}")
@@ -97,6 +111,7 @@ def build(
         }
 
     branch = _branch(root)
+    origin_url = _origin_url(root)
     material = snapshot.get("material") or {}
     ep_id = (ep or {}).get("id") or execution.get("ep")
     work_package = (ep or {}).get("work_package") or execution.get("work_package")
@@ -106,7 +121,7 @@ def build(
         or ((ep or {}).get("next") or {}).get("first_action")
     )
     material_head = str(material.get("head") or "")
-    request_id = f"LOCAL-{_safe_token(ep_id or (checkpoint or {}).get('id'))}-{_safe_token(material_head[:12])}"
+    request_id = request_id or f"LOCAL-{_safe_token(ep_id or (checkpoint or {}).get('id'))}-{_safe_token(material_head[:12])}"
 
     prohibited = [
         "Do not commit or push.",
@@ -132,6 +147,24 @@ def build(
             "outcome": (snapshot.get("owner") or {}).get("outcome"),
             "roadmap_revision": (snapshot.get("generated_from") or {}).get("roadmap_revision"),
             "work_package": work_package,
+        },
+        "repository": {
+            "clone_url": origin_url,
+            "branch": branch,
+            "required_head": material_head,
+            "checkout_instructions": (
+                [
+                    f"git clone {origin_url}",
+                    f"git checkout {branch}",
+                    f"git rev-parse HEAD  # must equal {material_head}",
+                ]
+                if origin_url
+                else [
+                    "Use the repository source supplied by the dispatcher.",
+                    f"git checkout {branch}",
+                    f"git rev-parse HEAD  # must equal {material_head}",
+                ]
+            ),
         },
         "execution": {
             "ep": ep_id,
@@ -173,6 +206,23 @@ def build(
             ],
             "stop_conditions": stop_conditions,
             "prohibited_actions": prohibited,
+        },
+        "provider_return": {
+            "target_sub_issue": return_sub_issue,
+            "required_before_dispatch": return_sub_issue is None,
+            "update_required": True,
+            "required_content": [
+                "request id and final result",
+                "observed material HEAD",
+                "commands/steps attempted and outcomes",
+                "failures/blockers",
+                "artifact/evidence references",
+            ],
+            "instruction": (
+                f"After completing the bounded work, update {return_sub_issue} with the result and evidence before returning the packet."
+                if return_sub_issue
+                else "A governed provider sub-issue return target must be supplied before this packet is dispatched."
+            ),
         },
         "return_contract": {
             "request_id": request_id,

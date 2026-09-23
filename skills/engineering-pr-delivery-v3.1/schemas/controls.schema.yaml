@@ -10,7 +10,7 @@ properties:
       additionalProperties: false
       required: [id, kind, state, source, condition, blocks, permits, resolution]
       properties:
-        id: {type: string, pattern: '^CTRL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        id: {type: string, pattern: '^(?:CTRL-[A-Za-z0-9][A-Za-z0-9._-]*|CTRL\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
         kind: {enum: [PROTOCOL, COLLISION, DEPENDENCY, DELIVERY, QUALITY, OWNER]}
         state: {enum: [OPEN, RESOLVED, SUPERSEDED]}
         source:
@@ -37,7 +37,7 @@ properties:
           required: [kind, id]
           properties:
             kind: {enum: [PENDING, KNOWN_ISSUE]}
-            id: {type: string, pattern: '^(PEND|KI)-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+            id: {type: string, pattern: '^(?:(?:PEND|KI)-[A-Za-z0-9][A-Za-z0-9._-]*|(?:PEND|KI)\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
         resolution:
           type: object
           additionalProperties: false

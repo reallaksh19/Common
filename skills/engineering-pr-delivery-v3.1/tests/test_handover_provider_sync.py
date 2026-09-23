@@ -200,6 +200,30 @@ class HandoverProviderSyncTests(unittest.TestCase):
             self.assertFalse(status["parent"]["updated"])
             self.assertFalse(status["handover"]["updated"])
 
+    def test_provider_sync_allocates_bookkeeping_ids_from_parent_issue(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            materialize_projection(root)
+            client = FakeGitHub()
+
+            result = sync_handover_provider(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="relay",
+                token="test-token",
+                api_base="https://api.github.test",
+                client=client,
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            synced = [row for row in events if row["type"] == "HANDOVER_LEDGER_SYNCED"][-1]
+            self.assertEqual("EVT.1771.1", synced["event_id"])
+
     def test_missing_relay_issue_is_created_attached_and_persisted(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

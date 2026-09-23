@@ -3,7 +3,7 @@ type: object
 required: [schema_version, id, authority, hypothesis, verification, proposal, authorization, application]
 properties:
   schema_version: {const: relay-v3.1-change-delta}
-  id: {type: string, pattern: '^CHANGE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  id: {type: string, pattern: '^(?:CHANGE-[A-Za-z0-9][A-Za-z0-9._-]*|CHANGE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
   authority: {const: GOVERNED_CHANGE_DELTA}
   hypothesis:
     type: object

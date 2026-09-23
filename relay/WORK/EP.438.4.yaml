@@ -1,0 +1,99 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.4",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Make Owner/machine-facing V3.1 status surfaces explicitly preserve selected-but-blocked programme semantics without overclaiming that one external action is the only legitimate action."
+  },
+  "basis": {
+    "predecessor_checkpoint": "CP.438.3",
+    "material_base": "2128a8692f9e41f15443d93731e92de952007bf8",
+    "protocol_basis": "Common#438 remaining closure plan after CP.438.3; PR #437 frozen for new scope.",
+    "semantic_dependencies": [
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/programme_reconciliation.py",
+        "reason": "Presentation must consume the canonical selected-frontier semantics rather than inventing its own programme decision."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/render_owner_stats.py",
+        "reason": "Owner-facing stats are the target presentation boundary."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/owner_commands.py",
+        "reason": "WHAT_NEXT / PROCEED_NEXT language must remain consistent with the rendered selected-frontier semantics."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/scripts/render_owner_stats.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/owner_commands.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_owner_stats.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_owner_commands.py"
+    ],
+    "read": [
+      "skills/engineering-pr-delivery-v3.1/scripts/programme_reconciliation.py"
+    ],
+    "protect": [],
+    "prohibit": [
+      "Do not alter canonical programme selection or fallback semantics.",
+      "Do not make an execution blocker grant programme reselection authority.",
+      "Do not infer that a blocked selected frontier makes one external/provider action the only legitimate action."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.9",
+      "statement": "Owner/machine-facing status for a selected execution-blocked frontier states that it remains selected, shows alternate live/deferred obligations separately, forbids automatic fallback, and requires Owner/programme reselection before switching frontier.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_owner_stats.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_owner_commands.py"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T12:02:34Z",
+      "body_digest": "sha256:08b0e42df58dae73880e5ed62b836e2b9ea1748ee79ccbf2ab25faf0a1d946f0",
+      "acceptance_items": [
+        {
+          "id": "PRESENT-1",
+          "statement": "Blocked selected work remains programme-selected and does not fall through to deferred live work."
+        },
+        {
+          "id": "PRESENT-2",
+          "statement": "Owner-facing status distinguishes execution blockers from programme authority and does not overclaim a sole legitimate external action."
+        },
+        {
+          "id": "PRESENT-3",
+          "statement": "A different programme frontier requires explicit Owner/programme reselection."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Make the detailed Owner status explicitly render selected frontier, selected ownership, executable frontier, alternate live obligations, blocked-selected-frontier semantics, and reselection requirement; add regression coverage.",
+    "stop_conditions": [
+      "The fix requires changing programme_reconciliation selection semantics.",
+      "A safety decision changes outside presentation/read-model output.",
+      "Owner/programme selection moves away from WP.438."
+    ]
+  }
+}

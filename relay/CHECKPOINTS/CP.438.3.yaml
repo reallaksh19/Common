@@ -1,0 +1,69 @@
+{
+  "schema_version": "relay-v3.1-checkpoint",
+  "id": "CP.438.3",
+  "ep": "EP.438.3",
+  "material_result": {
+    "head": "2128a8692f9e41f15443d93731e92de952007bf8",
+    "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.8",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py::test_live_common_authority_is_native_and_valid",
+        "Current accepted checkpoint is validated as canonical CP rooted in issue #438 rather than fixed to CP.438.1.",
+        "CP.438.1 remains explicitly asserted as immutable historical evidence.",
+        "GitHub Actions PASS jobs 107164163618, 107164163561, 107164163378, and 107164142948",
+        "exact head 2128a8692f9e41f15443d93731e92de952007bf8"
+      ]
+    }
+  ],
+  "validation": {
+    "focused_tests": "PASS",
+    "spec_delivery": "PASS",
+    "full_guardrails": "PASS"
+  },
+  "quality": {
+    "policy": "STANDARD",
+    "result": "CLEAR"
+  },
+  "known_limitations": [
+    "CP.438.3 is a narrow closure correction and does not expand the accepted scope of CP.438.2.",
+    "WP.438 remains ACTIVE until an explicit Owner/programme completion decision.",
+    "PR #437 merge/release remains subject to explicit Owner delivery authority."
+  ],
+  "discoveries": [
+    "A live self-hosting test that hard-codes one accepted checkpoint becomes stale as soon as serial execution correctly advances accepted truth.",
+    "Completion validation must assert canonical lineage and immutable history, not freeze one historical current pointer."
+  ],
+  "handoff": {
+    "what_changed": [
+      "The self-hosting authority test now accepts monotonic CP.438.* progression while retaining CP.438.1 as historical bootstrap evidence."
+    ],
+    "what_is_true_now": [
+      "EP.438.3 acceptance is fully evidenced.",
+      "CP.438.2 remains immutable predecessor truth.",
+      "The live repository may advance accepted checkpoint serials without invalidating the bootstrap preservation proof."
+    ],
+    "what_remains_uncertain": [
+      "No further material work is admitted after this corrective episode."
+    ],
+    "do_not_break": [
+      "Do not rewrite older checkpoints.",
+      "Do not weaken canonical issue-root validation for accepted checkpoints."
+    ],
+    "attempted_and_rejected": [
+      "Rewriting CP.438.2 or patching material while STATE was IDLE was rejected; a new serial EP was admitted instead."
+    ],
+    "resume_from": [
+      "Common#438",
+      "PR#437",
+      "CP.438.3",
+      "relay/STATE.yaml",
+      "relay/EVENTS.jsonl"
+    ],
+    "first_successor_action": "Do not admit another EP automatically; await Owner/programme decision."
+  }
+}

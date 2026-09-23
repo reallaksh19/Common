@@ -1,0 +1,18 @@
+{
+  "schema_version": "relay-v3.1-roadmap",
+  "revision": "RM.438.4",
+  "title": "Common#438 V3.1 self-hosting, serialization, and gate-reduction programme",
+  "owner": {
+    "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
+    "current_goal": "Remove unsupported PARALLEL execution lifecycle surface and document why the remaining simplification candidates are retained."
+  },
+  "work_packages": [
+    {
+      "id": "WP.438",
+      "title": "Complete Common#438 V3.1 identity, serialization, and gate-reduction work",
+      "weight": 100,
+      "state": "ACTIVE",
+      "depends_on": []
+    }
+  ]
+}

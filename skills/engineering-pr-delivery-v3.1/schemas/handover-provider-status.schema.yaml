@@ -16,7 +16,7 @@ $defs:
     additionalProperties: false
     required: [repository, issue_number, url, body_digest, updated]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       issue_number: {type: integer, minimum: 1}
       url: {type: string, format: uri}
       body_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}

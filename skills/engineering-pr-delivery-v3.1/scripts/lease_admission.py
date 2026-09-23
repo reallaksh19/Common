@@ -8,6 +8,7 @@ from typing import Any
 
 import yaml
 
+from lease_liveness import DEFAULT_RECOVERY_AFTER_SECONDS, material_activity_basis
 from v3lib import canonical_digest, load_yaml, require_identifier, validate_schema
 from validate_foundation import validate_authority
 
@@ -75,8 +76,9 @@ def build_native_lease(
     ep_override: dict[str, Any] | None = None,
     current_lease_override: dict[str, Any] | None = None,
     custody_epoch: int | None = None,
-    recovery_after_seconds: int = 3600,
+    recovery_after_seconds: int = DEFAULT_RECOVERY_AFTER_SECONDS,
     recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
+    base_ref: str | None = None,
 ) -> dict[str, Any]:
     if state_override is not None or ep_override is not None:
         if not isinstance(state_override, dict) or not isinstance(ep_override, dict):
@@ -183,6 +185,9 @@ def build_native_lease(
         "state": "ACTIVE",
         "invalidation": {"reasons": []},
     }
+
+    if base_ref:
+        lease["custody"]["activity_basis"] = material_activity_basis(root, ep, base_ref)
 
     if method == "OWNER_OVERRIDE":
         if not isinstance(owner_basis, dict):

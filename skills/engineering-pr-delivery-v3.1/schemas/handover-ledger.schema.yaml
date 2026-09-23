@@ -17,7 +17,7 @@ properties:
     additionalProperties: false
     required: [repository, number, title, url, state, disposition, relationships]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       number: {type: integer, minimum: 1}
       title: {type: string, minLength: 1}
       url: {type: string, format: uri}
@@ -29,7 +29,7 @@ properties:
     additionalProperties: false
     required: [repository, number, url]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       number: {type: integer, minimum: 1}
       url: {type: string, format: uri}
   current_frontier:
@@ -54,8 +54,8 @@ properties:
       additionalProperties: false
       required: [ep, work_package, status, continuation, checkpoint, lease, executor, basis]
       properties:
-        ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
-        work_package: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+        ep: {type: string, pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
+        work_package: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
         status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
         continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
         checkpoint: {type: [string, 'null']}

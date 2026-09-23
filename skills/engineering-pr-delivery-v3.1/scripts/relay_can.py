@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from material_basis import inspect as inspect_material_basis
+from protocol_default import resolve as resolve_protocol
 from v3lib import load_yaml, validate_schema
 from validate_foundation import validate_authority
 
@@ -114,18 +115,13 @@ def _result(action: str, allowed: bool, basis: list[str], blocking_controls: lis
 
 
 def _protocol_state(root: Path) -> tuple[bool, str]:
-    selection_path = root / "relay/PROTOCOL_SELECTION.yaml"
-    legacy_state = root / "agents/relay/REPO_STATE.yaml"
-    if not selection_path.exists():
-        if legacy_state.exists():
-            return False, "V2_5:LEGACY_DEFAULT"
-        return True, "V3_1:NATIVE_NO_SELECTOR"
-    selection = load_yaml(selection_path)
-    selected = str(selection.get("selected_protocol") or "")
-    status = str(selection.get("status") or "")
-    live = selected in {"V3", "V3_1"} and status == "ACTIVE"
-    suffix = ":COMPATIBLE_NATIVE_CORE" if selected == "V3" and live else ""
-    return live, f"{selected}:{status}{suffix}"
+    resolved = resolve_protocol(root)
+    mode = str(resolved.get("authority_mode") or "AMBIGUOUS")
+    status = str(resolved.get("status") or "INVALID")
+    repository_protocol = str(resolved.get("repository_protocol") or "UNKNOWN")
+    source = str(resolved.get("source") or "UNKNOWN")
+    live = mode == "NATIVE" and status == "ACTIVE"
+    return live, f"{mode}:{status}:repo={repository_protocol}:source={source}"
 
 
 def evaluate(
@@ -160,7 +156,7 @@ def evaluate(
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
     current_epoch = execution.get("custody_epoch")
-    if action in FENCED_ACTIONS and execution.get("lifecycle") in {"ACTIVE", "PARALLEL"} and current_epoch is not None:
+    if action in FENCED_ACTIONS and execution.get("lifecycle") == "ACTIVE" and current_epoch is not None:
         basis.append(f"custody_epoch:{current_epoch}")
         if expected_custody_epoch is None:
             reasons.append("CUSTODY_EPOCH_REQUIRED")
@@ -168,7 +164,7 @@ def evaluate(
             reasons.append("STALE_CUSTODY_EPOCH")
 
     if action in EXECUTION_ACTIONS:
-        if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or not ep:
+        if execution.get("lifecycle") != "ACTIVE" or not ep:
             reasons.append("NO_ACTIVE_EXECUTION")
         if not lease or lease.get("state") != "ACTIVE":
             reasons.append("NO_ACTIVE_LEASE")

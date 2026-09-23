@@ -4,7 +4,7 @@ required: [schema_version, authority, request_id, status, observed_head, environ
 properties:
   schema_version: {const: relay-v3.1-local-execution-result}
   authority: {const: EXTERNAL_EXECUTION_EVIDENCE}
-  request_id: {type: string, pattern: '^LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  request_id: {type: string, pattern: '^(?:LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*|LOCAL\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
   status: {enum: [PASS, FAIL, BLOCKED, NOT_RUN_ENVIRONMENT, NOT_RUN_INFRASTRUCTURE, HEAD_MISMATCH]}
   observed_head: {type: string, minLength: 7}
   environment:

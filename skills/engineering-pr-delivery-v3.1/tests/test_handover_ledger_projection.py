@@ -16,7 +16,7 @@ for entry in (SCRIPTS, TESTS):
 from handover_ledger_projection import build, render_ledger, render_parent_summary
 from test_relay_can import prepare_git
 from test_v3_foundation import DIGEST, dump
-from v3lib import load_yaml
+from v3lib import load_yaml, validate_schema
 
 
 def parent_observation() -> dict:
@@ -106,25 +106,25 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             controls = load_yaml(controls_path)
             controls["controls"] = [
                 {
-                    "id": "CTRL-PEND-001",
+                    "id": "CTRL.1771.1",
                     "kind": "DEPENDENCY",
                     "state": "OPEN",
                     "source": {"type": "REPOSITORY", "ref": "baseline"},
                     "condition": "Local baseline result must be consumed.",
                     "blocks": ["CHECKPOINT"],
                     "permits": ["READ"],
-                    "tracking": {"kind": "PENDING", "id": "PEND-001"},
+                    "tracking": {"kind": "PENDING", "id": "PEND.1771.1"},
                     "resolution": {"condition": "Result consumed.", "evidence": []},
                 },
                 {
-                    "id": "CTRL-KI-001",
+                    "id": "CTRL.1771.2",
                     "kind": "DELIVERY",
                     "state": "OPEN",
                     "source": {"type": "PROVIDER", "ref": "actions-zero-steps"},
                     "condition": "Hosted Actions executes zero steps.",
                     "blocks": ["PR_READY"],
                     "permits": ["MATERIAL_WRITE"],
-                    "tracking": {"kind": "KNOWN_ISSUE", "id": "KI-001"},
+                    "tracking": {"kind": "KNOWN_ISSUE", "id": "KI.1771.1"},
                     "resolution": {"condition": "Hosted execution restored.", "evidence": []},
                 },
             ]
@@ -132,6 +132,15 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
 
             ledger = build(root, parent_observation(), base_ref=base_ref)
             self.assertEqual("DERIVED_PROVIDER_PROJECTION", ledger["authority"])
+            canonical_ledger = copy.deepcopy(ledger)
+            canonical_ledger["parent_issue"]["repository"] = "reallaksh19/Common"
+            canonical_ledger["handover_issue"]["repository"] = "reallaksh19/Common"
+            canonical_ledger["ep_index"][0]["ep"] = "EP.1771.1"
+            canonical_ledger["ep_index"][0]["work_package"] = "WP.1771"
+            self.assertEqual(
+                [],
+                validate_schema("handover-ledger", canonical_ledger, "CANONICAL_HANDOVER_LEDGER"),
+            )
             self.assertEqual(1870, ledger["handover_issue"]["number"])
 
             by_ep = {row["ep"]: row for row in ledger["ep_index"]}
@@ -141,8 +150,8 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertEqual("RECOVERY", by_ep["EP-TA-009"]["continuation"])
             self.assertEqual("NEW", by_ep["EP-TA-011"]["continuation"])
 
-            self.assertEqual(["PEND-001"], [row["id"] for row in ledger["pending_items"]])
-            self.assertEqual(["KI-001"], [row["id"] for row in ledger["known_issues"]])
+            self.assertEqual(["PEND.1771.1"], [row["id"] for row in ledger["pending_items"]])
+            self.assertEqual(["KI.1771.1"], [row["id"] for row in ledger["known_issues"]])
             self.assertEqual("EP-TA-011", ledger["offloads"][0]["origin_ep"])
 
             body = render_ledger(ledger)
@@ -150,8 +159,8 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertIn("## EP index", body)
             self.assertIn("EP-TA-009", body)
             self.assertIn("RECOVERY_REQUIRED", body)
-            self.assertIn("PEND-001", body)
-            self.assertIn("KI-001", body)
+            self.assertIn("PEND.1771.1", body)
+            self.assertIn("KI.1771.1", body)
             self.assertIn("Handover ledger: example/repo#1870", parent)
             self.assertIn("Recovery-required EPs: 1", parent)
 

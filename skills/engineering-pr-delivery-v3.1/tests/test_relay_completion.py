@@ -20,13 +20,14 @@ from relay_tx import (
     activate_lease,
     authorize_change_delta,
     propose_change_delta,
+    publish_handover,
     reconcile_roadmap,
     record_change_hypothesis,
     record_recovery_reconstructed,
     renew_lease,
     verify_change_delta,
 )
-from test_handover_context import install_standalone, target_observation
+from test_handover_context import install_parent_issue, install_standalone, target_observation
 from test_relay_can import WRITE_PATH, prepare_git
 from test_relay_tx import accept_current_checkpoint_and_reconcile
 from test_v3_foundation import DIGEST, dump
@@ -83,8 +84,9 @@ class RelayCompletionTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", renewed["status"])
             renewal_dt = datetime.fromisoformat(renewal_basis.replace("Z", "+00:00"))
-            early_observation = (renewal_dt + timedelta(minutes=30)).isoformat().replace("+00:00", "Z")
-            eligible_observation = (renewal_dt + timedelta(minutes=61)).isoformat().replace("+00:00", "Z")
+            self.assertEqual(300, current_lease["custody"]["recovery_after_seconds"])
+            early_observation = (renewal_dt + timedelta(minutes=4)).isoformat().replace("+00:00", "Z")
+            eligible_observation = (renewal_dt + timedelta(minutes=6)).isoformat().replace("+00:00", "Z")
 
             with self.assertRaisesRegex(TransactionError, "RECOVERY_NOT_ELIGIBLE"):
                 activate_lease(
@@ -150,7 +152,210 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertIn("RECOVERY_STARTED", [row["type"] for row in events])
             self.assertIn("RECOVERY_RECONSTRUCTED", [row["type"] for row in events])
 
-    def test_fresh_handover_is_accepted_by_successor_not_merely_published(self):
+    def test_governed_activity_automatically_renews_current_executor_liveness(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            activate_lease(
+                root,
+                tx_id="TX-LIVE-START",
+                event_id="EVT-LIVE-START",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            lease_path = root / "relay/LEASES/LEASE-TA-011-02.yaml"
+            lease = load_yaml(lease_path)
+            old = "2026-09-22T00:00:00Z"
+            lease["custody"]["renewed_at"] = old
+            dump(lease_path, lease)
+
+            result = record_change_hypothesis(
+                root,
+                tx_id="TX-LIVE-ACTIVITY",
+                event_id="EVT-LIVE-ACTIVITY",
+                actor="agent-x",
+                change_id="CHANGE-LIVE-001",
+                statement="Governed engineering activity should renew current custody liveness.",
+                basis=["current EP analysis"],
+                expected_custody_epoch=1,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            renewed = load_yaml(lease_path)
+            self.assertGreater(
+                datetime.fromisoformat(renewed["custody"]["renewed_at"].replace("Z", "+00:00")),
+                datetime.fromisoformat(old.replace("Z", "+00:00")),
+            )
+            self.assertEqual(1, renewed["custody"]["epoch"])
+            self.assertIn("activity_basis", renewed["custody"])
+
+    def test_time_only_recovery_refuses_when_material_changed_since_last_activity(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            activate_lease(
+                root,
+                tx_id="TX-MATERIAL-LIVE-START",
+                event_id="EVT-MATERIAL-LIVE-START",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            renewed = datetime.fromisoformat(
+                lease["custody"]["renewed_at"].replace("Z", "+00:00")
+            )
+            material = root / "skills/engineering-pr-delivery-v3.1/scripts/base.py"
+            material.write_text(
+                material.read_text(encoding="utf-8") + "\n# unaccepted active material\n",
+                encoding="utf-8",
+            )
+            expired = (renewed + timedelta(minutes=6)).isoformat().replace("+00:00", "Z")
+
+            with self.assertRaisesRegex(
+                TransactionError,
+                "UNACCEPTED_MATERIAL_ACTIVITY_PRESENT",
+            ):
+                activate_lease(
+                    root,
+                    tx_id="TX-MATERIAL-LIVE-RECOVERY",
+                    event_id="EVT-MATERIAL-LIVE-RECOVERY",
+                    lease_id="LEASE-TA-011-03",
+                    executor_id="agent-y",
+                    actor="agent-y",
+                    method="DETERMINISTIC",
+                    qualification=None,
+                    owner_basis=None,
+                    branch=None,
+                    base_ref=base_ref,
+                    recovery_takeover=True,
+                    expected_custody_epoch=1,
+                    recovery_observed_at=expired,
+                )
+
+    def test_terminal_session_evidence_allows_immediate_fenced_recovery(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            activate_lease(
+                root,
+                tx_id="TX-SESSION-START",
+                event_id="EVT-SESSION-START",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            old = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            renewed = datetime.fromisoformat(
+                old["custody"]["renewed_at"].replace("Z", "+00:00")
+            )
+            observation_time = (renewed + timedelta(minutes=1)).isoformat().replace("+00:00", "Z")
+            recovery_observation = {
+                "schema_version": "relay-v3.1-recovery-observation",
+                "authority": "DERIVED_PROVIDER_OBSERVATION",
+                "provider": "TEST_SESSION_PROVIDER",
+                "provider_ref": "session://agent-x/run-1/terminated",
+                "lease_id": "LEASE-TA-011-02",
+                "executor_id": "agent-x",
+                "custody_epoch": 1,
+                "session_state": "TERMINATED",
+                "observed_at": observation_time,
+            }
+
+            recovered = activate_lease(
+                root,
+                tx_id="TX-SESSION-RECOVERY",
+                event_id="EVT-SESSION-RECOVERY",
+                lease_id="LEASE-TA-011-03",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+                recovery_takeover=True,
+                expected_custody_epoch=1,
+                recovery_observed_at=observation_time,
+                recovery_observation=recovery_observation,
+            )
+            self.assertEqual("COMMITTED", recovered["status"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual(2, state["execution"]["custody_epoch"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
+            self.assertEqual("TERMINAL_SESSION_CONFIRMED", started["details"]["recovery_reason"])
+            self.assertTrue(started["details"]["terminal_observation_digest"])
+            self.assertIn(
+                "session://agent-x/run-1/terminated",
+                started["basis"],
+            )
+
+    def test_handover_publication_requires_committed_plan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+
+            with self.assertRaisesRegex(TransactionError, "fresh HANDOVER_CONTEXT"):
+                publish_handover(
+                    root,
+                    tx_id="TX-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                    event_id="EVT-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                    actor="agent-x",
+                    base_ref=base_ref,
+                )
+
+    def test_handover_publish_rejects_tampered_inline_frozen_read_model(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            accept_current_checkpoint_and_reconcile(root, base_ref)
+            plan_handover(
+                root,
+                tx_id="TX-HANDOVER-INLINE-TAMPER-PLAN",
+                event_id="EVT-HANDOVER-INLINE-TAMPER-PLAN",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+
+            context_path = root / "relay/GENERATED/HANDOVER_CONTEXT.yaml"
+            context = load_yaml(context_path)
+            task_meta = context["accumulated_learning"]["task_snapshot"]
+            task_meta["value"]["next"]["immediate_action"] = "tampered continuation"
+            dump(context_path, context)
+
+            with self.assertRaisesRegex(
+                TransactionError,
+                "embedded task snapshot digest changed",
+            ):
+                publish_handover(
+                    root,
+                    tx_id="TX-HANDOVER-INLINE-TAMPER-PUBLISH",
+                    event_id="EVT-HANDOVER-INLINE-TAMPER-PUBLISH",
+                    actor="agent-x",
+                    base_ref=base_ref,
+                )
+
+    def test_handover_requires_plan_then_publish_before_successor_acceptance(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -165,6 +370,30 @@ class RelayCompletionTests(unittest.TestCase):
                 base_ref=base_ref,
                 complex_mode=False,
             )
+
+            with self.assertRaisesRegex(TransactionError, "fresh handover is unavailable"):
+                activate_lease(
+                    root,
+                    tx_id="TX-HANDOVER-EARLY",
+                    event_id="EVT-HANDOVER-EARLY",
+                    lease_id="LEASE-TA-011-02",
+                    executor_id="agent-y",
+                    actor="agent-y",
+                    method="DETERMINISTIC",
+                    qualification=None,
+                    owner_basis=None,
+                    branch=None,
+                    base_ref=base_ref,
+                )
+
+            published = publish_handover(
+                root,
+                tx_id="TX-HANDOVER-PUBLISH",
+                event_id="EVT-HANDOVER-PUBLISH",
+                actor="agent-x",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", published["status"])
 
             result = activate_lease(
                 root,
@@ -182,11 +411,89 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual("COMMITTED", result["status"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
+            published_events = [row for row in events if row["type"] == "HANDOVER_PUBLISHED"]
             accepted = [row for row in events if row["type"] == "HANDOVER_ACCEPTED"]
+            self.assertEqual(1, len(published_events))
             self.assertEqual(1, len(accepted))
             self.assertEqual("LEASE-TA-011-02", accepted[0]["subject"])
             granted = [row for row in events if row["event_id"] == "EVT-HANDOVER-ACCEPT"][0]
             self.assertEqual("HANDOFF", granted["details"]["continuation"])
+
+    def test_provider_backed_change_lifecycle_allocates_bookkeeping_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            recorded = record_change_hypothesis(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=None,
+                statement="The provider-backed change lifecycle should use issue-rooted identities.",
+                basis=["current EP analysis"],
+            )
+            self.assertEqual("TX.1771.1", recorded["id"])
+            change_id = "CHANGE.1771.1"
+            self.assertTrue((root / f"relay/CHANGES/{change_id}.yaml").exists())
+
+            verified = verify_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=change_id,
+                status="CONFIRMED",
+                evidence=["bounded verification evidence"],
+                falsifiers_checked=["no ownership transfer required"],
+            )
+            self.assertEqual("TX.1771.2", verified["id"])
+
+            proposal = {
+                "disposition": "UPDATE",
+                "source": {"work_package": "WP-TA-109", "parent_issue": 1771},
+                "retain": {},
+                "transfer": {},
+                "proposed_target": None,
+                "rationale": "Keep the same governed issue while updating framing.",
+            }
+            proposal_path = root / "canonical-change-proposal.yaml"
+            dump(proposal_path, proposal)
+            proposed = propose_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=change_id,
+                proposal_path=proposal_path,
+                authorization_required="OWNER",
+            )
+            self.assertEqual("TX.1771.3", proposed["id"])
+
+            authorized = authorize_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="owner",
+                change_id=change_id,
+                granted=True,
+                direct_utterance_digest=DIGEST,
+                session_timestamp="2026-09-23T10:55:00Z",
+            )
+            self.assertEqual("TX.1771.4", authorized["id"])
+            delta = load_yaml(root / f"relay/CHANGES/{change_id}.yaml")
+            self.assertEqual("GRANTED", delta["authorization"]["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                row["event_id"] for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(
+                ["EVT.1771.1", "EVT.1771.2", "EVT.1771.3", "EVT.1771.4"],
+                canonical,
+            )
 
     def test_confirmed_change_delta_cannot_reconcile_roadmap_before_owner_authority(self):
         with tempfile.TemporaryDirectory() as td:

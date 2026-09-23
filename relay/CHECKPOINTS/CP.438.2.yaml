@@ -1,0 +1,103 @@
+{
+  "schema_version": "relay-v3.1-checkpoint",
+  "id": "CP.438.2",
+  "ep": "EP.438.2",
+  "material_result": {
+    "head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+    "relevant_paths_digest": "sha256:99fc7ef679e77f9e36fd970874f0c444a33097d5327dc78cd2813791b7c1a051",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.4",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_nomenclature.py",
+        "skills/engineering-pr-delivery-v3.1/tests/test_v3_foundation.py::test_canonical_control_and_real_repository_consumer_schemas",
+        "Canonical namespace consumer audit completed through ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c.",
+        "GitHub Actions V3.1 PASS jobs 107154597214 and 107154581656"
+      ]
+    },
+    {
+      "id": "AC.438.5",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py",
+        "skills/engineering-pr-delivery-v3.1/tests/test_local_execution_contract.py",
+        "Provider-backed admission/custody/checkpoint/handover/local/change transitions allocate derivable bookkeeping identities.",
+        "GitHub Actions V3.1 PASS jobs 107154597214 and 107154581656"
+      ]
+    },
+    {
+      "id": "AC.438.6",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_transactionlib.py",
+        "Append-only event history, rollback safety, and durable identity reservation tests remain green.",
+        "GitHub Actions V3 PASS job 107154597002"
+      ]
+    },
+    {
+      "id": "AC.438.7",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+        "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py",
+        "Programme selection, zero-context recovery, custody fencing, and action-specific safety decisions remain green.",
+        "GitHub Actions V3.1 PASS jobs 107154597214 and 107154581656"
+      ]
+    }
+  ],
+  "validation": {
+    "focused_tests": "PASS",
+    "spec_delivery": "PASS",
+    "full_guardrails": "PASS"
+  },
+  "quality": {
+    "policy": "STANDARD",
+    "result": "CLEAR"
+  },
+  "known_limitations": [
+    "Pre-bootstrap PR#437 work remains provenance-only and is intentionally not rewritten into Relay execution history.",
+    "CP.438.2 closes EP.438.2 only; WP.438 remains ACTIVE until a separate Owner/programme completion decision.",
+    "PR #437 merge/release remains subject to explicit Owner delivery authority."
+  ],
+  "discoveries": [
+    "Live V3.1 dogfooding exposed duplicated reconciliation shapes, caller-owned bookkeeping IDs, append-only event concurrency risk, schema/nomenclature drift, and repository-name regex escaping.",
+    "Canonical identity is now wired through provider-backed admission, custody/recovery, checkpoints, handover, Change Delta bookkeeping, LOCAL dispatch, controls/debt tracking, and handover/provider projections."
+  ],
+  "handoff": {
+    "what_changed": [
+      "Issue-rooted canonical identity became an execution protocol rather than only a formatter.",
+      "Ordinary governed transitions derive TX/EVT/LEASE/EP/CP/CHANGE/LOCAL bookkeeping where durable issue lineage already exists.",
+      "Legacy durable IDs remain readable; existing identities were not renamed."
+    ],
+    "what_is_true_now": [
+      "EP.438.2 acceptance AC.438.4 through AC.438.7 is fully evidenced at this checkpoint.",
+      "CP.438.1 remains immutable predecessor truth and CP.438.2 is the accepted serialization/gate-reduction boundary.",
+      "WP.438 remains the selected active programme obligation; this checkpoint does not decide programme completion.",
+      "Zero-context takeover and stale-epoch fencing remain proved."
+    ],
+    "what_remains_uncertain": [
+      "Any further deletion/projection/liveness simplification is outside EP.438.2 and requires a new admitted episode or Owner/programme decision."
+    ],
+    "do_not_break": [
+      "Do not infer programme selection from the current/last EP.",
+      "Do not reuse or rename durable canonical identities.",
+      "Do not weaken custody epochs, material drift, checkpoint binding, or Owner delivery authority."
+    ],
+    "attempted_and_rejected": [
+      "Retroactive EP identities for pre-bootstrap commits were rejected.",
+      "Weakening valid gates was rejected where the friction was duplicate representation or derivable bookkeeping.",
+      "Schema validation was retained; mismatched consumer regexes were normalized instead."
+    ],
+    "resume_from": [
+      "Common#438",
+      "PR#437",
+      "CP.438.2",
+      "relay/STATE.yaml",
+      "relay/EVENTS.jsonl"
+    ],
+    "first_successor_action": "Do not admit another EP automatically. Await Owner/programme decision for any remaining WP.438 work."
+  }
+}

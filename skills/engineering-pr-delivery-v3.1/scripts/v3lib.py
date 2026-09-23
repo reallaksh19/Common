@@ -19,9 +19,15 @@ _SAFE_ID_SUFFIX = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 def require_identifier(value: str, prefix: str, label: str) -> str:
     text = str(value or "")
-    if not text.startswith(prefix):
-        raise ValueError(f"{label} must use {prefix}* namespace")
-    suffix = text[len(prefix):]
+    legacy_prefix = str(prefix)
+    canonical_prefix = legacy_prefix[:-1] + "." if legacy_prefix.endswith("-") else None
+    if text.startswith(legacy_prefix):
+        suffix = text[len(legacy_prefix):]
+    elif canonical_prefix and text.startswith(canonical_prefix):
+        suffix = text[len(canonical_prefix):]
+    else:
+        accepted = f"{legacy_prefix}* or {canonical_prefix}*" if canonical_prefix else f"{legacy_prefix}*"
+        raise ValueError(f"{label} must use {accepted} namespace")
     if not _SAFE_ID_SUFFIX.fullmatch(suffix):
         raise ValueError(f"{label} contains unsafe characters")
     return text

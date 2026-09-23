@@ -110,11 +110,17 @@ This is intentional. Post-cutover legacy mutation is a reconciliation event, not
 
 ## Default selection
 
-`protocol_default.py` is the protocol resolver:
+`protocol_default.py` is the canonical authority resolver. Repository authority is identified as `LEGACY` or `NATIVE`; version labels remain compatibility metadata.
 
 ```text
-no selector
-  → V2.5 LEGACY_DEFAULT
+no selector + legacy tree only
+  → LEGACY / LEGACY_DEFAULT
+
+no selector + native tree only
+  → NATIVE / ACTIVE / current V3.1-compatible tooling
+
+no selector + both authority trees
+  → INVALID (fail closed)
 
 V2_5 + PREPARED
   → V2.5 remains live; V3 staged

@@ -1,0 +1,120 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.5",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Reduce V3.1 to the smallest evidenced execution lifecycle by removing unsupported PARALLEL semantics while preserving all established safety decisions and recording retention reasons for other simplification candidates."
+  },
+  "basis": {
+    "predecessor_checkpoint": "CP.438.4",
+    "material_base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+    "protocol_basis": "Common#438 EP.438.5 simplification boundary; PR #439 frozen after accepted CP.438.4.",
+    "semantic_dependencies": [
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/schemas/state.schema.yaml",
+        "reason": "Lifecycle grammar must match the implemented custody model."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/relay_can.py",
+        "reason": "Action authorization must recognize only implemented active execution semantics."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py",
+        "reason": "Custody epoch enforcement must not imply unsupported parallel writers."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/scripts/lease_liveness.py",
+        "reason": "Liveness/recovery must follow the single authoritative lease model."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/schemas/state.schema.yaml",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_can.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/lease_liveness.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_relay_can.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py",
+      "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
+    ],
+    "read": [
+      "skills/engineering-pr-delivery-v3.1/scripts/protocol_default.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/handover_context.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/intelligence_projection.py",
+      "skills/engineering-pr-delivery-v3.1/operating-model/v25-migration-and-cutover.md"
+    ],
+    "protect": [],
+    "prohibit": [
+      "Do not weaken programme-selection, custody-epoch, material-drift, checkpoint-binding, or Owner delivery-authority gates.",
+      "Do not delete compatibility or projection machinery merely because it is derivable; retain it when it owns a real boundary.",
+      "Do not introduce multi-writer behavior while removing the phantom PARALLEL lifecycle."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.10",
+      "statement": "PARALLEL is rejected as an execution lifecycle, ACTIVE execution decisions remain unchanged, recovery/custody/checkpoint/programme/Owner-authority preservation tests remain green, and each evaluated retained simplification candidate has an explicit architectural reason.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_relay_can.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py"
+        },
+        {
+          "oracle": "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T12:32:40Z",
+      "body_digest": "sha256:d6ceecd7d95e04c02e061501067cb591ba7a00ab198b406cd8c758ad74656704",
+      "acceptance_items": [
+        {
+          "id": "SIMPLIFY-1",
+          "statement": "Remove phantom PARALLEL execution lifecycle support until a real multi-writer authority model exists."
+        },
+        {
+          "id": "SIMPLIFY-2",
+          "statement": "Preservation decisions for healthy ACTIVE execution, recovery, custody, checkpoint, programme selection, and Owner delivery authority remain unchanged."
+        },
+        {
+          "id": "SIMPLIFY-3",
+          "statement": "Retained simplification candidates have explicit architectural reasons rather than surviving by inertia."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Delete PARALLEL from state lifecycle validation and all execution/custody/liveness branches; add regression coverage that PARALLEL is invalid while ACTIVE decisions are unchanged; document retained candidate invariants.",
+    "stop_conditions": [
+      "Any existing accepted safety decision changes for ACTIVE execution.",
+      "Zero-context recovery or stale-epoch fencing regresses.",
+      "A proposed deletion owns a unique compatibility, provider, or user-facing boundary."
+    ]
+  }
+}

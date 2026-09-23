@@ -144,9 +144,11 @@ def base_objects():
         },
         "owner": {"outcome": "Simplify relay execution.", "current_goal": "Land V3 foundation."},
         "programme": {
+            "programme_progress": 0,
             "accepted_progress": 0,
             "completed_work": [],
             "remaining_work": ["WP-TA-109"],
+            "evidence_backed_work": [],
         },
         "execution": {
             "lifecycle": "ACTIVE",
@@ -218,6 +220,13 @@ def materialize(root: Path):
 
 
 class V3FoundationTests(unittest.TestCase):
+    def test_all_v31_schema_files_parse_as_yaml(self):
+        schema_dir = ROOT / "schemas"
+        for path in sorted(schema_dir.glob("*.schema.yaml")):
+            with self.subTest(schema=path.name):
+                parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
+                self.assertIsInstance(parsed, dict)
+
     def test_valid_foundation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
@@ -332,6 +341,49 @@ class V3FoundationTests(unittest.TestCase):
             path.write_text(json.dumps(event) + "\n" + json.dumps(event) + "\n", encoding="utf-8")
             errors = validate(root)
             self.assertTrue(any("duplicate event_id" in item for item in errors), errors)
+
+
+    def test_canonical_control_and_real_repository_consumer_schemas(self):
+        authorization = {
+            "schema_version": "relay-v3.1-authorization-result",
+            "action": "CHECKPOINT",
+            "allowed": False,
+            "basis": ["canonical control blocks checkpoint"],
+            "blocking_controls": ["CTRL.1771.1"],
+            "reason_codes": ["CONTROL_BLOCKS_ACTION"],
+        }
+        self.assertEqual(
+            [],
+            validate_schema("authorization-result", authorization, "CANONICAL_AUTHORIZATION_RESULT"),
+        )
+
+        issue = {
+            "repository": "reallaksh19/Common",
+            "issue_number": 438,
+            "url": "https://github.com/reallaksh19/Common/issues/438",
+            "body_digest": DIGEST,
+            "updated": True,
+        }
+        provider_status = {
+            "schema_version": "relay-v3.1-handover-provider-status",
+            "authority": "PROVIDER_READBACK",
+            "observed_at": "2026-09-23T11:07:00Z",
+            "marker": "relay-v3.1",
+            "parent": issue,
+            "handover": {
+                **issue,
+                "issue_number": 439,
+                "url": "https://github.com/reallaksh19/Common/issues/439",
+            },
+        }
+        self.assertEqual(
+            [],
+            validate_schema(
+                "handover-provider-status",
+                provider_status,
+                "REAL_REPOSITORY_HANDOVER_PROVIDER_STATUS",
+            ),
+        )
 
 
 if __name__ == "__main__":
