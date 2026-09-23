@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.2",
-    "state_digest": "sha256:38c3217ded981a86ba39201c10381f0fdc76dfe79ab1033c2aa8f21316fd372d",
+    "state_digest": "sha256:453a5767c682a99ac7f93b6eb4f9fca011517992e1081504b7728365ae5ede20",
     "material_basis": {
       "head": "2128a8692f9e41f15443d93731e92de952007bf8",
       "tree_digest": "sha256:887fcb068c41676b2917024412eaab0f456debd07ed1e26bac8b9d5e7ee757cc",
       "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "2128a8692f9e41f15443d93731e92de952007bf8"
+    "coordination_head": "58ff45f1152dd032ef20e808a6a9a25d22f47771"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -28,26 +28,20 @@
     ]
   },
   "execution": {
-    "lifecycle": "ACTIVE",
-    "work_package": "WP.438",
-    "ep": "EP.438.3",
-    "lease": "LEASE.438.3",
-    "executor": "chatgpt-v3.1-closure-fix",
+    "lifecycle": "IDLE",
+    "work_package": null,
+    "ep": null,
+    "lease": null,
+    "executor": null,
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [
-      "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
-    ],
+    "allowed_writes": [],
     "protected": [],
-    "prohibited": [
-      "Do not mutate CP.438.1 or CP.438.2.",
-      "Do not reopen EP.438.2 acceptance.",
-      "Do not weaken live authority validation; only remove the stale fixed-checkpoint assumption."
-    ]
+    "prohibited": []
   },
   "material": {
-    "base": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+    "base": "2128a8692f9e41f15443d93731e92de952007bf8",
     "head": "2128a8692f9e41f15443d93731e92de952007bf8",
     "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
@@ -55,12 +49,9 @@
   "evidence": {
     "latest_checkpoint": "CP.438.3",
     "latest_material_validation": {
-      "checkpoint": "CP.438.3",
-      "exact_head": "2128a8692f9e41f15443d93731e92de952007bf8",
-      "v2_5_job": "107164163618",
-      "v3_job": "107164163561",
-      "v3_1_push_job": "107164163378",
-      "v3_1_pr_job": "107164142948"
+      "focused_tests": "PASS",
+      "spec_delivery": "PASS",
+      "full_guardrails": "PASS"
     }
   },
   "controls": {
@@ -76,21 +67,16 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Release LEASE.438.3; do not admit a successor without a new Owner/programme decision.",
+    "immediate_material_action": null,
     "delivery_action": "Perform the explicitly authorized delivery transition.",
-    "stop_conditions": [
-      "Any change outside the single self-hosting test is required.",
-      "Authority validation reveals a different defect.",
-      "Owner/programme selection moves away from WP.438."
-    ]
+    "stop_conditions": []
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/WORK/EP.438.3.yaml",
-      "relay/LEASES/LEASE.438.3.yaml",
+      "relay/CONTROLS/controls.yaml",
       "relay/CHECKPOINTS/CP.438.3.yaml",
       "relay/EVENTS.jsonl"
     ]
