@@ -1,0 +1,39 @@
+{
+  "schema_version": "relay-v3.1-transaction",
+  "id": "TX.438.19",
+  "command": "SYNC_DELIVERY",
+  "actor": "owner",
+  "status": "COMMITTED",
+  "created_at": "2026-09-23T12:52:56Z",
+  "updated_at": "2026-09-23T12:52:56Z",
+  "operations": [
+    {
+      "path": "relay/STATE.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:21d56cefe6352d5f5393894f1457196a3adbae270b6bb8449162e21b041cb98d",
+      "after_digest": "sha256:c824e8aa40e697488a418ee005348a19b9fa71827ce1cd8e73ed6591b2f05d2a"
+    },
+    {
+      "path": "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:9578214d25c62b4f7164e3b733eaea44c44ea6d2b3456edb8483b71759026941",
+      "after_digest": "sha256:6b0e9fc5eb103a117d83d3c84abb8fe72393a3342e74656abfa0dd7fd0e2a3ac"
+    },
+    {
+      "path": "relay/EVENTS.jsonl",
+      "before_exists": true,
+      "before_digest": "sha256:99d67a9d13a32c3c7253a927ce0db99c1aaf39ea83dcfe7bb0f58469bf313552",
+      "after_digest": "sha256:a9a8e9711dfdac49fb4dba1b6e6c168a554a8b17206632c9d296035c1a7fe03d"
+    }
+  ],
+  "applied": [
+    "relay/STATE.yaml",
+    "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    "relay/EVENTS.jsonl"
+  ],
+  "identity_reservations": [
+    "EVT.438.39",
+    "TX.438.19"
+  ],
+  "payload_state": "PRUNED"
+}
