@@ -12,7 +12,13 @@ for entry in (SCRIPTS, TESTS):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
-from transactionlib import TransactionError, execute, incomplete_transactions, recover_all
+from transactionlib import (
+    TransactionError,
+    execute,
+    incomplete_transactions,
+    prune_terminal_payloads,
+    recover_all,
+)
 from validate_foundation import validate_authority
 from test_v3_foundation import materialize
 from v3lib import load_yaml
@@ -41,6 +47,16 @@ class TransactionJournalTests(unittest.TestCase):
             self.assertEqual("after-a", a.read_text(encoding="utf-8"))
             self.assertEqual("after-b", b.read_text(encoding="utf-8"))
             self.assertEqual([], incomplete_transactions(root))
+            tx_dir = root / "relay/TRANSACTIONS/TX-COMMIT-001"
+            manifest = load_yaml(tx_dir / "manifest.yaml")
+            self.assertEqual("PRUNED", manifest["payload_state"])
+            self.assertFalse((tx_dir / "staged").exists())
+            self.assertFalse((tx_dir / "backups").exists())
+            for operation in manifest["operations"]:
+                self.assertNotIn("staged_path", operation)
+                self.assertNotIn("backup_path", operation)
+                self.assertIn("before_digest", operation)
+                self.assertIn("after_digest", operation)
 
 
     def test_transaction_id_path_traversal_is_rejected(self):
@@ -120,6 +136,11 @@ class TransactionJournalTests(unittest.TestCase):
                 )
             errors = validate_authority(root)
             self.assertTrue(any("requires recovery" in item for item in errors), errors)
+            tx_dir = root / "relay/TRANSACTIONS/TX-ROLLBACK-001"
+            self.assertTrue((tx_dir / "staged").exists())
+            self.assertTrue((tx_dir / "backups").exists())
+            pending_manifest = load_yaml(tx_dir / "manifest.yaml")
+            self.assertEqual("RECOVERY_PAYLOAD", pending_manifest["payload_state"])
 
             results = recover_all(root)
             self.assertEqual("ROLLED_BACK", results[0]["status"])
@@ -127,6 +148,10 @@ class TransactionJournalTests(unittest.TestCase):
             self.assertEqual(before_events, (root / "relay/EVENTS.jsonl").read_bytes())
             self.assertEqual([], incomplete_transactions(root))
             self.assertEqual([], validate_authority(root))
+            terminal_manifest = load_yaml(tx_dir / "manifest.yaml")
+            self.assertEqual("PRUNED", terminal_manifest["payload_state"])
+            self.assertFalse((tx_dir / "staged").exists())
+            self.assertFalse((tx_dir / "backups").exists())
 
     def test_interruption_after_every_after_image_confirms_commit(self):
         with tempfile.TemporaryDirectory() as td:
@@ -149,6 +174,11 @@ class TransactionJournalTests(unittest.TestCase):
             self.assertEqual("CONFIRM_COMMIT", results[0]["recovery"]["strategy"])
             self.assertEqual(b"one-after", (root / "one.txt").read_bytes())
             self.assertEqual(b"two-after", (root / "two.txt").read_bytes())
+            tx_dir = root / "relay/TRANSACTIONS/TX-CONFIRM-001"
+            manifest = load_yaml(tx_dir / "manifest.yaml")
+            self.assertEqual("PRUNED", manifest["payload_state"])
+            self.assertFalse((tx_dir / "staged").exists())
+            self.assertFalse((tx_dir / "backups").exists())
 
     def test_unknown_external_change_refuses_destructive_auto_recovery(self):
         with tempfile.TemporaryDirectory() as td:
@@ -173,6 +203,51 @@ class TransactionJournalTests(unittest.TestCase):
                 recover_all(root)
             self.assertEqual("external-change", target.read_text(encoding="utf-8"))
             self.assertTrue(incomplete_transactions(root))
+
+    def test_next_transaction_prunes_terminal_payload_left_after_commit_marking(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            execute(
+                root,
+                tx_id="TX-PRUNE-OLD-001",
+                command="RESOLVE_CONTROL",
+                actor="agent-x",
+                replacements={"old.txt": b"old-after"},
+            )
+            tx_dir = root / "relay/TRANSACTIONS/TX-PRUNE-OLD-001"
+            manifest_path = tx_dir / "manifest.yaml"
+            manifest = load_yaml(manifest_path)
+
+            # Simulate residue from a process crash after terminal status was
+            # durable but before physical payload cleanup.
+            staged = tx_dir / "staged"
+            backups = tx_dir / "backups"
+            staged.mkdir(parents=True)
+            backups.mkdir(parents=True)
+            (staged / "residue.after").write_bytes(b"redundant")
+            (backups / "residue.before").write_bytes(b"redundant")
+            manifest["payload_state"] = "RECOVERY_PAYLOAD"
+            manifest["operations"][0]["staged_path"] = (
+                "relay/TRANSACTIONS/TX-PRUNE-OLD-001/staged/residue.after"
+            )
+            manifest["operations"][0]["backup_path"] = (
+                "relay/TRANSACTIONS/TX-PRUNE-OLD-001/backups/residue.before"
+            )
+            import yaml
+            manifest_path.write_text(
+                yaml.safe_dump(manifest, sort_keys=False),
+                encoding="utf-8",
+            )
+
+            self.assertEqual(["TX-PRUNE-OLD-001"], prune_terminal_payloads(root))
+            compact = load_yaml(manifest_path)
+            self.assertEqual("COMMITTED", compact["status"])
+            self.assertEqual("PRUNED", compact["payload_state"])
+            self.assertFalse(staged.exists())
+            self.assertFalse(backups.exists())
+            self.assertNotIn("staged_path", compact["operations"][0])
+            self.assertNotIn("backup_path", compact["operations"][0])
 
     def test_orphan_staging_directory_is_detected_and_cleaned(self):
         with tempfile.TemporaryDirectory() as td:
