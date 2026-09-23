@@ -1819,6 +1819,11 @@ def export_local_execution(
     checkpoint = _current_checkpoint(root, state)
     if ep is None and isinstance(checkpoint, dict) and checkpoint.get("ep"):
         ep = load_yaml(root / "relay/WORK" / f"{checkpoint['ep']}.yaml")
+    local_request_id = (
+        allocate_next_id(root, kind="LOCAL", root=governing_issue)
+        if governing_issue is not None
+        else None
+    )
     package = build_local_execution(
         root,
         snapshot,
@@ -1827,6 +1832,7 @@ def export_local_execution(
         mode=mode,
         commands=commands,
         return_sub_issue=return_sub_issue,
+        request_id=local_request_id,
     )
     request_md = render_local_execution_request(package).encode("utf-8")
     events = _events(root)
