@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.4",
-    "state_digest": "sha256:64a18acf1c823374ce02e69427e99928c89659f8ff97ffd4b61d0fe70de16650",
+    "state_digest": "sha256:213e47b088bc1167715adc07eb4e5f91a04defd991de470e3771fb5ad4356d05",
     "material_basis": {
       "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
       "tree_digest": "sha256:f3367800c6dac405f78f62873ebcd723296124ebf8f7bdbfbad1fc7d7af9a098",
       "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013"
+    "coordination_head": "45ddf5264d08ce0405abc7fba39e3f4428eadf08"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -28,34 +28,20 @@
     ]
   },
   "execution": {
-    "lifecycle": "ACTIVE",
-    "work_package": "WP.438",
-    "ep": "EP.438.5",
-    "lease": "LEASE.438.5",
-    "executor": "chatgpt-v3.1-simplification",
+    "lifecycle": "IDLE",
+    "work_package": null,
+    "ep": null,
+    "lease": null,
+    "executor": null,
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [
-      "skills/engineering-pr-delivery-v3.1/schemas/state.schema.yaml",
-      "skills/engineering-pr-delivery-v3.1/scripts/relay_can.py",
-      "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py",
-      "skills/engineering-pr-delivery-v3.1/scripts/lease_liveness.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_relay_can.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py",
-      "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
-    ],
+    "allowed_writes": [],
     "protected": [],
-    "prohibited": [
-      "Do not weaken programme-selection, custody-epoch, material-drift, checkpoint-binding, or Owner delivery-authority gates.",
-      "Do not delete compatibility or projection machinery merely because it is derivable; retain it when it owns a real boundary.",
-      "Do not introduce multi-writer behavior while removing the phantom PARALLEL lifecycle."
-    ]
+    "prohibited": []
   },
   "material": {
-    "base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+    "base": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
     "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
     "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
@@ -63,12 +49,9 @@
   "evidence": {
     "latest_checkpoint": "CP.438.5",
     "latest_material_validation": {
-      "checkpoint": "CP.438.5",
-      "exact_head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
-      "v2_5_job": "107184795420",
-      "v3_job": "107184794912",
-      "v3_1_push_job": "107184778974",
-      "v3_1_pr_job": "107184794965"
+      "focused_tests": "PASS",
+      "spec_delivery": "PASS",
+      "full_guardrails": "PASS"
     }
   },
   "controls": {
@@ -84,21 +67,16 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Release LEASE.438.5, then run the final 22-point programme audit from IDLE.",
-    "delivery_action": "Keep PR #441 limited to EP.438.5 simplification; merge/release authority remains separate.",
-    "stop_conditions": [
-      "Any existing accepted safety decision changes for ACTIVE execution.",
-      "Zero-context recovery or stale-epoch fencing regresses.",
-      "A proposed deletion owns a unique compatibility, provider, or user-facing boundary."
-    ]
+    "immediate_material_action": null,
+    "delivery_action": "PR #441 contains accepted EP.438.5 material; merge/release authority remains separate.",
+    "stop_conditions": []
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/WORK/EP.438.5.yaml",
-      "relay/LEASES/LEASE.438.5.yaml",
+      "relay/CONTROLS/controls.yaml",
       "relay/CHECKPOINTS/CP.438.5.yaml",
       "relay/EVENTS.jsonl"
     ]
