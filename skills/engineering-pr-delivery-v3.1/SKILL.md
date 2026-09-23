@@ -145,7 +145,7 @@ authority: DERIVED_READ_MODEL
 
 It is generated from ROADMAP / STATE / EP / LEASE / CHECKPOINT / CONTROLS; it never supplies missing authority.
 
-Accepted progress is derived from current roadmap weights plus accepted checkpoints. Coordination, PR opening, projection refreshes and handover publication earn no accepted progress.
+Programme progress is derived from authoritative ROADMAP work-package states and weights. Accepted evidence coverage is derived separately from accepted checkpoints. A migrated or historical ROADMAP-complete work package is not reopened merely because its native checkpoint was not replayed into the current protocol tree. Coordination, PR opening, projection refreshes and handover publication earn neither programme completion nor accepted evidence coverage.
 
 ## Native admission and V2.5 compatibility
 
@@ -294,7 +294,10 @@ See `operating-model/v25-migration-and-cutover.md`.
 
 **Execution safety is synchronous. Handover quality is deterministically derivable. Delivery synchronization may be eventually consistent until the requested delivery action requires it.**
 
+Optimisation is governed by the architecture preservation contract. Generated/read-model machinery may be removed, merged or regenerated only when destructive reconstruction and safety-decision tests continue to prove the durable programme/authority/acceptance/history kernel.
+
 See:
+- `operating-model/architecture-preservation-contract.md`
 - `operating-model/authority-model.md`
 - `operating-model/action-authorization.md`
 - `operating-model/material-basis-and-drift.md`
