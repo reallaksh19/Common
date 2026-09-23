@@ -1742,12 +1742,20 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--expected-custody-epoch", type=int)
     parser.add_argument("--recovery-observed-at")
-    parser.add_argument("--recovery-after-seconds", type=int, default=3600)
+    parser.add_argument(
+        "--recovery-after-seconds",
+        type=int,
+        default=DEFAULT_RECOVERY_AFTER_SECONDS,
+    )
     parser.add_argument("--recovery-policy", choices=["MANUAL_ONLY", "TAKEOVER_AFTER_EXPIRY"], default="TAKEOVER_AFTER_EXPIRY")
     parser.add_argument(
         "--recovery-takeover",
         action="store_true",
         help="Explicitly invalidate abandoned predecessor custody when no valid handover exists.",
+    )
+    parser.add_argument(
+        "--recovery-observation",
+        help="Provider/session termination observation YAML bound to the predecessor lease/epoch.",
     )
     parser.add_argument(
         "--programme-issue-observation",
@@ -1991,6 +1999,11 @@ def main() -> None:
             recovery_observed_at=args.recovery_observed_at,
             recovery_after_seconds=args.recovery_after_seconds,
             recovery_policy=args.recovery_policy,
+            recovery_observation=(
+                load_yaml(Path(args.recovery_observation))
+                if args.recovery_observation
+                else None
+            ),
             programme_issue_observations=[
                 load_yaml(Path(path)) for path in args.programme_issue_observation
             ],
