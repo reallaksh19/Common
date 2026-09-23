@@ -4,6 +4,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -14,10 +15,13 @@ for entry in (SCRIPTS, TESTS):
         sys.path.insert(0, str(entry))
 
 from intelligence_projection import build_improvement, build_task
+from programme_reconciliation import assess_boundary, require_boundary_ready
 from relay_can import evaluate
+from relay_tx import activate_lease, record_recovery_reconstructed
 from snapshot_projection import build as build_snapshot
+from test_handover_context import install_parent_issue, parent_issue_observation
 from test_relay_can import WRITE_PATH, prepare_git
-from v3lib import load_yaml
+from v3lib import load_events, load_yaml
 from validate_foundation import validate, validate_authority
 
 
@@ -71,6 +75,130 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self.assertEqual([], validate(root))
+
+    def test_zero_context_successor_reconstructs_and_takes_fenced_recovery(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            live_parent = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            started = activate_lease(
+                root,
+                tx_id="TX-PRESERVE-LIVE-START",
+                event_id="EVT-PRESERVE-LIVE-START",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", started["status"])
+            predecessor = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            renewed_at = datetime.fromisoformat(
+                predecessor["custody"]["renewed_at"].replace("Z", "+00:00")
+            )
+
+            shutil.rmtree(root / "relay/GENERATED")
+
+            reconstructed_snapshot = build_snapshot(root, base_ref)
+            reconstructed_task = build_task(root, base_ref, live_parent)
+            assessment = require_boundary_ready(
+                assess_boundary(
+                    reconstructed_task.get("parent_issue"),
+                    [live_parent],
+                    boundary="RECOVERY_TAKEOVER",
+                    selected_frontier_ref="example/project#1771",
+                )
+            )
+
+            self.assertEqual("READY", assessment["status"])
+            self.assertEqual("CONTINUE_CURRENT", assessment["continuation"])
+            self.assertEqual(
+                "example/project#1771",
+                assessment["executable_frontier"],
+            )
+            self.assertEqual(
+                "EP-TA-011",
+                reconstructed_snapshot["execution"]["ep"],
+            )
+            self.assertEqual(
+                "CP-TA-010",
+                reconstructed_snapshot["evidence"]["latest_checkpoint"],
+            )
+            self.assertIn(
+                "WP-TA-109",
+                reconstructed_snapshot["programme"]["remaining_work"],
+            )
+            self.assertTrue(
+                (reconstructed_task.get("next") or {}).get("immediate_action")
+            )
+
+            recovered_at = (renewed_at + timedelta(minutes=6)).isoformat().replace(
+                "+00:00",
+                "Z",
+            )
+            recovered = activate_lease(
+                root,
+                tx_id="TX-PRESERVE-RECOVERY",
+                event_id="EVT-PRESERVE-RECOVERY",
+                lease_id="LEASE-TA-011-03",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+                recovery_takeover=True,
+                expected_custody_epoch=1,
+                recovery_observed_at=recovered_at,
+                programme_issue_observations=[live_parent],
+                selected_programme_ref="example/project#1771",
+            )
+            self.assertEqual("COMMITTED", recovered["status"])
+
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual(2, state["execution"]["custody_epoch"])
+            self.assertEqual("LEASE-TA-011-03", state["execution"]["lease"])
+            old_lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            self.assertEqual("INVALIDATED", old_lease["state"])
+
+            stale = evaluate(
+                root,
+                "MATERIAL_WRITE",
+                path=WRITE_PATH,
+                base_ref=base_ref,
+                expected_custody_epoch=1,
+            )
+            self.assertFalse(stale["allowed"], stale)
+            self.assertIn("STALE_CUSTODY_EPOCH", stale["reason_codes"])
+
+            reconstructed = record_recovery_reconstructed(
+                root,
+                tx_id="TX-PRESERVE-RECOVERY-DONE",
+                event_id="EVT-PRESERVE-RECOVERY-DONE",
+                actor="agent-y",
+                evidence=[
+                    "programme frontier reconstructed from durable authority + provider observation",
+                    "generated state absent before fenced recovery",
+                ],
+                expected_custody_epoch=2,
+            )
+            self.assertEqual("COMMITTED", reconstructed["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            self.assertIn("RECOVERY_STARTED", [row["type"] for row in events])
+            self.assertIn("RECOVERY_RECONSTRUCTED", [row["type"] for row in events])
 
     def test_generated_snapshot_cannot_grant_authority_missing_from_durable_state(self):
         with tempfile.TemporaryDirectory() as td:
