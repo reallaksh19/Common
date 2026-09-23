@@ -162,7 +162,7 @@ _PATTERNS: list[tuple[str, tuple[str, ...]]] = [
         r"^\s*stats?\s*[?!.,]*\s*$",
         r"\bshow\s+(?:me\s+)?(?:the\s+)?(?:current\s+)?(?:detailed\s+)?stats?\b",
         r"\bcurrent\s+(?:detailed\s+)?statistics\b",
-        r"\bshow\s+(?:me\s+)?(?:the\s+)?(?:parent|issue|task)\s+(?:status|checklist|statistics)\b",
+        r"\bshow\s+(?:me\s+)?(?:the\s+)?(?:parent\s+issue|issue|task)\s+(?:status|checklist|statistics)\b",
         r"\bstatus\s+against\s+(?:the\s+)?parent\s+issue\b",
         r"\bparent\s+issue\s+stats?\b",
     )),
