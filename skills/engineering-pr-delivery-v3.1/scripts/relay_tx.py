@@ -11,6 +11,7 @@ from handover_projection import render as render_handover
 from intelligence_projection import build_improvement, build_task
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
+from programme_reconciliation import build as build_programme_reconciliation, require_ready as require_programme_reconciliation
 from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
 from relay_can import _protocol_state, evaluate as can_action
@@ -138,6 +139,54 @@ def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     ep_id = (state.get("execution") or {}).get("ep")
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
 
+def _parent_ref(parent: dict[str, Any] | None) -> str | None:
+    value = parent or {}
+    repository = value.get("repository")
+    number = value.get("number")
+    return f"{repository}#{number}" if repository and number else None
+
+
+def _require_programme_frontier(
+    parent: dict[str, Any] | None,
+    observations: list[dict[str, Any]] | None,
+    *,
+    boundary: str,
+) -> dict[str, Any]:
+    """Require a provider-backed parent to remain in the reconciled live frontier."""
+
+    selected_ref = _parent_ref(parent)
+    if not selected_ref:
+        return build_programme_reconciliation([], current_parent_ref=None)
+
+    supplied = list(observations or [])
+    if not supplied:
+        raise TransactionError(
+            f"PROGRAMME_RECONCILIATION_REQUIRED before {boundary}: "
+            f"provider-backed parent {selected_ref} requires ordered live parent observations"
+        )
+
+    try:
+        reconciliation = build_programme_reconciliation(
+            supplied,
+            current_parent_ref=selected_ref,
+        )
+        require_programme_reconciliation(reconciliation)
+    except (RuntimeError, ValueError) as exc:
+        raise TransactionError(str(exc)) from exc
+
+    if selected_ref not in (reconciliation.get("programme_frontier") or []):
+        row = next(
+            (item for item in reconciliation.get("parents") or [] if item.get("ref") == selected_ref),
+            {},
+        )
+        ownership = row.get("ownership") or "UNKNOWN"
+        raise TransactionError(
+            f"PROGRAMME_FRONTIER_MISMATCH before {boundary}: "
+            f"{selected_ref} is {ownership}, not STILL_REAL"
+        )
+    return reconciliation
+
+
 
 def _require_final_reconciliation(
     root: Path,
@@ -257,6 +306,7 @@ def admit_task(
     actor: str,
     admission_path: Path,
     base_ref: str,
+    programme_issue_observations: list[dict[str, Any]] | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     live_v3, protocol_state = _protocol_state(root)
@@ -280,6 +330,12 @@ def admit_task(
         require_identifier(str(ep.get("id")), "EP-", "ep_id")
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
+
+    programme_reconciliation = _require_programme_frontier(
+        ep.get("parent_issue"),
+        programme_issue_observations,
+        boundary="ADMIT_TASK",
+    )
 
     roadmap_path = root / str((state.get("roadmap") or {}).get("path"))
     roadmap = load_yaml(roadmap_path)
@@ -363,7 +419,23 @@ def admit_task(
     ids = [event_id + "-OWNER", event_id + "-EP", event_id + "-LEASE"]
     _assert_event_ids_available(events, ids)
     events.extend([
-        _event(ids[0], "OWNER_TASK_ADMITTED", actor, wp_id, [tx_id, disposition, *rplan["basis"]], {"roadmap_revision": rplan["new_revision"]}),
+        _event(
+            ids[0],
+            "OWNER_TASK_ADMITTED",
+            actor,
+            wp_id,
+            [
+                tx_id,
+                disposition,
+                *rplan["basis"],
+                canonical_digest(programme_reconciliation),
+            ],
+            {
+                "roadmap_revision": rplan["new_revision"],
+                "programme_parent_count": len(programme_reconciliation.get("parents") or []),
+                "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
+            },
+        ),
         _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
         _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
             "executor": lease_spec["executor_id"],
@@ -408,6 +480,7 @@ def activate_lease(
     recovery_observed_at: str | None = None,
     recovery_after_seconds: int = 3600,
     recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
+    programme_issue_observations: list[dict[str, Any]] | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
@@ -430,6 +503,7 @@ def activate_lease(
     different_executor = bool(old_active and old_executor != executor_id)
     continuation = "NEW"
     handover_digest = None
+    programme_reconciliation = build_programme_reconciliation([], current_parent_ref=None)
 
     if different_executor:
         try:
@@ -443,6 +517,12 @@ def activate_lease(
             eligible, recovery_basis = _recovery_eligible(old_lease or {}, recovery_observed_at)
             if not eligible:
                 raise TransactionError(f"RECOVERY_NOT_ELIGIBLE: {recovery_basis}") from exc
+            current_ep = _current_ep(root, state)
+            programme_reconciliation = _require_programme_frontier(
+                (current_ep or {}).get("parent_issue"),
+                programme_issue_observations,
+                boundary="RECOVERY_TAKEOVER",
+            )
             continuation = "RECOVERY"
         else:
             continuation = "HANDOFF"
@@ -544,13 +624,20 @@ def activate_lease(
             "RECOVERY_STARTED",
             actor,
             lease_id,
-            [tx_id, str(old_lease_id), f"custody_epoch:{new_epoch}"],
+            [
+                tx_id,
+                str(old_lease_id),
+                f"custody_epoch:{new_epoch}",
+                canonical_digest(programme_reconciliation),
+            ],
             {
                 "predecessor_lease": old_lease_id,
                 "successor_lease": lease_id,
                 "successor_executor": executor_id,
                 "custody_epoch": new_epoch,
                 "predecessor_handover": False,
+                "programme_parent_count": len(programme_reconciliation.get("parents") or []),
+                "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
             },
         ))
     events.append(_event(
@@ -558,7 +645,16 @@ def activate_lease(
         "LEASE_GRANTED",
         actor,
         lease_id,
-        [tx_id, str(new_lease.get("route")), f"continuation:{continuation}"],
+        [
+            tx_id,
+            str(new_lease.get("route")),
+            f"continuation:{continuation}",
+            *(
+                [canonical_digest(programme_reconciliation)]
+                if continuation == "RECOVERY"
+                else []
+            ),
+        ],
         {
             "executor": executor_id,
             "method": method,
