@@ -13,6 +13,7 @@ from lease_admission import build_native_lease
 from lease_liveness import (
     DEFAULT_RECOVERY_AFTER_SECONDS,
     active_lease_renewal,
+    material_activity_basis,
     recovery_eligibility,
     renew_copy,
 )
@@ -695,19 +696,9 @@ def renew_lease(
         raise TransactionError("only the current lease executor may renew custody liveness")
     ep = _current_ep(root, state)
     try:
-        activity_basis = (
-            inspect_material_basis(root, ep, base_ref)["material_basis"]
-            if isinstance(ep, dict)
-            else None
-        )
         normalized_basis = (
-            {
-                "relevant_paths_digest": activity_basis.get("relevant_paths_digest"),
-                "dependency_digest": activity_basis.get("dependency_digest"),
-                "material_head": activity_basis.get("head"),
-                "base_ref": base_ref,
-            }
-            if isinstance(activity_basis, dict)
+            material_activity_basis(root, ep, base_ref)
+            if isinstance(ep, dict)
             else None
         )
         renewed = renew_copy(
