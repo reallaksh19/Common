@@ -1,0 +1,39 @@
+{
+  "schema_version": "relay-v3.1-transaction",
+  "id": "TX.438.2",
+  "command": "RESOLVE_CONTROL",
+  "actor": "chatgpt-v3.1-bootstrap",
+  "status": "COMMITTED",
+  "created_at": "2026-09-23T10:23:00Z",
+  "updated_at": "2026-09-23T10:23:00Z",
+  "operations": [
+    {
+      "path": "relay/CONTROLS/controls.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:a9df1b505cb4d325f49bb40e71a5d8662ee3e3966db08b831219551460694231",
+      "after_digest": "sha256:571f5eac80a717605d6dfa6cb41f8c1e5c16cf8d1f558d8221a94cac1644d620"
+    },
+    {
+      "path": "relay/EVENTS.jsonl",
+      "before_exists": true,
+      "before_digest": "sha256:4df8b34c140750b4c8adec294d8246ee146b744b357e8ad3124a3fc4a2cecd98",
+      "after_digest": "sha256:1cf8e502ca59b95d62a90888632be70006b5519cc212f7cc2aec84c21f8b8e43"
+    },
+    {
+      "path": "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:c33a174a73829b9aa3afdc6e3e609ae0e87558b24398caf359da47260ccff558",
+      "after_digest": "sha256:4198707da46239b8dae6aeb040faf649b2c76df23de7013ccd5500d9f9b3a8fd"
+    }
+  ],
+  "applied": [
+    "relay/CONTROLS/controls.yaml",
+    "relay/EVENTS.jsonl",
+    "relay/GENERATED/CURRENT_SNAPSHOT.yaml"
+  ],
+  "identity_reservations": [
+    "EVT.438.6",
+    "TX.438.2"
+  ],
+  "payload_state": "PRUNED"
+}

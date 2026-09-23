@@ -5,12 +5,12 @@
     "roadmap_revision": "RM.438.1",
     "state_digest": "sha256:3e5a42dc98d19f47531fdd7bad67c346e9f180f10f7560077deb72dd1342fbe8",
     "material_basis": {
-      "head": "93f480c5578885d71c9fefbdc2912c7b76945051",
-      "tree_digest": "sha256:9846687ac00c2c902688659a84bba22300e47ae7da87df9f6b7138d9ecb30dfe",
-      "relevant_paths_digest": "sha256:198cda48310193c5d34853e7cea29468a2634846de32e7479b88adc1d3e82798",
-      "dependency_digest": "sha256:b7754bf4be907b50382fcb5d504d1374a73534cb68d0e94383932e9c9eb3c8c4"
+      "head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
+      "tree_digest": "sha256:671e2983ac9bbaabca622ea2abcbc4767a7983c1f0f6b20e26c3f449e7d58b6d",
+      "relevant_paths_digest": "sha256:67c38f98162cf341f9b8b8970a8b8ac691bd768992121976380a0b8f74a3d80d",
+      "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "93f480c5578885d71c9fefbdc2912c7b76945051"
+    "coordination_head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -45,23 +45,22 @@
   },
   "material": {
     "base": "93f480c5578885d71c9fefbdc2912c7b76945051",
-    "head": "93f480c5578885d71c9fefbdc2912c7b76945051",
-    "relevant_paths_digest": "sha256:198cda48310193c5d34853e7cea29468a2634846de32e7479b88adc1d3e82798",
-    "dependency_digest": "sha256:b7754bf4be907b50382fcb5d504d1374a73534cb68d0e94383932e9c9eb3c8c4"
+    "head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
+    "relevant_paths_digest": "sha256:67c38f98162cf341f9b8b8970a8b8ac691bd768992121976380a0b8f74a3d80d",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
     "latest_checkpoint": null,
     "latest_material_validation": {
-      "bootstrap": "NOT_YET_ACCEPTED"
+      "self_hosting_bootstrap": "PASS",
+      "exact_head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
+      "v3_1_push_job": "107134439033",
+      "v3_1_pr_job": "107134425117"
     }
   },
   "controls": {
-    "execution_blockers": [
-      "CTRL-SELFHOST-438-001"
-    ],
-    "handover_blockers": [
-      "CTRL-SELFHOST-438-001"
-    ],
+    "execution_blockers": [],
+    "handover_blockers": [],
     "delivery_blockers": [],
     "informational": []
   },
@@ -72,7 +71,7 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Add and run the live Common self-hosting reconstruction/recovery proof, then resolve the bootstrap proof control.",
+    "immediate_material_action": "Accept CP.438.1 against the exact current material basis, then advance to the next EP.",
     "delivery_action": "Perform the explicitly authorized delivery transition.",
     "stop_conditions": [
       "Owner/programme selection moves away from WP.438.",
@@ -81,7 +80,7 @@
     ]
   },
   "handoff": {
-    "zero_context_takeover_possible": false,
+    "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
