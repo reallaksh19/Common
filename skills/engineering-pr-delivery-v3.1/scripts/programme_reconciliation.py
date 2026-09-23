@@ -193,13 +193,6 @@ def build(
     }
 
 
-def require_ready(reconciliation: dict[str, Any]) -> None:
-    if reconciliation.get("status") in {"READY", "NOT_REQUIRED"}:
-        return
-    reasons = ", ".join(reconciliation.get("reason_codes") or [])
-    raise RuntimeError(f"PROGRAMME_RECONCILIATION_REQUIRED: {reasons}")
-
-
 def parent_ref(parent: dict[str, Any] | None) -> str | None:
     value = parent or {}
     repository = value.get("repository")
