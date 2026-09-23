@@ -1,0 +1,24 @@
+{
+  "schema_version": "relay-v3.1-controls",
+  "controls": [
+    {
+      "id": "CTRL-SELFHOST-438-001",
+      "kind": "QUALITY",
+      "state": "OPEN",
+      "source": {
+        "type": "VALIDATOR",
+        "ref": "Common#438:self-hosting-bootstrap"
+      },
+      "condition": "The live Common self-hosting authority has not yet passed destructive reconstruction and fenced successor recovery.",
+      "blocks": [
+        "CHECKPOINT",
+        "HANDOVER"
+      ],
+      "permits": [],
+      "resolution": {
+        "condition": "Live self-hosting reconstruction/recovery test passes against the Common#438 authority tree.",
+        "evidence": []
+      }
+    }
+  ]
+}

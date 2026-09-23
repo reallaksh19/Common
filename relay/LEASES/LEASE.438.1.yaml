@@ -1,0 +1,50 @@
+{
+  "schema_version": "relay-v3.1-lease",
+  "id": "LEASE.438.1",
+  "route": "SERIAL:EP.438.1",
+  "executor": {
+    "id": "chatgpt-v3.1-bootstrap"
+  },
+  "basis": {
+    "ep_id": "EP.438.1",
+    "ep_digest": "sha256:3e8202a7e215e0c4d94d7d1d05a68fdd128e412d4686b606722716b47f563888",
+    "material_base": "93f480c5578885d71c9fefbdc2912c7b76945051",
+    "predecessor_checkpoint": null,
+    "protocol_basis": "Common#438 / PR#437 self-hosting bootstrap; prior commits are provenance only"
+  },
+  "authority": {
+    "actions": [
+      "READ",
+      "ANALYZE",
+      "MATERIAL_WRITE",
+      "TEST",
+      "CHECKPOINT",
+      "HANDOVER",
+      "LOCAL_EXECUTION_EXPORT",
+      "DRAFT_PR_UPDATE"
+    ]
+  },
+  "admission": {
+    "method": "DETERMINISTIC",
+    "result": "PASS",
+    "repository_only": true,
+    "qualification": {
+      "required": false,
+      "qset": null,
+      "evaluator": null,
+      "result": null,
+      "evidence": []
+    }
+  },
+  "custody": {
+    "epoch": 1,
+    "granted_at": "2026-09-23T09:41:30Z",
+    "renewed_at": "2026-09-23T09:41:30Z",
+    "recovery_after_seconds": 3600,
+    "recovery_policy": "TAKEOVER_AFTER_EXPIRY"
+  },
+  "state": "ACTIVE",
+  "invalidation": {
+    "reasons": []
+  }
+}

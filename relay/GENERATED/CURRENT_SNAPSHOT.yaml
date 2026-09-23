@@ -1,0 +1,94 @@
+{
+  "schema_version": "relay-v3.1-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "generated_from": {
+    "roadmap_revision": "RM.438.1",
+    "state_digest": "sha256:3e5a42dc98d19f47531fdd7bad67c346e9f180f10f7560077deb72dd1342fbe8",
+    "material_basis": {
+      "head": "93f480c5578885d71c9fefbdc2912c7b76945051",
+      "tree_digest": "sha256:9846687ac00c2c902688659a84bba22300e47ae7da87df9f6b7138d9ecb30dfe",
+      "relevant_paths_digest": "sha256:198cda48310193c5d34853e7cea29468a2634846de32e7479b88adc1d3e82798",
+      "dependency_digest": "sha256:b7754bf4be907b50382fcb5d504d1374a73534cb68d0e94383932e9c9eb3c8c4"
+    },
+    "coordination_head": "93f480c5578885d71c9fefbdc2912c7b76945051"
+  },
+  "owner": {
+    "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
+    "current_goal": "Establish self-hosted V3.1 authority and interruption recovery for Common#438."
+  },
+  "programme": {
+    "programme_progress": 0,
+    "accepted_progress": 0,
+    "completed_work": [],
+    "remaining_work": [
+      "WP.438"
+    ],
+    "evidence_backed_work": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "work_package": "WP.438",
+    "ep": "EP.438.1",
+    "lease": "LEASE.438.1",
+    "executor": "chatgpt-v3.1-bootstrap",
+    "custody_epoch": 1
+  },
+  "scope": {
+    "allowed_writes": [
+      "skills/engineering-pr-delivery-v3.1/**"
+    ],
+    "protected": [],
+    "prohibited": [
+      "Do not rewrite pre-bootstrap PR#437 history as governed Relay execution.",
+      "Do not weaken programme-selection, custody, material-scope/drift, checkpoint, or Owner-authority invariants."
+    ]
+  },
+  "material": {
+    "base": "93f480c5578885d71c9fefbdc2912c7b76945051",
+    "head": "93f480c5578885d71c9fefbdc2912c7b76945051",
+    "relevant_paths_digest": "sha256:198cda48310193c5d34853e7cea29468a2634846de32e7479b88adc1d3e82798",
+    "dependency_digest": "sha256:b7754bf4be907b50382fcb5d504d1374a73534cb68d0e94383932e9c9eb3c8c4"
+  },
+  "evidence": {
+    "latest_checkpoint": null,
+    "latest_material_validation": {
+      "bootstrap": "NOT_YET_ACCEPTED"
+    }
+  },
+  "controls": {
+    "execution_blockers": [
+      "CTRL-SELFHOST-438-001"
+    ],
+    "handover_blockers": [
+      "CTRL-SELFHOST-438-001"
+    ],
+    "delivery_blockers": [],
+    "informational": []
+  },
+  "delivery": {
+    "issue": null,
+    "pr": 437,
+    "lifecycle": "DECLARED",
+    "merge_authorized": false
+  },
+  "next": {
+    "immediate_material_action": "Add and run the live Common self-hosting reconstruction/recovery proof, then resolve the bootstrap proof control.",
+    "delivery_action": "Perform the explicitly authorized delivery transition.",
+    "stop_conditions": [
+      "Owner/programme selection moves away from WP.438.",
+      "V3.1 authority validation fails.",
+      "Relevant or unknown material drift appears."
+    ]
+  },
+  "handoff": {
+    "zero_context_takeover_possible": false,
+    "reconstruction_sources": [
+      "relay/ROADMAP/ROADMAP.yaml",
+      "relay/STATE.yaml",
+      "relay/CONTROLS/controls.yaml",
+      "relay/WORK/EP.438.1.yaml",
+      "relay/LEASES/LEASE.438.1.yaml",
+      "relay/EVENTS.jsonl"
+    ]
+  }
+}
