@@ -25,6 +25,7 @@ from relay_tx import (
     export_local_execution,
     publish_handover,
     release_lease,
+    renew_lease,
     reconcile_roadmap,
     resolve_control,
     sync_delivery,
@@ -591,6 +592,63 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertIn("EVT-ACTIVATE-001-REL", ids)
             self.assertIn("EVT-ACTIVATE-001", ids)
             self.assertEqual([], validate(root))
+
+    def test_provider_backed_custody_maintenance_can_allocate_transition_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            activated = activate_lease(
+                root,
+                tx_id="TX-CUSTODY-SETUP",
+                event_id="EVT-CUSTODY-SETUP",
+                lease_id="LEASE-CUSTODY-SETUP",
+                executor_id="agent-x",
+                actor="agent-x",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", activated["status"])
+
+            renewed = renew_lease(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                expected_custody_epoch=1,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", renewed["status"])
+            self.assertEqual("TX.1771.1", renewed["id"])
+
+            released = release_lease(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                reason="ADMINISTRATIVE",
+                expected_custody_epoch=1,
+            )
+            self.assertEqual("COMMITTED", released["status"])
+            self.assertEqual("TX.1771.2", released["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("IDLE", state["execution"]["lifecycle"])
+
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                (row["event_id"], row["type"])
+                for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(
+                [("EVT.1771.1", "LEASE_RENEWED"), ("EVT.1771.2", "LEASE_RELEASED")],
+                canonical,
+            )
 
     def test_release_lease_atomically_enters_idle_state_and_refreshes_snapshot(self):
         with tempfile.TemporaryDirectory() as td:

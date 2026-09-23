@@ -808,8 +808,8 @@ def activate_lease(
 def renew_lease(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     expected_custody_epoch: int,
     base_ref: str,
@@ -818,6 +818,21 @@ def renew_lease(
 ) -> dict[str, Any]:
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
+    ep = _current_ep(root, state)
+    governing_issue = issue_number_from_ep(ep)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
     if not lease_id:
@@ -830,7 +845,6 @@ def renew_lease(
         raise TransactionError("lease custody epoch does not match STATE")
     if str(((lease.get("executor") or {}).get("id") or "")) != str(actor):
         raise TransactionError("only the current lease executor may renew custody liveness")
-    ep = _current_ep(root, state)
     try:
         normalized_basis = (
             material_activity_basis(root, ep, base_ref)
@@ -871,8 +885,8 @@ def renew_lease(
 def release_lease(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     reason: str = "HANDOFF",
     base_ref: str | None = None,
@@ -884,6 +898,21 @@ def release_lease(
 
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
+    ep = _current_ep(root, state)
+    governing_issue = issue_number_from_ep(ep)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
     if not lease_id:
@@ -1974,16 +2003,28 @@ def main() -> None:
     _add_start_args(activate)
 
     renew = sub.add_parser("renew-lease")
-    renew.add_argument("--tx-id", required=True)
-    renew.add_argument("--event-id", required=True)
+    renew.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current EP parent issue.",
+    )
+    renew.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current EP parent issue.",
+    )
     renew.add_argument("--actor", required=True)
     renew.add_argument("--expected-custody-epoch", type=int, required=True)
     renew.add_argument("--base-ref", required=True)
     renew.add_argument("--renewed-at")
 
     release = sub.add_parser("release-lease")
-    release.add_argument("--tx-id", required=True)
-    release.add_argument("--event-id", required=True)
+    release.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current EP parent issue.",
+    )
+    release.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current EP parent issue.",
+    )
     release.add_argument("--actor", required=True)
     release.add_argument("--reason", choices=["HANDOFF", "ADMINISTRATIVE"], default="HANDOFF")
     release.add_argument("--base-ref")
