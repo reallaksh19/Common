@@ -9,7 +9,7 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from programme_reconciliation import build
+from programme_reconciliation import assess_boundary, build, require_boundary_ready
 from test_v3_foundation import DIGEST
 
 
@@ -105,6 +105,70 @@ class ProgrammeReconciliationTests(unittest.TestCase):
         ])
         self.assertEqual("RECONCILIATION_REQUIRED", result["status"])
         self.assertIn("LINEAGE_TARGET_UNOBSERVED:example/project#175", result["reason_codes"])
+
+    def test_canonical_boundary_switches_handover_to_first_still_real_parent(self):
+        parent = {"repository": "example/project", "number": 118}
+        result = require_boundary_ready(
+            assess_boundary(
+                parent,
+                [
+                    observation(118, state="CLOSED", disposition="SUPERSEDE", acceptance_state="COMPLETE"),
+                    observation(19, acceptance_state="DEFERRED"),
+                    observation(174, acceptance_state="PENDING"),
+                ],
+                boundary="HANDOVER",
+            )
+        )
+        self.assertEqual("READY", result["status"])
+        self.assertEqual("SUPERSEDED", result["selected_ownership"])
+        self.assertEqual("SWITCH_FRONTIER", result["continuation"])
+        self.assertEqual("example/project#174", result["next_frontier"])
+
+    def test_next_work_uses_same_ordered_frontier_decision_as_handover(self):
+        parent = {"repository": "example/project", "number": 118}
+        observations = [
+            observation(118, state="CLOSED", disposition="CLOSE", acceptance_state="COMPLETE"),
+            observation(174, acceptance_state="PENDING"),
+            observation(175, acceptance_state="PENDING"),
+        ]
+        handover = require_boundary_ready(
+            assess_boundary(parent, observations, boundary="HANDOVER")
+        )
+        next_work = require_boundary_ready(
+            assess_boundary(parent, observations, boundary="NEXT_WORK")
+        )
+        self.assertEqual(handover["reconciliation"], next_work["reconciliation"])
+        self.assertEqual("example/project#174", next_work["next_frontier"])
+        self.assertEqual("SWITCH_FRONTIER", next_work["continuation"])
+
+    def test_recovery_and_admission_require_selected_parent_itself_to_be_frontier(self):
+        parent = {"repository": "example/project", "number": 118}
+        observations = [
+            observation(118, state="CLOSED", disposition="CLOSE", acceptance_state="COMPLETE"),
+            observation(174, acceptance_state="PENDING"),
+        ]
+        for boundary in ("RECOVERY_TAKEOVER", "ADMIT_TASK"):
+            result = assess_boundary(parent, observations, boundary=boundary)
+            self.assertEqual("PROGRAMME_FRONTIER_MISMATCH", result["status"])
+            self.assertEqual("example/project#174", result["next_frontier"])
+            with self.assertRaisesRegex(RuntimeError, "PROGRAMME_FRONTIER_MISMATCH"):
+                require_boundary_ready(result)
+
+    def test_single_parent_handover_requires_current_provider_truth(self):
+        parent = {"repository": "example/project", "number": 118}
+        missing = assess_boundary(parent, None, boundary="HANDOVER")
+        self.assertEqual("PROGRAMME_CURRENTNESS_REQUIRED", missing["status"])
+
+        unknown = observation(118)
+        unknown["disposition"] = "UNKNOWN"
+        result = assess_boundary(
+            parent,
+            None,
+            boundary="HANDOVER",
+            current_observation=unknown,
+        )
+        self.assertEqual("PROGRAMME_CURRENTNESS_REQUIRED", result["status"])
+        self.assertIn("PARENT_DISPOSITION_REQUIRED", result["reason_codes"])
 
     def test_blocked_parent_is_not_promoted_to_programme_frontier(self):
         result = build([
