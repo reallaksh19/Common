@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -28,17 +29,21 @@ COMMAND_TARGET_PATTERNS = {
     ],
     "RECORD_RECOVERY_RECONSTRUCTED": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
     ],
     "RECORD_CHANGE_HYPOTHESIS": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
         "relay/CHANGES/CHANGE-*.yaml",
     ],
     "VERIFY_CHANGE_DELTA": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
         "relay/CHANGES/CHANGE-*.yaml",
     ],
     "PROPOSE_CHANGE_DELTA": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
         "relay/CHANGES/CHANGE-*.yaml",
     ],
     "AUTHORIZE_CHANGE_DELTA": [
@@ -47,11 +52,13 @@ COMMAND_TARGET_PATTERNS = {
     ],
     "RESOLVE_CONTROL": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
         "relay/CONTROLS/controls.yaml",
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
     ],
     "RECONCILE_ROADMAP": [
         "relay/EVENTS.jsonl",
+        "relay/LEASES/LEASE-*.yaml",
         "relay/ROADMAP/ROADMAP.yaml",
         "relay/STATE.yaml",
         "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
@@ -136,6 +143,55 @@ def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | Non
     return out
 
 
+LEASE_MUTATION_COMMANDS = {"ACTIVATE_LEASE", "RENEW_LEASE", "ADMIT_TASK", "RELEASE_LEASE"}
+
+
+def _validate_lease_mutations(
+    root: Path,
+    command: str,
+    actor: str,
+    replacements: dict[str, bytes],
+) -> None:
+    lease_targets = [
+        path for path in replacements
+        if path.startswith("relay/LEASES/") and path.endswith(".yaml")
+    ]
+    if not lease_targets or command in LEASE_MUTATION_COMMANDS:
+        return
+
+    for relative in lease_targets:
+        target = repo_path(root, relative, "lease liveness target")
+        if not target.exists():
+            raise TransactionError(f"{command} cannot create lease authority: {relative}")
+        before = load_yaml(target)
+        after = yaml.safe_load(replacements[relative])
+        if not isinstance(before, dict) or not isinstance(after, dict):
+            raise TransactionError(f"{command} lease liveness mutation must preserve a mapping")
+        if str(((before.get("executor") or {}).get("id") or "")) != str(actor):
+            raise TransactionError(
+                f"{command} cannot renew liveness for a lease owned by another executor"
+            )
+        if before.get("state") != "ACTIVE" or after.get("state") != "ACTIVE":
+            raise TransactionError(f"{command} liveness renewal requires an ACTIVE lease")
+
+        before_top = copy.deepcopy(before)
+        after_top = copy.deepcopy(after)
+        before_custody = before_top.pop("custody", {}) or {}
+        after_custody = after_top.pop("custody", {}) or {}
+        if before_top != after_top:
+            raise TransactionError(
+                f"{command} may only mutate lease custody liveness fields"
+            )
+
+        for key in set(before_custody) | set(after_custody):
+            if key in {"renewed_at", "activity_basis"}:
+                continue
+            if before_custody.get(key) != after_custody.get(key):
+                raise TransactionError(
+                    f"{command} may not mutate lease custody.{key}"
+                )
+
+
 def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> None:
     patterns = COMMAND_TARGET_PATTERNS.get(command)
     if not patterns:
@@ -166,6 +222,7 @@ def _prepare(
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
     _validate_command_targets(command, replacements)
+    _validate_lease_mutations(root, command, actor, replacements)
     tx_dir = repo_path(root, f"relay/TRANSACTIONS/{tx_id}", "transaction directory")
     manifest_path = tx_dir / "manifest.yaml"
     if tx_dir.exists():
