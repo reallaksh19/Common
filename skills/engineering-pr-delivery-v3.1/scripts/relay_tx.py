@@ -215,12 +215,11 @@ def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def _governing_issue_number(root: Path, state: dict[str, Any]) -> int | None:
-    """Resolve durable issue lineage from current execution or accepted truth."""
+    """Resolve issue lineage from current execution or accepted checkpoint truth."""
     ep = _current_ep(root, state)
     issue = issue_number_from_ep(ep)
     if issue is not None:
         return issue
-
     checkpoint = _current_checkpoint(root, state)
     checkpoint_ep = (checkpoint or {}).get("ep")
     if checkpoint_ep:
@@ -374,81 +373,6 @@ def admit_task(
         raise TransactionError(f"ADMIT_TASK denied: PROTOCOL_NOT_ACTIVE ({protocol_state})")
 
     state, _ = _authority(root)
-
-    governing_issue = _governing_issue_number(root, state)
-    tx_id = _issue_scoped_id(
-        root,
-        kind="TX",
-        value=tx_id,
-        issue_number=governing_issue,
-        label="transaction id",
-    )
-    event_id = _transition_event_ids(
-        root,
-        event_id=event_id,
-        issue_number=governing_issue,
-        legacy_suffixes=[""],
-    )[0]
-
-    governing_issue = _governing_issue_number(root, state)
-    tx_id = _issue_scoped_id(
-        root,
-        kind="TX",
-        value=tx_id,
-        issue_number=governing_issue,
-        label="transaction id",
-    )
-    event_id = _transition_event_ids(
-        root,
-        event_id=event_id,
-        issue_number=governing_issue,
-        legacy_suffixes=[""],
-    )[0]
-
-    governing_issue = _governing_issue_number(root, state)
-    tx_id = _issue_scoped_id(
-        root,
-        kind="TX",
-        value=tx_id,
-        issue_number=governing_issue,
-        label="transaction id",
-    )
-    event_id = _transition_event_ids(
-        root,
-        event_id=event_id,
-        issue_number=governing_issue,
-        legacy_suffixes=[""],
-    )[0]
-
-    governing_issue = _governing_issue_number(root, state)
-    tx_id = _issue_scoped_id(
-        root,
-        kind="TX",
-        value=tx_id,
-        issue_number=governing_issue,
-        label="transaction id",
-    )
-    event_id = _transition_event_ids(
-        root,
-        event_id=event_id,
-        issue_number=governing_issue,
-        legacy_suffixes=[""],
-    )[0]
-
-    governing_issue = _governing_issue_number(root, state)
-    tx_id = _issue_scoped_id(
-        root,
-        kind="TX",
-        value=tx_id,
-        issue_number=governing_issue,
-        label="transaction id",
-    )
-    event_id = _transition_event_ids(
-        root,
-        event_id=event_id,
-        issue_number=governing_issue,
-        legacy_suffixes=[""],
-    )[0]
     execution = state.get("execution") or {}
     if execution.get("lifecycle") != "IDLE" or any(execution.get(key) for key in ("ep", "lease", "route")):
         raise TransactionError("ADMIT_TASK requires an IDLE repository with no active EP/lease/route")
@@ -1182,7 +1106,6 @@ def resolve_control(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, controls = _authority(root)
-
     governing_issue = _governing_issue_number(root, state)
     tx_id = _issue_scoped_id(
         root,
@@ -1249,6 +1172,20 @@ def reconcile_roadmap(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
     roadmap_path = str((state.get("roadmap") or {}).get("path"))
     current = load_yaml(root / roadmap_path)
@@ -1369,6 +1306,20 @@ def publish_handover(
 ) -> dict[str, Any]:
     _require_action(root, "HANDOVER", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
 
     # Publication must bind to the exact committed HANDOVER_PLANNED context. It is
@@ -1431,6 +1382,20 @@ def record_recovery_reconstructed(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
@@ -1759,6 +1724,20 @@ def export_local_execution(
 ) -> dict[str, Any]:
     _require_action(root, "LOCAL_EXECUTION_EXPORT", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
     snapshot = build_snapshot(root, base_ref)
     ep = _current_ep(root, state)
@@ -1916,6 +1895,20 @@ def sync_delivery(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     delivery = state.get("delivery") or {}
     expected = delivery.get("primary_vehicle")
     if delivery.get("required") is not True or not isinstance(expected, dict):
@@ -2024,10 +2017,7 @@ def close_task(
     )
     release_event_id = transition_ids[0] if has_active_lease else None
     close_event_id = transition_ids[1] if has_active_lease else transition_ids[0]
-    _assert_event_ids_available(
-        events,
-        [value for value in [release_event_id, close_event_id] if value],
-    )
+    _assert_event_ids_available(events, [x for x in [release_event_id, close_event_id] if x])
     if release_event_id:
         events.append(_event(str(release_event_id), "LEASE_RELEASED", actor, str(lease_id), [tx_id, "close-task"], {
             "reason": "CLOSE_TASK",
