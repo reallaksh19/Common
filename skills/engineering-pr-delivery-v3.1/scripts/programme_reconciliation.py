@@ -77,6 +77,7 @@ def build(
     observations: list[dict[str, Any]] | None,
     *,
     current_parent_ref: str | None = None,
+    selected_frontier_ref: str | None = None,
 ) -> dict[str, Any]:
     """Build an ordered programme-parent reconciliation read model.
 
@@ -90,6 +91,10 @@ def build(
             "authority": "DERIVED_PROGRAMME_RECONCILIATION",
             "status": "NOT_REQUIRED",
             "current_parent": current_parent_ref,
+            "selected_frontier": selected_frontier_ref,
+            "selected_frontier_ownership": None,
+            "executable_frontier": None,
+            "alternate_live_frontiers": [],
             "parents": [],
             "ordered_roadmap": [],
             "programme_frontier": [],
@@ -148,6 +153,9 @@ def build(
     if current_parent_ref and current_parent_ref not in seen:
         reason_codes.append(f"CURRENT_PARENT_MISSING:{current_parent_ref}")
 
+    if selected_frontier_ref and selected_frontier_ref not in seen:
+        reason_codes.append(f"SELECTED_FRONTIER_MISSING:{selected_frontier_ref}")
+
     for edge in graph:
         if edge["type"] in LINEAGE_RELATIONSHIPS and edge["to"] not in seen:
             reason_codes.append(f"LINEAGE_TARGET_UNOBSERVED:{edge['to']}")
@@ -177,10 +185,28 @@ def build(
         for row in parents
     ]
 
+    selected_row = next(
+        (row for row in parents if row["ref"] == selected_frontier_ref),
+        None,
+    )
+    selected_ownership = selected_row["ownership"] if selected_row else None
+    executable_frontier = (
+        selected_frontier_ref
+        if selected_ownership == "STILL_REAL"
+        else None
+    )
+    alternate_live_frontiers = [
+        ref for ref in programme_frontier if ref != selected_frontier_ref
+    ]
+
     return {
         "authority": "DERIVED_PROGRAMME_RECONCILIATION",
         "status": "RECONCILIATION_REQUIRED" if reason_codes else "READY",
         "current_parent": current_parent_ref,
+        "selected_frontier": selected_frontier_ref,
+        "selected_frontier_ownership": selected_ownership,
+        "executable_frontier": executable_frontier,
+        "alternate_live_frontiers": alternate_live_frontiers,
         "parents": parents,
         "ordered_roadmap": ordered_roadmap,
         "programme_frontier": programme_frontier,
@@ -213,6 +239,7 @@ def assess_boundary(
     *,
     boundary: str,
     current_observation: dict[str, Any] | None = None,
+    selected_frontier_ref: str | None = None,
 ) -> dict[str, Any]:
     """Canonical programme decision for actor-change / next-work boundaries.
 
@@ -236,8 +263,11 @@ def assess_boundary(
             "mode": "NOT_PROVIDER_BACKED",
             "selected_parent": None,
             "selected_ownership": None,
+            "selected_programme_frontier": None,
+            "selected_programme_ownership": None,
             "selected_observation": None,
             "next_frontier": None,
+            "executable_frontier": None,
             "continuation": "NOT_APPLICABLE",
             "reason_codes": [],
             "reconciliation": reconciliation,
@@ -268,7 +298,11 @@ def assess_boundary(
             "next_frontier": None,
             "continuation": "BLOCK",
             "reason_codes": ["PARENT_PROVIDER_STATE_REQUIRED"],
-            "reconciliation": build([], current_parent_ref=selected_ref),
+            "reconciliation": build(
+                [],
+                current_parent_ref=selected_ref,
+                selected_frontier_ref=selected_frontier_ref,
+            ),
         }
 
     # Handover may use a single live current-parent readback as a cheap
@@ -293,19 +327,50 @@ def assess_boundary(
                 "next_frontier": None,
                 "continuation": "BLOCK",
                 "reason_codes": missing,
-                "reconciliation": build([], current_parent_ref=selected_ref),
+                "reconciliation": build(
+                    [],
+                    current_parent_ref=selected_ref,
+                    selected_frontier_ref=selected_frontier_ref,
+                ),
             }
 
-    reconciliation = build(supplied, current_parent_ref=selected_ref)
+    preliminary = build(supplied, current_parent_ref=selected_ref)
+    current_row = next(
+        (row for row in preliminary.get("parents") or [] if row.get("ref") == selected_ref),
+        {},
+    )
+    current_ownership = current_row.get("ownership") or "UNKNOWN"
+
+    # Execution selection is separate from obligation state. An explicit
+    # Owner/ROADMAP selection wins. Without one, a non-terminal current parent
+    # remains selected even when execution is blocked; this prevents an
+    # infrastructure/evidence blocker from silently causing a lateral jump.
+    effective_selected_frontier = selected_frontier_ref
+    if effective_selected_frontier is None:
+        if current_ownership in {"STILL_REAL", "BLOCKED"}:
+            effective_selected_frontier = selected_ref
+        else:
+            effective_selected_frontier = (
+                (preliminary.get("programme_frontier") or [None])[0]
+            )
+
+    reconciliation = build(
+        supplied,
+        current_parent_ref=selected_ref,
+        selected_frontier_ref=effective_selected_frontier,
+    )
     if reconciliation.get("status") != "READY":
         return {
             "status": "PROGRAMME_RECONCILIATION_REQUIRED",
             "boundary": boundary,
             "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
             "selected_parent": selected_ref,
-            "selected_ownership": None,
+            "selected_ownership": current_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": reconciliation.get("selected_frontier_ownership"),
             "selected_observation": selected_observation,
-            "next_frontier": (reconciliation.get("programme_frontier") or [None])[0],
+            "next_frontier": effective_selected_frontier,
+            "executable_frontier": reconciliation.get("executable_frontier"),
             "continuation": "BLOCK",
             "reason_codes": list(reconciliation.get("reason_codes") or []),
             "reconciliation": reconciliation,
@@ -316,32 +381,83 @@ def assess_boundary(
         {},
     )
     selected_ownership = selected_row.get("ownership") or "UNKNOWN"
-    frontier = list(reconciliation.get("programme_frontier") or [])
-    next_frontier = frontier[0] if frontier else None
+    selected_programme_ownership = (
+        reconciliation.get("selected_frontier_ownership") or "UNKNOWN"
+    )
+    next_frontier = effective_selected_frontier
+    executable_frontier = reconciliation.get("executable_frontier")
 
-    if boundary in SELECTED_FRONTIER_BOUNDARIES and selected_ref not in frontier:
+    if selected_programme_ownership == "BLOCKED":
+        status = (
+            "PROGRAMME_FRONTIER_BLOCKED"
+            if boundary in SELECTED_FRONTIER_BOUNDARIES
+            else "READY"
+        )
+        return {
+            "status": status,
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "executable_frontier": None,
+            "continuation": "BLOCKED_SELECTED_FRONTIER",
+            "reason_codes": ["SELECTED_FRONTIER_BLOCKED"],
+            "reconciliation": reconciliation,
+        }
+
+    if selected_programme_ownership != "STILL_REAL":
+        return {
+            "status": "PROGRAMME_SELECTION_NOT_EXECUTABLE",
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "executable_frontier": None,
+            "continuation": "BLOCK",
+            "reason_codes": [f"SELECTED_FRONTIER_{selected_programme_ownership}"],
+            "reconciliation": reconciliation,
+        }
+
+    if boundary in SELECTED_FRONTIER_BOUNDARIES and selected_ref != executable_frontier:
         return {
             "status": "PROGRAMME_FRONTIER_MISMATCH",
             "boundary": boundary,
             "mode": "ORDERED_PARENT_SET",
             "selected_parent": selected_ref,
             "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
             "selected_observation": selected_observation,
             "next_frontier": next_frontier,
+            "executable_frontier": executable_frontier,
             "continuation": "BLOCK",
-            "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
+            "reason_codes": [
+                f"CURRENT_PARENT_{selected_ownership}",
+                "CURRENT_PARENT_NOT_SELECTED_FRONTIER",
+            ],
             "reconciliation": reconciliation,
         }
 
-    if boundary == "HANDOVER" and not explicit and selected_ref not in frontier:
+    if boundary == "HANDOVER" and not explicit and selected_ownership not in {"STILL_REAL", "BLOCKED"}:
         return {
             "status": "PROGRAMME_RECONCILIATION_REQUIRED",
             "boundary": boundary,
             "mode": "SINGLE_PARENT_CURRENTNESS",
             "selected_parent": selected_ref,
             "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
             "selected_observation": selected_observation,
             "next_frontier": next_frontier,
+            "executable_frontier": executable_frontier,
             "continuation": "BLOCK",
             "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
             "reconciliation": reconciliation,
@@ -349,9 +465,9 @@ def assess_boundary(
 
     continuation = (
         "CONTINUE_CURRENT"
-        if selected_ref in frontier
+        if selected_ref == executable_frontier
         else "SWITCH_FRONTIER"
-        if next_frontier
+        if executable_frontier
         else "NO_IMPLEMENTATION_FRONTIER"
     )
     return {
@@ -360,8 +476,11 @@ def assess_boundary(
         "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
         "selected_parent": selected_ref,
         "selected_ownership": selected_ownership,
+        "selected_programme_frontier": effective_selected_frontier,
+        "selected_programme_ownership": selected_programme_ownership,
         "selected_observation": selected_observation,
         "next_frontier": next_frontier,
+        "executable_frontier": executable_frontier,
         "continuation": continuation,
         "reason_codes": [],
         "reconciliation": reconciliation,
@@ -379,7 +498,18 @@ def require_boundary_ready(assessment: dict[str, Any]) -> dict[str, Any]:
     if status == "PROGRAMME_FRONTIER_MISMATCH":
         raise RuntimeError(
             f"{status} before {assessment.get('boundary')}: "
-            f"{selected} is {ownership}, not STILL_REAL"
+            f"{selected} is not the selected executable programme frontier"
+        )
+    if status == "PROGRAMME_FRONTIER_BLOCKED":
+        raise RuntimeError(
+            f"{status} before {assessment.get('boundary')}: "
+            f"{assessment.get('selected_programme_frontier')} is selected but execution-blocked"
+        )
+    if status == "PROGRAMME_SELECTION_NOT_EXECUTABLE":
+        raise RuntimeError(
+            f"{status} before {assessment.get('boundary')}: "
+            f"{assessment.get('selected_programme_frontier')} is "
+            f"{assessment.get('selected_programme_ownership')}"
         )
     raise RuntimeError(
         f"{status} before {assessment.get('boundary')}: "
