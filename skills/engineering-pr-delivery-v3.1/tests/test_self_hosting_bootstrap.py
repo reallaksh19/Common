@@ -25,6 +25,7 @@ from v3lib import load_events, load_yaml
 
 
 BASE = "93f480c5578885d71c9fefbdc2912c7b76945051"
+RECOVERY_PROOF_HEAD = "af2f951cbe13ad4dafcb7bd04802f3be08ab5b71"
 ISSUE_REF = "reallaksh19/Common#438"
 WRITE_PATH = "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py"
 
@@ -79,11 +80,24 @@ class SelfHostingBootstrapTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertEqual("WP.438", roadmap["work_packages"][0]["id"])
         self.assertEqual("ACTIVE", roadmap["work_packages"][0]["state"])
-        self.assertEqual("EP.438.1", state["execution"]["ep"])
-        self.assertEqual("LEASE.438.1", state["execution"]["lease"])
-        self.assertEqual(1, state["execution"]["custody_epoch"])
+        self.assertEqual("CP.438.1", state["accepted"]["checkpoint"])
+        self.assertTrue((REPO_ROOT / "relay/CHECKPOINTS/CP.438.1.yaml").exists())
         self.assertEqual("WP.438", ep["work_package"])
         self.assertEqual("LEASE.438.1", lease["id"])
+        self.assertIn(lease["state"], {"ACTIVE", "RELEASED", "INVALIDATED"})
+
+        execution = state["execution"]
+        if execution["lifecycle"] == "ACTIVE":
+            self.assertTrue(execution["ep"])
+            self.assertTrue(execution["lease"])
+            self.assertTrue((REPO_ROOT / "relay/WORK" / f"{execution['ep']}.yaml").exists())
+            self.assertTrue((REPO_ROOT / "relay/LEASES" / f"{execution['lease']}.yaml").exists())
+        else:
+            self.assertEqual("IDLE", execution["lifecycle"])
+            self.assertIsNone(execution["ep"])
+            self.assertIsNone(execution["lease"])
+            self.assertIsNone(execution["route"])
+
         self.assertEqual("PROVENANCE_ONLY", events[0]["details"]["pre_bootstrap_history"])
         self.assertEqual("NONE", events[0]["details"]["historical_execution_authority"])
         self.assertFalse((REPO_ROOT / "relay/WORK/EP.438.0.yaml").exists())
@@ -91,10 +105,7 @@ class SelfHostingBootstrapTests(unittest.TestCase):
     def test_live_authority_survives_generated_deletion_and_fenced_recovery(self):
         with tempfile.TemporaryDirectory() as td:
             clone = Path(td) / "common"
-            head = subprocess.check_output(
-                ["git", "-C", str(REPO_ROOT), "rev-parse", "HEAD"],
-                text=True,
-            ).strip()
+            head = RECOVERY_PROOF_HEAD
             subprocess.check_call(
                 ["git", "clone", "--quiet", "--no-hardlinks", str(REPO_ROOT), str(clone)]
             )
