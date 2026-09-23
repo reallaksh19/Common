@@ -21,10 +21,33 @@ from transactionlib import (
 )
 from validate_foundation import validate_authority
 from test_v3_foundation import materialize
-from v3lib import load_yaml
+from v3lib import load_yaml, validate_schema
 
 
 class TransactionJournalTests(unittest.TestCase):
+    def test_historical_committed_manifest_may_retain_recovery_paths(self):
+        manifest = {
+            "schema_version": "relay-v3.1-transaction",
+            "id": "TX-HISTORICAL-001",
+            "command": "ADMIT_TASK",
+            "actor": "agent-x",
+            "status": "COMMITTED",
+            "created_at": "2026-09-22T00:00:00Z",
+            "updated_at": "2026-09-22T00:01:00Z",
+            "operations": [
+                {
+                    "path": "relay/STATE.yaml",
+                    "before_exists": True,
+                    "before_digest": "sha256:" + "1" * 64,
+                    "after_digest": "sha256:" + "2" * 64,
+                    "staged_path": "relay/TRANSACTIONS/TX-HISTORICAL-001/staged/000.after",
+                    "backup_path": "relay/TRANSACTIONS/TX-HISTORICAL-001/backups/000.before",
+                }
+            ],
+            "applied": ["relay/STATE.yaml"],
+        }
+        self.assertEqual([], validate_schema("transaction", manifest, "TRANSACTION"))
+
     def test_committed_transaction_applies_all_after_images(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
