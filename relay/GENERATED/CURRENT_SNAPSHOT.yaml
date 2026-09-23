@@ -2,19 +2,19 @@
   "schema_version": "relay-v3.1-snapshot",
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
-    "roadmap_revision": "RM.438.3",
-    "state_digest": "sha256:a0a04b4ebcdf69f0bd87d51795e04f2c777af626884bf6fb56c9520ebccc2b8c",
+    "roadmap_revision": "RM.438.4",
+    "state_digest": "sha256:c2b20bac259691dac9eb016ca526402d21e24d45f35f2a6d7ce0babcbf0ee380",
     "material_basis": {
       "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
       "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
       "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "cf1727162fe17fff1acc50112f677f592805eb85"
+    "coordination_head": "19e171c57c260af1e4b49aba52a5f39f14ee8662"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Close the blocked-selected-frontier presentation gap without changing programme-selection or execution-authority semantics."
+    "current_goal": "Remove unsupported PARALLEL execution lifecycle surface and document why the remaining simplification candidates are retained."
   },
   "programme": {
     "programme_progress": 0,
@@ -28,17 +28,31 @@
     ]
   },
   "execution": {
-    "lifecycle": "IDLE",
-    "work_package": null,
-    "ep": null,
-    "lease": null,
-    "executor": null,
+    "lifecycle": "ACTIVE",
+    "work_package": "WP.438",
+    "ep": "EP.438.5",
+    "lease": "LEASE.438.5",
+    "executor": "chatgpt-v3.1-simplification",
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [],
+    "allowed_writes": [
+      "skills/engineering-pr-delivery-v3.1/schemas/state.schema.yaml",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_can.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/lease_liveness.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_relay_can.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py",
+      "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
+    ],
     "protected": [],
-    "prohibited": []
+    "prohibited": [
+      "Do not weaken programme-selection, custody-epoch, material-drift, checkpoint-binding, or Owner delivery-authority gates.",
+      "Do not delete compatibility or projection machinery merely because it is derivable; retain it when it owns a real boundary.",
+      "Do not introduce multi-writer behavior while removing the phantom PARALLEL lifecycle."
+    ]
   },
   "material": {
     "base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
@@ -62,21 +76,26 @@
   },
   "delivery": {
     "issue": 438,
-    "pr": 439,
-    "lifecycle": "DRAFT",
+    "pr": null,
+    "lifecycle": "PENDING_STACKED_PR",
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": null,
-    "delivery_action": "PR #439 contains accepted EP.438.4 material; merge/release authority remains separate.",
-    "stop_conditions": []
+    "immediate_material_action": "Delete PARALLEL from state lifecycle validation and all execution/custody/liveness branches; add regression coverage that PARALLEL is invalid while ACTIVE decisions are unchanged; document retained candidate invariants.",
+    "delivery_action": "Open a narrow stacked simplification PR; do not add this scope to PR #439.",
+    "stop_conditions": [
+      "Any existing accepted safety decision changes for ACTIVE execution.",
+      "Zero-context recovery or stale-epoch fencing regresses.",
+      "A proposed deletion owns a unique compatibility, provider, or user-facing boundary."
+    ]
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/CONTROLS/controls.yaml",
+      "relay/WORK/EP.438.5.yaml",
+      "relay/LEASES/LEASE.438.5.yaml",
       "relay/CHECKPOINTS/CP.438.4.yaml",
       "relay/EVENTS.jsonl"
     ]
