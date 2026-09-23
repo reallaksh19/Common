@@ -2,19 +2,19 @@
   "schema_version": "relay-v3.1-snapshot",
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
-    "roadmap_revision": "RM.438.3",
-    "state_digest": "sha256:a0a04b4ebcdf69f0bd87d51795e04f2c777af626884bf6fb56c9520ebccc2b8c",
+    "roadmap_revision": "RM.438.4",
+    "state_digest": "sha256:213e47b088bc1167715adc07eb4e5f91a04defd991de470e3771fb5ad4356d05",
     "material_basis": {
-      "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-      "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
-      "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
+      "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+      "tree_digest": "sha256:f3367800c6dac405f78f62873ebcd723296124ebf8f7bdbfbad1fc7d7af9a098",
+      "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "cf1727162fe17fff1acc50112f677f592805eb85"
+    "coordination_head": "45ddf5264d08ce0405abc7fba39e3f4428eadf08"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Close the blocked-selected-frontier presentation gap without changing programme-selection or execution-authority semantics."
+    "current_goal": "Remove unsupported PARALLEL execution lifecycle surface and document why the remaining simplification candidates are retained."
   },
   "programme": {
     "programme_progress": 0,
@@ -41,13 +41,13 @@
     "prohibited": []
   },
   "material": {
-    "base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-    "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-    "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
+    "base": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
-    "latest_checkpoint": "CP.438.4",
+    "latest_checkpoint": "CP.438.5",
     "latest_material_validation": {
       "focused_tests": "PASS",
       "spec_delivery": "PASS",
@@ -62,13 +62,13 @@
   },
   "delivery": {
     "issue": 438,
-    "pr": 439,
+    "pr": 441,
     "lifecycle": "DRAFT",
     "merge_authorized": false
   },
   "next": {
     "immediate_material_action": null,
-    "delivery_action": "PR #439 contains accepted EP.438.4 material; merge/release authority remains separate.",
+    "delivery_action": "PR #441 contains accepted EP.438.5 material; merge/release authority remains separate.",
     "stop_conditions": []
   },
   "handoff": {
@@ -77,7 +77,7 @@
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
       "relay/CONTROLS/controls.yaml",
-      "relay/CHECKPOINTS/CP.438.4.yaml",
+      "relay/CHECKPOINTS/CP.438.5.yaml",
       "relay/EVENTS.jsonl"
     ]
   }

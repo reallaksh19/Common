@@ -258,5 +258,20 @@ class ArchitecturePreservationTests(unittest.TestCase):
             self.assertTrue(allowed["allowed"], allowed)
 
 
+    def test_native_execution_authority_has_no_parallel_lifecycle_surface(self):
+        native_authority_files = [
+            ROOT / "schemas/state.schema.yaml",
+            ROOT / "scripts/relay_can.py",
+            ROOT / "scripts/relay_tx.py",
+            ROOT / "scripts/lease_liveness.py",
+        ]
+        for path in native_authority_files:
+            self.assertNotIn(
+                "PARALLEL",
+                path.read_text(encoding="utf-8"),
+                f"{path.name} must not advertise unsupported multi-writer execution authority",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()
