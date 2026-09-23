@@ -174,6 +174,7 @@ def _require_fresh_handover(
     state: dict[str, Any],
     *,
     base_ref: str | None,
+    require_published: bool = True,
 ) -> str:
     context_path = root / "relay/GENERATED/HANDOVER_CONTEXT.yaml"
     if not context_path.exists():
@@ -233,7 +234,18 @@ def _require_fresh_handover(
         for item in _events(root)
     )
     if not planned:
-        raise TransactionError("graceful lease release requires a committed HANDOVER_PLANNED event for the current context")
+        raise TransactionError("handover continuation requires a committed HANDOVER_PLANNED event for the current context")
+
+    if require_published:
+        published = any(
+            item.get("type") == "HANDOVER_PUBLISHED"
+            and digest in (item.get("basis") or [])
+            for item in _events(root)
+        )
+        if not published:
+            raise TransactionError(
+                "HANDOVER_NOT_PUBLISHED: planned context exists but no matching HANDOVER_PUBLISHED event is committed"
+            )
     return digest
 
 
@@ -954,10 +966,24 @@ def publish_handover(
     _require_action(root, "HANDOVER", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
+
+    # Publication must bind to the exact committed HANDOVER_PLANNED context. It is
+    # not valid to publish a freshly rebuilt but unplanned view.
+    context_digest = _require_fresh_handover(
+        root,
+        state,
+        base_ref=base_ref,
+        require_published=False,
+    )
+    context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+    learning = context.get("accumulated_learning") or {}
+    task_meta = learning.get("task_snapshot") or {}
+    improvement_meta = learning.get("improvement_view") or {}
+    task_snapshot = load_yaml(root / str(task_meta.get("path")))
+    improvement_view = load_yaml(root / str(improvement_meta.get("path")))
+
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
-    task_snapshot = build_task(root, base_ref)
-    improvement_view = build_improvement(root)
     handover = render_handover(snapshot, checkpoint, task_snapshot, improvement_view).encode("utf-8")
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
@@ -966,8 +992,11 @@ def publish_handover(
         "HANDOVER_PUBLISHED",
         actor,
         str((state.get("execution") or {}).get("ep") or (state.get("accepted") or {}).get("checkpoint") or "relay"),
-        [tx_id, _snapshot_path(state)],
-        {"artifact": "relay/GENERATED/HANDOVER.md"},
+        [tx_id, _snapshot_path(state), context_digest],
+        {
+            "artifact": "relay/GENERATED/HANDOVER.md",
+            "context_digest": context_digest,
+        },
     ))
     return execute(
         root,
@@ -981,7 +1010,6 @@ def publish_handover(
         },
         fail_after=fail_after,
     )
-
 
 
 def record_recovery_reconstructed(
