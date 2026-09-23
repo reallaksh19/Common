@@ -20,6 +20,7 @@ from relay_tx import (
     activate_lease,
     authorize_change_delta,
     propose_change_delta,
+    publish_handover,
     reconcile_roadmap,
     record_change_hypothesis,
     record_recovery_reconstructed,
@@ -166,6 +167,30 @@ class RelayCompletionTests(unittest.TestCase):
                 complex_mode=False,
             )
 
+            with self.assertRaisesRegex(TransactionError, "fresh handover is unavailable"):
+                activate_lease(
+                    root,
+                    tx_id="TX-HANDOVER-EARLY",
+                    event_id="EVT-HANDOVER-EARLY",
+                    lease_id="LEASE-TA-011-02",
+                    executor_id="agent-y",
+                    actor="agent-y",
+                    method="DETERMINISTIC",
+                    qualification=None,
+                    owner_basis=None,
+                    branch=None,
+                    base_ref=base_ref,
+                )
+
+            published = publish_handover(
+                root,
+                tx_id="TX-HANDOVER-PUBLISH",
+                event_id="EVT-HANDOVER-PUBLISH",
+                actor="agent-x",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", published["status"])
+
             result = activate_lease(
                 root,
                 tx_id="TX-HANDOVER-ACCEPT",
@@ -182,7 +207,9 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual("COMMITTED", result["status"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
+            published_events = [row for row in events if row["type"] == "HANDOVER_PUBLISHED"]
             accepted = [row for row in events if row["type"] == "HANDOVER_ACCEPTED"]
+            self.assertEqual(1, len(published_events))
             self.assertEqual(1, len(accepted))
             self.assertEqual("LEASE-TA-011-02", accepted[0]["subject"])
             granted = [row for row in events if row["event_id"] == "EVT-HANDOVER-ACCEPT"][0]
