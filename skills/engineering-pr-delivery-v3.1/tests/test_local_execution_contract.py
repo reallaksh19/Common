@@ -14,6 +14,7 @@ for entry in (SCRIPTS, TESTS):
         sys.path.insert(0, str(entry))
 
 from relay_tx import accept_local_execution_result, export_local_execution
+from test_handover_context import install_parent_issue
 from test_relay_can import prepare_git
 from test_v3_foundation import dump
 from transactionlib import TransactionError
@@ -25,6 +26,7 @@ class LocalExecutionContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
+            install_parent_issue(root, number=1771)
             subprocess.check_call(
                 ["git", "-C", str(root), "remote", "add", "origin", "https://github.com/example/project.git"]
             )
@@ -41,6 +43,8 @@ class LocalExecutionContractTests(unittest.TestCase):
 
             package = load_yaml(root / "relay/GENERATED/LOCAL_EXECUTION.yaml")
             request = package["request"]
+            self.assertEqual("LOCAL.1771.1", request["id"])
+            self.assertEqual(request["id"], package["return_contract"]["request_id"])
             self.assertEqual(package["material"]["head"], request["exact_basis"]["material_head"])
             self.assertTrue(request["preflight"])
             self.assertTrue(request["steps"])
