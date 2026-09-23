@@ -150,6 +150,7 @@ def _require_programme_boundary(
     observations: list[dict[str, Any]] | None,
     *,
     boundary: str,
+    selected_frontier_ref: str | None = None,
 ) -> dict[str, Any]:
     try:
         return require_boundary_ready(
@@ -157,6 +158,7 @@ def _require_programme_boundary(
                 parent,
                 observations,
                 boundary=boundary,
+                selected_frontier_ref=selected_frontier_ref,
             )
         )
     except (RuntimeError, ValueError) as exc:
@@ -280,6 +282,7 @@ def admit_task(
     admission_path: Path,
     base_ref: str,
     programme_issue_observations: list[dict[str, Any]] | None = None,
+    selected_programme_ref: str | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     live_v3, protocol_state = _protocol_state(root)
@@ -308,6 +311,7 @@ def admit_task(
         ep.get("parent_issue"),
         programme_issue_observations,
         boundary="ADMIT_TASK",
+        selected_frontier_ref=selected_programme_ref,
     )
     programme_reconciliation = programme_assessment["reconciliation"]
 
@@ -339,8 +343,9 @@ def admit_task(
     else:
         work_packages[existing_index] = wp
 
-    if any(item.get("state") == "ACTIVE" and item.get("id") != wp_id for item in work_packages):
-        raise TransactionError("serial ADMIT_TASK cannot create a second ACTIVE work package")
+    # SERIAL constrains execution custody (STATE/LEASE), not the number of
+    # unfinished programme obligations. Other ACTIVE work packages may remain
+    # real while this admission selects exactly one execution frontier.
 
     ep_path = root / "relay/WORK" / f"{ep['id']}.yaml"
     lease_spec = admission["lease"]
@@ -460,6 +465,7 @@ def activate_lease(
     recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
     recovery_observation: dict[str, Any] | None = None,
     programme_issue_observations: list[dict[str, Any]] | None = None,
+    selected_programme_ref: str | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, _ = _authority(root)
@@ -514,6 +520,7 @@ def activate_lease(
                 (current_ep or {}).get("parent_issue"),
                 programme_issue_observations,
                 boundary="RECOVERY_TAKEOVER",
+                selected_frontier_ref=selected_programme_ref,
             )
             programme_reconciliation = programme_assessment["reconciliation"]
             continuation = "RECOVERY"
@@ -1754,6 +1761,10 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
         default=[],
         help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
     )
+    parser.add_argument(
+        "--selected-programme-ref",
+        help="Explicit Owner/ROADMAP selected programme parent ref (for example owner/repo#123).",
+    )
 
 
 def main() -> None:
@@ -1774,6 +1785,10 @@ def main() -> None:
         action="append",
         default=[],
         help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
+    )
+    admit_task_parser.add_argument(
+        "--selected-programme-ref",
+        help="Explicit Owner/ROADMAP selected programme parent ref.",
     )
 
     admit = sub.add_parser("admit")
@@ -1941,6 +1956,7 @@ def main() -> None:
             programme_issue_observations=[
                 load_yaml(Path(path)) for path in args.programme_issue_observation
             ],
+            selected_programme_ref=args.selected_programme_ref,
         )
         print(f"{result['id']}: {result['status']}")
         return
@@ -1998,6 +2014,7 @@ def main() -> None:
             programme_issue_observations=[
                 load_yaml(Path(path)) for path in args.programme_issue_observation
             ],
+            selected_programme_ref=args.selected_programme_ref,
         )
     elif args.command == "renew-lease":
         result = renew_lease(
