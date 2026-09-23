@@ -55,7 +55,14 @@ def _progress(
 
     accepted: set[str] = set()
     cp_dir = root / "relay/CHECKPOINTS"
-    for path in sorted(cp_dir.glob("CP-*.yaml")) if cp_dir.exists() else []:
+    checkpoint_paths = []
+    if cp_dir.exists():
+        checkpoint_paths = sorted(
+            path
+            for path in cp_dir.glob("*.yaml")
+            if path.stem.startswith("CP-") or path.stem.startswith("CP.")
+        )
+    for path in checkpoint_paths:
         cp = load_yaml(path)
         if not isinstance(cp, dict) or not _accepted_checkpoint(cp):
             continue
