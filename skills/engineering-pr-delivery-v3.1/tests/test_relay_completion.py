@@ -215,7 +215,7 @@ class RelayCompletionTests(unittest.TestCase):
             renewed = datetime.fromisoformat(
                 lease["custody"]["renewed_at"].replace("Z", "+00:00")
             )
-            material = root / WRITE_PATH
+            material = root / "skills/engineering-pr-delivery-v3.1/scripts/base.py"
             material.write_text(
                 material.read_text(encoding="utf-8") + "\n# unaccepted active material\n",
                 encoding="utf-8",
