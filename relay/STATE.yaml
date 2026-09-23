@@ -5,10 +5,10 @@
     "path": "relay/ROADMAP/ROADMAP.yaml"
   },
   "execution": {
-    "lifecycle": "ACTIVE",
-    "ep": "EP.438.2",
-    "lease": "LEASE.438.2",
-    "route": "SERIAL:EP.438.2",
+    "lifecycle": "IDLE",
+    "ep": null,
+    "lease": null,
+    "route": null,
     "custody_epoch": 1
   },
   "accepted": {
