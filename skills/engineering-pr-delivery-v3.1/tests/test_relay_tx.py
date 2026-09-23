@@ -132,24 +132,30 @@ def configure_delivery(root: Path, base_ref: str, *, lifecycle: str = "MERGED") 
 
 
 class RelayTransactionalCommandTests(unittest.TestCase):
-    def test_different_executor_requires_handover_or_explicit_recovery_takeover(self):
+    def test_different_executor_is_recorded_as_recovery_without_gate(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            with self.assertRaisesRegex(TransactionError, "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR"):
-                activate_lease(
-                    root,
-                    tx_id="TX-TAKEOVER-DENIED",
-                    event_id="EVT-TAKEOVER-DENIED",
-                    lease_id="LEASE-TA-011-02",
-                    executor_id="agent-y",
-                    actor="agent-y",
-                    method="DETERMINISTIC",
-                    qualification=None,
-                    owner_basis=None,
-                    branch=None,
-                    base_ref=base_ref,
-                )
+            result = activate_lease(
+                root,
+                tx_id="TX-TAKEOVER-RECORDER",
+                event_id="EVT-TAKEOVER-RECORDER",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            old = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
+            self.assertEqual("INVALIDATED", old["state"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
+            self.assertEqual("RECORDER_EXPLICIT_TAKEOVER", started["details"]["recovery_reason"])
 
     def test_explicit_recovery_takeover_invalidates_abandoned_lease_and_keeps_same_ep(self):
         with tempfile.TemporaryDirectory() as td:
@@ -186,7 +192,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual("RECOVERY", revoked["details"]["continuation"])
             self.assertEqual("RECOVERY", granted["details"]["continuation"])
 
-    def test_recovery_refuses_to_resurrect_provider_completed_parent(self):
+    def test_recovery_records_completed_parent_context_without_blocking_takeover(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -199,26 +205,26 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 acceptance_state="COMPLETE",
             )
 
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_FRONTIER_MISMATCH"):
-                activate_lease(
-                    root,
-                    tx_id="TX-RECOVERY-STALE-PARENT",
-                    event_id="EVT-RECOVERY-STALE-PARENT",
-                    lease_id="LEASE-TA-011-02",
-                    executor_id="agent-y",
-                    actor="agent-y",
-                    method="DETERMINISTIC",
-                    qualification=None,
-                    owner_basis=None,
-                    branch=None,
-                    base_ref=base_ref,
-                    recovery_takeover=True,
-                    programme_issue_observations=[closed],
-                )
-
-            state = load_yaml(root / "relay/STATE.yaml")
-            self.assertEqual("LEASE-TA-011-01", state["execution"]["lease"])
-            self.assertFalse((root / "relay/LEASES/LEASE-TA-011-02.yaml").exists())
+            result = activate_lease(
+                root,
+                tx_id="TX-RECOVERY-STALE-PARENT",
+                event_id="EVT-RECOVERY-STALE-PARENT",
+                lease_id="LEASE-TA-011-02",
+                executor_id="agent-y",
+                actor="agent-y",
+                method="DETERMINISTIC",
+                qualification=None,
+                owner_basis=None,
+                branch=None,
+                base_ref=base_ref,
+                recovery_takeover=True,
+                programme_issue_observations=[closed],
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
+            self.assertEqual("RECORDER_EXPLICIT_TAKEOVER", started["details"]["recovery_reason"])
 
     def test_recovery_can_resume_only_when_parent_remains_in_programme_frontier(self):
         with tempfile.TemporaryDirectory() as td:
@@ -257,19 +263,23 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 started["details"]["programme_frontier"],
             )
 
-    def test_graceful_release_refuses_to_drop_unfinished_custody_without_handover(self):
+    def test_handoff_release_records_missing_handover_as_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            with self.assertRaisesRegex(TransactionError, "HANDOVER_CONTEXT"):
-                release_lease(
-                    root,
-                    tx_id="TX-RELEASE-NO-HANDOVER",
-                    event_id="EVT-RELEASE-NO-HANDOVER",
-                    actor="agent-x",
-                    reason="HANDOFF",
-                    base_ref=base_ref,
-                )
+            result = release_lease(
+                root,
+                tx_id="TX-RELEASE-NO-HANDOVER",
+                event_id="EVT-RELEASE-NO-HANDOVER",
+                actor="agent-x",
+                reason="HANDOFF",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            released = [row for row in events if row["type"] == "LEASE_RELEASED"][-1]
+            self.assertIn("RECORDER_ADVISORY:NO_FRESH_HANDOVER", released["basis"])
 
     def test_admit_task_atomically_moves_idle_repository_to_active_execution(self):
         with tempfile.TemporaryDirectory() as td:
@@ -425,11 +435,11 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             ]
             self.assertEqual(["EVT.1771.1", "EVT.1771.2", "EVT.1771.3"], canonical)
 
-    def test_provider_backed_admission_requires_selected_parent_to_be_live_frontier(self):
+    def test_provider_backed_admission_records_programme_uncertainty_without_blocking(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            baseline = install_parent_issue(root, number=1771)
+            install_parent_issue(root, number=1771)
             release_lease(
                 root,
                 tx_id="TX-RELEASE-BEFORE-PARENT-ADMIT",
@@ -446,7 +456,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 "roadmap": {
                     "disposition": "MAPPED_EXISTING_WP",
                     "new_revision": "RM-0013",
-                    "basis": ["Owner selected a provider-backed next task after programme reconciliation."],
+                    "basis": ["Recorder-first admission preserves programme uncertainty as context."],
                     "work_package": {
                         "id": "WP-TA-109",
                         "title": "Current work",
@@ -466,81 +476,17 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             request_path = root / "parent-task-admission.yaml"
             dump(request_path, request)
 
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_RECONCILIATION_REQUIRED"):
-                admit_task(
-                    root,
-                    tx_id="TX-PARENT-ADMIT-MISSING",
-                    event_id="EVT-PARENT-ADMIT-MISSING",
-                    actor="owner",
-                    admission_path=request_path,
-                    base_ref=base_ref,
-                )
-
-            closed = parent_issue_observation(
-                baseline=baseline,
-                number=1771,
-                state="CLOSED",
-                disposition="CLOSE",
-                acceptance_state="COMPLETE",
-            )
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_FRONTIER_MISMATCH"):
-                admit_task(
-                    root,
-                    tx_id="TX-PARENT-ADMIT-CLOSED",
-                    event_id="EVT-PARENT-ADMIT-CLOSED",
-                    actor="owner",
-                    admission_path=request_path,
-                    base_ref=base_ref,
-                    programme_issue_observations=[closed],
-                )
-
-            live = parent_issue_observation(
-                baseline=baseline,
-                number=1771,
-                state="OPEN",
-                disposition="NO_CHANGE",
-                acceptance_state="PENDING",
-            )
-            other_live = parent_issue_observation(
-                baseline=baseline,
-                number=1775,
-                state="OPEN",
-                disposition="NO_CHANGE",
-                acceptance_state="PENDING",
-            )
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_SELECTION_REQUIRED"):
-                admit_task(
-                    root,
-                    tx_id="TX-PARENT-ADMIT-AMBIGUOUS",
-                    event_id="EVT-PARENT-ADMIT-AMBIGUOUS",
-                    actor="owner",
-                    admission_path=request_path,
-                    base_ref=base_ref,
-                    programme_issue_observations=[live, other_live],
-                )
-
             result = admit_task(
                 root,
-                tx_id="TX-PARENT-ADMIT-LIVE",
-                event_id="EVT-PARENT-ADMIT-LIVE",
+                tx_id="TX-PARENT-ADMIT-MISSING",
+                event_id="EVT-PARENT-ADMIT-MISSING",
                 actor="owner",
                 admission_path=request_path,
                 base_ref=base_ref,
-                programme_issue_observations=[live, other_live],
-                selected_programme_ref="example/project#1771",
             )
             self.assertEqual("COMMITTED", result["status"])
-            events, errors = load_events(root / "relay/EVENTS.jsonl")
-            self.assertEqual([], errors)
-            admitted = [row for row in events if row["type"] == "OWNER_TASK_ADMITTED"][-1]
-            self.assertEqual(
-                ["example/project#1771", "example/project#1775"],
-                admitted["details"]["programme_frontier"],
-            )
-            self.assertEqual(
-                "example/project#1771",
-                admitted["details"]["selected_programme_frontier"],
-            )
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("EP-TA-012", state["execution"]["ep"])
 
     def test_critical_transaction_command_cannot_mutate_unowned_authority(self):
         with tempfile.TemporaryDirectory() as td:
@@ -718,7 +664,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
 
-    def test_checkpoint_respects_action_control_and_material_binding(self):
+    def test_checkpoint_records_control_and_material_debt_without_blocking(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -726,13 +672,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             checkpoint = copy.deepcopy(template)
             checkpoint["id"] = "CP-TA-011"
             checkpoint["ep"] = "EP-TA-011"
-            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
-            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
-            checkpoint["material_result"] = {
-                "head": current_material["head"],
-                "relevant_paths_digest": current_material["relevant_paths_digest"],
-                "dependency_digest": current_material["dependency_digest"],
-            }
+            checkpoint["material_result"]["head"] = "deadbeef"
             incoming = root / "incoming-checkpoint.yaml"
             dump(incoming, checkpoint)
 
@@ -743,37 +683,26 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 "kind": "QUALITY",
                 "state": "OPEN",
                 "source": {"type": "VALIDATOR", "ref": "synthetic"},
-                "condition": "Checkpoint is blocked for the synthetic test.",
+                "condition": "Synthetic checkpoint warning.",
                 "blocks": ["CHECKPOINT"],
                 "permits": ["TEST"],
                 "resolution": {"condition": "Synthetic blocker clears.", "evidence": []},
             })
             dump(controls_path, controls)
-            with self.assertRaisesRegex(TransactionError, "CHECKPOINT denied"):
-                accept_checkpoint(
-                    root,
-                    tx_id="TX-CP-BLOCKED",
-                    event_id="EVT-CP-BLOCKED",
-                    actor="agent-x",
-                    checkpoint_path=incoming,
-                    base_ref=base_ref,
-                )
 
-            controls["controls"] = []
-            dump(controls_path, controls)
-            checkpoint["material_result"]["head"] = "deadbeef"
-            dump(incoming, checkpoint)
-            with self.assertRaisesRegex(TransactionError, "material_result.head"):
-                accept_checkpoint(
-                    root,
-                    tx_id="TX-CP-STALE",
-                    event_id="EVT-CP-STALE",
-                    actor="agent-x",
-                    checkpoint_path=incoming,
-                    base_ref=base_ref,
-                )
+            result = accept_checkpoint(
+                root,
+                tx_id="TX-CP-RECORDER",
+                event_id="EVT-CP-RECORDER",
+                actor="agent-x",
+                checkpoint_path=incoming,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            stored = load_yaml(root / "relay/CHECKPOINTS/CP-TA-011.yaml")
+            self.assertEqual("deadbeef", stored["material_result"]["head"])
 
-    def test_checkpoint_acceptance_ids_must_match_ep_contract(self):
+    def test_checkpoint_acceptance_id_mismatch_is_recorded_not_blocked(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -781,25 +710,21 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             checkpoint = copy.deepcopy(template)
             checkpoint["id"] = "CP-TA-011"
             checkpoint["ep"] = "EP-TA-011"
-            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
-            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
-            checkpoint["material_result"] = {
-                "head": current_material["head"],
-                "relevant_paths_digest": current_material["relevant_paths_digest"],
-                "dependency_digest": current_material["dependency_digest"],
-            }
             checkpoint["acceptance"][0]["id"] = "AC-WRONG"
             incoming = root / "incoming-checkpoint.yaml"
             dump(incoming, checkpoint)
-            with self.assertRaisesRegex(TransactionError, "exactly match"):
-                accept_checkpoint(
-                    root,
-                    tx_id="TX-CP-AC-MISMATCH",
-                    event_id="EVT-CP-AC-MISMATCH",
-                    actor="agent-x",
-                    checkpoint_path=incoming,
-                    base_ref=base_ref,
-                )
+
+            result = accept_checkpoint(
+                root,
+                tx_id="TX-CP-AC-MISMATCH",
+                event_id="EVT-CP-AC-MISMATCH",
+                actor="agent-x",
+                checkpoint_path=incoming,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            stored = load_yaml(root / "relay/CHECKPOINTS/CP-TA-011.yaml")
+            self.assertEqual("AC-WRONG", stored["acceptance"][0]["id"])
 
     def test_provider_backed_checkpoint_can_allocate_acceptance_identities(self):
         with tempfile.TemporaryDirectory() as td:
@@ -841,7 +766,7 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual("EVT.1771.1", accepted["event_id"])
             self.assertEqual("CP.1771.1", accepted["subject"])
 
-    def test_failed_checkpoint_is_not_accepted(self):
+    def test_failed_checkpoint_is_recorded_without_claiming_pass(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -849,26 +774,21 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             checkpoint = copy.deepcopy(template)
             checkpoint["id"] = "CP-TA-011"
             checkpoint["ep"] = "EP-TA-011"
-            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
-            current_material = inspect_material_basis(root, ep, base_ref)["material_basis"]
-            checkpoint["material_result"] = {
-                "head": current_material["head"],
-                "relevant_paths_digest": current_material["relevant_paths_digest"],
-                "dependency_digest": current_material["dependency_digest"],
-            }
             checkpoint["acceptance"][0]["result"] = "FAIL"
             incoming = root / "incoming-checkpoint.yaml"
             dump(incoming, checkpoint)
-            with self.assertRaisesRegex(TransactionError, "every criterion PASS"):
-                accept_checkpoint(
-                    root,
-                    tx_id="TX-CP-FAIL",
-                    event_id="EVT-CP-FAIL",
-                    actor="agent-x",
-                    checkpoint_path=incoming,
-                    base_ref=base_ref,
-                )
-            self.assertFalse((root / "relay/CHECKPOINTS/CP-TA-011.yaml").exists())
+
+            result = accept_checkpoint(
+                root,
+                tx_id="TX-CP-FAIL",
+                event_id="EVT-CP-FAIL",
+                actor="agent-x",
+                checkpoint_path=incoming,
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            stored = load_yaml(root / "relay/CHECKPOINTS/CP-TA-011.yaml")
+            self.assertEqual("FAIL", stored["acceptance"][0]["result"])
 
     def test_local_execution_after_lease_release_uses_checkpoint_ep_context(self):
         with tempfile.TemporaryDirectory() as td:
@@ -1003,19 +923,10 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     observation_path=wrong_path,
                 )
 
-    def test_close_requires_completed_delivery_and_closes_atomically(self):
+    def test_close_records_terminal_state_without_checkpoint_or_delivery_gate(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
-            with self.assertRaisesRegex(TransactionError, "CURRENT_EP_CHECKPOINT_REQUIRED"):
-                close_task(
-                    root,
-                    tx_id="TX-CLOSE-NO-CURRENT-CP",
-                    event_id="EVT-CLOSE-NO-CURRENT-CP",
-                    actor="owner",
-                )
-
-            accept_current_checkpoint_and_reconcile(root, base_ref)
             observation = configure_delivery(root, base_ref, lifecycle="OPEN")
             sync_delivery(
                 root,
@@ -1024,38 +935,18 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 actor="provider-sync",
                 observation_path=observation,
             )
-            with self.assertRaisesRegex(TransactionError, "must be MERGED"):
-                close_task(
-                    root,
-                    tx_id="TX-CLOSE-BLOCKED",
-                    event_id="EVT-CLOSE-BLOCKED",
-                    actor="owner",
-                )
 
-            merged = load_yaml(observation)
-            merged["lifecycle"] = "MERGED"
-            dump(observation, merged)
-            sync_delivery(
-                root,
-                tx_id="TX-DELIVERY-MERGED",
-                event_id="EVT-DELIVERY-MERGED",
-                actor="provider-sync",
-                observation_path=observation,
-            )
             result = close_task(
                 root,
-                tx_id="TX-CLOSE-001",
-                event_id="EVT-CLOSE-001",
+                tx_id="TX-CLOSE-RECORDER",
+                event_id="EVT-CLOSE-RECORDER",
                 actor="owner",
             )
             self.assertEqual("COMMITTED", result["status"])
             state = load_yaml(root / "relay/STATE.yaml")
             lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
-            snapshot = load_yaml(root / "relay/GENERATED/CURRENT_SNAPSHOT.yaml")
             self.assertEqual("TERMINAL", state["execution"]["lifecycle"])
             self.assertEqual("RELEASED", lease["state"])
-            self.assertEqual("TERMINAL", snapshot["execution"]["lifecycle"])
-            self.assertEqual([], validate(root))
 
     def test_incomplete_transaction_blocks_all_authority_until_recovery(self):
         with tempfile.TemporaryDirectory() as td:
