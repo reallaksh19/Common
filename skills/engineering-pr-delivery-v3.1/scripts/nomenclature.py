@@ -155,6 +155,30 @@ def parse_legacy_id(value: str) -> dict[str, str] | None:
     return {"kind": match.group("kind"), "value": str(value)}
 
 
+def require_rooted_id(
+    value: str,
+    *,
+    kind: str,
+    root: int | str,
+    label: str,
+) -> str:
+    kind = _normalize_kind(kind)
+    root_text, _issue_number, _scope_kind = _normalize_root(root)
+    parsed = parse_canonical_id(value)
+    if parsed is None:
+        suffix = "" if kind in SINGLETON_TYPES | OPTIONALLY_SERIALIZED_TYPES else ".<serial>"
+        raise ValueError(
+            f"{label} must use {kind}.{root_text}{suffix} nomenclature"
+        )
+    if parsed["kind"] != kind:
+        raise ValueError(f"{label} must use {kind}.* namespace")
+    if parsed["root"] != root_text:
+        raise ValueError(
+            f"{label} root {parsed.get('root')} does not match governing scope {root_text}"
+        )
+    return value
+
+
 def require_issue_rooted_id(
     value: str,
     *,
@@ -162,21 +186,12 @@ def require_issue_rooted_id(
     issue_number: int,
     label: str,
 ) -> str:
-    kind = _normalize_kind(kind)
-    parsed = parse_canonical_id(value)
-    if parsed is None:
-        suffix = "" if kind in SINGLETON_TYPES | OPTIONALLY_SERIALIZED_TYPES else ".<serial>"
-        raise ValueError(
-            f"{label} must use {kind}.{int(issue_number)}{suffix} nomenclature"
-        )
-    if parsed["kind"] != kind:
-        raise ValueError(f"{label} must use {kind}.* namespace")
-    if parsed["scope_kind"] != "ISSUE" or parsed["issue_number"] != int(issue_number):
-        raise ValueError(
-            f"{label} issue root {parsed.get('root')} does not match "
-            f"governing GitHub issue {int(issue_number)}"
-        )
-    return value
+    return require_rooted_id(
+        value,
+        kind=kind,
+        root=issue_number,
+        label=label,
+    )
 
 
 def issue_number_from_ep(ep: dict[str, Any] | None) -> int | None:

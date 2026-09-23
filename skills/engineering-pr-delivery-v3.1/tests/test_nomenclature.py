@@ -18,6 +18,7 @@ from nomenclature import (
     parse_canonical_id,
     parse_legacy_id,
     require_issue_rooted_id,
+    require_rooted_id,
 )
 
 
@@ -79,6 +80,24 @@ class NomenclatureTests(unittest.TestCase):
         )
         self.assertIsNone(parse_canonical_id("EP-TA-011"))
         self.assertIsNone(parse_legacy_id("EP.1885.1"))
+
+    def test_generic_root_validation_preserves_repository_scope(self):
+        self.assertEqual(
+            "TX.REPO.3",
+            require_rooted_id(
+                "TX.REPO.3",
+                kind="TX",
+                root="REPO",
+                label="transaction id",
+            ),
+        )
+        with self.assertRaisesRegex(ValueError, "does not match governing scope REPO"):
+            require_rooted_id(
+                "TX.1885.1",
+                kind="TX",
+                root="REPO",
+                label="transaction id",
+            )
 
     def test_issue_root_validation_does_not_accept_wrong_issue(self):
         self.assertEqual(
