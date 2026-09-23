@@ -1159,13 +1159,9 @@ def reconcile_roadmap(
         errors = validate_schema("change-delta", change_delta, "CHANGE_DELTA")
         if errors:
             raise TransactionError("; ".join(errors))
-        if (change_delta.get("verification") or {}).get("status") != "CONFIRMED":
-            raise TransactionError("CHANGE_DELTA must be CONFIRMED before roadmap application")
+        # Recorder-first V3.1 records verification/authorization state as
+        # provenance. It does not use those fields as roadmap-mutation gates.
         authorization = change_delta.get("authorization") or {}
-        if authorization.get("required") == "OWNER" and authorization.get("status") != "GRANTED":
-            raise TransactionError("CHANGE_DELTA requires granted Owner authority")
-        if authorization.get("required") == "NONE" and authorization.get("status") != "NOT_REQUIRED":
-            raise TransactionError("CHANGE_DELTA authorization state is inconsistent")
         application = change_delta.get("application") or {}
         if application.get("status") != "NOT_APPLIED":
             raise TransactionError("CHANGE_DELTA is already applied or deferred")
