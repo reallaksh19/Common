@@ -52,7 +52,7 @@ class LeaseAdmissionTests(unittest.TestCase):
                     method="DETERMINISTIC",
                 )
 
-    def test_required_qualification_rejects_deterministic_admission(self):
+    def test_required_qualification_is_advisory_for_deterministic_admission(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             materialize(root)
@@ -63,13 +63,14 @@ class LeaseAdmissionTests(unittest.TestCase):
                 "question_policy": "Q1_Q5",
             }
             dump(ep_path, ep)
-            with self.assertRaisesRegex(AdmissionError, "requires qualification"):
-                build_native_lease(
-                    root,
-                    lease_id="LEASE-NEXT-002",
-                    executor_id="agent-x",
-                    method="DETERMINISTIC",
-                )
+            lease = build_native_lease(
+                root,
+                lease_id="LEASE-NEXT-002",
+                executor_id="agent-x",
+                method="DETERMINISTIC",
+            )
+            self.assertEqual("DETERMINISTIC", lease["admission"]["method"])
+            self.assertFalse(lease["admission"]["qualification"]["required"])
 
     def test_qualified_admission_binds_evidence_inside_lease(self):
         with tempfile.TemporaryDirectory() as td:
@@ -100,34 +101,36 @@ class LeaseAdmissionTests(unittest.TestCase):
             self.assertEqual("PASS", q["result"])
             self.assertEqual(2, len(q["evidence"]))
 
-    def test_qualified_admission_rejects_self_evaluation(self):
+    def test_qualified_self_evaluation_is_recorded_not_blocked(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             materialize(root)
-            with self.assertRaisesRegex(AdmissionError, "cannot be the execution candidate"):
-                build_native_lease(
-                    root,
-                    lease_id="LEASE-NEXT-004",
-                    executor_id="agent-x",
-                    method="QUALIFIED",
-                    qualification={
-                        "qset": "QSET-V3-001",
-                        "evaluator": "agent-x",
-                        "evidence": ["self asserted"],
-                    },
-                )
+            lease = build_native_lease(
+                root,
+                lease_id="LEASE-NEXT-004",
+                executor_id="agent-x",
+                method="QUALIFIED",
+                qualification={
+                    "qset": "QSET-V3-001",
+                    "evaluator": "agent-x",
+                    "evidence": ["self asserted"],
+                },
+            )
+            self.assertEqual("agent-x", lease["admission"]["qualification"]["evaluator"])
+            self.assertEqual("PASS", lease["admission"]["qualification"]["result"])
 
-    def test_exclusive_active_lease_blocks_other_executor(self):
+    def test_existing_active_lease_does_not_block_new_executor_record(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             materialize(root)
-            with self.assertRaisesRegex(AdmissionError, "ACTIVE lease for another executor"):
-                build_native_lease(
-                    root,
-                    lease_id="LEASE-NEXT-005",
-                    executor_id="agent-y",
-                    method="DETERMINISTIC",
-                )
+            lease = build_native_lease(
+                root,
+                lease_id="LEASE-NEXT-005",
+                executor_id="agent-y",
+                method="DETERMINISTIC",
+            )
+            self.assertEqual("agent-y", lease["executor"]["id"])
+            self.assertEqual("ACTIVE", lease["state"])
 
     def test_owner_override_is_bounded_and_not_delivery_authority(self):
         with tempfile.TemporaryDirectory() as td:
