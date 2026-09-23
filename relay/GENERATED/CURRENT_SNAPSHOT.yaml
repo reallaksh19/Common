@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.1",
-    "state_digest": "sha256:b12fb6a11c1ba83840dcd2f95ed2419f2caec7c27b0786832dc562ecb578140c",
+    "state_digest": "sha256:862f01fafa4ad431a643737d1ca4381398b94be62d96e293800eccec67027093",
     "material_basis": {
       "head": "e4b383687a712c768ff95f0b2230739508d433f3",
-      "tree_digest": "sha256:5c5f325fe383fc58529948874a6242427fd0664a1d02fec24dfebb34069d05c4",
+      "tree_digest": "sha256:fd3ae034841d95b218c996c16f77cb0659a86b7e8047c0cae2595a9411b2022a",
       "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "e4b383687a712c768ff95f0b2230739508d433f3"
+    "coordination_head": "af2f951cbe13ad4dafcb7bd04802f3be08ab5b71"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -28,25 +28,20 @@
     ]
   },
   "execution": {
-    "lifecycle": "ACTIVE",
-    "work_package": "WP.438",
-    "ep": "EP.438.1",
-    "lease": "LEASE.438.1",
-    "executor": "chatgpt-v3.1-bootstrap",
+    "lifecycle": "IDLE",
+    "work_package": null,
+    "ep": null,
+    "lease": null,
+    "executor": null,
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [
-      "skills/engineering-pr-delivery-v3.1/**"
-    ],
+    "allowed_writes": [],
     "protected": [],
-    "prohibited": [
-      "Do not rewrite pre-bootstrap PR#437 history as governed Relay execution.",
-      "Do not weaken programme-selection, custody, material-scope/drift, checkpoint, or Owner-authority invariants."
-    ]
+    "prohibited": []
   },
   "material": {
-    "base": "93f480c5578885d71c9fefbdc2912c7b76945051",
+    "base": "e4b383687a712c768ff95f0b2230739508d433f3",
     "head": "e4b383687a712c768ff95f0b2230739508d433f3",
     "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
@@ -54,10 +49,9 @@
   "evidence": {
     "latest_checkpoint": "CP.438.1",
     "latest_material_validation": {
-      "checkpoint": "CP.438.1",
-      "exact_head": "e4b383687a712c768ff95f0b2230739508d433f3",
-      "v3_1_push_job": "107141528625",
-      "v3_1_pr_job": "107141513570"
+      "focused_tests": "PASS",
+      "spec_delivery": "PASS",
+      "full_guardrails": "PASS"
     }
   },
   "controls": {
@@ -73,13 +67,9 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Admit EP.438.2 from CP.438.1 for remaining serialization and gate-reduction work.",
+    "immediate_material_action": null,
     "delivery_action": "Perform the explicitly authorized delivery transition.",
-    "stop_conditions": [
-      "Owner/programme selection moves away from WP.438.",
-      "V3.1 authority validation fails.",
-      "Relevant or unknown material drift appears."
-    ]
+    "stop_conditions": []
   },
   "handoff": {
     "zero_context_takeover_possible": true,
@@ -87,9 +77,7 @@
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
       "relay/CONTROLS/controls.yaml",
-      "relay/WORK/EP.438.1.yaml",
-      "relay/LEASES/LEASE.438.1.yaml",
-      "relay/EVENTS.jsonl"
+      "relay/CHECKPOINTS/CP.438.1.yaml"
     ]
   }
 }

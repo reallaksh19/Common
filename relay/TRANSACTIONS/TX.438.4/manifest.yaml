@@ -1,0 +1,46 @@
+{
+  "schema_version": "relay-v3.1-transaction",
+  "id": "TX.438.4",
+  "command": "RELEASE_LEASE",
+  "actor": "chatgpt-v3.1-bootstrap",
+  "status": "COMMITTED",
+  "created_at": "2026-09-23T10:34:00Z",
+  "updated_at": "2026-09-23T10:34:00Z",
+  "operations": [
+    {
+      "path": "relay/LEASES/LEASE.438.1.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:2a34432b868eb5194ca9eb77a08c962d86065258abbcdcac6e207328dbda3b04",
+      "after_digest": "sha256:384c3b59f883f686a6aa3af14e1a0cb9d3d886c53e60b8ba404287b8b79dfb61"
+    },
+    {
+      "path": "relay/STATE.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:afa17aa54ecfd57586de8e8a2733ee2e62f97434fc04b260bda665bd62ac85a3",
+      "after_digest": "sha256:8828cec3be3c1dbb8bbe6d93836817822c02f6dad3a528a38ed1c14230a73d54"
+    },
+    {
+      "path": "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:053f68f28546cc1d17a567090f69ef98d6b5de36cd07bc7bbd6b8ca11ccd9f72",
+      "after_digest": "sha256:4f337f80426d56472a3c1522c4cf4050ec7e0ff6e2bffd505c6bcc00c173f841"
+    },
+    {
+      "path": "relay/EVENTS.jsonl",
+      "before_exists": true,
+      "before_digest": "sha256:87562a9e46e6b582cda797239911b107f344888ef152c051a281ad0d68fb6fa9",
+      "after_digest": "sha256:c978260d277a062c702f16856696f2bc307846935b7d826e886452f7c6a23a49"
+    }
+  ],
+  "applied": [
+    "relay/LEASES/LEASE.438.1.yaml",
+    "relay/STATE.yaml",
+    "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    "relay/EVENTS.jsonl"
+  ],
+  "identity_reservations": [
+    "EVT.438.10",
+    "TX.438.4"
+  ],
+  "payload_state": "PRUNED"
+}
