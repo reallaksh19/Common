@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.1",
-    "state_digest": "sha256:3e5a42dc98d19f47531fdd7bad67c346e9f180f10f7560077deb72dd1342fbe8",
+    "state_digest": "sha256:b12fb6a11c1ba83840dcd2f95ed2419f2caec7c27b0786832dc562ecb578140c",
     "material_basis": {
-      "head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
-      "tree_digest": "sha256:671e2983ac9bbaabca622ea2abcbc4767a7983c1f0f6b20e26c3f449e7d58b6d",
-      "relevant_paths_digest": "sha256:67c38f98162cf341f9b8b8970a8b8ac691bd768992121976380a0b8f74a3d80d",
+      "head": "e4b383687a712c768ff95f0b2230739508d433f3",
+      "tree_digest": "sha256:5c5f325fe383fc58529948874a6242427fd0664a1d02fec24dfebb34069d05c4",
+      "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e"
+    "coordination_head": "e4b383687a712c768ff95f0b2230739508d433f3"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -18,12 +18,14 @@
   },
   "programme": {
     "programme_progress": 0,
-    "accepted_progress": 0,
+    "accepted_progress": 100,
     "completed_work": [],
     "remaining_work": [
       "WP.438"
     ],
-    "evidence_backed_work": []
+    "evidence_backed_work": [
+      "WP.438"
+    ]
   },
   "execution": {
     "lifecycle": "ACTIVE",
@@ -45,17 +47,17 @@
   },
   "material": {
     "base": "93f480c5578885d71c9fefbdc2912c7b76945051",
-    "head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
-    "relevant_paths_digest": "sha256:67c38f98162cf341f9b8b8970a8b8ac691bd768992121976380a0b8f74a3d80d",
+    "head": "e4b383687a712c768ff95f0b2230739508d433f3",
+    "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
-    "latest_checkpoint": null,
+    "latest_checkpoint": "CP.438.1",
     "latest_material_validation": {
-      "self_hosting_bootstrap": "PASS",
-      "exact_head": "2e06e0f03d98ecaedfa5951639b12d6b62e3b60e",
-      "v3_1_push_job": "107134439033",
-      "v3_1_pr_job": "107134425117"
+      "checkpoint": "CP.438.1",
+      "exact_head": "e4b383687a712c768ff95f0b2230739508d433f3",
+      "v3_1_push_job": "107141528625",
+      "v3_1_pr_job": "107141513570"
     }
   },
   "controls": {
@@ -71,7 +73,7 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Accept CP.438.1 against the exact current material basis, then advance to the next EP.",
+    "immediate_material_action": "Admit EP.438.2 from CP.438.1 for remaining serialization and gate-reduction work.",
     "delivery_action": "Perform the explicitly authorized delivery transition.",
     "stop_conditions": [
       "Owner/programme selection moves away from WP.438.",
