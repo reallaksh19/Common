@@ -180,7 +180,7 @@ class NativeV3CompatibilityTests(unittest.TestCase):
 
             resolved = resolve_protocol(root)
             self.assertEqual("LEGACY", resolved["authority_mode"])
-            self.assertEqual("ACTIVE", resolved["status"])
+            self.assertEqual("LEGACY_DEFAULT", resolved["status"])
             self.assertEqual("V2_5", resolved["selected_protocol"])
 
     def test_selectorless_dual_authority_fails_closed(self):
