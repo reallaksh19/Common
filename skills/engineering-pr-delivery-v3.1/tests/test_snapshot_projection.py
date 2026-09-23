@@ -18,6 +18,7 @@ for entry in (SCRIPTS, TESTS):
 from render_owner_status import render as render_owner
 from render_technical_status import render as render_technical
 from snapshot_projection import build
+from v3lib import canonical_digest, load_yaml
 from test_relay_can import prepare_git
 from test_v3_foundation import dump
 
