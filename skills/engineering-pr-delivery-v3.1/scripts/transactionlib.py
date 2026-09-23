@@ -294,16 +294,37 @@ def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> N
         )
 
 
+def _jsonl_records(data: bytes) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for raw in data.decode("utf-8").splitlines():
+        if not raw.strip():
+            continue
+        try:
+            value = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise TransactionError(
+                f"EVENT_HISTORY_INVALID_JSON: {exc.msg}"
+            ) from exc
+        if not isinstance(value, dict):
+            raise TransactionError("EVENT_HISTORY_INVALID_RECORD: expected JSON object")
+        records.append(value)
+    return records
+
+
 def _validate_append_only_history(root: Path, replacements: dict[str, bytes]) -> None:
     relative = "relay/EVENTS.jsonl"
     after = replacements.get(relative)
     if after is None:
         return
     target = root / relative
-    before = target.read_bytes() if target.exists() else b""
-    if not after.startswith(before):
+    before_records = _jsonl_records(target.read_bytes()) if target.exists() else []
+    after_records = _jsonl_records(after)
+    if (
+        len(after_records) < len(before_records)
+        or after_records[: len(before_records)] != before_records
+    ):
         raise TransactionError(
-            "EVENT_HISTORY_NOT_APPEND_ONLY: relay/EVENTS.jsonl replacement must extend the exact current durable history"
+            "EVENT_HISTORY_NOT_APPEND_ONLY: relay/EVENTS.jsonl replacement must extend the exact current durable event sequence"
         )
 
 
