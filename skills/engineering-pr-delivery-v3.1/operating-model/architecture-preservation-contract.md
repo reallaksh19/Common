@@ -43,6 +43,8 @@ A material writer must be bound to the current EP/route/material basis and curre
 
 After handoff or recovery advances the epoch, a stale predecessor cannot mutate execution state using old custody.
 
+Abandonment detection must not weaken that fence. Time-based recovery may shorten the operational takeover horizon only when liveness evidence says the predecessor has been inactive **and** the sensitive worktree has not moved since its last recorded activity. Stronger terminal-session evidence must be bound to the exact lease/executor/epoch. Ordinary liveness renewal may not rewrite lease authority or advance custody epochs.
+
 ### P4 — Scope and material drift are synchronous safety boundaries
 
 Material writes remain constrained by EP write/protected scope and mechanically derived relevant/unknown drift.
@@ -117,7 +119,10 @@ Primary regression coverage includes:
 - `test_handover_context.py` / `test_relay_completion.py`
   - stale parent continuation is rejected;
   - handoff requires plan, publish and successor acceptance;
-  - recovery remains distinct.
+  - recovery remains distinct;
+  - five-minute inactivity takeover is fenced by current sensitive worktree evidence;
+  - exact terminal-session evidence can permit immediate recovery without weakening custody epochs;
+  - governed current-executor activity renews liveness without heartbeat ceremony.
 - `test_relay_can.py`
   - scope, drift, action authority and Owner delivery separation.
 - `test_transactionlib.py`
