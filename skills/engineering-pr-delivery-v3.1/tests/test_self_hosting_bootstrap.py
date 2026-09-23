@@ -161,7 +161,7 @@ class SelfHostingBootstrapTests(unittest.TestCase):
                 selected_programme_ref=ISSUE_REF,
             )
             self.assertEqual("COMMITTED", recovered["status"])
-            self.assertEqual("TX.438.1", recovered["id"])
+            self.assertEqual("TX.438.2", recovered["id"])
 
             state = load_yaml(clone / "relay/STATE.yaml")
             self.assertEqual(2, state["execution"]["custody_epoch"])
