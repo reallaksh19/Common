@@ -10,6 +10,12 @@ from typing import Any
 from handover_projection import render as render_handover
 from intelligence_projection import build_improvement, build_task
 from lease_admission import build_native_lease
+from lease_liveness import (
+    DEFAULT_RECOVERY_AFTER_SECONDS,
+    active_lease_renewal,
+    recovery_eligibility,
+    renew_copy,
+)
 from material_basis import inspect as inspect_material_basis
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from local_execution_projection import build as build_local_execution
@@ -45,21 +51,20 @@ def _require_expected_custody_epoch(state: dict[str, Any], expected: int | None)
         raise TransactionError(f"STALE_CUSTODY_EPOCH: expected {expected}, current {current}")
 
 
-def _recovery_eligible(lease: dict[str, Any], observed_at: str | None = None) -> tuple[bool, str]:
-    custody = lease.get("custody") or {}
-    if not custody:
-        return True, "LEGACY_EXPLICIT_RECOVERY"
-    if custody.get("recovery_policy") != "TAKEOVER_AFTER_EXPIRY":
-        return False, "RECOVERY_POLICY_MANUAL_ONLY"
-    renewed = str(custody.get("renewed_at") or "")
-    seconds = int(custody.get("recovery_after_seconds") or 0)
-    if not renewed or seconds < 60:
-        return False, "RECOVERY_METADATA_INVALID"
-    observed = _parse_timestamp(observed_at) if observed_at else datetime.now(timezone.utc)
-    expires = _parse_timestamp(renewed).timestamp() + seconds
-    if observed.timestamp() < expires:
-        return False, "PREDECESSOR_LEASE_NOT_EXPIRED"
-    return True, "LEASE_EXPIRED"
+def _add_automatic_liveness(
+    root: Path,
+    state: dict[str, Any],
+    actor: str,
+    replacements: dict[str, bytes],
+    *,
+    base_ref: str | None = None,
+) -> None:
+    renewal = active_lease_renewal(root, state, actor, base_ref=base_ref)
+    if renewal is None:
+        return
+    path, lease = renewal
+    if path not in replacements:
+        replacements[path] = yaml_bytes(lease)
 
 
 def _authority(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -399,6 +404,11 @@ def admit_task(
                 disposition,
                 *rplan["basis"],
                 canonical_digest(programme_reconciliation),
+                *(
+                    list(recovery_assessment.get("basis") or [])
+                    if continuation == "RECOVERY"
+                    else []
+                ),
             ],
             {
                 "roadmap_revision": rplan["new_revision"],
@@ -449,8 +459,9 @@ def activate_lease(
     recovery_takeover: bool = False,
     expected_custody_epoch: int | None = None,
     recovery_observed_at: str | None = None,
-    recovery_after_seconds: int = 3600,
+    recovery_after_seconds: int = DEFAULT_RECOVERY_AFTER_SECONDS,
     recovery_policy: str = "TAKEOVER_AFTER_EXPIRY",
+    recovery_observation: dict[str, Any] | None = None,
     programme_issue_observations: list[dict[str, Any]] | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
@@ -489,10 +500,19 @@ def activate_lease(
                     "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
                     "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
                 ) from exc
-            eligible, recovery_basis = _recovery_eligible(old_lease or {}, recovery_observed_at)
-            if not eligible:
-                raise TransactionError(f"RECOVERY_NOT_ELIGIBLE: {recovery_basis}") from exc
             current_ep = _current_ep(root, state)
+            recovery_assessment = recovery_eligibility(
+                root,
+                old_lease or {},
+                ep=current_ep,
+                base_ref=base_ref,
+                observed_at=recovery_observed_at,
+                terminal_observation=recovery_observation,
+            )
+            if not recovery_assessment["eligible"]:
+                raise TransactionError(
+                    f"RECOVERY_NOT_ELIGIBLE: {recovery_assessment['reason']}"
+                ) from exc
             programme_assessment = _require_programme_boundary(
                 (current_ep or {}).get("parent_issue"),
                 programme_issue_observations,
@@ -520,6 +540,7 @@ def activate_lease(
         custody_epoch=new_epoch,
         recovery_after_seconds=recovery_after_seconds,
         recovery_policy=recovery_policy,
+        base_ref=base_ref,
     )
 
     replacements: dict[str, bytes] = {}
@@ -615,6 +636,8 @@ def activate_lease(
                 "programme_parent_count": len(programme_reconciliation.get("parents") or []),
                 "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
                 "next_programme_frontier": programme_assessment.get("next_frontier"),
+                "recovery_reason": recovery_assessment.get("reason"),
+                "terminal_observation_digest": recovery_assessment.get("terminal_observation_digest"),
             },
         ))
     events.append(_event(
@@ -669,12 +692,32 @@ def renew_lease(
     custody = lease.get("custody") or {}
     if int(custody.get("epoch") or -1) != int(expected_custody_epoch):
         raise TransactionError("lease custody epoch does not match STATE")
-    next_renewed_at = renewed_at or _now()
-    previous_renewed_at = str(custody.get("renewed_at") or "")
-    if previous_renewed_at and _parse_timestamp(next_renewed_at) < _parse_timestamp(previous_renewed_at):
-        raise TransactionError("LEASE_RENEWAL_TIME_REGRESSION")
-    renewed = copy.deepcopy(lease)
-    renewed["custody"]["renewed_at"] = next_renewed_at
+    if str(((lease.get("executor") or {}).get("id") or "")) != str(actor):
+        raise TransactionError("only the current lease executor may renew custody liveness")
+    ep = _current_ep(root, state)
+    try:
+        activity_basis = (
+            inspect_material_basis(root, ep, base_ref)["material_basis"]
+            if isinstance(ep, dict)
+            else None
+        )
+        normalized_basis = (
+            {
+                "relevant_paths_digest": activity_basis.get("relevant_paths_digest"),
+                "dependency_digest": activity_basis.get("dependency_digest"),
+                "material_head": activity_basis.get("head"),
+                "base_ref": base_ref,
+            }
+            if isinstance(activity_basis, dict)
+            else None
+        )
+        renewed = renew_copy(
+            lease,
+            renewed_at=renewed_at or _now(),
+            activity_basis=normalized_basis,
+        )
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
     snapshot = build_snapshot(root, base_ref, lease_override=renewed)
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
