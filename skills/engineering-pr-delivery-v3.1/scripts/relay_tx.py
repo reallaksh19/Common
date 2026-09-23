@@ -378,8 +378,11 @@ def admit_task(
         ep_override=ep,
         current_lease_override=None,
         custody_epoch=1,
-        recovery_after_seconds=int(lease_spec.get("recovery_after_seconds") or 3600),
+        recovery_after_seconds=int(
+            lease_spec.get("recovery_after_seconds") or DEFAULT_RECOVERY_AFTER_SECONDS
+        ),
         recovery_policy=str(lease_spec.get("recovery_policy") or "TAKEOVER_AFTER_EXPIRY"),
+        base_ref=base_ref,
     )
     snapshot = build_snapshot(
         root,
@@ -404,11 +407,6 @@ def admit_task(
                 disposition,
                 *rplan["basis"],
                 canonical_digest(programme_reconciliation),
-                *(
-                    list(recovery_assessment.get("basis") or [])
-                    if continuation == "RECOVERY"
-                    else []
-                ),
             ],
             {
                 "roadmap_revision": rplan["new_revision"],
@@ -626,6 +624,7 @@ def activate_lease(
                 str(old_lease_id),
                 f"custody_epoch:{new_epoch}",
                 canonical_digest(programme_reconciliation),
+                *list(recovery_assessment.get("basis") or []),
             ],
             {
                 "predecessor_lease": old_lease_id,
