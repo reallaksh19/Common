@@ -82,9 +82,12 @@ def resolve(root: Path) -> dict:
                 authority_mode="LEGACY",
                 selected_protocol="V2_5",
                 repository_protocol="V2_5",
-                status="ACTIVE",
+                status="LEGACY_DEFAULT",
                 source="LEGACY_TREE",
-                warning="Selectorless repository has only legacy V2.5 authority; keep V2.5 live.",
+                warning=(
+                    "Selectorless repository has only legacy V2.5 authority; keep V2.5 live. "
+                    "Native authority must not be inferred without a native tree or active selector."
+                ),
             )
         return _result(
             authority_mode="LEGACY",
