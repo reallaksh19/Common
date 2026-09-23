@@ -350,6 +350,80 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertTrue({"EVT-ADMIT-001-OWNER", "EVT-ADMIT-001-EP", "EVT-ADMIT-001-LEASE"}.issubset(ids))
             self.assertEqual([], validate(root))
 
+    def test_provider_backed_admission_can_allocate_execution_identities(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            baseline = install_parent_issue(root, number=1771)
+            release_lease(
+                root,
+                tx_id="TX-RELEASE-BEFORE-CANONICAL-ADMIT",
+                event_id="EVT-RELEASE-BEFORE-CANONICAL-ADMIT",
+                actor="agent-x",
+                reason="ADMINISTRATIVE",
+            )
+
+            source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            new_ep = copy.deepcopy(source_ep)
+            new_ep.pop("id", None)
+            request = {
+                "schema_version": "relay-v3.1-task-admission",
+                "roadmap": {
+                    "disposition": "MAPPED_EXISTING_WP",
+                    "new_revision": "RM-0013",
+                    "basis": ["Owner selected the provider-backed task."],
+                    "work_package": {
+                        "id": "WP-TA-109",
+                        "title": "Current work",
+                        "weight": 50,
+                        "state": "ACTIVE",
+                        "depends_on": ["WP-TA-108"],
+                    },
+                },
+                "ep": new_ep,
+                "lease": {
+                    "executor_id": "agent-z",
+                    "method": "DETERMINISTIC",
+                },
+                "delivery": {"required": False, "primary_vehicle": None},
+            }
+            request_path = root / "canonical-task-admission.yaml"
+            dump(request_path, request)
+            live = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            result = admit_task(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="owner",
+                admission_path=request_path,
+                base_ref=base_ref,
+                programme_issue_observations=[live],
+                selected_programme_ref="example/project#1771",
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("EP.1771.1", state["execution"]["ep"])
+            self.assertEqual("LEASE.1771.1", state["execution"]["lease"])
+            self.assertTrue((root / "relay/WORK/EP.1771.1.yaml").exists())
+            self.assertTrue((root / "relay/LEASES/LEASE.1771.1.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                row["event_id"]
+                for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(["EVT.1771.1", "EVT.1771.2", "EVT.1771.3"], canonical)
+
     def test_provider_backed_admission_requires_selected_parent_to_be_live_frontier(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)

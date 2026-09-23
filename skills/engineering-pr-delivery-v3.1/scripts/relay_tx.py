@@ -277,8 +277,8 @@ def _require_fresh_handover(
 def admit_task(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     admission_path: Path,
     base_ref: str,
@@ -299,14 +299,47 @@ def admit_task(
     errors = validate_schema("task-admission", admission, "TASK_ADMISSION")
     if errors:
         raise TransactionError("; ".join(errors))
-    ep = admission.get("ep") or {}
+    ep = copy.deepcopy(admission.get("ep") or {})
+    governing_issue = issue_number_from_ep(ep)
+    if not ep.get("id"):
+        if governing_issue is None:
+            raise TransactionError(
+                "EP_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
+            )
+        ep["id"] = allocate_next_id(root, kind="EP", root=governing_issue)
     errors = validate_schema("ep", ep, "EP")
     if errors:
         raise TransactionError("; ".join(errors))
     try:
         require_identifier(str(ep.get("id")), "EP-", "ep_id")
+        if parse_canonical_id(str(ep.get("id"))) is not None and governing_issue is not None:
+            require_issue_rooted_id(
+                str(ep.get("id")),
+                kind="EP",
+                issue_number=governing_issue,
+                label="ep_id",
+            )
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
+
+    if tx_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
+            )
+        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
+    else:
+        try:
+            require_identifier(tx_id, "TX-", "transaction id")
+            if parse_canonical_id(tx_id) is not None and governing_issue is not None:
+                require_issue_rooted_id(
+                    tx_id,
+                    kind="TX",
+                    issue_number=governing_issue,
+                    label="transaction id",
+                )
+        except ValueError as exc:
+            raise TransactionError(str(exc)) from exc
 
     programme_assessment = _require_programme_boundary(
         ep.get("parent_issue"),
@@ -349,8 +382,27 @@ def admit_task(
     # real while this admission selects exactly one execution frontier.
 
     ep_path = root / "relay/WORK" / f"{ep['id']}.yaml"
-    lease_spec = admission["lease"]
-    lease_id = str(lease_spec["id"])
+    lease_spec = copy.deepcopy(admission["lease"])
+    lease_id = lease_spec.get("id")
+    if not lease_id:
+        if governing_issue is None:
+            raise TransactionError(
+                "LEASE_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
+            )
+        lease_id = allocate_next_id(root, kind="LEASE", root=governing_issue)
+        lease_spec["id"] = lease_id
+    lease_id = str(lease_id)
+    try:
+        require_identifier(lease_id, "LEASE-", "lease_id")
+        if parse_canonical_id(lease_id) is not None and governing_issue is not None:
+            require_issue_rooted_id(
+                lease_id,
+                kind="LEASE",
+                issue_number=governing_issue,
+                label="lease_id",
+            )
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
     lease_path = root / "relay/LEASES" / f"{lease_id}.yaml"
     if ep_path.exists() or lease_path.exists():
         raise TransactionError("ADMIT_TASK refuses to overwrite an existing EP or lease")
@@ -399,7 +451,30 @@ def admit_task(
     )
 
     events = _events(root)
-    ids = [event_id + "-OWNER", event_id + "-EP", event_id + "-LEASE"]
+    if event_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
+            )
+        ids = allocate_next_ids(root, kind="EVT", root=governing_issue, count=3)
+    else:
+        try:
+            require_identifier(event_id, "EVT-", "event id")
+            parsed_event = parse_canonical_id(event_id)
+            if parsed_event is not None:
+                if governing_issue is not None:
+                    require_issue_rooted_id(
+                        event_id,
+                        kind="EVT",
+                        issue_number=governing_issue,
+                        label="event id",
+                    )
+                raise TransactionError(
+                    "CANONICAL_EVENT_ID_REQUIRES_ALLOCATOR_FOR_MULTI_EVENT_TRANSITION: omit event_id"
+                )
+        except ValueError as exc:
+            raise TransactionError(str(exc)) from exc
+        ids = [event_id + "-OWNER", event_id + "-EP", event_id + "-LEASE"]
     _assert_event_ids_available(events, ids)
     events.extend([
         _event(
@@ -1869,8 +1944,14 @@ def main() -> None:
     sub.add_parser("recover")
 
     admit_task_parser = sub.add_parser("admit-task")
-    admit_task_parser.add_argument("--tx-id", required=True)
-    admit_task_parser.add_argument("--event-id", required=True)
+    admit_task_parser.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the admitted EP parent issue.",
+    )
+    admit_task_parser.add_argument(
+        "--event-id",
+        help="Explicit legacy event base ID. Omit to allocate canonical EVT.<issue>.<serial> IDs.",
+    )
     admit_task_parser.add_argument("--actor", required=True)
     admit_task_parser.add_argument("--admission", required=True)
     admit_task_parser.add_argument("--base-ref", required=True)

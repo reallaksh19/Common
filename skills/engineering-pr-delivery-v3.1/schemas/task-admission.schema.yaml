@@ -31,7 +31,7 @@ properties:
   lease:
     type: object
     additionalProperties: false
-    required: [id, executor_id, method]
+    required: [executor_id, method]
     properties:
       id: {type: string, pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
       executor_id: {type: string, minLength: 1}
