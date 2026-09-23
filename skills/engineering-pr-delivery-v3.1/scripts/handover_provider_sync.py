@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from handover_ledger_projection import render_ledger, render_parent_summary
-from relay_tx import _assert_event_ids_available, _event
+from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 
@@ -225,8 +225,8 @@ def _sync_issue(
 def sync_handover_provider(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     token: str,
     ledger_path: Path | None = None,
@@ -251,6 +251,20 @@ def sync_handover_provider(
         raise TransactionError("; ".join(errors))
 
     parent = ledger.get("parent_issue") or {}
+    governing_issue = int(parent.get("number")) if parent.get("number") is not None else None
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     handover_identity, created = _ensure_handover_issue(
         parent=parent,
         requested=ledger.get("handover_issue"),
@@ -336,8 +350,14 @@ def sync_handover_provider(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Synchronize generated V3.1 parent/Handover issue projections to GitHub and verify readback.")
     parser.add_argument("repo_root", nargs="?", default=".")
-    parser.add_argument("--tx-id", required=True)
-    parser.add_argument("--event-id", required=True)
+    parser.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the ledger parent issue.",
+    )
+    parser.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the ledger parent issue.",
+    )
     parser.add_argument("--actor", required=True)
     parser.add_argument("--token-env", default="GITHUB_TOKEN")
     parser.add_argument("--api-base", default="https://api.github.com")

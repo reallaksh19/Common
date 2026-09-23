@@ -11,14 +11,14 @@ from programme_reconciliation import assess_boundary, require_boundary_ready
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
-from relay_tx import _event, _assert_event_ids_available
+from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
 
 
 def plan_handover(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     target_path: Path,
     base_ref: str,
@@ -42,6 +42,21 @@ def plan_handover(
     # an explicit ordered parent set may switch the programme frontier.
     task_snapshot = build_task(root, base_ref, None)
     task_parent = task_snapshot.get("parent_issue") or {}
+    governing_issue = task_parent.get("number")
+    governing_issue = int(governing_issue) if governing_issue is not None else None
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     try:
         programme_assessment = require_boundary_ready(
             assess_boundary(
@@ -138,8 +153,14 @@ def main() -> None:
         description="Freeze V3 relay truth and create a verified request for the standalone current three-pass generator."
     )
     parser.add_argument("repo_root", nargs="?", default=".")
-    parser.add_argument("--tx-id", required=True)
-    parser.add_argument("--event-id", required=True)
+    parser.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current task parent issue.",
+    )
+    parser.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current task parent issue.",
+    )
     parser.add_argument("--actor", required=True)
     parser.add_argument("--target-observation", required=True)
     parser.add_argument("--base-ref", required=True)

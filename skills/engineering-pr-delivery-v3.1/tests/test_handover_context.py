@@ -287,6 +287,36 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("EVT-HANDOVER-PLAN-001", [item["event_id"] for item in events])
             self.assertEqual([], validate(root))
 
+    def test_parent_backed_handover_allocates_bookkeeping_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root)
+            observation = parent_issue_observation(
+                baseline=baseline,
+                state="OPEN",
+                disposition="NO_CHANGE",
+            )
+
+            result = plan_handover(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+                parent_issue_observation=observation,
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            planned = [row for row in events if row["type"] == "HANDOVER_PLANNED"][-1]
+            self.assertEqual("EVT.1771.1", planned["event_id"])
+
     def test_parent_backed_handover_requires_live_programme_observation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
