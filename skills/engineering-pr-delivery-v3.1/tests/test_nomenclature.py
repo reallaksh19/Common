@@ -109,7 +109,7 @@ class NomenclatureTests(unittest.TestCase):
                 label="lease id",
             ),
         )
-        with self.assertRaisesRegex(ValueError, "does not match governing GitHub issue"):
+        with self.assertRaisesRegex(ValueError, "does not match governing scope 1885"):
             require_issue_rooted_id(
                 "LEASE.1902.1",
                 kind="LEASE",
