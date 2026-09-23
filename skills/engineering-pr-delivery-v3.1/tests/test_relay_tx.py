@@ -749,7 +749,8 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             _, base_ref = prepare_git(root)
             install_parent_issue(root, number=1771)
 
-            checkpoint = load_yaml(root / "fixtures/valid/CHECKPOINT.yaml")
+            _, _, _, _, template, *_ = base_objects()
+            checkpoint = copy.deepcopy(template)
             checkpoint.pop("id", None)
             ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
             material = inspect_material_basis(root, ep, base_ref)["material_basis"]
