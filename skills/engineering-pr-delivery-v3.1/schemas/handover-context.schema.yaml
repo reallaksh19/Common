@@ -168,14 +168,150 @@ properties:
       task_snapshot:
         type: object
         additionalProperties: false
-        required: [path, digest, source_protocol, ep, work_package, next_action]
+        required: [digest, source_protocol, ep, work_package, next_action, value]
         properties:
-          path: {type: string, minLength: 1}
-          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}      parent_issue:
+        type: object
+        additionalProperties: false
+        required: [repository, number, disposition, relationships]
+        properties:
+          repository: {type: [string, 'null']}
+          number: {type: [integer, 'null'], minimum: 1}
+          disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+          relationships: {type: array}
+      improvement_view:
+        type: object
+        additionalProperties: false
+        required: [digest, source_protocol, checkpoint, capability_change, evidence_count, value]
+        properties:
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}  generator_contract:
+    type: object
+    additionalProperties: false
+    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
+    properties:
+      canonical_launcher: {const: skills/three-pass-prompt-generator/SKILL.md}
+      canonical_schema: {const: skills/three-pass-prompt-generator/schema.md}
+      canonical_validator: {const: skills/three-pass-prompt-generator/validate.py}
+      protocol_revision_at_freeze: {type: string, pattern: '^TPG-'}
+      generator_mode: {const: THREE_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 5
+        maxItems: 5
+        prefixItems:
+          - {const: PROMPT_0_5}
+          - {const: PROMPT_1}
+          - {const: PROMPT_2}
+          - {const: PROMPT_2_5}
+          - {const: PROMPT_3}
+        items: false
+      complex_mode: {type: boolean}
+      prompt1_q1_q5_required: {type: boolean}
+additionalProperties: false
+}
           source_protocol: {enum: [V2_5, V3_1]}
           ep: {type: [string, 'null']}
           work_package: {type: [string, 'null']}
           next_action: {type: [string, 'null']}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+      parent_issue:
+        type: object
+        additionalProperties: false
+        required: [repository, number, disposition, relationships]
+        properties:
+          repository: {type: [string, 'null']}
+          number: {type: [integer, 'null'], minimum: 1}
+          disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+          relationships: {type: array}
+      improvement_view:
+        type: object
+        additionalProperties: false
+        required: [path, digest, source_protocol, checkpoint, capability_change, evidence_count]
+        properties:
+          path: {type: string, minLength: 1}
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          source_protocol: {enum: [V2_5, V3_1]}
+          checkpoint: {type: [string, 'null']}
+          capability_change: {type: boolean}
+          evidence_count: {type: integer, minimum: 0}
+  generator_contract:
+    type: object
+    additionalProperties: false
+    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
+    properties:
+      canonical_launcher: {const: skills/three-pass-prompt-generator/SKILL.md}
+      canonical_schema: {const: skills/three-pass-prompt-generator/schema.md}
+      canonical_validator: {const: skills/three-pass-prompt-generator/validate.py}
+      protocol_revision_at_freeze: {type: string, pattern: '^TPG-'}
+      generator_mode: {const: THREE_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 5
+        maxItems: 5
+        prefixItems:
+          - {const: PROMPT_0_5}
+          - {const: PROMPT_1}
+          - {const: PROMPT_2}
+          - {const: PROMPT_2_5}
+          - {const: PROMPT_3}
+        items: false
+      complex_mode: {type: boolean}
+      prompt1_q1_q5_required: {type: boolean}
+additionalProperties: false
+}
+          source_protocol: {enum: [V2_5, V3_1]}
+          checkpoint: {type: [string, 'null']}
+          capability_change: {type: boolean}
+          evidence_count: {type: integer, minimum: 0}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+  generator_contract:
+    type: object
+    additionalProperties: false
+    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
+    properties:
+      canonical_launcher: {const: skills/three-pass-prompt-generator/SKILL.md}
+      canonical_schema: {const: skills/three-pass-prompt-generator/schema.md}
+      canonical_validator: {const: skills/three-pass-prompt-generator/validate.py}
+      protocol_revision_at_freeze: {type: string, pattern: '^TPG-'}
+      generator_mode: {const: THREE_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 5
+        maxItems: 5
+        prefixItems:
+          - {const: PROMPT_0_5}
+          - {const: PROMPT_1}
+          - {const: PROMPT_2}
+          - {const: PROMPT_2_5}
+          - {const: PROMPT_3}
+        items: false
+      complex_mode: {type: boolean}
+      prompt1_q1_q5_required: {type: boolean}
+additionalProperties: false
+}
+          source_protocol: {enum: [V2_5, V3_1]}
+          ep: {type: [string, 'null']}
+          work_package: {type: [string, 'null']}
+          next_action: {type: [string, 'null']}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
       parent_issue:
         type: object
         additionalProperties: false
