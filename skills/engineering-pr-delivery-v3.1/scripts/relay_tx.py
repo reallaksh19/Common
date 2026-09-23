@@ -1284,22 +1284,27 @@ def publish_handover(
     )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
 
-    # Publication must bind to the exact committed HANDOVER_PLANNED context. It is
-    # not valid to publish a freshly rebuilt but unplanned view.
-    context_digest = _require_fresh_handover(
-        root,
-        state,
-        base_ref=base_ref,
-        require_published=False,
-    )
-    context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-    learning = context.get("accumulated_learning") or {}
-    task_meta = learning.get("task_snapshot") or {}
-    improvement_meta = learning.get("improvement_view") or {}
-    task_snapshot = task_meta.get("value")
-    improvement_view = improvement_meta.get("value")
-    if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
-        raise TransactionError("HANDOVER_STALE: planned read models are missing from HANDOVER_CONTEXT")
+    # Recorder-first V3.1 prefers a planned/frozen handover when available, but
+    # never blocks publication because the plan is missing or stale.
+    try:
+        context_digest = _require_fresh_handover(
+            root,
+            state,
+            base_ref=base_ref,
+            require_published=False,
+        )
+        context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+        learning = context.get("accumulated_learning") or {}
+        task_meta = learning.get("task_snapshot") or {}
+        improvement_meta = learning.get("improvement_view") or {}
+        task_snapshot = task_meta.get("value")
+        improvement_view = improvement_meta.get("value")
+        if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
+            raise TransactionError("planned handover read models unavailable")
+    except TransactionError as exc:
+        context_digest = "RECORDER_ADVISORY:NO_FRESH_PLANNED_HANDOVER"
+        task_snapshot = build_task(root, base_ref)
+        improvement_view = build_improvement(root)
 
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
