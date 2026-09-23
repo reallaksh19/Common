@@ -170,6 +170,120 @@ class ProgrammeReconciliationTests(unittest.TestCase):
         self.assertEqual("PROGRAMME_CURRENTNESS_REQUIRED", result["status"])
         self.assertIn("PARENT_DISPOSITION_REQUIRED", result["reason_codes"])
 
+    def test_wrc_style_owner_selection_displaces_unfinished_stale_current_programme(self):
+        current_parent = {"repository": "example/project", "number": 1771}
+        observations = [
+            observation(1771, acceptance_state="PENDING"),
+            observation(1775, acceptance_state="PENDING"),
+        ]
+
+        result = require_boundary_ready(
+            assess_boundary(
+                current_parent,
+                observations,
+                boundary="NEXT_WORK",
+                selected_frontier_ref="example/project#1775",
+            )
+        )
+
+        self.assertEqual("STILL_REAL", result["selected_ownership"])
+        self.assertEqual("example/project#1775", result["selected_programme_frontier"])
+        self.assertEqual("example/project#1775", result["executable_frontier"])
+        self.assertEqual("SWITCH_FRONTIER", result["continuation"])
+        self.assertIn(
+            "example/project#1771",
+            result["reconciliation"]["alternate_live_frontiers"],
+        )
+
+    def test_pdfhub_style_blocked_selected_frontier_does_not_laterally_jump(self):
+        current_parent = {"repository": "example/project", "number": 288}
+        observations = [
+            observation(284, acceptance_state="PENDING"),
+            observation(286, acceptance_state="DEFERRED"),
+            observation(288, acceptance_state="BLOCKED"),
+        ]
+
+        result = require_boundary_ready(
+            assess_boundary(
+                current_parent,
+                observations,
+                boundary="NEXT_WORK",
+                selected_frontier_ref="example/project#288",
+            )
+        )
+
+        self.assertEqual("READY", result["status"])
+        self.assertEqual("BLOCKED", result["selected_programme_ownership"])
+        self.assertEqual("BLOCKED_SELECTED_FRONTIER", result["continuation"])
+        self.assertEqual("example/project#288", result["next_frontier"])
+        self.assertIsNone(result["executable_frontier"])
+        self.assertIn(
+            "example/project#284",
+            result["reconciliation"]["alternate_live_frontiers"],
+        )
+
+    def test_blocked_current_frontier_is_implicitly_sticky_without_owner_reselection(self):
+        current_parent = {"repository": "example/project", "number": 288}
+        observations = [
+            observation(284, acceptance_state="PENDING"),
+            observation(288, acceptance_state="BLOCKED"),
+        ]
+
+        result = require_boundary_ready(
+            assess_boundary(
+                current_parent,
+                observations,
+                boundary="NEXT_WORK",
+            )
+        )
+
+        self.assertEqual("example/project#288", result["selected_programme_frontier"])
+        self.assertEqual("BLOCKED_SELECTED_FRONTIER", result["continuation"])
+        self.assertIsNone(result["executable_frontier"])
+
+    def test_ambiguous_idle_admission_requires_explicit_programme_selection(self):
+        proposed_parent = {"repository": "example/project", "number": 1775}
+        observations = [
+            observation(1771, acceptance_state="PENDING"),
+            observation(1775, acceptance_state="PENDING"),
+        ]
+
+        result = assess_boundary(
+            proposed_parent,
+            observations,
+            boundary="ADMIT_TASK",
+        )
+        self.assertEqual("PROGRAMME_SELECTION_REQUIRED", result["status"])
+        with self.assertRaisesRegex(RuntimeError, "PROGRAMME_SELECTION_REQUIRED"):
+            require_boundary_ready(result)
+
+        selected = require_boundary_ready(
+            assess_boundary(
+                proposed_parent,
+                observations,
+                boundary="ADMIT_TASK",
+                selected_frontier_ref="example/project#1775",
+            )
+        )
+        self.assertEqual("example/project#1775", selected["executable_frontier"])
+        self.assertEqual("CONTINUE_CURRENT", selected["continuation"])
+
+    def test_recovery_cannot_resurrect_old_programme_after_owner_selection_moves(self):
+        old_parent = {"repository": "example/project", "number": 1771}
+        observations = [
+            observation(1771, acceptance_state="PENDING"),
+            observation(1775, acceptance_state="PENDING"),
+        ]
+
+        result = assess_boundary(
+            old_parent,
+            observations,
+            boundary="RECOVERY_TAKEOVER",
+            selected_frontier_ref="example/project#1775",
+        )
+        self.assertEqual("PROGRAMME_FRONTIER_MISMATCH", result["status"])
+        self.assertEqual("example/project#1775", result["executable_frontier"])
+
     def test_blocked_parent_is_not_promoted_to_programme_frontier(self):
         result = build([
             observation(200, acceptance_state="BLOCKED"),
