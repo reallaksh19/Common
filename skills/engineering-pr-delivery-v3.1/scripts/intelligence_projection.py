@@ -503,12 +503,14 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
 
 
 def _use_v3_source(root: Path) -> bool:
-    selection = resolve_protocol(root)
-    if selection.get("selected_protocol") == "V3_1" and selection.get("status") == "ACTIVE":
+    resolved = resolve_protocol(root)
+    if resolved.get("status") == "INVALID":
+        raise ProjectionError(resolved.get("warning") or "Relay protocol authority is ambiguous")
+    if resolved.get("authority_mode") == "NATIVE" and resolved.get("status") == "ACTIVE":
         return True
-    if (root / V25_STATE).exists():
+    if resolved.get("authority_mode") == "LEGACY":
         return False
-    return (root / "relay/STATE.yaml").exists()
+    raise ProjectionError("Relay authority mode is not deterministically resolved")
 
 
 def build_task(root: Path, base_ref: str | None = None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
