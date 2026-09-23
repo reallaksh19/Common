@@ -4,6 +4,8 @@ import re
 import unittest
 from pathlib import Path
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -22,6 +24,13 @@ WORKFLOWS = {
 
 
 class RequiredCheckTerminalityTests(unittest.TestCase):
+    def test_relay_workflows_remain_valid_yaml(self):
+        for filename in WORKFLOWS:
+            with self.subTest(workflow=filename):
+                text = (ROOT / ".github/workflows" / filename).read_text(encoding="utf-8")
+                parsed = yaml.safe_load(text)
+                self.assertIsInstance(parsed, dict)
+
     def test_relay_required_checks_always_instantiate_on_pull_requests(self):
         for filename in WORKFLOWS:
             with self.subTest(workflow=filename):
