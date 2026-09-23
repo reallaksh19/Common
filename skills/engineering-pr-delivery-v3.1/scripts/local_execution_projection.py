@@ -93,6 +93,7 @@ def build(
     mode: str = "VALIDATE_ONLY",
     commands: list[str] | None = None,
     return_sub_issue: str | None = None,
+    request_id: str | None = None,
 ) -> dict[str, Any]:
     if mode not in {"VALIDATE_ONLY", "BOUNDED_EXECUTION"}:
         raise ValueError(f"unsupported local execution mode: {mode}")
@@ -120,7 +121,7 @@ def build(
         or ((ep or {}).get("next") or {}).get("first_action")
     )
     material_head = str(material.get("head") or "")
-    request_id = f"LOCAL-{_safe_token(ep_id or (checkpoint or {}).get('id'))}-{_safe_token(material_head[:12])}"
+    request_id = request_id or f"LOCAL-{_safe_token(ep_id or (checkpoint or {}).get('id'))}-{_safe_token(material_head[:12])}"
 
     prohibited = [
         "Do not commit or push.",
