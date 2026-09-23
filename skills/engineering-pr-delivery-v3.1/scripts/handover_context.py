@@ -120,6 +120,7 @@ def build_context(
     target: dict[str, Any],
     complex_mode: bool,
     parent_issue_observation: dict[str, Any] | None = None,
+    programme_reconciliation: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     revision = _standalone_contract(root)
@@ -151,6 +152,20 @@ def build_context(
         or improvement.get("capability_strengthened")
     )
     evidence_count = len(improvement.get("evidence_added") or [])
+    reconciliation = programme_reconciliation or {
+        "authority": "DERIVED_PROGRAMME_RECONCILIATION",
+        "status": "NOT_REQUIRED",
+        "current_parent": None,
+        "parents": [],
+        "ordered_roadmap": [],
+        "programme_frontier": [],
+        "execution_blocked": [],
+        "acceptance_debt": [],
+        "delivery_governance_debt": [],
+        "deferred_or_future": [],
+        "graph": [],
+        "reason_codes": [],
+    }
 
     context = {
         "schema_version": "relay-v3.1-handover-context",
@@ -175,6 +190,7 @@ def build_context(
                 "current_goal": (snapshot.get("owner") or {}).get("current_goal"),
                 "roadmap_revision": (snapshot.get("generated_from") or {}).get("roadmap_revision"),
                 "roadmap_title": roadmap.get("title"),
+                "reconciliation": reconciliation,
             },
             "local_responsibility": {
                 "work_package": context_wp_id,
@@ -292,7 +308,7 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "authorized_actions": "This handover package grants no new action authority. Prompt 3 must revalidate live relay.can(action) and explicit Owner authority before acting.",
             "intent_boundary": "Use blind_context for Prompts 0.5/1; quarantine reality_context until Prompt 2; treat accumulated_learning as accepted/history context rather than present action authority. Do not invent a parallel roadmap, issue model, checkpoint, or status system.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, validates the artifact, and leaves a recipient-ready continuation when another actor must act.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 should reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Treat blind_context.programme.reconciliation as the ordered parent-set programme basis: distinguish programme frontier, execution blockers, acceptance debt, delivery/governance debt, and deferred/future work before selecting any implementation. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 must not continue the old EP mechanically when programme reconciliation changes ownership; reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
         },
     }
     errors = validate_schema("three-pass-request", request, "THREE_PASS_REQUEST")
