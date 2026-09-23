@@ -24,7 +24,7 @@ A snapshot disagreement is a conformance failure. The snapshot never repairs, ov
 
 A novice executor should quickly determine:
 - the Owner outcome and current goal;
-- current roadmap revision and accepted progress;
+- current roadmap revision, programme progress, and accepted evidence coverage;
 - active WP / EP / lease / executor;
 - allowed, protected and prohibited scope;
 - exact material basis and coordination head;
@@ -36,14 +36,20 @@ A novice executor should quickly determine:
 
 ## Progress
 
-Accepted progress is derived from:
+The snapshot deliberately separates programme status from native evidence coverage.
+
+**Programme progress** is derived from authoritative ROADMAP work-package states and weights. A work package marked `COMPLETE` by the governed roadmap remains programme-complete even when historical or migrated native checkpoint artifacts were not replayed into the current protocol tree.
+
+**Accepted evidence coverage** is derived from:
 - current roadmap weights;
 - checkpoints whose acceptance is PASS and quality is CLEAR;
-- the EP referenced by each accepted checkpoint.
+- the EP/work package referenced by each accepted checkpoint.
 
-Starting implementation, temporarily green tests, opening a PR, refreshing projection, or generating a handover does not earn accepted progress.
+Starting implementation, temporarily green tests, opening a PR, refreshing projection, or generating a handover earns neither programme completion nor accepted evidence coverage by itself.
 
-If a new roadmap revision adds legitimate scope while accepted checkpoints remain unchanged, displayed progress may decrease because the denominator changed. That is expected and does not imply accepted engineering work was lost.
+The two percentages may legitimately differ. That difference is evidence/migration provenance information; it must not silently reopen ROADMAP-complete programme work.
+
+If a new roadmap revision adds legitimate scope while completed work or accepted checkpoints remain unchanged, either denominator-based percentage may decrease. That does not imply accepted engineering work was lost.
 
 ## Blockers
 
@@ -87,3 +93,14 @@ IMPROVEMENT_VIEW
 ```
 
 All remain `DERIVED_READ_MODEL` surfaces. #421 must derive them from governed roadmap/EP/checkpoint/progress/control/event/provider truth rather than creating competing lifecycle authority.
+
+
+## Destructive reconstruction requirement
+
+Generated state is disposable. Deleting `relay/GENERATED/**` must not invalidate durable authority or change synchronous action authorization.
+
+A zero-context successor must be able to rebuild the current project/task/improvement read models from ROADMAP, STATE, EP, LEASE, CHECKPOINT, CONTROLS, EVENTS, immutable evidence, and any live provider observation required by the boundary being crossed.
+
+Full conformance may report an expected generated projection as missing until it is regenerated. That is projection incompleteness, not an authority failure.
+
+See `architecture-preservation-contract.md`.
