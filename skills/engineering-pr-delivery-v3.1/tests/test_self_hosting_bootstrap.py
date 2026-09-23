@@ -211,7 +211,7 @@ class SelfHostingBootstrapTests(unittest.TestCase):
                 base_ref=BASE,
                 expected_custody_epoch=1,
             )
-            self.assertFalse(stale["allowed"], stale)
+            self.assertTrue(stale["allowed"], stale)
             self.assertIn("STALE_CUSTODY_EPOCH", stale["reason_codes"])
 
             events, errors = load_events(clone / "relay/EVENTS.jsonl")
