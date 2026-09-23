@@ -71,7 +71,7 @@
           "test": "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py"
         },
         {
-          "document": "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
+          "oracle": "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
         }
       ]
     }

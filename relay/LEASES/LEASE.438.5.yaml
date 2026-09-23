@@ -7,7 +7,7 @@
   },
   "basis": {
     "ep_id": "EP.438.5",
-    "ep_digest": "sha256:fcc9df32180c9f6ee47aba711c362b1c6d8e7599467ddc44b5c051c7758142c3",
+    "ep_digest": "sha256:34fad79f891afc326403a5c46aa8fdff05f77f6623e8e0918bf4a4dccb7f70af",
     "material_base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
     "predecessor_checkpoint": "CP.438.4",
     "protocol_basis": "Common#438 EP.438.5 simplification boundary; PR #439 frozen after accepted CP.438.4."
