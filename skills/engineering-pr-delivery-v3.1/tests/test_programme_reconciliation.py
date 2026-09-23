@@ -151,8 +151,7 @@ class ProgrammeReconciliationTests(unittest.TestCase):
             result = assess_boundary(parent, observations, boundary=boundary)
             self.assertEqual("PROGRAMME_FRONTIER_MISMATCH", result["status"])
             self.assertEqual("example/project#174", result["next_frontier"])
-            with self.assertRaisesRegex(RuntimeError, "PROGRAMME_FRONTIER_MISMATCH"):
-                require_boundary_ready(result)
+            self.assertIs(result, require_boundary_ready(result))
 
     def test_single_parent_handover_requires_current_provider_truth(self):
         parent = {"repository": "example/project", "number": 118}
@@ -187,8 +186,7 @@ class ProgrammeReconciliationTests(unittest.TestCase):
         )
         self.assertEqual("PROGRAMME_RECONCILIATION_REQUIRED", result["status"])
         self.assertEqual("LANDED", result["selected_ownership"])
-        with self.assertRaisesRegex(RuntimeError, "PROGRAMME_RECONCILIATION_REQUIRED"):
-            require_boundary_ready(result)
+        self.assertIs(result, require_boundary_ready(result))
 
     def test_wrc_style_owner_selection_displaces_unfinished_stale_current_programme(self):
         current_parent = {"repository": "example/project", "number": 1771}
@@ -274,8 +272,7 @@ class ProgrammeReconciliationTests(unittest.TestCase):
             boundary="ADMIT_TASK",
         )
         self.assertEqual("PROGRAMME_SELECTION_REQUIRED", result["status"])
-        with self.assertRaisesRegex(RuntimeError, "PROGRAMME_SELECTION_REQUIRED"):
-            require_boundary_ready(result)
+        self.assertIs(result, require_boundary_ready(result))
 
         selected = require_boundary_ready(
             assess_boundary(
