@@ -232,16 +232,14 @@ def _require_fresh_handover(
     learning = context.get("accumulated_learning") or {}
     task_meta = learning.get("task_snapshot") or {}
     improvement_meta = learning.get("improvement_view") or {}
-    task_path = root / str(task_meta.get("path") or "")
-    improvement_path = root / str(improvement_meta.get("path") or "")
-    if not task_path.exists() or not improvement_path.exists():
-        raise TransactionError("HANDOVER_STALE: task/improvement projection is missing")
-    task_snapshot = load_yaml(task_path)
-    improvement_view = load_yaml(improvement_path)
+    task_snapshot = task_meta.get("value")
+    improvement_view = improvement_meta.get("value")
+    if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
+        raise TransactionError("HANDOVER_STALE: frozen task/improvement read model is missing")
     if canonical_digest(task_snapshot) != task_meta.get("digest"):
-        raise TransactionError("HANDOVER_STALE: task snapshot digest changed")
+        raise TransactionError("HANDOVER_STALE: embedded task snapshot digest changed")
     if canonical_digest(improvement_view) != improvement_meta.get("digest"):
-        raise TransactionError("HANDOVER_STALE: improvement view digest changed")
+        raise TransactionError("HANDOVER_STALE: embedded improvement view digest changed")
 
     roadmap_effect = improvement_view.get("roadmap_effect") or {}
     if roadmap_effect.get("concept_change") == "UNKNOWN":
@@ -1090,8 +1088,10 @@ def publish_handover(
     learning = context.get("accumulated_learning") or {}
     task_meta = learning.get("task_snapshot") or {}
     improvement_meta = learning.get("improvement_view") or {}
-    task_snapshot = load_yaml(root / str(task_meta.get("path")))
-    improvement_view = load_yaml(root / str(improvement_meta.get("path")))
+    task_snapshot = task_meta.get("value")
+    improvement_view = improvement_meta.get("value")
+    if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
+        raise TransactionError("HANDOVER_STALE: planned read models are missing from HANDOVER_CONTEXT")
 
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
