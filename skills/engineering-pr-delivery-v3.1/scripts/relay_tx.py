@@ -1701,6 +1701,12 @@ def _add_start_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Explicitly invalidate abandoned predecessor custody when no valid handover exists.",
     )
+    parser.add_argument(
+        "--programme-issue-observation",
+        action="append",
+        default=[],
+        help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
+    )
 
 
 def main() -> None:
@@ -1716,6 +1722,12 @@ def main() -> None:
     admit_task_parser.add_argument("--actor", required=True)
     admit_task_parser.add_argument("--admission", required=True)
     admit_task_parser.add_argument("--base-ref", required=True)
+    admit_task_parser.add_argument(
+        "--programme-issue-observation",
+        action="append",
+        default=[],
+        help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
+    )
 
     admit = sub.add_parser("admit")
     admit.add_argument("--lease-id", required=True)
@@ -1875,6 +1887,9 @@ def main() -> None:
             actor=args.actor,
             admission_path=Path(args.admission),
             base_ref=args.base_ref,
+            programme_issue_observations=[
+                load_yaml(Path(path)) for path in args.programme_issue_observation
+            ],
         )
         print(f"{result['id']}: {result['status']}")
         return
@@ -1924,6 +1939,9 @@ def main() -> None:
             recovery_observed_at=args.recovery_observed_at,
             recovery_after_seconds=args.recovery_after_seconds,
             recovery_policy=args.recovery_policy,
+            programme_issue_observations=[
+                load_yaml(Path(path)) for path in args.programme_issue_observation
+            ],
         )
     elif args.command == "renew-lease":
         result = renew_lease(
