@@ -1,0 +1,83 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.3",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Make the live self-hosting authority test checkpoint-serial agnostic so accepted checkpoint progression does not regress closure validation."
+  },
+  "basis": {
+    "predecessor_checkpoint": "CP.438.2",
+    "material_base": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+    "protocol_basis": "Common#438 / PR#437; CP.438.2 accepted EP.438.2; final closure check exposed a stale hard-coded bootstrap checkpoint assertion.",
+    "semantic_dependencies": [
+      {
+        "path": ".github/workflows/engineering-pr-delivery-v3.1.yml",
+        "reason": "Corrective closure must pass the same required V3.1 validation boundary."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+    ],
+    "read": [],
+    "protect": [],
+    "prohibit": [
+      "Do not mutate CP.438.1 or CP.438.2.",
+      "Do not reopen EP.438.2 acceptance.",
+      "Do not weaken live authority validation; only remove the stale fixed-checkpoint assumption."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.8",
+      "statement": "Live self-hosting validation accepts monotonic canonical checkpoint progression while preserving CP.438.1 as immutable historical evidence.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py::test_live_common_authority_is_native_and_valid"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T10:38:00Z",
+      "body_digest": "sha256:c4421f2edb1529e325d6365084697eff5b4ed00f8bb0637bda5a9bdf06b1cf93",
+      "acceptance_items": [
+        {
+          "id": "SERIAL-1",
+          "statement": "Issue-rooted serialization is implemented as an identity protocol, not only a formatter."
+        },
+        {
+          "id": "GATES-1",
+          "statement": "Duplicated/wrong-boundary/derivable gates found during dogfooding are simplified or recorded with concrete follow-up."
+        },
+        {
+          "id": "SAFETY-1",
+          "statement": "Simplification preserves programme selection, custody, scope/drift, acceptance, and Owner-authority decisions."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Replace the hard-coded CP.438.1 current-checkpoint assertion with canonical issue-rooted checkpoint validation; retain an explicit assertion that CP.438.1 still exists.",
+    "stop_conditions": [
+      "Any change outside the single self-hosting test is required.",
+      "Authority validation reveals a different defect.",
+      "Owner/programme selection moves away from WP.438."
+    ]
+  }
+}

@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.2",
-    "state_digest": "sha256:746151cea288c2fc52de9b893127775b232616e9c4dd97f8c9b4ca503310e8d7",
+    "state_digest": "sha256:f4c99527c43e7a12f35a5bbd06e9d09cc9708104ae03a838420c09bc68ae949d",
     "material_basis": {
       "head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
       "tree_digest": "sha256:009cfae58361dd6b3aae4d10485dbd59be59917da0795a8acae62d60ee64e751",
       "relevant_paths_digest": "sha256:99fc7ef679e77f9e36fd970874f0c444a33097d5327dc78cd2813791b7c1a051",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "2e2375f53f9a641cd1561801b1a818bb6bd0ed39"
+    "coordination_head": "3236e4331bc717daef1a6f6b820edd12ccbe32fc"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -28,17 +28,23 @@
     ]
   },
   "execution": {
-    "lifecycle": "IDLE",
-    "work_package": null,
-    "ep": null,
-    "lease": null,
-    "executor": null,
+    "lifecycle": "ACTIVE",
+    "work_package": "WP.438",
+    "ep": "EP.438.3",
+    "lease": "LEASE.438.3",
+    "executor": "chatgpt-v3.1-closure-fix",
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [],
+    "allowed_writes": [
+      "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+    ],
     "protected": [],
-    "prohibited": []
+    "prohibited": [
+      "Do not mutate CP.438.1 or CP.438.2.",
+      "Do not reopen EP.438.2 acceptance.",
+      "Do not weaken live authority validation; only remove the stale fixed-checkpoint assumption."
+    ]
   },
   "material": {
     "base": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
@@ -67,16 +73,21 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": null,
+    "immediate_material_action": "Replace the hard-coded CP.438.1 current-checkpoint assertion with canonical issue-rooted checkpoint validation; retain an explicit assertion that CP.438.1 still exists.",
     "delivery_action": "Perform the explicitly authorized delivery transition.",
-    "stop_conditions": []
+    "stop_conditions": [
+      "Any change outside the single self-hosting test is required.",
+      "Authority validation reveals a different defect.",
+      "Owner/programme selection moves away from WP.438."
+    ]
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/CONTROLS/controls.yaml",
+      "relay/WORK/EP.438.3.yaml",
+      "relay/LEASES/LEASE.438.3.yaml",
       "relay/CHECKPOINTS/CP.438.2.yaml",
       "relay/EVENTS.jsonl"
     ]

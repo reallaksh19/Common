@@ -1,0 +1,49 @@
+{
+  "schema_version": "relay-v3.1-lease",
+  "id": "LEASE.438.3",
+  "route": "SERIAL:EP.438.3",
+  "executor": {
+    "id": "chatgpt-v3.1-closure-fix"
+  },
+  "basis": {
+    "ep_id": "EP.438.3",
+    "ep_digest": "sha256:7abb4233082d311de5df1a2a605da2df8ced956c80351a6e74f24ed9fb86ae89",
+    "material_base": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+    "predecessor_checkpoint": "CP.438.2",
+    "protocol_basis": "Common#438 / PR#437; CP.438.2 accepted EP.438.2; final closure check exposed a stale hard-coded bootstrap checkpoint assertion."
+  },
+  "authority": {
+    "actions": [
+      "READ",
+      "ANALYZE",
+      "MATERIAL_WRITE",
+      "TEST",
+      "CHECKPOINT",
+      "HANDOVER",
+      "DRAFT_PR_UPDATE"
+    ]
+  },
+  "admission": {
+    "method": "DETERMINISTIC",
+    "result": "PASS",
+    "repository_only": true,
+    "qualification": {
+      "required": false,
+      "qset": null,
+      "evaluator": null,
+      "result": null,
+      "evidence": []
+    }
+  },
+  "custody": {
+    "epoch": 1,
+    "granted_at": "2026-09-23T11:38:30Z",
+    "renewed_at": "2026-09-23T11:38:30Z",
+    "recovery_after_seconds": 3600,
+    "recovery_policy": "TAKEOVER_AFTER_EXPIRY"
+  },
+  "state": "ACTIVE",
+  "invalidation": {
+    "reasons": []
+  }
+}
