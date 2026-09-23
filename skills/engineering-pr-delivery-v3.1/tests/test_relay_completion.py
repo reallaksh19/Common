@@ -321,6 +321,40 @@ class RelayCompletionTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
 
+    def test_handover_publish_rejects_tampered_inline_frozen_read_model(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            accept_current_checkpoint_and_reconcile(root, base_ref)
+            plan_handover(
+                root,
+                tx_id="TX-HANDOVER-INLINE-TAMPER-PLAN",
+                event_id="EVT-HANDOVER-INLINE-TAMPER-PLAN",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+
+            context_path = root / "relay/GENERATED/HANDOVER_CONTEXT.yaml"
+            context = load_yaml(context_path)
+            task_meta = context["accumulated_learning"]["task_snapshot"]
+            task_meta["value"]["next"]["immediate_action"] = "tampered continuation"
+            dump(context_path, context)
+
+            with self.assertRaisesRegex(
+                TransactionError,
+                "embedded task snapshot digest changed",
+            ):
+                publish_handover(
+                    root,
+                    tx_id="TX-HANDOVER-INLINE-TAMPER-PUBLISH",
+                    event_id="EVT-HANDOVER-INLINE-TAMPER-PUBLISH",
+                    actor="agent-x",
+                    base_ref=base_ref,
+                )
+
     def test_handover_requires_plan_then_publish_before_successor_acceptance(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
