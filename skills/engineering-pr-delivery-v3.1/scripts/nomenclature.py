@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any
 
 
@@ -177,6 +178,49 @@ def issue_number_from_ep(ep: dict[str, Any] | None) -> int | None:
     parent = (ep or {}).get("parent_issue") or {}
     number = parent.get("number")
     return int(number) if number is not None else None
+
+
+def canonical_ids_in_repository(repo_root: Path) -> list[str]:
+    """Collect canonical IDs already consumed by durable Relay state/history."""
+    relay = repo_root / "relay"
+    if not relay.exists():
+        return []
+    found: set[str] = set()
+    token = re.compile(
+        r"(?<![A-Za-z0-9_.-])(?:"
+        + "|".join(sorted(DURABLE_TYPES, key=len, reverse=True))
+        + r")\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?"
+    )
+    for path in relay.rglob("*"):
+        if not path.is_file() or "GENERATED" in path.parts:
+            continue
+        if path.suffix.lower() not in {".yaml", ".yml", ".jsonl"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            continue
+        for match in token.finditer(text):
+            value = match.group(0)
+            if parse_canonical_id(value) is not None:
+                found.add(value)
+        if parse_canonical_id(path.stem) is not None:
+            found.add(path.stem)
+    return sorted(found)
+
+
+def allocate_next_id(repo_root: Path, *, kind: str, root: int | str) -> str:
+    """Choose the next ID from durable state/history.
+
+    The caller must create the object and append its creation event in one Relay
+    transaction. Shared EVENTS.jsonl preconditions then make concurrent
+    allocation conflicts fail closed; the loser retries from fresh state.
+    """
+    kind = _normalize_kind(kind)
+    if kind in SINGLETON_TYPES:
+        return canonical_id(kind, root)
+    serial = next_serial(canonical_ids_in_repository(repo_root), kind=kind, root=root)
+    return canonical_id(kind, root, serial)
 
 
 def next_serial(

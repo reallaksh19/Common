@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -10,6 +11,7 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from nomenclature import (
+    allocate_next_id,
     canonical_id,
     next_serial,
     parse_canonical_id,
@@ -93,6 +95,24 @@ class NomenclatureTests(unittest.TestCase):
                 kind="LEASE",
                 issue_number=1885,
                 label="lease id",
+            )
+
+    def test_repository_allocator_treats_durable_history_as_consumed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            events = root / "relay/EVENTS.jsonl"
+            events.parent.mkdir(parents=True, exist_ok=True)
+            events.write_text(
+                '{"subject":"LEASE.438.1","basis":["LEASE.438.4"]}\n',
+                encoding="utf-8",
+            )
+            generated = root / "relay/GENERATED/SHOULD_NOT_COUNT.yaml"
+            generated.parent.mkdir(parents=True, exist_ok=True)
+            generated.write_text("id: LEASE.438.99\n", encoding="utf-8")
+
+            self.assertEqual(
+                "LEASE.438.5",
+                allocate_next_id(root, kind="LEASE", root=438),
             )
 
     def test_serial_allocation_is_namespace_and_root_scoped_and_never_fills_gaps(self):
