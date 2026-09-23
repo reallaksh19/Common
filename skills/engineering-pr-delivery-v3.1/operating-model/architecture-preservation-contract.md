@@ -72,6 +72,8 @@ A partially applied multi-object mutation blocks authority until recovery.
 
 Recovery may confirm a commit only when all targets match after-images, may roll back known before/after mixtures, and must refuse destructive automatic recovery when an externally changed target matches neither basis.
 
+Byte-for-byte staged/backup payload is required only while recovery is still possible. Terminal transactions may discard those bytes once a compact durable receipt retains the command, actor, target paths, before/after digests, terminal status, applied set, timestamps, and recovery basis. Removing terminal payload must not reduce the ability to detect or recover an incomplete transaction.
+
 ### P8 — Handoff and recovery remain different facts
 
 Successful handoff requires:
