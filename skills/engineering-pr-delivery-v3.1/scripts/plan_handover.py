@@ -6,6 +6,7 @@ from pathlib import Path
 
 from handover_context import build_context, build_request, render_request
 from intelligence_projection import build_improvement, build_task
+from lease_liveness import active_lease_renewal
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
@@ -105,20 +106,26 @@ def plan_handover(
         },
     ))
 
+    replacements = {
+        snapshot_path: yaml_bytes(snapshot),
+        "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
+        str(task_meta["path"]): yaml_bytes(task_snapshot),
+        str(improvement_meta["path"]): yaml_bytes(improvement_view),
+        "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
+        "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    renewal = active_lease_renewal(root, state, actor, base_ref=base_ref)
+    if renewal is not None:
+        lease_path, renewed_lease = renewal
+        replacements[lease_path] = yaml_bytes(renewed_lease)
+
     return execute(
         root,
         tx_id=tx_id,
         command="PLAN_HANDOVER",
         actor=actor,
-        replacements={
-            snapshot_path: yaml_bytes(snapshot),
-            "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
-            str(task_meta["path"]): yaml_bytes(task_snapshot),
-            str(improvement_meta["path"]): yaml_bytes(improvement_view),
-            "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
-            "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
