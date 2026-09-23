@@ -123,6 +123,64 @@ def load_manifest(path: Path) -> dict[str, Any]:
     return value
 
 
+TERMINAL_STATUSES = {"COMMITTED", "ROLLED_BACK"}
+
+
+def _compact_terminal_manifest(
+    root: Path,
+    manifest_path: Path,
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    """Retain a digest receipt; discard byte payload no longer needed for recovery."""
+
+    if manifest.get("status") not in TERMINAL_STATUSES:
+        return manifest
+
+    compact = copy.deepcopy(manifest)
+    for operation in compact.get("operations") or []:
+        operation.pop("staged_path", None)
+        operation.pop("backup_path", None)
+    compact["payload_state"] = "PRUNED"
+    compact["updated_at"] = _now()
+    _atomic_write_yaml(manifest_path, compact)
+
+    tx_dir = manifest_path.parent
+    for name in ("staged", "backups"):
+        payload_dir = tx_dir / name
+        if payload_dir.exists():
+            shutil.rmtree(payload_dir)
+    return compact
+
+
+def prune_terminal_payloads(root: Path) -> list[str]:
+    """Clean terminal payload residue left by a crash after commit marking."""
+
+    base = root / "relay/TRANSACTIONS"
+    if not base.exists():
+        return []
+
+    pruned: list[str] = []
+    for tx_dir in sorted(path for path in base.glob("TX-*") if path.is_dir()):
+        manifest_path = tx_dir / "manifest.yaml"
+        if not manifest_path.exists():
+            continue
+        try:
+            manifest = load_manifest(manifest_path)
+        except Exception:
+            continue
+        if manifest.get("status") not in TERMINAL_STATUSES:
+            continue
+        has_payload = (tx_dir / "staged").exists() or (tx_dir / "backups").exists()
+        has_payload_refs = any(
+            "staged_path" in operation or "backup_path" in operation
+            for operation in manifest.get("operations") or []
+        )
+        if has_payload or has_payload_refs or manifest.get("payload_state") != "PRUNED":
+            _compact_terminal_manifest(root, manifest_path, manifest)
+            pruned.append(str(manifest.get("id") or tx_dir.name))
+    return pruned
+
+
 def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | None, str | None]]:
     base = root / "relay/TRANSACTIONS"
     if not base.exists():
@@ -225,6 +283,7 @@ def _prepare(
         require_identifier(tx_id, "TX-", "transaction id")
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
+    prune_terminal_payloads(root)
     if incomplete_transactions(root):
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
     _validate_command_targets(command, replacements)
@@ -268,6 +327,7 @@ def _prepare(
         "updated_at": now,
         "operations": operations,
         "applied": [],
+        "payload_state": "RECOVERY_PAYLOAD",
     }
     errors = validate_schema("transaction", manifest, "TRANSACTION")
     if errors:
@@ -324,7 +384,7 @@ def execute(
     manifest["status"] = "COMMITTED"
     manifest["updated_at"] = _now()
     _atomic_write_yaml(manifest_path, manifest)
-    return manifest
+    return _compact_terminal_manifest(root, manifest_path, manifest)
 
 
 def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
@@ -351,7 +411,7 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
         manifest["applied"] = [operation["path"] for operation in manifest["operations"]]
         manifest["updated_at"] = _now()
         _atomic_write_yaml(manifest_path, manifest)
-        return manifest
+        return _compact_terminal_manifest(root, manifest_path, manifest)
 
     basis = [f"{operation['path']}={state}" for operation, state in zip(manifest["operations"], states)]
     if any(state == "OTHER" for state in states):
@@ -380,7 +440,7 @@ def recover(root: Path, manifest_path: Path) -> dict[str, Any]:
     manifest["recovery"] = {"strategy": "ROLLBACK", "basis": basis}
     manifest["updated_at"] = _now()
     _atomic_write_yaml(manifest_path, manifest)
-    return manifest
+    return _compact_terminal_manifest(root, manifest_path, manifest)
 
 
 def recover_all(root: Path) -> list[dict[str, Any]]:
