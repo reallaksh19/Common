@@ -63,7 +63,8 @@ jobs:
 
       - name: Relay scope not applicable
         if: steps.relevance.outputs.relevant != 'true'
-        run: echo "NOT_APPLICABLE: no engineering-pr-delivery-v2.5 paths changed."
+        run: |
+          echo "NOT_APPLICABLE: no engineering-pr-delivery-v2.5 paths changed."
 
       - name: Set up Python
         if: steps.relevance.outputs.relevant == 'true'
