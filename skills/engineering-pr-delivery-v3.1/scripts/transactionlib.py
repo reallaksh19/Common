@@ -141,14 +141,19 @@ def _compact_terminal_manifest(
         operation.pop("staged_path", None)
         operation.pop("backup_path", None)
     compact["payload_state"] = "PRUNED"
-    compact["updated_at"] = _now()
     _atomic_write_yaml(manifest_path, compact)
 
     tx_dir = manifest_path.parent
     for name in ("staged", "backups"):
         payload_dir = tx_dir / name
         if payload_dir.exists():
-            shutil.rmtree(payload_dir)
+            try:
+                shutil.rmtree(payload_dir)
+            except OSError:
+                # Payload cleanup is an optimisation, not transaction authority.
+                # The compact terminal receipt is already durable; a later
+                # transaction will opportunistically retry physical pruning.
+                pass
     return compact
 
 
