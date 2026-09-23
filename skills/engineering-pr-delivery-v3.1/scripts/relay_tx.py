@@ -1410,6 +1410,7 @@ def export_local_execution(
     base_ref: str,
     mode: str = "VALIDATE_ONLY",
     commands: list[str] | None = None,
+    return_sub_issue: str | None = None,
     expected_custody_epoch: int | None = None,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
@@ -1421,7 +1422,15 @@ def export_local_execution(
     checkpoint = _current_checkpoint(root, state)
     if ep is None and isinstance(checkpoint, dict) and checkpoint.get("ep"):
         ep = load_yaml(root / "relay/WORK" / f"{checkpoint['ep']}.yaml")
-    package = build_local_execution(root, snapshot, ep, checkpoint, mode=mode, commands=commands)
+    package = build_local_execution(
+        root,
+        snapshot,
+        ep,
+        checkpoint,
+        mode=mode,
+        commands=commands,
+        return_sub_issue=return_sub_issue,
+    )
     request_md = render_local_execution_request(package).encode("utf-8")
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
@@ -1438,6 +1447,7 @@ def export_local_execution(
             ],
             "request_id": (package.get("request") or {}).get("id"),
             "mode": mode,
+            "return_sub_issue": (package.get("provider_return") or {}).get("target_sub_issue"),
         },
     ))
     return execute(
@@ -1783,6 +1793,10 @@ def main() -> None:
     local.add_argument("--base-ref", required=True)
     local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
     local.add_argument("--command", action="append", default=[], help="Exact local command to run; repeat for multiple commands.")
+    local.add_argument(
+        "--return-sub-issue",
+        help="Governed provider sub-issue URL/ref the local agent must update with result/evidence before returning.",
+    )
     local.add_argument("--expected-custody-epoch", type=int)
 
     local_result = sub.add_parser("local-execution-result")
@@ -1990,6 +2004,7 @@ def main() -> None:
             base_ref=args.base_ref,
             mode=args.mode,
             commands=args.command,
+            return_sub_issue=args.return_sub_issue,
             expected_custody_epoch=args.expected_custody_epoch,
         )
     elif args.command == "local-execution-result":
