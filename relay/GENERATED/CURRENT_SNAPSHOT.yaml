@@ -71,13 +71,13 @@
   },
   "delivery": {
     "issue": 438,
-    "pr": null,
-    "lifecycle": "PENDING_STACKED_PR",
+    "pr": 439,
+    "lifecycle": "DRAFT",
     "merge_authorized": false
   },
   "next": {
     "immediate_material_action": "Make the detailed Owner status explicitly render selected frontier, selected ownership, executable frontier, alternate live obligations, blocked-selected-frontier semantics, and reselection requirement; add regression coverage.",
-    "delivery_action": "Open a narrow stacked PR for EP.438.4; do not add this scope to PR #437.",
+    "delivery_action": "Keep PR #439 narrow; merge/release authority remains separate from EP execution.",
     "stop_conditions": [
       "The fix requires changing programme_reconciliation selection semantics.",
       "A safety decision changes outside presentation/read-model output.",
