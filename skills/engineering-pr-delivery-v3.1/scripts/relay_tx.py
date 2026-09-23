@@ -18,7 +18,7 @@ from lease_liveness import (
     renew_copy,
 )
 from material_basis import inspect as inspect_material_basis
-from nomenclature import allocate_next_id, issue_number_from_ep, parse_canonical_id, require_issue_rooted_id
+from nomenclature import allocate_next_id, allocate_next_ids, issue_number_from_ep, parse_canonical_id, require_issue_rooted_id
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
@@ -450,8 +450,8 @@ def admit_task(
 def activate_lease(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     lease_id: str | None,
     executor_id: str,
     actor: str,
@@ -474,6 +474,25 @@ def activate_lease(
     _require_expected_custody_epoch(state, expected_custody_epoch)
     current_ep = _current_ep(root, state)
     governing_issue = issue_number_from_ep(current_ep)
+    if tx_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
+            )
+        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
+    else:
+        try:
+            require_identifier(tx_id, "TX-", "transaction id")
+            if parse_canonical_id(tx_id) is not None and governing_issue is not None:
+                require_issue_rooted_id(
+                    tx_id,
+                    kind="TX",
+                    issue_number=governing_issue,
+                    label="transaction id",
+                )
+        except ValueError as exc:
+            raise TransactionError(str(exc)) from exc
+
     if lease_id is None:
         if governing_issue is None:
             raise TransactionError(
@@ -593,15 +612,64 @@ def activate_lease(
     replacements[_snapshot_path(new_state)] = yaml_bytes(snapshot)
 
     events = _events(root)
-    predecessor_event_id = event_id + "-REL" if transfer else None
-    transition_event_id = (
-        event_id + "-HANDOVER"
-        if continuation == "HANDOFF"
-        else event_id + "-RECOVERY"
-        if continuation == "RECOVERY"
-        else None
+    if event_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
+            )
+        event_count = 1 + int(transfer) + int(continuation in {"HANDOFF", "RECOVERY"})
+        allocated_event_ids = iter(
+            allocate_next_ids(
+                root,
+                kind="EVT",
+                root=governing_issue,
+                count=event_count,
+            )
+        )
+        predecessor_event_id = next(allocated_event_ids) if transfer else None
+        transition_event_id = (
+            next(allocated_event_ids)
+            if continuation in {"HANDOFF", "RECOVERY"}
+            else None
+        )
+        granted_event_id = next(allocated_event_ids)
+    else:
+        try:
+            require_identifier(event_id, "EVT-", "event id")
+            parsed_event = parse_canonical_id(event_id)
+            if parsed_event is not None and governing_issue is not None:
+                require_issue_rooted_id(
+                    event_id,
+                    kind="EVT",
+                    issue_number=governing_issue,
+                    label="event id",
+                )
+            if parsed_event is not None and (
+                transfer or continuation in {"HANDOFF", "RECOVERY"}
+            ):
+                raise TransactionError(
+                    "CANONICAL_EVENT_ID_REQUIRES_ALLOCATOR_FOR_MULTI_EVENT_TRANSITION: omit event_id"
+                )
+        except ValueError as exc:
+            raise TransactionError(str(exc)) from exc
+        predecessor_event_id = event_id + "-REL" if transfer else None
+        transition_event_id = (
+            event_id + "-HANDOVER"
+            if continuation == "HANDOFF"
+            else event_id + "-RECOVERY"
+            if continuation == "RECOVERY"
+            else None
+        )
+        granted_event_id = event_id
+
+    _assert_event_ids_available(
+        events,
+        [
+            value
+            for value in [predecessor_event_id, transition_event_id, granted_event_id]
+            if value
+        ],
     )
-    _assert_event_ids_available(events, [x for x in [predecessor_event_id, transition_event_id, event_id] if x])
     if transfer:
         basis = [tx_id, f"successor-lease:{lease_id}", f"continuation:{continuation}"]
         if handover_digest:
@@ -663,7 +731,7 @@ def activate_lease(
             },
         ))
     events.append(_event(
-        event_id,
+        granted_event_id,
         "LEASE_GRANTED",
         actor,
         lease_id,
@@ -1744,8 +1812,14 @@ def close_task(
     return execute(root, tx_id=tx_id, command="CLOSE_TASK", actor=actor, replacements=replacements, fail_after=fail_after)
 
 def _add_start_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--tx-id", required=True)
-    parser.add_argument("--event-id", required=True)
+    parser.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the governing EP issue.",
+    )
+    parser.add_argument(
+        "--event-id",
+        help="Explicit legacy event base ID. Omit to allocate canonical EVT.<issue>.<serial> IDs.",
+    )
     parser.add_argument(
         "--lease-id",
         help="Explicit lease ID. Omit to allocate LEASE.<issue>.<serial> from the governing EP issue.",

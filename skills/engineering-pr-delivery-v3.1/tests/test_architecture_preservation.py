@@ -91,8 +91,8 @@ class ArchitecturePreservationTests(unittest.TestCase):
 
             started = activate_lease(
                 root,
-                tx_id="TX-PRESERVE-LIVE-START",
-                event_id="EVT-PRESERVE-LIVE-START",
+                tx_id=None,
+                event_id=None,
                 lease_id=None,
                 executor_id="agent-x",
                 actor="agent-x",
@@ -103,6 +103,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 base_ref=base_ref,
             )
             self.assertEqual("COMMITTED", started["status"])
+            self.assertEqual("TX.1771.1", started["id"])
             state = load_yaml(root / "relay/STATE.yaml")
             predecessor_id = state["execution"]["lease"]
             self.assertEqual("LEASE.1771.1", predecessor_id)
@@ -152,8 +153,8 @@ class ArchitecturePreservationTests(unittest.TestCase):
             )
             recovered = activate_lease(
                 root,
-                tx_id="TX-PRESERVE-RECOVERY",
-                event_id="EVT-PRESERVE-RECOVERY",
+                tx_id=None,
+                event_id=None,
                 lease_id=None,
                 executor_id="agent-y",
                 actor="agent-y",
@@ -169,6 +170,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 selected_programme_ref="example/project#1771",
             )
             self.assertEqual("COMMITTED", recovered["status"])
+            self.assertEqual("TX.1771.2", recovered["id"])
 
             state = load_yaml(root / "relay/STATE.yaml")
             self.assertEqual(2, state["execution"]["custody_epoch"])
@@ -202,6 +204,13 @@ class ArchitecturePreservationTests(unittest.TestCase):
             self.assertEqual([], errors)
             self.assertIn("RECOVERY_STARTED", [row["type"] for row in events])
             self.assertIn("RECOVERY_RECONSTRUCTED", [row["type"] for row in events])
+            canonical_event_ids = [
+                row["event_id"] for row in events if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(
+                ["EVT.1771.1", "EVT.1771.2", "EVT.1771.3", "EVT.1771.4", "EVT.1771.5"],
+                canonical_event_ids,
+            )
 
     def test_generated_snapshot_cannot_grant_authority_missing_from_durable_state(self):
         with tempfile.TemporaryDirectory() as td:
