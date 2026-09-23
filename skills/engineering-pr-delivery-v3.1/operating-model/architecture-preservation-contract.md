@@ -98,6 +98,8 @@ Deleting generated Relay views must not:
 
 A zero-context successor must be able to rebuild the necessary read models from durable authority plus live provider observations required at the relevant boundary.
 
+A frozen handover context may embed exact derived read-model values when later publication must use the same planned view. Embedding one frozen copy is preferable to persisting additional synchronized projection files; digest checks must still detect tampering.
+
 Full conformance may report a missing expected generated projection until it is rebuilt; that is projection incompleteness, not loss of authority.
 
 ### P11 — Optimisation cannot silently broaden permission
