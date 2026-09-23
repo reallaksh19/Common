@@ -85,6 +85,26 @@ def _events(root: Path) -> list[dict[str, Any]]:
     return events
 
 
+def _latest_continuation_event(
+    events: list[dict[str, Any]],
+    ep_id: str | None,
+    *,
+    lease_id: str | None = None,
+) -> dict[str, Any] | None:
+    if not ep_id:
+        return None
+    rows = [
+        item for item in events
+        if item.get("type") == "CONTINUATION_RECORDED"
+        and str(item.get("subject")) == str(ep_id)
+        and (
+            lease_id is None
+            or str((item.get("details") or {}).get("lease")) == str(lease_id)
+        )
+    ]
+    return rows[-1] if rows else None
+
+
 def _event(event_id: str, event_type: str, actor: str, subject: str, basis: list[str], details: dict[str, Any]) -> dict[str, Any]:
     value = {
         "schema_version": "relay-v3.1-event",
@@ -912,6 +932,154 @@ def renew_lease(
         fail_after=fail_after,
     )
 
+def record_continuation(
+    root: Path,
+    *,
+    tx_id: str | None,
+    event_id: str | None,
+    actor: str,
+    continuation_path: Path,
+    expected_custody_epoch: int,
+    base_ref: str,
+    fail_after: int | None = None,
+) -> dict[str, Any]:
+    state, _ = _authority(root)
+    _require_expected_custody_epoch(state, expected_custody_epoch)
+    execution = state.get("execution") or {}
+    ep = _current_ep(root, state)
+    if not isinstance(ep, dict):
+        raise TransactionError("CONTINUATION_REQUIRES_ACTIVE_EP")
+    ep_id = str(execution.get("ep") or "")
+    lease_id = execution.get("lease")
+    if not lease_id:
+        raise TransactionError("CONTINUATION_REQUIRES_ACTIVE_LEASE")
+    lease = load_yaml(root / "relay/LEASES" / f"{lease_id}.yaml")
+    if lease.get("state") != "ACTIVE":
+        raise TransactionError("CONTINUATION_REQUIRES_ACTIVE_LEASE")
+    executor = str(((lease.get("executor") or {}).get("id") or ""))
+    if executor != str(actor):
+        raise TransactionError("only the current lease executor may record continuation")
+
+    continuation = load_yaml(continuation_path)
+    errors = validate_schema("continuation", continuation, "CONTINUATION")
+    if errors:
+        raise TransactionError("; ".join(errors))
+
+    governing_issue = issue_number_from_ep(ep)
+    receipt_id = _issue_scoped_id(
+        root,
+        kind="CONT",
+        value=str(continuation.get("id") or ""),
+        issue_number=governing_issue,
+        label="continuation id",
+    )
+    if continuation.get("id") != receipt_id:
+        raise TransactionError("continuation id normalization mismatch")
+
+    receipt_ep = continuation.get("ep") or {}
+    if receipt_ep.get("id") != ep_id:
+        raise TransactionError("CONTINUATION_EP_MISMATCH")
+    if receipt_ep.get("digest") != canonical_digest(ep):
+        raise TransactionError("CONTINUATION_EP_DIGEST_MISMATCH")
+
+    custody = continuation.get("custody") or {}
+    if custody.get("lease") != lease_id:
+        raise TransactionError("CONTINUATION_LEASE_MISMATCH")
+    if int(custody.get("epoch") or -1) != int(expected_custody_epoch):
+        raise TransactionError("CONTINUATION_CUSTODY_EPOCH_MISMATCH")
+    if str(custody.get("executor") or "") != executor:
+        raise TransactionError("CONTINUATION_EXECUTOR_MISMATCH")
+
+    parent = ep.get("parent_issue") or {}
+    goal = continuation.get("goal") or {}
+    parent_number = parent.get("number")
+    parent_digest = ((parent.get("baseline") or {}).get("body_digest"))
+    if parent_number is not None:
+        if goal.get("issue") != parent_number:
+            raise TransactionError("CONTINUATION_ISSUE_MISMATCH")
+        if goal.get("issue_baseline_digest") != parent_digest:
+            raise TransactionError("CONTINUATION_ISSUE_BASELINE_MISMATCH")
+    elif goal.get("issue") is not None or goal.get("issue_baseline_digest") is not None:
+        raise TransactionError("CONTINUATION_ISSUE_MUST_BE_NULL_WITHOUT_PARENT")
+
+    acceptance_ids = {
+        str(item.get("id"))
+        for item in ep.get("acceptance") or []
+        if isinstance(item, dict) and item.get("id")
+    }
+    focus = [str(item) for item in goal.get("acceptance_focus") or []]
+    unknown_focus = sorted(set(focus) - acceptance_ids)
+    if unknown_focus:
+        raise TransactionError(
+            "CONTINUATION_ACCEPTANCE_FOCUS_UNKNOWN: " + ", ".join(unknown_focus)
+        )
+
+    material = continuation.get("material") or {}
+    inspected = inspect_material_basis(root, ep, base_ref)["material_basis"]
+    if material.get("head") != inspected.get("head"):
+        raise TransactionError("CONTINUATION_MATERIAL_HEAD_MISMATCH")
+    branch = str(((lease.get("scope") or {}).get("branch") or ""))
+    if branch and material.get("branch") != branch:
+        raise TransactionError("CONTINUATION_BRANCH_MISMATCH")
+
+    target = f"relay/CONTINUITY/{ep_id}/{receipt_id}.yaml"
+    if (root / target).exists():
+        raise TransactionError(f"continuation receipt already exists: {receipt_id}")
+
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+    events = _events(root)
+    _assert_event_ids_available(events, [event_id])
+    receipt_digest = canonical_digest(continuation)
+    events.append(_event(
+        event_id,
+        "CONTINUATION_RECORDED",
+        actor,
+        ep_id,
+        [
+            tx_id,
+            str(lease_id),
+            canonical_digest(ep),
+            receipt_digest,
+            f"custody_epoch:{expected_custody_epoch}",
+        ],
+        {
+            "receipt": receipt_id,
+            "path": target,
+            "digest": receipt_digest,
+            "lease": lease_id,
+            "custody_epoch": expected_custody_epoch,
+            "material_head": material.get("head"),
+            "recoverability": material.get("recoverability"),
+            "acceptance_focus": focus,
+        },
+    ))
+    replacements = {
+        target: yaml_bytes(continuation),
+        "relay/EVENTS.jsonl": jsonl_bytes(events),
+    }
+    _add_automatic_liveness(root, state, actor, replacements, base_ref=base_ref)
+    return execute(
+        root,
+        tx_id=tx_id,
+        command="RECORD_CONTINUATION",
+        actor=actor,
+        replacements=replacements,
+        fail_after=fail_after,
+    )
+
+
 def release_lease(
     root: Path,
     *,
@@ -1415,13 +1583,42 @@ def record_recovery_reconstructed(
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")
     events = _events(root)
-    started = any(
-        item.get("type") == "RECOVERY_STARTED"
+    started_event = next((
+        item for item in reversed(events)
+        if item.get("type") == "RECOVERY_STARTED"
         and str((item.get("details") or {}).get("successor_lease") or item.get("subject")) == str(lease_id)
-        for item in events
-    )
-    if not started:
+    ), None)
+    if started_event is None:
         raise TransactionError("RECOVERY_RECONSTRUCTED requires a RECOVERY_STARTED event for the current lease")
+
+    predecessor_lease = (started_event.get("details") or {}).get("predecessor_lease")
+    predecessor_continuation = _latest_continuation_event(
+        events,
+        execution.get("ep"),
+        lease_id=str(predecessor_lease) if predecessor_lease else None,
+    )
+    continuation_basis: list[str] = []
+    continuation_details: dict[str, Any] | None = None
+    if predecessor_continuation is not None:
+        details = predecessor_continuation.get("details") or {}
+        path = str(details.get("path") or "")
+        digest = str(details.get("digest") or "")
+        if not path or not digest or not (root / path).exists():
+            raise TransactionError("RECOVERY_CONTINUATION_EVIDENCE_MISSING")
+        receipt = load_yaml(root / path)
+        errors = validate_schema("continuation", receipt, "CONTINUATION")
+        if errors:
+            raise TransactionError("; ".join(errors))
+        if canonical_digest(receipt) != digest:
+            raise TransactionError("RECOVERY_CONTINUATION_DIGEST_MISMATCH")
+        continuation_basis = [path, digest]
+        continuation_details = {
+            "receipt": details.get("receipt"),
+            "path": path,
+            "digest": digest,
+            "predecessor_lease": predecessor_lease,
+        }
+
     evidence = [str(item).strip() for item in evidence if str(item).strip()]
     if not evidence:
         raise TransactionError("RECOVERY_RECONSTRUCTED requires durable reconstruction evidence")
@@ -1431,11 +1628,12 @@ def record_recovery_reconstructed(
         "RECOVERY_RECONSTRUCTED",
         actor,
         str(lease_id),
-        [tx_id, *evidence, f"custody_epoch:{expected_custody_epoch}"],
+        [tx_id, *continuation_basis, *evidence, f"custody_epoch:{expected_custody_epoch}"],
         {
             "ep": execution.get("ep"),
             "custody_epoch": expected_custody_epoch,
             "evidence_count": len(evidence),
+            "predecessor_continuation": continuation_details,
         },
     ))
     replacements = {"relay/EVENTS.jsonl": jsonl_bytes(events)}
@@ -2227,6 +2425,14 @@ def main() -> None:
     renew.add_argument("--base-ref", required=True)
     renew.add_argument("--renewed-at")
 
+    continuation = sub.add_parser("record-continuation")
+    continuation.add_argument("--tx-id")
+    continuation.add_argument("--event-id")
+    continuation.add_argument("--actor", required=True)
+    continuation.add_argument("--continuation", required=True)
+    continuation.add_argument("--expected-custody-epoch", type=int, required=True)
+    continuation.add_argument("--base-ref", required=True)
+
     release = sub.add_parser("release-lease")
     release.add_argument(
         "--tx-id",
@@ -2457,6 +2663,16 @@ def main() -> None:
             expected_custody_epoch=args.expected_custody_epoch,
             base_ref=args.base_ref,
             renewed_at=args.renewed_at,
+        )
+    elif args.command == "record-continuation":
+        result = record_continuation(
+            root,
+            tx_id=args.tx_id,
+            event_id=args.event_id,
+            actor=args.actor,
+            continuation_path=Path(args.continuation),
+            expected_custody_epoch=args.expected_custody_epoch,
+            base_ref=args.base_ref,
         )
     elif args.command == "release-lease":
         result = release_lease(
