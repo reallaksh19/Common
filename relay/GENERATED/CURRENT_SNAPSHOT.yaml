@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.2",
-    "state_digest": "sha256:d375b6b285154dabc2b5e1782be6f5eea8b96a7b9c07803ff887997877e7ee51",
+    "state_digest": "sha256:6e51bd1b321322fa9a7e761b75f6ce4f2efcab721a61a7d3202d95d1f113a535",
     "material_basis": {
-      "head": "20822b72a1a363631cf0967816888bf3331742e3",
-      "tree_digest": "sha256:d152432f99bfa35b4299b3ff4ef5da04b9921aef6bc2adf9fbaa3eaaabaaf546",
-      "relevant_paths_digest": "sha256:c3193e192d61eb233e9cc5dbe3fda38e2655f7f97163273baf1cb769c04ca3a3",
+      "head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+      "tree_digest": "sha256:009cfae58361dd6b3aae4d10485dbd59be59917da0795a8acae62d60ee64e751",
+      "relevant_paths_digest": "sha256:99fc7ef679e77f9e36fd970874f0c444a33097d5327dc78cd2813791b7c1a051",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "20822b72a1a363631cf0967816888bf3331742e3"
+    "coordination_head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -48,16 +48,19 @@
   },
   "material": {
     "base": "e4b383687a712c768ff95f0b2230739508d433f3",
-    "head": "20822b72a1a363631cf0967816888bf3331742e3",
-    "relevant_paths_digest": "sha256:c3193e192d61eb233e9cc5dbe3fda38e2655f7f97163273baf1cb769c04ca3a3",
+    "head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+    "relevant_paths_digest": "sha256:99fc7ef679e77f9e36fd970874f0c444a33097d5327dc78cd2813791b7c1a051",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
-    "latest_checkpoint": "CP.438.1",
+    "latest_checkpoint": "CP.438.2",
     "latest_material_validation": {
-      "focused_tests": "PASS",
-      "spec_delivery": "PASS",
-      "full_guardrails": "PASS"
+      "checkpoint": "CP.438.2",
+      "exact_head": "ffd42fe0ae778c046f6cbbb96eb37c95b970ae6c",
+      "v2_5_job": "107154597430",
+      "v3_job": "107154597002",
+      "v3_1_push_job": "107154597214",
+      "v3_1_pr_job": "107154581656"
     }
   },
   "controls": {
@@ -73,7 +76,7 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Audit remaining V3.1 call sites and durable namespaces for incomplete typed-root/automatic allocation support; fix only identity or derivable-ceremony gaps covered by the preservation suite.",
+    "immediate_material_action": "Release LEASE.438.2 after accepted checkpoint; do not admit a successor without a new Owner/programme decision.",
     "delivery_action": "Perform the explicitly authorized delivery transition.",
     "stop_conditions": [
       "Owner/programme selection moves away from WP.438.",
@@ -90,7 +93,8 @@
       "relay/CONTROLS/controls.yaml",
       "relay/WORK/EP.438.2.yaml",
       "relay/LEASES/LEASE.438.2.yaml",
-      "relay/CHECKPOINTS/CP.438.1.yaml"
+      "relay/CHECKPOINTS/CP.438.2.yaml",
+      "relay/EVENTS.jsonl"
     ]
   }
 }
