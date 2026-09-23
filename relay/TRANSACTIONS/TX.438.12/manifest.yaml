@@ -23,7 +23,7 @@
       "path": "relay/EVENTS.jsonl",
       "before_exists": true,
       "before_digest": "sha256:1fe018c9b5371db1c76a50565f6155a5ad9f92048cab9bad7f114946e7770984",
-      "after_digest": "sha256:95f5fd53132cca6113411ccbd62dfc3fe8caf4dea6d589e2c41d372f8b735340"
+      "after_digest": "sha256:a6ddffb9630e6745f39cde823c814d7c0bea8fa35ab4d8f01501fdd176ce4117"
     }
   ],
   "applied": [
