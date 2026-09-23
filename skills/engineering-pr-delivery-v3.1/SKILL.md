@@ -158,16 +158,32 @@ It is generated from ROADMAP / STATE / EP / LEASE / CHECKPOINT / CONTROLS; it ne
 
 Programme progress is derived from authoritative ROADMAP work-package states and weights. Accepted evidence coverage is derived separately from accepted checkpoints. A migrated or historical ROADMAP-complete work package is not reopened merely because its native checkpoint was not replayed into the current protocol tree. Coordination, PR opening, projection refreshes and handover publication earn neither programme completion nor accepted evidence coverage.
 
+Do not create a fourth "completion snapshot". Owner/task completion reporting is rendered on demand from the existing derived project/task/improvement views:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/render_owner_status.py \
+  relay/GENERATED/CURRENT_SNAPSHOT.yaml \
+  --task-snapshot relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-view relay/GENERATED/improvements/<CP>.improvement.yaml
+```
+
+That rendering remains `DERIVED_READ_MODEL` presentation. It must keep programme progress, accepted evidence coverage, task-local completion, blockers, evidence-bound improvement and legal next actions distinct.
+
 ## Native admission and V2.5 compatibility
 
 Normal V3 admission is one lease transaction rather than a DISC/QSET/QUAL/TC chain.
 
+For a provider-backed EP, the transactional surface derives canonical issue-rooted `TX`, `EVT` and `LEASE` identities when they are omitted:
+
 ```bash
-python skills/engineering-pr-delivery-v3.1/scripts/lease_admission.py . \
-  --lease-id LEASE-001 \
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start \
   --executor-id agent-A \
-  --method DETERMINISTIC
+  --actor agent-A \
+  --method DETERMINISTIC \
+  --base-ref origin/main
 ```
+
+`lease_admission.py` remains a low-level object builder and accepts an explicit lease ID when a caller needs to inspect a lease object without activating it.
 
 An EP may explicitly require qualification through `admission_policy`. QUALIFIED admission embeds qset, independent evaluator identity and durable PASS evidence inside the lease. The evaluator cannot be the execution candidate.
 
@@ -177,7 +193,7 @@ Existing V2.5 evidence remains readable through a non-authoritative compatibilit
 
 ## Transactional commands
 
-Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`.
+Relay mutations are journaled under `relay/TRANSACTIONS/` using legacy `TX-*` or canonical `TX.<root>.<serial>` identities.
 
 While a transaction is `PREPARED`, `APPLYING`, or `RECOVERY_REQUIRED`, its journal retains staged after-images plus recoverable before-images because those bytes are still required for confirm-commit or rollback.
 
@@ -188,9 +204,15 @@ A canonical mutation is considered complete only when the transaction is `COMMIT
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . recover
 
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --tx-id TX-... --event-id EVT-... --actor ... --admission task-admission.yaml --base-ref origin/main
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start ...
-python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint ...
+# Provider-backed issue-scoped transitions allocate canonical IDs when omitted.
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --actor ... --admission task-admission.yaml --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start --executor-id ... --actor ... --method DETERMINISTIC --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint --actor ... --checkpoint checkpoint.yaml --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease --actor ... --expected-custody-epoch ... --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . release-lease --actor ... --reason ADMINISTRATIVE --expected-custody-epoch ...
+
+# Mixed-scope/provider coordination commands still require the identifiers their
+# governing scope cannot yet be inferred safely.
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . handover ...
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . local-execution ...
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . sync-delivery ...
@@ -198,6 +220,8 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . close ...
 ```
 
 Key semantics:
+- canonical IDs record governing scope but never imply currentness, priority or relationship;
+- issue-rooted allocation is automatic only when the governing issue is unambiguous; mixed/repository scope must remain explicit until its governing scope is typed;
 - lease transfer releases old custody, grants new custody, updates STATE, refreshes CURRENT_SNAPSHOT and appends EVENTS in one transaction;
 - accepted checkpoints are immutable and update STATE/snapshot/events together;
 - resolved controls update controls/snapshot/events together;
