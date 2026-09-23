@@ -16,6 +16,7 @@ for entry in (SCRIPTS, TESTS):
         sys.path.insert(0, str(entry))
 
 from material_basis import inspect as inspect_material_basis
+from plan_handover import plan_handover
 from relay_tx import (
     accept_checkpoint,
     activate_lease,
@@ -29,6 +30,7 @@ from relay_tx import (
     sync_delivery,
 )
 from snapshot_projection import build as build_snapshot
+from test_handover_context import install_standalone, target_observation
 from test_relay_can import prepare_git
 from test_v3_foundation import base_objects, dump
 from transactionlib import TransactionError, execute, yaml_bytes
@@ -541,6 +543,18 @@ class RelayTransactionalCommandTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
+            install_standalone(root)
+            accept_current_checkpoint_and_reconcile(root, base_ref)
+            planned = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-PLAN-001",
+                event_id="EVT-HANDOVER-PLAN-001",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+            self.assertEqual("COMMITTED", planned["status"])
             handover = publish_handover(
                 root,
                 tx_id="TX-HANDOVER-001",
