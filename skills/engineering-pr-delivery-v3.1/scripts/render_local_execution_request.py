@@ -29,6 +29,14 @@ def render(package: dict[str, Any]) -> str:
         f"- Branch: {basis['branch']}",
         f"- Required HEAD: {basis['material_head']}",
         "",
+        "## Repository / checkout",
+        f"- Clone URL: {(package.get('repository') or {}).get('clone_url') or 'DISPATCHER MUST SUPPLY'}",
+        f"- Branch: {(package.get('repository') or {}).get('branch')}",
+        f"- Required HEAD: {(package.get('repository') or {}).get('required_head')}",
+    ]
+    lines.extend(f"{i}. {item}" for i, item in enumerate((package.get("repository") or {}).get("checkout_instructions") or [], 1))
+    lines += [
+        "",
         "## Preflight",
     ]
     lines.extend(f"{i}. {item}" for i, item in enumerate(request["preflight"], 1))
@@ -44,6 +52,17 @@ def render(package: dict[str, Any]) -> str:
     lines.extend(f"- {item}" for item in request["stop_conditions"])
     lines += ["", "## Do not"]
     lines.extend(f"- {item}" for item in request["prohibited_actions"])
+    provider_return = package.get("provider_return") or {}
+    lines += [
+        "",
+        "## Provider sub-issue update",
+        f"- Target: {provider_return.get('target_sub_issue') or 'MUST BE SET BEFORE DISPATCH'}",
+        f"- Required: {'YES' if provider_return.get('update_required') else 'NO'}",
+        f"- {provider_return.get('instruction')}",
+    ]
+    for item in provider_return.get("required_content") or []:
+        lines.append(f"- Include: {item}")
+
     lines += [
         "",
         "## Return exactly this contract",
