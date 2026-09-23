@@ -14,6 +14,7 @@ SCRIPTS = SKILL_ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+from nomenclature import allocate_next_id
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from protocol_default import resolve as resolve_protocol
 from relay_can import evaluate
@@ -150,6 +151,11 @@ class SelfHostingBootstrapTests(unittest.TestCase):
                 )
             ).isoformat().replace("+00:00", "Z")
 
+            expected_tx_id = allocate_next_id(
+                clone,
+                kind="TX",
+                root=438,
+            )
             recovered = activate_lease(
                 clone,
                 tx_id=None,
@@ -169,7 +175,7 @@ class SelfHostingBootstrapTests(unittest.TestCase):
                 selected_programme_ref=ISSUE_REF,
             )
             self.assertEqual("COMMITTED", recovered["status"])
-            self.assertEqual("TX.438.2", recovered["id"])
+            self.assertEqual(expected_tx_id, recovered["id"])
 
             state = load_yaml(clone / "relay/STATE.yaml")
             self.assertEqual(2, state["execution"]["custody_epoch"])
