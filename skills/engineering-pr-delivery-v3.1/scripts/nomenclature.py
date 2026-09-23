@@ -19,6 +19,7 @@ SERIALIZED_TYPES = {
     "KI",
     "PEND",
     "CTRL",
+    "CONT",
     "CHANGE",
     "OFFLOAD",
     "LOCAL",

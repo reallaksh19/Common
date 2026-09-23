@@ -13,7 +13,7 @@ import yaml
 from protocol_default import resolve as resolve_protocol
 from snapshot_projection import build as build_project_snapshot
 from v25_migration import MIGRATION_REPORT, PROTOCOL_SELECTION, V25_ROOT, legacy_inventory
-from v3lib import canonical_digest, load_yaml, validate_schema
+from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 
 
 V25_STATE = "agents/relay/REPO_STATE.yaml"
@@ -34,6 +34,38 @@ def _load(path: Path) -> dict[str, Any] | None:
         return None
     value = load_yaml(path)
     return value if isinstance(value, dict) else None
+
+
+def _latest_continuation(
+    root: Path,
+    ep_id: str | None,
+) -> tuple[dict[str, Any] | None, str | None, str | None]:
+    if not ep_id:
+        return None, None, None
+    events, errors = load_events(root / "relay/EVENTS.jsonl")
+    if errors:
+        raise ProjectionError("invalid event history: " + "; ".join(errors[:8]))
+    event = next((
+        item for item in reversed(events)
+        if item.get("type") == "CONTINUATION_RECORDED"
+        and str(item.get("subject")) == str(ep_id)
+    ), None)
+    if event is None:
+        return None, None, None
+    details = event.get("details") or {}
+    path = str(details.get("path") or "")
+    digest = str(details.get("digest") or "")
+    if not path or not digest or not (root / path).exists():
+        raise ProjectionError("continuation event points to missing receipt")
+    receipt = _load(root / path)
+    if not isinstance(receipt, dict):
+        raise ProjectionError("continuation receipt is not an object")
+    errors = validate_schema("continuation", receipt, "CONTINUATION")
+    if errors:
+        raise ProjectionError("; ".join(errors))
+    if canonical_digest(receipt) != digest:
+        raise ProjectionError("continuation receipt digest mismatch")
+    return receipt, path, digest
 
 
 def _strings(values: Any) -> list[str]:
@@ -454,6 +486,18 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
     wp = next((x for x in roadmap.get("work_packages") or [] if str((x or {}).get("id")) == str(wp_id)), None)
     lease_id = execution.get("lease")
     lease = _load(root / "relay/LEASES" / f"{lease_id}.yaml") if lease_id else None
+    continuation, continuation_path, continuation_digest = _latest_continuation(root, ep_id)
+    continuity = None
+    if continuation is not None:
+        continuity = {
+            "receipt": continuation.get("id"),
+            "receipt_digest": continuation_digest,
+            "custody_epoch": ((continuation.get("custody") or {}).get("epoch")),
+            "recorded_at": continuation.get("recorded_at"),
+            "recoverability": ((continuation.get("material") or {}).get("recoverability")),
+            "acceptance_focus": list(((continuation.get("goal") or {}).get("acceptance_focus")) or []),
+            "immediate_action": ((continuation.get("next") or {}).get("immediate_action")),
+        }
     cp_accept = {str(x.get("id")): x for x in (checkpoint or {}).get("acceptance") or [] if isinstance(x, dict)}
     acceptance = [{
         "id": row.get("id"),
@@ -485,6 +529,7 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
         "inputs": [],
         "benchmarks": [],
         "benchmark_debt": {"required_missing": [], "stale": [], "optional": []},
+        "continuity": continuity,
         "execution": {"lifecycle": execution.get("lifecycle"), "lease_or_custody": lease_id, "executor": ((lease or {}).get("executor") or {}).get("id") if lease else None, "route": execution.get("route"), "branch": _git(root, "rev-parse", "--abbrev-ref", "HEAD")},
         "material": {"base": (project.get("material") or {}).get("base"), "current_head": (project.get("material") or {}).get("head")},
         "acceptance": acceptance,
@@ -494,7 +539,7 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
         "preserve": {"accepted_do_not_reopen": [{"claim": str(x), "checkpoint": cp_id, "evidence": [cp_id] if cp_id else [], "reopen_if": ["A benchmark fails or becomes stale.", "A dependency, counterexample, or Owner requirement changes."]} for x in handoff.get("what_is_true_now") or []]},
         "history": {"recent_events": []},
         "next": {"immediate_action": ((ep or {}).get("next") or {}).get("first_action"), "next_value_frontier": (wp or {}).get("title"), "stop_conditions": _strings(((ep or {}).get("next") or {}).get("stop_conditions"))},
-        "reconstruction_sources": ["relay/ROADMAP/ROADMAP.yaml", "relay/STATE.yaml", "relay/CONTROLS/controls.yaml"] + ([f"relay/WORK/{ep_id}.yaml"] if ep_id else []) + ([f"relay/CHECKPOINTS/{cp_id}.yaml"] if cp_id else []),
+        "reconstruction_sources": ["relay/ROADMAP/ROADMAP.yaml", "relay/STATE.yaml", "relay/CONTROLS/controls.yaml"] + ([f"relay/WORK/{ep_id}.yaml"] if ep_id else []) + ([f"relay/CHECKPOINTS/{cp_id}.yaml"] if cp_id else []) + ([continuation_path] if continuation_path else []),
     }
     errors = validate_schema("task-snapshot", task, "TASK_SNAPSHOT")
     if errors:

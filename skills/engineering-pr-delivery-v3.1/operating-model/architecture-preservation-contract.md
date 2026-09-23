@@ -19,9 +19,10 @@ Its durable truth model is:
 | Immutable accepted engineering truth | CHECKPOINT |
 | Open action-specific restrictions / explicit Owner permissions | CONTROLS |
 | Historical transitions | EVENTS |
+| Mid-EP continuation evidence | immutable CONTINUATION receipts |
 | Returned external/helper evidence | immutable evidence receipts |
 
-Generated snapshots, handover prose, provider projections, task/improvement views and status renderings are read models. They may improve comprehension but must not become independent authority.
+Generated snapshots, handover prose, provider projections, task/improvement views and status renderings are read models. They may improve comprehension but must not become independent authority. Continuation receipts are durable evidence for reconstruction, but they do not grant custody or acceptance. Only the current EP custodian may author them; Local Helper evidence remains external/helper evidence until the custodian consumes it.
 
 ## Preservation invariants
 

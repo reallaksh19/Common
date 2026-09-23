@@ -209,6 +209,7 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . admit-task --ac
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start --executor-id ... --actor ... --method DETERMINISTIC --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . checkpoint --actor ... --checkpoint checkpoint.yaml --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease --actor ... --expected-custody-epoch ... --base-ref origin/main
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . record-continuation --actor ... --continuation continuation.yaml --expected-custody-epoch ... --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . release-lease --actor ... --reason ADMINISTRATIVE --expected-custody-epoch ...
 
 # Mixed-scope/provider coordination commands still require the identifiers their
@@ -463,6 +464,28 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
   --tx-id TX-... --event-id EVT-... --actor agent-A \
   --expected-custody-epoch 7 --base-ref origin/main
 ```
+
+## Mid-EP continuation receipts
+
+V3.1 treats frequent runner/session interruption as a continuity problem rather than an EP-boundary event. A current custodian may record an immutable `CONT.*` continuation receipt at a meaningful semantic boundary:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . record-continuation \
+  --actor agent-A \
+  --continuation continuation.yaml \
+  --expected-custody-epoch 7 \
+  --base-ref origin/main
+```
+
+A continuation receipt is `CONTINUATION_EVIDENCE`, not accepted engineering truth and not action authority. Recording one requires the current EP, lease, executor and custody epoch, binds the exact EP digest and material head, and requires its `acceptance_focus` to name acceptance items owned by that EP. It may describe WIP progress, discoveries, rejected approaches, unresolved items and the immediate next action without promoting them to a checkpoint.
+
+Only the current EP custodian may author `CONTINUATION_RECORDED`. A Local Helper may run bounded local/browser work and return `LOCAL_EXECUTION_RETURNED` evidence, but it must never manufacture a continuation receipt on behalf of the engineering custodian. The custodian may cite returned local-execution evidence in a later receipt after independently resuming responsibility.
+
+Continuation evidence and custody liveness are distinct signals. Governed engineering activity such as recording a valid continuation may renew ordinary lease liveness, but a bare `LEASE_RENEWED` is not evidence of engineering progress and must not be treated as such by future progress-watchdog logic.
+
+Receipts live under `relay/CONTINUITY/<EP>/` and append `CONTINUATION_RECORDED`. The latest valid receipt is projected into `TASK_SNAPSHOT` and therefore flows into frozen handover context. Recovery also binds the predecessor's latest valid receipt when one exists. Missing continuation evidence never fabricates accepted truth: the accepted checkpoint remains the safe boundary and repository/provider reality must still be reconstructed.
+
+Use receipts at semantic boundaries such as meaningful commits, falsifier/test results, newly discovered blockers, rejected approaches, helper dispatch/return, and before planned handoff or long/risky operations. They are not heartbeat spam; ordinary governed activity still owns lease liveness.
 
 Clean responsibility transfer is two-sided. `HANDOVER_PLANNED/HANDOVER_PUBLISHED` prepare and expose the frozen continuation basis; they do not themselves prove that another runner accepted responsibility. When the successor validates that fresh basis and activates its lease, the same custody transaction emits `HANDOVER_ACCEPTED` and advances the epoch. Until then the derived Relay ledger may show `HANDOFF_PENDING`.
 
