@@ -971,8 +971,8 @@ def release_lease(
 def accept_checkpoint(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     checkpoint_path: Path,
     base_ref: str,
@@ -982,7 +982,61 @@ def accept_checkpoint(
     _require_action(root, "CHECKPOINT", base_ref=base_ref, expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
-    checkpoint = load_yaml(checkpoint_path)
+    ep = _current_ep(root, state)
+    if not isinstance(ep, dict):
+        raise TransactionError("checkpoint acceptance requires the current authoritative EP")
+    governing_issue = issue_number_from_ep(ep)
+
+    checkpoint = copy.deepcopy(load_yaml(checkpoint_path))
+    if not checkpoint.get("id"):
+        if governing_issue is None:
+            raise TransactionError(
+                "CHECKPOINT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical acceptance requires a provider-backed governing issue"
+            )
+        checkpoint["id"] = allocate_next_id(root, kind="CP", root=governing_issue)
+    if tx_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical checkpoint acceptance requires a provider-backed governing issue"
+            )
+        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
+    if event_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical checkpoint acceptance requires a provider-backed governing issue"
+            )
+        event_id = allocate_next_id(root, kind="EVT", root=governing_issue)
+
+    try:
+        cp_value = str(checkpoint.get("id"))
+        require_identifier(cp_value, "CP-", "checkpoint id")
+        require_identifier(tx_id, "TX-", "transaction id")
+        require_identifier(event_id, "EVT-", "event id")
+        if governing_issue is not None:
+            if parse_canonical_id(cp_value) is not None:
+                require_issue_rooted_id(
+                    cp_value,
+                    kind="CP",
+                    issue_number=governing_issue,
+                    label="checkpoint id",
+                )
+            if parse_canonical_id(tx_id) is not None:
+                require_issue_rooted_id(
+                    tx_id,
+                    kind="TX",
+                    issue_number=governing_issue,
+                    label="transaction id",
+                )
+            if parse_canonical_id(event_id) is not None:
+                require_issue_rooted_id(
+                    event_id,
+                    kind="EVT",
+                    issue_number=governing_issue,
+                    label="event id",
+                )
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
+
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
     if errors:
         raise TransactionError("; ".join(errors))
@@ -996,10 +1050,6 @@ def accept_checkpoint(
     active_ep = (state.get("execution") or {}).get("ep")
     if active_ep and checkpoint.get("ep") != active_ep:
         raise TransactionError("checkpoint EP does not match active execution EP")
-    ep = _current_ep(root, state)
-    if not isinstance(ep, dict):
-        raise TransactionError("checkpoint acceptance requires the current authoritative EP")
-
     expected_ac_ids = [str(item.get("id")) for item in ep.get("acceptance") or []]
     observed_ac_ids = [str(item.get("id")) for item in checkpoint.get("acceptance") or []]
     if len(observed_ac_ids) != len(set(observed_ac_ids)):
@@ -1997,15 +2047,27 @@ def main() -> None:
     release.add_argument("--expected-custody-epoch", type=int)
 
     checkpoint = sub.add_parser("checkpoint")
-    checkpoint.add_argument("--tx-id", required=True)
-    checkpoint.add_argument("--event-id", required=True)
+    checkpoint.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current EP parent issue.",
+    )
+    checkpoint.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current EP parent issue.",
+    )
     checkpoint.add_argument("--actor", required=True)
     checkpoint.add_argument("--checkpoint", required=True)
     checkpoint.add_argument("--base-ref", required=True)
     checkpoint.add_argument("--expected-custody-epoch", type=int)
     accept_cp = sub.add_parser("accept-checkpoint")
-    accept_cp.add_argument("--tx-id", required=True)
-    accept_cp.add_argument("--event-id", required=True)
+    accept_cp.add_argument(
+        "--tx-id",
+        help="Explicit transaction ID. Omit to allocate TX.<issue>.<serial> from the current EP parent issue.",
+    )
+    accept_cp.add_argument(
+        "--event-id",
+        help="Explicit event ID. Omit to allocate EVT.<issue>.<serial> from the current EP parent issue.",
+    )
     accept_cp.add_argument("--actor", required=True)
     accept_cp.add_argument("--checkpoint", required=True)
     accept_cp.add_argument("--base-ref", required=True)

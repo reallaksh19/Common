@@ -743,6 +743,45 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                     base_ref=base_ref,
                 )
 
+    def test_provider_backed_checkpoint_can_allocate_acceptance_identities(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            checkpoint = load_yaml(root / "fixtures/valid/CHECKPOINT.yaml")
+            checkpoint.pop("id", None)
+            ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
+            material = inspect_material_basis(root, ep, base_ref)["material_basis"]
+            checkpoint["ep"] = "EP-TA-011"
+            checkpoint["material_result"] = {
+                "head": material["head"],
+                "relevant_paths_digest": material["relevant_paths_digest"],
+                "dependency_digest": material["dependency_digest"],
+            }
+            incoming = root / "canonical-checkpoint.yaml"
+            dump(incoming, checkpoint)
+
+            result = accept_checkpoint(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                checkpoint_path=incoming,
+                base_ref=base_ref,
+            )
+
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            state = load_yaml(root / "relay/STATE.yaml")
+            self.assertEqual("CP.1771.1", state["accepted"]["checkpoint"])
+            self.assertTrue((root / "relay/CHECKPOINTS/CP.1771.1.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            accepted = [row for row in events if row["type"] == "CHECKPOINT_ACCEPTED"][-1]
+            self.assertEqual("EVT.1771.1", accepted["event_id"])
+            self.assertEqual("CP.1771.1", accepted["subject"])
+
     def test_failed_checkpoint_is_not_accepted(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
