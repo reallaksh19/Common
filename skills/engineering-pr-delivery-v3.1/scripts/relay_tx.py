@@ -11,7 +11,7 @@ from handover_projection import render as render_handover
 from intelligence_projection import build_improvement, build_task
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
-from programme_reconciliation import build as build_programme_reconciliation, require_ready as require_programme_reconciliation
+from programme_reconciliation import assess_boundary, build as build_programme_reconciliation, require_boundary_ready
 from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
 from relay_can import _protocol_state, evaluate as can_action
@@ -139,53 +139,22 @@ def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     ep_id = (state.get("execution") or {}).get("ep")
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
 
-def _parent_ref(parent: dict[str, Any] | None) -> str | None:
-    value = parent or {}
-    repository = value.get("repository")
-    number = value.get("number")
-    return f"{repository}#{number}" if repository and number else None
-
-
-def _require_programme_frontier(
+def _require_programme_boundary(
     parent: dict[str, Any] | None,
     observations: list[dict[str, Any]] | None,
     *,
     boundary: str,
 ) -> dict[str, Any]:
-    """Require a provider-backed parent to remain in the reconciled live frontier."""
-
-    selected_ref = _parent_ref(parent)
-    if not selected_ref:
-        return build_programme_reconciliation([], current_parent_ref=None)
-
-    supplied = list(observations or [])
-    if not supplied:
-        raise TransactionError(
-            f"PROGRAMME_RECONCILIATION_REQUIRED before {boundary}: "
-            f"provider-backed parent {selected_ref} requires ordered live parent observations"
-        )
-
     try:
-        reconciliation = build_programme_reconciliation(
-            supplied,
-            current_parent_ref=selected_ref,
+        return require_boundary_ready(
+            assess_boundary(
+                parent,
+                observations,
+                boundary=boundary,
+            )
         )
-        require_programme_reconciliation(reconciliation)
     except (RuntimeError, ValueError) as exc:
         raise TransactionError(str(exc)) from exc
-
-    if selected_ref not in (reconciliation.get("programme_frontier") or []):
-        row = next(
-            (item for item in reconciliation.get("parents") or [] if item.get("ref") == selected_ref),
-            {},
-        )
-        ownership = row.get("ownership") or "UNKNOWN"
-        raise TransactionError(
-            f"PROGRAMME_FRONTIER_MISMATCH before {boundary}: "
-            f"{selected_ref} is {ownership}, not STILL_REAL"
-        )
-    return reconciliation
-
 
 
 def _require_final_reconciliation(
@@ -331,11 +300,12 @@ def admit_task(
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
 
-    programme_reconciliation = _require_programme_frontier(
+    programme_assessment = _require_programme_boundary(
         ep.get("parent_issue"),
         programme_issue_observations,
         boundary="ADMIT_TASK",
     )
+    programme_reconciliation = programme_assessment["reconciliation"]
 
     roadmap_path = root / str((state.get("roadmap") or {}).get("path"))
     roadmap = load_yaml(roadmap_path)
@@ -434,6 +404,7 @@ def admit_task(
                 "roadmap_revision": rplan["new_revision"],
                 "programme_parent_count": len(programme_reconciliation.get("parents") or []),
                 "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
+                "next_programme_frontier": programme_assessment.get("next_frontier"),
             },
         ),
         _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
@@ -518,11 +489,12 @@ def activate_lease(
             if not eligible:
                 raise TransactionError(f"RECOVERY_NOT_ELIGIBLE: {recovery_basis}") from exc
             current_ep = _current_ep(root, state)
-            programme_reconciliation = _require_programme_frontier(
+            programme_assessment = _require_programme_boundary(
                 (current_ep or {}).get("parent_issue"),
                 programme_issue_observations,
                 boundary="RECOVERY_TAKEOVER",
             )
+            programme_reconciliation = programme_assessment["reconciliation"]
             continuation = "RECOVERY"
         else:
             continuation = "HANDOFF"
@@ -638,6 +610,7 @@ def activate_lease(
                 "predecessor_handover": False,
                 "programme_parent_count": len(programme_reconciliation.get("parents") or []),
                 "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
+                "next_programme_frontier": programme_assessment.get("next_frontier"),
             },
         ))
     events.append(_event(
