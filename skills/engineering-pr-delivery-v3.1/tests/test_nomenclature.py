@@ -58,7 +58,7 @@ class NomenclatureTests(unittest.TestCase):
 
     def test_all_repeatable_namespaces_use_same_grammar(self):
         for kind in (
-            "EP", "LEASE", "CP", "AC", "KI", "PEND", "CTRL", "CHANGE",
+            "EP", "LEASE", "CP", "AC", "KI", "PEND", "CTRL", "CONT", "CHANGE",
             "OFFLOAD", "LOCAL", "EVID", "HO", "REC", "ODR", "TX", "EVT",
         ):
             with self.subTest(kind=kind):
