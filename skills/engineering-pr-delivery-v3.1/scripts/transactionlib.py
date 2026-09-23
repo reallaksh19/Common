@@ -171,8 +171,6 @@ def _validate_lease_mutations(
             raise TransactionError(
                 f"{command} cannot renew liveness for a lease owned by another executor"
             )
-        if before.get("state") != "ACTIVE" or after.get("state") != "ACTIVE":
-            raise TransactionError(f"{command} liveness renewal requires an ACTIVE lease")
 
         before_top = copy.deepcopy(before)
         after_top = copy.deepcopy(after)
@@ -182,6 +180,8 @@ def _validate_lease_mutations(
             raise TransactionError(
                 f"{command} may only mutate lease custody liveness fields"
             )
+        if before.get("state") != "ACTIVE" or after.get("state") != "ACTIVE":
+            raise TransactionError(f"{command} liveness renewal requires an ACTIVE lease")
 
         for key in set(before_custody) | set(after_custody):
             if key in {"renewed_at", "activity_basis"}:
