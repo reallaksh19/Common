@@ -177,9 +177,13 @@ Existing V2.5 evidence remains readable through a non-authoritative compatibilit
 
 ## Transactional commands
 
-Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`. Each command records before/after digests, staged after-images, recoverable before-images and a manifest.
+Relay mutations are journaled under `relay/TRANSACTIONS/TX-*/`.
 
-A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted `PREPARED`, `APPLYING` or `RECOVERY_REQUIRED` transaction makes current authority unusable until recovery.
+While a transaction is `PREPARED`, `APPLYING`, or `RECOVERY_REQUIRED`, its journal retains staged after-images plus recoverable before-images because those bytes are still required for confirm-commit or rollback.
+
+Once the transaction becomes `COMMITTED` or `ROLLED_BACK`, the recovery payload is disposable: the manifest is compacted to a digest-only receipt and the `staged/` and `backups/` directories are pruned. Before/after digests, target paths, actor, command, timestamps, applied targets, and recovery basis remain durable.
+
+A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted non-terminal transaction makes current authority unusable until recovery.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . recover
