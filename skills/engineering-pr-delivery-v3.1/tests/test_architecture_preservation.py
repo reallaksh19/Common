@@ -93,7 +93,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 root,
                 tx_id="TX-PRESERVE-LIVE-START",
                 event_id="EVT-PRESERVE-LIVE-START",
-                lease_id="LEASE-TA-011-02",
+                lease_id=None,
                 executor_id="agent-x",
                 actor="agent-x",
                 method="DETERMINISTIC",
@@ -103,7 +103,10 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 base_ref=base_ref,
             )
             self.assertEqual("COMMITTED", started["status"])
-            predecessor = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            state = load_yaml(root / "relay/STATE.yaml")
+            predecessor_id = state["execution"]["lease"]
+            self.assertEqual("LEASE.1771.1", predecessor_id)
+            predecessor = load_yaml(root / "relay/LEASES" / f"{predecessor_id}.yaml")
             renewed_at = datetime.fromisoformat(
                 predecessor["custody"]["renewed_at"].replace("Z", "+00:00")
             )
@@ -151,7 +154,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 root,
                 tx_id="TX-PRESERVE-RECOVERY",
                 event_id="EVT-PRESERVE-RECOVERY",
-                lease_id="LEASE-TA-011-03",
+                lease_id=None,
                 executor_id="agent-y",
                 actor="agent-y",
                 method="DETERMINISTIC",
@@ -169,8 +172,8 @@ class ArchitecturePreservationTests(unittest.TestCase):
 
             state = load_yaml(root / "relay/STATE.yaml")
             self.assertEqual(2, state["execution"]["custody_epoch"])
-            self.assertEqual("LEASE-TA-011-03", state["execution"]["lease"])
-            old_lease = load_yaml(root / "relay/LEASES/LEASE-TA-011-02.yaml")
+            self.assertEqual("LEASE.1771.2", state["execution"]["lease"])
+            old_lease = load_yaml(root / "relay/LEASES" / f"{predecessor_id}.yaml")
             self.assertEqual("INVALIDATED", old_lease["state"])
 
             stale = evaluate(

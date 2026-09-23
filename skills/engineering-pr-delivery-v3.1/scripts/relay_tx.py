@@ -18,6 +18,7 @@ from lease_liveness import (
     renew_copy,
 )
 from material_basis import inspect as inspect_material_basis
+from nomenclature import allocate_next_id, issue_number_from_ep, parse_canonical_id, require_issue_rooted_id
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
@@ -451,7 +452,7 @@ def activate_lease(
     *,
     tx_id: str,
     event_id: str,
-    lease_id: str,
+    lease_id: str | None,
     executor_id: str,
     actor: str,
     method: str,
@@ -471,8 +472,23 @@ def activate_lease(
 ) -> dict[str, Any]:
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
+    current_ep = _current_ep(root, state)
+    governing_issue = issue_number_from_ep(current_ep)
+    if lease_id is None:
+        if governing_issue is None:
+            raise TransactionError(
+                "LEASE_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
+            )
+        lease_id = allocate_next_id(root, kind="LEASE", root=governing_issue)
     try:
         require_identifier(lease_id, "LEASE-", "lease_id")
+        if parse_canonical_id(lease_id) is not None and governing_issue is not None:
+            require_issue_rooted_id(
+                lease_id,
+                kind="LEASE",
+                issue_number=governing_issue,
+                label="lease_id",
+            )
     except ValueError as exc:
         raise TransactionError(str(exc)) from exc
     execution = state.get("execution") or {}
@@ -504,7 +520,6 @@ def activate_lease(
                     "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
                     "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
                 ) from exc
-            current_ep = _current_ep(root, state)
             recovery_assessment = recovery_eligibility(
                 root,
                 old_lease or {},
@@ -1731,7 +1746,10 @@ def close_task(
 def _add_start_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tx-id", required=True)
     parser.add_argument("--event-id", required=True)
-    parser.add_argument("--lease-id", required=True)
+    parser.add_argument(
+        "--lease-id",
+        help="Explicit lease ID. Omit to allocate LEASE.<issue>.<serial> from the governing EP issue.",
+    )
     parser.add_argument("--executor-id", required=True)
     parser.add_argument("--actor", required=True)
     parser.add_argument("--method", choices=["DETERMINISTIC", "QUALIFIED", "OWNER_OVERRIDE"], required=True)
