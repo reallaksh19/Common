@@ -10,6 +10,7 @@ on:
       - 'v3.1/**'
     paths:
       - 'skills/engineering-pr-delivery-v3.1/**'
+      - 'relay/**'
       - '.github/workflows/engineering-pr-delivery-v3.1.yml'
 
 permissions:
@@ -48,7 +49,7 @@ jobs:
           relevant=false
           while IFS= read -r path; do
             case "$path" in
-              skills/engineering-pr-delivery-v3.1/*|.github/workflows/engineering-pr-delivery-v3.1.yml)
+              skills/engineering-pr-delivery-v3.1/*|relay/*|.github/workflows/engineering-pr-delivery-v3.1.yml)
                 relevant=true
                 break
                 ;;
