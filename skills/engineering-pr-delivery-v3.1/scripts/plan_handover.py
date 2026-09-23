@@ -58,6 +58,7 @@ def plan_handover(
     if effective_parent_observation is not None:
         task_snapshot = build_task(root, base_ref, effective_parent_observation)
 
+    improvement_view = build_improvement(root)
     context, snapshot = build_context(
         root,
         base_ref=base_ref,
@@ -65,8 +66,9 @@ def plan_handover(
         complex_mode=complex_mode,
         parent_issue_observation=effective_parent_observation,
         programme_reconciliation=programme_reconciliation,
+        task_snapshot_override=task_snapshot,
+        improvement_view_override=improvement_view,
     )
-    improvement_view = build_improvement(root)
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
     if canonical_digest(task_snapshot) != task_meta.get("digest"):
@@ -109,8 +111,6 @@ def plan_handover(
     replacements = {
         snapshot_path: yaml_bytes(snapshot),
         "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
-        str(task_meta["path"]): yaml_bytes(task_snapshot),
-        str(improvement_meta["path"]): yaml_bytes(improvement_view),
         "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
         "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
         "relay/EVENTS.jsonl": jsonl_bytes(events),
