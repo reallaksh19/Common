@@ -126,6 +126,16 @@ def load_manifest(path: Path) -> dict[str, Any]:
 TERMINAL_STATUSES = {"COMMITTED", "ROLLED_BACK"}
 
 
+def _transaction_dirs(base: Path) -> list[Path]:
+    if not base.exists():
+        return []
+    return sorted(
+        path
+        for path in base.iterdir()
+        if path.is_dir() and (path.name.startswith("TX-") or path.name.startswith("TX."))
+    )
+
+
 def _compact_terminal_manifest(
     root: Path,
     manifest_path: Path,
@@ -165,7 +175,7 @@ def prune_terminal_payloads(root: Path) -> list[str]:
         return []
 
     pruned: list[str] = []
-    for tx_dir in sorted(path for path in base.glob("TX-*") if path.is_dir()):
+    for tx_dir in _transaction_dirs(base):
         manifest_path = tx_dir / "manifest.yaml"
         if not manifest_path.exists():
             continue
@@ -191,7 +201,7 @@ def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | Non
     if not base.exists():
         return []
     out = []
-    for tx_dir in sorted(path for path in base.glob("TX-*") if path.is_dir()):
+    for tx_dir in _transaction_dirs(base):
         path = tx_dir / "manifest.yaml"
         if not path.exists():
             out.append((path, None, "MISSING_MANIFEST"))
@@ -284,6 +294,19 @@ def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> N
         )
 
 
+def _validate_append_only_history(root: Path, replacements: dict[str, bytes]) -> None:
+    relative = "relay/EVENTS.jsonl"
+    after = replacements.get(relative)
+    if after is None:
+        return
+    target = root / relative
+    before = target.read_bytes() if target.exists() else b""
+    if not after.startswith(before):
+        raise TransactionError(
+            "EVENT_HISTORY_NOT_APPEND_ONLY: relay/EVENTS.jsonl replacement must extend the exact current durable history"
+        )
+
+
 def _prepare(
     root: Path,
     *,
@@ -301,10 +324,13 @@ def _prepare(
         raise TransactionError("another incomplete V3 transaction exists; recover it before starting a new command")
     _validate_command_targets(command, replacements)
     _validate_lease_mutations(root, command, actor, replacements)
+    _validate_append_only_history(root, replacements)
     tx_dir = repo_path(root, f"relay/TRANSACTIONS/{tx_id}", "transaction directory")
     manifest_path = tx_dir / "manifest.yaml"
-    if tx_dir.exists():
-        raise TransactionError(f"transaction already exists: {tx_id}")
+    try:
+        tx_dir.mkdir(parents=True, exist_ok=False)
+    except FileExistsError as exc:
+        raise TransactionError(f"transaction already exists: {tx_id}") from exc
 
     operations = []
     for index, (relative, after_bytes) in enumerate(sorted(replacements.items())):

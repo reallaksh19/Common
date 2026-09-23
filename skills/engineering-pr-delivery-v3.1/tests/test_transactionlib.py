@@ -116,6 +116,29 @@ class TransactionJournalTests(unittest.TestCase):
                     },
                 )
 
+    def test_stale_event_replacement_cannot_erase_intervening_history(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            events = root / "relay/EVENTS.jsonl"
+            stale_after = events.read_bytes() + b'{"event_id":"EVT-STALE","type":"MATERIAL_VALIDATED"}\n'
+
+            with events.open("ab") as fh:
+                fh.write(b'{"event_id":"EVT-INTERVENING","type":"MATERIAL_VALIDATED"}\n')
+            current = events.read_bytes()
+
+            with self.assertRaisesRegex(TransactionError, "EVENT_HISTORY_NOT_APPEND_ONLY"):
+                execute(
+                    root,
+                    tx_id="TX.REPO.1",
+                    command="RESOLVE_CONTROL",
+                    actor="agent-x",
+                    replacements={"relay/EVENTS.jsonl": stale_after},
+                )
+
+            self.assertEqual(current, events.read_bytes())
+            self.assertFalse((root / "relay/TRANSACTIONS/TX.REPO.1").exists())
+
     def test_interrupted_mixed_transaction_blocks_authority_then_rolls_back(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
