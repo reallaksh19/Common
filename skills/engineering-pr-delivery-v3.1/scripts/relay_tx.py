@@ -1417,18 +1417,36 @@ def accept_local_execution_result(
     elif observed_head != required_head:
         raise TransactionError("local execution result observed_head does not match the exported exact basis")
 
+    result_digest = canonical_digest(result)
+    digest_token = result_digest.split(":", 1)[-1]
+    request_id = str(request.get("id"))
+    evidence_rel = f"relay/EVIDENCE/local/{request_id}/{digest_token}.yaml"
+    evidence_path = root / evidence_rel
+    if evidence_path.exists():
+        raise TransactionError(
+            f"LOCAL_EXECUTION_EVIDENCE_ALREADY_EXISTS: immutable result receipt already exists at {evidence_rel}"
+        )
+
     events = _events(root)
     _assert_event_ids_available(events, [event_id])
     events.append(_event(
         event_id,
         "LOCAL_EXECUTION_RETURNED",
         actor,
-        str(request.get("id")),
-        [tx_id, str(request.get("id")), str((package.get("generated_from") or {}).get("snapshot_digest"))],
+        request_id,
+        [
+            tx_id,
+            request_id,
+            str((package.get("generated_from") or {}).get("snapshot_digest")),
+            evidence_rel,
+            result_digest,
+        ],
         {
             "status": status,
             "observed_head": observed_head,
             "required_head": required_head,
+            "evidence_path": evidence_rel,
+            "evidence_digest": result_digest,
         },
     ))
 
@@ -1438,6 +1456,7 @@ def accept_local_execution_result(
         command="IMPORT_LOCAL_EXECUTION_RESULT",
         actor=actor,
         replacements={
+            evidence_rel: yaml_bytes(result),
             "relay/GENERATED/LOCAL_EXECUTION_RESULT.yaml": yaml_bytes(result),
             "relay/EVENTS.jsonl": jsonl_bytes(events),
         },
