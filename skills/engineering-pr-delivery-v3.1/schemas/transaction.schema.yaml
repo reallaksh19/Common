@@ -56,6 +56,7 @@ allOf:
           items:
             required: [staged_path, backup_path]
   - if:
+      required: [payload_state]
       properties:
         payload_state: {const: PRUNED}
     then:
