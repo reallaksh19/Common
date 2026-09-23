@@ -23,7 +23,7 @@ from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
 from test_v3_foundation import DIGEST, dump
 from transactionlib import TransactionError
-from v3lib import load_events, load_yaml
+from v3lib import canonical_digest, load_events, load_yaml
 from validate_foundation import validate
 
 
@@ -266,12 +266,16 @@ class HandoverContextTests(unittest.TestCase):
             request_text = (root / "relay/GENERATED/THREE_PASS_REQUEST.md").read_text(encoding="utf-8")
             task_meta = context["accumulated_learning"]["task_snapshot"]
             improvement_meta = context["accumulated_learning"]["improvement_view"]
-            task_snapshot = load_yaml(root / task_meta["path"])
-            improvement_view = load_yaml(root / improvement_meta["path"])
+            task_snapshot = task_meta["value"]
+            improvement_view = improvement_meta["value"]
             self.assertEqual("DERIVED_READ_MODEL", task_snapshot["authority"])
             self.assertEqual("DERIVED_READ_MODEL", improvement_view["authority"])
             self.assertEqual(task_meta["ep"], task_snapshot["identity"]["ep"])
             self.assertEqual(improvement_meta["checkpoint"], improvement_view["checkpoint"])
+            self.assertEqual(task_meta["digest"], canonical_digest(task_snapshot))
+            self.assertEqual(improvement_meta["digest"], canonical_digest(improvement_view))
+            self.assertFalse((root / "relay/GENERATED/tasks").exists())
+            self.assertFalse((root / "relay/GENERATED/improvements").exists())
             self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
             self.assertEqual("PROVIDER_READBACK", context["target"]["authority"])
             self.assertEqual("DERIVED_GENERATOR_REQUEST", request["authority"])
