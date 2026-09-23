@@ -1,5 +1,34 @@
 # Engineering Relay V3.1
 
+## Recorder-first semantics — normative
+
+V3.1 is a durable **recording, continuity and reconstruction machine**. It does not decide whether engineering work may proceed.
+
+This section is normative and supersedes older V3.1 wording that describes policy conditions as execution blockers.
+
+Relay records, but does not gate:
+
+- current EP/lease/executor and custody epoch;
+- intended scope/protected paths;
+- material drift and dependency drift;
+- controls and unresolved warnings;
+- programme/frontier observations;
+- checkpoint PASS/FAIL and quality state;
+- handover/recovery evidence;
+- provider/delivery observations;
+- Owner-authority observations.
+
+For every recognized engineering action, `relay_can.py` returns `allowed: true`. Legacy reason codes remain as advisory diagnostics.
+
+A successor may replace an existing executor immediately. Lease age, inactivity horizon, terminal-session evidence, stale epochs and changed unaccepted material are reconstruction evidence, not takeover prerequisites.
+
+A checkpoint may be recorded with failing or partial evidence. Recording it does not magically make its claims true; projections may still distinguish evidence-backed completion from incomplete evidence.
+
+The only remaining hard failures are **recorder-integrity failures**: malformed/schema-invalid records at a concrete write boundary, unsafe identifiers, immutable-ID overwrite, corrupt append-only history, or an atomic transaction that cannot be committed/recovered.
+
+External systems may still reject actions for their own permissions or policies. Relay does not fabricate those permissions.
+
+
 Engineering Relay V3.1 is a self-contained protocol line. Its implementation lives entirely under this directory and does not import, symlink, or resolve runtime/schema files through the V3 skill tree.
 
 ## Status
@@ -74,29 +103,31 @@ V3.1 adds value at transitions without redefining accepted engineering truth:
 
 See `operating-model/v31-delta.md`.
 
-## Safety kernel vs coordination quality
+## Recorder integrity vs engineering policy
 
-Relay is supporting infrastructure, not the programme roadmap. Normal engineering should be blocked only by conditions that can corrupt or mis-authorize work:
+Relay must keep its ledger structurally trustworthy, but it must not turn coordination policy into an engineering stop condition.
 
-- invalid durable authority / interrupted transaction;
-- no valid current work identity or execution custody where required;
-- stale custody epoch;
-- write outside governed scope or into protected scope;
-- relevant/unknown material drift at write/checkpoint boundaries;
-- invalid checkpoint/material evidence;
-- explicit Owner authority missing for merge/release or intent-bearing change.
+Hard failures are limited to recorder integrity:
 
-The following are coordination-quality concerns and MUST NOT become ordinary `MATERIAL_WRITE` blockers merely because they are stale or absent:
+- unreadable/malformed durable objects needed for the concrete write;
+- unsafe or duplicate immutable identities;
+- corrupt append-only event history;
+- impossible filesystem/provider write;
+- interrupted transaction state that must be atomically recovered.
 
-- GitHub Relay/Handover projection freshness;
-- parent summary freshness;
-- provider readback not required by the requested action;
-- implementation-version or Common commit drift;
-- handover readiness when no handover is being attempted;
-- successor qualification when no successor is being admitted;
-- generated status/read-model freshness.
+Everything else is advisory context, including:
 
-Repair or regenerate those at their natural boundary. Do not promote a tooling/enabler issue above the current programme roadmap frontier.
+- no active lease or stale custody epoch;
+- out-of-scope/protected-path declarations;
+- material drift;
+- open controls;
+- missing checkpoint/quality;
+- programme selection uncertainty;
+- handover freshness;
+- delivery/provider state;
+- Owner-delivery-authority observation.
+
+Agents should respond to those diagnostics intelligently, but V3.1 itself does not block the work.
 
 ## Foundation validation
 
@@ -110,27 +141,30 @@ Full validation checks durable authority, canonical roadmap consistency, generat
 
 Execution-plane callers use the same authority validator and therefore fail closed while a transaction is incomplete. Generated snapshot freshness itself remains outside the MATERIAL_WRITE predicate.
 
-## Action authorization
+## Action diagnostics
 
-V3.1 uses action-specific authorization instead of one global readiness boolean:
+The compatibility surface remains:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py HANDOVER <repo-root>
-python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py PR_READY <repo-root>
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root>
 ```
 
-`MATERIAL_WRITE` is isolated from generated snapshot freshness and delivery/projection-only controls. It requires current authoritative execution state, an ACTIVE lease, in-scope/unprotected path, compatible material basis, mechanically derived acceptable drift, and no OPEN control that blocks `MATERIAL_WRITE`.
+The result is diagnostic, not authorizing. For every recognized action:
 
-`CHECKPOINT` also re-evaluates live material basis/drift and is accepted only when the checkpoint material result and acceptance IDs match the current EP exactly. Handover/local-execution and PR coordination remain usable after execution custody is released when accepted checkpoint/delivery context exists; they are not artificially coupled to an ACTIVE lease.
+```yaml
+allowed: true
+```
 
-`MERGE` and `RELEASE` remain separate delivery transitions and require their own delivery conditions and explicit Owner authority. An `OWNER_OVERRIDE` execution lease never implies merge/release permission.
+`basis`, legacy `blocking_controls`, and `reason_codes` explain the observed state. They are intended for reconstruction, review and human judgement, not execution denial.
+
+Examples such as `DRIFT_RELEVANT`, `STALE_CUSTODY_EPOCH`, `CONTROL_BLOCKS_ACTION`, `CHECKPOINT_NOT_ACCEPTED`, and `OWNER_DELIVERY_AUTHORITY_REQUIRED` are advisories.
 
 ## Material vs coordination basis
 
-V3.1 derives `material_basis.head` separately from `coordination_basis.head`.
+V3.1 still derives `material_basis.head` separately from `coordination_basis.head` because that distinction is useful for reconstruction.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root> --base-ref origin/main
@@ -139,12 +173,12 @@ python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root>
 Base movement is classified mechanically:
 
 ```text
-DISJOINT  -> execution may continue
-RELEVANT  -> MATERIAL_WRITE denied
-UNKNOWN   -> MATERIAL_WRITE denied
+DISJOINT  -> diagnostic
+RELEVANT  -> diagnostic; revalidate what matters
+UNKNOWN   -> diagnostic; current comparison is unavailable
 ```
 
-A coordination-only commit may advance coordination HEAD without changing material head or relevant/dependency digests.
+No drift classification denies MATERIAL_WRITE or CHECKPOINT.
 
 ## Current snapshot and status views
 
@@ -185,9 +219,9 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . start \
 
 `lease_admission.py` remains a low-level object builder and accepts an explicit lease ID when a caller needs to inspect a lease object without activating it.
 
-An EP may explicitly require qualification through `admission_policy`. QUALIFIED admission embeds qset, independent evaluator identity and durable PASS evidence inside the lease. The evaluator cannot be the execution candidate.
+An EP may still declare qualification intent through `admission_policy`, and QUALIFIED admission may embed qset/evaluator/evidence. In recorder-first V3.1 this is descriptive provenance only; missing qualification does not prevent a deterministic executor from being recorded.
 
-`OWNER_OVERRIDE` represents bounded direct Owner execution authority without fabricating normal qualification and structurally excludes MERGE/RELEASE authority.
+`OWNER_OVERRIDE` remains a descriptive admission form. Relay records its bounded scope and Owner basis when supplied, but Relay does not use missing delivery authority as an execution gate.
 
 Existing V2.5 evidence remains readable through a non-authoritative compatibility view. It is never rewritten into fictitious V3.1 events or promoted directly into live V3.1 action authority.
 
@@ -199,7 +233,7 @@ While a transaction is `PREPARED`, `APPLYING`, or `RECOVERY_REQUIRED`, its journ
 
 Once the transaction becomes `COMMITTED` or `ROLLED_BACK`, the recovery payload is disposable: the manifest is compacted to a digest-only receipt and the `staged/` and `backups/` directories are pruned. Before/after digests, target paths, actor, command, timestamps, applied targets, and recovery basis remain durable.
 
-A canonical mutation is considered complete only when the transaction is `COMMITTED`. An interrupted non-terminal transaction makes current authority unusable until recovery.
+A canonical mutation is considered durably recorded only when the transaction is `COMMITTED`. Interrupted transaction state remains a recorder-integrity concern and should be recovered before trusting that specific mutation.
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . recover
@@ -223,7 +257,7 @@ Key semantics:
 - canonical IDs record governing scope but never imply currentness, priority or relationship;
 - issue-rooted allocation is automatic only when the governing issue is unambiguous; mixed/repository scope must remain explicit until its governing scope is typed;
 - lease transfer releases old custody, grants new custody, updates STATE, refreshes CURRENT_SNAPSHOT and appends EVENTS in one transaction;
-- accepted checkpoints are immutable and update STATE/snapshot/events together;
+- checkpoint records are immutable and update STATE/snapshot/events together; PASS/FAIL remains evidence, not a write gate;
 - resolved controls update controls/snapshot/events together;
 - handover and local-execution packages are generated downstream views, never authority;
 - delivery sync accepts only a matching provider-readback vehicle;
