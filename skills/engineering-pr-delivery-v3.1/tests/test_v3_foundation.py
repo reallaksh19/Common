@@ -220,6 +220,13 @@ def materialize(root: Path):
 
 
 class V3FoundationTests(unittest.TestCase):
+    def test_all_v31_schema_files_parse_as_yaml(self):
+        schema_dir = ROOT / "schemas"
+        for path in sorted(schema_dir.glob("*.schema.yaml")):
+            with self.subTest(schema=path.name):
+                parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
+                self.assertIsInstance(parsed, dict)
+
     def test_valid_foundation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
