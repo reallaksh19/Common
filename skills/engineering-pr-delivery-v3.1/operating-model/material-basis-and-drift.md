@@ -1,56 +1,39 @@
-# V3 material basis and semantic drift
+# V3.1 material basis and semantic drift — recorder-first
 
-V3 separates the current coordination commit from the commit that last changed material-sensitive engineering state.
+V3.1 distinguishes material state from coordination state so reconstruction can identify what actually changed.
 
 ```text
 material_basis.head
 coordination_basis.head
 ```
 
-A coordination-only commit may advance `coordination_basis.head` while `material_basis.head` remains unchanged. Engineering evidence therefore stays tied to material state rather than generic Git HEAD.
+## Sensitivity set
 
-## EP sensitivity set
+The derived sensitivity set remains:
 
-The mechanical sensitivity set is derived from:
 - EP write scope;
 - EP read scope;
 - EP protected scope;
 - `basis.semantic_dependencies[].path`;
 - path-shaped acceptance test/oracle requirements.
 
-Command/tool dependencies that cannot be represented as a path MUST be declared through `semantic_dependencies`; otherwise drift classification may be unsafely incomplete.
+Incomplete semantic-dependency declarations reduce diagnostic quality, so agents should still declare the files/pins that govern important dependencies.
 
 ## Material head
 
-Starting from `EP.basis.material_base`, inspect commits through current checkout HEAD. The newest commit touching any sensitivity pattern becomes `material_basis.head`.
-
-If subsequent commits touch only coordination/non-sensitive paths:
-
-```text
-A material change
-B relay metadata
-C provider observation
-
-material head     = A
-coordination head = C
-```
+The material head is the newest commit after `EP.basis.material_base` touching the sensitivity set.
 
 ## Drift
 
-Given the current base ref:
+Against a supplied current base ref:
 
-```text
-changed_on_base
-∩
-EP sensitivity
-```
+- `DISJOINT` — base moved outside the sensitivity set;
+- `RELEVANT` — base changed a sensitive path;
+- `UNKNOWN` — the comparison cannot be established.
 
-classifies as:
-- `DISJOINT`: base advanced but no sensitive path changed;
-- `RELEVANT`: at least one sensitive path changed;
-- `UNKNOWN`: the base cannot be resolved, ancestry is incompatible, or Git evidence cannot be inspected.
+All three are **observations**.
 
-`DISJOINT` does not block `MATERIAL_WRITE`. `RELEVANT` and `UNKNOWN` do.
+`RELEVANT` and `UNKNOWN` no longer deny MATERIAL_WRITE or CHECKPOINT. They are recorded so the engineering agent and successor know what must be revalidated.
 
 ## CLI
 
@@ -58,4 +41,4 @@ classifies as:
 python skills/engineering-pr-delivery-v3.1/scripts/material_basis.py <repo-root> --base-ref origin/main
 ```
 
-`relay_can.py MATERIAL_WRITE` consumes the same mechanical classifier. The caller supplies the identity of the current base ref, not a subjective drift verdict.
+`relay_can.py` includes the same drift classification in its advisory basis.
