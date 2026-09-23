@@ -84,8 +84,9 @@ def parent_issue_observation(
     number: int = 1771,
     state: str = "OPEN",
     disposition: str = "NO_CHANGE",
+    acceptance_state: str | None = None,
 ) -> dict:
-    acceptance_state = "COMPLETE" if state == "CLOSED" else "PENDING"
+    acceptance_state = acceptance_state or ("COMPLETE" if state == "CLOSED" else "PENDING")
     return {
         "schema_version": "relay-v3.1-parent-issue-observation",
         "authority": "DERIVED_PROVIDER_OBSERVATION",
@@ -332,6 +333,55 @@ class HandoverContextTests(unittest.TestCase):
                 )
 
             self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_stale_current_parent_can_handover_after_explicit_programme_reconciliation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            baseline = install_parent_issue(root, number=1771)
+            completed = parent_issue_observation(
+                baseline=baseline,
+                number=1771,
+                state="CLOSED",
+                disposition="CLOSE",
+                acceptance_state="COMPLETE",
+            )
+            next_parent = parent_issue_observation(
+                baseline=baseline,
+                number=1772,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-PROGRAMME-RECONCILED",
+                event_id="EVT-HANDOVER-PROGRAMME-RECONCILED",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=True,
+                programme_issue_observations=[completed, next_parent],
+            )
+            self.assertEqual("COMMITTED", result["status"])
+
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            reconciliation = context["blind_context"]["programme"]["reconciliation"]
+            self.assertEqual("READY", reconciliation["status"])
+            self.assertEqual(
+                ["example/project#1772"],
+                reconciliation["programme_frontier"],
+            )
+            self.assertEqual(
+                "LANDED",
+                reconciliation["ordered_roadmap"][0]["ownership"],
+            )
+            self.assertEqual(
+                "STILL_REAL",
+                reconciliation["ordered_roadmap"][1]["ownership"],
+            )
 
     def test_open_unchanged_parent_can_plan_handover(self):
         with tempfile.TemporaryDirectory() as td:
