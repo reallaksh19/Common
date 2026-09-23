@@ -3,66 +3,7 @@ type: object
 required: [schema_version, id, command, actor, status, created_at, updated_at, operations, applied]
 properties:
   schema_version: {const: relay-v3.1-transaction}
-  id: {type: string, pattern: '^(?:TX-[A-Za-z0-9][A-Za-z0-9._-]*|TX\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)
-  command:
-    enum: [ADMIT_TASK, ACTIVATE_LEASE, RENEW_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, RECONCILE_ROADMAP, PUBLISH_HANDOVER, RECORD_RECOVERY_RECONSTRUCTED, RECORD_CHANGE_HYPOTHESIS, VERIFY_CHANGE_DELTA, PROPOSE_CHANGE_DELTA, AUTHORIZE_CHANGE_DELTA, EXPORT_LOCAL_EXECUTION, IMPORT_LOCAL_EXECUTION_RESULT, SYNC_DELIVERY, SYNC_HANDOVER_LEDGER, CLOSE_TASK, PLAN_HANDOVER, BOOTSTRAP_V3_MIGRATION, FREEZE_LEGACY_CUTOVER, ACTIVATE_PROTOCOL_CUTOVER]
-  actor: {type: string, minLength: 1}
-  status: {enum: [PREPARED, APPLYING, COMMITTED, ROLLED_BACK, RECOVERY_REQUIRED]}
-  created_at: {type: string, format: date-time}
-  updated_at: {type: string, format: date-time}
-  payload_state: {enum: [RECOVERY_PAYLOAD, PRUNED]}
-  operations:
-    type: array
-    minItems: 1
-    items:
-      type: object
-      additionalProperties: false
-      required: [path, before_exists, before_digest, after_digest]
-      properties:
-        path: {type: string, minLength: 1}
-        before_exists: {type: boolean}
-        before_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
-        after_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
-        staged_path: {type: string, minLength: 1}
-        backup_path: {type: [string, 'null']}
-  applied:
-    type: array
-    uniqueItems: true
-    items: {type: string, minLength: 1}
-  recovery:
-    type: object
-    additionalProperties: false
-    required: [strategy, basis]
-    properties:
-      strategy: {enum: [CONFIRM_COMMIT, ROLLBACK]}
-      basis:
-        type: array
-        minItems: 1
-        items: {type: string, minLength: 1}
-allOf:
-  - if:
-      properties:
-        status: {enum: [PREPARED, APPLYING, RECOVERY_REQUIRED]}
-    then:
-      properties:
-        payload_state: {const: RECOVERY_PAYLOAD}
-        operations:
-          items:
-            required: [staged_path, backup_path]
-  - if:
-      properties:
-        payload_state: {const: PRUNED}
-    then:
-      properties:
-        status: {enum: [COMMITTED, ROLLED_BACK]}
-        operations:
-          items:
-            not:
-              anyOf:
-                - required: [staged_path]
-                - required: [backup_path]
-additionalProperties: false
-}
+  id: {type: string, pattern: '^(?:TX-[A-Za-z0-9][A-Za-z0-9._-]*|TX\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
   command:
     enum: [ADMIT_TASK, ACTIVATE_LEASE, RENEW_LEASE, RELEASE_LEASE, ACCEPT_CHECKPOINT, RESOLVE_CONTROL, RECONCILE_ROADMAP, PUBLISH_HANDOVER, RECORD_RECOVERY_RECONSTRUCTED, RECORD_CHANGE_HYPOTHESIS, VERIFY_CHANGE_DELTA, PROPOSE_CHANGE_DELTA, AUTHORIZE_CHANGE_DELTA, EXPORT_LOCAL_EXECUTION, IMPORT_LOCAL_EXECUTION_RESULT, SYNC_DELIVERY, SYNC_HANDOVER_LEDGER, CLOSE_TASK, PLAN_HANDOVER, BOOTSTRAP_V3_MIGRATION, FREEZE_LEGACY_CUTOVER, ACTIVATE_PROTOCOL_CUTOVER]
   actor: {type: string, minLength: 1}
