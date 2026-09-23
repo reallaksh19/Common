@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.3",
-    "state_digest": "sha256:0e60044fc07dcafcc7aa059bc93bcf6f19b3fbe33182bebcb6c1aba6ff664e2c",
+    "state_digest": "sha256:a0a04b4ebcdf69f0bd87d51795e04f2c777af626884bf6fb56c9520ebccc2b8c",
     "material_basis": {
       "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
       "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
       "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "a2ecc7748f1da6ef54d4053359d036646f1a9ff3"
+    "coordination_head": "cf1727162fe17fff1acc50112f677f592805eb85"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -28,29 +28,20 @@
     ]
   },
   "execution": {
-    "lifecycle": "ACTIVE",
-    "work_package": "WP.438",
-    "ep": "EP.438.4",
-    "lease": "LEASE.438.4",
-    "executor": "chatgpt-v3.1-presentation",
+    "lifecycle": "IDLE",
+    "work_package": null,
+    "ep": null,
+    "lease": null,
+    "executor": null,
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [
-      "skills/engineering-pr-delivery-v3.1/scripts/render_owner_stats.py",
-      "skills/engineering-pr-delivery-v3.1/scripts/owner_commands.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_owner_stats.py",
-      "skills/engineering-pr-delivery-v3.1/tests/test_owner_commands.py"
-    ],
+    "allowed_writes": [],
     "protected": [],
-    "prohibited": [
-      "Do not alter canonical programme selection or fallback semantics.",
-      "Do not make an execution blocker grant programme reselection authority.",
-      "Do not infer that a blocked selected frontier makes one external/provider action the only legitimate action."
-    ]
+    "prohibited": []
   },
   "material": {
-    "base": "2128a8692f9e41f15443d93731e92de952007bf8",
+    "base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
     "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
     "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
@@ -58,12 +49,9 @@
   "evidence": {
     "latest_checkpoint": "CP.438.4",
     "latest_material_validation": {
-      "checkpoint": "CP.438.4",
-      "exact_head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-      "v2_5_job": "107174652980",
-      "v3_job": "107174654160",
-      "v3_1_push_job": "107174634154",
-      "v3_1_pr_job": "107174653806"
+      "focused_tests": "PASS",
+      "spec_delivery": "PASS",
+      "full_guardrails": "PASS"
     }
   },
   "controls": {
@@ -79,22 +67,17 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Release LEASE.438.4; do not mix simplification work into PR #439.",
-    "delivery_action": "Keep PR #439 narrow; merge/release authority remains separate from EP execution.",
-    "stop_conditions": [
-      "The fix requires changing programme_reconciliation selection semantics.",
-      "A safety decision changes outside presentation/read-model output.",
-      "Owner/programme selection moves away from WP.438."
-    ]
+    "immediate_material_action": null,
+    "delivery_action": "PR #439 contains accepted EP.438.4 material; merge/release authority remains separate.",
+    "stop_conditions": []
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/WORK/EP.438.4.yaml",
-      "relay/LEASES/LEASE.438.4.yaml",
-      "relay/CHECKPOINTS/CP.438.3.yaml",
+      "relay/CONTROLS/controls.yaml",
+      "relay/CHECKPOINTS/CP.438.4.yaml",
       "relay/EVENTS.jsonl"
     ]
   }
