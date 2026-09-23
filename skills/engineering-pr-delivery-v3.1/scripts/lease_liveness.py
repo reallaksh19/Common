@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import copy
+import fnmatch
+import hashlib
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from material_basis import inspect as inspect_material_basis
+from material_basis import inspect as inspect_material_basis, sensitivity
 from v3lib import canonical_digest, load_yaml, validate_schema
 
 
@@ -22,12 +25,57 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def _matches(path: str, pattern: str) -> bool:
+    path = path.replace("\\", "/").lstrip("./")
+    pattern = pattern.replace("\\", "/").lstrip("./")
+    if fnmatch.fnmatchcase(path, pattern):
+        return True
+    if pattern.endswith("/**"):
+        prefix = pattern[:-3].rstrip("/")
+        return path == prefix or path.startswith(prefix + "/")
+    return False
+
+
+def _worktree_digest(root: Path, patterns: list[str]) -> str:
+    """Digest current tracked + untracked worktree content for sensitive paths.
+
+    Unlike material_basis, this intentionally observes uncommitted work. It is
+    liveness evidence only; it never becomes checkpoint/material authority.
+    """
+
+    raw = subprocess.check_output(
+        ["git", "-C", str(root), "ls-files", "-co", "--exclude-standard", "-z"],
+    )
+    paths = sorted(
+        {
+            item
+            for item in raw.decode("utf-8", errors="strict").split("\0")
+            if item and any(_matches(item, pattern) for pattern in patterns)
+        }
+    )
+    records: list[dict[str, Any]] = []
+    for relative in paths:
+        target = root / relative
+        if not target.exists():
+            records.append({"path": relative, "state": "MISSING"})
+            continue
+        if target.is_dir():
+            continue
+        records.append({
+            "path": relative,
+            "state": "PRESENT",
+            "digest": "sha256:" + hashlib.sha256(target.read_bytes()).hexdigest(),
+        })
+    return canonical_digest(records)
+
+
 def material_activity_basis(root: Path, ep: dict[str, Any], base_ref: str) -> dict[str, Any]:
     inspected = inspect_material_basis(root, ep, base_ref)
     material = inspected.get("material_basis") or {}
+    patterns, dependency_patterns = sensitivity(ep)
     return {
-        "relevant_paths_digest": str(material.get("relevant_paths_digest") or ""),
-        "dependency_digest": str(material.get("dependency_digest") or ""),
+        "relevant_worktree_digest": _worktree_digest(root, patterns),
+        "dependency_worktree_digest": _worktree_digest(root, dependency_patterns),
         "material_head": str(material.get("head") or ""),
         "base_ref": str(base_ref),
     }
@@ -85,6 +133,17 @@ def active_lease_renewal(
         return None
 
     custody = lease.get("custody") or {}
+    required_liveness = {
+        "epoch",
+        "granted_at",
+        "renewed_at",
+        "recovery_after_seconds",
+        "recovery_policy",
+    }
+    if not required_liveness.issubset(custody):
+        # Pre-liveness native leases remain readable. Do not partially upgrade
+        # their custody shape as a side effect of an unrelated command.
+        return None
     epoch = execution.get("custody_epoch")
     lease_epoch = custody.get("epoch")
     if epoch is not None and lease_epoch is not None and int(epoch) != int(lease_epoch):
@@ -197,7 +256,7 @@ def recovery_eligibility(
                 "basis": [f"material_basis_error:{exc}"],
                 "terminal_observation_digest": terminal_digest,
             }
-        for key in ("relevant_paths_digest", "dependency_digest"):
+        for key in ("relevant_worktree_digest", "dependency_worktree_digest"):
             if stored_basis.get(key) != current_basis.get(key):
                 return {
                     "eligible": False,
