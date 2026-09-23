@@ -346,7 +346,7 @@ While the selector is `V2_5 / PREPARED`, these projections derive from live V2.5
 
 The continuity control may be resolved only after the generated continuity assessment is schema-valid and `ready: true`. `protocol_cutover.py assess` independently verifies that report and requires its legacy-tree digest to equal the migration inventory digest. A resolved control with prose alone is insufficient.
 
-`plan_handover.py` atomically materializes the current TASK_SNAPSHOT and IMPROVEMENT_VIEW with HANDOVER_CONTEXT and binds their digests into accumulated learning. Prompt/handover consumers may use them for reconstruction and negative knowledge, but they grant no new action authority.
+`plan_handover.py` derives the current TASK_SNAPSHOT and IMPROVEMENT_VIEW on demand, freezes those exact read models **inside** HANDOVER_CONTEXT, and binds their digests into accumulated learning. It no longer persists separate handover-only task/improvement files that must remain synchronized with the context. The standalone intelligence projection CLI remains available when a human/tool explicitly wants those views as separate diagnostic artifacts. None of these projections grants new action authority.
 
 
 ## Parent-issue-relative task snapshots
