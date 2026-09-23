@@ -413,6 +413,26 @@ def assess_boundary(
     next_frontier = effective_selected_frontier
     executable_frontier = reconciliation.get("executable_frontier")
 
+    if (
+        boundary in SELECTED_FRONTIER_BOUNDARIES
+        and selected_ownership not in {"STILL_REAL", "BLOCKED"}
+    ):
+        return {
+            "status": "PROGRAMME_FRONTIER_MISMATCH",
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "executable_frontier": executable_frontier,
+            "continuation": "BLOCK",
+            "reason_codes": [f"CURRENT_PARENT_{selected_ownership}"],
+            "reconciliation": reconciliation,
+        }
+
     if selected_programme_ownership == "BLOCKED":
         status = (
             "PROGRAMME_FRONTIER_BLOCKED"
