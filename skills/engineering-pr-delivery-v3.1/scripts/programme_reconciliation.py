@@ -433,6 +433,27 @@ def assess_boundary(
             "reconciliation": reconciliation,
         }
 
+    # A cheap single-parent handover observation can prove continuation only
+    # while that same parent remains a live obligation. If it is already
+    # terminal/superseded/transferred/etc., the missing fact is programme
+    # reconciliation, not merely executability of an inferred selection.
+    if boundary == "HANDOVER" and not explicit and selected_ownership not in {"STILL_REAL", "BLOCKED"}:
+        return {
+            "status": "PROGRAMME_RECONCILIATION_REQUIRED",
+            "boundary": boundary,
+            "mode": "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_programme_frontier": effective_selected_frontier,
+            "selected_programme_ownership": selected_programme_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "executable_frontier": executable_frontier,
+            "continuation": "BLOCK",
+            "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
+            "reconciliation": reconciliation,
+        }
+
     if selected_programme_ownership == "BLOCKED":
         status = (
             "PROGRAMME_FRONTIER_BLOCKED"
@@ -489,23 +510,6 @@ def assess_boundary(
                 f"CURRENT_PARENT_{selected_ownership}",
                 "CURRENT_PARENT_NOT_SELECTED_FRONTIER",
             ],
-            "reconciliation": reconciliation,
-        }
-
-    if boundary == "HANDOVER" and not explicit and selected_ownership not in {"STILL_REAL", "BLOCKED"}:
-        return {
-            "status": "PROGRAMME_RECONCILIATION_REQUIRED",
-            "boundary": boundary,
-            "mode": "SINGLE_PARENT_CURRENTNESS",
-            "selected_parent": selected_ref,
-            "selected_ownership": selected_ownership,
-            "selected_programme_frontier": effective_selected_frontier,
-            "selected_programme_ownership": selected_programme_ownership,
-            "selected_observation": selected_observation,
-            "next_frontier": next_frontier,
-            "executable_frontier": executable_frontier,
-            "continuation": "BLOCK",
-            "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
             "reconciliation": reconciliation,
         }
 

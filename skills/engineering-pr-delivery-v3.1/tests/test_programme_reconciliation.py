@@ -170,6 +170,26 @@ class ProgrammeReconciliationTests(unittest.TestCase):
         self.assertEqual("PROGRAMME_CURRENTNESS_REQUIRED", result["status"])
         self.assertIn("PARENT_DISPOSITION_REQUIRED", result["reason_codes"])
 
+    def test_single_parent_terminal_handover_requires_programme_reconciliation(self):
+        parent = {"repository": "example/project", "number": 118}
+        completed = observation(
+            118,
+            state="CLOSED",
+            disposition="CLOSE",
+            acceptance_state="COMPLETE",
+        )
+
+        result = assess_boundary(
+            parent,
+            None,
+            boundary="HANDOVER",
+            current_observation=completed,
+        )
+        self.assertEqual("PROGRAMME_RECONCILIATION_REQUIRED", result["status"])
+        self.assertEqual("LANDED", result["selected_ownership"])
+        with self.assertRaisesRegex(RuntimeError, "PROGRAMME_RECONCILIATION_REQUIRED"):
+            require_boundary_ready(result)
+
     def test_wrc_style_owner_selection_displaces_unfinished_stale_current_programme(self):
         current_parent = {"repository": "example/project", "number": 1771}
         observations = [

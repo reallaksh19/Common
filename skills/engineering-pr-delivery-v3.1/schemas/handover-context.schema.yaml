@@ -53,11 +53,16 @@ properties:
           reconciliation:
             type: object
             additionalProperties: false
-            required: [authority, status, current_parent, parents, ordered_roadmap, programme_frontier, execution_blocked, acceptance_debt, delivery_governance_debt, deferred_or_future, graph, reason_codes]
+            required: [authority, status, current_parent, selected_frontier, selected_frontier_ownership, executable_frontier, alternate_live_frontiers, parents, ordered_roadmap, programme_frontier, execution_blocked, acceptance_debt, delivery_governance_debt, deferred_or_future, graph, reason_codes]
             properties:
               authority: {const: DERIVED_PROGRAMME_RECONCILIATION}
               status: {enum: [NOT_REQUIRED, READY, RECONCILIATION_REQUIRED]}
               current_parent: {type: [string, 'null']}
+              selected_frontier: {type: [string, 'null']}
+              selected_frontier_ownership:
+                enum: [LANDED, SUPERSEDED, TRANSFERRED, SPLIT, CLOSED_WITH_DEBT, UNKNOWN, BLOCKED, DEFERRED, STILL_REAL, READY_TO_CLOSE, null]
+              executable_frontier: {type: [string, 'null']}
+              alternate_live_frontiers: {type: array, items: {type: string, minLength: 3}}
               parents:
                 type: array
                 items:
