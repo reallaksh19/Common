@@ -905,10 +905,11 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             add_open_control(root)
+            install_parent_issue(root, number=1771)
             result = resolve_control(
                 root,
-                tx_id="TX-CONTROL-001",
-                event_id="EVT-CONTROL-001",
+                tx_id=None,
+                event_id=None,
                 actor="agent-x",
                 control_id="CTRL-TEST-001",
                 evidence=["provider readback PASS"],
@@ -921,7 +922,8 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual(["provider readback PASS"], row["resolution"]["evidence"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
-            self.assertIn("EVT-CONTROL-001", [item["event_id"] for item in events])
+            self.assertIn("EVT.1771.1", [item["event_id"] for item in events])
+            self.assertEqual("TX.1771.1", result["id"])
             self.assertEqual([], validate(root))
 
     def test_handover_and_local_execution_are_generated_downstream_views(self):
@@ -971,14 +973,19 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             observation = configure_delivery(root, base_ref)
+            install_parent_issue(root, number=1771)
             result = sync_delivery(
                 root,
-                tx_id="TX-DELIVERY-001",
-                event_id="EVT-DELIVERY-001",
+                tx_id=None,
+                event_id=None,
                 actor="provider-sync",
                 observation_path=observation,
             )
             self.assertEqual("COMMITTED", result["status"])
+            self.assertEqual("TX.1771.1", result["id"])
+            events, event_errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], event_errors)
+            self.assertIn("EVT.1771.1", [item["event_id"] for item in events])
             persisted = load_yaml(root / "relay/GENERATED/DELIVERY_STATUS.yaml")
             self.assertEqual("PROVIDER_READBACK", persisted["authority"])
             self.assertEqual("MERGED", persisted["lifecycle"])

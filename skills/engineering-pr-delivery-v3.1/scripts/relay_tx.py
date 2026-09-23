@@ -213,6 +213,22 @@ def _current_ep(root: Path, state: dict[str, Any]) -> dict[str, Any] | None:
     ep_id = (state.get("execution") or {}).get("ep")
     return load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
 
+
+def _governing_issue_number(root: Path, state: dict[str, Any]) -> int | None:
+    """Resolve durable issue lineage from current execution or accepted truth."""
+    ep = _current_ep(root, state)
+    issue = issue_number_from_ep(ep)
+    if issue is not None:
+        return issue
+
+    checkpoint = _current_checkpoint(root, state)
+    checkpoint_ep = (checkpoint or {}).get("ep")
+    if checkpoint_ep:
+        ep_path = root / "relay/WORK" / f"{checkpoint_ep}.yaml"
+        if ep_path.exists():
+            return issue_number_from_ep(load_yaml(ep_path))
+    return None
+
 def _require_programme_boundary(
     parent: dict[str, Any] | None,
     observations: list[dict[str, Any]] | None,
@@ -358,6 +374,81 @@ def admit_task(
         raise TransactionError(f"ADMIT_TASK denied: PROTOCOL_NOT_ACTIVE ({protocol_state})")
 
     state, _ = _authority(root)
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     execution = state.get("execution") or {}
     if execution.get("lifecycle") != "IDLE" or any(execution.get(key) for key in ("ep", "lease", "route")):
         raise TransactionError("ADMIT_TASK requires an IDLE repository with no active EP/lease/route")
@@ -1081,8 +1172,8 @@ def accept_checkpoint(
 def resolve_control(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     control_id: str,
     evidence: list[str],
@@ -1091,6 +1182,21 @@ def resolve_control(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     state, controls = _authority(root)
+
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
     matches = [item for item in controls.get("controls") or [] if item.get("id") == control_id]
     if len(matches) != 1:
@@ -1133,8 +1239,8 @@ def resolve_control(
 def reconcile_roadmap(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     reconciliation_path: Path,
     base_ref: str,
@@ -1254,8 +1360,8 @@ def reconcile_roadmap(
 def publish_handover(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     base_ref: str,
     expected_custody_epoch: int | None = None,
@@ -1317,8 +1423,8 @@ def publish_handover(
 def record_recovery_reconstructed(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     evidence: list[str],
     expected_custody_epoch: int,
@@ -1641,8 +1747,8 @@ def authorize_change_delta(
 def export_local_execution(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     base_ref: str,
     mode: str = "VALIDATE_ONLY",
@@ -1707,12 +1813,27 @@ def export_local_execution(
 def accept_local_execution_result(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     result_path: Path,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
+    state, _ = _authority(root)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     package_path = root / "relay/GENERATED/LOCAL_EXECUTION.yaml"
     if not package_path.exists():
         raise TransactionError("local execution result requires an exported LOCAL_EXECUTION package")
@@ -1788,8 +1909,8 @@ def accept_local_execution_result(
 def sync_delivery(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     observation_path: Path,
     fail_after: int | None = None,
@@ -1833,8 +1954,8 @@ def sync_delivery(
 def close_task(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     parent_issue_observation: dict[str, Any] | None = None,
     expected_custody_epoch: int | None = None,
@@ -1843,6 +1964,14 @@ def close_task(
     _require_action(root, "CLOSE_TASK", expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
+    governing_issue = _governing_issue_number(root, state)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
     _require_final_reconciliation(
         root,
         state,
@@ -1886,15 +2015,26 @@ def close_task(
         replacements[f"relay/LEASES/{lease_id}.yaml"] = yaml_bytes(released)
 
     events = _events(root)
-    release_event_id = event_id + "-REL" if lease and lease.get("state") == "ACTIVE" else None
-    _assert_event_ids_available(events, [x for x in [release_event_id, event_id] if x])
+    has_active_lease = bool(lease and lease.get("state") == "ACTIVE")
+    transition_ids = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=["-REL", ""] if has_active_lease else [""],
+    )
+    release_event_id = transition_ids[0] if has_active_lease else None
+    close_event_id = transition_ids[1] if has_active_lease else transition_ids[0]
+    _assert_event_ids_available(
+        events,
+        [value for value in [release_event_id, close_event_id] if value],
+    )
     if release_event_id:
         events.append(_event(str(release_event_id), "LEASE_RELEASED", actor, str(lease_id), [tx_id, "close-task"], {
             "reason": "CLOSE_TASK",
             "graceful": True,
         }))
     events.append(_event(
-        event_id,
+        close_event_id,
         "TASK_CLOSED",
         actor,
         str((state.get("accepted") or {}).get("checkpoint") or "relay"),
@@ -2058,8 +2198,8 @@ def main() -> None:
     accept_cp.add_argument("--expected-custody-epoch", type=int)
 
     control = sub.add_parser("resolve-control")
-    control.add_argument("--tx-id", required=True)
-    control.add_argument("--event-id", required=True)
+    control.add_argument("--tx-id")
+    control.add_argument("--event-id")
     control.add_argument("--actor", required=True)
     control.add_argument("--control-id", required=True)
     control.add_argument("--evidence", action="append", default=[])
@@ -2067,8 +2207,8 @@ def main() -> None:
     control.add_argument("--expected-custody-epoch", type=int)
 
     roadmap = sub.add_parser("reconcile-roadmap")
-    roadmap.add_argument("--tx-id", required=True)
-    roadmap.add_argument("--event-id", required=True)
+    roadmap.add_argument("--tx-id")
+    roadmap.add_argument("--event-id")
     roadmap.add_argument("--actor", required=True)
     roadmap.add_argument("--reconciliation", required=True)
     roadmap.add_argument("--base-ref", required=True)
@@ -2076,15 +2216,15 @@ def main() -> None:
     roadmap.add_argument("--change-delta")
 
     handover = sub.add_parser("handover")
-    handover.add_argument("--tx-id", required=True)
-    handover.add_argument("--event-id", required=True)
+    handover.add_argument("--tx-id")
+    handover.add_argument("--event-id")
     handover.add_argument("--actor", required=True)
     handover.add_argument("--base-ref", required=True)
     handover.add_argument("--expected-custody-epoch", type=int)
 
     local = sub.add_parser("local-execution")
-    local.add_argument("--tx-id", required=True)
-    local.add_argument("--event-id", required=True)
+    local.add_argument("--tx-id")
+    local.add_argument("--event-id")
     local.add_argument("--actor", required=True)
     local.add_argument("--base-ref", required=True)
     local.add_argument("--mode", choices=["VALIDATE_ONLY", "BOUNDED_EXECUTION"], default="VALIDATE_ONLY")
@@ -2096,34 +2236,34 @@ def main() -> None:
     local.add_argument("--expected-custody-epoch", type=int)
 
     local_result = sub.add_parser("local-execution-result")
-    local_result.add_argument("--tx-id", required=True)
-    local_result.add_argument("--event-id", required=True)
+    local_result.add_argument("--tx-id")
+    local_result.add_argument("--event-id")
     local_result.add_argument("--actor", required=True)
     local_result.add_argument("--result", required=True)
 
     delivery = sub.add_parser("sync-delivery")
-    delivery.add_argument("--tx-id", required=True)
-    delivery.add_argument("--event-id", required=True)
+    delivery.add_argument("--tx-id")
+    delivery.add_argument("--event-id")
     delivery.add_argument("--actor", required=True)
     delivery.add_argument("--observation", required=True)
 
     close = sub.add_parser("close")
-    close.add_argument("--tx-id", required=True)
-    close.add_argument("--event-id", required=True)
+    close.add_argument("--tx-id")
+    close.add_argument("--event-id")
     close.add_argument("--actor", required=True)
     close.add_argument("--parent-issue-observation")
     close.add_argument("--expected-custody-epoch", type=int)
 
     recovery_done = sub.add_parser("recovery-reconstructed")
-    recovery_done.add_argument("--tx-id", required=True)
-    recovery_done.add_argument("--event-id", required=True)
+    recovery_done.add_argument("--tx-id")
+    recovery_done.add_argument("--event-id")
     recovery_done.add_argument("--actor", required=True)
     recovery_done.add_argument("--expected-custody-epoch", type=int, required=True)
     recovery_done.add_argument("--evidence", action="append", default=[])
 
     change_record = sub.add_parser("record-change")
-    change_record.add_argument("--tx-id", required=True)
-    change_record.add_argument("--event-id", required=True)
+    change_record.add_argument("--tx-id")
+    change_record.add_argument("--event-id")
     change_record.add_argument("--actor", required=True)
     change_record.add_argument("--change-id", required=True)
     change_record.add_argument("--statement", required=True)
@@ -2132,8 +2272,8 @@ def main() -> None:
     change_record.add_argument("--expected-custody-epoch", type=int)
 
     change_verify = sub.add_parser("verify-change")
-    change_verify.add_argument("--tx-id", required=True)
-    change_verify.add_argument("--event-id", required=True)
+    change_verify.add_argument("--tx-id")
+    change_verify.add_argument("--event-id")
     change_verify.add_argument("--actor", required=True)
     change_verify.add_argument("--change-id", required=True)
     change_verify.add_argument("--status", choices=["CONFIRMED", "REJECTED"], required=True)
@@ -2142,8 +2282,8 @@ def main() -> None:
     change_verify.add_argument("--expected-custody-epoch", type=int)
 
     change_propose = sub.add_parser("propose-change")
-    change_propose.add_argument("--tx-id", required=True)
-    change_propose.add_argument("--event-id", required=True)
+    change_propose.add_argument("--tx-id")
+    change_propose.add_argument("--event-id")
     change_propose.add_argument("--actor", required=True)
     change_propose.add_argument("--change-id", required=True)
     change_propose.add_argument("--proposal", required=True)
@@ -2151,8 +2291,8 @@ def main() -> None:
     change_propose.add_argument("--expected-custody-epoch", type=int)
 
     change_authorize = sub.add_parser("authorize-change")
-    change_authorize.add_argument("--tx-id", required=True)
-    change_authorize.add_argument("--event-id", required=True)
+    change_authorize.add_argument("--tx-id")
+    change_authorize.add_argument("--event-id")
     change_authorize.add_argument("--actor", required=True)
     change_authorize.add_argument("--change-id", required=True)
     change_authorize.add_argument("--decision", choices=["GRANT", "DENY"], required=True)
