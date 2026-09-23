@@ -282,6 +282,17 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 reason="ADMINISTRATIVE",
             )
 
+            roadmap_path = root / "relay/ROADMAP/ROADMAP.yaml"
+            roadmap = load_yaml(roadmap_path)
+            roadmap["work_packages"].append({
+                "id": "WP-OTHER-ACTIVE",
+                "title": "Separate unfinished programme obligation",
+                "weight": 10,
+                "state": "ACTIVE",
+                "depends_on": [],
+            })
+            dump(roadmap_path, roadmap)
+
             source_ep = load_yaml(root / "relay/WORK/EP-TA-011.yaml")
             new_ep = copy.deepcopy(source_ep)
             new_ep["id"] = "EP-TA-012"
@@ -323,6 +334,15 @@ class RelayTransactionalCommandTests(unittest.TestCase):
             self.assertEqual("EP-TA-012", state["execution"]["ep"])
             self.assertEqual("LEASE-TA-012-01", state["execution"]["lease"])
             self.assertEqual("RM-0013", state["roadmap"]["revision"])
+            admitted_roadmap = load_yaml(root / "relay/ROADMAP/ROADMAP.yaml")
+            self.assertEqual(
+                {"WP-TA-109", "WP-OTHER-ACTIVE"},
+                {
+                    item["id"]
+                    for item in admitted_roadmap["work_packages"]
+                    if item["state"] == "ACTIVE"
+                },
+            )
             self.assertTrue((root / "relay/WORK/EP-TA-012.yaml").exists())
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
@@ -406,6 +426,24 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 disposition="NO_CHANGE",
                 acceptance_state="PENDING",
             )
+            other_live = parent_issue_observation(
+                baseline=baseline,
+                number=1775,
+                state="OPEN",
+                disposition="NO_CHANGE",
+                acceptance_state="PENDING",
+            )
+            with self.assertRaisesRegex(TransactionError, "PROGRAMME_SELECTION_REQUIRED"):
+                admit_task(
+                    root,
+                    tx_id="TX-PARENT-ADMIT-AMBIGUOUS",
+                    event_id="EVT-PARENT-ADMIT-AMBIGUOUS",
+                    actor="owner",
+                    admission_path=request_path,
+                    base_ref=base_ref,
+                    programme_issue_observations=[live, other_live],
+                )
+
             result = admit_task(
                 root,
                 tx_id="TX-PARENT-ADMIT-LIVE",
@@ -413,15 +451,20 @@ class RelayTransactionalCommandTests(unittest.TestCase):
                 actor="owner",
                 admission_path=request_path,
                 base_ref=base_ref,
-                programme_issue_observations=[live],
+                programme_issue_observations=[live, other_live],
+                selected_programme_ref="example/project#1771",
             )
             self.assertEqual("COMMITTED", result["status"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
             admitted = [row for row in events if row["type"] == "OWNER_TASK_ADMITTED"][-1]
             self.assertEqual(
-                ["example/project#1771"],
+                ["example/project#1771", "example/project#1775"],
                 admitted["details"]["programme_frontier"],
+            )
+            self.assertEqual(
+                "example/project#1771",
+                admitted["details"]["selected_programme_frontier"],
             )
 
     def test_critical_transaction_command_cannot_mutate_unowned_authority(self):
