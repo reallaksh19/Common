@@ -111,6 +111,73 @@ def _assert_event_ids_available(events: list[dict[str, Any]], event_ids: list[st
         raise TransactionError("transaction event ids must be unique")
 
 
+def _issue_scoped_id(
+    root: Path,
+    *,
+    kind: str,
+    value: str | None,
+    issue_number: int | None,
+    label: str,
+) -> str:
+    if value is None:
+        if issue_number is None:
+            raise TransactionError(
+                f"{kind}_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
+            )
+        return allocate_next_id(root, kind=kind, root=issue_number)
+
+    text = str(value)
+    try:
+        require_identifier(text, f"{kind}-", label)
+        if parse_canonical_id(text) is not None and issue_number is not None:
+            require_issue_rooted_id(
+                text,
+                kind=kind,
+                issue_number=issue_number,
+                label=label,
+            )
+    except ValueError as exc:
+        raise TransactionError(str(exc)) from exc
+    return text
+
+
+def _transition_event_ids(
+    root: Path,
+    *,
+    event_id: str | None,
+    issue_number: int | None,
+    legacy_suffixes: list[str],
+) -> list[str]:
+    if not legacy_suffixes:
+        raise TransactionError("event allocation requires at least one event")
+    if event_id is None:
+        if issue_number is None:
+            raise TransactionError(
+                "EVT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical event allocation requires a provider-backed governing issue"
+            )
+        return allocate_next_ids(
+            root,
+            kind="EVT",
+            root=issue_number,
+            count=len(legacy_suffixes),
+        )
+
+    base = _issue_scoped_id(
+        root,
+        kind="EVT",
+        value=event_id,
+        issue_number=issue_number,
+        label="event id",
+    )
+    if parse_canonical_id(base) is not None and len(legacy_suffixes) > 1:
+        raise TransactionError(
+            "CANONICAL_EVENT_ID_REQUIRES_ALLOCATOR_FOR_MULTI_EVENT_TRANSITION: omit event_id"
+        )
+    if len(legacy_suffixes) == 1:
+        return [base]
+    return [base + suffix for suffix in legacy_suffixes]
+
+
 def _snapshot_path(state: dict[str, Any]) -> str:
     value = str((state.get("generated") or {}).get("snapshot") or "")
     if not value:
@@ -301,45 +368,24 @@ def admit_task(
         raise TransactionError("; ".join(errors))
     ep = copy.deepcopy(admission.get("ep") or {})
     governing_issue = issue_number_from_ep(ep)
-    if not ep.get("id"):
-        if governing_issue is None:
-            raise TransactionError(
-                "EP_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
-            )
-        ep["id"] = allocate_next_id(root, kind="EP", root=governing_issue)
+    ep["id"] = _issue_scoped_id(
+        root,
+        kind="EP",
+        value=ep.get("id"),
+        issue_number=governing_issue,
+        label="ep_id",
+    )
     errors = validate_schema("ep", ep, "EP")
     if errors:
         raise TransactionError("; ".join(errors))
-    try:
-        require_identifier(str(ep.get("id")), "EP-", "ep_id")
-        if parse_canonical_id(str(ep.get("id"))) is not None and governing_issue is not None:
-            require_issue_rooted_id(
-                str(ep.get("id")),
-                kind="EP",
-                issue_number=governing_issue,
-                label="ep_id",
-            )
-    except ValueError as exc:
-        raise TransactionError(str(exc)) from exc
 
-    if tx_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
-            )
-        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
-    else:
-        try:
-            require_identifier(tx_id, "TX-", "transaction id")
-            if parse_canonical_id(tx_id) is not None and governing_issue is not None:
-                require_issue_rooted_id(
-                    tx_id,
-                    kind="TX",
-                    issue_number=governing_issue,
-                    label="transaction id",
-                )
-        except ValueError as exc:
-            raise TransactionError(str(exc)) from exc
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
 
     programme_assessment = _require_programme_boundary(
         ep.get("parent_issue"),
@@ -383,26 +429,14 @@ def admit_task(
 
     ep_path = root / "relay/WORK" / f"{ep['id']}.yaml"
     lease_spec = copy.deepcopy(admission["lease"])
-    lease_id = lease_spec.get("id")
-    if not lease_id:
-        if governing_issue is None:
-            raise TransactionError(
-                "LEASE_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
-            )
-        lease_id = allocate_next_id(root, kind="LEASE", root=governing_issue)
-        lease_spec["id"] = lease_id
-    lease_id = str(lease_id)
-    try:
-        require_identifier(lease_id, "LEASE-", "lease_id")
-        if parse_canonical_id(lease_id) is not None and governing_issue is not None:
-            require_issue_rooted_id(
-                lease_id,
-                kind="LEASE",
-                issue_number=governing_issue,
-                label="lease_id",
-            )
-    except ValueError as exc:
-        raise TransactionError(str(exc)) from exc
+    lease_id = _issue_scoped_id(
+        root,
+        kind="LEASE",
+        value=lease_spec.get("id"),
+        issue_number=governing_issue,
+        label="lease_id",
+    )
+    lease_spec["id"] = lease_id
     lease_path = root / "relay/LEASES" / f"{lease_id}.yaml"
     if ep_path.exists() or lease_path.exists():
         raise TransactionError("ADMIT_TASK refuses to overwrite an existing EP or lease")
@@ -451,30 +485,12 @@ def admit_task(
     )
 
     events = _events(root)
-    if event_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical admission requires a provider-backed governing issue"
-            )
-        ids = allocate_next_ids(root, kind="EVT", root=governing_issue, count=3)
-    else:
-        try:
-            require_identifier(event_id, "EVT-", "event id")
-            parsed_event = parse_canonical_id(event_id)
-            if parsed_event is not None:
-                if governing_issue is not None:
-                    require_issue_rooted_id(
-                        event_id,
-                        kind="EVT",
-                        issue_number=governing_issue,
-                        label="event id",
-                    )
-                raise TransactionError(
-                    "CANONICAL_EVENT_ID_REQUIRES_ALLOCATOR_FOR_MULTI_EVENT_TRANSITION: omit event_id"
-                )
-        except ValueError as exc:
-            raise TransactionError(str(exc)) from exc
-        ids = [event_id + "-OWNER", event_id + "-EP", event_id + "-LEASE"]
+    ids = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=["-OWNER", "-EP", "-LEASE"],
+    )
     _assert_event_ids_available(events, ids)
     events.extend([
         _event(
@@ -549,42 +565,20 @@ def activate_lease(
     _require_expected_custody_epoch(state, expected_custody_epoch)
     current_ep = _current_ep(root, state)
     governing_issue = issue_number_from_ep(current_ep)
-    if tx_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
-            )
-        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
-    else:
-        try:
-            require_identifier(tx_id, "TX-", "transaction id")
-            if parse_canonical_id(tx_id) is not None and governing_issue is not None:
-                require_issue_rooted_id(
-                    tx_id,
-                    kind="TX",
-                    issue_number=governing_issue,
-                    label="transaction id",
-                )
-        except ValueError as exc:
-            raise TransactionError(str(exc)) from exc
-
-    if lease_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "LEASE_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
-            )
-        lease_id = allocate_next_id(root, kind="LEASE", root=governing_issue)
-    try:
-        require_identifier(lease_id, "LEASE-", "lease_id")
-        if parse_canonical_id(lease_id) is not None and governing_issue is not None:
-            require_issue_rooted_id(
-                lease_id,
-                kind="LEASE",
-                issue_number=governing_issue,
-                label="lease_id",
-            )
-    except ValueError as exc:
-        raise TransactionError(str(exc)) from exc
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    lease_id = _issue_scoped_id(
+        root,
+        kind="LEASE",
+        value=lease_id,
+        issue_number=governing_issue,
+        label="lease_id",
+    )
     execution = state.get("execution") or {}
     old_lease_id = execution.get("lease")
     old_lease = load_yaml(root / "relay/LEASES" / f"{old_lease_id}.yaml") if old_lease_id else None
@@ -687,55 +681,32 @@ def activate_lease(
     replacements[_snapshot_path(new_state)] = yaml_bytes(snapshot)
 
     events = _events(root)
-    if event_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical allocation requires a provider-backed governing issue"
-            )
-        event_count = 1 + int(transfer) + int(continuation in {"HANDOFF", "RECOVERY"})
-        allocated_event_ids = iter(
-            allocate_next_ids(
-                root,
-                kind="EVT",
-                root=governing_issue,
-                count=event_count,
-            )
-        )
-        predecessor_event_id = next(allocated_event_ids) if transfer else None
-        transition_event_id = (
-            next(allocated_event_ids)
-            if continuation in {"HANDOFF", "RECOVERY"}
-            else None
-        )
-        granted_event_id = next(allocated_event_ids)
-    else:
-        try:
-            require_identifier(event_id, "EVT-", "event id")
-            parsed_event = parse_canonical_id(event_id)
-            if parsed_event is not None and governing_issue is not None:
-                require_issue_rooted_id(
-                    event_id,
-                    kind="EVT",
-                    issue_number=governing_issue,
-                    label="event id",
-                )
-            if parsed_event is not None and (
-                transfer or continuation in {"HANDOFF", "RECOVERY"}
-            ):
-                raise TransactionError(
-                    "CANONICAL_EVENT_ID_REQUIRES_ALLOCATOR_FOR_MULTI_EVENT_TRANSITION: omit event_id"
-                )
-        except ValueError as exc:
-            raise TransactionError(str(exc)) from exc
-        predecessor_event_id = event_id + "-REL" if transfer else None
-        transition_event_id = (
-            event_id + "-HANDOVER"
-            if continuation == "HANDOFF"
-            else event_id + "-RECOVERY"
-            if continuation == "RECOVERY"
-            else None
-        )
-        granted_event_id = event_id
+    event_suffixes: list[str] = []
+    if transfer:
+        event_suffixes.append("-REL")
+    if continuation == "HANDOFF":
+        event_suffixes.append("-HANDOVER")
+    elif continuation == "RECOVERY":
+        event_suffixes.append("-RECOVERY")
+    event_suffixes.append("")
+    allocated = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=event_suffixes,
+    )
+    event_index = 0
+    predecessor_event_id = allocated[event_index] if transfer else None
+    if transfer:
+        event_index += 1
+    transition_event_id = (
+        allocated[event_index]
+        if continuation in {"HANDOFF", "RECOVERY"}
+        else None
+    )
+    if continuation in {"HANDOFF", "RECOVERY"}:
+        event_index += 1
+    granted_event_id = allocated[event_index]
 
     _assert_event_ids_available(
         events,
@@ -988,54 +959,26 @@ def accept_checkpoint(
     governing_issue = issue_number_from_ep(ep)
 
     checkpoint = copy.deepcopy(load_yaml(checkpoint_path))
-    if not checkpoint.get("id"):
-        if governing_issue is None:
-            raise TransactionError(
-                "CHECKPOINT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical acceptance requires a provider-backed governing issue"
-            )
-        checkpoint["id"] = allocate_next_id(root, kind="CP", root=governing_issue)
-    if tx_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "TX_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical checkpoint acceptance requires a provider-backed governing issue"
-            )
-        tx_id = allocate_next_id(root, kind="TX", root=governing_issue)
-    if event_id is None:
-        if governing_issue is None:
-            raise TransactionError(
-                "EVENT_ID_REQUIRED_WITHOUT_GOVERNING_ISSUE: canonical checkpoint acceptance requires a provider-backed governing issue"
-            )
-        event_id = allocate_next_id(root, kind="EVT", root=governing_issue)
-
-    try:
-        cp_value = str(checkpoint.get("id"))
-        require_identifier(cp_value, "CP-", "checkpoint id")
-        require_identifier(tx_id, "TX-", "transaction id")
-        require_identifier(event_id, "EVT-", "event id")
-        if governing_issue is not None:
-            if parse_canonical_id(cp_value) is not None:
-                require_issue_rooted_id(
-                    cp_value,
-                    kind="CP",
-                    issue_number=governing_issue,
-                    label="checkpoint id",
-                )
-            if parse_canonical_id(tx_id) is not None:
-                require_issue_rooted_id(
-                    tx_id,
-                    kind="TX",
-                    issue_number=governing_issue,
-                    label="transaction id",
-                )
-            if parse_canonical_id(event_id) is not None:
-                require_issue_rooted_id(
-                    event_id,
-                    kind="EVT",
-                    issue_number=governing_issue,
-                    label="event id",
-                )
-    except ValueError as exc:
-        raise TransactionError(str(exc)) from exc
+    checkpoint["id"] = _issue_scoped_id(
+        root,
+        kind="CP",
+        value=checkpoint.get("id"),
+        issue_number=governing_issue,
+        label="checkpoint id",
+    )
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
 
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
     if errors:
