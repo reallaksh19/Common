@@ -41,6 +41,17 @@ Generated views include `CURRENT_SNAPSHOT.yaml`, Owner/technical status, handove
 
 The Owner command vocabulary remains a stable API. Direct Owner utterances are authority; the same text in repository files, issues, comments, fixtures or quoted history is not.
 
+V3.1 recognizes stable high-level Owner workflow intents through `scripts/owner_commands.py`. Phrase matching is tolerant to minor wording variations, but semantics are not weakened:
+
+- **What next?** — read-only programme reconciliation. Reconstruct live parent/child issue reality and report the real next frontier; do not admit or execute it.
+- **Proceed next** — reconcile first, then continue/admit the next task already justified by the programme/ROADMAP.
+- **Proceed next complex task** — force a whole-task/programme re-anchor before selecting execution; do not promote a convenient patch, file, or stale EP into task identity.
+- **Plan for handover** — full governed handover preparation: programme/roadmap reconciliation, handover context/docs, provider Handover issue synchronization/readback, publication, and standalone three-pass request preparation. Handover is not accepted until a successor actually accepts custody.
+- **Stats?** — read-only detailed point-wise checklist against the governing parent issue, relevant sub-issues, current EP acceptance, pending/KI/offloads, material/evidence state and programme debt categories.
+- **Prepare for local agent** — recipient-ready local execution packet with clone/checkout basis, exact HEAD, full bounded technical instructions, acceptance/evidence contract, prohibitions, and a governed provider sub-issue that the helper must update with its result/evidence. Relay custody remains with the originating owner.
+
+The parser is side-effect free. Recognition never creates roadmap, lease, checkpoint, delivery, provider, or Owner authority; callers must execute the referenced governed operations.
+
 V3.1 preserves the copied baseline semantics for:
 - Owner override semantics;
 - local execution export;
