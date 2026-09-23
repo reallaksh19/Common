@@ -34,7 +34,8 @@ properties:
     uniqueItems: true
     items:
       type: string
-      pattern: '^[A-Z]+\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?  recovery:
+      pattern: '^[A-Z]+\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?$'
+  recovery:
     type: object
     additionalProperties: false
     required: [strategy, basis]
