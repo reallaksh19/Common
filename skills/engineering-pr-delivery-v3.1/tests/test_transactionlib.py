@@ -145,6 +145,11 @@ class TransactionJournalTests(unittest.TestCase):
             materialize(root)
             before_state = (root / "relay/STATE.yaml").read_bytes()
             before_events = (root / "relay/EVENTS.jsonl").read_bytes()
+            valid_appended_events = before_events + (
+                b'{"schema_version":"relay-v3.1-event","event_id":"EVT-ROLLBACK-EXTRA",'
+                b'"type":"MATERIAL_VALIDATED","timestamp":"2026-09-23T00:00:00Z",'
+                b'"actor":"agent-x","subject":"EP-TA-011","basis":["test"],"details":{}}\n'
+            )
             with self.assertRaisesRegex(TransactionError, "injected transaction interruption"):
                 execute(
                     root,
@@ -153,7 +158,7 @@ class TransactionJournalTests(unittest.TestCase):
                     actor="agent-x",
                     replacements={
                         "relay/STATE.yaml": b"broken-state-after",
-                        "relay/EVENTS.jsonl": b"broken-events-after",
+                        "relay/EVENTS.jsonl": valid_appended_events,
                     },
                     fail_after=1,
                 )
