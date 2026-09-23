@@ -415,9 +415,20 @@ See `operating-model/parent-handover-ledger.md`.
 
 New V3.1 custody is fenced by a monotonic `custody_epoch`. Once an active STATE carries an epoch, every state-changing execution action MUST present the current expected epoch. Missing or stale epochs fail closed. A recovery takeover increments the epoch, so a predecessor that later returns cannot mutate the work using stale custody.
 
-Leases carry `granted_at`, `renewed_at`, `recovery_after_seconds`, and a recovery policy. V3.1 does not run a polling daemon. Recovery eligibility is evaluated on demand when a different executor attempts explicit recovery. `TAKEOVER_AFTER_EXPIRY` permits recovery only after the persisted horizon; `MANUAL_ONLY` does not infer abandonment from time.
+Newly issued leases default to a **300-second inactivity horizon**. Relay does not require a polling daemon or a separate manual heartbeat loop. Meaningful governed activity performed by the current lease executor renews `custody.renewed_at` transactionally with that action. When a material basis is available, renewal also captures a non-authoritative `activity_basis` containing digests of the current sensitive worktree and semantic-dependency worktree.
 
-The active runner may renew custody transactionally:
+This liveness basis is deliberately distinct from checkpoint/material authority:
+
+- it may observe uncommitted sensitive work so recovery does not race an active writer;
+- it never proves acceptance or changes programme progress;
+- it never changes the custody epoch;
+- ordinary commands may mutate only `renewed_at` and `activity_basis` on the current executor's ACTIVE lease; they cannot use liveness renewal to rewrite lease authority.
+
+For `TAKEOVER_AFTER_EXPIRY`, explicit recovery after the inactivity horizon is allowed only when the sensitive worktree/dependency digests still match the predecessor's last activity basis. If sensitive material changed after the last recorded activity, timeout alone is insufficient and recovery fails with `UNACCEPTED_MATERIAL_ACTIVITY_PRESENT`.
+
+A provider/session termination observation may establish stronger abandonment evidence before the timeout. `--recovery-observation` accepts a schema-validated observation bound to the exact predecessor lease, executor, custody epoch and observation time, with a terminal state of `TERMINATED`, `CANCELLED`, or `FAILED`. A stale, mismatched, or non-terminal observation cannot invalidate custody.
+
+The explicit `renew-lease` command remains available for diagnostics/compatibility, but normal active runners should not need heartbeat ceremony:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
@@ -427,9 +438,9 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . renew-lease \
 
 Clean responsibility transfer is two-sided. `HANDOVER_PLANNED/HANDOVER_PUBLISHED` prepare and expose the frozen continuation basis; they do not themselves prove that another runner accepted responsibility. When the successor validates that fresh basis and activates its lease, the same custody transaction emits `HANDOVER_ACCEPTED` and advances the epoch. Until then the derived Relay ledger may show `HANDOFF_PENDING`.
 
-Recovery is semantically distinct. An expiry-eligible explicit takeover emits `RECOVERY_STARTED`, invalidates predecessor custody, preserves the same EP where the work identity is unchanged, advances the epoch, and grants successor custody. After the successor reconstructs unaccepted material/evidence it records `RECOVERY_RECONSTRUCTED` with durable evidence. Do not represent recovery as a successful predecessor handover.
+Recovery remains semantically distinct. An eligible explicit takeover emits `RECOVERY_STARTED`, invalidates predecessor custody, preserves the same EP only when programme reconciliation still says that work is real, advances the epoch, and grants successor custody. After the successor reconstructs unaccepted material/evidence it records `RECOVERY_RECONSTRUCTED` with durable evidence. Do not represent recovery as a successful predecessor handover.
 
-Legacy V3.1 repositories without epoch/liveness fields remain readable. Explicit recovery remains available for such legacy custody, but newly issued leases use fenced custody.
+Legacy native repositories without complete epoch/liveness fields remain readable and are not partially upgraded as a side effect of unrelated commands. Explicit legacy recovery remains available; newly issued leases use fenced five-minute liveness.
 
 ## Governed continuous improvement / Change Delta
 
