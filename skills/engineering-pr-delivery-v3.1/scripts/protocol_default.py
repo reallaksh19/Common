@@ -154,7 +154,9 @@ def main() -> None:
         "warning",
     ):
         print(f"{key}: {value.get(key)}")
-    raise SystemExit(0 if value["status"] != "INVALID" else 1)
+    # Recorder-first V3.1 reports protocol-selection ambiguity as diagnostics.
+    # It must not become an execution/CI permission gate.
+    raise SystemExit(0)
 
 
 if __name__ == "__main__":

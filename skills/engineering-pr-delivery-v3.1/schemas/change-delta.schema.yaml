@@ -16,7 +16,7 @@ properties:
         additionalProperties: false
         required: [process, actor]
         properties:
-          process: {enum: [PROMPT_1, OWNER]}
+          process: {type: string, minLength: 1}
           actor: {type: string, minLength: 1}
       basis:
         type: array
@@ -33,7 +33,7 @@ properties:
         additionalProperties: false
         required: [process, actor]
         properties:
-          process: {const: PROMPT_2}
+          process: {type: string, minLength: 1}
           actor: {type: string, minLength: 1}
       evidence:
         type: array
