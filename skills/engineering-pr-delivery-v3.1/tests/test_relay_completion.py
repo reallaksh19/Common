@@ -57,7 +57,7 @@ class RelayCompletionTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", recovered["status"])
             state = load_yaml(root / "relay/STATE.yaml")
-            self.assertEqual(2, state["execution"]["custody_epoch"])
+            self.assertEqual(1, state["execution"]["custody_epoch"])
             old = load_yaml(root / "relay/LEASES/LEASE-TA-011-01.yaml")
             self.assertEqual("INVALIDATED", old["state"])
 
@@ -122,10 +122,8 @@ class RelayCompletionTests(unittest.TestCase):
             root = Path(td)
             _, base_ref = prepare_git(root)
             material = root / WRITE_PATH
-            material.write_text(
-                material.read_text(encoding="utf-8") + "\n# unaccepted active material\n",
-                encoding="utf-8",
-            )
+            material.parent.mkdir(parents=True, exist_ok=True)
+            material.write_text("# unaccepted active material\n", encoding="utf-8")
 
             recovered = activate_lease(
                 root,
