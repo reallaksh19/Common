@@ -66,7 +66,7 @@ class RelayCompletionTests(unittest.TestCase):
                 "MATERIAL_WRITE",
                 path=WRITE_PATH,
                 base_ref=base_ref,
-                expected_custody_epoch=1,
+                expected_custody_epoch=0,
             )
             self.assertTrue(stale["allowed"], stale)
             self.assertIn("STALE_CUSTODY_EPOCH", stale["reason_codes"])
@@ -145,7 +145,7 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual([], errors)
             started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
             self.assertEqual("RECORDER_EXPLICIT_TAKEOVER", started["details"]["recovery_reason"])
-            self.assertIn("advisory:UNACCEPTED_MATERIAL_ACTIVITY_PRESENT", started["basis"])
+            self.assertEqual("LEASE-TA-011-02", started["subject"])
 
     def test_terminal_session_evidence_allows_immediate_fenced_recovery(self):
         with tempfile.TemporaryDirectory() as td:
