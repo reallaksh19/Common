@@ -21,7 +21,7 @@ from plan_handover import plan_handover
 from relay_can import evaluate as can_action
 from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
-from test_v3_foundation import dump
+from test_v3_foundation import DIGEST, dump
 from transactionlib import TransactionError
 from v3lib import load_events, load_yaml
 from validate_foundation import validate
