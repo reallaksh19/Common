@@ -228,6 +228,21 @@ def _governing_issue_number(root: Path, state: dict[str, Any]) -> int | None:
             return issue_number_from_ep(load_yaml(ep_path))
     return None
 
+
+def _governing_issue_for_change(
+    root: Path,
+    state: dict[str, Any],
+    change_id: str,
+    delta: dict[str, Any] | None = None,
+) -> int | None:
+    parsed = parse_canonical_id(change_id)
+    if parsed and parsed.get("kind") == "CHANGE" and parsed.get("scope_kind") == "ISSUE":
+        return int(parsed["issue_number"])
+    source_issue = ((delta or {}).get("application") or {}).get("source_issue")
+    if source_issue is not None:
+        return int(source_issue)
+    return _governing_issue_number(root, state)
+
 def _require_programme_boundary(
     parent: dict[str, Any] | None,
     observations: list[dict[str, Any]] | None,
@@ -1438,10 +1453,10 @@ def record_recovery_reconstructed(
 def record_change_hypothesis(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
-    change_id: str,
+    change_id: str | None,
     statement: str,
     basis: list[str],
     process: str = "PROMPT_1",
@@ -1450,10 +1465,27 @@ def record_change_hypothesis(
 ) -> dict[str, Any]:
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
-    try:
-        require_identifier(change_id, "CHANGE-", "change_id")
-    except ValueError as exc:
-        raise TransactionError(str(exc)) from exc
+    governing_issue = _governing_issue_number(root, state)
+    change_id = _issue_scoped_id(
+        root,
+        kind="CHANGE",
+        value=change_id,
+        issue_number=governing_issue,
+        label="change_id",
+    )
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     if process not in {"PROMPT_1", "OWNER"}:
         raise TransactionError("change hypothesis process must be PROMPT_1 or OWNER")
     statement = statement.strip()
@@ -1528,8 +1560,8 @@ def record_change_hypothesis(
 def verify_change_delta(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     change_id: str,
     status: str,
@@ -1545,6 +1577,20 @@ def verify_change_delta(
     errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
     if errors:
         raise TransactionError("; ".join(errors))
+    governing_issue = _governing_issue_for_change(root, state, change_id, delta)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     if (delta.get("verification") or {}).get("status") != "PENDING":
         raise TransactionError("change delta verification is not PENDING")
     status = status.upper()
@@ -1592,8 +1638,8 @@ def verify_change_delta(
 def propose_change_delta(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     change_id: str,
     proposal_path: Path,
@@ -1608,6 +1654,20 @@ def propose_change_delta(
     errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
     if errors:
         raise TransactionError("; ".join(errors))
+    governing_issue = _governing_issue_for_change(root, state, change_id, delta)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     if (delta.get("verification") or {}).get("status") != "CONFIRMED":
         raise TransactionError("Prompt 2.5 proposal requires CONFIRMED verification")
     if delta.get("proposal") is not None:
@@ -1656,8 +1716,8 @@ def propose_change_delta(
 def authorize_change_delta(
     root: Path,
     *,
-    tx_id: str,
-    event_id: str,
+    tx_id: str | None,
+    event_id: str | None,
     actor: str,
     change_id: str,
     granted: bool,
@@ -1665,11 +1725,26 @@ def authorize_change_delta(
     session_timestamp: str,
     fail_after: int | None = None,
 ) -> dict[str, Any]:
+    state, _ = _authority(root)
     path = root / "relay/CHANGES" / f"{change_id}.yaml"
     delta = load_yaml(path)
     errors = validate_schema("change-delta", delta, "CHANGE_DELTA")
     if errors:
         raise TransactionError("; ".join(errors))
+    governing_issue = _governing_issue_for_change(root, state, change_id, delta)
+    tx_id = _issue_scoped_id(
+        root,
+        kind="TX",
+        value=tx_id,
+        issue_number=governing_issue,
+        label="transaction id",
+    )
+    event_id = _transition_event_ids(
+        root,
+        event_id=event_id,
+        issue_number=governing_issue,
+        legacy_suffixes=[""],
+    )[0]
     authorization = delta.get("authorization") or {}
     if authorization.get("required") != "OWNER" or authorization.get("status") != "PENDING":
         raise TransactionError("change delta is not awaiting Owner authorization")
@@ -2252,18 +2327,18 @@ def main() -> None:
     recovery_done.add_argument("--evidence", action="append", default=[])
 
     change_record = sub.add_parser("record-change")
-    change_record.add_argument("--tx-id", required=True)
-    change_record.add_argument("--event-id", required=True)
+    change_record.add_argument("--tx-id")
+    change_record.add_argument("--event-id")
     change_record.add_argument("--actor", required=True)
-    change_record.add_argument("--change-id", required=True)
+    change_record.add_argument("--change-id")
     change_record.add_argument("--statement", required=True)
     change_record.add_argument("--basis", action="append", default=[])
     change_record.add_argument("--process", choices=["PROMPT_1", "OWNER"], default="PROMPT_1")
     change_record.add_argument("--expected-custody-epoch", type=int)
 
     change_verify = sub.add_parser("verify-change")
-    change_verify.add_argument("--tx-id", required=True)
-    change_verify.add_argument("--event-id", required=True)
+    change_verify.add_argument("--tx-id")
+    change_verify.add_argument("--event-id")
     change_verify.add_argument("--actor", required=True)
     change_verify.add_argument("--change-id", required=True)
     change_verify.add_argument("--status", choices=["CONFIRMED", "REJECTED"], required=True)
@@ -2272,8 +2347,8 @@ def main() -> None:
     change_verify.add_argument("--expected-custody-epoch", type=int)
 
     change_propose = sub.add_parser("propose-change")
-    change_propose.add_argument("--tx-id", required=True)
-    change_propose.add_argument("--event-id", required=True)
+    change_propose.add_argument("--tx-id")
+    change_propose.add_argument("--event-id")
     change_propose.add_argument("--actor", required=True)
     change_propose.add_argument("--change-id", required=True)
     change_propose.add_argument("--proposal", required=True)
@@ -2281,8 +2356,8 @@ def main() -> None:
     change_propose.add_argument("--expected-custody-epoch", type=int)
 
     change_authorize = sub.add_parser("authorize-change")
-    change_authorize.add_argument("--tx-id", required=True)
-    change_authorize.add_argument("--event-id", required=True)
+    change_authorize.add_argument("--tx-id")
+    change_authorize.add_argument("--event-id")
     change_authorize.add_argument("--actor", required=True)
     change_authorize.add_argument("--change-id", required=True)
     change_authorize.add_argument("--decision", choices=["GRANT", "DENY"], required=True)

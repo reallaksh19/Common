@@ -27,7 +27,7 @@ from relay_tx import (
     renew_lease,
     verify_change_delta,
 )
-from test_handover_context import install_standalone, target_observation
+from test_handover_context import install_parent_issue, install_standalone, target_observation
 from test_relay_can import WRITE_PATH, prepare_git
 from test_relay_tx import accept_current_checkpoint_and_reconcile
 from test_v3_foundation import DIGEST, dump
@@ -418,6 +418,82 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual("LEASE-TA-011-02", accepted[0]["subject"])
             granted = [row for row in events if row["event_id"] == "EVT-HANDOVER-ACCEPT"][0]
             self.assertEqual("HANDOFF", granted["details"]["continuation"])
+
+    def test_provider_backed_change_lifecycle_allocates_bookkeeping_ids(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            install_parent_issue(root, number=1771)
+
+            recorded = record_change_hypothesis(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=None,
+                statement="The provider-backed change lifecycle should use issue-rooted identities.",
+                basis=["current EP analysis"],
+            )
+            self.assertEqual("TX.1771.1", recorded["id"])
+            change_id = "CHANGE.1771.1"
+            self.assertTrue((root / f"relay/CHANGES/{change_id}.yaml").exists())
+
+            verified = verify_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=change_id,
+                status="CONFIRMED",
+                evidence=["bounded verification evidence"],
+                falsifiers_checked=["no ownership transfer required"],
+            )
+            self.assertEqual("TX.1771.2", verified["id"])
+
+            proposal = {
+                "disposition": "UPDATE",
+                "source": {"work_package": "WP-TA-109", "parent_issue": 1771},
+                "retain": {},
+                "transfer": {},
+                "proposed_target": None,
+                "rationale": "Keep the same governed issue while updating framing.",
+            }
+            proposal_path = root / "canonical-change-proposal.yaml"
+            dump(proposal_path, proposal)
+            proposed = propose_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="agent-x",
+                change_id=change_id,
+                proposal_path=proposal_path,
+                authorization_required="OWNER",
+            )
+            self.assertEqual("TX.1771.3", proposed["id"])
+
+            authorized = authorize_change_delta(
+                root,
+                tx_id=None,
+                event_id=None,
+                actor="owner",
+                change_id=change_id,
+                granted=True,
+                direct_utterance_digest=DIGEST,
+                session_timestamp="2026-09-23T10:55:00Z",
+            )
+            self.assertEqual("TX.1771.4", authorized["id"])
+            delta = load_yaml(root / f"relay/CHANGES/{change_id}.yaml")
+            self.assertEqual("GRANTED", delta["authorization"]["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            canonical = [
+                row["event_id"] for row in events
+                if str(row["event_id"]).startswith("EVT.1771.")
+            ]
+            self.assertEqual(
+                ["EVT.1771.1", "EVT.1771.2", "EVT.1771.3", "EVT.1771.4"],
+                canonical,
+            )
 
     def test_confirmed_change_delta_cannot_reconcile_roadmap_before_owner_authority(self):
         with tempfile.TemporaryDirectory() as td:
