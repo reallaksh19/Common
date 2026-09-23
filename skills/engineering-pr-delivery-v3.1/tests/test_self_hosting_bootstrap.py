@@ -114,10 +114,18 @@ class SelfHostingBootstrapTests(unittest.TestCase):
             self.assertEqual("LEASE.438.1", reconstructed["execution"]["lease"])
             self.assertEqual(1, reconstructed["execution"]["custody_epoch"])
             self.assertEqual(["WP.438"], reconstructed["programme"]["remaining_work"])
-            self.assertIn(
+            controls = load_yaml(clone / "relay/CONTROLS/controls.yaml")
+            bootstrap_control = next(
+                row
+                for row in controls["controls"]
+                if row["id"] == "CTRL-SELFHOST-438-001"
+            )
+            self.assertEqual("RESOLVED", bootstrap_control["state"])
+            self.assertNotIn(
                 "CTRL-SELFHOST-438-001",
                 reconstructed["controls"]["execution_blockers"],
             )
+            self.assertTrue(reconstructed["handoff"]["zero_context_takeover_possible"])
             self.assertTrue(reconstructed["next"]["immediate_material_action"])
 
             assessment = require_boundary_ready(
