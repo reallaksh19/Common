@@ -25,6 +25,7 @@ def plan_handover(
     complex_mode: bool,
     parent_issue_observation: dict | None = None,
     programme_issue_observations: list[dict] | None = None,
+    selected_programme_ref: str | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -48,6 +49,7 @@ def plan_handover(
                 programme_issue_observations,
                 boundary="HANDOVER",
                 current_observation=parent_issue_observation,
+                selected_frontier_ref=selected_programme_ref,
             )
         )
     except (RuntimeError, ValueError) as exc:
@@ -103,6 +105,7 @@ def plan_handover(
             "generator_mode": request["generator"]["mode"],
             "programme_parent_count": len(programme_reconciliation.get("parents") or []),
             "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
+            "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
             "programme_continuation": programme_assessment.get("continuation"),
             "next_programme_frontier": programme_assessment.get("next_frontier"),
         },
@@ -147,6 +150,10 @@ def main() -> None:
         default=[],
         help="Provider observation for one reconciled programme parent; repeat in intended programme order.",
     )
+    parser.add_argument(
+        "--selected-programme-ref",
+        help="Explicit Owner/ROADMAP selected programme parent ref.",
+    )
     parser.add_argument("--complex", action="store_true")
     args = parser.parse_args()
     result = plan_handover(
@@ -159,6 +166,7 @@ def main() -> None:
         complex_mode=args.complex,
         parent_issue_observation=(load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None),
         programme_issue_observations=[load_yaml(Path(path)) for path in args.programme_issue_observation],
+        selected_programme_ref=args.selected_programme_ref,
     )
     print(f"{result['id']}: {result['status']}")
 
