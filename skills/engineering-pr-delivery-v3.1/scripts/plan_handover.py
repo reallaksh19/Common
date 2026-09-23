@@ -7,7 +7,7 @@ from pathlib import Path
 from handover_context import build_context, build_request, render_request
 from intelligence_projection import build_improvement, build_task
 from lease_liveness import active_lease_renewal
-from programme_reconciliation import assess_boundary, require_boundary_ready
+from programme_reconciliation import assess_boundary
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
@@ -57,18 +57,19 @@ def plan_handover(
         issue_number=governing_issue,
         legacy_suffixes=[""],
     )[0]
+    # Recorder-first V3.1 records programme reconciliation as context only.
+    # A BLOCK/UNKNOWN assessment is carried into the handover package instead of
+    # preventing the handover record from being created.
     try:
-        programme_assessment = require_boundary_ready(
-            assess_boundary(
-                task_parent,
-                programme_issue_observations,
-                boundary="HANDOVER",
-                current_observation=parent_issue_observation,
-                selected_frontier_ref=selected_programme_ref,
-            )
+        programme_assessment = assess_boundary(
+            task_parent,
+            programme_issue_observations,
+            boundary="HANDOVER",
+            current_observation=parent_issue_observation,
+            selected_frontier_ref=selected_programme_ref,
         )
-    except (RuntimeError, ValueError) as exc:
-        raise TransactionError(str(exc)) from exc
+    except ValueError:
+        programme_assessment = assess_boundary(None, None, boundary="HANDOVER")
 
     effective_parent_observation = programme_assessment.get("selected_observation")
     programme_reconciliation = programme_assessment["reconciliation"]

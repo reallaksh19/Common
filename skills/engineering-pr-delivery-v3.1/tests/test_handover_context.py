@@ -317,32 +317,30 @@ class HandoverContextTests(unittest.TestCase):
             planned = [row for row in events if row["type"] == "HANDOVER_PLANNED"][-1]
             self.assertEqual("EVT.1771.1", planned["event_id"])
 
-    def test_parent_backed_handover_requires_live_programme_observation(self):
+    def test_parent_backed_handover_records_missing_programme_observation(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
             install_standalone(root)
             install_parent_issue(root)
 
-            write_before = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
-            self.assertTrue(write_before["allowed"], write_before)
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-CURRENTNESS-MISSING",
+                event_id="EVT-HANDOVER-CURRENTNESS-MISSING",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            self.assertEqual(
+                "NOT_REQUIRED",
+                context["blind_context"]["programme"]["reconciliation"]["status"],
+            )
 
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_CURRENTNESS_REQUIRED"):
-                plan_handover(
-                    root,
-                    tx_id="TX-HANDOVER-CURRENTNESS-MISSING",
-                    event_id="EVT-HANDOVER-CURRENTNESS-MISSING",
-                    actor="agent-x",
-                    target_path=target_observation(root),
-                    base_ref=base_ref,
-                    complex_mode=False,
-                )
-
-            write_after = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
-            self.assertTrue(write_after["allowed"], write_after)
-            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
-
-    def test_closed_or_changed_parent_requires_programme_reconciliation_before_handover(self):
+    def test_closed_parent_reconciliation_debt_does_not_block_handover_recording(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -354,19 +352,18 @@ class HandoverContextTests(unittest.TestCase):
                 disposition="CLOSE",
             )
 
-            with self.assertRaisesRegex(TransactionError, "PROGRAMME_RECONCILIATION_REQUIRED"):
-                plan_handover(
-                    root,
-                    tx_id="TX-HANDOVER-STALE-PARENT",
-                    event_id="EVT-HANDOVER-STALE-PARENT",
-                    actor="agent-x",
-                    target_path=target_observation(root),
-                    base_ref=base_ref,
-                    complex_mode=False,
-                    parent_issue_observation=observation,
-                )
-
-            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-STALE-PARENT",
+                event_id="EVT-HANDOVER-STALE-PARENT",
+                actor="agent-x",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+                parent_issue_observation=observation,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertTrue((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
 
     def test_stale_current_parent_can_handover_after_explicit_programme_reconciliation(self):
         with tempfile.TemporaryDirectory() as td:
@@ -469,7 +466,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertTrue(after["allowed"], after)
             self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
 
-    def test_handover_only_control_blocks_plan_but_not_material_write(self):
+    def test_handover_control_is_advisory_and_plan_still_records(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -484,21 +481,18 @@ class HandoverContextTests(unittest.TestCase):
                 "permits": ["MATERIAL_WRITE", "TEST"],
                 "resolution": {"condition": "Handover target is ready.", "evidence": []},
             })
-            write = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
-            self.assertTrue(write["allowed"], write)
-            with self.assertRaisesRegex(TransactionError, "HANDOVER denied"):
-                plan_handover(
-                    root,
-                    tx_id="TX-HANDOVER-BLOCKED",
-                    event_id="EVT-HANDOVER-BLOCKED",
-                    actor="owner",
-                    target_path=target_observation(root),
-                    base_ref=base_ref,
-                    complex_mode=False,
-                )
-            write_after = can_action(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
-            self.assertTrue(write_after["allowed"], write_after)
+            handover_diag = can_action(root, "HANDOVER")
+            self.assertTrue(handover_diag["allowed"], handover_diag)
+            self.assertIn("CONTROL_BLOCKS_ACTION", handover_diag["reason_codes"])
 
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-BLOCKED",
+                event_id="EVT-HANDOVER-BLOCKED",
+                actor="owner",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+            )
+            self.assertEqual("COMMITTED", result["status"])
 
-if __name__ == "__main__":
-    unittest.main()

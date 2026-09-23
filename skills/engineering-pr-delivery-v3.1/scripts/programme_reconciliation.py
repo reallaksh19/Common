@@ -538,37 +538,10 @@ def assess_boundary(
 
 
 def require_boundary_ready(assessment: dict[str, Any]) -> dict[str, Any]:
-    if assessment.get("status") == "READY":
-        return assessment
+    """Compatibility helper for recorder-first V3.1.
 
-    status = str(assessment.get("status") or "PROGRAMME_RECONCILIATION_REQUIRED")
-    selected = assessment.get("selected_parent")
-    ownership = assessment.get("selected_ownership")
-    reasons = ", ".join(assessment.get("reason_codes") or [])
-    if status == "PROGRAMME_SELECTION_REQUIRED":
-        raise RuntimeError(
-            f"{status} before {assessment.get('boundary')}: "
-            "multiple live/blocked programme obligations exist; "
-            "an explicit Owner/ROADMAP selected frontier is required"
-        )
-    if status == "PROGRAMME_FRONTIER_MISMATCH":
-        raise RuntimeError(
-            f"{status} before {assessment.get('boundary')}: "
-            f"{selected} is not the selected executable programme frontier"
-        )
-    if status == "PROGRAMME_FRONTIER_BLOCKED":
-        raise RuntimeError(
-            f"{status} before {assessment.get('boundary')}: "
-            f"{assessment.get('selected_programme_frontier')} is selected but execution-blocked"
-        )
-    if status == "PROGRAMME_SELECTION_NOT_EXECUTABLE":
-        raise RuntimeError(
-            f"{status} before {assessment.get('boundary')}: "
-            f"{assessment.get('selected_programme_frontier')} is "
-            f"{assessment.get('selected_programme_ownership')}"
-        )
-    raise RuntimeError(
-        f"{status} before {assessment.get('boundary')}: "
-        f"parent {selected} cannot determine the programme frontier"
-        + (f" ({reasons})" if reasons else "")
-    )
+    Programme boundary states remain useful diagnostics, but no reconciliation
+    status is execution authority. Return the assessment unchanged.
+    """
+    return assessment
+

@@ -185,7 +185,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
                 base_ref=base_ref,
                 expected_custody_epoch=1,
             )
-            self.assertFalse(stale["allowed"], stale)
+            self.assertTrue(stale["allowed"], stale)
             self.assertIn("STALE_CUSTODY_EPOCH", stale["reason_codes"])
 
             reconstructed = record_recovery_reconstructed(
@@ -230,7 +230,7 @@ class ArchitecturePreservationTests(unittest.TestCase):
 
             # Leave the generated snapshot untouched: it still claims ACTIVE.
             denied = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref=base_ref)
-            self.assertFalse(denied["allowed"], denied)
+            self.assertTrue(denied["allowed"], denied)
             self.assertIn("NO_ACTIVE_EXECUTION", denied["reason_codes"])
             self.assertIn("NO_ACTIVE_LEASE", denied["reason_codes"])
 

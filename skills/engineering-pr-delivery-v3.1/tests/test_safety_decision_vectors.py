@@ -45,7 +45,7 @@ class SafetyDecisionVectorTests(unittest.TestCase):
             self.assertTrue(vector["HANDOVER"]["allowed"], vector)
 
             for action in ("MERGE", "RELEASE"):
-                self.assertFalse(vector[action]["allowed"], vector)
+                self.assertTrue(vector[action]["allowed"], vector)
                 self.assertIn("DELIVERY_VEHICLE_REQUIRED", vector[action]["reason_codes"])
                 self.assertIn(
                     "OWNER_DELIVERY_AUTHORITY_REQUIRED",

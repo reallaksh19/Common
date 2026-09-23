@@ -150,37 +150,37 @@ class RelayCanTests(unittest.TestCase):
                 "resolution": {"condition": "Exclusive ownership restored.", "evidence": []},
             })
             result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("CONTROL_BLOCKS_ACTION", result["reason_codes"])
             self.assertEqual(["CTRL-COLLISION"], result["blocking_controls"])
 
-    def test_relevant_dependency_drift_blocks_material_write(self):
+    def test_relevant_dependency_drift_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             advance_base(root, "deps/compiler.py", "VERSION = 2\n")
             result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("DRIFT_RELEVANT", result["reason_codes"])
             self.assertTrue(any(item == "drift:RELEVANT" for item in result["basis"]), result)
 
-    def test_unknown_drift_blocks_material_write(self):
+    def test_unknown_drift_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="does-not-exist")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("DRIFT_UNKNOWN", result["reason_codes"])
 
-    def test_missing_base_ref_blocks_material_write(self):
+    def test_missing_base_ref_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH)
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("BASE_REF_REQUIRED", result["reason_codes"])
 
-    def test_protected_or_out_of_scope_path_is_denied(self):
+    def test_protected_or_out_of_scope_path_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
@@ -190,11 +190,11 @@ class RelayCanTests(unittest.TestCase):
                 path="skills/three-pass-prompt-generator/schema.md",
                 base_ref="base",
             )
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("PATH_OUTSIDE_EP_WRITE_SCOPE", result["reason_codes"])
             self.assertIn("PATH_PROTECTED", result["reason_codes"])
 
-    def test_owner_override_allows_bounded_write_but_not_merge(self):
+    def test_owner_override_delivery_restriction_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
@@ -230,15 +230,15 @@ class RelayCanTests(unittest.TestCase):
             dump(state_path, state)
             add_control(root, owner_authority("MERGE"))
             merge = evaluate(root, "MERGE")
-            self.assertFalse(merge["allowed"], merge)
+            self.assertTrue(merge["allowed"], merge)
             self.assertIn("OWNER_OVERRIDE_DELIVERY_FORBIDDEN", merge["reason_codes"])
 
-    def test_checkpoint_requires_live_base_ref(self):
+    def test_checkpoint_missing_base_ref_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             denied = evaluate(root, "CHECKPOINT")
-            self.assertFalse(denied["allowed"], denied)
+            self.assertTrue(denied["allowed"], denied)
             self.assertIn("BASE_REF_REQUIRED", denied["reason_codes"])
 
             allowed = evaluate(root, "CHECKPOINT", base_ref="base")
@@ -271,15 +271,15 @@ class RelayCanTests(unittest.TestCase):
             pr_ready = evaluate(root, "PR_READY")
             self.assertTrue(pr_ready["allowed"], pr_ready)
 
-    def test_pr_ready_requires_pull_request_delivery_vehicle(self):
+    def test_pr_ready_missing_delivery_vehicle_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             result = evaluate(root, "PR_READY")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("DELIVERY_VEHICLE_REQUIRED", result["reason_codes"])
 
-    def test_prepared_selector_cannot_authorize_live_v3_execution(self):
+    def test_prepared_selector_is_reported_but_does_not_block_recording(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
@@ -295,13 +295,13 @@ class RelayCanTests(unittest.TestCase):
             (root / "agents/relay/REPO_STATE.yaml").write_text("schema_version: relay-v2.5\n", encoding="utf-8")
 
             write = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(write["allowed"], write)
+            self.assertTrue(write["allowed"], write)
             self.assertIn("PROTOCOL_NOT_ACTIVE", write["reason_codes"])
 
             handover = evaluate(root, "HANDOVER")
             self.assertTrue(handover["allowed"], handover)
 
-    def test_merge_requires_explicit_owner_delivery_authority(self):
+    def test_merge_missing_owner_delivery_authority_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
@@ -314,7 +314,7 @@ class RelayCanTests(unittest.TestCase):
             dump(state_path, state)
 
             denied = evaluate(root, "MERGE")
-            self.assertFalse(denied["allowed"], denied)
+            self.assertTrue(denied["allowed"], denied)
             self.assertEqual(["OWNER_DELIVERY_AUTHORITY_REQUIRED"], denied["reason_codes"])
 
             add_control(root, owner_authority("MERGE"))
@@ -322,17 +322,17 @@ class RelayCanTests(unittest.TestCase):
             self.assertTrue(allowed["allowed"], allowed)
             self.assertEqual(["ALLOW"], allowed["reason_codes"])
 
-    def test_merge_requires_delivery_vehicle(self):
+    def test_merge_missing_delivery_vehicle_is_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
             add_control(root, owner_authority("MERGE"))
             result = evaluate(root, "MERGE")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("DELIVERY_VEHICLE_REQUIRED", result["reason_codes"])
 
 
-    def test_parallel_lifecycle_is_rejected_as_execution_authority(self):
+    def test_parallel_lifecycle_validation_error_is_advisory_to_relay_can(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             prepare_git(root)
@@ -350,7 +350,7 @@ class RelayCanTests(unittest.TestCase):
 
             dump(state_path, state)
             result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(result["allowed"], result)
+            self.assertTrue(result["allowed"], result)
             self.assertIn("INVALID_FOUNDATION", result["reason_codes"])
 
 

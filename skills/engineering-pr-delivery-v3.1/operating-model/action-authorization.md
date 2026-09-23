@@ -1,100 +1,65 @@
-# V3 action authorization
+# V3.1 action diagnostics — recorder-first
 
-V3 authorizes **actions**, not a generic relay state.
+Engineering Relay V3.1 is a **recording and reconstruction system**, not an execution gatekeeper.
 
-The central interface is:
-
-```text
-relay.can(action)
-```
-
-The CLI surface is:
+The compatibility CLI remains:
 
 ```bash
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MATERIAL_WRITE <repo-root> --path path/to/file --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py CHECKPOINT <repo-root> --base-ref origin/main
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py HANDOVER <repo-root>
-python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py PR_READY <repo-root>
 python skills/engineering-pr-delivery-v3.1/scripts/relay_can.py MERGE <repo-root>
 ```
 
-## Native-core compatibility
+## Semantics
 
-`relay.can(action)` evaluates the stable native safety core. A repository whose durable selector is `V3 / ACTIVE` is a supported compatibility basis for current V3.1 tooling when the native foundation and frozen legacy-history invariants validate. The selector is not rewritten just to consume a newer implementation.
+For every recognized action, `relay_can.py` returns `allowed: true`.
 
-Implementation-version drift is diagnostic coordination information, not a reason to deny ordinary product work. `PROTOCOL_NOT_ACTIVE` remains appropriate for genuinely legacy/staged states such as `V2_5 / PREPARED`, not for an already-active native V3 repository.
+The existing fields remain useful:
 
-## Stable action vocabulary
+- `basis` records the facts inspected;
+- `blocking_controls` is a legacy field name and now lists controls that would previously have blocked the action;
+- `reason_codes` records advisory conditions such as stale custody, drift, missing checkpoint, protected scope, or missing Owner delivery authority.
 
-```text
-READ
-ANALYZE
-MATERIAL_WRITE
-TEST
-CHECKPOINT
-HANDOVER
-LOCAL_EXECUTION_EXPORT
-DRAFT_PR_UPDATE
-PR_READY
-MERGE
-RELEASE
-CLOSE_TASK
-```
+These are **diagnostics only**. They do not authorize or deny engineering work.
 
-## Precedence
-
-The evaluator applies:
-1. durable V3 authority validity;
-2. current lifecycle and EP for execution-plane actions;
-3. current ACTIVE lease only where execution custody is required;
-4. lease/EP/route/material-base binding;
-5. action authority;
-6. requested write path against EP write/protected scope;
-7. live material/coordination basis inspection;
-8. mechanical semantic drift classification against the supplied current base ref;
-9. OPEN action-scoped controls;
-10. checkpoint/quality requirements for delivery transitions;
-11. explicit Owner delivery authority for MERGE/RELEASE.
-
-The result contains deterministic `allowed`, `basis`, `blocking_controls`, and stable `reason_codes`.
-
-## Execution-plane isolation
-
-`MATERIAL_WRITE` intentionally does not inspect:
-- generated snapshot freshness;
-- external Issue projection freshness;
-- PR body digests;
-- handover readiness;
-- successor qualification;
-- provider delivery observations.
-
-Those concerns may be represented by controls that block their own actions, but they do not block `MATERIAL_WRITE` unless a control explicitly blocks `MATERIAL_WRITE`.
-
-For `MATERIAL_WRITE`, the caller supplies only the identity of the current base ref. V3 derives the drift result mechanically from:
+Examples:
 
 ```text
-EP material_base..current base ref
-∩
-EP material sensitivity
+DRIFT_RELEVANT                 -> advisory
+STALE_CUSTODY_EPOCH            -> advisory
+CONTROL_BLOCKS_ACTION          -> advisory
+CHECKPOINT_NOT_ACCEPTED        -> advisory
+OWNER_DELIVERY_AUTHORITY_REQUIRED -> advisory
 ```
 
-`DISJOINT` satisfies the drift component. `RELEVANT` and `UNKNOWN` deny the write.
+## What may still fail
 
-## Owner delivery authority
+Recorder-first does not mean corrupt-the-ledger-first. A write may still fail when the recorder cannot safely persist the record itself, for example:
 
-An execution Owner override is deliberately not merge/release authority. `MERGE` and `RELEASE` require explicit durable Owner action authority represented by an OPEN `OWNER` control whose source is `OWNER` and whose `permits` contains the requested action.
+- malformed YAML or schema-invalid object supplied to a concrete transaction;
+- duplicate immutable IDs;
+- unsafe/path-traversal identifiers;
+- impossible file write;
+- append-only event corruption;
+- an interrupted atomic transaction that cannot be committed.
 
-This is a V3-2/3 representation of explicit delivery authority. Later transactional command work may introduce a more specialized durable representation, but it must preserve the same semantic separation.
+Those are storage/integrity failures, not programme or engineering-policy gates.
 
+## Custody, scope, drift and controls
 
-## Post-execution handover and delivery
+Custody epochs, leases, scope declarations, material drift and controls remain valuable provenance.
 
-Execution custody and handover/delivery coordination are deliberately separate.
+They answer questions such as:
 
-- `MATERIAL_WRITE`, `TEST`, and `CHECKPOINT` require active execution custody.
-- `CHECKPOINT` also requires a current base ref so relevant drift is re-evaluated at acceptance time.
-- `HANDOVER` and `LOCAL_EXECUTION_EXPORT` may run after lease release when an accepted checkpoint supplies the work context.
-- `DRAFT_PR_UPDATE` and `PR_READY` do not require an active execution lease; they require the relevant delivery vehicle, and `PR_READY` additionally requires accepted checkpoint/quality truth.
-- `MERGE` and `RELEASE` continue to require explicit Owner delivery authority.
+- who was recorded as current;
+- what scope was intended;
+- whether base material moved;
+- what risks or unresolved controls existed;
+- what a successor should inspect.
 
-This prevents the delivery/handover planes from being re-coupled to material execution custody.
+They no longer stop MATERIAL_WRITE, TEST, CHECKPOINT, HANDOVER, delivery or closure.
+
+## Delivery
+
+Relay records delivery and Owner-authority observations. It does not decide whether GitHub or another provider will accept an external action. Provider permissions and explicit human decisions remain outside the recorder.

@@ -98,40 +98,27 @@ def build_native_lease(
 
     current_lease_id = str((current_lease or {}).get("id") or "")
     current_executor = str(((current_lease or {}).get("executor") or {}).get("id") or "")
-    if (
-        isinstance(current_lease, dict)
-        and current_lease.get("state") == "ACTIVE"
-        and current_executor != executor_id
-        and current_lease_id != str(replace_active_lease_id or "")
-    ):
-        raise AdmissionError(
-            "exclusive route already has an ACTIVE lease for another executor; release/transfer is required"
-        )
+    # Recorder-first V3.1 does not use an existing executor as an admission gate.
+    # The next transaction records whichever executor becomes current.
 
     required = _qualification_required(ep)
-    if required and method == "DETERMINISTIC":
-        raise AdmissionError("EP admission policy requires qualification; deterministic admission is insufficient")
-    if method == "QUALIFIED" and not required:
-        required = True
 
-    if method == "QUALIFIED":
-        if not isinstance(qualification, dict):
-            raise AdmissionError("QUALIFIED admission requires qualification evidence")
+    if method == "QUALIFIED" and isinstance(qualification, dict):
         qset = str(qualification.get("qset") or "").strip()
         evaluator = str(qualification.get("evaluator") or "").strip()
         evidence = [str(x) for x in qualification.get("evidence") or [] if str(x).strip()]
-        if not qset or not evaluator or not evidence:
-            raise AdmissionError("qualification requires qset, evaluator, and durable evidence")
-        if evaluator == executor_id:
-            raise AdmissionError("qualified admission evaluator cannot be the execution candidate")
+        complete = bool(qset and evaluator and evidence)
         q = {
-            "required": True,
-            "qset": qset,
-            "evaluator": evaluator,
-            "result": "PASS",
+            "required": bool(complete),
+            "qset": qset or None,
+            "evaluator": evaluator or None,
+            "result": "PASS" if complete else None,
             "evidence": evidence,
         }
     else:
+        # EP qualification policy is preserved as historical intent only. It may
+        # be reported by projections, but it cannot stop the recorder from
+        # assigning the next executor.
         q = {
             "required": False,
             "qset": None,

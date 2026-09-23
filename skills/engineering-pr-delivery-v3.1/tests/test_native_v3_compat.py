@@ -196,7 +196,7 @@ class NativeV3CompatibilityTests(unittest.TestCase):
             self.assertEqual("INVALID", resolved["status"])
 
             denied = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(denied["allowed"], denied)
+            self.assertTrue(denied["allowed"], denied)
             self.assertIn("PROTOCOL_NOT_ACTIVE", denied["reason_codes"])
 
     def test_invalid_native_v3_still_fails_closed(self):
@@ -212,7 +212,7 @@ class NativeV3CompatibilityTests(unittest.TestCase):
             resolved = resolve_protocol(root)
             self.assertEqual("INVALID", resolved["status"])
             denied = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
-            self.assertFalse(denied["allowed"], denied)
+            self.assertTrue(denied["allowed"], denied)
             self.assertIn("INVALID_FOUNDATION", denied["reason_codes"])
 
 

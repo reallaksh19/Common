@@ -138,10 +138,13 @@ def evaluate(
 
     authority_errors = validate_authority(root)
     if authority_errors:
+        # Recorder-first V3.1: foundation problems are diagnostics, not execution gates.
+        # Structural parsing/transaction integrity is still enforced by the transaction
+        # that actually writes the ledger.
         return _result(
             action,
-            False,
-            ["authority validation failed", *authority_errors[:5]],
+            True,
+            ["RECORDER_ADVISORY: authority validation failed", *authority_errors[:5]],
             [],
             ["INVALID_FOUNDATION"],
         )
@@ -258,12 +261,15 @@ def evaluate(
         reasons.append("CONTROL_BLOCKS_ACTION")
 
     reasons = list(dict.fromkeys(reasons))
-    allowed = not reasons
-    return _result(action, allowed, basis, blocking_controls, ["ALLOW"] if allowed else reasons)
+    # Recorder-first V3.1 never uses policy observations to stop an engineering
+    # action. Keep the legacy reason codes as machine-readable advisories so the
+    # ledger still records drift, custody, control, checkpoint and delivery debt.
+    allowed = True
+    return _result(action, allowed, basis, blocking_controls, ["ALLOW"] if not reasons else reasons)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate one Engineering Relay V3.1 action against current authoritative state.")
+    parser = argparse.ArgumentParser(description="Record V3.1 action diagnostics without blocking engineering execution.")
     parser.add_argument("action", choices=sorted(ACTIONS))
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--path", help="Repository-relative material path for MATERIAL_WRITE.")

@@ -43,14 +43,9 @@ def _custody_epoch(state: dict[str, Any]) -> int | None:
 
 
 def _require_expected_custody_epoch(state: dict[str, Any], expected: int | None) -> None:
-    execution = state.get("execution") or {}
-    current = _custody_epoch(state)
-    if execution.get("lifecycle") != "ACTIVE" or current is None:
-        return
-    if expected is None:
-        raise TransactionError("CUSTODY_EPOCH_REQUIRED")
-    if int(expected) != current:
-        raise TransactionError(f"STALE_CUSTODY_EPOCH: expected {expected}, current {current}")
+    # Recorder-first V3.1 keeps custody epochs as provenance only. A stale or
+    # omitted epoch is diagnostic context, never a mutation gate.
+    return
 
 
 def _add_automatic_liveness(
@@ -70,11 +65,12 @@ def _add_automatic_liveness(
 
 
 def _authority(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
-    errors = validate_authority(root)
-    if errors:
-        raise TransactionError("invalid V3 authority: " + "; ".join(errors[:8]))
+    # Recorder-first V3.1 reads the durable ledger even when cross-object
+    # validation reports debt. Structural YAML/schema failures still surface at
+    # the concrete read/write boundary.
     state = load_yaml(root / "relay/STATE.yaml")
-    controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
+    controls_path = str((state.get("controls") or {}).get("path") or "")
+    controls = load_yaml(root / controls_path) if controls_path else {"controls": []}
     return state, controls
 
 
@@ -250,17 +246,16 @@ def _require_programme_boundary(
     boundary: str,
     selected_frontier_ref: str | None = None,
 ) -> dict[str, Any]:
+    # Programme reconciliation is recorded as context, never execution authority.
     try:
-        return require_boundary_ready(
-            assess_boundary(
-                parent,
-                observations,
-                boundary=boundary,
-                selected_frontier_ref=selected_frontier_ref,
-            )
+        return assess_boundary(
+            parent,
+            observations,
+            boundary=boundary,
+            selected_frontier_ref=selected_frontier_ref,
         )
-    except (RuntimeError, ValueError) as exc:
-        raise TransactionError(str(exc)) from exc
+    except ValueError:
+        return assess_boundary(None, None, boundary=boundary)
 
 
 def _require_final_reconciliation(
@@ -269,28 +264,10 @@ def _require_final_reconciliation(
     *,
     parent_issue_observation: dict[str, Any] | None = None,
 ) -> None:
-    execution = state.get("execution") or {}
-    active_ep_id = execution.get("ep")
-    checkpoint = _current_checkpoint(root, state)
-    if not isinstance(checkpoint, dict):
-        raise TransactionError("CLOSE_TASK requires an accepted checkpoint")
-    checkpoint_ep = checkpoint.get("ep")
-    if active_ep_id and checkpoint_ep != active_ep_id:
-        raise TransactionError("CURRENT_EP_CHECKPOINT_REQUIRED before CLOSE_TASK")
-
-    improvement = build_improvement(root)
-    roadmap_effect = improvement.get("roadmap_effect") or {}
-    if roadmap_effect.get("concept_change") == "UNKNOWN":
-        raise TransactionError("ROADMAP_RECONCILIATION_REQUIRED before CLOSE_TASK")
-
-    ep_id = active_ep_id or checkpoint_ep
-    ep = load_yaml(root / "relay/WORK" / f"{ep_id}.yaml") if ep_id else None
-    parent_basis = (ep or {}).get("parent_issue") or {}
-    if parent_basis.get("number"):
-        task = build_task(root, parent_issue_observation=parent_issue_observation)
-        parent = task.get("parent_issue") or {}
-        if parent.get("disposition") == "UNKNOWN":
-            raise TransactionError("PARENT_ISSUE_RECONCILIATION_REQUIRED before CLOSE_TASK")
+    # Recorder-first V3.1 permits closure while reconciliation/delivery debt is
+    # still visible in the ledger. Closing records a decision; it does not certify
+    # that all programme debt disappeared.
+    return
 
 
 def _require_fresh_handover(
@@ -384,13 +361,12 @@ def admit_task(
     fail_after: int | None = None,
 ) -> dict[str, Any]:
     live_v3, protocol_state = _protocol_state(root)
-    if not live_v3:
-        raise TransactionError(f"ADMIT_TASK denied: PROTOCOL_NOT_ACTIVE ({protocol_state})")
 
     state, _ = _authority(root)
     execution = state.get("execution") or {}
-    if execution.get("lifecycle") != "IDLE" or any(execution.get(key) for key in ("ep", "lease", "route")):
-        raise TransactionError("ADMIT_TASK requires an IDLE repository with no active EP/lease/route")
+    # Recorder-first admission may supersede an existing execution pointer. The
+    # predecessor objects remain durable history; admission no longer waits for
+    # an IDLE repository.
 
     admission = load_yaml(admission_path)
     errors = validate_schema("task-admission", admission, "TASK_ADMISSION")
@@ -471,6 +447,15 @@ def admit_task(
     if ep_path.exists() or lease_path.exists():
         raise TransactionError("ADMIT_TASK refuses to overwrite an existing EP or lease")
 
+    predecessor_lease_id = execution.get("lease")
+    predecessor_lease = None
+    if predecessor_lease_id and str(predecessor_lease_id) != str(lease_id):
+        predecessor_path = root / "relay/LEASES" / f"{predecessor_lease_id}.yaml"
+        if predecessor_path.exists():
+            candidate = load_yaml(predecessor_path)
+            if isinstance(candidate, dict) and candidate.get("state") == "ACTIVE":
+                predecessor_lease = candidate
+
     new_roadmap = copy.deepcopy(roadmap)
     new_roadmap["revision"] = rplan["new_revision"]
     new_roadmap["work_packages"] = work_packages
@@ -515,16 +500,50 @@ def admit_task(
     )
 
     events = _events(root)
+    event_suffixes = (
+        ["-SUPERSEDED", "-OWNER", "-EP", "-LEASE"]
+        if predecessor_lease is not None
+        else ["-OWNER", "-EP", "-LEASE"]
+    )
     ids = _transition_event_ids(
         root,
         event_id=event_id,
         issue_number=governing_issue,
-        legacy_suffixes=["-OWNER", "-EP", "-LEASE"],
+        legacy_suffixes=event_suffixes,
     )
     _assert_event_ids_available(events, ids)
+    offset = 0
+    replacements = {
+        str((state.get("roadmap") or {}).get("path")): yaml_bytes(new_roadmap),
+        "relay/STATE.yaml": yaml_bytes(provisional_state),
+        f"relay/WORK/{ep['id']}.yaml": yaml_bytes(ep),
+        f"relay/LEASES/{lease_id}.yaml": yaml_bytes(lease),
+        _snapshot_path(provisional_state): yaml_bytes(snapshot),
+    }
+    if predecessor_lease is not None:
+        superseded = copy.deepcopy(predecessor_lease)
+        superseded["state"] = "INVALIDATED"
+        reasons = list((superseded.get("invalidation") or {}).get("reasons") or [])
+        reasons.append(f"RECORDER_SUPERSEDED_BY_ADMISSION:{lease_id}")
+        superseded["invalidation"] = {"reasons": list(dict.fromkeys(reasons))}
+        replacements[f"relay/LEASES/{predecessor_lease_id}.yaml"] = yaml_bytes(superseded)
+        events.append(_event(
+            ids[0],
+            "LEASE_REVOKED",
+            actor,
+            str(predecessor_lease_id),
+            [tx_id, f"successor-lease:{lease_id}", "continuation:ADMISSION_SUPERSEDED"],
+            {
+                "successor_lease": lease_id,
+                "successor_executor": lease_spec["executor_id"],
+                "continuation": "ADMISSION_SUPERSEDED",
+            },
+        ))
+        offset = 1
+
     events.extend([
         _event(
-            ids[0],
+            ids[offset],
             "OWNER_TASK_ADMITTED",
             actor,
             wp_id,
@@ -540,30 +559,26 @@ def admit_task(
                 "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
                 "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
                 "next_programme_frontier": programme_assessment.get("next_frontier"),
+                "superseded_lease": predecessor_lease_id if predecessor_lease is not None else None,
             },
         ),
-        _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
-        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
+        _event(ids[offset + 1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
+        _event(ids[offset + 2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
             "executor": lease_spec["executor_id"],
             "method": lease_spec["method"],
             "continuation": "NEW",
             "custody_epoch": 1,
+            "superseded_lease": predecessor_lease_id if predecessor_lease is not None else None,
         }),
     ])
+    replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
 
     return execute(
         root,
         tx_id=tx_id,
         command="ADMIT_TASK",
         actor=actor,
-        replacements={
-            str((state.get("roadmap") or {}).get("path")): yaml_bytes(new_roadmap),
-            "relay/STATE.yaml": yaml_bytes(provisional_state),
-            f"relay/WORK/{ep['id']}.yaml": yaml_bytes(ep),
-            f"relay/LEASES/{lease_id}.yaml": yaml_bytes(lease),
-            _snapshot_path(provisional_state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
@@ -632,12 +647,10 @@ def activate_lease(
     if different_executor:
         try:
             handover_digest = _require_fresh_handover(root, state, base_ref=base_ref)
-        except TransactionError as exc:
-            if not recovery_takeover:
-                raise TransactionError(
-                    "ACTIVE_LEASE_OWNED_BY_DIFFERENT_EXECUTOR: fresh handover is unavailable; "
-                    "use explicit recovery takeover only after the next process has determined predecessor custody is abandoned"
-                ) from exc
+        except TransactionError:
+            # Recorder-first V3.1 automatically records a takeover when no fresh
+            # handover exists. Lease age, material activity and provider terminal
+            # evidence remain diagnostics in recovery_assessment, never blockers.
             recovery_assessment = recovery_eligibility(
                 root,
                 old_lease or {},
@@ -646,10 +659,6 @@ def activate_lease(
                 observed_at=recovery_observed_at,
                 terminal_observation=recovery_observation,
             )
-            if not recovery_assessment["eligible"]:
-                raise TransactionError(
-                    f"RECOVERY_NOT_ELIGIBLE: {recovery_assessment['reason']}"
-                ) from exc
             programme_assessment = _require_programme_boundary(
                 (current_ep or {}).get("parent_issue"),
                 programme_issue_observations,
@@ -954,7 +963,10 @@ def release_lease(
 
     handover_digest = None
     if reason == "HANDOFF":
-        handover_digest = _require_fresh_handover(root, state, base_ref=base_ref)
+        try:
+            handover_digest = _require_fresh_handover(root, state, base_ref=base_ref)
+        except TransactionError:
+            handover_digest = "RECORDER_ADVISORY:NO_FRESH_HANDOVER"
 
     released = copy.deepcopy(lease)
     released["state"] = "RELEASED"
@@ -1012,12 +1024,13 @@ def accept_checkpoint(
     _require_action(root, "CHECKPOINT", base_ref=base_ref, expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
-    ep = _current_ep(root, state)
-    if not isinstance(ep, dict):
-        raise TransactionError("checkpoint acceptance requires the current authoritative EP")
-    governing_issue = issue_number_from_ep(ep)
 
     checkpoint = copy.deepcopy(load_yaml(checkpoint_path))
+    checkpoint_ep_id = str(checkpoint.get("ep") or "")
+    ep_path = root / "relay/WORK" / f"{checkpoint_ep_id}.yaml"
+    ep = load_yaml(ep_path) if checkpoint_ep_id and ep_path.exists() else _current_ep(root, state)
+    governing_issue = issue_number_from_ep(ep) if isinstance(ep, dict) else _governing_issue_number(root, state)
+
     checkpoint["id"] = _issue_scoped_id(
         root,
         kind="CP",
@@ -1042,35 +1055,9 @@ def accept_checkpoint(
     errors = validate_schema("checkpoint", checkpoint, "CHECKPOINT")
     if errors:
         raise TransactionError("; ".join(errors))
-    if any(item.get("result") != "PASS" for item in checkpoint.get("acceptance") or []):
-        raise TransactionError("checkpoint acceptance requires every criterion PASS")
-    if (checkpoint.get("quality") or {}).get("result") != "CLEAR":
-        raise TransactionError("checkpoint acceptance requires quality CLEAR")
-    validation = checkpoint.get("validation") or {}
-    if any(value == "FAIL" for value in validation.values()):
-        raise TransactionError("checkpoint acceptance cannot contain failed validation")
-    active_ep = (state.get("execution") or {}).get("ep")
-    if active_ep and checkpoint.get("ep") != active_ep:
-        raise TransactionError("checkpoint EP does not match active execution EP")
-    expected_ac_ids = [str(item.get("id")) for item in ep.get("acceptance") or []]
-    observed_ac_ids = [str(item.get("id")) for item in checkpoint.get("acceptance") or []]
-    if len(observed_ac_ids) != len(set(observed_ac_ids)):
-        raise TransactionError("checkpoint acceptance contains duplicate criterion ids")
-    if set(observed_ac_ids) != set(expected_ac_ids) or len(observed_ac_ids) != len(expected_ac_ids):
-        raise TransactionError("checkpoint acceptance ids must exactly match the current EP acceptance contract")
-
-    expected_quality = str((ep.get("quality_policy") or {}).get("level") or "")
-    if (checkpoint.get("quality") or {}).get("policy") != expected_quality:
-        raise TransactionError("checkpoint quality policy must match the current EP quality policy")
-
-    material = inspect_material_basis(root, ep, base_ref)
-    current_material = material["material_basis"]
-    observed_material = checkpoint.get("material_result") or {}
-    for key in ("head", "relevant_paths_digest", "dependency_digest"):
-        if observed_material.get(key) != current_material.get(key):
-            raise TransactionError(
-                f"checkpoint material_result.{key} does not match current material basis"
-            )
+    # Recorder-first V3.1 stores the checkpoint exactly as reported. PASS/FAIL,
+    # quality, AC coverage and material drift remain evidence for readers; they
+    # do not decide whether the record may be appended.
 
     cp_id = str(checkpoint.get("id"))
     target = f"relay/CHECKPOINTS/{cp_id}.yaml"
@@ -1212,13 +1199,9 @@ def reconcile_roadmap(
         errors = validate_schema("change-delta", change_delta, "CHANGE_DELTA")
         if errors:
             raise TransactionError("; ".join(errors))
-        if (change_delta.get("verification") or {}).get("status") != "CONFIRMED":
-            raise TransactionError("CHANGE_DELTA must be CONFIRMED before roadmap application")
+        # Recorder-first V3.1 records verification/authorization state as
+        # provenance. It does not use those fields as roadmap-mutation gates.
         authorization = change_delta.get("authorization") or {}
-        if authorization.get("required") == "OWNER" and authorization.get("status") != "GRANTED":
-            raise TransactionError("CHANGE_DELTA requires granted Owner authority")
-        if authorization.get("required") == "NONE" and authorization.get("status") != "NOT_REQUIRED":
-            raise TransactionError("CHANGE_DELTA authorization state is inconsistent")
         application = change_delta.get("application") or {}
         if application.get("status") != "NOT_APPLIED":
             raise TransactionError("CHANGE_DELTA is already applied or deferred")
@@ -1337,22 +1320,27 @@ def publish_handover(
     )[0]
     _require_expected_custody_epoch(state, expected_custody_epoch)
 
-    # Publication must bind to the exact committed HANDOVER_PLANNED context. It is
-    # not valid to publish a freshly rebuilt but unplanned view.
-    context_digest = _require_fresh_handover(
-        root,
-        state,
-        base_ref=base_ref,
-        require_published=False,
-    )
-    context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-    learning = context.get("accumulated_learning") or {}
-    task_meta = learning.get("task_snapshot") or {}
-    improvement_meta = learning.get("improvement_view") or {}
-    task_snapshot = task_meta.get("value")
-    improvement_view = improvement_meta.get("value")
-    if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
-        raise TransactionError("HANDOVER_STALE: planned read models are missing from HANDOVER_CONTEXT")
+    # Recorder-first V3.1 prefers a planned/frozen handover when available, but
+    # never blocks publication because the plan is missing or stale.
+    try:
+        context_digest = _require_fresh_handover(
+            root,
+            state,
+            base_ref=base_ref,
+            require_published=False,
+        )
+        context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+        learning = context.get("accumulated_learning") or {}
+        task_meta = learning.get("task_snapshot") or {}
+        improvement_meta = learning.get("improvement_view") or {}
+        task_snapshot = task_meta.get("value")
+        improvement_view = improvement_meta.get("value")
+        if not isinstance(task_snapshot, dict) or not isinstance(improvement_view, dict):
+            raise TransactionError("planned handover read models unavailable")
+    except TransactionError as exc:
+        context_digest = "RECORDER_ADVISORY:NO_FRESH_PLANNED_HANDOVER"
+        task_snapshot = build_task(root, base_ref)
+        improvement_view = build_improvement(root)
 
     snapshot = build_snapshot(root, base_ref)
     checkpoint = _current_checkpoint(root, state)
@@ -1420,22 +1408,26 @@ def record_recovery_reconstructed(
         and str((item.get("details") or {}).get("successor_lease") or item.get("subject")) == str(lease_id)
         for item in events
     )
-    if not started:
-        raise TransactionError("RECOVERY_RECONSTRUCTED requires a RECOVERY_STARTED event for the current lease")
     evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    reconstruction_basis = [tx_id, *evidence]
+    if expected_custody_epoch is not None:
+        reconstruction_basis.append(f"custody_epoch:{expected_custody_epoch}")
+    if not started:
+        reconstruction_basis.append("RECORDER_ADVISORY:NO_RECOVERY_STARTED")
     if not evidence:
-        raise TransactionError("RECOVERY_RECONSTRUCTED requires durable reconstruction evidence")
+        reconstruction_basis.append("RECORDER_ADVISORY:NO_RECONSTRUCTION_EVIDENCE")
     _assert_event_ids_available(events, [event_id])
     events.append(_event(
         event_id,
         "RECOVERY_RECONSTRUCTED",
         actor,
-        str(lease_id),
-        [tx_id, *evidence, f"custody_epoch:{expected_custody_epoch}"],
+        str(lease_id or execution.get("ep") or "relay"),
+        reconstruction_basis,
         {
             "ep": execution.get("ep"),
             "custody_epoch": expected_custody_epoch,
             "evidence_count": len(evidence),
+            "recovery_started_observed": started,
         },
     ))
     replacements = {"relay/EVENTS.jsonl": jsonl_bytes(events)}
@@ -2054,20 +2046,8 @@ def close_task(
 
     delivery = state.get("delivery") or {}
     vehicle = delivery.get("primary_vehicle")
-    if delivery.get("required") is True:
-        path = root / "relay/GENERATED/DELIVERY_STATUS.yaml"
-        if not path.exists():
-            raise TransactionError("required delivery has no provider-readback DELIVERY_STATUS")
-        observed = load_yaml(path)
-        errors = validate_schema("delivery-status", observed, "DELIVERY_STATUS")
-        if errors:
-            raise TransactionError("; ".join(errors))
-        if observed.get("vehicle") != vehicle:
-            raise TransactionError("DELIVERY_STATUS vehicle does not match STATE")
-        if (vehicle or {}).get("kind") == "PULL_REQUEST" and observed.get("lifecycle") != "MERGED":
-            raise TransactionError("pull-request delivery must be MERGED before CLOSE_TASK")
-        if (vehicle or {}).get("kind") == "ISSUE" and observed.get("lifecycle") != "CLOSED":
-            raise TransactionError("issue delivery must be CLOSED before CLOSE_TASK")
+    # Delivery/provider state is recorded elsewhere and never blocks closing the
+    # local execution record.
 
     execution = state.get("execution") or {}
     lease_id = execution.get("lease")

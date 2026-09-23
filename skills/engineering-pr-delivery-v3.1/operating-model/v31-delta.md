@@ -1,66 +1,94 @@
-# Engineering Relay V3.1 delta
+# Engineering Relay V3.1 — recorder-first model
 
 ## Purpose
 
-V3.1 preserves the copied execution-safety model and adds missing continuity at actor/task boundaries. It is intentionally not a redesign of execution packages, checkpoints, controls, material drift, or delivery authority.
+V3.1 is a durable engineering **recording, continuity and reconstruction machine**.
+
+It records:
+
+- programme/issue context;
+- execution packages;
+- current actor/lease;
+- checkpoints, including failed or partial evidence;
+- controls and warnings;
+- material/drift observations;
+- continuation receipts;
+- handover/recovery history;
+- local-execution evidence;
+- delivery/provider observations;
+- roadmap and closure history.
+
+It does **not** stop engineering work because a coordination precondition is missing.
 
 ## Base mantra
 
-A runner must leave the baton more useful than it received it. If another actor must act, the receiver needs an executable contract rather than a status paragraph. If the current actor releases unfinished custody, the repository must retain enough verified context for a qualified successor to continue without reconstructing intent from chat.
+Persist enough truth that another agent can reconstruct what happened and continue without hidden chat context.
 
-## Communication modes
+```text
+observe
+→ record
+→ continue
+→ reconstruct when needed
+```
 
-### STATUS
+not:
 
-Reports current truth. No recipient action is implied.
+```text
+observe
+→ invent a gate
+→ block engineering
+```
 
-### REQUEST
+## Recorder boundaries
 
-Another actor is expected to perform bounded work. A request must carry purpose, exact material basis, steps, success/stop conditions, prohibited actions, and a return contract.
+Policy conditions are advisory:
 
-### HANDOVER
+- lease/custody mismatch;
+- stale epoch;
+- active predecessor;
+- inactivity horizon;
+- changed unaccepted material;
+- programme selection;
+- controls;
+- scope/protected-path declarations;
+- material drift;
+- checkpoint PASS/FAIL state;
+- quality state;
+- handover freshness;
+- provider/delivery state;
+- Owner delivery-authority observation.
 
-Continuation responsibility is ending or moving. Graceful release requires current handover context and explicit reconciliation of programme/parent-issue consequences.
+Structural integrity remains enforced:
 
-A REQUEST must not be answered with STATUS-only prose.
+- parseable/schema-valid records at write boundaries;
+- immutable IDs are not overwritten;
+- event history remains append-only;
+- transactions remain atomic/recoverable.
+
+## Checkpoints
+
+A checkpoint is a durable report of engineering state. It may contain PASS or FAIL evidence.
+
+Recording a checkpoint does not claim that all acceptance criteria passed. Downstream projections may separately decide whether a checkpoint constitutes accepted evidence.
+
+## Handover and recovery
+
+Handover and recovery are history labels, not prerequisites for continuation.
+
+A successor can take over immediately. The recorder preserves predecessor state and records what evidence was or was not available.
 
 ## Local execution
 
-LOCAL_EXECUTION_EXPORT produces YAML plus a human-readable runnable packet. VALIDATE_ONLY is the default mode. The helper verifies exact HEAD before running steps and returns one of PASS, FAIL, BLOCKED, NOT_RUN_ENVIRONMENT, NOT_RUN_INFRASTRUCTURE, or HEAD_MISMATCH.
-
-LOCAL_EXECUTION_RETURNED is evidence only. The original owner resumes responsibility and decides whether the evidence supports checkpoint, control, roadmap, or delivery changes.
-
-## Graceful release
-
-HANDOFF release validates:
-
-1. current STATE/EP/lease against HANDOVER_CONTEXT;
-2. current material head and digests;
-3. task/improvement projection digests;
-4. committed HANDOVER_PLANNED evidence;
-5. explicit roadmap reconciliation rather than UNKNOWN;
-6. parent-issue disposition when a parent issue exists.
-
-ADMINISTRATIVE release remains an explicitly non-graceful recovery path.
-
-## Human status and value
-
-Quantitative task/parent/programme status is projected from existing V3.1 read models. It is not treated as evidence of technical value. IMPROVEMENT_VIEW separately reports evidence-bound capability/evidence/understanding/downstream changes and unresolved proof.
-
-## Roadmap feedback
-
-RECONCILE_ROADMAP accepts a proposed reconciliation but mutates the existing ROADMAP and STATE transactionally. NO_CHANGE cannot hide a mutation. A changing disposition requires a new roadmap revision, and an active EP may not be orphaned.
-
-## Parent-issue lineage
-
-Provider observations can state NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, or UNKNOWN and carry typed relationships such as TRANSFERS_TO, SPLIT_INTO, and SUPERSEDED_BY. TASK_SNAPSHOT and handover preserve that lineage.
+Local helpers still do not become the engineering voice merely by returning evidence. Their results are recorded as external evidence. The current engineering agent decides what to do next, but Relay does not block that decision.
 
 ## Non-goals
 
 V3.1 does not:
-- weaken checkpoint acceptance;
-- make generated views authoritative;
-- transfer task custody to local helpers;
-- make issue/provider state execution authority;
-- silently select itself as the repository protocol;
-- import or link implementation/schema files from the V3 skill tree.
+
+- authorize GitHub permissions;
+- guarantee code correctness;
+- replace tests/review;
+- infer academic/product truth;
+- fabricate evidence;
+- hide unresolved warnings;
+- use older protocol generations as fallback authority.
