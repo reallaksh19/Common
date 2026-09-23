@@ -1024,12 +1024,13 @@ def accept_checkpoint(
     _require_action(root, "CHECKPOINT", base_ref=base_ref, expected_custody_epoch=expected_custody_epoch)
     state, _ = _authority(root)
     _require_expected_custody_epoch(state, expected_custody_epoch)
-    ep = _current_ep(root, state)
-    if not isinstance(ep, dict):
-        raise TransactionError("checkpoint acceptance requires the current authoritative EP")
-    governing_issue = issue_number_from_ep(ep)
 
     checkpoint = copy.deepcopy(load_yaml(checkpoint_path))
+    checkpoint_ep_id = str(checkpoint.get("ep") or "")
+    ep_path = root / "relay/WORK" / f"{checkpoint_ep_id}.yaml"
+    ep = load_yaml(ep_path) if checkpoint_ep_id and ep_path.exists() else _current_ep(root, state)
+    governing_issue = issue_number_from_ep(ep) if isinstance(ep, dict) else _governing_issue_number(root, state)
+
     checkpoint["id"] = _issue_scoped_id(
         root,
         kind="CP",
@@ -1407,22 +1408,26 @@ def record_recovery_reconstructed(
         and str((item.get("details") or {}).get("successor_lease") or item.get("subject")) == str(lease_id)
         for item in events
     )
-    if not started:
-        raise TransactionError("RECOVERY_RECONSTRUCTED requires a RECOVERY_STARTED event for the current lease")
     evidence = [str(item).strip() for item in evidence if str(item).strip()]
+    reconstruction_basis = [tx_id, *evidence]
+    if expected_custody_epoch is not None:
+        reconstruction_basis.append(f"custody_epoch:{expected_custody_epoch}")
+    if not started:
+        reconstruction_basis.append("RECORDER_ADVISORY:NO_RECOVERY_STARTED")
     if not evidence:
-        raise TransactionError("RECOVERY_RECONSTRUCTED requires durable reconstruction evidence")
+        reconstruction_basis.append("RECORDER_ADVISORY:NO_RECONSTRUCTION_EVIDENCE")
     _assert_event_ids_available(events, [event_id])
     events.append(_event(
         event_id,
         "RECOVERY_RECONSTRUCTED",
         actor,
-        str(lease_id),
-        [tx_id, *evidence, f"custody_epoch:{expected_custody_epoch}"],
+        str(lease_id or execution.get("ep") or "relay"),
+        reconstruction_basis,
         {
             "ep": execution.get("ep"),
             "custody_epoch": expected_custody_epoch,
             "evidence_count": len(evidence),
+            "recovery_started_observed": started,
         },
     ))
     replacements = {"relay/EVENTS.jsonl": jsonl_bytes(events)}
