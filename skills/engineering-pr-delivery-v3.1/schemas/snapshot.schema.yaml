@@ -31,14 +31,19 @@ properties:
   programme:
     type: object
     additionalProperties: false
-    required: [accepted_progress, completed_work, remaining_work]
+    required: [programme_progress, accepted_progress, completed_work, remaining_work, evidence_backed_work]
     properties:
+      programme_progress: {type: number, minimum: 0, maximum: 100}
       accepted_progress: {type: number, minimum: 0, maximum: 100}
       completed_work:
         type: array
         uniqueItems: true
         items: {type: string, pattern: '^WP-'}
       remaining_work:
+        type: array
+        uniqueItems: true
+        items: {type: string, pattern: '^WP-'}
+      evidence_backed_work:
         type: array
         uniqueItems: true
         items: {type: string, pattern: '^WP-'}
