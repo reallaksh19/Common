@@ -86,6 +86,167 @@ properties:
       renewed_at: {type: string, format: date-time}
       recovery_after_seconds: {type: integer, minimum: 60}
       recovery_policy: {enum: [MANUAL_ONLY, TAKEOVER_AFTER_EXPIRY]}
+      activity_basis:
+        type: object
+        additionalProperties: false
+        required: [relevant_paths_digest, dependency_digest, material_head, base_ref]
+        properties:
+          relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}  state: {enum: [ACTIVE, RELEASED, REVOKED, INVALIDATED]}
+  invalidation:
+    type: object
+    additionalProperties: false
+    required: [reasons]
+    properties:
+      reasons:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {const: OWNER_OVERRIDE}
+    then:
+      required: [scope]
+      properties:
+        admission:
+          required: [owner_basis]
+          properties:
+            repository_only: {const: false}
+        authority:
+          properties:
+            actions:
+              not:
+                contains: {enum: [MERGE, RELEASE]}
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {enum: [DETERMINISTIC, QUALIFIED]}
+    then:
+      properties:
+        admission:
+          properties:
+            repository_only: {const: true}
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: true}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: string, minLength: 1}
+                evaluator: {type: string, minLength: 1}
+                result: {const: PASS}
+                evidence:
+                  type: array
+                  minItems: 1
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: false}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: 'null'}
+                evaluator: {type: 'null'}
+                result: {type: 'null'}
+                evidence:
+                  maxItems: 0
+additionalProperties: false
+}
+          dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}  state: {enum: [ACTIVE, RELEASED, REVOKED, INVALIDATED]}
+  invalidation:
+    type: object
+    additionalProperties: false
+    required: [reasons]
+    properties:
+      reasons:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {const: OWNER_OVERRIDE}
+    then:
+      required: [scope]
+      properties:
+        admission:
+          required: [owner_basis]
+          properties:
+            repository_only: {const: false}
+        authority:
+          properties:
+            actions:
+              not:
+                contains: {enum: [MERGE, RELEASE]}
+  - if:
+      properties:
+        admission:
+          properties:
+            method: {enum: [DETERMINISTIC, QUALIFIED]}
+    then:
+      properties:
+        admission:
+          properties:
+            repository_only: {const: true}
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: true}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: string, minLength: 1}
+                evaluator: {type: string, minLength: 1}
+                result: {const: PASS}
+                evidence:
+                  type: array
+                  minItems: 1
+  - if:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                required: {const: false}
+    then:
+      properties:
+        admission:
+          properties:
+            qualification:
+              properties:
+                qset: {type: 'null'}
+                evaluator: {type: 'null'}
+                result: {type: 'null'}
+                evidence:
+                  maxItems: 0
+additionalProperties: false
+}
+          material_head: {type: string, minLength: 7}
+          base_ref: {type: string, minLength: 1}
   state: {enum: [ACTIVE, RELEASED, REVOKED, INVALIDATED]}
   invalidation:
     type: object
