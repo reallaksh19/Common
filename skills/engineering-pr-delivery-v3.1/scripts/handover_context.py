@@ -9,6 +9,7 @@ from typing import Any
 
 from snapshot_projection import build as build_snapshot
 from intelligence_projection import build_improvement, build_task
+from programme_reconciliation import build as build_programme_reconciliation
 from v3lib import canonical_digest, load_yaml, validate_schema
 
 
@@ -150,20 +151,10 @@ def build_context(
         or improvement.get("capability_strengthened")
     )
     evidence_count = len(improvement.get("evidence_added") or [])
-    reconciliation = programme_reconciliation or {
-        "authority": "DERIVED_PROGRAMME_RECONCILIATION",
-        "status": "NOT_REQUIRED",
-        "current_parent": None,
-        "parents": [],
-        "ordered_roadmap": [],
-        "programme_frontier": [],
-        "execution_blocked": [],
-        "acceptance_debt": [],
-        "delivery_governance_debt": [],
-        "deferred_or_future": [],
-        "graph": [],
-        "reason_codes": [],
-    }
+    reconciliation = programme_reconciliation or build_programme_reconciliation(
+        [],
+        current_parent_ref=None,
+    )
 
     context = {
         "schema_version": "relay-v3.1-handover-context",
