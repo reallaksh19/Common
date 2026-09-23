@@ -2,19 +2,19 @@
   "schema_version": "relay-v3.1-snapshot",
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
-    "roadmap_revision": "RM.438.1",
-    "state_digest": "sha256:862f01fafa4ad431a643737d1ca4381398b94be62d96e293800eccec67027093",
+    "roadmap_revision": "RM.438.2",
+    "state_digest": "sha256:d375b6b285154dabc2b5e1782be6f5eea8b96a7b9c07803ff887997877e7ee51",
     "material_basis": {
-      "head": "e4b383687a712c768ff95f0b2230739508d433f3",
-      "tree_digest": "sha256:fd3ae034841d95b218c996c16f77cb0659a86b7e8047c0cae2595a9411b2022a",
-      "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
+      "head": "20822b72a1a363631cf0967816888bf3331742e3",
+      "tree_digest": "sha256:d152432f99bfa35b4299b3ff4ef5da04b9921aef6bc2adf9fbaa3eaaabaaf546",
+      "relevant_paths_digest": "sha256:c3193e192d61eb233e9cc5dbe3fda38e2655f7f97163273baf1cb769c04ca3a3",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "af2f951cbe13ad4dafcb7bd04802f3be08ab5b71"
+    "coordination_head": "20822b72a1a363631cf0967816888bf3331742e3"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Establish self-hosted V3.1 authority and interruption recovery for Common#438."
+    "current_goal": "Complete issue-rooted serialization and typed governing-root work while removing only derivable V3.1 ceremony."
   },
   "programme": {
     "programme_progress": 0,
@@ -28,22 +28,28 @@
     ]
   },
   "execution": {
-    "lifecycle": "IDLE",
-    "work_package": null,
-    "ep": null,
-    "lease": null,
-    "executor": null,
+    "lifecycle": "ACTIVE",
+    "work_package": "WP.438",
+    "ep": "EP.438.2",
+    "lease": "LEASE.438.2",
+    "executor": "chatgpt-v3.1-serialization",
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [],
+    "allowed_writes": [
+      "skills/engineering-pr-delivery-v3.1/**"
+    ],
     "protected": [],
-    "prohibited": []
+    "prohibited": [
+      "Do not rewrite EP.438.1, CP.438.1, or pre-bootstrap provenance.",
+      "Do not infer programme selection from EP/LEASE currentness.",
+      "Do not weaken custody epoch, scope/drift, checkpoint binding, or Owner delivery authority."
+    ]
   },
   "material": {
     "base": "e4b383687a712c768ff95f0b2230739508d433f3",
-    "head": "e4b383687a712c768ff95f0b2230739508d433f3",
-    "relevant_paths_digest": "sha256:f280e9b664ca919ce5da23b63225f05494d92e74267c364f1bc22553ba5b97d2",
+    "head": "20822b72a1a363631cf0967816888bf3331742e3",
+    "relevant_paths_digest": "sha256:c3193e192d61eb233e9cc5dbe3fda38e2655f7f97163273baf1cb769c04ca3a3",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
@@ -67,9 +73,14 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": null,
+    "immediate_material_action": "Audit remaining V3.1 call sites and durable namespaces for incomplete typed-root/automatic allocation support; fix only identity or derivable-ceremony gaps covered by the preservation suite.",
     "delivery_action": "Perform the explicitly authorized delivery transition.",
-    "stop_conditions": []
+    "stop_conditions": [
+      "Owner/programme selection moves away from WP.438.",
+      "A safety decision vector regresses.",
+      "Relevant or unknown material drift appears.",
+      "An identity migration would require rewriting an existing durable ID."
+    ]
   },
   "handoff": {
     "zero_context_takeover_possible": true,
@@ -77,6 +88,8 @@
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
       "relay/CONTROLS/controls.yaml",
+      "relay/WORK/EP.438.2.yaml",
+      "relay/LEASES/LEASE.438.2.yaml",
       "relay/CHECKPOINTS/CP.438.1.yaml"
     ]
   }

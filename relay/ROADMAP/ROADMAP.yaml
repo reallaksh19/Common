@@ -1,15 +1,15 @@
 {
   "schema_version": "relay-v3.1-roadmap",
-  "revision": "RM.438.1",
-  "title": "Common#438 V3.1 self-hosting and gate-reduction programme",
+  "revision": "RM.438.2",
+  "title": "Common#438 V3.1 self-hosting, serialization, and gate-reduction programme",
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Establish self-hosted V3.1 authority and interruption recovery for Common#438."
+    "current_goal": "Complete issue-rooted serialization and typed governing-root work while removing only derivable V3.1 ceremony."
   },
   "work_packages": [
     {
       "id": "WP.438",
-      "title": "Bootstrap Common#438 into real self-hosted V3.1 execution",
+      "title": "Complete Common#438 V3.1 identity, serialization, and gate-reduction work",
       "weight": 100,
       "state": "ACTIVE",
       "depends_on": []

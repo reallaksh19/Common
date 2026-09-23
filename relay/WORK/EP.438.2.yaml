@@ -1,0 +1,114 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.2",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Complete the remaining issue-rooted identity/serialization tranche and remove derivable V3.1 bookkeeping ceremony without weakening the preserved safety kernel."
+  },
+  "basis": {
+    "predecessor_checkpoint": "CP.438.1",
+    "material_base": "e4b383687a712c768ff95f0b2230739508d433f3",
+    "protocol_basis": "Common#438 / PR#437; CP.438.1 accepted self-hosting bootstrap; Owner instruction to proceed with the overall plan.",
+    "semantic_dependencies": [
+      {
+        "path": ".github/workflows/engineering-pr-delivery-v3.1.yml",
+        "reason": "Live Relay authority and V3.1 implementation changes must remain continuously validated."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/**"
+    ],
+    "read": [],
+    "protect": [],
+    "prohibit": [
+      "Do not rewrite EP.438.1, CP.438.1, or pre-bootstrap provenance.",
+      "Do not infer programme selection from EP/LEASE currentness.",
+      "Do not weaken custody epoch, scope/drift, checkpoint binding, or Owner delivery authority."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.4",
+      "statement": "Canonical durable identity supports the planned Relay namespaces and typed governing roots with immutable/no-reuse semantics and legacy dual-read compatibility.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_nomenclature.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.5",
+      "statement": "Provider-backed admission, custody maintenance, recovery, and checkpoint acceptance allocate derivable bookkeeping identities without requiring callers to manufacture them.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_relay_tx.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.6",
+      "statement": "Identity allocation and transaction history remain safe under concurrency/rollback, including append-only event history and durable reservation semantics.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_transactionlib.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.7",
+      "statement": "Programme selection, zero-context reconstruction, custody fencing, and action-specific safety decisions remain green after the serialization changes.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T10:38:00Z",
+      "body_digest": "sha256:c4421f2edb1529e325d6365084697eff5b4ed00f8bb0637bda5a9bdf06b1cf93",
+      "acceptance_items": [
+        {
+          "id": "SERIAL-1",
+          "statement": "Issue-rooted serialization is implemented as an identity protocol, not only a formatter."
+        },
+        {
+          "id": "GATES-1",
+          "statement": "Duplicated/wrong-boundary/derivable gates found during dogfooding are simplified or recorded with concrete follow-up."
+        },
+        {
+          "id": "SAFETY-1",
+          "statement": "Simplification preserves programme selection, custody, scope/drift, acceptance, and Owner-authority decisions."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Audit remaining V3.1 call sites and durable namespaces for incomplete typed-root/automatic allocation support; fix only identity or derivable-ceremony gaps covered by the preservation suite.",
+    "stop_conditions": [
+      "Owner/programme selection moves away from WP.438.",
+      "A safety decision vector regresses.",
+      "Relevant or unknown material drift appears.",
+      "An identity migration would require rewriting an existing durable ID."
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "relay-v3.1-lease",
+  "id": "LEASE.438.2",
+  "route": "SERIAL:EP.438.2",
+  "executor": {
+    "id": "chatgpt-v3.1-serialization"
+  },
+  "basis": {
+    "ep_id": "EP.438.2",
+    "ep_digest": "sha256:dcc78115078d638e3b07f8587b833067ddd0fb51b84253e6aae79e8378600abb",
+    "material_base": "e4b383687a712c768ff95f0b2230739508d433f3",
+    "predecessor_checkpoint": "CP.438.1",
+    "protocol_basis": "Common#438 / PR#437; CP.438.1 accepted self-hosting bootstrap; Owner instruction to proceed with the overall plan."
+  },
+  "authority": {
+    "actions": [
+      "READ",
+      "ANALYZE",
+      "MATERIAL_WRITE",
+      "TEST",
+      "CHECKPOINT",
+      "HANDOVER",
+      "LOCAL_EXECUTION_EXPORT",
+      "DRAFT_PR_UPDATE"
+    ]
+  },
+  "admission": {
+    "method": "DETERMINISTIC",
+    "result": "PASS",
+    "repository_only": true,
+    "qualification": {
+      "required": false,
+      "qset": null,
+      "evaluator": null,
+      "result": null,
+      "evidence": []
+    }
+  },
+  "custody": {
+    "epoch": 1,
+    "granted_at": "2026-09-23T10:38:00Z",
+    "renewed_at": "2026-09-23T10:38:00Z",
+    "recovery_after_seconds": 3600,
+    "recovery_policy": "TAKEOVER_AFTER_EXPIRY"
+  },
+  "state": "ACTIVE",
+  "invalidation": {
+    "reasons": []
+  }
+}
