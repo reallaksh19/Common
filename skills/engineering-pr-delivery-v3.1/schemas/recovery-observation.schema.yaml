@@ -1,0 +1,14 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, provider, provider_ref, lease_id, executor_id, custody_epoch, session_state, observed_at]
+properties:
+  schema_version: {const: relay-v3.1-recovery-observation}
+  authority: {const: DERIVED_PROVIDER_OBSERVATION}
+  provider: {type: string, minLength: 1}
+  provider_ref: {type: string, minLength: 1}
+  lease_id: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  executor_id: {type: string, minLength: 1}
+  custody_epoch: {type: integer, minimum: 1}
+  session_state: {enum: [TERMINATED, CANCELLED, FAILED]}
+  observed_at: {type: string, format: date-time}
+additionalProperties: false
