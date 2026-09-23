@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -24,6 +25,9 @@ class LocalExecutionContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
+            subprocess.check_call(
+                ["git", "-C", str(root), "remote", "add", "origin", "https://github.com/example/project.git"]
+            )
             tx = export_local_execution(
                 root,
                 tx_id="TX-LOCAL-CONTRACT",
@@ -31,6 +35,7 @@ class LocalExecutionContractTests(unittest.TestCase):
                 actor="agent-x",
                 base_ref=base_ref,
                 commands=["python -m unittest tests.test_signed_pdf"],
+                return_sub_issue="https://github.com/example/project/issues/202",
             )
             self.assertEqual("COMMITTED", tx["status"])
 
@@ -46,6 +51,14 @@ class LocalExecutionContractTests(unittest.TestCase):
             self.assertIn("HEAD_MISMATCH", rendered)
             self.assertIn("python -m unittest tests.test_signed_pdf", rendered)
             self.assertEqual("python -m unittest tests.test_signed_pdf", request["steps"][0]["command"])
+            self.assertEqual("https://github.com/example/project.git", package["repository"]["clone_url"])
+            self.assertIn("git clone https://github.com/example/project.git", rendered)
+            self.assertEqual(
+                "https://github.com/example/project/issues/202",
+                package["provider_return"]["target_sub_issue"],
+            )
+            self.assertIn("Provider sub-issue update", rendered)
+            self.assertIn("https://github.com/example/project/issues/202", rendered)
             self.assertIn("Return exactly this contract", rendered)
             self.assertIn("originating owner resumes responsibility", rendered)
 
