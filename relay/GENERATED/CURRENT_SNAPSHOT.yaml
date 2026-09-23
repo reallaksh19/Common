@@ -2,19 +2,19 @@
   "schema_version": "relay-v3.1-snapshot",
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
-    "roadmap_revision": "RM.438.2",
-    "state_digest": "sha256:453a5767c682a99ac7f93b6eb4f9fca011517992e1081504b7728365ae5ede20",
+    "roadmap_revision": "RM.438.3",
+    "state_digest": "sha256:1578a738efcaebcae7cd405770a67b5612ee3064439c1bcfa8d1f650307a4b4b",
     "material_basis": {
       "head": "2128a8692f9e41f15443d93731e92de952007bf8",
       "tree_digest": "sha256:887fcb068c41676b2917024412eaab0f456debd07ed1e26bac8b9d5e7ee757cc",
       "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "58ff45f1152dd032ef20e808a6a9a25d22f47771"
+    "coordination_head": "503d8d0bda2a4d36313db2c2b185a593fbe895de"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Complete issue-rooted serialization and typed governing-root work while removing only derivable V3.1 ceremony."
+    "current_goal": "Close the blocked-selected-frontier presentation gap without changing programme-selection or execution-authority semantics."
   },
   "programme": {
     "programme_progress": 0,
@@ -28,17 +28,26 @@
     ]
   },
   "execution": {
-    "lifecycle": "IDLE",
-    "work_package": null,
-    "ep": null,
-    "lease": null,
-    "executor": null,
+    "lifecycle": "ACTIVE",
+    "work_package": "WP.438",
+    "ep": "EP.438.4",
+    "lease": "LEASE.438.4",
+    "executor": "chatgpt-v3.1-presentation",
     "custody_epoch": 1
   },
   "scope": {
-    "allowed_writes": [],
+    "allowed_writes": [
+      "skills/engineering-pr-delivery-v3.1/scripts/render_owner_stats.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/owner_commands.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_owner_stats.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_owner_commands.py"
+    ],
     "protected": [],
-    "prohibited": []
+    "prohibited": [
+      "Do not alter canonical programme selection or fallback semantics.",
+      "Do not make an execution blocker grant programme reselection authority.",
+      "Do not infer that a blocked selected frontier makes one external/provider action the only legitimate action."
+    ]
   },
   "material": {
     "base": "2128a8692f9e41f15443d93731e92de952007bf8",
@@ -61,22 +70,27 @@
     "informational": []
   },
   "delivery": {
-    "issue": null,
-    "pr": 437,
-    "lifecycle": "DECLARED",
+    "issue": 438,
+    "pr": null,
+    "lifecycle": "PENDING_STACKED_PR",
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": null,
-    "delivery_action": "Perform the explicitly authorized delivery transition.",
-    "stop_conditions": []
+    "immediate_material_action": "Make the detailed Owner status explicitly render selected frontier, selected ownership, executable frontier, alternate live obligations, blocked-selected-frontier semantics, and reselection requirement; add regression coverage.",
+    "delivery_action": "Open a narrow stacked PR for EP.438.4; do not add this scope to PR #437.",
+    "stop_conditions": [
+      "The fix requires changing programme_reconciliation selection semantics.",
+      "A safety decision changes outside presentation/read-model output.",
+      "Owner/programme selection moves away from WP.438."
+    ]
   },
   "handoff": {
     "zero_context_takeover_possible": true,
     "reconstruction_sources": [
       "relay/ROADMAP/ROADMAP.yaml",
       "relay/STATE.yaml",
-      "relay/CONTROLS/controls.yaml",
+      "relay/WORK/EP.438.4.yaml",
+      "relay/LEASES/LEASE.438.4.yaml",
       "relay/CHECKPOINTS/CP.438.3.yaml",
       "relay/EVENTS.jsonl"
     ]

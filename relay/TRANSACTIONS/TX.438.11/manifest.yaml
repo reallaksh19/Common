@@ -1,0 +1,66 @@
+{
+  "schema_version": "relay-v3.1-transaction",
+  "id": "TX.438.11",
+  "command": "ADMIT_TASK",
+  "actor": "owner",
+  "status": "COMMITTED",
+  "created_at": "2026-09-23T12:03:00Z",
+  "updated_at": "2026-09-23T12:03:02Z",
+  "operations": [
+    {
+      "path": "relay/ROADMAP/ROADMAP.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:f074cdc2dfd6ee808ea78bf9aea707bd2eb10ea3118c2d1624dc3f350e297aab",
+      "after_digest": "sha256:3e35e1310085df2111e9a03f3f3edd9c7a2da5bbcc1fabfc2745005be9b62145"
+    },
+    {
+      "path": "relay/STATE.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:ab2f84ea7d28689838f53b30afff5cfe451d4bcd9b4d53a28486d8de30108f11",
+      "after_digest": "sha256:f44124d3951f2ba3f920080b8654adcd7cdd23be3256031ad374128b99d7371b"
+    },
+    {
+      "path": "relay/WORK/EP.438.4.yaml",
+      "before_exists": false,
+      "before_digest": null,
+      "after_digest": "sha256:347898e5d2e63b980d05b52a26ab3a91bdfc4b666036e2c572d664eee0532ecc"
+    },
+    {
+      "path": "relay/LEASES/LEASE.438.4.yaml",
+      "before_exists": false,
+      "before_digest": null,
+      "after_digest": "sha256:9dcc538e193dfec8762fe6dbc112a8efb11484acda6cf9e6aa99056304413f7b"
+    },
+    {
+      "path": "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+      "before_exists": true,
+      "before_digest": "sha256:f141c7391c450b67a0effb928504b10ff9322e0be631c3ccda9f783e72fbb9a5",
+      "after_digest": "sha256:996a2829bb4886183d23cb1df247476f1bf93f02264d1e0b8e8c723787144ffe"
+    },
+    {
+      "path": "relay/EVENTS.jsonl",
+      "before_exists": true,
+      "before_digest": "sha256:1a7516c564df0ab3937966d59b0c3567a8d76f3facbdef88ea4ddcedc18dfee4",
+      "after_digest": "sha256:1fe018c9b5371db1c76a50565f6155a5ad9f92048cab9bad7f114946e7770984"
+    }
+  ],
+  "applied": [
+    "relay/ROADMAP/ROADMAP.yaml",
+    "relay/STATE.yaml",
+    "relay/WORK/EP.438.4.yaml",
+    "relay/LEASES/LEASE.438.4.yaml",
+    "relay/GENERATED/CURRENT_SNAPSHOT.yaml",
+    "relay/EVENTS.jsonl"
+  ],
+  "identity_reservations": [
+    "AC.438.9",
+    "EP.438.4",
+    "EVT.438.27",
+    "EVT.438.28",
+    "EVT.438.29",
+    "LEASE.438.4",
+    "TX.438.11",
+    "WP.438"
+  ],
+  "payload_state": "PRUNED"
+}
