@@ -46,7 +46,9 @@ class SnapshotProjectionTests(unittest.TestCase):
             self.assertEqual("LEASE-TA-011-01", snapshot["execution"]["lease"])
             self.assertEqual("agent-x", snapshot["execution"]["executor"])
             self.assertEqual("WP-TA-109", snapshot["execution"]["work_package"])
+            self.assertEqual(50.0, snapshot["programme"]["programme_progress"])
             self.assertEqual(50.0, snapshot["programme"]["accepted_progress"])
+            self.assertEqual(["WP-TA-108"], snapshot["programme"]["evidence_backed_work"])
             self.assertEqual(["WP-TA-108"], snapshot["programme"]["completed_work"])
             self.assertEqual(["WP-TA-109"], snapshot["programme"]["remaining_work"])
             self.assertTrue(snapshot["handoff"]["zero_context_takeover_possible"])
@@ -57,6 +59,22 @@ class SnapshotProjectionTests(unittest.TestCase):
             self.assertIn("relay/LEASES/LEASE-TA-011-01.yaml", sources)
             self.assertIn("relay/CHECKPOINTS/CP-TA-010.yaml", sources)
             self.assertEqual("Validate schemas.", snapshot["next"]["immediate_material_action"])
+
+    def test_roadmap_complete_work_stays_complete_without_recreated_native_checkpoint(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+
+            # The roadmap already says WP-TA-108 is COMPLETE, while its historical
+            # checkpoint points to an EP that is intentionally absent. This models
+            # migrated/history-backed work where native evidence was not replayed.
+            snapshot = build(root, "base")
+
+            self.assertEqual(50.0, snapshot["programme"]["programme_progress"])
+            self.assertEqual(["WP-TA-108"], snapshot["programme"]["completed_work"])
+            self.assertEqual(["WP-TA-109"], snapshot["programme"]["remaining_work"])
+            self.assertEqual(0.0, snapshot["programme"]["accepted_progress"])
+            self.assertEqual([], snapshot["programme"]["evidence_backed_work"])
 
     def test_coordination_head_can_advance_without_material_head(self):
         with tempfile.TemporaryDirectory() as td:
