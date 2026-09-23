@@ -38,6 +38,10 @@ class RequiredCheckTerminalityTests(unittest.TestCase):
                     'git diff --name-only --no-renames "$BASE_SHA" "$HEAD_SHA"',
                     text,
                 )
+                self.assertIn(
+                    "Path relevance could not be determined; running full validation.",
+                    text,
+                )
 
     def test_relay_required_checks_keep_real_validation_path_gated_inside_job(self):
         for filename, patterns in WORKFLOWS.items():
