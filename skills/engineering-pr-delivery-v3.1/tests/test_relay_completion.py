@@ -151,7 +151,21 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertIn("RECOVERY_STARTED", [row["type"] for row in events])
             self.assertIn("RECOVERY_RECONSTRUCTED", [row["type"] for row in events])
 
-    def test_fresh_handover_is_accepted_by_successor_not_merely_published(self):
+    def test_handover_publication_requires_committed_plan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+
+            with self.assertRaisesRegex(TransactionError, "fresh HANDOVER_CONTEXT"):
+                publish_handover(
+                    root,
+                    tx_id="TX-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                    event_id="EVT-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                    actor="agent-x",
+                    base_ref=base_ref,
+                )
+
+    def test_handover_requires_plan_then_publish_before_successor_acceptance(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
