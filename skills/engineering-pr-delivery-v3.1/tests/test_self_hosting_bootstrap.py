@@ -14,7 +14,7 @@ SCRIPTS = SKILL_ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from nomenclature import allocate_next_id
+from nomenclature import allocate_next_id, parse_canonical_id
 from programme_reconciliation import assess_boundary, require_boundary_ready
 from protocol_default import resolve as resolve_protocol
 from relay_can import evaluate
@@ -80,8 +80,18 @@ class SelfHostingBootstrapTests(unittest.TestCase):
         self.assertEqual([], errors)
         self.assertEqual("WP.438", roadmap["work_packages"][0]["id"])
         self.assertEqual("ACTIVE", roadmap["work_packages"][0]["state"])
-        self.assertEqual("CP.438.1", state["accepted"]["checkpoint"])
-        self.assertTrue((REPO_ROOT / "relay/CHECKPOINTS/CP.438.1.yaml").exists())
+        accepted_checkpoint = state["accepted"]["checkpoint"]
+        parsed_checkpoint = parse_canonical_id(accepted_checkpoint)
+        self.assertIsNotNone(parsed_checkpoint)
+        self.assertEqual("CP", parsed_checkpoint["kind"])
+        self.assertEqual(438, parsed_checkpoint["issue_number"])
+        self.assertTrue(
+            (REPO_ROOT / "relay/CHECKPOINTS" / f"{accepted_checkpoint}.yaml").exists()
+        )
+        self.assertTrue(
+            (REPO_ROOT / "relay/CHECKPOINTS/CP.438.1.yaml").exists(),
+            "bootstrap checkpoint must remain immutable historical evidence",
+        )
         self.assertEqual("WP.438", ep["work_package"])
         self.assertEqual("LEASE.438.1", lease["id"])
         self.assertIn(lease["state"], {"ACTIVE", "RELEASED", "INVALIDATED"})
