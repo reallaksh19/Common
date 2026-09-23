@@ -34,6 +34,24 @@ The admission builder does **not** persist or activate the lease. V3-6 transacti
 
 An ACTIVE lease already owned by a different executor prevents a new lease from being admitted for that route until release/transfer.
 
+
+## Custody liveness and abandoned-agent recovery
+
+New native leases are epoch-fenced and default to a 300-second inactivity recovery horizon.
+
+Normal governed activity by the current lease executor refreshes liveness in the same transaction; Relay does not require a background heartbeat daemon. When the command has a material basis, the lease also records digests of the current sensitive and dependency worktrees. These are abandonment/liveness evidence only, not accepted material authority.
+
+Timeout-based recovery therefore requires both:
+
+1. the persisted inactivity horizon has elapsed; and
+2. the current sensitive/dependency worktree still matches the predecessor's last recorded activity basis.
+
+If worktree material changed after the last activity record, timeout-only takeover is refused. An exact provider/session termination observation bound to the predecessor lease, executor and custody epoch may instead establish immediate abandonment evidence.
+
+Recovery still advances the custody epoch and invalidates predecessor custody. Programme reconciliation remains a separate prerequisite before a provider-backed EP can be continued.
+
+Legacy native leases without complete liveness fields remain readable and are not partially upgraded by unrelated commands.
+
 ## EP admission policy
 
 An EP may declare:
