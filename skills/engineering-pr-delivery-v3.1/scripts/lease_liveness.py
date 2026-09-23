@@ -196,15 +196,14 @@ def recovery_eligibility(
     observed_at: str | None = None,
     terminal_observation: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    custody = lease.get("custody") or {}
-    if not custody:
-        return {
-            "eligible": True,
-            "reason": "LEGACY_EXPLICIT_RECOVERY",
-            "basis": [],
-            "terminal_observation_digest": None,
-        }
+    """Return diagnostics for an explicit recovery takeover.
 
+    Recorder-first V3.1 never blocks a successor because a predecessor lease is
+    young, stale, or followed by unaccepted material activity. Those facts remain
+    visible in the returned basis so reconstruction can account for them.
+    """
+
+    custody = lease.get("custody") or {}
     terminal, terminal_reason, terminal_digest = validate_terminal_observation(
         lease,
         terminal_observation,
@@ -213,67 +212,60 @@ def recovery_eligibility(
         return {
             "eligible": True,
             "reason": terminal_reason,
-            "basis": [str((terminal_observation or {}).get("provider_ref") or ""), terminal_digest],
+            "basis": [
+                str((terminal_observation or {}).get("provider_ref") or ""),
+                str(terminal_digest or ""),
+            ],
             "terminal_observation_digest": terminal_digest,
         }
 
-    if custody.get("recovery_policy") != "TAKEOVER_AFTER_EXPIRY":
-        return {
-            "eligible": False,
-            "reason": "RECOVERY_POLICY_MANUAL_ONLY",
-            "basis": [],
-            "terminal_observation_digest": terminal_digest,
-        }
-
+    basis: list[str] = []
     renewed = str(custody.get("renewed_at") or "")
     seconds = int(custody.get("recovery_after_seconds") or 0)
-    if not renewed or seconds < MIN_RECOVERY_AFTER_SECONDS:
-        return {
-            "eligible": False,
-            "reason": "RECOVERY_METADATA_INVALID",
-            "basis": [],
-            "terminal_observation_digest": terminal_digest,
-        }
+    policy = str(custody.get("recovery_policy") or "")
+    if policy:
+        basis.append(f"recovery_policy:{policy}")
+    if renewed:
+        basis.append(f"renewed_at:{renewed}")
+    if seconds:
+        basis.append(f"recovery_after_seconds:{seconds}")
 
-    observed = _parse_timestamp(observed_at) if observed_at else datetime.now(timezone.utc)
-    expires = _parse_timestamp(renewed).timestamp() + seconds
-    if observed.timestamp() < expires:
-        return {
-            "eligible": False,
-            "reason": "PREDECESSOR_LEASE_NOT_EXPIRED",
-            "basis": [f"renewed_at:{renewed}", f"recovery_after_seconds:{seconds}"],
-            "terminal_observation_digest": terminal_digest,
-        }
+    if renewed and seconds:
+        try:
+            observed = _parse_timestamp(observed_at) if observed_at else datetime.now(timezone.utc)
+            expires = _parse_timestamp(renewed).timestamp() + seconds
+            if observed.timestamp() < expires:
+                basis.append("advisory:PREDECESSOR_LEASE_NOT_EXPIRED")
+            else:
+                basis.append("advisory:INACTIVITY_HORIZON_EXPIRED")
+        except Exception as exc:
+            basis.append(f"advisory:RECOVERY_METADATA_INVALID:{exc}")
+    elif custody:
+        basis.append("advisory:RECOVERY_METADATA_INVALID")
 
     stored_basis = custody.get("activity_basis") or {}
     if stored_basis and isinstance(ep, dict) and base_ref:
         try:
             current_basis = material_activity_basis(root, ep, base_ref)
         except Exception as exc:
-            return {
-                "eligible": False,
-                "reason": "RECOVERY_MATERIAL_BASIS_UNKNOWN",
-                "basis": [f"material_basis_error:{exc}"],
-                "terminal_observation_digest": terminal_digest,
-            }
-        for key in ("relevant_worktree_digest", "dependency_worktree_digest"):
-            if stored_basis.get(key) != current_basis.get(key):
-                return {
-                    "eligible": False,
-                    "reason": "UNACCEPTED_MATERIAL_ACTIVITY_PRESENT",
-                    "basis": [
+            basis.append(f"advisory:RECOVERY_MATERIAL_BASIS_UNKNOWN:{exc}")
+        else:
+            for key in ("relevant_worktree_digest", "dependency_worktree_digest"):
+                if stored_basis.get(key) != current_basis.get(key):
+                    basis.extend([
+                        "advisory:UNACCEPTED_MATERIAL_ACTIVITY_PRESENT",
                         f"last_activity:{stored_basis.get(key)}",
                         f"current:{current_basis.get(key)}",
-                    ],
-                    "terminal_observation_digest": terminal_digest,
-                }
+                    ])
+                    break
 
-    basis = [f"renewed_at:{renewed}", f"recovery_after_seconds:{seconds}"]
     if terminal_observation is not None and terminal_reason != "NO_TERMINAL_SESSION_EVIDENCE":
-        basis.append(f"ignored_terminal_evidence:{terminal_reason}")
+        basis.append(f"advisory:{terminal_reason}")
+
     return {
         "eligible": True,
-        "reason": "INACTIVITY_HORIZON_EXPIRED",
-        "basis": basis,
+        "reason": "RECORDER_EXPLICIT_TAKEOVER",
+        "basis": list(dict.fromkeys(x for x in basis if x)),
         "terminal_observation_digest": terminal_digest,
     }
+
