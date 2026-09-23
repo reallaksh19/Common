@@ -1,0 +1,129 @@
+{
+  "schema_version": "relay-v3.1-ep",
+  "id": "EP.438.5",
+  "work_package": "WP.438",
+  "outcome": {
+    "statement": "Delete the phantom live PARALLEL lifecycle and duplicate persisted THREE_PASS_REQUEST YAML representation without changing programme, custody, material, checkpoint, recovery, or Owner-authority decisions."
+  },
+  "basis": {
+    "predecessor_checkpoint": "CP.438.4",
+    "material_base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+    "protocol_basis": "Common#438 bounded simplification plan after CP.438.4; PR #437 frozen and PR #439 contains accepted presentation semantics.",
+    "semantic_dependencies": [
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/operating-model/architecture-preservation-contract.md",
+        "reason": "Deletion is allowed only when preservation invariants remain reconstructable and unchanged."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+        "reason": "Action decisions must remain unchanged after deletion."
+      },
+      {
+        "path": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py",
+        "reason": "Zero-context reconstruction and fenced recovery must remain green."
+      }
+    ]
+  },
+  "scope": {
+    "write": [
+      "skills/engineering-pr-delivery-v3.1/schemas/state.schema.yaml",
+      "skills/engineering-pr-delivery-v3.1/schemas/snapshot.schema.yaml",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_can.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/lease_liveness.py",
+      "skills/engineering-pr-delivery-v3.1/scripts/plan_handover.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_v3_foundation.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_handover_context.py",
+      "skills/engineering-pr-delivery-v3.1/operating-model/three-pass-integration.md",
+      "skills/engineering-pr-delivery-v3.1/SKILL.md"
+    ],
+    "read": [
+      "skills/engineering-pr-delivery-v3.1/scripts/v25_migration.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+      "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+    ],
+    "protect": [],
+    "prohibit": [
+      "Do not remove V2.5 migration inventory semantics for historical /parallel/ artifacts.",
+      "Do not weaken custody fencing, relevant-drift, checkpoint binding, programme selection, or Owner delivery authority.",
+      "Do not remove the recipient-ready THREE_PASS_REQUEST.md invocation surface or HANDOVER_CONTEXT frozen source."
+    ]
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.10",
+      "statement": "PARALLEL is not a valid live V3.1 execution lifecycle and cannot authorize execution/fenced actions; migration inventory semantics remain intact.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_v3_foundation.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.11",
+      "statement": "Plan-for-handover persists one frozen HANDOVER_CONTEXT plus one recipient-ready Markdown request, not a duplicate THREE_PASS_REQUEST YAML copy; the typed request is still derived and schema-validated on demand.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_handover_context.py"
+        }
+      ]
+    },
+    {
+      "id": "AC.438.12",
+      "statement": "The preservation suite, zero-context recovery, migration compatibility, and all required V2.5/V3/V3.1 checks remain green after deletion.",
+      "evidence_requirements": [
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py"
+        },
+        {
+          "test": "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py"
+        }
+      ]
+    }
+  ],
+  "quality_policy": {
+    "level": "STANDARD",
+    "independent_review": "OPTIONAL"
+  },
+  "parent_issue": {
+    "provider": "GITHUB",
+    "repository": "reallaksh19/Common",
+    "number": 438,
+    "title": "Dogfood V3.1 during Relay completion and reduce excessive gating",
+    "url": "https://github.com/reallaksh19/Common/issues/438",
+    "baseline": {
+      "observed_at": "2026-09-23T12:21:50Z",
+      "body_digest": "sha256:08b0e42df58dae73880e5ed62b836e2b9ea1748ee79ccbf2ab25faf0a1d946f0",
+      "acceptance_items": [
+        {
+          "id": "SIMPLIFY-1",
+          "statement": "Phantom PARALLEL runtime authority is removed without changing safety decisions."
+        },
+        {
+          "id": "SIMPLIFY-2",
+          "statement": "Duplicate persisted request representation is removed while preserving the recipient-ready invocation and frozen handover source."
+        },
+        {
+          "id": "SIMPLIFY-3",
+          "statement": "Retained migration/cutover machinery has a stated authority-preservation purpose."
+        }
+      ]
+    }
+  },
+  "admission_policy": {
+    "qualification": "NOT_REQUIRED",
+    "question_policy": "NONE"
+  },
+  "next": {
+    "first_action": "Remove PARALLEL only from live execution authority paths, then remove the persisted THREE_PASS_REQUEST YAML copy and update focused tests/docs; run the full preservation suite.",
+    "stop_conditions": [
+      "Any deletion changes a safety decision vector.",
+      "V2.5 migration/cutover compatibility requires the removed runtime behavior.",
+      "Zero-context reconstruction or stale-predecessor fencing changes."
+    ]
+  }
+}

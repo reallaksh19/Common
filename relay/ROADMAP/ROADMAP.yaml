@@ -1,10 +1,10 @@
 {
   "schema_version": "relay-v3.1-roadmap",
-  "revision": "RM.438.3",
+  "revision": "RM.438.4",
   "title": "Common#438 V3.1 self-hosting, serialization, and gate-reduction programme",
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Close the blocked-selected-frontier presentation gap without changing programme-selection or execution-authority semantics."
+    "current_goal": "Remove only proven redundant V3.1 runtime/projection machinery while preserving all accepted safety decisions."
   },
   "work_packages": [
     {
