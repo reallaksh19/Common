@@ -340,6 +340,32 @@ def assess_boundary(
         {},
     )
     current_ownership = current_row.get("ownership") or "UNKNOWN"
+    live_selection_candidates = [
+        row["ref"]
+        for row in preliminary.get("parents") or []
+        if row.get("ownership") in {"STILL_REAL", "BLOCKED"}
+    ]
+
+    if (
+        boundary == "ADMIT_TASK"
+        and selected_frontier_ref is None
+        and len(live_selection_candidates) > 1
+    ):
+        return {
+            "status": "PROGRAMME_SELECTION_REQUIRED",
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": current_ownership,
+            "selected_programme_frontier": None,
+            "selected_programme_ownership": None,
+            "selected_observation": selected_observation,
+            "next_frontier": None,
+            "executable_frontier": None,
+            "continuation": "BLOCK",
+            "reason_codes": ["MULTIPLE_LIVE_PROGRAMME_OBLIGATIONS"],
+            "reconciliation": preliminary,
+        }
 
     # Execution selection is separate from obligation state. An explicit
     # Owner/ROADMAP selection wins. Without one, a non-terminal current parent
@@ -495,6 +521,12 @@ def require_boundary_ready(assessment: dict[str, Any]) -> dict[str, Any]:
     selected = assessment.get("selected_parent")
     ownership = assessment.get("selected_ownership")
     reasons = ", ".join(assessment.get("reason_codes") or [])
+    if status == "PROGRAMME_SELECTION_REQUIRED":
+        raise RuntimeError(
+            f"{status} before {assessment.get('boundary')}: "
+            "multiple live/blocked programme obligations exist; "
+            "an explicit Owner/ROADMAP selected frontier is required"
+        )
     if status == "PROGRAMME_FRONTIER_MISMATCH":
         raise RuntimeError(
             f"{status} before {assessment.get('boundary')}: "
