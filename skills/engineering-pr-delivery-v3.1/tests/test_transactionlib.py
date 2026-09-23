@@ -15,6 +15,7 @@ for entry in (SCRIPTS, TESTS):
 from transactionlib import TransactionError, execute, incomplete_transactions, recover_all
 from validate_foundation import validate_authority
 from test_v3_foundation import materialize
+from v3lib import load_yaml
 
 
 class TransactionJournalTests(unittest.TestCase):
@@ -72,6 +73,32 @@ class TransactionJournalTests(unittest.TestCase):
                     replacements={"../relay-v3.1-outside.txt": b"escape"},
                 )
             self.assertFalse(outside.exists())
+
+    def test_non_lease_command_cannot_use_liveness_carveout_to_rewrite_lease_authority(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            materialize(root)
+            lease_path = root / "relay/LEASES/LEASE-TA-011-01.yaml"
+            lease = load_yaml(lease_path)
+            mutated = dict(lease)
+            mutated["state"] = "INVALIDATED"
+            import yaml
+            with self.assertRaisesRegex(
+                TransactionError,
+                "may only mutate lease custody liveness fields",
+            ):
+                execute(
+                    root,
+                    tx_id="TX-LIVENESS-ESCAPE-001",
+                    command="RECORD_CHANGE_HYPOTHESIS",
+                    actor="agent-x",
+                    replacements={
+                        "relay/LEASES/LEASE-TA-011-01.yaml": yaml.safe_dump(
+                            mutated,
+                            sort_keys=False,
+                        ).encode("utf-8"),
+                    },
+                )
 
     def test_interrupted_mixed_transaction_blocks_authority_then_rolls_back(self):
         with tempfile.TemporaryDirectory() as td:
