@@ -261,10 +261,13 @@ python skills/engineering-pr-delivery-v3.1/scripts/protocol_default.py <repo-roo
 ```
 
 Semantics:
-- no selector → V2.5 compatibility remains the default;
-- `V2_5 / PREPARED` → V3.1 is staged, but V2.5 remains live;
-- `V3_1 / ACTIVE` → V3.1 is the live/default relay; V2.5 becomes read-only history;
-- invalid selection/history digest → fail closed; do not guess a protocol.
+- authority identity is `LEGACY` vs `NATIVE`; `V2_5` / `V3` / `V3_1` are compatibility/tooling metadata, not programme state;
+- no selector + only `agents/relay/REPO_STATE.yaml` → `LEGACY / LEGACY_DEFAULT`;
+- no selector + only `relay/STATE.yaml` → `NATIVE / ACTIVE` using current V3.1-compatible tooling without a migration ceremony;
+- no selector + both durable authority trees → `INVALID`; fail closed rather than guess;
+- `V2_5 / PREPARED` → LEGACY remains live while native authority is staged;
+- `V3 / ACTIVE` or `V3_1 / ACTIVE` → NATIVE is live; accepted history is not rewritten merely to consume current tooling;
+- invalid selection/history digest → fail closed.
 
 Before cutover:
 
