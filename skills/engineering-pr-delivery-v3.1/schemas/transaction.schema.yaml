@@ -29,6 +29,45 @@ properties:
     type: array
     uniqueItems: true
     items: {type: string, minLength: 1}
+  identity_reservations:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+      pattern: '^[A-Z]+\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?  recovery:
+    type: object
+    additionalProperties: false
+    required: [strategy, basis]
+    properties:
+      strategy: {enum: [CONFIRM_COMMIT, ROLLBACK]}
+      basis:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        status: {enum: [PREPARED, APPLYING, RECOVERY_REQUIRED]}
+    then:
+      properties:
+        payload_state: {const: RECOVERY_PAYLOAD}
+        operations:
+          items:
+            required: [staged_path, backup_path]
+  - if:
+      properties:
+        payload_state: {const: PRUNED}
+    then:
+      properties:
+        status: {enum: [COMMITTED, ROLLED_BACK]}
+        operations:
+          items:
+            not:
+              anyOf:
+                - required: [staged_path]
+                - required: [backup_path]
+additionalProperties: false
+
   recovery:
     type: object
     additionalProperties: false

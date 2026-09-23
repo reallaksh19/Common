@@ -12,6 +12,7 @@ if str(SCRIPTS) not in sys.path:
 
 from nomenclature import (
     allocate_next_id,
+    allocate_next_ids,
     canonical_id,
     next_serial,
     parse_canonical_id,
@@ -113,6 +114,17 @@ class NomenclatureTests(unittest.TestCase):
             self.assertEqual(
                 "LEASE.438.5",
                 allocate_next_id(root, kind="LEASE", root=438),
+            )
+
+    def test_batch_allocation_is_monotonic_within_one_namespace_root(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            events = root / "relay/EVENTS.jsonl"
+            events.parent.mkdir(parents=True, exist_ok=True)
+            events.write_text('{"subject":"EVT.438.2"}\n', encoding="utf-8")
+            self.assertEqual(
+                ["EVT.438.3", "EVT.438.4", "EVT.438.5"],
+                allocate_next_ids(root, kind="EVT", root=438, count=3),
             )
 
     def test_serial_allocation_is_namespace_and_root_scoped_and_never_fills_gaps(self):

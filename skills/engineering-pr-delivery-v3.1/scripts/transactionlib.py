@@ -12,6 +12,7 @@ from typing import Any
 
 import yaml
 
+from nomenclature import canonical_ids_in_text, parse_canonical_id
 from v3lib import load_yaml, repo_path, require_identifier, validate_schema
 
 
@@ -376,6 +377,15 @@ def _prepare(
             "backup_path": backup_rel,
         })
 
+    identity_reservations: set[str] = set()
+    if parse_canonical_id(tx_id) is not None:
+        identity_reservations.add(tx_id)
+    for payload in replacements.values():
+        try:
+            identity_reservations.update(canonical_ids_in_text(payload.decode("utf-8")))
+        except UnicodeDecodeError:
+            continue
+
     now = _now()
     manifest = {
         "schema_version": "relay-v3.1-transaction",
@@ -387,6 +397,7 @@ def _prepare(
         "updated_at": now,
         "operations": operations,
         "applied": [],
+        "identity_reservations": sorted(identity_reservations),
         "payload_state": "RECOVERY_PAYLOAD",
     }
     errors = validate_schema("transaction", manifest, "TRANSACTION")

@@ -37,6 +37,11 @@ _CANONICAL = re.compile(
     r"(?:\.(?P<serial>[1-9][0-9]*))?$"
 )
 _LEGACY = re.compile(r"^(?P<kind>[A-Z]+)-[A-Za-z0-9][A-Za-z0-9._-]*$")
+_CANONICAL_TOKEN = re.compile(
+    r"(?<![A-Za-z0-9_.-])(?:"
+    + "|".join(sorted(DURABLE_TYPES, key=len, reverse=True))
+    + r")\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?"
+)
 
 
 def _normalize_kind(kind: str) -> str:
@@ -180,17 +185,21 @@ def issue_number_from_ep(ep: dict[str, Any] | None) -> int | None:
     return int(number) if number is not None else None
 
 
+def canonical_ids_in_text(text: str) -> list[str]:
+    found: set[str] = set()
+    for match in _CANONICAL_TOKEN.finditer(str(text or "")):
+        value = match.group(0)
+        if parse_canonical_id(value) is not None:
+            found.add(value)
+    return sorted(found)
+
+
 def canonical_ids_in_repository(repo_root: Path) -> list[str]:
     """Collect canonical IDs already consumed by durable Relay state/history."""
     relay = repo_root / "relay"
     if not relay.exists():
         return []
     found: set[str] = set()
-    token = re.compile(
-        r"(?<![A-Za-z0-9_.-])(?:"
-        + "|".join(sorted(DURABLE_TYPES, key=len, reverse=True))
-        + r")\.(?:[1-9][0-9]*|REPO|INTERNAL)(?:\.[1-9][0-9]*)?"
-    )
     for path in relay.rglob("*"):
         if not path.is_file() or "GENERATED" in path.parts:
             continue
@@ -200,10 +209,7 @@ def canonical_ids_in_repository(repo_root: Path) -> list[str]:
             text = path.read_text(encoding="utf-8")
         except (OSError, UnicodeError):
             continue
-        for match in token.finditer(text):
-            value = match.group(0)
-            if parse_canonical_id(value) is not None:
-                found.add(value)
+        found.update(canonical_ids_in_text(text))
         if parse_canonical_id(path.stem) is not None:
             found.add(path.stem)
     return sorted(found)
@@ -221,6 +227,24 @@ def allocate_next_id(repo_root: Path, *, kind: str, root: int | str) -> str:
         return canonical_id(kind, root)
     serial = next_serial(canonical_ids_in_repository(repo_root), kind=kind, root=root)
     return canonical_id(kind, root, serial)
+
+
+def allocate_next_ids(
+    repo_root: Path,
+    *,
+    kind: str,
+    root: int | str,
+    count: int,
+) -> list[str]:
+    if count < 1:
+        raise ValueError("allocation count must be positive")
+    kind = _normalize_kind(kind)
+    if kind in SINGLETON_TYPES:
+        if count != 1:
+            raise ValueError(f"{kind} supports only one identifier per governing issue")
+        return [canonical_id(kind, root)]
+    start = next_serial(canonical_ids_in_repository(repo_root), kind=kind, root=root)
+    return [canonical_id(kind, root, start + offset) for offset in range(count)]
 
 
 def next_serial(
