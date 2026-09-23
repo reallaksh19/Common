@@ -6,6 +6,8 @@ from v3lib import validate_schema
 
 
 LINEAGE_RELATIONSHIPS = {"SUPERSEDED_BY", "TRANSFERS_TO", "SPLIT_INTO"}
+SELECTED_FRONTIER_BOUNDARIES = {"ADMIT_TASK", "RECOVERY_TAKEOVER"}
+SWITCHABLE_BOUNDARIES = {"HANDOVER", "NEXT_WORK"}
 
 
 def _ref(observation: dict[str, Any]) -> str:
@@ -196,3 +198,198 @@ def require_ready(reconciliation: dict[str, Any]) -> None:
         return
     reasons = ", ".join(reconciliation.get("reason_codes") or [])
     raise RuntimeError(f"PROGRAMME_RECONCILIATION_REQUIRED: {reasons}")
+
+
+def parent_ref(parent: dict[str, Any] | None) -> str | None:
+    value = parent or {}
+    repository = value.get("repository")
+    number = value.get("number")
+    return f"{repository}#{number}" if repository and number else None
+
+
+def observation_ref(observation: dict[str, Any] | None) -> str | None:
+    value = observation or {}
+    repository = value.get("repository")
+    number = value.get("issue_number")
+    return f"{repository}#{number}" if repository and number else None
+
+
+def assess_boundary(
+    parent: dict[str, Any] | None,
+    observations: list[dict[str, Any]] | None,
+    *,
+    boundary: str,
+    current_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Canonical programme decision for actor-change / next-work boundaries.
+
+    The result is a derived decision only. It never mutates ROADMAP, provider
+    state, EP state, or action authority.
+    """
+
+    boundary = str(boundary).upper()
+    if boundary not in SELECTED_FRONTIER_BOUNDARIES | SWITCHABLE_BOUNDARIES:
+        raise ValueError(f"unsupported programme boundary: {boundary}")
+
+    selected_ref = parent_ref(parent)
+    explicit = list(observations or [])
+    selected_observation = None
+
+    if not selected_ref:
+        reconciliation = build([], current_parent_ref=None)
+        return {
+            "status": "READY",
+            "boundary": boundary,
+            "mode": "NOT_PROVIDER_BACKED",
+            "selected_parent": None,
+            "selected_ownership": None,
+            "selected_observation": None,
+            "next_frontier": None,
+            "continuation": "NOT_APPLICABLE",
+            "reason_codes": [],
+            "reconciliation": reconciliation,
+        }
+
+    if explicit:
+        supplied = explicit
+        selected_observation = next(
+            (row for row in explicit if observation_ref(row) == selected_ref),
+            None,
+        )
+    elif current_observation is not None:
+        supplied = [current_observation]
+        selected_observation = current_observation if observation_ref(current_observation) == selected_ref else None
+    else:
+        status = (
+            "PROGRAMME_CURRENTNESS_REQUIRED"
+            if boundary == "HANDOVER"
+            else "PROGRAMME_RECONCILIATION_REQUIRED"
+        )
+        return {
+            "status": status,
+            "boundary": boundary,
+            "mode": "MISSING_PROVIDER_OBSERVATION",
+            "selected_parent": selected_ref,
+            "selected_ownership": None,
+            "selected_observation": None,
+            "next_frontier": None,
+            "continuation": "BLOCK",
+            "reason_codes": ["PARENT_PROVIDER_STATE_REQUIRED"],
+            "reconciliation": build([], current_parent_ref=selected_ref),
+        }
+
+    # Handover may use a single live current-parent readback as a cheap
+    # continuation proof. Unknown provider state/disposition is currentness debt,
+    # not a fully reconciled programme decision.
+    if boundary == "HANDOVER" and not explicit and selected_observation is not None:
+        state = str(selected_observation.get("state") or "UNKNOWN")
+        disposition = str(selected_observation.get("disposition") or "UNKNOWN")
+        missing = []
+        if state == "UNKNOWN":
+            missing.append("PARENT_PROVIDER_STATE_REQUIRED")
+        if disposition == "UNKNOWN":
+            missing.append("PARENT_DISPOSITION_REQUIRED")
+        if missing:
+            return {
+                "status": "PROGRAMME_CURRENTNESS_REQUIRED",
+                "boundary": boundary,
+                "mode": "SINGLE_PARENT_CURRENTNESS",
+                "selected_parent": selected_ref,
+                "selected_ownership": None,
+                "selected_observation": selected_observation,
+                "next_frontier": None,
+                "continuation": "BLOCK",
+                "reason_codes": missing,
+                "reconciliation": build([], current_parent_ref=selected_ref),
+            }
+
+    reconciliation = build(supplied, current_parent_ref=selected_ref)
+    if reconciliation.get("status") != "READY":
+        return {
+            "status": "PROGRAMME_RECONCILIATION_REQUIRED",
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": None,
+            "selected_observation": selected_observation,
+            "next_frontier": (reconciliation.get("programme_frontier") or [None])[0],
+            "continuation": "BLOCK",
+            "reason_codes": list(reconciliation.get("reason_codes") or []),
+            "reconciliation": reconciliation,
+        }
+
+    selected_row = next(
+        (row for row in reconciliation.get("parents") or [] if row.get("ref") == selected_ref),
+        {},
+    )
+    selected_ownership = selected_row.get("ownership") or "UNKNOWN"
+    frontier = list(reconciliation.get("programme_frontier") or [])
+    next_frontier = frontier[0] if frontier else None
+
+    if boundary in SELECTED_FRONTIER_BOUNDARIES and selected_ref not in frontier:
+        return {
+            "status": "PROGRAMME_FRONTIER_MISMATCH",
+            "boundary": boundary,
+            "mode": "ORDERED_PARENT_SET",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "continuation": "BLOCK",
+            "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
+            "reconciliation": reconciliation,
+        }
+
+    if boundary == "HANDOVER" and not explicit and selected_ref not in frontier:
+        return {
+            "status": "PROGRAMME_RECONCILIATION_REQUIRED",
+            "boundary": boundary,
+            "mode": "SINGLE_PARENT_CURRENTNESS",
+            "selected_parent": selected_ref,
+            "selected_ownership": selected_ownership,
+            "selected_observation": selected_observation,
+            "next_frontier": next_frontier,
+            "continuation": "BLOCK",
+            "reason_codes": [f"SELECTED_PARENT_{selected_ownership}"],
+            "reconciliation": reconciliation,
+        }
+
+    continuation = (
+        "CONTINUE_CURRENT"
+        if selected_ref in frontier
+        else "SWITCH_FRONTIER"
+        if next_frontier
+        else "NO_IMPLEMENTATION_FRONTIER"
+    )
+    return {
+        "status": "READY",
+        "boundary": boundary,
+        "mode": "ORDERED_PARENT_SET" if explicit else "SINGLE_PARENT_CURRENTNESS",
+        "selected_parent": selected_ref,
+        "selected_ownership": selected_ownership,
+        "selected_observation": selected_observation,
+        "next_frontier": next_frontier,
+        "continuation": continuation,
+        "reason_codes": [],
+        "reconciliation": reconciliation,
+    }
+
+
+def require_boundary_ready(assessment: dict[str, Any]) -> dict[str, Any]:
+    if assessment.get("status") == "READY":
+        return assessment
+
+    status = str(assessment.get("status") or "PROGRAMME_RECONCILIATION_REQUIRED")
+    selected = assessment.get("selected_parent")
+    ownership = assessment.get("selected_ownership")
+    reasons = ", ".join(assessment.get("reason_codes") or [])
+    if status == "PROGRAMME_FRONTIER_MISMATCH":
+        raise RuntimeError(
+            f"{status} before {assessment.get('boundary')}: "
+            f"{selected} is {ownership}, not STILL_REAL"
+        )
+    raise RuntimeError(
+        f"{status} before {assessment.get('boundary')}: "
+        f"parent {selected} cannot determine the programme frontier"
+        + (f" ({reasons})" if reasons else "")
+    )
