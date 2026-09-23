@@ -170,7 +170,18 @@ properties:
         additionalProperties: false
         required: [digest, source_protocol, ep, work_package, next_action, value]
         properties:
-          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}      parent_issue:
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          source_protocol: {enum: [V2_5, V3_1]}
+          ep: {type: [string, 'null']}
+          work_package: {type: [string, 'null']}
+          next_action: {type: [string, 'null']}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+      parent_issue:
         type: object
         additionalProperties: false
         required: [repository, number, disposition, relationships]
@@ -184,7 +195,18 @@ properties:
         additionalProperties: false
         required: [digest, source_protocol, checkpoint, capability_change, evidence_count, value]
         properties:
-          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}  generator_contract:
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          source_protocol: {enum: [V2_5, V3_1]}
+          checkpoint: {type: [string, 'null']}
+          capability_change: {type: boolean}
+          evidence_count: {type: integer, minimum: 0}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+  generator_contract:
     type: object
     additionalProperties: false
     required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
