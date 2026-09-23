@@ -121,6 +121,8 @@ def build_context(
     complex_mode: bool,
     parent_issue_observation: dict[str, Any] | None = None,
     programme_reconciliation: dict[str, Any] | None = None,
+    task_snapshot_override: dict[str, Any] | None = None,
+    improvement_view_override: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     revision = _standalone_contract(root)
@@ -139,13 +141,9 @@ def build_context(
     context_wp_id = execution.get("work_package") or ((context_ep or {}).get("work_package"))
     wp = _wp_row(roadmap, context_wp_id)
     handoff = (checkpoint or {}).get("handoff") or {}
-    task_snapshot = build_task(root, base_ref, parent_issue_observation)
-    improvement_view = build_improvement(root)
+    task_snapshot = task_snapshot_override or build_task(root, base_ref, parent_issue_observation)
+    improvement_view = improvement_view_override or build_improvement(root)
     task_identity = task_snapshot.get("identity") or {}
-    task_ep = task_identity.get("ep") or context_ep_id
-    task_path = f"relay/GENERATED/tasks/{task_ep or 'current'}.snapshot.yaml"
-    improvement_cp = improvement_view.get("checkpoint") or checkpoint_id
-    improvement_path = f"relay/GENERATED/improvements/{improvement_cp or 'current'}.improvement.yaml"
     improvement = improvement_view.get("improvement") or {}
     capability_change = bool(
         improvement.get("capability_added")
@@ -235,20 +233,20 @@ def build_context(
             "resume_from": list(handoff.get("resume_from") or []),
             "first_successor_action": handoff.get("first_successor_action"),
             "task_snapshot": {
-                "path": task_path,
                 "digest": canonical_digest(task_snapshot),
                 "source_protocol": task_snapshot.get("source_protocol"),
                 "ep": task_identity.get("ep"),
                 "work_package": task_identity.get("work_package"),
                 "next_action": (task_snapshot.get("next") or {}).get("immediate_action"),
+                "value": task_snapshot,
             },
             "improvement_view": {
-                "path": improvement_path,
                 "digest": canonical_digest(improvement_view),
                 "source_protocol": improvement_view.get("source_protocol"),
                 "checkpoint": improvement_view.get("checkpoint"),
                 "capability_change": capability_change,
                 "evidence_count": evidence_count,
+                "value": improvement_view,
             },
             "parent_issue": {
                 "repository": (task_snapshot.get("parent_issue") or {}).get("repository"),
