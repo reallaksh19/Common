@@ -143,7 +143,13 @@ def incomplete_transactions(root: Path) -> list[tuple[Path, dict[str, Any] | Non
     return out
 
 
-LEASE_MUTATION_COMMANDS = {"ACTIVATE_LEASE", "RENEW_LEASE", "ADMIT_TASK", "RELEASE_LEASE"}
+LEASE_MUTATION_COMMANDS = {
+    "ACTIVATE_LEASE",
+    "RENEW_LEASE",
+    "ADMIT_TASK",
+    "RELEASE_LEASE",
+    "CLOSE_TASK",
+}
 
 
 def _validate_lease_mutations(
