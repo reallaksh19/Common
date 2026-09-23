@@ -9,13 +9,16 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
 
+V3_SKILL_PATTERN = "skills/" + "engineering-pr-delivery-v3/*"
+
+
 WORKFLOWS = {
     "engineering-pr-delivery-v2.5.yml": (
         "skills/engineering-pr-delivery-v2.5/*",
         "skills/three-pass-prompt-generator/*",
     ),
     "engineering-pr-delivery-v3.yml": (
-        "skills/engineering-pr-delivery-v3/*",
+        V3_SKILL_PATTERN,
     ),
     "engineering-pr-delivery-v3.1.yml": (
         "skills/engineering-pr-delivery-v3.1/*",
