@@ -144,9 +144,11 @@ def base_objects():
         },
         "owner": {"outcome": "Simplify relay execution.", "current_goal": "Land V3 foundation."},
         "programme": {
+            "programme_progress": 0,
             "accepted_progress": 0,
             "completed_work": [],
             "remaining_work": ["WP-TA-109"],
+            "evidence_backed_work": [],
         },
         "execution": {
             "lifecycle": "ACTIVE",
