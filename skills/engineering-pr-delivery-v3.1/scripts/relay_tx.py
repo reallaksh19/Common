@@ -45,7 +45,7 @@ def _custody_epoch(state: dict[str, Any]) -> int | None:
 def _require_expected_custody_epoch(state: dict[str, Any], expected: int | None) -> None:
     execution = state.get("execution") or {}
     current = _custody_epoch(state)
-    if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or current is None:
+    if execution.get("lifecycle") != "ACTIVE" or current is None:
         return
     if expected is None:
         raise TransactionError("CUSTODY_EPOCH_REQUIRED")

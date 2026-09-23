@@ -116,7 +116,7 @@ def active_lease_renewal(
     """
 
     execution = state.get("execution") or {}
-    if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"}:
+    if execution.get("lifecycle") != "ACTIVE":
         return None
     lease_id = execution.get("lease")
     ep_id = execution.get("ep")

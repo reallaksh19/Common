@@ -156,7 +156,7 @@ def evaluate(
     blocking_controls: list[str] = []
     execution = state.get("execution") or {}
     current_epoch = execution.get("custody_epoch")
-    if action in FENCED_ACTIONS and execution.get("lifecycle") in {"ACTIVE", "PARALLEL"} and current_epoch is not None:
+    if action in FENCED_ACTIONS and execution.get("lifecycle") == "ACTIVE" and current_epoch is not None:
         basis.append(f"custody_epoch:{current_epoch}")
         if expected_custody_epoch is None:
             reasons.append("CUSTODY_EPOCH_REQUIRED")
@@ -164,7 +164,7 @@ def evaluate(
             reasons.append("STALE_CUSTODY_EPOCH")
 
     if action in EXECUTION_ACTIONS:
-        if execution.get("lifecycle") not in {"ACTIVE", "PARALLEL"} or not ep:
+        if execution.get("lifecycle") != "ACTIVE" or not ep:
             reasons.append("NO_ACTIVE_EXECUTION")
         if not lease or lease.get("state") != "ACTIVE":
             reasons.append("NO_ACTIVE_LEASE")

@@ -17,6 +17,7 @@ for entry in (SCRIPTS, TESTS):
 
 from relay_can import evaluate
 from validate_foundation import validate
+from v3lib import validate_schema
 from test_v3_foundation import DIGEST, dump, materialize
 
 
@@ -329,6 +330,28 @@ class RelayCanTests(unittest.TestCase):
             result = evaluate(root, "MERGE")
             self.assertFalse(result["allowed"], result)
             self.assertIn("DELIVERY_VEHICLE_REQUIRED", result["reason_codes"])
+
+
+    def test_parallel_lifecycle_is_rejected_as_execution_authority(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+
+            state_path = root / "relay/STATE.yaml"
+            state = yaml.safe_load(state_path.read_text(encoding="utf-8"))
+            state["execution"]["lifecycle"] = "PARALLEL"
+
+            schema_errors = validate_schema("state", state, "STATE")
+            self.assertTrue(schema_errors)
+            self.assertTrue(
+                any("PARALLEL" in item or "lifecycle" in item for item in schema_errors),
+                schema_errors,
+            )
+
+            dump(state_path, state)
+            result = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertFalse(result["allowed"], result)
+            self.assertIn("INVALID_FOUNDATION", result["reason_codes"])
 
 
 if __name__ == "__main__":
