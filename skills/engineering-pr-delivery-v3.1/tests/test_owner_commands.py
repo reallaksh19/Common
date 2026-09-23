@@ -147,5 +147,23 @@ class OwnerWorkflowCommandTests(unittest.TestCase):
         self.assertIsNone(result["intent"])
 
 
+    def test_blocked_frontier_language_separates_execution_from_programme_authority(self):
+        what_next = parse_owner_command("What next?")
+        what_steps = " ".join(what_next["workflow"]["steps"]).lower()
+        self.assertIn("remains selected", what_steps)
+        self.assertIn("execution-blocked", what_steps)
+        self.assertIn("does not grant programme reselection authority", what_steps)
+        self.assertIn(
+            "not proof that one external/provider action is the only legitimate action",
+            what_steps,
+        )
+
+        proceed = parse_owner_command("Proceed next")
+        proceed_steps = " ".join(proceed["workflow"]["steps"]).lower()
+        self.assertIn("keeping the same selected frontier", proceed_steps)
+        self.assertIn("without owner/programme reselection", proceed_steps)
+        self.assertIn("do not present an execution blocker as programme authority", proceed_steps)
+
+
 if __name__ == "__main__":
     unittest.main()

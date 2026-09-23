@@ -65,6 +65,24 @@ def render(
     task = task_snapshot or {}
     ledger = handover_ledger or {}
 
+    selected_frontier = recon.get("selected_frontier")
+    selected_ownership = recon.get("selected_frontier_ownership")
+    executable_frontier = recon.get("executable_frontier")
+    alternate_live = list(recon.get("alternate_live_frontiers") or [])
+    selected_is_blocked = bool(
+        selected_frontier
+        and (
+            selected_ownership == "BLOCKED"
+            or selected_frontier in (recon.get("execution_blocked") or [])
+        )
+    )
+    automatic_fallback = "NO" if selected_is_blocked else "NOT_APPLICABLE"
+    switch_authority = (
+        "Owner/programme reselection required"
+        if selected_is_blocked
+        else "No blocked-selection reselection requirement"
+    )
+
     lines = [
         "# Engineering Relay V3.1 — Detailed Stats",
         "",
@@ -79,11 +97,23 @@ def render(
         f"- Current EP / lease: {execution.get('ep') or 'NONE'} / {execution.get('lease') or 'NONE'}",
         "",
         "## Programme classification",
+        f"- Selected execution frontier: {selected_frontier or 'none'}",
+        f"- Selected frontier ownership: {selected_ownership or 'none'}",
+        f"- Executable frontier: {executable_frontier or 'none'}",
+        f"- Alternate live frontiers: {alternate_live}",
         f"- Programme frontier: {recon.get('programme_frontier') or []}",
         f"- Execution blocked: {recon.get('execution_blocked') or []}",
         f"- Acceptance debt: {recon.get('acceptance_debt') or []}",
         f"- Delivery / governance debt: {recon.get('delivery_governance_debt') or []}",
         f"- Deferred / future: {recon.get('deferred_or_future') or []}",
+        f"- Automatic fallback from a blocked selected frontier: {automatic_fallback}",
+        f"- Frontier switch authority: {switch_authority}",
+        (
+            "- Blocker meaning: execution is blocked, but programme selection is unchanged; "
+            "the blocker does not grant programme reselection authority."
+            if selected_is_blocked
+            else "- Blocker meaning: no blocked selected frontier is currently reported."
+        ),
     ]
 
     _checklist(lines, "Parent / sub-issue programme set", list(recon.get("parents") or []))
@@ -141,7 +171,13 @@ def render(
         f"- Unaccepted material status: {material.get('status') or 'UNKNOWN'}",
         "",
         "## Next",
-        f"- Reconciled first programme frontier: {(recon.get('programme_frontier') or [None])[0] or 'none'}",
+        f"- Selected programme frontier: {selected_frontier or 'none'}",
+        (
+            "- Selected frontier status: SELECTED_BUT_EXECUTION_BLOCKED; "
+            "do not fall through to alternate/deferred work."
+            if selected_is_blocked
+            else f"- Selected frontier status: {selected_ownership or 'none'}"
+        ),
         f"- Current material action: {(snapshot.get('next') or {}).get('immediate_material_action') or 'none'}",
         f"- Delivery action: {(snapshot.get('next') or {}).get('delivery_action') or 'none'}",
         "",
