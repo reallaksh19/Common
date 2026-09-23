@@ -218,6 +218,7 @@ class TransactionJournalTests(unittest.TestCase):
             tx_dir = root / "relay/TRANSACTIONS/TX-PRUNE-OLD-001"
             manifest_path = tx_dir / "manifest.yaml"
             manifest = load_yaml(manifest_path)
+            terminal_updated_at = manifest["updated_at"]
 
             # Simulate residue from a process crash after terminal status was
             # durable but before physical payload cleanup.
@@ -244,6 +245,7 @@ class TransactionJournalTests(unittest.TestCase):
             compact = load_yaml(manifest_path)
             self.assertEqual("COMMITTED", compact["status"])
             self.assertEqual("PRUNED", compact["payload_state"])
+            self.assertEqual(terminal_updated_at, compact["updated_at"])
             self.assertFalse(staged.exists())
             self.assertFalse(backups.exists())
             self.assertNotIn("staged_path", compact["operations"][0])
