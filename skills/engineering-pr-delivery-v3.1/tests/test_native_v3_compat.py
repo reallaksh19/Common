@@ -113,6 +113,7 @@ class NativeV3CompatibilityTests(unittest.TestCase):
 
             self.assertEqual([], validate(root))
             resolved = resolve_protocol(root)
+            self.assertEqual("NATIVE", resolved["authority_mode"])
             self.assertEqual("V3_1", resolved["selected_protocol"])
             self.assertEqual("V3", resolved["repository_protocol"])
             self.assertEqual("ACTIVE", resolved["status"])
@@ -122,7 +123,7 @@ class NativeV3CompatibilityTests(unittest.TestCase):
             allowed = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
             self.assertTrue(allowed["allowed"], allowed)
             self.assertTrue(
-                any(item == "protocol:V3:ACTIVE:COMPATIBLE_NATIVE_CORE" for item in allowed["basis"]),
+                any(item == "protocol:NATIVE:ACTIVE:repo=V3:source=SELECTOR" for item in allowed["basis"]),
                 allowed,
             )
 
@@ -152,6 +153,51 @@ class NativeV3CompatibilityTests(unittest.TestCase):
             self.assertEqual("relay-v3.1-lease", lease["schema_version"])
             self.assertEqual(1, lease["custody"]["epoch"])
             self.assertEqual([], validate(root))
+
+    def test_selectorless_native_tree_resolves_native_everywhere(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+
+            resolved = resolve_protocol(root)
+            self.assertEqual("NATIVE", resolved["authority_mode"])
+            self.assertEqual("ACTIVE", resolved["status"])
+            self.assertEqual("NATIVE_NO_SELECTOR", resolved["repository_protocol"])
+
+            allowed = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertTrue(allowed["allowed"], allowed)
+            self.assertIn(
+                "protocol:NATIVE:ACTIVE:repo=NATIVE_NO_SELECTOR:source=NATIVE_TREE",
+                allowed["basis"],
+            )
+
+    def test_selectorless_legacy_tree_resolves_legacy(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            state = root / "agents/relay/REPO_STATE.yaml"
+            state.parent.mkdir(parents=True, exist_ok=True)
+            state.write_text("schema_version: relay-v2.5\n", encoding="utf-8")
+
+            resolved = resolve_protocol(root)
+            self.assertEqual("LEGACY", resolved["authority_mode"])
+            self.assertEqual("ACTIVE", resolved["status"])
+            self.assertEqual("V2_5", resolved["selected_protocol"])
+
+    def test_selectorless_dual_authority_fails_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_git(root)
+            legacy = root / "agents/relay/REPO_STATE.yaml"
+            legacy.parent.mkdir(parents=True, exist_ok=True)
+            legacy.write_text("schema_version: relay-v2.5\n", encoding="utf-8")
+
+            resolved = resolve_protocol(root)
+            self.assertEqual("AMBIGUOUS", resolved["authority_mode"])
+            self.assertEqual("INVALID", resolved["status"])
+
+            denied = evaluate(root, "MATERIAL_WRITE", path=WRITE_PATH, base_ref="base")
+            self.assertFalse(denied["allowed"], denied)
+            self.assertIn("PROTOCOL_NOT_ACTIVE", denied["reason_codes"])
 
     def test_invalid_native_v3_still_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
