@@ -90,6 +90,45 @@ properties:
   benchmark_debt:
     type: object
     required: [required_missing, stale, optional]
+  continuity:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [receipt, receipt_digest, custody_epoch, recorded_at, recoverability, acceptance_focus, immediate_action]
+    properties:
+      receipt: {type: string, minLength: 1}
+      receipt_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}  material:
+    type: object
+    required: [base, current_head]
+  acceptance: {type: array}
+  controls:
+    type: object
+    required: [material_write, checkpoint, handover, pr_ready, merge, release]
+  knowledge_state:
+    type: object
+    required: [known_true, known_false, unknown, assumptions]
+  negative_knowledge: {type: array}
+  preserve:
+    type: object
+    required: [accepted_do_not_reopen]
+  history:
+    type: object
+    required: [recent_events]
+  next:
+    type: object
+    required: [immediate_action, next_value_frontier, stop_conditions]
+  reconstruction_sources:
+    type: array
+    minItems: 1
+additionalProperties: false
+}
+      custody_epoch: {type: integer, minimum: 1}
+      recorded_at: {type: string, format: date-time}
+      recoverability: {enum: [DURABLE_REMOTE, LOCAL_ONLY, UNKNOWN]}
+      acceptance_focus:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      immediate_action: {type: string, minLength: 1}
   execution:
     type: object
     required: [lifecycle, lease_or_custody, executor, route, branch]
