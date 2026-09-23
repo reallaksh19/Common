@@ -12,7 +12,7 @@
     "custody_epoch": 1
   },
   "accepted": {
-    "checkpoint": "CP.438.2"
+    "checkpoint": "CP.438.3"
   },
   "controls": {
     "path": "relay/CONTROLS/controls.yaml"
