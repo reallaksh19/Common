@@ -11,7 +11,7 @@ from handover_projection import render as render_handover
 from intelligence_projection import build_improvement, build_task
 from lease_admission import build_native_lease
 from material_basis import inspect as inspect_material_basis
-from programme_reconciliation import assess_boundary, build as build_programme_reconciliation, require_boundary_ready
+from programme_reconciliation import assess_boundary, require_boundary_ready
 from local_execution_projection import build as build_local_execution
 from render_local_execution_request import render as render_local_execution_request
 from relay_can import _protocol_state, evaluate as can_action
@@ -474,7 +474,11 @@ def activate_lease(
     different_executor = bool(old_active and old_executor != executor_id)
     continuation = "NEW"
     handover_digest = None
-    programme_reconciliation = build_programme_reconciliation([], current_parent_ref=None)
+    programme_reconciliation = assess_boundary(
+        None,
+        None,
+        boundary="RECOVERY_TAKEOVER",
+    )["reconciliation"]
 
     if different_executor:
         try:
