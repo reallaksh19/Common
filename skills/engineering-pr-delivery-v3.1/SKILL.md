@@ -479,6 +479,10 @@ python skills/engineering-pr-delivery-v3.1/scripts/relay_tx.py . record-continua
 
 A continuation receipt is `CONTINUATION_EVIDENCE`, not accepted engineering truth and not action authority. Recording one requires the current EP, lease, executor and custody epoch, binds the exact EP digest and material head, and requires its `acceptance_focus` to name acceptance items owned by that EP. It may describe WIP progress, discoveries, rejected approaches, unresolved items and the immediate next action without promoting them to a checkpoint.
 
+Only the current EP custodian may author `CONTINUATION_RECORDED`. A Local Helper may run bounded local/browser work and return `LOCAL_EXECUTION_RETURNED` evidence, but it must never manufacture a continuation receipt on behalf of the engineering custodian. The custodian may cite returned local-execution evidence in a later receipt after independently resuming responsibility.
+
+Continuation evidence and custody liveness are distinct signals. Governed engineering activity such as recording a valid continuation may renew ordinary lease liveness, but a bare `LEASE_RENEWED` is not evidence of engineering progress and must not be treated as such by future progress-watchdog logic.
+
 Receipts live under `relay/CONTINUITY/<EP>/` and append `CONTINUATION_RECORDED`. The latest valid receipt is projected into `TASK_SNAPSHOT` and therefore flows into frozen handover context. Recovery also binds the predecessor's latest valid receipt when one exists. Missing continuation evidence never fabricates accepted truth: the accepted checkpoint remains the safe boundary and repository/provider reality must still be reconstructed.
 
 Use receipts at semantic boundaries such as meaningful commits, falsifier/test results, newly discovered blockers, rejected approaches, helper dispatch/return, and before planned handoff or long/risky operations. They are not heartbeat spam; ordinary governed activity still owns lease liveness.
