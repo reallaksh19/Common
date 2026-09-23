@@ -2262,8 +2262,8 @@ def main() -> None:
     recovery_done.add_argument("--evidence", action="append", default=[])
 
     change_record = sub.add_parser("record-change")
-    change_record.add_argument("--tx-id")
-    change_record.add_argument("--event-id")
+    change_record.add_argument("--tx-id", required=True)
+    change_record.add_argument("--event-id", required=True)
     change_record.add_argument("--actor", required=True)
     change_record.add_argument("--change-id", required=True)
     change_record.add_argument("--statement", required=True)
@@ -2272,8 +2272,8 @@ def main() -> None:
     change_record.add_argument("--expected-custody-epoch", type=int)
 
     change_verify = sub.add_parser("verify-change")
-    change_verify.add_argument("--tx-id")
-    change_verify.add_argument("--event-id")
+    change_verify.add_argument("--tx-id", required=True)
+    change_verify.add_argument("--event-id", required=True)
     change_verify.add_argument("--actor", required=True)
     change_verify.add_argument("--change-id", required=True)
     change_verify.add_argument("--status", choices=["CONFIRMED", "REJECTED"], required=True)
@@ -2282,8 +2282,8 @@ def main() -> None:
     change_verify.add_argument("--expected-custody-epoch", type=int)
 
     change_propose = sub.add_parser("propose-change")
-    change_propose.add_argument("--tx-id")
-    change_propose.add_argument("--event-id")
+    change_propose.add_argument("--tx-id", required=True)
+    change_propose.add_argument("--event-id", required=True)
     change_propose.add_argument("--actor", required=True)
     change_propose.add_argument("--change-id", required=True)
     change_propose.add_argument("--proposal", required=True)
@@ -2291,8 +2291,8 @@ def main() -> None:
     change_propose.add_argument("--expected-custody-epoch", type=int)
 
     change_authorize = sub.add_parser("authorize-change")
-    change_authorize.add_argument("--tx-id")
-    change_authorize.add_argument("--event-id")
+    change_authorize.add_argument("--tx-id", required=True)
+    change_authorize.add_argument("--event-id", required=True)
     change_authorize.add_argument("--actor", required=True)
     change_authorize.add_argument("--change-id", required=True)
     change_authorize.add_argument("--decision", choices=["GRANT", "DENY"], required=True)
