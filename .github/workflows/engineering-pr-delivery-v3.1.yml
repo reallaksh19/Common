@@ -38,6 +38,13 @@ jobs:
             exit 0
           fi
 
+          changed_paths="$RUNNER_TEMP/relay-changed-paths.txt"
+          if ! git diff --name-only --no-renames "$BASE_SHA" "$HEAD_SHA" > "$changed_paths"; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            echo "Path relevance could not be determined; running full validation." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
           relevant=false
           while IFS= read -r path; do
             case "$path" in
@@ -46,7 +53,7 @@ jobs:
                 break
                 ;;
             esac
-          done < <(git diff --name-only --no-renames "$BASE_SHA" "$HEAD_SHA")
+          done < "$changed_paths"
 
           echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
           if [[ "$relevant" == "false" ]]; then
