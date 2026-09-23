@@ -261,6 +261,14 @@ def _validate_lease_mutations(
                 )
 
 
+def _target_matches(path: str, pattern: str) -> bool:
+    if fnmatch(path, pattern):
+        return True
+    if "-*" in pattern:
+        return fnmatch(path, pattern.replace("-*", ".*"))
+    return False
+
+
 def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> None:
     patterns = COMMAND_TARGET_PATTERNS.get(command)
     if not patterns:
@@ -268,7 +276,7 @@ def _validate_command_targets(command: str, replacements: dict[str, bytes]) -> N
     invalid = [
         path for path in replacements
         if path.startswith("relay/")
-        and not any(fnmatch(path, pattern) for pattern in patterns)
+        and not any(_target_matches(path, pattern) for pattern in patterns)
     ]
     if invalid:
         raise TransactionError(

@@ -84,6 +84,7 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
 
     for token in (
         "lease-",
+        "lease.",
         "pull_request",
         "pull request",
         "pr #",

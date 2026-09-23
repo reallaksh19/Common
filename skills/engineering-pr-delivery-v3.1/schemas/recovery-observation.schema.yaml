@@ -6,7 +6,7 @@ properties:
   authority: {const: DERIVED_PROVIDER_OBSERVATION}
   provider: {type: string, minLength: 1}
   provider_ref: {type: string, minLength: 1}
-  lease_id: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+  lease_id: {type: string, pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)$'}
   executor_id: {type: string, minLength: 1}
   custody_epoch: {type: integer, minimum: 1}
   session_state: {enum: [TERMINATED, CANCELLED, FAILED]}

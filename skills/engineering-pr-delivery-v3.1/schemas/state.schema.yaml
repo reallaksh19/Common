@@ -17,7 +17,7 @@ properties:
     properties:
       lifecycle: {enum: [ACTIVE, PARALLEL, IDLE, TERMINAL, INITIALIZING]}
       ep: {type: [string, 'null'], pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
-      lease: {type: [string, 'null'], pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      lease: {type: [string, 'null'], pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)$'}
       route: {type: [string, 'null'], minLength: 1}
       custody_epoch: {type: integer, minimum: 0}
   accepted:
@@ -63,7 +63,7 @@ allOf:
         execution:
           properties:
             ep: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
-            lease: {type: string, pattern: '^LEASE-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+            lease: {type: string, pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)$'}
             route: {type: string, pattern: '^SERIAL:EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
   - if:
       properties:
