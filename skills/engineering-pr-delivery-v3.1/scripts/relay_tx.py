@@ -447,6 +447,15 @@ def admit_task(
     if ep_path.exists() or lease_path.exists():
         raise TransactionError("ADMIT_TASK refuses to overwrite an existing EP or lease")
 
+    predecessor_lease_id = execution.get("lease")
+    predecessor_lease = None
+    if predecessor_lease_id and str(predecessor_lease_id) != str(lease_id):
+        predecessor_path = root / "relay/LEASES" / f"{predecessor_lease_id}.yaml"
+        if predecessor_path.exists():
+            candidate = load_yaml(predecessor_path)
+            if isinstance(candidate, dict) and candidate.get("state") == "ACTIVE":
+                predecessor_lease = candidate
+
     new_roadmap = copy.deepcopy(roadmap)
     new_roadmap["revision"] = rplan["new_revision"]
     new_roadmap["work_packages"] = work_packages
@@ -491,16 +500,50 @@ def admit_task(
     )
 
     events = _events(root)
+    event_suffixes = (
+        ["-SUPERSEDED", "-OWNER", "-EP", "-LEASE"]
+        if predecessor_lease is not None
+        else ["-OWNER", "-EP", "-LEASE"]
+    )
     ids = _transition_event_ids(
         root,
         event_id=event_id,
         issue_number=governing_issue,
-        legacy_suffixes=["-OWNER", "-EP", "-LEASE"],
+        legacy_suffixes=event_suffixes,
     )
     _assert_event_ids_available(events, ids)
+    offset = 0
+    replacements = {
+        str((state.get("roadmap") or {}).get("path")): yaml_bytes(new_roadmap),
+        "relay/STATE.yaml": yaml_bytes(provisional_state),
+        f"relay/WORK/{ep['id']}.yaml": yaml_bytes(ep),
+        f"relay/LEASES/{lease_id}.yaml": yaml_bytes(lease),
+        _snapshot_path(provisional_state): yaml_bytes(snapshot),
+    }
+    if predecessor_lease is not None:
+        superseded = copy.deepcopy(predecessor_lease)
+        superseded["state"] = "INVALIDATED"
+        reasons = list((superseded.get("invalidation") or {}).get("reasons") or [])
+        reasons.append(f"RECORDER_SUPERSEDED_BY_ADMISSION:{lease_id}")
+        superseded["invalidation"] = {"reasons": list(dict.fromkeys(reasons))}
+        replacements[f"relay/LEASES/{predecessor_lease_id}.yaml"] = yaml_bytes(superseded)
+        events.append(_event(
+            ids[0],
+            "LEASE_REVOKED",
+            actor,
+            str(predecessor_lease_id),
+            [tx_id, f"successor-lease:{lease_id}", "continuation:ADMISSION_SUPERSEDED"],
+            {
+                "successor_lease": lease_id,
+                "successor_executor": lease_spec["executor_id"],
+                "continuation": "ADMISSION_SUPERSEDED",
+            },
+        ))
+        offset = 1
+
     events.extend([
         _event(
-            ids[0],
+            ids[offset],
             "OWNER_TASK_ADMITTED",
             actor,
             wp_id,
@@ -516,30 +559,26 @@ def admit_task(
                 "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
                 "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
                 "next_programme_frontier": programme_assessment.get("next_frontier"),
+                "superseded_lease": predecessor_lease_id if predecessor_lease is not None else None,
             },
         ),
-        _event(ids[1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
-        _event(ids[2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
+        _event(ids[offset + 1], "EP_CREATED", actor, ep["id"], [tx_id, wp_id, str((ep.get("basis") or {}).get("protocol_basis"))], {}),
+        _event(ids[offset + 2], "LEASE_GRANTED", actor, lease_id, [tx_id, route, "continuation:NEW"], {
             "executor": lease_spec["executor_id"],
             "method": lease_spec["method"],
             "continuation": "NEW",
             "custody_epoch": 1,
+            "superseded_lease": predecessor_lease_id if predecessor_lease is not None else None,
         }),
     ])
+    replacements["relay/EVENTS.jsonl"] = jsonl_bytes(events)
 
     return execute(
         root,
         tx_id=tx_id,
         command="ADMIT_TASK",
         actor=actor,
-        replacements={
-            str((state.get("roadmap") or {}).get("path")): yaml_bytes(new_roadmap),
-            "relay/STATE.yaml": yaml_bytes(provisional_state),
-            f"relay/WORK/{ep['id']}.yaml": yaml_bytes(ep),
-            f"relay/LEASES/{lease_id}.yaml": yaml_bytes(lease),
-            _snapshot_path(provisional_state): yaml_bytes(snapshot),
-            "relay/EVENTS.jsonl": jsonl_bytes(events),
-        },
+        replacements=replacements,
         fail_after=fail_after,
     )
 
