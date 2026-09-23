@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.4",
-    "state_digest": "sha256:d70c6c3ad3c48fd807a52349b9acc7f976b80a537334cc29da0cd976f1ad4412",
+    "state_digest": "sha256:64a18acf1c823374ce02e69427e99928c89659f8ff97ffd4b61d0fe70de16650",
     "material_basis": {
-      "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-      "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
-      "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
+      "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+      "tree_digest": "sha256:f3367800c6dac405f78f62873ebcd723296124ebf8f7bdbfbad1fc7d7af9a098",
+      "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "af17288880da5edc7f30fc63b377bb6970e74fd2"
+    "coordination_head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -56,16 +56,19 @@
   },
   "material": {
     "base": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-    "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
-    "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
+    "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
-    "latest_checkpoint": "CP.438.4",
+    "latest_checkpoint": "CP.438.5",
     "latest_material_validation": {
-      "focused_tests": "PASS",
-      "spec_delivery": "PASS",
-      "full_guardrails": "PASS"
+      "checkpoint": "CP.438.5",
+      "exact_head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+      "v2_5_job": "107184795420",
+      "v3_job": "107184794912",
+      "v3_1_push_job": "107184778974",
+      "v3_1_pr_job": "107184794965"
     }
   },
   "controls": {
@@ -81,7 +84,7 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Delete PARALLEL from state lifecycle validation and all execution/custody/liveness branches; add regression coverage that PARALLEL is invalid while ACTIVE decisions are unchanged; document retained candidate invariants.",
+    "immediate_material_action": "Release LEASE.438.5, then run the final 22-point programme audit from IDLE.",
     "delivery_action": "Keep PR #441 limited to EP.438.5 simplification; merge/release authority remains separate.",
     "stop_conditions": [
       "Any existing accepted safety decision changes for ACTIVE execution.",
@@ -96,7 +99,7 @@
       "relay/STATE.yaml",
       "relay/WORK/EP.438.5.yaml",
       "relay/LEASES/LEASE.438.5.yaml",
-      "relay/CHECKPOINTS/CP.438.4.yaml",
+      "relay/CHECKPOINTS/CP.438.5.yaml",
       "relay/EVENTS.jsonl"
     ]
   }

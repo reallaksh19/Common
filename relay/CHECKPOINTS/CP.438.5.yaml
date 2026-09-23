@@ -1,0 +1,67 @@
+{
+  "schema_version": "relay-v3.1-checkpoint",
+  "id": "CP.438.5",
+  "ep": "EP.438.5",
+  "material_result": {
+    "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
+    "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.10",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_relay_can.py::test_parallel_lifecycle_is_rejected_as_execution_authority",
+        "skills/engineering-pr-delivery-v3.1/tests/test_architecture_preservation.py::test_native_execution_authority_has_no_parallel_lifecycle_surface",
+        "skills/engineering-pr-delivery-v3.1/tests/test_safety_decision_vectors.py",
+        "skills/engineering-pr-delivery-v3.1/tests/test_self_hosting_bootstrap.py",
+        "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md",
+        "GitHub Actions PASS jobs 107184795420, 107184794912, 107184794965, 107184778974"
+      ]
+    }
+  ],
+  "validation": {
+    "focused_tests": "PASS",
+    "spec_delivery": "PASS",
+    "full_guardrails": "PASS"
+  },
+  "quality": {
+    "policy": "STANDARD",
+    "result": "CLEAR"
+  },
+  "known_limitations": [
+    "Legacy migration inventory/prose may still use the ordinary word parallel; that does not create native execution authority.",
+    "Three-pass request, migration/cutover and generated projection machinery are retained because they own distinct invocation, compatibility or read-model boundaries.",
+    "WP.438 remains ACTIVE pending the final 22-point programme audit."
+  ],
+  "discoveries": [
+    "Native PARALLEL lifecycle support was phantom authority: the implementation had no multi-writer lease, fencing or checkpoint-merge model.",
+    "The remaining simplification candidates are not equivalent duplication; each retained candidate has an explicit boundary reason in simplification-audit.md."
+  ],
+  "handoff": {
+    "what_changed": [
+      "Native STATE lifecycle no longer accepts PARALLEL; authorization, custody transactions and liveness treat only ACTIVE as current execution authority."
+    ],
+    "what_is_true_now": [
+      "Healthy ACTIVE decision vectors, zero-context recovery, stale-epoch fencing, checkpoint binding, programme selection and Owner delivery separation remain green."
+    ],
+    "what_remains_uncertain": [
+      "Programme completion is not inferred from this execution checkpoint; the final 22-point audit still governs WP.438 completion."
+    ],
+    "do_not_break": [
+      "Do not reintroduce PARALLEL until a real multi-writer authority/fencing/checkpoint design exists.",
+      "Do not delete retained compatibility/projection boundaries without preservation evidence."
+    ],
+    "attempted_and_rejected": [
+      "Deleting three-pass invocation, V2.5 cutover or derived user projections was rejected because those components own distinct boundaries."
+    ],
+    "resume_from": [
+      "Common#438",
+      "PR#441",
+      "CP.438.5",
+      "skills/engineering-pr-delivery-v3.1/operating-model/simplification-audit.md"
+    ],
+    "first_successor_action": "Run the final 22-point audit from IDLE; do not admit another material EP unless that audit finds an unresolved implementation defect."
+  }
+}
