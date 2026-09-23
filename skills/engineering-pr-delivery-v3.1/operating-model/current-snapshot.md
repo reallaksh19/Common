@@ -78,6 +78,40 @@ python skills/engineering-pr-delivery-v3.1/scripts/generate_snapshot.py <repo-ro
 The write uses a temporary file followed by replacement so an incomplete YAML document is not published as the current snapshot.
 
 
+## Completion/status reporting
+
+Do not create or describe a fourth authoritative "task completion snapshot".
+
+Completion reporting is an on-demand rendering over the existing derived surfaces:
+
+```text
+CURRENT_SNAPSHOT
++ TASK_SNAPSHOT
++ IMPROVEMENT_VIEW
+        ↓
+V3.1 Owner / Task Status
+```
+
+The renderer must preserve the distinctions between:
+
+- programme progress and accepted evidence coverage;
+- project/programme state and task-local completion;
+- current execution/custody and accepted checkpoint truth;
+- execution, handover, delivery and informational blockers;
+- evidence-bound improvement and work that is still not proved;
+- current action and stop conditions.
+
+All three inputs remain `DERIVED_READ_MODEL`. The combined status report is a presentation surface only and MUST NOT be persisted or consumed as execution, acceptance, programme or delivery authority.
+
+Render it with:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/render_owner_status.py \
+  relay/GENERATED/CURRENT_SNAPSHOT.yaml \
+  --task-snapshot relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-view relay/GENERATED/improvements/<CP>.improvement.yaml
+```
+
 ## Project snapshot role and #421 task projections
 
 The V3 `CURRENT_SNAPSHOT.yaml` defined here is the **project/programme first-read model**. It answers where the programme is, what is accepted/active, broad blocker state, delivery state, and the current frontier.
