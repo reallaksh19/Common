@@ -35,9 +35,24 @@ def _progress(
     *,
     checkpoint_override: dict[str, Any] | None = None,
     ep_override: dict[str, Any] | None = None,
-) -> tuple[float, list[str], list[str]]:
-    wp_rows = roadmap.get("work_packages") or []
-    weights = {str(row.get("id")): float(row.get("weight") or 0) for row in wp_rows if isinstance(row, dict)}
+) -> tuple[float, list[str], list[str], float, list[str]]:
+    """Separate programme completion from native checkpoint evidence coverage.
+
+    ROADMAP is the programme-status authority. Accepted checkpoints prove evidence
+    coverage for work packages, but absence of a native checkpoint must not turn a
+    ROADMAP COMPLETE package back into remaining work (notably after migration).
+    """
+
+    wp_rows = [row for row in (roadmap.get("work_packages") or []) if isinstance(row, dict)]
+    weights = {str(row.get("id")): float(row.get("weight") or 0) for row in wp_rows}
+    order = [str(row.get("id")) for row in wp_rows]
+
+    completed = [str(row.get("id")) for row in wp_rows if row.get("state") == "COMPLETE"]
+    remaining = [str(row.get("id")) for row in wp_rows if row.get("state") != "COMPLETE"]
+    total = sum(weights.values())
+    programme_earned = sum(weights[wp] for wp in completed)
+    programme_progress = 0.0 if total <= 0 else round(programme_earned * 100.0 / total, 2)
+
     accepted: set[str] = set()
     cp_dir = root / "relay/CHECKPOINTS"
     for path in sorted(cp_dir.glob("CP-*.yaml")) if cp_dir.exists() else []:
@@ -62,13 +77,11 @@ def _progress(
         wp = str((ep or {}).get("work_package") or "")
         if wp in weights:
             accepted.add(wp)
-    total = sum(weights.values())
-    earned = sum(weights[wp] for wp in accepted)
-    percent = 0.0 if total <= 0 else round(earned * 100.0 / total, 2)
-    order = [str(row.get("id")) for row in wp_rows if isinstance(row, dict)]
-    completed = [wp for wp in order if wp in accepted]
-    remaining = [wp for wp in order if wp not in accepted]
-    return percent, completed, remaining
+
+    evidence_backed = [wp for wp in order if wp in accepted]
+    evidence_earned = sum(weights[wp] for wp in evidence_backed)
+    accepted_progress = 0.0 if total <= 0 else round(evidence_earned * 100.0 / total, 2)
+    return programme_progress, completed, remaining, accepted_progress, evidence_backed
 
 
 def _control_groups(controls: dict[str, Any]) -> dict[str, list[str]]:
@@ -204,7 +217,7 @@ def build(
             "dependency_digest": empty,
         }
 
-    accepted_progress, completed_work, remaining_work = _progress(
+    programme_progress, completed_work, remaining_work, accepted_progress, evidence_backed_work = _progress(
         root,
         roadmap,
         checkpoint_override=checkpoint_override,
@@ -244,9 +257,11 @@ def build(
             "current_goal": (roadmap.get("owner") or {}).get("current_goal"),
         },
         "programme": {
-            "accepted_progress": accepted_progress,
+            "programme_progress": programme_progress,
             "completed_work": completed_work,
             "remaining_work": remaining_work,
+            "accepted_progress": accepted_progress,
+            "evidence_backed_work": evidence_backed_work,
         },
         "execution": {
             "lifecycle": execution.get("lifecycle"),
