@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.4",
-    "state_digest": "sha256:c2b20bac259691dac9eb016ca526402d21e24d45f35f2a6d7ce0babcbf0ee380",
+    "state_digest": "sha256:d70c6c3ad3c48fd807a52349b9acc7f976b80a537334cc29da0cd976f1ad4412",
     "material_basis": {
       "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
       "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
       "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "19e171c57c260af1e4b49aba52a5f39f14ee8662"
+    "coordination_head": "af17288880da5edc7f30fc63b377bb6970e74fd2"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -76,13 +76,13 @@
   },
   "delivery": {
     "issue": 438,
-    "pr": null,
-    "lifecycle": "PENDING_STACKED_PR",
+    "pr": 441,
+    "lifecycle": "DRAFT",
     "merge_authorized": false
   },
   "next": {
     "immediate_material_action": "Delete PARALLEL from state lifecycle validation and all execution/custody/liveness branches; add regression coverage that PARALLEL is invalid while ACTIVE decisions are unchanged; document retained candidate invariants.",
-    "delivery_action": "Open a narrow stacked simplification PR; do not add this scope to PR #439.",
+    "delivery_action": "Keep PR #441 limited to EP.438.5 simplification; merge/release authority remains separate.",
     "stop_conditions": [
       "Any existing accepted safety decision changes for ACTIVE execution.",
       "Zero-context recovery or stale-epoch fencing regresses.",

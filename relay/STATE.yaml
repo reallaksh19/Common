@@ -19,7 +19,11 @@
   },
   "delivery": {
     "required": true,
-    "primary_vehicle": null
+    "primary_vehicle": {
+      "provider": "GITHUB",
+      "kind": "PULL_REQUEST",
+      "number": 441
+    }
   },
   "generated": {
     "snapshot": "relay/GENERATED/CURRENT_SNAPSHOT.yaml"
