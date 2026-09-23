@@ -16,10 +16,10 @@ properties:
     additionalProperties: false
     required: [ep_id, ep_digest, material_base, predecessor_checkpoint, protocol_basis]
     properties:
-      ep_id: {type: string, pattern: '^EP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      ep_id: {type: string, pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
       ep_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
       material_base: {type: string, minLength: 7}
-      predecessor_checkpoint: {type: [string, 'null'], pattern: '^CP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+      predecessor_checkpoint: {type: [string, 'null'], pattern: '^(?:CP-[A-Za-z0-9][A-Za-z0-9._-]*|CP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
       protocol_basis: {type: string, minLength: 1}
   authority:
     type: object

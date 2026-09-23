@@ -19,14 +19,14 @@ properties:
         additionalProperties: false
         required: [id, title, weight, state, depends_on]
         properties:
-          id: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+          id: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
           title: {type: string, minLength: 1}
           weight: {type: number, exclusiveMinimum: 0}
           state: {const: ACTIVE}
           depends_on:
             type: array
             uniqueItems: true
-            items: {type: string, pattern: '^WP-[A-Za-z0-9][A-Za-z0-9._-]*$'}
+            items: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
   ep: {type: object}
   lease:
     type: object
