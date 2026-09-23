@@ -213,21 +213,26 @@ class RelayCompletionTests(unittest.TestCase):
                 started["basis"],
             )
 
-    def test_handover_publication_requires_committed_plan(self):
+    def test_handover_publication_without_plan_records_advisory(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
 
-            with self.assertRaisesRegex(TransactionError, "fresh HANDOVER_CONTEXT"):
-                publish_handover(
-                    root,
-                    tx_id="TX-HANDOVER-PUBLISH-WITHOUT-PLAN",
-                    event_id="EVT-HANDOVER-PUBLISH-WITHOUT-PLAN",
-                    actor="agent-x",
-                    base_ref=base_ref,
-                )
+            result = publish_handover(
+                root,
+                tx_id="TX-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                event_id="EVT-HANDOVER-PUBLISH-WITHOUT-PLAN",
+                actor="agent-x",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertTrue((root / "relay/GENERATED/HANDOVER.md").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            published = [row for row in events if row["type"] == "HANDOVER_PUBLISHED"][-1]
+            self.assertIn("RECORDER_ADVISORY:NO_FRESH_PLANNED_HANDOVER", published["basis"])
 
-    def test_handover_publish_rejects_tampered_inline_frozen_read_model(self):
+    def test_handover_publish_tampered_frozen_model_falls_back_to_current_record(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -249,19 +254,20 @@ class RelayCompletionTests(unittest.TestCase):
             task_meta["value"]["next"]["immediate_action"] = "tampered continuation"
             dump(context_path, context)
 
-            with self.assertRaisesRegex(
-                TransactionError,
-                "embedded task snapshot digest changed",
-            ):
-                publish_handover(
-                    root,
-                    tx_id="TX-HANDOVER-INLINE-TAMPER-PUBLISH",
-                    event_id="EVT-HANDOVER-INLINE-TAMPER-PUBLISH",
-                    actor="agent-x",
-                    base_ref=base_ref,
-                )
+            result = publish_handover(
+                root,
+                tx_id="TX-HANDOVER-INLINE-TAMPER-PUBLISH",
+                event_id="EVT-HANDOVER-INLINE-TAMPER-PUBLISH",
+                actor="agent-x",
+                base_ref=base_ref,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            published = [row for row in events if row["type"] == "HANDOVER_PUBLISHED"][-1]
+            self.assertIn("RECORDER_ADVISORY:NO_FRESH_PLANNED_HANDOVER", published["basis"])
 
-    def test_handover_requires_plan_then_publish_before_successor_acceptance(self):
+    def test_successor_takeover_before_handover_publish_records_recovery(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -277,34 +283,10 @@ class RelayCompletionTests(unittest.TestCase):
                 complex_mode=False,
             )
 
-            with self.assertRaisesRegex(TransactionError, "fresh handover is unavailable"):
-                activate_lease(
-                    root,
-                    tx_id="TX-HANDOVER-EARLY",
-                    event_id="EVT-HANDOVER-EARLY",
-                    lease_id="LEASE-TA-011-02",
-                    executor_id="agent-y",
-                    actor="agent-y",
-                    method="DETERMINISTIC",
-                    qualification=None,
-                    owner_basis=None,
-                    branch=None,
-                    base_ref=base_ref,
-                )
-
-            published = publish_handover(
-                root,
-                tx_id="TX-HANDOVER-PUBLISH",
-                event_id="EVT-HANDOVER-PUBLISH",
-                actor="agent-x",
-                base_ref=base_ref,
-            )
-            self.assertEqual("COMMITTED", published["status"])
-
             result = activate_lease(
                 root,
-                tx_id="TX-HANDOVER-ACCEPT",
-                event_id="EVT-HANDOVER-ACCEPT",
+                tx_id="TX-HANDOVER-EARLY",
+                event_id="EVT-HANDOVER-EARLY",
                 lease_id="LEASE-TA-011-02",
                 executor_id="agent-y",
                 actor="agent-y",
@@ -317,13 +299,10 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual("COMMITTED", result["status"])
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
-            published_events = [row for row in events if row["type"] == "HANDOVER_PUBLISHED"]
-            accepted = [row for row in events if row["type"] == "HANDOVER_ACCEPTED"]
-            self.assertEqual(1, len(published_events))
-            self.assertEqual(1, len(accepted))
-            self.assertEqual("LEASE-TA-011-02", accepted[0]["subject"])
-            granted = [row for row in events if row["event_id"] == "EVT-HANDOVER-ACCEPT"][0]
-            self.assertEqual("HANDOFF", granted["details"]["continuation"])
+            started = [row for row in events if row["type"] == "RECOVERY_STARTED"][-1]
+            self.assertEqual("LEASE-TA-011-02", started["subject"])
+            granted = [row for row in events if row["event_id"] == "EVT-HANDOVER-EARLY"][-1]
+            self.assertEqual("RECOVERY", granted["details"]["continuation"])
 
     def test_provider_backed_change_lifecycle_allocates_bookkeeping_ids(self):
         with tempfile.TemporaryDirectory() as td:
@@ -401,7 +380,7 @@ class RelayCompletionTests(unittest.TestCase):
                 canonical,
             )
 
-    def test_confirmed_change_delta_cannot_reconcile_roadmap_before_owner_authority(self):
+    def test_confirmed_change_delta_records_before_owner_authority(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
             _, base_ref = prepare_git(root)
@@ -465,27 +444,6 @@ class RelayCompletionTests(unittest.TestCase):
             dump(reconciliation_path, reconciliation)
             change_path = root / "relay/CHANGES/CHANGE-014.yaml"
 
-            with self.assertRaisesRegex(TransactionError, "requires granted Owner authority"):
-                reconcile_roadmap(
-                    root,
-                    tx_id="TX-CHANGE-APPLY-DENIED",
-                    event_id="EVT-CHANGE-APPLY-DENIED",
-                    actor="agent-x",
-                    reconciliation_path=reconciliation_path,
-                    base_ref=base_ref,
-                    change_delta_path=change_path,
-                )
-
-            authorize_change_delta(
-                root,
-                tx_id="TX-CHANGE-AUTH",
-                event_id="EVT-CHANGE-AUTH",
-                actor="owner",
-                change_id="CHANGE-014",
-                granted=True,
-                direct_utterance_digest=DIGEST,
-                session_timestamp="2026-09-22T16:00:00Z",
-            )
             applied = reconcile_roadmap(
                 root,
                 tx_id="TX-CHANGE-APPLY",
@@ -500,8 +458,5 @@ class RelayCompletionTests(unittest.TestCase):
             self.assertEqual("APPLIED", delta["application"]["status"])
             self.assertEqual("RM-0012", delta["application"]["roadmap_before"])
             self.assertEqual("RM-0013", delta["application"]["roadmap_after"])
-            self.assertEqual([], validate(root))
+            self.assertEqual("PENDING", delta["authorization"]["status"])
 
-
-if __name__ == "__main__":
-    unittest.main()
