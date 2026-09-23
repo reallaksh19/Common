@@ -6,6 +6,7 @@ from pathlib import Path
 
 from handover_context import build_context, build_request, render_request
 from intelligence_projection import build_improvement, build_task
+from programme_currentness import require_handover_currentness
 from relay_can import evaluate as can_action
 from transactionlib import TransactionError, execute, jsonl_bytes, yaml_bytes
 from v3lib import canonical_digest, load_events, load_yaml, validate_schema
