@@ -1,0 +1,73 @@
+{
+  "schema_version": "relay-v3.1-checkpoint",
+  "id": "CP.438.4",
+  "ep": "EP.438.4",
+  "material_result": {
+    "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+    "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
+    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
+  },
+  "acceptance": [
+    {
+      "id": "AC.438.9",
+      "result": "PASS",
+      "evidence": [
+        "skills/engineering-pr-delivery-v3.1/tests/test_owner_stats.py::test_blocked_selected_frontier_is_not_rendered_as_fallback_or_sole_action",
+        "skills/engineering-pr-delivery-v3.1/tests/test_owner_commands.py::test_blocked_frontier_language_separates_execution_from_programme_authority",
+        "Owner stats explicitly report selected frontier, BLOCKED ownership, no executable frontier, no automatic fallback, and Owner/programme reselection requirement.",
+        "WHAT_NEXT / PROCEED_NEXT semantics explicitly treat execution blockers as restrictions rather than programme authority or proof of a sole legitimate external/provider action.",
+        "GitHub Actions PASS jobs 107174652980, 107174654160, 107174634154, and 107174653806",
+        "exact material head ae4c666b39442396fbf0b27d03dc9fc2ff337cb9"
+      ]
+    }
+  ],
+  "validation": {
+    "focused_tests": "PASS",
+    "spec_delivery": "PASS",
+    "full_guardrails": "PASS"
+  },
+  "quality": {
+    "policy": "STANDARD",
+    "result": "CLEAR"
+  },
+  "known_limitations": [
+    "This checkpoint changes presentation/Owner workflow semantics only; programme reconciliation and action authorization decisions are unchanged.",
+    "PR #439 is stacked on frozen PR #437 and remains a separate delivery decision.",
+    "WP.438 remains ACTIVE pending the bounded simplification episode and final programme audit."
+  ],
+  "discoveries": [
+    "The reconciliation kernel already preserved blocked-selected-frontier semantics; the remaining gap was Owner-facing interpretation.",
+    "A blocker can constrain execution without granting programme reselection authority or proving a single external action is uniquely legitimate."
+  ],
+  "handoff": {
+    "what_changed": [
+      "Detailed Owner stats now show selected frontier, selected ownership, executable frontier, alternate live obligations, blocked-selection fallback policy, and reselection authority.",
+      "WHAT_NEXT and PROCEED_NEXT wording now explicitly preserves the selected frontier when blocked."
+    ],
+    "what_is_true_now": [
+      "A selected BLOCKED frontier remains selected.",
+      "Deferred/alternate obligations remain visible but are not automatic fallback.",
+      "Switching frontier requires Owner/programme reselection.",
+      "No canonical programme-selection safety decision changed."
+    ],
+    "what_remains_uncertain": [
+      "Remaining simplification/deletion candidates are outside EP.438.4 and require a new admitted episode."
+    ],
+    "do_not_break": [
+      "Do not infer programme authority from an execution blocker.",
+      "Do not fall through from a blocked selected frontier to deferred/live alternatives merely to stay busy."
+    ],
+    "attempted_and_rejected": [
+      "Changing programme_reconciliation itself was rejected because the kernel behavior was already correct.",
+      "Treating the blocker as proof of one sole legitimate external action was rejected."
+    ],
+    "resume_from": [
+      "Common#438",
+      "PR#439",
+      "CP.438.4",
+      "relay/STATE.yaml",
+      "relay/EVENTS.jsonl"
+    ],
+    "first_successor_action": "Release LEASE.438.4; then admit a separate bounded simplification episode if Owner/programme still selects WP.438."
+  }
+}

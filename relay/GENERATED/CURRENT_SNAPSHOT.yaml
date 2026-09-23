@@ -3,14 +3,14 @@
   "authority": "DERIVED_READ_MODEL",
   "generated_from": {
     "roadmap_revision": "RM.438.3",
-    "state_digest": "sha256:a1d2a1f2d57c7ac0f02e3d417f5026039e02ed9f2530d784cdcece41078598bb",
+    "state_digest": "sha256:0e60044fc07dcafcc7aa059bc93bcf6f19b3fbe33182bebcb6c1aba6ff664e2c",
     "material_basis": {
-      "head": "2128a8692f9e41f15443d93731e92de952007bf8",
-      "tree_digest": "sha256:887fcb068c41676b2917024412eaab0f456debd07ed1e26bac8b9d5e7ee757cc",
-      "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
+      "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+      "tree_digest": "sha256:67412074ed79a208ffd58d67eb7b6c8c4584f3eaa1fe0f273255f6d19bec7612",
+      "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
       "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
     },
-    "coordination_head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9"
+    "coordination_head": "a2ecc7748f1da6ef54d4053359d036646f1a9ff3"
   },
   "owner": {
     "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
@@ -51,16 +51,19 @@
   },
   "material": {
     "base": "2128a8692f9e41f15443d93731e92de952007bf8",
-    "head": "2128a8692f9e41f15443d93731e92de952007bf8",
-    "relevant_paths_digest": "sha256:2d3992eacace69fce096b02d36a456fd8d801d3311df98db28a613ee33800900",
+    "head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+    "relevant_paths_digest": "sha256:cba03c9b90d7845e2a3986f7ed12d83120104bae47f96fbb4c2b61c48405bf98",
     "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
   },
   "evidence": {
-    "latest_checkpoint": "CP.438.3",
+    "latest_checkpoint": "CP.438.4",
     "latest_material_validation": {
-      "focused_tests": "PASS",
-      "spec_delivery": "PASS",
-      "full_guardrails": "PASS"
+      "checkpoint": "CP.438.4",
+      "exact_head": "ae4c666b39442396fbf0b27d03dc9fc2ff337cb9",
+      "v2_5_job": "107174652980",
+      "v3_job": "107174654160",
+      "v3_1_push_job": "107174634154",
+      "v3_1_pr_job": "107174653806"
     }
   },
   "controls": {
@@ -76,7 +79,7 @@
     "merge_authorized": false
   },
   "next": {
-    "immediate_material_action": "Make the detailed Owner status explicitly render selected frontier, selected ownership, executable frontier, alternate live obligations, blocked-selected-frontier semantics, and reselection requirement; add regression coverage.",
+    "immediate_material_action": "Release LEASE.438.4; do not mix simplification work into PR #439.",
     "delivery_action": "Keep PR #439 narrow; merge/release authority remains separate from EP execution.",
     "stop_conditions": [
       "The fix requires changing programme_reconciliation selection semantics.",
