@@ -33,6 +33,12 @@ def plan_handover(
     if errors:
         raise TransactionError("; ".join(errors))
 
+    task_snapshot = build_task(root, base_ref, parent_issue_observation)
+    try:
+        require_handover_currentness(task_snapshot)
+    except RuntimeError as exc:
+        raise TransactionError(str(exc)) from exc
+
     context, snapshot = build_context(
         root,
         base_ref=base_ref,
@@ -40,7 +46,6 @@ def plan_handover(
         complex_mode=complex_mode,
         parent_issue_observation=parent_issue_observation,
     )
-    task_snapshot = build_task(root, base_ref, parent_issue_observation)
     improvement_view = build_improvement(root)
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
