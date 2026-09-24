@@ -1,5 +1,5 @@
 schema_version: relay-v3.1-roadmap
-revision: RM.438.5
+revision: RM.438.6
 title: Common#438 V3.1 self-hosting, serialization, and gate-reduction programme
 owner:
   outcome: Reduce V3.1 to the smallest gate set that protects programme intent, bounded

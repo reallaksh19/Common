@@ -1,0 +1,45 @@
+schema_version: relay-v3.1-lease
+id: LEASE.438.7
+route: SERIAL:EP.438.7
+executor:
+  id: chatgpt-v3.1-fixture-repair
+basis:
+  ep_id: EP.438.7
+  ep_digest: sha256:c94a392802da6109fd64908254be74c5d08467755cc47aa33021796d4af29333
+  material_base: c2392b670868e4049d7032f21aef6acc08d7f8b7
+  predecessor_checkpoint: CP.438.6
+  protocol_basis: Common#438 EP.438.7 baseline test fixture repair; work issue Common#461.
+authority:
+  actions:
+  - READ
+  - ANALYZE
+  - MATERIAL_WRITE
+  - TEST
+  - CHECKPOINT
+  - HANDOVER
+  - LOCAL_EXECUTION_EXPORT
+  - DRAFT_PR_UPDATE
+admission:
+  method: DETERMINISTIC
+  result: PASS
+  repository_only: true
+  qualification:
+    required: false
+    qset: null
+    evaluator: null
+    result: null
+    evidence: []
+custody:
+  epoch: 1
+  granted_at: '2026-09-24T15:41:32.737441Z'
+  renewed_at: '2026-09-24T15:41:32.737441Z'
+  recovery_after_seconds: 300
+  recovery_policy: TAKEOVER_AFTER_EXPIRY
+  activity_basis:
+    relevant_worktree_digest: sha256:8530c7a499ff6583c21ac6c825efaf1d84c83973bde4c2cbb03c847ef7124b5b
+    dependency_worktree_digest: sha256:0cfe1e2ea844439b17780fdc6dc9057c48d3aafa00968c60d34711c0b00fe3e7
+    material_head: c2392b670868e4049d7032f21aef6acc08d7f8b7
+    base_ref: c2392b670868e4049d7032f21aef6acc08d7f8b7
+state: ACTIVE
+invalidation:
+  reasons: []

@@ -33,14 +33,14 @@ admission:
 custody:
   epoch: 1
   granted_at: '2026-09-24T13:06:26.911238Z'
-  renewed_at: '2026-09-24T13:06:26.911238Z'
+  renewed_at: '2026-09-24T15:40:00.067046Z'
   recovery_after_seconds: 300
   recovery_policy: TAKEOVER_AFTER_EXPIRY
   activity_basis:
-    relevant_worktree_digest: sha256:0e5a1ecf1e6ab3d56772c65928a7536fedfd0a0b78536f34f8a9bc3b61eec5ea
+    relevant_worktree_digest: sha256:0218f008f70c8f925e9a62ab5c617f039ec7265fc3d5c94b955b95c8f473d665
     dependency_worktree_digest: sha256:93153f435e02eb42d2265e70995e10a2cf2b5113f3ec35f9b3460a728409f5ed
-    material_head: c2392b670868e4049d7032f21aef6acc08d7f8b7
-    base_ref: origin/main
-state: ACTIVE
+    material_head: 1c92694aeb103840f7dccdf0d8fd1a7a95d2c262
+    base_ref: c2392b670868e4049d7032f21aef6acc08d7f8b7
+state: RELEASED
 invalidation:
   reasons: []
