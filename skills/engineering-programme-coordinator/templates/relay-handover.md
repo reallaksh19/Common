@@ -44,6 +44,22 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 
 **Exact head:** ...
 
+**Task Snapshot:** <ref>
+
+**Overall state:** COMPLETE / PARTIAL / OPEN / NOT_RUN / UNKNOWN
+
+**Child acceptance:** SATISFIED / PARTIAL / OPEN / UNKNOWN — <coverage or UNKNOWN>
+
+**Programme contribution:** SATISFIED / PARTIAL / OPEN / UNKNOWN — <coverage or UNKNOWN>
+
+**Verification:** PASS / PARTIAL / FAIL / NOT_RUN / PENDING / UNKNOWN — <failure origins>
+
+**Delivery:** NONE / DRAFT / OPEN / REVIEW_READY / CHANGES_REQUESTED / CONFLICTED / MERGED / CLOSED / UNKNOWN
+
+**What remains:**
+
+- ...
+
 **Expected next observable:** ...
 
 **Latest task publications:**
