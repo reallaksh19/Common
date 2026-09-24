@@ -1,0 +1,513 @@
+{
+  "schema_version": "relay-v3.1-task-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "source_protocol": "V3_1",
+  "identity": {
+    "work_package": "WP-011",
+    "ep": "EP-302",
+    "issue": 302,
+    "delivery_vehicle": 304
+  },
+  "purpose": {
+    "programme_outcome": "Resumable OCR execution",
+    "current_goal": "Exact-head certification",
+    "task_outcome": "Prove OCR resume correctness",
+    "why_this_task_exists": "Certification required before review-ready handoff"
+  },
+  "lineage": {
+    "predecessor_checkpoint": null,
+    "upstream_dependencies": [],
+    "roadmap_admission": {
+      "disposition": "MAPPED_EXISTING_WP",
+      "revision": "RM-EXAMPLE",
+      "basis": [
+        "golden-example"
+      ]
+    }
+  },
+  "parent_issue": {
+    "repository": "reallaksh19/Pdf-Hub",
+    "number": 302,
+    "title": "Phase 11: resumable OCR execution",
+    "state": "OPEN",
+    "url": "https://github.com/reallaksh19/Pdf-Hub/issues/302",
+    "baseline": null,
+    "current": {
+      "acceptance_items": [
+        {
+          "id": "AC-OCR-01",
+          "statement": "Resume contract implemented",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-OCR-02",
+          "statement": "Post-hydration rollback regression exists",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-OCR-03",
+          "statement": "Exact-head executable certification completes",
+          "state": "NOT_RUN",
+          "reason_class": "INFRASTRUCTURE",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-OCR-04",
+          "statement": "PR reaches review-ready state",
+          "state": "PENDING",
+          "reason_class": "PROVIDER",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        }
+      ]
+    },
+    "updates": [],
+    "disposition": "NO_CHANGE",
+    "relationships": [],
+    "handover_ledger": null
+  },
+  "programme_parent": {
+    "repository": "reallaksh19/Pdf-Hub",
+    "number": 302,
+    "title": "Phase 11 resumable OCR execution",
+    "url": "https://github.com/reallaksh19/Pdf-Hub/issues/302"
+  },
+  "planning": {
+    "state": "PRESENT",
+    "provider_ref": "github:reallaksh19/Pdf-Hub#302/comment-plan",
+    "revision": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "observed_at": "2026-09-24T05:00:00Z",
+    "expected_next_observable": {
+      "statement": "Exact-head certification executes or reproduces the first #304-owned defect",
+      "evidence": [
+        "pnpm certification output"
+      ]
+    }
+  },
+  "task_publications": [
+    {
+      "type": "IMPLEMENTATION_PLAN",
+      "ref": "github:reallaksh19/Pdf-Hub#302/comment-plan",
+      "observed_at": "2026-09-24T05:00:00Z",
+      "summary": "Agent-authored implementation plan.",
+      "exact_head": null
+    }
+  ],
+  "programme_progress": null,
+  "work_issue_progress": {
+    "criteria": [
+      {
+        "id": "AC-OCR-01",
+        "statement": "Resume contract implemented",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-OCR-02",
+        "statement": "Post-hydration rollback regression exists",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-OCR-03",
+        "statement": "Exact-head executable certification completes",
+        "state": "NOT_RUN",
+        "reason_class": "INFRASTRUCTURE",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-OCR-04",
+        "statement": "PR reaches review-ready state",
+        "state": "PENDING",
+        "reason_class": "PROVIDER",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 2,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 1,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    },
+    "coverage": {
+      "satisfied": 2,
+      "applicable_total": 4,
+      "percent": 50,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "plan_progress": {
+    "criteria": [
+      {
+        "id": "STEP-OCR-01",
+        "statement": "Scope and source review",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-OCR-02",
+        "statement": "Invariant review",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-OCR-03",
+        "statement": "Rollback regression",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-OCR-04",
+        "statement": "Exact-head certification",
+        "state": "NOT_RUN",
+        "reason_class": "INFRASTRUCTURE",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 3,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 1,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    },
+    "coverage": {
+      "satisfied": 3,
+      "applicable_total": 4,
+      "percent": 75,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "task_acceptance_progress": {
+    "criteria": [
+      {
+        "id": "EP-OCR-01",
+        "statement": "Material review finds no product defect",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EP-OCR-02",
+        "statement": "Exact-head certification executes",
+        "state": "NOT_RUN",
+        "reason_class": "INFRASTRUCTURE",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 1,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 2,
+      "percent": 50,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "verification": {
+    "state": "PARTIAL",
+    "observations": [
+      {
+        "id": "V-OCR-01",
+        "statement": "Focused static/invariant review",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "V-OCR-02",
+        "statement": "Hosted certification",
+        "state": "NOT_RUN",
+        "reason_class": "INFRASTRUCTURE",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "V-OCR-03",
+        "statement": "Local certification",
+        "state": "NOT_RUN",
+        "reason_class": "INFRASTRUCTURE",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "failure_origins": {
+      "INFRASTRUCTURE": 2
+    }
+  },
+  "delivery": {
+    "pr": 304,
+    "url": "https://github.com/reallaksh19/Pdf-Hub/pull/304",
+    "lifecycle": "DRAFT",
+    "base": "edb534ce24eb52572a784d3fa394abf909083a80",
+    "head": "426a83a176aaca81674b9069ba9fb432df9ec352",
+    "mergeability": "MERGEABLE"
+  },
+  "completion": {
+    "overall_state": "PARTIAL",
+    "headline": "#302 PARTIAL — product review is strong, but required exact-head certification is NOT_RUN because no execution-capable checkout is available.",
+    "implementation": "PARTIAL",
+    "verification": "PARTIAL",
+    "delivery": "DRAFT",
+    "work_issue_acceptance": "PARTIAL",
+    "programme_contribution": "UNKNOWN",
+    "provider_issue": "OPEN",
+    "what_done": [
+      "Resume contract review",
+      "Post-hydration rollback regression"
+    ],
+    "what_remains": [
+      "Execute exact-head certification commands",
+      "Mark PR review-ready only after executable evidence"
+    ],
+    "dependencies": [
+      "Execution-capable checkout / hosted runner [INFRASTRUCTURE]"
+    ],
+    "owner_decisions": []
+  },
+  "parent_issue_progress": {
+    "checklist": [
+      {
+        "id": "AC-OCR-01",
+        "statement": "Resume contract implemented",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-OCR-02",
+        "statement": "Post-hydration rollback regression exists",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-OCR-03",
+        "statement": "Exact-head executable certification completes",
+        "state": "NOT_RUN",
+        "evidence": []
+      },
+      {
+        "id": "AC-OCR-04",
+        "statement": "PR reaches review-ready state",
+        "state": "PENDING",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 2,
+      "partial": 0,
+      "pending": 2,
+      "blocked": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    }
+  },
+  "current_task_progress": {
+    "checklist": [
+      {
+        "id": "EP-OCR-01",
+        "statement": "Material review finds no product defect",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "EP-OCR-02",
+        "statement": "Exact-head certification executes",
+        "state": "NOT_RUN",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 1,
+      "partial": 0,
+      "pending": 1,
+      "blocked": 0,
+      "total": 2
+    }
+  },
+  "offloads": [],
+  "pending_items": [],
+  "known_issues": [],
+  "improvement_vs_original_issue": {
+    "baseline_digest": null,
+    "items": []
+  },
+  "scope": {
+    "write": [],
+    "read": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "inputs": [],
+  "benchmarks": [],
+  "benchmark_debt": {
+    "required_missing": [],
+    "stale": [],
+    "optional": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "lease_or_custody": null,
+    "executor": "example-agent",
+    "route": null,
+    "branch": "example"
+  },
+  "material": {
+    "base": "edb534ce24eb52572a784d3fa394abf909083a80",
+    "current_head": "426a83a176aaca81674b9069ba9fb432df9ec352"
+  },
+  "acceptance": [
+    {
+      "id": "EP-OCR-01",
+      "state": "PASS",
+      "statement": "Material review finds no product defect",
+      "evidence": []
+    },
+    {
+      "id": "EP-OCR-02",
+      "state": "NOT_RUN",
+      "statement": "Exact-head certification executes",
+      "evidence": []
+    }
+  ],
+  "controls": {
+    "material_write": [],
+    "checkpoint": [],
+    "handover": [],
+    "pr_ready": [],
+    "merge": [],
+    "release": []
+  },
+  "knowledge_state": {
+    "known_true": [],
+    "known_false": [],
+    "unknown": [],
+    "assumptions": []
+  },
+  "negative_knowledge": [],
+  "preserve": {
+    "accepted_do_not_reopen": []
+  },
+  "history": {
+    "recent_events": []
+  },
+  "next": {
+    "immediate_action": "Obtain an execution-capable checkout and run the five certification commands.",
+    "next_value_frontier": "Executable certification",
+    "stop_conditions": []
+  },
+  "reconstruction_sources": [
+    "golden-example"
+  ]
+}
