@@ -58,12 +58,22 @@ Work that may continue independently:
 # Success oracle
 - ...
 
+# Acceptance Contract
+
+Use stable `AC-*` IDs. These are the denominator for child/work-issue completion reporting.
+
+| ID | Criterion | Parent mapping | Weight |
+|---|---|---|---:|
+| AC-<workstream>-01 | ... | EXIT-... | 1 |
+
+Criteria should be observable, evidence-bound and independent of PR/commit count.
+
 # Implementation Plan
 Agent-authored and revisable:
 - understanding;
 - source truth inspected;
 - approach;
-- meaningful slices;
+- meaningful `STEP-*` slices, each with current state and mapped `AC-*` criteria;
 - expected files/components;
 - interfaces affected;
 - validation;
