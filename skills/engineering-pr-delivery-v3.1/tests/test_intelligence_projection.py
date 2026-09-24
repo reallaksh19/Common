@@ -471,6 +471,30 @@ class IntelligenceProjectionTests(unittest.TestCase):
                     "head": "head-sha",
                     "mergeability": "MERGEABLE",
                 },
+                "delivery_stack": [
+                    {
+                        "pr": 233,
+                        "url": "https://github.com/example/repo/pull/233",
+                        "title": "Parent slice",
+                        "lifecycle": "DRAFT",
+                        "relationship": "STACK_PARENT",
+                        "base": "programme-base",
+                        "head": "parent-head",
+                        "mergeability": "MERGEABLE",
+                        "note": "Earlier slice owned by the same issue.",
+                    },
+                    {
+                        "pr": 235,
+                        "url": "https://github.com/example/repo/pull/235",
+                        "title": "Current slice",
+                        "lifecycle": "DRAFT",
+                        "relationship": "PRIMARY",
+                        "base": "base-sha",
+                        "head": "head-sha",
+                        "mergeability": "MERGEABLE",
+                        "note": None,
+                    },
+                ],
                 "expected_next_observable": {
                     "statement": "Exact-head certification executes.",
                     "evidence": ["command output"],
@@ -535,6 +559,9 @@ class IntelligenceProjectionTests(unittest.TestCase):
             self.assertEqual("PARTIAL", task["verification"]["state"])
             self.assertEqual(1, task["verification"]["failure_origins"]["INFRASTRUCTURE"])
             self.assertEqual("DRAFT", task["delivery"]["lifecycle"])
+            self.assertEqual(2, len(task["delivery_stack"]))
+            self.assertEqual(233, task["delivery_stack"][0]["pr"])
+            self.assertEqual("STACK_PARENT", task["delivery_stack"][0]["relationship"])
             self.assertEqual("PARTIAL", task["completion"]["overall_state"])
             self.assertEqual("PARTIAL", task["completion"]["work_issue_acceptance"])
             self.assertEqual("PARTIAL", task["completion"]["programme_contribution"])

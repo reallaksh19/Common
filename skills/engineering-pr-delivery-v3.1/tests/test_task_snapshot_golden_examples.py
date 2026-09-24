@@ -71,6 +71,37 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
         self.assertIn("| Programme contribution | SATISFIED | 1/1 criteria satisfied — 100% unweighted coverage |", text)
         self.assertIn("MERGED — PR #202", text)
 
+    def test_delivery_stack_renders_without_replacing_primary_delivery(self):
+        task = self.assert_valid("active-task")
+        task["delivery_stack"] = [
+            {
+                "pr": 99,
+                "url": "https://github.com/example/repo/pull/99",
+                "title": "Parent slice",
+                "lifecycle": "DRAFT",
+                "relationship": "STACK_PARENT",
+                "base": "base-a",
+                "head": "head-a",
+                "mergeability": "MERGEABLE",
+                "note": "Earlier slice",
+            },
+            {
+                "pr": 101,
+                "url": "https://github.com/example/repo/pull/101",
+                "title": "Current slice",
+                "lifecycle": "DRAFT",
+                "relationship": "PRIMARY",
+                "base": "base-b",
+                "head": "head-b",
+                "mergeability": "MERGEABLE",
+                "note": None,
+            },
+        ]
+        self.assertEqual([], validate_schema("task-snapshot", task, "stacked-active-task"))
+        text = render(task)
+        self.assertIn("### Delivery stack", text)
+        self.assertIn("| STACK_PARENT | #99 | DRAFT | base-a | head-a | Earlier slice |", text)
+        self.assertIn("| PRIMARY | #101 | DRAFT | base-b | head-b | - |", text)
 
 if __name__ == "__main__":
     unittest.main()

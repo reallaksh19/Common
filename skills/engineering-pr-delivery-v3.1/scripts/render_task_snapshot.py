@@ -90,6 +90,9 @@ def render(task: dict[str, Any]) -> str:
     expected = planning.get("expected_next_observable") or {}
     material = task.get("material") or {}
     delivery = task.get("delivery") or {}
+    delivery_stack = [
+        row for row in (task.get("delivery_stack") or []) if isinstance(row, dict)
+    ]
     completion = task.get("completion") or {}
     verification = task.get("verification") or {}
     nxt = task.get("next") or {}
@@ -133,6 +136,22 @@ def render(task: dict[str, Any]) -> str:
         f"| Programme contribution | {_axis_state(task, 'programme_contribution')} | {_progress_line(task, 'programme_progress')} |",
         f"| Provider issue | {_axis_state(task, 'provider_issue', str(work.get('state') or 'UNKNOWN'))} | {work.get('state') or 'UNKNOWN'} |",
     ]
+
+    if delivery_stack:
+        lines += [
+            "",
+            "### Delivery stack",
+            "",
+            "| Relationship | PR | Lifecycle | Base | Head | Note |",
+            "| --- | --- | --- | --- | --- | --- |",
+        ]
+        for row in delivery_stack:
+            pr_label = f"#{row.get('pr')}" if row.get("pr") else "-"
+            lines.append(
+                f"| {row.get('relationship') or 'RELATED'} | {pr_label} | "
+                f"{row.get('lifecycle') or 'UNKNOWN'} | {row.get('base') or '-'} | "
+                f"{row.get('head') or '-'} | {row.get('note') or '-'} |"
+            )
 
     _bullet_section(lines, "What is done", completion.get("what_done"), "none proved by the current acceptance denominator")
     _bullet_section(lines, "What remains", completion.get("what_remains"), "none on the mapped child/task acceptance criteria")

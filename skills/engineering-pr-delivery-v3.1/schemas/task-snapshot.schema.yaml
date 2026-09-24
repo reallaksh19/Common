@@ -170,6 +170,22 @@ properties:
       base: {type: [string, 'null']}
       head: {type: [string, 'null']}
       mergeability: {type: [string, 'null']}
+  delivery_stack:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [pr, lifecycle, relationship]
+      properties:
+        pr: {type: integer, minimum: 1}
+        url: {type: [string, 'null']}
+        title: {type: [string, 'null']}
+        lifecycle: {enum: [NONE, DRAFT, OPEN, REVIEW_READY, CHANGES_REQUESTED, CONFLICTED, MERGED, CLOSED, UNKNOWN]}
+        relationship: {enum: [PRIMARY, STACK_PARENT, STACK_CHILD, RELATED]}
+        base: {type: [string, 'null']}
+        head: {type: [string, 'null']}
+        mergeability: {type: [string, 'null']}
+        note: {type: [string, 'null']}
   completion:
     type: object
     additionalProperties: false
