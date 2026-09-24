@@ -50,8 +50,12 @@ properties:
               enum: [PASS, PARTIAL, FAIL, NOT_RUN, PENDING, DEFERRED, NOT_APPLICABLE, UNKNOWN, COMPLETE, BLOCKED]
             reason_class:
               enum: [CURRENT_TASK, UPSTREAM_DEPENDENCY, SIBLING_WORKSTREAM, PREEXISTING_UNRELATED, INFRASTRUCTURE, PROVIDER, OWNER_DECISION, UNKNOWN]
-            evidence: {type: array, items: {type: string, minLength: 1}}
-            provider_refs: {type: array, items: {type: string, minLength: 1}}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+            provider_refs:
+              type: array
+              items: {type: string, minLength: 1}
             remaining:
               type: array
               items: {type: string, minLength: 1}
@@ -113,7 +117,16 @@ properties:
           additionalProperties: false
           required: [id, statement, state]
           properties:
-            id: {type: string, pattern: '^STEP-[A-Za-z0-9._-]+
+            id: {type: string, pattern: '^STEP-[A-Za-z0-9._-]+$'}
+            statement: {type: string, minLength: 1}
+            state: {enum: [PASS, PARTIAL, FAIL, NOT_RUN, PENDING, DEFERRED, NOT_APPLICABLE, UNKNOWN]}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+            acceptance_refs:
+              type: array
+              items: {type: string, minLength: 1}
+            weight: {type: number, minimum: 0}
   verification:
     type: array
     items:
@@ -174,48 +187,7 @@ properties:
         ref: {type: string, minLength: 1}
         type: {enum: [REQUIREMENT, DECISION, STATUS, DEPENDENCY, ACCEPTANCE, DELIVERY, COMMENT]}
         summary: {type: string, minLength: 1}
-        effect: {type: array, items: {type: string, minLength: 1}}
-additionalProperties: false
-}
-            statement: {type: string, minLength: 1}
-            state: {enum: [PASS, PARTIAL, FAIL, NOT_RUN, PENDING, DEFERRED, NOT_APPLICABLE, UNKNOWN]}
-            evidence:
-              type: array
-              items: {type: string, minLength: 1}
-            acceptance_refs:
-              type: array
-              items: {type: string, minLength: 1}
-            weight: {type: number, minimum: 0}
-  expected_next_observable:
-    type: [object, 'null']
-    additionalProperties: false
-    required: [statement, evidence]
-    properties:
-      statement: {type: string, minLength: 1}
-      evidence:
-        type: array
-        items: {type: string, minLength: 1}
-  task_publications:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [type, ref, observed_at, summary]
-      properties:
-        type: {enum: [IMPLEMENTATION_PLAN, PLAN_UPDATE, TASK_EVIDENCE, TASK_RESULT]}
-        ref: {type: string, minLength: 1}
-        observed_at: {type: string, format: date-time}
-        summary: {type: string, minLength: 1}
-        exact_head: {type: [string, 'null']}
-  updates:
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [ref, type, summary, effect]
-      properties:
-        ref: {type: string, minLength: 1}
-        type: {enum: [REQUIREMENT, DECISION, STATUS, DEPENDENCY, ACCEPTANCE, DELIVERY, COMMENT]}
-        summary: {type: string, minLength: 1}
-        effect: {type: array, items: {type: string, minLength: 1}}
+        effect:
+          type: array
+          items: {type: string, minLength: 1}
 additionalProperties: false
