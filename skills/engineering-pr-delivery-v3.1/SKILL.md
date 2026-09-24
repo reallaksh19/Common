@@ -173,6 +173,10 @@ EXPECTED
 → CONSEQUENCE
 ```
 
+When one issue deliberately owns a stacked or multi-PR delivery, keep `delivery` as the primary/current PR and expose all owned/related PRs through `delivery_stack[]`. Do not flatten a stack into one PR or create one engineering responsibility per PR merely for reporting.
+
+For pull-request CI, `scripts/validate_task_binding.py` can assert that an explicitly owned issue has a Task Snapshot containing the current PR at the exact head. This is a reporting/reconstruction integrity check, not engineering authorization.
+
 See `operating-model/agent-task-publication.md`.
 
 ## Owner reporting delta
