@@ -89,6 +89,88 @@ When reconstructing a programme, preserve:
 
 V3.1 must not manufacture missing programme semantics from its own leases, checkpoints, controls, generated snapshots or historical protocol state.
 
+## Agent implementation-plan and task-publication lifecycle — normative
+
+For a bounded child implementation issue, the engineering agent owns the implementation plan.
+
+Normal sequence:
+
+```text
+child responsibility
+→ three-pass reasoning when used
+→ live reality refresh
+→ IMPLEMENTATION_PLAN rev 1
+→ engineering execution
+→ PLAN_UPDATE only when material learning changes the approach
+→ TASK_EVIDENCE only for meaningful intermediate evidence
+→ PR/test/artifact material truth
+→ TASK_RESULT / handoff
+→ [Relay Handover] indexes the current programme consequence
+```
+
+After live revalidation and before substantial material modification, the agent should publish `IMPLEMENTATION_PLAN — rev 1` on its owned child issue when practical.
+
+That publication is a **reconstruction convention, not permission**:
+
+- do not wait for Relay/coordinator approval after posting the plan;
+- useful work performed before the plan was published remains valid;
+- a missing/stale plan reduces reconstruction confidence only;
+- plan revision does not require a new EP while the owned responsibility is unchanged.
+
+The implementation plan should normally state:
+
+- exact basis/head;
+- understanding of the engineering problem;
+- owned outcome and ownership boundary;
+- source truth;
+- approach;
+- expected changed surfaces;
+- dependencies and independent work;
+- falsifier;
+- validation;
+- preserve/invariants;
+- uncertainties;
+- expected next observable;
+- consumer/handoff contract.
+
+### EP relationship
+
+The EP is V3.1's bounded task identity, not a duplicate implementation plan.
+
+One meaningful engineering responsibility should normally map to one EP. Do not create nano-EPs for individual file reads, edits, tests, comments or PR operations.
+
+For the new programme topology:
+
+- `programme_parent` identifies the governing programme issue when distinct;
+- `parent_issue` identifies the owned child implementation issue;
+- the current child-issue provider observation supplies the latest implementation-plan revision and meaningful task publications;
+- `TASK_SNAPSHOT` and the Handover ledger expose that plan/expectation context.
+
+An EP may exist before the incoming agent publishes its plan, for example when a handover/three-pass packet was prepared from existing V3.1 context. In that case bind the existing task to the newly observed plan; do not create a replacement EP merely because the plan appeared or changed.
+
+### Meaningful provider publications
+
+Use four durable publication types:
+
+```text
+IMPLEMENTATION_PLAN
+PLAN_UPDATE
+TASK_EVIDENCE
+TASK_RESULT
+```
+
+Do not post every command, file read, test retry, timer wake or chat message.
+
+The coordinator watches the plan's **expected next observable** and reasons:
+
+```text
+EXPECTED
+→ OBSERVED
+→ CONSEQUENCE
+```
+
+See `operating-model/agent-task-publication.md`.
+
 ## Owner reporting delta
 
 V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
