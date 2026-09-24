@@ -294,11 +294,11 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
         "user_input": {
             "target": target["url"],
             "human_goal": blind["programme"]["outcome"],
-            "user_intent": "Generate the current standalone five-prompt handover for the provider-verified target using frozen V3.1 context, preserving value-added relay continuity and explicit coordination consequences.",
-            "authorized_actions": "This handover package grants no new action authority. Prompt 3 must revalidate live relay.can(action) and explicit Owner authority before acting.",
-            "intent_boundary": "Use blind_context for Prompts 0.5/1; quarantine reality_context until Prompt 2; treat accumulated_learning as accepted/history context rather than present action authority. Do not invent a parallel roadmap, issue model, checkpoint, or status system.",
+            "user_intent": "Generate the current standalone five-prompt handover for the provider-verified target, preserving independent judgement, production context and a recipient-ready continuation.",
+            "authorized_actions": "The handover package itself grants no new human intent or provider capability. Prompt 3 should act when the user's requested action, production ownership, evidence and available tools/provider capability support it; V3.1 recording state is not production permission.",
+            "intent_boundary": "Prompts 0.5 and 1 must be independently framed from stable project truth. Use only durable programme outcome/current goal, governing/local responsibility, stable constraints and genuine problem/witness facts for the early passes. Do not feed current reconciliation/frontier/status, accumulated learning, implementation or active-agent conclusions into Prompt 0.5/1. Reality and coordination state return in Prompt 2 onward.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, validates the artifact, and leaves a recipient-ready continuation when another actor must act.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. blind_context may shape Prompts 0.5/1; reality_context is reserved for Prompt 2 onward; accumulated_learning must not be silently contradicted without new evidence. Prompt 2 should identify stale or contradictory coordination truth. Treat blind_context.programme.reconciliation as the ordered parent-set programme basis: distinguish programme frontier, execution blockers, acceptance debt, delivery/governance debt, and deferred/future work before selecting any implementation. Prompt 2.5 should state explicit task, parent-issue and roadmap consequences. Prompt 3 must not continue the old EP mechanically when programme reconciliation changes ownership; reconcile authorized existing coordination artifacts, state evidence-bound value added, and when another actor must act emit a runnable request rather than status-only prose.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. For Prompt 0.5 use stable programme destination, governing responsibility, boundary, constraints and only a short local-task purpose. For Prompt 1 independently use the same stable destination plus the exact local responsibility, actor/job and a raw discriminating witness when one exists; do not inherit Prompt 0.5 hypotheses. Treat blind_context.programme.reconciliation, reality_context and accumulated_learning as Prompt-2-and-later evidence. Prompt 2 reconstructs current production/coordination reality. Prompt 2.5 reconciles the independent Prompt-0.5 contribution view, independent Prompt-1 situated-problem view and Prompt-2 reality. Prompt 3 refreshes volatile production facts, executes the smallest justified user-requested move when technically possible, verifies the result, and routes cross-agent consequences or a runnable handoff rather than status-only prose.",
         },
     }
     errors = validate_schema("three-pass-request", request, "THREE_PASS_REQUEST")
@@ -311,7 +311,7 @@ def render_request(request: dict[str, Any]) -> str:
     user = request["user_input"]
     gen = request["generator"]
     qline = (
-        "COMPLEX MODE: ON — preserve visible target-specific Q1–Q5 inside Prompt 1 per the live standalone schema."
+        "COMPLEX MODE: ON — cover the live schema's Q1–Q5 reasoning territories inside one coherent Prompt 1; do not force visible Q-label headings unless the Owner explicitly requested those labels."
         if gen["complex_mode"]
         else "COMPLEX MODE: OFF."
     )
