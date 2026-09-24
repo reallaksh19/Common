@@ -207,11 +207,11 @@ PASS — no extra protocol stage
 
 ## PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.
+The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.
 
 ## PROMPT 1 — IMAGINE
 
-Think independently about the specific unresolved domain problem.
+You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.
 
 ## PROMPT 2 — UNDERSTAND
 
@@ -272,7 +272,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_is_required(self):
         bad = GOOD.replace(
-            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThink independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.\n\n",
+            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThe programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.\n\n",
             "",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -288,7 +288,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_rejects_local_task_as_destination(self):
         bad = GOOD.replace(
-            "Think independently from the original roadmap and large-project goal through the governing issue, then carry the ongoing local task only as subordinate context. Generate non-obvious value hypotheses and reframings; local task and PR state are not the destination.",
+            "The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.",
             "Summarize the ongoing local task and latest PR.",
         )
         errors = MOD.validate_text(bad, SHA)
