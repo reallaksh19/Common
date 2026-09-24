@@ -81,11 +81,11 @@ Use stable `AC-*` IDs. These are the denominator for child/work-issue completion
 
 | ID | Criterion | Parent mapping | Weight |
 | --- | --- | --- | ---: |
-| AC-<workstream>-01 | ... | EXIT-... | 1 |
+| AC-<workstream>-01 | ... | EXIT-... | — |
 
 Keep criteria observable and evidence-bound. Do not use PR count, commit count, chat activity, or plan publication itself as acceptance.
 
-If no weighting is genuinely needed, keep equal weights or omit weights in provider observations; V3.1 will report **unweighted acceptance coverage** rather than inventing a composite score.
+If no weighting is genuinely needed, omit weights; V3.1 will report **unweighted acceptance coverage** rather than inventing a composite score.
 
 ## Implementation Plan
 
