@@ -94,6 +94,7 @@ def validate_child(text, role, errors):
         (r"preserve|invariant", "Preserve / invariants"),
         (r"falsifier|negative test", "Falsifier"),
         (r"success oracle|definition of done|pass.*fail", "Success oracle"),
+        (r"acceptance contract|acceptance criteria", "Acceptance Contract"),
         (r"implementation plan", "Implementation Plan"),
         (r"handoff", "Expected handoff"),
         (r"semantic escalation|escalat", "Semantic escalation"),
