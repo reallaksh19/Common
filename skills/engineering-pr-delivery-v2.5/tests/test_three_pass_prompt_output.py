@@ -207,7 +207,7 @@ PASS — no extra protocol stage
 
 ## PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.
+The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.
 
 ## PROMPT 1 — IMAGINE
 
@@ -273,7 +273,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_is_required(self):
         bad = GOOD.replace(
-            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThe programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.\n\n",
+            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThe programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.\n\n",
             "",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -289,7 +289,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_rejects_local_task_as_destination(self):
         bad = GOOD.replace(
-            "The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.",
+            "The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.",
             "Summarize the ongoing local task and latest PR.",
         )
         errors = MOD.validate_text(bad, SHA)
