@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 from typing import Any
 
+from owner_publication import evaluate as evaluate_publication, load_cursor
 from v3lib import load_yaml
 
 
@@ -34,10 +35,52 @@ def _require_read_model(value: dict | None, *, schema_version: str, label: str) 
         )
 
 
+
+def _change_lines(delta: dict[str, Any] | None) -> list[str]:
+    if not delta:
+        return []
+    details = delta.get("details") or {}
+    event = str(delta.get("event_class") or "UNKNOWN")
+    changed = [str(x) for x in delta.get("changed_dimensions") or []]
+    lines = [
+        "## What changed",
+        f"- Publication class: **{event}**",
+        f"- Changed dimensions: {_items(changed)}",
+    ]
+    previous_at = delta.get("previous_published_at")
+    if previous_at:
+        lines.append(f"- Compared with Owner publication: **{previous_at}**")
+    if event == "NO_MATERIAL_PROGRESS":
+        lines.append("- No material, acceptance, evidence, delivery, roadmap, or next-work reporting dimension changed.")
+    if event == "EVIDENCE_PROGRESS":
+        lines.append("- Evidence changed without claiming task/acceptance completion.")
+    if event == "IMPLEMENTATION_CHANGE":
+        lines.append("- Material/implementation state changed without claiming acceptance movement.")
+
+    for row in details.get("acceptance_transitions") or []:
+        lines.append(
+            f"- Acceptance {row.get('id')}: "
+            f"{row.get('from_state') or 'absent'} → {row.get('to_state') or 'absent'}"
+        )
+
+    for label, key in (
+        ("Programme progress", "programme_progress"),
+        ("Accepted evidence coverage", "accepted_progress"),
+        ("Roadmap revision", "roadmap_revision"),
+        ("Material head", "material_head"),
+        ("Checkpoint", "checkpoint"),
+    ):
+        value = details.get(key) or {}
+        if value.get("from") != value.get("to"):
+            lines.append(f"- {label}: {value.get('from')} → {value.get('to')}")
+    lines.append("")
+    return lines
+
 def render(
     snapshot: dict,
     task_snapshot: dict | None = None,
     improvement_view: dict | None = None,
+    publication_delta: dict[str, Any] | None = None,
 ) -> str:
     _require_read_model(
         snapshot,
@@ -71,6 +114,9 @@ def render(
         "Reporting surface: **CURRENT_SNAPSHOT + TASK_SNAPSHOT + IMPROVEMENT_VIEW**",
         "This report is derived; it does not grant execution, acceptance, delivery, or programme authority.",
         "",
+    ]
+    lines += _change_lines(publication_delta)
+    lines += [
         "## Programme truth vs accepted evidence",
         f"- Roadmap revision: **{(snapshot.get('generated_from') or {}).get('roadmap_revision')}**",
         f"- Programme progress: **{p.get('programme_progress')}%**",
@@ -180,10 +226,20 @@ def main() -> None:
     parser.add_argument("snapshot", help="Path to generated CURRENT_SNAPSHOT.yaml")
     parser.add_argument("--task-snapshot")
     parser.add_argument("--improvement-view")
+    parser.add_argument(
+        "--publication-cursor",
+        help="Optional previous Owner publication cursor. Reporting metadata only; never authority.",
+    )
     args = parser.parse_args()
+    snapshot = load_yaml(Path(args.snapshot))
     task = load_yaml(Path(args.task_snapshot)) if args.task_snapshot else None
     improvement = load_yaml(Path(args.improvement_view)) if args.improvement_view else None
-    print(render(load_yaml(Path(args.snapshot)), task, improvement), end="")
+    delta = None
+    if args.publication_cursor:
+        cursor = load_cursor(Path(args.publication_cursor))
+        delta = evaluate_publication(snapshot, task, improvement, cursor)
+        delta.pop("current_baseline", None)
+    print(render(snapshot, task, improvement, delta), end="")
 
 
 if __name__ == "__main__":

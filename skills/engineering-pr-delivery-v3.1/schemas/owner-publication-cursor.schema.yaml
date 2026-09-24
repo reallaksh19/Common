@@ -1,0 +1,32 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, sequence, published_at, sources, baseline]
+properties:
+  schema_version: {const: relay-v3.1-owner-publication-cursor}
+  authority: {const: DERIVED_REPORTING_METADATA}
+  sequence: {type: integer, minimum: 1}
+  published_at: {type: string, format: date-time}
+  sources:
+    type: object
+    additionalProperties: false
+    required: [snapshot_digest, task_snapshot_digest, improvement_view_digest]
+    properties:
+      snapshot_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      task_snapshot_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      improvement_view_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  baseline:
+    type: object
+    required: [programme, owner, execution, material, evidence, controls, delivery, project_next, task, improvement]
+    properties:
+      programme: {type: object}
+      owner: {type: object}
+      execution: {type: object}
+      material: {type: object}
+      evidence: {type: object}
+      controls: {type: object}
+      delivery: {type: object}
+      project_next: {type: object}
+      task: {type: [object, 'null']}
+      improvement: {type: [object, 'null']}
+  note: {type: [string, 'null']}
+additionalProperties: false
