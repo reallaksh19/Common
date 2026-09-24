@@ -2,6 +2,8 @@
 
 Send a substantial outcome-oriented assignment. Do not nano-manage implementation.
 
+**Relay protocol rule:** use Engineering Relay **V3.1 only** if Relay context is relevant. Do not consult or use V3 or V2.5 for live status, coordination, gating, recovery, handover, or Owner-command semantics.
+
 ```text
 WORK_ORDER
 
