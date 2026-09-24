@@ -70,7 +70,7 @@ Use stable `EXIT-*` IDs. These are the denominator for programme-contribution re
 
 | ID | Requirement | Responsible workstreams | Evidence sources | Weight | Status |
 |---|---|---|---|---:|---|
-| EXIT-001 | ... | A,B | PR/test/artifact | 1 | OPEN |
+| EXIT-001 | ... | A,B | PR/test/artifact | — | OPEN |
 
 Use declared weights only when the programme genuinely needs weighted acceptance. Otherwise V3.1 reports unweighted criterion coverage explicitly.
 
