@@ -7,16 +7,23 @@ This is a reasoning/reporting pass. It does not authorize or deny production.
 ```text
 COORDINATION PASS
 
-Read current durable production reality first:
+Read current durable programme + production reality first:
 
-- governing parent/programme issue;
+- governing parent Programme Specification;
+- current effective amendment index and referenced Owner/programme amendments;
+- dedicated [Relay Handover] operational ledger;
 - active child issue contracts;
 - each agent's latest durable implementation plan;
-- current branch/PR/commit/test/runtime evidence;
-- recent durable handoffs;
+- every nonterminal PR and its exact head/lifecycle;
+- current branch/commit/test/runtime/artifact evidence;
+- recent durable producer→consumer handoffs;
+- negative knowledge / do-not-reopen findings;
 - local engineering coordinator snapshot/returns when available;
 - relevant canonical source truth;
+- parent EXIT criteria;
 - source freshness.
+
+Treat the Handover issue as an index. Verify material claims against linked durable evidence where a consequence depends on them.
 
 Relay protocol rule: **V3.1 only**. Do not consult or use V3 or V2.5 for live coordination, status, gating, recovery, or Owner-command semantics.
 
@@ -87,10 +94,15 @@ Then reconcile cross-workstream reality:
 
 - newly discovered dependencies;
 - newly satisfied dependencies;
+- work that can now run or run partially;
 - conflicting assumptions;
-- overlapping ownership;
-- producer results that should be routed to consumers;
+- overlapping ownership / shared integration surfaces;
+- producer results that should be routed immediately to consumers;
+- stale dependency watches that can be retired;
 - local evidence that now needs promotion;
+- negative-knowledge entries that should prevent repeated dead ends;
+- nonterminal PRs missing from the operational ledger;
+- parent EXIT criteria advanced / unchanged / regressed;
 - any semantic-boundary change.
 
 Ask whether a genuine semantic boundary changed:
@@ -106,6 +118,19 @@ keep prior direction and make the smallest coordinator move.
 
 If YES:
 identify exactly what changed and whether fresh three-pass reasoning is warranted.
+
+OPERATIONAL LEDGER
+
+Propose the minimal [Relay Handover] updates needed for zero-context reconstruction:
+- workstream/material refs;
+- dependency state;
+- nonterminal PR carry-forward;
+- producer→consumer handoff;
+- negative knowledge;
+- Owner decision need;
+- next coordinator action / observation.
+
+Do not rewrite the ledger merely because time passed.
 
 OWNER
 
