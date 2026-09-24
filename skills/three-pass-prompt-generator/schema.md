@@ -3090,12 +3090,12 @@ This is the same reasoning continuity used by the successful product-level and t
 
 The complete generator output begins with the mandatory **SCHEMA EXECUTION HANDSHAKE**, followed by one shared **SCHEMA BASIS** section.
 
-Then, for **each requested lot**, output four visible sections:
+Then, for **each requested lot**, output six visible sections:
 
 1. one **PREFLIGHT RECORD**;
-2. exactly five **copy-pasteable prompt blocks**.
+2. exactly five **copy-pasteable prompt blocks**: Prompt 0.5, Prompt 1, Prompt 2, Prompt 2.5 and Prompt 3.
 
-The preflight is metadata, **not a fourth prompt**.
+The preflight is metadata, **not one of the five prompts**.
 
 If the user requested two lots, output two lot sections. Do not merge them and do not invent a different second target.
 
