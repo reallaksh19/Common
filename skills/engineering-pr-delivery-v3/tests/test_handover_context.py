@@ -81,7 +81,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertNotIn("branch:", blind_text.lower())
             self.assertNotIn("pull request", blind_text.lower())
             self.assertNotIn("419", blind_text)
-            self.assertEqual("TPG-3P-2026-09-24-R11", context["generator_contract"]["protocol_revision_at_freeze"])
+            self.assertEqual("TPG-3P-2026-09-24-R12", context["generator_contract"]["protocol_revision_at_freeze"])
 
     def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
         with tempfile.TemporaryDirectory() as td:
