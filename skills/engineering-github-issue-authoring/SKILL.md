@@ -324,7 +324,7 @@ Q5 smallest coherent patch + before/after evidence + negative test + rollback/fa
 
 For numerical engineering, at least two questions require real hand calculations using concrete numbers supplied by the issue/repository. For software engineering, use exact byte/pointer/cursor/hash/state reconstruction rather than generic prose.
 
-The parent program issue may carry Owner qualification baseline questions, but child questions must be tailored to the child partition and may not downgrade inherited Owner technical obligations.
+The parent programme may carry Owner-authored reasoning questions when useful, but they remain evidence/reasoning prompts rather than execution qualification. Child questions should be tailored to the owned responsibility and may not dilute inherited technical obligations.
 
 ## 17. Relay V3.1 interoperability — recorder-first
 
@@ -333,7 +333,7 @@ For each child/revision issue, relay state binds:
 ```text
 WORK_ITEM_SOURCE: GITHUB_ISSUE
 WORK_ITEM_KEY: github:<owner>/<repo>#<child>
-WORK_ITEM_MODE: EXCLUSIVE
+WORK_ITEM_MODE: RECORDED_RESPONSIBILITY
 PROGRAM_ID:
 PROGRAM_WORK_ITEM_KEY: github:<owner>/<repo>#<parent>
 ISSUE_ROLE:
@@ -371,12 +371,13 @@ Verify at minimum:
 [ ] anti-drift/falsifiers and sibling-conflict observations explicit without becoming permission gates
 [ ] revision links predecessor evidence when applicable
 [ ] five implementation questions included only where they materially improve a complex/critical task
-[ ] >=2 hand-calculation questions for numerical engineering
-[ ] V3.1 linkage fields present for program children
+[ ] when numerical reasoning questions are included, they use real hand/exact reconstruction where useful
+[ ] V3.1-only recorder/reconstruction semantics are explicit for programme children
+[ ] dedicated [Relay Handover] child exists for multi-agent programmes
 ```
 
 Run `scripts/validate_issue_workorder.py` on drafts when a repository-capable environment is available. Structural PASS never substitutes for engineering review.
 
 ## 19. User-visible result
 
-When actual creation is requested, return parent/child issue numbers and links, the partition/dependency plan, common input/benchmark/validation summary, overlap disposition, and the five implementation questions for the child being handed to an agent. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.
+When actual creation is requested, return the parent issue, dedicated [Relay Handover] issue, child issue links, ownership/dependency plan, canonical input summary, producer/consumer relationships and any material uncertainties. Include implementation reasoning questions only when they materially help the task. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.
