@@ -43,7 +43,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         },
         {
@@ -55,7 +55,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         },
         {
@@ -67,7 +67,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         },
         {
@@ -79,7 +79,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         },
         {
@@ -91,7 +91,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         },
         {
@@ -103,7 +103,7 @@
           "trace_refs": [],
           "remaining": [],
           "owner": null,
-          "weight": 1,
+          "weight": null,
           "parent_mappings": []
         }
       ]
@@ -153,7 +153,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -165,7 +165,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -177,7 +177,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -189,7 +189,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -201,7 +201,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       }
     ],
@@ -234,7 +234,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -246,7 +246,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -258,7 +258,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -270,7 +270,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -282,7 +282,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -294,7 +294,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       }
     ],
@@ -327,7 +327,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -339,7 +339,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -351,7 +351,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -363,7 +363,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       }
     ],
@@ -396,7 +396,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -408,7 +408,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       }
     ],
@@ -442,7 +442,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       },
       {
@@ -457,7 +457,7 @@
         "trace_refs": [],
         "remaining": [],
         "owner": null,
-        "weight": 1,
+        "weight": null,
         "parent_mappings": []
       }
     ],
