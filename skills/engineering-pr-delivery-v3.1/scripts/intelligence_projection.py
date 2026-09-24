@@ -269,7 +269,7 @@ def _completion_model(
     if provider_state not in {"OPEN", "CLOSED"}:
         provider_state = "UNKNOWN"
 
-    if work_state == "SATISFIED" and verification_state in {"PASS", "UNKNOWN"}:
+    if work_state == "SATISFIED" and verification_state == "PASS":
         overall = "COMPLETE"
     elif work_state in {"PARTIAL", "SATISFIED"} or implementation in {"PARTIAL", "COMPLETE"} or verification_state in {"PARTIAL", "FAIL", "NOT_RUN"}:
         overall = "PARTIAL"
