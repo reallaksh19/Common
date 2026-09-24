@@ -488,6 +488,85 @@ Run a full fresh three-pass sequence only when a semantic boundary changes, such
 
 Do not regenerate early independent reasoning because a timer fired, a commit landed, a test finished or an agent replied.
 
+## Operational files
+
+Stable/durable contracts:
+
+```text
+schemas/issue-contract.schema.yaml
+templates/issue-responsibility.md
+```
+
+Current dispatch:
+
+```text
+schemas/work-order.schema.yaml
+templates/work-order.md
+```
+
+Local engineering bridge:
+
+```text
+schemas/local-coordinator-return.schema.yaml
+templates/local-coordinator-bridge.md
+templates/local-engineering-snapshot.md
+```
+
+Derived/disposable coordination:
+
+```text
+schemas/coordination-observation.schema.yaml
+templates/coordination-pass.md
+```
+
+Owner reporting:
+
+```text
+schemas/owner-coordination-report.schema.yaml
+scripts/render_owner_coordination.py
+```
+
+Temporal observation guidance:
+
+```text
+references/chatgpt-work-observation.md
+```
+
+### Validate a structured object
+
+```bash
+python skills/engineering-programme-coordinator/scripts/validate.py \
+  coordination-observation path/to/observation.yaml
+```
+
+Supported schema names:
+
+```text
+issue-contract
+work-order
+local-coordinator-return
+coordination-observation
+owner-coordination-report
+```
+
+### Render an Owner coordination report
+
+```bash
+python skills/engineering-programme-coordinator/scripts/render_owner_coordination.py \
+  path/to/coordination-observation.yaml \
+  --mode SEMANTIC_DELTA
+```
+
+Or, for an Owner-requested heartbeat:
+
+```bash
+python skills/engineering-programme-coordinator/scripts/render_owner_coordination.py \
+  path/to/coordination-observation.yaml \
+  --mode CADENCED
+```
+
+Use `--yaml` to emit the normalized `engineering-coordinator-owner-report-v1` object instead of Markdown.
+
 ## Anti-patterns
 
 Do not introduce:
