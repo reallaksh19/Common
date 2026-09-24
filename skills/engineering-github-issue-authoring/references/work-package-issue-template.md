@@ -64,7 +64,7 @@ Use stable `AC-*` IDs. These are the denominator for child/work-issue completion
 
 | ID | Criterion | Parent mapping | Weight |
 |---|---|---|---:|
-| AC-<workstream>-01 | ... | EXIT-... | 1 |
+| AC-<workstream>-01 | ... | EXIT-... | — |
 
 Criteria should be observable, evidence-bound and independent of PR/commit count.
 
