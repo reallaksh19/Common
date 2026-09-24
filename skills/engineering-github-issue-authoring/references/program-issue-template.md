@@ -1,69 +1,89 @@
-# Parent / Program Engineering Issue Template
+# Parent / Programme Engineering Issue Template
 
 Use for `ISSUE_TOPOLOGY: PROGRAM_ISSUE_SET`.
+
+The parent issue is the durable **Programme Specification + Coordination Record**. It preserves programme meaning; it is not a live execution lock.
 
 ```markdown
 ISSUE_ROLE: PROGRAM_ROOT
 PROGRAM_ID: PGM-<repo>-<short-task>
-PROGRAM_WORK_ITEM_KEY: SELF_AFTER_CREATION
-PROGRAM_BASIS_REVISION: PB-0001
-COMMON_INPUT_SET_ID: <PROGRAM_ID>-INPUTS-v1
-COMMON_BENCHMARK_SET_ID: <PROGRAM_ID>-BENCH-v1
-COMMON_VALIDATION_SET_ID: <PROGRAM_ID>-VALID-v1
-COMMON_ROADMAP_SET_ID: <PROGRAM_ID>-ROADMAP-v1
+PROGRAMME_BASIS_REVISION: PB-0001
+RELAY_PROTOCOL: V3.1_ONLY
+RELAY_HANDOVER_ISSUE: PENDING
 
-# Mission
-<Original Owner intent, preserved without implementation-agent reinterpretation.>
+# Owner outcome
+<Human/programme result that must ultimately become true.>
 
-# 0. Ground truth at program creation
+# Why now / governing witnesses
+<Concrete need/failure/evidence.>
+
 Observed main: `<40-hex>`
-Re-ground before every child activation.
 
-# 1. Owner intent / original task ledger
-| ID | Original requirement | Status | Owner source |
-|---|---|---|---|
-| TASK-001 | ... | OPEN | ... |
-
-# 2. Owner Roadmap / authority ledger
-| ID | Roadmap/source | Bound revision | Role | Status | Mutation authority |
-|---|---|---|---|---|---|
-| RM-001 | ... | ... | PRIMARY | ALIGNED | OWNER_ONLY |
-
-# 3. Common input set
-| ID | Source | Authority | Required data | Status | Drift / invalidation |
-|---|---|---|---|---|---|
-| INPUT-001 | ... | PRODUCTION_INPUT | ... | AVAILABLE | ... |
-
-# 4. Common benchmark / oracle set
-| ID | Type | Source | Inputs | Expected quantity | Tolerance | Independent? | Status |
-|---|---|---|---|---|---|---|---|
-| BM-001 | FROZEN_ANALYTICAL | ... | ... | ... | ... | YES | READY |
-
-# 5. Common validation set
-| ID | Gate / command / evidence | Required result | Applies to | Status |
-|---|---|---|---|---|
-| VAL-001 | ... | PASS | WP-001,WP-003 | NOT_RUN |
-
-# 6. Global protected domains / exclusions
-- NO ...
-
-# 7. Program Definition of Done
-The program is complete only when every required TASK row is satisfied/Owner-disposed, all required work packages/revisions are complete, common sets remain current, integration gates pass, and NOT_RUN/FAIL are not promoted.
-
-# 8. Work-package partition / dependency registry
-| WP | Relation | Child issue | Scope / deliverable | Owned authority/paths | Depends on | Parent rows used | Status | Chain / PR | Overlap |
-|---|---|---|---|---|---|---|---|---|---|
-| WP-001 | IMPLEMENTATION | PENDING | ... | ... | NONE | TASK-001; INPUT-001; BM-001; VAL-001 | PLANNED | PENDING | SAFE_DISJOINT |
-
-# 9. Overlap rules
-Before a child is activated, compare PARTITION_KEY, authority domains, expected changed paths and active sibling PRs. `BLOCKED_ACTIVE_SIBLING` or `UNKNOWN` => no material write authority.
-
-# 10. Integration / closure gates
+# Non-goals
 - ...
 
-# 11. Relay contract
-Every material child gets its own GitHub issue, WORK_ITEM_KEY, canonical engineering-pr-delivery-v2 chain and exclusive current agent instance. Parent issue is program/common-custody authority, not a shared multi-writer production chain.
+# Effective amendment index
+CURRENT_BASIS_REVISION: PB-0001
 
-# 12. Current program-status projection
-Maintain operational child status in a mutable program-status comment/repository program-state artifact. Do not rewrite the original Owner contract on each agent turn.
+| Amendment | Kind | Durable ref | Summary | Supersedes |
+|---|---|---|---|---|
+| ... | OWNER_DECISION / OWNER_AMENDMENT / RESPONSIBILITY_TRANSFER / PROGRAMME_DISCOVERY / EVIDENCE_RECORD | ... | ... | ... |
+
+Ordinary discussion does not change the programme contract. Explicit amendments do.
+
+# Canonical input/source registry
+| ID | Ref/source | Meaning | Authority | Kind | Invalidation |
+|---|---|---|---|---|---|
+| INPUT-001 | ... | ... | ... | PRODUCTION / AUTHORED / GENERATED / FIXTURE / EXTERNAL / OWNER_SUPPLIED | ... |
+
+# Programme invariants / preserve
+- ...
+
+# Workstream registry
+| Workstream | Child issue | Outcome | Owns | Excludes | Consumers | Plan ref/revision |
+|---|---|---|---|---|---|---|
+| A | PENDING | ... | ... | ... | B | MISSING |
+
+# Producer / consumer contracts
+## OUT-001 — <production output>
+Producer: A
+Consumers: B
+Meaning:
+- ...
+Consumers must not infer:
+- ...
+
+# Dependency contracts
+## DEP-001 — <required production output>
+Producer: A
+Consumer: B
+Why required: ...
+Satisfaction evidence:
+- ...
+Work that may continue independently:
+- ...
+
+A dependency is missing production truth, not permission.
+
+# Programme success / exit criteria
+| ID | Requirement | Responsible workstreams | Evidence sources | Status |
+|---|---|---|---|---|
+| EXIT-001 | ... | A,B | PR/test/artifact | OPEN |
+
+# Decision surface
+Engineer: implementation choices inside owned responsibility.
+Coordinator: cross-agent consequences, useful parallelism, re-observation, helper/local-coordinator recommendation and routing.
+Owner: genuine human/product/programme choices only.
+
+# Dedicated [Relay Handover] operational ledger
+Create one child issue:
+`[Relay Handover] <programme title>`
+
+It indexes workstreams, plans, PRs, exact heads, dependencies, pending items, known issues, negative knowledge, handoffs and next observations.
+
+A stale/missing ledger reduces observability only; it never invalidates production engineering.
+
+# Relay V3.1
+Use Engineering Relay V3.1 only for recorder/reconstruction/reporting semantics when useful.
+Do not use V3 or V2.5 for live coordination, status, recovery, gating, handover or Owner-command semantics.
 ```

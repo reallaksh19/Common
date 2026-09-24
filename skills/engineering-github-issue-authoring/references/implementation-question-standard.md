@@ -1,10 +1,10 @@
-# Implementation Qualification Question Standard
+# Implementation Reasoning Question Standard
 
 ## Purpose
 
-The five questions at the end of an engineering issue are a **senior-engineer implementation screen**. They should reveal whether the incoming agent understands the actual production path, can reconstruct critical engineering/semantic quantities independently, can detect stale authority, and can propose the smallest safe patch.
+When useful for complex/engineering-critical work, the five questions are a **senior-engineer reasoning aid**. They expose whether the current engineering picture traces the actual production path, reconstructs critical quantities independently, detects stale assumptions/source truth, and identifies the smallest evidence-supported patch.
 
-They are not textbook questions and not a task checklist.
+They are not textbook questions, not a task checklist, and not a qualification/execution gate. Focused parallel issues may omit them entirely.
 
 ## Exactly five questions
 
@@ -98,7 +98,7 @@ coordinate/index transformation
 fixed-format output positions
 ```
 
-At least two questions should require the candidate to produce exact intermediate values/states, not merely describe architecture.
+At least two questions should require the agent to produce exact intermediate values/states, not merely describe architecture.
 
 ## Source-governance profile
 
@@ -108,7 +108,7 @@ For `QUESTION_PROFILE: SOURCE_GOVERNANCE`, require exact provenance reconstructi
 source -> normalized fact -> authority record -> production consumer
 ```
 
-Use concrete source IDs/claims/revisions. Ask the candidate to identify which claim is admissible, which is conflicted, and what exact evidence would falsify the chosen disposition. If numerical source data exists, include a hand reconstruction rather than making all five questions documentary.
+Use concrete source IDs/claims/revisions. Ask the agent to identify which claim is admissible, which is conflicted, and what exact evidence would falsify the chosen disposition. If numerical source data exists, include a hand reconstruction rather than making all five questions documentary.
 
 ## Q1 — actual production trace
 
@@ -120,7 +120,7 @@ Must include:
 - first ownership/authority transition;
 - one observation that would falsify the trace.
 
-Reject:
+Weak:
 
 ```text
 Explain the architecture.
@@ -165,7 +165,7 @@ Ask:
 - which exact parent IDs/revisions/hashes should disagree;
 - where the live code must block;
 - expected failure/state/error;
-- one test that would prove the candidate's model is wrong.
+- one test that would prove the agent's model is wrong.
 
 ## Q4 — independent benchmark reconstruction
 
@@ -194,7 +194,7 @@ Require inputs, units/sign convention, tolerance and an explicit anti-circularit
 
 ## Q5 — smallest safe patch
 
-The candidate must state:
+The agent must state:
 
 ```text
 first exact function/file to change
@@ -222,7 +222,7 @@ A five-question set should normally satisfy:
 >= 1 safe-patch + rollback + NO-PATCH boundary
 ```
 
-For numerical engineering, at least one question should be difficult enough that a candidate who cannot do the underlying engineering by hand cannot bluff through it using repository prose.
+For numerical engineering, at least one question should be difficult enough that a agent who cannot do the underlying engineering by hand cannot bluff through it using repository prose.
 
 ## Anti-patterns
 

@@ -60,6 +60,10 @@ OWNER DECISIONS ALREADY MADE
 
 The local coordinator chooses engineering decomposition, workers, worktrees, tests and local probes.
 
+For each substantial worker responsibility, the local coordinator should ensure the owning engineering agent has a durable child-issue `IMPLEMENTATION_PLAN` when practical. The worker authors the plan; the local coordinator does not replace engineering judgement with a coordinator-written plan.
+
+Plan publication/revision is reconstruction context, never local execution permission.
+
 ## Work → local: CONTEXT_UPDATE
 
 Use when one programme fact changed while local work continues.

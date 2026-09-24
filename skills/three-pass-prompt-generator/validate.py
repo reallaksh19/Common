@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-24-R11"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-24-R12"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -546,6 +546,17 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
                 errors.append(f"{label}: Prompt 3 must require positive evidence for material narrowing/removal/closure")
             if "preserve" not in prompt3_lower or "add" not in prompt3_lower or "defer" not in prompt3_lower:
                 errors.append(f"{label}: Prompt 3 must preserve a broad evidence-supported decision space")
+            if intent_type in {"ANALYZE_THEN_ACT", "EXECUTE_DEFINED_ACTION"}:
+                if "implementation_plan" not in prompt3_lower and "implementation plan" not in prompt3_lower:
+                    errors.append(f"{label}: executable Prompt 3 must tell the engineering agent to publish its own implementation plan")
+                if "expected next observable" not in prompt3_lower:
+                    errors.append(f"{label}: executable Prompt 3 implementation plan must carry EXPECTED NEXT OBSERVABLE")
+                if (
+                    "not an approval gate" not in prompt3_lower
+                    and "not approval" not in prompt3_lower
+                    and "do not wait" not in prompt3_lower
+                ):
+                    errors.append(f"{label}: executable Prompt 3 must state that plan publication is not an approval gate")
             for phrase in (
                 "produce the reconciled register",
                 "your deliverable is a better current register",

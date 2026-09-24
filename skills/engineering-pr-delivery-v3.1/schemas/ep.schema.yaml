@@ -108,6 +108,34 @@ properties:
               properties:
                 id: {type: string, minLength: 1}
                 statement: {type: string, minLength: 1}
+  programme_parent:
+    type: object
+    additionalProperties: false
+    required: [provider, repository, number, title, url]
+    properties:
+      provider: {const: GITHUB}
+      repository: {type: string, pattern: '^[^/]+/[^/]+$'}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+  implementation_plan_basis:
+    type: object
+    additionalProperties: false
+    required: [provider_ref, revision, digest, observed_at]
+    properties:
+      provider_ref: {type: string, minLength: 1}
+      revision: {type: integer, minimum: 1}
+      digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      observed_at: {type: string, format: date-time}
+  expected_next_observable:
+    type: object
+    additionalProperties: false
+    required: [statement, evidence]
+    properties:
+      statement: {type: string, minLength: 1}
+      evidence:
+        type: array
+        items: {type: string, minLength: 1}
   offloads:
     type: array
     items:

@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -207,7 +207,7 @@ PASS — no extra protocol stage
 
 ## PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.
+The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.
 
 ## PROMPT 1 — IMAGINE
 
@@ -230,6 +230,7 @@ RECONCILE — compare the baseline, verified reality, and the roadmap; state the
 CRITIQUE THE CLAIM — define a GAP WITNESS and DISPROOF CONDITION, require quantitative or executable proof, try the stronger case with the existing model first, and withdraw or narrow architecture that proves unnecessary.
 A PROBE / EVIDENCE TASK may investigate an unproved hypothesis without admitting the hypothesized capability as product scope.
 DECIDE — preserve, revise, add, defer, remove, or leave unchanged; require positive evidence for narrowing, removal, closure, or ownership transfer and choose the smallest evidence-supported move.
+For engineering execution, after live revalidation publish your own IMPLEMENTATION_PLAN — rev 1 on the owned child issue, including EXPECTED NEXT OBSERVABLE. This is not an approval gate; do not wait for Relay/coordinator approval after publishing it. Use PLAN_UPDATE, TASK_EVIDENCE and TASK_RESULT only for meaningful semantic changes/evidence/handoff.
 At completion report:
 THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
 FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
@@ -272,7 +273,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_is_required(self):
         bad = GOOD.replace(
-            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThe programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.\n\n",
+            "## PROMPT 0.5 — IMAGINE FROM PROGRAMME\n\nThe programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.\n\n",
             "",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -288,7 +289,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt05_rejects_local_task_as_destination(self):
         bad = GOOD.replace(
-            "The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what this area must contribute to the programme, note one consequential question if the situation reveals it, and keep the ownership boundary intact.",
+            "The programme has a durable project goal and this governing issue has a specific responsibility inside it. Treat the local task as one possible instrument, not the definition of the need. Ask what programme contribution this area must make, note one consequential question if the situation reveals it, and keep the ownership boundary intact.",
             "Summarize the ongoing local task and latest PR.",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -362,7 +363,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-24-R11", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-24-R12", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -373,7 +374,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-24-R11")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-24-R12")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 

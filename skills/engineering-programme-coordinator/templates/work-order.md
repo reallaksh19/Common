@@ -8,7 +8,13 @@ Send a substantial outcome-oriented assignment. Do not nano-manage implementatio
 WORK_ORDER
 
 WORKSTREAM
-<alias / issue>
+<alias / child issue>
+
+PROGRAMME BASIS
+<parent issue + current effective basis revision>
+
+RELEVANT AMENDMENTS
+- <only amendments that materially affect this workstream>
 
 OUTCOME
 <what must become true in production>
@@ -24,6 +30,12 @@ EXCLUDES
 CURRENT DURABLE INPUTS
 - <issue / commit / PR / artifact / canonical source>
 - include observed head/digest/time only when it materially improves reconstruction
+
+RELEVANT NEGATIVE KNOWLEDGE
+- <rejected/disproved approach + evidence + reopen condition, only if relevant>
+
+CURRENT MATERIAL
+- branch / PR / exact head when material already exists
 
 DEPENDENCY CONTRACTS
 
@@ -62,6 +74,7 @@ Examples:
 
 CONSUMERS
 - <who needs the result and what they consume>
+- <what the consumer must not infer from this output>
 
 SEMANTIC ESCALATION
 Return early only if evidence materially changes:
@@ -73,6 +86,21 @@ Return early only if evidence materially changes:
 
 OWNER DECISIONS ALREADY MADE
 - ...
+
+FIRST DURABLE AGENT PUBLICATION
+After live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
+
+The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after posting it. If useful work already began, publish the current plan and continue.
+
+During execution publish only meaningful semantic deltas:
+- `PLAN_UPDATE` when evidence materially changes the approach;
+- `TASK_EVIDENCE` when an intermediate result changes reconstruction or another workstream's next action;
+- `TASK_RESULT` at the delivery/handoff boundary.
+
+Do not post every command, file read, test retry, timer wake or chat update.
+
+EP NOTE
+An EP is V3.1's recorder identity for the bounded responsibility. Do not create a new EP merely because the plan was published or revised.
 
 EXECUTION STYLE
 Design the detailed implementation yourself.

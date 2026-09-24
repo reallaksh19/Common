@@ -116,6 +116,68 @@ def _tracked_items(controls: dict[str, Any] | None, kind: str) -> list[dict[str,
     return result
 
 
+def _programme_ref(ep: dict[str, Any] | None, parent: dict[str, Any]) -> dict[str, Any] | None:
+    source = (ep or {}).get("programme_parent") or (ep or {}).get("parent_issue") or parent
+    if not isinstance(source, dict):
+        return None
+    return {
+        "repository": source.get("repository"),
+        "number": source.get("number"),
+        "title": source.get("title"),
+        "url": source.get("url"),
+    }
+
+
+def _planning_sections(
+    observation: dict[str, Any] | None,
+    ep: dict[str, Any] | None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    observed = (observation or {}).get("implementation_plan")
+    basis = (ep or {}).get("implementation_plan_basis") or {}
+    if isinstance(observed, dict):
+        planning = {
+            "state": observed.get("state") or "UNKNOWN",
+            "provider_ref": observed.get("provider_ref"),
+            "revision": observed.get("revision"),
+            "digest": observed.get("digest"),
+            "observed_at": observed.get("observed_at"),
+        }
+    elif basis:
+        planning = {
+            "state": "PRESENT",
+            "provider_ref": basis.get("provider_ref"),
+            "revision": basis.get("revision"),
+            "digest": basis.get("digest"),
+            "observed_at": basis.get("observed_at"),
+        }
+    else:
+        planning = {
+            "state": "MISSING",
+            "provider_ref": None,
+            "revision": None,
+            "digest": None,
+            "observed_at": None,
+        }
+
+    expected = (observation or {}).get("expected_next_observable")
+    if not isinstance(expected, dict):
+        expected = (ep or {}).get("expected_next_observable")
+    if not isinstance(expected, dict):
+        first_action = ((ep or {}).get("next") or {}).get("first_action")
+        expected = (
+            {"statement": str(first_action), "evidence": []}
+            if first_action
+            else None
+        )
+    planning["expected_next_observable"] = expected
+    publications = [
+        dict(row)
+        for row in ((observation or {}).get("task_publications") or [])
+        if isinstance(row, dict)
+    ]
+    return planning, publications
+
+
 def _issue_sections(
     observation: dict[str, Any] | None,
     ep: dict[str, Any] | None,
@@ -181,8 +243,12 @@ def _issue_sections(
                 "evidence": [str(cp_id)],
                 "project_value": str(change),
             })
+    planning, publications = _planning_sections(obs, ep)
     return {
         "parent_issue": parent,
+        "programme_parent": _programme_ref(ep, parent),
+        "planning": planning,
+        "task_publications": publications,
         "parent_issue_progress": {"checklist": parent_rows, "summary": _progress_summary(parent_rows, True)},
         "current_task_progress": {"checklist": task_rows, "summary": _progress_summary(task_rows, False)},
         "offloads": list((ep or {}).get("offloads") or []),

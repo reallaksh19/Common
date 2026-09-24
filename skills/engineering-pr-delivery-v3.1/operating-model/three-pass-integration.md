@@ -106,6 +106,25 @@ plus repository/kind/number/title/url/state/observed-at/provider-ref.
 
 The repository validator proves the observation shape and binds its digest into the frozen handover context. The actual provider integration that creates the observation remains responsible for genuine provider readback; manually typed prose is not converted into provider authority.
 
+## Prompt 3 → engineering-plan boundary
+
+The standalone three-pass packet ends with reasoning/revalidation. It does not replace the engineering agent's own implementation plan.
+
+For an owned implementation task, Prompt 3 should normally transition into:
+
+```text
+live revalidation
+→ agent publishes IMPLEMENTATION_PLAN rev 1 on the child issue
+→ V3.1 observes/binds current plan context
+→ engineering execution continues without waiting for plan approval
+→ PLAN_UPDATE / TASK_EVIDENCE only when meaningful
+→ TASK_RESULT at handoff
+```
+
+If an EP already existed before the plan was published, keep the same EP while the owned responsibility is unchanged. Current plan revision is provider/task context, not a reason to create a replacement EP.
+
+See `agent-task-publication.md`.
+
 ## Generated artifacts
 
 ```text

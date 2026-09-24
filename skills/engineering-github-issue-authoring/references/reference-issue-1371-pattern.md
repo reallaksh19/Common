@@ -18,7 +18,7 @@ The issue establishes an unusually complete implementation work order by combini
 3. registered production authority and explicit current limitations;
 4. a Definition of Done organized by real workflow states;
 5. a phased PR-sized execution strategy;
-6. a takeover/overlap gate before mutation;
+6. explicit takeover/overlap evidence that helps prevent conflicting engineering work;
 7. exact input-source authority and regression fixture locations;
 8. live API/function examples and minimum implementation skeletons;
 9. exact PASS conditions for mesh/analyse/output state;
@@ -27,7 +27,7 @@ The issue establishes an unusually complete implementation work order by combini
 12. explicit exclusions and capability boundaries;
 13. negative/anti-drift expectations;
 14. a validation matrix with `PASS/FAIL/NOT_RUN` truth;
-15. an implementation takeover qualification appendix.
+15. deep implementation reasoning questions that can be reused as non-blocking falsification/reconstruction prompts.
 
 ## Reference question pattern
 
@@ -70,7 +70,7 @@ actual shell/continuum analytical benchmark calculation
 actual WRC/local-axis reconstruction
 ```
 
-The implementation candidate must establish the independent result **before** using production output for comparison.
+When numerical independence matters, establish the independent result **before** using production output for comparison. This is an evidence-quality rule, not a coordinator permission gate.
 
 ## What not to copy blindly
 
@@ -106,3 +106,7 @@ which benchmark is independent
 how drift/circularity is prevented
 what five hard questions prove the implementer understands the job
 ```
+
+## Non-blocking adaptation
+
+Use #1371 as a depth/intelligence reference only. Do **not** copy its takeover, qualification, write-authority or workflow-gating mechanics into new programmes. In the current model, parent/child issues preserve durable engineering meaning, PRs/tests preserve production evidence, the dedicated [Relay Handover] issue indexes operational reality, and Relay V3.1 records/reconstructs without granting engineering permission.

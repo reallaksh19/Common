@@ -63,10 +63,20 @@ Deleting this coordinator layer must reduce observability only. It must not inva
 Use each surface for one job:
 
 ```text
-GitHub issue
-= durable engineering responsibility
+Parent programme issue
+= governing human/programme contract
+  + durable programme specification
 
-Implementation plan in issue
+Owner-authorized amendments/comments
+= durable semantic changes, transfers, decisions and evidence chronology
+
+Dedicated [Relay Handover] child issue
+= current operational ledger / reconstruction index
+
+Child implementation issue
+= bounded engineering responsibility
+
+Implementation plan in child issue/comment
 = revisable execution baseline
 
 Work Order
@@ -76,7 +86,7 @@ Repository / commits / PRs / tests / runtime evidence
 = production truth
 
 Local coordinator / helper returns
-= evidence and execution consequences
+= execution evidence and programme consequences
 
 Coordinator observation
 = derived/disposable interpretation
@@ -85,10 +95,73 @@ Owner coordination report
 = concise programme-facing synthesis
 
 V3.1
-= optional recording / reconstruction / reporting substrate
+= recorder / reconstruction / reporting substrate
 ```
 
 Issue responsibility outranks an implementation plan. An implementation plan may change when evidence changes.
+
+The parent issue and its effective amendments define programme meaning. The Handover issue indexes current operational reality but does not prove it; linked production evidence does.
+
+### Programme Specification + Coordination Record
+
+The parent issue should durably preserve:
+
+- programme identity and basis revision;
+- Owner outcome / why-now / non-goals;
+- effective amendment index;
+- workstream registry and ownership partition;
+- canonical input/source registry;
+- producer/consumer contracts;
+- dependency contracts expressed as required production outputs;
+- success/exit criteria;
+- invariants and preserve conditions;
+- engineer/coordinator/Owner decision boundaries.
+
+Use `templates/programme-specification.md` and `schemas/programme-record.schema.yaml`.
+
+### Owner-authorized amendments
+
+Use comments/amendments for semantic chronology rather than silently rewriting history.
+
+Recognized durable amendment kinds:
+
+```text
+OWNER_AMENDMENT
+OWNER_DECISION
+RESPONSIBILITY_TRANSFER
+PROGRAMME_DISCOVERY
+EVIDENCE_RECORD
+```
+
+Each amendment should state the previous basis, change, evidence/reason, affected workstreams, unaffected scope and any superseded amendment. Keep a small current amendment index in the parent issue so zero-context reconstruction does not require replaying the entire comment history.
+
+### Dedicated [Relay Handover] operational ledger
+
+Every multi-agent programme should have one dedicated child issue:
+
+```text
+[Relay Handover] <programme title>
+```
+
+It is the durable current operational index for:
+
+- workstreams / agents;
+- implementation-plan refs/revisions;
+- branch/PR/exact-head material;
+- expected next observables;
+- production-output dependencies;
+- every nonterminal PR;
+- pending items and known issues;
+- negative knowledge / do-not-reopen findings;
+- producer→consumer handoffs;
+- programme-significant local execution returns;
+- Owner decisions needed;
+- next coordinator action;
+- next useful observation.
+
+Use `templates/relay-handover.md` and `schemas/relay-handover.schema.yaml`.
+
+A stale/missing Handover ledger reduces observability only. It never invalidates production work, ownership, commits, PRs or tests.
 
 ## Issue responsibility contract
 
@@ -170,6 +243,23 @@ A dependency describes missing production truth, not permission.
 
 A Work Order is outcome-oriented and substantial.
 
+For an engineering workstream, the first useful durable observable is normally the **agent-authored implementation plan** on the owned child issue. The coordinator should expect it, but must not treat its absence as a production stop.
+
+After the plan exists, the coordinator should watch the plan's own `EXPECTED NEXT OBSERVABLE` rather than inventing heartbeat milestones.
+
+Task publications that matter to the coordinator are:
+
+```text
+IMPLEMENTATION_PLAN
+PLAN_UPDATE
+TASK_EVIDENCE
+TASK_RESULT
+```
+
+Routine commands, file reads, test retries and chat updates stay out of programme coordination.
+
+
+
 It carries:
 
 ```text
@@ -191,15 +281,48 @@ Do not decompose into nano-tasks. Let the engineering agent design detailed impl
 ## Programme coordinator loop
 
 ```text
-OBSERVE
+BOOTSTRAP DURABLE PROGRAMME RECORD
+→ OBSERVE
 → RECONCILE
 → IDENTIFY REAL PRODUCTION FRONTIERS
 → DISPATCH
 → OBSERVE RETURNS
 → RESOLVE CROSS-AGENT CONSEQUENCES
+→ UPDATE OPERATIONAL LEDGER
 → ASK OWNER ONLY WHEN NEEDED
 → REPEAT
 ```
+
+At bootstrap or zero-context takeover, derive the programme from:
+
+```text
+parent specification
++ effective amendments
++ [Relay Handover] ledger
++ child issues / plans
++ all nonterminal PRs
++ current repository/test/runtime evidence
++ programme-significant local returns
+```
+
+Then derive the coordinator's semantic graphs:
+
+```text
+OUTCOME
+OWNERSHIP
+PRODUCER-CONSUMER
+DEPENDENCY
+EXPECTATION
+MATERIAL
+EVIDENCE
+NEGATIVE KNOWLEDGE
+DECISION
+TEMPORAL
+```
+
+See `references/coordinator-information-use.md`.
+
+The coordinator should use these graphs to maximize parallel-safe work, route producer outputs as soon as the required evidence exists, avoid repeated dead ends, recover after session loss, choose useful timers/helpers, and map child results back to programme exit criteria.
 
 At ordinary observation time, ask:
 
@@ -507,8 +630,17 @@ Do not regenerate early independent reasoning because a timer fired, a commit la
 Stable/durable contracts:
 
 ```text
+schemas/programme-record.schema.yaml
+templates/programme-specification.md
 schemas/issue-contract.schema.yaml
 templates/issue-responsibility.md
+```
+
+Durable operational ledger:
+
+```text
+schemas/relay-handover.schema.yaml
+templates/relay-handover.md
 ```
 
 Current dispatch:
@@ -526,9 +658,10 @@ templates/local-coordinator-bridge.md
 templates/local-engineering-snapshot.md
 ```
 
-Derived/disposable coordination:
+Programme bootstrap / derived coordination:
 
 ```text
+templates/programme-bootstrap.md
 schemas/coordination-observation.schema.yaml
 templates/coordination-pass.md
 ```
@@ -540,9 +673,10 @@ schemas/owner-coordination-report.schema.yaml
 scripts/render_owner_coordination.py
 ```
 
-Temporal observation guidance:
+Coordinator reasoning / temporal guidance:
 
 ```text
+references/coordinator-information-use.md
 references/chatgpt-work-observation.md
 ```
 
@@ -561,6 +695,8 @@ work-order
 local-coordinator-return
 coordination-observation
 owner-coordination-report
+programme-record
+relay-handover
 ```
 
 ### Render an Owner coordination report

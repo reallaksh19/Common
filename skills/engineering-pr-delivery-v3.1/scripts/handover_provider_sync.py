@@ -96,14 +96,14 @@ def _relay_candidates(rows: Any, repository: str, parent_number: int) -> list[di
     if not isinstance(rows, list):
         raise TransactionError("GitHub sub-issue readback must be a list")
     marker = _case_marker(repository, parent_number)
-    prefix = f"[Relay] #{parent_number}"
+    prefixes = (f"[Relay Handover] #{parent_number}", f"[Relay] #{parent_number}")
     result = []
     for row in rows:
         if not isinstance(row, dict):
             continue
         title = str(row.get("title") or "")
         body = str(row.get("body") or "")
-        if marker in body or title.startswith(prefix):
+        if marker in body or any(title.startswith(prefix) for prefix in prefixes):
             result.append(row)
     return result
 
@@ -160,11 +160,11 @@ def _ensure_handover_issue(
     if candidates:
         return _identity(candidates[0], repository), False
 
-    title = f"[Relay] #{parent_number} — {str(parent.get('title') or 'continuation ledger')}"
+    title = f"[Relay Handover] #{parent_number} — {str(parent.get('title') or 'programme operational ledger')}"
     body = "\n".join([
         _case_marker(repository, parent_number),
         "",
-        "Generated Engineering Relay case file. Repository Relay objects remain engineering authority.",
+        "Generated V3.1 programme operational ledger. It indexes durable production evidence and never grants engineering permission.",
     ])
     created = client(
         "POST",

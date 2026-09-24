@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, authority, source_protocol, identity, purpose, lineage, parent_issue, parent_issue_progress, current_task_progress, offloads, pending_items, known_issues, improvement_vs_original_issue, scope, inputs, benchmarks, execution, material, acceptance, controls, knowledge_state, negative_knowledge, next, reconstruction_sources]
+required: [schema_version, authority, source_protocol, identity, purpose, lineage, parent_issue, programme_parent, planning, task_publications, parent_issue_progress, current_task_progress, offloads, pending_items, known_issues, improvement_vs_original_issue, scope, inputs, benchmarks, execution, material, acceptance, controls, knowledge_state, negative_knowledge, next, reconstruction_sources]
 properties:
   schema_version: {const: relay-v3.1-task-snapshot}
   authority: {const: DERIVED_READ_MODEL}
@@ -37,6 +37,46 @@ properties:
           repository: {type: string}
           issue_number: {type: integer, minimum: 1}
           url: {type: string}
+  programme_parent:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [repository, number, title, url]
+    properties:
+      repository: {type: [string, 'null']}
+      number: {type: [integer, 'null'], minimum: 1}
+      title: {type: [string, 'null']}
+      url: {type: [string, 'null']}
+  planning:
+    type: object
+    additionalProperties: false
+    required: [state, provider_ref, revision, digest, observed_at, expected_next_observable]
+    properties:
+      state: {enum: [PRESENT, MISSING, STALE, UNKNOWN]}
+      provider_ref: {type: [string, 'null']}
+      revision: {type: [integer, 'null'], minimum: 1}
+      digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      observed_at: {type: [string, 'null'], format: date-time}
+      expected_next_observable:
+        type: [object, 'null']
+        additionalProperties: false
+        required: [statement, evidence]
+        properties:
+          statement: {type: string, minLength: 1}
+          evidence:
+            type: array
+            items: {type: string, minLength: 1}
+  task_publications:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [type, ref, observed_at, summary]
+      properties:
+        type: {enum: [IMPLEMENTATION_PLAN, PLAN_UPDATE, TASK_EVIDENCE, TASK_RESULT]}
+        ref: {type: string, minLength: 1}
+        observed_at: {type: string, format: date-time}
+        summary: {type: string, minLength: 1}
+        exact_head: {type: [string, 'null']}
   parent_issue_progress:
     type: object
     additionalProperties: false

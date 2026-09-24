@@ -244,7 +244,7 @@ class HandoverProviderSyncTests(unittest.TestCase):
             ledger = load_yaml(root / "relay/GENERATED/HANDOVER_LEDGER.yaml")
             created_number = ledger["handover_issue"]["number"]
             self.assertIn(created_number, client.subissues[client._sub_url(1771)])
-            self.assertIn("[Relay] #1771", client.issues[client._url(created_number)]["title"])
+            self.assertIn("[Relay Handover] #1771", client.issues[client._url(created_number)]["title"])
             status = load_yaml(root / "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml")
             self.assertEqual(created_number, status["handover"]["issue_number"])
 

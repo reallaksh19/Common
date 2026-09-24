@@ -82,6 +82,7 @@ IMPLEMENTATION_CHANGE
 EVIDENCE_PROGRESS
 DELIVERY_OR_CUSTODY_PROGRESS
 CONTROL_STATE_CHANGE
+TASK_PLANNING_PROGRESS
 WAITING_OR_MONITORING
 NO_MATERIAL_PROGRESS
 ```
@@ -103,6 +104,7 @@ When a previous cursor exists, the report begins with a concise **What changed**
 Important distinctions are explicit:
 
 - implementation movement does not imply acceptance movement;
+- implementation-plan / expected-observable movement does not imply implementation or acceptance completion;
 - evidence movement does not imply task completion;
 - regression is visible instead of hidden by aggregate percentages;
 - unchanged state is reported as `NO_MATERIAL_PROGRESS`.

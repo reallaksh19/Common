@@ -1,194 +1,270 @@
-# V3.1 Parent Issue and Handover Ledger Protocol
+# V3.1 Parent Programme and [Relay Handover] Operational Ledger
 
 ## Purpose
 
-A governed parent issue states the human/programme problem. One dedicated `[Relay Handover]` child/sub-issue is the provider-facing operational ledger for that parent.
+Use GitHub as the durable programme specification and coordination record while keeping V3.1 recorder-first.
 
-The Handover issue is a generated/provider projection. It is not roadmap, checkpoint, EP, lease, control, or acceptance authority.
+For a multi-agent programme:
+
+```text
+PARENT PROGRAMME ISSUE
+= governing human/programme contract
+
+OWNER-AUTHORIZED AMENDMENTS
+= durable semantic chronology
+
+CHILD IMPLEMENTATION ISSUES
+= bounded engineering responsibilities
+  + agent-authored implementation plans
+  + meaningful task evidence/results
+
+[Relay Handover] CHILD
+= current programme operational ledger / reconstruction index
+
+PRs / commits / tests / artifacts
+= material and exact-head evidence
+
+V3.1
+= record / reconstruct / project / report
+```
+
+None of these coordination surfaces is engineering permission.
 
 ## Responsibility model
 
-| Actor | Responsibility | Must not do |
-| --- | --- | --- |
-| Owner | Decide intent-bearing goal/scope/priority changes and authorize material transfer/supersession/closure when required | Maintain routine relay bookkeeping |
-| Active execution agent | Discover facts, implement bounded work, write canonical relay transactions/evidence, raise pending/KI/offload facts | Manually maintain duplicate parent/ledger status tables |
-| Relay | Derive parent summary + Handover ledger, synchronize provider state, and verify readback | Invent Owner intent or accepted engineering truth |
-| Local/helper agent | Execute the bounded request and return evidence | Update parent issue, Handover ledger, roadmap, checkpoint, or EP authority |
-| Successor/recovery agent | Reconstruct durable truth and continue/recover through normal admission | Rewrite predecessor history |
-| Prompt 0.5/1/2/2.5 | Reason, challenge, verify, and propose disposition | Mutate provider/governing state directly |
-| Prompt 3 | Execute an already-authorized reconciliation and verify its effect | Create new Owner intent |
+| Actor | Owns |
+| --- | --- |
+| Owner | Human/programme intent, genuine product decisions, intent-bearing amendments |
+| Programme coordinator | Cross-agent consequences, dependency routing, useful parallelism, temporal re-observation, concise Owner reporting |
+| Engineering agent | Its bounded production problem, implementation plan, implementation details, validation and handoff |
+| Local engineering coordinator | Local workers/worktrees/tests/browser/runtime orchestration where needed |
+| Helper | Bounded probe/validation/implementation task and evidence return |
+| V3.1 | Durable recorder/reconstruction/read-model/provider projection |
 
-The shorthand is:
+## Parent programme issue
+
+The parent preserves stable programme semantics:
+
+- Owner outcome and why-now;
+- non-goals;
+- programme basis revision;
+- effective Owner/programme amendment index;
+- canonical source/input registry;
+- workstream/ownership partition;
+- producer/consumer contracts;
+- dependencies expressed as required production outputs;
+- programme invariants;
+- programme exit criteria;
+- engineer/coordinator/Owner decision boundaries.
+
+Do not use the parent as a per-command status log.
+
+## Child implementation issue
+
+The child issue is the durable home for one engineering responsibility.
+
+It carries:
+
+- owned outcome;
+- ownership/conflict boundary;
+- canonical inputs;
+- producer/consumer contract;
+- real dependencies + independent work;
+- falsifier;
+- success oracle;
+- implementation plan;
+- task evidence/results;
+- expected handoff;
+- semantic escalation conditions.
+
+The engineering agent publishes its own implementation plan there.
+
+## Agent task publication lifecycle
+
+Normal durable task publications are:
 
 ```text
-OWNER  -> DECIDES
-AGENT  -> DISCOVERS + PRODUCES EVIDENCE
-RELAY  -> RECORDS + SYNCHRONIZES + READS BACK
-PROVIDER -> STORES/REPORTS EXTERNAL STATE
+IMPLEMENTATION_PLAN
+PLAN_UPDATE
+TASK_EVIDENCE
+TASK_RESULT
 ```
 
-## Parent issue contents
+The agent does not publish every command or timer tick.
 
-The parent issue stays compact:
+### IMPLEMENTATION_PLAN
 
-- governing goal/acceptance;
-- programme relationship;
-- generated Relay section with current frontier, progress, handover-ledger link, pending/KI/offload counts and issue disposition.
+After live revalidation and before substantial material modification, publish the current plan when practical.
 
-The agent does not manually maintain the generated Relay section.
+A plan is not approval. Do not wait for Relay/coordinator permission after publishing it.
 
-## Dedicated Handover issue contents
+### PLAN_UPDATE
 
-Exactly one Handover issue is associated with each governed parent issue. Its current body is regenerated from durable relay truth and contains:
+Use only when material evidence changes the approach while the owned responsibility remains the same.
 
-- EP index and current frontier;
-- parent progress;
-- pending items from existing `PEND-*` tracked controls;
-- known issues from existing `KI-*` tracked controls;
-- EP offloads/local-helper work and their states;
-- current delivery/PR state;
-- handover/recovery-relevant event history;
-- immediate next action.
+Plan revision does not require a new EP.
 
-No duplicate pending, known-issue, offload, EP, or checkpoint authority is created.
+### TASK_EVIDENCE
 
-Historical provider comments may record synchronized handover/recovery milestones, but repository EVENTS/CHECKPOINTS remain the reconstructable basis.
+Use when an intermediate result changes reconstruction or another workstream's next action.
+
+### TASK_RESULT
+
+Use at a meaningful delivery/handoff boundary. Link exact branch/PR/base/head and validation evidence.
+
+See `agent-task-publication.md`.
+
+## EP relationship
+
+The EP records bounded task identity.
+
+In the new programme topology an EP may carry both:
+
+```text
+programme_parent
+= governing parent programme issue
+
+parent_issue
+= owned child implementation issue
+```
+
+Older EPs may have only `parent_issue`; V3.1 treats that issue as the reconstruction root for compatibility.
+
+The EP may record an initial implementation-plan basis if one existed when the EP was created, but current plan revision comes from the child-issue provider observation.
+
+Do not create a new EP merely because the plan was first published or revised.
+
+## Dedicated [Relay Handover] child
+
+Create exactly one programme operational ledger issue named:
+
+```text
+[Relay Handover] <programme>
+```
+
+The provider sync may reuse older `[Relay]` case issues for compatibility, but newly materialized issues use `[Relay Handover]`.
+
+The ledger indexes rather than duplicates:
+
+- programme basis;
+- workstream / EP / child issue;
+- implementation-plan state/ref/revision;
+- expected next observable;
+- branch/PR/exact-head material;
+- all nonterminal PRs when provider information is available;
+- pending items and known issues;
+- required production-output dependencies;
+- negative knowledge / do-not-reopen;
+- meaningful local/helper returns;
+- producer→consumer handoffs;
+- Owner decisions needed;
+- next coordinator action;
+- next useful observation.
+
+A ledger statement does not prove a production claim. Link exact durable evidence.
+
+## Programme-root versus child-task observation
+
+The programme Handover ledger is rooted at the programme parent.
+
+The current task plan may live on a child implementation issue.
+
+V3.1 therefore supports:
+
+```text
+programme parent observation
++
+optional work/child issue observation
+        ↓
+programme Handover ledger
+```
+
+The work-issue observation supplies current plan/publication context; the programme observation supplies programme basis/progress/Handover identity.
 
 ## Provider synchronization
 
-Relay performs provider synchronization after a canonical change that materially changes the parent/ledger projection.
+Provider synchronization is a reporting/reconstruction operation:
 
 ```text
-canonical relay transaction/evidence
-        ->
-regenerate HANDOVER_LEDGER + PARENT_RELAY_SUMMARY
-        ->
-apply authorized GitHub body/comment change
-        ->
-read provider state back
-        ->
-compare normalized readback
+durable V3.1 / production evidence
+→ regenerate derived Handover projection
+→ update only Relay-managed provider block
+→ read back
+→ compare normalized content
 ```
 
-Provider sync failure is a coordination/delivery problem unless the requested engineering action explicitly requires provider convergence. Do not turn a stale GitHub projection into accepted engineering truth.
+Provider sync failure is a reporting/delivery problem. It does not invalidate production work.
 
-## Parent issue upgrade protocol
+## Negative knowledge
 
-Prompt 1 may challenge the parent framing. Prompt 2 verifies current reality. Prompt 2.5 proposes one existing disposition:
+Preserve rejected approaches and accepted do-not-reopen conclusions with evidence and a reopen condition.
+
+The coordinator should consult them before dispatching a replacement agent so sessions do not repeat already-settled dead ends.
+
+## Session-loss recovery
+
+If an agent disappears:
+
+1. read the child issue;
+2. read current implementation plan;
+3. inspect EP/task snapshot;
+4. inspect branch/PR/exact head;
+5. inspect task evidence and durable tests/artifacts;
+6. determine what production consequence remains unfinished;
+7. give a successor the smallest reconstruction packet.
+
+No lease-expiry or recovery ceremony is required to make already-existing production evidence valid.
+
+V3.1 may record the executor change for history.
+
+## Coordinator observation
+
+The coordinator should reason:
 
 ```text
-NO_CHANGE
-UPDATE
-LINK
-TRANSFER
-SPLIT
-SUPERSEDE
-CLOSE
-UNKNOWN / OWNER_DECISION_REQUIRED
+EXPECTED
+what plan/evidence event should happen next?
+
+OBSERVED
+what durable evidence exists now?
+
+CONSEQUENCE
+what changes for this workstream, a consumer, the Owner, or next observation?
 ```
 
-Prompt 1/2/2.5 do not mutate the parent.
+Timers wake this observation; timers never authorize engineering.
 
-### Relay may synchronize without new Owner intent
+## Semantic programme changes
 
-Relay may update provider status when it is only reporting already-governed truth, for example:
+Only explicit Owner/programme amendments alter governing programme meaning.
 
-- acceptance/progress state;
-- current EP/lease/frontier;
-- pending/KI/offload state;
-- PR/delivery state;
-- already-authorized relationship/readback.
+When evidence changes programme outcome, ownership, shared interface semantics, or canonical source authority:
 
-### Owner authority is required
+- preserve the old basis;
+- record the new evidence;
+- update the effective amendment/disposition;
+- route affected workstreams;
+- regenerate deeper three-pass reasoning if the semantic boundary truly changed.
 
-Require direct Owner authority when the proposed change alters governing intent, including:
+Routine plan changes, commits, PR updates and tests do not automatically change programme meaning.
 
-- changing the human goal;
-- materially expanding/narrowing governing scope;
-- changing acceptance meaning rather than status;
-- transferring responsibility where ownership/goal changes;
-- superseding the governing issue;
-- closing/cancelling work despite unresolved governed obligations.
+## Non-authority invariant
 
-## Transfer to a new GitHub issue
+Missing or stale:
 
-TRANSFER preserves history.
+- implementation plan;
+- Handover ledger;
+- V3.1 projection;
+- timer;
+- coordinator report;
+- lease/checkpoint/control observation;
 
-1. Determine exact transferred scope/acceptance/pending/KI/offload references.
-2. Obtain Owner authority if the transfer changes governing intent/ownership.
-3. Create or identify the target parent issue.
-4. Ensure the target has its own dedicated Handover issue.
-5. Add typed `TRANSFERS_TO` / related lineage on the source observation and reciprocal provider context on the target.
-6. Synchronize the old Handover ledger with what moved and what remains.
-7. Seed the target Handover ledger with inherited references and provenance.
-8. Read back both provider issues.
-9. Never delete historical ownership from the source issue.
+may reduce reconstruction quality.
 
-SPLIT follows the same rule but retains governed work in both issues. SUPERSEDE moves the governing formulation itself; the old issue remains historical and points to the replacement.
+They do not block coding, invalidate material, revoke engineering responsibility, or create permission.
 
-## Abandonment robustness
+## V3.1 only
 
-The Handover ledger must be reconstructable without a final action from the disappearing agent. The next process derives EP status from durable EP/lease/checkpoint/event state. If an EP is no longer current/owned and has no accepted completion checkpoint, the projection exposes `RECOVERY_REQUIRED` rather than hiding it.
+Use Engineering Relay V3.1 only for current recording/reconstruction/reporting semantics.
 
-This projection does not itself decide process liveness; it makes loss of custody visible once canonical custody state is updated/recovered.
-
-## Custody and continuation protocol
-
-The Relay issue is a current case file, not custody authority. New native custody uses a monotonic epoch plus persisted liveness metadata. An active mutation carrying an old epoch is rejected after a successor takeover.
-
-```text
-ACTIVE epoch 17 / agent-A
-        |
-        | clean frozen handover accepted
-        v
-ACTIVE epoch 18 / agent-B / HANDOFF
-
-or
-
-ACTIVE epoch 17 / agent-A
-        |
-        | no valid handover + recovery eligible
-        v
-RECOVERY_STARTED
-        |
-        v
-ACTIVE epoch 18 / agent-B / RECOVERY
-        |
-        v
-RECOVERY_RECONSTRUCTED
-```
-
-No background monitor is required. Time-based recovery is evaluated only when takeover is requested. A platform-provided authoritative termination signal may be used in future, but silence alone is never treated as proof while a non-expired lease remains valid.
-
-`HANDOVER_PUBLISHED` means a continuation packet is available. `HANDOVER_ACCEPTED` means a successor actually assumed custody. The Relay projection may therefore expose `HANDOFF_PENDING` without claiming responsibility moved.
-
-## Continuous-improvement record
-
-A Prompt-1 challenge is persisted as a Change Delta hypothesis rather than immediately editing roadmap/provider truth. Prompt 2 supplies verification/rejection evidence, Prompt 2.5 supplies the proposed issue/roadmap disposition, and required Owner authority is recorded independently. Only the authorized reconciliation mutates the roadmap and marks the Change Delta APPLIED.
-
-This preserves:
-
-- the previous governing basis;
-- what was independently challenged;
-- verification evidence/falsifiers;
-- the proposed NO_CHANGE/UPDATE/LINK/TRANSFER/SPLIT/SUPERSEDE/CLOSE consequence;
-- who/what authorized an intent-bearing change;
-- the before/after roadmap revision and application event.
-
-The Relay issue shows the active non-applied Change Delta as current coordination information. It does not make the proposal authoritative.
-
-## Exactly one Relay case file
-
-Provider synchronization owns Relay-case-file materialization:
-
-1. read the parent issue's native sub-issues;
-2. identify matching Relay issues using the deterministic case marker/title;
-3. fail closed if more than one matches;
-4. reuse the sole existing Relay issue when present;
-5. otherwise create and attach one;
-6. render the current Relay envelope;
-7. update only Relay-managed blocks;
-8. read both issues back and persist provider readback.
-
-A transfer/split/supersession target is a new governed parent and therefore receives its own Relay issue. The source Relay issue remains historical and preserves lineage.
-
+Do not use V3 or V2.5 as live coordination, recovery, gating, handover or Owner-command protocols.

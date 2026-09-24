@@ -1,0 +1,172 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - programme
+  - owner_outcome
+  - non_goals
+  - amendment_index
+  - workstreams
+  - canonical_inputs
+  - dependencies
+  - exit_criteria
+properties:
+  schema_version:
+    const: engineering-coordinator-programme-record-v1
+  authority:
+    const: DURABLE_PROGRAMME_SPECIFICATION
+  programme:
+    type: object
+    additionalProperties: false
+    required: [id, parent_issue, basis_revision, observed_main]
+    properties:
+      id: {type: string, minLength: 1}
+      parent_issue: {type: string, minLength: 1}
+      basis_revision: {type: string, minLength: 1}
+      observed_main: {type: string, minLength: 1}
+      relay_handover_ref: {type: [string, 'null']}
+      created_at: {type: [string, 'null'], format: date-time}
+  owner_outcome:
+    type: object
+    additionalProperties: false
+    required: [outcome, why_now]
+    properties:
+      outcome: {type: string, minLength: 1}
+      why_now: {type: string, minLength: 1}
+      decisions_already_made:
+        type: array
+        items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    items: {type: string, minLength: 1}
+  amendment_index:
+    type: object
+    additionalProperties: false
+    required: [current_basis_revision, effective_amendments]
+    properties:
+      current_basis_revision: {type: string, minLength: 1}
+      effective_amendments:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [id, ref, kind, summary]
+          properties:
+            id: {type: string, minLength: 1}
+            ref: {type: string, minLength: 1}
+            kind:
+              enum: [OWNER_AMENDMENT, OWNER_DECISION, RESPONSIBILITY_TRANSFER, PROGRAMME_DISCOVERY, EVIDENCE_RECORD]
+            summary: {type: string, minLength: 1}
+            supersedes: {type: [string, 'null']}
+  workstreams:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - issue_ref
+        - outcome
+        - owns
+        - excludes
+        - consumers
+        - implementation_plan
+      properties:
+        id: {type: string, minLength: 1}
+        issue_ref: {type: string, minLength: 1}
+        outcome: {type: string, minLength: 1}
+        owns:
+          type: array
+          minItems: 1
+          items: {type: string, minLength: 1}
+        excludes:
+          type: array
+          items: {type: string, minLength: 1}
+        consumers:
+          type: array
+          items: {type: string, minLength: 1}
+        implementation_plan:
+          type: object
+          additionalProperties: false
+          required: [state]
+          properties:
+            state: {enum: [PRESENT, MISSING, STALE, UNKNOWN]}
+            ref: {type: [string, 'null']}
+            revision: {type: [integer, 'null'], minimum: 1}
+            digest: {type: [string, 'null']}
+            observed_at: {type: [string, 'null'], format: date-time}
+  canonical_inputs:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, ref, meaning, authority, kind]
+      properties:
+        id: {type: string, minLength: 1}
+        ref: {type: string, minLength: 1}
+        meaning: {type: string, minLength: 1}
+        authority: {type: string, minLength: 1}
+        kind:
+          enum: [PRODUCTION, AUTHORED, GENERATED, FIXTURE, EXTERNAL, OWNER_SUPPLIED]
+        invalidation_rule: {type: [string, 'null']}
+  dependencies:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - consumer
+        - required_output
+        - why_required
+        - satisfaction_evidence
+        - independent_work
+      properties:
+        id: {type: string, minLength: 1}
+        producer: {type: [string, 'null']}
+        consumer: {type: string, minLength: 1}
+        required_output: {type: string, minLength: 1}
+        why_required: {type: string, minLength: 1}
+        satisfaction_evidence:
+          type: array
+          items: {type: string, minLength: 1}
+        independent_work:
+          type: array
+          items: {type: string, minLength: 1}
+  exit_criteria:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, requirement, evidence_sources, responsible_workstreams]
+      properties:
+        id: {type: string, minLength: 1}
+        requirement: {type: string, minLength: 1}
+        evidence_sources:
+          type: array
+          items: {type: string, minLength: 1}
+        responsible_workstreams:
+          type: array
+          items: {type: string, minLength: 1}
+        status:
+          enum: [OPEN, PARTIAL, SATISFIED, DEFERRED, NOT_APPLICABLE]
+  preserve:
+    type: array
+    items: {type: string, minLength: 1}
+  decision_surface:
+    type: object
+    additionalProperties: false
+    properties:
+      engineer:
+        type: array
+        items: {type: string, minLength: 1}
+      coordinator:
+        type: array
+        items: {type: string, minLength: 1}
+      owner:
+        type: array
+        items: {type: string, minLength: 1}

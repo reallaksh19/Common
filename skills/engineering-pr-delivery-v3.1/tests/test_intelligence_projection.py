@@ -348,6 +348,24 @@ class IntelligenceProjectionTests(unittest.TestCase):
                     "acceptance_items": ["PI-175-02"],
                     "provider_refs": ["issue-176"],
                 }],
+                "implementation_plan": {
+                    "state": "PRESENT",
+                    "provider_ref": "github:example/repo#175/comment-9",
+                    "revision": 1,
+                    "digest": "sha256:" + ("d" * 64),
+                    "observed_at": "2026-09-22T08:55:00Z",
+                },
+                "expected_next_observable": {
+                    "statement": "Focused validation evidence on the current head.",
+                    "evidence": ["exact head", "test result"],
+                },
+                "task_publications": [{
+                    "type": "IMPLEMENTATION_PLAN",
+                    "ref": "github:example/repo#175/comment-9",
+                    "observed_at": "2026-09-22T08:55:00Z",
+                    "summary": "Agent-authored implementation plan.",
+                    "exact_head": None,
+                }],
             }
             task = build_task(root, parent_issue_observation=observation)
             self.assertEqual("DERIVED_READ_MODEL", task["authority"])
@@ -363,6 +381,13 @@ class IntelligenceProjectionTests(unittest.TestCase):
             self.assertEqual(1, task["parent_issue_progress"]["summary"]["complete"])
             self.assertEqual(1, task["parent_issue_progress"]["summary"]["pending"])
             self.assertEqual("COMPLETE", task["current_task_progress"]["checklist"][0]["state"])
+            self.assertEqual("PRESENT", task["planning"]["state"])
+            self.assertEqual("github:example/repo#175/comment-9", task["planning"]["provider_ref"])
+            self.assertEqual(
+                "Focused validation evidence on the current head.",
+                task["planning"]["expected_next_observable"]["statement"],
+            )
+            self.assertEqual("IMPLEMENTATION_PLAN", task["task_publications"][0]["type"])
 
     def test_evidence_only_checkpoint_does_not_fake_capability_progress(self):
         with tempfile.TemporaryDirectory() as td:

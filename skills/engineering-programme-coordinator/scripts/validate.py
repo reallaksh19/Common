@@ -13,6 +13,8 @@ SCHEMAS = {
     "local-coordinator-return",
     "coordination-observation",
     "owner-coordination-report",
+    "programme-record",
+    "relay-handover",
 }
 
 
