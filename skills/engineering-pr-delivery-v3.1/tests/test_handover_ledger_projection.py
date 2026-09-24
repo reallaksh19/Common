@@ -246,6 +246,16 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             }
             work["implementation_plan"]["provider_ref"] = "github:example/repo#1772/comment-20"
             work["implementation_plan"]["revision"] = 1
+            work["implementation_plan"]["responsibility_basis_ref"] = "github:example/repo#1772"
+            work["implementation_plan"]["responsibility_basis_digest"] = DIGEST
+            work["delivery"] = {
+                "pr": 237,
+                "url": "https://github.com/example/repo/pull/237",
+                "lifecycle": "REVIEW_READY",
+                "base": "base-sha",
+                "head": "head-sha",
+                "mergeability": "MERGEABLE",
+            }
             work["task_publications"] = [
                 {
                     "type": "IMPLEMENTATION_PLAN",
@@ -273,6 +283,18 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 "github:example/repo#1772/comment-20",
                 row["implementation_plan"]["provider_ref"],
             )
+            self.assertEqual(
+                DIGEST,
+                row["implementation_plan"]["responsibility_basis_digest"],
+            )
+            self.assertEqual("OPEN", row["provider_issue_state"])
+            self.assertEqual("REVIEW_READY", row["delivery"]["lifecycle"])
+            self.assertEqual(237, row["delivery"]["pr"])
+            self.assertEqual("base-sha", row["delivery"]["base"])
+            self.assertEqual("head-sha", row["delivery"]["head"])
+
+            body = render_ledger(ledger)
+            self.assertIn("| OPEN | REVIEW_READY | #237 | base-sha | head-sha |", body)
 
 
 if __name__ == "__main__":
