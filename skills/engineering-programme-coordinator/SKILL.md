@@ -243,6 +243,23 @@ A dependency describes missing production truth, not permission.
 
 A Work Order is outcome-oriented and substantial.
 
+For an engineering workstream, the first useful durable observable is normally the **agent-authored implementation plan** on the owned child issue. The coordinator should expect it, but must not treat its absence as a production stop.
+
+After the plan exists, the coordinator should watch the plan's own `EXPECTED NEXT OBSERVABLE` rather than inventing heartbeat milestones.
+
+Task publications that matter to the coordinator are:
+
+```text
+IMPLEMENTATION_PLAN
+PLAN_UPDATE
+TASK_EVIDENCE
+TASK_RESULT
+```
+
+Routine commands, file reads, test retries and chat updates stay out of programme coordination.
+
+
+
 It carries:
 
 ```text
