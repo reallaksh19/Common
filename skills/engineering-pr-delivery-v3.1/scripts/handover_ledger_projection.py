@@ -313,7 +313,13 @@ def build(
         current_work_observation = work_issue_observation
 
     task_observation = current_work_observation if observation_is_programme else parent_issue_observation
-    task = build_task(root, base_ref, task_observation)
+    programme_observation = parent_issue_observation if observation_is_programme else None
+    task = build_task(
+        root,
+        base_ref,
+        task_observation,
+        programme_observation,
+    )
     parent = (
         _parent_from_observation(parent_issue_observation)
         if observation_is_programme
