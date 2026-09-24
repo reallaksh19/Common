@@ -1,0 +1,66 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - observed_at
+  - reporting_mode
+  - what_changed
+  - workstreams
+  - cross_workstream
+  - local_coordination
+  - uncertainties_risks
+  - needs_you
+  - next_observation
+properties:
+  schema_version:
+    const: engineering-coordinator-owner-report-v1
+  authority:
+    const: DERIVED_OWNER_COORDINATION_REPORT
+  observed_at:
+    type: string
+    format: date-time
+  reporting_mode:
+    enum: [SEMANTIC_DELTA, CADENCED]
+  what_changed:
+    type: array
+    items: {type: string, minLength: 1}
+  workstreams:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, expected, observed, consequence]
+      properties:
+        id: {type: string, minLength: 1}
+        expected: {type: string}
+        observed: {type: string}
+        consequence: {type: string}
+  cross_workstream:
+    type: object
+    additionalProperties: false
+    required: [new_dependencies, satisfied_dependencies, conflicts]
+    properties:
+      new_dependencies:
+        type: array
+        items: {type: string, minLength: 1}
+      satisfied_dependencies:
+        type: array
+        items: {type: string, minLength: 1}
+      conflicts:
+        type: array
+        items: {type: string, minLength: 1}
+  local_coordination:
+    type: array
+    items: {type: string, minLength: 1}
+  uncertainties_risks:
+    type: array
+    items: {type: string, minLength: 1}
+  needs_you:
+    type: array
+    items: {type: string, minLength: 1}
+  next_observation:
+    type: string
+  note:
+    type: [string, 'null']

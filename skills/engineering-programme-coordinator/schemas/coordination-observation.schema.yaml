@@ -1,0 +1,224 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - observed_at
+  - source_freshness
+  - workstreams
+  - cross_workstream
+  - semantic_boundary
+  - owner
+  - next_observation
+properties:
+  schema_version:
+    const: engineering-coordinator-observation-v1
+  authority:
+    const: DERIVED_COORDINATION_VIEW
+  observed_at:
+    type: string
+    format: date-time
+  source_freshness:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [source, observed_at]
+      properties:
+        source: {type: string, minLength: 1}
+        observed_at: {type: string, format: date-time}
+        ref: {type: [string, 'null']}
+        digest: {type: [string, 'null']}
+  workstreams:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - issue_ref
+        - plan
+        - expected
+        - observed
+        - consequence
+        - plan_conformance
+        - dependencies
+        - helper_recommendation
+        - evidence
+        - uncertainties
+        - suggestions
+      properties:
+        id: {type: string, minLength: 1}
+        issue_ref: {type: string, minLength: 1}
+        plan:
+          type: object
+          additionalProperties: false
+          required: [state]
+          properties:
+            state:
+              enum: [PRESENT, MISSING, STALE, UNKNOWN]
+            ref: {type: [string, 'null']}
+            revision: {type: [integer, 'null'], minimum: 1}
+            digest: {type: [string, 'null']}
+            observed_at: {type: [string, 'null'], format: date-time}
+        expected:
+          type: object
+          additionalProperties: false
+          required: [description, evidence]
+          properties:
+            description: {type: string, minLength: 1}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+        observed:
+          type: object
+          additionalProperties: false
+          required: [summary, evidence]
+          properties:
+            summary: {type: string}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+        consequence:
+          type: string
+        plan_conformance:
+          enum:
+            - ALIGNED
+            - MINOR_DEVIATION
+            - MATERIAL_DEVIATION
+            - PLAN_STALE
+            - PLAN_CONTRADICTED
+            - INSUFFICIENT_EVIDENCE
+        dependencies:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - required_output
+              - state
+              - why_required
+              - evidence
+              - independent_work
+            properties:
+              producer: {type: [string, 'null']}
+              required_output: {type: string, minLength: 1}
+              state:
+                enum: [SATISFIED, MISSING, UNCERTAIN, DISCOVERED, SUPERSEDED]
+              why_required: {type: string, minLength: 1}
+              evidence:
+                type: array
+                items: {type: string, minLength: 1}
+              independent_work:
+                type: array
+                items: {type: string, minLength: 1}
+        helper_recommendation:
+          type: object
+          additionalProperties: false
+          required: [recommended, reason, purpose]
+          properties:
+            recommended: {type: boolean}
+            reason: {type: [string, 'null']}
+            purpose: {type: [string, 'null']}
+            mode:
+              type: [string, 'null']
+              enum: [PROBE_VALIDATE, BOUNDED_IMPLEMENTATION, INTERACTIVE_ASSISTANCE, null]
+        evidence:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [ref, scope, promotion_required]
+            properties:
+              ref: {type: string, minLength: 1}
+              scope:
+                enum: [LOCAL_ONLY, SHARED_DURABLE]
+              promotion_required:
+                type: boolean
+              note: {type: [string, 'null']}
+        uncertainties:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [kind, statement]
+            properties:
+              kind:
+                enum: [OPEN_QUESTION, RISK, FALSIFIER_IN_FLIGHT, UNKNOWN]
+              statement: {type: string, minLength: 1}
+              evidence:
+                type: array
+                items: {type: string, minLength: 1}
+        suggestions:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+              - target
+              - reason
+              - action
+              - owner_required
+              - affected_workstreams
+              - evidence
+            properties:
+              target: {type: string, minLength: 1}
+              reason: {type: string, minLength: 1}
+              action: {type: string, minLength: 1}
+              urgency: {type: [string, 'null']}
+              owner_required: {type: boolean}
+              affected_workstreams:
+                type: array
+                items: {type: string, minLength: 1}
+              evidence:
+                type: array
+                items: {type: string, minLength: 1}
+  cross_workstream:
+    type: object
+    additionalProperties: false
+    required:
+      - newly_discovered_dependencies
+      - satisfied_dependencies
+      - conflicting_assumptions
+      - overlapping_ownership
+    properties:
+      newly_discovered_dependencies:
+        type: array
+        items: {type: string, minLength: 1}
+      satisfied_dependencies:
+        type: array
+        items: {type: string, minLength: 1}
+      conflicting_assumptions:
+        type: array
+        items: {type: string, minLength: 1}
+      overlapping_ownership:
+        type: array
+        items: {type: string, minLength: 1}
+  semantic_boundary:
+    type: object
+    additionalProperties: false
+    required: [changed, reason]
+    properties:
+      changed: {type: boolean}
+      reason: {type: [string, 'null']}
+  owner:
+    type: object
+    additionalProperties: false
+    required: [decisions_needed, material_risks]
+    properties:
+      decisions_needed:
+        type: array
+        items: {type: string, minLength: 1}
+      material_risks:
+        type: array
+        items: {type: string, minLength: 1}
+  next_observation:
+    type: object
+    additionalProperties: false
+    required: [reason, expected_evidence]
+    properties:
+      reason: {type: string}
+      expected_evidence:
+        type: array
+        items: {type: string, minLength: 1}
