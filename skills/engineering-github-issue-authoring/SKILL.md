@@ -1,17 +1,17 @@
 ---
 name: engineering-github-issue-authoring
-description: Create implementation-grade GitHub engineering issues from live repository truth. Supports single issues and multi-agent program issue sets with an immutable parent Owner/common-custody contract, exclusive work-package child issues, revision child issues, relay-chain interoperability, overlap prevention, source/input and benchmark/validation custody, anti-drift gates, code-ready guidance, and five human-like implementation qualification questions requiring hand calculation or exact reconstruction.
+description: Create implementation-grade GitHub engineering issues from live repository truth. Supports a durable parent programme specification, Owner-authorized amendment chronology, a dedicated non-authoritative [Relay Handover] operational ledger, bounded child implementation issues, parallel-focused issues, revision/integration issues, explicit producer-consumer contracts, falsifiers, exact evidence, and V3.1 recorder-first interoperability without engineering permission gates.
 ---
 
 # Engineering GitHub Issue Authoring
 
 ## 1. Purpose
 
-Turn an Owner request into a durable implementation work order that survives multiple agents and revisions without losing original intent, common inputs, benchmark/oracle authority, validation criteria, roadmap bindings, or overlap ownership.
+Turn an Owner request into a durable programme specification and bounded engineering issue set that survives multiple agents, revisions and session loss without losing human intent, source truth, ownership, producer-consumer relationships, evidence, negative knowledge or current operational context.
 
-Reference quality: `reallaksh19/Advanced_Analysis#1371` for depth and implementation specificity. Do not copy its product-specific facts into another task unless the live target repository independently supports them.
+Reference quality: `reallaksh19/Advanced_Analysis#1371` for engineering depth and `XML_Compare_Utilities#980` for reuse/ownership clarity. Reuse their durable engineering intelligence, not their qualification or blocking machinery.
 
-This skill interoperates with `engineering-pr-delivery-v2`. Authoring defines the durable GitHub work topology; relay-v2 governs execution/takeover/custody of each material work item.
+This skill interoperates with **Engineering Relay V3.1 only**. V3.1 records/reconstructs reality; it does not grant engineering permission. Do not use V3 or V2.5 for live issue topology, gating, takeover, recovery, status, handover or Owner-command semantics.
 
 ## 2. Trigger phrases
 
@@ -42,7 +42,7 @@ existing tests / validation scripts
 input/source fixtures
 benchmark/oracle definitions
 open PRs/WIPs/claims that can overlap
-live Common engineering-pr-delivery-v2 for engineering-critical issue work
+live Common engineering-pr-delivery-v3.1 when Relay context is useful; never V3 or V2.5 for current semantics
 ```
 
 Reference issues are depth/style examples, not automatically current engineering authority.
@@ -53,9 +53,12 @@ Record internally:
 
 ```text
 ISSUE_TOPOLOGY: SINGLE_ISSUE | PROGRAM_ISSUE_SET
+CHILD_PROFILE: WORK_PACKAGE | PARALLEL_FOCUSED | REVISION | INTEGRATION | RELAY_HANDOVER
 ```
 
-Use `PROGRAM_ISSUE_SET` when the work is expected to require multiple coherent PRs/agents/revisions, independent authority domains, shared input/benchmark/validation custody, integration work, or material sibling-overlap control. Owner-requested parent/sub-issues is an explicit program trigger.
+Use `PROGRAM_ISSUE_SET` when the work has multiple meaningful workstreams/agents, shared source truth, producer-consumer relationships, integration work, or a durable programme outcome that must survive several PRs.
+
+Use `PARALLEL_FOCUSED` for bounded independent work such as a falsifier, stale expectation, source-derived oracle correction, guardrail debt or focused integration finding. Do not inflate those issues into heavyweight work packs.
 
 Do not split a naturally atomic task just to increase issue count.
 
@@ -90,18 +93,25 @@ For complicated multi-agent work, use:
 
 ```text
 PARENT / PROGRAM ISSUE
-  ├─ WORK_PACKAGE child WP-001
-  ├─ WORK_PACKAGE child WP-002
-  ├─ WORK_PACKAGE child WP-003
-  ├─ REVISION child of completed WP-001 when later material revision is required
-  └─ INTEGRATION/VALIDATION child when cross-package closure is required
+  = governing human/programme contract
+  + durable Programme Specification
+
+  ├─ [Relay Handover] child
+  │    = current operational ledger / reconstruction index
+  │
+  ├─ WORK_PACKAGE or PARALLEL_FOCUSED child
+  ├─ WORK_PACKAGE or PARALLEL_FOCUSED child
+  ├─ REVISION child when completed work is materially revised
+  └─ INTEGRATION/VALIDATION child when cross-workstream closure is required
 ```
+
+Owner-authorized comments/amendments on the parent preserve semantic changes, transfers, decisions and evidence chronology. The parent should maintain a compact effective-amendment index so a coordinator does not need to replay all comments to reconstruct current programme meaning.
 
 ### Parent/program issue
 
 Use `references/program-issue-template.md`.
 
-The parent is the durable Owner/common-custody contract and owns stable ledgers:
+The parent is the durable **Programme Specification + Coordination Record** and owns stable programme semantics:
 
 ```text
 TASK-### original Owner requirements
@@ -109,8 +119,11 @@ RM-###   Owner/other roadmap bindings
 INPUT-### common input/source authority
 BM-###    common benchmark/oracle authority
 VAL-###   common validation criteria
-work-package partition/dependency registry
-program-level exclusions / Definition of Done / integration gates
+workstream ownership registry
+producer/consumer output contracts
+dependency contracts expressed as required production outputs
+programme exclusions / invariants / exit criteria
+effective Owner/programme amendment index
 ```
 
 Version common sets explicitly:
@@ -129,13 +142,13 @@ Children may reference these rows; they may not silently redefine, omit, re-base
 
 Use `references/work-package-issue-template.md`.
 
-Each child is one bounded material-write partition with its own GitHub `WORK_ITEM_KEY`, relay-v2 chain, exclusive current agent instance, explicit owned domains/paths, dependencies, and inherited common-set IDs.
+Each child is one bounded engineering responsibility with explicit ownership boundary, canonical inputs, producer/consumer contract, real production dependencies, falsifier, success oracle, implementation plan and expected handoff. A write fence is a conflict-avoidance/ownership boundary, not execution permission. Use `references/parallel-focused-issue-template.md` for small parallel workstreams.
 
 ### Revision child
 
 A later material revision of a completed/frozen child gets a new `REVISION` issue linked to the predecessor and carrying the same `PARTITION_KEY` plus `REVISION_SEQUENCE`.
 
-Do **not** create a new issue merely because the current agent is replaced while an unfinished child remains active. That is a relay-v2 takeover on the same child/chain.
+Do **not** create a new issue merely because the current agent is replaced while an unfinished child remains active. That is a V3.1 takeover on the same child/chain.
 
 ## 7. Parent-child inheritance contract
 
@@ -162,43 +175,46 @@ USES_VALIDATION_ROWS:
 
 A child can add local rows for genuinely child-specific data, but parent common rows retain their IDs/meaning/authority. If parent common authority is wrong/stale, stop and revise the parent program basis rather than fixing it locally.
 
-## 8. Partition and overlap gate before child creation
+## 8. Ownership / overlap observation before child creation
 
-Every work package must state:
+Every child should state:
 
 ```text
-OWNED_AUTHORITY_DOMAINS
-OWNED_PATHS_OR_COMPONENTS
+OWNED_RESPONSIBILITY
+OWNED_PATHS_OR_COMPONENTS where useful
 READ_DEPENDENCIES
-PROTECTED_SIBLING_DOMAINS
-DEPENDENCY_PREDECESSORS
+NEIGHBOURING_OWNERS
+POTENTIAL_SHARED_SURFACES
 ```
 
-Compare against planned/active sibling issues and open PR/WIP claims. Classify:
+Compare planned/active siblings and open PRs. Report:
 
 ```text
-SAFE_DISJOINT
-SAFE_SERIALIZED
-COORDINATION_REQUIRED
-BLOCKED_ACTIVE_SIBLING
+DISJOINT
+MAY_CONFLICT
+SHARED_INTEGRATION_SURFACE
 UNKNOWN
 ```
 
-`BLOCKED_ACTIVE_SIBLING` or `UNKNOWN` must not be authored as immediately write-ready.
+This is coordination information, not a write-authority gate.
 
-Read overlap is not write ownership. Shared writes require one explicit integration/serialization owner.
+Read overlap is normal. Shared file edits may be handled through isolated branches/worktrees and integration. Escalate only when concurrent work would create a genuine semantic/interface conflict that cannot be safely reconciled locally.
 
-## 9. Two-pass program creation
+## 9. Program creation sequence
 
 When actual issue creation is requested:
 
-1. Draft/audit the parent and partition registry with stable `PROGRAM_ID`, `WP-*`, `TASK-*`, `INPUT-*`, `BM-*`, `VAL-*`, `RM-*` IDs.
+1. Draft/audit the parent Programme Specification with stable `PROGRAM_ID`, basis revision, Owner outcome, canonical inputs, workstream registry, producer/consumer contracts, dependency contracts and programme exit criteria.
 2. Create the parent issue.
-3. Resolve `PROGRAM_WORK_ITEM_KEY = github:<owner>/<repo>#<parent>`.
-4. Create each child issue with exact parent key/common-set inheritance and bounded partition.
-5. Where native GitHub sub-issue linking is available through the execution environment, register it; otherwise keep explicit parent/child links and parent work-package registry.
-6. Publish/update a mutable parent program-status projection containing child issue numbers, chain/PR state, dependencies and overlap status. Do not rewrite the original Owner contract for operational churn.
-7. Do not activate a blocked-overlap child.
+3. Resolve the parent GitHub reference.
+4. Create one dedicated child issue titled `[Relay Handover] <programme title>` using the coordinator's Handover template.
+5. Create bounded child issues with `WORK_PACKAGE` or `PARALLEL_FOCUSED` profiles as appropriate.
+6. Record each child in the parent workstream registry.
+7. Put agent-authored implementation plans in the child issue/comment once available; plan absence is visible but never an execution gate.
+8. Use PRs/commits/tests/artifacts as material truth and carry every nonterminal PR in the Handover ledger.
+9. Maintain current operational context in the Handover child rather than rewriting the parent contract for ordinary churn.
+10. Use Owner-authorized parent amendments for real semantic changes; update the effective-amendment index.
+11. Use V3.1 only for recorder/reconstruction/reporting semantics when needed.
 
 ## 10. Ground truth at issue creation
 
@@ -287,12 +303,12 @@ Every issue requires:
 8. never invent hidden engineering defaults;
 9. if an issue assumption is obsolete, prove it and correct the plan within Owner intent instead of implementing stale work;
 10. Owner roadmap mutation and merge remain separately Owner-controlled;
-11. for program children, parent basis/common-set drift blocks further material mutation until reconciled;
-12. active sibling partition/write overlap blocks material authority.
+11. parent/common-set drift must be made visible and reconciled where it affects engineering meaning, but stale coordination metadata alone never blocks production;
+12. active sibling overlap is reported and coordinated according to actual semantic/file conflict; it is not an automatic permission denial.
 
 ## 16. Five human-like implementation questions
 
-Every material implementation/revision child and every single implementation issue ends with exactly five questions under `# Appendix A — implementation qualification`.
+For complex/engineering-critical issues, use five implementation questions when they materially improve problem understanding, falsification or exact reconstruction. They are reasoning aids, **not qualification or permission gates**. Focused parallel issues do not need five questions unless the task genuinely benefits from them.
 
 Read `references/implementation-question-standard.md`.
 
@@ -310,7 +326,7 @@ For numerical engineering, at least two questions require real hand calculations
 
 The parent program issue may carry Owner qualification baseline questions, but child questions must be tailored to the child partition and may not downgrade inherited Owner technical obligations.
 
-## 17. Relay-v2 interoperability
+## 17. Relay V3.1 interoperability — recorder-first
 
 For each child/revision issue, relay state binds:
 
@@ -331,7 +347,7 @@ INHERITED_VALIDATION_SET_ID:
 INHERITED_ROADMAP_SET_ID:
 ```
 
-The parent program is not a shared multi-writer production chain. Each material child owns its own canonical chain. Takeover of unfinished child stays on that chain; revision of frozen work uses a revision child/new chain.
+The parent programme and Handover issue are not execution-authority stores. V3.1 may record/reconstruct child material and handoffs, but its lease/custody/checkpoint/control data are advisory. Useful production evidence remains valid regardless of coordinator freshness.
 
 ## 18. Quality audit before issue creation
 
@@ -344,7 +360,7 @@ Verify at minimum:
 [ ] Owner/roadmap/source authority explicit
 [ ] INPUT/BM/VAL/RM ledgers itemized where applicable
 [ ] program common sets versioned for multi-agent work
-[ ] child partitions/dependencies/overlap classified
+[ ] child ownership, consumers, dependencies and potential overlap recorded
 [ ] children inherit exact common-set IDs and parent TASK rows
 [ ] production path traced
 [ ] minimum-to-code skeleton exists where coding is expected
@@ -352,11 +368,11 @@ Verify at minimum:
 [ ] PASS/FAIL/NOT_RUN concrete
 [ ] independent oracle separated from product regression
 [ ] negative tests/falsifiers exist
-[ ] anti-drift and sibling-overlap gates explicit
+[ ] anti-drift/falsifiers and sibling-conflict observations explicit without becoming permission gates
 [ ] revision links predecessor evidence when applicable
-[ ] exactly five implementation questions for material child/single issue
+[ ] five implementation questions included only where they materially improve a complex/critical task
 [ ] >=2 hand-calculation questions for numerical engineering
-[ ] relay-v2 linkage fields present for program children
+[ ] V3.1 linkage fields present for program children
 ```
 
 Run `scripts/validate_issue_workorder.py` on drafts when a repository-capable environment is available. Structural PASS never substitutes for engineering review.
