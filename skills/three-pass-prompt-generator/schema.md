@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -222,7 +222,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -246,7 +246,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-22-R10`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-24-R11`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -1965,168 +1965,199 @@ Delivery mechanics come after this decision.
 
 ---
 
-# STEP 0.5 — BUILD PROMPT 0.5 FROM THE PROGRAMME-LEVEL BLIND REFERENCE
+# STEP 0.5 — BUILD PROMPT 0.5 FROM STABLE PROGRAMME TRUTH
 
-Prompt 0.5 is the first independent-thinking pass and deliberately works at a wider aperture than Prompt 1.
+Prompt 0.5 is the first independent-thinking pass. Its unit of thought is **programme contribution**.
+
+The generator should do the difficult classification work privately. The downstream agent should receive a small amount of stable truth and enough empty space to exercise judgement.
 
 Allowed inputs to Prompt 0.5:
 
 ```text
-ORIGINAL ROADMAP / LARGE-PROJECT GOAL
-GOVERNING ISSUE
-GOVERNING ISSUE ROLE
-LOCAL TASK CONTEXT — purpose/scope only, 2–5 lines
-HUMAN OUTCOME
-GENUINE CONSTRAINTS
-domain facts independent of today's implementation
-PROGRAMME IMAGINATION OBJECT
+ORIGINAL ROADMAP / DURABLE PROGRAMME OUTCOME
+GOVERNING ISSUE / AREA RESPONSIBILITY
+OWNERSHIP / NON-GOAL BOUNDARY
+AFFECTED HUMAN OR SYSTEM at a high level
+LOCAL TASK PURPOSE — one or two sentences only
+GENUINE DOMAIN / HUMAN / SAFETY / PLATFORM CONSTRAINTS
+explicit user-authored outcome requirements that survive solution erasure
 ```
 
-Forbidden inputs to Prompt 0.5 unless independently justified as genuine constraints:
+May be included only when needed to make the programme statement meaningful:
 
 ```text
-current PR/branch state
-current task status
-commit counts / changed-file counts / CI telemetry
-current implementation
-current proposed answer
-current acceptance checklist
-current work sequence
-present blockers
-current roadmap status/progress
-repository architecture or internal abstraction names
+parent/sibling existence for ownership context
+a stable external dependency contract
+one representative witness when the programme description would otherwise be empty
 ```
 
-Prompt 0.5 must form a broad independent opinion about what the project → governing-issue → local-task chain should make possible before meeting today's answer.
+Forbidden inputs to Prompt 0.5 unless they are independently established as genuine constraints:
+
+```text
+current PR/branch/task status
+commit counts / changed-file counts / CI telemetry
+current implementation or architecture
+current proposed answer/options
+current acceptance checklist
+current work sequence
+current roadmap decomposition or progress state
+present blockers
+previous agent conclusions
+active work by other agents
+repository-internal abstraction names
+```
+
+Prompt 0.5 should create **one clean step backward**, not a strategy framework.
+
+Its central cognitive invitation is:
+
+> Given where the programme is trying to go, what does this area actually need to contribute?
+
+It may add at most two natural tensions:
+
+- Is the local task only one possible instrument for that contribution?
+- Is there one assumption, simplification or missing contribution that would materially change how this responsibility should be understood?
+
+Do not require a fixed number of opportunities, hypotheses, risks, missing capabilities or reframings. Non-obvious value must be consequential, not quota-driven.
+
+Prompt 0.5 succeeds when it changes the agent's viewpoint, not when it produces a large inventory.
 
 ---
 
-# STEP 1 — BUILD PROMPT 1 ONLY FROM THE BLIND REFERENCE
+# STEP 1 — BUILD PROMPT 1 INDEPENDENTLY FROM THE SAME STABLE TRUTH
 
-This is the most important construction rule.
+Prompt 1 is a second independent view, not an elaboration of Prompt 0.5.
+
+Its unit of thought is **situated capability / judgement**: what excellent handling of this exact responsibility requires when confronted with the real person, system, case or decision.
+
+Prompt 1 may share stable truth with Prompt 0.5, but it MUST NOT receive Prompt 0.5's newly inferred hypotheses, reframings, conclusions or proposed missing capabilities.
 
 Allowed inputs to Prompt 1:
 
 ```text
-PROGRAMME-LEVEL INDEPENDENT PICTURE distilled from Prompt 0.5
-GOVERNING ISSUE and GOVERNING ISSUE ROLE
-LOCAL TASK CONTEXT — purpose/scope only
-USER-REQUESTED LEVEL
-TARGET TITLE / SURFACE when it is itself part of the requested human problem
-TARGET ANCHORS
-ISSUE TASK CONTRACT for ISSUE_TASK
-PROBLEM KERNEL
-PROBLEM WITNESS for ISSUE_TASK when one exists
-INDEPENDENT WORK PRODUCT for ISSUE_TASK when a witness is selected
-UNDERLYING HUMAN PROBLEM
-HUMAN OUTCOME
+one-sentence durable programme destination
+GOVERNING ISSUE / AREA RESPONSIBILITY
+OWNERSHIP / NON-GOAL BOUNDARY
+WHY-NOW premise when identity-bearing
+LOCAL TASK PURPOSE
+RESPONSIBLE ACTOR / PERSON / SYSTEM
+concrete job, decision or outcome
 GENUINE CONSTRAINTS
-EXPERTISE
-IMAGINATION OBJECT
-domain facts that are genuinely independent of the current implementation
+user-authored outcome requirements that survive solution erasure
+raw PROBLEM WITNESS when a real discriminating witness exists
+reported witness result only as a claim to reproduce/falsify
+domain facts independent of today's implementation
 ```
 
-Forbidden inputs to Prompt 1 unless independently justified as genuine constraints:
+Forbidden inputs to Prompt 1 unless independently established as genuine constraints:
 
 ```text
+Prompt 0.5 speculative conclusions or hypotheses
 CURRENT ARTIFACT FORM
 CURRENT STATED ANSWER / IMPLEMENTATION
 CURRENT-STATE FACTS
-CURRENT ANSWER QUARANTINE
-repository structure
-existing abstraction names
-current schemas
-current architecture
-issue checklist
-current roadmap
-file names
-PR numbers
-present blockers
-current decision list
-current solution vocabulary
+repository structure / file names / PR numbers
+existing abstraction names / schemas / current architecture
+current issue checklist or roadmap decomposition
+present blockers / current decision list
+current solution vocabulary / candidate architectures
+previous agent conclusions
+active work by other agents
+current interpretation of the witness
 ```
 
-The purpose is to let the future agent **have an opinion before meeting today's answer**.
+The purpose is to let Prompt 1 arrive at a materially different local framing from Prompt 0.5 when the real problem warrants one.
 
-Prompt 0.5 supplies the wider project-level independent picture. Prompt 1 must narrow from that picture into the governing issue and local task rather than restarting from the latest PR/task status.
-
-For task/issue targets, recover the human intention underneath the work item.
+For task/issue targets, recover the human intention underneath the work item without erasing issue identity.
 
 Examples:
 
 ```text
 "Add three matrix rungs and capability mappings"
 → not "imagine an excellent matrix"
-→ imagine how a learner stuck on a real question should be connected
-   to reusable knowledge, prerequisites and teaching
+→ understand what the learner/system actually needs this responsibility to make possible
 
 "Maintain this open-items register"
 → not "imagine an excellent register"
-→ imagine how a competent successor should determine what genuinely remains,
-   what is decision versus executable work, and what should happen next
+→ understand how a competent successor should determine what genuinely remains
 
 "Fix 900-page scrolling"
 → not "imagine a 900-page mode"
-→ imagine what working with a very large document should feel like and
-   what must remain responsive
+→ understand what continuous, trustworthy interaction must survive under demanding document workloads
 ```
 
-The generator itself enforces blindness by controlling what information is allowed into Prompt 1.
+When a real witness exists, use this transfer pattern:
 
-**Do not make Prompt 1 talk about that enforcement.**
+```text
+work the concrete case
+→ understand what is actually difficult or consequential
+→ change one material feature / compare a nearby real case
+→ ask what still has to be true
+```
+
+This protects against turning one example into a special-case feature.
+
+If no honest discriminating witness exists, do not invent one.
+
+The generator enforces blindness and specificity by selecting the inputs. The downstream agent should not be asked to reason about the protocol itself.
 
 # PROMPT 0.5 — IMAGINE FROM PROGRAMME
 
-Generate a self-contained **independent-thinking prompt at the broader project level**.
+Generate a self-contained prompt that feels like a thoughtful human invitation, not a reasoning framework.
 
-Prompt 0.5 must reason in this order:
+Give the agent:
+
+- the durable programme destination;
+- this area's governing responsibility;
+- the ownership boundary;
+- high-level beneficiary/system context;
+- genuine constraints;
+- the local task purpose in one or two subordinate sentences.
+
+Then invite the agent to stand at programme level and ask essentially:
+
+> **Given where the programme is trying to go, what does this area actually need to contribute?**
+
+Treat the local task as one possible instrument, not as the definition of the need.
+
+Where the situation genuinely supports it, invite one consequential simplification, missing contribution or assumption worth testing. Do not demand novelty and do not enumerate candidate architecture.
+
+Use natural project/domain language. Avoid visible methodology vocabulary.
+
+Prompt 0.5 should normally end with natural prose plus only this small carry-forward capsule:
 
 ```text
-ORIGINAL ROADMAP / LARGE-PROJECT GOAL
-→ GOVERNING ISSUE in service of that goal
-→ ONGOING OR LAST LOCAL TASK as only a short subordinate slice
+CONTRIBUTION
+What this area really needs to contribute.
+
+CONSEQUENTIAL QUESTION / REFRAME
+The single most important question, simplification or assumption worth examining more closely, if one emerged.
+
+BOUNDARY
+What responsibility should not expand.
 ```
 
-The ordering is mandatory. The local task is context, not the destination.
-
-Prompt 0.5 must be generated from the blind reference, not from current PR/task status or implementation choices. Give the future agent enough stable context to understand the original project destination, the governing issue's responsibility, and a 2–5 line description of the local task's purpose. Do not give branch/PR status, current solution details, current acceptance checklist, current work sequence, or inherited proposed answer.
-
-Make the future agent think independently about the **larger value** of this chain. It should ask, in project/domain language:
-
-- If the large-project goal were served exceptionally well, what capability or human outcome would exist?
-- What must the governing issue contribute to that destination, regardless of today's local implementation?
-- What important opportunity, missing capability, simplification, risk, or wrong assumption may be invisible when attention starts from the latest task?
-- Is the local task actually the right expression of the governing issue's need, or only one possible instrument?
-- What would a strong successor notice from the project level that someone staring at the latest PR could miss?
-- What project-level hypothesis is worth carrying down into the issue-level Prompt 1?
-
-Prompt 0.5 must end with a concise **PROGRAMME-LEVEL INDEPENDENT PICTURE** containing:
-- the large-project outcome that matters;
-- the governing issue's role in achieving it;
-- 2–4 non-obvious project/issue-level value hypotheses or reframings;
-- the local task in only a few lines, explicitly subordinate to those larger goals;
-- assumptions or questions that Prompt 1 should examine at tighter resolution.
-
-Prompt 0.5 is imaginative and independent. It is not a repository-status report, PR summary, or factual orientation pass.
+Prompt 0.5 is imaginative and independent. It is not a repository-status report, PR summary, roadmap checklist or factual orientation pass.
 
 ---
 
 # PROMPT 1 — IMAGINE
 
-Generate a self-contained first-principles prompt from the **BLIND REFERENCE only**.
+Generate a self-contained independent prompt from the stable local problem truth only.
 
-Prompt 1 is the **more local independent-thinking pass**. Start from the governing issue, then reason down into the local task / concrete witness. Use Prompt 0.5's broader project-level hypotheses as context to challenge the local framing, but do not convert Prompt 1 into a project-wide redesign.
+Prompt 1 is the **deep encounter with the exact responsibility**. It does not inherit Prompt 0.5's inferred conclusions.
 
-It should begin from the strongest available concrete footing:
+The prompt should feel as though a capable practitioner has been placed directly into the situation and asked to exercise judgement.
 
-- for ISSUE_TASK with a usable PROBLEM WITNESS: the real case/object and the practitioner who must work it;
-- otherwise: the underlying human problem;
-- the intended human outcome;
+Start from the strongest honest footing available:
+
+- the exact responsibility and why-now situation;
+- the responsible actor, person or system;
+- the concrete job/decision/outcome;
 - genuine constraints;
-- relevant domain realities;
-- the required expertise.
+- a real discriminating witness when one exists.
 
-When a witness exists, prefer verbs such as:
+When a witness exists, prefer substantive verbs such as:
 
 ```text
 calculate
@@ -2140,183 +2171,123 @@ explain
 work the case
 ```
 
-over:
+rather than generic invitations to "consider" or "discuss".
 
-```text
-consider
-discuss
-imagine principles
-think about
-```
-
-Prompt 1 should make the future agent **do the substantive work** that reveals the issue.
-
-Prompt 1 must **not mention** repositories, issue trackers, later passes, blind/reference mechanics, schema rules, or instructions about what the agent is forbidden to inspect.
-
-Those are generator-side controls, not part of the human prompt.
-
-Use human language and mental simulation.
-
-### Blind does not mean generic
-
-Prompt 1 should be concrete enough that the user can immediately tell whether it is:
-
-- issue-level;
-- tab/surface-level;
-- product-level;
-- or repository/system-level.
-
-For TAB_SURFACE, normally walk a real user through the surface from arrival/input to result/refusal/review.
-
-For ISSUE_TASK, stay on the specific underlying issue problem and its lifecycle stage; do not drift to the whole tab.
-
-Use TARGET ANCHORS aggressively enough to make the scenario vivid, while keeping current-answer facts quarantined.
+The downstream agent should do enough real work to discover what matters.
 
 ### Human-immersion rule
 
-Prompt 1 should feel as though a strong practitioner has been dropped directly into the real situation.
+Prompt 1 should read like a real situation, not a methodology lesson.
 
-Prefer this shape:
+A strong shape is:
 
 ```text
-who is the person?
-→ what are they trying to accomplish?
-→ what real thing is in front of them?
-→ what makes this case difficult or consequential?
-→ what would they need to understand, calculate, decide, trust, notice, or prove?
-→ what would good handling make possible?
+responsible person/system
+→ real job or decision
+→ concrete situation / witness
+→ what makes it difficult or consequential
+→ what must become understandable, trustworthy, decidable or achievable
+→ what still holds when one material detail changes
+→ where this responsibility stops
 ```
-
-The reader should forget that a three-pass method exists.
 
 Do not narrate:
 
 - pass sequencing;
+- blind/reference mechanics;
+- preflight/gate terminology;
+- repository-access restrictions;
 - future comparison mechanics;
-- repository/issue-access restrictions;
-- schema/preflight/gate terminology;
-- instructions about preserving an answer for a later stage.
+- instructions about preserving an answer for another pass.
 
-Do not begin with procedural advice about how to think.
+The reader should forget that a three-pass method exists.
 
-Cause first-principles reasoning through the real situation, concrete object and questions.
+### Witness transfer rule
 
-### Prompt 1 must end in a human picture of success
+When a real witness exists:
 
-At the end, ask naturally for something equivalent to:
+1. let the agent work the case;
+2. treat reported results as claims to reproduce/falsify, not accepted interpretations;
+3. change one material feature of the case, or compare a nearby real case when available;
+4. ask what still needs to be true;
+5. distinguish the underlying requirement from properties that belonged only to the example.
 
-> **“If this were handled really well, what would become possible for the person doing the work?”**
+Do not use the term "reusable primitive" in the agent-facing prompt merely to force abstraction.
 
-Then ask what would make that outcome trustworthy, durable, or worth defending.
+If no genuine witness exists, say so only when useful and reason from the actor, job, situation and constraints. Do not fabricate a benchmark, failure or user story.
 
-Do not mention that the answer will become a reference for another pass. The generator retains that relationship internally.
+### Complex mode
 
-### Complex-mode addition
+If COMPLEX MODE is ON, the generator should ensure the five Q1–Q5 reasoning territories are covered, but they are **coverage diagnostics**, not a mandatory visible compositional skeleton.
 
-If COMPLEX MODE is ON, Prompt 1 must naturally cover all five Q1–Q5 reasoning lenses from Appendix H.
+Do not expose Q1/Q2/Q3/Q4/Q5 labels unless the user explicitly asks for visible labels.
 
-Do **not** write robotic headings such as:
+The natural Prompt 1 should remain one coherent piece of judgement rather than five mini-essays.
 
-```text
-Q1:
-Q2:
-Q3:
-Q4:
-Q5:
-```
+### Level-specific guidance
 
-unless the user explicitly asks to see those labels.
+For TAB_SURFACE:
+- walk a real user through the named surface end to end;
+- preserve the genuine user job;
+- do not leak today's UI arrangement, bug list or backlog.
 
-Instead weave the five lenses into the human scenario so they feel like the natural questions a strong practitioner would ask.
+For PRODUCT:
+- imagine the desired product experience broadly;
+- current product implementation remains hidden.
 
-### Product-level note
+For REPOSITORY_SYSTEM:
+- reason about the desired human/system outcome independent of today's repository architecture, phase names and implementation vocabulary.
 
-At product level, the product category itself can be part of the human goal. Prompt 1 may therefore imagine the desired product experience broadly.
+For ISSUE_TASK:
+- stay closer to the issue than to the parent programme;
+- preserve the why-now premise, exact owned question and ownership edge;
+- do not turn the issue's current artifact or work breakdown into the thing being imagined.
 
-What remains forbidden is leaking the **current product implementation**.
-
-### Repository/system-level note
-
-Imagine the desired human/system outcome independent of today's repository architecture, roadmap, phase names and implementation vocabulary.
-
-### Tab/surface-level note
-
-Imagine the real user using that named surface end to end.
-
-Prompt 1 should normally cover:
+For an ISSUE_TASK with a witness, the conceptual sequence is:
 
 ```text
-real starting situation
-→ inputs / choices
-→ interpretation / calculation / transformation
-→ result or refusal
-→ understanding of applicability
-→ review / evidence / next action
+put the RESPONSIBLE ACTOR into the WHY-NOW situation
+→ make the OWNED QUESTION unmistakable
+→ state the OWNERSHIP BOUNDARY where needed
+→ work the real witness
+→ vary/contrast the witness
+→ say what excellent handling requires
+→ return to the owned question
 ```
 
-Use the tab's genuine domain purpose and user job.
+The generator may use internal task-contract, problem-kernel, witness and sibling-separation machinery to construct this prompt, but those taxonomy terms should normally stay invisible.
 
-Do not leak today's UI arrangement, bug list, implementation limits or current backlog.
+### Prompt 1 carry-forward capsule
 
-### Task/issue-level note
-
-Issue-level Prompt 1 should be **closer to the issue than to the parent programme**.
-
-Do not start by abstracting upward to a generic human problem.
-
-Start with the ISSUE TASK CONTRACT.
-
-Construct Prompt 1 in this order:
+After natural reasoning, ask for only:
 
 ```text
-1. Put the RESPONSIBLE ACTOR into the exact WHY-NOW situation.
-2. State the STARTING PREMISE as a scenario, not as verified reality.
-3. Make the OWNED QUESTION unmistakable.
-4. State the NON-GOALS / OWNERSHIP BOUNDARY where it matters.
-5. Carry the PROBLEM KERNEL concretely.
-6. If a PROBLEM WITNESS exists, give the future agent the real case/payload and require
-   the INDEPENDENT WORK PRODUCT before asking for broader judgement.
-7. Make reported witness outputs claims to reproduce/falsify, not accepted conclusions.
-8. Ask first-principles questions that emerge from what the witness teaches.
-9. Return explicitly to the OWNED QUESTION.
-10. End with the human/domain outcome.
+GOOD LOOKS LIKE
+A concise independent picture of excellent handling of the owned problem.
+
+WHAT GENERALIZES
+What the situation or witness taught that survives beyond the surface example.
+
+ASSUMPTION / UNCERTAINTY TO TEST
+The most important thing live reality needs to confirm, falsify or clarify.
+
+OWNERSHIP BOUNDARY
+Where this responsibility stops.
 ```
 
-The actor is the person responsible for **this issue's outcome**.
+Do not ask for architecture or implementation candidates yet.
 
-Do not automatically substitute the product end-user.
+Prompt 1 is successful when it can say something like:
 
-For a coordination/closure issue, the right actor may be the engineering owner or successor deciding what truly remains.
+> "The issue is framed around X, but working the actual situation suggests Y is the thing that matters."
 
-For a user-facing defect issue, the end-user may be appropriate.
+without drifting outside the project's responsibility.
 
-Do not begin by asking for the current artifact:
+Run the existing hidden target-fidelity, witness-independence, answer-exclusion, artifact-erasure and current-vocabulary checks, plus these additional hidden checks:
 
-```text
-bad:  "Imagine an excellent decision package."
-bad:  "Imagine an excellent register."
-bad:  "Imagine an excellent matrix."
-```
-
-Instead ask about the actual unresolved problem:
-
-```text
-better:
-"You are responsible for a professional engineering capability whose governing method
-directly supports some cases but not the real case now in front of you. The source does
-not provide the missing extension rule. Work the case far enough to show exactly where
-the governed method ends, what additional assumption would be needed to continue, and
-what evidence would be required before an organisation could responsibly rely on that extension."
-```
-
-That is issue-specific in structure without revealing today's options or evidence conclusion.
-
-Do **not** assume the current issue's proposed artifact or work breakdown is the correct instrument.
-
-Run the TASK-CONTRACT FIDELITY, NEIGHBOUR-SEPARATION,
-PROBLEM-WITNESS SELECTION, WITNESS-INDEPENDENCE, KERNEL-COVERAGE,
-SAME-ISSUE IDENTITY, ANSWER-EXCLUSION, ARTIFACT-ERASURE,
-CURRENT-VOCABULARY and PROMPT-1 OBJECT gates before accepting Prompt 1.
+- **EARLY-PASS INDEPENDENCE:** Prompt 1 could plausibly reach a materially different local framing from Prompt 0.5; Prompt 0.5 has not told it what to discover.
+- **NOVELTY-QUOTA:** neither early prompt requires a fixed number of opportunities, ideas, missing capabilities or reframings.
+- **TRANSFER:** when a witness is used, Prompt 1 distinguishes what belongs to the example from what survives a materially changed case.
 
 ---
 
@@ -3119,12 +3090,12 @@ This is the same reasoning continuity used by the successful product-level and t
 
 The complete generator output begins with the mandatory **SCHEMA EXECUTION HANDSHAKE**, followed by one shared **SCHEMA BASIS** section.
 
-Then, for **each requested lot**, output four visible sections:
+Then, for **each requested lot**, output six visible sections:
 
 1. one **PREFLIGHT RECORD**;
-2. exactly three **copy-pasteable prompt blocks**.
+2. exactly five **copy-pasteable prompt blocks**: Prompt 0.5, Prompt 1, Prompt 2, Prompt 2.5 and Prompt 3.
 
-The preflight is metadata, **not a fourth prompt**.
+The preflight is metadata, **not one of the five prompts**.
 
 If the user requested two lots, output two lot sections. Do not merge them and do not invent a different second target.
 
@@ -3135,7 +3106,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -3154,7 +3125,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
