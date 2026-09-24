@@ -389,6 +389,155 @@ class IntelligenceProjectionTests(unittest.TestCase):
             )
             self.assertEqual("IMPLEMENTATION_PLAN", task["task_publications"][0]["type"])
 
+    def test_task_snapshot_separates_programme_child_plan_verification_and_delivery(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            prepare_active_legacy(root)
+            stage_v3(root)
+            digest = "sha256:" + ("e" * 64)
+            child = {
+                "schema_version": "relay-v3.1-parent-issue-observation",
+                "authority": "DERIVED_PROVIDER_OBSERVATION",
+                "provider": "GITHUB",
+                "repository": "example/repo",
+                "issue_number": 232,
+                "title": "Focused child",
+                "url": "https://github.com/example/repo/issues/232",
+                "state": "OPEN",
+                "observed_at": "2026-09-24T05:00:00Z",
+                "baseline": {
+                    "observed_at": "2026-09-24T04:00:00Z",
+                    "body_digest": digest,
+                    "acceptance_items": [
+                        {"id": "AC-F-01", "statement": "Bounded implementation exists."},
+                        {"id": "AC-F-02", "statement": "Exact-head certification executes."},
+                    ],
+                },
+                "current_contract": {
+                    "body_digest": digest,
+                    "acceptance_items": [
+                        {
+                            "id": "AC-F-01",
+                            "statement": "Bounded implementation exists.",
+                            "state": "PASS",
+                            "reason_class": "CURRENT_TASK",
+                            "evidence": ["commit-a"],
+                            "provider_refs": ["issue-232"],
+                        },
+                        {
+                            "id": "AC-F-02",
+                            "statement": "Exact-head certification executes.",
+                            "state": "NOT_RUN",
+                            "reason_class": "INFRASTRUCTURE",
+                            "evidence": ["runner-unavailable"],
+                            "provider_refs": ["issue-232"],
+                        },
+                    ],
+                },
+                "implementation_plan": {
+                    "state": "PRESENT",
+                    "provider_ref": "github:example/repo#232/comment-plan",
+                    "revision": 1,
+                    "digest": digest,
+                    "observed_at": "2026-09-24T04:30:00Z",
+                    "steps": [
+                        {"id": "STEP-F-01", "statement": "Implement bounded change.", "state": "PASS"},
+                        {"id": "STEP-F-02", "statement": "Run exact-head certification.", "state": "NOT_RUN"},
+                    ],
+                },
+                "verification": [
+                    {
+                        "id": "V-F-01",
+                        "statement": "Focused static validation.",
+                        "state": "PASS",
+                        "reason_class": "CURRENT_TASK",
+                        "evidence": ["test-pass"],
+                    },
+                    {
+                        "id": "V-F-02",
+                        "statement": "Exact-head certification.",
+                        "state": "NOT_RUN",
+                        "reason_class": "INFRASTRUCTURE",
+                        "evidence": ["runner-unavailable"],
+                    },
+                ],
+                "delivery": {
+                    "pr": 235,
+                    "url": "https://github.com/example/repo/pull/235",
+                    "lifecycle": "DRAFT",
+                    "base": "base-sha",
+                    "head": "head-sha",
+                    "mergeability": "MERGEABLE",
+                },
+                "expected_next_observable": {
+                    "statement": "Exact-head certification executes.",
+                    "evidence": ["command output"],
+                },
+                "task_publications": [],
+                "updates": [],
+                "disposition": "NO_CHANGE",
+                "relationships": [],
+            }
+            programme = {
+                "schema_version": "relay-v3.1-parent-issue-observation",
+                "authority": "DERIVED_PROVIDER_OBSERVATION",
+                "provider": "GITHUB",
+                "repository": "example/repo",
+                "issue_number": 210,
+                "title": "Programme",
+                "url": "https://github.com/example/repo/issues/210",
+                "state": "OPEN",
+                "observed_at": "2026-09-24T05:00:00Z",
+                "baseline": {
+                    "observed_at": "2026-09-24T04:00:00Z",
+                    "body_digest": digest,
+                    "acceptance_items": [
+                        {"id": "EXIT-P1", "statement": "First programme criterion."},
+                        {"id": "EXIT-P2", "statement": "Second programme criterion."},
+                    ],
+                },
+                "current_contract": {
+                    "body_digest": digest,
+                    "acceptance_items": [
+                        {
+                            "id": "EXIT-P1",
+                            "statement": "First programme criterion.",
+                            "state": "PASS",
+                            "evidence": ["proof-1"],
+                            "provider_refs": ["issue-210"],
+                        },
+                        {
+                            "id": "EXIT-P2",
+                            "statement": "Second programme criterion.",
+                            "state": "PENDING",
+                            "reason_class": "SIBLING_WORKSTREAM",
+                            "evidence": [],
+                            "provider_refs": ["issue-210"],
+                        },
+                    ],
+                },
+                "updates": [],
+                "disposition": "NO_CHANGE",
+                "relationships": [],
+            }
+
+            task = build_task(
+                root,
+                parent_issue_observation=child,
+                programme_issue_observation=programme,
+            )
+
+            self.assertEqual(50.0, task["work_issue_progress"]["coverage"]["percent"])
+            self.assertEqual(50.0, task["plan_progress"]["coverage"]["percent"])
+            self.assertEqual(50.0, task["programme_progress"]["coverage"]["percent"])
+            self.assertEqual("PARTIAL", task["verification"]["state"])
+            self.assertEqual(1, task["verification"]["failure_origins"]["INFRASTRUCTURE"])
+            self.assertEqual("DRAFT", task["delivery"]["lifecycle"])
+            self.assertEqual("PARTIAL", task["completion"]["overall_state"])
+            self.assertEqual("PARTIAL", task["completion"]["work_issue_acceptance"])
+            self.assertEqual("PARTIAL", task["completion"]["programme_contribution"])
+            self.assertIn("INFRASTRUCTURE", " ".join(task["completion"]["dependencies"]))
+
     def test_evidence_only_checkpoint_does_not_fake_capability_progress(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
