@@ -146,6 +146,13 @@ OUTPUT
 Produce a coordination observation matching
 engineering-coordinator-observation-v1.
 
+Populate when available:
+
+- programme_context: parent ref, current basis revision, Handover ref, effective amendment refs;
+- nonterminal_prs: every draft/open/changes-requested/conflicted/reviewable PR still in play;
+- negative_knowledge: programme-significant do-not-reopen findings + reopen condition;
+- exit_criteria: each relevant parent EXIT-* criterion with exact evidence and OPEN/PARTIAL/SATISFIED/DEFERRED/NOT_APPLICABLE state.
+
 The central calculation is:
 
 EXPECTED
