@@ -46,6 +46,10 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 
 **Expected next observable:** ...
 
+**Latest task publications:**
+
+- IMPLEMENTATION_PLAN / PLAN_UPDATE / TASK_EVIDENCE / TASK_RESULT refs only
+
 **Latest durable evidence:**
 
 - ...
