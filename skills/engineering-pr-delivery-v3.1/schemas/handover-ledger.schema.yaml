@@ -12,6 +12,9 @@ properties:
       state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
       task_snapshot_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
       roadmap_revision: {type: string, minLength: 1}
+      provider_observation_digests:
+        type: array
+        items: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
   parent_issue:
     type: object
     additionalProperties: false
