@@ -108,7 +108,9 @@ child responsibility
 → [Relay Handover] indexes the current programme consequence
 ```
 
-After live revalidation and before substantial material modification, the agent should publish `IMPLEMENTATION_PLAN — rev 1` on its owned child issue when practical.
+After live revalidation and before substantial material modification, the agent should publish `IMPLEMENTATION_PLAN — rev 1` on its owned child issue when practical. The durable comment should begin with that typed heading; a Three-Pass packet or execution narrative is input/evidence, not the implementation plan.
+
+The plan basis should record the owned child responsibility/provider ref and its observed body/contract digest when available. If the child responsibility later changes, V3.1 may project the prior plan as `STALE`; that is revalidation debt, not an execution block.
 
 That publication is a **reconstruction convention, not permission**:
 
@@ -158,6 +160,8 @@ PLAN_UPDATE
 TASK_EVIDENCE
 TASK_RESULT
 ```
+
+Begin the durable comment with the typed publication heading so reconstruction does not have to infer semantic state changes from prose. A correction/narrowing that changes the intended material approach is a `PLAN_UPDATE`; final exact-main/integration acceptance is a `TASK_RESULT` when that is the owned responsibility.
 
 Do not post every command, file read, test retry, timer wake or chat message.
 

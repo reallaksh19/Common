@@ -440,6 +440,8 @@ class IntelligenceProjectionTests(unittest.TestCase):
                     "revision": 1,
                     "digest": digest,
                     "observed_at": "2026-09-24T04:30:00Z",
+                    "responsibility_basis_ref": "github:example/repo#232",
+                    "responsibility_basis_digest": digest,
                     "steps": [
                         {"id": "STEP-F-01", "statement": "Implement bounded change.", "state": "PASS"},
                         {"id": "STEP-F-02", "statement": "Run exact-head certification.", "state": "NOT_RUN"},
@@ -537,6 +539,20 @@ class IntelligenceProjectionTests(unittest.TestCase):
             self.assertEqual("PARTIAL", task["completion"]["work_issue_acceptance"])
             self.assertEqual("PARTIAL", task["completion"]["programme_contribution"])
             self.assertIn("INFRASTRUCTURE", " ".join(task["completion"]["dependencies"]))
+            self.assertEqual("PRESENT", task["planning"]["state"])
+            self.assertEqual(digest, task["planning"]["responsibility_basis_digest"])
+
+            child["current_contract"]["body_digest"] = "sha256:" + ("f" * 64)
+            stale_task = build_task(
+                root,
+                parent_issue_observation=child,
+                programme_issue_observation=programme,
+            )
+            self.assertEqual("STALE", stale_task["planning"]["state"])
+            self.assertEqual(
+                digest,
+                stale_task["planning"]["responsibility_basis_digest"],
+            )
 
     def test_evidence_only_checkpoint_does_not_fake_capability_progress(self):
         with tempfile.TemporaryDirectory() as td:

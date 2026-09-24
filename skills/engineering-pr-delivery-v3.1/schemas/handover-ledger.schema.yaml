@@ -78,6 +78,20 @@ properties:
             revision: {type: [integer, 'null'], minimum: 1}
             digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
             observed_at: {type: [string, 'null'], format: date-time}
+            responsibility_basis_ref: {type: [string, 'null']}
+            responsibility_basis_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+        provider_issue_state: {enum: [OPEN, CLOSED, UNKNOWN]}
+        delivery:
+          type: object
+          additionalProperties: false
+          required: [lifecycle]
+          properties:
+            pr: {type: [integer, 'null'], minimum: 1}
+            url: {type: [string, 'null']}
+            lifecycle: {enum: [NONE, DRAFT, OPEN, REVIEW_READY, CHANGES_REQUESTED, CONFLICTED, MERGED, CLOSED, UNKNOWN]}
+            base: {type: [string, 'null']}
+            head: {type: [string, 'null']}
+            mergeability: {type: [string, 'null']}
         expected_next_observable:
           type: [object, 'null']
           additionalProperties: false

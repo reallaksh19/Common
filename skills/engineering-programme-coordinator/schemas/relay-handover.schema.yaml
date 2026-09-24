@@ -57,8 +57,12 @@ properties:
             state: {enum: [PRESENT, MISSING, STALE, UNKNOWN]}
             ref: {type: [string, 'null']}
             revision: {type: [integer, 'null'], minimum: 1}
+            responsibility_basis_ref: {type: [string, 'null']}
+            responsibility_basis_digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+        provider_issue_state: {enum: [OPEN, CLOSED, UNKNOWN]}
         branch: {type: [string, 'null']}
         pr: {type: [string, 'null']}
+        base: {type: [string, 'null']}
         exact_head: {type: [string, 'null']}
         task_snapshot_ref: {type: [string, 'null']}
         completion:

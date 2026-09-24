@@ -382,6 +382,8 @@ def _planning_sections(
             "revision": observed.get("revision"),
             "digest": observed.get("digest"),
             "observed_at": observed.get("observed_at"),
+            "responsibility_basis_ref": observed.get("responsibility_basis_ref"),
+            "responsibility_basis_digest": observed.get("responsibility_basis_digest"),
         }
     elif basis:
         planning = {
@@ -390,6 +392,8 @@ def _planning_sections(
             "revision": basis.get("revision"),
             "digest": basis.get("digest"),
             "observed_at": basis.get("observed_at"),
+            "responsibility_basis_ref": basis.get("responsibility_basis_ref"),
+            "responsibility_basis_digest": basis.get("responsibility_basis_digest"),
         }
     else:
         planning = {
@@ -398,7 +402,21 @@ def _planning_sections(
             "revision": None,
             "digest": None,
             "observed_at": None,
+            "responsibility_basis_ref": None,
+            "responsibility_basis_digest": None,
         }
+
+    current_responsibility_digest = (
+        ((observation or {}).get("current_contract") or {}).get("body_digest")
+    )
+    planned_responsibility_digest = planning.get("responsibility_basis_digest")
+    if (
+        planning.get("state") == "PRESENT"
+        and planned_responsibility_digest
+        and current_responsibility_digest
+        and planned_responsibility_digest != current_responsibility_digest
+    ):
+        planning["state"] = "STALE"
 
     expected = (observation or {}).get("expected_next_observable")
     if not isinstance(expected, dict):

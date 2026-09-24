@@ -103,6 +103,8 @@ Normal expectation:
 
 This is a strong reconstruction convention, not permission.
 
+For deterministic provider reconstruction, the durable comment should **begin with the typed publication heading**. A Three-Pass packet or long execution narrative may contain the same ideas, but it is not the agent-authored implementation plan.
+
 If useful implementation/investigation already happened before the plan was posted, the work remains valid. Publish the current plan as soon as practical and continue.
 
 Do not wait for Relay/coordinator approval after publishing the plan.
@@ -115,6 +117,7 @@ IMPLEMENTATION_PLAN — rev 1
 BASIS
 - exact current main/head
 - relevant parent programme basis
+- owned child responsibility ref + observed body/contract digest, when available
 - three-pass packet ref, when used
 
 MY UNDERSTANDING
@@ -228,6 +231,8 @@ What the coordinator should now expect.
 
 Use a new EP/child only if the engineering responsibility itself has materially changed.
 
+A correction/narrowing that changes the intended material approach is still a `PLAN_UPDATE` even when it appears during a long reasoning pass. Label it durably rather than forcing the coordinator to infer the semantic transition from prose.
+
 ## 6. Meaningful intermediate evidence — TASK_EVIDENCE
 
 Do not post every action.
@@ -263,6 +268,15 @@ NONE | <missing production truth>
 
 PLAN CONSEQUENCE
 NONE | PLAN_UPDATE required
+
+BLOCKING CONDITION
+NONE | <production fact that prevents useful continuation>
+
+UNBLOCK CONDITION
+NONE | <externally observable fact that permits revalidation>
+
+EXPECTED NEXT OBSERVABLE
+<the next useful evidence/event, especially when waiting>
 ```
 
 Useful triggers include:
@@ -278,7 +292,7 @@ Routine chatter is not a publication requirement.
 
 ## 7. Delivery / handoff — TASK_RESULT
 
-At the meaningful task delivery boundary publish:
+At the meaningful task delivery boundary publish a comment whose first durable heading is `TASK_RESULT`. Final exact-main/integration acceptance is also a TASK_RESULT when that is the owned responsibility.
 
 ```text
 TASK_RESULT
@@ -321,6 +335,8 @@ NEXT
 ```
 
 The PR/commit/test/artifact is the material truth. The comment is the durable semantic handoff/index.
+
+Provider issue lifecycle is separate from responsibility completion: a valid `TASK_RESULT` may establish that the bounded responsibility is complete even if the GitHub issue remains open for readback or programme chronology.
 
 ## Acceptance and progress denominators
 

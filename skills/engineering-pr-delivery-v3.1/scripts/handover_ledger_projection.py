@@ -129,6 +129,8 @@ def _plan_from_ep(ep: dict[str, Any]) -> dict[str, Any]:
             "revision": basis.get("revision"),
             "digest": basis.get("digest"),
             "observed_at": basis.get("observed_at"),
+            "responsibility_basis_ref": basis.get("responsibility_basis_ref"),
+            "responsibility_basis_digest": basis.get("responsibility_basis_digest"),
         }
     return {
         "state": "MISSING",
@@ -136,6 +138,8 @@ def _plan_from_ep(ep: dict[str, Any]) -> dict[str, Any]:
         "revision": None,
         "digest": None,
         "observed_at": None,
+        "responsibility_basis_ref": None,
+        "responsibility_basis_digest": None,
     }
 
 
@@ -143,12 +147,47 @@ def _plan_from_observation(observation: dict[str, Any] | None) -> dict[str, Any]
     row = (observation or {}).get("implementation_plan")
     if not isinstance(row, dict):
         return None
+    state = row.get("state") or "UNKNOWN"
+    responsibility_basis_digest = row.get("responsibility_basis_digest")
+    current_responsibility_digest = (
+        ((observation or {}).get("current_contract") or {}).get("body_digest")
+    )
+    if (
+        state == "PRESENT"
+        and responsibility_basis_digest
+        and current_responsibility_digest
+        and responsibility_basis_digest != current_responsibility_digest
+    ):
+        state = "STALE"
     return {
-        "state": row.get("state") or "UNKNOWN",
+        "state": state,
         "provider_ref": row.get("provider_ref"),
         "revision": row.get("revision"),
         "digest": row.get("digest"),
         "observed_at": row.get("observed_at"),
+        "responsibility_basis_ref": row.get("responsibility_basis_ref"),
+        "responsibility_basis_digest": responsibility_basis_digest,
+    }
+
+
+def _delivery_from_observation(observation: dict[str, Any] | None) -> dict[str, Any]:
+    row = (observation or {}).get("delivery")
+    if not isinstance(row, dict):
+        return {
+            "pr": None,
+            "url": None,
+            "lifecycle": "UNKNOWN",
+            "base": None,
+            "head": None,
+            "mergeability": None,
+        }
+    return {
+        "pr": row.get("pr"),
+        "url": row.get("url"),
+        "lifecycle": row.get("lifecycle") or "UNKNOWN",
+        "base": row.get("base"),
+        "head": row.get("head"),
+        "mergeability": row.get("mergeability"),
     }
 
 
@@ -413,6 +452,8 @@ def build(
             else None
         )
         work_observation = observation_by_issue.get(work_key) if work_key else None
+        provider_issue_state = str((work_observation or {}).get("state") or "UNKNOWN")
+        delivery = _delivery_from_observation(work_observation)
         observed_plan = _plan_from_observation(work_observation)
         if observed_plan:
             plan = observed_plan
@@ -433,8 +474,25 @@ def build(
                     "revision": task_plan.get("revision"),
                     "digest": task_plan.get("digest"),
                     "observed_at": task_plan.get("observed_at"),
+                    "responsibility_basis_ref": task_plan.get("responsibility_basis_ref"),
+                    "responsibility_basis_digest": task_plan.get("responsibility_basis_digest"),
                 }
                 expected = task_plan.get("expected_next_observable") or expected
+            provider_issue_state = str(
+                ((task.get("parent_issue") or {}).get("state"))
+                or provider_issue_state
+                or "UNKNOWN"
+            )
+            task_delivery = task.get("delivery") or {}
+            if task_delivery:
+                delivery = {
+                    "pr": task_delivery.get("pr"),
+                    "url": task_delivery.get("url"),
+                    "lifecycle": task_delivery.get("lifecycle") or "UNKNOWN",
+                    "base": task_delivery.get("base"),
+                    "head": task_delivery.get("head"),
+                    "mergeability": task_delivery.get("mergeability"),
+                }
             task_publications = [
                 dict(row)
                 for row in (task.get("task_publications") or [])
@@ -447,6 +505,8 @@ def build(
             "work_package": str(ep.get("work_package")),
             "work_issue": work_issue,
             "implementation_plan": plan,
+            "provider_issue_state": provider_issue_state,
+            "delivery": delivery,
             "expected_next_observable": expected,
             "latest_publications": publications[-4:],
             "status": status,
@@ -654,21 +714,26 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "",
         "## EP index",
         "",
-        "| EP | Work issue | WP | Plan | Expected next observable | Status | Continuation | Checkpoint | Lease | Executor |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| EP | Work issue | WP | Plan | Expected next observable | Provider issue | Delivery | PR | Base | Head | Status | Continuation | Checkpoint | Lease | Executor |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for row in ledger["ep_index"]:
         work_issue = row.get("work_issue") or {}
         plan = row.get("implementation_plan") or {}
         expected = row.get("expected_next_observable") or {}
+        delivery = row.get("delivery") or {}
         plan_label = str(plan.get("state") or "UNKNOWN")
         if plan.get("revision") is not None:
             plan_label += f" r{plan.get('revision')}"
+        pr_label = f"#{delivery.get('pr')}" if delivery.get("pr") is not None else "-"
         lines.append(
             f"| {row['ep']} | "
             f"{work_issue.get('repository') or '-'}#{work_issue.get('number') or '-'} | "
             f"{row['work_package']} | {plan_label} | "
             f"{expected.get('statement') or '-'} | "
+            f"{row.get('provider_issue_state') or 'UNKNOWN'} | "
+            f"{delivery.get('lifecycle') or 'UNKNOWN'} | {pr_label} | "
+            f"{delivery.get('base') or '-'} | {delivery.get('head') or '-'} | "
             f"{row['status']} | {row['continuation']} | "
             f"{row.get('checkpoint') or '-'} | {row.get('lease') or '-'} | {row.get('executor') or '-'} |"
         )

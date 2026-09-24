@@ -77,7 +77,7 @@ It carries:
 - expected handoff;
 - semantic escalation conditions.
 
-The engineering agent publishes its own implementation plan there.
+The engineering agent publishes its own implementation plan there. Typed task publications should begin with their publication name so provider reconstruction does not have to infer plan/result transitions from long-form prose.
 
 ## Agent task publication lifecycle
 
@@ -148,12 +148,12 @@ The ledger indexes rather than duplicates:
 
 - programme basis;
 - workstream / EP / child issue;
-- implementation-plan state/ref/revision + STEP-* coverage;
+- implementation-plan state/ref/revision + responsibility basis digest + STEP-* coverage;
 - child/work-issue AC-* acceptance coverage;
 - programme EXIT-* contribution coverage;
 - verification state + failure/wait origin;
-- delivery/PR lifecycle;
-- provider issue lifecycle;
+- per-workstream delivery/PR lifecycle, base and exact head;
+- provider issue lifecycle **separately from responsibility completion**;
 - explicit remaining work;
 - expected next observable;
 - branch/PR/exact-head material;
@@ -217,7 +217,8 @@ If an agent disappears:
 4. inspect branch/PR/exact head;
 5. inspect task evidence and durable tests/artifacts;
 6. determine what production consequence remains unfinished;
-7. give a successor the smallest reconstruction packet.
+7. give a successor the smallest reconstruction packet;
+8. require the successor to revalidate live reality and publish its own current `IMPLEMENTATION_PLAN` rather than blindly inheriting the predecessor's approach.
 
 No lease-expiry or recovery ceremony is required to make already-existing production evidence valid.
 
@@ -225,14 +226,16 @@ V3.1 may record the executor change for history.
 
 ## Coordinator observation
 
-The coordinator should reason:
+Before acting on an old `NEXT`, task result, Handover entry or agent summary, refresh the affected child issue, relevant PR lifecycle/head/base, current main/material head, latest typed publication and dependency outputs. Historical handoff tells the coordinator what to look for; live provider/material evidence says whether it already happened.
+
+Then reason:
 
 ```text
 EXPECTED
 what plan/evidence event should happen next?
 
 OBSERVED
-what durable evidence exists now?
+what durable provider/material evidence exists now?
 
 CONSEQUENCE
 what changes for this workstream, a consumer, the Owner, or next observation?
