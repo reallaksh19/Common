@@ -531,6 +531,13 @@ def build(
             "state_digest": canonical_digest(state),
             "task_snapshot_digest": canonical_digest(task),
             "roadmap_revision": str((state.get("roadmap") or {}).get("revision")),
+            "provider_observation_digests": [
+                canonical_digest(parent_issue_observation),
+                *[
+                    canonical_digest(observation)
+                    for _, observation in sorted(observation_by_issue.items())
+                ],
+            ],
         },
         "parent_issue": {
             "repository": repository,
