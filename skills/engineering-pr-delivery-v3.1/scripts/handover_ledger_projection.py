@@ -139,6 +139,29 @@ def _plan_from_ep(ep: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _plan_from_observation(observation: dict[str, Any] | None) -> dict[str, Any] | None:
+    row = (observation or {}).get("implementation_plan")
+    if not isinstance(row, dict):
+        return None
+    return {
+        "state": row.get("state") or "UNKNOWN",
+        "provider_ref": row.get("provider_ref"),
+        "revision": row.get("revision"),
+        "digest": row.get("digest"),
+        "observed_at": row.get("observed_at"),
+    }
+
+
+def _observation_key(observation: dict[str, Any] | None) -> tuple[str, int] | None:
+    if not isinstance(observation, dict):
+        return None
+    repository = observation.get("repository")
+    number = observation.get("issue_number")
+    if not repository or not isinstance(number, int):
+        return None
+    return str(repository), number
+
+
 def _checkpoint_complete(checkpoint: dict[str, Any] | None) -> bool:
     if not isinstance(checkpoint, dict):
         return False
@@ -235,6 +258,7 @@ def build(
     *,
     base_ref: str,
     work_issue_observation: dict[str, Any] | None = None,
+    work_issue_observations: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     observation_errors = validate_schema(
         "parent-issue-observation",
@@ -243,6 +267,22 @@ def build(
     )
     if observation_errors:
         raise ProjectionError("; ".join(observation_errors))
+
+    work_observations = list(work_issue_observations or [])
+    if work_issue_observation is not None:
+        work_observations.append(work_issue_observation)
+    observation_by_issue: dict[tuple[str, int], dict[str, Any]] = {}
+    for index, observation in enumerate(work_observations):
+        errors = validate_schema(
+            "parent-issue-observation",
+            observation,
+            f"WORK_ISSUE_OBSERVATION[{index}]",
+        )
+        if errors:
+            raise ProjectionError("; ".join(errors))
+        key = _observation_key(observation)
+        if key:
+            observation_by_issue[key] = observation
 
     state = load_yaml(root / "relay/STATE.yaml")
     current_execution = state.get("execution") or {}
@@ -265,7 +305,14 @@ def build(
         and not _matches_ref(work_ref, observation_repo, observation_number)
     )
 
-    task_observation = work_issue_observation if observation_is_programme else parent_issue_observation
+    current_work_key = None
+    if work_ref.get("repository") and isinstance(work_ref.get("number"), int):
+        current_work_key = (str(work_ref.get("repository")), int(work_ref.get("number")))
+    current_work_observation = observation_by_issue.get(current_work_key) if current_work_key else None
+    if current_work_observation is None and work_issue_observation is not None:
+        current_work_observation = work_issue_observation
+
+    task_observation = current_work_observation if observation_is_programme else parent_issue_observation
     task = build_task(root, base_ref, task_observation)
     parent = (
         _parent_from_observation(parent_issue_observation)
@@ -352,6 +399,25 @@ def build(
         plan = _plan_from_ep(ep)
         expected = ep.get("expected_next_observable")
         publications: list[dict[str, Any]] = []
+
+        work_issue = _work_issue(ep)
+        work_key = (
+            (str(work_issue.get("repository")), int(work_issue.get("number")))
+            if isinstance(work_issue, dict) and work_issue.get("repository") and isinstance(work_issue.get("number"), int)
+            else None
+        )
+        work_observation = observation_by_issue.get(work_key) if work_key else None
+        observed_plan = _plan_from_observation(work_observation)
+        if observed_plan:
+            plan = observed_plan
+        if isinstance((work_observation or {}).get("expected_next_observable"), dict):
+            expected = (work_observation or {}).get("expected_next_observable")
+        publications = [
+            dict(row)
+            for row in ((work_observation or {}).get("task_publications") or [])
+            if isinstance(row, dict)
+        ]
+
         if str(ep_id) == str(current_ep):
             task_plan = task.get("planning") or {}
             if task_plan:
@@ -363,15 +429,17 @@ def build(
                     "observed_at": task_plan.get("observed_at"),
                 }
                 expected = task_plan.get("expected_next_observable") or expected
-            publications = [
+            task_publications = [
                 dict(row)
                 for row in (task.get("task_publications") or [])
                 if isinstance(row, dict)
             ]
+            if task_publications:
+                publications = task_publications
         ep_index.append({
             "ep": ep_id,
             "work_package": str(ep.get("work_package")),
-            "work_issue": _work_issue(ep),
+            "work_issue": work_issue,
             "implementation_plan": plan,
             "expected_next_observable": expected,
             "latest_publications": publications[-4:],
@@ -695,7 +763,9 @@ def main() -> None:
     parser.add_argument("--parent-observation", required=True)
     parser.add_argument(
         "--work-issue-observation",
-        help="Optional current child/work-issue provider observation used for plan/publication reconstruction when --parent-observation is the programme root.",
+        action="append",
+        default=[],
+        help="Child/work-issue provider observation used for plan/publication reconstruction. Repeat for parallel workstreams.",
     )
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--output", required=True)
@@ -705,16 +775,15 @@ def main() -> None:
 
     root = Path(args.repo_root).resolve()
     observation = load_yaml(Path(args.parent_observation))
-    work_observation = (
-        load_yaml(Path(args.work_issue_observation))
-        if args.work_issue_observation
-        else None
-    )
+    work_observations = [
+        load_yaml(Path(path))
+        for path in (args.work_issue_observation or [])
+    ]
     ledger = build(
         root,
         observation,
         base_ref=args.base_ref,
-        work_issue_observation=work_observation,
+        work_issue_observations=work_observations,
     )
     _write(Path(args.output), yaml.safe_dump(ledger, sort_keys=False))
     if args.ledger_markdown:
