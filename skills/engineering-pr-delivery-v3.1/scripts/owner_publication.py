@@ -31,6 +31,7 @@ EVENT_CLASSES = {
     "CONTROL_STATE_CHANGE",
     "WAITING_OR_MONITORING",
     "NO_MATERIAL_PROGRESS",
+    "TASK_PLANNING_PROGRESS",
 }
 
 
@@ -53,6 +54,9 @@ def _stable_task(task_snapshot: dict[str, Any] | None) -> dict[str, Any] | None:
         "identity": _mapping(task_snapshot.get("identity")),
         "purpose": _mapping(task_snapshot.get("purpose")),
         "parent_issue": _mapping(task_snapshot.get("parent_issue")),
+        "programme_parent": _mapping(task_snapshot.get("programme_parent")),
+        "planning": _mapping(task_snapshot.get("planning")),
+        "task_publications": _rows(task_snapshot.get("task_publications")),
         "parent_issue_progress": _mapping(task_snapshot.get("parent_issue_progress")),
         "current_task_progress": _mapping(task_snapshot.get("current_task_progress")),
         "acceptance": _rows(task_snapshot.get("acceptance")),
@@ -258,9 +262,39 @@ def classify(previous: dict[str, Any] | None, current: dict[str, Any]) -> dict[s
             event = "EVIDENCE_PROGRESS"
         elif "delivery" in diff["changed_dimensions"] or "execution" in diff["changed_dimensions"]:
             event = "DELIVERY_OR_CUSTODY_PROGRESS"
+        elif "task" in diff["changed_dimensions"]:
+            before_task = (previous or {}).get("task") or {}
+            after_task = current.get("task") or {}
+            non_planning_keys = {
+                "identity",
+                "purpose",
+                "parent_issue",
+                "programme_parent",
+                "parent_issue_progress",
+                "current_task_progress",
+                "acceptance",
+                "benchmarks",
+                "benchmark_debt",
+                "pending_items",
+                "known_issues",
+                "offloads",
+                "next",
+                "history",
+                "knowledge_state",
+                "negative_knowledge",
+                "preserve",
+            }
+            planning_only = all(
+                before_task.get(key) == after_task.get(key)
+                for key in non_planning_keys
+            ) and (
+                before_task.get("planning") != after_task.get("planning")
+                or before_task.get("task_publications") != after_task.get("task_publications")
+            )
+            event = "TASK_PLANNING_PROGRESS" if planning_only else "CONTROL_STATE_CHANGE"
         elif any(
             key in diff["changed_dimensions"]
-            for key in ("controls", "owner", "programme", "project_next", "task", "improvement")
+            for key in ("controls", "owner", "programme", "project_next", "improvement")
         ):
             event = "CONTROL_STATE_CHANGE"
         else:
