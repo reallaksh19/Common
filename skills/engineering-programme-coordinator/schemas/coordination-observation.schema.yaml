@@ -19,6 +19,55 @@ properties:
   observed_at:
     type: string
     format: date-time
+  programme_context:
+    type: object
+    additionalProperties: false
+    properties:
+      parent_ref: {type: [string, 'null']}
+      basis_revision: {type: [string, 'null']}
+      handover_ref: {type: [string, 'null']}
+      effective_amendments:
+        type: array
+        items: {type: string, minLength: 1}
+  nonterminal_prs:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [ref, workstream, lifecycle]
+      properties:
+        ref: {type: string, minLength: 1}
+        workstream: {type: string, minLength: 1}
+        lifecycle:
+          enum: [DRAFT, OPEN, CHANGES_REQUESTED, CONFLICTED, REVIEWABLE, UNKNOWN]
+        head: {type: [string, 'null']}
+        note: {type: [string, 'null']}
+  negative_knowledge:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [statement, reopen_condition]
+      properties:
+        statement: {type: string, minLength: 1}
+        reopen_condition: {type: string}
+        evidence:
+          type: array
+          items: {type: string, minLength: 1}
+  exit_criteria:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, status, evidence]
+      properties:
+        id: {type: string, minLength: 1}
+        status:
+          enum: [OPEN, PARTIAL, SATISFIED, DEFERRED, NOT_APPLICABLE]
+        evidence:
+          type: array
+          items: {type: string, minLength: 1}
+        note: {type: [string, 'null']}
   source_freshness:
     type: array
     items:
