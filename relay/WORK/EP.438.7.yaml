@@ -1,0 +1,57 @@
+schema_version: relay-v3.1-ep
+id: EP.438.7
+work_package: WP.438
+outcome:
+  statement: Repair synthetic handover-ledger test fixture in test_portable_cutover_compatibility.py
+    to satisfy current schema requirements while preserving existing invalid-repository
+    check.
+basis:
+  predecessor_checkpoint: CP.438.6
+  material_base: c2392b670868e4049d7032f21aef6acc08d7f8b7
+  protocol_basis: Common#438 EP.438.7 baseline test fixture repair; work issue Common#461.
+  semantic_dependencies:
+  - path: skills/engineering-pr-delivery-v3.1/schemas/handover-ledger.schema.yaml
+    reason: Schema defining required properties for handover ledger.
+scope:
+  write:
+  - skills/engineering-pr-delivery-v3.1/tests/test_portable_cutover_compatibility.py
+  read:
+  - skills/engineering-pr-delivery-v3.1/schemas/handover-ledger.schema.yaml
+  protect: []
+  prohibit:
+  - Do not make schema changes.
+  - Do not make runtime changes.
+  - Do not make prompt-contract changes.
+  - Do not make action-authority changes.
+  - Do not modify Advanced_Analysis remote.
+  - 'Do not merge PR #460.'
+acceptance:
+- id: AC.438.12
+  statement: test_portable_cutover_compatibility.py passes with valid synthetic handover-ledger
+    fixture matching current schema, and existing invalid-repository check is preserved.
+  evidence_requirements:
+  - test: skills/engineering-pr-delivery-v3.1/tests/test_portable_cutover_compatibility.py
+quality_policy:
+  level: STANDARD
+  independent_review: OPTIONAL
+parent_issue:
+  provider: GITHUB
+  repository: reallaksh19/Common
+  number: 438
+  title: Dogfood V3.1 during Relay completion and reduce excessive gating
+  url: https://github.com/reallaksh19/Common/issues/438
+  baseline:
+    observed_at: '2026-09-24T12:00:00Z'
+    body_digest: sha256:d6ceecd7d95e04c02e061501067cb591ba7a00ab198b406cd8c758ad74656704
+    acceptance_items:
+    - id: FIXTURE-1
+      statement: Repair synthetic handover-ledger test fixture in test_portable_cutover_compatibility.py.
+admission_policy:
+  qualification: NOT_REQUIRED
+  question_policy: NONE
+next:
+  first_action: Update synthetic handover-ledger fixture in test_portable_cutover_compatibility.py
+    to include required fields.
+  stop_conditions:
+  - Schema changes or runtime changes are proposed.
+  - Any existing accepted safety decision or test regresses.

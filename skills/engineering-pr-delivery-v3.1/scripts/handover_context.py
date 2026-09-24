@@ -31,7 +31,12 @@ def _git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
 
-def _standalone_contract(root: Path) -> str:
+def _protocol_checkout_root() -> Path:
+    return Path(__file__).resolve().parents[3]
+
+
+def _standalone_contract(protocol_root: Path | None = None) -> str:
+    root = protocol_root or _protocol_checkout_root()
     schema_path = root / SCHEMA
     validator_path = root / VALIDATOR
     launcher_path = root / LAUNCHER
@@ -125,9 +130,10 @@ def build_context(
     programme_reconciliation: dict[str, Any] | None = None,
     task_snapshot_override: dict[str, Any] | None = None,
     improvement_view_override: dict[str, Any] | None = None,
+    protocol_root: Path | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
-    revision = _standalone_contract(root)
+    revision = _standalone_contract(protocol_root)
     snapshot = build_snapshot(root, base_ref)
     state = load_yaml(root / "relay/STATE.yaml")
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))

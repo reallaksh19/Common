@@ -1,84 +1,79 @@
-{
-  "schema_version": "relay-v3.1-snapshot",
-  "authority": "DERIVED_READ_MODEL",
-  "generated_from": {
-    "roadmap_revision": "RM.438.4",
-    "state_digest": "sha256:dd4b0154092e83b5099173a7a6eba784a96957156c724f6b3d93cb2ceb4320db",
-    "material_basis": {
-      "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
-      "tree_digest": "sha256:f3367800c6dac405f78f62873ebcd723296124ebf8f7bdbfbad1fc7d7af9a098",
-      "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
-      "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
-    },
-    "coordination_head": "45feb46f7bac959a5fd6a3893d80dad51f53575f"
-  },
-  "owner": {
-    "outcome": "Reduce V3.1 to the smallest gate set that protects programme intent, bounded execution, custody, material truth, accepted evidence, and Owner authority.",
-    "current_goal": "Remove unsupported PARALLEL execution lifecycle surface and document why the remaining simplification candidates are retained."
-  },
-  "programme": {
-    "programme_progress": 0,
-    "accepted_progress": 100,
-    "completed_work": [],
-    "remaining_work": [
-      "WP.438"
-    ],
-    "evidence_backed_work": [
-      "WP.438"
-    ]
-  },
-  "execution": {
-    "lifecycle": "IDLE",
-    "work_package": null,
-    "ep": null,
-    "lease": null,
-    "executor": null,
-    "custody_epoch": 1
-  },
-  "scope": {
-    "allowed_writes": [],
-    "protected": [],
-    "prohibited": []
-  },
-  "material": {
-    "base": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
-    "head": "633901b9978d8f47a188ba2b2fd3a7cd596a7013",
-    "relevant_paths_digest": "sha256:530e1758a68cb5ee71ee8b583066099b804f8e32d51b26977632f4ded95bf656",
-    "dependency_digest": "sha256:c0c47b107b50c5a6f06cfd6f7cfc03d403c8a7b26539a92bd4f4257b540d9e27"
-  },
-  "evidence": {
-    "latest_checkpoint": "CP.438.5",
-    "latest_material_validation": {
-      "focused_tests": "PASS",
-      "spec_delivery": "PASS",
-      "full_guardrails": "PASS"
-    }
-  },
-  "controls": {
-    "execution_blockers": [],
-    "handover_blockers": [],
-    "delivery_blockers": [],
-    "informational": []
-  },
-  "delivery": {
-    "issue": 438,
-    "pr": 437,
-    "lifecycle": "DRAFT",
-    "merge_authorized": false
-  },
-  "next": {
-    "immediate_material_action": null,
-    "delivery_action": "PR #439 and PR #441 are merged into the #437 branch. PR #437 remains the unmerged delivery vehicle to main; no merge authority is inferred for it.",
-    "stop_conditions": []
-  },
-  "handoff": {
-    "zero_context_takeover_possible": true,
-    "reconstruction_sources": [
-      "relay/ROADMAP/ROADMAP.yaml",
-      "relay/STATE.yaml",
-      "relay/CONTROLS/controls.yaml",
-      "relay/CHECKPOINTS/CP.438.5.yaml",
-      "relay/EVENTS.jsonl"
-    ]
-  }
-}
+schema_version: relay-v3.1-snapshot
+authority: DERIVED_READ_MODEL
+generated_from:
+  roadmap_revision: RM.438.6
+  state_digest: sha256:5546965b0817dfad76b71a7b0c7097b82be28062c5b0e1dc3c80d1c10ebdefb8
+  material_basis:
+    head: c2392b670868e4049d7032f21aef6acc08d7f8b7
+    tree_digest: sha256:e444cd1912d8f1467cfae3abc13a75ddaf1ddc1d2c08c0931c3a1aef29322b54
+    relevant_paths_digest: sha256:dce7d55c6366216182fe71e815d226440c9694836ba00a5f488f407c7db3a609
+    dependency_digest: sha256:c90b7c1973897992ff8664bbd528e7530b6dcf1530c2cf63ff5ac241f637a865
+  coordination_head: 1c92694aeb103840f7dccdf0d8fd1a7a95d2c262
+owner:
+  outcome: Reduce V3.1 to the smallest gate set that protects programme intent, bounded
+    execution, custody, material truth, accepted evidence, and Owner authority.
+  current_goal: Remove unsupported PARALLEL execution lifecycle surface and document
+    why the remaining simplification candidates are retained.
+programme:
+  programme_progress: 0.0
+  completed_work: []
+  remaining_work:
+  - WP.438
+  accepted_progress: 100.0
+  evidence_backed_work:
+  - WP.438
+execution:
+  lifecycle: ACTIVE
+  work_package: WP.438
+  ep: EP.438.7
+  lease: LEASE.438.7
+  executor: chatgpt-v3.1-fixture-repair
+  custody_epoch: 1
+scope:
+  allowed_writes:
+  - skills/engineering-pr-delivery-v3.1/tests/test_portable_cutover_compatibility.py
+  protected: []
+  prohibited:
+  - Do not make schema changes.
+  - Do not make runtime changes.
+  - Do not make prompt-contract changes.
+  - Do not make action-authority changes.
+  - Do not modify Advanced_Analysis remote.
+  - 'Do not merge PR #460.'
+material:
+  base: c2392b670868e4049d7032f21aef6acc08d7f8b7
+  head: c2392b670868e4049d7032f21aef6acc08d7f8b7
+  relevant_paths_digest: sha256:dce7d55c6366216182fe71e815d226440c9694836ba00a5f488f407c7db3a609
+  dependency_digest: sha256:c90b7c1973897992ff8664bbd528e7530b6dcf1530c2cf63ff5ac241f637a865
+evidence:
+  latest_checkpoint: CP.438.6
+  latest_material_validation:
+    focused_tests: PASS
+    spec_delivery: PASS
+    full_guardrails: PASS
+controls:
+  execution_blockers: []
+  handover_blockers: []
+  delivery_blockers: []
+  informational: []
+delivery:
+  issue: null
+  pr: 460
+  lifecycle: DECLARED
+  merge_authorized: false
+next:
+  immediate_material_action: Update synthetic handover-ledger fixture in test_portable_cutover_compatibility.py
+    to include required fields.
+  delivery_action: Perform the explicitly authorized delivery transition.
+  stop_conditions:
+  - Schema changes or runtime changes are proposed.
+  - Any existing accepted safety decision or test regresses.
+handoff:
+  zero_context_takeover_possible: true
+  reconstruction_sources:
+  - relay/ROADMAP/ROADMAP.yaml
+  - relay/STATE.yaml
+  - relay/CONTROLS/controls.yaml
+  - relay/WORK/EP.438.7.yaml
+  - relay/LEASES/LEASE.438.7.yaml
+  - relay/CHECKPOINTS/CP.438.6.yaml

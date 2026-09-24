@@ -264,6 +264,11 @@ class SchemaRepositoryRegexTests(unittest.TestCase):
             "pending_items": [],
             "known_issues": [],
             "offloads": [],
+            "accepted_truth": {},
+            "material": {},
+            "negative_knowledge": {},
+            "accountability": {},
+            "active_change": None,
             "delivery": {
                 "issue": 1882,
                 "pr": None,

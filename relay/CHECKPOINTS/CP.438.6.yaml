@@ -1,0 +1,54 @@
+schema_version: relay-v3.1-checkpoint
+id: CP.438.6
+ep: EP.438.6
+material_result:
+  head: 1c92694aeb103840f7dccdf0d8fd1a7a95d2c262
+  relevant_paths_digest: sha256:31b72c4d08bee9178e6182dfb7177abc053a86047bbf87ac1c0442a08eeebc91
+  dependency_digest: sha256:641d9488c7aae0d320aa2a2793eba08c3b9011f66d2f84320df2eedcde58b4a1
+acceptance:
+- id: AC.438.11
+  result: PASS
+  evidence:
+  - skills/engineering-pr-delivery-v3.1/tests/test_handover_context.py (17 tests PASS)
+  - Downstream disposable worktree smoke test on Advanced_Analysis#1862 (61b74de9d846c27105c26a66e13b7461b1933870)
+    plan_handover COMMITTED
+  - 'PR #460 opened on branch fix/v31-handover-asset-resolution-459'
+validation:
+  focused_tests: PASS
+  spec_delivery: PASS
+  full_guardrails: PASS
+quality:
+  policy: STANDARD
+  result: CLEAR
+known_limitations:
+- Inherited test_portable_cutover_compatibility.py failure from stale synthetic handover-ledger
+  fixture on Common main.
+discoveries:
+- Standalone three-pass prompt generator components must be resolved from the protocol
+  checkout root (_protocol_checkout_root()), not the consumer repository.
+handoff:
+  what_changed:
+  - handover_context.py resolves physical standalone three-pass generator assets from
+    protocol checkout root.
+  - test_handover_context.py added unit tests for unvendored consumer repos and fail-closed
+    missing/corrupt protocol assets.
+  what_is_true_now:
+  - Consumer repositories do not need to vendor skills/three-pass-prompt-generator/**
+    to generate valid handover requests.
+  - Emitted generator_contract paths in HANDOVER_CONTEXT.yaml remain canonical.
+  what_remains_uncertain:
+  - 'Common CI terminal validation status on PR #460 pending update for test_portable_cutover_compatibility.py
+    fixture.'
+  do_not_break:
+  - Do not alter emitted canonical generator path identifiers.
+  - Do not require consumer repositories to vendor three-pass prompt generator skills.
+  attempted_and_rejected:
+  - Requiring consumer repositories to vendor three-pass generator files was rejected.
+  resume_from:
+  - Common#438
+  - Common#459
+  - Common#461
+  - PR#460
+  - CP.438.6
+  first_successor_action: Release LEASE.438.6 to IDLE and admit EP.438.7 to repair
+    the synthetic test_portable_cutover_compatibility fixture.

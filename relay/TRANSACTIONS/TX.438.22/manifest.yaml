@@ -1,0 +1,124 @@
+schema_version: relay-v3.1-transaction
+id: TX.438.22
+command: RELEASE_LEASE
+actor: chatgpt-v3.1-handover-asset-repair
+status: COMMITTED
+created_at: '2026-09-24T15:40:15.355437Z'
+updated_at: '2026-09-24T15:40:15.472796Z'
+operations:
+- path: relay/EVENTS.jsonl
+  before_exists: true
+  before_digest: sha256:63f5bb813b692dbceeacabc58c1f151813cd9d4d9805c1337f586f9c0cf82b10
+  after_digest: sha256:fc3ac58d702d465be9635c89392b924eb22df467ea2535e0549f4173eba473c1
+- path: relay/GENERATED/CURRENT_SNAPSHOT.yaml
+  before_exists: true
+  before_digest: sha256:2ece0c014f284b94a0ec2584e2f2485471cab14679498be1cb704f12848be792
+  after_digest: sha256:169bded0cdd002b0f1635f4e15758785e31b12e26ea515105c33260ed717be43
+- path: relay/LEASES/LEASE.438.6.yaml
+  before_exists: true
+  before_digest: sha256:353267955abc1da6d2426038a88b32a118d149306a03fe89469bc9ae50bbb18b
+  after_digest: sha256:3ff79d6773c2c7d84c988ca6ae18a6084a946d2b0cc986e48ef432b283ef070d
+- path: relay/STATE.yaml
+  before_exists: true
+  before_digest: sha256:a91e1ff922fc55bcae96392290418014ffc0a34138f0032483387223698dbbf2
+  after_digest: sha256:5249afe9e3946a44ee1c8085d82478daece7ca3a43bfcdd285bca2fa433e443c
+applied:
+- relay/EVENTS.jsonl
+- relay/GENERATED/CURRENT_SNAPSHOT.yaml
+- relay/LEASES/LEASE.438.6.yaml
+- relay/STATE.yaml
+identity_reservations:
+- AC.438.1
+- AC.438.10
+- AC.438.2
+- AC.438.3
+- AC.438.4
+- AC.438.5
+- AC.438.6
+- AC.438.7
+- AC.438.8
+- AC.438.9
+- CP.438.1
+- CP.438.2
+- CP.438.3
+- CP.438.4
+- CP.438.5
+- CP.438.6
+- EP.438.1
+- EP.438.2
+- EP.438.3
+- EP.438.4
+- EP.438.5
+- EP.438.6
+- EVT.438.1
+- EVT.438.10
+- EVT.438.11
+- EVT.438.12
+- EVT.438.13
+- EVT.438.14
+- EVT.438.15
+- EVT.438.18
+- EVT.438.19
+- EVT.438.2
+- EVT.438.20
+- EVT.438.21
+- EVT.438.22
+- EVT.438.23
+- EVT.438.24
+- EVT.438.25
+- EVT.438.26
+- EVT.438.27
+- EVT.438.28
+- EVT.438.29
+- EVT.438.3
+- EVT.438.30
+- EVT.438.31
+- EVT.438.32
+- EVT.438.33
+- EVT.438.34
+- EVT.438.35
+- EVT.438.36
+- EVT.438.37
+- EVT.438.38
+- EVT.438.39
+- EVT.438.4
+- EVT.438.40
+- EVT.438.41
+- EVT.438.42
+- EVT.438.43
+- EVT.438.44
+- EVT.438.5
+- EVT.438.6
+- EVT.438.7
+- EVT.438.8
+- EVT.438.9
+- LEASE.438.1
+- LEASE.438.2
+- LEASE.438.3
+- LEASE.438.4
+- LEASE.438.5
+- LEASE.438.6
+- TX.438.1
+- TX.438.10
+- TX.438.11
+- TX.438.12
+- TX.438.13
+- TX.438.14
+- TX.438.15
+- TX.438.16
+- TX.438.17
+- TX.438.18
+- TX.438.19
+- TX.438.2
+- TX.438.20
+- TX.438.21
+- TX.438.22
+- TX.438.3
+- TX.438.4
+- TX.438.5
+- TX.438.6
+- TX.438.7
+- TX.438.8
+- TX.438.9
+- WP.438
+payload_state: PRUNED
