@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
-EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-22-R10"
+EXPECTED_PROTOCOL_REVISION = "TPG-3P-2026-09-24-R11"
 
 LEGACY_ACTIVE_PATTERNS = (
     "TARGET SCOPE:",
@@ -444,23 +444,18 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
         if p05 >= 0 and p1 >= 0:
             prompt05 = lot[p05:p1]
             prompt05_lower = prompt05.lower()
-            if "roadmap" not in prompt05_lower and "large-project" not in prompt05_lower and "large project" not in prompt05_lower and "project goal" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must start from the original roadmap / large-project goal")
-            if "governing issue" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must reason through the governing issue")
-            if (
-                "ongoing" not in prompt05_lower
-                and "last task" not in prompt05_lower
-                and "local task" not in prompt05_lower
-                and "current task" not in prompt05_lower
-            ):
-                errors.append(f"{label}: Prompt 0.5 must carry the ongoing/last local task as subordinate context")
-            if "subordinate" not in prompt05_lower and "not the destination" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must explicitly subordinate local task/PR state to the larger goal")
-            if "independent" not in prompt05_lower and "imagin" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must be an independent-thinking/imagination pass, not only orientation")
-            if "non-obvious" not in prompt05_lower and "refram" not in prompt05_lower and "hypoth" not in prompt05_lower:
-                errors.append(f"{label}: Prompt 0.5 must ask for non-obvious value hypotheses or reframing")
+            if not any(token in prompt05_lower for token in ("programme", "program", "large-project", "large project", "project goal", "destination")):
+                errors.append(f"{label}: Prompt 0.5 must expose the durable programme/project destination")
+            if "governing issue" not in prompt05_lower and "responsib" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must expose the governing responsibility")
+            if "local task" not in prompt05_lower and "local work" not in prompt05_lower and "task purpose" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must carry the local task/work as subordinate context")
+            if "instrument" not in prompt05_lower and "not the definition" not in prompt05_lower and "subordinate" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must treat local work as an instrument rather than the destination")
+            if "contribution" not in prompt05_lower:
+                errors.append(f"{label}: Prompt 0.5 must ask what this area contributes to the programme")
+            if re.search(r"\b(?:2|3|4|two|three|four)\s+(?:non-obvious\s+)?(?:ideas|opportunities|hypotheses|reframings|missing capabilities)\b", prompt05_lower):
+                errors.append(f"{label}: Prompt 0.5 must not impose a novelty quota")
 
         if p1 >= 0:
             p2 = lot.find(PROMPT_HEADINGS[2], p1 + 1)
@@ -477,6 +472,11 @@ def validate_text(text: str, expected_schema_sha: str | None = None) -> list[str
             for phrase in PROMPT1_MACHINE_SURFACE_PATTERNS:
                 if phrase in prompt1_lower:
                     errors.append(f"{label}: Prompt 1 exposes machine/taxonomy surface language: {phrase!r}")
+            if "prompt 0.5" in prompt1_lower or "prompt-0.5" in prompt1_lower:
+                errors.append(f"{label}: Prompt 1 must not inherit or discuss Prompt 0.5 conclusions")
+            if re.search(r"\b(?:2|3|4|two|three|four)\s+(?:non-obvious\s+)?(?:ideas|opportunities|hypotheses|reframings|missing capabilities)\b", prompt1_lower):
+                errors.append(f"{label}: Prompt 1 must not impose a novelty quota")
+
 
         p25 = lot.find(PROMPT_HEADINGS[3])
         p3 = lot.find(PROMPT_HEADINGS[4])
