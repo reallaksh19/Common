@@ -143,6 +143,8 @@ Every multi-agent programme should have one dedicated child issue:
 [Relay Handover] <programme title>
 ```
 
+At bootstrap, verify that this issue exists. If an active programme has no Handover issue, materialize one from the **current live provider/material state** as a reporting/reconstruction action before relying on a programme-wide ledger. Missing materialization never blocks engineering work.
+
 It is the durable current operational index for:
 
 - workstreams / agents;
@@ -256,6 +258,8 @@ TASK_EVIDENCE
 TASK_RESULT
 ```
 
+For deterministic reconstruction, a durable publication should begin with the corresponding typed heading (for example `IMPLEMENTATION_PLAN — rev 1` or `TASK_RESULT — ...`). A Three-Pass packet, narrative execution report, correction note or final-acceptance prose remains useful evidence, but it does not substitute for the typed publication when the semantic event is plan creation, plan change, meaningful evidence, or delivery.
+
 Routine commands, file reads, test retries and chat updates stay out of programme coordination.
 
 
@@ -293,14 +297,21 @@ BOOTSTRAP DURABLE PROGRAMME RECORD
 → REPEAT
 ```
 
-At bootstrap or zero-context takeover, derive the programme from:
+At bootstrap or zero-context takeover:
+
+1. read the parent specification and effective amendments;
+2. verify/materialize the `[Relay Handover]` issue if the programme is active and multi-agent;
+3. refresh child issues, typed task publications, relevant PR lifecycle/head/base, current main and material test/runtime evidence;
+4. only then reconstruct the programme view.
+
+Derive the programme from:
 
 ```text
 parent specification
 + effective amendments
 + [Relay Handover] ledger
-+ child issues / plans
-+ all nonterminal PRs
++ child issues / typed plans and results
++ current PR/provider state
 + current repository/test/runtime evidence
 + programme-significant local returns
 ```
@@ -324,18 +335,24 @@ See `references/coordinator-information-use.md`.
 
 The coordinator should use these graphs to maximize parallel-safe work, route producer outputs as soon as the required evidence exists, avoid repeated dead ends, recover after session loss, choose useful timers/helpers, and map child results back to programme exit criteria.
 
-At ordinary observation time, ask:
+At ordinary observation time, **refresh live provider/material state before acting on an old `NEXT`, handoff, agent summary, or ledger entry**. At minimum refresh the affected child issue, relevant PR(s), current main/material head, latest typed publication and any dependency output that could have changed.
+
+Then ask:
 
 ```text
 EXPECTED
 What concrete production/evidence event was expected?
 
 OBSERVED
-What is actually true now?
+What is actually true now from provider/material evidence?
 
 CONSEQUENCE
 What, if anything, follows for another workstream, the plan, the Owner or next observation?
 ```
+
+A prior handoff tells the coordinator what to look for next; it never substitutes for observing whether that event has already happened.
+
+Keep **responsibility completion** separate from **provider issue lifecycle**. A child issue may remain OPEN after a valid `TASK_RESULT` and merged material; do not redispatch work merely because the GitHub issue is open.
 
 ## Coordination observation
 
