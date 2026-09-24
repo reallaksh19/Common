@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,9 @@ OWNERSHIP_PATTERNS = (
     re.compile(r"(?im)\bOwned issue\s*:?\s*#(\d+)\b"),
     re.compile(r"(?im)\b(?:Closes|Fixes|Resolves)\s+#(\d+)\b"),
 )
+
+COORDINATION_PATH_PREFIXES = ("relay/",)
+COORDINATION_PATHS = {".github/workflows/v3-relay.yml"}
 
 
 def owned_issue_from_body(body: str | None) -> int | None:
@@ -40,6 +44,34 @@ def _issue_number(task: dict[str, Any]) -> int | None:
         return number
     number = ((task.get("identity") or {}).get("issue"))
     return number if isinstance(number, int) else None
+
+
+def _git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", "-C", str(root), *args],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+
+
+def _coordination_only_since(root: Path, recorded_head: str | None, current_head: str) -> bool:
+    if not recorded_head or recorded_head == current_head:
+        return bool(recorded_head)
+    ancestor = _git(root, "merge-base", "--is-ancestor", recorded_head, current_head)
+    if ancestor.returncode != 0:
+        return False
+    diff = _git(root, "diff", "--name-only", f"{recorded_head}..{current_head}")
+    if diff.returncode != 0:
+        return False
+    paths = [line.strip() for line in diff.stdout.splitlines() if line.strip()]
+    if not paths:
+        return True
+    return all(
+        path in COORDINATION_PATHS
+        or any(path.startswith(prefix) for prefix in COORDINATION_PATH_PREFIXES)
+        for path in paths
+    )
 
 
 def _delivery_rows(task: dict[str, Any]) -> list[dict[str, Any]]:
@@ -77,11 +109,12 @@ def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: st
                 continue
             represented.append(str(path.relative_to(root)))
             row_head = row.get("head")
-            if row_head == head_sha:
-                return []
             material_head = ((task.get("material") or {}).get("current_head"))
-            if row_head in {None, ""} and material_head == head_sha:
-                return []
+            for recorded_head in (row_head, material_head):
+                if recorded_head == head_sha:
+                    return []
+                if _coordination_only_since(root, recorded_head, head_sha):
+                    return []
 
     if not represented:
         return [
@@ -90,9 +123,9 @@ def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: st
         ]
 
     return [
-        f"Task Snapshot for issue #{issue_number} represents PR #{pr_number} but not exact head {head_sha}",
+        f"Task Snapshot for issue #{issue_number} represents PR #{pr_number} but not current material basis for head {head_sha}",
         f"matched snapshot(s): {', '.join(represented)}",
-        "refresh the Task Snapshot from current provider/material state",
+        "refresh the Task Snapshot; coordination-only commits after the recorded material head are allowed",
     ]
 
 

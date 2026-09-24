@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -13,6 +14,16 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from validate_task_binding import owned_issue_from_body, validate_binding, validate_event
+
+
+def _git(root: Path, *args: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(root), *args],
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    return result.stdout.strip()
 
 
 class TaskBindingValidationTests(unittest.TestCase):
@@ -66,7 +77,32 @@ class TaskBindingValidationTests(unittest.TestCase):
             root = Path(td)
             self._write_snapshot(root, head="old-head")
             errors = validate_binding(root, 265, 270, "new-head")
-            self.assertIn("not exact head", errors[0])
+            self.assertIn("not current material basis", errors[0])
+
+    def test_coordination_only_commit_after_material_head_is_allowed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _git(root, "init")
+            _git(root, "config", "user.email", "relay@example.invalid")
+            _git(root, "config", "user.name", "Relay Test")
+            (root / "product.txt").write_text("material\n", encoding="utf-8")
+            _git(root, "add", "product.txt")
+            _git(root, "commit", "-m", "material")
+            material_head = _git(root, "rev-parse", "HEAD")
+
+            self._write_snapshot(root, head=material_head)
+            _git(root, "add", "relay/GENERATED/tasks/ISSUE-265.snapshot.yaml")
+            _git(root, "commit", "-m", "coordination snapshot")
+            current_head = _git(root, "rev-parse", "HEAD")
+
+            self.assertEqual([], validate_binding(root, 265, 270, current_head))
+
+            (root / "product.txt").write_text("changed material\n", encoding="utf-8")
+            _git(root, "add", "product.txt")
+            _git(root, "commit", "-m", "new material")
+            newer_head = _git(root, "rev-parse", "HEAD")
+            errors = validate_binding(root, 265, 270, newer_head)
+            self.assertIn("not current material basis", errors[0])
 
     def test_pull_request_event_uses_owned_issue_marker(self):
         with tempfile.TemporaryDirectory() as td:
