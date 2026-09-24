@@ -31,6 +31,25 @@ External systems may still reject actions for their own permissions or policies.
 
 Engineering Relay V3.1 is a self-contained protocol line. Its implementation lives entirely under this directory and does not import, symlink, or resolve runtime/schema files through the V3 skill tree.
 
+## Owner reporting delta
+
+V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
+
+Use:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/owner_publication.py \
+  relay/GENERATED/CURRENT_SNAPSHOT.yaml \
+  --task-snapshot relay/GENERATED/tasks/<EP>.snapshot.yaml \
+  --improvement-view relay/GENERATED/improvements/<CP>.improvement.yaml
+```
+
+After the status has actually been shown to the Owner, `--apply` may advance `relay/PUBLICATION/OWNER_STATUS.yaml`.
+
+The cursor and delta classification are **reporting metadata only**. Missing/stale reporting state must never block production, and no authorization/admission/recovery/checkpoint/delivery path may consume the cursor as a gate.
+
+See `operating-model/owner-reporting-delta.md`.
+
 ## Status
 
 V3.1 is the current implementation/guideline over a stable native Relay core. It MUST NOT silently replace V2.5 authority, but an already-cut-over `V3 / ACTIVE` repository does **not** require another protocol migration merely to use current V3.1 tooling.
