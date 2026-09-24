@@ -49,9 +49,94 @@ def _load_yaml_files(directory: Path) -> list[tuple[Path, dict[str, Any]]]:
     return rows
 
 
+def _matches_ref(ref: dict[str, Any] | None, repository: str, number: int) -> bool:
+    value = ref or {}
+    return value.get("repository") == repository and value.get("number") == number
+
+
 def _matches_parent(ep: dict[str, Any], repository: str, number: int) -> bool:
-    parent = ep.get("parent_issue") or {}
-    return parent.get("repository") == repository and parent.get("number") == number
+    return _matches_ref(ep.get("programme_parent"), repository, number) or _matches_ref(
+        ep.get("parent_issue"), repository, number
+    )
+
+
+def _parent_from_observation(observation: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "repository": observation.get("repository"),
+        "number": observation.get("issue_number"),
+        "title": observation.get("title"),
+        "url": observation.get("url"),
+        "state": observation.get("state") or "UNKNOWN",
+        "disposition": observation.get("disposition") or "UNKNOWN",
+        "relationships": list(observation.get("relationships") or []),
+        "handover_ledger": observation.get("handover_ledger"),
+    }
+
+
+def _progress_from_observation(observation: dict[str, Any]) -> dict[str, int]:
+    rows = list(
+        ((observation.get("current_contract") or {}).get("acceptance_items"))
+        or ((observation.get("baseline") or {}).get("acceptance_items"))
+        or []
+    )
+    result = {
+        "complete": 0,
+        "partial": 0,
+        "pending": 0,
+        "blocked": 0,
+        "deferred": 0,
+        "not_applicable": 0,
+        "unknown": 0,
+        "total": len(rows),
+    }
+    mapping = {
+        "COMPLETE": "complete",
+        "PASS": "complete",
+        "PARTIAL": "partial",
+        "PENDING": "pending",
+        "NOT_PROVED": "pending",
+        "BLOCKED": "blocked",
+        "FAIL": "blocked",
+        "DEFERRED": "deferred",
+        "NOT_APPLICABLE": "not_applicable",
+        "NA": "not_applicable",
+        "UNKNOWN": "unknown",
+    }
+    for row in rows:
+        bucket = mapping.get(str((row or {}).get("state") or "UNKNOWN"), "unknown")
+        result[bucket] += 1
+    return result
+
+
+def _work_issue(ep: dict[str, Any]) -> dict[str, Any] | None:
+    issue = ep.get("parent_issue") or {}
+    if not issue.get("repository") or not isinstance(issue.get("number"), int):
+        return None
+    return {
+        "repository": str(issue.get("repository")),
+        "number": int(issue.get("number")),
+        "url": str(issue.get("url")),
+        "title": issue.get("title"),
+    }
+
+
+def _plan_from_ep(ep: dict[str, Any]) -> dict[str, Any]:
+    basis = ep.get("implementation_plan_basis") or {}
+    if basis:
+        return {
+            "state": "PRESENT",
+            "provider_ref": basis.get("provider_ref"),
+            "revision": basis.get("revision"),
+            "digest": basis.get("digest"),
+            "observed_at": basis.get("observed_at"),
+        }
+    return {
+        "state": "MISSING",
+        "provider_ref": None,
+        "revision": None,
+        "digest": None,
+        "observed_at": None,
+    }
 
 
 def _checkpoint_complete(checkpoint: dict[str, Any] | None) -> bool:
@@ -149,9 +234,44 @@ def build(
     parent_issue_observation: dict[str, Any],
     *,
     base_ref: str,
+    work_issue_observation: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    task = build_task(root, base_ref, parent_issue_observation)
-    parent = task.get("parent_issue") or {}
+    observation_errors = validate_schema(
+        "parent-issue-observation",
+        parent_issue_observation,
+        "PROGRAMME_OR_WORK_ISSUE_OBSERVATION",
+    )
+    if observation_errors:
+        raise ProjectionError("; ".join(observation_errors))
+
+    state = load_yaml(root / "relay/STATE.yaml")
+    current_execution = state.get("execution") or {}
+    current_ep = current_execution.get("ep")
+    current_ep_obj = None
+    if current_ep:
+        current_path = root / "relay/WORK" / f"{current_ep}.yaml"
+        if current_path.exists():
+            value = load_yaml(current_path)
+            current_ep_obj = value if isinstance(value, dict) else None
+
+    observation_repo = str(parent_issue_observation.get("repository") or "")
+    observation_number = parent_issue_observation.get("issue_number")
+    programme_ref = (current_ep_obj or {}).get("programme_parent") or {}
+    work_ref = (current_ep_obj or {}).get("parent_issue") or {}
+    observation_is_programme = bool(
+        observation_repo
+        and isinstance(observation_number, int)
+        and _matches_ref(programme_ref, observation_repo, observation_number)
+        and not _matches_ref(work_ref, observation_repo, observation_number)
+    )
+
+    task_observation = work_issue_observation if observation_is_programme else parent_issue_observation
+    task = build_task(root, base_ref, task_observation)
+    parent = (
+        _parent_from_observation(parent_issue_observation)
+        if observation_is_programme
+        else (task.get("parent_issue") or {})
+    )
     ledger_ref = parent.get("handover_ledger")
     if not isinstance(ledger_ref, dict):
         provider_status_path = root / "relay/GENERATED/HANDOVER_PROVIDER_STATUS.yaml"
@@ -169,14 +289,11 @@ def build(
     if not repository or not isinstance(number, int):
         raise ProjectionError("handover ledger requires a concrete parent issue identity")
 
-    state = load_yaml(root / "relay/STATE.yaml")
     snapshot = build_snapshot(root, base_ref)
     events, errors = load_events(root / "relay/EVENTS.jsonl")
     if errors:
         raise ProjectionError("; ".join(errors))
 
-    current_execution = state.get("execution") or {}
-    current_ep = current_execution.get("ep")
     current_lease = current_execution.get("lease")
 
     eps: dict[str, dict[str, Any]] = {}
@@ -232,9 +349,32 @@ def build(
         if lease_id:
             basis.append(f"relay/LEASES/{lease_id}.yaml")
         relevant_refs.update([ep_id, *(str(x) for x in (checkpoint_id, lease_id) if x)])
+        plan = _plan_from_ep(ep)
+        expected = ep.get("expected_next_observable")
+        publications: list[dict[str, Any]] = []
+        if str(ep_id) == str(current_ep):
+            task_plan = task.get("planning") or {}
+            if task_plan:
+                plan = {
+                    "state": task_plan.get("state") or "UNKNOWN",
+                    "provider_ref": task_plan.get("provider_ref"),
+                    "revision": task_plan.get("revision"),
+                    "digest": task_plan.get("digest"),
+                    "observed_at": task_plan.get("observed_at"),
+                }
+                expected = task_plan.get("expected_next_observable") or expected
+            publications = [
+                dict(row)
+                for row in (task.get("task_publications") or [])
+                if isinstance(row, dict)
+            ]
         ep_index.append({
             "ep": ep_id,
             "work_package": str(ep.get("work_package")),
+            "work_issue": _work_issue(ep),
+            "implementation_plan": plan,
+            "expected_next_observable": expected,
+            "latest_publications": publications[-4:],
             "status": status,
             "continuation": continuation,
             "checkpoint": checkpoint_id,
@@ -351,7 +491,11 @@ def build(
             "status": frontier.get("status") or "UNKNOWN",
             "continuation": frontier.get("continuation") or "UNKNOWN",
         },
-        "parent_progress": dict((task.get("parent_issue_progress") or {}).get("summary") or {}),
+        "parent_progress": (
+            _progress_from_observation(parent_issue_observation)
+            if observation_is_programme
+            else dict((task.get("parent_issue_progress") or {}).get("summary") or {})
+        ),
         "ep_index": ep_index,
         "pending_items": list(task.get("pending_items") or []),
         "known_issues": list(task.get("known_issues") or []),
@@ -429,12 +573,22 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "",
         "## EP index",
         "",
-        "| EP | WP | Status | Continuation | Checkpoint | Lease | Executor |",
-        "|---|---|---|---|---|---|---|",
+        "| EP | Work issue | WP | Plan | Expected next observable | Status | Continuation | Checkpoint | Lease | Executor |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for row in ledger["ep_index"]:
+        work_issue = row.get("work_issue") or {}
+        plan = row.get("implementation_plan") or {}
+        expected = row.get("expected_next_observable") or {}
+        plan_label = str(plan.get("state") or "UNKNOWN")
+        if plan.get("revision") is not None:
+            plan_label += f" r{plan.get('revision')}"
         lines.append(
-            f"| {row['ep']} | {row['work_package']} | {row['status']} | {row['continuation']} | "
+            f"| {row['ep']} | "
+            f"{work_issue.get('repository') or '-'}#{work_issue.get('number') or '-'} | "
+            f"{row['work_package']} | {plan_label} | "
+            f"{expected.get('statement') or '-'} | "
+            f"{row['status']} | {row['continuation']} | "
             f"{row.get('checkpoint') or '-'} | {row.get('lease') or '-'} | {row.get('executor') or '-'} |"
         )
 
@@ -539,6 +693,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate V3.1 parent/Handover issue provider projections.")
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument("--parent-observation", required=True)
+    parser.add_argument(
+        "--work-issue-observation",
+        help="Optional current child/work-issue provider observation used for plan/publication reconstruction when --parent-observation is the programme root.",
+    )
     parser.add_argument("--base-ref", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--ledger-markdown")
@@ -547,7 +705,17 @@ def main() -> None:
 
     root = Path(args.repo_root).resolve()
     observation = load_yaml(Path(args.parent_observation))
-    ledger = build(root, observation, base_ref=args.base_ref)
+    work_observation = (
+        load_yaml(Path(args.work_issue_observation))
+        if args.work_issue_observation
+        else None
+    )
+    ledger = build(
+        root,
+        observation,
+        base_ref=args.base_ref,
+        work_issue_observation=work_observation,
+    )
     _write(Path(args.output), yaml.safe_dump(ledger, sort_keys=False))
     if args.ledger_markdown:
         _write(Path(args.ledger_markdown), render_ledger(ledger))
