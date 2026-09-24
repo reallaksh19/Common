@@ -47,6 +47,48 @@ If V3.1 contains compatibility readers for legacy-shaped durable artifacts, thos
 
 **Normative override:** any later section in this document that mentions V3, V2.5, `V3`, `V2_5`, legacy admission, protocol cutover, migration, compatibility, or historical authority is **archival/migration documentation only**. Current agents/coordinators must not use those passages as live execution, coordination, reporting, recovery, gating, or Owner-command instructions.
 
+## GitHub programme source hierarchy — recorder/reconstruction input
+
+For multi-agent programmes, V3.1 should interpret durable GitHub information using this source hierarchy:
+
+```text
+1. Parent programme issue
+   = governing human/programme contract
+
+2. Explicit Owner-authorized comments/amendments
+   = durable semantic changes, transfers, decisions and evidence chronology
+
+3. Dedicated [Relay Handover] child issue
+   = current operational ledger / reconstruction index
+
+4. Child implementation issues
+   = bounded engineering responsibilities + revisable implementation plans
+
+5. PRs / commits / tests / artifacts
+   = actual material and exact-head evidence
+
+6. V3.1
+   = recorder / reconstruction / reporting mechanism
+```
+
+The provider-facing `[Relay Handover]` issue is an operational index, not execution authority. Its statements should point to durable material evidence where a production claim matters.
+
+Missing/stale Handover content may reduce reconstruction quality but must never invalidate existing production work, revoke responsibility, block coding/PRs, or create authority.
+
+When reconstructing a programme, preserve:
+
+- current parent basis revision and effective amendment refs;
+- all nonterminal PRs;
+- implementation-plan refs/revisions when available;
+- required production-output dependencies and independent work;
+- producer→consumer handoffs;
+- pending items / known issues;
+- negative knowledge / do-not-reopen evidence;
+- genuine Owner decisions;
+- exact evidence for programme exit criteria.
+
+V3.1 must not manufacture missing programme semantics from its own leases, checkpoints, controls, generated snapshots or historical protocol state.
+
 ## Owner reporting delta
 
 V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
