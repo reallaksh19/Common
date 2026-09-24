@@ -641,9 +641,10 @@ templates/local-coordinator-bridge.md
 templates/local-engineering-snapshot.md
 ```
 
-Derived/disposable coordination:
+Programme bootstrap / derived coordination:
 
 ```text
+templates/programme-bootstrap.md
 schemas/coordination-observation.schema.yaml
 templates/coordination-pass.md
 ```
