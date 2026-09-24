@@ -182,10 +182,11 @@ def render(
         ]
 
     lines += [
-        "## Blockers by consequence",
-        f"- Execution: {_items(c.get('execution_blockers'))}",
-        f"- Handover: {_items(c.get('handover_blockers'))}",
-        f"- Delivery: {_items(c.get('delivery_blockers'))}",
+        "## Recorded constraints / diagnostics",
+        "These are descriptive observations, not V3.1 execution permission.",
+        f"- Execution-relevant diagnostics: {_items(c.get('execution_blockers'))}",
+        f"- Handover diagnostics: {_items(c.get('handover_blockers'))}",
+        f"- Delivery diagnostics: {_items(c.get('delivery_blockers'))}",
         f"- Informational: {_items(c.get('informational'))}",
         "",
     ]
@@ -210,7 +211,7 @@ def render(
         ]
 
     lines += [
-        "## Legal next boundary",
+        "## Next actions",
         f"- Material: {n.get('immediate_material_action') or 'none'}",
         f"- Delivery: {n.get('delivery_action') or 'none'}",
         f"- Stop conditions: {_items(n.get('stop_conditions'))}",
