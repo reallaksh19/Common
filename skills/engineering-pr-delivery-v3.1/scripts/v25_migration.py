@@ -81,16 +81,28 @@ def _schema_version(path: Path) -> str | None:
     return str(value.get("schema_version")) if isinstance(value, dict) and value.get("schema_version") else None
 
 
+LEGACY_TEXT_EXTENSIONS = {".yaml", ".yml", ".json", ".md", ".txt"}
+
+
+def _read_bytes_portable(path: Path) -> bytes:
+    data = path.read_bytes()
+    if path.suffix.lower() in LEGACY_TEXT_EXTENSIONS:
+        return data.replace(b"\r\n", b"\n")
+    return data
+
+
 def legacy_inventory(root: Path) -> tuple[list[dict[str, Any]], str]:
     base = root / V25_TREE
     if not base.exists():
         raise MigrationError(f"legacy relay tree is missing: {V25_TREE}")
+    files = [p for p in base.rglob("*") if p.is_file()]
+    files.sort(key=lambda p: p.relative_to(root).as_posix())
     entries = []
-    for path in sorted(p for p in base.rglob("*") if p.is_file()):
+    for path in files:
         rel = path.relative_to(root).as_posix()
         entries.append({
             "path": rel,
-            "digest": _sha256_bytes(path.read_bytes()),
+            "digest": _sha256_bytes(_read_bytes_portable(path)),
             "category": _category(rel),
             "schema_version": _schema_version(path),
         })
@@ -138,7 +150,7 @@ def build_report(root: Path) -> dict[str, Any]:
         "source": {
             "root": str(root),
             "state_path": V25_STATE,
-            "state_digest": _sha256_bytes(state_path.read_bytes()),
+            "state_digest": _sha256_bytes(_read_bytes_portable(state_path)),
             "roadmap_path": roadmap_ref,
             "legacy_tree_digest": tree_digest,
         },

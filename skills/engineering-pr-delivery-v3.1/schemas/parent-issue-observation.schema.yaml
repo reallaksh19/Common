@@ -5,7 +5,7 @@ properties:
   schema_version: {const: relay-v3.1-parent-issue-observation}
   authority: {const: DERIVED_PROVIDER_OBSERVATION}
   provider: {const: GITHUB}
-  repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+  repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
   issue_number: {type: integer, minimum: 1}
   title: {type: string, minLength: 1}
   url: {type: string, format: uri}
@@ -61,7 +61,7 @@ properties:
           additionalProperties: false
           required: [repository, issue_number, url]
           properties:
-            repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+            repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
             issue_number: {type: integer, minimum: 1}
             url: {type: string, format: uri}
         scope:
@@ -78,7 +78,7 @@ properties:
     additionalProperties: false
     required: [repository, issue_number, url]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       issue_number: {type: integer, minimum: 1}
       url: {type: string, format: uri}
   updates:

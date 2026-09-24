@@ -17,7 +17,7 @@ properties:
     additionalProperties: false
     required: [repository, number, title, url, state, disposition, relationships]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       number: {type: integer, minimum: 1}
       title: {type: string, minLength: 1}
       url: {type: string, format: uri}
@@ -29,7 +29,7 @@ properties:
     additionalProperties: false
     required: [repository, number, url]
     properties:
-      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+$'}
+      repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       number: {type: integer, minimum: 1}
       url: {type: string, format: uri}
   current_frontier:
