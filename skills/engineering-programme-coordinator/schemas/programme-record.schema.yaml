@@ -26,6 +26,7 @@ properties:
       parent_issue: {type: string, minLength: 1}
       basis_revision: {type: string, minLength: 1}
       observed_main: {type: string, minLength: 1}
+      relay_handover_ref: {type: [string, 'null']}
       created_at: {type: [string, 'null'], format: date-time}
   owner_outcome:
     type: object
