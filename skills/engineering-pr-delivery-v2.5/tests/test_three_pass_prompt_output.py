@@ -230,6 +230,7 @@ RECONCILE — compare the baseline, verified reality, and the roadmap; state the
 CRITIQUE THE CLAIM — define a GAP WITNESS and DISPROOF CONDITION, require quantitative or executable proof, try the stronger case with the existing model first, and withdraw or narrow architecture that proves unnecessary.
 A PROBE / EVIDENCE TASK may investigate an unproved hypothesis without admitting the hypothesized capability as product scope.
 DECIDE — preserve, revise, add, defer, remove, or leave unchanged; require positive evidence for narrowing, removal, closure, or ownership transfer and choose the smallest evidence-supported move.
+For engineering execution, after live revalidation publish your own IMPLEMENTATION_PLAN — rev 1 on the owned child issue, including EXPECTED NEXT OBSERVABLE. This is not an approval gate; do not wait for Relay/coordinator approval after publishing it. Use PLAN_UPDATE, TASK_EVIDENCE and TASK_RESULT only for meaningful semantic changes/evidence/handoff.
 At completion report:
 THREE_PASS_REASONING_STATUS: THREE_PASS_COMPLETE
 FOLLOW_ON_QUALIFICATION_QUESTION_SET: NOT_APPLICABLE
