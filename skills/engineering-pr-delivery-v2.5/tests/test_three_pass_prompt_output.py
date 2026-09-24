@@ -16,7 +16,7 @@ SHA = "a" * 40
 GOOD = f"""# SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -33,7 +33,7 @@ PASS
 # SCHEMA BASIS
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-22-R10
+TPG-3P-2026-09-24-R11
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -362,7 +362,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("SCHEMA EXECUTION HANDSHAKE" in e for e in errors), errors)
 
     def test_wrong_protocol_revision_is_rejected(self):
-        bad = GOOD.replace("TPG-3P-2026-09-22-R10", "TPG-STALE-REVISION", 1)
+        bad = GOOD.replace("TPG-3P-2026-09-24-R11", "TPG-STALE-REVISION", 1)
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("PROTOCOL REVISION" in e for e in errors), errors)
 
@@ -373,7 +373,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("does not match expected current SHA" in e or "SHA must match" in e for e in errors), errors)
 
     def test_compatibility_wrapper_uses_standalone_validator(self):
-        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-22-R10")
+        self.assertEqual(MOD.EXPECTED_PROTOCOL_REVISION, "TPG-3P-2026-09-24-R11")
         canonical = ROOT.parent / "three-pass-prompt-generator" / "validate.py"
         self.assertTrue(canonical.exists(), canonical)
 
