@@ -1,0 +1,563 @@
+{
+  "schema_version": "relay-v3.1-task-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "source_protocol": "V3_1",
+  "identity": {
+    "work_package": "WP-232",
+    "ep": "EP-232",
+    "issue": 232,
+    "delivery_vehicle": 235
+  },
+  "purpose": {
+    "programme_outcome": "One exact-main readiness proof",
+    "current_goal": "Close P5 honestly",
+    "task_outcome": "Executable circular missing-unit falsifier",
+    "why_this_task_exists": "Declared falsifier lacked executable mutation"
+  },
+  "lineage": {
+    "predecessor_checkpoint": null,
+    "upstream_dependencies": [],
+    "roadmap_admission": {
+      "disposition": "MAPPED_EXISTING_WP",
+      "revision": "RM-EXAMPLE",
+      "basis": [
+        "golden-example"
+      ]
+    }
+  },
+  "parent_issue": {
+    "repository": "reallaksh19/Grade9V3",
+    "number": 232,
+    "title": "Implement circular symbol-unit falsifier mutation",
+    "state": "OPEN",
+    "url": "https://github.com/reallaksh19/Grade9V3/issues/232",
+    "baseline": null,
+    "current": {
+      "acceptance_items": [
+        {
+          "id": "AC-F-01",
+          "statement": "Missing-unit mutation exists",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-F-02",
+          "statement": "Exact SYMBOL_FIELD_MISSING violation observed",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-F-03",
+          "statement": "Neighboring mutations remain green",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-F-04",
+          "statement": "Merged material is on current main",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        }
+      ]
+    },
+    "updates": [],
+    "disposition": "NO_CHANGE",
+    "relationships": [],
+    "handover_ledger": null
+  },
+  "programme_parent": {
+    "repository": "reallaksh19/Grade9V3",
+    "number": 210,
+    "title": "Core → Atlas → standalone visual readiness",
+    "url": "https://github.com/reallaksh19/Grade9V3/issues/210"
+  },
+  "planning": {
+    "state": "PRESENT",
+    "provider_ref": "github:reallaksh19/Grade9V3#232/comment-plan",
+    "revision": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "observed_at": "2026-09-24T05:00:00Z",
+    "expected_next_observable": {
+      "statement": "Consumer #215 uses merged #232 output",
+      "evidence": [
+        "#215 exact-main P5 evidence"
+      ]
+    }
+  },
+  "task_publications": [
+    {
+      "type": "IMPLEMENTATION_PLAN",
+      "ref": "github:reallaksh19/Grade9V3#232/comment-plan",
+      "observed_at": "2026-09-24T05:00:00Z",
+      "summary": "Agent-authored implementation plan.",
+      "exact_head": null
+    }
+  ],
+  "programme_progress": {
+    "criteria": [
+      {
+        "id": "EXIT-210-P1",
+        "statement": "P1 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P2",
+        "statement": "P2 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P3",
+        "statement": "P3 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P4",
+        "statement": "P4 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P5",
+        "statement": "P5 exact-main guardrail closure",
+        "state": "PENDING",
+        "reason_class": "SIBLING_WORKSTREAM",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 4,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 5
+    },
+    "coverage": {
+      "satisfied": 4,
+      "applicable_total": 5,
+      "percent": 80,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "work_issue_progress": {
+    "criteria": [
+      {
+        "id": "AC-F-01",
+        "statement": "Missing-unit mutation exists",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-F-02",
+        "statement": "Exact SYMBOL_FIELD_MISSING violation observed",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-F-03",
+        "statement": "Neighboring mutations remain green",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-F-04",
+        "statement": "Merged material is on current main",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 4,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    },
+    "coverage": {
+      "satisfied": 4,
+      "applicable_total": 4,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "plan_progress": {
+    "criteria": [
+      {
+        "id": "STEP-F-01",
+        "statement": "Trace declaration and registry",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-F-02",
+        "statement": "Implement bounded mutation",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-F-03",
+        "statement": "Validate and merge",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 3,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 3
+    },
+    "coverage": {
+      "satisfied": 3,
+      "applicable_total": 3,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "task_acceptance_progress": {
+    "criteria": [
+      {
+        "id": "EP-232-AC-01",
+        "statement": "Declared falsifier executes",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EP-232-AC-02",
+        "statement": "Expected violation matches",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 2,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    },
+    "coverage": {
+      "satisfied": 2,
+      "applicable_total": 2,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "verification": {
+    "state": "PASS",
+    "observations": [
+      {
+        "id": "V-232-01",
+        "statement": "Focused gate suite",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "V-232-02",
+        "statement": "Generated freshness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "failure_origins": {}
+  },
+  "delivery": {
+    "pr": 235,
+    "url": "https://github.com/reallaksh19/Grade9V3/pull/235",
+    "lifecycle": "MERGED",
+    "base": "7dcd490c28e8f3c339f8302168164b4541ae1417",
+    "head": "11cdfdc95f265393829fd2ef3fe359b2961dd6c3",
+    "mergeability": "MERGED"
+  },
+  "completion": {
+    "overall_state": "COMPLETE",
+    "headline": "#232 COMPLETE — bounded child acceptance is satisfied and PR #235 is merged; programme P5 remains open.",
+    "implementation": "COMPLETE",
+    "verification": "PASS",
+    "delivery": "MERGED",
+    "work_issue_acceptance": "SATISFIED",
+    "programme_contribution": "PARTIAL",
+    "provider_issue": "OPEN",
+    "what_done": [
+      "Circular missing-unit mutation registered",
+      "Exact expected violation proved",
+      "Merged material available to #215"
+    ],
+    "what_remains": [],
+    "dependencies": [],
+    "owner_decisions": []
+  },
+  "parent_issue_progress": {
+    "checklist": [
+      {
+        "id": "AC-F-01",
+        "statement": "Missing-unit mutation exists",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-F-02",
+        "statement": "Exact SYMBOL_FIELD_MISSING violation observed",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-F-03",
+        "statement": "Neighboring mutations remain green",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-F-04",
+        "statement": "Merged material is on current main",
+        "state": "PASS",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 4,
+      "partial": 0,
+      "pending": 0,
+      "blocked": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    }
+  },
+  "current_task_progress": {
+    "checklist": [
+      {
+        "id": "EP-232-AC-01",
+        "statement": "Declared falsifier executes",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "EP-232-AC-02",
+        "statement": "Expected violation matches",
+        "state": "PASS",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 2,
+      "partial": 0,
+      "pending": 0,
+      "blocked": 0,
+      "total": 2
+    }
+  },
+  "offloads": [],
+  "pending_items": [],
+  "known_issues": [],
+  "improvement_vs_original_issue": {
+    "baseline_digest": null,
+    "items": []
+  },
+  "scope": {
+    "write": [],
+    "read": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "inputs": [],
+  "benchmarks": [],
+  "benchmark_debt": {
+    "required_missing": [],
+    "stale": [],
+    "optional": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "lease_or_custody": null,
+    "executor": "example-agent",
+    "route": null,
+    "branch": "example"
+  },
+  "material": {
+    "base": "7dcd490c28e8f3c339f8302168164b4541ae1417",
+    "current_head": "11cdfdc95f265393829fd2ef3fe359b2961dd6c3"
+  },
+  "acceptance": [
+    {
+      "id": "EP-232-AC-01",
+      "state": "PASS",
+      "statement": "Declared falsifier executes",
+      "evidence": []
+    },
+    {
+      "id": "EP-232-AC-02",
+      "state": "PASS",
+      "statement": "Expected violation matches",
+      "evidence": []
+    }
+  ],
+  "controls": {
+    "material_write": [],
+    "checkpoint": [],
+    "handover": [],
+    "pr_ready": [],
+    "merge": [],
+    "release": []
+  },
+  "knowledge_state": {
+    "known_true": [],
+    "known_false": [],
+    "unknown": [],
+    "assumptions": []
+  },
+  "negative_knowledge": [],
+  "preserve": {
+    "accepted_do_not_reopen": []
+  },
+  "history": {
+    "recent_events": []
+  },
+  "next": {
+    "immediate_action": "No further #232 engineering; route result to #215.",
+    "next_value_frontier": "Consumer integration",
+    "stop_conditions": []
+  },
+  "reconstruction_sources": [
+    "golden-example"
+  ]
+}
