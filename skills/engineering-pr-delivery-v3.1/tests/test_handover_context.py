@@ -16,7 +16,15 @@ for entry in (SCRIPTS, TESTS):
     if str(entry) not in sys.path:
         sys.path.insert(0, str(entry))
 
-from handover_context import build_context, build_request, render_request, validate_visibility
+from handover_context import (
+    HandoverContextError,
+    _protocol_checkout_root,
+    _standalone_contract,
+    build_context,
+    build_request,
+    render_request,
+    validate_visibility,
+)
 from plan_handover import plan_handover
 from relay_can import evaluate as can_action
 from relay_tx import release_lease
@@ -496,3 +504,105 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("COMMITTED", result["status"])
 
+    def test_handover_context_resolves_generator_from_protocol_checkout_without_vendored_skills(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            self.assertFalse((root / "skills/three-pass-prompt-generator").exists())
+            target = load_yaml(target_observation(root, kind="PULL_REQUEST", number=420))
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=True,
+            )
+            self.assertFalse((root / "skills/three-pass-prompt-generator").exists())
+            contract = context["generator_contract"]
+            self.assertEqual("skills/three-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
+            self.assertEqual("skills/three-pass-prompt-generator/schema.md", contract["canonical_schema"])
+            self.assertEqual("skills/three-pass-prompt-generator/validate.py", contract["canonical_validator"])
+            self.assertEqual("TPG-3P-2026-09-24-R12", contract["protocol_revision_at_freeze"])
+            self.assertEqual("THREE_PASS_ONLY", contract["generator_mode"])
+            self.assertTrue(contract["live_main_fetch_required"])
+
+    def test_plan_handover_succeeds_without_vendored_skills(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            self.assertFalse((root / "skills/three-pass-prompt-generator").exists())
+            target_path = target_observation(root)
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-UNVENDORED-001",
+                event_id="EVT-HANDOVER-UNVENDORED-001",
+                actor="owner",
+                target_path=target_path,
+                base_ref=base_ref,
+                complex_mode=True,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            self.assertTrue((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+            self.assertTrue((root / "relay/GENERATED/THREE_PASS_REQUEST.yaml").exists())
+            self.assertTrue((root / "relay/GENERATED/THREE_PASS_REQUEST.md").exists())
+            self.assertFalse((root / "skills/three-pass-prompt-generator").exists())
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            contract = context["generator_contract"]
+            self.assertEqual("skills/three-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
+            self.assertEqual("skills/three-pass-prompt-generator/schema.md", contract["canonical_schema"])
+            self.assertEqual("skills/three-pass-prompt-generator/validate.py", contract["canonical_validator"])
+            self.assertEqual([], validate(root))
+
+    def test_genuinely_missing_or_corrupted_protocol_assets_fail_closed(self):
+        with tempfile.TemporaryDirectory() as bad_proto:
+            with self.assertRaises(HandoverContextError) as cm:
+                _standalone_contract(Path(bad_proto))
+            self.assertIn("standalone three-pass component missing", str(cm.exception))
+
+        with tempfile.TemporaryDirectory() as bad_proto:
+            proto_path = Path(bad_proto)
+            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills.mkdir(parents=True)
+            for name in ("SKILL.md", "schema.md", "validate.py"):
+                shutil.copyfile(STANDALONE / name, proto_skills / name)
+            schema_file = proto_skills / "schema.md"
+            schema_file.write_text(
+                schema_file.read_text(encoding="utf-8").replace("TPG-3P-2026-09-24-R12", "TPG-WRONG-REV"),
+                encoding="utf-8",
+            )
+            with self.assertRaises(HandoverContextError) as cm:
+                _standalone_contract(proto_path)
+            self.assertIn("revision mismatch", str(cm.exception))
+
+        with tempfile.TemporaryDirectory() as bad_proto:
+            proto_path = Path(bad_proto)
+            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills.mkdir(parents=True)
+            for name in ("SKILL.md", "schema.md", "validate.py"):
+                shutil.copyfile(STANDALONE / name, proto_skills / name)
+            schema_file = proto_skills / "schema.md"
+            schema_file.write_text(
+                schema_file.read_text(encoding="utf-8").replace("THREE_PASS_ONLY", "MISSING_TOKEN"),
+                encoding="utf-8",
+            )
+            with self.assertRaises(HandoverContextError) as cm:
+                _standalone_contract(proto_path)
+            self.assertIn("missing required surface", str(cm.exception))
+
+        with tempfile.TemporaryDirectory() as bad_proto:
+            proto_path = Path(bad_proto)
+            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills.mkdir(parents=True)
+            for name in ("SKILL.md", "schema.md", "validate.py"):
+                shutil.copyfile(STANDALONE / name, proto_skills / name)
+            launcher_file = proto_skills / "SKILL.md"
+            launcher_file.write_text("No fetch required", encoding="utf-8")
+            with self.assertRaises(HandoverContextError) as cm:
+                _standalone_contract(proto_path)
+            self.assertIn("launcher no longer requires a current-main schema fetch", str(cm.exception))
+
+        with tempfile.TemporaryDirectory() as td, tempfile.TemporaryDirectory() as bad_proto:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            target = load_yaml(target_observation(root))
+            with self.assertRaises(HandoverContextError):
+                build_context(root, base_ref=base_ref, target=target, complex_mode=False, protocol_root=Path(bad_proto))
