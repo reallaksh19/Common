@@ -6,148 +6,134 @@ import tempfile
 
 HERE = Path(__file__).resolve().parent
 VALIDATOR = HERE / "validate_issue_workorder.py"
+SHA = "0123456789012345678901234567890123456789"
 
-BASE = r'''# Mission
-Implement the exact retained production route from governed source to accepted output.
+PROGRAM = f"""ISSUE_ROLE: PROGRAM_ROOT
+PROGRAM_ID: PGM-DEMO
+PROGRAMME_BASIS_REVISION: PB-0001
+RELAY_PROTOCOL: V3.1_ONLY
 
-# 0. Ground truth at issue creation
-Observed main: `0123456789012345678901234567890123456789`.
-Do not assume this SHA is current when implementation begins. Re-ground first.
+# Owner outcome
+Deliver one coherent programme result.
 
-# 1. Owner intent, authority and scope
-Owner intent is to close the bounded route without changing the Owner roadmap or source/oracle authority.
+# Why now / governing witnesses
+Current integration evidence shows a real gap.
+Observed main: {SHA}
 
-# 2. Definition of Done
-The retained source, produced artifact, calculation and output all share the current authority identity.
+# Non-goals
+No unrelated architecture expansion.
 
-# 3. Input/source inventory
-| ID | Source | Authority | Data | Status |
-|---|---|---|---|---|
-| INPUT-001 | `fixtures/case.json` | PRODUCTION_INPUT | coordinates, load, material | AVAILABLE |
+# Effective amendment index
+CURRENT_BASIS_REVISION: PB-0001
+No amendments yet.
 
-# 4. Current production/repository path to preserve
-`fixtures/case.json` -> `normalizeCase()` -> `bindCase()` -> `runCase()` -> result.
+# Canonical inputs
+INPUT-001 | src/contracts.json | canonical contract | PRODUCTION
 
-# 5. Technical implementation instructions
-Use the live public APIs. Do not duplicate architecture.
-```js
-const input = loadCase('fixtures/case.json');
-const normalized = normalizeCase(input);
-const retained = bindCase(normalized);
-const result = runCase(retained);
-assert(result.caseId === retained.caseId);
-```
+# Workstream registry
+A | #1 | producer output | owns producer | consumer B
 
-# 6. PASS / FAIL / NOT_RUN criteria
-PASS means the focused route executes and the retained ID matches. FAIL means a numerical/state assertion fails. NOT_RUN means it did not execute.
+# Producer / consumer contracts
+A produces exact contract X for B.
 
-# 7. Benchmark / independent oracle criteria
-| ID | Type | Source | Inputs | Expected | Tolerance | Independent | Status |
-|---|---|---|---|---|---|---|---|
-| BM-001 | FROZEN_ANALYTICAL | `validation/case.md` | L=200, E=200000, P=1000 | delta=4.0 | 1e-6 mm | YES | READY |
-| BM-002 | PRODUCT_REGRESSION | `tests/case.test.js` | sample | state=READY | exact | NO | READY |
-A product regression is not an independent oracle. Never choose expected values or tolerance from current production output.
+# Dependency contracts
+B requires contract X. B may continue unrelated UI work independently.
 
-# 8. Anti-drift / fail-closed logic
-Re-ground main before coding. If production output disagrees with the independent oracle, do not weaken tolerance or regenerate expected values. A stale parent must block execution.
+# Programme exit criteria
+EXIT-001 | integrated result works | A,B | PR/test evidence | OPEN
 
-# 9. Negative tests and falsifiers
-Mutate source revision without regenerating the retained artifact; execution must reject the stale parent. The hypothesis is falsified if the current public route already rejects the observed failure before the proposed patch.
+# Dedicated Relay Handover operational ledger
+[Relay Handover] demo programme will be created as the current operational index.
+"""
 
-# 10. Explicit exclusions / non-goals
-NO roadmap mutation. NO benchmark re-baselining. NO direct-core bypass. NO merge without Owner authorization.
+FOCUSED = f"""ISSUE_ROLE: PARALLEL_FOCUSED
+PROGRAMME: github:owner/repo#100
+WORKSTREAM_ID: F
+RELAY_PROTOCOL: V3.1_ONLY
+Observed main: {SHA}
 
-# 11. Validation matrix
-| Boundary | PASS | Independent | Negative | Status |
-|---|---|---|---|---|
-| source custody | required | N/A | yes | NOT_RUN |
-| numerical result | required | yes | yes | NOT_RUN |
+# Outcome
+Make the declared falsifier executable.
 
-# Appendix A — implementation qualification
-QUESTION_PROFILE: NUMERICAL_ENGINEERING
+# Why now / concrete witness
+A focused test currently fails.
 
-## Q1 — Walk me through the actual case
-Take `fixtures/case.json` and trace the real case through `normalizeCase()`, `bindCase()`, `runCase()` and result publication. Tell me which current case/source IDs should survive each boundary, what exact retained object the solver consumes, and what single mismatch would falsify your trace before you propose any code change.
+# Owned responsibility
+Focused mutation helper and assertions.
 
-## Q2 — Do this calculation before touching the code
-For the actual benchmark values L=200 mm, E=200000 MPa, P=1000 N and I=6666.6667 mm^4, calculate the Euler-Bernoulli tip deflection by hand, show the numerator and denominator separately, then point to the first production function in `src/solver/beam.js` whose result should be compared with your independent value and explain the first-wrong-boundary interpretation if they disagree.
+# Ownership boundary / conflict-avoidance fence
+Do not change unrelated production architecture.
 
-## Q3 — Show me where stale state gets stopped
-Change `sourceRevision` from 17 to 18 while deliberately keeping retained mesh revision 17 and execution parent 17. Walk through the exact authority/invariant checks that should reject Run, name the expected stale state/error, and give one falsifier test that would prove your understanding of the current custody boundary is wrong.
+# Canonical inputs / source truth
+The canonical declaration is the source truth.
 
-## Q4 — Prove the benchmark independently
-Using a=10 mm, R=100 mm and sigma=50 MPa from `validation/kirsch.json`, independently derive the expected hoop stress at the hole boundary and the remote-boundary traction components at theta=0 and theta=90 before looking at production output. State units, sign convention and tolerance, then explain why `tests/product-regression.js` cannot serve as the oracle for this comparison.
+# Preserve / invariants
+Do not rewrite the declaration merely to make the test pass.
 
-## Q5 — What is the smallest patch you would make?
-Assume the hand result and current repository trace show the first wrong boundary is `bindCase()` retaining an obsolete parent ID. Name the smallest exact patch and files you would change, the failing evidence expected before it, PASS evidence after it, the neighbor regression that must remain unchanged, your rollback/falsifier condition, and the explicit NO-PATCH case if live main already rejects the stale parent correctly.
-'''
+# Producer / consumer contract
+Produces executable falsifier evidence. No downstream semantic contract change expected.
 
-PROGRAM = r'''ISSUE_ROLE: PROGRAM_ROOT
-PROGRAM_ID: PGM-AA-LAFEA
-PROGRAM_WORK_ITEM_KEY: SELF_AFTER_CREATION
-PROGRAM_BASIS_REVISION: PB-0001
-COMMON_INPUT_SET_ID: PGM-AA-LAFEA-INPUTS-v1
-COMMON_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1
-COMMON_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1
-COMMON_ROADMAP_SET_ID: PGM-AA-LAFEA-ROADMAP-v1
+# Dependencies
+NONE.
 
-# Mission
-Close the Owner program without losing common engineering authority across agents.
+# Falsifier
+If the proposed mutation does not produce the declared violation, the assumed path is wrong.
 
-# 0. Ground truth at program creation
-Observed main `0123456789012345678901234567890123456789`. Re-ground every child before work.
+# Success oracle
+Exact focused test passes with the declared violation.
 
-# 1. Original task ledger
-TASK-001 | complete production route | OPEN | Owner issue
+# Implementation Plan
+Agent-authored and revisable. Proposed approach, changed files, validation, uncertainties and next observable are recorded here.
 
-# 2. Roadmap ledger
-RM-001 | `docs/roadmap.md` | abc | PRIMARY | ALIGNED | OWNER_ONLY
+# Expected handoff
+Return exact head, evidence, proved/not-proved and limitations.
 
-# 3. Common inputs
-INPUT-001 | `input/model.json` | PRODUCTION_INPUT | geometry/material | AVAILABLE | invalidates mesh/result
+# Semantic escalation
+Escalate only if canonical source truth or programme ownership changes.
+"""
 
-# 4. Common benchmark / oracle
-BM-001 | FROZEN_ANALYTICAL | `validation/ref.json` | actual values | stress | 2% | YES | READY
-Product regression is not an independent oracle; production output may not select expected values or tolerance.
+HANDOVER = f"""ISSUE_ROLE: RELAY_HANDOVER
+PARENT_PROGRAMME: github:owner/repo#100
+PROGRAMME_BASIS_REVISION: PB-0001
+RELAY_PROTOCOL: V3.1_ONLY
+Observed main: {SHA}
 
-# 5. Common validation
-VAL-001 | `node scripts/check.mjs` | PASS | WP-001 | NOT_RUN
+# Non-authority rule
+This ledger is an index, not production authority.
 
-# 6. Program Definition of Done
-PASS requires TASK-001 satisfied, required child work complete, common oracle current, and NOT_RUN never promoted.
+# Programme basis
+Parent #100 / PB-0001.
 
-# 7. Work-package partition registry
-| WP | Relation | Child | Scope | Owned paths | Depends | Rows | Status | Chain/PR | Overlap |
-|---|---|---|---|---|---|---|---|---|---|
-| WP-001 | IMPLEMENTATION | PENDING | route | `src/a/**` | NONE | INPUT-001; BM-001; VAL-001 | PLANNED | PENDING | SAFE_DISJOINT |
+# Workstreams
+F | #232 | plan present | expected falsifier result.
 
-# 8. Anti-drift / overlap
-Re-ground parent/main. UNKNOWN or BLOCKED_ACTIVE_SIBLING receives no write authority. Oracle/tolerance authority stays in parent.
-'''
+# Dependency ledger
+No real dependency currently.
 
-CHILD_HEADER = r'''ISSUE_ROLE: WORK_PACKAGE
-PROGRAM_ID: PGM-AA-LAFEA
-PARENT_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#100
-WORK_PACKAGE_ID: WP-001
-PARTITION_KEY: PGM-AA-LAFEA/WP-001
-PREDECESSOR_WORK_ITEM_KEY: NONE
-REVISION_SEQUENCE: 0
-INHERITED_PROGRAM_BASIS_REVISION: PB-0001
-INHERITED_INPUT_SET_ID: PGM-AA-LAFEA-INPUTS-v1
-INHERITED_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1
-INHERITED_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1
-INHERITED_ROADMAP_SET_ID: PGM-AA-LAFEA-ROADMAP-v1
-PARENT_TASK_ROWS: TASK-001
-USES_INPUT_ROWS: INPUT-001
-USES_BENCHMARK_ROWS: BM-001
-USES_VALIDATION_ROWS: VAL-001
-OVERLAP_CLASSIFICATION: SAFE_DISJOINT
-OWNED_AUTHORITY_DOMAINS: route-orchestration
-OWNED_PATHS_OR_COMPONENTS: src/route/**
-READ_DEPENDENCIES: input/model.json
-PROTECTED_SIBLING_DOMAINS: solver-formulation
-DEPENDENCY_PREDECESSORS: NONE
-'''
+# Nonterminal PRs
+Carry all draft/open PRs until terminal.
+
+# Pending items
+Focused test evidence.
+
+# Known issues
+None.
+
+# Negative knowledge / do-not-reopen
+Do not change canonical declaration merely to silence a test.
+
+# Recent handoffs
+None yet.
+
+# Owner decisions needed
+NONE.
+
+# Next coordinator action
+Observe F result and route only if programme-significant.
+
+# Next useful observation
+Watch for PR/test evidence.
+"""
 
 
 def run(text):
@@ -168,20 +154,14 @@ def expect(name, text, expected):
 
 def main():
     ok = True
-    ok &= expect("strong single numerical workorder", BASE, 0)
-    ok &= expect("strong program root", PROGRAM, 0)
-    ok &= expect("strong work-package child", CHILD_HEADER + "\n" + BASE, 0)
-    ok &= expect("program missing common validation set rejected", PROGRAM.replace("COMMON_VALIDATION_SET_ID: PGM-AA-LAFEA-VALID-v1\n", ""), 1)
-    ok &= expect("child missing inherited benchmark set rejected", (CHILD_HEADER + "\n" + BASE).replace("INHERITED_BENCHMARK_SET_ID: PGM-AA-LAFEA-BENCH-v1\n", ""), 1)
-    ok &= expect("child unknown overlap is structurally recorded", (CHILD_HEADER + "\n" + BASE).replace("OVERLAP_CLASSIFICATION: SAFE_DISJOINT", "OVERLAP_CLASSIFICATION: UNKNOWN"), 0)
-    ok &= expect("child invalid overlap value rejected", (CHILD_HEADER + "\n" + BASE).replace("OVERLAP_CLASSIFICATION: SAFE_DISJOINT", "OVERLAP_CLASSIFICATION: MAYBE"), 1)
-    revision = (CHILD_HEADER + "\n" + BASE).replace("ISSUE_ROLE: WORK_PACKAGE", "ISSUE_ROLE: REVISION").replace("PREDECESSOR_WORK_ITEM_KEY: NONE", "PREDECESSOR_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#101").replace("REVISION_SEQUENCE: 0", "REVISION_SEQUENCE: 1")
-    ok &= expect("strong revision child", revision, 0)
-    ok &= expect("revision without predecessor rejected", revision.replace("PREDECESSOR_WORK_ITEM_KEY: github:reallaksh19/Advanced_Analysis#101", "PREDECESSOR_WORK_ITEM_KEY: NONE"), 1)
-    ok &= expect("textbook question rejected", BASE.replace("Take `fixtures/case.json` and trace the real case through `normalizeCase()`, `bindCase()`, `runCase()` and result publication. Tell me which current case/source IDs should survive each boundary, what exact retained object the solver consumes, and what single mismatch would falsify your trace before you propose any code change.", "Explain the architecture."), 1)
-    ok &= expect("missing input ledger rejected", BASE.replace("INPUT-001", "SOURCE-A"), 1)
-    ok &= expect("missing benchmark row rejected", BASE.replace("BM-001", "BENCH-A").replace("BM-002", "BENCH-B"), 1)
+    ok &= expect("programme specification", PROGRAM, 0)
+    ok &= expect("parallel focused child", FOCUSED, 0)
+    ok &= expect("relay handover ledger", HANDOVER, 0)
+    ok &= expect("focused child without parent rejected", FOCUSED.replace("PROGRAMME: github:owner/repo#100\n", ""), 1)
+    ok &= expect("programme without handover reference rejected", PROGRAM.replace("# Dedicated Relay Handover operational ledger\n[Relay Handover] demo programme will be created as the current operational index.\n", ""), 1)
+    ok &= expect("legacy protocol path rejected", FOCUSED + "\nengineering-pr-delivery-v2.5\n", 1)
     return 0 if ok else 1
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
