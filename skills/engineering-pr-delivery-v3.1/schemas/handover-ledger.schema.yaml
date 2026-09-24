@@ -56,6 +56,160 @@ properties:
       properties:
         ep: {type: string, pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
         work_package: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
+        work_issue:
+          type: [object, 'null']
+          additionalProperties: false
+          required: [repository, number, url]
+          properties:
+            repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+        continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
+        checkpoint: {type: [string, 'null']}
+        lease: {type: [string, 'null']}
+        executor: {type: [string, 'null']}
+        custody_epoch: {type: [integer, 'null'], minimum: 0}
+        basis:
+          type: array
+          items: {type: string, minLength: 1}
+  pending_items: {type: array}
+  known_issues: {type: array}
+  offloads:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [origin_ep]
+      properties:
+        origin_ep: {type: string}
+  accepted_truth:
+    type: object
+    additionalProperties: true
+  material:
+    type: object
+    additionalProperties: true
+  negative_knowledge:
+    type: object
+    additionalProperties: true
+  accountability:
+    type: object
+    additionalProperties: true
+  active_change:
+    type: [object, 'null']
+    additionalProperties: true
+  delivery:
+    type: object
+    additionalProperties: true
+  records:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [event_id, type, timestamp, actor, subject, basis]
+      properties:
+        event_id: {type: string}
+        type: {type: string}
+        timestamp: {type: string}
+        actor: {type: string}
+        subject: {type: string}
+        basis: {type: array}
+  next:
+    type: object
+    additionalProperties: false
+    required: [action, stop_conditions]
+    properties:
+      action: {type: [string, 'null']}
+      stop_conditions: {type: array}
+additionalProperties: false
+}
+            number: {type: integer, minimum: 1}
+            url: {type: string, format: uri}
+            title: {type: [string, 'null']}
+        implementation_plan:
+          type: object
+          additionalProperties: false
+          required: [state, provider_ref, revision, digest, observed_at]
+          properties:
+            state: {enum: [PRESENT, MISSING, STALE, UNKNOWN]}
+            provider_ref: {type: [string, 'null']}
+            revision: {type: [integer, 'null'], minimum: 1}
+            digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}        continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
+        checkpoint: {type: [string, 'null']}
+        lease: {type: [string, 'null']}
+        executor: {type: [string, 'null']}
+        custody_epoch: {type: [integer, 'null'], minimum: 0}
+        basis:
+          type: array
+          items: {type: string, minLength: 1}
+  pending_items: {type: array}
+  known_issues: {type: array}
+  offloads:
+    type: array
+    items:
+      type: object
+      additionalProperties: true
+      required: [origin_ep]
+      properties:
+        origin_ep: {type: string}
+  accepted_truth:
+    type: object
+    additionalProperties: true
+  material:
+    type: object
+    additionalProperties: true
+  negative_knowledge:
+    type: object
+    additionalProperties: true
+  accountability:
+    type: object
+    additionalProperties: true
+  active_change:
+    type: [object, 'null']
+    additionalProperties: true
+  delivery:
+    type: object
+    additionalProperties: true
+  records:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [event_id, type, timestamp, actor, subject, basis]
+      properties:
+        event_id: {type: string}
+        type: {type: string}
+        timestamp: {type: string}
+        actor: {type: string}
+        subject: {type: string}
+        basis: {type: array}
+  next:
+    type: object
+    additionalProperties: false
+    required: [action, stop_conditions]
+    properties:
+      action: {type: [string, 'null']}
+      stop_conditions: {type: array}
+additionalProperties: false
+}
+            observed_at: {type: [string, 'null'], format: date-time}
+        expected_next_observable:
+          type: [object, 'null']
+          additionalProperties: false
+          required: [statement, evidence]
+          properties:
+            statement: {type: string, minLength: 1}
+            evidence:
+              type: array
+              items: {type: string, minLength: 1}
+        latest_publications:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [type, ref, observed_at, summary]
+            properties:
+              type: {enum: [IMPLEMENTATION_PLAN, PLAN_UPDATE, TASK_EVIDENCE, TASK_RESULT]}
+              ref: {type: string, minLength: 1}
+              observed_at: {type: string, format: date-time}
+              summary: {type: string, minLength: 1}
+              exact_head: {type: [string, 'null']}
         status: {enum: [ACTIVE, COMPLETE, RECOVERY_REQUIRED, UNKNOWN]}
         continuation: {enum: [NEW, HANDOFF_PENDING, HANDOFF, RECOVERY, UNKNOWN]}
         checkpoint: {type: [string, 'null']}
