@@ -342,6 +342,79 @@ UNKNOWN   -> diagnostic; current comparison is unavailable
 
 No drift classification denies MATERIAL_WRITE or CHECKPOINT.
 
+## Task Snapshot reporting contract — Owner-facing
+
+A Task Snapshot must answer immediately:
+
+```text
+WHAT IS THIS TASK?
+WHAT IS DONE?
+HOW MUCH OF THE CHILD/WORK ISSUE IS ACCEPTED?
+WHAT PROGRAMME CRITERIA DOES IT SATISFY?
+WHAT REMAINS?
+WHY IS IT REMAINING?
+WHAT IS THE DELIVERY STATE?
+WHAT HAPPENS NEXT?
+DOES THE OWNER NEED TO DECIDE ANYTHING?
+```
+
+Keep these axes independent:
+
+```text
+programme progress
+work/child issue acceptance
+implementation-plan progress
+current task/EP acceptance
+verification
+delivery/PR lifecycle
+provider issue lifecycle
+```
+
+Never collapse them into a single ambiguous `DONE`.
+
+State semantics preserve:
+
+```text
+PASS
+PARTIAL
+FAIL
+NOT_RUN
+PENDING
+DEFERRED
+NOT_APPLICABLE
+UNKNOWN
+```
+
+and failure/wait origin:
+
+```text
+CURRENT_TASK
+UPSTREAM_DEPENDENCY
+SIBLING_WORKSTREAM
+PREEXISTING_UNRELATED
+INFRASTRUCTURE
+PROVIDER
+OWNER_DECISION
+UNKNOWN
+```
+
+`FAIL` is not automatically a blocker. `NOT_RUN` is never a code failure.
+
+Percentages are permitted only from an explicit acceptance or plan denominator. Prefer stable `EXIT-*`, `AC-*`, and `STEP-*` IDs. If no denominator exists, render `UNKNOWN / UNMAPPED` rather than inventing a percentage.
+
+Owner-facing status should begin with:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/render_task_snapshot.py \
+  relay/GENERATED/tasks/<EP>.snapshot.yaml
+```
+
+Finished examples are indexed in:
+
+```text
+skills/engineering-programme-coordinator/references/OUTPUT_EXAMPLE_INDEX.md
+```
+
 ## Current snapshot and status views
 
 `CURRENT_SNAPSHOT.yaml` is a generated first-read model and MUST declare:
