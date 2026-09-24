@@ -75,6 +75,18 @@ What evidence would prove the current assumed fix/framing wrong?
 
 What exact durable evidence proves this issue is resolved?
 
+## Acceptance Contract
+
+Use stable `AC-*` IDs. These are the denominator for child/work-issue completion reporting.
+
+| ID | Criterion | Parent mapping | Weight |
+| --- | --- | --- | ---: |
+| AC-<workstream>-01 | ... | EXIT-... | 1 |
+
+Keep criteria observable and evidence-bound. Do not use PR count, commit count, chat activity, or plan publication itself as acceptance.
+
+If no weighting is genuinely needed, keep equal weights or omit weights in provider observations; V3.1 will report **unweighted acceptance coverage** rather than inventing a composite score.
+
 ## Implementation Plan
 
 Agent-authored and revisable:
@@ -82,6 +94,7 @@ Agent-authored and revisable:
 - understanding;
 - source truth inspected;
 - proposed approach;
+- meaningful `STEP-*` slices with state and mapped `AC-*` criteria;
 - expected changed files/components;
 - validation;
 - preserve/invariants;
