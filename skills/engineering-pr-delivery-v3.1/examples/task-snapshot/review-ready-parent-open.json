@@ -1,0 +1,649 @@
+{
+  "schema_version": "relay-v3.1-task-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "source_protocol": "V3_1",
+  "identity": {
+    "work_package": "WP-215",
+    "ep": "EP-215",
+    "issue": 215,
+    "delivery_vehicle": 237
+  },
+  "purpose": {
+    "programme_outcome": "One exact-main readiness proof",
+    "current_goal": "Close P1–P5 honestly",
+    "task_outcome": "Joined readiness oracle",
+    "why_this_task_exists": "Integration evidence"
+  },
+  "lineage": {
+    "predecessor_checkpoint": null,
+    "upstream_dependencies": [],
+    "roadmap_admission": {
+      "disposition": "MAPPED_EXISTING_WP",
+      "revision": "RM-EXAMPLE",
+      "basis": [
+        "golden-example"
+      ]
+    }
+  },
+  "parent_issue": {
+    "repository": "reallaksh19/Grade9V3",
+    "number": 215,
+    "title": "Verify Core → Atlas → standalone visual end to end",
+    "state": "OPEN",
+    "url": "https://github.com/reallaksh19/Grade9V3/issues/215",
+    "baseline": null,
+    "current": {
+      "acceptance_items": [
+        {
+          "id": "AC-E-01",
+          "statement": "Joined browser oracle implemented",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-E-02",
+          "statement": "Joined oracle executes in full discovery",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-E-03",
+          "statement": "Reviewer evidence ledger exists",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-E-04",
+          "statement": "Generated manifest refreshed",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-E-05",
+          "statement": "Exact PR-head joined oracle passes",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-E-06",
+          "statement": "Final one-main P1–P5 acceptance passes",
+          "state": "PENDING",
+          "reason_class": "SIBLING_WORKSTREAM",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": 1,
+          "parent_mappings": []
+        }
+      ]
+    },
+    "updates": [],
+    "disposition": "NO_CHANGE",
+    "relationships": [],
+    "handover_ledger": null
+  },
+  "programme_parent": {
+    "repository": "reallaksh19/Grade9V3",
+    "number": 210,
+    "title": "Core → Atlas → standalone visual readiness",
+    "url": "https://github.com/reallaksh19/Grade9V3/issues/210"
+  },
+  "planning": {
+    "state": "PRESENT",
+    "provider_ref": "github:reallaksh19/Grade9V3#215/comment-plan",
+    "revision": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "observed_at": "2026-09-24T05:00:00Z",
+    "expected_next_observable": {
+      "statement": "Final exact-main P1–P5 result after #233/#234 land",
+      "evidence": [
+        "merged sibling outputs",
+        "exact-main full discovery"
+      ]
+    }
+  },
+  "task_publications": [
+    {
+      "type": "IMPLEMENTATION_PLAN",
+      "ref": "github:reallaksh19/Grade9V3#215/comment-plan",
+      "observed_at": "2026-09-24T05:00:00Z",
+      "summary": "Agent-authored implementation plan.",
+      "exact_head": null
+    }
+  ],
+  "programme_progress": {
+    "criteria": [
+      {
+        "id": "EXIT-210-P1",
+        "statement": "P1 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P2",
+        "statement": "P2 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P3",
+        "statement": "P3 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P4",
+        "statement": "P4 readiness",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EXIT-210-P5",
+        "statement": "P5 exact-main guardrail closure",
+        "state": "PENDING",
+        "reason_class": "SIBLING_WORKSTREAM",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 4,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 5
+    },
+    "coverage": {
+      "satisfied": 4,
+      "applicable_total": 5,
+      "percent": 80,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "work_issue_progress": {
+    "criteria": [
+      {
+        "id": "AC-E-01",
+        "statement": "Joined browser oracle implemented",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-E-02",
+        "statement": "Joined oracle executes in full discovery",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-E-03",
+        "statement": "Reviewer evidence ledger exists",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-E-04",
+        "statement": "Generated manifest refreshed",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-E-05",
+        "statement": "Exact PR-head joined oracle passes",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-E-06",
+        "statement": "Final one-main P1–P5 acceptance passes",
+        "state": "PENDING",
+        "reason_class": "SIBLING_WORKSTREAM",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 5,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 6
+    },
+    "coverage": {
+      "satisfied": 5,
+      "applicable_total": 6,
+      "percent": 83.3,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "plan_progress": {
+    "criteria": [
+      {
+        "id": "STEP-E-01",
+        "statement": "Build joined oracle",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-E-02",
+        "statement": "Integrate discovery",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-E-03",
+        "statement": "Publish evidence ledger",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-E-04",
+        "statement": "Regenerate manifest",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 4,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 4
+    },
+    "coverage": {
+      "satisfied": 4,
+      "applicable_total": 4,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "task_acceptance_progress": {
+    "criteria": [
+      {
+        "id": "EP-215-AC-01",
+        "statement": "Joined oracle passes",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "EP-215-AC-02",
+        "statement": "No #215-owned regression",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 2,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    },
+    "coverage": {
+      "satisfied": 2,
+      "applicable_total": 2,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "verification": {
+    "state": "PARTIAL",
+    "observations": [
+      {
+        "id": "V-215-01",
+        "statement": "Joined Chrome/Node proof",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      },
+      {
+        "id": "V-215-02",
+        "statement": "Full discovery",
+        "state": "FAIL",
+        "reason_class": "SIBLING_WORKSTREAM",
+        "evidence": [
+          "#233",
+          "#234"
+        ],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": 1,
+        "parent_mappings": []
+      }
+    ],
+    "failure_origins": {
+      "SIBLING_WORKSTREAM": 1
+    }
+  },
+  "delivery": {
+    "pr": 237,
+    "url": "https://github.com/reallaksh19/Grade9V3/pull/237",
+    "lifecycle": "REVIEW_READY",
+    "base": "11cdfdc95f265393829fd2ef3fe359b2961dd6c3",
+    "head": "9728e6170dedfc001d062d60a4e0f5455dd7ee2b",
+    "mergeability": "MERGEABLE"
+  },
+  "completion": {
+    "overall_state": "PARTIAL",
+    "headline": "#215 PARTIAL — implementation complete on review-ready PR #237; final child/programme acceptance remains open.",
+    "implementation": "COMPLETE",
+    "verification": "PARTIAL",
+    "delivery": "REVIEW_READY",
+    "work_issue_acceptance": "PARTIAL",
+    "programme_contribution": "PARTIAL",
+    "provider_issue": "OPEN",
+    "what_done": [
+      "Joined Atlas → Core → portable browser oracle",
+      "Discovery integration",
+      "Reviewer evidence ledger",
+      "Generated manifest refresh"
+    ],
+    "what_remains": [
+      "#233 producer result",
+      "#234 producer result",
+      "Final exact-current-main P1–P5 rerun"
+    ],
+    "dependencies": [
+      "#233 owner-extension correction [SIBLING_WORKSTREAM]",
+      "#234 FBD backlog correction [SIBLING_WORKSTREAM]"
+    ],
+    "owner_decisions": []
+  },
+  "parent_issue_progress": {
+    "checklist": [
+      {
+        "id": "AC-E-01",
+        "statement": "Joined browser oracle implemented",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-E-02",
+        "statement": "Joined oracle executes in full discovery",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-E-03",
+        "statement": "Reviewer evidence ledger exists",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-E-04",
+        "statement": "Generated manifest refreshed",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-E-05",
+        "statement": "Exact PR-head joined oracle passes",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-E-06",
+        "statement": "Final one-main P1–P5 acceptance passes",
+        "state": "PENDING",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 5,
+      "partial": 0,
+      "pending": 1,
+      "blocked": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 6
+    }
+  },
+  "current_task_progress": {
+    "checklist": [
+      {
+        "id": "EP-215-AC-01",
+        "statement": "Joined oracle passes",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "EP-215-AC-02",
+        "statement": "No #215-owned regression",
+        "state": "PASS",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 2,
+      "partial": 0,
+      "pending": 0,
+      "blocked": 0,
+      "total": 2
+    }
+  },
+  "offloads": [],
+  "pending_items": [],
+  "known_issues": [],
+  "improvement_vs_original_issue": {
+    "baseline_digest": null,
+    "items": []
+  },
+  "scope": {
+    "write": [],
+    "read": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "inputs": [],
+  "benchmarks": [],
+  "benchmark_debt": {
+    "required_missing": [],
+    "stale": [],
+    "optional": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "lease_or_custody": null,
+    "executor": "example-agent",
+    "route": null,
+    "branch": "example"
+  },
+  "material": {
+    "base": "11cdfdc95f265393829fd2ef3fe359b2961dd6c3",
+    "current_head": "9728e6170dedfc001d062d60a4e0f5455dd7ee2b"
+  },
+  "acceptance": [
+    {
+      "id": "EP-215-AC-01",
+      "state": "PASS",
+      "statement": "Joined oracle passes",
+      "evidence": []
+    },
+    {
+      "id": "EP-215-AC-02",
+      "state": "PASS",
+      "statement": "No #215-owned regression",
+      "evidence": []
+    }
+  ],
+  "controls": {
+    "material_write": [],
+    "checkpoint": [],
+    "handover": [],
+    "pr_ready": [],
+    "merge": [],
+    "release": []
+  },
+  "knowledge_state": {
+    "known_true": [],
+    "known_false": [],
+    "unknown": [],
+    "assumptions": []
+  },
+  "negative_knowledge": [],
+  "preserve": {
+    "accepted_do_not_reopen": []
+  },
+  "history": {
+    "recent_events": []
+  },
+  "next": {
+    "immediate_action": "Re-observe after #233/#234 are on main.",
+    "next_value_frontier": "Final P5 acceptance",
+    "stop_conditions": []
+  },
+  "reconstruction_sources": [
+    "golden-example"
+  ]
+}
