@@ -551,7 +551,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
     lines = [
         f"# Relay Handover — Parent #{parent['number']}",
         "",
-        "> Generated V3.1 provider projection. Repository relay objects remain engineering authority.",
+        "> Generated V3.1 operational projection. It indexes durable programme/task evidence and never grants engineering permission.",
         "",
         "## Parent",
         f"- Parent: {parent['repository']}#{parent['number']} — {parent['title']}",
