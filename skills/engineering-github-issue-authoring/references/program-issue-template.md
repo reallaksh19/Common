@@ -66,9 +66,13 @@ Work that may continue independently:
 A dependency is missing production truth, not permission.
 
 # Programme success / exit criteria
-| ID | Requirement | Responsible workstreams | Evidence sources | Status |
-|---|---|---|---|---|
-| EXIT-001 | ... | A,B | PR/test/artifact | OPEN |
+Use stable `EXIT-*` IDs. These are the denominator for programme-contribution reporting.
+
+| ID | Requirement | Responsible workstreams | Evidence sources | Weight | Status |
+|---|---|---|---|---:|---|
+| EXIT-001 | ... | A,B | PR/test/artifact | 1 | OPEN |
+
+Use declared weights only when the programme genuinely needs weighted acceptance. Otherwise V3.1 reports unweighted criterion coverage explicitly.
 
 # Decision surface
 Engineer: implementation choices inside owned responsibility.
