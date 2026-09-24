@@ -54,6 +54,20 @@ def _axis_state(task: dict[str, Any], key: str, fallback: str = "UNKNOWN") -> st
     return str(completion.get(key) or fallback)
 
 
+def _acceptance_axis(progress: dict[str, Any] | None) -> str:
+    coverage = (progress or {}).get("coverage") or {}
+    total = coverage.get("applicable_total")
+    percent = coverage.get("percent")
+    summary = (progress or {}).get("summary") or {}
+    if not total or percent is None:
+        return "UNKNOWN"
+    if percent == 100:
+        return "SATISFIED"
+    if (coverage.get("satisfied") or 0) > 0 or summary.get("partial", 0) > 0:
+        return "PARTIAL"
+    return "OPEN"
+
+
 def _bullet_section(lines: list[str], title: str, values: Any, empty: str = "none") -> None:
     rows = _items(values)
     lines += ["", f"### {title}"]
@@ -112,7 +126,7 @@ def render(task: dict[str, Any]) -> str:
         "| --- | --- | --- |",
         f"| Implementation plan | {_axis_state(task, 'implementation')} | {_progress_line(task, 'plan_progress')} |",
         f"| Child/work-issue acceptance | {_axis_state(task, 'work_issue_acceptance')} | {_progress_line(task, 'work_issue_progress', 'parent_issue_progress')} |",
-        f"| Current task / EP acceptance | {_axis_state(task, 'verification', str(verification.get('state') or 'UNKNOWN'))} | {_progress_line(task, 'task_acceptance_progress', 'current_task_progress')} |",
+        f"| Current task / EP acceptance | {_acceptance_axis(task.get('task_acceptance_progress'))} | {_progress_line(task, 'task_acceptance_progress', 'current_task_progress')} |",
         f"| Verification | {verification.get('state') or _axis_state(task, 'verification')} | failure origins: "
         + (", ".join(f"{k}={v}" for k, v in sorted((verification.get('failure_origins') or {}).items())) or "none") + " |",
         f"| Delivery | {_axis_state(task, 'delivery', str(delivery.get('lifecycle') or 'UNKNOWN'))} | {delivery.get('lifecycle') or 'UNKNOWN'} |",
