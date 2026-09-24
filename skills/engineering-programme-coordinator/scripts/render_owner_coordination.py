@@ -105,11 +105,39 @@ def build_report(observation: dict[str, Any], mode: str) -> dict[str, Any]:
     if expected_evidence:
         next_text = (next_text + " Watch for: " + "; ".join(expected_evidence)).strip()
 
+    programme = observation.get("programme_context") or {}
+    exit_rows = []
+    for row in observation.get("exit_criteria") or []:
+        exit_rows.append({
+            "id": str(row.get("id") or ""),
+            "status": str(row.get("status") or "OPEN"),
+            "note": row.get("note"),
+        })
+
+    nonterminal_prs = [
+        f"{row.get('ref')} [{row.get('workstream')}] {row.get('lifecycle')}"
+        + (f" @ {row.get('head')}" if row.get("head") else "")
+        for row in observation.get("nonterminal_prs") or []
+    ]
+
+    negative_knowledge = [
+        str(row.get("statement") or "")
+        for row in observation.get("negative_knowledge") or []
+        if str(row.get("statement") or "")
+    ]
+
     report = {
         "schema_version": "engineering-coordinator-owner-report-v1",
         "authority": "DERIVED_OWNER_COORDINATION_REPORT",
         "observed_at": observation["observed_at"],
         "reporting_mode": mode,
+        "programme_context": {
+            "parent_ref": programme.get("parent_ref"),
+            "basis_revision": programme.get("basis_revision"),
+        },
+        "programme_exit": exit_rows,
+        "nonterminal_prs": nonterminal_prs,
+        "negative_knowledge": negative_knowledge,
         "what_changed": changed,
         "workstreams": workstreams,
         "cross_workstream": {
@@ -153,6 +181,35 @@ def render_markdown(report: dict[str, Any]) -> str:
         ]
 
     cross = report.get("cross_workstream") or {}
+    programme = report.get("programme_context") or {}
+    if programme.get("parent_ref") or programme.get("basis_revision"):
+        lines += [
+            "",
+            "## Programme basis",
+            f"- Parent: {programme.get('parent_ref') or 'unknown'}",
+            f"- Basis revision: {programme.get('basis_revision') or 'unknown'}",
+        ]
+
+    if report.get("programme_exit"):
+        lines += ["", "## Programme exit criteria"]
+        for row in report.get("programme_exit") or []:
+            note = f" — {row.get('note')}" if row.get("note") else ""
+            lines.append(f"- {row.get('id')}: **{row.get('status')}**{note}")
+
+    if report.get("nonterminal_prs"):
+        lines += [
+            "",
+            "## Nonterminal PRs",
+            f"- {_items(report.get('nonterminal_prs') or [])}",
+        ]
+
+    if report.get("negative_knowledge"):
+        lines += [
+            "",
+            "## Negative knowledge",
+            f"- {_items(report.get('negative_knowledge') or [])}",
+        ]
+
     lines += [
         "",
         "## Cross-workstream",
