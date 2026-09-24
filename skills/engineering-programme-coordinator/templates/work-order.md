@@ -87,6 +87,21 @@ Return early only if evidence materially changes:
 OWNER DECISIONS ALREADY MADE
 - ...
 
+FIRST DURABLE AGENT PUBLICATION
+After live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
+
+The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after posting it. If useful work already began, publish the current plan and continue.
+
+During execution publish only meaningful semantic deltas:
+- `PLAN_UPDATE` when evidence materially changes the approach;
+- `TASK_EVIDENCE` when an intermediate result changes reconstruction or another workstream's next action;
+- `TASK_RESULT` at the delivery/handoff boundary.
+
+Do not post every command, file read, test retry, timer wake or chat update.
+
+EP NOTE
+An EP is V3.1's recorder identity for the bounded responsibility. Do not create a new EP merely because the plan was published or revised.
+
 EXECUTION STYLE
 Design the detailed implementation yourself.
 Use falsifiers and validation appropriate to the issue.
