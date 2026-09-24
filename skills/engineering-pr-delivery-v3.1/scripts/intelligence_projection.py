@@ -96,6 +96,247 @@ def _progress_summary(rows: list[dict[str, Any]], parent: bool) -> dict[str, int
     return result
 
 
+PROGRESS_STATES = {
+    "PASS": "PASS",
+    "COMPLETE": "PASS",
+    "PARTIAL": "PARTIAL",
+    "FAIL": "FAIL",
+    "BLOCKED": "FAIL",
+    "NOT_RUN": "NOT_RUN",
+    "PENDING": "PENDING",
+    "NOT_PROVED": "PENDING",
+    "DEFERRED": "DEFERRED",
+    "NOT_APPLICABLE": "NOT_APPLICABLE",
+    "NA": "NOT_APPLICABLE",
+    "UNKNOWN": "UNKNOWN",
+}
+
+
+def _normalise_progress_state(value: Any) -> str:
+    return PROGRESS_STATES.get(str(value or "UNKNOWN").upper(), "UNKNOWN")
+
+
+def _progress_item(row: dict[str, Any], *, default_reason: str = "UNKNOWN") -> dict[str, Any]:
+    return {
+        "id": str(row.get("id") or "UNKNOWN"),
+        "statement": str(row.get("statement") or row.get("description") or row.get("id") or "Unknown criterion"),
+        "state": _normalise_progress_state(row.get("state") or row.get("result") or row.get("status")),
+        "reason_class": str(row.get("reason_class") or default_reason),
+        "evidence": _strings(row.get("evidence")),
+        "trace_refs": _strings(row.get("provider_refs") or row.get("trace_refs")),
+        "remaining": _strings(row.get("remaining")),
+        "owner": row.get("owner"),
+        "weight": row.get("weight") if isinstance(row.get("weight"), (int, float)) else None,
+        "parent_mappings": _strings(row.get("parent_mappings") or row.get("acceptance_refs")),
+    }
+
+
+def _progress_model(rows: Any, *, default_reason: str = "UNKNOWN") -> dict[str, Any]:
+    criteria = [
+        _progress_item(row, default_reason=default_reason)
+        for row in (rows or [])
+        if isinstance(row, dict)
+    ]
+    summary = {key: 0 for key in ("pass", "partial", "fail", "not_run", "pending", "deferred", "not_applicable", "unknown")}
+    key_map = {
+        "PASS": "pass",
+        "PARTIAL": "partial",
+        "FAIL": "fail",
+        "NOT_RUN": "not_run",
+        "PENDING": "pending",
+        "DEFERRED": "deferred",
+        "NOT_APPLICABLE": "not_applicable",
+        "UNKNOWN": "unknown",
+    }
+    for row in criteria:
+        summary[key_map[row["state"]]] += 1
+    summary["total"] = len(criteria)
+
+    applicable = [row for row in criteria if row["state"] != "NOT_APPLICABLE"]
+    if not applicable:
+        coverage = {"satisfied": 0, "applicable_total": 0, "percent": None, "basis": "NO_DENOMINATOR"}
+    elif all(isinstance(row.get("weight"), (int, float)) for row in applicable) and sum(float(row["weight"]) for row in applicable) > 0:
+        total = sum(float(row["weight"]) for row in applicable)
+        satisfied = sum(float(row["weight"]) for row in applicable if row["state"] == "PASS")
+        coverage = {
+            "satisfied": satisfied,
+            "applicable_total": total,
+            "percent": round(100.0 * satisfied / total, 1),
+            "basis": "DECLARED_WEIGHTS",
+        }
+    else:
+        total = len(applicable)
+        satisfied = sum(1 for row in applicable if row["state"] == "PASS")
+        coverage = {
+            "satisfied": satisfied,
+            "applicable_total": total,
+            "percent": round(100.0 * satisfied / total, 1),
+            "basis": "UNWEIGHTED_CRITERIA",
+        }
+    return {"criteria": criteria, "summary": summary, "coverage": coverage}
+
+
+def _issue_progress(observation: dict[str, Any] | None) -> dict[str, Any]:
+    current = (observation or {}).get("current_contract") or {}
+    baseline = (observation or {}).get("baseline") or {}
+    rows = current.get("acceptance_items") or baseline.get("acceptance_items") or []
+    return _progress_model(rows)
+
+
+def _plan_progress(observation: dict[str, Any] | None) -> dict[str, Any]:
+    plan = (observation or {}).get("implementation_plan") or {}
+    return _progress_model(plan.get("steps") or [], default_reason="CURRENT_TASK")
+
+
+def _verification(observation: dict[str, Any] | None, task_progress: dict[str, Any]) -> dict[str, Any]:
+    raw = (observation or {}).get("verification")
+    observations = _progress_model(
+        raw if isinstance(raw, list) else (task_progress or {}).get("criteria") or [],
+        default_reason="CURRENT_TASK",
+    )["criteria"]
+    origins: dict[str, int] = {}
+    for row in observations:
+        if row["state"] in {"FAIL", "NOT_RUN", "PARTIAL", "PENDING"}:
+            origin = str(row.get("reason_class") or "UNKNOWN")
+            origins[origin] = origins.get(origin, 0) + 1
+
+    states = [row["state"] for row in observations if row["state"] != "NOT_APPLICABLE"]
+    current_fail = any(
+        row["state"] == "FAIL" and row.get("reason_class") == "CURRENT_TASK"
+        for row in observations
+    )
+    if not states:
+        state = "UNKNOWN"
+    elif current_fail:
+        state = "FAIL"
+    elif all(value == "PASS" for value in states):
+        state = "PASS"
+    elif all(value == "NOT_RUN" for value in states):
+        state = "NOT_RUN"
+    elif any(value in {"PASS", "PARTIAL", "FAIL", "NOT_RUN"} for value in states):
+        state = "PARTIAL"
+    elif any(value == "PENDING" for value in states):
+        state = "PENDING"
+    else:
+        state = "UNKNOWN"
+    return {"state": state, "observations": observations, "failure_origins": origins}
+
+
+def _acceptance_state(progress: dict[str, Any] | None) -> str:
+    coverage = (progress or {}).get("coverage") or {}
+    total = coverage.get("applicable_total")
+    percent = coverage.get("percent")
+    summary = (progress or {}).get("summary") or {}
+    if not total:
+        return "UNKNOWN"
+    if percent == 100:
+        return "SATISFIED"
+    if (coverage.get("satisfied") or 0) > 0 or summary.get("partial", 0) > 0:
+        return "PARTIAL"
+    return "OPEN"
+
+
+def _implementation_state(plan_progress: dict[str, Any] | None, planning: dict[str, Any]) -> str:
+    coverage = (plan_progress or {}).get("coverage") or {}
+    percent = coverage.get("percent")
+    if percent == 100:
+        return "COMPLETE"
+    if percent is not None and percent > 0:
+        return "PARTIAL"
+    if planning.get("state") == "PRESENT":
+        return "OPEN"
+    return "UNKNOWN"
+
+
+def _completion_model(
+    *,
+    work_progress: dict[str, Any],
+    plan_progress: dict[str, Any],
+    task_progress: dict[str, Any],
+    programme_progress: dict[str, Any] | None,
+    planning: dict[str, Any],
+    verification: dict[str, Any],
+    delivery: dict[str, Any],
+    issue_state: str | None,
+    issue_number: Any,
+) -> dict[str, Any]:
+    work_state = _acceptance_state(work_progress)
+    programme_state = _acceptance_state(programme_progress)
+    implementation = _implementation_state(plan_progress, planning)
+    verification_state = str(verification.get("state") or "UNKNOWN")
+    delivery_state = str(delivery.get("lifecycle") or "UNKNOWN")
+    provider_state = str(issue_state or "UNKNOWN").upper()
+    if provider_state not in {"OPEN", "CLOSED"}:
+        provider_state = "UNKNOWN"
+
+    if work_state == "SATISFIED" and verification_state in {"PASS", "UNKNOWN"}:
+        overall = "COMPLETE"
+    elif work_state in {"PARTIAL", "SATISFIED"} or implementation in {"PARTIAL", "COMPLETE"} or verification_state in {"PARTIAL", "FAIL", "NOT_RUN"}:
+        overall = "PARTIAL"
+    elif work_state == "OPEN":
+        overall = "OPEN"
+    else:
+        overall = "UNKNOWN"
+
+    done = [
+        row["statement"]
+        for row in (work_progress.get("criteria") or [])
+        if row.get("state") == "PASS"
+    ]
+    remains = [
+        row["statement"]
+        for row in (work_progress.get("criteria") or [])
+        if row.get("state") not in {"PASS", "NOT_APPLICABLE"}
+    ]
+    if not remains:
+        remains = [
+            row["statement"]
+            for row in (task_progress.get("criteria") or [])
+            if row.get("state") not in {"PASS", "NOT_APPLICABLE"}
+        ]
+
+    dependency_reasons = {"UPSTREAM_DEPENDENCY", "SIBLING_WORKSTREAM", "INFRASTRUCTURE", "PROVIDER"}
+    dependencies = []
+    owner_decisions = []
+    for progress in (work_progress, task_progress):
+        for row in progress.get("criteria") or []:
+            reason = row.get("reason_class")
+            if row.get("state") in {"PASS", "NOT_APPLICABLE"}:
+                continue
+            if reason in dependency_reasons:
+                dependencies.append(f"{row['id']}: {row['statement']} [{reason}]")
+            if reason == "OWNER_DECISION":
+                owner_decisions.append(f"{row['id']}: {row['statement']}")
+    for row in verification.get("observations") or []:
+        if row.get("state") in {"PASS", "NOT_APPLICABLE"}:
+            continue
+        reason = row.get("reason_class")
+        if reason in dependency_reasons:
+            dependencies.append(f"{row['id']}: {row['statement']} [{reason}]")
+        if reason == "OWNER_DECISION":
+            owner_decisions.append(f"{row['id']}: {row['statement']}")
+
+    headline = (
+        f"#{issue_number} {overall} — "
+        f"child acceptance {work_state.lower()}; verification {verification_state.lower()}; "
+        f"delivery {delivery_state.lower()}."
+    )
+    return {
+        "overall_state": overall,
+        "headline": headline,
+        "implementation": implementation,
+        "verification": verification_state,
+        "delivery": delivery_state,
+        "work_issue_acceptance": work_state,
+        "programme_contribution": programme_state,
+        "provider_issue": provider_state,
+        "what_done": list(dict.fromkeys(done)),
+        "what_remains": list(dict.fromkeys(remains)),
+        "dependencies": list(dict.fromkeys(dependencies)),
+        "owner_decisions": list(dict.fromkeys(owner_decisions)),
+    }
+
+
 def _tracked_items(controls: dict[str, Any] | None, kind: str) -> list[dict[str, Any]]:
     result = []
     for row in (controls or {}).get("controls") or []:
