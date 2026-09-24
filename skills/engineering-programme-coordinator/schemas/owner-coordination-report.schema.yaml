@@ -23,6 +23,29 @@ properties:
     format: date-time
   reporting_mode:
     enum: [SEMANTIC_DELTA, CADENCED]
+  programme_context:
+    type: object
+    additionalProperties: false
+    properties:
+      parent_ref: {type: [string, 'null']}
+      basis_revision: {type: [string, 'null']}
+  programme_exit:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, status]
+      properties:
+        id: {type: string, minLength: 1}
+        status:
+          enum: [OPEN, PARTIAL, SATISFIED, DEFERRED, NOT_APPLICABLE]
+        note: {type: [string, 'null']}
+  nonterminal_prs:
+    type: array
+    items: {type: string, minLength: 1}
+  negative_knowledge:
+    type: array
+    items: {type: string, minLength: 1}
   what_changed:
     type: array
     items: {type: string, minLength: 1}
