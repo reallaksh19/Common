@@ -393,8 +393,8 @@ Rules:
 - `NO_MATERIAL_DRIFT` → proceed.
 - `STATUS_ONLY` → update current status; proceed only if scope/authority unchanged.
 - `ASSUMPTION_OBSOLETE` → do not implement the stale assumption; prove current behavior and revise the plan inside existing Owner intent.
-- `OWNER_INTENT_CHANGED`, `SOURCE_ORACLE_AUTHORITY_CHANGED`, `UNKNOWN` → READ_ONLY until re-grounded/authorized.
-- `OVERLAP_CONFLICT` → coordinate/take over/partition; do not silently create a second writer.
+- `OWNER_INTENT_CHANGED`, `SOURCE_ORACLE_AUTHORITY_CHANGED`, `UNKNOWN` → identify the affected assumption/decision, preserve useful independent work, and escalate only what genuinely requires new human/source truth.
+- `OVERLAP_CONFLICT` → coordinate/partition/integrate the conflicting surface; do not convert file overlap into a global programme lock.
 
 Forbidden anti-drift shortcuts:
 
@@ -482,9 +482,9 @@ unless the Owner explicitly states otherwise.
 
 ---
 
-# Appendix A — implementation qualification
+# Optional Appendix A — implementation reasoning questions
 
-Incoming agent must answer from the **live repository plus the issue inputs**, not from textbook memory or this issue alone.
+For complex/engineering-critical work, these questions may be used to improve implementation reasoning. They are answered from the **live repository plus issue inputs**, not textbook memory. They are not a qualification or permission gate.
 
 QUESTION_PROFILE: <NUMERICAL_ENGINEERING | SOFTWARE_ENGINEERING | SOURCE_GOVERNANCE>
 
@@ -508,5 +508,5 @@ QUESTION_PROFILE: <NUMERICAL_ENGINEERING | SOFTWARE_ENGINEERING | SOURCE_GOVERNA
 
 <Require exact files/functions, expected failing evidence before, PASS after, protected unchanged domains, negative test, rollback condition and NO-PATCH case.>
 
-Automatic qualification failure if the answer fabricates repository evidence, changes an oracle to match output, treats a visual result as validation, or answers without the required hand/exact reconstruction.
+Treat fabricated repository evidence, circular oracle changes, or visual-only validation as evidence that the reasoning is unreliable; correct the engineering picture before relying on it. Do not convert the question set into execution permission.
 ```
