@@ -36,17 +36,23 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 
 **Implementation plan:** PRESENT / MISSING / STALE / UNKNOWN — <ref/revision>
 
+**Plan responsibility basis:** <child issue/provider ref + body/contract digest when available>
+
 **Agent / local coordinator ref:** ...
+
+**Provider issue state:** OPEN / CLOSED / UNKNOWN
 
 **Branch:** ...
 
 **PR:** ...
 
+**Base:** ...
+
 **Exact head:** ...
 
 **Task Snapshot:** <ref>
 
-**Overall state:** COMPLETE / PARTIAL / OPEN / NOT_RUN / UNKNOWN
+**Responsibility state:** COMPLETE / PARTIAL / OPEN / NOT_RUN / UNKNOWN
 
 **Child acceptance:** SATISFIED / PARTIAL / OPEN / UNKNOWN — <coverage or UNKNOWN>
 
@@ -72,7 +78,7 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 
 **Next programme consequence:** ...
 
-Repeat for every active/nonterminal workstream.
+Repeat for every active/nonterminal workstream, and retain recently completed workstreams while their result still has an unresolved consumer/programme consequence. Provider issue state and responsibility state are independent; an OPEN issue may already have a completed responsibility.
 
 ## Dependency ledger
 
