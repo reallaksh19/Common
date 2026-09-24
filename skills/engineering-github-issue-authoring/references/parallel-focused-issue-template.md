@@ -92,6 +92,19 @@ Agent-authored and revisable:
 
 Publishing/updating the plan is useful reconstruction context, not execution approval.
 
+## Task publication lifecycle
+
+Use the child issue for the engineering agent's durable semantic task record:
+
+```text
+IMPLEMENTATION_PLAN — rev 1
+PLAN_UPDATE — only when material learning changes the approach
+TASK_EVIDENCE — only for meaningful intermediate evidence
+TASK_RESULT — at delivery/handoff
+```
+
+The engineering agent authors the plan. Plan publication/revision is not approval and does not block production. Do not post every command or test retry.
+
 ## Expected handoff
 
 Return:
