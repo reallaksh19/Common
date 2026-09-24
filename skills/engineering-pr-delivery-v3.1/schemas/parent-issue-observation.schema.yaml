@@ -81,6 +81,49 @@ properties:
       repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
       issue_number: {type: integer, minimum: 1}
       url: {type: string, format: uri}
+  implementation_plan:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [state, provider_ref, revision, digest, observed_at]
+    properties:
+      state: {enum: [PRESENT, MISSING, STALE, UNKNOWN]}
+      provider_ref: {type: [string, 'null']}
+      revision: {type: [integer, 'null'], minimum: 1}
+      digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}
+    items:
+      type: object
+      additionalProperties: false
+      required: [ref, type, summary, effect]
+      properties:
+        ref: {type: string, minLength: 1}
+        type: {enum: [REQUIREMENT, DECISION, STATUS, DEPENDENCY, ACCEPTANCE, DELIVERY, COMMENT]}
+        summary: {type: string, minLength: 1}
+        effect: {type: array, items: {type: string, minLength: 1}}
+additionalProperties: false
+}
+      observed_at: {type: [string, 'null'], format: date-time}
+  expected_next_observable:
+    type: [object, 'null']
+    additionalProperties: false
+    required: [statement, evidence]
+    properties:
+      statement: {type: string, minLength: 1}
+      evidence:
+        type: array
+        items: {type: string, minLength: 1}
+  task_publications:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [type, ref, observed_at, summary]
+      properties:
+        type:
+          enum: [IMPLEMENTATION_PLAN, PLAN_UPDATE, TASK_EVIDENCE, TASK_RESULT]
+        ref: {type: string, minLength: 1}
+        observed_at: {type: string, format: date-time}
+        summary: {type: string, minLength: 1}
+        exact_head: {type: [string, 'null']}
   updates:
     type: array
     items:
