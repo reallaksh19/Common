@@ -52,7 +52,7 @@ properties:
     items:
       type: object
       additionalProperties: false
-      required: [ep, work_package, status, continuation, checkpoint, lease, executor, basis]
+      required: [ep, work_package, work_issue, implementation_plan, expected_next_observable, latest_publications, status, continuation, checkpoint, lease, executor, basis]
       properties:
         ep: {type: string, pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
         work_package: {type: string, pattern: '^(?:WP-[A-Za-z0-9][A-Za-z0-9._-]*|WP\.[1-9][0-9]*(?:\.[1-9][0-9]*)?)$'}
