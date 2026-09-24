@@ -18,7 +18,9 @@ Read current durable production reality first:
 - relevant canonical source truth;
 - source freshness.
 
-Do not treat chat activity, timers, Relay state, leases, checkpoints or coordinator metadata as production permission.
+Relay protocol rule: **V3.1 only**. Do not consult or use V3 or V2.5 for live coordination, status, gating, recovery, or Owner-command semantics.
+
+Do not treat chat activity, timers, V3.1 recorder state, leases, checkpoints or coordinator metadata as production permission.
 
 For each workstream, reconstruct:
 

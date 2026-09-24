@@ -4,6 +4,8 @@ Use this bridge when ChatGPT Work owns programme coordination but local executio
 
 The local engineering coordinator is **not** a second programme coordinator.
 
+**Relay protocol rule:** if Relay material is consulted, use **V3.1 only**. V3 and V2.5 are historical/compatibility material and must not be used for live execution, coordination, recovery, gating, status or Owner-command semantics.
+
 ## Work → local: EXECUTE_WORKSTREAM
 
 ```text
