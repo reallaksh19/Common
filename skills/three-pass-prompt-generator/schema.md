@@ -17,7 +17,7 @@ When invoked from the canonical GitHub URL, the generated artifact must begin ex
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -63,7 +63,7 @@ Set:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -222,7 +222,7 @@ Record after the execution handshake:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 SCHEMA SOURCE:
 <canonical URL/path or explicitly user-supplied schema text>
@@ -246,7 +246,7 @@ PASS | FAIL
 Rules:
 
 - the execution handshake must appear before `# SCHEMA BASIS`;
-- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-24-R11`;
+- `PROTOCOL REVISION` must equal `TPG-3P-2026-09-24-R12`;
 - handshake SHA and SCHEMA BASIS SHA must match exactly;
 - `GENERATOR MODE` must equal `THREE_PASS_ONLY`;
 - canonical GitHub URL/repository supplied → `LIVE_THIS_RUN` is mandatory;
@@ -2527,6 +2527,45 @@ prepare the smallest justified change/action
 → state anything still unresolved
 ```
 
+### Agent-authored implementation plan before substantial material execution
+
+When Prompt 3 is expected to continue into engineering execution on an owned child/task issue, tell the future agent:
+
+> After revalidating live reality and before substantial material modification, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child implementation issue when practical. Write the plan yourself; do not copy the three-pass packet as the plan.
+
+The plan should capture the agent's current engineering judgement:
+
+```text
+BASIS
+MY UNDERSTANDING
+OWNED OUTCOME
+SOURCE TRUTH
+APPROACH
+EXPECTED CHANGED SURFACES
+DEPENDENCIES
+INDEPENDENT WORK
+FALSIFIER
+VALIDATION
+PRESERVE / INVARIANTS
+UNCERTAINTIES
+EXPECTED NEXT OBSERVABLE
+CONSUMER / HANDOFF
+```
+
+This is a reconstruction convention, **not an approval gate**.
+
+Prompt 3 must also tell the agent:
+
+- do not wait for Relay/coordinator approval after publishing the plan;
+- if useful work already started, publish the current plan and continue;
+- publish `PLAN_UPDATE` only when evidence materially changes the approach;
+- publish `TASK_EVIDENCE` only when an intermediate result changes reconstruction or another workstream's next action;
+- publish `TASK_RESULT` at the meaningful delivery/handoff boundary;
+- do not post every command, file read, test retry, timer wake or chat update;
+- do not create a new EP merely because the implementation plan was first published or revised when the owned responsibility is unchanged.
+
+The three-pass packet remains reasoning input. The implementation plan is the engineering agent's own execution baseline.
+
 Tell the future agent explicitly:
 
 > Use Prompt 1 as the independent reference picture, not as an infallible specification.
@@ -3106,7 +3145,7 @@ Output this structure and nothing else:
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
@@ -3125,7 +3164,7 @@ PASS
 
 ```text
 PROTOCOL REVISION:
-TPG-3P-2026-09-24-R11
+TPG-3P-2026-09-24-R12
 
 GENERATOR MODE:
 THREE_PASS_ONLY
