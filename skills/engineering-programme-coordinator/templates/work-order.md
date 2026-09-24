@@ -90,12 +90,16 @@ OWNER DECISIONS ALREADY MADE
 FIRST DURABLE AGENT PUBLICATION
 After live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
 
+The publication must begin with that typed heading. In `BASIS`, record the child responsibility/provider ref and its observed body/contract digest when available, plus the exact live material basis. This lets the coordinator detect when the issue changed after the plan was authored.
+
 The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after posting it. If useful work already began, publish the current plan and continue.
 
 During execution publish only meaningful semantic deltas:
-- `PLAN_UPDATE` when evidence materially changes the approach;
+- `PLAN_UPDATE — rev N` when evidence materially changes the approach, including a correction/narrowing that changes what material the agent now intends to produce;
 - `TASK_EVIDENCE` when an intermediate result changes reconstruction or another workstream's next action;
-- `TASK_RESULT` at the delivery/handoff boundary.
+- `TASK_RESULT` at the delivery/handoff boundary, including final exact-main acceptance when that is the owned outcome.
+
+Use the typed heading as the first durable heading. Narrative Three-Pass output or a semantically equivalent correction/final report is still evidence, but should not replace the corresponding typed publication.
 
 Do not post every command, file read, test retry, timer wake or chat update.
 
