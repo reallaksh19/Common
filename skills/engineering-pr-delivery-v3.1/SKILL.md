@@ -45,6 +45,8 @@ Older protocol trees are historical/compatibility material only. Their presence 
 
 If V3.1 contains compatibility readers for legacy-shaped durable artifacts, those readers exist only so current V3.1 can reconstruct history. They are **not** a direction to execute the older protocol or to import its blocking semantics.
 
+**Normative override:** any later section in this document that mentions V3, V2.5, `V3`, `V2_5`, legacy admission, protocol cutover, migration, compatibility, or historical authority is **archival/migration documentation only**. Current agents/coordinators must not use those passages as live execution, coordination, reporting, recovery, gating, or Owner-command instructions.
+
 ## Owner reporting delta
 
 V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
@@ -239,9 +241,9 @@ python skills/engineering-pr-delivery-v3.1/scripts/render_owner_status.py \
 
 That rendering remains `DERIVED_READ_MODEL` presentation. It must keep programme progress, accepted evidence coverage, task-local completion, blockers, evidence-bound improvement and legal next actions distinct.
 
-## Native admission and V2.5 compatibility
+## Historical native admission / V2.5 compatibility — archival only
 
-Normal V3 admission is one lease transaction rather than a DISC/QSET/QUAL/TC chain.
+Historical native admission used one lease transaction rather than a DISC/QSET/QUAL/TC chain. This is not a current instruction to use V3.
 
 For a provider-backed EP, the transactional surface derives canonical issue-rooted `TX`, `EVT` and `LEASE` identities when they are omitted:
 
@@ -304,7 +306,7 @@ Key semantics:
 
 ## Plan for Handover / three-pass integration
 
-V3 does not redefine the standalone three-pass protocol. It freezes relay truth into:
+V3.1 does not redefine the standalone three-pass protocol. Historical compatibility notes may reference V3-shaped truth, but current coordination uses V3.1 only.
 
 ```text
 relay/GENERATED/HANDOVER_CONTEXT.yaml
@@ -335,7 +337,7 @@ A failed/unverified handover plan can deny HANDOVER but does not itself deny MAT
 
 See `operating-model/three-pass-integration.md`. The richer handover-content redesign tracked separately in Common issue #420 remains separately owned.
 
-## V2.5 migration and protocol cutover
+## Historical V2.5 migration / protocol cutover — archival only
 
 V3.1 migration is non-destructive. The original `agents/relay/**` tree is inventoried and hashed before V3.1 authority is created.
 
