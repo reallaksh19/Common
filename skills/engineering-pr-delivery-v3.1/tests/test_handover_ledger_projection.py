@@ -53,6 +53,33 @@ def parent_observation() -> dict:
             "issue_number": 1870,
             "url": "https://github.com/example/repo/issues/1870",
         },
+        "implementation_plan": {
+            "state": "PRESENT",
+            "provider_ref": "github:example/repo#1771/comment-10",
+            "revision": 2,
+            "digest": DIGEST,
+            "observed_at": "2026-09-22T13:55:00Z",
+        },
+        "expected_next_observable": {
+            "statement": "Focused validation result on the exact head.",
+            "evidence": ["test result", "exact head"],
+        },
+        "task_publications": [
+            {
+                "type": "IMPLEMENTATION_PLAN",
+                "ref": "github:example/repo#1771/comment-9",
+                "observed_at": "2026-09-22T13:00:00Z",
+                "summary": "Initial implementation plan.",
+                "exact_head": None,
+            },
+            {
+                "type": "PLAN_UPDATE",
+                "ref": "github:example/repo#1771/comment-10",
+                "observed_at": "2026-09-22T13:55:00Z",
+                "summary": "Plan revised after source inspection.",
+                "exact_head": None,
+            },
+        ],
     }
 
 
@@ -149,6 +176,13 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertEqual("COMPLETE", by_ep["EP-TA-008"]["status"])
             self.assertEqual("RECOVERY", by_ep["EP-TA-009"]["continuation"])
             self.assertEqual("NEW", by_ep["EP-TA-011"]["continuation"])
+            self.assertEqual("PRESENT", by_ep["EP-TA-011"]["implementation_plan"]["state"])
+            self.assertEqual(2, by_ep["EP-TA-011"]["implementation_plan"]["revision"])
+            self.assertEqual(
+                "Focused validation result on the exact head.",
+                by_ep["EP-TA-011"]["expected_next_observable"]["statement"],
+            )
+            self.assertEqual(2, len(by_ep["EP-TA-011"]["latest_publications"]))
 
             self.assertEqual(["PEND.1771.1"], [row["id"] for row in ledger["pending_items"]])
             self.assertEqual(["KI.1771.1"], [row["id"] for row in ledger["known_issues"]])
@@ -163,6 +197,82 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertIn("KI.1771.1", body)
             self.assertIn("Handover ledger: example/repo#1870", parent)
             self.assertIn("Recovery-required EPs: 1", parent)
+
+    def test_programme_ledger_can_root_at_parent_while_task_plan_lives_on_child_issue(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+
+            current_path = root / "relay/WORK/EP-TA-011.yaml"
+            current = load_yaml(current_path)
+            current["programme_parent"] = {
+                "provider": "GITHUB",
+                "repository": "example/repo",
+                "number": 1771,
+                "title": "Programme root",
+                "url": "https://github.com/example/repo/issues/1771",
+            }
+            current["parent_issue"] = {
+                "provider": "GITHUB",
+                "repository": "example/repo",
+                "number": 1772,
+                "title": "Focused child",
+                "url": "https://github.com/example/repo/issues/1772",
+                "baseline": {
+                    "observed_at": "2026-09-20T00:00:00Z",
+                    "body_digest": DIGEST,
+                    "acceptance_items": [{"id": "CHILD-1", "statement": "Focused result is proved."}],
+                },
+            }
+            dump(current_path, current)
+
+            work = copy.deepcopy(parent_observation())
+            work["issue_number"] = 1772
+            work["title"] = "Focused child"
+            work["url"] = "https://github.com/example/repo/issues/1772"
+            work["handover_ledger"] = None
+            work["baseline"] = current["parent_issue"]["baseline"]
+            work["current_contract"] = {
+                "body_digest": DIGEST,
+                "acceptance_items": [
+                    {
+                        "id": "CHILD-1",
+                        "statement": "Focused result is proved.",
+                        "state": "PENDING",
+                        "evidence": [],
+                        "provider_refs": ["issue-1772"],
+                    }
+                ],
+            }
+            work["implementation_plan"]["provider_ref"] = "github:example/repo#1772/comment-20"
+            work["implementation_plan"]["revision"] = 1
+            work["task_publications"] = [
+                {
+                    "type": "IMPLEMENTATION_PLAN",
+                    "ref": "github:example/repo#1772/comment-20",
+                    "observed_at": "2026-09-22T13:55:00Z",
+                    "summary": "Child implementation plan.",
+                    "exact_head": None,
+                }
+            ]
+
+            ledger = build(
+                root,
+                parent_observation(),
+                base_ref=base_ref,
+                work_issue_observation=work,
+            )
+
+            self.assertEqual(1771, ledger["parent_issue"]["number"])
+            self.assertEqual(2, ledger["parent_progress"]["total"])
+            row = next(item for item in ledger["ep_index"] if item["ep"] == "EP-TA-011")
+            self.assertEqual(1772, row["work_issue"]["number"])
+            self.assertEqual("PRESENT", row["implementation_plan"]["state"])
+            self.assertEqual(1, row["implementation_plan"]["revision"])
+            self.assertEqual(
+                "github:example/repo#1772/comment-20",
+                row["implementation_plan"]["provider_ref"],
+            )
 
 
 if __name__ == "__main__":
