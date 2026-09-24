@@ -71,6 +71,32 @@ def task_snapshot() -> dict:
         "source_protocol": "V3_1",
         "identity": {"work_package": "WP-2", "ep": "EP-2"},
         "purpose": {"task_outcome": "Preserve completion semantics."},
+        "programme_parent": {
+            "repository": "example/repo",
+            "number": 210,
+            "title": "Programme",
+            "url": "https://github.com/example/repo/issues/210",
+        },
+        "planning": {
+            "state": "PRESENT",
+            "provider_ref": "github:example/repo#232/comment-1",
+            "revision": 1,
+            "digest": "sha256:" + ("a" * 64),
+            "observed_at": "2026-09-24T03:00:00Z",
+            "expected_next_observable": {
+                "statement": "Focused exact-head validation.",
+                "evidence": ["test result"],
+            },
+        },
+        "task_publications": [
+            {
+                "type": "IMPLEMENTATION_PLAN",
+                "ref": "github:example/repo#232/comment-1",
+                "observed_at": "2026-09-24T03:00:00Z",
+                "summary": "Plan published.",
+                "exact_head": None,
+            }
+        ],
         "current_task_progress": {
             "summary": {
                 "complete": 6,
@@ -144,6 +170,10 @@ class OwnerStatusRenderingTests(unittest.TestCase):
         self.assertIn("Still not proved: local exact-head validation", text)
         self.assertIn("Handover: CTRL-HO", text)
         self.assertIn("Task stop conditions: programme reselection", text)
+        self.assertIn("Implementation plan: **PRESENT** rev 1", text)
+        self.assertIn("Expected next observable: Focused exact-head validation.", text)
+        self.assertIn("Programme parent: example/repo#210", text)
+        self.assertIn("Task publications: 1", text)
         self.assertIn("Zero-context takeover possible: **YES**", text)
 
     def test_completion_report_rejects_non_derived_inputs(self):
