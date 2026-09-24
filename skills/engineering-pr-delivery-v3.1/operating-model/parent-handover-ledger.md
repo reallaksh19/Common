@@ -148,7 +148,13 @@ The ledger indexes rather than duplicates:
 
 - programme basis;
 - workstream / EP / child issue;
-- implementation-plan state/ref/revision;
+- implementation-plan state/ref/revision + STEP-* coverage;
+- child/work-issue AC-* acceptance coverage;
+- programme EXIT-* contribution coverage;
+- verification state + failure/wait origin;
+- delivery/PR lifecycle;
+- provider issue lifecycle;
+- explicit remaining work;
 - expected next observable;
 - branch/PR/exact-head material;
 - all nonterminal PRs when provider information is available;
