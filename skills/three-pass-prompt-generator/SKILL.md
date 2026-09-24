@@ -62,15 +62,39 @@ They are not supplementary instructions for three-pass prompt generation.
 
 Repository and issue files for the **user's target** may of course be inspected after the schema handshake because they are evidence, not generator-control instructions.
 
+## Early-pass interaction contract
+
+Prompt 0.5 and Prompt 1 must be **independently framed** from the same stable project truth.
+
+- Prompt 0.5 asks what the governing area must contribute to the programme.
+- Prompt 1 asks what excellent handling of the exact local responsibility demands in the lived problem.
+- Prompt 1 MUST NOT inherit Prompt 0.5's speculative conclusions, reframings or proposed missing capabilities.
+- The generator may use detailed target/task/witness taxonomy internally, but the downstream prompts should normally speak in natural project/domain language.
+- Do not impose novelty quotas such as "find three non-obvious ideas".
+- When a real witness exists, Prompt 1 should work it and then vary/contrast one material feature to discover what generalizes.
+- When no honest witness exists, do not invent one.
+
+The intended relationship is:
+
+```text
+stable programme truth ──► Prompt 0.5 independent contribution view
+          │
+          └──────────────► Prompt 1 independent situated-problem view
+
+Prompt 0.5 result ─┐
+Prompt 1 result   ─┼──► Prompt 2.5 reconciliation
+Prompt 2 reality ──┘
+```
+
 ## Complex Q1–Q5
 
-When the user requests complex Q1–Q5, those are the five human reasoning lenses defined by the live standalone schema.
+When the user requests complex Q1–Q5, those are the five human reasoning territories defined by the live standalone schema.
 
-They remain inside Prompt 1. Prompt 0.5 is the separate global independent-thinking pass and Prompt 2.5 is the separate integrated reality+reconciliation bridge; neither is a Q1–Q5 stage.
+They remain inside Prompt 1 as **coverage diagnostics**, not a mandatory five-part rhetorical skeleton. Prompt 0.5 is the separate programme-level independent pass and Prompt 2.5 is the separate integrated reality+reconciliation bridge.
 
 Do not create any extra workflow stage, machine metadata block, or evaluator requirement beyond the five schema-defined prompts.
 
-If visible Q1–Q5 headings are requested, write them in natural target-specific practitioner language.
+Only expose visible Q1–Q5 headings when the user explicitly asks to see those labels. Otherwise the generated Prompt 1 should remain one coherent, natural practitioner prompt.
 
 ## Fail closed
 
