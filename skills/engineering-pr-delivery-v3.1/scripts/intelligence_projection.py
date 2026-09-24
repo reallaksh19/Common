@@ -631,7 +631,11 @@ def _v3_controls(root: Path, state: dict[str, Any]) -> dict[str, list[str]]:
     return result
 
 
-def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
+def _v25_task(
+    root: Path,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     state = load_yaml(root / V25_STATE)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
     progress = _load(root / V25_PROGRESS) or {}
@@ -742,7 +746,14 @@ def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None
     if checkpoint_path:
         sources.append(checkpoint_path)
 
-    issue_sections = _issue_sections(parent_issue_observation, None, acceptance, checkpoint, None)
+    issue_sections = _issue_sections(
+        parent_issue_observation,
+        programme_issue_observation,
+        None,
+        acceptance,
+        checkpoint,
+        None,
+    )
     task = {
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -790,7 +801,12 @@ def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None
     return task
 
 
-def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
+def _v3_task(
+    root: Path,
+    base_ref: str | None,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     state = load_yaml(root / "relay/STATE.yaml")
     project = build_project_snapshot(root, base_ref)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
@@ -812,7 +828,14 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
     } for row in (ep or {}).get("acceptance") or [] if isinstance(row, dict)]
     handoff = (checkpoint or {}).get("handoff") or {}
     native_controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
-    issue_sections = _issue_sections(parent_issue_observation, ep, acceptance, checkpoint, native_controls)
+    issue_sections = _issue_sections(
+        parent_issue_observation,
+        programme_issue_observation,
+        ep,
+        acceptance,
+        checkpoint,
+        native_controls,
+    )
     task = {
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -862,8 +885,17 @@ def _use_v3_source(root: Path) -> bool:
     raise ProjectionError("Relay authority mode is not deterministically resolved")
 
 
-def build_task(root: Path, base_ref: str | None = None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
-    return _v3_task(root, base_ref, parent_issue_observation) if _use_v3_source(root) else _v25_task(root, parent_issue_observation)
+def build_task(
+    root: Path,
+    base_ref: str | None = None,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    return (
+        _v3_task(root, base_ref, parent_issue_observation, programme_issue_observation)
+        if _use_v3_source(root)
+        else _v25_task(root, parent_issue_observation, programme_issue_observation)
+    )
 
 
 def _v25_improvement(root: Path) -> dict[str, Any]:
@@ -1106,19 +1138,29 @@ def main() -> None:
     parser.add_argument("--output")
     parser.add_argument("--task-output")
     parser.add_argument("--improvement-output")
-    parser.add_argument("--parent-issue-observation")
+    parser.add_argument("--parent-issue-observation", help="Owned child/work-issue provider observation")
+    parser.add_argument("--programme-issue-observation", help="Optional governing programme-parent provider observation")
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
     parent_issue_observation = load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None
+    programme_issue_observation = load_yaml(Path(args.programme_issue_observation)) if args.programme_issue_observation else None
     if args.kind == "task":
-        _write(root, args.output, build_task(root, args.base_ref, parent_issue_observation))
+        _write(
+            root,
+            args.output,
+            build_task(root, args.base_ref, parent_issue_observation, programme_issue_observation),
+        )
         return
     if args.kind == "improvement":
         _write(root, args.output, build_improvement(root))
         return
     report = assess_continuity(root, args.base_ref)
     if args.task_output:
-        _write(root, args.task_output, build_task(root, args.base_ref, parent_issue_observation))
+        _write(
+            root,
+            args.task_output,
+            build_task(root, args.base_ref, parent_issue_observation, programme_issue_observation),
+        )
     if args.improvement_output:
         _write(root, args.improvement_output, build_improvement(root))
     _write(root, args.output, report)
