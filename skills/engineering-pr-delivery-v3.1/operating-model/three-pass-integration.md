@@ -27,7 +27,21 @@ direct Owner handover command
 → live standalone validator validates the generated prompt artifact
 ```
 
-Complex mode preserves visible target-specific Q1–Q5 in Prompt 1 according to the live standalone schema.
+Prompt 0.5 and Prompt 1 are now deliberately **independent early views**:
+
+```text
+stable programme truth ──► Prompt 0.5: programme contribution
+          │
+          └──────────────► Prompt 1: situated local judgement
+
+Prompt 0.5 result ─┐
+Prompt 1 result   ─┼──► Prompt 2.5 reconciliation
+Prompt 2 reality ──┘
+```
+
+The V3.1 adapter must not feed Prompt 0.5's speculative conclusions into Prompt 1. It also must not expose live programme reconciliation/frontier/status, accumulated learning, implementation state or active-agent conclusions to either early pass. Those are Prompt-2-and-later evidence.
+
+Complex mode preserves the Q1–Q5 **reasoning coverage** defined by the live standalone schema. Visible Q-label headings are used only when explicitly requested; otherwise Prompt 1 remains one coherent natural practitioner prompt.
 
 ## Visibility partition
 
