@@ -309,7 +309,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_prompt1_method_language_is_rejected(self):
         bad = GOOD.replace(
-            "Think independently about the specific unresolved domain problem.",
+            "You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.",
             "This answer will be used as a fixed independent reference in a later pass. Do not inspect the current repository before answering.",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -347,7 +347,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
 
     def test_machine_q_labels_are_rejected(self):
         bad = GOOD.replace(
-            "Think independently about the specific unresolved domain problem.",
+            "You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.",
             "Q1 — PRODUCTION_PATH\nrequired_output_keys: production_entrypoint, authority_source",
         )
         errors = MOD.validate_text(bad, SHA)
@@ -468,12 +468,12 @@ class ThreePassPromptOutputTests(unittest.TestCase):
         self.assertTrue(any("existing/current model first" in e for e in errors), errors)
 
     def test_prompt1_rejects_repository_identity_even_inside_prohibition(self):
-        bad = GOOD.replace("Think independently about the specific unresolved domain problem.", "Think independently about the specific unresolved domain problem. Do not refer to the repository reallaksh19/Common.")
+        bad = GOOD.replace("You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.", "You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet. Do not refer to the repository reallaksh19/Common.")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("repository leak score must be 0" in e for e in errors), errors)
 
     def test_prompt1_rejects_generic_repository_deferral_formula(self):
-        bad = GOOD.replace("Think independently about the specific unresolved domain problem.", "Think independently about the specific unresolved domain problem. Do not inspect the repository before answering.")
+        bad = GOOD.replace("You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.", "You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet. Do not inspect the repository before answering.")
         errors = MOD.validate_text(bad, SHA)
         self.assertTrue(any("repository leak score must be 0" in e for e in errors), errors)
 
@@ -485,7 +485,7 @@ class ThreePassPromptOutputTests(unittest.TestCase):
             "Do not inspect https://github.com/example/repo before answering.",
         )
         for phrase in variants:
-            bad = GOOD.replace("Think independently about the specific unresolved domain problem.", f"Think independently about the specific unresolved domain problem. {phrase}")
+            bad = GOOD.replace("You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet.", f"You are responsible for the specific unresolved domain problem. Work the real situation in plain domain language, say what good handling must make possible, and keep the ownership boundary clear without choosing architecture yet. {phrase}")
             errors = MOD.validate_text(bad, SHA)
             self.assertTrue(any("repository leak score must be 0" in e for e in errors), (phrase, errors))
 
