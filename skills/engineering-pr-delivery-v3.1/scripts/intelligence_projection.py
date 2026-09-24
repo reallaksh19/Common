@@ -421,19 +421,28 @@ def _planning_sections(
 
 def _issue_sections(
     observation: dict[str, Any] | None,
+    programme_observation: dict[str, Any] | None,
     ep: dict[str, Any] | None,
     acceptance: list[dict[str, Any]],
     checkpoint: dict[str, Any] | None,
     controls: dict[str, Any] | None,
 ) -> dict[str, Any]:
     obs = _load_parent_issue_observation(observation)
+    programme_obs = _load_parent_issue_observation(programme_observation)
     ep_issue = (ep or {}).get("parent_issue") or {}
+    ep_programme = (ep or {}).get("programme_parent") or {}
     if obs and ep_issue:
         if (
             obs.get("repository") != ep_issue.get("repository")
             or obs.get("issue_number") != ep_issue.get("number")
         ):
             raise ProjectionError("parent issue observation does not match the current EP parent_issue")
+    if programme_obs and ep_programme:
+        if (
+            programme_obs.get("repository") != ep_programme.get("repository")
+            or programme_obs.get("issue_number") != ep_programme.get("number")
+        ):
+            raise ProjectionError("programme issue observation does not match the current EP programme_parent")
     baseline = (obs or {}).get("baseline") or ep_issue.get("baseline")
     current = (obs or {}).get("current_contract")
     parent = {
@@ -485,11 +494,44 @@ def _issue_sections(
                 "project_value": str(change),
             })
     planning, publications = _planning_sections(obs, ep)
+    programme_parent = _programme_ref(ep, parent)
+    if programme_obs:
+        programme_parent = {
+            "repository": programme_obs.get("repository"),
+            "number": programme_obs.get("issue_number"),
+            "title": programme_obs.get("title"),
+            "url": programme_obs.get("url"),
+        }
+
+    work_progress = _issue_progress(obs)
+    task_progress = _progress_model(acceptance, default_reason="CURRENT_TASK")
+    plan_progress = _plan_progress(obs)
+    programme_progress = _issue_progress(programme_obs) if programme_obs else None
+    verification = _verification(obs, task_progress)
+    delivery = dict((obs or {}).get("delivery") or {"lifecycle": "UNKNOWN"})
+    completion = _completion_model(
+        work_progress=work_progress,
+        plan_progress=plan_progress,
+        task_progress=task_progress,
+        programme_progress=programme_progress,
+        planning=planning,
+        verification=verification,
+        delivery=delivery,
+        issue_state=parent.get("state"),
+        issue_number=parent.get("number"),
+    )
     return {
         "parent_issue": parent,
-        "programme_parent": _programme_ref(ep, parent),
+        "programme_parent": programme_parent,
         "planning": planning,
         "task_publications": publications,
+        "programme_progress": programme_progress,
+        "work_issue_progress": work_progress,
+        "plan_progress": plan_progress,
+        "task_acceptance_progress": task_progress,
+        "verification": verification,
+        "delivery": delivery,
+        "completion": completion,
         "parent_issue_progress": {"checklist": parent_rows, "summary": _progress_summary(parent_rows, True)},
         "current_task_progress": {"checklist": task_rows, "summary": _progress_summary(task_rows, False)},
         "offloads": list((ep or {}).get("offloads") or []),
