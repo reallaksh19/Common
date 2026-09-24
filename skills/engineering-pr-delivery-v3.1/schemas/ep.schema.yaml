@@ -108,6 +108,132 @@ properties:
               properties:
                 id: {type: string, minLength: 1}
                 statement: {type: string, minLength: 1}
+  programme_parent:
+    type: object
+    additionalProperties: false
+    required: [provider, repository, number, title, url]
+    properties:
+      provider: {const: GITHUB}
+      repository: {type: string, pattern: '^[^/\\s]+/[^/\\s]+
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, status, agent_type, task, allowed_writes, expected_return, trace_refs]
+      properties:
+        id: {type: string, pattern: '^(?:OFFLOAD-[A-Za-z0-9][A-Za-z0-9._-]*|OFFLOAD\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
+        status: {enum: [PLANNED, ACTIVE, RETURNED, ACCEPTED, CANCELLED]}
+        agent_type: {enum: [LOCAL_AGENT, THIRD_PARTY_AGENT, HUMAN]}
+        task: {type: string, minLength: 1}
+        allowed_writes:
+          type: array
+          items: {type: string, minLength: 1}
+        expected_return:
+          type: array
+          minItems: 1
+          items: {type: string, minLength: 1}
+        trace_refs:
+          type: array
+          items: {type: string, minLength: 1}
+  admission_policy:
+    type: object
+    additionalProperties: false
+    required: [qualification]
+    properties:
+      qualification: {enum: [NOT_REQUIRED, REQUIRED]}
+      question_policy: {enum: [NONE, Q1_Q5, CUSTOM]}
+  next:
+    type: object
+    additionalProperties: false
+    required: [first_action, stop_conditions]
+    properties:
+      first_action: {type: string, minLength: 1}
+      stop_conditions:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        quality_policy:
+          properties:
+            level: {enum: [HIGH_RISK, CRITICAL]}
+    then:
+      properties:
+        quality_policy:
+          properties:
+            independent_review: {const: REQUIRED}
+additionalProperties: false
+}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+  implementation_plan_basis:
+    type: object
+    additionalProperties: false
+    required: [provider_ref, revision, digest, observed_at]
+    properties:
+      provider_ref: {type: string, minLength: 1}
+      revision: {type: integer, minimum: 1}
+      digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, status, agent_type, task, allowed_writes, expected_return, trace_refs]
+      properties:
+        id: {type: string, pattern: '^(?:OFFLOAD-[A-Za-z0-9][A-Za-z0-9._-]*|OFFLOAD\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'}
+        status: {enum: [PLANNED, ACTIVE, RETURNED, ACCEPTED, CANCELLED]}
+        agent_type: {enum: [LOCAL_AGENT, THIRD_PARTY_AGENT, HUMAN]}
+        task: {type: string, minLength: 1}
+        allowed_writes:
+          type: array
+          items: {type: string, minLength: 1}
+        expected_return:
+          type: array
+          minItems: 1
+          items: {type: string, minLength: 1}
+        trace_refs:
+          type: array
+          items: {type: string, minLength: 1}
+  admission_policy:
+    type: object
+    additionalProperties: false
+    required: [qualification]
+    properties:
+      qualification: {enum: [NOT_REQUIRED, REQUIRED]}
+      question_policy: {enum: [NONE, Q1_Q5, CUSTOM]}
+  next:
+    type: object
+    additionalProperties: false
+    required: [first_action, stop_conditions]
+    properties:
+      first_action: {type: string, minLength: 1}
+      stop_conditions:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+allOf:
+  - if:
+      properties:
+        quality_policy:
+          properties:
+            level: {enum: [HIGH_RISK, CRITICAL]}
+    then:
+      properties:
+        quality_policy:
+          properties:
+            independent_review: {const: REQUIRED}
+additionalProperties: false
+}
+      observed_at: {type: string, format: date-time}
+  expected_next_observable:
+    type: object
+    additionalProperties: false
+    required: [statement, evidence]
+    properties:
+      statement: {type: string, minLength: 1}
+      evidence:
+        type: array
+        items: {type: string, minLength: 1}
   offloads:
     type: array
     items:
