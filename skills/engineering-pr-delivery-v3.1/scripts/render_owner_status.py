@@ -56,6 +56,8 @@ def _change_lines(delta: dict[str, Any] | None) -> list[str]:
         lines.append("- Evidence changed without claiming task/acceptance completion.")
     if event == "IMPLEMENTATION_CHANGE":
         lines.append("- Material/implementation state changed without claiming acceptance movement.")
+    if event == "TASK_PLANNING_PROGRESS":
+        lines.append("- Implementation-plan / expected-observable context changed without claiming implementation or acceptance completion.")
 
     for row in details.get("acceptance_transitions") or []:
         lines.append(
