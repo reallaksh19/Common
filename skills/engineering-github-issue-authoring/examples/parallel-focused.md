@@ -20,10 +20,10 @@ Do not change the canonical declaration or unrelated runtime surfaces.
 
 | ID | Criterion | Parent mapping | Weight |
 |---|---|---|---:|
-| AC-F-01 | bounded mutation exists | EXIT-P5 | 1 |
-| AC-F-02 | exact declared violation observed | EXIT-P5 | 1 |
-| AC-F-03 | neighboring mutation cases remain green | EXIT-P5 | 1 |
-| AC-F-04 | producer output is durably delivered | EXIT-P5 | 1 |
+| AC-F-01 | bounded mutation exists | EXIT-P5 | — |
+| AC-F-02 | exact declared violation observed | EXIT-P5 | — |
+| AC-F-03 | neighboring mutation cases remain green | EXIT-P5 | — |
+| AC-F-04 | producer output is durably delivered | EXIT-P5 | — |
 
 ## Falsifier
 If the bounded mutation does not generate the declared violation, stop and reframe the assumed defect.
