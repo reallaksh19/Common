@@ -1,0 +1,90 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - kind
+  - workstream_id
+  - observed_at
+  - summary
+  - evidence
+  - programme_consequence
+  - affected_workstreams
+  - independent_work_continues
+  - owner_decision_required
+  - semantic_boundary_change
+properties:
+  schema_version:
+    const: engineering-coordinator-local-return-v1
+  kind:
+    enum:
+      - DURABLE_RESULT
+      - DEPENDENCY_DISCOVERED
+      - SEMANTIC_CHANGE
+      - LOCAL_EXECUTION_EVENT
+  workstream_id:
+    type: string
+    minLength: 1
+  observed_at:
+    type: string
+    format: date-time
+  summary:
+    type: string
+    minLength: 1
+  outcome:
+    type: [string, 'null']
+    enum: [ACHIEVED, PARTIAL, FALSIFIED, UNKNOWN, null]
+  evidence:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [ref, scope, promotion_required]
+      properties:
+        ref: {type: string, minLength: 1}
+        scope:
+          enum: [LOCAL_ONLY, SHARED_DURABLE]
+        promotion_required:
+          type: boolean
+        note:
+          type: [string, 'null']
+  programme_consequence:
+    type: string
+  affected_workstreams:
+    type: array
+    items: {type: string, minLength: 1}
+  independent_work_continues:
+    type: array
+    items: {type: string, minLength: 1}
+  owner_decision_required:
+    type: boolean
+  semantic_boundary_change:
+    type: boolean
+  dependency:
+    type:
+      - object
+      - 'null'
+    additionalProperties: false
+    required: [missing_production_truth, why_required, likely_owner]
+    properties:
+      missing_production_truth: {type: string, minLength: 1}
+      why_required: {type: string, minLength: 1}
+      likely_owner: {type: [string, 'null']}
+      satisfaction_evidence:
+        type: array
+        items: {type: string, minLength: 1}
+  local_event:
+    type:
+      - object
+      - 'null'
+    additionalProperties: false
+    required: [event, programme_significance]
+    properties:
+      event: {type: string, minLength: 1}
+      programme_significance: {type: string}
+  consumer_consequences:
+    type: array
+    items: {type: string, minLength: 1}
+  uncertainty:
+    type: array
+    items: {type: string, minLength: 1}
