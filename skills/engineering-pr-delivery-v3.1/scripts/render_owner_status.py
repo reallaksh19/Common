@@ -149,11 +149,21 @@ def render(
         current = (task_snapshot.get("current_task_progress") or {}).get("summary") or {}
         parent = (task_snapshot.get("parent_issue_progress") or {}).get("summary") or {}
         next_task = task_snapshot.get("next") or {}
+        planning = task_snapshot.get("planning") or {}
+        expected = planning.get("expected_next_observable") or {}
+        publications = task_snapshot.get("task_publications") or []
+        programme_parent = task_snapshot.get("programme_parent") or {}
         lines += [
             "## Task-local completion",
             f"- Source protocol: **{task_snapshot.get('source_protocol')}**",
             f"- Work package / EP: **{identity.get('work_package') or 'NONE'} / {identity.get('ep') or 'NONE'}**",
             f"- Task outcome: {purpose.get('task_outcome') or 'Unknown'}",
+            f"- Programme parent: {programme_parent.get('repository') or 'unknown'}#{programme_parent.get('number') or 'NONE'}",
+            f"- Implementation plan: **{planning.get('state') or 'UNKNOWN'}**"
+            + (f" rev {planning.get('revision')}" if planning.get("revision") is not None else "")
+            + (f" — {planning.get('provider_ref')}" if planning.get("provider_ref") else ""),
+            f"- Expected next observable: {expected.get('statement') or 'none'}",
+            f"- Task publications: {len(publications)}",
             f"- Current task: {_counts(current, ['complete', 'partial', 'pending', 'blocked'])}",
             f"- Parent issue: {_counts(parent, ['complete', 'partial', 'pending', 'blocked', 'deferred', 'not_applicable', 'unknown'])}",
             f"- Offloads: {len(task_snapshot.get('offloads') or [])}",
