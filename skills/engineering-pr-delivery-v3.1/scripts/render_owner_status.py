@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from owner_publication import evaluate as evaluate_publication, load_cursor
+from render_task_snapshot import render as render_task_snapshot
 from v3lib import load_yaml
 
 
@@ -118,6 +119,9 @@ def render(
         "",
     ]
     lines += _change_lines(publication_delta)
+    if task_snapshot:
+        lines.append(render_task_snapshot(task_snapshot).rstrip())
+        lines.append("")
     lines += [
         "## Programme truth vs accepted evidence",
         f"- Roadmap revision: **{(snapshot.get('generated_from') or {}).get('roadmap_revision')}**",
@@ -156,7 +160,7 @@ def render(
         publications = task_snapshot.get("task_publications") or []
         programme_parent = task_snapshot.get("programme_parent") or {}
         lines += [
-            "## Task-local completion",
+            "## Task reconstruction details",
             f"- Source protocol: **{task_snapshot.get('source_protocol')}**",
             f"- Work package / EP: **{identity.get('work_package') or 'NONE'} / {identity.get('ep') or 'NONE'}**",
             f"- Task outcome: {purpose.get('task_outcome') or 'Unknown'}",
@@ -166,8 +170,8 @@ def render(
             + (f" — {planning.get('provider_ref')}" if planning.get("provider_ref") else ""),
             f"- Expected next observable: {expected.get('statement') or 'none'}",
             f"- Task publications: {len(publications)}",
-            f"- Current task: {_counts(current, ['complete', 'partial', 'pending', 'blocked'])}",
-            f"- Parent issue: {_counts(parent, ['complete', 'partial', 'pending', 'blocked', 'deferred', 'not_applicable', 'unknown'])}",
+            f"- Legacy task-count view: {_counts(current, ['complete', 'partial', 'pending', 'blocked'])}",
+            f"- Legacy work-issue-count view: {_counts(parent, ['complete', 'partial', 'pending', 'blocked', 'deferred', 'not_applicable', 'unknown'])}",
             f"- Offloads: {len(task_snapshot.get('offloads') or [])}",
             f"- Pending tracked items: {len(task_snapshot.get('pending_items') or [])}",
             f"- Known issues: {len(task_snapshot.get('known_issues') or [])}",
@@ -178,10 +182,11 @@ def render(
         ]
 
     lines += [
-        "## Blockers by consequence",
-        f"- Execution: {_items(c.get('execution_blockers'))}",
-        f"- Handover: {_items(c.get('handover_blockers'))}",
-        f"- Delivery: {_items(c.get('delivery_blockers'))}",
+        "## Recorded constraints / diagnostics",
+        "These are descriptive observations, not V3.1 execution permission.",
+        f"- Execution-relevant diagnostics: {_items(c.get('execution_blockers'))}",
+        f"- Handover diagnostics: {_items(c.get('handover_blockers'))}",
+        f"- Delivery diagnostics: {_items(c.get('delivery_blockers'))}",
         f"- Informational: {_items(c.get('informational'))}",
         "",
     ]
@@ -206,7 +211,7 @@ def render(
         ]
 
     lines += [
-        "## Legal next boundary",
+        "## Next actions",
         f"- Material: {n.get('immediate_material_action') or 'none'}",
         f"- Delivery: {n.get('delivery_action') or 'none'}",
         f"- Stop conditions: {_items(n.get('stop_conditions'))}",

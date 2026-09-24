@@ -168,7 +168,7 @@ class OwnerStatusRenderingTests(unittest.TestCase):
         self.assertIn("Known issues: 1", text)
         self.assertIn("Capability strengthened: signed PDF warning", text)
         self.assertIn("Still not proved: local exact-head validation", text)
-        self.assertIn("Handover: CTRL-HO", text)
+        self.assertIn("Handover diagnostics: CTRL-HO", text)
         self.assertIn("Task stop conditions: programme reselection", text)
         self.assertIn("Implementation plan: **PRESENT** rev 1", text)
         self.assertIn("Expected next observable: Focused exact-head validation.", text)

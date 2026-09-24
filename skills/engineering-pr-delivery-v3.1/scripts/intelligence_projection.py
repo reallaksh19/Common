@@ -96,6 +96,247 @@ def _progress_summary(rows: list[dict[str, Any]], parent: bool) -> dict[str, int
     return result
 
 
+PROGRESS_STATES = {
+    "PASS": "PASS",
+    "COMPLETE": "PASS",
+    "PARTIAL": "PARTIAL",
+    "FAIL": "FAIL",
+    "BLOCKED": "FAIL",
+    "NOT_RUN": "NOT_RUN",
+    "PENDING": "PENDING",
+    "NOT_PROVED": "PENDING",
+    "DEFERRED": "DEFERRED",
+    "NOT_APPLICABLE": "NOT_APPLICABLE",
+    "NA": "NOT_APPLICABLE",
+    "UNKNOWN": "UNKNOWN",
+}
+
+
+def _normalise_progress_state(value: Any) -> str:
+    return PROGRESS_STATES.get(str(value or "UNKNOWN").upper(), "UNKNOWN")
+
+
+def _progress_item(row: dict[str, Any], *, default_reason: str = "UNKNOWN") -> dict[str, Any]:
+    return {
+        "id": str(row.get("id") or "UNKNOWN"),
+        "statement": str(row.get("statement") or row.get("description") or row.get("id") or "Unknown criterion"),
+        "state": _normalise_progress_state(row.get("state") or row.get("result") or row.get("status")),
+        "reason_class": str(row.get("reason_class") or default_reason),
+        "evidence": _strings(row.get("evidence")),
+        "trace_refs": _strings(row.get("provider_refs") or row.get("trace_refs")),
+        "remaining": _strings(row.get("remaining")),
+        "owner": row.get("owner"),
+        "weight": row.get("weight") if isinstance(row.get("weight"), (int, float)) else None,
+        "parent_mappings": _strings(row.get("parent_mappings") or row.get("acceptance_refs")),
+    }
+
+
+def _progress_model(rows: Any, *, default_reason: str = "UNKNOWN") -> dict[str, Any]:
+    criteria = [
+        _progress_item(row, default_reason=default_reason)
+        for row in (rows or [])
+        if isinstance(row, dict)
+    ]
+    summary = {key: 0 for key in ("pass", "partial", "fail", "not_run", "pending", "deferred", "not_applicable", "unknown")}
+    key_map = {
+        "PASS": "pass",
+        "PARTIAL": "partial",
+        "FAIL": "fail",
+        "NOT_RUN": "not_run",
+        "PENDING": "pending",
+        "DEFERRED": "deferred",
+        "NOT_APPLICABLE": "not_applicable",
+        "UNKNOWN": "unknown",
+    }
+    for row in criteria:
+        summary[key_map[row["state"]]] += 1
+    summary["total"] = len(criteria)
+
+    applicable = [row for row in criteria if row["state"] != "NOT_APPLICABLE"]
+    if not applicable:
+        coverage = {"satisfied": 0, "applicable_total": 0, "percent": None, "basis": "NO_DENOMINATOR"}
+    elif all(isinstance(row.get("weight"), (int, float)) for row in applicable) and sum(float(row["weight"]) for row in applicable) > 0:
+        total = sum(float(row["weight"]) for row in applicable)
+        satisfied = sum(float(row["weight"]) for row in applicable if row["state"] == "PASS")
+        coverage = {
+            "satisfied": satisfied,
+            "applicable_total": total,
+            "percent": round(100.0 * satisfied / total, 1),
+            "basis": "DECLARED_WEIGHTS",
+        }
+    else:
+        total = len(applicable)
+        satisfied = sum(1 for row in applicable if row["state"] == "PASS")
+        coverage = {
+            "satisfied": satisfied,
+            "applicable_total": total,
+            "percent": round(100.0 * satisfied / total, 1),
+            "basis": "UNWEIGHTED_CRITERIA",
+        }
+    return {"criteria": criteria, "summary": summary, "coverage": coverage}
+
+
+def _issue_progress(observation: dict[str, Any] | None) -> dict[str, Any]:
+    current = (observation or {}).get("current_contract") or {}
+    baseline = (observation or {}).get("baseline") or {}
+    rows = current.get("acceptance_items") or baseline.get("acceptance_items") or []
+    return _progress_model(rows)
+
+
+def _plan_progress(observation: dict[str, Any] | None) -> dict[str, Any]:
+    plan = (observation or {}).get("implementation_plan") or {}
+    return _progress_model(plan.get("steps") or [], default_reason="CURRENT_TASK")
+
+
+def _verification(observation: dict[str, Any] | None, task_progress: dict[str, Any]) -> dict[str, Any]:
+    raw = (observation or {}).get("verification")
+    observations = _progress_model(
+        raw if isinstance(raw, list) else (task_progress or {}).get("criteria") or [],
+        default_reason="CURRENT_TASK",
+    )["criteria"]
+    origins: dict[str, int] = {}
+    for row in observations:
+        if row["state"] in {"FAIL", "NOT_RUN", "PARTIAL", "PENDING"}:
+            origin = str(row.get("reason_class") or "UNKNOWN")
+            origins[origin] = origins.get(origin, 0) + 1
+
+    states = [row["state"] for row in observations if row["state"] != "NOT_APPLICABLE"]
+    current_fail = any(
+        row["state"] == "FAIL" and row.get("reason_class") == "CURRENT_TASK"
+        for row in observations
+    )
+    if not states:
+        state = "UNKNOWN"
+    elif current_fail:
+        state = "FAIL"
+    elif all(value == "PASS" for value in states):
+        state = "PASS"
+    elif all(value == "NOT_RUN" for value in states):
+        state = "NOT_RUN"
+    elif any(value in {"PASS", "PARTIAL", "FAIL", "NOT_RUN"} for value in states):
+        state = "PARTIAL"
+    elif any(value == "PENDING" for value in states):
+        state = "PENDING"
+    else:
+        state = "UNKNOWN"
+    return {"state": state, "observations": observations, "failure_origins": origins}
+
+
+def _acceptance_state(progress: dict[str, Any] | None) -> str:
+    coverage = (progress or {}).get("coverage") or {}
+    total = coverage.get("applicable_total")
+    percent = coverage.get("percent")
+    summary = (progress or {}).get("summary") or {}
+    if not total:
+        return "UNKNOWN"
+    if percent == 100:
+        return "SATISFIED"
+    if (coverage.get("satisfied") or 0) > 0 or summary.get("partial", 0) > 0:
+        return "PARTIAL"
+    return "OPEN"
+
+
+def _implementation_state(plan_progress: dict[str, Any] | None, planning: dict[str, Any]) -> str:
+    coverage = (plan_progress or {}).get("coverage") or {}
+    percent = coverage.get("percent")
+    if percent == 100:
+        return "COMPLETE"
+    if percent is not None and percent > 0:
+        return "PARTIAL"
+    if planning.get("state") == "PRESENT":
+        return "OPEN"
+    return "UNKNOWN"
+
+
+def _completion_model(
+    *,
+    work_progress: dict[str, Any],
+    plan_progress: dict[str, Any],
+    task_progress: dict[str, Any],
+    programme_progress: dict[str, Any] | None,
+    planning: dict[str, Any],
+    verification: dict[str, Any],
+    delivery: dict[str, Any],
+    issue_state: str | None,
+    issue_number: Any,
+) -> dict[str, Any]:
+    work_state = _acceptance_state(work_progress)
+    programme_state = _acceptance_state(programme_progress)
+    implementation = _implementation_state(plan_progress, planning)
+    verification_state = str(verification.get("state") or "UNKNOWN")
+    delivery_state = str(delivery.get("lifecycle") or "UNKNOWN")
+    provider_state = str(issue_state or "UNKNOWN").upper()
+    if provider_state not in {"OPEN", "CLOSED"}:
+        provider_state = "UNKNOWN"
+
+    if work_state == "SATISFIED" and verification_state == "PASS":
+        overall = "COMPLETE"
+    elif work_state in {"PARTIAL", "SATISFIED"} or implementation in {"PARTIAL", "COMPLETE"} or verification_state in {"PARTIAL", "FAIL", "NOT_RUN"}:
+        overall = "PARTIAL"
+    elif work_state == "OPEN":
+        overall = "OPEN"
+    else:
+        overall = "UNKNOWN"
+
+    done = [
+        row["statement"]
+        for row in (work_progress.get("criteria") or [])
+        if row.get("state") == "PASS"
+    ]
+    remains = [
+        row["statement"]
+        for row in (work_progress.get("criteria") or [])
+        if row.get("state") not in {"PASS", "NOT_APPLICABLE"}
+    ]
+    if not remains:
+        remains = [
+            row["statement"]
+            for row in (task_progress.get("criteria") or [])
+            if row.get("state") not in {"PASS", "NOT_APPLICABLE"}
+        ]
+
+    dependency_reasons = {"UPSTREAM_DEPENDENCY", "SIBLING_WORKSTREAM", "INFRASTRUCTURE", "PROVIDER"}
+    dependencies = []
+    owner_decisions = []
+    for progress in (work_progress, task_progress):
+        for row in progress.get("criteria") or []:
+            reason = row.get("reason_class")
+            if row.get("state") in {"PASS", "NOT_APPLICABLE"}:
+                continue
+            if reason in dependency_reasons:
+                dependencies.append(f"{row['id']}: {row['statement']} [{reason}]")
+            if reason == "OWNER_DECISION":
+                owner_decisions.append(f"{row['id']}: {row['statement']}")
+    for row in verification.get("observations") or []:
+        if row.get("state") in {"PASS", "NOT_APPLICABLE"}:
+            continue
+        reason = row.get("reason_class")
+        if reason in dependency_reasons:
+            dependencies.append(f"{row['id']}: {row['statement']} [{reason}]")
+        if reason == "OWNER_DECISION":
+            owner_decisions.append(f"{row['id']}: {row['statement']}")
+
+    headline = (
+        f"#{issue_number} {overall} — "
+        f"child acceptance {work_state.lower()}; verification {verification_state.lower()}; "
+        f"delivery {delivery_state.lower()}."
+    )
+    return {
+        "overall_state": overall,
+        "headline": headline,
+        "implementation": implementation,
+        "verification": verification_state,
+        "delivery": delivery_state,
+        "work_issue_acceptance": work_state,
+        "programme_contribution": programme_state,
+        "provider_issue": provider_state,
+        "what_done": list(dict.fromkeys(done)),
+        "what_remains": list(dict.fromkeys(remains)),
+        "dependencies": list(dict.fromkeys(dependencies)),
+        "owner_decisions": list(dict.fromkeys(owner_decisions)),
+    }
+
+
 def _tracked_items(controls: dict[str, Any] | None, kind: str) -> list[dict[str, Any]]:
     result = []
     for row in (controls or {}).get("controls") or []:
@@ -180,19 +421,28 @@ def _planning_sections(
 
 def _issue_sections(
     observation: dict[str, Any] | None,
+    programme_observation: dict[str, Any] | None,
     ep: dict[str, Any] | None,
     acceptance: list[dict[str, Any]],
     checkpoint: dict[str, Any] | None,
     controls: dict[str, Any] | None,
 ) -> dict[str, Any]:
     obs = _load_parent_issue_observation(observation)
+    programme_obs = _load_parent_issue_observation(programme_observation)
     ep_issue = (ep or {}).get("parent_issue") or {}
+    ep_programme = (ep or {}).get("programme_parent") or {}
     if obs and ep_issue:
         if (
             obs.get("repository") != ep_issue.get("repository")
             or obs.get("issue_number") != ep_issue.get("number")
         ):
             raise ProjectionError("parent issue observation does not match the current EP parent_issue")
+    if programme_obs and ep_programme:
+        if (
+            programme_obs.get("repository") != ep_programme.get("repository")
+            or programme_obs.get("issue_number") != ep_programme.get("number")
+        ):
+            raise ProjectionError("programme issue observation does not match the current EP programme_parent")
     baseline = (obs or {}).get("baseline") or ep_issue.get("baseline")
     current = (obs or {}).get("current_contract")
     parent = {
@@ -244,11 +494,44 @@ def _issue_sections(
                 "project_value": str(change),
             })
     planning, publications = _planning_sections(obs, ep)
+    programme_parent = _programme_ref(ep, parent)
+    if programme_obs:
+        programme_parent = {
+            "repository": programme_obs.get("repository"),
+            "number": programme_obs.get("issue_number"),
+            "title": programme_obs.get("title"),
+            "url": programme_obs.get("url"),
+        }
+
+    work_progress = _issue_progress(obs)
+    task_progress = _progress_model(acceptance, default_reason="CURRENT_TASK")
+    plan_progress = _plan_progress(obs)
+    programme_progress = _issue_progress(programme_obs) if programme_obs else None
+    verification = _verification(obs, task_progress)
+    delivery = dict((obs or {}).get("delivery") or {"lifecycle": "UNKNOWN"})
+    completion = _completion_model(
+        work_progress=work_progress,
+        plan_progress=plan_progress,
+        task_progress=task_progress,
+        programme_progress=programme_progress,
+        planning=planning,
+        verification=verification,
+        delivery=delivery,
+        issue_state=parent.get("state"),
+        issue_number=parent.get("number"),
+    )
     return {
         "parent_issue": parent,
-        "programme_parent": _programme_ref(ep, parent),
+        "programme_parent": programme_parent,
         "planning": planning,
         "task_publications": publications,
+        "programme_progress": programme_progress,
+        "work_issue_progress": work_progress,
+        "plan_progress": plan_progress,
+        "task_acceptance_progress": task_progress,
+        "verification": verification,
+        "delivery": delivery,
+        "completion": completion,
         "parent_issue_progress": {"checklist": parent_rows, "summary": _progress_summary(parent_rows, True)},
         "current_task_progress": {"checklist": task_rows, "summary": _progress_summary(task_rows, False)},
         "offloads": list((ep or {}).get("offloads") or []),
@@ -348,7 +631,11 @@ def _v3_controls(root: Path, state: dict[str, Any]) -> dict[str, list[str]]:
     return result
 
 
-def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
+def _v25_task(
+    root: Path,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     state = load_yaml(root / V25_STATE)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
     progress = _load(root / V25_PROGRESS) or {}
@@ -459,7 +746,14 @@ def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None
     if checkpoint_path:
         sources.append(checkpoint_path)
 
-    issue_sections = _issue_sections(parent_issue_observation, None, acceptance, checkpoint, None)
+    issue_sections = _issue_sections(
+        parent_issue_observation,
+        programme_issue_observation,
+        None,
+        acceptance,
+        checkpoint,
+        None,
+    )
     task = {
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -507,7 +801,12 @@ def _v25_task(root: Path, parent_issue_observation: dict[str, Any] | None = None
     return task
 
 
-def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
+def _v3_task(
+    root: Path,
+    base_ref: str | None,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     state = load_yaml(root / "relay/STATE.yaml")
     project = build_project_snapshot(root, base_ref)
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
@@ -529,7 +828,14 @@ def _v3_task(root: Path, base_ref: str | None, parent_issue_observation: dict[st
     } for row in (ep or {}).get("acceptance") or [] if isinstance(row, dict)]
     handoff = (checkpoint or {}).get("handoff") or {}
     native_controls = load_yaml(root / str((state.get("controls") or {}).get("path")))
-    issue_sections = _issue_sections(parent_issue_observation, ep, acceptance, checkpoint, native_controls)
+    issue_sections = _issue_sections(
+        parent_issue_observation,
+        programme_issue_observation,
+        ep,
+        acceptance,
+        checkpoint,
+        native_controls,
+    )
     task = {
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
@@ -579,8 +885,17 @@ def _use_v3_source(root: Path) -> bool:
     raise ProjectionError("Relay authority mode is not deterministically resolved")
 
 
-def build_task(root: Path, base_ref: str | None = None, parent_issue_observation: dict[str, Any] | None = None) -> dict[str, Any]:
-    return _v3_task(root, base_ref, parent_issue_observation) if _use_v3_source(root) else _v25_task(root, parent_issue_observation)
+def build_task(
+    root: Path,
+    base_ref: str | None = None,
+    parent_issue_observation: dict[str, Any] | None = None,
+    programme_issue_observation: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    return (
+        _v3_task(root, base_ref, parent_issue_observation, programme_issue_observation)
+        if _use_v3_source(root)
+        else _v25_task(root, parent_issue_observation, programme_issue_observation)
+    )
 
 
 def _v25_improvement(root: Path) -> dict[str, Any]:
@@ -823,19 +1138,29 @@ def main() -> None:
     parser.add_argument("--output")
     parser.add_argument("--task-output")
     parser.add_argument("--improvement-output")
-    parser.add_argument("--parent-issue-observation")
+    parser.add_argument("--parent-issue-observation", help="Owned child/work-issue provider observation")
+    parser.add_argument("--programme-issue-observation", help="Optional governing programme-parent provider observation")
     args = parser.parse_args()
     root = Path(args.repo_root).resolve()
     parent_issue_observation = load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None
+    programme_issue_observation = load_yaml(Path(args.programme_issue_observation)) if args.programme_issue_observation else None
     if args.kind == "task":
-        _write(root, args.output, build_task(root, args.base_ref, parent_issue_observation))
+        _write(
+            root,
+            args.output,
+            build_task(root, args.base_ref, parent_issue_observation, programme_issue_observation),
+        )
         return
     if args.kind == "improvement":
         _write(root, args.output, build_improvement(root))
         return
     report = assess_continuity(root, args.base_ref)
     if args.task_output:
-        _write(root, args.task_output, build_task(root, args.base_ref, parent_issue_observation))
+        _write(
+            root,
+            args.task_output,
+            build_task(root, args.base_ref, parent_issue_observation, programme_issue_observation),
+        )
     if args.improvement_output:
         _write(root, args.improvement_output, build_improvement(root))
     _write(root, args.output, report)

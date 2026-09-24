@@ -64,6 +64,13 @@ Do not split a naturally atomic task just to increase issue count.
 
 Read `references/multi-agent-program-issues.md` for program topology.
 
+Finished authoring examples:
+- `examples/programme-root.md`
+- `examples/parallel-focused.md`
+
+Cross-skill output index:
+- `../engineering-programme-coordinator/references/OUTPUT_EXAMPLE_INDEX.md`
+
 ## 5. Single-issue architecture
 
 For a bounded single issue, use `references/engineering-issue-template.md` and preserve these layers:

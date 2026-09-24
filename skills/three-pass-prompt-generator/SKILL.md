@@ -1,4 +1,10 @@
-# Three-Pass Prompt Generator — Standalone Launcher
+# Three-Pass Prompt Generator
+
+## Finished publication example
+
+Use `examples/clean-five-prompt-packet.md` as the agent-facing publication reference.
+
+Keep internal generator/compiler diagnostics out of the durable engineering issue unless the diagnostic itself is under investigation. The published artifact should foreground the five prompts, target, basis and schema revision. — Standalone Launcher
 
 This skill exists only to generate the five sequential prompts defined by its canonical three-pass schema.
 

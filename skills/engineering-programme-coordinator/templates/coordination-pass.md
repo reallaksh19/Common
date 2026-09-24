@@ -45,7 +45,21 @@ For each workstream, reconstruct:
    What is actually true now?
    Cite durable evidence.
 
-5. PLAN CONFORMANCE
+5. COMPLETION AXES
+   Reconstruct independently:
+   - plan progress;
+   - child/work-issue acceptance;
+   - current task/EP acceptance;
+   - verification state + failure origin;
+   - delivery/PR lifecycle;
+   - programme contribution;
+   - provider issue lifecycle.
+
+   Use explicit EXIT-*/AC-*/STEP-* denominators where present.
+   If no denominator exists, report UNKNOWN / UNMAPPED.
+   Do not infer completion from PR count, commit count or test count.
+
+6. PLAN CONFORMANCE
    Classify:
    ALIGNED
    MINOR_DEVIATION
@@ -56,7 +70,7 @@ For each workstream, reconstruct:
 
    Judge unreconciled semantic deviation, not harmless implementation churn.
 
-6. DEPENDENCIES
+7. DEPENDENCIES
    For each real dependency state the required production output.
    Classify:
    SATISFIED
@@ -67,26 +81,26 @@ For each workstream, reconstruct:
 
    Also state what work may continue independently.
 
-7. HELPER NEED
+8. HELPER NEED
    Would a bounded local/browser/runtime helper materially reduce uncertainty or protect production?
    Recommend only when useful.
 
-8. EVIDENCE SCOPE
+9. EVIDENCE SCOPE
    Which evidence is LOCAL_ONLY?
    Which is SHARED_DURABLE?
    Does anything need promotion because another workstream now depends on it?
 
-9. UNCERTAINTY
+10. UNCERTAINTY
    Distinguish:
    OPEN_QUESTION
    RISK
    FALSIFIER_IN_FLIGHT
    UNKNOWN
 
-10. CONSEQUENCE
+11. CONSEQUENCE
     What, if anything, follows for another agent, this plan, the Owner or next observation?
 
-11. SUGGESTED ACTION
+12. SUGGESTED ACTION
     Only if useful.
     State target, reason, action, affected workstreams, evidence and whether Owner judgement is required.
 

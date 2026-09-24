@@ -129,6 +129,9 @@ What I inspected and which source is authoritative.
 APPROACH
 The implementation strategy I currently intend to use.
 
+PLAN SLICES
+Use stable STEP-* IDs. Each meaningful slice records current state and the AC-* criteria it supports.
+
 EXPECTED CHANGED SURFACES
 Files/components/interfaces likely to change.
 
@@ -247,7 +250,10 @@ EVIDENCE
 ...
 
 RESULT
-PASS | FAIL | NOT_RUN | OBSERVED
+PASS | PARTIAL | FAIL | NOT_RUN | PENDING | OBSERVED
+
+REASON CLASS
+CURRENT_TASK | UPSTREAM_DEPENDENCY | SIBLING_WORKSTREAM | PREEXISTING_UNRELATED | INFRASTRUCTURE | PROVIDER | OWNER_DECISION | UNKNOWN
 
 CONSEQUENCE
 ...
@@ -315,6 +321,29 @@ NEXT
 ```
 
 The PR/commit/test/artifact is the material truth. The comment is the durable semantic handoff/index.
+
+## Acceptance and progress denominators
+
+Use stable IDs:
+
+```text
+programme: EXIT-*
+child/work issue: AC-*
+implementation plan: STEP-*
+```
+
+Task Snapshot percentages come only from those declared criteria/weights.
+
+Do not use these as progress denominators:
+
+- PR count;
+- commit count;
+- file count;
+- test count;
+- chat volume;
+- publication count.
+
+When a denominator is absent, V3.1 reports `UNKNOWN / UNMAPPED`.
 
 ## 8. V3.1 read models
 

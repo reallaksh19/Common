@@ -60,6 +60,19 @@ properties:
         branch: {type: [string, 'null']}
         pr: {type: [string, 'null']}
         exact_head: {type: [string, 'null']}
+        task_snapshot_ref: {type: [string, 'null']}
+        completion:
+          type: object
+          additionalProperties: false
+          properties:
+            overall_state: {enum: [COMPLETE, PARTIAL, OPEN, NOT_RUN, UNKNOWN]}
+            child_acceptance: {enum: [SATISFIED, PARTIAL, OPEN, UNKNOWN]}
+            programme_contribution: {enum: [SATISFIED, PARTIAL, OPEN, UNKNOWN]}
+            verification: {enum: [PASS, PARTIAL, FAIL, NOT_RUN, PENDING, UNKNOWN]}
+            delivery: {enum: [NONE, DRAFT, OPEN, REVIEW_READY, CHANGES_REQUESTED, CONFLICTED, MERGED, CLOSED, UNKNOWN]}
+            what_remains:
+              type: array
+              items: {type: string, minLength: 1}
         expected_next_observable: {type: string}
         latest_evidence:
           type: array

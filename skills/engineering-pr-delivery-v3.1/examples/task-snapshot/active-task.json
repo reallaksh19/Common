@@ -1,0 +1,407 @@
+{
+  "schema_version": "relay-v3.1-task-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "source_protocol": "V3_1",
+  "identity": {
+    "work_package": "WP-A",
+    "ep": "EP-A",
+    "issue": 101,
+    "delivery_vehicle": 101
+  },
+  "purpose": {
+    "programme_outcome": "Example outcome",
+    "current_goal": "Implement child",
+    "task_outcome": "Active implementation",
+    "why_this_task_exists": "Current child responsibility"
+  },
+  "lineage": {
+    "predecessor_checkpoint": null,
+    "upstream_dependencies": [],
+    "roadmap_admission": {
+      "disposition": "MAPPED_EXISTING_WP",
+      "revision": "RM-EXAMPLE",
+      "basis": [
+        "golden-example"
+      ]
+    }
+  },
+  "parent_issue": {
+    "repository": "example/repo",
+    "number": 101,
+    "title": "Active child",
+    "state": "OPEN",
+    "url": "https://github.com/example/repo/issues/101",
+    "baseline": null,
+    "current": {
+      "acceptance_items": [
+        {
+          "id": "AC-A-01",
+          "statement": "First criterion",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": null,
+          "parent_mappings": []
+        },
+        {
+          "id": "AC-A-02",
+          "statement": "Second criterion",
+          "state": "PENDING",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": null,
+          "parent_mappings": []
+        }
+      ]
+    },
+    "updates": [],
+    "disposition": "NO_CHANGE",
+    "relationships": [],
+    "handover_ledger": null
+  },
+  "programme_parent": {
+    "repository": "example/repo",
+    "number": 100,
+    "title": "Example programme",
+    "url": "https://github.com/example/repo/issues/100"
+  },
+  "planning": {
+    "state": "PRESENT",
+    "provider_ref": "github:example/repo#101/comment-plan",
+    "revision": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "observed_at": "2026-09-24T05:00:00Z",
+    "expected_next_observable": {
+      "statement": "Implementation evidence",
+      "evidence": []
+    }
+  },
+  "task_publications": [
+    {
+      "type": "IMPLEMENTATION_PLAN",
+      "ref": "github:example/repo#101/comment-plan",
+      "observed_at": "2026-09-24T05:00:00Z",
+      "summary": "Agent-authored implementation plan.",
+      "exact_head": null
+    }
+  ],
+  "programme_progress": {
+    "criteria": [
+      {
+        "id": "EXIT-1",
+        "statement": "Programme result",
+        "state": "PENDING",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 0,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 0,
+      "applicable_total": 1,
+      "percent": 0,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "work_issue_progress": {
+    "criteria": [
+      {
+        "id": "AC-A-01",
+        "statement": "First criterion",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      },
+      {
+        "id": "AC-A-02",
+        "statement": "Second criterion",
+        "state": "PENDING",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 2,
+      "percent": 50,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "plan_progress": {
+    "criteria": [
+      {
+        "id": "STEP-A-01",
+        "statement": "Investigate",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      },
+      {
+        "id": "STEP-A-02",
+        "statement": "Implement",
+        "state": "PENDING",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 2,
+      "percent": 50,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "task_acceptance_progress": {
+    "criteria": [
+      {
+        "id": "EP-A-01",
+        "statement": "Current task acceptance",
+        "state": "PENDING",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 0,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 1,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 0,
+      "applicable_total": 1,
+      "percent": 0,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "verification": {
+    "state": "PENDING",
+    "observations": [
+      {
+        "id": "V-A-01",
+        "statement": "Focused validation",
+        "state": "PENDING",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "failure_origins": {
+      "CURRENT_TASK": 1
+    }
+  },
+  "delivery": {
+    "pr": null,
+    "url": null,
+    "lifecycle": "NONE",
+    "base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "mergeability": null
+  },
+  "completion": {
+    "overall_state": "PARTIAL",
+    "headline": "#101 PARTIAL — implementation is active and acceptance remains open.",
+    "implementation": "PARTIAL",
+    "verification": "PENDING",
+    "delivery": "NONE",
+    "work_issue_acceptance": "PARTIAL",
+    "programme_contribution": "OPEN",
+    "provider_issue": "OPEN",
+    "what_done": [
+      "First criterion"
+    ],
+    "what_remains": [
+      "Second criterion"
+    ],
+    "dependencies": [],
+    "owner_decisions": []
+  },
+  "parent_issue_progress": {
+    "checklist": [
+      {
+        "id": "AC-A-01",
+        "statement": "First criterion",
+        "state": "PASS",
+        "evidence": []
+      },
+      {
+        "id": "AC-A-02",
+        "statement": "Second criterion",
+        "state": "PENDING",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 1,
+      "partial": 0,
+      "pending": 1,
+      "blocked": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 2
+    }
+  },
+  "current_task_progress": {
+    "checklist": [
+      {
+        "id": "EP-A-01",
+        "statement": "Current task acceptance",
+        "state": "PENDING",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 0,
+      "partial": 0,
+      "pending": 1,
+      "blocked": 0,
+      "total": 1
+    }
+  },
+  "offloads": [],
+  "pending_items": [],
+  "known_issues": [],
+  "improvement_vs_original_issue": {
+    "baseline_digest": null,
+    "items": []
+  },
+  "scope": {
+    "write": [],
+    "read": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "inputs": [],
+  "benchmarks": [],
+  "benchmark_debt": {
+    "required_missing": [],
+    "stale": [],
+    "optional": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "lease_or_custody": null,
+    "executor": "example-agent",
+    "route": null,
+    "branch": "example"
+  },
+  "material": {
+    "base": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "current_head": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "acceptance": [
+    {
+      "id": "EP-A-01",
+      "state": "PENDING",
+      "statement": "Current task acceptance",
+      "evidence": []
+    }
+  ],
+  "controls": {
+    "material_write": [],
+    "checkpoint": [],
+    "handover": [],
+    "pr_ready": [],
+    "merge": [],
+    "release": []
+  },
+  "knowledge_state": {
+    "known_true": [],
+    "known_false": [],
+    "unknown": [],
+    "assumptions": []
+  },
+  "negative_knowledge": [],
+  "preserve": {
+    "accepted_do_not_reopen": []
+  },
+  "history": {
+    "recent_events": []
+  },
+  "next": {
+    "immediate_action": "Continue bounded implementation.",
+    "next_value_frontier": "Second criterion",
+    "stop_conditions": []
+  },
+  "reconstruction_sources": [
+    "golden-example"
+  ]
+}

@@ -625,6 +625,18 @@ Run a full fresh three-pass sequence only when a semantic boundary changes, such
 
 Do not regenerate early independent reasoning because a timer fired, a commit landed, a test finished or an agent replied.
 
+## Finished output examples
+
+Before inventing an output shape, consult:
+
+```text
+references/OUTPUT_EXAMPLE_INDEX.md
+```
+
+It indexes finished examples for Task Snapshot states, issue creation, task publications, PR delivery, multi-agent Handover, local coordinator transfers/returns, Owner semantic-delta reporting and three-pass publication.
+
+Examples are reference shapes only; always substitute live evidence.
+
 ## Operational files
 
 Stable/durable contracts:
