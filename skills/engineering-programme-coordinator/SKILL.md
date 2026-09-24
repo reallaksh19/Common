@@ -9,7 +9,21 @@ description: Coordinate multi-agent engineering production through issue respons
 
 Coordinate production by **expectations, dependencies and evidence — not by locks**.
 
-This skill sits above repository engineering and may read Engineering Relay V3.1 as historical/reporting evidence. It is deliberately not part of Relay execution authority.
+This skill sits above repository engineering and may read **Engineering Relay V3.1** as optional historical/reporting evidence. It is deliberately not part of Relay execution authority.
+
+### Relay protocol selection — V3.1 only
+
+For all current coordinator activity, **use Engineering Relay V3.1 only**.
+
+Do **not** consult, execute, route through, or derive live coordination semantics from:
+
+- `engineering-pr-delivery-v3`;
+- `engineering-pr-delivery-v2.5`;
+- older Relay selectors, gates, leases, controls, recovery rules, status rules, or Owner-command semantics.
+
+V3 and V2.5 may exist in repository history for archival/migration compatibility, but they are **not current coordination authority** and must not be used to decide what an agent may do, what the programme state is, or what the Owner should be told.
+
+If current V3.1 tooling can read a legacy-shaped artifact for compatibility, that does **not** mean the coordinator should fall back to the older protocol. The coordinator interprets current work through V3.1 recorder-first semantics only.
 
 Core role split:
 
