@@ -82,6 +82,9 @@ If the proposed mutation does not produce the declared violation, the assumed pa
 # Success oracle
 Exact focused test passes with the declared violation.
 
+# Acceptance Contract
+AC-F-01 | executable falsifier exists | EXIT-001 | 1
+
 # Implementation Plan
 Agent-authored and revisable. Proposed approach, changed files, validation, uncertainties and next observable are recorded here.
 
