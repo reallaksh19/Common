@@ -31,6 +31,20 @@ External systems may still reject actions for their own permissions or policies.
 
 Engineering Relay V3.1 is a self-contained protocol line. Its implementation lives entirely under this directory and does not import, symlink, or resolve runtime/schema files through the V3 skill tree.
 
+### Current protocol rule — V3.1 only
+
+For current engineering coordination, recording, reconstruction, reporting, handover, local execution packaging, and Owner-command interpretation, **use V3.1 only**.
+
+Do **not** use:
+
+- `engineering-pr-delivery-v3`;
+- `engineering-pr-delivery-v2.5`;
+- V3/V2.5 gates, blockers, leases, custody rules, controls, recovery rules, checkpoint rules, status logic, or Owner-command semantics.
+
+Older protocol trees are historical/compatibility material only. Their presence in the repository, tests, migration code, or legacy selectors does not make them current authority.
+
+If V3.1 contains compatibility readers for legacy-shaped durable artifacts, those readers exist only so current V3.1 can reconstruct history. They are **not** a direction to execute the older protocol or to import its blocking semantics.
+
 ## Owner reporting delta
 
 V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
@@ -52,19 +66,22 @@ See `operating-model/owner-reporting-delta.md`.
 
 ## Status
 
-V3.1 is the current implementation/guideline over a stable native Relay core. It MUST NOT silently replace V2.5 authority, but an already-cut-over `V3 / ACTIVE` repository does **not** require another protocol migration merely to use current V3.1 tooling.
+V3.1 is the **only current Relay implementation/guideline** for live engineering coordination and recording.
 
-Supported native execution bases are:
+Current agents and coordinators must not choose V3 or V2.5 as an execution/coordination basis, even when legacy-shaped artifacts or selectors remain readable for migration/reconstruction compatibility.
 
 ```text
-V3_1 / ACTIVE  -> native current selector
-V3   / ACTIVE  -> compatible native core; current V3.1 tooling may operate without rewriting the selector
-V2_5 / PREPARED or legacy-default -> legacy/staged semantics; live native mutations remain blocked until the existing cutover completes
+CURRENT LIVE PROTOCOL
+V3.1
+
+NOT LIVE COORDINATION PROTOCOLS
+V3
+V2.5
 ```
 
-Compatibility is read-time and prospective. Existing V3 roadmap/EP/checkpoint/control/event truth is not rewritten. V3.1-only state, such as custody epochs, is established naturally on the next relevant native transition. The repository's implementation-version label and exact Common commit are **not product acceptance criteria** by themselves.
+A legacy selector, object shape, issue comment, test fixture, or historical record may be read by V3.1 when necessary to reconstruct history. That compatibility does not grant legacy protocol authority and must never reintroduce old gates or blockers.
 
-The V3.1 delta focuses on relay continuity at actor boundaries: recipient-ready local execution, typed result return, graceful custody release, human-readable quantitative/value summaries, roadmap reconciliation, parent-issue lineage, and stale-runner fencing.
+The repository's implementation-version label and exact Common commit are not product acceptance criteria by themselves.
 
 ## V3.1 architecture
 
@@ -73,7 +90,7 @@ V3.1 separates:
 - zero-context handover/reconstruction;
 - external delivery/projection.
 
-Only execution-plane facts normally block material coding.
+V3.1 execution-plane facts are recorder/reconstruction observations. They do not block material coding; actual production constraints come from the engineering problem, source truth, tests/runtime evidence, human decisions, and real provider permissions.
 
 The durable core is:
 - roadmap;
