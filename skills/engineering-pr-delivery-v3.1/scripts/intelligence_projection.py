@@ -527,6 +527,11 @@ def _issue_sections(
     programme_progress = _issue_progress(programme_obs) if programme_obs else None
     verification = _verification(obs, task_progress)
     delivery = dict((obs or {}).get("delivery") or {"lifecycle": "UNKNOWN"})
+    delivery_stack = [
+        dict(row)
+        for row in ((obs or {}).get("delivery_stack") or [])
+        if isinstance(row, dict)
+    ]
     completion = _completion_model(
         work_progress=work_progress,
         plan_progress=plan_progress,
@@ -549,6 +554,7 @@ def _issue_sections(
         "task_acceptance_progress": task_progress,
         "verification": verification,
         "delivery": delivery,
+        "delivery_stack": delivery_stack,
         "completion": completion,
         "parent_issue_progress": {"checklist": parent_rows, "summary": _progress_summary(parent_rows, True)},
         "current_task_progress": {"checklist": task_rows, "summary": _progress_summary(task_rows, False)},
