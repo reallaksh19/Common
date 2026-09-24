@@ -23,11 +23,11 @@ Independent producer lanes exist, but programme closure requires one exact-head 
 
 | ID | Requirement | Responsible workstreams | Evidence | Weight | Status |
 |---|---|---|---|---:|---|
-| EXIT-P1 | Core contract holds | A/E | test refs | 1 | OPEN |
-| EXIT-P2 | Atlas contract holds | B/E | test refs | 1 | OPEN |
-| EXIT-P3 | Navigation holds | C/E | browser refs | 1 | OPEN |
-| EXIT-P4 | Standalone host holds | D/E | offline refs | 1 | OPEN |
-| EXIT-P5 | One exact-main joined proof passes | E + producer debts | exact-main discovery | 1 | OPEN |
+| EXIT-P1 | Core contract holds | A/E | test refs | — | OPEN |
+| EXIT-P2 | Atlas contract holds | B/E | test refs | — | OPEN |
+| EXIT-P3 | Navigation holds | C/E | browser refs | — | OPEN |
+| EXIT-P4 | Standalone host holds | D/E | offline refs | — | OPEN |
+| EXIT-P5 | One exact-main joined proof passes | E + producer debts | exact-main discovery | — | OPEN |
 
 ## Workstream registry
 A/B/C/D/E plus focused F/G/H producer corrections.
