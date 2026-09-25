@@ -13,10 +13,10 @@ from programme_reconciliation import build as build_programme_reconciliation
 from v3lib import canonical_digest, load_yaml, validate_schema
 
 
-PROMPT_SEQUENCE = ["PROMPT_0_5", "PROMPT_1", "PROMPT_2", "PROMPT_2_5", "PROMPT_3"]
-LAUNCHER = "skills/three-pass-prompt-generator/SKILL.md"
-SCHEMA = "skills/three-pass-prompt-generator/schema.md"
-VALIDATOR = "skills/three-pass-prompt-generator/validate.py"
+PROMPT_SEQUENCE = ["PASS_1_SYSTEM_BASELINE", "PASS_2_IMPROVE_RECONCILE_PLAN"]
+LAUNCHER = "skills/two-pass-prompt-generator/SKILL.md"
+SCHEMA = "skills/two-pass-prompt-generator/schema.md"
+VALIDATOR = "skills/two-pass-prompt-generator/validate.py"
 
 
 class HandoverContextError(RuntimeError):
@@ -42,28 +42,26 @@ def _standalone_contract(protocol_root: Path | None = None) -> str:
     launcher_path = root / LAUNCHER
     for path in (launcher_path, schema_path, validator_path):
         if not path.exists():
-            raise HandoverContextError(f"standalone three-pass component missing: {path}")
+            raise HandoverContextError(f"standalone two-pass component missing: {path}")
     schema_text = schema_path.read_text(encoding="utf-8")
     validator_text = validator_path.read_text(encoding="utf-8")
     match = re.search(r"(?m)^PROTOCOL REVISION:\s*\n?\s*(TPG-[A-Za-z0-9-]+)", schema_text)
     validator_match = re.search(r'EXPECTED_PROTOCOL_REVISION\s*=\s*"([^"]+)"', validator_text)
     if not match or not validator_match:
-        raise HandoverContextError("cannot establish standalone three-pass protocol revision")
+        raise HandoverContextError("cannot establish standalone two-pass protocol revision")
     revision = match.group(1)
     if revision != validator_match.group(1):
-        raise HandoverContextError("standalone three-pass schema/validator revision mismatch")
+        raise HandoverContextError("standalone two-pass schema/validator revision mismatch")
     for token in (
-        "THREE_PASS_ONLY",
-        "## PROMPT 0.5 — IMAGINE FROM PROGRAMME",
-        "## PROMPT 1 — IMAGINE",
-        "## PROMPT 2 — UNDERSTAND",
-        "## PROMPT 2.5 — RECONCILE REALITY AND DIRECTION",
-        "## PROMPT 3 — REVALIDATE AND MOVE FORWARD",
-        "COMPLEX Q1–Q5 COVERAGE:",
+        "TWO_PASS_ONLY",
+        "## PASS 1 — INDEPENDENT SYSTEM BASELINE",
+        "## PASS 2 — IMPROVE, RECONCILE, PLAN",
+        "IMPROVEMENT PROPOSAL",
+        "APPROVAL REQUIRED",
     ):
         if token not in schema_text:
-            raise HandoverContextError(f"standalone three-pass schema missing required surface: {token}")
-    if "Fetch `skills/three-pass-prompt-generator/schema.md` from current `main`" not in launcher_path.read_text(encoding="utf-8"):
+            raise HandoverContextError(f"standalone two-pass schema missing required surface: {token}")
+    if "fetch `skills/two-pass-prompt-generator/schema.md` from current `main`" not in launcher_path.read_text(encoding="utf-8"):
         raise HandoverContextError("standalone launcher no longer requires a current-main schema fetch")
     return revision
 
@@ -258,11 +256,11 @@ def build_context(
             "canonical_schema": SCHEMA,
             "canonical_validator": VALIDATOR,
             "protocol_revision_at_freeze": revision,
-            "generator_mode": "THREE_PASS_ONLY",
+            "generator_mode": "TWO_PASS_ONLY",
             "live_main_fetch_required": True,
             "prompt_sequence": list(PROMPT_SEQUENCE),
             "complex_mode": bool(complex_mode),
-            "prompt1_q1_q5_required": bool(complex_mode),
+            "approval_boundary_required": True,
         },
     }
     errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
@@ -280,7 +278,7 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
     target = context["target"]
     generator = context["generator_contract"]
     request = {
-        "schema_version": "relay-v3.1-three-pass-request",
+        "schema_version": "relay-v3.1-two-pass-request",
         "authority": "DERIVED_GENERATOR_REQUEST",
         "target": target,
         "handover_context": {
@@ -295,19 +293,20 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "live_main_fetch_required": True,
             "prompt_sequence": list(generator["prompt_sequence"]),
             "complex_mode": generator["complex_mode"],
-            "prompt1_q1_q5_required": generator["prompt1_q1_q5_required"],
+            "approval_boundary_required": generator["approval_boundary_required"],
         },
         "user_input": {
             "target": target["url"],
+            "repository": target["repository"],
             "human_goal": blind["programme"]["outcome"],
-            "user_intent": "Generate the current standalone five-prompt handover for the provider-verified target, preserving independent judgement, production context and a recipient-ready continuation.",
-            "authorized_actions": "The handover package itself grants no new action authority; it creates no new human intent or provider capability. Prompt 3 should act when the user's requested action, production ownership, evidence and available tools/provider capability support it; V3.1 recording state is not production permission.",
-            "intent_boundary": "Prompts 0.5 and 1 must be independently framed from stable project truth. Use only durable programme outcome/current goal, governing/local responsibility, stable constraints and genuine problem/witness facts for the early passes. Do not feed current reconciliation/frontier/status, accumulated learning, implementation or active-agent conclusions into Prompt 0.5/1. Reality and coordination state return in Prompt 2 onward.",
-            "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Prompt 0.5 / 1 / 2 / 2.5 / 3, validates the artifact, and leaves a recipient-ready continuation when another actor must act.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml after the standalone schema handshake. For Prompt 0.5 use stable programme destination, governing responsibility, boundary, constraints and only a short local-task purpose. For Prompt 1 independently use the same stable destination plus the exact local responsibility, actor/job and a raw discriminating witness when one exists; do not inherit Prompt 0.5 hypotheses. Treat blind_context.programme.reconciliation, reality_context and accumulated_learning as Prompt-2-and-later evidence. Prompt 2 reconstructs current production/coordination reality. Prompt 2.5 reconciles the independent Prompt-0.5 contribution view, independent Prompt-1 situated-problem view and Prompt-2 reality. Prompt 3 refreshes volatile production facts, executes the smallest justified user-requested move when technically possible, verifies the result, and routes cross-agent consequences or a runnable handoff rather than status-only prose.",
+            "user_intent": "Generate the current standalone two-pass handover. Pass 1 independently reconstructs the live repository/application without exposing the actual issue/task or asking for a next action. Pass 2 uses that baseline plus the actual task to propose only legitimate high-ROI improvements, quantify them, draft the engineering plan in chat, stop for Owner approval, then after approval publish the plan on the original issue and bind/create EPs for coordinator use.",
+            "authorized_actions": "The generated prompts grant no production authority. Pass 2 may publish the approved implementation plan, bind/create EPs and refresh Task Snapshot/Handover only after explicit Owner approval; material execution occurs only when the Owner-approved action boundary and real provider/tool permissions allow it.",
+            "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, current PR, requested change, Improvement Proposal or further action. Pass 2 must prefer no improvement over speculation, reject rewrites/scope expansion, keep adjacent proposals in separate responsibilities, and pause before durable publication or implementation until Owner approval.",
+            "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Pass 1 and Pass 2, validates the artifact, and Pass 2 contains an explicit Owner approval boundary plus the post-approval issue/EP/Task-Snapshot/Handover continuation.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. Build Pass 1 from repository/system identity, broad human outcome and stable constraints while quarantining target issue/task and current delivery state. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then refreshes target/provider/material reality, performs the high-ROI Improvement Proposal scan with quantitative evidence, reconciles the actual task, drafts IMPLEMENTATION_PLAN in chat, stops for Owner approval, and after approval publishes on the original issue and updates EP/Task Snapshot/Handover.",
         },
     }
-    errors = validate_schema("three-pass-request", request, "THREE_PASS_REQUEST")
+    errors = validate_schema("two-pass-request", request, "TWO_PASS_REQUEST")
     if errors:
         raise HandoverContextError("; ".join(errors))
     return request
@@ -317,12 +316,15 @@ def render_request(request: dict[str, Any]) -> str:
     user = request["user_input"]
     gen = request["generator"]
     qline = (
-        "COMPLEX MODE: ON — cover the live schema's Q1–Q5 reasoning territories inside one coherent Prompt 1; do not force visible Q-label headings unless the Owner explicitly requested those labels."
+        "DEEP MODE: ON — increase evidence depth and quantitative analysis inside the same two passes; do not add stages."
         if gen["complex_mode"]
-        else "COMPLEX MODE: OFF."
+        else "DEEP MODE: OFF."
     )
     return f"""TARGET:
 {user['target']}
+
+REPOSITORY / SYSTEM:
+{user['repository']}
 
 HUMAN GOAL:
 {user['human_goal']}
