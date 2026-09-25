@@ -391,6 +391,30 @@ UNKNOWN
 
 A missing/stale plan is reconstruction debt only.
 
+### Owner-facing status rule
+
+After a meaningful `IMPLEMENTATION_PLAN`, `PLAN_UPDATE`, `TASK_EVIDENCE`, or `TASK_RESULT` changes current reconstruction, refresh the **issue-local** Task Snapshot from live provider/material state and use its rendered form as the primary status surface shown to the Owner.
+
+Do not substitute a narrative activity summary such as "updated issue / created branch / added tests" when the Owner is asking for task status.
+
+The rendered status must make these distinctions visible when applicable:
+
+- parent/programme progress checklist;
+- current child/task acceptance checklist;
+- current plan revision and expected next observable;
+- implementation versus verification;
+- `NOT_RUN` versus `FAIL`;
+- provider issue state versus responsibility completion;
+- PR lifecycle, base and current material head;
+- stacked/related PRs;
+- what is done;
+- what remains;
+- next useful observable/action.
+
+If `CURRENT_SNAPSHOT` belongs to another EP/responsibility, it must not masquerade as the current issue's status. Generate/read the issue-local snapshot under `relay/GENERATED/tasks/**` instead.
+
+Narrative prose may follow the rendered snapshot for context, but it is secondary.
+
 ## 9. [Relay Handover] programme ledger
 
 The programme Handover ledger should index each EP/workstream with:
