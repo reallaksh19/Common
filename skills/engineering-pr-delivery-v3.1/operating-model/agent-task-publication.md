@@ -100,6 +100,8 @@ After approval, the same agent refreshes volatile reality and publishes the appr
 
 ## 3. First durable agent publication — IMPLEMENTATION_PLAN
 
+Before publishing the plan, perform the live V3.1 handshake against current `Common@main`. Repeat that handshake on session/resume and at later semantic boundaries defined by the current V3.1 skill. If the Common SHA changed, reload the live skill/Two-Pass contract and revalidate the pending action rather than replaying completed work.
+
 Normal expectation:
 
 > After live revalidation and before substantial material modification, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child implementation issue.
@@ -117,11 +119,16 @@ Recommended shape:
 ```text
 IMPLEMENTATION_PLAN — rev 1
 
+PROTOCOL BASIS
+- V3.1
+- Common@<resolved current-main SHA>
+- <current Two-Pass protocol revision>
+
 BASIS
 - exact current main/head
 - relevant parent programme basis
 - owned child responsibility ref + observed body/contract digest, when available
-- three-pass packet ref, when used
+- Pass-1/Pass-2 reasoning refs, when used
 
 MY UNDERSTANDING
 What I believe the real engineering problem is.
@@ -367,6 +374,14 @@ When a denominator is absent, V3.1 reports `UNKNOWN / UNMAPPED`.
 ## 8. V3.1 read models
 
 V3.1 may observe the child issue and expose in `TASK_SNAPSHOT`:
+
+```text
+protocol_basis.protocol
+protocol_basis.common_sha
+protocol_basis.two_pass_revision
+```
+
+alongside:
 
 ```text
 programme_parent
