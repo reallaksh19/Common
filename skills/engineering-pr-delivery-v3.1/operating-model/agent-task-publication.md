@@ -17,16 +17,23 @@ CHILD IMPLEMENTATION ISSUE
 bounded engineering responsibility
         │
         ▼
-THREE-PASS PACKET
-independent reasoning + current reality + direction
+PASS 1 SYSTEM BASELINE
+independent live system understanding without task/action bias
+        │
+        ▼
+PASS 2 IMPROVEMENT + TASK RECONCILIATION
+chat-only proposals + draft implementation plan
+        │
+        ▼
+OWNER APPROVAL
         │
         ▼
 AGENT LIVE REFRESH
-confirm current source truth/material
+confirm approval basis is still current
         │
         ▼
 IMPLEMENTATION_PLAN rev 1
-agent-authored, posted durably on the child issue
+agent-authored, includes approved IP-* proposals, posted durably on the child issue
         │
         ├────► V3.1 observes/binds current plan to task snapshot
         │
@@ -81,19 +88,15 @@ parent_issue:
 
 For compatibility, older EPs may have only `parent_issue`; V3.1 then treats that issue as both work issue and programme parent for reconstruction.
 
-## 2. Three-pass is reasoning, not the implementation plan
+## 2. Two-pass separates system understanding from approved engineering intent
 
-A three-pass packet gives the agent:
+Pass 1 independently reconstructs the live repository/application without seeing the actual issue/task or being asked for a next action.
 
-- programme contribution view;
-- independent situated problem view;
-- verified current reality;
-- reconciled direction;
-- revalidated move-forward reasoning.
+Pass 2 receives that baseline plus the actual task, refreshes live evidence, identifies zero or more legitimate high-ROI Improvement Proposals, quantifies them, reconciles the task, and shows the Owner a draft implementation plan in chat.
 
-It does **not** choose the final implementation details for the engineering agent.
+The first Pass-2 response is **not** durable engineering intent. It must stop for explicit Owner approval.
 
-After Prompt 3 refreshes live reality, the incoming agent writes its own implementation plan.
+After approval, the same agent refreshes volatile reality and publishes the approved implementation plan on the original owned issue. Approved in-scope IP-* proposals are embedded in that plan. Approved adjacent proposals use a separate responsibility/EP rather than silently widening the issue.
 
 ## 3. First durable agent publication — IMPLEMENTATION_PLAN
 
@@ -103,7 +106,7 @@ Normal expectation:
 
 This is a strong reconstruction convention, not permission.
 
-For deterministic provider reconstruction, the durable comment should **begin with the typed publication heading**. A Three-Pass packet or long execution narrative may contain the same ideas, but it is not the agent-authored implementation plan.
+For deterministic provider reconstruction, the durable comment should **begin with the typed publication heading**. Pass-1/Pass-2 reasoning or long execution narrative may contain the same ideas, but it is not the approved durable implementation plan.
 
 If useful implementation/investigation already happened before the plan was posted, the work remains valid. Publish the current plan as soon as practical and continue.
 
