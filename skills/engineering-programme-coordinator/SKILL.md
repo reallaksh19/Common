@@ -339,6 +339,8 @@ The coordinator should use these graphs to maximize parallel-safe work, route pr
 
 At ordinary observation time, **refresh live provider/material state before acting on an old `NEXT`, handoff, agent summary, or ledger entry**. At minimum refresh the affected child issue, relevant PR(s), current main/material head, latest typed publication and any dependency output that could have changed.
 
+Also resolve current `Common@main` at coordinator session/resume and before dispatch/merge/handover boundaries. Compare that SHA to the current task's `protocol_basis.common_sha`. A mismatch means **PROTOCOL_REFRESH_REQUIRED**: refresh the live V3.1/Two-Pass contract and revalidate the pending consequence before dispatch. It does not by itself reopen accepted engineering evidence or block unrelated material work.
+
 Then ask:
 
 ```text
