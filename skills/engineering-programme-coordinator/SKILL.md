@@ -262,6 +262,8 @@ For deterministic reconstruction, a durable publication should begin with the co
 
 Routine commands, file reads, test retries and chat updates stay out of programme coordination.
 
+When reporting a workstream's current state to the Owner, prefer the freshly rebuilt **issue-local rendered Task Snapshot** over an agent-written activity recap. The coordinator must first refresh live child issue, plan/publications, PR/head and verification state. A repository-level `CURRENT_SNAPSHOT` for another EP is not a substitute for the requested issue's Task Snapshot.
+
 
 
 It carries:
