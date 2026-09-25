@@ -203,7 +203,7 @@ class HandoverContextTests(unittest.TestCase):
             rendered = render_request(request)
             self.assertIn("Fetch skills/two-pass-prompt-generator/schema.md from current main", rendered)
             self.assertIn("DEEP MODE: ON", rendered)
-            self.assertIn("grants no production authority", rendered)
+            self.assertIn("grant no production authority", rendered)
 
     def test_non_complex_request_still_has_two_passes_and_approval_boundary(self):
         with tempfile.TemporaryDirectory() as td:
