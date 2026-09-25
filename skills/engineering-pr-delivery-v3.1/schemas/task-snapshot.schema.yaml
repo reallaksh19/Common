@@ -61,6 +61,16 @@ properties:
   schema_version: {const: relay-v3.1-task-snapshot}
   authority: {const: DERIVED_READ_MODEL}
   source_protocol: {enum: [V2_5, V3_1]}
+  protocol_basis:
+    type: object
+    additionalProperties: false
+    required: [protocol, common_repository, common_sha, two_pass_revision]
+    properties:
+      protocol: {const: V3.1}
+      common_repository: {const: reallaksh19/Common}
+      common_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+      two_pass_revision: {type: string, pattern: '^TPG-2P-'}
+      resolved_at: {type: [string, 'null'], format: date-time}
   identity:
     type: object
     required: [work_package, ep, issue, delivery_vehicle]
