@@ -87,19 +87,21 @@ Return early only if evidence materially changes:
 OWNER DECISIONS ALREADY MADE
 - ...
 
-FIRST DURABLE AGENT PUBLICATION
-After live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
+TWO-PASS / FIRST DURABLE AGENT PUBLICATION
+When the two-pass flow is used, first show the Owner the evidence-backed Improvement Proposal(s) and DRAFT IMPLEMENTATION_PLAN in chat. Do not publish the durable plan, create/bind EPs, or materially implement from that proposal response.
 
-The publication must begin with that typed heading. In `BASIS`, record the child responsibility/provider ref and its observed body/contract digest when available, plus the exact live material basis. This lets the coordinator detect when the issue changed after the plan was authored.
+After explicit Owner approval, refresh live reality. If the approval basis materially changed, show the delta and stop for renewed approval. Otherwise publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
 
-The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after posting it. If useful work already began, publish the current plan and continue.
+The publication must begin with that typed heading. In `BASIS`, record the child responsibility/provider ref and its observed body/contract digest when available, plus the exact live material basis. Include only approved Improvement Proposal(s), with quantitative basis, scope relation, falsifier and expected benefit.
+
+The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after Owner approval and publication. If useful work already began before the plan could be posted, publish the current approved plan as soon as practical and continue within the approved action boundary.
 
 During execution publish only meaningful semantic deltas:
 - `PLAN_UPDATE — rev N` when evidence materially changes the approach, including a correction/narrowing that changes what material the agent now intends to produce;
 - `TASK_EVIDENCE` when an intermediate result changes reconstruction or another workstream's next action;
 - `TASK_RESULT` at the delivery/handoff boundary, including final exact-main acceptance when that is the owned outcome.
 
-Use the typed heading as the first durable heading. Narrative Three-Pass output or a semantically equivalent correction/final report is still evidence, but should not replace the corresponding typed publication.
+Use the typed heading as the first durable heading. Two-Pass reasoning, Improvement Proposal chat, or semantically equivalent correction/final report is still evidence, but should not replace the corresponding typed publication.
 
 Do not post every command, file read, test retry, timer wake or chat update.
 
