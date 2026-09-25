@@ -187,7 +187,7 @@ class RelayCanTests(unittest.TestCase):
             result = evaluate(
                 root,
                 "MATERIAL_WRITE",
-                path="skills/three-pass-prompt-generator/schema.md",
+                path="skills/two-pass-prompt-generator/schema.md",
                 base_ref="base",
             )
             self.assertTrue(result["allowed"], result)

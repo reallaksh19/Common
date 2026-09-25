@@ -258,9 +258,11 @@ TASK_EVIDENCE
 TASK_RESULT
 ```
 
-For deterministic reconstruction, a durable publication should begin with the corresponding typed heading (for example `IMPLEMENTATION_PLAN — rev 1` or `TASK_RESULT — ...`). A Three-Pass packet, narrative execution report, correction note or final-acceptance prose remains useful evidence, but it does not substitute for the typed publication when the semantic event is plan creation, plan change, meaningful evidence, or delivery.
+For deterministic reconstruction, a durable publication should begin with the corresponding typed heading (for example `IMPLEMENTATION_PLAN — rev 1` or `TASK_RESULT — ...`). Two-Pass reasoning, Improvement Proposals, narrative execution reports, correction notes or final-acceptance prose remain useful evidence, but they do not substitute for the typed publication when the semantic event is approved plan creation, plan change, meaningful evidence, or delivery.
 
 Routine commands, file reads, test retries and chat updates stay out of programme coordination.
+
+When reporting a workstream's current state to the Owner, prefer the freshly rebuilt **issue-local rendered Task Snapshot** over an agent-written activity recap. The coordinator must first refresh live child issue, plan/publications, PR/head and verification state. A repository-level `CURRENT_SNAPSHOT` for another EP is not a substitute for the requested issue's Task Snapshot.
 
 
 
@@ -619,7 +621,7 @@ CADENCED
 
 In CADENCED mode, unchanged reports should be terse.
 
-## Semantic boundaries and three-pass reasoning
+## Semantic boundaries and two-pass reasoning
 
 Routine timer/event wakeups use a lightweight reconciliation:
 
@@ -632,7 +634,7 @@ DOES THE PRIOR DIRECTION STILL HOLD?
 SMALLEST COORDINATOR ACTION
 ```
 
-Run a full fresh three-pass sequence only when a semantic boundary changes, such as:
+Run a fresh two-pass sequence when a semantic boundary requires independent system re-understanding plus a new Owner-approved implementation plan, such as:
 
 - product goal changed;
 - governing issue meaning changed;
@@ -650,7 +652,7 @@ Before inventing an output shape, consult:
 references/OUTPUT_EXAMPLE_INDEX.md
 ```
 
-It indexes finished examples for Task Snapshot states, issue creation, task publications, PR delivery, multi-agent Handover, local coordinator transfers/returns, Owner semantic-delta reporting and three-pass publication.
+It indexes finished examples for Task Snapshot states, issue creation, task publications, PR delivery, multi-agent Handover, local coordinator transfers/returns, Owner semantic-delta reporting and two-pass publication.
 
 Examples are reference shapes only; always substitute live evidence.
 

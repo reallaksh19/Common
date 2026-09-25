@@ -24,11 +24,11 @@ The deletion is intentionally limited to the **native execution lifecycle**:
 
 Historical/migration prose or legacy inventory classification may still use the ordinary word "parallel". That does not create native multi-writer execution authority.
 
-## Retained: three-pass handover request representation
+## Retained: two-pass handover request representation
 
 **Decision:** retain.
 
-`THREE_PASS_REQUEST` is a derived invocation package for the standalone generator. It does not grant engineering authority and it deliberately requires the generator to fetch its current schema from `main`. Removing it would collapse an integration boundary, not merely delete duplicate state.
+`TWO_PASS_REQUEST` is a derived invocation package for the standalone generator. It does not grant engineering authority and it deliberately requires the generator to fetch its current schema from `main`. Removing it would collapse an integration boundary, not merely delete duplicate state.
 
 Safety boundary: generated request remains non-authoritative; action authority is revalidated at execution time.
 

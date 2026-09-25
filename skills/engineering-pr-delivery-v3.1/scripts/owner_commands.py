@@ -37,7 +37,7 @@ INTENT_SEMANTICS = {
     "PLAN_HANDOVER": (
         "Prepare a full governed handover: reconcile programme/roadmap truth, freeze the "
         "handover context, update/synchronize the provider handover issue, publish the "
-        "handover package, and prepare the live standalone three-pass request."
+        "handover package, and prepare the live standalone two-pass request."
     ),
     "STATS": (
         "Report current detailed programme/task statistics against the governing parent "
@@ -106,7 +106,7 @@ WORKFLOWS = {
             "Generate full handover documentation and provider Relay/Handover ledger projection.",
             "Create/update and verify the governed GitHub handover sub-issue using provider readback.",
             "Publish the matching handover artifact (HANDOVER_PUBLISHED).",
-            "Prepare the current standalone three-pass request (Prompt 0.5/1/2/2.5/3); complex mode includes the full whole-task reasoning surface.",
+            "Prepare the current standalone two-pass request (Pass 1 independent system baseline; Pass 2 high-ROI improvement/task reconciliation with Owner approval boundary).",
             "Do not claim HANDOVER_ACCEPTED until a successor actually accepts custody.",
         ],
         "requires": ["handover_target_observation", "programme_parent_observations", "provider_handover_issue_readback"],

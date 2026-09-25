@@ -68,7 +68,7 @@ def base_objects():
         "scope": {
             "write": ["skills/engineering-pr-delivery-v3.1/**"],
             "read": ["skills/engineering-pr-delivery-v2.5/**"],
-            "protect": ["skills/three-pass-prompt-generator/**"],
+            "protect": ["skills/three-pass-prompt-generator/**", "skills/two-pass-prompt-generator/**"],
             "prohibit": ["Do not make V3 the default protocol in this slice."],
         },
         "acceptance": [
@@ -159,7 +159,7 @@ def base_objects():
         },
         "scope": {
             "allowed_writes": ["skills/engineering-pr-delivery-v3.1/**"],
-            "protected": ["skills/three-pass-prompt-generator/**"],
+            "protected": ["skills/three-pass-prompt-generator/**", "skills/two-pass-prompt-generator/**"],
             "prohibited": ["Do not make V3 the default protocol in this slice."],
         },
         "material": {

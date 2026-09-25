@@ -1,0 +1,63 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, target, handover_context, generator, user_input]
+properties:
+  schema_version: {const: relay-v3.1-two-pass-request}
+  authority: {const: DERIVED_GENERATOR_REQUEST}
+  target:
+    type: object
+    additionalProperties: false
+    required: [schema_version, authority, provider, repository, kind, number, title, url, state, observed_at, provider_ref]
+    properties:
+      schema_version: {const: relay-v3.1-handover-target}
+      authority: {const: PROVIDER_READBACK}
+      provider: {const: GITHUB}
+      repository: {type: string, minLength: 3}
+      kind: {enum: [ISSUE, PULL_REQUEST]}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+      state: {enum: [OPEN, CLOSED, DRAFT, READY, MERGED, UNKNOWN]}
+      observed_at: {type: string, format: date-time}
+      provider_ref: {type: string, minLength: 1}
+  handover_context:
+    type: object
+    additionalProperties: false
+    required: [path, digest]
+    properties:
+      path: {const: relay/GENERATED/HANDOVER_CONTEXT.yaml}
+      digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  generator:
+    type: object
+    additionalProperties: false
+    required: [launcher, schema, validator, mode, live_main_fetch_required, prompt_sequence, complex_mode, approval_boundary_required]
+    properties:
+      launcher: {const: skills/two-pass-prompt-generator/SKILL.md}
+      schema: {const: skills/two-pass-prompt-generator/schema.md}
+      validator: {const: skills/two-pass-prompt-generator/validate.py}
+      mode: {const: TWO_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 2
+        maxItems: 2
+        prefixItems:
+          - {const: PASS_1_SYSTEM_BASELINE}
+          - {const: PASS_2_IMPROVE_RECONCILE_PLAN}
+        items: false
+      complex_mode: {type: boolean}
+      approval_boundary_required: {const: true}
+  user_input:
+    type: object
+    additionalProperties: false
+    required: [target, repository, human_goal, user_intent, authorized_actions, intent_boundary, intent_completion_test, context_rule]
+    properties:
+      target: {type: string, format: uri}
+      repository: {type: string, minLength: 3}
+      human_goal: {type: string, minLength: 1}
+      user_intent: {type: string, minLength: 1}
+      authorized_actions: {type: string, minLength: 1}
+      intent_boundary: {type: string, minLength: 1}
+      intent_completion_test: {type: string, minLength: 1}
+      context_rule: {type: string, minLength: 1}
+additionalProperties: false

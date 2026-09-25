@@ -58,11 +58,11 @@ This example demonstrates that review-ready material is not the same as merged d
 | Local → Work `DURABLE_RESULT` | `engineering-programme-coordinator/examples/local/durable-result.md` |
 | Local → Work `DEPENDENCY_DISCOVERED` | `engineering-programme-coordinator/examples/local/dependency-discovered.md` |
 
-## Three-pass publication
+## Two-pass publication
 
-- `three-pass-prompt-generator/examples/clean-five-prompt-packet.md`
+- `two-pass-prompt-generator/examples/clean-two-pass-packet.md`
 
-Publish the five agent-facing prompts. Keep generator/compiler diagnostics out of the engineering issue unless a diagnostic itself is the subject of investigation.
+Publish exactly the two agent-facing prompts. Pass 1 ends at independent system understanding. Pass 2 shows quantified Improvement Proposal(s) and a draft implementation plan, pauses for Owner approval, then continues after approval without creating a third pass. Keep generator/compiler diagnostics out of the engineering issue unless a diagnostic itself is the subject of investigation.
 
 ## Reporting quality invariants
 
