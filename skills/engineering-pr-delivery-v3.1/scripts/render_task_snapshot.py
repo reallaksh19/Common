@@ -83,6 +83,7 @@ def render(task: dict[str, Any]) -> str:
     if task.get("schema_version") != "relay-v3.1-task-snapshot":
         raise ValueError("TASK_SNAPSHOT must use schema_version relay-v3.1-task-snapshot")
 
+    protocol_basis = task.get("protocol_basis") or {}
     identity = task.get("identity") or {}
     work = task.get("parent_issue") or {}
     programme = task.get("programme_parent") or {}
@@ -108,6 +109,9 @@ def render(task: dict[str, Any]) -> str:
         "",
         f"**{headline}**",
         "",
+        f"- Protocol basis: {protocol_basis.get('protocol') or 'UNKNOWN'}"
+        + (f" — Common@{protocol_basis.get('common_sha')}" if protocol_basis.get("common_sha") else "")
+        + (f" — {protocol_basis.get('two_pass_revision')}" if protocol_basis.get("two_pass_revision") else ""),
         f"- Programme: {programme.get('repository') or 'unknown'}#{programme.get('number') or 'NONE'}"
         + (f" — {programme.get('title')}" if programme.get("title") else ""),
         f"- Work issue: {work.get('repository') or 'unknown'}#{work.get('number') or 'NONE'}"

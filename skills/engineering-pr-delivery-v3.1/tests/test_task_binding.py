@@ -27,7 +27,15 @@ def _git(root: Path, *args: str) -> str:
 
 
 class TaskBindingValidationTests(unittest.TestCase):
-    def _write_snapshot(self, root: Path, *, issue: int = 265, head: str = "head-270") -> None:
+    def _write_snapshot(
+        self,
+        root: Path,
+        *,
+        issue: int = 265,
+        head: str = "head-270",
+        common_sha: str | None = None,
+        two_pass_revision: str = "TPG-2P-2026-09-25-R1",
+    ) -> None:
         path = root / "relay/GENERATED/tasks/ISSUE-265.snapshot.yaml"
         path.parent.mkdir(parents=True, exist_ok=True)
         value = {
@@ -54,6 +62,13 @@ class TaskBindingValidationTests(unittest.TestCase):
                 },
             ],
         }
+        if common_sha is not None:
+            value["protocol_basis"] = {
+                "protocol": "V3.1",
+                "common_repository": "reallaksh19/Common",
+                "common_sha": common_sha,
+                "two_pass_revision": two_pass_revision,
+            }
         path.write_text(yaml.safe_dump(value, sort_keys=False), encoding="utf-8")
 
     def test_owned_issue_marker_prefers_explicit_ownership(self):
@@ -103,6 +118,50 @@ class TaskBindingValidationTests(unittest.TestCase):
             newer_head = _git(root, "rev-parse", "HEAD")
             errors = validate_binding(root, 265, 270, newer_head)
             self.assertIn("not current material basis", errors[0])
+
+    def test_live_protocol_basis_is_required_when_requested(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            live_sha = "a" * 40
+            self._write_snapshot(root, common_sha=live_sha)
+            self.assertEqual(
+                [],
+                validate_binding(
+                    root,
+                    265,
+                    270,
+                    "head-270",
+                    expected_common_sha=live_sha,
+                    expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+                ),
+            )
+
+            stale = "b" * 40
+            errors = validate_binding(
+                root,
+                265,
+                270,
+                "head-270",
+                expected_common_sha=stale,
+                expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+            )
+            self.assertIn("not on the live V3.1 protocol basis", errors[0])
+            self.assertTrue(any("stale" in row for row in errors))
+
+    def test_missing_protocol_basis_fails_when_live_basis_is_required(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._write_snapshot(root)
+            errors = validate_binding(
+                root,
+                265,
+                270,
+                "head-270",
+                expected_common_sha="c" * 40,
+                expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+            )
+            self.assertIn("not on the live V3.1 protocol basis", errors[0])
+            self.assertTrue(any("missing protocol_basis" in row for row in errors))
 
     def test_pull_request_event_uses_owned_issue_marker(self):
         with tempfile.TemporaryDirectory() as td:

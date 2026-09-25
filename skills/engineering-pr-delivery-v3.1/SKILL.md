@@ -112,7 +112,16 @@ repository/application
 
 For two-pass work, the agent first shows the Owner its Improvement Proposal(s) and draft implementation plan in chat and stops for explicit approval. After approval and a fresh live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial material modification when practical. The durable comment should begin with that typed heading; Pass-1/Pass-2 reasoning or execution narrative is input/evidence, not a substitute for the durable plan.
 
-The plan basis should record the owned child responsibility/provider ref and its observed body/contract digest when available. If the child responsibility later changes, V3.1 may project the prior plan as `STALE`; that is revalidation debt, not an execution block.
+The plan basis should record the owned child responsibility/provider ref and its observed body/contract digest when available, plus the live V3.1 protocol basis:
+
+```text
+PROTOCOL BASIS
+V3.1
+Common@<resolved current-main SHA>
+<Two-Pass revision>
+```
+
+If the child responsibility later changes, V3.1 may project the prior plan as `STALE`; that is revalidation debt, not an execution block. If the live Common SHA changes, refresh/re-read the current protocol at the next semantic boundary and regenerate the issue-local Task Snapshot on the new basis; do not manufacture a plan revision unless the engineering approach itself changed.
 
 That publication is a **reconstruction convention, not permission**:
 
@@ -177,7 +186,7 @@ EXPECTED
 
 When one issue deliberately owns a stacked or multi-PR delivery, keep `delivery` as the primary/current PR and expose all owned/related PRs through `delivery_stack[]`. Do not flatten a stack into one PR or create one engineering responsibility per PR merely for reporting.
 
-For pull-request CI, `scripts/validate_task_binding.py` can assert that an explicitly owned issue has a Task Snapshot containing the current PR at the exact head. This is a reporting/reconstruction integrity check, not engineering authorization.
+For pull-request CI, `scripts/validate_task_binding.py` can assert that an explicitly owned issue has a Task Snapshot containing the current PR at the exact head. With `--require-current-protocol-basis`, it also requires that snapshot to name the exact Common checkout and live Two-Pass revision executing the validator. This is a reporting/reconstruction integrity check, not engineering authorization.
 
 See `operating-model/agent-task-publication.md`.
 
@@ -203,6 +212,23 @@ See `operating-model/owner-reporting-delta.md`.
 ## Status
 
 V3.1 is the **only current Relay implementation/guideline** for live engineering coordination and recording.
+
+### Live protocol handshake
+
+A consumer repository must not treat an old prompt, old checkout, pinned workflow SHA, legacy `AGENTS.md`, or prior task publication as proof that its agent is still on the current V3.1 contract.
+
+At these semantic boundaries, resolve **current `reallaksh19/Common@main`**, establish the exact SHA with `scripts/live_protocol_basis.py`, and re-read the live V3.1 skill plus current Two-Pass schema before continuing:
+
+- new agent/session start;
+- resumed task after session loss or handover;
+- before publishing `IMPLEMENTATION_PLAN`;
+- before a material `PLAN_UPDATE`;
+- before `TASK_RESULT`;
+- before PR-ready, merge, handover/takeover, or coordinator dispatch based on prior state.
+
+If the resolved Common SHA is unchanged from the agent's recorded basis, continue normally. If it changed, refresh the live contract and revalidate **only the pending action/plan assumption**; do not restart completed engineering work or invalidate material evidence merely because the recorder protocol changed.
+
+The exact resolved SHA and Two-Pass revision should be recorded in the implementation-plan `PROTOCOL BASIS` and issue-local Task Snapshot. A protocol refresh is reconstruction/coordination work, not production permission.
 
 Current agents and coordinators must not choose V3 or V2.5 as an execution/coordination basis, even when legacy-shaped artifacts or selectors remain readable for migration/reconstruction compatibility.
 

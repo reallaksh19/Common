@@ -864,6 +864,11 @@ def _v3_task(
         "schema_version": "relay-v3.1-task-snapshot",
         "authority": "DERIVED_READ_MODEL",
         "source_protocol": "V3_1",
+        **(
+            {"protocol_basis": dict(((ep or {}).get("basis") or {}).get("live_protocol_basis"))}
+            if isinstance((((ep or {}).get("basis") or {}).get("live_protocol_basis")), dict)
+            else {}
+        ),
         "identity": {"work_package": wp_id, "ep": ep_id, "issue": (project.get("delivery") or {}).get("issue"), "delivery_vehicle": (project.get("delivery") or {}).get("pr") or (project.get("delivery") or {}).get("issue")},
         "purpose": {
             "programme_outcome": (roadmap.get("owner") or {}).get("outcome"),

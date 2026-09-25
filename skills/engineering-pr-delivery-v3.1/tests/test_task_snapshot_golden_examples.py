@@ -71,6 +71,19 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
         self.assertIn("| Programme contribution | SATISFIED | 1/1 criteria satisfied — 100% unweighted coverage |", text)
         self.assertIn("MERGED — PR #202", text)
 
+    def test_protocol_basis_is_visible_when_present(self):
+        task = self.assert_valid("active-task")
+        task["protocol_basis"] = {
+            "protocol": "V3.1",
+            "common_repository": "reallaksh19/Common",
+            "common_sha": "a" * 40,
+            "two_pass_revision": "TPG-2P-2026-09-25-R1",
+        }
+        self.assertEqual([], validate_schema("task-snapshot", task, "protocol-basis-task"))
+        text = render(task)
+        self.assertIn("Protocol basis: V3.1 — Common@" + ("a" * 40), text)
+        self.assertIn("TPG-2P-2026-09-25-R1", text)
+
     def test_delivery_stack_renders_without_replacing_primary_delivery(self):
         task = self.assert_valid("active-task")
         task["delivery_stack"] = [
