@@ -214,25 +214,22 @@ properties:
   generator_contract:
     type: object
     additionalProperties: false
-    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
+    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, approval_boundary_required]
     properties:
-      canonical_launcher: {const: skills/three-pass-prompt-generator/SKILL.md}
-      canonical_schema: {const: skills/three-pass-prompt-generator/schema.md}
-      canonical_validator: {const: skills/three-pass-prompt-generator/validate.py}
-      protocol_revision_at_freeze: {type: string, pattern: '^TPG-'}
-      generator_mode: {const: THREE_PASS_ONLY}
+      canonical_launcher: {const: skills/two-pass-prompt-generator/SKILL.md}
+      canonical_schema: {const: skills/two-pass-prompt-generator/schema.md}
+      canonical_validator: {const: skills/two-pass-prompt-generator/validate.py}
+      protocol_revision_at_freeze: {type: string, pattern: '^TPG-2P-'}
+      generator_mode: {const: TWO_PASS_ONLY}
       live_main_fetch_required: {const: true}
       prompt_sequence:
         type: array
-        minItems: 5
-        maxItems: 5
+        minItems: 2
+        maxItems: 2
         prefixItems:
-          - {const: PROMPT_0_5}
-          - {const: PROMPT_1}
-          - {const: PROMPT_2}
-          - {const: PROMPT_2_5}
-          - {const: PROMPT_3}
+          - {const: PASS_1_SYSTEM_BASELINE}
+          - {const: PASS_2_IMPROVE_RECONCILE_PLAN}
         items: false
       complex_mode: {type: boolean}
-      prompt1_q1_q5_required: {type: boolean}
+      approval_boundary_required: {const: true}
 additionalProperties: false
