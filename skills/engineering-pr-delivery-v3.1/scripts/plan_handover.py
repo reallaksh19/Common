@@ -130,8 +130,8 @@ def plan_handover(
     replacements = {
         snapshot_path: yaml_bytes(snapshot),
         "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
-        "relay/GENERATED/THREE_PASS_REQUEST.yaml": yaml_bytes(request),
-        "relay/GENERATED/THREE_PASS_REQUEST.md": request_md,
+        "relay/GENERATED/TWO_PASS_REQUEST.yaml": yaml_bytes(request),
+        "relay/GENERATED/TWO_PASS_REQUEST.md": request_md,
         "relay/EVENTS.jsonl": jsonl_bytes(events),
     }
     renewal = active_lease_renewal(root, state, actor, base_ref=base_ref)
@@ -151,7 +151,7 @@ def plan_handover(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Freeze V3 relay truth and create a verified request for the standalone current three-pass generator."
+        description="Freeze V3 relay truth and create a verified request for the standalone current two-pass generator."
     )
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument(
