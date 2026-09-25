@@ -96,10 +96,12 @@ For a bounded child implementation issue, the engineering agent owns the impleme
 Normal sequence:
 
 ```text
-child responsibility
-→ three-pass reasoning when used
-→ live reality refresh
-→ IMPLEMENTATION_PLAN rev 1
+repository/application
+→ PASS 1 independent system baseline
+→ PASS 2 improvement/task reconciliation
+→ Owner approval
+→ IMPLEMENTATION_PLAN rev 1 on owned issue
+→ EP/Task Snapshot/Handover binding
 → engineering execution
 → PLAN_UPDATE only when material learning changes the approach
 → TASK_EVIDENCE only for meaningful intermediate evidence
@@ -108,7 +110,7 @@ child responsibility
 → [Relay Handover] indexes the current programme consequence
 ```
 
-After live revalidation and before substantial material modification, the agent should publish `IMPLEMENTATION_PLAN — rev 1` on its owned child issue when practical. The durable comment should begin with that typed heading; a Three-Pass packet or execution narrative is input/evidence, not the implementation plan.
+For two-pass work, the agent first shows the Owner its Improvement Proposal(s) and draft implementation plan in chat and stops for explicit approval. After approval and a fresh live revalidation, publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial material modification when practical. The durable comment should begin with that typed heading; Pass-1/Pass-2 reasoning or execution narrative is input/evidence, not a substitute for the durable plan.
 
 The plan basis should record the owned child responsibility/provider ref and its observed body/contract digest when available. If the child responsibility later changes, V3.1 may project the prior plan as `STALE`; that is revalidation debt, not an execution block.
 
@@ -148,7 +150,7 @@ For the new programme topology:
 - the current child-issue provider observation supplies the latest implementation-plan revision and meaningful task publications;
 - `TASK_SNAPSHOT` and the Handover ledger expose that plan/expectation context.
 
-An EP may exist before the incoming agent publishes its plan, for example when a handover/three-pass packet was prepared from existing V3.1 context. In that case bind the existing task to the newly observed plan; do not create a replacement EP merely because the plan appeared or changed.
+An EP may exist before the incoming agent publishes its plan, for example when a handover/two-pass packet was prepared from existing V3.1 context. In that case bind the existing task to the newly observed plan; do not create a replacement EP merely because the plan appeared or changed.
 
 ### Meaningful provider publications
 
@@ -245,7 +247,7 @@ V3.1 recognizes stable high-level Owner workflow intents through `scripts/owner_
 - **What next?** — read-only programme reconciliation. Reconstruct live parent/child issue reality and report the real next frontier; do not admit or execute it.
 - **Proceed next** — reconcile first, then continue/admit the next task already justified by the programme/ROADMAP.
 - **Proceed next complex task** — force a whole-task/programme re-anchor before selecting execution; do not promote a convenient patch, file, or stale EP into task identity.
-- **Plan for handover** — full governed handover preparation: programme/roadmap reconciliation, handover context/docs, provider Handover issue synchronization/readback, publication, and standalone three-pass request preparation. Handover is not accepted until a successor actually accepts custody.
+- **Plan for handover** — full governed handover preparation: programme/roadmap reconciliation, handover context/docs, provider Handover issue synchronization/readback, publication, and standalone two-pass request preparation. Handover is not accepted until a successor actually accepts custody.
 - **Stats?** — read-only detailed point-wise checklist against the governing parent issue, relevant sub-issues, current EP acceptance, pending/KI/offloads, material/evidence state and programme debt categories.
 - **Prepare for local agent** — recipient-ready local execution packet with clone/checkout basis, exact HEAD, full bounded technical instructions, acceptance/evidence contract, prohibitions, and a governed provider sub-issue that the helper must update with its result/evidence. Relay custody remains with the originating owner.
 
@@ -257,7 +259,7 @@ V3.1 preserves the copied baseline semantics for:
 - zero-context reconstruction;
 - Q1-Q5 for complex takeover;
 - Plan for Handover;
-- the standalone Prompt 0.5 / 1 / 2 / 2.5 / 3 flow;
+- the standalone Pass 1 / Pass 2 flow with the Owner approval boundary inside Pass 2;
 - explicit merge/release authority.
 
 ## V3.1 delta boundaries
@@ -509,14 +511,14 @@ Key semantics:
 - mixed before/after state is rolled back;
 - an external/unknown target mutation is never auto-overwritten during recovery.
 
-## Plan for Handover / three-pass integration
+## Plan for Handover / two-pass integration
 
-V3.1 does not redefine the standalone three-pass protocol. Historical compatibility notes may reference V3-shaped truth, but current coordination uses V3.1 only.
+V3.1 binds current handover generation to the standalone two-pass protocol. Historical Three-Pass artifacts remain compatibility/history only.
 
 ```text
 relay/GENERATED/HANDOVER_CONTEXT.yaml
-relay/GENERATED/THREE_PASS_REQUEST.yaml
-relay/GENERATED/THREE_PASS_REQUEST.md
+relay/GENERATED/TWO_PASS_REQUEST.yaml
+relay/GENERATED/TWO_PASS_REQUEST.md
 ```
 
 Generation requires an action-authorized HANDOVER and a normalized provider-readback target.
@@ -531,16 +533,16 @@ python skills/engineering-pr-delivery-v3.1/scripts/plan_handover.py . \
   --complex
 ```
 
-The context is structurally partitioned:
-- `blind_context` — programme/local responsibility and stable constraints for Prompt 0.5 / Prompt 1;
-- `reality_context` — active execution/material/control/delivery truth reserved for Prompt 2 onward;
-- `accumulated_learning` — accepted checkpoint history/learning, not action authority.
+The context remains structurally partitioned for reconstruction, but the generated prompt applies it differently:
+- Pass 1 receives repository/system identity, broad human outcome and stable constraints, then independently inspects live system reality while the actual issue/task/action request stays quarantined.
+- Pass 2 receives the Pass-1 baseline plus the actual target, reality context and accumulated learning, performs the high-ROI improvement scan, reconciles the issue, drafts the implementation plan, and stops for Owner approval.
+- accumulated learning remains history/evidence, not action authority.
 
 The request points to the canonical standalone launcher/schema/validator and requires a fresh current-`main` schema fetch at actual prompt-generation time. It never caches or reproduces the five-prompt schema. Complex mode preserves visible Q1–Q5 in Prompt 1 exactly as required by the live standalone schema.
 
 A failed/unverified handover plan can deny HANDOVER but does not itself deny MATERIAL_WRITE.
 
-See `operating-model/three-pass-integration.md`. The richer handover-content redesign tracked separately in Common issue #420 remains separately owned.
+See `operating-model/two-pass-integration.md`.
 
 ## Historical V2.5 migration / protocol cutover — archival only
 
@@ -709,7 +711,7 @@ Responsibility is explicit:
 - **Active agent discovers and produces canonical evidence**.
 - **Relay records, projects, synchronizes, and reads provider state back**.
 - **Local/helper agents return bounded evidence only**.
-- **Prompt 0.5/1/2/2.5 reason/propose; Prompt 3 executes only already-authorized reconciliation**.
+- **Pass 1 understands without task/action bias; Pass 2 proposes/reconciles, pauses for Owner approval, then persists/executes only within approved authority**.
 
 Parent issue changes use the existing disposition vocabulary. Status-only truth may be synchronized by Relay. Intent-bearing UPDATE/TRANSFER/SPLIT/SUPERSEDE/CLOSE changes require Owner authority when they alter governing intent. Transfers preserve old/new issue lineage and each target parent has its own Handover ledger.
 
@@ -760,7 +762,7 @@ Prompt 2.5
   -> CHANGE_DELTA_PROPOSED
 required authority
   -> CHANGE_AUTHORIZED
-Relay / Prompt 3
+Relay / approved Pass-2 continuation
   -> ROADMAP_RECONCILED + Change Delta APPLIED
 ```
 
