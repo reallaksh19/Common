@@ -287,8 +287,8 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("DERIVED_HANDOVER_INPUT", context["authority"])
             self.assertEqual("PROVIDER_READBACK", context["target"]["authority"])
             self.assertEqual("DERIVED_GENERATOR_REQUEST", request["authority"])
-            self.assertEqual(5, len(request["generator"]["prompt_sequence"]))
-            self.assertTrue(request["generator"]["prompt1_q1_q5_required"])
+            self.assertEqual(2, len(request["generator"]["prompt_sequence"]))
+            self.assertTrue(request["generator"]["approval_boundary_required"])
             self.assertIn("current main", request_text)
             events, errors = load_events(root / "relay/EVENTS.jsonl")
             self.assertEqual([], errors)
@@ -560,7 +560,7 @@ class HandoverContextTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as bad_proto:
             proto_path = Path(bad_proto)
-            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills = proto_path / "skills/two-pass-prompt-generator"
             proto_skills.mkdir(parents=True)
             for name in ("SKILL.md", "schema.md", "validate.py"):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
@@ -575,7 +575,7 @@ class HandoverContextTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as bad_proto:
             proto_path = Path(bad_proto)
-            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills = proto_path / "skills/two-pass-prompt-generator"
             proto_skills.mkdir(parents=True)
             for name in ("SKILL.md", "schema.md", "validate.py"):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
@@ -590,7 +590,7 @@ class HandoverContextTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as bad_proto:
             proto_path = Path(bad_proto)
-            proto_skills = proto_path / "skills/three-pass-prompt-generator"
+            proto_skills = proto_path / "skills/two-pass-prompt-generator"
             proto_skills.mkdir(parents=True)
             for name in ("SKILL.md", "schema.md", "validate.py"):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
