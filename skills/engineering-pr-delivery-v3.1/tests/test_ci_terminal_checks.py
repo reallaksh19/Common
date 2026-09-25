@@ -22,6 +22,7 @@ WORKFLOWS = {
     ),
     "engineering-pr-delivery-v3.1.yml": (
         "skills/engineering-pr-delivery-v3.1/*",
+        "skills/two-pass-prompt-generator/*",
         "relay/*",
     ),
 }
