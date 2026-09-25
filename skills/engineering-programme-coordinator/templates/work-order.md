@@ -87,12 +87,15 @@ Return early only if evidence materially changes:
 OWNER DECISIONS ALREADY MADE
 - ...
 
+LIVE V3.1 BASIS
+At session start/resume and before plan/result/readiness/merge/handover semantic boundaries, resolve current `reallaksh19/Common@main`. Record the exact SHA and current Two-Pass revision. If the SHA changed, reload the live V3.1/Two-Pass contract and revalidate the pending action only.
+
 TWO-PASS / FIRST DURABLE AGENT PUBLICATION
 When the two-pass flow is used, first show the Owner the evidence-backed Improvement Proposal(s) and DRAFT IMPLEMENTATION_PLAN in chat. Do not publish the durable plan, create/bind EPs, or materially implement from that proposal response.
 
 After explicit Owner approval, refresh live reality. If the approval basis materially changed, show the delta and stop for renewed approval. Otherwise publish `IMPLEMENTATION_PLAN — rev 1` on the owned child issue before substantial modification when practical.
 
-The publication must begin with that typed heading. In `BASIS`, record the child responsibility/provider ref and its observed body/contract digest when available, plus the exact live material basis. Include only approved Improvement Proposal(s), with quantitative basis, scope relation, falsifier and expected benefit.
+The publication must begin with that typed heading. Include a `PROTOCOL BASIS` block naming V3.1, the exact resolved current-main Common SHA, and current Two-Pass revision. In `BASIS`, record the child responsibility/provider ref and its observed body/contract digest when available, plus the exact live material basis. Include only approved Improvement Proposal(s), with quantitative basis, scope relation, falsifier and expected benefit.
 
 The plan is agent-authored and revisable. Do not wait for coordinator/Relay approval after Owner approval and publication. If useful work already began before the plan could be posted, publish the current approved plan as soon as practical and continue within the approved action boundary.
 
