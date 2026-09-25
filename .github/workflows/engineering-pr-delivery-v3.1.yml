@@ -10,6 +10,7 @@ on:
       - 'v3.1/**'
     paths:
       - 'skills/engineering-pr-delivery-v3.1/**'
+      - 'skills/two-pass-prompt-generator/**'
       - 'relay/**'
       - '.github/workflows/engineering-pr-delivery-v3.1.yml'
 
@@ -49,7 +50,7 @@ jobs:
           relevant=false
           while IFS= read -r path; do
             case "$path" in
-              skills/engineering-pr-delivery-v3.1/*|relay/*|.github/workflows/engineering-pr-delivery-v3.1.yml)
+              skills/engineering-pr-delivery-v3.1/*|skills/two-pass-prompt-generator/*|relay/*|.github/workflows/engineering-pr-delivery-v3.1.yml)
                 relevant=true
                 break
                 ;;
@@ -79,6 +80,10 @@ jobs:
       - name: Compile V3.1 Python
         if: steps.relevance.outputs.relevant == 'true'
         run: python -m compileall -q skills/engineering-pr-delivery-v3.1/scripts skills/engineering-pr-delivery-v3.1/tests
+      - name: Validate standalone two-pass example
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python skills/two-pass-prompt-generator/validate.py skills/two-pass-prompt-generator/examples/clean-two-pass-packet.md
+
       - name: Run V3.1 foundation tests
         if: steps.relevance.outputs.relevant == 'true'
         run: python -m unittest discover -s skills/engineering-pr-delivery-v3.1/tests -p 'test*.py' -v
