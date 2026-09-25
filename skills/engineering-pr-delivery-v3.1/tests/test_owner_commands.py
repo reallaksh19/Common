@@ -76,7 +76,7 @@ class OwnerWorkflowCommandTests(unittest.TestCase):
                 self.assertEqual("PLAN_HANDOVER", result["intent"])
                 self.assertFalse(result["workflow"]["progress_execution"])
                 joined = " ".join(result["workflow"]["steps"]).lower()
-                self.assertIn("three-pass", joined)
+                self.assertIn("two-pass", joined)
                 self.assertIn("github", joined)
                 self.assertIn("roadmap", joined)
 
