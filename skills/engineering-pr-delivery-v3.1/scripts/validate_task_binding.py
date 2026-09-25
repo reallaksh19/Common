@@ -14,6 +14,8 @@ from typing import Any
 
 import yaml
 
+from live_protocol_basis import resolve as resolve_live_protocol_basis
+
 OWNERSHIP_PATTERNS = (
     re.compile(r"(?im)\bIssue ownership remains\s+#(\d+)\b"),
     re.compile(r"(?im)\bOwned issue\s*:?\s*#(\d+)\b"),
@@ -87,7 +89,41 @@ def _delivery_rows(task: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
-def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: str) -> list[str]:
+def _protocol_basis_errors(
+    task: dict[str, Any],
+    *,
+    expected_common_sha: str | None,
+    expected_two_pass_revision: str | None,
+) -> list[str]:
+    if not expected_common_sha:
+        return []
+    basis = task.get("protocol_basis")
+    if not isinstance(basis, dict):
+        return ["Task Snapshot is missing protocol_basis required for live V3.1 freshness"]
+    errors: list[str] = []
+    if basis.get("protocol") != "V3.1":
+        errors.append(f"Task Snapshot protocol_basis.protocol is {basis.get('protocol')!r}, expected 'V3.1'")
+    if basis.get("common_sha") != expected_common_sha:
+        errors.append(
+            f"Task Snapshot Common basis {basis.get('common_sha')!r} is stale; live Common/main is {expected_common_sha}"
+        )
+    if expected_two_pass_revision and basis.get("two_pass_revision") != expected_two_pass_revision:
+        errors.append(
+            "Task Snapshot Two-Pass revision "
+            f"{basis.get('two_pass_revision')!r} is stale; live revision is {expected_two_pass_revision}"
+        )
+    return errors
+
+
+def validate_binding(
+    root: Path,
+    issue_number: int,
+    pr_number: int,
+    head_sha: str,
+    *,
+    expected_common_sha: str | None = None,
+    expected_two_pass_revision: str | None = None,
+) -> list[str]:
     task_dir = root / "relay/GENERATED/tasks"
     candidates: list[tuple[Path, dict[str, Any]]] = []
     if task_dir.exists():
@@ -103,7 +139,18 @@ def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: st
         ]
 
     represented: list[str] = []
+    protocol_failures: list[str] = []
     for path, task in candidates:
+        task_protocol_errors = _protocol_basis_errors(
+            task,
+            expected_common_sha=expected_common_sha,
+            expected_two_pass_revision=expected_two_pass_revision,
+        )
+        if task_protocol_errors:
+            protocol_failures.extend(
+                f"{path.relative_to(root)}: {error}" for error in task_protocol_errors
+            )
+            continue
         for row in _delivery_rows(task):
             if row.get("pr") != pr_number:
                 continue
@@ -115,6 +162,13 @@ def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: st
                     return []
                 if _coordination_only_since(root, recorded_head, head_sha):
                     return []
+
+    if protocol_failures:
+        return [
+            f"Task Snapshot for owned issue #{issue_number} is not on the live V3.1 protocol basis",
+            *protocol_failures,
+            "refresh Common/main, re-read the live V3.1/Two-Pass contract, then regenerate the issue-local Task Snapshot",
+        ]
 
     if not represented:
         return [
@@ -129,7 +183,13 @@ def validate_binding(root: Path, issue_number: int, pr_number: int, head_sha: st
     ]
 
 
-def validate_event(root: Path, event: dict[str, Any]) -> tuple[bool, list[str]]:
+def validate_event(
+    root: Path,
+    event: dict[str, Any],
+    *,
+    expected_common_sha: str | None = None,
+    expected_two_pass_revision: str | None = None,
+) -> tuple[bool, list[str]]:
     pr = event.get("pull_request")
     if not isinstance(pr, dict):
         return True, ["SKIP: event is not pull_request"]
@@ -143,7 +203,14 @@ def validate_event(root: Path, event: dict[str, Any]) -> tuple[bool, list[str]]:
     if not isinstance(pr_number, int) or not head_sha:
         return False, ["pull_request event is missing PR number or head SHA"]
 
-    errors = validate_binding(root, issue_number, pr_number, str(head_sha))
+    errors = validate_binding(
+        root,
+        issue_number,
+        pr_number,
+        str(head_sha),
+        expected_common_sha=expected_common_sha,
+        expected_two_pass_revision=expected_two_pass_revision,
+    )
     if errors:
         return False, errors
     return True, [
@@ -157,10 +224,21 @@ def main() -> None:
     )
     parser.add_argument("--root", default=".")
     parser.add_argument("--event", required=True, help="GitHub event JSON path")
+    parser.add_argument(
+        "--require-current-protocol-basis",
+        action="store_true",
+        help="Require the owned issue Task Snapshot to name this exact Common checkout and live Two-Pass revision.",
+    )
     args = parser.parse_args()
 
     event = json.loads(Path(args.event).read_text(encoding="utf-8"))
-    ok, messages = validate_event(Path(args.root), event)
+    basis = resolve_live_protocol_basis() if args.require_current_protocol_basis else {}
+    ok, messages = validate_event(
+        Path(args.root),
+        event,
+        expected_common_sha=basis.get("common_sha"),
+        expected_two_pass_revision=basis.get("two_pass_revision"),
+    )
     for message in messages:
         print(message)
     if not ok:
