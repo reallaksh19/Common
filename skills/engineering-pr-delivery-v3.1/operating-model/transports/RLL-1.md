@@ -85,7 +85,9 @@ allow_material_write: false
 Supported modes:
 
 - `BRANCH_RESUME`: resume the declared branch; prior legitimate worker commits must not be reset to the original base.
-- `EXACT_HEAD_EVIDENCE`: execute against the declared immutable head in a clean worktree/detached checkout; tracked material writes are prohibited.
+- `EXACT_HEAD_EVIDENCE`: execute against the declared immutable head in a clean dedicated worktree/detached checkout; tracked material writes are prohibited.
+
+An `RLL_EXECUTION_V1` envelope in the issue body is trusted only when the issue author is one of the configured authorized GitHub identities. An execution envelope in a later comment is trusted only when that comment author is authorized. This prevents an arbitrary issue/comment author from turning transport metadata into executable work merely by reproducing the marker.
 
 ## Labels
 
@@ -271,6 +273,8 @@ base_sha: <approved production base>
 
 First claim verifies branch ancestry from `base_sha`.
 
+Before invoking the engineering agent, the deterministic launcher positions the workspace on the governed branch. If the current checkout is clean and merely behind `origin/<branch>`, it may fast-forward. Local-ahead material is preserved. A dirty wrong-branch checkout or divergent branch is an escalation, never an automatic reset/rebase.
+
 Later invocations resume the branch's actual material head.
 
 Every invocation should observe:
@@ -286,7 +290,7 @@ git merge-base <branch> <base_sha>
 
 Material Git state wins over a stale RLL comment.
 
-For `EXACT_HEAD_EVIDENCE`, the worker must use the declared `head_sha` and return to a clean unchanged tree.
+For `EXACT_HEAD_EVIDENCE`, the deterministic launcher creates or reuses a dedicated detached worktree under the RLL data directory at the declared `head_sha`. It must not detach or repurpose the user's normal checkout. The evidence worktree must return clean and remain on the exact declared head.
 
 ## Reference launcher
 
