@@ -47,7 +47,8 @@ def boolv(v):
 
 def parse_exec(issue,comments,authorized):
  src=[]
- if EXEC in (issue.get("body") or ""): src.append(issue["body"])
+ issue_author=(issue.get("author") or {}).get("login")
+ if issue_author in authorized and EXEC in (issue.get("body") or ""): src.append(issue["body"])
  for c in comments:
   if (c.get("user") or {}).get("login") in authorized and EXEC in (c.get("body") or ""): src.append(c["body"])
  if not src: raise RllError("no authorized RLL_EXECUTION_V1")
@@ -84,7 +85,15 @@ def choose(active,ready):
 
 def issue_rows(repo,label): return ghj("issue","list","-R",repo,"--state","open","--label",label,"--limit","100","--json","number,createdAt")
 def issue_view(repo,n): return ghj("issue","view",str(n),"-R",repo,"--json","number,title,body,state,labels,url,author")
-def comments(repo,n): return ghj("api",f"repos/{repo}/issues/{n}/comments","--paginate")
+def comments(repo,n):
+ try: pages=json.loads(gh("api",f"repos/{repo}/issues/{n}/comments?per_page=100","--paginate","--slurp"))
+ except json.JSONDecodeError as e: raise RllError("GitHub comments API returned non-JSON") from e
+ if not isinstance(pages,list): raise RllError("GitHub comments API returned unexpected pagination shape")
+ rows=[]
+ for page in pages:
+  if not isinstance(page,list): raise RllError("GitHub comments API page is not an array")
+  rows.extend(page)
+ return rows
 def labelset(issue): return {x["name"] if isinstance(x,dict) else x for x in issue.get("labels",[])}
 def state_comment(cs):
  r=[c for c in cs if (c.get("body") or "").lstrip().startswith(STATE)]
