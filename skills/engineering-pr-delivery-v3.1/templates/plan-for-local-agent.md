@@ -184,7 +184,8 @@ adapter present/current
 → Common basis verified
 → local git/gh/agy/Python prerequisites verified
 → sidecar installed in smoke mode
-→ rll-ready applied to one bounded pilot
+→ confirm pilot issue is OPEN and has never reached REVIEW_READY/CANCELLED
+→ rll-ready applied to that bounded pilot
 → timer wake proves issue discovery + mutex + worker-state mutation
 → overlap/reentrancy check
 → smoke reviewed
@@ -194,6 +195,10 @@ adapter present/current
 → rll-review-ready
 → independent V3.1 review
 ```
+
+Never reopen or reuse completed/review-ready work merely to obtain a smoke target. If the originally planned pilot completed before RLL activation, choose the next genuinely open bounded task or create a dedicated non-engineering smoke issue.
+
+Before unattended activation, require browser-based `gh auth login --web` backed by the OS credential store. Do not persist GitHub tokens in sidecar/config files or prompts. Configure Antigravity through its documented Tool Permission setting; do not synthesize wildcard grant entries.
 
 For an already-proven repository adapter, later jobs may skip reinstall/smoke only when the local environment and adapter basis are unchanged and healthy.
 
