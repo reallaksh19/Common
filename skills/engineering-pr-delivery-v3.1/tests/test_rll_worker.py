@@ -243,6 +243,19 @@ allow_material_write: false
                 with rll.Mutex(lock):
                     pass
 
+    def test_rll_contract_schemas_are_valid_json(self):
+        schema_root = Path(__file__).resolve().parents[1] / "schemas"
+        expected = {
+            "rll-execution.schema.json": "RLL_EXECUTION_V1",
+            "rll-worker-state.schema.json": "RLL_WORKER_STATE_V1",
+            "rll-directive.schema.json": "RELAY_DIRECTIVE_V1",
+            "rll-run-result.schema.json": "RLL_RUN_RESULT_V1",
+        }
+        for filename, title in expected.items():
+            value = json.loads((schema_root / filename).read_text(encoding="utf-8"))
+            self.assertEqual(title, value["title"])
+            self.assertEqual("object", value["type"])
+
     def test_launcher_contains_no_merge_release_or_delete_provider_operation(self):
         source = MODULE_PATH.read_text(encoding="utf-8")
         forbidden = [
