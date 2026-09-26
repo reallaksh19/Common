@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rll-execution.schema.json",
+  "title": "RLL_EXECUTION_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transport",
+    "worker",
+    "mode",
+    "repository",
+    "base_sha",
+    "allow_material_write"
+  ],
+  "properties": {
+    "transport": {
+      "const": "RLL-1"
+    },
+    "worker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": [
+        "BRANCH_RESUME",
+        "EXACT_HEAD_EVIDENCE"
+      ]
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[^/]+/[^/]+$"
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "head_sha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "allow_material_write": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "BRANCH_RESUME"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "branch"
+        ],
+        "properties": {
+          "allow_material_write": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "EXACT_HEAD_EVIDENCE"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "head_sha"
+        ],
+        "properties": {
+          "allow_material_write": {
+            "const": false
+          }
+        }
+      }
+    }
+  ],
+  "description": "The protocol marker line supplies the envelope discriminator; this schema validates the marker body."
+}

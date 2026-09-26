@@ -30,6 +30,26 @@ Owner handover command
 → execution/publications within approved authority
 ```
 
+
+### Execution transport after plan authority
+
+A scheduled execution transport such as RLL-1 may be attached only **after** the applicable Pass-2 approval/publication boundary has been crossed.
+
+The transport may remove human copy/paste between the durable child issue and the local executor, but it must not bypass the Pass-1/Pass-2 visibility boundary or manufacture approval.
+
+Conceptually:
+
+```text
+PASS 2 approval/publication
+→ RLL_EXECUTION_V1
+→ rll-ready
+→ unattended bounded implementation/evidence
+```
+
+For a read-only exact-head local-execution child that is already explicitly authorized by the governing issue, `EXACT_HEAD_EVIDENCE` may transport that executable evidence request without creating a new implementation plan. It still cannot broaden the engineering responsibility.
+
+See `operating-model/transports/RLL-1.md`.
+
 ## Pass 1 visibility
 
 Pass 1 may know:

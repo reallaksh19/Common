@@ -190,6 +190,42 @@ For pull-request CI, `scripts/validate_task_binding.py` can assert that an expli
 
 See `operating-model/agent-task-publication.md`.
 
+
+## RLL-1 execution transport — normative
+
+V3.1 may use **RLL-1 (Relay Lease Loop v1)** to transport already-authorized work to a scheduled local engineering agent.
+
+RLL-1 is below V3.1. It does not create product requirements, acceptance criteria, implementation authority, Owner approval, merge authority, release authority, or programme completion. Its operational labels/leases/comments are never engineering acceptance evidence.
+
+Reference:
+
+`operating-model/transports/RLL-1.md`
+
+The reference transport intentionally requires no GitHub MCP server. It uses native `git`, GitHub CLI `gh` / `gh api`, a deterministic single-machine mutex/lease launcher, and Antigravity headless execution.
+
+An RLL child is eligible only after the governing engineering contract/plan is already recoverable and an `RLL_EXECUTION_V1` envelope identifies either:
+
+- `BRANCH_RESUME` for an owned implementation branch; or
+- `EXACT_HEAD_EVIDENCE` for read-only exact-head execution/certification.
+
+The transport labels are limited to:
+
+```text
+rll-ready
+rll-active
+rll-review-ready
+rll-escalation
+```
+
+Do not infer PASS/FAIL/completion from those labels. Engineering result semantics remain the normal V3.1 evidence vocabulary.
+
+Only structured `RELAY_DIRECTIVE_V1` comments from configured authorized identities are executable transport directives. Ordinary GitHub prose remains context only.
+
+A scheduled/timer wake, mutex acquisition, lease renewal, routine edit/test progress, or transient retry does not warrant a V3.1 durable publication. The existing four publication types remain unchanged.
+
+The transport must never merge, release, delete branches, close programme work, or use `agy --dangerously-skip-permissions`. Scoped local permissions are required for unattended execution.
+
+
 ## Owner reporting delta
 
 V3.1 may keep a derived Owner-publication cursor solely to answer **what changed since the last Owner-visible report**.
