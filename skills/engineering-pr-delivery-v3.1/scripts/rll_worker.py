@@ -193,7 +193,7 @@ def prepare_workspace(root,e,data_dir,issue):
 def lease(s,mins): s["lease_epoch"]+=1; s["lease_until"]=(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=mins)).strftime("%Y-%m-%dT%H:%M:%SZ"); s["state"]="ACTIVE"; s["phase"]="IMPLEMENT"
 
 def apply_dirs(s,rows):
- invoke=True; notes=[]
+ invoke=not (s.get("state")=="RETRY_WAIT" and s.get("phase") in {"PAUSED_BY_DIRECTIVE","REPLAN_REQUIRED"}); notes=[]
  for seq,act,ins in rows:
   s["last_directive_sequence"]=seq
   if ins:notes.append(f"{seq} {act}: {ins}")
