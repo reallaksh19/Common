@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "rll_worker.py"
 SPEC = importlib.util.spec_from_file_location("rll_worker", MODULE_PATH)
@@ -242,6 +243,56 @@ allow_material_write: false
             with self.assertRaises(rll.RllError):
                 with rll.Mutex(lock):
                     pass
+
+    def test_headless_result_requires_successful_structured_output(self):
+        payload = {
+            "status": "SUCCESS",
+            "structured_output": {
+                "schema": "RLL_RUN_RESULT_V1",
+                "transport_state": "ACTIVE",
+                "current": "working",
+                "next": "test",
+                "evidence_comment_url": None,
+                "engineering_summary": "",
+                "notes": [],
+            },
+        }
+        completed = type("Completed", (), {
+            "returncode": 0,
+            "stdout": json.dumps(payload),
+            "stderr": "",
+        })()
+        with patch.object(rll, "cmd", return_value=completed):
+            result = rll.agy(
+                Path("."),
+                "prompt",
+                Path("schema.json"),
+                "2h",
+                "high",
+            )
+        self.assertEqual("ACTIVE", result["transport_state"])
+
+    def test_headless_permission_denial_becomes_transport_retry_error(self):
+        payload = {
+            "status": "SUCCESS",
+            "structured_output": {
+                "schema": "RLL_RUN_RESULT_V1",
+                "transport_state": "REVIEW_READY",
+                "current": "done",
+                "next": "review",
+                "evidence_comment_url": "https://example.invalid/evidence",
+                "engineering_summary": "claimed complete",
+                "notes": [],
+            },
+        }
+        completed = type("Completed", (), {
+            "returncode": 0,
+            "stdout": json.dumps(payload),
+            "stderr": "tool permission denied; requires approval",
+        })()
+        with patch.object(rll, "cmd", return_value=completed):
+            with self.assertRaises(rll.RllError):
+                rll.agy(Path("."), "prompt", Path("schema.json"), "2h", "high")
 
     def test_rll_contract_schemas_are_valid_json(self):
         schema_root = Path(__file__).resolve().parents[1] / "schemas"
