@@ -12,6 +12,8 @@ The governing rule is:
 
 RLL-1 is initially single-worker / single-machine. Distributed arbitration is explicitly out of scope.
 
+The reviewed rollout/implementation blueprint is `RLL-1-blueprint.md`. The normative transport contract in this file takes precedence if the rollout document ever drifts.
+
 ## Transport implementation
 
 The reference transport does **not** require a GitHub MCP server.
