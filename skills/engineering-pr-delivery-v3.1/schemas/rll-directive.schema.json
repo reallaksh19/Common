@@ -5,15 +5,11 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema",
     "sequence",
     "issue",
     "action"
   ],
   "properties": {
-    "schema": {
-      "const": "RELAY_DIRECTIVE_V1"
-    },
     "sequence": {
       "type": "integer",
       "minimum": 1
@@ -34,5 +30,6 @@
     "instruction": {
       "type": "string"
     }
-  }
+  },
+  "description": "The protocol marker line supplies the envelope discriminator; this schema validates the marker body."
 }
