@@ -335,6 +335,8 @@ agy -p <prompt>
 
 Do not use `--dangerously-skip-permissions`.
 
+For `--output-format json --json-schema ...`, the launcher must require terminal Antigravity status `SUCCESS` and consume the parsed `structured_output`, not infer success from process exit code or free-text `response`. Headless permission soft-denials and print-timeout partial-result notices are transport `RETRY_WAIT` conditions even if the CLI process itself exits zero.
+
 Antigravity must be authenticated interactively once before unattended use.
 
 Use scoped permissions in `~/.gemini/antigravity-cli/settings.json`.
