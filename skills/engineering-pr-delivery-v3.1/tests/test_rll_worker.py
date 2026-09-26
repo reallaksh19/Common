@@ -139,6 +139,28 @@ allow_material_write: false
         self.assertEqual("ACTIVE", state["state"])
         self.assertEqual(2, state["last_directive_sequence"])
 
+    def test_pause_persists_until_authorized_resume(self):
+        state = {
+            "state": "RETRY_WAIT",
+            "phase": "PAUSED_BY_DIRECTIVE",
+            "lease_until": None,
+            "last_directive_sequence": 1,
+            "current": "paused",
+            "next": "await resume",
+        }
+        invoke, notes = rll.apply_dirs(state, [])
+        self.assertFalse(invoke)
+        self.assertEqual([], notes)
+        self.assertEqual("PAUSED_BY_DIRECTIVE", state["phase"])
+
+        invoke, notes = rll.apply_dirs(
+            state,
+            [(2, "RESUME", "continue the existing bounded plan")],
+        )
+        self.assertTrue(invoke)
+        self.assertEqual("ACTIVE", state["state"])
+        self.assertEqual(2, state["last_directive_sequence"])
+
     def test_review_ready_requires_clean_tree_and_evidence_url(self):
         envelope = {"mode": "BRANCH_RESUME", "branch": "feature/work"}
         base = {
