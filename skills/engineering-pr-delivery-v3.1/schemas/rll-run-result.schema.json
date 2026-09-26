@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/rll-run-result.schema.json",
+  "title": "RLL_RUN_RESULT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "transport_state",
+    "current",
+    "next",
+    "evidence_comment_url",
+    "engineering_summary",
+    "notes"
+  ],
+  "properties": {
+    "schema": { "const": "RLL_RUN_RESULT_V1" },
+    "transport_state": {
+      "enum": ["ACTIVE", "RETRY_WAIT", "ESCALATION_REQUIRED", "REVIEW_READY"]
+    },
+    "current": { "type": "string", "minLength": 1 },
+    "next": { "type": "string", "minLength": 1 },
+    "evidence_comment_url": {
+      "anyOf": [
+        { "type": "string", "format": "uri" },
+        { "type": "null" }
+      ]
+    },
+    "engineering_summary": { "type": "string" },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
