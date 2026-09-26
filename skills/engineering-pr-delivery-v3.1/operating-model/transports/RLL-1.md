@@ -51,6 +51,8 @@ An issue is eligible only when all of the following are true:
 
 - it is open;
 - it carries `rll-ready` or `rll-active`;
+- it is not already in terminal transport state `REVIEW_READY` or `CANCELLED`;
+- it has not been reopened merely to reuse completed engineering work as a smoke/pilot;
 - its engineering responsibility is already bounded by the issue/programme;
 - an approved/durable implementation plan exists when the governing workflow requires one;
 - an `RLL_EXECUTION_V1` envelope exists in the issue body or in an authorized coordinator comment;
@@ -339,9 +341,11 @@ For `--output-format json --json-schema ...`, the launcher must require terminal
 
 Antigravity must be authenticated interactively once before unattended use.
 
-Use scoped permissions in `~/.gemini/antigravity-cli/settings.json`.
+For current Antigravity CLI releases, configure Tool Permission through the documented `/config` / `/settings` surface. Headless print mode soft-denies tools that require interactive approval. Do not invent or persist undocumented wildcard grant entries such as `command(*)`, `read_file(*)`, or `write_file(*)`.
 
-Recommended permission shape is repository-specific and should allow only the commands/files needed by the task. In particular, do not authorize GitHub merge/release/destructive commands.
+For unattended host-backed RLL work that cannot run in Antigravity's isolated sandbox, the documented `always-proceed` Tool Permission mode may be required. It is intentionally broad: use it only under a dedicated least-privileged OS account/workspace, with RLL's deterministic worktree/postflight guards, and never as authority to merge/release or operate outside the governed repository. Prefer `proceed-in-sandbox` where the task can genuinely run without host filesystem/network access.
+
+GitHub authentication must come from an interactive `gh auth login --web`/browser flow stored by the operating-system credential store. Do not place `GH_TOKEN`, `GITHUB_TOKEN`, OAuth/PAT strings, or `oauth_token` fields in sidecar JSON, Antigravity settings, checked-in files, transcripts, or prompts. If GitHub CLI reports that secure credential storage is unavailable, stop and repair credential storage rather than falling back to a plaintext RLL secret.
 
 RLL recommends that provider-control mutations (RLL labels/state) remain in the deterministic launcher. The engineering agent needs provider read access and, when evidence publication is required, bounded issue-comment authority.
 
@@ -511,7 +515,7 @@ Coordinator review
 3. create the four RLL labels;
 4. configure scoped Antigravity permissions;
 5. create one Scheduled Task;
-6. run a non-destructive smoke issue;
+6. run a non-destructive smoke on an OPEN bounded issue that has never reached REVIEW_READY/CANCELLED; never reopen completed work for smoke;
 7. prove mutex overlap rejection;
 8. prove lease-expiry reconstruction;
 9. prove stale worker-state head loses to Git;
@@ -519,7 +523,7 @@ Coordinator review
 11. run an exact-head evidence pilot;
 12. only then enable a source-write pilot.
 
-The first pilot must not merge or release anything.
+The first pilot must not merge or release anything. A completed/closed/review-ready issue must never be reopened or relabeled merely to satisfy the pilot. If the intended engineering task has already completed, use a fresh bounded smoke issue or the next genuinely open RLL task.
 
 ## Rollback
 

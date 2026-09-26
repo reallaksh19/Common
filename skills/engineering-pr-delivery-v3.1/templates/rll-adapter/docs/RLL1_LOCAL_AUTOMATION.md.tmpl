@@ -23,6 +23,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-rll1-antigra
   -PilotIssue <issue>
 ```
 
+## Authentication and Antigravity permission
+
+Authenticate GitHub CLI once with `gh auth login --web` and verify `gh auth status`. RLL expects GitHub CLI to use the operating-system credential store. Do not set `GH_TOKEN`/`GITHUB_TOKEN` for the sidecar and never copy an OAuth/PAT into sidecar JSON or Antigravity settings.
+
+For Antigravity CLI, use the documented `/config` → Tool Permission setting. Do not add undocumented wildcard grant entries such as `command(*)` or `write_file(*)`. Unattended host-backed execution may require the documented `always-proceed` mode; because it is broad, use a dedicated least-privileged OS account/workspace. Prefer `proceed-in-sandbox` where the task can truly run without host filesystem/network access.
+
+The smoke pilot must be an OPEN bounded issue that has not already reached `REVIEW_READY` or `CANCELLED`. Never reopen completed engineering work just to reuse it as the RLL pilot.
+
 ## Enable execution
 
 After smoke review:
@@ -30,12 +38,14 @@ After smoke review:
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-rll1-antigravity-sidecar.ps1 `
   -CommonRoot "C:\path\to\Common" `
-  -PilotIssue <issue> `
+  -PilotIssue <same-open-pilot> `
   -EnableExecution
 ```
 
 Use `BRANCH_RESUME` only for a governed source-write branch.
 Use `EXACT_HEAD_EVIDENCE` for read-only immutable-head execution.
+
+Execution enablement does not add `rll-ready` again; it resumes the smoke-established RLL state.
 
 Never use transport state as engineering PASS/FAIL.
 Never use RLL to infer merge/release authority.

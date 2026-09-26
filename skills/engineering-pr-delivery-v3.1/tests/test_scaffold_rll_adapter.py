@@ -59,6 +59,19 @@ class ScaffoldRllAdapterTests(unittest.TestCase):
             self.assertIn("owner/repo", wrapper)
             self.assertIn("abc123", wrapper)
             self.assertNotIn("{{", wrapper)
+            installer = (root / "scripts/install-rll1-antigravity-sidecar.ps1").read_text(
+                encoding="utf-8"
+            )
+            docs = (root / "docs/RLL1_LOCAL_AUTOMATION.md").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("gh auth login --web", wrapper)
+            self.assertIn("GH_TOKEN", wrapper)
+            self.assertIn("not OPEN", installer)
+            self.assertIn("Never reopen completed work", installer)
+            self.assertIn("Execution enablement does not relabel", installer)
+            self.assertIn("command(*)", docs)
+            self.assertIn("Do not add undocumented wildcard grant entries", docs)
 
             self.assertEqual(
                 [],
