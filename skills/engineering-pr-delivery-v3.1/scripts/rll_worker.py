@@ -213,9 +213,17 @@ Ordinary comments are context, not executable directives. {mode} Perform the ent
 def agy(root,text,schema,timeout,effort):
  r=cmd(["agy","-p",text,"--output-format","json","--json-schema",str(schema),"--effort",effort,"--print-timeout",timeout],cwd=root,check=False)
  if r.returncode: raise RllError("Antigravity headless invocation failed: "+r.stderr.strip())
- try:o=json.loads(r.stdout); v=o.get("response",o) if isinstance(o,dict) else o; v=json.loads(v) if isinstance(v,str) else v
- except Exception as e: raise RllError("invalid Antigravity structured result") from e
- if not isinstance(v,dict) or v.get("schema")!="RLL_RUN_RESULT_V1" or v.get("transport_state") not in {"ACTIVE","RETRY_WAIT","ESCALATION_REQUIRED","REVIEW_READY"}: raise RllError("invalid RLL_RUN_RESULT_V1")
+ diagnostics=r.stderr.strip()
+ if re.search(r"soft[- ]denied|permission[^\n]*(?:denied|approval)|requires approval",diagnostics,re.I):
+  raise RllError("Antigravity headless permission denial: "+diagnostics)
+ if re.search(r"print[- ]timeout|timeout[^\n]*partial|partial output",diagnostics,re.I):
+  raise RllError("Antigravity headless timeout/partial result: "+diagnostics)
+ try:o=json.loads(r.stdout)
+ except Exception as e: raise RllError("invalid Antigravity JSON envelope") from e
+ if not isinstance(o,dict) or o.get("status")!="SUCCESS": raise RllError("Antigravity did not report terminal SUCCESS")
+ v=o.get("structured_output")
+ if not isinstance(v,dict): raise RllError("Antigravity SUCCESS result omitted structured_output")
+ if v.get("schema")!="RLL_RUN_RESULT_V1" or v.get("transport_state") not in {"ACTIVE","RETRY_WAIT","ESCALATION_REQUIRED","REVIEW_READY"}: raise RllError("invalid RLL_RUN_RESULT_V1")
  return v
 
 def apply_result(s,v,o,e):
