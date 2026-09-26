@@ -138,6 +138,49 @@ def validate_basis(root,e):
  else: git(root,"cat-file","-e",e["head_sha"]+"^{commit}")
 
 def observe(root): return {"head":git(root,"rev-parse","HEAD"),"branch":git(root,"branch","--show-current"),"clean":not bool(git(root,"status","--porcelain=v1","--untracked-files=all"))}
+
+def is_ancestor(root,older,newer):
+ return cmd(["git","-C",str(root),"merge-base","--is-ancestor",older,newer],check=False).returncode==0
+
+def prepare_branch_workspace(root,e):
+ target=e["branch"]; remote="origin/"+target; o=observe(root)
+ if o["branch"]!=target:
+  if not o["clean"]: raise RllError(f"cannot switch to governed branch {target}: current worktree is dirty on {o['branch'] or 'DETACHED'}")
+  local_exists=cmd(["git","-C",str(root),"show-ref","--verify","--quiet","refs/heads/"+target],check=False).returncode==0
+  if local_exists: git(root,"switch",target)
+  else: git(root,"switch","--track","-c",target,remote)
+  o=observe(root)
+ if not is_ancestor(root,e["base_sha"],o["head"]): raise RllError("local governed branch does not descend from approved base")
+ local=o["head"]; remote_head=git(root,"rev-parse",remote)
+ if local==remote_head: return root
+ if is_ancestor(root,remote_head,local): return root
+ if is_ancestor(root,local,remote_head):
+  if not o["clean"]: raise RllError("governed branch is behind origin while local worktree is dirty")
+  git(root,"merge","--ff-only",remote)
+  return root
+ raise RllError("local governed branch diverges from origin; refusing automatic reconciliation")
+
+def prepare_exact_head_workspace(root,e,data_dir,issue):
+ worktrees=data_dir/"worktrees"; worktrees.mkdir(parents=True,exist_ok=True)
+ target=worktrees/f"issue-{issue}"
+ if target.exists():
+  probe=git(target,"rev-parse","--git-dir",check=False)
+  if not probe:
+   raise RllError(f"exact-head worktree path exists but is not a Git worktree: {target}")
+  o=observe(target)
+  if not o["clean"]: raise RllError(f"exact-head worktree is dirty: {target}")
+  if o["head"]==e["head_sha"]: return target
+  git(root,"worktree","remove","--force",str(target))
+ git(root,"worktree","prune")
+ git(root,"worktree","add","--detach",str(target),e["head_sha"])
+ o=observe(target)
+ if o["head"]!=e["head_sha"] or not o["clean"]: raise RllError("failed to establish clean exact-head worktree")
+ return target
+
+def prepare_workspace(root,e,data_dir,issue):
+ if e["mode"]=="BRANCH_RESUME": return prepare_branch_workspace(root,e)
+ return prepare_exact_head_workspace(root,e,data_dir,issue)
+
 def lease(s,mins): s["lease_epoch"]+=1; s["lease_until"]=(dt.datetime.now(dt.timezone.utc)+dt.timedelta(minutes=mins)).strftime("%Y-%m-%dT%H:%M:%SZ"); s["state"]="ACTIVE"; s["phase"]="IMPLEMENT"
 
 def apply_dirs(s,rows):
@@ -169,6 +212,7 @@ def agy(root,text,schema,timeout,effort):
 def apply_result(s,v,o,e):
  s["material_head"]=o["head"]; s["current"]=str(v.get("current","")); s["next"]=str(v.get("next","")); state=v["transport_state"]
  if e["mode"]=="BRANCH_RESUME" and o["branch"]!=e["branch"]: s.update(state="ESCALATION_REQUIRED",phase="BRANCH_MISMATCH",lease_until=None,current="governed branch mismatch",next="restore branch without discarding material"); return
+ if e["mode"]=="EXACT_HEAD_EVIDENCE" and o["head"]!=e["head_sha"]: s.update(state="ESCALATION_REQUIRED",phase="HEAD_MISMATCH",lease_until=None,current="exact-head evidence worktree moved from declared head",next="restore exact head and rerun evidence"); return
  if state=="REVIEW_READY" and (not o["clean"] or not v.get("evidence_comment_url")): s.update(state="ACTIVE",phase="POSTFLIGHT",current="review-ready denied by dirty tree or missing evidence URL",next="complete exact-head postflight/evidence"); return
  s["state"]=state; s["phase"]="REVIEW_READY" if state=="REVIEW_READY" else ("ESCALATION" if state=="ESCALATION_REQUIRED" else state); s["lease_until"]=None if state!="ACTIVE" else s["lease_until"]
 
@@ -179,20 +223,21 @@ def main():
    if not shutil.which(x): raise RllError(f"missing command {x}")
   if cmd(["gh","auth","status"],check=False).returncode: raise RllError("gh authentication unavailable")
   if not git(root,"rev-parse","--git-dir",check=False): raise RllError("repo-root is not a Git repository")
-  lock=Path(a.data_dir).expanduser()/re.sub(r"[^A-Za-z0-9_.-]+","-",a.repository)/"worker.lock"
+  data_dir=Path(a.data_dir).expanduser()/re.sub(r"[^A-Za-z0-9_.-]+","-",a.repository)
+  lock=data_dir/"worker.lock"
   with Mutex(lock):
    row=choose(issue_rows(a.repository,ACTIVE),issue_rows(a.repository,READY))
    if not row: print(json.dumps({"status":"IDLE"})); return 0
    n=int(row["number"]); issue=issue_view(a.repository,n); cs=comments(a.repository,n); auth=set(a.authorized_login); e=parse_exec(issue,cs,auth)
    if e["repository"]!=a.repository or e["worker"]!=a.worker_id: raise RllError("execution identity mismatch")
-   validate_basis(root,e); obs=observe(root); sr=state_comment(cs); s=parse_state(sr["body"]) if sr else {"worker":a.worker_id,"issue":n,"state":"READY","phase":"CLAIM","mode":e["mode"],"branch":e.get("branch"),"base_sha":e["base_sha"],"material_head":obs["head"],"lease_epoch":0,"lease_until":None,"last_directive_sequence":0,"current":"eligible issue discovered","next":"claim lease"}
+   validate_basis(root,e); workspace=prepare_workspace(root,e,data_dir,n); obs=observe(workspace); sr=state_comment(cs); s=parse_state(sr["body"]) if sr else {"worker":a.worker_id,"issue":n,"state":"READY","phase":"CLAIM","mode":e["mode"],"branch":e.get("branch"),"base_sha":e["base_sha"],"material_head":obs["head"],"lease_epoch":0,"lease_until":None,"last_directive_sequence":0,"current":"eligible issue discovered","next":"claim lease"}
    rows=directives(cs,n,auth,s["last_directive_sequence"]); invoke,notes=apply_dirs(s,rows); common,two=protocol_basis(); labels=labelset(issue)
    if s["state"]=="CANCELLED" or not invoke: state_write(a.repository,n,sr,render(s,common,two)); label_state(a.repository,n,labels,s["state"]); print(json.dumps({"status":s["state"],"issue":n})); return 0
    lease(s,a.lease_minutes); s["material_head"]=obs["head"]; sid=state_write(a.repository,n,sr,render(s,common,two)); label_state(a.repository,n,labels,"ACTIVE")
    if a.smoke: s.update(state="RETRY_WAIT",phase="SMOKE_COMPLETE",lease_until=None,current="non-destructive smoke complete",next="review before enabling agent"); state_write(a.repository,n,{"id":sid},render(s,common,two)); print(json.dumps({"status":"SMOKE_COMPLETE","issue":n})); return 0
-   try:v=agy(root,prompt(a.repository,n,e,notes),Path(__file__).resolve().parents[1]/"schemas/rll-run-result.schema.json",a.print_timeout,a.effort)
+   try:v=agy(workspace,prompt(a.repository,n,e,notes),Path(__file__).resolve().parents[1]/"schemas/rll-run-result.schema.json",a.print_timeout,a.effort)
    except RllError as ex: s.update(state="RETRY_WAIT",phase="AGENT_INVOCATION",lease_until=None,current=str(ex),next="retry after environment recovery"); state_write(a.repository,n,{"id":sid},render(s,common,two)); print(json.dumps({"status":"RETRY_WAIT","issue":n})); return 0
-   apply_result(s,v,observe(root),e); state_write(a.repository,n,{"id":sid},render(s,common,two)); label_state(a.repository,n,labelset(issue_view(a.repository,n)),s["state"]); print(json.dumps({"status":s["state"],"issue":n,"material_head":s["material_head"]})); return 0
+   apply_result(s,v,observe(workspace),e); state_write(a.repository,n,{"id":sid},render(s,common,two)); label_state(a.repository,n,labelset(issue_view(a.repository,n)),s["state"]); print(json.dumps({"status":s["state"],"issue":n,"material_head":s["material_head"],"workspace":str(workspace)})); return 0
  except RllError as ex: print(json.dumps({"status":"ERROR","error":str(ex)}),file=sys.stderr); return 2
 
 if __name__=="__main__": raise SystemExit(main())
