@@ -5,7 +5,6 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "schema",
     "transport",
     "worker",
     "mode",
@@ -14,9 +13,6 @@
     "allow_material_write"
   ],
   "properties": {
-    "schema": {
-      "const": "RLL_EXECUTION_V1"
-    },
     "transport": {
       "const": "RLL-1"
     },
@@ -95,5 +91,6 @@
         }
       }
     }
-  ]
+  ],
+  "description": "The protocol marker line supplies the envelope discriminator; this schema validates the marker body."
 }
