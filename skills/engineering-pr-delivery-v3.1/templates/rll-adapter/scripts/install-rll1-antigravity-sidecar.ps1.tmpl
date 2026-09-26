@@ -1,0 +1,85 @@
+[CmdletBinding(SupportsShouldProcess=$true)]
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$CommonRoot,
+    [string]$RequiredCommonBasis = "{{REQUIRED_COMMON_BASIS}}",
+    [string]$Cron = "*/10 * * * *",
+    [int]$PilotIssue = 0,
+    [switch]$EnableExecution
+)
+
+$ErrorActionPreference = "Stop"
+$RepoRoot = Split-Path -Parent $PSScriptRoot
+$Wrapper = Join-Path $PSScriptRoot "rll1-antigravity-worker.ps1"
+
+foreach ($tool in @("git","gh","agy")) {
+    if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { throw "Required command '$tool' is not on PATH." }
+}
+if (-not (Test-Path $Wrapper)) { throw "RLL wrapper not found: $Wrapper" }
+
+$Launcher = Join-Path $CommonRoot "skills\engineering-pr-delivery-v3.1\scripts\rll_worker.py"
+if (-not (Test-Path $Launcher)) { throw "Common RLL launcher not found: $Launcher" }
+
+& git -C $CommonRoot merge-base --is-ancestor $RequiredCommonBasis HEAD *> $null
+if ($LASTEXITCODE -ne 0) { throw "Common HEAD does not contain required RLL basis $RequiredCommonBasis." }
+& gh auth status *> $null
+if ($LASTEXITCODE -ne 0) { throw "Run 'gh auth login' first." }
+
+$labels = @(
+    @{ Name="rll-ready"; Color="1D76DB"; Description="RLL-1 eligible for unattended execution" },
+    @{ Name="rll-active"; Color="FBCA04"; Description="RLL-1 transport execution active" },
+    @{ Name="rll-review-ready"; Color="0E8A16"; Description="RLL-1 evidence ready for independent review" },
+    @{ Name="rll-escalation"; Color="B60205"; Description="RLL-1 requires coordinator or Owner resolution" }
+)
+foreach ($label in $labels) {
+    & gh label create $label.Name --repo "{{REPOSITORY}}" --color $label.Color --description $label.Description --force *> $null
+    if ($LASTEXITCODE -ne 0) { throw "Failed to create/update label $($label.Name)" }
+}
+
+if ($PilotIssue -gt 0) {
+    $pilotText = & gh issue view $PilotIssue --repo "{{REPOSITORY}}" --json body,comments --jq '.body, .comments[].body'
+    if ($LASTEXITCODE -ne 0) { throw "Unable to inspect pilot issue #$PilotIssue" }
+    if (($pilotText -join "`n") -notmatch "RLL_EXECUTION_V1") { throw "Pilot issue #$PilotIssue has no RLL_EXECUTION_V1 envelope." }
+    & gh issue edit $PilotIssue --repo "{{REPOSITORY}}" --add-label "rll-ready" *> $null
+    if ($LASTEXITCODE -ne 0) { throw "Failed to mark pilot issue #$PilotIssue rll-ready" }
+}
+
+$homeDir = [Environment]::GetFolderPath("UserProfile")
+$sidecarId = "{{SIDECAR_ID}}"
+$sidecarDir = Join-Path $homeDir ".gemini\config\sidecars\$sidecarId"
+$configPath = Join-Path $homeDir ".gemini\config\config.json"
+$sidecarPath = Join-Path $sidecarDir "sidecar.json"
+New-Item -ItemType Directory -Path $sidecarDir -Force | Out-Null
+New-Item -ItemType Directory -Path (Split-Path -Parent $configPath) -Force | Out-Null
+
+$sidecar = [ordered]@{
+    display_name = "{{REPOSITORY}} RLL-1"
+    description = "Engineering Relay V3.1 RLL-1 scheduled local worker"
+    builtin = "schedule"
+    args = @($Cron, "powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $Wrapper)
+    restart_policy = "always"
+    env = [ordered]@{
+        COMMON_REPO_ROOT = (Resolve-Path $CommonRoot).Path
+        RLL_SMOKE = $(if ($EnableExecution) { "0" } else { "1" })
+    }
+}
+
+if (Test-Path $configPath) {
+    $raw = Get-Content $configPath -Raw
+    $config = if ($raw.Trim()) { $raw | ConvertFrom-Json } else { [pscustomobject]@{} }
+    Copy-Item $configPath "$configPath.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+} else {
+    $config = [pscustomobject]@{}
+}
+if (-not ($config.PSObject.Properties.Name -contains "sidecars")) {
+    Add-Member -InputObject $config -MemberType NoteProperty -Name "sidecars" -Value ([pscustomobject]@{})
+}
+Add-Member -InputObject $config.sidecars -MemberType NoteProperty -Name $sidecarId -Value ([pscustomobject]@{enabled=$true}) -Force
+
+if ($PSCmdlet.ShouldProcess($sidecarPath, "Install RLL-1 sidecar")) {
+    $sidecar | ConvertTo-Json -Depth 10 | Set-Content $sidecarPath -Encoding UTF8
+    $config | ConvertTo-Json -Depth 20 | Set-Content $configPath -Encoding UTF8
+}
+
+Write-Host "Installed $sidecarId with cron $Cron"
+if ($EnableExecution) { Write-Host "Execution enabled." } else { Write-Host "Smoke mode enabled; rerun with -EnableExecution after review." }
