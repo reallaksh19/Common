@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rll-worker-state.schema.json",
+  "title": "RLL_WORKER_STATE_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "protocol_basis",
+    "worker",
+    "issue",
+    "state",
+    "phase",
+    "mode",
+    "base_sha",
+    "material_head",
+    "lease_epoch",
+    "lease_until",
+    "last_directive_sequence",
+    "current",
+    "next"
+  ],
+  "properties": {
+    "schema": {
+      "const": "RLL_WORKER_STATE_V1"
+    },
+    "protocol_basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relay",
+        "common",
+        "two_pass",
+        "transport"
+      ],
+      "properties": {
+        "relay": {
+          "const": "V3.1"
+        },
+        "common": {
+          "type": "string",
+          "minLength": 1
+        },
+        "two_pass": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transport": {
+          "const": "RLL-1"
+        }
+      }
+    },
+    "worker": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "state": {
+      "enum": [
+        "READY",
+        "ACTIVE",
+        "RETRY_WAIT",
+        "ESCALATION_REQUIRED",
+        "REVIEW_READY",
+        "CANCELLED"
+      ]
+    },
+    "phase": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "enum": [
+        "BRANCH_RESUME",
+        "EXACT_HEAD_EVIDENCE"
+      ]
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "base_sha": {
+      "type": "string",
+      "minLength": 1
+    },
+    "material_head": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lease_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "lease_until": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "last_directive_sequence": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "current": {
+      "type": "string"
+    },
+    "next": {
+      "type": "string"
+    }
+  }
+}
