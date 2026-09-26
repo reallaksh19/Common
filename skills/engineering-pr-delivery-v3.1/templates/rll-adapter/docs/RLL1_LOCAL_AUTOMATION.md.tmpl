@@ -1,0 +1,41 @@
+# RLL-1 local automation — {{REPOSITORY}}
+
+This is a thin repository adapter for Common Engineering Relay V3.1 RLL-1.
+
+Required Common basis: `{{REQUIRED_COMMON_BASIS}}`.
+
+## Architecture
+
+```text
+Antigravity schedule sidecar
+  -> repository PowerShell wrapper
+  -> Common V3.1 rll_worker.py
+  -> deterministic git + gh transport
+  -> one agy -p engineering run
+  -> GitHub evidence
+```
+
+## Install smoke mode
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-rll1-antigravity-sidecar.ps1 `
+  -CommonRoot "C:\path\to\Common" `
+  -PilotIssue <issue>
+```
+
+## Enable execution
+
+After smoke review:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-rll1-antigravity-sidecar.ps1 `
+  -CommonRoot "C:\path\to\Common" `
+  -PilotIssue <issue> `
+  -EnableExecution
+```
+
+Use `BRANCH_RESUME` only for a governed source-write branch.
+Use `EXACT_HEAD_EVIDENCE` for read-only immutable-head execution.
+
+Never use transport state as engineering PASS/FAIL.
+Never use RLL to infer merge/release authority.
