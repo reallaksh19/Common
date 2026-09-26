@@ -419,6 +419,35 @@ Upgrade to a sidecar only after evidence shows a need for stronger lifecycle con
 
 Do not build distributed locking on top of GitHub labels/comments in RLL-1.
 
+## "Plan for local agent" planning entrypoint
+
+When the Owner/coordinator says **"Plan for local agent"**, use the normative template:
+
+`templates/plan-for-local-agent.md`
+
+That template performs the RLL planning/staging operation:
+
+- refresh live V3.1/project basis;
+- choose `BRANCH_RESUME` or `EXACT_HEAD_EVIDENCE`;
+- preserve the existing engineering authority/non-goals/evidence contract;
+- verify or scaffold the thin repository adapter;
+- publish an authorized `RLL_EXECUTION_V1` envelope;
+- stage smoke-first activation.
+
+If the consumer repository has no adapter, generate the standard four-file shell with:
+
+```bash
+python skills/engineering-pr-delivery-v3.1/scripts/scaffold_rll_adapter.py \
+  --repo-root <consumer-repo-root> \
+  --repository <owner/repo> \
+  --required-common-basis <current-common-sha> \
+  --authorized-login <github-login>
+```
+
+The generated adapter deliberately contains no RLL state machine, lease engine, schemas or launcher implementation; those remain owned by Common.
+
+"Plan for local agent" does not start source-writing execution by itself and never implies merge/release authority.
+
 ## Two-Pass relationship
 
 RLL executes after the applicable planning/approval boundary:
