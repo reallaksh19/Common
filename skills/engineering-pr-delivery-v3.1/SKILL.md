@@ -225,6 +225,14 @@ A scheduled/timer wake, mutex acquisition, lease renewal, routine edit/test prog
 
 The transport must never merge, release, delete branches, close programme work, or use `agy --dangerously-skip-permissions`. Scoped local permissions are required for unattended execution.
 
+For standard planning/staging, use:
+
+- `templates/plan-for-local-agent.md` — normative phrase-driven local-agent plan template;
+- `templates/rll-adapter/` — thin consumer-repository adapter templates;
+- `scripts/scaffold_rll_adapter.py` — deterministic adapter scaffolder.
+
+The phrase **"Plan for local agent"** binds to that template set. Do not invent a bespoke timer/MCP/local-agent protocol when the standard template applies.
+
 
 ## Owner reporting delta
 
@@ -311,7 +319,8 @@ V3.1 recognizes stable high-level Owner workflow intents through `scripts/owner_
 - **Proceed next complex task** — force a whole-task/programme re-anchor before selecting execution; do not promote a convenient patch, file, or stale EP into task identity.
 - **Plan for handover** — full governed handover preparation: programme/roadmap reconciliation, handover context/docs, provider Handover issue synchronization/readback, publication, and standalone two-pass request preparation. Handover is not accepted until a successor actually accepts custody.
 - **Stats?** — read-only detailed point-wise checklist against the governing parent issue, relevant sub-issues, current EP acceptance, pending/KI/offloads, material/evidence state and programme debt categories.
-- **Prepare for local agent** — recipient-ready local execution packet with clone/checkout basis, exact HEAD, full bounded technical instructions, acceptance/evidence contract, prohibitions, and a governed provider sub-issue that the helper must update with its result/evidence. Relay custody remains with the originating owner.
+- **Plan for local agent** — apply `templates/plan-for-local-agent.md` as the normative RLL-1 planning/staging template. Refresh live V3.1/project state, choose `BRANCH_RESUME` or `EXACT_HEAD_EVIDENCE`, preserve the governing engineering contract/prohibitions/evidence return, verify or scaffold the thin repository adapter, publish the authorized `RLL_EXECUTION_V1` envelope, and stage smoke-first activation. This command plans/stages unattended execution; it does not itself authorize merge/release or source-writing execution beyond the already-governing task.
+- **Prepare for local agent** — recipient-ready local execution packet with clone/checkout basis, exact HEAD, full bounded technical instructions, acceptance/evidence contract, prohibitions, and a governed provider sub-issue that the helper must update with its result/evidence. Relay custody remains with the originating owner. When RLL-1 is available, prefer `Plan for local agent` for machine-consumable scheduled execution and retain this command for manual/helper transfer.
 
 The parser is side-effect free. Recognition never creates roadmap, lease, checkpoint, delivery, provider, or Owner authority; callers must execute the referenced governed operations.
 
