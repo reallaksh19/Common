@@ -98,6 +98,20 @@ VALIDATION MATRIX
 APPENDIX A — FIVE IMPLEMENTATION QUESTIONS
 ```
 
+### Original Intent capture for a direct Owner-derived issue
+
+When actual issue creation is requested and the bounded issue originates from a direct Owner instruction available in the current source conversation:
+
+1. create the engineering issue;
+2. create one child/sub-issue titled `[Original Intent] <engineering issue title>`;
+3. copy the relevant Owner instruction verbatim using `references/original-intent-issue-template.md`, subject only to sensitive-data redaction;
+4. record the Original Intent issue ref/digest on the engineering issue;
+5. keep later Owner decisions/amendments on the engineering issue rather than rewriting the historical source.
+
+If the raw source is genuinely unavailable, record `ORIGINAL_INTENT_ISSUE: NOT_AVAILABLE_FROM_CURRENT_SOURCE` rather than inventing verbatim history.
+
+The Original Intent child has no EP, implementation plan, Local Agent execution or RLL lifecycle.
+
 ## 6. Program issue-set architecture
 
 For complicated multi-agent work, use:
@@ -395,7 +409,7 @@ Verify at minimum:
 ```text
 [ ] topology + FOCUSED/DETAILED/PROGRAMME authoring profile classified correctly
 [ ] mission/original task not diluted
-[ ] Original Intent source created/linked when direct raw Owner intent is available and useful
+[ ] Original Intent source created/linked when direct raw Owner intent is available; if unavailable, absence is stated rather than reconstructed from memory
 [ ] Original Intent is historical source only: NO EP / NO implementation lifecycle
 [ ] existing Roadmap / EP / OFFLOAD-LOCAL / RLL / Handover topology is preserved rather than duplicated
 [ ] live creation-time SHA recorded
@@ -422,4 +436,4 @@ Run `scripts/validate_issue_workorder.py` on drafts when a repository-capable en
 
 ## 19. User-visible result
 
-When actual creation is requested, return the parent issue, dedicated [Relay Handover] issue, child issue links, ownership/dependency plan, canonical input summary, producer/consumer relationships and any material uncertainties. Include implementation reasoning questions only when they materially help the task. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.
+When actual creation is requested, return the engineering/programme issue, linked [Original Intent] source when created, dedicated [Relay Handover] issue for multi-agent programmes, child issue links, ownership/dependency plan, canonical input summary, producer/consumer relationships and any material uncertainties. Include implementation reasoning questions only when they materially help the task. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.
