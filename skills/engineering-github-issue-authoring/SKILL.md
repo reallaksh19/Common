@@ -66,6 +66,7 @@ Use `PARALLEL_FOCUSED` for bounded independent work such as a falsifier, stale e
 Do not split a naturally atomic task just to increase issue count.
 
 Read `references/multi-agent-program-issues.md` for program topology.
+Read `references/pr-provider-discipline.md` for advisory PR naming/body identity and completion/supersede/duplicate lifecycle semantics.
 
 Finished authoring examples:
 - `examples/programme-root.md`
@@ -413,6 +414,8 @@ Verify at minimum:
 [ ] Original Intent source created/linked when direct raw Owner intent is available; if unavailable, absence is stated rather than reconstructed from memory
 [ ] Original Intent is historical source only: NO EP / NO implementation lifecycle
 [ ] existing Roadmap / EP / OFFLOAD-LOCAL / RLL / Handover topology is preserved rather than duplicated
+[ ] implementation PR identity exposes owned issue / EP / plan / AGENT_STATUS / delivery relationship when applicable
+[ ] PR title/branch guidance remains advisory and never encodes PASS/READY/FINAL lifecycle as engineering truth
 [ ] live creation-time SHA recorded
 [ ] Owner/roadmap/source authority explicit
 [ ] INPUT/BM/VAL/RM ledgers itemized where applicable
