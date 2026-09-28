@@ -437,6 +437,45 @@ def _planning_sections(
     return planning, publications
 
 
+def _merge_reconstruction_context(
+    observation: dict[str, Any] | None,
+    programme_observation: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    work = (observation or {}).get("reconstruction_context")
+    programme = (programme_observation or {}).get("reconstruction_context")
+    work = work if isinstance(work, dict) else {}
+    programme = programme if isinstance(programme, dict) else {}
+
+    original_intent = work.get("original_intent") or programme.get("original_intent")
+    latest_reconciliation = work.get("latest_reconciliation") or programme.get("latest_reconciliation")
+
+    def merged_refs(key: str) -> list[str]:
+        values: list[str] = []
+        for source in (programme, work):
+            for value in source.get(key) or []:
+                text = str(value)
+                if text and text not in values:
+                    values.append(text)
+        return values
+
+    result = {
+        "original_intent": dict(original_intent) if isinstance(original_intent, dict) else None,
+        "latest_reconciliation": (
+            dict(latest_reconciliation) if isinstance(latest_reconciliation, dict) else None
+        ),
+        "primary_conversation_refs": merged_refs("primary_conversation_refs"),
+        "roadmap_refs": merged_refs("roadmap_refs"),
+        "local_agent_refs": merged_refs("local_agent_refs"),
+        "rll_refs": merged_refs("rll_refs"),
+    }
+    if not result["original_intent"] and not result["latest_reconciliation"] and not any(
+        result[key]
+        for key in ("primary_conversation_refs", "roadmap_refs", "local_agent_refs", "rll_refs")
+    ):
+        return None
+    return result
+
+
 def _issue_sections(
     observation: dict[str, Any] | None,
     programme_observation: dict[str, Any] | None,
@@ -512,6 +551,12 @@ def _issue_sections(
                 "project_value": str(change),
             })
     planning, publications = _planning_sections(obs, ep)
+    reconstruction_context = _merge_reconstruction_context(obs, programme_obs)
+    continuity = (
+        dict((obs or {}).get("continuity"))
+        if isinstance((obs or {}).get("continuity"), dict)
+        else None
+    )
     programme_parent = _programme_ref(ep, parent)
     if programme_obs:
         programme_parent = {
@@ -546,6 +591,8 @@ def _issue_sections(
     return {
         "parent_issue": parent,
         "programme_parent": programme_parent,
+        **({"reconstruction_context": reconstruction_context} if reconstruction_context else {}),
+        **({"continuity": continuity} if continuity else {}),
         "planning": planning,
         "task_publications": publications,
         "programme_progress": programme_progress,

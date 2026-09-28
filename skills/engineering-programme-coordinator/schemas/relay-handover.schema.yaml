@@ -33,6 +33,15 @@ properties:
     minLength: 1
   observed_main:
     type: [string, 'null']
+  reconstruction:
+    type: object
+    additionalProperties: false
+    properties:
+      original_intent_ref: {type: [string, 'null']}
+      latest_programme_reconciliation_ref: {type: [string, 'null']}
+      roadmap_refs:
+        type: array
+        items: {type: string, minLength: 1}
   workstreams:
     type: array
     items:
@@ -65,6 +74,34 @@ properties:
         base: {type: [string, 'null']}
         exact_head: {type: [string, 'null']}
         task_snapshot_ref: {type: [string, 'null']}
+        reconstruction:
+          type: object
+          additionalProperties: false
+          properties:
+            latest_reconciliation_ref: {type: [string, 'null']}
+            primary_conversation_refs:
+              type: array
+              items: {type: string, minLength: 1}
+            local_agent_refs:
+              type: array
+              items: {type: string, minLength: 1}
+            rll_refs:
+              type: array
+              items: {type: string, minLength: 1}
+        continuity:
+          type: object
+          additionalProperties: false
+          properties:
+            ref: {type: [string, 'null']}
+            custody_epoch: {type: [integer, 'null'], minimum: 1}
+            executor: {type: [string, 'null']}
+            status: {enum: [ACTIVE, HANDOFF_READY, COMPLETE, SUPERSEDED, BLOCKED, UNKNOWN]}
+            continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
+            exact_head: {type: [string, 'null']}
+            predecessor_ref: {type: [string, 'null']}
+            further_tasks:
+              type: array
+              items: {type: string, pattern: '^FT-[1-9][0-9]*-[1-9][0-9]*$'}
         completion:
           type: object
           additionalProperties: false

@@ -34,7 +34,7 @@ class TaskBindingValidationTests(unittest.TestCase):
         issue: int = 265,
         head: str = "head-270",
         common_sha: str | None = None,
-        two_pass_revision: str = "TPG-2P-2026-09-25-R1",
+        two_pass_revision: str = "TPG-2P-2026-09-28-R3",
     ) -> None:
         path = root / "relay/GENERATED/tasks/ISSUE-265.snapshot.yaml"
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -132,7 +132,7 @@ class TaskBindingValidationTests(unittest.TestCase):
                     270,
                     "head-270",
                     expected_common_sha=live_sha,
-                    expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+                    expected_two_pass_revision="TPG-2P-2026-09-28-R3",
                 ),
             )
 
@@ -143,7 +143,7 @@ class TaskBindingValidationTests(unittest.TestCase):
                 270,
                 "head-270",
                 expected_common_sha=stale,
-                expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+                expected_two_pass_revision="TPG-2P-2026-09-28-R3",
             )
             self.assertIn("not on the live V3.1 protocol basis", errors[0])
             self.assertTrue(any("stale" in row for row in errors))
@@ -158,7 +158,7 @@ class TaskBindingValidationTests(unittest.TestCase):
                 270,
                 "head-270",
                 expected_common_sha="c" * 40,
-                expected_two_pass_revision="TPG-2P-2026-09-25-R1",
+                expected_two_pass_revision="TPG-2P-2026-09-28-R3",
             )
             self.assertIn("not on the live V3.1 protocol basis", errors[0])
             self.assertTrue(any("missing protocol_basis" in row for row in errors))

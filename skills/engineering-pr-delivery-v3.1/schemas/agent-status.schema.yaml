@@ -1,0 +1,179 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - marker
+  - agent
+  - protocol_basis
+  - responsibility
+  - plan
+  - material
+  - current
+  - completed
+  - further_tasks
+  - pending_items
+  - reasoning_refs
+  - offloads
+  - rll
+  - delivery
+  - handover
+  - negative_knowledge
+  - updated_at
+properties:
+  schema_version: {const: relay-v3.1-agent-status}
+  authority: {const: DERIVED_EXECUTION_CONTINUITY}
+  marker: {const: AGENT_STATUS_V1}
+  agent:
+    type: object
+    additionalProperties: false
+    required: [executor, custody_epoch, continuation, status]
+    properties:
+      executor: {type: string, minLength: 1}
+      custody_epoch: {type: integer, minimum: 1}
+      continuation: {enum: [NEW, HANDOFF, RECOVERY]}
+      status: {enum: [ACTIVE, HANDOFF_READY, COMPLETE, SUPERSEDED, BLOCKED]}
+  protocol_basis:
+    type: object
+    additionalProperties: false
+    required: [protocol, common_sha, two_pass_revision]
+    properties:
+      protocol: {const: V3.1}
+      common_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+      two_pass_revision: {type: string, pattern: '^TPG-2P-'}
+  responsibility:
+    type: object
+    additionalProperties: false
+    required: [issue, ep, work_package]
+    properties:
+      issue: {type: integer, minimum: 1}
+      ep: {type: [string, 'null']}
+      work_package: {type: [string, 'null']}
+  plan:
+    type: object
+    additionalProperties: false
+    required: [implementation_plan, plan_revision, latest_plan_update, latest_task_evidence, latest_task_result]
+    properties:
+      implementation_plan: {type: [string, 'null']}
+      plan_revision: {type: [integer, 'null'], minimum: 1}
+      latest_plan_update: {type: [string, 'null']}
+      latest_task_evidence: {type: [string, 'null']}
+      latest_task_result: {type: [string, 'null']}
+  material:
+    type: object
+    additionalProperties: false
+    required: [branch, primary_pr, base, head]
+    properties:
+      branch: {type: [string, 'null']}
+      primary_pr: {type: [integer, 'null'], minimum: 1}
+      base: {type: [string, 'null']}
+      head: {type: [string, 'null']}
+  current: {type: string, minLength: 1}
+  completed:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, statement, evidence]
+      properties:
+        id: {type: string, minLength: 1}
+        statement: {type: string, minLength: 1}
+        evidence:
+          type: array
+          items: {type: string, minLength: 1}
+  further_tasks:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, state, statement, depends_on, unblock_condition, expected_evidence, target, evidence]
+      properties:
+        id: {type: string, pattern: '^FT-[1-9][0-9]*-[1-9][0-9]*$'}
+        state: {enum: [PENDING, ACTIVE, BLOCKED, DONE, SUPERSEDED, NOT_APPLICABLE]}
+        statement: {type: string, minLength: 1}
+        depends_on: {type: [string, 'null']}
+        unblock_condition: {type: [string, 'null']}
+        expected_evidence: {type: [string, 'null']}
+        target: {type: [string, 'null']}
+        evidence:
+          type: array
+          items: {type: string, minLength: 1}
+        reason_class:
+          enum: [CURRENT_TASK, UPSTREAM_DEPENDENCY, SIBLING_WORKSTREAM, PREEXISTING_UNRELATED, INFRASTRUCTURE, PROVIDER, OWNER_DECISION, UNKNOWN]
+  pending_items:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, state, reason_class, statement, owner, dependency, unblock_condition, expected_next_observable, evidence_refs]
+      properties:
+        id: {type: string, pattern: '^PEND-[1-9][0-9]*-[1-9][0-9]*$'}
+        state: {enum: [PENDING, BLOCKED, CLEARED, SUPERSEDED]}
+        reason_class:
+          enum: [CURRENT_TASK, UPSTREAM_DEPENDENCY, SIBLING_WORKSTREAM, PREEXISTING_UNRELATED, INFRASTRUCTURE, PROVIDER, OWNER_DECISION, UNKNOWN]
+        statement: {type: string, minLength: 1}
+        owner: {type: [string, 'null']}
+        dependency: {type: [string, 'null']}
+        unblock_condition: {type: [string, 'null']}
+        expected_next_observable: {type: [string, 'null']}
+        evidence_refs:
+          type: array
+          items: {type: string, minLength: 1}
+  reasoning_refs:
+    type: array
+    items: {type: string, minLength: 1}
+  offloads:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, provider_issue, state, engineering_result, latest_result_ref, consumer_consequence]
+      properties:
+        id: {type: string, minLength: 1}
+        provider_issue: {type: [integer, 'null'], minimum: 1}
+        state: {enum: [REQUESTED, ACTIVE, RETURNED, BLOCKED, ACCEPTED, CANCELLED]}
+        engineering_result: {enum: [PASS, PARTIAL, FAIL, NOT_RUN, UNKNOWN]}
+        latest_result_ref: {type: [string, 'null']}
+        consumer_consequence: {type: [string, 'null']}
+  rll:
+    type: object
+    additionalProperties: false
+    required: [transport, state, execution_ref, worker_state_ref, engineering_result]
+    properties:
+      transport: {enum: [NONE, RLL-1]}
+      state: {enum: [NOT_ACTIVE, READY, ACTIVE, RETRY_WAIT, REVIEW_READY, ESCALATION_REQUIRED]}
+      execution_ref: {type: [string, 'null']}
+      worker_state_ref: {type: [string, 'null']}
+      engineering_result: {enum: [NOT_RUN, PASS, PARTIAL, FAIL, UNKNOWN]}
+  delivery:
+    type: object
+    additionalProperties: false
+    required: [lifecycle, relationship, related_prs]
+    properties:
+      lifecycle: {enum: [NONE, DRAFT, OPEN, REVIEW_READY, CHANGES_REQUESTED, CONFLICTED, MERGED, CLOSED, UNKNOWN]}
+      relationship: {enum: [PRIMARY, STACK_PARENT, STACK_CHILD, RELATED]}
+      related_prs:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [pr, relationship, lifecycle]
+          properties:
+            pr: {type: integer, minimum: 1}
+            relationship: {enum: [PRIMARY, STACK_PARENT, STACK_CHILD, RELATED]}
+            lifecycle: {enum: [NONE, DRAFT, OPEN, REVIEW_READY, CHANGES_REQUESTED, CONFLICTED, MERGED, CLOSED, UNKNOWN]}
+            head: {type: [string, 'null']}
+  handover:
+    type: object
+    additionalProperties: false
+    required: [predecessor_status_ref, successor_first_action]
+    properties:
+      predecessor_status_ref: {type: [string, 'null']}
+      successor_first_action:
+        type: array
+        items: {type: string, minLength: 1}
+  negative_knowledge:
+    type: array
+    items: {type: string, minLength: 1}
+  updated_at: {type: string, format: date-time}

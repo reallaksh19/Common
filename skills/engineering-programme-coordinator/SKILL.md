@@ -67,8 +67,12 @@ Parent programme issue
 = governing human/programme contract
   + durable programme specification
 
+[Original Intent] child issue, when direct Owner source exists
+= verbatim historical Owner source / supplied inputs / ideas / expected outputs
+= no EP / no execution lifecycle
+
 Owner-authorized amendments/comments
-= durable semantic changes, transfers, decisions and evidence chronology
+= durable current semantic changes, transfers, decisions and evidence chronology
 
 Dedicated [Relay Handover] child issue
 = current operational ledger / reconstruction index
@@ -147,7 +151,11 @@ At bootstrap, verify that this issue exists. If an active programme has no Hando
 
 It is the durable current operational index for:
 
-- workstreams / agents;
+- Original Intent ref and latest programme reconciliation ref;
+- workstreams / EPs;
+- latest responsibility reconciliation / primary-conversation refs;
+- Local Agent / OFFLOAD refs;
+- RLL execution/state refs when relevant;
 - implementation-plan refs/revisions;
 - branch/PR/exact-head material;
 - expected next observables;
@@ -164,6 +172,8 @@ It is the durable current operational index for:
 Use `templates/relay-handover.md` and `schemas/relay-handover.schema.yaml`.
 
 A stale/missing Handover ledger reduces observability only. It never invalidates production work, ownership, commits, PRs or tests.
+
+Handover indexes provenance; it does not absorb it. Keep verbatim Original Intent in its source issue, primary-agent substantive reasoning on the owned work issue, Local Agent conversation/evidence on the governed offload/provider issue, and RLL transport state on the existing RLL surfaces.
 
 ## Issue responsibility contract
 

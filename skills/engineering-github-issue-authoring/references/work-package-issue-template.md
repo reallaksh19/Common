@@ -4,8 +4,10 @@ Use for a bounded engineering responsibility. For small parallel tasks prefer `p
 
 ```markdown
 ISSUE_ROLE: WORK_PACKAGE | REVISION | INTEGRATION
+AUTHORING_PROFILE: FOCUSED | DETAILED
 PROGRAMME: github:<owner>/<repo>#<parent>
 WORKSTREAM_ID: <A/B/C/...>
+ORIGINAL_INTENT_REF: github:<owner>/<repo>#<original-intent> | INHERITED_FROM_PROGRAMME
 RELAY_PROTOCOL: V3.1_ONLY
 PREDECESSOR_WORK_ITEM_KEY: NONE | github:<owner>/<repo>#<predecessor>
 
@@ -98,6 +100,19 @@ TASK_RESULT — at delivery/handoff
 ```
 
 The engineering agent authors the plan. Plan publication/revision is not approval and does not block production. Do not post every command or test retry.
+
+# Reconstruction / delegated execution refs
+
+```text
+EP:
+Latest primary-agent reconciliation:
+OFFLOAD / Local Agent refs:
+RLL execution/state refs:
+Task Snapshot:
+Relay Handover:
+```
+
+Use the owned issue for substantive primary-agent conversation. Reuse governed Local Agent/OFFLOAD provider issues and current RLL surfaces; do not create a parallel conversation ledger.
 
 # Expected handoff
 Return:

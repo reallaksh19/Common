@@ -53,8 +53,11 @@ Record internally:
 
 ```text
 ISSUE_TOPOLOGY: SINGLE_ISSUE | PROGRAM_ISSUE_SET
-CHILD_PROFILE: WORK_PACKAGE | PARALLEL_FOCUSED | REVISION | INTEGRATION | RELAY_HANDOVER
+AUTHORING_PROFILE: FOCUSED | DETAILED | PROGRAMME
+CHILD_PROFILE: WORK_PACKAGE | PARALLEL_FOCUSED | REVISION | INTEGRATION | RELAY_HANDOVER | ORIGINAL_INTENT
 ```
+
+Choose the authoring profile from reconstruction need, not issue size alone. Use `references/issue-authoring-profiles.md`. The profile is advisory authoring discipline, never an admission/permission gate.
 
 Use `PROGRAM_ISSUE_SET` when the work has multiple meaningful workstreams/agents, shared source truth, producer-consumer relationships, integration work, or a durable programme outcome that must survive several PRs.
 
@@ -63,10 +66,13 @@ Use `PARALLEL_FOCUSED` for bounded independent work such as a falsifier, stale e
 Do not split a naturally atomic task just to increase issue count.
 
 Read `references/multi-agent-program-issues.md` for program topology.
+Read `references/pr-provider-discipline.md` for advisory PR naming/body identity and completion/supersede/duplicate lifecycle semantics.
 
 Finished authoring examples:
 - `examples/programme-root.md`
+- `examples/detailed-with-original-intent.md`
 - `examples/parallel-focused.md`
+- `examples/original-intent.md`
 
 Cross-skill output index:
 - `../engineering-programme-coordinator/references/OUTPUT_EXAMPLE_INDEX.md`
@@ -94,6 +100,20 @@ VALIDATION MATRIX
 APPENDIX A — FIVE IMPLEMENTATION QUESTIONS
 ```
 
+### Original Intent capture for a direct Owner-derived issue
+
+When actual issue creation is requested and the bounded issue originates from a direct Owner instruction available in the current source conversation:
+
+1. create the engineering issue;
+2. create one child/sub-issue titled `[Original Intent] <engineering issue title>`;
+3. copy the relevant Owner instruction verbatim using `references/original-intent-issue-template.md`, subject only to sensitive-data redaction;
+4. record the Original Intent issue ref/digest on the engineering issue;
+5. keep later Owner decisions/amendments on the engineering issue rather than rewriting the historical source.
+
+If the raw source is genuinely unavailable, record `ORIGINAL_INTENT_ISSUE: NOT_AVAILABLE_FROM_CURRENT_SOURCE` rather than inventing verbatim history.
+
+The Original Intent child has no EP, implementation plan, Local Agent execution or RLL lifecycle.
+
 ## 6. Program issue-set architecture
 
 For complicated multi-agent work, use:
@@ -103,14 +123,23 @@ PARENT / PROGRAM ISSUE
   = governing human/programme contract
   + durable Programme Specification
 
+  ├─ [Original Intent] child
+  │    = verbatim historical Owner source + supplied inputs/ideas/expected outputs
+  │    = NO EP / NO execution lifecycle
+  │
   ├─ [Relay Handover] child
   │    = current operational ledger / reconstruction index
   │
   ├─ WORK_PACKAGE or PARALLEL_FOCUSED child
-  ├─ WORK_PACKAGE or PARALLEL_FOCUSED child
+  │    = EP responsibility + primary-agent semantic conversation/publications
+  │    ├─ governed Local Agent/OFFLOAD provider sub-issue when used
+  │    └─ RLL transport state on the governed issue when used
+  │
   ├─ REVISION child when completed work is materially revised
   └─ INTEGRATION/VALIDATION child when cross-workstream closure is required
 ```
+
+Do not replace existing Roadmap / EP / OFFLOAD-LOCAL / RLL / Handover semantics with a new conversation state machine. The only new source role is `ORIGINAL_INTENT`, used when raw direct Owner intent is available and materially useful to reconstruction.
 
 Owner-authorized comments/amendments on the parent preserve semantic changes, transfers, decisions and evidence chronology. The parent should maintain a compact effective-amendment index so a coordinator does not need to replay all comments to reconstruct current programme meaning.
 
@@ -214,14 +243,16 @@ When actual issue creation is requested:
 1. Draft/audit the parent Programme Specification with stable `PROGRAM_ID`, basis revision, Owner outcome, canonical inputs, workstream registry, producer/consumer contracts, dependency contracts and programme exit criteria.
 2. Create the parent issue.
 3. Resolve the parent GitHub reference.
-4. Create one dedicated child issue titled `[Relay Handover] <programme title>` using the coordinator's Handover template.
-5. Create bounded child issues with `WORK_PACKAGE` or `PARALLEL_FOCUSED` profiles as appropriate.
-6. Record each child in the parent workstream registry.
-7. Put agent-authored implementation plans in the child issue/comment once available; plan absence is visible but never an execution gate.
-8. Use PRs/commits/tests/artifacts as material truth and carry every nonterminal PR in the Handover ledger.
-9. Maintain current operational context in the Handover child rather than rewriting the parent contract for ordinary churn.
-10. Use Owner-authorized parent amendments for real semantic changes; update the effective-amendment index.
-11. Use V3.1 only for recorder/reconstruction/reporting semantics when needed.
+4. When the work originates from direct Owner instruction and the raw source is available, create one `[Original Intent] <programme title>` child using `references/original-intent-issue-template.md`. Preserve the relevant Owner instruction verbatim, subject only to sensitive-data redaction. Record the child ref/digest on the parent.
+5. Create one dedicated child issue titled `[Relay Handover] <programme title>` using the coordinator's Handover template.
+6. Create bounded child issues with `WORK_PACKAGE` or `PARALLEL_FOCUSED` profiles as appropriate.
+7. Record each child in the parent workstream registry.
+8. Put agent-authored implementation plans and substantive responsibility-scoped conversation records on the owned child issue once available. Plan absence is visible but never an execution gate.
+9. Reuse existing Local Agent/OFFLOAD provider sub-issues for helper conversation/evidence. Reuse existing RLL issue comments/state for transport. Do not create a global duplicate conversation ledger.
+10. Use PRs/commits/tests/artifacts as material truth and carry every nonterminal PR in the Handover ledger.
+11. Maintain current operational context in the Handover child rather than rewriting the parent contract for ordinary churn.
+12. Use Owner-authorized parent amendments for real semantic changes; update the effective-amendment index. Do not rewrite the Original Intent source to make history look current.
+13. Use V3.1 only for recorder/reconstruction/reporting semantics when needed.
 
 ## 10. Ground truth at issue creation
 
@@ -354,15 +385,37 @@ INHERITED_VALIDATION_SET_ID:
 INHERITED_ROADMAP_SET_ID:
 ```
 
-The parent programme and Handover issue are not execution-authority stores. V3.1 may record/reconstruct child material and handoffs, but its lease/custody/checkpoint/control data are advisory. Useful production evidence remains valid regardless of coordinator freshness.
+The parent programme, Original Intent source and Handover issue are not execution-authority stores. V3.1 may record/reconstruct child material and handoffs, but its lease/custody/checkpoint/control data are advisory. Useful production evidence remains valid regardless of coordinator freshness.
+
+### Reconstruction topology
+
+For a zero-context successor, preserve and traverse existing surfaces in this order when relevant:
+
+```text
+Original Intent source
+→ current Owner/Roadmap basis + explicit amendments
+→ EP / owned child responsibility
+→ relevant primary-agent conversation + task publications
+→ Local Agent/OFFLOAD provider sub-issues
+→ RLL execution/state/results
+→ PR/test/runtime material truth
+→ Task Snapshot / Relay Handover
+```
+
+Use `references/conversation-record-format.md` for substantive primary-agent conversation. A Local Agent/helper record belongs on its existing governed offload/provider issue. RLL timer/lease chatter remains transport metadata and must not be copied into semantic history.
 
 ## 18. Quality audit before issue creation
 
 Verify at minimum:
 
 ```text
-[ ] topology classified correctly
+[ ] topology + FOCUSED/DETAILED/PROGRAMME authoring profile classified correctly
 [ ] mission/original task not diluted
+[ ] Original Intent source created/linked when direct raw Owner intent is available; if unavailable, absence is stated rather than reconstructed from memory
+[ ] Original Intent is historical source only: NO EP / NO implementation lifecycle
+[ ] existing Roadmap / EP / OFFLOAD-LOCAL / RLL / Handover topology is preserved rather than duplicated
+[ ] implementation PR identity exposes owned issue / EP / plan / AGENT_STATUS / delivery relationship when applicable
+[ ] PR title/branch guidance remains advisory and never encodes PASS/READY/FINAL lifecycle as engineering truth
 [ ] live creation-time SHA recorded
 [ ] Owner/roadmap/source authority explicit
 [ ] INPUT/BM/VAL/RM ledgers itemized where applicable
@@ -387,4 +440,4 @@ Run `scripts/validate_issue_workorder.py` on drafts when a repository-capable en
 
 ## 19. User-visible result
 
-When actual creation is requested, return the parent issue, dedicated [Relay Handover] issue, child issue links, ownership/dependency plan, canonical input summary, producer/consumer relationships and any material uncertainties. Include implementation reasoning questions only when they materially help the task. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.
+When actual creation is requested, return the engineering/programme issue, linked [Original Intent] source when created, dedicated [Relay Handover] issue for multi-agent programmes, child issue links, ownership/dependency plan, canonical input summary, producer/consumer relationships and any material uncertainties. Include implementation reasoning questions only when they materially help the task. Do not merge implementation PRs or mutate Owner roadmaps as a side effect of issue creation.

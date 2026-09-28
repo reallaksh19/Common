@@ -77,12 +77,73 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
             "protocol": "V3.1",
             "common_repository": "reallaksh19/Common",
             "common_sha": "a" * 40,
-            "two_pass_revision": "TPG-2P-2026-09-25-R1",
+            "two_pass_revision": "TPG-2P-2026-09-28-R3",
         }
         self.assertEqual([], validate_schema("task-snapshot", task, "protocol-basis-task"))
         text = render(task)
         self.assertIn("Protocol basis: V3.1 — Common@" + ("a" * 40), text)
-        self.assertIn("TPG-2P-2026-09-25-R1", text)
+        self.assertIn("TPG-2P-2026-09-28-R3", text)
+
+    def test_reconstruction_context_is_reference_only_and_visible(self):
+        task = self.assert_valid("active-task")
+        task["reconstruction_context"] = {
+            "original_intent": {
+                "repository": "example/repo",
+                "issue_number": 90,
+                "url": "https://github.com/example/repo/issues/90",
+                "source_ref": "github:example/repo#90/body",
+                "digest": "sha256:" + ("b" * 64),
+            },
+            "latest_reconciliation": {
+                "ref": "github:example/repo#101/comment-12",
+                "observed_at": "2026-09-28T10:00:00Z",
+                "summary": "Original intent and current responsibility remain aligned.",
+            },
+            "primary_conversation_refs": ["github:example/repo#101/comment-10"],
+            "roadmap_refs": ["RM-101"],
+            "local_agent_refs": ["github:example/repo#105"],
+            "rll_refs": ["github:example/repo#101/comment-rll"],
+        }
+        self.assertEqual([], validate_schema("task-snapshot", task, "reconstruction-context-task"))
+        text = render(task)
+        self.assertIn("Original Intent: example/repo#90", text)
+        self.assertIn("Latest reconciliation: github:example/repo#101/comment-12", text)
+        self.assertIn("Primary conversation: github:example/repo#101/comment-10", text)
+        self.assertIn("Local Agent / OFFLOAD: github:example/repo#105", text)
+        self.assertIn("RLL: github:example/repo#101/comment-rll", text)
+        self.assertNotIn("Original intent and current responsibility remain aligned.", text)
+
+    def test_agent_continuity_is_reference_only_and_visible(self):
+        task = self.assert_valid("active-task")
+        task["continuity"] = {
+            "current": {
+                "ref": "github:example/repo#101/comment-status",
+                "custody_epoch": 3,
+                "executor": "agent-b",
+                "status": "ACTIVE",
+                "continuation": "RECOVERY",
+                "exact_head": "head-101",
+                "updated_at": "2026-09-28T11:35:00Z",
+            },
+            "further_tasks": [
+                {
+                    "id": "FT-101-1",
+                    "state": "BLOCKED",
+                    "statement": "Run exact-head browser certification.",
+                    "reason_class": "INFRASTRUCTURE",
+                    "dependency": "#105",
+                    "expected_next_observable": "Exact-head browser evidence.",
+                }
+            ],
+            "predecessor_ref": "github:example/repo#101/comment-old-status",
+        }
+        self.assertEqual([], validate_schema("task-snapshot", task, "continuity-task"))
+        text = render(task)
+        self.assertIn("Agent continuity: ACTIVE / RECOVERY epoch 3", text)
+        self.assertIn("Status ref: github:example/repo#101/comment-status", text)
+        self.assertIn("FT-101-1", text)
+        self.assertIn("INFRASTRUCTURE", text)
+        self.assertIn("Predecessor: github:example/repo#101/comment-old-status", text)
 
     def test_delivery_stack_renders_without_replacing_primary_delivery(self):
         task = self.assert_valid("active-task")

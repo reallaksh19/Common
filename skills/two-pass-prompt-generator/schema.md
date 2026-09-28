@@ -14,7 +14,7 @@ A generated artifact must begin with:
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-2P-2026-09-25-R1
+TPG-2P-2026-09-28-R3
 
 GENERATOR MODE:
 TWO_PASS_ONLY
@@ -85,11 +85,81 @@ Pass 2 receives:
 - the actual Pass-1 baseline;
 - the actual next issue/task;
 - current repository/application/provider evidence;
-- programme/Owner constraints and approved authority.
+- programme/Owner constraints and approved authority;
+- the linked Original Intent source when one exists;
+- current Roadmap/programme basis and explicit Owner amendments;
+- the current EP/owned responsibility;
+- relevant primary-agent conversation/reconciliation refs;
+- latest AGENT_STATUS_V1 / Further task continuity when one exists;
+- relevant Local Agent/OFFLOAD provider refs;
+- relevant RLL execution/state refs;
+- current Task Snapshot and [Relay Handover] refs.
 
-The future agent must first refresh live reality, then step back far enough to challenge the task's assumptions without expanding ownership.
+The future agent must first refresh live reality, then reconstruct **authority and provenance in order** rather than treating all historical text as equally authoritative:
 
-#### A. High-ROI improvement scan
+```text
+Original Intent historical source
+→ current Owner/Roadmap authority + amendments
+→ current EP / owned issue responsibility
+→ relevant primary-agent reasoning
+→ latest AGENT_STATUS_V1 / Further task
+→ Local Agent / OFFLOAD evidence
+→ RLL transport state/results
+→ current PR/test/runtime material truth
+→ current Task Snapshot / Handover index
+```
+
+Historical Original Intent explains what the Owner originally meant; later explicit Owner amendments may supersede current meaning. Agent reasoning is not Owner authority. AGENT_STATUS_V1 is derived execution continuity only: it tells the successor where the predecessor believed execution stood, but every unresolved FT-* item must be revalidated against live provider/material truth before continuation. Local Agent evidence is scoped to its offload. RLL is transport and never proves engineering acceptance by itself.
+
+#### A. Step-back reconciliation
+
+Before proposing improvements, emit:
+
+```text
+STEP-BACK RECONCILIATION
+
+PRESERVED
+Original intent/current requirement still represented correctly.
+
+SATISFIED
+Original/current expectation already proved by live evidence.
+
+MISSING
+Owner intent/input/expected output is absent from the current issue/plan.
+
+DRIFTED
+Current issue/plan has moved away from the still-effective Owner intent.
+
+SUPERSEDED_BY_OWNER
+A later explicit Owner decision intentionally replaced the earlier meaning.
+
+ROADMAP_CHANGED
+Current Roadmap/programme authority changed the execution/consumer consequence.
+
+EP_ASSUMPTION_ONLY
+A prior engineering-agent assumption exists but was never Owner/programme authority.
+
+LOCAL_AGENT_FINDING
+A delegated/helper result changes or constrains current reasoning.
+
+RLL_TRANSPORT_ONLY
+Observed RLL state is operational transport context, not acceptance evidence.
+
+REALITY_CORRECTION
+Live repository/app/material truth contradicts an earlier Owner/agent assumption.
+
+UNRESOLVED
+Evidence or human judgement is still genuinely missing.
+
+CONSEQUENCE
+NONE | ISSUE_CLARIFICATION | IMPROVEMENT_PROPOSAL |
+PLAN_CHANGE | ROADMAP_PROPOSAL | SEPARATE_RESPONSIBILITY |
+OWNER_DECISION_REQUIRED
+```
+
+Include only classifications that materially apply. Cite refs/evidence; do not copy full conversation transcripts into the reconciliation.
+
+#### B. High-ROI improvement scan
 
 Find **zero or more** legitimate improvements. Prefer no proposal to a speculative proposal.
 
@@ -151,7 +221,7 @@ IN_SCOPE | ADJACENT | UNRELATED | FALSIFIED
 
 The score is a relative heuristic; concrete before/after quantities are more important.
 
-#### B. Reconcile the actual task
+#### C. Reconcile the actual task
 
 Determine from live evidence:
 
@@ -161,7 +231,7 @@ Determine from live evidence:
 - which proposals are actually in scope;
 - which approved adjacent proposals require a separate child responsibility/EP rather than contaminating the issue.
 
-#### C. Draft plan in chat
+#### D. Draft plan in chat
 
 Before any durable issue mutation, EP creation/binding, branch/PR creation, or material implementation, show:
 
@@ -194,7 +264,7 @@ APPROVAL REQUIRED
 No durable plan publication, EP creation/binding, or material implementation has been performed from this proposal response.
 ```
 
-#### D. After explicit Owner approval — same Pass 2
+#### E. After explicit Owner approval — same Pass 2
 
 This is a continuation of Pass 2, not a third pass.
 
@@ -235,6 +305,10 @@ Pass 1 must not contain:
 - current branch/PR status;
 - issue acceptance criteria;
 - the hidden task title;
+- Original Intent issue/content;
+- prior primary-agent conversation/reconciliation;
+- AGENT_STATUS_V1 / Further task continuity;
+- Local Agent/OFFLOAD or RLL task history;
 - "Improvement Proposal";
 - implementation-plan instructions;
 - proposed next action;
@@ -245,6 +319,16 @@ The generator may know these internally; it must quarantine them until Pass 2.
 ## Pass-2 evidence rule
 
 Pass 2 must tell the future agent to distrust stale prose when live provider/material evidence is available. Historical handoff explains what to inspect next; live reality determines what is true now.
+
+Pass 2 must distinguish provenance from authority:
+- Original Intent = historical Owner source;
+- later explicit Owner/Roadmap amendments = current semantic authority when applicable;
+- primary/local-agent reasoning = non-authoritative reasoning/evidence unless adopted by Owner/programme authority;
+- AGENT_STATUS_V1 = mutable derived execution continuity; stale status never outranks Git/material truth;
+- unresolved FT-* = predecessor continuity hints that a successor must revalidate before continuing;
+- RLL = transport state;
+- PR/tests/runtime/artifacts = material truth;
+- Task Snapshot/Handover = derived/indexing views.
 
 ## Approval rule
 

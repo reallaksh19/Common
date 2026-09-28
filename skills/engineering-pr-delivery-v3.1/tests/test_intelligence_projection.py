@@ -336,6 +336,24 @@ class IntelligenceProjectionTests(unittest.TestCase):
                     ],
                 },
                 "updates": [{"ref": "issuecomment-1", "type": "STATUS", "summary": "Host parity accepted.", "effect": ["PI-175-01 COMPLETE"]}],
+                "reconstruction_context": {
+                    "original_intent": {
+                        "repository": "example/repo",
+                        "issue_number": 170,
+                        "url": "https://github.com/example/repo/issues/170",
+                        "source_ref": "github:example/repo#170/body",
+                        "digest": "sha256:" + ("a" * 64),
+                    },
+                    "latest_reconciliation": {
+                        "ref": "github:example/repo#175/comment-reconcile",
+                        "observed_at": "2026-09-22T08:58:00Z",
+                        "summary": "Current issue still owns the focused follow-up.",
+                    },
+                    "primary_conversation_refs": ["github:example/repo#175/comment-context"],
+                    "roadmap_refs": ["RM-175"],
+                    "local_agent_refs": ["github:example/repo#180"],
+                    "rll_refs": ["github:example/repo#175/comment-rll-state"],
+                },
                 "disposition": "TRANSFER",
                 "relationships": [{
                     "type": "TRANSFERS_TO",
@@ -388,6 +406,13 @@ class IntelligenceProjectionTests(unittest.TestCase):
                 task["planning"]["expected_next_observable"]["statement"],
             )
             self.assertEqual("IMPLEMENTATION_PLAN", task["task_publications"][0]["type"])
+            self.assertEqual(170, task["reconstruction_context"]["original_intent"]["issue_number"])
+            self.assertEqual(
+                "github:example/repo#175/comment-reconcile",
+                task["reconstruction_context"]["latest_reconciliation"]["ref"],
+            )
+            self.assertEqual(["RM-175"], task["reconstruction_context"]["roadmap_refs"])
+            self.assertEqual(["github:example/repo#180"], task["reconstruction_context"]["local_agent_refs"])
 
     def test_task_snapshot_separates_programme_child_plan_verification_and_delivery(self):
         with tempfile.TemporaryDirectory() as td:

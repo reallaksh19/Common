@@ -46,6 +46,24 @@ def parent_observation() -> dict:
             ],
         },
         "updates": [],
+        "reconstruction_context": {
+            "original_intent": {
+                "repository": "example/repo",
+                "issue_number": 1700,
+                "url": "https://github.com/example/repo/issues/1700",
+                "source_ref": "github:example/repo#1700/body",
+                "digest": DIGEST,
+            },
+            "latest_reconciliation": {
+                "ref": "github:example/repo#1771/comment-11",
+                "observed_at": "2026-09-22T13:58:00Z",
+                "summary": "Programme intent remains aligned.",
+            },
+            "primary_conversation_refs": ["github:example/repo#1771/comment-8"],
+            "roadmap_refs": ["RM-1771"],
+            "local_agent_refs": [],
+            "rll_refs": [],
+        },
         "disposition": "NO_CHANGE",
         "relationships": [],
         "handover_ledger": {
@@ -169,6 +187,11 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 validate_schema("handover-ledger", canonical_ledger, "CANONICAL_HANDOVER_LEDGER"),
             )
             self.assertEqual(1870, ledger["handover_issue"]["number"])
+            self.assertEqual(1700, ledger["reconstruction_context"]["original_intent"]["issue_number"])
+            self.assertEqual(
+                "github:example/repo#1771/comment-11",
+                ledger["reconstruction_context"]["latest_reconciliation"]["ref"],
+            )
 
             by_ep = {row["ep"]: row for row in ledger["ep_index"]}
             self.assertEqual("ACTIVE", by_ep["EP-TA-011"]["status"])
@@ -190,6 +213,10 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
 
             body = render_ledger(ledger)
             parent = render_parent_summary(ledger)
+            self.assertIn("## Reconstruction context", body)
+            self.assertIn("Original Intent: example/repo#1700", body)
+            self.assertIn("github:example/repo#1771/comment-11", body)
+            self.assertNotIn("Programme intent remains aligned.", body)
             self.assertIn("## EP index", body)
             self.assertIn("EP-TA-009", body)
             self.assertIn("RECOVERY_REQUIRED", body)
@@ -197,6 +224,20 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertIn("KI.1771.1", body)
             self.assertIn("Handover ledger: example/repo#1870", parent)
             self.assertIn("Recovery-required EPs: 1", parent)
+
+    def test_legacy_observation_without_reconstruction_context_remains_valid(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            observation = parent_observation()
+            observation.pop("reconstruction_context", None)
+
+            ledger = build(root, observation, base_ref=base_ref)
+
+            self.assertIsNone(ledger.get("reconstruction_context"))
+            body = render_ledger(ledger)
+            self.assertIn("Original Intent: NONE", body)
+            self.assertIn("Latest reconciliation: NONE", body)
 
     def test_programme_ledger_can_root_at_parent_while_task_plan_lives_on_child_issue(self):
         with tempfile.TemporaryDirectory() as td:
@@ -256,6 +297,40 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 "head": "head-sha",
                 "mergeability": "MERGEABLE",
             }
+            work["reconstruction_context"] = {
+                "original_intent": None,
+                "latest_reconciliation": {
+                    "ref": "github:example/repo#1772/comment-reconcile",
+                    "observed_at": "2026-09-22T14:01:00Z",
+                    "summary": "Child responsibility remains bounded.",
+                },
+                "primary_conversation_refs": ["github:example/repo#1772/comment-context"],
+                "roadmap_refs": [],
+                "local_agent_refs": [],
+                "rll_refs": [],
+            }
+            work["continuity"] = {
+                "current": {
+                    "ref": "github:example/repo#1772/comment-status",
+                    "custody_epoch": 5,
+                    "executor": "agent-next",
+                    "status": "ACTIVE",
+                    "continuation": "RECOVERY",
+                    "exact_head": "head-sha",
+                    "updated_at": "2026-09-28T11:40:00Z",
+                },
+                "further_tasks": [
+                    {
+                        "id": "FT-1772-1",
+                        "state": "PENDING",
+                        "statement": "Run final focused validation.",
+                        "reason_class": "CURRENT_TASK",
+                        "dependency": None,
+                        "expected_next_observable": "Focused validation result.",
+                    }
+                ],
+                "predecessor_ref": "github:example/repo#1772/comment-old-status",
+            }
             work["task_publications"] = [
                 {
                     "type": "IMPLEMENTATION_PLAN",
@@ -292,8 +367,20 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertEqual(237, row["delivery"]["pr"])
             self.assertEqual("base-sha", row["delivery"]["base"])
             self.assertEqual("head-sha", row["delivery"]["head"])
+            self.assertEqual(
+                "github:example/repo#1772/comment-reconcile",
+                row["reconstruction_context"]["latest_reconciliation"]["ref"],
+            )
+            self.assertEqual(
+                1700,
+                row["reconstruction_context"]["original_intent"]["issue_number"],
+            )
+            self.assertEqual(5, row["continuity"]["current"]["custody_epoch"])
+            self.assertEqual("RECOVERY", row["continuity"]["current"]["continuation"])
+            self.assertEqual("FT-1772-1", row["continuity"]["further_tasks"][0]["id"])
 
             body = render_ledger(ledger)
+            self.assertIn("github:example/repo#1772/comment-status / epoch 5 / RECOVERY / FT=FT-1772-1", body)
             self.assertIn("| OPEN | REVIEW_READY | #237 | base-sha | head-sha |", body)
 
 

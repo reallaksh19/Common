@@ -92,11 +92,67 @@ For compatibility, older EPs may have only `parent_issue`; V3.1 then treats that
 
 Pass 1 independently reconstructs the live repository/application without seeing the actual issue/task or being asked for a next action.
 
-Pass 2 receives that baseline plus the actual task, refreshes live evidence, identifies zero or more legitimate high-ROI Improvement Proposals, quantifies them, reconciles the task, and shows the Owner a draft implementation plan in chat.
+Pass 2 receives that baseline plus the actual task and refreshes live evidence.
+
+Before proposing improvements, it reconstructs the relevant hierarchy:
+
+```text
+Original Intent historical source
+→ current Owner/Roadmap authority + amendments
+→ current EP / owned issue responsibility
+→ relevant primary-agent reasoning
+→ latest AGENT_STATUS_V1 / Further task
+→ Local Agent / OFFLOAD evidence
+→ RLL transport state/results
+→ current PR/test/runtime material truth
+→ current Task Snapshot / Handover index
+```
+
+It then emits `STEP-BACK RECONCILIATION`, distinguishing preserved/satisfied/missing/drifted/superseded Owner intent, Roadmap changes, EP-only assumptions, Local Agent findings, RLL transport-only facts, reality corrections and unresolved questions. Only after that should it identify zero or more legitimate high-ROI Improvement Proposals, quantify them, reconcile the issue disposition, and show the Owner a draft implementation plan in chat.
 
 The first Pass-2 response is **not** durable engineering intent. It must stop for explicit Owner approval.
 
 After approval, the same agent refreshes volatile reality and publishes the approved implementation plan on the original owned issue. Approved in-scope IP-* proposals are embedded in that plan. Approved adjacent proposals use a separate responsibility/EP rather than silently widening the issue.
+
+## 2.1 Responsibility-scoped conversation provenance
+
+The four task publication types remain unchanged. `CONVERSATION_RECORD` is contextual provider provenance, not task-state publication.
+
+When practical, after a substantive semantic Owner↔agent exchange and before the next major material action, append a compact record to the existing responsibility-specific provider surface:
+
+- primary agent → owned child/engineering issue;
+- Local Agent/helper → governed OFFLOAD/provider sub-issue;
+- RLL → do not copy transport chatter; keep existing RLL execution/state/directive records.
+
+Persist only exchanges that materially affect intent, inputs, expected outputs, RCA, proposals, approvals/rejections, assumptions, falsifiers, reconciliation or handoff understanding.
+
+Do not archive routine commands, file reads, test retries, timer wakes or generic progress chatter.
+
+Failure/missing context capture is reconstruction debt only and does not revoke or invalidate useful material evidence.
+
+## 2.2 Mutable execution continuity — AGENT_STATUS_V1
+
+`CONVERSATION_RECORD` explains **why** reasoning/decisions happened.
+
+`AGENT_STATUS_V1` explains **where execution is now and what remains**.
+
+Keep exactly one mutable status comment per custody epoch on the owned issue. It is `DERIVED_EXECUTION_CONTINUITY`, not an engineering task publication or authority store.
+
+Recommended normalized structure lives in:
+- `templates/agent-status.md`;
+- `schemas/agent-status.schema.yaml`;
+- `scripts/agent_status.py`.
+
+Use FT-* only inside `Further task`. A successor reads predecessor status but must revalidate unresolved FT-* against live issue/PR/head/tests/artifacts before continuing.
+
+Custody transition:
+- initial executor → `NEW`;
+- graceful successor → new status comment with `HANDOFF` + predecessor ref;
+- abrupt-loss successor → new status comment with `RECOVERY` + predecessor ref.
+
+Do not mutate the predecessor status after custody changes.
+
+When responsibility completes, TASK_RESULT carries engineering outcome; status becomes `COMPLETE` and Further task is empty within that responsibility. When responsibility is genuinely replaced, TASK_RESULT records `SUPERSEDED`, status becomes `SUPERSEDED`, and the successor issue is named. Provider issue closure remains separate.
 
 ## 3. First durable agent publication — IMPLEMENTATION_PLAN
 
@@ -379,9 +435,18 @@ V3.1 may observe the child issue and expose in `TASK_SNAPSHOT`:
 protocol_basis.protocol
 protocol_basis.common_sha
 protocol_basis.two_pass_revision
+
+reconstruction_context.original_intent
+reconstruction_context.latest_reconciliation
+reconstruction_context.primary_conversation_refs[]
+reconstruction_context.roadmap_refs[]
+reconstruction_context.local_agent_refs[]
+reconstruction_context.rll_refs[]
 ```
 
-alongside:
+These are provider/evidence pointers only. Task Snapshot must not copy transcript bodies or turn historical Original Intent / agent reasoning into current authority.
+
+Alongside:
 
 ```text
 programme_parent
@@ -432,9 +497,14 @@ Narrative prose may follow the rendered snapshot for context, but it is secondar
 
 ## 9. [Relay Handover] programme ledger
 
-The programme Handover ledger should index each EP/workstream with:
+The programme Handover ledger should index programme/workstream reconstruction with:
 
-- child work issue;
+- Original Intent ref;
+- current Roadmap/programme reconciliation refs;
+- child work issue / EP;
+- latest responsibility reconciliation and substantive primary-conversation refs;
+- Local Agent / OFFLOAD provider refs;
+- RLL execution/state refs when relevant;
 - plan state/ref/revision;
 - expected next observable;
 - branch/PR/exact-head material where available;
@@ -442,7 +512,7 @@ The programme Handover ledger should index each EP/workstream with:
 - dependency/output consequences;
 - current task result/handoff.
 
-It should not duplicate full implementation-plan prose.
+It should not duplicate full implementation-plan prose, Original Intent bodies, conversation transcripts, Local Agent chatter or RLL timer/lease chatter.
 
 ## 10. Coordinator use
 

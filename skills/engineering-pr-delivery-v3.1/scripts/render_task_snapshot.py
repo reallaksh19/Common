@@ -84,6 +84,11 @@ def render(task: dict[str, Any]) -> str:
         raise ValueError("TASK_SNAPSHOT must use schema_version relay-v3.1-task-snapshot")
 
     protocol_basis = task.get("protocol_basis") or {}
+    reconstruction = task.get("reconstruction_context") or {}
+    continuity = task.get("continuity") or {}
+    current_continuity = continuity.get("current") or {}
+    original_intent = reconstruction.get("original_intent") or {}
+    latest_reconciliation = reconstruction.get("latest_reconciliation") or {}
     identity = task.get("identity") or {}
     work = task.get("parent_issue") or {}
     programme = task.get("programme_parent") or {}
@@ -118,6 +123,20 @@ def render(task: dict[str, Any]) -> str:
         + (f" — {work.get('title')}" if work.get("title") else "")
         + f" [{work.get('state') or 'UNKNOWN'}]",
         f"- Work package / EP: {identity.get('work_package') or 'NONE'} / {identity.get('ep') or 'NONE'}",
+        f"- Original Intent: "
+        + (
+            f"{original_intent.get('repository')}#{original_intent.get('issue_number')}"
+            if original_intent.get("repository") and original_intent.get("issue_number")
+            else "NONE"
+        ),
+        f"- Latest reconciliation: {latest_reconciliation.get('ref') or 'NONE'}",
+        f"- Agent continuity: "
+        + (
+            f"{current_continuity.get('status')} / {current_continuity.get('continuation')} "
+            f"epoch {current_continuity.get('custody_epoch')} — {current_continuity.get('ref')}"
+            if current_continuity
+            else "NONE"
+        ),
         f"- Plan: {planning.get('state') or 'UNKNOWN'}"
         + (f" rev {planning.get('revision')}" if planning.get("revision") is not None else "")
         + (f" — {planning.get('provider_ref')}" if planning.get("provider_ref") else ""),
@@ -140,6 +159,53 @@ def render(task: dict[str, Any]) -> str:
         f"| Programme contribution | {_axis_state(task, 'programme_contribution')} | {_progress_line(task, 'programme_progress')} |",
         f"| Provider issue | {_axis_state(task, 'provider_issue', str(work.get('state') or 'UNKNOWN'))} | {work.get('state') or 'UNKNOWN'} |",
     ]
+
+    reconstruction_refs = []
+    for label, key in (
+        ("Primary conversation", "primary_conversation_refs"),
+        ("Roadmap", "roadmap_refs"),
+        ("Local Agent / OFFLOAD", "local_agent_refs"),
+        ("RLL", "rll_refs"),
+    ):
+        refs = _items(reconstruction.get(key))
+        if refs:
+            reconstruction_refs.append(f"{label}: {', '.join(refs)}")
+
+    if original_intent.get("url"):
+        reconstruction_refs.insert(0, f"Original Intent: {original_intent.get('url')}")
+    if latest_reconciliation.get("ref"):
+        detail = str(latest_reconciliation.get("ref"))
+        if latest_reconciliation.get("observed_at"):
+            detail += f" @ {latest_reconciliation.get('observed_at')}"
+        reconstruction_refs.append(f"Latest reconciliation: {detail}")
+
+    if reconstruction_refs:
+        _bullet_section(lines, "Reconstruction references", reconstruction_refs)
+
+    if current_continuity or continuity.get("further_tasks"):
+        lines += ["", "### Execution continuity"]
+        if current_continuity:
+            lines += [
+                f"- Status ref: {current_continuity.get('ref')}",
+                f"- Executor: {current_continuity.get('executor')}",
+                f"- Custody epoch: {current_continuity.get('custody_epoch')}",
+                f"- Continuation: {current_continuity.get('continuation')}",
+                f"- Status: {current_continuity.get('status')}",
+                f"- Exact head: {current_continuity.get('exact_head') or 'NONE'}",
+                f"- Predecessor: {continuity.get('predecessor_ref') or 'NONE'}",
+            ]
+        ft_rows = [
+            row for row in (continuity.get("further_tasks") or [])
+            if isinstance(row, dict)
+        ]
+        if ft_rows:
+            lines += ["", "| Further task | State | Reason | Dependency | Expected next observable |", "| --- | --- | --- | --- | --- |"]
+            for row in ft_rows:
+                lines.append(
+                    f"| {row.get('id')} — {row.get('statement')} | {row.get('state')} | "
+                    f"{row.get('reason_class') or 'UNKNOWN'} | {row.get('dependency') or '-'} | "
+                    f"{row.get('expected_next_observable') or '-'} |"
+                )
 
     if delivery_stack:
         lines += [

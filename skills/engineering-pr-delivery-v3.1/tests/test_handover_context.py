@@ -148,7 +148,15 @@ class HandoverContextTests(unittest.TestCase):
             self.assertNotIn("branch:", blind_text.lower())
             self.assertNotIn("pull request", blind_text.lower())
             self.assertNotIn("419", blind_text)
-            self.assertEqual("TPG-2P-2026-09-25-R1", context["generator_contract"]["protocol_revision_at_freeze"])
+            self.assertNotIn("work_package", blind_text.lower())
+            self.assertNotIn("selected_frontier", blind_text.lower())
+            self.assertNotIn("acceptance_statements", blind_text.lower())
+            self.assertNotIn("Do not make V3 the default protocol in this slice.", blind_text)
+            self.assertEqual(
+                {"outcome", "roadmap_title"},
+                set(context["blind_context"]["programme"]),
+            )
+            self.assertEqual("TPG-2P-2026-09-28-R3", context["generator_contract"]["protocol_revision_at_freeze"])
 
     def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
         with tempfile.TemporaryDirectory() as td:
@@ -175,15 +183,16 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("IDLE", context["reality_context"]["execution"]["lifecycle"])
             self.assertIsNone(context["reality_context"]["execution"]["ep"])
-            self.assertEqual("WP-TA-109", context["blind_context"]["local_responsibility"]["work_package"])
+            self.assertEqual("WP-TA-109", context["reality_context"]["local_responsibility"]["work_package"])
             self.assertIn(
                 "Foundation objects validate deterministically.",
-                context["blind_context"]["local_responsibility"]["acceptance_statements"],
+                context["reality_context"]["local_responsibility"]["acceptance_statements"],
             )
             self.assertIn(
                 "Do not make V3 the default protocol in this slice.",
-                context["blind_context"]["stable_constraints"],
+                context["reality_context"]["task_constraints"],
             )
+            self.assertEqual([], context["blind_context"]["stable_constraints"])
 
     def test_complex_request_preserves_exact_two_pass_contract_and_approval_boundary(self):
         with tempfile.TemporaryDirectory() as td:
@@ -238,6 +247,112 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("V3_1", learning["improvement_view"]["source_protocol"])
             self.assertEqual("CP-TA-010", learning["improvement_view"]["checkpoint"])
             self.assertTrue(learning["improvement_view"]["digest"].startswith("sha256:"))
+            self.assertEqual(
+                {
+                    "original_intent": None,
+                    "latest_reconciliation": None,
+                    "primary_conversation_refs": [],
+                    "roadmap_refs": [],
+                    "local_agent_refs": [],
+                    "rll_refs": [],
+                },
+                learning["reconstruction_context"],
+            )
+
+    def test_reconstruction_context_is_explicit_for_pass2_and_absent_from_blind_context(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            target = load_yaml(target_observation(root))
+
+            initial, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+            )
+            task_snapshot = copy.deepcopy(initial["accumulated_learning"]["task_snapshot"]["value"])
+            task_snapshot["reconstruction_context"] = {
+                "original_intent": {
+                    "repository": "example/project",
+                    "issue_number": 1700,
+                    "url": "https://github.com/example/project/issues/1700",
+                    "source_ref": "github:example/project#1700/body",
+                    "digest": "sha256:" + ("a" * 64),
+                },
+                "latest_reconciliation": {
+                    "ref": "github:example/project#1771/comment-reconcile",
+                    "observed_at": "2026-09-28T10:00:00Z",
+                    "summary": "Current responsibility remains aligned with effective Owner intent.",
+                },
+                "primary_conversation_refs": ["github:example/project#1771/comment-context"],
+                "roadmap_refs": ["RM-1771"],
+                "local_agent_refs": ["github:example/project#1780"],
+                "rll_refs": ["github:example/project#1771/comment-rll-state"],
+            }
+            task_snapshot["continuity"] = {
+                "current": {
+                    "ref": "github:example/project#1771/comment-status",
+                    "custody_epoch": 4,
+                    "executor": "agent-successor",
+                    "status": "ACTIVE",
+                    "continuation": "RECOVERY",
+                    "exact_head": "material-head",
+                    "updated_at": "2026-09-28T10:05:00Z",
+                },
+                "further_tasks": [
+                    {
+                        "id": "FT-1771-1",
+                        "state": "PENDING",
+                        "statement": "Revalidate exact-head evidence.",
+                        "reason_class": "CURRENT_TASK",
+                        "dependency": None,
+                        "expected_next_observable": "Exact-head evidence result.",
+                    }
+                ],
+                "predecessor_ref": "github:example/project#1771/comment-old-status",
+            }
+
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+                task_snapshot_override=task_snapshot,
+                improvement_view_override=initial["accumulated_learning"]["improvement_view"]["value"],
+            )
+
+            reconstruction = context["accumulated_learning"]["reconstruction_context"]
+            self.assertEqual(1700, reconstruction["original_intent"]["issue_number"])
+            self.assertEqual(
+                "github:example/project#1771/comment-reconcile",
+                reconstruction["latest_reconciliation"]["ref"],
+            )
+            self.assertEqual(["github:example/project#1780"], reconstruction["local_agent_refs"])
+            self.assertEqual(["github:example/project#1771/comment-rll-state"], reconstruction["rll_refs"])
+            continuity = context["accumulated_learning"]["continuity"]
+            self.assertEqual(4, continuity["current"]["custody_epoch"])
+            self.assertEqual("RECOVERY", continuity["current"]["continuation"])
+            self.assertEqual("FT-1771-1", continuity["further_tasks"][0]["id"])
+
+            blind_text = yaml.safe_dump(context["blind_context"], sort_keys=True)
+            self.assertNotIn("1700", blind_text)
+            self.assertNotIn("comment-reconcile", blind_text)
+            self.assertNotIn("comment-context", blind_text)
+            self.assertNotIn("comment-rll-state", blind_text)
+            self.assertNotIn("comment-status", blind_text)
+            self.assertNotIn("FT-1771-1", blind_text)
+            self.assertEqual([], validate_visibility(context))
+
+            request = build_request(context)
+            rendered = render_request(request)
+            self.assertIn("STEP-BACK RECONCILIATION", rendered)
+            self.assertIn("Original Intent", rendered)
+            self.assertIn("Local Agent/OFFLOAD", rendered)
+            self.assertIn("RLL transport", rendered)
+            self.assertIn("AGENT_STATUS_V1", rendered)
+            self.assertIn("Further task", rendered)
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
@@ -345,7 +460,7 @@ class HandoverContextTests(unittest.TestCase):
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
             self.assertEqual(
                 "NOT_REQUIRED",
-                context["blind_context"]["programme"]["reconciliation"]["status"],
+                context["reality_context"]["programme_reconciliation"]["status"],
             )
 
     def test_closed_parent_reconciliation_debt_does_not_block_handover_recording(self):
@@ -407,7 +522,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("COMMITTED", result["status"])
 
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-            reconciliation = context["blind_context"]["programme"]["reconciliation"]
+            reconciliation = context["reality_context"]["programme_reconciliation"]
             self.assertEqual("READY", reconciliation["status"])
             self.assertEqual(
                 ["example/project#1772"],
@@ -521,7 +636,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("skills/two-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
             self.assertEqual("skills/two-pass-prompt-generator/schema.md", contract["canonical_schema"])
             self.assertEqual("skills/two-pass-prompt-generator/validate.py", contract["canonical_validator"])
-            self.assertEqual("TPG-2P-2026-09-25-R1", contract["protocol_revision_at_freeze"])
+            self.assertEqual("TPG-2P-2026-09-28-R3", contract["protocol_revision_at_freeze"])
             self.assertEqual("TWO_PASS_ONLY", contract["generator_mode"])
             self.assertTrue(contract["live_main_fetch_required"])
 
@@ -566,7 +681,7 @@ class HandoverContextTests(unittest.TestCase):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
             schema_file = proto_skills / "schema.md"
             schema_file.write_text(
-                schema_file.read_text(encoding="utf-8").replace("TPG-2P-2026-09-25-R1", "TPG-WRONG-REV"),
+                schema_file.read_text(encoding="utf-8").replace("TPG-2P-2026-09-28-R3", "TPG-WRONG-REV"),
                 encoding="utf-8",
             )
             with self.assertRaises(HandoverContextError) as cm:

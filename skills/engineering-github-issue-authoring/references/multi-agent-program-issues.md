@@ -8,14 +8,24 @@ Use this model when one Owner outcome spans several meaningful workstreams.
 PARENT PROGRAMME ISSUE
 = governing programme specification
 
+[Original Intent] CHILD
+= verbatim historical Owner source + Owner-supplied inputs/ideas/expected outputs
+= no EP / no execution lifecycle
+
 OWNER-AUTHORIZED AMENDMENTS / COMMENTS
-= durable semantic chronology
+= durable current semantic chronology
 
 [Relay Handover] CHILD
 = current operational ledger / reconstruction index
 
-CHILD IMPLEMENTATION ISSUES
-= bounded engineering responsibilities
+CHILD IMPLEMENTATION ISSUES / EPs
+= bounded engineering responsibilities + primary-agent semantic conversation/publications
+
+LOCAL AGENT / OFFLOAD PROVIDER ISSUES
+= bounded delegated request/conversation/return evidence
+
+RLL STATE ON GOVERNED ISSUE
+= already-authorized transport only
 
 PRs / commits / tests / artifacts
 = material and exact-head evidence
@@ -30,6 +40,8 @@ Use V3.1 only. V3/V2.5 are historical compatibility material, not live coordinat
 
 The parent preserves:
 
+- Original Intent child ref/digest when raw direct Owner source exists;
+- stable TASK-* Owner requirement mapping;
 - Owner outcome / why-now;
 - non-goals;
 - current programme basis revision;
@@ -71,7 +83,21 @@ SUPERSEDES
 
 Keep the parent effective-amendment index current.
 
-## 4. Dedicated [Relay Handover] child
+## 4. Original Intent child
+
+When the programme originates from direct Owner instruction and the raw source is available, create one `[Original Intent] <programme title>` child.
+
+It preserves:
+- verbatim Owner instruction;
+- supplied inputs/examples;
+- Owner ideas/hypotheses;
+- explicitly requested outputs;
+- constraints/preserve;
+- non-authoritative derived intent index.
+
+It receives no EP and does not replace later Owner amendments or current Roadmap authority.
+
+## 5. Dedicated [Relay Handover] child
 
 Create exactly one operational-ledger issue per programme.
 
@@ -95,7 +121,7 @@ It records/indexes:
 
 Its contents are evidence pointers and coordination context, not authority.
 
-## 5. Child profiles
+## 6. Child profiles
 
 ### WORK_PACKAGE
 Substantial bounded implementation or validation responsibility.
@@ -117,7 +143,7 @@ Cross-workstream consumer/closure work.
 
 Each child states outcome, witness, ownership boundary, canonical inputs, producer/consumer contract, real dependencies, independent work, falsifier, success oracle, implementation plan, expected handoff and semantic escalation.
 
-## 6. Parallelism
+## 7. Parallelism
 
 Do not predeclare a global serial/parallel lock.
 
@@ -132,7 +158,7 @@ MAY_CONFLICT_WITH <workstream>
 
 A shared file is not automatically a programme dependency. Use isolated branches/worktrees and integration where possible.
 
-## 7. Dependencies
+## 8. Dependencies
 
 Record the missing production output, not merely an issue edge.
 
@@ -148,7 +174,7 @@ consumer consequence
 
 Do not wait for producer issue closure if the required durable output already exists.
 
-## 8. Implementation plans
+## 9. Implementation plans
 
 Each agent should publish a revisable implementation plan when practical.
 
@@ -156,7 +182,7 @@ A plan is an execution baseline for reconstruction and plan-conformance reasonin
 
 Missing/stale plans reduce coordinator confidence; they never revoke engineering agency.
 
-## 9. PR/material truth
+## 10. PR/material truth
 
 PRs are implementation/exact-head validation vehicles.
 
@@ -164,16 +190,20 @@ Carry every nonterminal PR in the Handover ledger until terminal.
 
 A PR merge is not automatically a programme exit criterion.
 
-## 10. Coordinator use
+## 11. Coordinator use
 
 The coordinator joins:
 
 ```text
-parent
-+ effective amendments
+Original Intent
++ parent / Roadmap basis
++ effective Owner amendments
 + Handover
-+ child responsibility
++ child / EP responsibility
++ relevant primary-agent conversation
 + implementation plans
++ Local Agent / OFFLOAD refs
++ RLL execution/state refs when relevant
 + nonterminal PRs
 + current production evidence
 + negative knowledge
@@ -196,7 +226,7 @@ Use those to:
 
 See `engineering-programme-coordinator/references/coordinator-information-use.md`.
 
-## 11. Completion
+## 12. Completion
 
 Programme completion is determined from parent exit criteria and exact durable evidence.
 

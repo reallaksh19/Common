@@ -2,6 +2,20 @@
 
 Use this structure for substantial multi-agent engineering issues. Keep it focused on durable responsibility. Do not turn it into a live status dashboard.
 
+## Reconstruction source refs
+
+```text
+Original Intent: <ref / inherited / NONE>
+Current programme/Roadmap basis: <ref>
+EP: <ref when assigned>
+Latest responsibility reconciliation: <ref / NONE>
+Local Agent / OFFLOAD refs: <refs / NONE>
+RLL refs: <refs / NONE>
+Task Snapshot / Handover: <refs / NONE>
+```
+
+These are reconstruction pointers, not extra authority stores. Keep the actual Original Intent, Local Agent evidence and RLL state on their existing provider surfaces.
+
 ## Outcome
 
 What production capability/result should exist when this responsibility is fulfilled?

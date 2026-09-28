@@ -176,6 +176,43 @@ Begin the durable comment with the typed publication heading so reconstruction d
 
 Do not post every command, file read, test retry, timer wake or chat message.
 
+### Responsibility-scoped conversation provenance
+
+The four typed publications above remain the complete engineering-task publication set. A `CONVERSATION_RECORD` is **provider context provenance**, not a fifth task publication.
+
+Persist a substantive Owner↔agent exchange when a zero-context successor could make a materially different engineering decision because of it, for example:
+- new Owner input/source/example or expected output;
+- Owner approval, rejection or amendment;
+- RCA/architecture conclusion with downstream consequence;
+- corrected engineering assumption or important falsifier;
+- accepted/rejected Improvement Proposal;
+- takeover/handover interpretation that changes reconstruction.
+
+For the primary agent, keep the record on the owned engineering issue. For a Local Agent/helper, keep it on the existing governed OFFLOAD/provider sub-issue and reference it through `offloads[].trace_refs`. For RLL, retain the existing `RLL_EXECUTION_V1`, `RLL_WORKER_STATE_V1` and `RELAY_DIRECTIVE_V1` surfaces; do not duplicate timer/lease chatter as semantic conversation.
+
+Owner portions retain their real Owner authority/context classification. Agent reasoning remains non-authoritative unless explicitly adopted by Owner/programme authority.
+
+Missing conversation capture is reconstruction debt only. It never invalidates material work or becomes a production gate.
+
+### Mutable execution continuity — AGENT_STATUS_V1
+
+An active engineering custody epoch may maintain **one mutable `AGENT_STATUS_V1` provider comment** on the owned issue.
+
+`AGENT_STATUS_V1`:
+- authority = `DERIVED_EXECUTION_CONTINUITY`;
+- is **not** a fifth task publication;
+- answers "where is execution now and what remains?";
+- never overrides Owner/Roadmap authority, EP responsibility, plan publications, Git/material truth, tests/runtime, TASK_EVIDENCE or TASK_RESULT;
+- indexes Local Agent/OFFLOAD and RLL surfaces rather than duplicating them.
+
+Its `Further task` section uses lightweight `FT-<issue>-<serial>` IDs with states `PENDING | ACTIVE | BLOCKED | DONE | SUPERSEDED | NOT_APPLICABLE`. FT-* exists only for continuity/readback and never replaces STEP/AC/EXIT/EP/WP/OFFLOAD identities or becomes an execution gate.
+
+Update the same status comment only at meaningful execution boundaries: session start/resume, plan route change, primary PR creation, meaningful FT completion, new exact-head candidate, blocker/dependency change, Local Agent/RLL consequence change, formal handover, TASK_RESULT, COMPLETE/SUPERSEDED.
+
+For graceful handover or abrupt recovery, the successor creates a **new** AGENT_STATUS_V1 custody epoch and references the predecessor comment. The successor must revalidate every unresolved FT-* item against live provider/material truth before carrying it forward. Never edit a vanished predecessor's status record.
+
+See `templates/agent-status.md` and `schemas/agent-status.schema.yaml`.
+
 The coordinator watches the plan's **expected next observable** and reasons:
 
 ```text
@@ -430,6 +467,7 @@ A Task Snapshot must answer immediately:
 
 ```text
 WHAT IS THIS TASK?
+WHAT ORIGINAL INTENT / LATEST RECONCILIATION SHOULD A SUCCESSOR READ?
 WHAT IS DONE?
 HOW MUCH OF THE CHILD/WORK ISSUE IS ACCEPTED?
 WHAT PROGRAMME CRITERIA DOES IT SATISFY?
