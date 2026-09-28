@@ -77,12 +77,12 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
             "protocol": "V3.1",
             "common_repository": "reallaksh19/Common",
             "common_sha": "a" * 40,
-            "two_pass_revision": "TPG-2P-2026-09-28-R2",
+            "two_pass_revision": "TPG-2P-2026-09-28-R3",
         }
         self.assertEqual([], validate_schema("task-snapshot", task, "protocol-basis-task"))
         text = render(task)
         self.assertIn("Protocol basis: V3.1 — Common@" + ("a" * 40), text)
-        self.assertIn("TPG-2P-2026-09-28-R2", text)
+        self.assertIn("TPG-2P-2026-09-28-R3", text)
 
     def test_reconstruction_context_is_reference_only_and_visible(self):
         task = self.assert_valid("active-task")
