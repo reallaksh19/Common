@@ -36,7 +36,7 @@ GitHub bounded child
       |
       | RLL_EXECUTION_V1 + rll-ready
       v
-Antigravity sidecar schedule
+OS scheduler / compatibility Antigravity schedule
       |
       v
 deterministic rll_worker.py
@@ -45,7 +45,7 @@ deterministic rll_worker.py
   - Git material/workspace preparation
       |
       v
-one agy -p engineering session
+one configured engineering-executor session
       |
       v
 branch/tests/exact-head evidence
@@ -165,7 +165,7 @@ Required properties:
 - executable evidence contract;
 - no merge/release authority.
 
-The launcher creates a dedicated detached worktree and Antigravity executes the child contract there.
+The launcher creates a dedicated detached worktree and the configured executor executes the child contract there.
 
 Exit:
 
@@ -313,3 +313,18 @@ RLL-1 is ready for normal use only after evidence proves:
 ## Invariant
 
 > Automate movement of authority and evidence; do not automate creation of authority.
+
+
+## CODEX_LOCAL_V1 migration profile
+
+For Codex-backed consumers, retain the full RLL-1 control plane and replace only the engineering-executor and scheduler integration:
+
+```text
+Windows Task Scheduler
+  -> repo-local thin wrapper
+  -> Common rll_worker.py --executor codex
+  -> codex exec
+  -> Common Git/provider postflight
+```
+
+The Codex executor returns structured transport/evidence metadata; Common remains responsible for exact material observation, bounded branch push, durable evidence publication and RLL label/state mutation. Run an exact-head/read-only pilot and a native-Windows workspace-write conformance probe before any source-write pilot.
