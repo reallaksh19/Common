@@ -90,6 +90,26 @@ OWNER DECISIONS ALREADY MADE
 LIVE V3.1 BASIS
 At session start/resume and before plan/result/readiness/merge/handover semantic boundaries, resolve current `reallaksh19/Common@main`. Record the exact SHA and current Two-Pass revision. If the SHA changed, reload the live V3.1/Two-Pass contract and revalidate the pending action only.
 
+TWO-PASS / STEP-BACK RECONCILIATION
+Pass 1 remains independent from the issue/history.
+
+At Pass 2 / takeover, read relevant durable context in this order:
+
+```text
+1. Original Intent source
+2. current Owner/Roadmap basis + explicit amendments
+3. current EP / owned issue responsibility
+4. relevant primary-agent conversation/reconciliation
+5. Local Agent / OFFLOAD provider issue(s), when relevant
+6. RLL execution/state/results, when relevant
+7. current PR/tests/runtime/material truth
+8. current Task Snapshot / Relay Handover
+```
+
+Do not treat these as equal authority. Original Intent is historical Owner source; current Owner/Roadmap amendments govern current semantics; agent reasoning is non-authoritative unless adopted; Local Agent evidence is bounded; RLL is transport; material evidence proves current engineering reality.
+
+Emit `STEP-BACK RECONCILIATION` before Improvement Proposal(s), using materially applicable classes such as PRESERVED, SATISFIED, MISSING, DRIFTED, SUPERSEDED_BY_OWNER, ROADMAP_CHANGED, EP_ASSUMPTION_ONLY, LOCAL_AGENT_FINDING, RLL_TRANSPORT_ONLY, REALITY_CORRECTION and UNRESOLVED.
+
 TWO-PASS / FIRST DURABLE AGENT PUBLICATION
 When the two-pass flow is used, first show the Owner the evidence-backed Improvement Proposal(s) and DRAFT IMPLEMENTATION_PLAN in chat. Do not publish the durable plan, create/bind EPs, or materially implement from that proposal response.
 
