@@ -92,7 +92,22 @@ For compatibility, older EPs may have only `parent_issue`; V3.1 then treats that
 
 Pass 1 independently reconstructs the live repository/application without seeing the actual issue/task or being asked for a next action.
 
-Pass 2 receives that baseline plus the actual task, refreshes live evidence, identifies zero or more legitimate high-ROI Improvement Proposals, quantifies them, reconciles the task, and shows the Owner a draft implementation plan in chat.
+Pass 2 receives that baseline plus the actual task and refreshes live evidence.
+
+Before proposing improvements, it reconstructs the relevant hierarchy:
+
+```text
+Original Intent historical source
+→ current Owner/Roadmap authority + amendments
+→ current EP / owned issue responsibility
+→ relevant primary-agent reasoning
+→ Local Agent / OFFLOAD evidence
+→ RLL transport state/results
+→ current PR/test/runtime material truth
+→ current Task Snapshot / Handover index
+```
+
+It then emits `STEP-BACK RECONCILIATION`, distinguishing preserved/satisfied/missing/drifted/superseded Owner intent, Roadmap changes, EP-only assumptions, Local Agent findings, RLL transport-only facts, reality corrections and unresolved questions. Only after that should it identify zero or more legitimate high-ROI Improvement Proposals, quantify them, reconcile the issue disposition, and show the Owner a draft implementation plan in chat.
 
 The first Pass-2 response is **not** durable engineering intent. It must stop for explicit Owner approval.
 
