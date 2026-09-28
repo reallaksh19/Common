@@ -49,6 +49,13 @@ def boolv(v):
  if v.lower()=="false": return False
  raise RllError("boolean must be true/false")
 
+def normalize_local_execution_request(raw):
+ value=str(raw or "").strip()
+ if not value or value=="null": return None
+ if not re.fullmatch(r"(?:LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*|LOCAL\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)",value):
+  raise RllError("invalid local_execution_request")
+ return value
+
 def normalize_allowed_paths(raw):
  rows=[]
  for item in str(raw or "").split(";"):
@@ -92,7 +99,7 @@ def parse_exec(issue,comments,authorized):
  if mode not in MODES: raise RllError(f"unsupported mode {mode}")
  if mode=="BRANCH_RESUME" and (not d.get("branch") or not write): raise RllError("BRANCH_RESUME requires branch and material writes")
  if mode=="EXACT_HEAD_EVIDENCE" and (not d.get("head_sha") or write): raise RllError("EXACT_HEAD_EVIDENCE requires head_sha and no material writes")
- return {"repository":need(d,"repository"),"worker":need(d,"worker"),"mode":mode,"base_sha":need(d,"base_sha"),"branch":d.get("branch"),"head_sha":d.get("head_sha"),"write":write,"allowed_paths":normalize_allowed_paths(d.get("allowed_paths","")),"commit_message":d.get("commit_message","").strip()}
+ return {"repository":need(d,"repository"),"worker":need(d,"worker"),"local_execution_request":normalize_local_execution_request(d.get("local_execution_request")),"mode":mode,"base_sha":need(d,"base_sha"),"branch":d.get("branch"),"head_sha":d.get("head_sha"),"write":write,"allowed_paths":normalize_allowed_paths(d.get("allowed_paths","")),"commit_message":d.get("commit_message","").strip()}
 
 def parse_state(body):
  d=block(body,STATE)
@@ -251,6 +258,7 @@ def issue_context(issue,comments,limit=60000):
 
 def prompt(repo,n,e,notes,executor,issue,comments):
  ds="\n".join("- "+x for x in notes) or "- none"
+ request=e.get("local_execution_request") or "none"
  mode="Resume the governed branch without resetting prior legitimate work." if e["mode"]=="BRANCH_RESUME" else "Use the declared exact head for evidence only; do not change repository material."
  if executor=="codex":
   allowed="\n".join("- "+x for x in e.get("allowed_paths",[])) or "- none"
@@ -261,7 +269,7 @@ def prompt(repo,n,e,notes,executor,issue,comments):
   provider="Read the complete issue using gh and read applicable repo-local AGENTS.md/rule files. Commit bounded material when appropriate, but do not push or mutate RLL provider state."
   context=""
   path_rule=""
- return f"""You are the Engineering Relay V3.1 RLL-1 engineering executor. Repository {repo}; governing issue #{n}. RLL-1 is transport only; issue/programme/approved plan and material Git truth govern engineering. Mode {e['mode']}; base {e['base_sha']}; branch {e.get('branch')}; head {e.get('head_sha')}; writes {e['write']}. Authorized launcher-filtered directives:
+ return f"""You are the Engineering Relay V3.1 RLL-1 engineering executor. Repository {repo}; governing issue #{n}. RLL-1 is transport only; issue/programme/approved plan and material Git truth govern engineering. Local execution request correlation: {request}. This correlation is derived context only and creates no authority. Mode {e['mode']}; base {e['base_sha']}; branch {e.get('branch')}; head {e.get('head_sha')}; writes {e['write']}. Authorized launcher-filtered directives:
 {ds}
 {provider}
 {path_rule}
