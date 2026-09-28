@@ -537,3 +537,16 @@ RLL is removable without rewriting V3.1 material truth:
 The design invariant is:
 
 > Automate movement of authority and evidence; do not automate creation of authority.
+
+
+## Codex executor profile
+
+RLL-1 also supports a Codex local executor without changing the transport state machine or authority model.
+
+The normative executor profile is:
+
+`operating-model/transports/RLL-1-Codex.md`
+
+The Codex profile reuses this transport's deterministic mutex, GitHub lease/state, directives, `BRANCH_RESUME`, `EXACT_HEAD_EVIDENCE`, and review boundary. It moves provider-control/evidence publication and branch commit/push into the deterministic launcher, keeps GitHub credentials out of the Codex engineering process, requires explicit `allowed_paths` for Codex branch writes, and uses an OS-level scheduler rather than an LLM-native sidecar.
+
+Antigravity remains a legacy-compatible executor until separately retired. Executor choice never creates merge/release authority.
