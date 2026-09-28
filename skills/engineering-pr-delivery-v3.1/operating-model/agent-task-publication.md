@@ -101,6 +101,7 @@ Original Intent historical source
 → current Owner/Roadmap authority + amendments
 → current EP / owned issue responsibility
 → relevant primary-agent reasoning
+→ latest AGENT_STATUS_V1 / Further task
 → Local Agent / OFFLOAD evidence
 → RLL transport state/results
 → current PR/test/runtime material truth
@@ -128,6 +129,30 @@ Persist only exchanges that materially affect intent, inputs, expected outputs, 
 Do not archive routine commands, file reads, test retries, timer wakes or generic progress chatter.
 
 Failure/missing context capture is reconstruction debt only and does not revoke or invalidate useful material evidence.
+
+## 2.2 Mutable execution continuity — AGENT_STATUS_V1
+
+`CONVERSATION_RECORD` explains **why** reasoning/decisions happened.
+
+`AGENT_STATUS_V1` explains **where execution is now and what remains**.
+
+Keep exactly one mutable status comment per custody epoch on the owned issue. It is `DERIVED_EXECUTION_CONTINUITY`, not an engineering task publication or authority store.
+
+Recommended normalized structure lives in:
+- `templates/agent-status.md`;
+- `schemas/agent-status.schema.yaml`;
+- `scripts/agent_status.py`.
+
+Use FT-* only inside `Further task`. A successor reads predecessor status but must revalidate unresolved FT-* against live issue/PR/head/tests/artifacts before continuing.
+
+Custody transition:
+- initial executor → `NEW`;
+- graceful successor → new status comment with `HANDOFF` + predecessor ref;
+- abrupt-loss successor → new status comment with `RECOVERY` + predecessor ref.
+
+Do not mutate the predecessor status after custody changes.
+
+When responsibility completes, TASK_RESULT carries engineering outcome; status becomes `COMPLETE` and Further task is empty within that responsibility. When responsibility is genuinely replaced, TASK_RESULT records `SUPERSEDED`, status becomes `SUPERSEDED`, and the successor issue is named. Provider issue closure remains separate.
 
 ## 3. First durable agent publication — IMPLEMENTATION_PLAN
 
