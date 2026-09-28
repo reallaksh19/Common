@@ -113,6 +113,38 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
         self.assertIn("RLL: github:example/repo#101/comment-rll", text)
         self.assertNotIn("Original intent and current responsibility remain aligned.", text)
 
+    def test_agent_continuity_is_reference_only_and_visible(self):
+        task = self.assert_valid("active-task")
+        task["continuity"] = {
+            "current": {
+                "ref": "github:example/repo#101/comment-status",
+                "custody_epoch": 3,
+                "executor": "agent-b",
+                "status": "ACTIVE",
+                "continuation": "RECOVERY",
+                "exact_head": "head-101",
+                "updated_at": "2026-09-28T11:35:00Z",
+            },
+            "further_tasks": [
+                {
+                    "id": "FT-101-1",
+                    "state": "BLOCKED",
+                    "statement": "Run exact-head browser certification.",
+                    "reason_class": "INFRASTRUCTURE",
+                    "dependency": "#105",
+                    "expected_next_observable": "Exact-head browser evidence.",
+                }
+            ],
+            "predecessor_ref": "github:example/repo#101/comment-old-status",
+        }
+        self.assertEqual([], validate_schema("task-snapshot", task, "continuity-task"))
+        text = render(task)
+        self.assertIn("Agent continuity: ACTIVE / RECOVERY epoch 3", text)
+        self.assertIn("Status ref: github:example/repo#101/comment-status", text)
+        self.assertIn("FT-101-1", text)
+        self.assertIn("INFRASTRUCTURE", text)
+        self.assertIn("Predecessor: github:example/repo#101/comment-old-status", text)
+
     def test_delivery_stack_renders_without_replacing_primary_delivery(self):
         task = self.assert_valid("active-task")
         task["delivery_stack"] = [
