@@ -1,0 +1,9 @@
+{
+  "bridge_requirement": "Every declared extension must name the Core1 lesson that supplies its bridge.",
+  "core2_only_extensions": [],
+  "registry_digest": "48226b84da7728bb1c343a0c12ab320e3f61f1e314d5d18ee5b8f6fe92fda40a",
+  "registry_id": "PHY-P-I-CONCEPT-SEGREGATION-v1",
+  "rule": "A Core2 transfer page may only require capabilities that Core1 taught, unless the extra capability is declared here as a transfer extension with an explicit Core1 bridge. An undeclared extra capability fails CORE2_REQUIRES_UNTAUGHT_CONCEPT.",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS"
+}

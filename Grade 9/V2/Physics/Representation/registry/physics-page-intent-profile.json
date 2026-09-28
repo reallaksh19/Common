@@ -1,0 +1,69 @@
+{
+  "profile_id": "PHY-P-H-PAGE-INTENT-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "genericity_statement": "Primitive selection is driven by the P-F capability record's own representation requirements and structural obligations. There is no per-capability or per-topic table: a new Physics representation requirement is added here as one data row, not as a code branch.",
+  "primitive_by_representation_requirement": {
+    "MOTION_PATH_DIAGRAM": "TRAJECTORY_VIEW",
+    "MOTION_VECTOR_DIAGRAM": "VECTOR_STATE_VIEW",
+    "PHASE_STRIP": "PHASE_BOUNDARY_VIEW",
+    "SIGNED_AXIS": "SIGN_FRAME_OVERLAY",
+    "STATE_TABLE": "STATE_TABLE",
+    "RATE_TABLE": "STATE_TABLE",
+    "EQUATION_STATE_RELATION": "DIAGRAM_EQUATION_BRIDGE",
+    "POSITION_TIME_GRAPH": "POSITION_TIME_GRAPH",
+    "VELOCITY_TIME_GRAPH": "VELOCITY_TIME_GRAPH",
+    "ACCELERATION_TIME_GRAPH": "ACCELERATION_TIME_GRAPH",
+    "SIGNED_AREA_VIEW": "SLOPE_AREA_DECODER",
+    "SOURCE_GRAPH": "SLOPE_AREA_DECODER",
+    "OPTION_GRAPH_SET": "OPTION_GRAPH_SET_VIEW",
+    "TIMELINE_INTERVAL": "TIMELINE_INTERVAL_VIEW",
+    "RELATIVE_STATE_DIAGRAM": "RELATIVE_FRAME_VIEW",
+    "FREE_BODY_DIAGRAM": "FORCE_DIAGRAM",
+    "FORCE_DIAGRAM": "FORCE_DIAGRAM"
+  },
+  "anchor_primitive_by_lesson_mode": {
+    "FULL_LEARNING": "PHENOMENON_SCENE",
+    "CONCISE_VERIFY_ONLY": null,
+    "PROBE": null
+  },
+  "conditional_primitives": {
+    "multiphase": "MOTION_STRIP",
+    "model_validity": "MODEL_VALIDITY_GATE",
+    "verification": "VERIFICATION_CHECK_STRIP",
+    "misconception_repair": "MINIMAL_PHYSICS_CONTRAST"
+  },
+  "conditional_primitives_by_lesson_mode": {
+    "FULL_LEARNING": ["multiphase", "model_validity", "verification", "misconception_repair"],
+    "CONCISE_VERIFY_ONLY": ["verification"],
+    "PROBE": ["verification"]
+  },
+  "representation_obligations_never_trimmed": true,
+  "trimming_note": "P-F decides what must be teachable, so every representation requirement always receives a primitive. Lesson mode controls only which conditional primitives are added on top of the obligations: a READY_VERIFY_ONLY capability keeps its representation obligations but gains no phenomenon anchor, motion strip or misconception contrast.",
+  "page_intent_cognitive_jobs": {
+    "SEE": "Read the physical situation and the declared frame before any symbol is used.",
+    "REALIZE": "Build and translate the required representation of the state.",
+    "UNDERSTAND": "Select the relation, check its validity conditions, and verify the result."
+  },
+  "primitive_page_intent_phase": {
+    "PHENOMENON_SCENE": "SEE",
+    "SIGN_FRAME_OVERLAY": "SEE",
+    "MOTION_STRIP": "SEE",
+    "TRAJECTORY_VIEW": "REALIZE",
+    "VECTOR_STATE_VIEW": "REALIZE",
+    "PHASE_BOUNDARY_VIEW": "REALIZE",
+    "STATE_TABLE": "REALIZE",
+    "POSITION_TIME_GRAPH": "REALIZE",
+    "VELOCITY_TIME_GRAPH": "REALIZE",
+    "ACCELERATION_TIME_GRAPH": "REALIZE",
+    "SLOPE_AREA_DECODER": "REALIZE",
+    "OPTION_GRAPH_SET_VIEW": "REALIZE",
+    "TIMELINE_INTERVAL_VIEW": "REALIZE",
+    "RELATIVE_FRAME_VIEW": "REALIZE",
+    "FORCE_DIAGRAM": "REALIZE",
+    "DIAGRAM_EQUATION_BRIDGE": "UNDERSTAND",
+    "MODEL_VALIDITY_GATE": "UNDERSTAND",
+    "MINIMAL_PHYSICS_CONTRAST": "UNDERSTAND",
+    "VERIFICATION_CHECK_STRIP": "UNDERSTAND"
+  }
+}

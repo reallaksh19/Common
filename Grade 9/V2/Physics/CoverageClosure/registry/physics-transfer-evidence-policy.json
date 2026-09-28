@@ -1,0 +1,129 @@
+{
+  "closure_requires_physical_realization": true,
+  "closure_states": [
+    "CLOSED",
+    "OPEN"
+  ],
+  "coverage_dispositions": [
+    "COVERED_IN_CORE1_LESSON",
+    "COVERED_IN_CORE1_PRACTICE",
+    "COVERED_IN_CORE2_TRANSFER",
+    "EXCLUDED_BY_REVIEW",
+    "UNCOVERED"
+  ],
+  "dimension_closure_rules": {
+    "acquisition": {
+      "closable_by_event_classes": [
+        "CORE1_INDEPENDENT_ATTEMPT",
+        "CORE2_NEW_INSTANCE"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 1,
+      "minimum_successes": 1
+    },
+    "delayed_retention": {
+      "closable_by_event_classes": [
+        "DELAYED_RETRIEVAL"
+      ],
+      "minimum_delay_days": 14,
+      "minimum_distinct_instances": 2,
+      "minimum_successes": 2
+    },
+    "far_transfer": {
+      "closable_by_event_classes": [
+        "CORE2_NEW_CONTEXT"
+      ],
+      "minimum_delay_days": 7,
+      "minimum_distinct_instances": 2,
+      "minimum_successes": 2
+    },
+    "fluency": {
+      "closable_by_event_classes": [
+        "TIMED_SET"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 3,
+      "minimum_successes": 3
+    },
+    "independent_reconstruction": {
+      "closable_by_event_classes": [
+        "CORE1_INDEPENDENT_ATTEMPT"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 1,
+      "minimum_successes": 1
+    },
+    "mixed_model_discrimination": {
+      "closable_by_event_classes": [
+        "MIXED_MODEL_SET"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 2,
+      "minimum_successes": 2
+    },
+    "near_transfer": {
+      "closable_by_event_classes": [
+        "CORE2_NEW_INSTANCE"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 2,
+      "minimum_successes": 2
+    },
+    "representation_translation": {
+      "closable_by_event_classes": [
+        "CORE2_NEW_REPRESENTATION"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 2,
+      "minimum_successes": 2
+    },
+    "timed_performance": {
+      "closable_by_event_classes": [
+        "TIMED_SET"
+      ],
+      "minimum_delay_days": 0,
+      "minimum_distinct_instances": 3,
+      "minimum_successes": 3
+    }
+  },
+  "event_classes": [
+    "CORE1_INDEPENDENT_ATTEMPT",
+    "CORE2_NEW_INSTANCE",
+    "CORE2_NEW_CONTEXT",
+    "CORE2_NEW_REPRESENTATION",
+    "MIXED_MODEL_SET",
+    "DELAYED_RETRIEVAL",
+    "TIMED_SET"
+  ],
+  "longitudinal_dimensions": [
+    "acquisition",
+    "independent_reconstruction",
+    "delayed_retention",
+    "near_transfer",
+    "far_transfer",
+    "mixed_model_discrimination",
+    "representation_translation",
+    "fluency",
+    "timed_performance"
+  ],
+  "never_closable_by_single_current_success": [
+    "delayed_retention",
+    "far_transfer",
+    "mixed_model_discrimination",
+    "fluency",
+    "timed_performance",
+    "near_transfer",
+    "representation_translation"
+  ],
+  "outcomes": [
+    "CORRECT",
+    "INCORRECT",
+    "PARTIAL",
+    "NOT_ATTEMPTED"
+  ],
+  "policy_digest": "715ee58d0bf52fafd6563043db2bcb9d5bd2a767ebcca54dec7812461936f626",
+  "policy_id": "PHY-P-J-TRANSFER-EVIDENCE-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "transfer_evidence_may_shrink_assessment_scope": false
+}

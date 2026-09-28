@@ -1,0 +1,57 @@
+{
+  "first_step_reference_source": "P-D reasoning route first role plus the primary capability's frame/sign obligation.",
+  "forbidden_producer_inputs": [
+    "pr156",
+    "pull/156",
+    "mature_reference",
+    "benchmark_inputs"
+  ],
+  "genericity_statement": "Hint ladder, first-step reference and solution structure are composed from the P-D reasoning route and the P-F structural obligations of the primary capability. No per-topic hint table exists.",
+  "hint_ladder_levels": [
+    "H1_NOTICE",
+    "H2_MODEL",
+    "H3_START"
+  ],
+  "hint_level_forbidden_content": {
+    "H1_NOTICE": [
+      "RELATION",
+      "SUBSTITUTION",
+      "RESULT",
+      "OPTION_LABEL"
+    ],
+    "H2_MODEL": [
+      "SUBSTITUTION",
+      "RESULT",
+      "OPTION_LABEL"
+    ],
+    "H3_START": [
+      "RESULT",
+      "OPTION_LABEL"
+    ]
+  },
+  "hint_level_intent": {
+    "H1_NOTICE": "Direct attention to the decisive physical feature of the situation. Names no relation and no number.",
+    "H2_MODEL": "Name the physical model and the assumption that has to hold. Still performs no step.",
+    "H3_START": "Give only the first physically meaningful move. Stops before any result."
+  },
+  "hint_templates": {
+    "H1_NOTICE": "Notice {attention}. Read it from the item before choosing anything.",
+    "H2_MODEL": "Model: {model}. It holds only while {condition}.",
+    "H3_START": "First move: {first_move}. Stop there and check it before going further."
+  },
+  "profile_digest": "9d23807f464e88b50952817e9e4a36b3da37a81285628ba2417ef9f19961e434",
+  "profile_id": "PHY-P-I-CORE2-AUTHORING-v1",
+  "schema_version": "1.0.0",
+  "solution_required_sections": [
+    "SYSTEM_AND_FRAME",
+    "STATE_TABLE",
+    "MODEL_AND_VALIDITY",
+    "RELATION_CHOICE",
+    "EXECUTION",
+    "PHYSICAL_VERIFICATION",
+    "RESULT_INTERPRETATION"
+  ],
+  "solution_requires_independent_verification": true,
+  "source_body_preservation": "EXACT",
+  "subject": "PHYSICS"
+}

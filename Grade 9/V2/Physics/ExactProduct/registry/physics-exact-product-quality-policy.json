@@ -1,0 +1,121 @@
+{
+  "policy_id": "PHY-P-L-EXACT-PRODUCT-QUALITY-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "required_product_ids": [
+    "CORE_STUDY_GUIDE",
+    "TRANSFER_SOLUTION_BOOK"
+  ],
+  "required_core1_sections": [
+    "MAIN_TEACHING",
+    "APPENDIX_A_CORE_PRACTICE",
+    "APPENDIX_B_CORE_SOLUTIONS",
+    "APPENDIX_C_PRINTABLE_HANDOUT"
+  ],
+  "required_core2_sections": [
+    "TRANSFER_QUESTIONS",
+    "HINT_LADDERS",
+    "FULL_SOLUTIONS"
+  ],
+  "required_quality_states": [
+    "PUBLICATION_ENGINEERING",
+    "SUBJECT_CORRECTNESS",
+    "PEDAGOGICAL_DESIGN",
+    "ASSESSMENT_DESIGN",
+    "VISUAL_USABILITY",
+    "MATURE_DESIGN_QUALITY",
+    "REFERENCE_COMPARABILITY"
+  ],
+  "machine_settable_states": [
+    "PUBLICATION_ENGINEERING"
+  ],
+  "human_settable_states": [
+    "SUBJECT_CORRECTNESS",
+    "PEDAGOGICAL_DESIGN",
+    "ASSESSMENT_DESIGN",
+    "VISUAL_USABILITY"
+  ],
+  "derived_states": [
+    "MATURE_DESIGN_QUALITY",
+    "REFERENCE_COMPARABILITY"
+  ],
+  "required_human_roles": {
+    "SUBJECT_CORRECTNESS": "AUTHORIZED_PHYSICS_SUBJECT",
+    "PEDAGOGICAL_DESIGN": "AUTHORIZED_PEDAGOGY",
+    "ASSESSMENT_DESIGN": "AUTHORIZED_ASSESSMENT",
+    "VISUAL_USABILITY": "AUTHORIZED_VISUAL_USABILITY"
+  },
+  "human_attestation_requirements": [
+    "REVIEWER_ROLE_MUST_MATCH_THE_STATE",
+    "ATTESTATION_MUST_BIND_THE_EXACT_ARTIFACT_SHA256",
+    "ATTESTATION_REF_MUST_BE_PRESENT",
+    "AI_ASSISTED_REFERENCE_REVIEW_MAY_NEVER_SATISFY_A_HUMAN_STATE"
+  ],
+  "ai_pre_review": {
+    "review_class": "AI_ASSISTED_REFERENCE_REVIEW",
+    "authority": "ADVISORY_ONLY",
+    "may_set_human_states": false,
+    "may_set_mature_classification": false,
+    "must_bind_exact_artifact_sha256": true
+  },
+  "learning_effectiveness_states": [
+    "NOT_RUN",
+    "PILOT_EVIDENCE",
+    "STUDY_REQUIRED",
+    "VALIDATED"
+  ],
+  "learning_effectiveness_default": "STUDY_REQUIRED",
+  "minimum_font_pt": 5.5,
+  "minimum_figures_in_core1": 1,
+  "minimum_hints_per_transfer_page": 3,
+  "forbidden_runtime_reference_fragments": [
+    "pull/156",
+    "PR156",
+    "raw_pr156",
+    "mature_reference"
+  ],
+  "reference_comparator_id": "FROZEN_PR156_MATURE_DESIGN_COMPARATOR",
+  "reference_comparator_allowed_stage": "AFTER_ALL_HUMAN_GATES_PASS",
+  "mature_classification": "V2_MATURE_INSTRUCTIONAL_PRODUCT",
+  "blocked_classification": "BLOCKED_PENDING_AUTHORIZED_REVIEW_OR_EXACT_ARTIFACT",
+  "failed_classification": "FAILED_MACHINE_QUALITY_GATE",
+  "exit_codes": {
+    "0": "PASS — exact product and every required release gate resolved PASS",
+    "1": "FAIL — a machine or validation gate failed",
+    "2": "BLOCKED — machine gates are green but a required authorized review or exact artifact is missing"
+  },
+  "machine_failure_codes": [
+    "MISSING_CORE1_PDF",
+    "MISSING_CORE2_PDF",
+    "THIRD_REQUIRED_PRODUCT_INSTEAD_OF_APPENDIX_C",
+    "APPENDIX_A_MISSING",
+    "APPENDIX_B_MISSING",
+    "APPENDIX_C_MISSING",
+    "HANDOUT_ANSWER_LEAKAGE",
+    "INTERNAL_TOKEN_LEAKED_TO_LEARNER",
+    "TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED",
+    "FIGURE_ABSENT_FROM_CORE1",
+    "OFF_PAGE_TEXT",
+    "MIN_FONT_SIZE_FAILURE",
+    "PHYSICAL_PAGE_CUSTODY_FAILURE",
+    "EXACT_ARTIFACT_HASH_MISMATCH",
+    "SOURCE_COVERAGE_RECONCILIATION_FAILURE",
+    "EXTERNAL_CORPUS_RECONCILIATION_FAILURE",
+    "ELIGIBLE_ITEM_MISSING_CORE2",
+    "HINT_SUPPORT_FAILURE",
+    "SOLUTION_FAILURE",
+    "COVERAGE_CLOSURE_OPEN"
+  ],
+  "release_falsifiers": [
+    "MACHINE_GREEN_CLAIMED_AS_PEDAGOGY_PASS",
+    "AI_PRE_REVIEW_COUNTED_AS_HUMAN_REVIEW",
+    "MATURE_CLAIMED_WITH_A_PENDING_REVIEW",
+    "MATURE_CLAIMED_WITH_A_FAILED_REVIEW",
+    "REFERENCE_COMPARISON_RUN_BEFORE_HUMAN_GATES",
+    "PR156_USED_AS_PRODUCER_INPUT_BEFORE_FINAL_COMPARISON",
+    "HUMAN_ATTESTATION_NOT_BOUND_TO_EXACT_BYTES",
+    "FABRICATED_REVIEWER_ROLE",
+    "LEARNING_EFFECTIVENESS_CLAIMED_FROM_A_POLISHED_PDF",
+    "BLOCKED_REPORTED_AS_PASS"
+  ]
+}

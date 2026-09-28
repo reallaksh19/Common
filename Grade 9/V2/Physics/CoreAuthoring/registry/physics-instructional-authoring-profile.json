@@ -1,0 +1,121 @@
+{
+  "profile_id": "PHY-P-G-INSTRUCTIONAL-AUTHORING-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "pedagogy_model": "SEE_REALIZE_UNDERSTAND",
+  "genericity_statement": "Primary PCK family is derived from the structural obligations carried by each P-F capability record. No capability id, topic id or problem-family id is hard-coded into family selection, so a new Physics topic enters as data and never as a new schema or a new selection branch.",
+  "lesson_mode_by_treatment": {
+    "ACTIVE_STUDY": "FULL_LEARNING",
+    "REPAIR_BEFORE": "FULL_LEARNING",
+    "REPAIR_IN_UNIT": "FULL_LEARNING",
+    "READY_VERIFY_ONLY": "CONCISE_VERIFY_ONLY",
+    "PROBE_FIRST": "PROBE"
+  },
+  "content_roles_by_mode": {
+    "FULL_LEARNING": [
+      "SEE_PHENOMENON_ANCHOR",
+      "SEE_SYSTEM_FRAME_SIGN",
+      "REALIZE_REPRESENTATION",
+      "REALIZE_RECONSTRUCTION",
+      "UNDERSTAND_RELATION_AND_VALIDITY",
+      "WORKED_REASONING_SEQUENCE",
+      "MISCONCEPTION_MINIMAL_CONTRAST",
+      "GUIDED_ATTEMPT",
+      "FADED_ATTEMPT",
+      "INDEPENDENT_ATTEMPT",
+      "PHYSICAL_VERIFICATION",
+      "TRANSFER_BRIDGE"
+    ],
+    "CONCISE_VERIFY_ONLY": [
+      "SEE_ACTIVATION",
+      "INDEPENDENT_ATTEMPT",
+      "PHYSICAL_VERIFICATION"
+    ],
+    "PROBE": [
+      "SEE_ACTIVATION",
+      "DECISIVE_DIAGNOSTIC_PROBE",
+      "BRANCH_AFTER_PROBE"
+    ]
+  },
+  "family_selection_rules": [
+    {
+      "rule_id": "R-GRAPH",
+      "when": {"any_representation_requirement_substring": ["GRAPH", "SIGNED_AREA"]},
+      "family": "GRAPH_SLOPE_AREA_DECODING"
+    },
+    {
+      "rule_id": "R-PHASE",
+      "when": {"multiphase": true},
+      "family": "PHASE_CONTINUITY_REASONING"
+    },
+    {
+      "rule_id": "R-MODEL-VALIDITY",
+      "when": {"model_validity_required": true},
+      "family": "MODEL_SELECTION_AND_VALIDITY"
+    },
+    {
+      "rule_id": "R-VECTOR",
+      "when": {"any_representation_requirement": ["MOTION_VECTOR_DIAGRAM", "RELATIVE_STATE_DIAGRAM"]},
+      "family": "VECTOR_COMPONENT_DECOMPOSITION"
+    },
+    {
+      "rule_id": "R-FRAME-SIGN",
+      "when": {"frame_or_sign_required": true},
+      "family": "SYSTEM_FRAME_SIGN_SETUP"
+    },
+    {
+      "rule_id": "R-RELATION",
+      "when": {"any_representation_requirement": ["EQUATION_STATE_RELATION", "STATE_TABLE", "TIMELINE_INTERVAL", "RATE_TABLE"]},
+      "family": "RELATION_RECONSTRUCTION"
+    },
+    {
+      "rule_id": "R-REPRESENTATION",
+      "when": {"has_representation_requirement": true},
+      "family": "STATE_REPRESENTATION_TRANSLATION"
+    },
+    {
+      "rule_id": "R-DEFAULT",
+      "when": {},
+      "family": "PHENOMENON_ANCHOR"
+    }
+  ],
+  "support_pck_families": [
+    "PHENOMENON_ANCHOR",
+    "SYSTEM_FRAME_SIGN_SETUP",
+    "STATE_REPRESENTATION_TRANSLATION",
+    "WORKED_REASONING_SEQUENCE",
+    "MISCONCEPTION_MINIMAL_CONTRAST",
+    "FIRST_MOVE_DECISION_SUPPORT",
+    "PHYSICAL_VERIFICATION",
+    "TRANSFER_VARIATION"
+  ],
+  "conditional_support_families": {
+    "frame_or_sign": "SYSTEM_FRAME_SIGN_SETUP",
+    "model_validity": "MODEL_SELECTION_AND_VALIDITY",
+    "multiphase": "PHASE_CONTINUITY_REASONING",
+    "verification": "PHYSICAL_VERIFICATION"
+  },
+  "pck_job_to_family": {
+    "PHYSICAL_ANCHOR": "PHENOMENON_ANCHOR",
+    "SYSTEM_FRAME_SETUP": "SYSTEM_FRAME_SIGN_SETUP",
+    "FRAME_SIGN_BINDING": "SYSTEM_FRAME_SIGN_SETUP",
+    "MODEL_RECONSTRUCTION": "RELATION_RECONSTRUCTION",
+    "MODEL_VALIDITY_CHECK": "MODEL_SELECTION_AND_VALIDITY",
+    "REPRESENTATION_TRANSLATION": "STATE_REPRESENTATION_TRANSLATION",
+    "WORKED_REASONING_SEQUENCE": "WORKED_REASONING_SEQUENCE",
+    "GUIDED_TO_INDEPENDENT_PROGRESSION": "WORKED_REASONING_SEQUENCE",
+    "TRANSFER_VARIATION": "TRANSFER_VARIATION",
+    "PHYSICAL_VERIFICATION": "PHYSICAL_VERIFICATION",
+    "ACTIVATE_PHYSICAL_MEANING": "PHENOMENON_ANCHOR",
+    "INDEPENDENT_PHYSICAL_CHECK": "PHYSICAL_VERIFICATION",
+    "DECISIVE_DIAGNOSTIC_PROBE": "FIRST_MOVE_DECISION_SUPPORT",
+    "BRANCH_AFTER_PROBE": "FIRST_MOVE_DECISION_SUPPORT",
+    "PREREQUISITE_RECONSTRUCTION": "RELATION_RECONSTRUCTION",
+    "MINIMAL_CONTRAST": "MISCONCEPTION_MINIMAL_CONTRAST",
+    "ERROR_CONTRAST": "MISCONCEPTION_MINIMAL_CONTRAST",
+    "RECONSTRUCTION_CHECK": "PHYSICAL_VERIFICATION",
+    "EMBEDDED_REPAIR": "MISCONCEPTION_MINIMAL_CONTRAST"
+  },
+  "minimum_promotion_state_for_authoring": "PROMOTED_PILOT",
+  "release_authority_state": "PILOT_ONLY_HUMAN_EXPERT_RELEASE_NOT_GRANTED"
+}

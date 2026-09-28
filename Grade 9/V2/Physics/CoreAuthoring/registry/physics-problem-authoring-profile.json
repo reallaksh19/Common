@@ -1,0 +1,49 @@
+{
+  "profile_id": "PHY-P-G-PROBLEM-AUTHORING-v1",
+  "schema_version": "1.0.0",
+  "subject": "PHYSICS",
+  "genericity_statement": "Core1 problem prompts are composed from the structural obligations of a P-F capability record (system/frame, state/phase, model validity, representation, verification). Problem families are referenced as data. No topic-specific prompt table is required for a new Physics topic to author correctly.",
+  "prompt_frame": "Authored Core1 instance for {family}. A new situation is described in which {structure}. Set up the system and frame, build the state table, select and justify the relation, solve, then run the required physical check.",
+  "structure_clause_by_obligation": {
+    "frame_or_sign": "a positive direction must be declared before any signed quantity is used",
+    "model_validity": "the assumptions of the candidate model must be checked against the stated conditions",
+    "multiphase": "the motion changes character at a stated instant and the boundary state must be carried across",
+    "representation": "the state must be translated between the described situation and the required representation",
+    "graph": "a plotted state variable must be decoded as either a rate or an accumulated signed change",
+    "vector": "directed quantities must be resolved onto the declared axis before being combined",
+    "default": "the required state variables must be identified and related"
+  },
+  "stage_modifiers": {
+    "GUIDED": "Use the supplied first-move cue and the pre-drawn frame; complete the remaining steps.",
+    "FADED": "One supplied cue has been removed; decide that step yourself and complete the rest.",
+    "INDEPENDENT": "No procedural cue is supplied beyond the situation and the required representation.",
+    "PROBE": "Answer only the decisive diagnostic question; do not solve the full problem yet."
+  },
+  "solution_reasoning_roles": [
+    "READ_PHENOMENON",
+    "DEFINE_SYSTEM",
+    "EXTRACT_KNOWNS_AND_HIDDEN_FACTS",
+    "SELECT_MODEL",
+    "REPRESENT",
+    "CHOOSE_RELATION",
+    "SOLVE",
+    "CHECK_UNITS",
+    "VERIFY_PHYSICAL_PLAUSIBILITY",
+    "INTERPRET_RESULT"
+  ],
+  "reasoning_role_text": {
+    "READ_PHENOMENON": "Read the described situation and say what physically happens, in order.",
+    "DEFINE_SYSTEM": "Name the object being tracked and declare the origin and positive direction.",
+    "EXTRACT_KNOWNS_AND_HIDDEN_FACTS": "Enter every given quantity into the start and end state rows, including facts implied by the wording.",
+    "SELECT_MODEL": "Name the physical model and check each of its assumptions against a stated condition.",
+    "REPRESENT": "Build the required representation and check it against the state table.",
+    "CHOOSE_RELATION": "Choose the relation whose variables match what is known and what is wanted.",
+    "SOLVE": "Substitute signed values and carry out the algebra.",
+    "CHECK_UNITS": "Check that both sides of the relation carry the same dimensions.",
+    "VERIFY_PHYSICAL_PLAUSIBILITY": "Run the independent physical check required by this capability.",
+    "INTERPRET_RESULT": "Translate the signed result back into a direction and a physical statement."
+  },
+  "final_response_frame": "A complete response declares the system and sign convention, shows the state table, names and justifies the model and relation, carries the signed values through, and states the conclusion only after the required physical check has passed.",
+  "new_instance_source_class": "NEW_AUTHORED_CORE1",
+  "external_transfer_reserved_for": "CORE2"
+}
