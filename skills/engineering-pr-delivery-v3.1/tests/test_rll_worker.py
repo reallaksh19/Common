@@ -421,5 +421,43 @@ allow_material_write: false
         with self.assertRaises(rll.RllError):
             rll.duration_seconds("0h")
 
+
+    def test_publish_executor_evidence_refuses_dirty_review_ready(self):
+        value = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "REVIEW_READY",
+            "current": "done",
+            "next": "review",
+            "evidence_comment_url": None,
+            "evidence_markdown": "claimed evidence",
+            "engineering_summary": "",
+            "notes": [],
+        }
+        with patch.object(rll, "ghj") as api:
+            result = rll.publish_executor_evidence(
+                "owner/repo", 42, value,
+                {"head": "abc", "branch": "feature/work", "clean": False},
+                "codex",
+            )
+        api.assert_not_called()
+        self.assertIsNone(result["evidence_comment_url"])
+
+    def test_cmd_timeout_is_transport_error(self):
+        with patch.object(
+            rll.subprocess,
+            "run",
+            side_effect=rll.subprocess.TimeoutExpired(["codex"], 5),
+        ):
+            with self.assertRaises(rll.RllError):
+                rll.cmd(["codex"], timeout=5)
+
+    def test_run_executor_dispatches_codex(self):
+        with patch.object(rll, "codex", return_value={"ok": True}) as selected:
+            result = rll.run_executor(
+                "codex", Path("."), "prompt", Path("schema.json"), "10s", "high", True
+            )
+        self.assertEqual({"ok": True}, result)
+        selected.assert_called_once()
+
 if __name__ == "__main__":
     unittest.main()
