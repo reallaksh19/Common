@@ -50,6 +50,16 @@
     },
     "allow_material_write": {
       "type": "boolean"
+    },
+    "allowed_paths": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Semicolon-delimited repository-relative write paths. Required by CODEX_LOCAL_V1 BRANCH_RESUME."
+    },
+    "commit_message": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional launcher-owned commit message for bounded branch-write completion."
     }
   },
   "allOf": [
