@@ -90,6 +90,7 @@ Pass 2 receives:
 - current Roadmap/programme basis and explicit Owner amendments;
 - the current EP/owned responsibility;
 - relevant primary-agent conversation/reconciliation refs;
+- latest AGENT_STATUS_V1 / Further task continuity when one exists;
 - relevant Local Agent/OFFLOAD provider refs;
 - relevant RLL execution/state refs;
 - current Task Snapshot and [Relay Handover] refs.
@@ -101,13 +102,14 @@ Original Intent historical source
 → current Owner/Roadmap authority + amendments
 → current EP / owned issue responsibility
 → relevant primary-agent reasoning
+→ latest AGENT_STATUS_V1 / Further task
 → Local Agent / OFFLOAD evidence
 → RLL transport state/results
 → current PR/test/runtime material truth
 → current Task Snapshot / Handover index
 ```
 
-Historical Original Intent explains what the Owner originally meant; later explicit Owner amendments may supersede current meaning. Agent reasoning is not Owner authority. Local Agent evidence is scoped to its offload. RLL is transport and never proves engineering acceptance by itself.
+Historical Original Intent explains what the Owner originally meant; later explicit Owner amendments may supersede current meaning. Agent reasoning is not Owner authority. AGENT_STATUS_V1 is derived execution continuity only: it tells the successor where the predecessor believed execution stood, but every unresolved FT-* item must be revalidated against live provider/material truth before continuation. Local Agent evidence is scoped to its offload. RLL is transport and never proves engineering acceptance by itself.
 
 #### A. Step-back reconciliation
 
@@ -305,6 +307,7 @@ Pass 1 must not contain:
 - the hidden task title;
 - Original Intent issue/content;
 - prior primary-agent conversation/reconciliation;
+- AGENT_STATUS_V1 / Further task continuity;
 - Local Agent/OFFLOAD or RLL task history;
 - "Improvement Proposal";
 - implementation-plan instructions;
@@ -321,6 +324,8 @@ Pass 2 must distinguish provenance from authority:
 - Original Intent = historical Owner source;
 - later explicit Owner/Roadmap amendments = current semantic authority when applicable;
 - primary/local-agent reasoning = non-authoritative reasoning/evidence unless adopted by Owner/programme authority;
+- AGENT_STATUS_V1 = mutable derived execution continuity; stale status never outranks Git/material truth;
+- unresolved FT-* = predecessor continuity hints that a successor must revalidate before continuing;
 - RLL = transport state;
 - PR/tests/runtime/artifacts = material truth;
 - Task Snapshot/Handover = derived/indexing views.
