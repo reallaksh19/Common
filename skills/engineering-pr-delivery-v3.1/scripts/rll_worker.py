@@ -361,11 +361,11 @@ def publish_executor_evidence(repo,n,v,o,executor,local_execution_request=None):
  request_line=f"Local execution request: {local_execution_request}\n" if local_execution_request else ""
  body=(
   "TASK_EVIDENCE — RLL EXECUTOR\n\n"
-  f"Executor: {executor}\n"
+  + f"Executor: {executor}\n"
   + request_line
-  + f"Observed material head: {o['head']}\n"
-  f"Observed branch: {o['branch'] or 'DETACHED'}\n"
-  f"Working tree clean: {str(o['clean']).lower()}\n\n"
+  + f"Observed material head: `{o['head']}`\n"
+  + f"Observed branch: `{o['branch'] or 'DETACHED'}`\n"
+  + f"Working tree clean: {str(o['clean']).lower()}\n\n"
   + v["evidence_markdown"].strip()
  )
  x=ghj("api",f"repos/{repo}/issues/{n}/comments","--method","POST","--field",f"body={body}")
