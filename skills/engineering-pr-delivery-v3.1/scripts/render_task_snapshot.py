@@ -85,6 +85,8 @@ def render(task: dict[str, Any]) -> str:
 
     protocol_basis = task.get("protocol_basis") or {}
     reconstruction = task.get("reconstruction_context") or {}
+    continuity = task.get("continuity") or {}
+    current_continuity = continuity.get("current") or {}
     original_intent = reconstruction.get("original_intent") or {}
     latest_reconciliation = reconstruction.get("latest_reconciliation") or {}
     identity = task.get("identity") or {}
@@ -128,6 +130,13 @@ def render(task: dict[str, Any]) -> str:
             else "NONE"
         ),
         f"- Latest reconciliation: {latest_reconciliation.get('ref') or 'NONE'}",
+        f"- Agent continuity: "
+        + (
+            f"{current_continuity.get('status')} / {current_continuity.get('continuation')} "
+            f"epoch {current_continuity.get('custody_epoch')} — {current_continuity.get('ref')}"
+            if current_continuity
+            else "NONE"
+        ),
         f"- Plan: {planning.get('state') or 'UNKNOWN'}"
         + (f" rev {planning.get('revision')}" if planning.get("revision") is not None else "")
         + (f" — {planning.get('provider_ref')}" if planning.get("provider_ref") else ""),
@@ -172,6 +181,31 @@ def render(task: dict[str, Any]) -> str:
 
     if reconstruction_refs:
         _bullet_section(lines, "Reconstruction references", reconstruction_refs)
+
+    if current_continuity or continuity.get("further_tasks"):
+        lines += ["", "### Execution continuity"]
+        if current_continuity:
+            lines += [
+                f"- Status ref: {current_continuity.get('ref')}",
+                f"- Executor: {current_continuity.get('executor')}",
+                f"- Custody epoch: {current_continuity.get('custody_epoch')}",
+                f"- Continuation: {current_continuity.get('continuation')}",
+                f"- Status: {current_continuity.get('status')}",
+                f"- Exact head: {current_continuity.get('exact_head') or 'NONE'}",
+                f"- Predecessor: {continuity.get('predecessor_ref') or 'NONE'}",
+            ]
+        ft_rows = [
+            row for row in (continuity.get("further_tasks") or [])
+            if isinstance(row, dict)
+        ]
+        if ft_rows:
+            lines += ["", "| Further task | State | Reason | Dependency | Expected next observable |", "| --- | --- | --- | --- | --- |"]
+            for row in ft_rows:
+                lines.append(
+                    f"| {row.get('id')} — {row.get('statement')} | {row.get('state')} | "
+                    f"{row.get('reason_class') or 'UNKNOWN'} | {row.get('dependency') or '-'} | "
+                    f"{row.get('expected_next_observable') or '-'} |"
+                )
 
     if delivery_stack:
         lines += [
