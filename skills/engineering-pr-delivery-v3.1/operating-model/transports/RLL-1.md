@@ -343,7 +343,7 @@ The reference profile:
 - never uses dangerous approval/sandbox bypass flags;
 - never trusts process exit code alone; structured output and Git postflight are both required;
 - receives durable issue/comment context from the launcher and MUST NOT invoke `gh`, GitHub APIs, GitHub MCP, or provider-control commands;
-- may return `evidence_markdown`; Common binds it to the observed head and posts the durable evidence comment.
+- always returns `evidence_markdown` as a string; use `""` when no durable executor evidence is being supplied. When non-empty, Common binds it to the observed head and posts the durable evidence comment.
 
 For Codex `BRANCH_RESUME`, the authorized `RLL_EXECUTION_V1` envelope MUST also provide:
 
@@ -404,10 +404,13 @@ The agent result is transport metadata, not engineering acceptance:
   "current": "exact-head certification complete",
   "next": "independent coordinator review",
   "evidence_comment_url": "https://github.com/owner/repo/issues/342#issuecomment-...",
+  "evidence_markdown": "focused tests PASS; hosted CI NOT_RUN_INFRASTRUCTURE",
   "engineering_summary": "focused tests PASS; hosted CI NOT_RUN_INFRASTRUCTURE",
   "notes": []
 }
 ```
+
+`RLL_RUN_RESULT_V1` is a strict Structured Outputs object: every declared root property is required. `evidence_markdown` therefore always appears; use an empty string when there is no evidence body to publish. Optional URL semantics remain represented by the required nullable `evidence_comment_url` field.
 
 Allowed `transport_state` values returned by the agent:
 
