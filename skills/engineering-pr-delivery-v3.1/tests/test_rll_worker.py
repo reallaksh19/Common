@@ -332,7 +332,7 @@ allow_material_write: false
         }
         completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
         calls = []
-        def fake_cmd(argv, cwd=None, check=True, timeout=None):
+        def fake_cmd(argv, cwd=None, check=True, timeout=None, env=None):
             calls.append((argv, cwd, check, timeout))
             output = Path(argv[argv.index("--output-last-message") + 1])
             output.write_text(json.dumps(payload), encoding="utf-8")
@@ -345,6 +345,10 @@ allow_material_write: false
         self.assertIn("--output-schema", argv)
         self.assertIn("--output-last-message", argv)
         self.assertEqual("workspace-write", argv[argv.index("--sandbox") + 1])
+        self.assertIn("--json", argv)
+        self.assertIn('approvals_reviewer="user"', argv)
+        self.assertIn('web_search="disabled"', argv)
+        self.assertIn('sandbox_workspace_write.network_access=false', argv)
         self.assertEqual("ACTIVE", result["transport_state"])
 
     def test_codex_exact_head_uses_read_only_sandbox(self):
@@ -359,7 +363,7 @@ allow_material_write: false
         }
         completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
         seen = {}
-        def fake_cmd(argv, cwd=None, check=True, timeout=None):
+        def fake_cmd(argv, cwd=None, check=True, timeout=None, env=None):
             seen["argv"] = argv
             Path(argv[argv.index("--output-last-message") + 1]).write_text(json.dumps(payload), encoding="utf-8")
             return completed
@@ -458,6 +462,85 @@ allow_material_write: false
             )
         self.assertEqual({"ok": True}, result)
         selected.assert_called_once()
+
+    def test_codex_branch_resume_requires_allowed_paths(self):
+        issue = {
+            "author": {"login": "owner"},
+            "body": """RLL_EXECUTION_V1
+
+transport: RLL-1
+worker: codex-local
+mode: BRANCH_RESUME
+repository: owner/repo
+branch: feature/work
+base_sha: abc123
+allow_material_write: true
+allowed_paths: src/owned; validation/example.json
+commit_message: bounded codex change
+""",
+        }
+        value = rll.parse_exec(issue, [], {"owner"})
+        self.assertEqual(["src/owned", "validation/example.json"], value["allowed_paths"])
+        self.assertEqual("bounded codex change", value["commit_message"])
+
+    def test_codex_prompt_embeds_issue_context_and_forbids_provider_control(self):
+        issue = {"number": 42, "title": "Bounded task", "body": "Do the bounded work."}
+        comments = [{"user": {"login": "owner"}, "body": "TASK_NOTE\nkeep scope"}]
+        envelope = {
+            "mode": "BRANCH_RESUME",
+            "base_sha": "abc",
+            "branch": "feature/work",
+            "head_sha": None,
+            "write": True,
+            "allowed_paths": ["src/owned"],
+        }
+        text = rll.prompt("owner/repo", 42, envelope, [], "codex", issue, comments)
+        self.assertIn("DURABLE ISSUE CONTEXT", text)
+        self.assertIn("Do the bounded work.", text)
+        self.assertIn("Do not invoke gh", text)
+        self.assertIn("Do not commit, push, rebase, merge", text)
+        self.assertIn("src/owned", text)
+
+    def test_codex_scrubs_github_token_environment(self):
+        payload = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "ACTIVE",
+            "current": "working",
+            "next": "test",
+            "evidence_comment_url": None,
+            "engineering_summary": "",
+            "notes": [],
+        }
+        completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        seen = {}
+        def fake_cmd(argv, cwd=None, check=True, timeout=None, env=None):
+            seen["env"] = env
+            Path(argv[argv.index("--output-last-message") + 1]).write_text(
+                json.dumps(payload), encoding="utf-8"
+            )
+            return completed
+        with patch.dict(
+            os.environ,
+            {"GH_TOKEN": "secret", "GITHUB_TOKEN": "secret", "GH_ENTERPRISE_TOKEN": "secret"},
+            clear=False,
+        ):
+            with patch.object(rll, "cmd", side_effect=fake_cmd):
+                rll.codex(Path("."), "prompt", Path("schema.json"), "10s", "high", False)
+        self.assertNotIn("GH_TOKEN", seen["env"])
+        self.assertNotIn("GITHUB_TOKEN", seen["env"])
+        self.assertNotIn("GH_ENTERPRISE_TOKEN", seen["env"])
+
+    def test_codex_native_windows_write_fails_closed(self):
+        with patch.object(rll.sys, "platform", "win32"):
+            with self.assertRaises(rll.RllError):
+                rll.codex(Path("."), "prompt", Path("schema.json"), "10s", "high", True)
+
+    def test_allowed_path_confinement_rejects_escape(self):
+        self.assertTrue(rll.path_allowed("src/owned/a.js", ["src/owned"]))
+        self.assertFalse(rll.path_allowed("src/other/a.js", ["src/owned"]))
+        with self.assertRaises(rll.RllError):
+            rll.normalize_allowed_paths("../escape")
+
 
 if __name__ == "__main__":
     unittest.main()
