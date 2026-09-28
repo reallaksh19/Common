@@ -1,7 +1,7 @@
 # SCHEMA EXECUTION HANDSHAKE
 
 PROTOCOL REVISION:
-TPG-2P-2026-09-25-R1
+TPG-2P-2026-09-28-R2
 
 GENERATOR MODE:
 TWO_PASS_ONLY
@@ -31,9 +31,13 @@ Return an INDEPENDENT_SYSTEM_BASELINE covering system/user outcome, current beha
 
 Use the actual Pass-1 baseline, then inspect the current assigned issue and live repository/provider state.
 
-First step back and identify zero or more evidence-supported high-ROI improvements. Prefer no proposal to a speculative proposal and do not propose a rewrite merely because a cleaner architecture is imaginable. For each candidate, show an IMPROVEMENT PROPOSAL with observed gap, evidence, current→proposed state, quantitative before/after effect where measurable (UNKNOWN otherwise), estimated change size, impact/evidence/reuse/effort/risk scores, confidence, relative ROI, falsifier, and SCOPE RELATION.
+Before proposing changes, reconstruct the relevant provenance in order: linked Original Intent historical source; current Owner/Roadmap basis and explicit amendments; current EP/owned responsibility; relevant primary-agent conversation/reconciliation; relevant Local Agent/OFFLOAD evidence; relevant RLL execution/state; current PR/tests/runtime; then current Task Snapshot/Handover.
 
-Then reconcile the actual issue against live reality. State whether its responsibility should be preserved, amended, split, superseded, or is already satisfied. Keep adjacent improvements out of the issue unless separately approved as their own responsibility.
+Emit a STEP-BACK RECONCILIATION. Classify only materially applicable facts as PRESERVED, SATISFIED, MISSING, DRIFTED, SUPERSEDED_BY_OWNER, ROADMAP_CHANGED, EP_ASSUMPTION_ONLY, LOCAL_AGENT_FINDING, RLL_TRANSPORT_ONLY, REALITY_CORRECTION, or UNRESOLVED, and state the resulting CONSEQUENCE. Treat Original Intent as historical Owner source, later explicit Owner/Roadmap amendments as current authority where applicable, agent reasoning as non-authoritative reasoning/evidence, RLL as transport, and material provider/runtime evidence as current engineering truth. Cite refs; do not paste full transcripts.
+
+Then identify zero or more evidence-supported high-ROI improvements. Prefer no proposal to a speculative proposal and do not propose a rewrite merely because a cleaner architecture is imaginable. For each candidate, show an IMPROVEMENT PROPOSAL with observed gap, evidence, current→proposed state, quantitative before/after effect where measurable (UNKNOWN otherwise), estimated change size, impact/evidence/reuse/effort/risk scores, confidence, relative ROI, falsifier, and SCOPE RELATION.
+
+Reconcile the actual issue against live reality. State whether its responsibility should be preserved, amended, split, superseded, or is already satisfied. Keep adjacent improvements out of the issue unless separately approved as their own responsibility.
 
 Show me a DRAFT IMPLEMENTATION_PLAN in chat with basis, understanding, issue disposition, proposals, owned outcome, STEP-* slices, surfaces, dependencies, falsifier, validation, preserved invariants, uncertainty, expected next observable, and consumer/handoff.
 
