@@ -123,6 +123,7 @@ security:
 
 execution:
   mode: BRANCH_RESUME | EXACT_HEAD_EVIDENCE
+  local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
   branch: <branch|null>
   head_sha: <sha|null>
   base_sha: <sha>
@@ -165,6 +166,14 @@ merge_release_authority: false
 For `EXACT_HEAD_EVIDENCE`, `allowed_paths` is empty and material writes are false.
 
 For Codex `BRANCH_RESUME`, `allowed_paths` is mandatory.
+
+### 4.1 V3.1 local-execution correlation
+
+When the repository has a native V3.1 `LOCAL_EXECUTION_EXPORT` for the bounded work, that generated packet is the canonical derived recipient contract. Do not create a parallel `TASK.md` or RLL-specific engineering task specification.
+
+Record the generated `request.id` as `local_execution_request` in `RLL_EXECUTION_V1`. The deterministic launcher must propagate that correlation into executor context and `TASK_EVIDENCE`. The correlation does not create authority and does not replace the governing issue/programme, approved plan, exact Git material truth, or independent review.
+
+If no native V3.1 local-execution packet exists, `local_execution_request` may be null and the existing issue/plan reconstruction path remains valid.
 
 ## 5. Machine topology
 
@@ -257,6 +266,7 @@ RLL_EXECUTION_V1
 
 transport: RLL-1
 worker: codex-local
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: EXACT_HEAD_EVIDENCE
 repository: <owner/repo>
 head_sha: <exact-candidate-sha>
@@ -281,6 +291,7 @@ RLL_EXECUTION_V1
 
 transport: RLL-1
 worker: codex-local
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: BRANCH_RESUME
 repository: <owner/repo>
 branch: <governed-branch>
@@ -493,7 +504,7 @@ When replacing Antigravity or another local executor:
 existing engineering task
   -> preserve engineering authorization
   -> remove/withhold rll-ready
-  -> post RLL_TRANSPORT_PAUSE
+  -> publish RELAY_DIRECTIVE_V1 / PAUSE
   -> implement Common Codex profile
   -> implement thin consumer adapter
   -> complete read-only + write smoke
@@ -501,6 +512,8 @@ existing engineering task
   -> restore rll-ready
   -> resume branch/exact-head from Git truth
 ```
+
+Use only the normative `RELAY_DIRECTIVE_V1` control surface for transport pause/resume. Do not invent a separate `RLL_TRANSPORT_PAUSE` object.
 
 Do not restart or discard legitimate engineering material merely because the executor changed.
 
@@ -515,13 +528,14 @@ When a V3.1 agent receives **"Plan for local agent"** and Codex may be relevant:
 5. otherwise identify the smallest missing Codex/RLL delta this blueprint must supply;
 6. determine whether `EXACT_HEAD_EVIDENCE` or `BRANCH_RESUME` truthfully fits;
 7. fill `rll-codex-local-blueprint/v1` only for the selected/repaired Codex path;
-8. stage/update the thin adapter only when required and authorized;
-9. create a fresh smoke issue when activation/smoke is required;
-10. publish the matching `RLL_EXECUTION_V1` envelope;
-11. install/validate smoke-first activation;
-12. do not start source-writing execution unless that engineering write is already authorized;
-13. do not infer executor migration authority from the keyword alone;
-14. do not merge/release without fresh direct Owner authority.
+8. when native V3.1 `LOCAL_EXECUTION_EXPORT` is available, resolve/export its current request and bind `request.id` as `local_execution_request`;
+9. stage/update the thin adapter only when required and authorized;
+10. create a fresh smoke issue when activation/smoke is required;
+11. publish the matching `RLL_EXECUTION_V1` envelope;
+12. install/validate smoke-first activation;
+13. do not start source-writing execution unless that engineering write is already authorized;
+14. do not infer executor migration authority from the keyword alone;
+15. do not merge/release without fresh direct Owner authority.
 
 ## 14. Invariant
 
