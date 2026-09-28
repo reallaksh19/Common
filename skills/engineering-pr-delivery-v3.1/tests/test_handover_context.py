@@ -291,6 +291,28 @@ class HandoverContextTests(unittest.TestCase):
                 "local_agent_refs": ["github:example/project#1780"],
                 "rll_refs": ["github:example/project#1771/comment-rll-state"],
             }
+            task_snapshot["continuity"] = {
+                "current": {
+                    "ref": "github:example/project#1771/comment-status",
+                    "custody_epoch": 4,
+                    "executor": "agent-successor",
+                    "status": "ACTIVE",
+                    "continuation": "RECOVERY",
+                    "exact_head": "material-head",
+                    "updated_at": "2026-09-28T10:05:00Z",
+                },
+                "further_tasks": [
+                    {
+                        "id": "FT-1771-1",
+                        "state": "PENDING",
+                        "statement": "Revalidate exact-head evidence.",
+                        "reason_class": "CURRENT_TASK",
+                        "dependency": None,
+                        "expected_next_observable": "Exact-head evidence result.",
+                    }
+                ],
+                "predecessor_ref": "github:example/project#1771/comment-old-status",
+            }
 
             context, _ = build_context(
                 root,
@@ -309,12 +331,18 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual(["github:example/project#1780"], reconstruction["local_agent_refs"])
             self.assertEqual(["github:example/project#1771/comment-rll-state"], reconstruction["rll_refs"])
+            continuity = context["accumulated_learning"]["continuity"]
+            self.assertEqual(4, continuity["current"]["custody_epoch"])
+            self.assertEqual("RECOVERY", continuity["current"]["continuation"])
+            self.assertEqual("FT-1771-1", continuity["further_tasks"][0]["id"])
 
             blind_text = yaml.safe_dump(context["blind_context"], sort_keys=True)
             self.assertNotIn("1700", blind_text)
             self.assertNotIn("comment-reconcile", blind_text)
             self.assertNotIn("comment-context", blind_text)
             self.assertNotIn("comment-rll-state", blind_text)
+            self.assertNotIn("comment-status", blind_text)
+            self.assertNotIn("FT-1771-1", blind_text)
             self.assertEqual([], validate_visibility(context))
 
             request = build_request(context)
@@ -323,6 +351,8 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("Original Intent", rendered)
             self.assertIn("Local Agent/OFFLOAD", rendered)
             self.assertIn("RLL transport", rendered)
+            self.assertIn("AGENT_STATUS_V1", rendered)
+            self.assertIn("Further task", rendered)
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
