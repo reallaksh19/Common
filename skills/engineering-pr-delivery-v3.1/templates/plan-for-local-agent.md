@@ -33,6 +33,14 @@ owned_branch_or_exact_head: <ref>
 
 If material facts changed, update the plan before staging RLL.
 
+## Executor profile
+
+Choose the local executor before classifying the job.
+
+For Codex, instantiate `templates/rll-codex-local-blueprint.md` alongside this plan and use `worker: codex-local`. The Codex blueprint supplies the machine topology, provider/credential isolation, WSL/Linux source-write qualification, mandatory `allowed_paths` for branch writes, launcher-owned commit/push boundary, and smoke sequence.
+
+For legacy Antigravity compatibility, retain the existing adapter rules until that executor is separately retired.
+
 ## 1. Classify the local-agent job
 
 Choose exactly one mode.
