@@ -171,6 +171,13 @@ def build_context(
             "local_agent_refs": [],
             "rll_refs": [],
         }
+    task_continuity = task_snapshot.get("continuity")
+    if not isinstance(task_continuity, dict):
+        task_continuity = {
+            "current": None,
+            "further_tasks": [],
+            "predecessor_ref": None,
+        }
     improvement = improvement_view.get("improvement") or {}
     capability_change = bool(
         improvement.get("capability_added")
@@ -251,6 +258,7 @@ def build_context(
             "resume_from": list(handoff.get("resume_from") or []),
             "first_successor_action": handoff.get("first_successor_action"),
             "reconstruction_context": task_reconstruction,
+            "continuity": task_continuity,
             "task_snapshot": {
                 "digest": canonical_digest(task_snapshot),
                 "source_protocol": task_snapshot.get("source_protocol"),
@@ -322,11 +330,11 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "target": target["url"],
             "repository": target["repository"],
             "human_goal": blind["programme"]["outcome"],
-            "user_intent": "Generate the current standalone two-pass handover. Pass 1 independently reconstructs the live repository/application without exposing the actual issue/task or provenance history or asking for a next action. Pass 2 uses that baseline plus the actual task and accumulated reconstruction refs to reconcile Original Intent, current Owner/Roadmap authority, EP responsibility, relevant primary-agent reasoning, Local Agent/OFFLOAD evidence, RLL transport and live material truth before proposing high-ROI improvements and a draft engineering plan; it stops for Owner approval before durable plan/EP/implementation actions.",
+            "user_intent": "Generate the current standalone two-pass handover. Pass 1 independently reconstructs the live repository/application without exposing the actual issue/task, provenance history or execution continuity or asking for a next action. Pass 2 uses that baseline plus the actual task, accumulated reconstruction refs and latest AGENT_STATUS_V1/Further task continuity to reconcile Original Intent, current Owner/Roadmap authority, EP responsibility, relevant primary-agent reasoning, execution continuity, Local Agent/OFFLOAD evidence, RLL transport and live material truth before proposing high-ROI improvements and a draft engineering plan; it stops for Owner approval before durable plan/EP/implementation actions.",
             "authorized_actions": "The generated prompts grant no production authority. Pass 2 may publish the approved implementation plan, bind/create EPs and refresh Task Snapshot/Handover only after explicit Owner approval; material execution occurs only when the Owner-approved action boundary and real provider/tool permissions allow it.",
-            "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, Original Intent source, prior agent conversation/reconciliation, Local Agent/OFFLOAD or RLL task history, current PR, requested change, Improvement Proposal or further action. Pass 2 must distinguish historical intent, current Owner/Roadmap authority, agent reasoning, delegated evidence, RLL transport and material truth; prefer no improvement over speculation; reject rewrites/scope expansion; keep adjacent proposals in separate responsibilities; and pause before durable publication or implementation until Owner approval.",
+            "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, Original Intent source, prior agent conversation/reconciliation, AGENT_STATUS_V1/Further task, Local Agent/OFFLOAD or RLL task history, current PR, requested change, Improvement Proposal or further action. Pass 2 must distinguish historical intent, current Owner/Roadmap authority, agent reasoning, mutable execution continuity, delegated evidence, RLL transport and material truth; stale AGENT_STATUS never outranks live material truth; prefer no improvement over speculation; reject rewrites/scope expansion; keep adjacent proposals in separate responsibilities; and pause before durable publication or implementation until Owner approval.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Pass 1 and Pass 2, validates the artifact, and Pass 2 contains an explicit Owner approval boundary plus the post-approval issue/EP/Task-Snapshot/Handover continuation.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. For Pass 1 use only blind_context: repository/system identity comes from this request, while blind_context supplies broad programme outcome/title and any genuinely global stable constraints. Do not use reality_context or accumulated_learning when generating Pass 1. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then reads reality_context plus accumulated_learning.reconstruction_context and refreshes target/provider/material reality; reconcile in order Original Intent -> current Owner/Roadmap amendments -> EP/owned issue -> relevant primary-agent reasoning -> Local Agent/OFFLOAD evidence -> RLL transport -> PR/tests/runtime -> Task Snapshot/Handover. Emit STEP-BACK RECONCILIATION before any high-ROI Improvement Proposal, then draft IMPLEMENTATION_PLAN in chat, stop for Owner approval, and after approval publish on the original issue and update EP/Task Snapshot/Handover.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. For Pass 1 use only blind_context: repository/system identity comes from this request, while blind_context supplies broad programme outcome/title and any genuinely global stable constraints. Do not use reality_context or accumulated_learning when generating Pass 1. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then reads reality_context plus accumulated_learning.reconstruction_context and accumulated_learning.continuity and refreshes target/provider/material reality; reconcile in order Original Intent -> current Owner/Roadmap amendments -> EP/owned issue + current plan -> relevant primary-agent reasoning -> latest AGENT_STATUS_V1/Further task -> Local Agent/OFFLOAD evidence -> RLL transport -> PR/tests/runtime -> latest TASK_EVIDENCE/TASK_RESULT -> Task Snapshot/Handover. Revalidate every unresolved FT-* item against live material truth before carrying it forward. Emit STEP-BACK RECONCILIATION before any high-ROI Improvement Proposal, then draft IMPLEMENTATION_PLAN in chat, stop for Owner approval, and after approval publish on the original issue and update EP/Task Snapshot/Handover.",
         },
     }
     errors = validate_schema("two-pass-request", request, "TWO_PASS_REQUEST")
