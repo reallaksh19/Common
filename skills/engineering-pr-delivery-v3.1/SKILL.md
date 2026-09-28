@@ -176,6 +176,24 @@ Begin the durable comment with the typed publication heading so reconstruction d
 
 Do not post every command, file read, test retry, timer wake or chat message.
 
+### Responsibility-scoped conversation provenance
+
+The four typed publications above remain the complete engineering-task publication set. A `CONVERSATION_RECORD` is **provider context provenance**, not a fifth task publication.
+
+Persist a substantive Owner↔agent exchange when a zero-context successor could make a materially different engineering decision because of it, for example:
+- new Owner input/source/example or expected output;
+- Owner approval, rejection or amendment;
+- RCA/architecture conclusion with downstream consequence;
+- corrected engineering assumption or important falsifier;
+- accepted/rejected Improvement Proposal;
+- takeover/handover interpretation that changes reconstruction.
+
+For the primary agent, keep the record on the owned engineering issue. For a Local Agent/helper, keep it on the existing governed OFFLOAD/provider sub-issue and reference it through `offloads[].trace_refs`. For RLL, retain the existing `RLL_EXECUTION_V1`, `RLL_WORKER_STATE_V1` and `RELAY_DIRECTIVE_V1` surfaces; do not duplicate timer/lease chatter as semantic conversation.
+
+Owner portions retain their real Owner authority/context classification. Agent reasoning remains non-authoritative unless explicitly adopted by Owner/programme authority.
+
+Missing conversation capture is reconstruction debt only. It never invalidates material work or becomes a production gate.
+
 The coordinator watches the plan's **expected next observable** and reasons:
 
 ```text
@@ -430,6 +448,7 @@ A Task Snapshot must answer immediately:
 
 ```text
 WHAT IS THIS TASK?
+WHAT ORIGINAL INTENT / LATEST RECONCILIATION SHOULD A SUCCESSOR READ?
 WHAT IS DONE?
 HOW MUCH OF THE CHILD/WORK ISSUE IS ACCEPTED?
 WHAT PROGRAMME CRITERIA DOES IT SATISFY?
