@@ -6,8 +6,10 @@ The issue must be rich enough for zero-context reconstruction but small enough t
 
 ```text
 ISSUE_ROLE: PARALLEL_FOCUSED
+AUTHORING_PROFILE: FOCUSED
 PROGRAMME: github:<owner>/<repo>#<parent>
 WORKSTREAM_ID: <F/G/H/...>
+ORIGINAL_INTENT_REF: github:<owner>/<repo>#<original-intent> | INHERITED_FROM_PROGRAMME
 RELAY_PROTOCOL: V3.1_ONLY
 ```
 
@@ -117,6 +119,19 @@ TASK_RESULT — at delivery/handoff
 ```
 
 The engineering agent authors the plan. Plan publication/revision is not approval and does not block production. Do not post every command or test retry.
+
+## Reconstruction / delegated execution refs
+
+```text
+EP:
+Latest primary-agent reconciliation:
+OFFLOAD / Local Agent refs:
+RLL execution/state refs:
+Task Snapshot:
+Relay Handover:
+```
+
+Keep Local Agent/OFFLOAD and RLL history on their existing governed surfaces.
 
 ## Expected handoff
 
