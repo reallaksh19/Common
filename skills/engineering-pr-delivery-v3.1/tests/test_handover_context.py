@@ -238,6 +238,17 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("V3_1", learning["improvement_view"]["source_protocol"])
             self.assertEqual("CP-TA-010", learning["improvement_view"]["checkpoint"])
             self.assertTrue(learning["improvement_view"]["digest"].startswith("sha256:"))
+            self.assertEqual(
+                {
+                    "original_intent": None,
+                    "latest_reconciliation": None,
+                    "primary_conversation_refs": [],
+                    "roadmap_refs": [],
+                    "local_agent_refs": [],
+                    "rll_refs": [],
+                },
+                learning["reconstruction_context"],
+            )
 
     def test_reconstruction_context_is_explicit_for_pass2_and_absent_from_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
