@@ -5,7 +5,7 @@ import argparse
 import re
 from pathlib import Path
 
-EXPECTED_PROTOCOL_REVISION = "TPG-2P-2026-09-25-R1"
+EXPECTED_PROTOCOL_REVISION = "TPG-2P-2026-09-28-R2"
 PASS1 = "## PASS 1 — INDEPENDENT SYSTEM BASELINE"
 PASS2 = "## PASS 2 — IMPROVE, RECONCILE, PLAN"
 
@@ -36,6 +36,10 @@ def validate(text: str) -> list[str]:
         r"https://github\.com/[^\s)]+/(?:issues|pull)/\d+",
         r"(?i)\bPR\s*#\d+",
         r"(?i)\bIssue\s*#\d+",
+        r"(?i)ORIGINAL INTENT",
+        r"(?i)CONVERSATION_RECORD",
+        r"(?i)\bOFFLOAD\b",
+        r"(?i)RLL_(?:EXECUTION|WORKER_STATE)",
         r"(?i)IMPROVEMENT PROPOSAL",
         r"(?i)IMPLEMENTATION_PLAN",
         r"(?i)APPROVAL REQUIRED",
@@ -44,13 +48,17 @@ def validate(text: str) -> list[str]:
             errors.append(f"Pass 1 leaks task/action material: {pattern}")
     p2 = text.split(PASS2, 1)[1]
     for token in (
+        "STEP-BACK RECONCILIATION",
+        "Original Intent",
+        "Roadmap",
+        "LOCAL_AGENT_FINDING",
+        "RLL_TRANSPORT_ONLY",
         "IMPROVEMENT PROPOSAL",
         "QUANTITATIVE",
         "FALSIFIER",
         "SCOPE RELATION",
         "DRAFT IMPLEMENTATION_PLAN",
         "APPROVAL REQUIRED",
-        "original",
         "EP",
         "Task Snapshot",
         "Handover",
