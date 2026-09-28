@@ -14,6 +14,7 @@ Read current durable programme + production reality first:
 - current effective amendment index and referenced Owner/programme amendments;
 - active child / EP responsibility contracts;
 - relevant primary-agent conversation/reconciliation refs;
+- latest AGENT_STATUS_V1 / unresolved Further task for active custody, when present;
 - relevant Local Agent / OFFLOAD provider issues;
 - relevant RLL execution/state refs as transport context only;
 - dedicated [Relay Handover] operational ledger;
@@ -29,7 +30,7 @@ Read current durable programme + production reality first:
 
 Treat the Handover issue as an index. Verify material claims against linked durable evidence where a consequence depends on them.
 
-Before workstream recommendations, perform a compact STEP-BACK RECONCILIATION across historical Original Intent, current Owner/Roadmap authority, current responsibility, agent/delegated reasoning and live material truth. Distinguish PRESERVED / SATISFIED / MISSING / DRIFTED / SUPERSEDED_BY_OWNER / ROADMAP_CHANGED / EP_ASSUMPTION_ONLY / LOCAL_AGENT_FINDING / RLL_TRANSPORT_ONLY / REALITY_CORRECTION / UNRESOLVED only where material.
+Before workstream recommendations, revalidate any unresolved FT-* continuity items against live provider/material truth, then perform a compact STEP-BACK RECONCILIATION across historical Original Intent, current Owner/Roadmap authority, current responsibility, agent/delegated reasoning, mutable execution continuity and live material truth. Distinguish PRESERVED / SATISFIED / MISSING / DRIFTED / SUPERSEDED_BY_OWNER / ROADMAP_CHANGED / EP_ASSUMPTION_ONLY / LOCAL_AGENT_FINDING / RLL_TRANSPORT_ONLY / REALITY_CORRECTION / UNRESOLVED only where material.
 
 Relay protocol rule: **V3.1 only**. Do not consult or use V3 or V2.5 for live coordination, status, gating, recovery, or Owner-command semantics.
 
@@ -144,6 +145,7 @@ OPERATIONAL LEDGER
 Propose the minimal [Relay Handover] updates needed for zero-context reconstruction:
 - Original Intent / latest reconciliation refs;
 - workstream / EP / primary-conversation refs;
+- current AGENT_STATUS_V1 ref/custody epoch and unresolved FT-* IDs;
 - Local Agent / OFFLOAD and RLL refs when relevant;
 - workstream/material refs;
 - dependency state;
