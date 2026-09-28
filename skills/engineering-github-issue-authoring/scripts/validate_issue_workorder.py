@@ -16,6 +16,7 @@ ROLES = {
     "REVISION",
     "INTEGRATION",
     "RELAY_HANDOVER",
+    "ORIGINAL_INTENT",
 }
 QUESTION_PROFILES = {"NUMERICAL_ENGINEERING", "SOFTWARE_ENGINEERING", "SOURCE_GOVERNANCE"}
 
@@ -117,6 +118,25 @@ def validate_child(text, role, errors):
     validate_optional_questions(text, errors)
 
 
+def validate_original_intent(text, errors):
+    if not (field(text, "PARENT_WORK_ITEM") or field(text, "PARENT_PROGRAMME")):
+        errors.append("ORIGINAL_INTENT must reference its parent work item")
+    if field(text, "AUTHORITY") != "HISTORICAL_OWNER_SOURCE":
+        errors.append("ORIGINAL_INTENT AUTHORITY must be HISTORICAL_OWNER_SOURCE")
+    if (field(text, "NO_EP") or "").lower() != "true":
+        errors.append("ORIGINAL_INTENT must declare NO_EP: true")
+    for pattern, label in (
+        (r"original owner instruction.*verbatim", "Original Owner instruction — VERBATIM"),
+        (r"capture metadata", "Capture metadata"),
+        (r"owner-supplied inputs", "Owner-supplied inputs"),
+        (r"owner ideas|hypotheses", "Owner ideas / hypotheses"),
+        (r"expected outputs", "Expected outputs"),
+        (r"constraints|preserve", "Constraints / preserve"),
+        (r"derived intent index", "Derived intent index"),
+    ):
+        require_heading(text, pattern, errors, label)
+
+
 def validate_handover(text, errors):
     if not (field(text, "PARENT_PROGRAMME") or field(text, "PARENT_WORK_ITEM_KEY")):
         errors.append("RELAY_HANDOVER must reference its parent programme")
@@ -150,6 +170,8 @@ def validate(path):
         validate_program_root(text, errors)
     elif role == "RELAY_HANDOVER":
         validate_handover(text, errors)
+    elif role == "ORIGINAL_INTENT":
+        validate_original_intent(text, errors)
     else:
         validate_child(text, role, errors)
 
