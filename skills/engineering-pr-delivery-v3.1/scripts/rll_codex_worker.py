@@ -117,6 +117,23 @@ def parse_duration_seconds(value: str) -> int:
     return amount * multiplier
 
 
+def verify_codex_workspace_access(root: Path, codex_user: str | None, write: bool) -> None:
+    if not codex_user:
+        return
+    checks = ["-r", "-x"] + (["-w"] if write else [])
+    for flag in checks:
+        result = subprocess.run(
+            ["sudo", "-n", "-u", codex_user, "test", flag, str(root)],
+            text=True,
+            capture_output=True,
+        )
+        if result.returncode:
+            need = "read/write/traverse" if write else "read/traverse"
+            raise core.RllError(
+                f"CODEX_WORKSPACE_ACCESS_NOT_QUALIFIED: {codex_user} lacks {need} access to {root}"
+            )
+
+
 def issue_context(issue, comments, limit: int = 60000) -> str:
     parts = [f"ISSUE #{issue['number']}: {issue.get('title', '')}", issue.get("body") or ""]
     for comment in comments:
@@ -215,6 +232,8 @@ def codex(
         raise core.RllError(
             "CODEX_NATIVE_WINDOWS_WRITE_NOT_QUALIFIED: run BRANCH_RESUME through WSL2/Linux"
         )
+    verify_codex_workspace_access(root, codex_user, sandbox == "workspace-write")
+
     env = os.environ.copy()
     for key in (
         "GH_TOKEN",
