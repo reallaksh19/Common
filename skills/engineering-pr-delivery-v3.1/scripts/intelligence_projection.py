@@ -552,6 +552,11 @@ def _issue_sections(
             })
     planning, publications = _planning_sections(obs, ep)
     reconstruction_context = _merge_reconstruction_context(obs, programme_obs)
+    continuity = (
+        dict((obs or {}).get("continuity"))
+        if isinstance((obs or {}).get("continuity"), dict)
+        else None
+    )
     programme_parent = _programme_ref(ep, parent)
     if programme_obs:
         programme_parent = {
@@ -587,6 +592,7 @@ def _issue_sections(
         "parent_issue": parent,
         "programme_parent": programme_parent,
         **({"reconstruction_context": reconstruction_context} if reconstruction_context else {}),
+        **({"continuity": continuity} if continuity else {}),
         "planning": planning,
         "task_publications": publications,
         "programme_progress": programme_progress,
