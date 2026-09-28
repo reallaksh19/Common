@@ -95,6 +95,37 @@ Return exact head, evidence, proved/not-proved and limitations.
 Escalate only if canonical source truth or programme ownership changes.
 """
 
+ORIGINAL_INTENT = f"""ISSUE_ROLE: ORIGINAL_INTENT
+PARENT_WORK_ITEM: github:owner/repo#100
+AUTHORITY: HISTORICAL_OWNER_SOURCE
+NO_EP: true
+RELAY_PROTOCOL: V3.1_ONLY
+
+# Original Owner instruction — VERBATIM
+<<<
+Preserve the original request exactly enough for a successor to understand the human goal.
+>>>
+
+# Capture metadata
+Observed main: {SHA}
+Source conversation: owner/current.
+
+# Owner-supplied inputs
+Issue #100 and one screenshot.
+
+# Owner ideas / hypotheses
+The current status may be stale.
+
+# Expected outputs explicitly requested
+A reconstructible intent source.
+
+# Explicit constraints / preserve
+Do not add an execution gate.
+
+# Derived intent index — NON-AUTHORITATIVE
+Human problem: successors lose intent context.
+"""
+
 HANDOVER = f"""ISSUE_ROLE: RELAY_HANDOVER
 PARENT_PROGRAMME: github:owner/repo#100
 PROGRAMME_BASIS_REVISION: PB-0001
@@ -160,6 +191,8 @@ def main():
     ok &= expect("programme specification", PROGRAM, 0)
     ok &= expect("parallel focused child", FOCUSED, 0)
     ok &= expect("relay handover ledger", HANDOVER, 0)
+    ok &= expect("original intent source", ORIGINAL_INTENT, 0)
+    ok &= expect("original intent without parent rejected", ORIGINAL_INTENT.replace("PARENT_WORK_ITEM: github:owner/repo#100\n", ""), 1)
     ok &= expect("focused child without parent rejected", FOCUSED.replace("PROGRAMME: github:owner/repo#100\n", ""), 1)
     ok &= expect("programme without handover reference rejected", PROGRAM.replace("# Dedicated Relay Handover operational ledger\n[Relay Handover] demo programme will be created as the current operational index.\n", ""), 1)
     ok &= expect("legacy protocol path rejected", FOCUSED + "\nengineering-pr-delivery-v2.5\n", 1)
