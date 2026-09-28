@@ -33,6 +33,46 @@ owned_branch_or_exact_head: <ref>
 
 If material facts changed, update the plan before staging RLL.
 
+## Existing repository protocol discovery — mandatory
+
+The exact Owner keyword **"Plan for local agent"** does not mean "install a new protocol."
+
+Before selecting an executor or scaffolding anything, inspect the target repository for existing local-agent/RLL authority and adapter material, including repository rules, scripts, installers, scheduler configuration, docs, source guards, live issue envelopes, and Common-basis pins.
+
+Classify exactly one:
+
+```text
+PRESENT_CURRENT_COMPATIBLE
+PRESENT_CURRENT_NEEDS_BLUEPRINT_DELTA
+PRESENT_STALE_OR_INCOMPATIBLE
+ABSENT
+```
+
+Apply these rules:
+
+- `PRESENT_CURRENT_COMPATIBLE` -> **REUSE**. Keep the repository protocol as the primary implementation. Do not scaffold a duplicate adapter or migrate executors merely because a newer blueprint exists.
+- `PRESENT_CURRENT_NEEDS_BLUEPRINT_DELTA` -> **AUGMENT_MINIMALLY**. Preserve the repository protocol and use the relevant Common blueprint only to fill the missing capability or safety boundary.
+- `PRESENT_STALE_OR_INCOMPATIBLE` -> **UPDATE_IN_PLACE** when practical. Preserve repository-specific integration and replace only stale/incompatible transport pieces.
+- `ABSENT` -> **SCAFFOLD** the standard thin adapter.
+
+A repository-local protocol is "compatible" when it preserves V3.1 authority, RLL transport/result separation, Git material truth, independent review, and the required executor/security invariants for the requested job.
+
+Never create a second competing local-agent protocol when the existing one can truthfully perform the requested job.
+
+## Executor profile
+
+Choose the local executor only after repository protocol discovery.
+
+For Codex, use `templates/rll-codex-local-blueprint.md` **if required**:
+- when the repository has no Codex/RLL implementation;
+- when its Common basis or Codex adapter is stale/incompatible;
+- when it lacks a required Codex safety boundary such as provider/credential isolation, `allowed_paths`, WSL/Linux source-write qualification, launcher-owned commit/push, structured output, or smoke gating;
+- when the Owner explicitly requests migration to Codex.
+
+If the existing repository protocol already satisfies the Codex blueprint invariants, do not re-scaffold it. Use the blueprint as a conformance checklist and record `blueprint_required: false`.
+
+For legacy Antigravity compatibility, retain the existing adapter rules until that executor is separately retired or migration is explicitly authorized.
+
 ## 1. Classify the local-agent job
 
 Choose exactly one mode.
@@ -218,6 +258,17 @@ repository:
   name: <owner/repo>
   main: <sha>
   governing_issue: <number>
+
+existing_local_agent_protocol:
+  status: PRESENT_CURRENT_COMPATIBLE | PRESENT_CURRENT_NEEDS_BLUEPRINT_DELTA | PRESENT_STALE_OR_INCOMPATIBLE | ABSENT
+  sources:
+    - <repo path / live provider source>
+  selected_action: REUSE | AUGMENT_MINIMALLY | UPDATE_IN_PLACE | SCAFFOLD
+  reason: <why this classification is true>
+
+blueprint:
+  codex_blueprint_required: true|false
+  reason: <missing delta or "existing protocol already conforms">
 
 adapter:
   status: PRESENT_CURRENT | PRESENT_STALE | ABSENT
