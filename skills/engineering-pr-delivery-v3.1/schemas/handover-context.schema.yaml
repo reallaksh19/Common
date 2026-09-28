@@ -160,7 +160,7 @@ properties:
   accumulated_learning:
     type: object
     additionalProperties: false
-    required: [checkpoint, discoveries, known_limitations, what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action, reconstruction_context, task_snapshot, improvement_view, parent_issue]
+    required: [checkpoint, discoveries, known_limitations, what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action, reconstruction_context, continuity, task_snapshot, improvement_view, parent_issue]
     properties:
       checkpoint: {type: [string, 'null']}
       discoveries: {type: array, items: {type: string}}
@@ -207,6 +207,38 @@ properties:
           rll_refs:
             type: array
             items: {type: string, minLength: 1}
+      continuity:
+        type: object
+        additionalProperties: false
+        required: [current, further_tasks, predecessor_ref]
+        properties:
+          current:
+            type: [object, 'null']
+            additionalProperties: false
+            required: [ref, custody_epoch, executor, status, continuation, exact_head, updated_at]
+            properties:
+              ref: {type: string, minLength: 1}
+              custody_epoch: {type: integer, minimum: 1}
+              executor: {type: string, minLength: 1}
+              status: {enum: [ACTIVE, HANDOFF_READY, COMPLETE, SUPERSEDED, BLOCKED]}
+              continuation: {enum: [NEW, HANDOFF, RECOVERY]}
+              exact_head: {type: [string, 'null']}
+              updated_at: {type: [string, 'null'], format: date-time}
+          further_tasks:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [id, state, statement, reason_class, dependency, expected_next_observable]
+              properties:
+                id: {type: string, pattern: '^FT-[1-9][0-9]*-[1-9][0-9]*$'}
+                state: {enum: [PENDING, ACTIVE, BLOCKED, DONE, SUPERSEDED, NOT_APPLICABLE]}
+                statement: {type: string, minLength: 1}
+                reason_class:
+                  enum: [CURRENT_TASK, UPSTREAM_DEPENDENCY, SIBLING_WORKSTREAM, PREEXISTING_UNRELATED, INFRASTRUCTURE, PROVIDER, OWNER_DECISION, UNKNOWN]
+                dependency: {type: [string, 'null']}
+                expected_next_observable: {type: [string, 'null']}
+          predecessor_ref: {type: [string, 'null']}
       task_snapshot:
         type: object
         additionalProperties: false
