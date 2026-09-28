@@ -304,13 +304,14 @@ def agy(root,text,schema,timeout,effort):
  if not isinstance(v,dict): raise RllError("Antigravity SUCCESS result omitted structured_output")
  return validate_run_result(v)
 
-def codex(root,text,schema,timeout,effort,write):
+def codex(root,text,schema,timeout,effort,write,codex_user=None,codex_home=None):
  if write and sys.platform.startswith("win"):
   raise RllError("CODEX_NATIVE_WINDOWS_WRITE_NOT_QUALIFIED: run BRANCH_RESUME through WSL2/Linux")
  sandbox="workspace-write" if write else "read-only"
  env=os.environ.copy()
  for k in ("GH_TOKEN","GITHUB_TOKEN","GH_ENTERPRISE_TOKEN","GITHUB_ENTERPRISE_TOKEN"): env.pop(k,None)
  with tempfile.TemporaryDirectory(prefix="rll-codex-") as tmp:
+  if codex_user: os.chmod(tmp,0o777)
   output=Path(tmp)/"last-message.json"
   argv=[
    "codex","--ask-for-approval","never","exec",
@@ -325,6 +326,11 @@ def codex(root,text,schema,timeout,effort,write):
    "-c",'sandbox_workspace_write.network_access=false',
    text,
   ]
+  if codex_user:
+   home=codex_home or f"/home/{codex_user}/.codex-rll"
+   argv=["sudo","-n","-u",codex_user,"env",f"CODEX_HOME={home}",f"HOME=/home/{codex_user}",f"PATH={env.get('PATH','')}"]+argv
+  elif codex_home:
+   env["CODEX_HOME"]=codex_home
   r=cmd(argv,cwd=root,check=False,timeout=duration_seconds(timeout),env=env)
   if r.returncode: raise RllError("Codex headless invocation failed: "+r.stderr.strip())
   for line in r.stdout.splitlines():
@@ -336,9 +342,9 @@ def codex(root,text,schema,timeout,effort,write):
   except Exception as e: raise RllError("invalid Codex structured result") from e
   return validate_run_result(v)
 
-def run_executor(name,root,text,schema,timeout,effort,write):
+def run_executor(name,root,text,schema,timeout,effort,write,codex_user=None,codex_home=None):
  if name=="antigravity": return agy(root,text,schema,timeout,effort)
- if name=="codex": return codex(root,text,schema,timeout,effort,write)
+ if name=="codex": return codex(root,text,schema,timeout,effort,write,codex_user,codex_home)
  raise RllError(f"unsupported executor {name}")
 
 def publish_executor_evidence(repo,n,v,o,executor):
@@ -394,12 +400,17 @@ def apply_result(s,v,o,e):
  s["state"]=state; s["phase"]="REVIEW_READY" if state=="REVIEW_READY" else ("ESCALATION" if state=="ESCALATION_REQUIRED" else state); s["lease_until"]=None if state!="ACTIVE" else s["lease_until"]
 
 def main():
- p=argparse.ArgumentParser(); p.add_argument("--repo-root",default="."); p.add_argument("--repository",required=True); p.add_argument("--worker-id",default="antigravity-local"); p.add_argument("--authorized-login",action="append",required=True); p.add_argument("--executor",choices=tuple(sorted(EXECUTORS)),default="antigravity"); p.add_argument("--data-dir",default=os.environ.get("RLL_DATA_DIR",str(Path.home()/".rll"))); p.add_argument("--lease-minutes",type=int,default=90); p.add_argument("--print-timeout",default="2h"); p.add_argument("--effort",choices=("low","medium","high"),default="high"); p.add_argument("--smoke",action="store_true"); a=p.parse_args(); root=Path(a.repo_root).resolve()
+ p=argparse.ArgumentParser(); p.add_argument("--repo-root",default="."); p.add_argument("--repository",required=True); p.add_argument("--worker-id",default="antigravity-local"); p.add_argument("--authorized-login",action="append",required=True); p.add_argument("--executor",choices=tuple(sorted(EXECUTORS)),default="antigravity"); p.add_argument("--codex-user"); p.add_argument("--codex-home"); p.add_argument("--data-dir",default=os.environ.get("RLL_DATA_DIR",str(Path.home()/".rll"))); p.add_argument("--lease-minutes",type=int,default=90); p.add_argument("--print-timeout",default="2h"); p.add_argument("--effort",choices=("low","medium","high"),default="high"); p.add_argument("--smoke",action="store_true"); a=p.parse_args(); root=Path(a.repo_root).resolve()
  try:
   for x in ("git","gh",("agy" if a.executor=="antigravity" else "codex")):
    if not shutil.which(x): raise RllError(f"missing command {x}")
+  if a.executor=="codex" and a.codex_user and not shutil.which("sudo"): raise RllError("codex-user isolation requires sudo")
   if cmd(["gh","auth","status"],check=False).returncode: raise RllError("gh authentication unavailable")
-  if a.executor=="codex" and cmd(["codex","login","status"],check=False).returncode: raise RllError("Codex authentication unavailable")
+  if a.executor=="codex":
+   if a.codex_user:
+    home=a.codex_home or f"/home/{a.codex_user}/.codex-rll"
+    if cmd(["sudo","-n","-u",a.codex_user,"env",f"CODEX_HOME={home}",f"HOME=/home/{a.codex_user}","codex","login","status"],check=False).returncode: raise RllError("Codex authentication unavailable for isolated user")
+   elif cmd(["codex","login","status"],check=False).returncode: raise RllError("Codex authentication unavailable")
   if not git(root,"rev-parse","--git-dir",check=False): raise RllError("repo-root is not a Git repository")
   data_dir=Path(a.data_dir).expanduser()/re.sub(r"[^A-Za-z0-9_.-]+","-",a.repository)
   lock=data_dir/"worker.lock"
@@ -419,7 +430,7 @@ def main():
    if a.smoke: s.update(state="RETRY_WAIT",phase="SMOKE_COMPLETE",lease_until=None,current="non-destructive smoke complete",next="review before enabling agent"); state_write(a.repository,n,{"id":sid},render(s,common,two)); print(json.dumps({"status":"SMOKE_COMPLETE","issue":n})); return 0
    pre_head=obs["head"]; pre_remote=git(workspace,"rev-parse","origin/"+e["branch"]) if e["mode"]=="BRANCH_RESUME" else None
    try:
-    v=run_executor(a.executor,workspace,prompt(a.repository,n,e,notes,a.executor,issue,cs),Path(__file__).resolve().parents[1]/"schemas/rll-run-result.schema.json",a.print_timeout,a.effort,e["write"])
+    v=run_executor(a.executor,workspace,prompt(a.repository,n,e,notes,a.executor,issue,cs),Path(__file__).resolve().parents[1]/"schemas/rll-run-result.schema.json",a.print_timeout,a.effort,e["write"],a.codex_user,a.codex_home)
     if a.executor=="codex":
      after=observe(workspace)
      if e["mode"]=="EXACT_HEAD_EVIDENCE":
