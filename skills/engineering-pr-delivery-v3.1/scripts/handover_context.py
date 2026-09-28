@@ -101,6 +101,13 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
         "delivery_blockers",
         "handover_blockers",
         "current_snapshot",
+        "work_package",
+        "acceptance_statements",
+        "selected_frontier",
+        "current_parent",
+        "original_intent",
+        "offload",
+        "rll_",
     ):
         if token in blind_text:
             errors.append(f"blind_context contains reality-only token: {token}")
@@ -195,11 +202,14 @@ def build_context(
         "blind_context": {
             "programme": {
                 "outcome": (snapshot.get("owner") or {}).get("outcome"),
-                "current_goal": (snapshot.get("owner") or {}).get("current_goal"),
-                "roadmap_revision": (snapshot.get("generated_from") or {}).get("roadmap_revision"),
                 "roadmap_title": roadmap.get("title"),
-                "reconciliation": reconciliation,
             },
+            # Task/EP constraints are intentionally excluded here. If a consumer has
+            # genuinely repository-wide constraints, it may add them explicitly.
+            "stable_constraints": [],
+        },
+        "reality_context": {
+            "programme_reconciliation": reconciliation,
             "local_responsibility": {
                 "work_package": context_wp_id,
                 "title": (wp or {}).get("title"),
@@ -210,9 +220,7 @@ def build_context(
                     if isinstance(item, dict) and str(item.get("statement") or "").strip()
                 ],
             },
-            "stable_constraints": list(((context_ep or {}).get("scope") or {}).get("prohibit") or []),
-        },
-        "reality_context": {
+            "task_constraints": list(((context_ep or {}).get("scope") or {}).get("prohibit") or []),
             "execution": {
                 "lifecycle": execution.get("lifecycle"),
                 "ep": ep_id,
@@ -318,7 +326,7 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "authorized_actions": "The generated prompts grant no production authority. Pass 2 may publish the approved implementation plan, bind/create EPs and refresh Task Snapshot/Handover only after explicit Owner approval; material execution occurs only when the Owner-approved action boundary and real provider/tool permissions allow it.",
             "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, Original Intent source, prior agent conversation/reconciliation, Local Agent/OFFLOAD or RLL task history, current PR, requested change, Improvement Proposal or further action. Pass 2 must distinguish historical intent, current Owner/Roadmap authority, agent reasoning, delegated evidence, RLL transport and material truth; prefer no improvement over speculation; reject rewrites/scope expansion; keep adjacent proposals in separate responsibilities; and pause before durable publication or implementation until Owner approval.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Pass 1 and Pass 2, validates the artifact, and Pass 2 contains an explicit Owner approval boundary plus the post-approval issue/EP/Task-Snapshot/Handover continuation.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. Build Pass 1 from repository/system identity, broad human outcome and stable constraints while quarantining target issue/task, reconstruction_context and current delivery state. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then reads accumulated_learning.reconstruction_context and refreshes target/provider/material reality; reconcile in order Original Intent -> current Owner/Roadmap amendments -> EP/owned issue -> relevant primary-agent reasoning -> Local Agent/OFFLOAD evidence -> RLL transport -> PR/tests/runtime -> Task Snapshot/Handover. Emit STEP-BACK RECONCILIATION before any high-ROI Improvement Proposal, then draft IMPLEMENTATION_PLAN in chat, stop for Owner approval, and after approval publish on the original issue and update EP/Task Snapshot/Handover.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. For Pass 1 use only blind_context: repository/system identity comes from this request, while blind_context supplies broad programme outcome/title and any genuinely global stable constraints. Do not use reality_context or accumulated_learning when generating Pass 1. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then reads reality_context plus accumulated_learning.reconstruction_context and refreshes target/provider/material reality; reconcile in order Original Intent -> current Owner/Roadmap amendments -> EP/owned issue -> relevant primary-agent reasoning -> Local Agent/OFFLOAD evidence -> RLL transport -> PR/tests/runtime -> Task Snapshot/Handover. Emit STEP-BACK RECONCILIATION before any high-ROI Improvement Proposal, then draft IMPLEMENTATION_PLAN in chat, stop for Owner approval, and after approval publish on the original issue and update EP/Task Snapshot/Handover.",
         },
     }
     errors = validate_schema("two-pass-request", request, "TWO_PASS_REQUEST")
