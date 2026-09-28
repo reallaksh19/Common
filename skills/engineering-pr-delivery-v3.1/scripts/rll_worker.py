@@ -277,6 +277,7 @@ def run_executor(name,root,text,schema,timeout,effort,write):
  raise RllError(f"unsupported executor {name}")
 
 def publish_executor_evidence(repo,n,v,o,executor):
+ if v.get("transport_state")!="REVIEW_READY" or not o["clean"]: return v
  if v.get("evidence_comment_url") or not (v.get("evidence_markdown") or "").strip(): return v
  body=(
   "TASK_EVIDENCE — RLL EXECUTOR\n\n"
@@ -293,7 +294,7 @@ def publish_executor_evidence(repo,n,v,o,executor):
 def push_governed_branch(root,e):
  if e["mode"]!="BRANCH_RESUME": return observe(root)
  o=observe(root)
- if o["branch"]!=e["branch"]: return o
+ if o["branch"]!=e["branch"] or not o["clean"]: return o
  remote="origin/"+e["branch"]; remote_head=git(root,"rev-parse",remote)
  if o["head"]==remote_head: return o
  if not is_ancestor(root,remote_head,o["head"]): raise RllError("governed branch diverged from origin after executor; refusing push")
@@ -313,6 +314,7 @@ def main():
   for x in ("git","gh",("agy" if a.executor=="antigravity" else "codex")):
    if not shutil.which(x): raise RllError(f"missing command {x}")
   if cmd(["gh","auth","status"],check=False).returncode: raise RllError("gh authentication unavailable")
+  if a.executor=="codex" and cmd(["codex","login","status"],check=False).returncode: raise RllError("Codex authentication unavailable")
   if not git(root,"rev-parse","--git-dir",check=False): raise RllError("repo-root is not a Git repository")
   data_dir=Path(a.data_dir).expanduser()/re.sub(r"[^A-Za-z0-9_.-]+","-",a.repository)
   lock=data_dir/"worker.lock"
