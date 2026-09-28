@@ -73,6 +73,10 @@ If the existing repository protocol already satisfies the Codex blueprint invari
 
 For legacy Antigravity compatibility, retain the existing adapter rules until that executor is separately retired or migration is explicitly authorized.
 
+Record the selected executor explicitly. Generic execution-envelope examples must use the selected worker identity rather than implicitly defaulting to Antigravity. For Codex, the standard worker identity is `codex-local` unless the repository's compatible thin adapter deliberately uses another configured identity.
+
+When native V3.1 `LOCAL_EXECUTION_EXPORT` is available for the bounded work, treat the generated `LOCAL_EXECUTION.yaml/.md` packet as the canonical derived recipient contract. Bind its `request.id` into RLL as `local_execution_request`; do not invent a parallel `TASK.md` or second engineering task contract. The generated packet remains derived context and does not create authority.
+
 ## 1. Classify the local-agent job
 
 Choose exactly one mode.
@@ -162,7 +166,8 @@ Publish one authorized execution envelope on the governing issue.
 RLL_EXECUTION_V1
 
 transport: RLL-1
-worker: antigravity-local
+worker: <selected-worker-id>
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: BRANCH_RESUME
 repository: <owner/repo>
 branch: <owned-branch>
@@ -176,7 +181,8 @@ allow_material_write: true
 RLL_EXECUTION_V1
 
 transport: RLL-1
-worker: antigravity-local
+worker: <selected-worker-id>
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: EXACT_HEAD_EVIDENCE
 repository: <owner/repo>
 head_sha: <exact-sha>
@@ -275,8 +281,13 @@ adapter:
   action: REUSE | UPDATE | SCAFFOLD
   required_common_basis: <sha>
 
+executor:
+  type: codex | antigravity
+  worker_id: <selected-worker-id>
+
 execution:
   mode: BRANCH_RESUME | EXACT_HEAD_EVIDENCE
+  local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
   branch: <value|null>
   head_sha: <value|null>
   base_sha: <sha>
@@ -297,6 +308,15 @@ activation:
   ready_label_after: <condition>
   next_human_action: <only if unavoidable; otherwise null>
 
+staging_result:
+  provider_mutations_performed: true|false
+  issue_comments: []
+  labels: []
+  repository_mutations: []
+  execution_envelopes: []
+  source_execution_started: false
+  merge_release_action_performed: false
+
 merge_release_authority: false
 ```
 
@@ -304,6 +324,8 @@ Then perform the durable staging actions that are already authorized:
 - publish/update the execution envelope;
 - scaffold/update the adapter when that is part of the requested planning work;
 - create labels/configuration artifacts as appropriate to the repository plan.
+
+The response MUST truthfully populate `staging_result` with every provider/repository mutation performed by the planning operation. A plan that published a comment, changed a label, created/updated an envelope, or changed repository material must not report itself as inspection-only. When no mutation occurred, return empty mutation lists and `provider_mutations_performed: false`.
 
 Do not start source-writing execution merely because the plan was requested.
 

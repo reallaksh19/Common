@@ -65,7 +65,8 @@ Minimum execution envelope:
 RLL_EXECUTION_V1
 
 transport: RLL-1
-worker: antigravity-local
+worker: <selected-worker-id>
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: BRANCH_RESUME
 repository: owner/repo
 branch: owned-branch
@@ -79,7 +80,8 @@ For exact-head evidence tasks:
 RLL_EXECUTION_V1
 
 transport: RLL-1
-worker: antigravity-local
+worker: <selected-worker-id>
+local_execution_request: <V3.1-LOCAL_EXECUTION-request-id|null>
 mode: EXACT_HEAD_EVIDENCE
 repository: owner/repo
 head_sha: <exact-sha>
@@ -91,6 +93,10 @@ Supported modes:
 
 - `BRANCH_RESUME`: resume the declared branch; prior legitimate worker commits must not be reset to the original base.
 - `EXACT_HEAD_EVIDENCE`: execute against the declared immutable head in a clean dedicated worktree/detached checkout; tracked material writes are prohibited.
+
+`worker` is the adapter-selected worker identity; generic protocol examples must not assume a particular executor. `local_execution_request` is optional correlation to a native V3.1 `LOCAL_EXECUTION_EXPORT` request. When present, it MUST identify the bounded generated recipient packet for this execution and the launcher propagates it into executor context and durable `TASK_EVIDENCE`. It is derived context only and creates no new engineering authority.
+
+Transport pause/resume uses only authorized `RELAY_DIRECTIVE_V1` with `action: PAUSE | RESUME`. There is no separate executable `RLL_TRANSPORT_PAUSE` object.
 
 An `RLL_EXECUTION_V1` envelope in the issue body is trusted only when the issue author is one of the configured authorized GitHub identities. An execution envelope in a later comment is trusted only when that comment author is authorized. This prevents an arbitrary issue/comment author from turning transport metadata into executable work merely by reproducing the marker.
 
@@ -343,7 +349,8 @@ The reference profile:
 - never uses dangerous approval/sandbox bypass flags;
 - never trusts process exit code alone; structured output and Git postflight are both required;
 - receives durable issue/comment context from the launcher and MUST NOT invoke `gh`, GitHub APIs, GitHub MCP, or provider-control commands;
-- may return `evidence_markdown`; Common binds it to the observed head and posts the durable evidence comment.
+- receives the optional V3.1 `local_execution_request` correlation when the envelope supplies one;
+- may return `evidence_markdown`; Common binds it to the observed head, local-execution request correlation when present, and posts the durable evidence comment.
 
 For Codex `BRANCH_RESUME`, the authorized `RLL_EXECUTION_V1` envelope MUST also provide:
 
