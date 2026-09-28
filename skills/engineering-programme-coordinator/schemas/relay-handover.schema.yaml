@@ -88,6 +88,20 @@ properties:
             rll_refs:
               type: array
               items: {type: string, minLength: 1}
+        continuity:
+          type: object
+          additionalProperties: false
+          properties:
+            ref: {type: [string, 'null']}
+            custody_epoch: {type: [integer, 'null'], minimum: 1}
+            executor: {type: [string, 'null']}
+            status: {enum: [ACTIVE, HANDOFF_READY, COMPLETE, SUPERSEDED, BLOCKED, UNKNOWN]}
+            continuation: {enum: [NEW, HANDOFF, RECOVERY, UNKNOWN]}
+            exact_head: {type: [string, 'null']}
+            predecessor_ref: {type: [string, 'null']}
+            further_tasks:
+              type: array
+              items: {type: string, pattern: '^FT-[1-9][0-9]*-[1-9][0-9]*$'}
         completion:
           type: object
           additionalProperties: false
