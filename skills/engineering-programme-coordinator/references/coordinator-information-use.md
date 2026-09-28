@@ -4,7 +4,7 @@ The coordinator should treat the programme record as a **semantic graph**, not a
 
 ## Information graph
 
-From the parent programme specification, effective amendments, Relay Handover ledger, child issues/plans, PRs and durable evidence, derive:
+From the Original Intent source (when present), parent programme specification, effective amendments, Relay Handover ledger, child issues/plans, responsibility-scoped conversation refs, Local Agent/OFFLOAD evidence, RLL transport refs, PRs and durable evidence, derive:
 
 ```text
 OUTCOME GRAPH
@@ -44,16 +44,19 @@ These are coordinator-derived views. None is production authority.
 
 On first contact or zero-context takeover:
 
-1. read parent programme issue;
-2. resolve current basis revision + effective amendment index;
-3. read the dedicated Relay Handover issue;
-4. enumerate child implementation issues;
-5. enumerate every nonterminal PR;
-6. read current implementation-plan refs;
-7. verify current repository/PR/material evidence where consequence matters;
-8. reconstruct negative knowledge and unresolved programme obligations;
-9. derive the graphs above;
-10. compare the Handover index to live durable evidence and mark stale/unknown fields rather than trusting them blindly.
+1. independently re-ground the live system when the Two-Pass Pass-1 boundary applies;
+2. read the linked Original Intent source when present;
+3. read the parent programme issue and resolve current basis revision + explicit Owner/programme amendments;
+4. enumerate child implementation issues / EP responsibilities;
+5. read only relevant primary-agent conversation/reconciliation refs;
+6. read relevant Local Agent/OFFLOAD provider issues and RLL execution/state refs without treating RLL as acceptance evidence;
+7. read the dedicated Relay Handover issue as an index;
+8. enumerate every nonterminal PR and current implementation-plan ref;
+9. verify current repository/PR/test/runtime/material evidence where consequence matters;
+10. reconstruct negative knowledge and unresolved programme obligations;
+11. perform step-back reconciliation between historical intent, current authority, engineering reasoning and material reality;
+12. derive the graphs above;
+13. compare the Handover index to live durable evidence and mark stale/unknown fields rather than trusting them blindly.
 
 Output:
 
@@ -79,10 +82,14 @@ Do not require all fields to be complete before coordinating.
 Build each Work Order by joining:
 
 ```text
-parent outcome/boundary
+Original Intent ref when relevant
++ current parent outcome/boundary
 + effective amendments affecting this workstream
-+ child responsibility
++ child / EP responsibility
++ latest relevant responsibility reconciliation
 + current implementation plan
++ Local Agent/OFFLOAD refs when relevant
++ RLL refs when relevant
 + canonical inputs
 + dependency contracts
 + consumer contract
@@ -243,7 +250,7 @@ If a new falsifier disproves earlier negative knowledge:
 
 Routine coordination uses expected→observed→consequence.
 
-Regenerate deeper three-pass reasoning only when evidence changes:
+Regenerate deeper Two-Pass reasoning only when evidence changes:
 
 - programme/human outcome;
 - governing issue meaning;
