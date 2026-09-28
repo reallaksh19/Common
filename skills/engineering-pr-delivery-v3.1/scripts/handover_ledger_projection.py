@@ -461,6 +461,11 @@ def build(
         work_observation = observation_by_issue.get(work_key) if work_key else None
         provider_issue_state = str((work_observation or {}).get("state") or "UNKNOWN")
         reconstruction_context = _reconstruction_context_from_observation(work_observation)
+        continuity = (
+            dict((work_observation or {}).get("continuity"))
+            if isinstance((work_observation or {}).get("continuity"), dict)
+            else None
+        )
         delivery = _delivery_from_observation(work_observation)
         observed_plan = _plan_from_observation(work_observation)
         if observed_plan:
@@ -511,11 +516,15 @@ def build(
             task_reconstruction_context = task.get("reconstruction_context")
             if isinstance(task_reconstruction_context, dict):
                 reconstruction_context = dict(task_reconstruction_context)
+            task_continuity = task.get("continuity")
+            if isinstance(task_continuity, dict):
+                continuity = dict(task_continuity)
         ep_index.append({
             "ep": ep_id,
             "work_package": str(ep.get("work_package")),
             "work_issue": work_issue,
             **({"reconstruction_context": reconstruction_context} if reconstruction_context else {}),
+            **({"continuity": continuity} if continuity else {}),
             "implementation_plan": plan,
             "provider_issue_state": provider_issue_state,
             "delivery": delivery,
@@ -758,8 +767,8 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "",
         "## EP index",
         "",
-        "| EP | Work issue | WP | Plan | Reconciliation | Expected next observable | Provider issue | Delivery | PR | Base | Head | Status | Continuation | Checkpoint | Lease | Executor |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "| EP | Work issue | WP | Plan | Reconciliation | Agent continuity | Expected next observable | Provider issue | Delivery | PR | Base | Head | Status | Continuation | Checkpoint | Lease | Executor |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for row in ledger["ep_index"]:
         work_issue = row.get("work_issue") or {}
@@ -768,6 +777,19 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         delivery = row.get("delivery") or {}
         row_reconstruction = row.get("reconstruction_context") or {}
         reconciliation_ref = ((row_reconstruction.get("latest_reconciliation") or {}).get("ref")) or "-"
+        row_continuity = row.get("continuity") or {}
+        current_status = row_continuity.get("current") or {}
+        ft_ids = [
+            str(item.get("id"))
+            for item in (row_continuity.get("further_tasks") or [])
+            if isinstance(item, dict) and item.get("state") not in {"DONE", "SUPERSEDED", "NOT_APPLICABLE"}
+        ]
+        continuity_label = (
+            f"{current_status.get('ref')} / epoch {current_status.get('custody_epoch')} / "
+            f"{current_status.get('continuation')} / FT={','.join(ft_ids) if ft_ids else 'none'}"
+            if current_status
+            else "-"
+        )
         plan_label = str(plan.get("state") or "UNKNOWN")
         if plan.get("revision") is not None:
             plan_label += f" r{plan.get('revision')}"
@@ -775,7 +797,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         lines.append(
             f"| {row['ep']} | "
             f"{work_issue.get('repository') or '-'}#{work_issue.get('number') or '-'} | "
-            f"{row['work_package']} | {plan_label} | {reconciliation_ref} | "
+            f"{row['work_package']} | {plan_label} | {reconciliation_ref} | {continuity_label} | "
             f"{expected.get('statement') or '-'} | "
             f"{row.get('provider_issue_state') or 'UNKNOWN'} | "
             f"{delivery.get('lifecycle') or 'UNKNOWN'} | {pr_label} | "
