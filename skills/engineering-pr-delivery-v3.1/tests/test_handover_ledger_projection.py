@@ -46,6 +46,24 @@ def parent_observation() -> dict:
             ],
         },
         "updates": [],
+        "reconstruction_context": {
+            "original_intent": {
+                "repository": "example/repo",
+                "issue_number": 1700,
+                "url": "https://github.com/example/repo/issues/1700",
+                "source_ref": "github:example/repo#1700/body",
+                "digest": DIGEST,
+            },
+            "latest_reconciliation": {
+                "ref": "github:example/repo#1771/comment-11",
+                "observed_at": "2026-09-22T13:58:00Z",
+                "summary": "Programme intent remains aligned.",
+            },
+            "primary_conversation_refs": ["github:example/repo#1771/comment-8"],
+            "roadmap_refs": ["RM-1771"],
+            "local_agent_refs": [],
+            "rll_refs": [],
+        },
         "disposition": "NO_CHANGE",
         "relationships": [],
         "handover_ledger": {
@@ -169,6 +187,11 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 validate_schema("handover-ledger", canonical_ledger, "CANONICAL_HANDOVER_LEDGER"),
             )
             self.assertEqual(1870, ledger["handover_issue"]["number"])
+            self.assertEqual(1700, ledger["reconstruction_context"]["original_intent"]["issue_number"])
+            self.assertEqual(
+                "github:example/repo#1771/comment-11",
+                ledger["reconstruction_context"]["latest_reconciliation"]["ref"],
+            )
 
             by_ep = {row["ep"]: row for row in ledger["ep_index"]}
             self.assertEqual("ACTIVE", by_ep["EP-TA-011"]["status"])
@@ -190,6 +213,10 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
 
             body = render_ledger(ledger)
             parent = render_parent_summary(ledger)
+            self.assertIn("## Reconstruction context", body)
+            self.assertIn("Original Intent: example/repo#1700", body)
+            self.assertIn("github:example/repo#1771/comment-11", body)
+            self.assertNotIn("Programme intent remains aligned.", body)
             self.assertIn("## EP index", body)
             self.assertIn("EP-TA-009", body)
             self.assertIn("RECOVERY_REQUIRED", body)
@@ -256,6 +283,18 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 "head": "head-sha",
                 "mergeability": "MERGEABLE",
             }
+            work["reconstruction_context"] = {
+                "original_intent": None,
+                "latest_reconciliation": {
+                    "ref": "github:example/repo#1772/comment-reconcile",
+                    "observed_at": "2026-09-22T14:01:00Z",
+                    "summary": "Child responsibility remains bounded.",
+                },
+                "primary_conversation_refs": ["github:example/repo#1772/comment-context"],
+                "roadmap_refs": [],
+                "local_agent_refs": [],
+                "rll_refs": [],
+            }
             work["task_publications"] = [
                 {
                     "type": "IMPLEMENTATION_PLAN",
@@ -292,6 +331,14 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertEqual(237, row["delivery"]["pr"])
             self.assertEqual("base-sha", row["delivery"]["base"])
             self.assertEqual("head-sha", row["delivery"]["head"])
+            self.assertEqual(
+                "github:example/repo#1772/comment-reconcile",
+                row["reconstruction_context"]["latest_reconciliation"]["ref"],
+            )
+            self.assertEqual(
+                1700,
+                row["reconstruction_context"]["original_intent"]["issue_number"],
+            )
 
             body = render_ledger(ledger)
             self.assertIn("| OPEN | REVIEW_READY | #237 | base-sha | head-sha |", body)
