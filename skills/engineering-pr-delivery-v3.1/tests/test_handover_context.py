@@ -239,6 +239,71 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("CP-TA-010", learning["improvement_view"]["checkpoint"])
             self.assertTrue(learning["improvement_view"]["digest"].startswith("sha256:"))
 
+    def test_reconstruction_context_is_explicit_for_pass2_and_absent_from_blind_context(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            install_standalone(root)
+            target = load_yaml(target_observation(root))
+
+            initial, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+            )
+            task_snapshot = copy.deepcopy(initial["accumulated_learning"]["task_snapshot"]["value"])
+            task_snapshot["reconstruction_context"] = {
+                "original_intent": {
+                    "repository": "example/project",
+                    "issue_number": 1700,
+                    "url": "https://github.com/example/project/issues/1700",
+                    "source_ref": "github:example/project#1700/body",
+                    "digest": "sha256:" + ("a" * 64),
+                },
+                "latest_reconciliation": {
+                    "ref": "github:example/project#1771/comment-reconcile",
+                    "observed_at": "2026-09-28T10:00:00Z",
+                    "summary": "Current responsibility remains aligned with effective Owner intent.",
+                },
+                "primary_conversation_refs": ["github:example/project#1771/comment-context"],
+                "roadmap_refs": ["RM-1771"],
+                "local_agent_refs": ["github:example/project#1780"],
+                "rll_refs": ["github:example/project#1771/comment-rll-state"],
+            }
+
+            context, _ = build_context(
+                root,
+                base_ref=base_ref,
+                target=target,
+                complex_mode=False,
+                task_snapshot_override=task_snapshot,
+                improvement_view_override=initial["accumulated_learning"]["improvement_view"]["value"],
+            )
+
+            reconstruction = context["accumulated_learning"]["reconstruction_context"]
+            self.assertEqual(1700, reconstruction["original_intent"]["issue_number"])
+            self.assertEqual(
+                "github:example/project#1771/comment-reconcile",
+                reconstruction["latest_reconciliation"]["ref"],
+            )
+            self.assertEqual(["github:example/project#1780"], reconstruction["local_agent_refs"])
+            self.assertEqual(["github:example/project#1771/comment-rll-state"], reconstruction["rll_refs"])
+
+            blind_text = yaml.safe_dump(context["blind_context"], sort_keys=True)
+            self.assertNotIn("1700", blind_text)
+            self.assertNotIn("comment-reconcile", blind_text)
+            self.assertNotIn("comment-context", blind_text)
+            self.assertNotIn("comment-rll-state", blind_text)
+            self.assertEqual([], validate_visibility(context))
+
+            request = build_request(context)
+            rendered = render_request(request)
+            self.assertIn("STEP-BACK RECONCILIATION", rendered)
+            self.assertIn("Original Intent", rendered)
+            self.assertIn("Local Agent/OFFLOAD", rendered)
+            self.assertIn("RLL transport", rendered)
+
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
