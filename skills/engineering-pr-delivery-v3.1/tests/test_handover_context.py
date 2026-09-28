@@ -148,6 +148,14 @@ class HandoverContextTests(unittest.TestCase):
             self.assertNotIn("branch:", blind_text.lower())
             self.assertNotIn("pull request", blind_text.lower())
             self.assertNotIn("419", blind_text)
+            self.assertNotIn("work_package", blind_text.lower())
+            self.assertNotIn("selected_frontier", blind_text.lower())
+            self.assertNotIn("acceptance_statements", blind_text.lower())
+            self.assertNotIn("Do not make V3 the default protocol in this slice.", blind_text)
+            self.assertEqual(
+                {"outcome", "roadmap_title"},
+                set(context["blind_context"]["programme"]),
+            )
             self.assertEqual("TPG-2P-2026-09-28-R2", context["generator_contract"]["protocol_revision_at_freeze"])
 
     def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
@@ -175,15 +183,16 @@ class HandoverContextTests(unittest.TestCase):
             )
             self.assertEqual("IDLE", context["reality_context"]["execution"]["lifecycle"])
             self.assertIsNone(context["reality_context"]["execution"]["ep"])
-            self.assertEqual("WP-TA-109", context["blind_context"]["local_responsibility"]["work_package"])
+            self.assertEqual("WP-TA-109", context["reality_context"]["local_responsibility"]["work_package"])
             self.assertIn(
                 "Foundation objects validate deterministically.",
-                context["blind_context"]["local_responsibility"]["acceptance_statements"],
+                context["reality_context"]["local_responsibility"]["acceptance_statements"],
             )
             self.assertIn(
                 "Do not make V3 the default protocol in this slice.",
-                context["blind_context"]["stable_constraints"],
+                context["reality_context"]["task_constraints"],
             )
+            self.assertEqual([], context["blind_context"]["stable_constraints"])
 
     def test_complex_request_preserves_exact_two_pass_contract_and_approval_boundary(self):
         with tempfile.TemporaryDirectory() as td:
@@ -421,7 +430,7 @@ class HandoverContextTests(unittest.TestCase):
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
             self.assertEqual(
                 "NOT_REQUIRED",
-                context["blind_context"]["programme"]["reconciliation"]["status"],
+                context["reality_context"]["programme_reconciliation"]["status"],
             )
 
     def test_closed_parent_reconciliation_debt_does_not_block_handover_recording(self):
@@ -483,7 +492,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("COMMITTED", result["status"])
 
             context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
-            reconciliation = context["blind_context"]["programme"]["reconciliation"]
+            reconciliation = context["reality_context"]["programme_reconciliation"]
             self.assertEqual("READY", reconciliation["status"])
             self.assertEqual(
                 ["example/project#1772"],
