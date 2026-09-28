@@ -23,10 +23,11 @@ It uses:
 - native `git` for material repository truth;
 - GitHub CLI `gh` and `gh api` for issue/PR/provider reads plus bounded label/comment mutations;
 - a deterministic Python launcher for local mutex, issue selection, lease/state updates and directive filtering;
-- Google Antigravity `agy -p` for non-interactive engineering-agent execution;
-- Antigravity `/schedule` as the initial recurring trigger.
+- a pluggable local engineering executor selected by machine configuration;
+- `CODEX_LOCAL_V1` using ordinary `codex exec`;
+- legacy Antigravity `agy -p` as a compatibility executor during migration.
 
-A persistent Antigravity sidecar is a later lifecycle upgrade, not an RLL-1 prerequisite.
+Executor selection does not create engineering authority and is not accepted from ordinary issue comments.
 
 ## Authority hierarchy
 
@@ -307,7 +308,7 @@ skills/engineering-pr-delivery-v3.1/scripts/rll_worker.py
 Responsibilities:
 
 1. acquire same-machine mutex;
-2. verify `git`, `gh` and `agy` availability;
+2. verify `git`, `gh` and the configured executor binary (`codex` or compatibility `agy`) availability;
 3. verify authenticated `gh`;
 4. discover exactly one active issue or deterministically select the oldest ready issue;
 5. load issue + comments using `gh`;
@@ -315,15 +316,36 @@ Responsibilities:
 7. find/create the singular worker-state comment;
 8. filter/apply authorized directives;
 9. claim/renew the GitHub lease;
-10. invoke Antigravity headlessly;
+10. invoke the configured engineering executor headlessly;
 11. parse a structured `RLL_RUN_RESULT_V1`;
-12. refresh material Git truth;
-13. update transport state/labels;
-14. release the mutex.
+12. refresh material Git truth and, for a clean governed branch ahead of origin, push that exact HEAD without force/reset/rebase;
+13. bind executor evidence to the observed material head and publish durable `TASK_EVIDENCE` when the executor returned `evidence_markdown`;
+14. update transport state/labels;
+15. release the mutex.
 
 The launcher does not merge, release, delete branches, close programme issues, or mutate acceptance criteria.
 
-## Antigravity invocation
+## Executor profiles
+
+The launcher supports `--executor antigravity|codex`. The compatibility default remains `antigravity` until consumer adapters explicitly migrate. Executor selection is local machine configuration, not issue authority.
+
+### CODEX_LOCAL_V1
+
+Use ordinary `codex exec`, not the `review` subcommand.
+
+The reference profile:
+- runs in the prepared RLL workspace;
+- uses `--output-schema` plus `--output-last-message` and parses the latter as `RLL_RUN_RESULT_V1`;
+- uses `workspace-write` for `BRANCH_RESUME` and `read-only` for `EXACT_HEAD_EVIDENCE`;
+- sets approval policy to `never` for unattended operation;
+- uses bounded wall-clock timeout and treats timeout/auth/provider/runtime failures as transport retry conditions;
+- never uses dangerous approval/sandbox bypass flags;
+- never trusts process exit code alone; structured output and Git postflight are both required;
+- may return `evidence_markdown`; Common binds it to the observed head and posts the durable evidence comment.
+
+Native-Windows source-write readiness MUST be demonstrated on the actual consumer machine before source-write RLL is enabled. A successful Codex process/structured result is not proof that `workspace-write` actually permitted material writes. Git postflight remains authoritative.
+
+### Antigravity compatibility invocation
 
 Reference headless execution uses:
 
@@ -537,3 +559,8 @@ RLL is removable without rewriting V3.1 material truth:
 The design invariant is:
 
 > Automate movement of authority and evidence; do not automate creation of authority.
+
+
+## Scheduler neutrality
+
+RLL-1 does not require the executor to provide its own scheduler. Consumer adapters MAY use the operating system scheduler. For Windows Codex consumers, Windows Task Scheduler with overlap suppression plus the existing Common mutex is the preferred initial trigger. Scheduler cadence is operational metadata and creates no authority.
