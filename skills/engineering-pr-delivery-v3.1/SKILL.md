@@ -194,6 +194,25 @@ Owner portions retain their real Owner authority/context classification. Agent r
 
 Missing conversation capture is reconstruction debt only. It never invalidates material work or becomes a production gate.
 
+### Mutable execution continuity — AGENT_STATUS_V1
+
+An active engineering custody epoch may maintain **one mutable `AGENT_STATUS_V1` provider comment** on the owned issue.
+
+`AGENT_STATUS_V1`:
+- authority = `DERIVED_EXECUTION_CONTINUITY`;
+- is **not** a fifth task publication;
+- answers "where is execution now and what remains?";
+- never overrides Owner/Roadmap authority, EP responsibility, plan publications, Git/material truth, tests/runtime, TASK_EVIDENCE or TASK_RESULT;
+- indexes Local Agent/OFFLOAD and RLL surfaces rather than duplicating them.
+
+Its `Further task` section uses lightweight `FT-<issue>-<serial>` IDs with states `PENDING | ACTIVE | BLOCKED | DONE | SUPERSEDED | NOT_APPLICABLE`. FT-* exists only for continuity/readback and never replaces STEP/AC/EXIT/EP/WP/OFFLOAD identities or becomes an execution gate.
+
+Update the same status comment only at meaningful execution boundaries: session start/resume, plan route change, primary PR creation, meaningful FT completion, new exact-head candidate, blocker/dependency change, Local Agent/RLL consequence change, formal handover, TASK_RESULT, COMPLETE/SUPERSEDED.
+
+For graceful handover or abrupt recovery, the successor creates a **new** AGENT_STATUS_V1 custody epoch and references the predecessor comment. The successor must revalidate every unresolved FT-* item against live provider/material truth before carrying it forward. Never edit a vanished predecessor's status record.
+
+See `templates/agent-status.md` and `schemas/agent-status.schema.yaml`.
+
 The coordinator watches the plan's **expected next observable** and reasons:
 
 ```text
