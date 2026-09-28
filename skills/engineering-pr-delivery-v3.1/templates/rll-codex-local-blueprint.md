@@ -12,17 +12,23 @@ Canonical references:
 
 ## 1. Use this blueprint when
 
-Use this blueprint when all are true:
+This blueprint is **conditional**, not an automatic replacement for repository-local protocol.
+
+First inspect the target repository's existing V3.1 local-agent/RLL implementation.
+
+Use this blueprint to scaffold or repair the missing delta when all relevant conditions are true:
 
 - V3.1 is the live engineering coordination/recording protocol;
 - the engineering task is already bounded by an issue/plan/Owner decision;
 - unattended local execution is desired;
-- the local executor is Codex;
+- Codex is the selected or explicitly requested executor;
+- the existing repository protocol is absent, stale/incompatible, or missing one or more required CODEX_LOCAL_V1 invariants;
 - provider control must remain deterministic and outside the model process;
-- the consumer repository should keep only a thin adapter;
 - source-writing execution, when required, can run under WSL2/Linux or another qualified Linux environment.
 
-Do not use this blueprint to invent engineering scope or bypass an Owner/governance decision.
+If the repository already has a current compatible Codex/RLL protocol satisfying this blueprint's invariants, **reuse it**. In that case the blueprint is a conformance checklist and should not create duplicate scripts, schedulers, state machines, labels, or authority.
+
+Do not use this blueprint to invent engineering scope, force an executor migration, replace compatible repository-specific integration, or bypass an Owner/governance decision.
 
 ## 2. Canonical invariant
 
@@ -500,19 +506,22 @@ Do not restart or discard legitimate engineering material merely because the exe
 
 ## 13. Agent instantiation algorithm
 
-When a V3.1 agent is told to use this blueprint:
+When a V3.1 agent receives **"Plan for local agent"** and Codex may be relevant:
 
 1. refresh current V3.1/Common/Two-Pass basis;
 2. reconstruct the governing engineering contract;
-3. determine whether `EXACT_HEAD_EVIDENCE` or `BRANCH_RESUME` truthfully fits;
-4. inspect the consumer adapter;
-5. fill `rll-codex-local-blueprint/v1`;
-6. stage/update the thin adapter when authorized;
-7. create a fresh smoke issue;
-8. publish the matching `RLL_EXECUTION_V1` envelope;
-9. install/validate smoke-first activation;
-10. do not start source-writing execution unless that engineering write is already authorized;
-11. do not merge/release without fresh direct Owner authority.
+3. discover the repository's existing local-agent/RLL protocol and classify it as `PRESENT_CURRENT_COMPATIBLE`, `PRESENT_CURRENT_NEEDS_BLUEPRINT_DELTA`, `PRESENT_STALE_OR_INCOMPATIBLE`, or `ABSENT`;
+4. if `PRESENT_CURRENT_COMPATIBLE`, reuse it and use this blueprint only as a conformance checklist;
+5. otherwise identify the smallest missing Codex/RLL delta this blueprint must supply;
+6. determine whether `EXACT_HEAD_EVIDENCE` or `BRANCH_RESUME` truthfully fits;
+7. fill `rll-codex-local-blueprint/v1` only for the selected/repaired Codex path;
+8. stage/update the thin adapter only when required and authorized;
+9. create a fresh smoke issue when activation/smoke is required;
+10. publish the matching `RLL_EXECUTION_V1` envelope;
+11. install/validate smoke-first activation;
+12. do not start source-writing execution unless that engineering write is already authorized;
+13. do not infer executor migration authority from the keyword alone;
+14. do not merge/release without fresh direct Owner authority.
 
 ## 14. Invariant
 
