@@ -339,6 +339,7 @@ The reference profile:
 - uses `workspace-write` for `BRANCH_RESUME` and `read-only` for `EXACT_HEAD_EVIDENCE`;
 - sets approval policy to `never`, sets `approvals_reviewer="user"`, disables web search, and disables workspace-write network access;
 - removes `GH_TOKEN`, `GITHUB_TOKEN` and enterprise-token variants from the Codex process environment;
+- supports a dedicated local Codex OS identity / `CODEX_HOME` so provider credentials remain owned by the launcher user;
 - never uses dangerous approval/sandbox bypass flags;
 - never trusts process exit code alone; structured output and Git postflight are both required;
 - receives durable issue/comment context from the launcher and MUST NOT invoke `gh`, GitHub APIs, GitHub MCP, or provider-control commands;
