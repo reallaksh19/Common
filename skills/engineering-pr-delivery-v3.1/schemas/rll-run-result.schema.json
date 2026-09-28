@@ -14,22 +14,47 @@
     "notes"
   ],
   "properties": {
-    "schema": { "const": "RLL_RUN_RESULT_V1" },
-    "transport_state": {
-      "enum": ["ACTIVE", "RETRY_WAIT", "ESCALATION_REQUIRED", "REVIEW_READY"]
+    "schema": {
+      "const": "RLL_RUN_RESULT_V1"
     },
-    "current": { "type": "string", "minLength": 1 },
-    "next": { "type": "string", "minLength": 1 },
-    "evidence_comment_url": {
-      "anyOf": [
-        { "type": "string", "format": "uri" },
-        { "type": "null" }
+    "transport_state": {
+      "enum": [
+        "ACTIVE",
+        "RETRY_WAIT",
+        "ESCALATION_REQUIRED",
+        "REVIEW_READY"
       ]
     },
-    "engineering_summary": { "type": "string" },
+    "current": {
+      "type": "string",
+      "minLength": 1
+    },
+    "next": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_comment_url": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "engineering_summary": {
+      "type": "string"
+    },
     "notes": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_markdown": {
+      "type": "string"
     }
   }
 }

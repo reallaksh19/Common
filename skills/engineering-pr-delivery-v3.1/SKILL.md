@@ -201,7 +201,7 @@ Reference:
 
 `operating-model/transports/RLL-1.md`
 
-The reference transport intentionally requires no GitHub MCP server. It uses native `git`, GitHub CLI `gh` / `gh api`, a deterministic single-machine mutex/lease launcher, and Antigravity headless execution.
+The reference transport intentionally requires no GitHub MCP server. It uses native `git`, GitHub CLI `gh` / `gh api`, a deterministic single-machine mutex/lease launcher, and a machine-selected local executor. `CODEX_LOCAL_V1` is supported through ordinary `codex exec`; Antigravity remains a compatibility executor during migration. Executor/scheduler choice does not create engineering authority.
 
 An RLL child is eligible only after the governing engineering contract/plan is already recoverable and an `RLL_EXECUTION_V1` envelope identifies either:
 
