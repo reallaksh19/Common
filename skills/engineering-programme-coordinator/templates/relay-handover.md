@@ -28,6 +28,14 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 - Last observed main:
 - Last reconciled at:
 
+## Reconstruction references
+
+- **Original Intent:** <github issue/ref or NONE>
+- **Latest programme reconciliation:** <comment/event ref or NONE>
+- **Roadmap refs:** <RM-* / ROADMAP_RECONCILED refs>
+
+These are pointers only. Do not copy the Original Intent body or conversation transcript into Handover.
+
 ## Workstreams
 
 ### <A> — <child issue>
@@ -51,6 +59,14 @@ A ledger statement such as "B produced X" is not proof by itself. Link the commi
 **Exact head:** ...
 
 **Task Snapshot:** <ref>
+
+**Latest responsibility reconciliation:** <ref or NONE>
+
+**Primary conversation refs:** <refs only>
+
+**Local Agent / OFFLOAD refs:** <refs only>
+
+**RLL execution/state refs:** <refs only>
 
 **Responsibility state:** COMPLETE / PARTIAL / OPEN / NOT_RUN / UNKNOWN
 
@@ -156,7 +172,7 @@ Promote only programme-significant local results:
 - local evidence requiring shared promotion;
 - session loss with material programme consequence.
 
-Do not copy routine worker chatter or command logs here.
+Do not copy routine worker chatter or command logs here. Keep Local Agent conversation/evidence on its governed OFFLOAD/provider issue and RLL operational chatter/state on the existing RLL surfaces; Handover only indexes the refs needed for reconstruction.
 
 ## Owner decisions needed
 
