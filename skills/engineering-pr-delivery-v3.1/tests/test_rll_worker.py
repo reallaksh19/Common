@@ -319,5 +319,107 @@ allow_material_write: false
             self.assertNotIn(token, source)
 
 
+    def test_codex_source_write_command_is_schema_bound_and_workspace_scoped(self):
+        payload = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "ACTIVE",
+            "current": "working",
+            "next": "test",
+            "evidence_comment_url": None,
+            "evidence_markdown": "",
+            "engineering_summary": "",
+            "notes": [],
+        }
+        completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        calls = []
+        def fake_cmd(argv, cwd=None, check=True, timeout=None):
+            calls.append((argv, cwd, check, timeout))
+            output = Path(argv[argv.index("--output-last-message") + 1])
+            output.write_text(json.dumps(payload), encoding="utf-8")
+            return completed
+        with patch.object(rll, "cmd", side_effect=fake_cmd):
+            result = rll.codex(Path("."), "prompt", Path("schema.json"), "30m", "high", True)
+        argv = calls[0][0]
+        self.assertEqual("codex", argv[0])
+        self.assertEqual(["--ask-for-approval", "never", "exec"], argv[1:4])
+        self.assertIn("--output-schema", argv)
+        self.assertIn("--output-last-message", argv)
+        self.assertEqual("workspace-write", argv[argv.index("--sandbox") + 1])
+        self.assertEqual("ACTIVE", result["transport_state"])
+
+    def test_codex_exact_head_uses_read_only_sandbox(self):
+        payload = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "ACTIVE",
+            "current": "working",
+            "next": "review",
+            "evidence_comment_url": None,
+            "engineering_summary": "",
+            "notes": [],
+        }
+        completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        seen = {}
+        def fake_cmd(argv, cwd=None, check=True, timeout=None):
+            seen["argv"] = argv
+            Path(argv[argv.index("--output-last-message") + 1]).write_text(json.dumps(payload), encoding="utf-8")
+            return completed
+        with patch.object(rll, "cmd", side_effect=fake_cmd):
+            rll.codex(Path("."), "prompt", Path("schema.json"), "2h", "high", False)
+        self.assertEqual("read-only", seen["argv"][seen["argv"].index("--sandbox") + 1])
+
+    def test_codex_rejects_missing_or_invalid_output_file(self):
+        completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        with patch.object(rll, "cmd", return_value=completed):
+            with self.assertRaises(rll.RllError):
+                rll.codex(Path("."), "prompt", Path("schema.json"), "10s", "high", True)
+
+    def test_codex_rejects_nonzero_exit_even_with_possible_output(self):
+        completed = type("Completed", (), {"returncode": 7, "stdout": "", "stderr": "provider error"})()
+        with patch.object(rll, "cmd", return_value=completed):
+            with self.assertRaises(rll.RllError):
+                rll.codex(Path("."), "prompt", Path("schema.json"), "10s", "high", True)
+
+    def test_validate_run_result_accepts_executor_evidence_markdown(self):
+        value = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "REVIEW_READY",
+            "current": "done",
+            "next": "review",
+            "evidence_comment_url": None,
+            "evidence_markdown": "focused tests PASS",
+            "engineering_summary": "focused PASS",
+            "notes": [],
+        }
+        self.assertEqual(value, rll.validate_run_result(value))
+
+    def test_publish_executor_evidence_binds_observed_material_head(self):
+        value = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "REVIEW_READY",
+            "current": "done",
+            "next": "review",
+            "evidence_comment_url": None,
+            "evidence_markdown": "focused tests PASS",
+            "engineering_summary": "focused PASS",
+            "notes": [],
+        }
+        with patch.object(rll, "ghj", return_value={"html_url": "https://example.invalid/evidence"}) as api:
+            result = rll.publish_executor_evidence(
+                "owner/repo", 42, value,
+                {"head": "abc123", "branch": "feature/work", "clean": True},
+                "codex",
+            )
+        self.assertEqual("https://example.invalid/evidence", result["evidence_comment_url"])
+        joined = " ".join(api.call_args.args)
+        self.assertIn("abc123", joined)
+        self.assertIn("focused tests PASS", joined)
+
+    def test_duration_seconds_is_bounded_and_explicit(self):
+        self.assertEqual(7200, rll.duration_seconds("2h"))
+        self.assertEqual(1800, rll.duration_seconds("30m"))
+        self.assertEqual(45, rll.duration_seconds("45s"))
+        with self.assertRaises(rll.RllError):
+            rll.duration_seconds("0h")
+
 if __name__ == "__main__":
     unittest.main()
