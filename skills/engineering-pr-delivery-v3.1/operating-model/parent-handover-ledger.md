@@ -148,6 +148,7 @@ The ledger indexes rather than duplicates:
 
 - programme basis;
 - workstream / EP / child issue;
+- current AGENT_STATUS_V1 ref/custody epoch/continuation + unresolved FT-* IDs;
 - implementation-plan state/ref/revision + responsibility basis digest + STEP-* coverage;
 - child/work-issue AC-* acceptance coverage;
 - programme EXIT-* contribution coverage;
@@ -211,18 +212,24 @@ The coordinator should consult them before dispatching a replacement agent so se
 
 If an agent disappears:
 
-1. read the child issue;
-2. read current implementation plan;
-3. inspect EP/task snapshot;
-4. inspect branch/PR/exact head;
-5. inspect task evidence and durable tests/artifacts;
-6. determine what production consequence remains unfinished;
-7. give a successor the smallest reconstruction packet;
-8. require the successor to revalidate live reality and publish its own current `IMPLEMENTATION_PLAN` rather than blindly inheriting the predecessor's approach.
+1. refresh live Common@main / V3.1;
+2. read Original Intent when present;
+3. read current Owner/Roadmap basis and amendments;
+4. read EP / owned issue responsibility;
+5. read current IMPLEMENTATION_PLAN / PLAN_UPDATE;
+6. read relevant CONVERSATION_RECORDs;
+7. read the latest AGENT_STATUS_V1 and its Further task;
+8. inspect Local Agent/OFFLOAD state;
+9. inspect RLL transport state when active;
+10. inspect branch / PR / exact head / tests / artifacts;
+11. inspect latest TASK_EVIDENCE / TASK_RESULT;
+12. inspect Task Snapshot / Relay Handover;
+13. revalidate every unresolved FT-* item against live material truth;
+14. create the successor's own AGENT_STATUS_V1 custody epoch with `RECOVERY` (or `HANDOFF` for graceful transfer) and predecessor ref.
 
-No lease-expiry or recovery ceremony is required to make already-existing production evidence valid.
+The successor does not edit the predecessor's status and does not blindly inherit its FT list or implementation assumptions.
 
-V3.1 may record the executor change for history.
+No lease-expiry ceremony is required to make already-existing production evidence valid. AGENT_STATUS improves recovery observability only.
 
 ## Coordinator observation
 
@@ -253,7 +260,7 @@ When evidence changes programme outcome, ownership, shared interface semantics, 
 - record the new evidence;
 - update the effective amendment/disposition;
 - route affected workstreams;
-- regenerate deeper three-pass reasoning if the semantic boundary truly changed.
+- regenerate deeper Two-Pass reasoning if the semantic boundary truly changed.
 
 Routine plan changes, commits, PR updates and tests do not automatically change programme meaning.
 
@@ -263,6 +270,7 @@ Missing or stale:
 
 - implementation plan;
 - Handover ledger;
+- AGENT_STATUS_V1;
 - V3.1 projection;
 - timer;
 - coordinator report;
