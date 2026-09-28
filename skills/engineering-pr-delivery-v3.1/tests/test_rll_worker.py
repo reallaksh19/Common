@@ -542,5 +542,33 @@ commit_message: bounded codex change
             rll.normalize_allowed_paths("../escape")
 
 
+    def test_codex_isolated_user_uses_dedicated_home(self):
+        payload = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "ACTIVE",
+            "current": "working",
+            "next": "test",
+            "evidence_comment_url": None,
+            "engineering_summary": "",
+            "notes": [],
+        }
+        completed = type("Completed", (), {"returncode": 0, "stdout": "", "stderr": ""})()
+        seen = {}
+        def fake_cmd(argv, cwd=None, check=True, timeout=None, env=None):
+            seen["argv"] = argv
+            Path(argv[argv.index("--output-last-message") + 1]).write_text(
+                json.dumps(payload), encoding="utf-8"
+            )
+            return completed
+        with patch.object(rll, "cmd", side_effect=fake_cmd):
+            rll.codex(
+                Path("."), "prompt", Path("schema.json"), "10s", "high", False,
+                "rll-codex", "/home/rll-codex/.codex-rll",
+            )
+        self.assertEqual(["sudo", "-n", "-u", "rll-codex", "env"], seen["argv"][:5])
+        self.assertIn("CODEX_HOME=/home/rll-codex/.codex-rll", seen["argv"])
+        self.assertIn("HOME=/home/rll-codex", seen["argv"])
+
+
 if __name__ == "__main__":
     unittest.main()
