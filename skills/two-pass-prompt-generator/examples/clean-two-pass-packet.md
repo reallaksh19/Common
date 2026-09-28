@@ -31,7 +31,9 @@ Return an INDEPENDENT_SYSTEM_BASELINE covering system/user outcome, current beha
 
 Use the actual Pass-1 baseline, then inspect the current assigned issue and live repository/provider state.
 
-Before proposing changes, reconstruct the relevant provenance in order: linked Original Intent historical source; current Owner/Roadmap basis and explicit amendments; current EP/owned responsibility; relevant primary-agent conversation/reconciliation; relevant Local Agent/OFFLOAD evidence; relevant RLL execution/state; current PR/tests/runtime; then current Task Snapshot/Handover.
+Before proposing changes, reconstruct the relevant provenance in order: linked Original Intent historical source; current Owner/Roadmap basis and explicit amendments; current EP/owned responsibility; relevant primary-agent conversation/reconciliation; latest AGENT_STATUS_V1 / Further task continuity; relevant Local Agent/OFFLOAD evidence; relevant RLL execution/state; current PR/tests/runtime; latest TASK_EVIDENCE/TASK_RESULT; then current Task Snapshot/Handover.
+
+Treat AGENT_STATUS_V1 as non-authoritative continuity only. Revalidate every unresolved FT-* item against live issue/PR/head/test/material truth before carrying it forward.
 
 Emit a STEP-BACK RECONCILIATION. Classify only materially applicable facts as PRESERVED, SATISFIED, MISSING, DRIFTED, SUPERSEDED_BY_OWNER, ROADMAP_CHANGED, EP_ASSUMPTION_ONLY, LOCAL_AGENT_FINDING, RLL_TRANSPORT_ONLY, REALITY_CORRECTION, or UNRESOLVED, and state the resulting CONSEQUENCE. Treat Original Intent as historical Owner source, later explicit Owner/Roadmap amendments as current authority where applicable, agent reasoning as non-authoritative reasoning/evidence, RLL as transport, and material provider/runtime evidence as current engineering truth. Cite refs; do not paste full transcripts.
 
