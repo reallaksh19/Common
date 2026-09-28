@@ -309,6 +309,28 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 "local_agent_refs": [],
                 "rll_refs": [],
             }
+            work["continuity"] = {
+                "current": {
+                    "ref": "github:example/repo#1772/comment-status",
+                    "custody_epoch": 5,
+                    "executor": "agent-next",
+                    "status": "ACTIVE",
+                    "continuation": "RECOVERY",
+                    "exact_head": "head-sha",
+                    "updated_at": "2026-09-28T11:40:00Z",
+                },
+                "further_tasks": [
+                    {
+                        "id": "FT-1772-1",
+                        "state": "PENDING",
+                        "statement": "Run final focused validation.",
+                        "reason_class": "CURRENT_TASK",
+                        "dependency": None,
+                        "expected_next_observable": "Focused validation result.",
+                    }
+                ],
+                "predecessor_ref": "github:example/repo#1772/comment-old-status",
+            }
             work["task_publications"] = [
                 {
                     "type": "IMPLEMENTATION_PLAN",
@@ -353,8 +375,12 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
                 1700,
                 row["reconstruction_context"]["original_intent"]["issue_number"],
             )
+            self.assertEqual(5, row["continuity"]["current"]["custody_epoch"])
+            self.assertEqual("RECOVERY", row["continuity"]["current"]["continuation"])
+            self.assertEqual("FT-1772-1", row["continuity"]["further_tasks"][0]["id"])
 
             body = render_ledger(ledger)
+            self.assertIn("github:example/repo#1772/comment-status / epoch 5 / RECOVERY / FT=FT-1772-1", body)
             self.assertIn("| OPEN | REVIEW_READY | #237 | base-sha | head-sha |", body)
 
 
