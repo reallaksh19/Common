@@ -225,6 +225,20 @@ class HandoverLedgerProjectionTests(unittest.TestCase):
             self.assertIn("Handover ledger: example/repo#1870", parent)
             self.assertIn("Recovery-required EPs: 1", parent)
 
+    def test_legacy_observation_without_reconstruction_context_remains_valid(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            observation = parent_observation()
+            observation.pop("reconstruction_context", None)
+
+            ledger = build(root, observation, base_ref=base_ref)
+
+            self.assertIsNone(ledger.get("reconstruction_context"))
+            body = render_ledger(ledger)
+            self.assertIn("Original Intent: NONE", body)
+            self.assertIn("Latest reconciliation: NONE", body)
+
     def test_programme_ledger_can_root_at_parent_while_task_plan_lives_on_child_issue(self):
         with tempfile.TemporaryDirectory() as td:
             root = Path(td)
