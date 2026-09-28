@@ -2,6 +2,15 @@
 
 Use this template as a starting structure. Replace every placeholder with live repository evidence or an explicit `UNRESOLVED` statement. Delete optional subsections only when genuinely inapplicable.
 
+For substantial single-responsibility work, normally declare:
+
+```text
+ISSUE_ROLE: SINGLE
+AUTHORING_PROFILE: DETAILED
+ORIGINAL_INTENT_ISSUE: github:<owner>/<repo>#<source> | NONE
+RELAY_PROTOCOL: V3.1_ONLY
+```
+
 ```markdown
 # Mission
 
@@ -59,11 +68,24 @@ Open overlap/WIP state at creation:
 
 # 1. Owner intent, authority and scope
 
-## 1.1 Owner intent
+## 1.1 Original Intent source
 
-<Restate the task without diluting it.>
+When direct Owner source exists:
 
-## 1.2 Governing Owner Roadmap(s)
+```text
+ORIGINAL_INTENT_ISSUE: github:<owner>/<repo>#<source>
+ORIGINAL_INTENT_DIGEST: sha256:<digest>
+```
+
+Read the verbatim source before interpreting it. Later Owner amendments/decisions may supersede current meaning without rewriting the historical source.
+
+## 1.2 Owner task / expected-output ledger
+
+| ID | Requirement / expected output | Source ref | Current interpretation | Status |
+|---|---|---|---|---|
+| TASK-001 | ... | Original Intent / Owner comment | ... | ACTIVE / SUPERSEDED / SATISFIED |
+
+## 1.3 Governing Owner Roadmap(s)
 
 | Roadmap | Revision/blob | Role | Alignment | Mutation authority |
 |---|---|---|---|---|
@@ -71,7 +93,7 @@ Open overlap/WIP state at creation:
 
 Issue assignment does **not** grant roadmap mutation authority.
 
-## 1.3 Engineering/source authority
+## 1.4 Engineering/source authority
 
 ```text
 <source authority>
@@ -80,7 +102,7 @@ Issue assignment does **not** grant roadmap mutation authority.
 <result/publication authority>
 ```
 
-## 1.4 Explicit scope
+## 1.5 Explicit scope
 
 In scope:
 - ...
@@ -459,7 +481,27 @@ Creation-time source inspection does not pre-qualify implementation tests.
 
 ---
 
-# 13. Delivery / handover contract
+# 13. Reconstruction topology
+
+Record only refs/identities, not transcript copies.
+
+```text
+Original Intent:
+Current Roadmap / Owner amendments:
+EP / responsibility:
+Latest primary-agent reconciliation:
+Local Agent / OFFLOAD refs:
+RLL execution/state refs:
+Current PR/head:
+Task Snapshot:
+Relay Handover:
+```
+
+Primary-agent substantive conversation stays on this owned issue using the responsibility-scoped conversation format. Local Agent conversation/evidence stays on the governed offload/provider issue. RLL operational state stays in the existing RLL surfaces.
+
+---
+
+# 14. Delivery / handover contract
 
 Implementation must follow the live repository delivery policy.
 
