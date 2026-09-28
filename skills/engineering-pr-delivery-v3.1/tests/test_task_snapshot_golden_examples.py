@@ -84,6 +84,35 @@ class TaskSnapshotGoldenExamplesTests(unittest.TestCase):
         self.assertIn("Protocol basis: V3.1 — Common@" + ("a" * 40), text)
         self.assertIn("TPG-2P-2026-09-25-R1", text)
 
+    def test_reconstruction_context_is_reference_only_and_visible(self):
+        task = self.assert_valid("active-task")
+        task["reconstruction_context"] = {
+            "original_intent": {
+                "repository": "example/repo",
+                "issue_number": 90,
+                "url": "https://github.com/example/repo/issues/90",
+                "source_ref": "github:example/repo#90/body",
+                "digest": "sha256:" + ("b" * 64),
+            },
+            "latest_reconciliation": {
+                "ref": "github:example/repo#101/comment-12",
+                "observed_at": "2026-09-28T10:00:00Z",
+                "summary": "Original intent and current responsibility remain aligned.",
+            },
+            "primary_conversation_refs": ["github:example/repo#101/comment-10"],
+            "roadmap_refs": ["RM-101"],
+            "local_agent_refs": ["github:example/repo#105"],
+            "rll_refs": ["github:example/repo#101/comment-rll"],
+        }
+        self.assertEqual([], validate_schema("task-snapshot", task, "reconstruction-context-task"))
+        text = render(task)
+        self.assertIn("Original Intent: example/repo#90", text)
+        self.assertIn("Latest reconciliation: github:example/repo#101/comment-12", text)
+        self.assertIn("Primary conversation: github:example/repo#101/comment-10", text)
+        self.assertIn("Local Agent / OFFLOAD: github:example/repo#105", text)
+        self.assertIn("RLL: github:example/repo#101/comment-rll", text)
+        self.assertNotIn("Original intent and current responsibility remain aligned.", text)
+
     def test_delivery_stack_renders_without_replacing_primary_delivery(self):
         task = self.assert_valid("active-task")
         task["delivery_stack"] = [
