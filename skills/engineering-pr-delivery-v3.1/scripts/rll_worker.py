@@ -355,21 +355,22 @@ def run_executor(name,root,text,schema,timeout,effort,write,codex_user=None,code
  if name=="codex": return codex(root,text,schema,timeout,effort,write,codex_user,codex_home)
  raise RllError(f"unsupported executor {name}")
 
-def publish_executor_evidence(repo,n,v,o,executor):
+def publish_executor_evidence(repo,n,v,o,executor,local_execution_request=None):
  if v.get("transport_state")!="REVIEW_READY" or not o["clean"]: return v
  if v.get("evidence_comment_url") or not (v.get("evidence_markdown") or "").strip(): return v
+ request_line=f"Local execution request: {local_execution_request}\n" if local_execution_request else ""
  body=(
   "TASK_EVIDENCE — RLL EXECUTOR\n\n"
   f"Executor: {executor}\n"
-  f"Observed material head: \`{o['head']}\`\n"
-  f"Observed branch: \`{o['branch'] or 'DETACHED'}\`\n"
+  + request_line
+  + f"Observed material head: {o['head']}\n"
+  f"Observed branch: {o['branch'] or 'DETACHED'}\n"
   f"Working tree clean: {str(o['clean']).lower()}\n\n"
   + v["evidence_markdown"].strip()
  )
  x=ghj("api",f"repos/{repo}/issues/{n}/comments","--method","POST","--field",f"body={body}")
  v=dict(v); v["evidence_comment_url"]=x.get("html_url") or x.get("url")
  return v
-
 def push_governed_branch(root,e):
  if e["mode"]!="BRANCH_RESUME": return observe(root)
  o=observe(root)
@@ -451,10 +452,10 @@ def main():
       else: obs=after
     else:
      obs=push_governed_branch(workspace,e)
-    v=publish_executor_evidence(a.repository,n,v,obs,a.executor)
+    v=publish_executor_evidence(a.repository,n,v,obs,a.executor,e.get("local_execution_request"))
    except RllEscalation as ex: s.update(state="ESCALATION_REQUIRED",phase="CODEX_CONFINEMENT",lease_until=None,current=str(ex),next="coordinator review required"); state_write(a.repository,n,{"id":sid},render(s,common,two)); label_state(a.repository,n,labelset(issue_view(a.repository,n)),s["state"]); print(json.dumps({"status":"ESCALATION_REQUIRED","issue":n})); return 0
    except RllError as ex: s.update(state="RETRY_WAIT",phase="AGENT_INVOCATION",lease_until=None,current=str(ex),next="retry after environment recovery"); state_write(a.repository,n,{"id":sid},render(s,common,two)); print(json.dumps({"status":"RETRY_WAIT","issue":n})); return 0
-   apply_result(s,v,obs,e); state_write(a.repository,n,{"id":sid},render(s,common,two)); label_state(a.repository,n,labelset(issue_view(a.repository,n)),s["state"]); print(json.dumps({"status":s["state"],"issue":n,"material_head":s["material_head"],"workspace":str(workspace),"executor":a.executor})); return 0
+   apply_result(s,v,obs,e); state_write(a.repository,n,{"id":sid},render(s,common,two)); label_state(a.repository,n,labelset(issue_view(a.repository,n)),s["state"]); print(json.dumps({"status":s["state"],"issue":n,"material_head":s["material_head"],"workspace":str(workspace),"executor":a.executor,"local_execution_request":e.get("local_execution_request")})); return 0
  except RllError as ex: print(json.dumps({"status":"ERROR","error":str(ex)}),file=sys.stderr); return 2
 
 if __name__=="__main__": raise SystemExit(main())
