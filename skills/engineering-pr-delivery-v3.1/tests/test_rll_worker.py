@@ -118,7 +118,7 @@ allow_material_write: false
             "current": "testing",
             "next": "certification",
         }
-        body = rll.render(state, "common-sha", "TPG-2P-2026-09-25-R1")
+        body = rll.render(state, "common-sha", "TPG-2P-2026-09-28-R2")
         parsed = rll.parse_state(body)
         for key in (
             "worker", "issue", "state", "phase", "mode", "branch",
