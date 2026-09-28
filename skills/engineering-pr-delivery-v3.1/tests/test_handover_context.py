@@ -156,7 +156,7 @@ class HandoverContextTests(unittest.TestCase):
                 {"outcome", "roadmap_title"},
                 set(context["blind_context"]["programme"]),
             )
-            self.assertEqual("TPG-2P-2026-09-28-R2", context["generator_contract"]["protocol_revision_at_freeze"])
+            self.assertEqual("TPG-2P-2026-09-28-R3", context["generator_contract"]["protocol_revision_at_freeze"])
 
     def test_post_release_handover_keeps_checkpoint_task_context_while_reality_is_idle(self):
         with tempfile.TemporaryDirectory() as td:
@@ -606,7 +606,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual("skills/two-pass-prompt-generator/SKILL.md", contract["canonical_launcher"])
             self.assertEqual("skills/two-pass-prompt-generator/schema.md", contract["canonical_schema"])
             self.assertEqual("skills/two-pass-prompt-generator/validate.py", contract["canonical_validator"])
-            self.assertEqual("TPG-2P-2026-09-28-R2", contract["protocol_revision_at_freeze"])
+            self.assertEqual("TPG-2P-2026-09-28-R3", contract["protocol_revision_at_freeze"])
             self.assertEqual("TWO_PASS_ONLY", contract["generator_mode"])
             self.assertTrue(contract["live_main_fetch_required"])
 
@@ -651,7 +651,7 @@ class HandoverContextTests(unittest.TestCase):
                 shutil.copyfile(STANDALONE / name, proto_skills / name)
             schema_file = proto_skills / "schema.md"
             schema_file.write_text(
-                schema_file.read_text(encoding="utf-8").replace("TPG-2P-2026-09-28-R2", "TPG-WRONG-REV"),
+                schema_file.read_text(encoding="utf-8").replace("TPG-2P-2026-09-28-R3", "TPG-WRONG-REV"),
                 encoding="utf-8",
             )
             with self.assertRaises(HandoverContextError) as cm:
