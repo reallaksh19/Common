@@ -28,9 +28,9 @@ Pass 1 is an **independent system-understanding prompt**. It may inspect the liv
 
 Pass 2 receives the Pass-1 result plus the actual task/issue and current live evidence. It must:
 
-- reconstruct relevant provenance in order: Original Intent → current Owner/Roadmap authority → EP responsibility → primary-agent reasoning → Local Agent/OFFLOAD evidence → RLL transport → material truth → Task Snapshot/Handover;
+- reconstruct relevant provenance in order: Original Intent → current Owner/Roadmap authority → EP responsibility/current plan → primary-agent reasoning → latest AGENT_STATUS_V1/Further task → Local Agent/OFFLOAD evidence → RLL transport → material truth/TASK_EVIDENCE/TASK_RESULT → Task Snapshot/Handover;
 - emit an explicit STEP-BACK RECONCILIATION before proposing changes;
-- keep historical intent, current authority, agent reasoning, delegated evidence, transport state and material truth semantically distinct;
+- keep historical intent, current authority, agent reasoning, mutable execution continuity, delegated evidence, transport state and material truth semantically distinct; revalidate unresolved FT-* items against live material truth before carrying them forward;
 - identify zero or more legitimate high-ROI improvements only after reconciliation;
 - quantify each proposal from evidence instead of inventing numbers;
 - reject rewrite/novelty pressure;
