@@ -9,10 +9,14 @@ COORDINATION PASS
 
 Read current durable programme + production reality first:
 
+- linked Original Intent source when present;
 - governing parent Programme Specification;
 - current effective amendment index and referenced Owner/programme amendments;
+- active child / EP responsibility contracts;
+- relevant primary-agent conversation/reconciliation refs;
+- relevant Local Agent / OFFLOAD provider issues;
+- relevant RLL execution/state refs as transport context only;
 - dedicated [Relay Handover] operational ledger;
-- active child issue contracts;
 - each agent's latest durable implementation plan;
 - every nonterminal PR and its exact head/lifecycle;
 - current branch/commit/test/runtime/artifact evidence;
@@ -24,6 +28,8 @@ Read current durable programme + production reality first:
 - source freshness.
 
 Treat the Handover issue as an index. Verify material claims against linked durable evidence where a consequence depends on them.
+
+Before workstream recommendations, perform a compact STEP-BACK RECONCILIATION across historical Original Intent, current Owner/Roadmap authority, current responsibility, agent/delegated reasoning and live material truth. Distinguish PRESERVED / SATISFIED / MISSING / DRIFTED / SUPERSEDED_BY_OWNER / ROADMAP_CHANGED / EP_ASSUMPTION_ONLY / LOCAL_AGENT_FINDING / RLL_TRANSPORT_ONLY / REALITY_CORRECTION / UNRESOLVED only where material.
 
 Relay protocol rule: **V3.1 only**. Do not consult or use V3 or V2.5 for live coordination, status, gating, recovery, or Owner-command semantics.
 
@@ -131,11 +137,14 @@ If NO:
 keep prior direction and make the smallest coordinator move.
 
 If YES:
-identify exactly what changed and whether fresh three-pass reasoning is warranted.
+identify exactly what changed and whether fresh Two-Pass reasoning is warranted.
 
 OPERATIONAL LEDGER
 
 Propose the minimal [Relay Handover] updates needed for zero-context reconstruction:
+- Original Intent / latest reconciliation refs;
+- workstream / EP / primary-conversation refs;
+- Local Agent / OFFLOAD and RLL refs when relevant;
 - workstream/material refs;
 - dependency state;
 - nonterminal PR carry-forward;
