@@ -488,6 +488,61 @@ commit_message: bounded codex change
         self.assertEqual("bounded codex change", value["commit_message"])
         self.assertEqual("LOCAL-EP13-7-616bd4c268e6", value["local_execution_request"])
 
+    def test_local_execution_request_roundtrips_to_prompt_and_task_evidence(self):
+        request_id = "LOCAL-SMOKE-abc123"
+        issue = {
+            "author": {"login": "owner"},
+            "number": 42,
+            "title": "Smoke correlation",
+            "body": f"""RLL_EXECUTION_V1
+
+transport: RLL-1
+worker: codex-local
+local_execution_request: {request_id}
+mode: EXACT_HEAD_EVIDENCE
+repository: owner/repo
+head_sha: deadbeef
+base_sha: abc123
+allow_material_write: false
+""",
+        }
+
+        envelope = rll.parse_exec(issue, [], {"owner"})
+        self.assertEqual(request_id, envelope["local_execution_request"])
+
+        prompt = rll.prompt("owner/repo", 42, envelope, [], "codex", issue, [])
+        self.assertIn(request_id, prompt)
+
+        result = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "REVIEW_READY",
+            "current": "done",
+            "next": "review",
+            "evidence_comment_url": None,
+            "evidence_markdown": "smoke evidence PASS",
+            "engineering_summary": "smoke PASS",
+            "notes": [],
+        }
+        with patch.object(
+            rll,
+            "ghj",
+            return_value={"html_url": "https://example.invalid/evidence"},
+        ) as api:
+            returned = rll.publish_executor_evidence(
+                "owner/repo",
+                42,
+                result,
+                {"head": "deadbeef", "branch": "", "clean": True},
+                "codex",
+                envelope["local_execution_request"],
+            )
+
+        self.assertEqual("https://example.invalid/evidence", returned["evidence_comment_url"])
+        posted = " ".join(api.call_args.args)
+        self.assertIn(request_id, posted)
+        self.assertIn("deadbeef", posted)
+        self.assertIn("smoke evidence PASS", posted)
+
     def test_local_execution_request_rejects_invalid_identifier(self):
         issue = {
             "author": {"login": "owner"},
