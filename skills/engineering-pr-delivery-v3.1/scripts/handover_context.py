@@ -150,6 +150,16 @@ def build_context(
     task_snapshot = task_snapshot_override or build_task(root, base_ref, parent_issue_observation)
     improvement_view = improvement_view_override or build_improvement(root)
     task_identity = task_snapshot.get("identity") or {}
+    task_reconstruction = task_snapshot.get("reconstruction_context")
+    if not isinstance(task_reconstruction, dict):
+        task_reconstruction = {
+            "original_intent": None,
+            "latest_reconciliation": None,
+            "primary_conversation_refs": [],
+            "roadmap_refs": [],
+            "local_agent_refs": [],
+            "rll_refs": [],
+        }
     improvement = improvement_view.get("improvement") or {}
     capability_change = bool(
         improvement.get("capability_added")
@@ -228,6 +238,7 @@ def build_context(
             "attempted_and_rejected": list(handoff.get("attempted_and_rejected") or []),
             "resume_from": list(handoff.get("resume_from") or []),
             "first_successor_action": handoff.get("first_successor_action"),
+            "reconstruction_context": task_reconstruction,
             "task_snapshot": {
                 "digest": canonical_digest(task_snapshot),
                 "source_protocol": task_snapshot.get("source_protocol"),
@@ -299,11 +310,11 @@ def build_request(context: dict[str, Any]) -> dict[str, Any]:
             "target": target["url"],
             "repository": target["repository"],
             "human_goal": blind["programme"]["outcome"],
-            "user_intent": "Generate the current standalone two-pass handover. Pass 1 independently reconstructs the live repository/application without exposing the actual issue/task or asking for a next action. Pass 2 uses that baseline plus the actual task to propose only legitimate high-ROI improvements, quantify them, draft the engineering plan in chat, stop for Owner approval, then after approval publish the plan on the original issue and bind/create EPs for coordinator use.",
+            "user_intent": "Generate the current standalone two-pass handover. Pass 1 independently reconstructs the live repository/application without exposing the actual issue/task or provenance history or asking for a next action. Pass 2 uses that baseline plus the actual task and accumulated reconstruction refs to reconcile Original Intent, current Owner/Roadmap authority, EP responsibility, relevant primary-agent reasoning, Local Agent/OFFLOAD evidence, RLL transport and live material truth before proposing high-ROI improvements and a draft engineering plan; it stops for Owner approval before durable plan/EP/implementation actions.",
             "authorized_actions": "The generated prompts grant no production authority. Pass 2 may publish the approved implementation plan, bind/create EPs and refresh Task Snapshot/Handover only after explicit Owner approval; material execution occurs only when the Owner-approved action boundary and real provider/tool permissions allow it.",
-            "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, current PR, requested change, Improvement Proposal or further action. Pass 2 must prefer no improvement over speculation, reject rewrites/scope expansion, keep adjacent proposals in separate responsibilities, and pause before durable publication or implementation until Owner approval.",
+            "intent_boundary": "Pass 1 may inspect the live repository/application but must not receive or reveal the actual issue/task, Original Intent source, prior agent conversation/reconciliation, Local Agent/OFFLOAD or RLL task history, current PR, requested change, Improvement Proposal or further action. Pass 2 must distinguish historical intent, current Owner/Roadmap authority, agent reasoning, delegated evidence, RLL transport and material truth; prefer no improvement over speculation; reject rewrites/scope expansion; keep adjacent proposals in separate responsibilities; and pause before durable publication or implementation until Owner approval.",
             "intent_completion_test": "The standalone generator fetches its canonical schema from current main, emits exactly Pass 1 and Pass 2, validates the artifact, and Pass 2 contains an explicit Owner approval boundary plus the post-approval issue/EP/Task-Snapshot/Handover continuation.",
-            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. Build Pass 1 from repository/system identity, broad human outcome and stable constraints while quarantining target issue/task and current delivery state. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then refreshes target/provider/material reality, performs the high-ROI Improvement Proposal scan with quantitative evidence, reconciles the actual task, drafts IMPLEMENTATION_PLAN in chat, stops for Owner approval, and after approval publishes on the original issue and updates EP/Task Snapshot/Handover.",
+            "context_rule": "Read relay/GENERATED/HANDOVER_CONTEXT.yaml only after the schema handshake. Build Pass 1 from repository/system identity, broad human outcome and stable constraints while quarantining target issue/task, reconstruction_context and current delivery state. Pass 1 asks for live system understanding and ends without recommendations. Pass 2 consumes the Pass-1 result, then reads accumulated_learning.reconstruction_context and refreshes target/provider/material reality; reconcile in order Original Intent -> current Owner/Roadmap amendments -> EP/owned issue -> relevant primary-agent reasoning -> Local Agent/OFFLOAD evidence -> RLL transport -> PR/tests/runtime -> Task Snapshot/Handover. Emit STEP-BACK RECONCILIATION before any high-ROI Improvement Proposal, then draft IMPLEMENTATION_PLAN in chat, stop for Owner approval, and after approval publish on the original issue and update EP/Task Snapshot/Handover.",
         },
     }
     errors = validate_schema("two-pass-request", request, "TWO_PASS_REQUEST")
