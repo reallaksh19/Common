@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/reallaksh19/Common/rll-agent-result.schema.json",
+  "title": "RLL_AGENT_RESULT_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "transport_state",
+    "current",
+    "next",
+    "engineering_summary",
+    "evidence_body",
+    "notes"
+  ],
+  "properties": {
+    "schema": { "const": "RLL_AGENT_RESULT_V1" },
+    "transport_state": {
+      "enum": ["ACTIVE", "RETRY_WAIT", "ESCALATION_REQUIRED", "REVIEW_READY"]
+    },
+    "current": { "type": "string", "minLength": 1 },
+    "next": { "type": "string", "minLength": 1 },
+    "engineering_summary": { "type": "string" },
+    "evidence_body": { "type": "string" },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
