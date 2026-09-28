@@ -201,6 +201,13 @@ def _observation_key(observation: dict[str, Any] | None) -> tuple[str, int] | No
     return str(repository), number
 
 
+def _reconstruction_context_from_observation(
+    observation: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    value = (observation or {}).get("reconstruction_context")
+    return dict(value) if isinstance(value, dict) else None
+
+
 def _checkpoint_complete(checkpoint: dict[str, Any] | None) -> bool:
     if not isinstance(checkpoint, dict):
         return False
@@ -453,6 +460,7 @@ def build(
         )
         work_observation = observation_by_issue.get(work_key) if work_key else None
         provider_issue_state = str((work_observation or {}).get("state") or "UNKNOWN")
+        reconstruction_context = _reconstruction_context_from_observation(work_observation)
         delivery = _delivery_from_observation(work_observation)
         observed_plan = _plan_from_observation(work_observation)
         if observed_plan:
@@ -500,10 +508,14 @@ def build(
             ]
             if task_publications:
                 publications = task_publications
+            task_reconstruction_context = task.get("reconstruction_context")
+            if isinstance(task_reconstruction_context, dict):
+                reconstruction_context = dict(task_reconstruction_context)
         ep_index.append({
             "ep": ep_id,
             "work_package": str(ep.get("work_package")),
             "work_issue": work_issue,
+            **({"reconstruction_context": reconstruction_context} if reconstruction_context else {}),
             "implementation_plan": plan,
             "provider_issue_state": provider_issue_state,
             "delivery": delivery,
@@ -623,6 +635,14 @@ def build(
             if isinstance(ledger_ref, dict)
             else None
         ),
+        "reconstruction_context": (
+            _reconstruction_context_from_observation(parent_issue_observation)
+            or (
+                dict(task.get("reconstruction_context"))
+                if isinstance(task.get("reconstruction_context"), dict)
+                else None
+            )
+        ),
         "current_frontier": {
             "ep": frontier.get("ep"),
             "work_package": frontier.get("work_package"),
@@ -700,6 +720,30 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
         f"- Issue disposition: {parent['disposition']}",
         "",
+        "## Reconstruction context",
+    ]
+    reconstruction = ledger.get("reconstruction_context") or {}
+    original_intent = reconstruction.get("original_intent") or {}
+    latest_reconciliation = reconstruction.get("latest_reconciliation") or {}
+    if original_intent:
+        lines.append(
+            f"- Original Intent: {original_intent.get('repository')}#{original_intent.get('issue_number')} "
+            f"({original_intent.get('url')})"
+        )
+    else:
+        lines.append("- Original Intent: NONE")
+    lines.append(f"- Latest reconciliation: {latest_reconciliation.get('ref') or 'NONE'}")
+    for label, key in (
+        ("Primary conversation refs", "primary_conversation_refs"),
+        ("Roadmap refs", "roadmap_refs"),
+        ("Local Agent / OFFLOAD refs", "local_agent_refs"),
+        ("RLL refs", "rll_refs"),
+    ):
+        refs = reconstruction.get(key) or []
+        lines.append(f"- {label}: {refs if refs else 'none'}")
+
+    lines += [
+        "",
         "## Current frontier",
         f"- EP: {frontier.get('ep') or 'NONE'}",
         f"- Work package: {frontier.get('work_package') or 'NONE'}",
@@ -714,14 +758,16 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         "",
         "## EP index",
         "",
-        "| EP | Work issue | WP | Plan | Expected next observable | Provider issue | Delivery | PR | Base | Head | Status | Continuation | Checkpoint | Lease | Executor |",
-        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
+        "| EP | Work issue | WP | Plan | Reconciliation | Expected next observable | Provider issue | Delivery | PR | Base | Head | Status | Continuation | Checkpoint | Lease | Executor |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for row in ledger["ep_index"]:
         work_issue = row.get("work_issue") or {}
         plan = row.get("implementation_plan") or {}
         expected = row.get("expected_next_observable") or {}
         delivery = row.get("delivery") or {}
+        row_reconstruction = row.get("reconstruction_context") or {}
+        reconciliation_ref = ((row_reconstruction.get("latest_reconciliation") or {}).get("ref")) or "-"
         plan_label = str(plan.get("state") or "UNKNOWN")
         if plan.get("revision") is not None:
             plan_label += f" r{plan.get('revision')}"
@@ -729,7 +775,7 @@ def render_ledger(ledger: dict[str, Any]) -> str:
         lines.append(
             f"| {row['ep']} | "
             f"{work_issue.get('repository') or '-'}#{work_issue.get('number') or '-'} | "
-            f"{row['work_package']} | {plan_label} | "
+            f"{row['work_package']} | {plan_label} | {reconciliation_ref} | "
             f"{expected.get('statement') or '-'} | "
             f"{row.get('provider_issue_state') or 'UNKNOWN'} | "
             f"{delivery.get('lifecycle') or 'UNKNOWN'} | {pr_label} | "
@@ -819,6 +865,13 @@ def render_parent_summary(ledger: dict[str, Any]) -> str:
         "## Relay",
         "",
         f"- Handover ledger: {handover.get('repository')}#{handover.get('number')} ({handover.get('url')})" if handover else "- Handover ledger: PENDING MATERIALIZATION",
+        f"- Original Intent: "
+        + (
+            f"{((ledger.get('reconstruction_context') or {}).get('original_intent') or {}).get('repository')}#"
+            f"{((ledger.get('reconstruction_context') or {}).get('original_intent') or {}).get('issue_number')}"
+            if ((ledger.get('reconstruction_context') or {}).get('original_intent') or {}).get('repository')
+            else "NONE"
+        ),
         f"- Current frontier: {frontier.get('ep') or 'NONE'} — {frontier.get('status')} / {frontier.get('continuation')}",
         f"- Progress: complete={progress.get('complete', 0)}, partial={progress.get('partial', 0)}, pending={progress.get('pending', 0)}, blocked={progress.get('blocked', 0)}, total={progress.get('total', 0)}",
         f"- Open pending: {len(ledger['pending_items'])}",
