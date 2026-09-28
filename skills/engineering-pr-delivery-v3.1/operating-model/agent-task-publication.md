@@ -113,6 +113,22 @@ The first Pass-2 response is **not** durable engineering intent. It must stop fo
 
 After approval, the same agent refreshes volatile reality and publishes the approved implementation plan on the original owned issue. Approved in-scope IP-* proposals are embedded in that plan. Approved adjacent proposals use a separate responsibility/EP rather than silently widening the issue.
 
+## 2.1 Responsibility-scoped conversation provenance
+
+The four task publication types remain unchanged. `CONVERSATION_RECORD` is contextual provider provenance, not task-state publication.
+
+When practical, after a substantive semantic Owner↔agent exchange and before the next major material action, append a compact record to the existing responsibility-specific provider surface:
+
+- primary agent → owned child/engineering issue;
+- Local Agent/helper → governed OFFLOAD/provider sub-issue;
+- RLL → do not copy transport chatter; keep existing RLL execution/state/directive records.
+
+Persist only exchanges that materially affect intent, inputs, expected outputs, RCA, proposals, approvals/rejections, assumptions, falsifiers, reconciliation or handoff understanding.
+
+Do not archive routine commands, file reads, test retries, timer wakes or generic progress chatter.
+
+Failure/missing context capture is reconstruction debt only and does not revoke or invalidate useful material evidence.
+
 ## 3. First durable agent publication — IMPLEMENTATION_PLAN
 
 Before publishing the plan, perform the live V3.1 handshake against current `Common@main`. Repeat that handshake on session/resume and at later semantic boundaries defined by the current V3.1 skill. If the Common SHA changed, reload the live skill/Two-Pass contract and revalidate the pending action rather than replaying completed work.
