@@ -56,6 +56,10 @@ def _standalone_contract(protocol_root: Path | None = None) -> str:
         "TWO_PASS_ONLY",
         "## PASS 1 — INDEPENDENT SYSTEM BASELINE",
         "## PASS 2 — IMPROVE, RECONCILE, PLAN",
+        "STEP-BACK RECONCILIATION",
+        "Original Intent",
+        "LOCAL_AGENT_FINDING",
+        "RLL_TRANSPORT_ONLY",
         "IMPROVEMENT PROPOSAL",
         "APPROVAL REQUIRED",
     ):
