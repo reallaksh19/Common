@@ -254,6 +254,7 @@ allow_material_write: false
                 "current": "working",
                 "next": "test",
                 "evidence_comment_url": None,
+                "evidence_markdown": "",
                 "engineering_summary": "",
                 "notes": [],
             },
@@ -282,6 +283,7 @@ allow_material_write: false
                 "current": "done",
                 "next": "review",
                 "evidence_comment_url": "https://example.invalid/evidence",
+                "evidence_markdown": "",
                 "engineering_summary": "claimed complete",
                 "notes": [],
             },
@@ -307,6 +309,16 @@ allow_material_write: false
             value = json.loads((schema_root / filename).read_text(encoding="utf-8"))
             self.assertEqual(title, value["title"])
             self.assertEqual("object", value["type"])
+
+    def test_rll_run_result_schema_is_strict_structured_output_compatible(self):
+        schema_path = Path(__file__).resolve().parents[1] / "schemas" / "rll-run-result.schema.json"
+        value = json.loads(schema_path.read_text(encoding="utf-8"))
+        self.assertFalse(value["additionalProperties"])
+        self.assertEqual(set(value["properties"]), set(value["required"]))
+        self.assertEqual("string", value["properties"]["schema"]["type"])
+        self.assertEqual("RLL_RUN_RESULT_V1", value["properties"]["schema"]["const"])
+        self.assertEqual("string", value["properties"]["transport_state"]["type"])
+        self.assertIn("evidence_markdown", value["required"])
 
     def test_launcher_contains_no_merge_release_or_delete_provider_operation(self):
         source = MODULE_PATH.read_text(encoding="utf-8")
@@ -359,6 +371,7 @@ allow_material_write: false
             "current": "working",
             "next": "review",
             "evidence_comment_url": None,
+            "evidence_markdown": "",
             "engineering_summary": "",
             "notes": [],
         }
@@ -509,6 +522,7 @@ commit_message: bounded codex change
             "current": "working",
             "next": "test",
             "evidence_comment_url": None,
+            "evidence_markdown": "",
             "engineering_summary": "",
             "notes": [],
         }
@@ -550,6 +564,7 @@ commit_message: bounded codex change
             "current": "working",
             "next": "test",
             "evidence_comment_url": None,
+            "evidence_markdown": "",
             "engineering_summary": "",
             "notes": [],
         }
