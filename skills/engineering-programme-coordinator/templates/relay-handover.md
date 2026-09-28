@@ -64,6 +64,12 @@ These are pointers only. Do not copy the Original Intent body or conversation tr
 
 **Primary conversation refs:** <refs only>
 
+**Agent continuity:** <AGENT_STATUS_V1 ref / custody epoch / NEW|HANDOFF|RECOVERY / ACTIVE|HANDOFF_READY|COMPLETE|SUPERSEDED|BLOCKED>
+
+**Unresolved Further task IDs:** <FT-* refs only>
+
+**Predecessor status ref:** <ref or NONE>
+
 **Local Agent / OFFLOAD refs:** <refs only>
 
 **RLL execution/state refs:** <refs only>
@@ -172,7 +178,7 @@ Promote only programme-significant local results:
 - local evidence requiring shared promotion;
 - session loss with material programme consequence.
 
-Do not copy routine worker chatter or command logs here. Keep Local Agent conversation/evidence on its governed OFFLOAD/provider issue and RLL operational chatter/state on the existing RLL surfaces; Handover only indexes the refs needed for reconstruction.
+Do not copy routine worker chatter or command logs here. Keep the full mutable AGENT_STATUS_V1 comment on the owned work issue, Local Agent conversation/evidence on its governed OFFLOAD/provider issue, and RLL operational chatter/state on the existing RLL surfaces; Handover only indexes the refs/FT IDs needed for reconstruction.
 
 ## Owner decisions needed
 
