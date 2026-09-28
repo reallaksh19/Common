@@ -335,15 +335,36 @@ Use ordinary `codex exec`, not the `review` subcommand.
 
 The reference profile:
 - runs in the prepared RLL workspace;
-- uses `--output-schema` plus `--output-last-message` and parses the latter as `RLL_RUN_RESULT_V1`;
+- uses `--json` plus `--output-schema` / `--output-last-message` and requires valid structured terminal output;
 - uses `workspace-write` for `BRANCH_RESUME` and `read-only` for `EXACT_HEAD_EVIDENCE`;
-- sets approval policy to `never` for unattended operation;
-- uses bounded wall-clock timeout and treats timeout/auth/provider/runtime failures as transport retry conditions;
+- sets approval policy to `never`, sets `approvals_reviewer="user"`, disables web search, and disables workspace-write network access;
+- removes `GH_TOKEN`, `GITHUB_TOKEN` and enterprise-token variants from the Codex process environment;
 - never uses dangerous approval/sandbox bypass flags;
 - never trusts process exit code alone; structured output and Git postflight are both required;
+- receives durable issue/comment context from the launcher and MUST NOT invoke `gh`, GitHub APIs, GitHub MCP, or provider-control commands;
 - may return `evidence_markdown`; Common binds it to the observed head and posts the durable evidence comment.
 
-Native-Windows source-write readiness MUST be demonstrated on the actual consumer machine before source-write RLL is enabled. A successful Codex process/structured result is not proof that `workspace-write` actually permitted material writes. Git postflight remains authoritative.
+For Codex `BRANCH_RESUME`, the authorized `RLL_EXECUTION_V1` envelope MUST also provide:
+
+```yaml
+allowed_paths: path/one; path/two; directory/prefix
+commit_message: optional launcher-owned commit message
+```
+
+`allowed_paths` is semicolon-delimited and repository-relative. Absolute paths and `..` escapes are invalid.
+
+Codex may edit/test only. It MUST NOT commit, push, rebase, merge, or mutate Git refs. On `REVIEW_READY`, the deterministic launcher:
+1. verifies Codex did not move HEAD;
+2. verifies every changed path is within `allowed_paths`;
+3. runs `git diff --check`;
+4. stages and commits the bounded changes;
+5. verifies the remote governed branch did not advance during the run;
+6. pushes the exact launcher-owned head without force;
+7. publishes durable evidence bound to postflight Git truth.
+
+A path escape, agent Git-head mutation, concurrent remote advance, rejected push, or exact-head mutation is `ESCALATION_REQUIRED`, not an automatic reset/rebase/reconciliation.
+
+Native-Windows source-write execution is not qualified for this profile. The launcher fails closed on native-Windows `BRANCH_RESUME`; use WSL2/Linux for source-write pilots and production branch writes. Read-only exact-head evidence may run on Windows when its local smoke passes.
 
 ### Antigravity compatibility invocation
 
@@ -369,7 +390,7 @@ For unattended host-backed RLL work that cannot run in Antigravity's isolated sa
 
 GitHub authentication must come from an interactive `gh auth login --web`/browser flow stored by the operating-system credential store. Do not place `GH_TOKEN`, `GITHUB_TOKEN`, OAuth/PAT strings, or `oauth_token` fields in sidecar JSON, Antigravity settings, checked-in files, transcripts, or prompts. If GitHub CLI reports that secure credential storage is unavailable, stop and repair credential storage rather than falling back to a plaintext RLL secret.
 
-RLL recommends that provider-control mutations (RLL labels/state) remain in the deterministic launcher. The engineering agent needs provider read access and, when evidence publication is required, bounded issue-comment authority.
+RLL provider-control mutations remain in the deterministic launcher. Under CODEX_LOCAL_V1, the engineering agent receives durable issue context from the launcher and needs no provider read/write authority; it must not use gh/GitHub APIs/MCP. The Antigravity compatibility executor may retain its legacy bounded provider-read/evidence path until separately retired.
 
 ## Structured run result
 
