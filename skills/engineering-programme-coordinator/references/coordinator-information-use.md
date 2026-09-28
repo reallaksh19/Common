@@ -49,14 +49,15 @@ On first contact or zero-context takeover:
 3. read the parent programme issue and resolve current basis revision + explicit Owner/programme amendments;
 4. enumerate child implementation issues / EP responsibilities;
 5. read only relevant primary-agent conversation/reconciliation refs;
-6. read relevant Local Agent/OFFLOAD provider issues and RLL execution/state refs without treating RLL as acceptance evidence;
-7. read the dedicated Relay Handover issue as an index;
-8. enumerate every nonterminal PR and current implementation-plan ref;
-9. verify current repository/PR/test/runtime/material evidence where consequence matters;
-10. reconstruct negative knowledge and unresolved programme obligations;
-11. perform step-back reconciliation between historical intent, current authority, engineering reasoning and material reality;
-12. derive the graphs above;
-13. compare the Handover index to live durable evidence and mark stale/unknown fields rather than trusting them blindly.
+6. read latest AGENT_STATUS_V1 / Further task when present, treating it only as predecessor continuity;
+7. read relevant Local Agent/OFFLOAD provider issues and RLL execution/state refs without treating RLL as acceptance evidence;
+8. read the dedicated Relay Handover issue as an index;
+9. enumerate every nonterminal PR and current implementation-plan ref;
+10. verify current repository/PR/test/runtime/material evidence where consequence matters and revalidate every unresolved FT-* item;
+11. reconstruct negative knowledge and unresolved programme obligations;
+12. perform step-back reconciliation between historical intent, current authority, engineering reasoning, continuity hints and material reality;
+13. derive the graphs above;
+14. compare the Handover index to live durable evidence and mark stale/unknown fields rather than trusting them blindly.
 
 Output:
 
@@ -88,6 +89,7 @@ Original Intent ref when relevant
 + child / EP responsibility
 + latest relevant responsibility reconciliation
 + current implementation plan
++ latest AGENT_STATUS_V1 / unresolved FT-* refs when relevant
 + Local Agent/OFFLOAD refs when relevant
 + RLL refs when relevant
 + canonical inputs
