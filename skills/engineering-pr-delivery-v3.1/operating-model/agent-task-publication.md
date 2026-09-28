@@ -379,9 +379,18 @@ V3.1 may observe the child issue and expose in `TASK_SNAPSHOT`:
 protocol_basis.protocol
 protocol_basis.common_sha
 protocol_basis.two_pass_revision
+
+reconstruction_context.original_intent
+reconstruction_context.latest_reconciliation
+reconstruction_context.primary_conversation_refs[]
+reconstruction_context.roadmap_refs[]
+reconstruction_context.local_agent_refs[]
+reconstruction_context.rll_refs[]
 ```
 
-alongside:
+These are provider/evidence pointers only. Task Snapshot must not copy transcript bodies or turn historical Original Intent / agent reasoning into current authority.
+
+Alongside:
 
 ```text
 programme_parent
@@ -432,9 +441,14 @@ Narrative prose may follow the rendered snapshot for context, but it is secondar
 
 ## 9. [Relay Handover] programme ledger
 
-The programme Handover ledger should index each EP/workstream with:
+The programme Handover ledger should index programme/workstream reconstruction with:
 
-- child work issue;
+- Original Intent ref;
+- current Roadmap/programme reconciliation refs;
+- child work issue / EP;
+- latest responsibility reconciliation and substantive primary-conversation refs;
+- Local Agent / OFFLOAD provider refs;
+- RLL execution/state refs when relevant;
 - plan state/ref/revision;
 - expected next observable;
 - branch/PR/exact-head material where available;
@@ -442,7 +456,7 @@ The programme Handover ledger should index each EP/workstream with:
 - dependency/output consequences;
 - current task result/handoff.
 
-It should not duplicate full implementation-plan prose.
+It should not duplicate full implementation-plan prose, Original Intent bodies, conversation transcripts, Local Agent chatter or RLL timer/lease chatter.
 
 ## 10. Coordinator use
 
