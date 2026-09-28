@@ -69,6 +69,7 @@ Read `references/multi-agent-program-issues.md` for program topology.
 
 Finished authoring examples:
 - `examples/programme-root.md`
+- `examples/detailed-with-original-intent.md`
 - `examples/parallel-focused.md`
 - `examples/original-intent.md`
 
