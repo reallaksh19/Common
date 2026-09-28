@@ -84,6 +84,9 @@ def render(task: dict[str, Any]) -> str:
         raise ValueError("TASK_SNAPSHOT must use schema_version relay-v3.1-task-snapshot")
 
     protocol_basis = task.get("protocol_basis") or {}
+    reconstruction = task.get("reconstruction_context") or {}
+    original_intent = reconstruction.get("original_intent") or {}
+    latest_reconciliation = reconstruction.get("latest_reconciliation") or {}
     identity = task.get("identity") or {}
     work = task.get("parent_issue") or {}
     programme = task.get("programme_parent") or {}
@@ -118,6 +121,13 @@ def render(task: dict[str, Any]) -> str:
         + (f" — {work.get('title')}" if work.get("title") else "")
         + f" [{work.get('state') or 'UNKNOWN'}]",
         f"- Work package / EP: {identity.get('work_package') or 'NONE'} / {identity.get('ep') or 'NONE'}",
+        f"- Original Intent: "
+        + (
+            f"{original_intent.get('repository')}#{original_intent.get('issue_number')}"
+            if original_intent.get("repository") and original_intent.get("issue_number")
+            else "NONE"
+        ),
+        f"- Latest reconciliation: {latest_reconciliation.get('ref') or 'NONE'}",
         f"- Plan: {planning.get('state') or 'UNKNOWN'}"
         + (f" rev {planning.get('revision')}" if planning.get("revision") is not None else "")
         + (f" — {planning.get('provider_ref')}" if planning.get("provider_ref") else ""),
@@ -140,6 +150,28 @@ def render(task: dict[str, Any]) -> str:
         f"| Programme contribution | {_axis_state(task, 'programme_contribution')} | {_progress_line(task, 'programme_progress')} |",
         f"| Provider issue | {_axis_state(task, 'provider_issue', str(work.get('state') or 'UNKNOWN'))} | {work.get('state') or 'UNKNOWN'} |",
     ]
+
+    reconstruction_refs = []
+    for label, key in (
+        ("Primary conversation", "primary_conversation_refs"),
+        ("Roadmap", "roadmap_refs"),
+        ("Local Agent / OFFLOAD", "local_agent_refs"),
+        ("RLL", "rll_refs"),
+    ):
+        refs = _items(reconstruction.get(key))
+        if refs:
+            reconstruction_refs.append(f"{label}: {', '.join(refs)}")
+
+    if original_intent.get("url"):
+        reconstruction_refs.insert(0, f"Original Intent: {original_intent.get('url')}")
+    if latest_reconciliation.get("ref"):
+        detail = str(latest_reconciliation.get("ref"))
+        if latest_reconciliation.get("observed_at"):
+            detail += f" @ {latest_reconciliation.get('observed_at')}"
+        reconstruction_refs.append(f"Latest reconciliation: {detail}")
+
+    if reconstruction_refs:
+        _bullet_section(lines, "Reconstruction references", reconstruction_refs)
 
     if delivery_stack:
         lines += [
