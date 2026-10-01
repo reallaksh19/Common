@@ -234,14 +234,11 @@ def validate_plan(plan,study_model,study_scope,pck_registry,profile,completeness
     item_by_id={x['item_id']:x for x in aitems}
     for x in bsol:
         if not x['reasoning_steps'] or not x['verification_steps']: fail('CHEMICAL_CHECK_REDUCED_TO_ANSWER_ONLY',x['solution_id'])
-        item=item_by_id.get(x['item_ref'])
-        if item is None or x.get('instance_digest')!=item.get('instance_digest'):
-            fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',x['solution_id']+': instance digest')
+        item=item_by.get(x['item_ref'])
+        if not item or x.get('instance_digest')!=item.get('instance_digest'): fail('APPENDIX_B_INSTANCE_MISMATCH',x['solution_id'])
         generic=('Source-bound expected response: '+item['instance_authority']['content']+' Evidence to preserve:')
         if x.get('final_response','').startswith(generic):
             fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',x['solution_id']+': generic source restatement')
-        item=item_by.get(x['item_ref'])
-        if not item or x.get('instance_digest')!=item.get('instance_digest'): fail('APPENDIX_B_INSTANCE_MISMATCH',x['solution_id'])
         if not x.get('final_response') or x['final_response'].startswith('A complete response states the relevant chemical evidence'): fail('APPENDIX_B_GENERIC_SOLUTION',x['solution_id'])
     if hand.get('answer_free') is not True: fail('HANDOUT_CONTAINS_ANSWERS')
     if hand.get('introduced_capability_refs') or set(hand.get('supported_capability_refs',[]))!=required or {x['capability_ref'] for x in hand.get('reference_entries',[])}!=required: fail('HANDOUT_INTRODUCES_NEW_CHEMISTRY')
