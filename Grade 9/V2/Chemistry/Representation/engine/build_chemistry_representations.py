@@ -123,6 +123,7 @@ def validate_bundle(bundle,core1_plan,study_model,registry,profile,notation):
         if cap not in recs: fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s.get('representation_id','unknown'))
         grouped[cap].append(s); p=by.get(s['primitive_id'])
         if not p or not primitive_supports_capability(p,cap): fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s['primitive_id'])
+        if not primitive_applicable(s['primitive_id'],lessons[cap],recs[cap]): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id']+': primitive not supported by bound instance')
         if s['instructional_job']!=p['instructional_job'] or s['attention_target']!=p['attention_target']: fail('VISUAL_WITHOUT_INSTRUCTIONAL_JOB',s['representation_id'])
         r=recs[cap]; allowed_entities=set(instance_tokens(lessons[cap],r))
         if set(s['chemical_entities'])!=allowed_entities or set(s['source_semantic_data']['chemical_entities'])!=allowed_entities: fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id'])
