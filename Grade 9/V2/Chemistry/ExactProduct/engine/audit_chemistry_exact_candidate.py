@@ -21,7 +21,7 @@ PR #309 disclosed:
   are re-derived from the rendered document rather than trusted.
 """
 
-import argparse, copy, hashlib, json, sys
+import argparse, copy, hashlib, json, re, sys
 from pathlib import Path
 import pymupdf
 
@@ -139,12 +139,25 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
         findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_PAGE_COUNT_MISMATCH: attempts=%d support=%d solutions=%d'
                         % (attempt_pages,support_pages,solution_pages))
 
-    # 4. source figure semantics must be a picture, not a dumped structure
+    # 4. Core1 Appendix A/B must render concrete source-bound instances and responses
+    core1_text='\n'.join(p['text'] for p in core1)
+    practice_count=len(re.findall(r'Practice \\d+ —',core1_text))
+    practice_instance_count=core1_text.count('Source-authorized instance:')
+    solution_count=len(re.findall(r'Solution \\d+ —',core1_text))
+    solution_instance_count=core1_text.count('Source-bound expected response:')
+    core1_practice_instance_closure=(practice_count>0 and practice_count==practice_instance_count)
+    core1_solution_instance_closure=(solution_count>0 and solution_count==solution_instance_count)
+    if not core1_practice_instance_closure:
+        findings.append('CORE1_PRACTICE_INSTANCE_MISSING: practice=%d concrete=%d' % (practice_count,practice_instance_count))
+    if not core1_solution_instance_closure:
+        findings.append('CORE1_SOLUTION_NOT_INSTANCE_BOUND: solutions=%d concrete=%d' % (solution_count,solution_instance_count))
+
+    # 5. source figure semantics must be a picture, not a dumped structure
     if any(('"model": "PARTICLE_COUNT"' in p['text']) or ('"particles":' in p['text'])
            or ('Source figure semantics' in p['text']) for p in core2):
         findings.append('SOURCE_FIGURE_SEMANTICS_RENDERED_AS_TEXT_NOT_REALIZED_VISUAL')
 
-    # 5. the bridge claim must be backed by an actual drawn bridge
+    # 6. the bridge claim must be backed by an actual drawn bridge
     bridge=[p for p in core1 if 'Same chemical entity across three views' in p['text']]
     realized_bridge=bool(bridge and any(p['drawings'] for p in bridge))
     if not realized_bridge:
@@ -154,6 +167,8 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
 
     candidate['machine_evidence']['macro_particle_symbolic_realized']=realized_bridge
     candidate['machine_evidence']['attempt_before_support_pass']=attempt_before_support
+    candidate['machine_evidence']['core1_practice_instance_closure_pass']=core1_practice_instance_closure
+    candidate['machine_evidence']['core1_solution_instance_closure_pass']=core1_solution_instance_closure
     candidate['machine_evidence']['learner_internal_identifier_leaks']=len(leaks)
     candidate['package_digest']=digest(candidate,'package_digest')
     Path(candidate_path).write_text(json.dumps(candidate,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
@@ -174,7 +189,13 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
                         'core2_attempt_pages':attempt_pages,
                         'core2_support_pages':support_pages,
                         'core2_solution_pages':solution_pages,
-                        'attempt_before_support_pass':attempt_before_support}}
+                        'attempt_before_support_pass':attempt_before_support,
+                        'core1_practice_count':practice_count,
+                        'core1_practice_instance_count':practice_instance_count,
+                        'core1_solution_count':solution_count,
+                        'core1_solution_instance_count':solution_instance_count,
+                        'core1_practice_instance_closure_pass':core1_practice_instance_closure,
+                        'core1_solution_instance_closure_pass':core1_solution_instance_closure}}
     Path(out_review).write_text(json.dumps(review,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
     return candidate,review
 
