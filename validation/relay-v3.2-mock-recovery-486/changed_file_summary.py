@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Test-only changed-file summary utility for Relay V3.2 recovery drill #486.
 
-Commit-A scope intentionally implements only the input contract/parser and
-extension aggregation. Later declared units remain incomplete.
+Commit-A scope established the parser and extension aggregation. This branch is
+intentionally allowed to advance beyond that durable evidence checkpoint so a
+later successor has a real material delta to reconstruct.
 """
 
 from __future__ import annotations
@@ -48,3 +49,20 @@ def extension_counts(paths: Iterable[str]) -> dict[str, int]:
             extension = "<no_extension>"
         counts[extension] += 1
     return dict(sorted(counts.items()))
+
+
+def _parent_directory(path: str) -> str:
+    """Return one normalized parent candidate for later directory aggregation."""
+    normalized = path.replace("\\", "/").strip("/")
+    if "/" not in normalized:
+        return "."
+    return normalized.rsplit("/", 1)[0] or "."
+
+
+def summary_seed(paths: Iterable[str]) -> dict[str, object]:
+    """Assemble the already-proved summary fields for later CLI composition."""
+    path_list = list(paths)
+    return {
+        "total_file_count": len(path_list),
+        "extensions": extension_counts(path_list),
+    }
