@@ -198,6 +198,7 @@
    "additionalProperties": false,
    "required": [
     "answer_separation_pass",
+    "attempt_before_support_pass",
     "handout_answer_leakage",
     "handout_scope_leakage",
     "formula_typography_pass",
@@ -382,6 +383,9 @@
     },
     "visual_semantic_validator_ref": {
      "type": "string"
+    },
+    "attempt_before_support_pass": {
+     "type": "boolean"
     }
    }
   },
