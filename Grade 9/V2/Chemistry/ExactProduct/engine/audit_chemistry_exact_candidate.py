@@ -144,9 +144,9 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
 
     # 4. Core1 Appendix A/B must render concrete source-bound instances and responses
     core1_text='\n'.join(p['text'] for p in core1)
-    practice_count=len(re.findall(r'Practice \\d+ —',core1_text))
+    practice_count=len(re.findall(r'Practice \d+ —',core1_text))
     practice_instance_count=core1_text.count('Source-authorized instance:')
-    solution_count=len(re.findall(r'Solution \\d+ —',core1_text))
+    solution_count=len(re.findall(r'Solution \d+ —',core1_text))
     solution_instance_count=core1_text.count('Source-bound expected response:')
     core1_practice_instance_closure=(practice_count>0 and practice_count==practice_instance_count)
     core1_solution_instance_closure=(solution_count>0 and solution_count==solution_instance_count)
