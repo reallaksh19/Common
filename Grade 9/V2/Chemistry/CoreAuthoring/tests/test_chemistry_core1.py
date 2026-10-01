@@ -61,6 +61,26 @@ assert {x['item_ref'] for x in plan_a['appendices']['appendix_b']['solutions']}=
 assert not any(x['external_candidate_refs'] for x in plan_a['appendices']['appendix_a']['items'])
 assert not any((l['worked_example'] or {}).get('external_candidate_refs') for l in plan_a['lessons'])
 
+# Source-grounded practice must be concretely answerable as posed. Prefer the
+# assessment record when it carries richer task/representation evidence than
+# the source prose, and never tell the learner a missing visual was supplied.
+aitems=plan_a['appendices']['appendix_a']['items']
+bsol={x['item_ref']:x for x in plan_a['appendices']['appendix_b']['solutions']}
+def cap_items(cap): return [x for x in aitems if x['primary_capability_ref']==cap]
+apparatus=cap_items('CAP-READ-APPARATUS-METHOD')
+assert apparatus and all(x['instance_authority']['authority_ref']=='CQ10' for x in apparatus)
+assert all('Use the supplied apparatus representation' not in x['prompt'] for x in apparatus)
+assert all('simple filtration' in x['prompt'] for x in apparatus)
+assert all('Method: simple filtration.' in bsol[x['item_id']]['final_response'] for x in apparatus)
+particle=cap_items('CAP-TRANSLATE-PARTICLE-SYMBOL')
+assert particle and all(x['instance_authority']['authority_ref']=='CQ02' for x in particle)
+assert all('H₂O' in x['prompt'] and 'Draw or describe one particle-level H₂O entity' in x['prompt'] for x in particle)
+classification=cap_items('CAP-CLASSIFY-CHANGE-EVIDENCE')
+assert classification and all(x['instance_authority']['authority_ref']=='CQ04' for x in classification)
+assert all('melting' in bsol[x['item_id']]['final_response'].lower() for x in classification)
+role=cap_items('CAP-ATTACH-SPECIES-ROLE')
+assert all('changing-species role' in bsol[x['item_id']]['final_response'] for x in role)
+
 # Validate actual semantic products against contracts.
 Draft202012Validator(load(D/'contracts'/'chemistry-promoted-pck.schema.json')).validate(pck)
 Draft202012Validator(load(D/'contracts'/'chemistry-core1-study-plan.schema.json')).validate(plan_a)
