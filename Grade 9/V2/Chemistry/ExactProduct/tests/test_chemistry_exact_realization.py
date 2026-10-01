@@ -22,6 +22,10 @@ with tempfile.TemporaryDirectory() as td:
     validate_release_decision(decision,candidate,[],policy)
     e=candidate['machine_evidence']
     assert e['formula_typography_pass']
+    # The current synthetic source does not supply the target property needed
+    # to complete a property→apparatus suitability example. The rendered guide
+    # must expose that source boundary instead of hard-coding FULL_INSTRUCTIONAL.
+    assert e['core1_instructional_depth']=='SUMMARY_LEVEL',e['core1_instructional_depth']
     assert e['macro_particle_symbolic_realized']
     assert e['learner_internal_identifier_leaks']==0
     assert e['actual_placement_evidence'] and e['placement_bounds_violations']==0 and e['orphan_continuations']==0
