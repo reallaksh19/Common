@@ -91,6 +91,26 @@ def validate(audit: dict, registry: dict | None = None) -> dict:
                 f"asset={key} tier={row['scope_tier_id']}",
             )
 
+        layer_classes = {
+            layers[layer_id]["authority_class"]
+            for layer_id in row["authority_layer_ids"]
+        }
+        required_authority_classes = {
+            "SOURCE_DEFINED": {"SOURCE_DEFINED", "OFFICIAL_SYLLABUS"},
+            "STANDARD_CHEMISTRY_DERIVED": {"STANDARD_CHEMISTRY_DERIVED"},
+            "AUTHORING_RECOMMENDATION": {"AUTHORING_RECOMMENDATION"},
+        }
+        required_classes = required_authority_classes.get(row["claim_class"])
+        if required_classes and not layer_classes.intersection(required_classes):
+            fail(
+                "CHEM_SOURCE_AUDIT_CLAIM_AUTHORITY_MISMATCH",
+                (
+                    f"asset={key} claim_class={row['claim_class']} "
+                    f"requires_one_of={sorted(required_classes)} "
+                    f"observed={sorted(layer_classes)}"
+                ),
+            )
+
     expected = expected_assets(gate)
     for kind in audit["coverage_requirements"]:
         expected_refs = expected[kind]
