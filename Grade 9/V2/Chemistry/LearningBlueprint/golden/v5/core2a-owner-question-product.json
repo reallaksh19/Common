@@ -1,0 +1,145 @@
+{
+  "schema_version": "5.0.0",
+  "product_mode": "CORE2A",
+  "conditioning_ref": "V4-OWNER-OVERRIDE-REDOX",
+  "question_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+  "episodes": [
+    {
+      "question_id": "CHEM-C2-SRC-Q15C",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "REPRESENTATION_OR_SETUP", "FIRST_MOVE", "TECHNICAL_BREAKDOWN",
+        "FULL_SOLUTION", "ERROR_TRAP", "VERIFICATION", "RETRY_OR_NEAR_TRANSFER"
+      ],
+      "technical_steps": [
+        {"step_id":"Q1-ATT","job":"ATTEMPT"},
+        {"step_id":"Q1-REP","job":"REPRESENTATION_OR_SETUP"},
+        {"step_id":"Q1-FIRST","job":"FIRST_MOVE"},
+        {"step_id":"Q1-BREAK","job":"TECHNICAL_BREAKDOWN"},
+        {"step_id":"Q1-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"Q1-ERR","job":"ERROR_TRAP"},
+        {"step_id":"Q1-VER","job":"VERIFICATION"},
+        {"step_id":"Q1-RETRY","job":"RETRY_OR_NEAR_TRANSFER"}
+      ],
+      "reconstructable_ttus": [
+        {
+          "ttu_id":"TTU-2A-Q15C-EVENT",
+          "owner_id":"CHEM-C2-SRC-Q15C",
+          "ttu_type":"EVENT_LINE",
+          "cognitive_job":"SEQUENCE_EVENTS",
+          "learner_action":"Complete the before -> heating -> after event line, then attach the oxidation-state changes that justify the Redox interpretation.",
+          "initial_state": {
+            "before":"Fe(0) + S(0)",
+            "event":"strong heating",
+            "after":"[blank product]",
+            "fe_change":"0 -> [blank]",
+            "s_change":"0 -> [blank]"
+          },
+          "missing_elements": [
+            {"element_id":"Q15C-PRODUCT","semantic_role":"chemical product after strong heating"},
+            {"element_id":"Q15C-FE-OS","semantic_role":"Fe oxidation state in product"},
+            {"element_id":"Q15C-S-OS","semantic_role":"S oxidation state in product"}
+          ],
+          "canonical_complete_state": {
+            "event_line":"Fe + S --strong heat--> FeS",
+            "fe_change":"0 -> +2",
+            "s_change":"0 -> -2"
+          },
+          "hint_ladder": [
+            {"hint_id":"Q15C-TTU-H1","targets_missing_element_ids":["Q15C-PRODUCT"],"hint_text":"Write the product formed when iron and sulphur react strongly: iron sulphide."},
+            {"hint_id":"Q15C-TTU-H2","targets_missing_element_ids":["Q15C-FE-OS","Q15C-S-OS"],"hint_text":"FeS is neutral; use the +2/-2 pair to satisfy the total charge."}
+          ],
+          "verification_rule":"The completed event line must preserve atom identity and show opposite oxidation-state movements: Fe 0->+2 and S 0->-2.",
+          "representation_authority_refs":["CORE2A:Q15C", "CORE1A:REDOX-OXIDATION-STATE-LANE"],
+          "exposure_mode":"SETUP_THEN_COMPLETE",
+          "new_chemistry_refs":[]
+        }
+      ],
+      "hint_bindings": [
+        {"hint_id":"Q1-H1","binds_to_step_id":"Q1-FIRST"},
+        {"hint_id":"Q1-H2","binds_to_step_id":"Q1-BREAK"}
+      ]
+    },
+    {
+      "question_id": "CHEM-C2-SRC-Q29",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "REPRESENTATION_OR_SETUP", "FIRST_MOVE", "TECHNICAL_BREAKDOWN",
+        "FULL_SOLUTION", "ERROR_TRAP", "VERIFICATION", "RETRY_OR_NEAR_TRANSFER"
+      ],
+      "technical_steps": [
+        {"step_id":"Q2-ATT","job":"ATTEMPT"},
+        {"step_id":"Q2-REP","job":"REPRESENTATION_OR_SETUP"},
+        {"step_id":"Q2-FIRST","job":"FIRST_MOVE"},
+        {"step_id":"Q2-BREAK","job":"TECHNICAL_BREAKDOWN"},
+        {"step_id":"Q2-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"Q2-ERR","job":"ERROR_TRAP"},
+        {"step_id":"Q2-VER","job":"VERIFICATION"},
+        {"step_id":"Q2-RETRY","job":"RETRY_OR_NEAR_TRANSFER"}
+      ],
+      "reconstructable_ttus": [
+        {
+          "ttu_id":"TTU-2A-Q29-LEDGER",
+          "owner_id":"CHEM-C2-SRC-Q29",
+          "ttu_type":"LEDGER_TABLE",
+          "cognitive_job":"TRACK_BEFORE_AFTER",
+          "learner_action":"Fill the oxidation-state ledger for Ca, C and O on both sides before deciding whether decomposition is Redox.",
+          "initial_state": {
+            "equation":"CaCO3 -> CaO + CO2",
+            "ledger":"Ca [blank]->[blank]; C [blank]->[blank]; O [blank]->[blank]"
+          },
+          "missing_elements": [
+            {"element_id":"Q29-CA-R","semantic_role":"Ca oxidation state before"},
+            {"element_id":"Q29-CA-P","semantic_role":"Ca oxidation state after"},
+            {"element_id":"Q29-C-R","semantic_role":"C oxidation state before"},
+            {"element_id":"Q29-C-P","semantic_role":"C oxidation state after"},
+            {"element_id":"Q29-O-R","semantic_role":"O oxidation state before"},
+            {"element_id":"Q29-O-P","semantic_role":"O oxidation state after"}
+          ],
+          "canonical_complete_state": {
+            "ledger":"Ca +2->+2; C +4->+4; O -2->-2",
+            "decision":"chemical decomposition but non-redox"
+          },
+          "hint_ladder": [
+            {"hint_id":"Q29-TTU-H1","targets_missing_element_ids":["Q29-O-R","Q29-O-P"],"hint_text":"Use the normal oxygen oxidation state of -2 here."},
+            {"hint_id":"Q29-TTU-H2","targets_missing_element_ids":["Q29-CA-R","Q29-CA-P"],"hint_text":"Calcium is Group 2, so use +2 in these compounds."},
+            {"hint_id":"Q29-TTU-H3","targets_missing_element_ids":["Q29-C-R","Q29-C-P"],"hint_text":"Use the sum rule in CaCO3 and CO2 to obtain carbon's oxidation state."}
+          ],
+          "verification_rule":"Every tracked element must have identical before/after oxidation state; if any change is claimed, recompute the sum rule.",
+          "representation_authority_refs":["CORE2A:Q29", "CORE1A:REDOX-NONREDOX-CONTRAST"],
+          "exposure_mode":"SETUP_THEN_COMPLETE",
+          "new_chemistry_refs":[]
+        }
+      ],
+      "hint_bindings": [
+        {"hint_id":"Q2-H1","binds_to_step_id":"Q2-FIRST"},
+        {"hint_id":"Q2-H2","binds_to_step_id":"Q2-BREAK"}
+      ]
+    }
+  ],
+  "coverage_closure": {
+    "selected_question_count": 2,
+    "attempt_path_count": 2,
+    "check_path_count": 2,
+    "full_solution_path_count": 2,
+    "ttu_path_count": 2
+  },
+  "page_plan": [
+    {"page_id":"Q1-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.67,"technical_step_ids":["Q1-ATT","Q1-REP","Q1-FIRST","Q1-BREAK"],"ttu_ids":["TTU-2A-Q15C-EVENT"],"learner_action_ids":["ACT-Q1-ATTEMPT","ACT-Q1-COMPLETE-EVENT"]},
+    {"page_id":"Q1-P2","page_role":"SOLUTION","expected_active_area_ratio":0.74,"technical_step_ids":["Q1-SOL","Q1-ERR","Q1-VER","Q1-RETRY"],"ttu_ids":[],"learner_action_ids":[]},
+    {"page_id":"Q2-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.66,"technical_step_ids":["Q2-ATT","Q2-REP","Q2-FIRST","Q2-BREAK"],"ttu_ids":["TTU-2A-Q29-LEDGER"],"learner_action_ids":["ACT-Q2-ATTEMPT","ACT-Q2-COMPLETE-LEDGER"]},
+    {"page_id":"Q2-P2","page_role":"SOLUTION","expected_active_area_ratio":0.75,"technical_step_ids":["Q2-SOL","Q2-ERR","Q2-VER","Q2-RETRY"],"ttu_ids":[],"learner_action_ids":[]}
+  ],
+  "cross_core_reuse_audit": {
+    "shared_helper_prose_count": 0,
+    "repeated_generic_template_fraction": 0.12,
+    "shared_question_stem_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+    "shared_answer_authority_ids": ["ANS-Q15C", "ANS-Q29"]
+  }
+}

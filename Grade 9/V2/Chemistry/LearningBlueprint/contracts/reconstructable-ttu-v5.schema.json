@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-reconstructable-ttu-v5.schema.json",
+  "title": "Chemistry Reconstructable TTU v5",
+  "type": "object",
+  "required": [
+    "ttu_id",
+    "owner_id",
+    "ttu_type",
+    "cognitive_job",
+    "learner_action",
+    "initial_state",
+    "missing_elements",
+    "canonical_complete_state",
+    "hint_ladder",
+    "verification_rule",
+    "representation_authority_refs",
+    "exposure_mode"
+  ],
+  "properties": {
+    "ttu_id": {"type": "string", "minLength": 1},
+    "owner_id": {"type": "string", "minLength": 1},
+    "ttu_type": {
+      "enum": [
+        "INCOMPLETE_DIAGRAM",
+        "COMPONENT_ASSEMBLY",
+        "GRAPH_COMPLETION",
+        "EQUATION_SKELETON",
+        "EVENT_LINE",
+        "LEDGER_TABLE",
+        "DECISION_TREE",
+        "REACTION_SCHEME",
+        "REPRESENTATION_MAP",
+        "PARTICLE_SPECIES_MAP",
+        "OXIDATION_STATE_LANE"
+      ]
+    },
+    "cognitive_job": {
+      "enum": [
+        "RECONSTRUCT_STRUCTURE",
+        "COMPLETE_RELATION",
+        "SEQUENCE_EVENTS",
+        "MAP_COMPONENTS",
+        "PLOT_RELATION",
+        "BALANCE_CONSERVATION",
+        "SELECT_PATH",
+        "TRANSLATE_REPRESENTATION",
+        "TRACK_BEFORE_AFTER",
+        "CONNECT_CAUSE_EFFECT"
+      ]
+    },
+    "learner_action": {"type": "string", "minLength": 1},
+    "initial_state": {"type": "object", "minProperties": 1},
+    "missing_elements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["element_id", "semantic_role"],
+        "properties": {
+          "element_id": {"type": "string", "minLength": 1},
+          "semantic_role": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "canonical_complete_state": {"type": "object", "minProperties": 1},
+    "hint_ladder": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["hint_id", "targets_missing_element_ids", "hint_text"],
+        "properties": {
+          "hint_id": {"type": "string", "minLength": 1},
+          "targets_missing_element_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "hint_text": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "verification_rule": {"type": "string", "minLength": 1},
+    "representation_authority_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "exposure_mode": {
+      "enum": [
+        "MODEL_THEN_RECONSTRUCT",
+        "RECONSTRUCT_BEFORE_CANONICAL",
+        "SETUP_THEN_COMPLETE",
+        "CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS"
+      ]
+    },
+    "new_chemistry_refs": {"type": "array", "maxItems": 0}
+  },
+  "additionalProperties": true
+}

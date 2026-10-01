@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-study-differentiation-unit-v6.schema.json",
+  "title": "Chemistry Study Differentiation Unit v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "router_id",
+    "subtopic_id",
+    "difficulty",
+    "research_dossier",
+    "concept_decomposition",
+    "representation_plan",
+    "misconception_plan",
+    "core1a_plan",
+    "core1b_plan",
+    "depth_release_gate"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "router_id": {"const": "SDU"},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "difficulty": {
+      "type": "object",
+      "required": ["badge", "authority", "evidence_profile"],
+      "properties": {
+        "badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+        "authority": {"enum": ["OWNER_PROVIDED", "SOURCE_PROVIDED", "DERIVED", "VALIDATED_DERIVED"]},
+        "evidence_profile": {
+          "type": "object",
+          "required": [
+            "prerequisite_depth",
+            "element_interactivity",
+            "inferential_jump_severity",
+            "representation_translation",
+            "model_discrimination",
+            "sign_frame_sensitivity",
+            "multi_step_dependency",
+            "abstraction",
+            "misconception_density",
+            "synthesis"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "research_dossier": {
+      "type": "object",
+      "required": [
+        "research_level",
+        "semantic_sources",
+        "learning_difficulty_sources",
+        "misconception_evidence",
+        "representation_evidence",
+        "representation_translation_risks",
+        "design_decisions"
+      ]
+    },
+    "concept_decomposition": {
+      "type": "object",
+      "required": ["learning_atom_ids", "sub_subtopic_ids", "major_inferential_jump_ids"]
+    },
+    "representation_plan": {
+      "type": "object",
+      "required": ["representation_requirement_ids", "translation_requirements", "visual_reasoning_jobs"]
+    },
+    "misconception_plan": {
+      "type": "object",
+      "required": ["misconception_ids", "contrast_requirements"]
+    },
+    "core1a_plan": {
+      "type": "object",
+      "required": ["product_mode", "concept_ttu_refs", "max_pages", "page_count_is_quality_metric"],
+      "properties": {
+        "product_mode": {"const": "CORE1A"},
+        "concept_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "max_pages": {"type": "integer", "minimum": 1, "maximum": 30},
+        "page_count_is_quality_metric": {"const": false}
+      }
+    },
+    "core1b_plan": {
+      "type": "object",
+      "required": ["product_mode", "concept_ttu_refs", "max_pages", "page_count_is_quality_metric"],
+      "properties": {
+        "product_mode": {"const": "CORE1B"},
+        "concept_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "max_pages": {"type": "integer", "minimum": 1, "maximum": 30},
+        "page_count_is_quality_metric": {"const": false}
+      }
+    },
+    "depth_release_gate": {
+      "type": "object",
+      "required": [
+        "all_learning_atoms_closed",
+        "all_major_inferential_jumps_bridged",
+        "representation_coverage_complete",
+        "equation_assimilation_complete",
+        "misconception_coverage_complete",
+        "page_budget_exhaustion_required"
+      ],
+      "properties": {
+        "all_learning_atoms_closed": {"const": true},
+        "all_major_inferential_jumps_bridged": {"const": true},
+        "representation_coverage_complete": {"const": true},
+        "equation_assimilation_complete": {"const": true},
+        "misconception_coverage_complete": {"const": true},
+        "page_budget_exhaustion_required": {"const": false}
+      }
+    }
+  },
+  "additionalProperties": true
+}

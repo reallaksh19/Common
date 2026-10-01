@@ -1,0 +1,155 @@
+{
+  "schema_version": "5.0.0",
+  "product_mode": "CORE2B",
+  "conditioning_ref": "V4-OWNER-OVERRIDE-REDOX",
+  "question_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+  "episodes": [
+    {
+      "question_id": "CHEM-C2-SRC-Q15C",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "TARGET_REPHRASE", "RELEVANT_DATA_SELECTION", "REPRESENTATION_CHOICE",
+        "PRINCIPLE_SELECTION", "FIRST_MOVE_COMMIT", "JUSTIFICATION", "PROGRESSIVE_HINTS",
+        "FULL_SOLUTION", "VERIFICATION", "GENERALIZE_OR_DIAGNOSE"
+      ],
+      "technical_steps": [
+        {"step_id":"B1-ATT","job":"ATTEMPT"},
+        {"step_id":"B1-TGT","job":"TARGET_REPHRASE"},
+        {"step_id":"B1-DATA","job":"RELEVANT_DATA_SELECTION"},
+        {"step_id":"B1-REP","job":"REPRESENTATION_CHOICE"},
+        {"step_id":"B1-PRIN","job":"PRINCIPLE_SELECTION"},
+        {"step_id":"B1-FIRST","job":"FIRST_MOVE_COMMIT"},
+        {"step_id":"B1-JUST","job":"JUSTIFICATION"},
+        {"step_id":"B1-HINT","job":"PROGRESSIVE_HINTS"},
+        {"step_id":"B1-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"B1-VER","job":"VERIFICATION"},
+        {"step_id":"B1-GEN","job":"GENERALIZE_OR_DIAGNOSE"}
+      ],
+      "reconstructable_ttus": [
+        {
+          "ttu_id":"TTU-2B-Q15C-SCHEME",
+          "owner_id":"CHEM-C2-SRC-Q15C",
+          "ttu_type":"REACTION_SCHEME",
+          "cognitive_job":"RECONSTRUCT_STRUCTURE",
+          "learner_action":"Choose the representation yourself, then complete the reaction scheme and oxidation-state evidence before opening any principle hint.",
+          "initial_state": {
+            "question_cue":"iron filings + sulphur, strong heating",
+            "scheme":"[reactants] --heat--> [blank product]",
+            "proof":"Fe [blank]->[blank]; S [blank]->[blank]"
+          },
+          "missing_elements": [
+            {"element_id":"B-Q15C-PRODUCT","semantic_role":"product identity"},
+            {"element_id":"B-Q15C-FE-R","semantic_role":"Fe oxidation state before"},
+            {"element_id":"B-Q15C-FE-P","semantic_role":"Fe oxidation state after"},
+            {"element_id":"B-Q15C-S-R","semantic_role":"S oxidation state before"},
+            {"element_id":"B-Q15C-S-P","semantic_role":"S oxidation state after"}
+          ],
+          "canonical_complete_state": {
+            "scheme":"Fe + S --heat--> FeS",
+            "proof":"Fe 0->+2; S 0->-2"
+          },
+          "hint_ladder": [
+            {"hint_id":"B-Q15C-H1","targets_missing_element_ids":["B-Q15C-PRODUCT"],"hint_text":"The heated mixture forms a compound rather than remaining an unreacted mixture."},
+            {"hint_id":"B-Q15C-H2","targets_missing_element_ids":["B-Q15C-FE-R","B-Q15C-S-R"],"hint_text":"Both reactants are free elements before reaction."},
+            {"hint_id":"B-Q15C-H3","targets_missing_element_ids":["B-Q15C-FE-P","B-Q15C-S-P"],"hint_text":"Use neutrality of FeS to assign the +2/-2 pair."}
+          ],
+          "verification_rule":"The learner's chosen representation is acceptable only if it proves one oxidation-state increase and one decrease for the same atoms before/after.",
+          "representation_authority_refs":["CORE2A:Q15C", "CORE1A:REDOX-OXIDATION-STATE-LANE"],
+          "exposure_mode":"CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS",
+          "new_chemistry_refs":[]
+        }
+      ],
+      "hint_bindings": [
+        {"hint_id":"B1-H1","binds_to_step_id":"B1-TGT"},
+        {"hint_id":"B1-H2","binds_to_step_id":"B1-REP"},
+        {"hint_id":"B1-H3","binds_to_step_id":"B1-PRIN"},
+        {"hint_id":"B1-H4","binds_to_step_id":"B1-FIRST"}
+      ]
+    },
+    {
+      "question_id": "CHEM-C2-SRC-Q29",
+      "source_class": "SOURCE_CORE2",
+      "stem_custody": "PRESERVED",
+      "provenance_custody": "PRESERVED",
+      "answer_custody": "PRESERVED",
+      "required_jobs": [
+        "ATTEMPT", "TARGET_REPHRASE", "RELEVANT_DATA_SELECTION", "REPRESENTATION_CHOICE",
+        "PRINCIPLE_SELECTION", "FIRST_MOVE_COMMIT", "JUSTIFICATION", "PROGRESSIVE_HINTS",
+        "FULL_SOLUTION", "VERIFICATION", "GENERALIZE_OR_DIAGNOSE"
+      ],
+      "technical_steps": [
+        {"step_id":"B2-ATT","job":"ATTEMPT"},
+        {"step_id":"B2-TGT","job":"TARGET_REPHRASE"},
+        {"step_id":"B2-DATA","job":"RELEVANT_DATA_SELECTION"},
+        {"step_id":"B2-REP","job":"REPRESENTATION_CHOICE"},
+        {"step_id":"B2-PRIN","job":"PRINCIPLE_SELECTION"},
+        {"step_id":"B2-FIRST","job":"FIRST_MOVE_COMMIT"},
+        {"step_id":"B2-JUST","job":"JUSTIFICATION"},
+        {"step_id":"B2-HINT","job":"PROGRESSIVE_HINTS"},
+        {"step_id":"B2-SOL","job":"FULL_SOLUTION"},
+        {"step_id":"B2-VER","job":"VERIFICATION"},
+        {"step_id":"B2-GEN","job":"GENERALIZE_OR_DIAGNOSE"}
+      ],
+      "reconstructable_ttus": [
+        {
+          "ttu_id":"TTU-2B-Q29-DECISION",
+          "owner_id":"CHEM-C2-SRC-Q29",
+          "ttu_type":"DECISION_TREE",
+          "cognitive_job":"SELECT_PATH",
+          "learner_action":"Construct the shortest decision path that can prove or reject Redox for CaCO3 -> CaO + CO2; do not use the word decomposition as evidence.",
+          "initial_state": {
+            "root":"Chemical reaction observed",
+            "branch":"Redox? -> [what evidence must be built?] -> [decision]"
+          },
+          "missing_elements": [
+            {"element_id":"B-Q29-EVIDENCE","semantic_role":"required redox evidence"},
+            {"element_id":"B-Q29-TRACK","semantic_role":"before/after oxidation-state ledger"},
+            {"element_id":"B-Q29-DECISION","semantic_role":"redox/non-redox conclusion"}
+          ],
+          "canonical_complete_state": {
+            "path":"chemical reaction -> track Ca/C/O oxidation states -> all unchanged -> non-redox"
+          },
+          "hint_ladder": [
+            {"hint_id":"B-Q29-H1","targets_missing_element_ids":["B-Q29-EVIDENCE"],"hint_text":"Reaction topology does not prove Redox; identify a quantity that must change if electrons are transferred."},
+            {"hint_id":"B-Q29-H2","targets_missing_element_ids":["B-Q29-TRACK"],"hint_text":"Build a before/after ledger for Ca, C and O."},
+            {"hint_id":"B-Q29-H3","targets_missing_element_ids":["B-Q29-DECISION"],"hint_text":"If no oxidation state rises or falls, reject the Redox label even though the reaction is chemical."}
+          ],
+          "verification_rule":"The conclusion must be derived from unchanged oxidation states, not from the decomposition label or presence/absence of gas.",
+          "representation_authority_refs":["CORE2A:Q29", "CORE1A:REDOX-NONREDOX-CONTRAST"],
+          "exposure_mode":"CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS",
+          "new_chemistry_refs":[]
+        }
+      ],
+      "hint_bindings": [
+        {"hint_id":"B2-H1","binds_to_step_id":"B2-TGT"},
+        {"hint_id":"B2-H2","binds_to_step_id":"B2-DATA"},
+        {"hint_id":"B2-H3","binds_to_step_id":"B2-PRIN"},
+        {"hint_id":"B2-H4","binds_to_step_id":"B2-FIRST"}
+      ]
+    }
+  ],
+  "coverage_closure": {
+    "selected_question_count": 2,
+    "attempt_path_count": 2,
+    "check_path_count": 2,
+    "full_solution_path_count": 2,
+    "ttu_path_count": 2
+  },
+  "page_plan": [
+    {"page_id":"B1-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.64,"technical_step_ids":["B1-ATT","B1-TGT","B1-DATA","B1-REP","B1-PRIN"],"ttu_ids":["TTU-2B-Q15C-SCHEME"],"learner_action_ids":["ACT-B1-PLAN","ACT-B1-RECONSTRUCT-SCHEME"]},
+    {"page_id":"B1-P2","page_role":"WORKSPACE","expected_active_area_ratio":0.42,"technical_step_ids":["B1-FIRST","B1-JUST","B1-HINT"],"ttu_ids":[],"learner_action_ids":["ACT-B1-COMMIT","ACT-B1-JUSTIFY"],"workspace_justification":"Learner must commit the first move and justify it before opening the fixed hints."},
+    {"page_id":"B1-P3","page_role":"SOLUTION","expected_active_area_ratio":0.72,"technical_step_ids":["B1-SOL","B1-VER","B1-GEN"],"ttu_ids":[],"learner_action_ids":["ACT-B1-DIAGNOSE"]},
+    {"page_id":"B2-P1","page_role":"QUESTION_EPISODE","expected_active_area_ratio":0.65,"technical_step_ids":["B2-ATT","B2-TGT","B2-DATA","B2-REP","B2-PRIN"],"ttu_ids":["TTU-2B-Q29-DECISION"],"learner_action_ids":["ACT-B2-PLAN","ACT-B2-BUILD-DECISION"]},
+    {"page_id":"B2-P2","page_role":"WORKSPACE","expected_active_area_ratio":0.43,"technical_step_ids":["B2-FIRST","B2-JUST","B2-HINT"],"ttu_ids":[],"learner_action_ids":["ACT-B2-COMMIT","ACT-B2-JUSTIFY"],"workspace_justification":"Learner must prove or reject redox from oxidation-state evidence before receiving the worked path."},
+    {"page_id":"B2-P3","page_role":"SOLUTION","expected_active_area_ratio":0.73,"technical_step_ids":["B2-SOL","B2-VER","B2-GEN"],"ttu_ids":[],"learner_action_ids":["ACT-B2-DIAGNOSE"]}
+  ],
+  "cross_core_reuse_audit": {
+    "shared_helper_prose_count": 0,
+    "repeated_generic_template_fraction": 0.09,
+    "shared_question_stem_ids": ["CHEM-C2-SRC-Q15C", "CHEM-C2-SRC-Q29"],
+    "shared_answer_authority_ids": ["ANS-Q15C", "ANS-Q29"]
+  }
+}

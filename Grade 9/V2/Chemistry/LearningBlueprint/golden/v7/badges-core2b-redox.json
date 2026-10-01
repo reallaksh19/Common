@@ -1,0 +1,6 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE2B",
+  "learner_visible_badges": ["BUCKET", "CONCEPT", "TASK_DEMAND", "PURPOSE", "SOURCE", "SUPPORT"],
+  "student_knowledge_percent_visible": false
+}

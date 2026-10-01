@@ -1,0 +1,12 @@
+{
+  "schema_version": "6.0.0",
+  "closure_id": "SH-C2A-REDOX-001",
+  "product_mode": "CORE2A",
+  "canonical_answer_available": true,
+  "progressive_help_available": true,
+  "misconception_help_available": true,
+  "canonical_reveal_available": true,
+  "independent_verification": {"required": true},
+  "repair_path": {"available": true},
+  "next_step": {"defined": true}
+}

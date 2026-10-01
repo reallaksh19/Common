@@ -20,6 +20,13 @@ def expect(code,fn):
     raise AssertionError('expected '+code)
 def redigest_plan(p): p['plan_digest']=''; p['plan_digest']=digest(p,'plan_digest'); return p
 def lesson(p,c): return next(x for x in p['lessons'] if x['capability_ref']==c)
+def _representation_evidence_for_test(rep):
+    keys=('formulas','charges','coefficients','states','conditions','structures','figures','observations','units')
+    parts=[]
+    for key in keys:
+        vals=rep.get(key,[])
+        if vals: parts.append(key.replace('_',' ')+' = '+', '.join(str(x) for x in vals))
+    return '; '.join(parts) if parts else 'no additional representation token is recorded'
 def redigest_pck(reg):
     for a in reg['assets']:
         a['asset_digest']=''; x=copy.deepcopy(a); x.pop('asset_digest'); a['asset_digest']=hashlib.sha256(canonical(x).encode()).hexdigest()
@@ -40,8 +47,8 @@ treatment=load(LS/'registry'/'chemistry-treatment-policy.json')
 model_a=build_model(copy.deepcopy(study_scope),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external),copy.deepcopy(semantics),copy.deepcopy(no_attempt),copy.deepcopy(treatment),'CHEM-C-G-UPSTREAM-NO-ATTEMPT')
 model_b=build_model(copy.deepcopy(study_scope),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external),copy.deepcopy(semantics),copy.deepcopy(with_attempt),copy.deepcopy(treatment),'CHEM-C-G-UPSTREAM-WITH-ATTEMPT')
 pck=load_pck_registry(); profile=load(D/'registry'/'chemistry-instructional-authoring-profile.json'); completeness=load(D/'registry'/'chemistry-core1-scope-completeness-policy.json'); problems=load(D/'registry'/'chemistry-problem-authoring-profile.json')
-plan_a=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT')
-plan_b=build_plan(copy.deepcopy(model_b),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-WITH-ATTEMPT')
+plan_a=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
+plan_b=build_plan(copy.deepcopy(model_b),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-WITH-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
 required=set(study_scope['required_capability_refs'])
 assert {x['capability_ref'] for x in plan_a['lessons']}==required
 assert all(x['lesson_mode']=='FULL_LEARNING' for x in plan_a['lessons'])
@@ -53,6 +60,26 @@ assert {x['primary_capability_ref'] for x in plan_a['appendices']['appendix_a'][
 assert {x['item_ref'] for x in plan_a['appendices']['appendix_b']['solutions']}=={x['item_id'] for x in plan_a['appendices']['appendix_a']['items']}
 assert not any(x['external_candidate_refs'] for x in plan_a['appendices']['appendix_a']['items'])
 assert not any((l['worked_example'] or {}).get('external_candidate_refs') for l in plan_a['lessons'])
+
+# Source-grounded practice must be concretely answerable as posed. Prefer the
+# assessment record when it carries richer task/representation evidence than
+# the source prose, and never tell the learner a missing visual was supplied.
+aitems=plan_a['appendices']['appendix_a']['items']
+bsol={x['item_ref']:x for x in plan_a['appendices']['appendix_b']['solutions']}
+def cap_items(cap): return [x for x in aitems if x['primary_capability_ref']==cap]
+apparatus=cap_items('CAP-READ-APPARATUS-METHOD')
+assert apparatus and all(x['instance_authority']['authority_ref']=='CQ10' for x in apparatus)
+assert all('Use the supplied apparatus representation' not in x['prompt'] for x in apparatus)
+assert all('simple filtration' in x['prompt'] for x in apparatus)
+assert all('Method: simple filtration.' in bsol[x['item_id']]['final_response'] for x in apparatus)
+particle=cap_items('CAP-TRANSLATE-PARTICLE-SYMBOL')
+assert particle and all(x['instance_authority']['authority_ref']=='CQ02' for x in particle)
+assert all('H₂O' in x['prompt'] and 'Draw or describe one particle-level H₂O entity' in x['prompt'] for x in particle)
+classification=cap_items('CAP-CLASSIFY-CHANGE-EVIDENCE')
+assert classification and all(x['instance_authority']['authority_ref']=='CQ04' for x in classification)
+assert all('melting' in bsol[x['item_id']]['final_response'].lower() for x in classification)
+role=cap_items('CAP-ATTACH-SPECIES-ROLE')
+assert all('changing-species role' in bsol[x['item_id']]['final_response'] for x in role)
 
 # Validate actual semantic products against contracts.
 Draft202012Validator(load(D/'contracts'/'chemistry-promoted-pck.schema.json')).validate(pck)
@@ -114,14 +141,39 @@ expect('HANDOUT_CONTAINS_ANSWERS',lambda:validate_plan(bad,model_a,study_scope,p
 bad=copy.deepcopy(plan_a); bad['appendices']['appendix_c']['introduced_capability_refs']=['CAP-READ-STRUCTURE-SITE']; redigest_plan(bad)
 expect('HANDOUT_INTRODUCES_NEW_CHEMISTRY',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
 
+# 18 CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_a']['items'][0]['instance_authority']={}; bad['appendices']['appendix_a']['items'][0]['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 19 APPENDIX_B_INSTANCE_MISMATCH
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_b']['solutions'][0]['instance_digest']='0'*64; redigest_plan(bad)
+expect('APPENDIX_B_INSTANCE_MISMATCH',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 20 APPENDIX_B_GENERIC_SOLUTION
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_b']['solutions'][0]['final_response']='A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.'; redigest_plan(bad)
+expect('APPENDIX_B_GENERIC_SOLUTION',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
+# 21 CORE1_SOLUTION_NOT_INSTANCE_BOUND — a source restatement is not an answer
+bad=copy.deepcopy(plan_a)
+item=bad['appendices']['appendix_a']['items'][0]
+sol=bad['appendices']['appendix_b']['solutions'][0]
+sol['final_response']='Source-bound expected response: '+item['instance_authority']['content']+' Evidence to preserve: '+_representation_evidence_for_test(item['instance_authority']['representation'])
+redigest_plan(bad)
+expect('CORE1_SOLUTION_NOT_INSTANCE_BOUND',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
+# 22 Core1 lesson worked example must retain concrete authority
+bad=copy.deepcopy(plan_a); w=lesson(bad,'CAP-CHECK-ATOM-CONSERVATION')['worked_example']; w['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 23 Core1 lesson attempts must retain concrete authority
+bad=copy.deepcopy(plan_a); a=lesson(bad,'CAP-PARSE-ION-CHARGE')['independent_attempt']; a['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
 # Treatment-relative sufficiency and authority boundaries.
 assert lesson(plan_b,'CAP-PARSE-ION-CHARGE')['content_roles']==profile['content_roles_by_mode']['CONCISE_VERIFY_ONLY']
 assert all(a['promotion_authority']['subject_expert_release_state']=='NOT_GRANTED' for a in pck['assets'])
 assert all(a['raw_mature_reference_used'] is False for a in pck['assets'])
 # Deterministic replay.
-again=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT')
+again=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
 assert json.dumps(plan_a,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
-print('CHEMISTRY C-G required falsifiers = 17 PASS')
+print('CHEMISTRY C-G required falsifiers = 23 PASS')
 print('CHEMISTRY C-G promoted PCK pilot authority = PASS')
 print('CHEMISTRY C-G treatment-relative Core1 authoring = PASS')
 print('CHEMISTRY C-G Appendix A/B/C semantic closure = PASS')

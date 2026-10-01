@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-content-bill-of-materials-v7.schema.json",
+  "title": "Chemistry Core Content Bill of Materials v7",
+  "type": "object",
+  "required": ["schema_version", "ccbom_id", "subtopic_id", "registry_ref", "assets", "coverage_summary"],
+  "properties": {
+    "schema_version": {"const": "7.0.0"},
+    "ccbom_id": {"type": "string", "minLength": 1},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "registry_ref": {"type": "string", "minLength": 1},
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "asset_class", "authority_ref", "core_dispositions"],
+        "properties": {
+          "asset_id": {"type": "string", "minLength": 1},
+          "asset_class": {"enum": ["CONCEPT", "LEARNING_ATOM", "EQUATION", "DERIVATION", "DATA", "REPRESENTATION", "EXAMPLE", "MISCONCEPTION", "BOUNDARY", "VERIFICATION", "QUESTION", "ANSWER"]},
+          "authority_ref": {"type": "string", "minLength": 1},
+          "core_dispositions": {"type": "object"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "coverage_summary": {
+      "type": "object",
+      "required": ["mandatory_total", "mandatory_closed", "unresolved_asset_ids"],
+      "properties": {
+        "mandatory_total": {"type": "integer", "minimum": 0},
+        "mandatory_closed": {"type": "integer", "minimum": 0},
+        "unresolved_asset_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,5 +1,5 @@
 {
-  "artifact_sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
+  "artifact_sha256": "0941ae70b41783715cf7ca5b3a371fd8fadc1da180ad7fcde98592646faa6325",
   "audit_id": "CHEM-C-L-AUDIT-CORE1",
   "checks": {
     "ACTUAL_PLACEMENT_EVIDENCE": "PASS",
@@ -11,5 +11,5 @@
     "TEXT_COLLISION": "PASS"
   },
   "minimum_font_pt": 9.0,
-  "vector_pages": 23
+  "vector_pages": 30
 }

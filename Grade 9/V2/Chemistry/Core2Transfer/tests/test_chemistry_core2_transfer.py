@@ -39,7 +39,7 @@ def upstream():
     study_scope=derive_study_scope(copy.deepcopy(scope),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external))
     model=build_model(copy.deepcopy(study_scope),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external),copy.deepcopy(semantics),copy.deepcopy(no_attempt),load(LS/'registry'/'chemistry-treatment-policy.json'),'CHEM-C-I-UPSTREAM')
     pck=load_pck_registry(); core_profile=load(CA/'registry'/'chemistry-instructional-authoring-profile.json'); completeness=load(CA/'registry'/'chemistry-core1-scope-completeness-policy.json'); problems=load(CA/'registry'/'chemistry-problem-authoring-profile.json')
-    core1=build_core1(copy.deepcopy(model),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(core_profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-I-CORE1')
+    core1=build_core1(copy.deepcopy(model),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(core_profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-I-CORE1',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
     return corpus,external,model,core1,families,guide
 
 corpus,external,model,core1,families,guide=upstream()

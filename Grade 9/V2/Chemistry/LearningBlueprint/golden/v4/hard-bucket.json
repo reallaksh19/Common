@@ -1,0 +1,25 @@
+{
+  "schema_version": "4.0.0",
+  "bucket_id": "BUCKET-HARD-OXIDATION-STATE",
+  "subject": "CHEMISTRY",
+  "subtopic_id": "oxidation-state-tracking",
+  "title": "Track oxidation state and connect it to Redox change",
+  "difficulty_badge": "HARD",
+  "page_envelope": {"max_pages": 30, "is_ceiling_not_quota": true},
+  "research": {
+    "mode": "DEEP_REQUIRED",
+    "research_refs": ["RSC-REDOX-REPRESENTATION", "CERP-REDOX-MISCONCEPTIONS"],
+    "research_questions": [
+      "Which representations best connect species identity, oxidation state and electron transfer?",
+      "Which oxidation-state and charge misconceptions recur for novice learners?"
+    ]
+  },
+  "visual_plan": {
+    "visual_jobs": ["SYMBOLIC_MODEL", "QUANTITY_MODEL", "REPRESENTATION_BRIDGE", "ERROR_VISUAL"]
+  },
+  "decomposition": {
+    "decision": "SPLIT",
+    "sub_subtopic_ids": ["oxidation-state-meaning", "before-after-lane", "state-change-to-redox-label", "boundary-and-error-cases"]
+  },
+  "realization_modes": ["CORE1A", "CORE1B"]
+}

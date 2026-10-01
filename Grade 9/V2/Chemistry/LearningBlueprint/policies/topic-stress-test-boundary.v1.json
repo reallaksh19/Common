@@ -1,0 +1,55 @@
+{
+  "policy_id": "CHEM-TOPIC-STRESS-TEST-BOUNDARY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "doctrine": {
+    "topic_specific_cases_may": [
+      "FALSIFY_GENERIC_CONTRACTS",
+      "EXERCISE_GENERIC_ENGINES",
+      "PROVE_REGRESSION_COVERAGE",
+      "PROVE_SOURCE_SCOPE_HANDLING"
+    ],
+    "topic_specific_cases_must_not": [
+      "DEFINE_GROUND_TRUTH",
+      "DEFINE_CANONICAL_DOMAIN_AUTHORITY",
+      "DEFINE_GENERIC_CONTROL_FLOW",
+      "DEFINE_DEFAULT_POLICY",
+      "AUTHORIZE_NEW_CHEMISTRY",
+      "SERVE_AS_PRODUCER_INPUT_FOR_UNRELATED_TOPICS"
+    ]
+  },
+  "stress_topics": [
+    {
+      "topic_id": "REDOX",
+      "role": "STRESS_TEST",
+      "authority_status": "NON_AUTHORITATIVE_FIXTURE",
+      "allowed_uses": [
+        "REGRESSION_GOLDEN",
+        "SOURCE_SCOPE_STRESS",
+        "PRODUCT_STRESS",
+        "FALSIFIER_INPUT"
+      ],
+      "forbidden_uses": [
+        "GROUND_TRUTH",
+        "CANONICAL_AUTHORITY",
+        "GENERIC_ENGINE_BRANCH_KEY",
+        "DEFAULT_POLICY_BASIS"
+      ]
+    }
+  ],
+  "generic_engine_roots": [
+    "Grade 9/V2/Chemistry/LearningBlueprint/engine"
+  ],
+  "fixture_roots": [
+    "Grade 9/V2/Chemistry/LearningBlueprint/golden",
+    "Grade 9/V2/Chemistry/LearningBlueprint/stress_tests",
+    "Grade 9/V2/Chemistry/LearningBlueprint/fixtures"
+  ],
+  "engine_rules": {
+    "topic_named_branching_forbidden": true,
+    "direct_fixture_path_dependency_forbidden": true,
+    "fixture_import_into_generic_engine_forbidden": true,
+    "registry_and_contract_driven_dispatch_required": true
+  },
+  "release_rule": "A_TOPIC_STRESS_TEST_MAY_PROVE_OR_FALSIFY_A_GENERIC_RULE_BUT_CANNOT_CREATE_OR_EXPAND_SUBJECT_AUTHORITY"
+}

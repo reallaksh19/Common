@@ -38,7 +38,7 @@ def build_upstream():
     study_scope=derive_study_scope(copy.deepcopy(scope_bundle),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external))
     model=build_model(copy.deepcopy(study_scope),copy.deepcopy(source_ledger),copy.deepcopy(qbindings),copy.deepcopy(external),copy.deepcopy(semantics),copy.deepcopy(no_attempt),load(LS/'registry'/'chemistry-treatment-policy.json'),'CHEM-C-H-UPSTREAM')
     pck=load_pck_registry(); profile=load(CA/'registry'/'chemistry-instructional-authoring-profile.json'); completeness=load(CA/'registry'/'chemistry-core1-scope-completeness-policy.json'); problems=load(CA/'registry'/'chemistry-problem-authoring-profile.json')
-    plan=build_plan(copy.deepcopy(model),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-H-CORE1')
+    plan=build_plan(copy.deepcopy(model),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-H-CORE1',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
     return plan,model
 
 plan,model=build_upstream()
@@ -85,13 +85,31 @@ expect('CONTRAST_REQUIRED_BUT_SINGLE_CASE_VISUAL_USED',lambda:validate_bundle(ba
 badn=copy.deepcopy(notation); badn['ascii_fallback_policy']='ALLOW_FLAT_ASCII'
 expect('ASCII_FALLBACK_MAKES_CHARGE_AMBIGUOUS',lambda:validate_notation(badn))
 
+# 12 source-bound instance tokens drive applicable visual selection
+read_formula=[x for x in bundle['representations'] if x['capability_ref']=='CAP-READ-FORMULA']
+assert any(x['primitive_id']=='FORMULA_ANATOMY_VIEW' for x in read_formula)
+assert not any(x['primitive_id']=='COEFFICIENT_SUBSCRIPT_CONTRAST' for x in read_formula)
+assert any('CaCl₂' in x['notation_tokens'] or 'SO₄²⁻' in x['notation_tokens'] for x in read_formula)
+
+# 13 unsupported instance visual cannot be injected into the bundle
+bad=copy.deepcopy(bundle)
+probe=copy.deepcopy(next(x for x in read_formula if x['primitive_id']=='FORMULA_ANATOMY_VIEW'))
+probe['representation_id']='REP-CAP-READ-FORMULA-99-COEFFICIENT_SUBSCRIPT_CONTRAST'
+probe['primitive_id']='COEFFICIENT_SUBSCRIPT_CONTRAST'
+p=primitive(registry,'COEFFICIENT_SUBSCRIPT_CONTRAST')
+probe['instructional_job']=p['instructional_job']; probe['attention_target']=p['attention_target']
+probe['translation_obligation']=p['translation_obligation']; probe['representation_level_from']=p['representation_level_from']; probe['representation_level_to']=p['representation_level_to']; probe['learner_action_expected']=p['learner_action']
+probe['renderer_constraints']=sorted(set(p['renderer_constraints']+['NOTATION_CONTRACT:'+notation['contract_id']]))
+bad['representations'].append(probe); redigest(bad)
+expect('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',lambda:validate_bundle(bad,plan,model,registry,page_profile,notation))
+
 # Deterministic replay and semantic trace closure.
 again=build_bundle(copy.deepcopy(plan),copy.deepcopy(model),copy.deepcopy(registry),copy.deepcopy(page_profile),copy.deepcopy(notation))
 assert json.dumps(bundle,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
 for s in bundle['representations']:
     assert s['instructional_job'] and s['attention_target'] and s['learner_action_expected'] and s['accessibility_text']
     assert s['source_semantic_data']['source_obligation_refs'] or s['source_semantic_data']['assessment_question_refs']
-print('CHEMISTRY C-H required falsifiers = 11 PASS')
+print('CHEMISTRY C-H required falsifiers = 13 PASS')
 print('CHEMISTRY C-H semantic teaching primitives = PASS')
 print('CHEMISTRY C-H source-bound representation trace = PASS')
 print('CHEMISTRY C-H notation safety = PASS')

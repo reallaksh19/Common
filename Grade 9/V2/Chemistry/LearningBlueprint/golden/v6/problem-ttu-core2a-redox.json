@@ -1,0 +1,74 @@
+{
+  "schema_version": "6.0.0",
+  "ttu_family": "PROBLEM_TTU",
+  "ttu_id": "PT-C2A-REDOX-001",
+  "product_mode": "CORE2A",
+  "identity": {
+    "problem_family_id": "PF-AGENT-ROLE-ASSIGNMENT",
+    "capability_requirements": ["CAP-TRACK-OXIDATION-STATE", "CAP-ATTACH-SPECIES-ROLE"],
+    "question_id": "Q-REDOX-FROZEN-001",
+    "question_authority_ref": "REG-CHEM-G9-REDOX-001:Q-REDOX-FROZEN-001"
+  },
+  "task_state": {
+    "givens": ["Zn + Cu2+ -> Zn2+ + Cu"],
+    "unknown": "identify oxidation/reduction and oxidising/reducing agents",
+    "constraints": ["preserve species identity", "electron balance must close"],
+    "event": "redox electron transfer",
+    "representation_options": ["OXIDATION_STATE_LANE", "ELECTRON_LEDGER"],
+    "competing_models": ["AGENT_BY_NAME_MEMORISATION", "AGENT_BY_SELF_CHANGE_AND_OTHER_EFFECT"]
+  },
+  "expert_solution_state": {
+    "recognition": "track the same element before and after reaction",
+    "representation": "oxidation-state lane plus electron ledger",
+    "model_selection": "state increase = oxidation/electron loss; state decrease = reduction/electron gain",
+    "first_move": "assign 0/+2 states to Zn and Cu species",
+    "reasoning_steps": ["track identity", "compare states", "infer electron loss/gain", "attach agent role"],
+    "equations": ["Zn -> Zn2+ + 2e-", "Cu2+ + 2e- -> Cu"],
+    "result": "Zn is oxidised and is reducing agent; Cu2+ is reduced and is oxidising agent",
+    "verification": "electrons lost by Zn equal electrons gained by Cu2+",
+    "wrong_routes": ["calling the reduced species the reducing agent", "treating oxidation state as literal ionic charge"]
+  },
+  "task_demand": {
+    "conceptual_demand": 2,
+    "structural_distance": 1,
+    "representation_change": 1,
+    "model_discrimination": 1,
+    "hidden_constraint": 0,
+    "sign_direction_reversal": 0,
+    "reversed_target": 0,
+    "constraint_inversion": 0,
+    "multi_step_bridge": 2,
+    "synthesis": 1,
+    "competitive_mixing": 0,
+    "calculation_load": 0
+  },
+  "learner_interaction": {
+    "mode": "DECLARATIVE_WORKED_PROBLEM",
+    "first_move_exposed": true,
+    "worked_reasoning_available": true
+  },
+  "self_help_closure_ref": "SH-C2A-REDOX-001",
+  "transfer_lineage": {
+    "relationship": "FADING_ANCHOR",
+    "transfer_evidence_status": "NOT_TRANSFER_EVIDENCE"
+  },
+  "reconstructable_ttu_refs": ["TTU-C2A-REDOX-SETUP-001"],
+  "support_band_ref": "LAU-REDOX-001:GUIDED",
+  "realization_contract": {
+    "identity": "ADAPTIVE_DECLARATIVE_PROBLEM_REFERENCE",
+    "exposure_mode": "SETUP_THEN_COMPLETE",
+    "learner_actions": ["ATTEMPT", "INSPECT_SETUP", "COMPLETE", "STUDY_EXPERT_SOLUTION", "VERIFY"]
+  },
+  "differentiation_fingerprint": {
+    "context": "zinc copper redox",
+    "problem_family": "PF-AGENT-ROLE-ASSIGNMENT",
+    "known_quantities": "reaction species",
+    "numerical_values": "none",
+    "target_unknown": "agent roles",
+    "representation": "partly supplied state lane",
+    "model_sequence": "recognition -> setup -> worked reasoning",
+    "special_condition": "electron balance",
+    "solution_path": "complete expert path shown after setup",
+    "learner_action": "STUDY_AND_COMPLETE"
+  }
+}

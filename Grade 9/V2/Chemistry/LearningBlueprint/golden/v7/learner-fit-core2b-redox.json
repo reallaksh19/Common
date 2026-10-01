@@ -1,0 +1,23 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE2B",
+  "question_id": "CHEM-C2A-SRC-U2Q35",
+  "purpose": "COMPETITIVE_EXAM",
+  "purpose_used": true,
+  "task_demand_score": 3,
+  "compiler_support": "STANDARD",
+  "fit_focus": ["representation", "model_selection"],
+  "conditioning": {
+    "mode": "KNOWLEDGE_EVIDENCE",
+    "knowledge_percent": 90,
+    "subdimensions": {
+      "recognition": 85,
+      "representation": 40,
+      "model_selection": 45,
+      "first_move": 80,
+      "execution": 85,
+      "explanation": 75,
+      "verification": 70
+    }
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "policy_id": "CHEM-G9-V2-BLUEPRINT-v7-PRODUCT-ASSURANCE",
+  "schema_version": "7.0.0",
+  "coverage": {
+    "required_core_dispositions": ["CORE1", "CORE1A", "CORE1B", "CORE2", "CORE2A", "CORE2B"],
+    "legal_dispositions": ["MUST_REALIZE", "MUST_REFERENCE", "MUST_RECONSTRUCT", "MUST_APPLY", "MUST_SELECT_OR_RECONSTRUCT", "OPTIONAL", "NOT_APPLICABLE", "FORBIDDEN"],
+    "mandatory_closure": 1.0,
+    "blank_disposition_forbidden": true,
+    "mandatory_realization_ref_required": true
+  },
+  "similarity": {
+    "semantic_reuse_exact_allowed_classes": ["FROZEN_SOURCE_WORDING", "CANONICAL_EQUATION", "CANONICAL_FACT", "SOURCE_FIGURE_WITH_CUSTODY"],
+    "non_frozen_prose": {
+      "max_verbatim_5gram_overlap": 0.10,
+      "max_identical_contiguous_words": 35
+    },
+    "generated_example": {
+      "weights": {
+        "problem_family": 0.15,
+        "givens": 0.15,
+        "numerical_values": 0.10,
+        "target": 0.15,
+        "representation": 0.15,
+        "model_sequence": 0.15,
+        "special_condition": 0.05,
+        "solution_path": 0.10
+      },
+      "pass_below": 0.70,
+      "review_from": 0.70,
+      "fail_from": 0.85,
+      "declared_exceptions": ["FADING_ANCHOR", "SOURCE_QUESTION_IDENTITY"]
+    },
+    "pedagogical_ab": {
+      "weights": {
+        "example": 0.30,
+        "representation": 0.20,
+        "learner_action": 0.25,
+        "sequence": 0.25
+      },
+      "pass_below": 0.45,
+      "review_from": 0.45,
+      "fail_above": 0.60,
+      "hard_fail_all_same": ["example", "representation", "sequence", "learner_action"]
+    },
+    "threshold_status": "INITIAL_ENGINEERING_POLICY_NOT_EMPIRICAL_LEARNING_CLAIM"
+  },
+  "difficulty": {
+    "core1_intrinsic_dimensions": ["prerequisite_depth", "element_interactivity", "inferential_jumps", "representation_translation", "abstraction", "model_discrimination", "condition_sensitivity", "misconception_density", "symbolic_quantitative_coupling", "synthesis"],
+    "dimension_scale": {"min": 0, "max": 3},
+    "bands": [
+      {"id": "EASY", "min": 0, "max": 9},
+      {"id": "MEDIUM", "min": 10, "max": 19},
+      {"id": "HARD", "min": 20, "max": 30}
+    ],
+    "owner_badge_may_override": true,
+    "one_band_mismatch_requires_reason": true,
+    "two_band_mismatch_requires_explicit_owner_confirmation": true,
+    "core2_label": "TASK_DEMAND",
+    "core1_label": "INTRINSIC_DIFFICULTY"
+  },
+  "purpose_contracts": {
+    "CORE1A": {"mandatory_actions": ["EXPLAIN", "REPRESENT", "JUSTIFY_OR_DERIVE", "CONTRAST", "MODELED_EXAMPLE"], "forbidden_dominant_mode": "OPEN_TUTOR_DIALOGUE"},
+    "CORE1B": {"mandatory_actions": ["PREDICT_OR_RETRIEVE", "RECONSTRUCT", "EXPLAIN_OR_JUSTIFY", "VERIFY"], "learner_generated_major_ttu_ratio_min": 0.60, "forbidden_dominant_mode": "SUPPLIED_EXPOSITION"},
+    "CORE2A": {"mandatory_actions": ["EXPERT_RECOGNITION", "SETUP", "FULL_SOLUTION", "WHY_STEPS", "VERIFY"], "forbidden_dominant_mode": "NO_COMPLETE_EXPERT_SOLUTION"},
+    "CORE2B": {"mandatory_actions": ["ATTEMPT", "MODEL_OR_REPRESENTATION_CHOICE", "FIRST_MOVE_COMMITMENT", "JUSTIFY", "VERIFY"], "learner_generated_major_ttu_ratio_min": 0.60, "forbidden_dominant_mode": "METHOD_REVEALED_BEFORE_COMMITMENT"}
+  },
+  "learner_fit": {
+    "applies_to": ["CORE2A", "CORE2B"],
+    "recompute_support_independently": true,
+    "knowledge_bands": [
+      {"id": "FOUNDATION", "min": 0, "max": 30},
+      {"id": "DEVELOPING", "min": 31, "max": 60},
+      {"id": "SECURE", "min": 61, "max": 80},
+      {"id": "ADVANCED", "min": 81, "max": 100}
+    ],
+    "demand_bands": [
+      {"id": "LOW", "min": 0, "max": 4},
+      {"id": "MODERATE", "min": 5, "max": 9},
+      {"id": "HIGH", "min": 10, "max": 14},
+      {"id": "EXTREME", "min": 15, "max": 36}
+    ],
+    "support_matrix": {
+      "FOUNDATION": {"LOW": "STANDARD", "MODERATE": "GUIDED", "HIGH": "FOUNDATION_HIGH_SUPPORT", "EXTREME": "FOUNDATION_HIGH_SUPPORT"},
+      "DEVELOPING": {"LOW": "STANDARD", "MODERATE": "GUIDED", "HIGH": "GUIDED", "EXTREME": "FOUNDATION_HIGH_SUPPORT"},
+      "SECURE": {"LOW": "CHALLENGE_MINIMAL", "MODERATE": "STANDARD", "HIGH": "GUIDED", "EXTREME": "GUIDED"},
+      "ADVANCED": {"LOW": "CHALLENGE_MINIMAL", "MODERATE": "CHALLENGE_MINIMAL", "HIGH": "STANDARD", "EXTREME": "GUIDED"}
+    },
+    "focus_guard": {"below_50_forbids": ["CHALLENGE_MINIMAL"], "below_35_forbids": ["STANDARD", "CHALLENGE_MINIMAL"]},
+    "owner_override_requires_null_knowledge_percent": true
+  },
+  "question_custody": {
+    "every_question_requires_source_display": true,
+    "every_question_requires_answer_closure": true,
+    "source_frozen_requires": ["source_question_number", "source_locator", "source_stem_hash", "stem_identity_status", "answer_ref", "canonical_solution_ref", "verification_ref"],
+    "generated_original_requires": ["generated_grounding_refs", "learner_visible_source", "answer_ref", "canonical_solution_ref", "verification_ref"],
+    "source_stem_identity_required": "EXACT",
+    "answer_status_required": "CLOSED"
+  },
+  "badges": {
+    "learner_visible_recommended_max_per_page": 6,
+    "learner_visible": ["BUCKET", "CONCEPT", "INTRINSIC_DIFFICULTY", "TASK_DEMAND", "PURPOSE", "LINKAGE", "PROBLEM_FAMILY", "REPRESENTATION_TTU", "LEARNER_ACTION", "TRANSFER", "SOURCE", "SUPPORT", "VERIFICATION", "ANSWER_STATE"],
+    "machine_only": ["AUTHORITY_STATUS", "SOURCE_HASH", "ANSWER_CLOSURE_STATE", "RESEARCH_LEVEL", "DIFFICULTY_EVIDENCE_SCORE", "KNOWLEDGE_CONDITIONING_MODE", "LAU_SUPPORT_DECISION", "TASK_DEMAND_VECTOR", "TTU_CLOSURE", "SIMILARITY_SCORE", "RELEASE_STATUS", "OWNER_OVERRIDE", "CONFIDENCE_PROVENANCE"],
+    "student_knowledge_percent_learner_visible": false
+  }
+}

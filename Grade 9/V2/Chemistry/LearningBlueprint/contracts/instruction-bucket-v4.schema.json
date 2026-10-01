@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-learning-blueprint/instruction-bucket-v4.schema.json",
+  "title": "Chemistry Core1A/Core1B Instruction Bucket v4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "bucket_id",
+    "subject",
+    "subtopic_id",
+    "title",
+    "difficulty_badge",
+    "page_envelope",
+    "research",
+    "visual_plan",
+    "decomposition",
+    "realization_modes"
+  ],
+  "properties": {
+    "schema_version": {"const": "4.0.0"},
+    "bucket_id": {"type": "string", "minLength": 1},
+    "subject": {"const": "CHEMISTRY"},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "difficulty_badge": {"enum": ["EASY", "MEDIUM", "HARD"]},
+    "page_envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_pages", "is_ceiling_not_quota"],
+      "properties": {
+        "max_pages": {"type": "integer", "minimum": 1, "maximum": 30},
+        "is_ceiling_not_quota": {"const": true}
+      }
+    },
+    "research": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "research_refs"],
+      "properties": {
+        "mode": {"enum": ["OPTIONAL", "REQUIRED", "DEEP_REQUIRED"]},
+        "research_refs": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "research_questions": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "visual_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visual_jobs"],
+      "properties": {
+        "visual_jobs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "PHENOMENON_VISUAL",
+              "PARTICLE_MODEL",
+              "SYMBOLIC_MODEL",
+              "QUANTITY_MODEL",
+              "COMPARISON_VISUAL",
+              "CAUSAL_SEQUENCE",
+              "BOUNDARY_CONTRAST",
+              "ERROR_VISUAL",
+              "REPRESENTATION_BRIDGE"
+            ]
+          }
+        }
+      }
+    },
+    "decomposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "sub_subtopic_ids"],
+      "properties": {
+        "decision": {"enum": ["NOT_NEEDED", "SPLIT"]},
+        "sub_subtopic_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"decision": {"const": "SPLIT"}}},
+          "then": {"properties": {"sub_subtopic_ids": {"minItems": 2}}}
+        },
+        {
+          "if": {"properties": {"decision": {"const": "NOT_NEEDED"}}},
+          "then": {"properties": {"sub_subtopic_ids": {"maxItems": 0}}}
+        }
+      ]
+    },
+    "realization_modes": {
+      "type": "array",
+      "prefixItems": [{"const": "CORE1A"}, {"const": "CORE1B"}],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"difficulty_badge": {"const": "EASY"}}},
+      "then": {
+        "properties": {
+          "page_envelope": {"properties": {"max_pages": {"maximum": 10}}},
+          "research": {"properties": {"mode": {"const": "OPTIONAL"}}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"difficulty_badge": {"const": "MEDIUM"}}},
+      "then": {
+        "properties": {
+          "page_envelope": {"properties": {"max_pages": {"maximum": 20}}},
+          "research": {
+            "properties": {
+              "mode": {"const": "REQUIRED"},
+              "research_refs": {"minItems": 1}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"difficulty_badge": {"const": "HARD"}}},
+      "then": {
+        "properties": {
+          "page_envelope": {"properties": {"max_pages": {"maximum": 30}}},
+          "research": {
+            "properties": {
+              "mode": {"const": "DEEP_REQUIRED"},
+              "research_refs": {"minItems": 2},
+              "research_questions": {"minItems": 2}
+            },
+            "required": ["research_questions"]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-learner-adaptation-unit-v6.schema.json",
+  "title": "Chemistry Learner Adaptation Unit v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "router_id",
+    "question_id",
+    "question_authority_ref",
+    "problem_family",
+    "purpose",
+    "conditioning",
+    "task_demand",
+    "resolved_support",
+    "core2a_plan",
+    "core2b_plan"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "router_id": {"const": "LAU"},
+    "question_id": {"type": "string", "minLength": 1},
+    "question_authority_ref": {"type": "string", "minLength": 1},
+    "problem_family": {"type": "string", "minLength": 1},
+    "purpose": {"enum": ["FIRST_STUDY", "REVISION", "COMPETITIVE_EXAM"]},
+    "conditioning": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["KNOWLEDGE_EVIDENCE", "OWNER_OVERRIDE"]},
+        "learner_state": {
+          "type": "object",
+          "required": ["capability_scope", "knowledge_percent", "confidence", "provenance", "evidence_count", "subdimensions"],
+          "properties": {
+            "capability_scope": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "knowledge_percent": {"type": "number", "minimum": 0, "maximum": 100},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "provenance": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+            "evidence_count": {"type": "integer", "minimum": 1},
+            "subdimensions": {
+              "type": "object",
+              "required": ["recognition", "representation", "model_selection", "first_move", "execution", "explanation", "verification"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "owner_override": {
+          "type": "object",
+          "required": ["support_band", "reason", "preserve_system_finding"],
+          "properties": {
+            "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+            "reason": {"type": "string", "minLength": 1},
+            "preserve_system_finding": {"const": true}
+          }
+        }
+      }
+    },
+    "task_demand": {
+      "type": "object",
+      "required": [
+        "conceptual_demand",
+        "structural_distance",
+        "representation_change",
+        "model_discrimination",
+        "hidden_constraint",
+        "sign_direction_reversal",
+        "reversed_target",
+        "constraint_inversion",
+        "multi_step_bridge",
+        "synthesis",
+        "competitive_mixing",
+        "calculation_load"
+      ],
+      "additionalProperties": false
+    },
+    "resolved_support": {
+      "type": "object",
+      "required": ["support_band", "decision_basis", "learner_state_used", "task_demand_used", "purpose_used"],
+      "properties": {
+        "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]},
+        "decision_basis": {"enum": ["LEARNER_TASK_FIT", "OWNER_OVERRIDE_WITH_TASK_DEMAND"]},
+        "learner_state_used": {"type": "boolean"},
+        "task_demand_used": {"const": true},
+        "purpose_used": {"const": true}
+      }
+    },
+    "core2a_plan": {
+      "type": "object",
+      "required": ["product_mode", "problem_ttu_refs", "support_band"],
+      "properties": {
+        "product_mode": {"const": "CORE2A"},
+        "problem_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]}
+      }
+    },
+    "core2b_plan": {
+      "type": "object",
+      "required": ["product_mode", "problem_ttu_refs", "support_band"],
+      "properties": {
+        "product_mode": {"const": "CORE2B"},
+        "problem_ttu_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "support_band": {"enum": ["FOUNDATION_HIGH_SUPPORT", "GUIDED", "STANDARD", "CHALLENGE_MINIMAL"]}
+      }
+    }
+  },
+  "additionalProperties": true
+}

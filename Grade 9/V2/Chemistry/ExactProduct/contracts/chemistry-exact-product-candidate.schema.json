@@ -198,6 +198,9 @@
    "additionalProperties": false,
    "required": [
     "answer_separation_pass",
+    "attempt_before_support_pass",
+    "core1_solution_instance_closure_pass",
+    "core1_practice_instance_closure_pass",
     "handout_answer_leakage",
     "handout_scope_leakage",
     "formula_typography_pass",
@@ -382,6 +385,15 @@
     },
     "visual_semantic_validator_ref": {
      "type": "string"
+    },
+    "attempt_before_support_pass": {
+     "type": "boolean"
+    },
+    "core1_practice_instance_closure_pass": {
+     "type": "boolean"
+    },
+    "core1_solution_instance_closure_pass": {
+     "type": "boolean"
     }
    }
   },

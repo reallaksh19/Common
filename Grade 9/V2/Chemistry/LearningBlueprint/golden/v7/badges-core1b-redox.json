@@ -1,0 +1,6 @@
+{
+  "schema_version": "7.0.0",
+  "product_mode": "CORE1B",
+  "learner_visible_badges": ["BUCKET", "CONCEPT", "INTRINSIC_DIFFICULTY", "PURPOSE", "LEARNER_ACTION"],
+  "student_knowledge_percent_visible": false
+}

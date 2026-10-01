@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-learning-blueprint/core2-learner-conditioning-v4.schema.json",
+  "title": "Chemistry Core2A/Core2B Learner Conditioning v4",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mode"],
+  "properties": {
+    "schema_version": {"const": "4.0.0"},
+    "mode": {"enum": ["KNOWLEDGE_PERCENT", "OWNER_OVERRIDE"]},
+    "knowledge_percent": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "owner_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "support_profile", "demand_profile"],
+      "properties": {
+        "reason": {"type": "string", "minLength": 1},
+        "support_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "support_density",
+            "hint_entry_level",
+            "representation_support",
+            "first_move_support",
+            "solution_delay"
+          ],
+          "properties": {
+            "support_density": {"enum": ["HIGH", "MEDIUM", "LOW", "MINIMAL"]},
+            "hint_entry_level": {"enum": ["H0_ATTEMPT", "H1_ORIENT", "H2_STRUCTURE", "H3_REPRESENTATION", "H4_PRINCIPLE", "H5_FIRST_MOVE", "H6_PARTIAL_PATH"]},
+            "representation_support": {"enum": ["SUPPLIED", "AVAILABLE_ON_REQUEST", "DEFERRED"]},
+            "first_move_support": {"enum": ["EXPLICIT", "AVAILABLE_ON_REQUEST", "DEFERRED"]},
+            "solution_delay": {"enum": ["AFTER_INITIAL_ATTEMPT", "AFTER_HINT_LADDER", "AFTER_FULL_ATTEMPT"]}
+          }
+        },
+        "demand_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["transfer_distance", "interleaving", "synthesis_width", "time_pressure"],
+          "properties": {
+            "transfer_distance": {"enum": ["SAME_STRUCTURE", "NEAR_TRANSFER", "INTERLEAVED_TRANSFER", "EXTENDED_WITHIN_SCOPE"]},
+            "interleaving": {"type": "boolean"},
+            "synthesis_width": {"type": "integer", "minimum": 1, "maximum": 3},
+            "time_pressure": {"enum": ["NONE", "PRACTICE", "COMPETITION"]}
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"mode": {"const": "KNOWLEDGE_PERCENT"}}},
+      "then": {
+        "required": ["knowledge_percent"],
+        "not": {"required": ["owner_override"]}
+      }
+    },
+    {
+      "if": {"properties": {"mode": {"const": "OWNER_OVERRIDE"}}},
+      "then": {
+        "required": ["owner_override"],
+        "not": {"required": ["knowledge_percent"]}
+      }
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+name: V2 Chemistry Learning Blueprint v5 Product Quality
+
+on:
+  pull_request:
+    paths:
+      - 'Grade 9/V2/Chemistry/LearningBlueprint/**'
+      - '.github/workflows/v2-chemistry-learning-blueprint-v5.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v5-product-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate v5 JSON syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          targets = [
+              root / 'BLUEPRINT_INVARIANTS.json',
+              root / 'contracts/reconstructable-ttu-v5.schema.json',
+              root / 'contracts/study-product-v5.schema.json',
+              root / 'contracts/question-product-v5.schema.json',
+              root / 'policies/v5-study-product-quality-policy.json',
+          ] + sorted((root / 'golden/v5').glob('*.json'))
+          for path in targets:
+              json.loads(path.read_text(encoding='utf-8'))
+              print('JSON_OK', path)
+          PY
+
+      - name: Run v5 product-quality falsifiers
+        run: python -m unittest 'Grade 9/V2/Chemistry/LearningBlueprint/tests/test_blueprint_v5_product_quality.py' -v
+
+      - name: Validate Core1A and Core1B study-product goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v5-study-product-quality-policy.json"
+          python "$ROOT/engine/validate_blueprint_v5.py" --policy "$POLICY" --study-product "$ROOT/golden/v5/core1a-hard-study-product.json"
+          python "$ROOT/engine/validate_blueprint_v5.py" --policy "$POLICY" --study-product "$ROOT/golden/v5/core1b-hard-study-product.json"
+
+      - name: Validate Core2A and Core2B question-product goldens
+        run: |
+          ROOT='Grade 9/V2/Chemistry/LearningBlueprint'
+          POLICY="$ROOT/policies/v5-study-product-quality-policy.json"
+          python "$ROOT/engine/validate_blueprint_v5.py" --policy "$POLICY" --question-product "$ROOT/golden/v5/core2a-owner-question-product.json"
+          python "$ROOT/engine/validate_blueprint_v5.py" --policy "$POLICY" --question-product "$ROOT/golden/v5/core2b-owner-question-product.json"
+
+      - name: Assert v5 governing invariants
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint')
+          inv = json.loads((root / 'BLUEPRINT_INVARIANTS.json').read_text(encoding='utf-8'))
+          rules = {x['rule'] for x in inv['invariants']}
+          required = {
+              'CORE1A_AND_CORE1B_MUST_CLOSE_TECHNICAL_LEARNING_JOBS_AND_SUMMARY_ONLY_ARTIFACTS_ARE_FORBIDDEN',
+              'EVERY_MAJOR_CORE1A_OR_CORE1B_LEARNING_ATOM_REQUIRES_AT_LEAST_ONE_RECONSTRUCTABLE_TTU',
+              'A_FULLY_COMPLETED_DIAGRAM_GRAPH_EQUATION_EVENT_LINE_OR_TABLE_DOES_NOT_COUNT_AS_A_RECONSTRUCTABLE_TTU',
+              'EVERY_SELECTED_CORE2A_OR_CORE2B_QUESTION_REQUIRES_A_RECONSTRUCTABLE_TTU_PATH',
+              'PAGE_COUNT_TARGETING_AND_PADDING_TO_REACH_A_DIFFICULTY_PAGE_ENVELOPE_ARE_FORBIDDEN',
+              'FINAL_LEARNER_PDF_REQUIRES_MEASURED_ACTIVE_AREA_AND_UNJUSTIFIED_WHITE_SPACE_MUST_FAIL_PRODUCT_QUALITY_GATES',
+          }
+          missing = sorted(required - rules)
+          assert not missing, missing
+          print('V5_PRODUCT_QUALITY_INVARIANTS=PASS')
+          PY
+
+      - name: Assert TTU exposure modes
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('Grade 9/V2/Chemistry/LearningBlueprint/golden/v5')
+          expected = {
+              'core1a-hard-study-product.json': 'MODEL_THEN_RECONSTRUCT',
+              'core1b-hard-study-product.json': 'RECONSTRUCT_BEFORE_CANONICAL',
+              'core2a-owner-question-product.json': 'SETUP_THEN_COMPLETE',
+              'core2b-owner-question-product.json': 'CHOOSE_OR_RECONSTRUCT_BEFORE_HINTS',
+          }
+          for name, mode in expected.items():
+              data = json.loads((root / name).read_text(encoding='utf-8'))
+              if 'reconstructable_ttus' in data:
+                  ttus = data['reconstructable_ttus']
+              else:
+                  ttus = [ttu for ep in data['episodes'] for ttu in ep['reconstructable_ttus']]
+              assert ttus, name
+              assert all(x['exposure_mode'] == mode for x in ttus), (name, mode)
+              print(name, 'TTU_MODE=', mode, 'COUNT=', len(ttus))
+          PY

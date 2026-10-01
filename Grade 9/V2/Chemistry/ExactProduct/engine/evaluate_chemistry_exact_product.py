@@ -67,6 +67,9 @@ def machine_validate(candidate,cold,policy,artifact_root='.',required_qc_refs=No
     e=candidate['machine_evidence']
     checks=[
       (not e['answer_separation_pass'],'APPENDIX_A_B_ANSWER_SEPARATION_FAILURE'),
+      (not e.get('attempt_before_support_pass',False),'CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE'),
+      (not e.get('core1_practice_instance_closure_pass',False),'CORE1_PRACTICE_INSTANCE_MISSING'),
+      (not e.get('core1_solution_instance_closure_pass',False),'CORE1_SOLUTION_NOT_INSTANCE_BOUND'),
       (e['handout_answer_leakage'],'HANDOUT_ANSWER_LEAKAGE'),
       (e['handout_scope_leakage'],'HANDOUT_SCOPE_LEAKAGE'),
       (not e['formula_typography_pass'],'FORMULA_SUBSCRIPT_SUPERSCRIPT_FAILURE'),
@@ -90,6 +93,7 @@ def machine_validate(candidate,cold,policy,artifact_root='.',required_qc_refs=No
       # legacy candidate that predates these fields still evaluates.
       (e.get('learner_internal_identifier_leaks',0)>0,'LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK'),
       (len(e.get('teaching_primitive_kinds_realized',[]))<policy.get('minimum_realized_primitive_kinds',0),'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED'),
+      (bool(e.get('teaching_primitives_label_only',[])),'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED'),
       ('actual_placement_evidence' in e and not e['actual_placement_evidence'],'PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE'),
       (e.get('placement_bounds_violations',0)>0,'PLACEMENT_OUT_OF_PHYSICAL_BOUNDS'),
       (e.get('orphan_continuations',0)>0,'ORPHAN_CONTINUATION_FRAGMENT')]
@@ -134,13 +138,17 @@ def build_release_decision(candidate,machine_gate,reviews,reference_comparison,p
     if machine_gate['status']=='PASS' and all_human and reference_comparison['state']=='PASS':
         e=candidate['machine_evidence']
         if candidate['candidate_class']=='LEGACY_NONCONFORMING_REDOX': fail('LEGACY_NONCONFORMING_REDOX_SNAPSHOT_RECEIVES_MATURE_PASS')
-        if candidate['candidate_class']=='KNOWN_THIN_SMOKE' or e['core1_instructional_depth']!='FULL_INSTRUCTIONAL': fail('KNOWN_THIN_SMOKE_SPECIMEN_RECEIVES_MATURE_DESIGN_PASS')
+        if candidate['candidate_class']=='KNOWN_THIN_SMOKE': fail('KNOWN_THIN_SMOKE_SPECIMEN_RECEIVES_MATURE_DESIGN_PASS')
+        if e['core1_instructional_depth']!='FULL_INSTRUCTIONAL': fail('CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE')
         if not e['macro_particle_symbolic_realized']: fail('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED')
-        if e.get('teaching_primitives_label_only') and len(e['teaching_primitives_label_only'])>len(e.get('teaching_primitive_kinds_realized',[])): fail('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED')
+        if e.get('teaching_primitives_label_only'): fail('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED')
         if e.get('learner_internal_identifier_leaks',0)>0: fail('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK')
         if not e['primary_supports_correct']: fail('PRIMARY_SUPPORTS_LABELS_INCORRECT')
         if not e['visual_usable_actual_size']: fail('VISUAL_UNUSABLE_AT_ACTUAL_OUTPUT_SIZE')
         if not e['hints_distinct_from_solution']: fail('HINTS_DUPLICATE_SOLUTION_BUT_MARKED_MATURE')
+        if not e.get('attempt_before_support_pass',False): fail('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE')
+        if not e.get('core1_practice_instance_closure_pass',False): fail('CORE1_PRACTICE_INSTANCE_MISSING')
+        if not e.get('core1_solution_instance_closure_pass',False): fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND')
         quality['MATURE_DESIGN_QUALITY']='PASS'; classification=policy['mature_classification']; exit_code=0
     elif machine_gate['status']=='FAIL':
         quality['MATURE_DESIGN_QUALITY']='FAIL'; classification='VALIDATION_FAIL'; exit_code=1
@@ -166,6 +174,7 @@ def validate_release_decision(decision,candidate,reviews,policy):
         if 'APPENDIX_C_PRINTABLE_HANDOUT' not in set(artifact_map(candidate)['CORE_STUDY_GUIDE']['required_sections']): fail('APPENDIX_C_MISSING_BUT_PRODUCT_MARKED_MATURE')
         if e['handout_answer_leakage']: fail('HANDOUT_CONTAINS_SOLUTIONS')
         if not e['hints_distinct_from_solution']: fail('HINTS_DUPLICATE_SOLUTION_BUT_MARKED_MATURE')
+        if not e.get('attempt_before_support_pass',False): fail('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE')
         if not e['primary_supports_correct']: fail('PRIMARY_SUPPORTS_LABELS_INCORRECT')
         if not e['visual_usable_actual_size']: fail('VISUAL_UNUSABLE_AT_ACTUAL_OUTPUT_SIZE')
         if not e['source_structure_formula_fidelity']: fail('SOURCE_STRUCTURE_OR_FORMULA_DRIFT_IGNORED')

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-canonical-domain-registry-v6.schema.json",
+  "title": "Chemistry Canonical Domain Registry v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "registry_id",
+    "subtopic_id",
+    "join_ref",
+    "assets",
+    "stable_id_policy",
+    "provenance_closed"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "registry_id": {"type": "string", "minLength": 1},
+    "subtopic_id": {"type": "string", "minLength": 1},
+    "join_ref": {"type": "string", "minLength": 1},
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "asset_type", "ground_truth_refs", "validation_status", "content_hash"],
+        "properties": {
+          "asset_id": {"type": "string", "minLength": 1},
+          "asset_type": {
+            "enum": [
+              "CONCEPT",
+              "MODEL",
+              "LAW",
+              "EQUATION",
+              "DERIVATION",
+              "CAPABILITY",
+              "LEARNING_ATOM",
+              "REPRESENTATION",
+              "MISCONCEPTION",
+              "PROBLEM_FAMILY",
+              "SOURCE_QUESTION",
+              "CANONICAL_SOLUTION",
+              "EXAMPLE",
+              "VERIFICATION_RULE"
+            ]
+          },
+          "ground_truth_refs": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "validation_status": {"const": "VALIDATED"},
+          "content_hash": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "stable_id_policy": {"const": "ASSETS_KEEP_STABLE_IDS_ACROSS_DOWNSTREAM_REALIZATIONS"},
+    "provenance_closed": {"const": true}
+  },
+  "additionalProperties": true
+}

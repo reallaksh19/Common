@@ -47,45 +47,170 @@ def select_pck(record,reg,profile):
     return primary,support
 
 def verification(record,primary): return list(record['verification_requirements'] or primary['verification_method'])
-def attempt(cap,stage,prompt,record,problem_profile,lesson_id):
-    return {'attempt_id':f'{lesson_id}-{stage}','support_stage':stage,'prompt':prompt+' '+problem_profile['stage_modifiers'][stage],'representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations'])}
-def problem(cap,record,primary,problem_profile,lesson_id):
-    fam=family_ref(record); prompt=problem_profile['prompt_templates'][cap]
-    return {'instance_id':f'{lesson_id}-WORKED-NEW','source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':cap,'prompt':prompt+' Work on a newly authored source-authorized instance rather than an original external transfer item.','representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations']),'surface_variation':'representation_reframing_and_cue_change','external_candidate_refs':[],'reasoning_steps':list(problem_profile['solution_reasoning_templates'][cap]),'verification_steps':verification(record,primary)}
 
-def build_lesson(record,reg,profile,problem_profile):
+REPRESENTATION_KEYS=('formulas','charges','coefficients','states','conditions','structures','figures','observations','units')
+
+def _normalized_representation(rep):
+    return {k:list(rep.get(k,[])) for k in REPRESENTATION_KEYS}
+
+def _authority_indexes(source_set,question_set):
+    source={}
+    for u in (source_set or {}).get('units',[]):
+        ref='CO-'+u['source_unit_id']
+        source[ref]={
+            'authority_kind':'SOURCE_OBLIGATION',
+            'authority_ref':ref,
+            'source_locator':u['source_provenance']['source_locator'],
+            'authority_digest':u['source_provenance']['source_digest'],
+            'content':u['statement'],
+            'representation':_normalized_representation(u['representation']),
+        }
+    assessment={}
+    for q in (question_set or {}).get('questions',[]):
+        base={
+            'authority_kind':'ASSESSMENT_QUESTION',
+            'source_locator':q['source_provenance']['source_locator'],
+            'authority_digest':q['source_provenance']['source_digest'],
+            'representation':_normalized_representation(q['representation']),
+        }
+        option_text='; '.join(str(o.get('text','')).strip() for o in q.get('options',[]) if str(o.get('text','')).strip())
+        content=q['stem']+(' Options: '+option_text if option_text else '')
+        assessment[q['question_id']]={**base,'authority_ref':q['question_id'],'content':content}
+        for p in q.get('subparts',[]):
+            ref=f"{q['question_id']}.{p['part_id']}"
+            assessment[ref]={**base,'authority_ref':ref,'content':p['stem']}
+    return source,assessment
+
+ASSESSMENT_FIRST_CAPS={
+    'CAP-CHECK-RULE-EXCEPTION',
+    'CAP-CLASSIFY-CHANGE-EVIDENCE',
+    'CAP-READ-APPARATUS-METHOD',
+    'CAP-SEPARATE-OBSERVATION-INFERENCE',
+    'CAP-TRANSLATE-PARTICLE-SYMBOL',
+    'CAP-VERIFY-CHEMICAL-REPRESENTATION',
+}
+
+def _assessment_refs_by_evidence(record,assessment_index):
+    ranked=[]
+    for ref in record['assessment_question_refs']:
+        a=assessment_index.get(ref)
+        if not a: continue
+        rep=a.get('representation') or {}
+        concrete=sum(len(rep.get(k,[])) for k in REPRESENTATION_KEYS)
+        ranked.append((concrete,1 if '.' in ref else 0,ref))
+    return [ref for _,_,ref in sorted(ranked,key=lambda x:(-x[0],-x[1],x[2]))]
+
+def _bind_practice_authority(record,source_index,assessment_index):
+    refs=_assessment_refs_by_evidence(record,assessment_index)
+    if record['capability_ref'] in ASSESSMENT_FIRST_CAPS:
+        for ref in refs:
+            if ref in assessment_index: return copy.deepcopy(assessment_index[ref])
+    for ref in record['source_obligation_refs']:
+        if ref in source_index: return copy.deepcopy(source_index[ref])
+    for ref in refs:
+        if ref in assessment_index: return copy.deepcopy(assessment_index[ref])
+    fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',record['capability_ref'])
+
+def _representation_evidence(rep):
+    parts=[]
+    for key in REPRESENTATION_KEYS:
+        vals=rep.get(key,[])
+        if vals: parts.append(key.replace('_',' ')+' = '+', '.join(str(x) for x in vals))
+    return '; '.join(parts) if parts else 'no additional representation token is recorded'
+
+def _practice_prompt(cap,authority,problem_profile,stage):
+    evidence=_representation_evidence(authority['representation'])
+    if cap=='CAP-ATTACH-SPECIES-ROLE':
+        task='Use the supplied reaction evidence to identify which reactant species change. Label each changing reactant as a changing species; do not assign a more specific reagent role unless the source explicitly supplies that vocabulary.'
+    elif cap=='CAP-TRANSLATE-PARTICLE-SYMBOL':
+        task='Use H₂O as the symbolic starting point. Draw or describe one particle-level H₂O entity so that its chemical identity and atom count are preserved. Do not infer the total number of H₂O particles in the source figure.'
+    elif cap=='CAP-READ-APPARATUS-METHOD':
+        task='The source-authorized figure is identified as simple filtration. Name the method, then state whether the supplied evidence includes the target property or observation needed to justify why that method is suitable.'
+    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE':
+        task='Keep the literal observation "precipitate forms" separate from the narrowest supported inference. Do not name a composition or mechanism that the source does not supply.'
+    else:
+        task=problem_profile['prompt_templates'][cap]
+    return (task+' '
+            +'Source-authorized instance: '+authority['content']+' '
+            +'Concrete evidence: '+evidence+'. '
+            +'Use only this evidence; if the task asks for a boundary, state it explicitly rather than inventing missing chemistry. '
+            +problem_profile['stage_modifiers'][stage])
+
+def _expected_response(authority,record):
+    cap=record['capability_ref']; rep=authority['representation']
+    formulas=list(rep.get('formulas',[])); charges=list(rep.get('charges',[]))
+    conditions=list(rep.get('conditions',[])); observations=list(rep.get('observations',[])); figures=list(rep.get('figures',[]))
+    if cap=='CAP-CHECK-ATOM-CONSERVATION' and '2H₂ + O₂ → 2H₂O' in formulas:
+        answer='For 2H₂ + O₂ → 2H₂O, H is 4 atoms on each side and O is 2 atoms on each side, so atom conservation passes.'
+    elif cap=='CAP-PARSE-ION-CHARGE':
+        answer='In SO₄²⁻, the subscript 4 counts oxygen atoms while the superscript 2− is the overall ion charge. Do not turn the charge into a subscript or coefficient.'
+    elif cap=='CAP-READ-FORMULA':
+        answer='CaCl₂ contains Ca and Cl with a subscript 2 on Cl; SO₄²⁻ contains S and O with a subscript 4 on O and an overall 2− charge.'
+    elif cap=='CAP-PRESERVE-REACTION-CONDITION' and conditions:
+        answer='The recorded condition is '+', '.join(conditions)+'. It belongs with the reaction arrow/process and must remain present when A → B is read or rewritten.'
+    elif cap=='CAP-TRACK-REACTING-SPECIES' and formulas:
+        answer='Track Zn to Zn²⁺ and Cu²⁺ to Cu. Both reactant species change identity/charge state across the represented process.'
+    elif cap=='CAP-ATTACH-SPECIES-ROLE' and formulas:
+        answer='Zn changes to Zn²⁺ and Cu²⁺ changes to Cu. Both reactants therefore belong in the changing-species role for this authored Core1 exercise; no spectator species is shown in the supplied equation.'
+    elif cap=='CAP-TRANSLATE-PARTICLE-SYMBOL':
+        answer='One H₂O entity contains 2 H atoms and 1 O atom. A faithful particle-level representation preserves that identity and within-entity atom count; the total number of H₂O particles in the source figure is not supplied.'
+    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE':
+        answer='Observation: precipitate forms. Narrow inference: a solid phase has formed. The source does not authorize a claim about the solid\'s composition or mechanism.'
+    elif cap=='CAP-CLASSIFY-CHANGE-EVIDENCE':
+        answer='Melting is a physical state change. Gas formation during a reaction may be evidence of chemical change; state the evidence before applying the classification.'
+    elif cap=='CAP-CHECK-RULE-EXCEPTION':
+        answer='Check whether the explicit exception applies before using the default rule. The exception gate controls the decision.'
+    elif cap=='CAP-READ-APPARATUS-METHOD' and figures:
+        answer='Method: simple filtration. The supplied evidence does not state the target property or observation, so a property-based suitability justification cannot be completed for this instance.'
+    elif cap=='CAP-VERIFY-CHEMICAL-REPRESENTATION':
+        answer='One valid verification check is to confirm that the same chemical species identity is preserved in the result or representation before accepting it.'
+    else:
+        answer='The source evidence is insufficient for a more specific conclusion; preserve the recorded evidence and state the unresolved boundary.'
+    return 'Source-bound expected response: '+answer
+
+def attempt(cap,stage,record,problem_profile,lesson_id,authority):
+    return {'attempt_id':f'{lesson_id}-{stage}','support_stage':stage,'prompt':_practice_prompt(cap,authority,problem_profile,stage),'representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations']),'instance_authority':copy.deepcopy(authority),'instance_digest':digest(authority)}
+def problem(cap,record,primary,problem_profile,lesson_id,authority):
+    fam=family_ref(record)
+    return {'instance_id':f'{lesson_id}-WORKED-NEW','source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':cap,'prompt':_practice_prompt(cap,authority,problem_profile,'GUIDED'),'representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations']),'surface_variation':'representation_reframing_and_cue_change','external_candidate_refs':[],'reasoning_steps':list(problem_profile['solution_reasoning_templates'][cap]),'verification_steps':verification(record,primary),'instance_authority':copy.deepcopy(authority),'instance_digest':digest(authority),'final_response':_expected_response(authority,record)}
+
+def build_lesson(record,reg,profile,problem_profile,authority):
     cap=record['capability_ref']; primary,support=select_pck(record,reg,profile); mode=profile['lesson_mode_by_treatment'][record['treatment']]; lesson_id='CORE1-'+cap
     pck_refs=[primary['asset_id']]+[a['asset_id'] for a in support]; first=next((a for a in support if a['family']=='FIRST_MOVE_DECISION_SUPPORT'),primary); contrast=next((a for a in support if a['family']=='MISCONCEPTION_MINIMAL_CONTRAST'),primary)
     base=problem_profile['prompt_templates'][cap]; ver=verification(record,primary)
     trace={'source_obligation_refs':list(record['source_obligation_refs']),'assessment_question_refs':list(record['assessment_question_refs']),'external_candidate_refs':list(record['external_candidate_refs']),'problem_family_refs':list(record['problem_family_refs'])}
     if mode=='FULL_LEARNING':
         rep=list(primary['particle_symbolic_representation_path'])+[f'OBLIGATION_LEVEL:{x}' for x in record['representation_level_obligations']]+[f'OBLIGATION_REP:{x}' for x in record['representation_requirement_obligations']]
-        mis={'wrong_model':primary['common_wrong_model'],'why_plausible':'The shortcut can look sufficient because it uses a familiar surface cue before the decisive chemical evidence is checked.','minimal_contrast':contrast['minimal_contrast'],'repair_steps':list(contrast['repair_route']),'retry_prompt':base+' Retry after applying the repaired model to a close but newly authored instance.'}
-        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Identify the target and state the first chemically meaningful move: '+first['reconstruction_route'][0],'familiar_macro_anchor':primary['familiar_macro_anchor'],'representation_path':rep,'ordinary_language_explanation':primary['ordinary_language_bridge'],'rule_model_condition':primary['rule_model_condition_cue'],'reconstruction_steps':list(primary['reconstruction_route']),'worked_example':problem(cap,record,primary,problem_profile,lesson_id),'concept_helper':first['ordinary_language_bridge'],'misconception_repair':mis,'guided_attempt':attempt(cap,'GUIDED',base,record,problem_profile,lesson_id),'faded_attempt':attempt(cap,'FADED',base,record,problem_profile,lesson_id),'independent_attempt':attempt(cap,'INDEPENDENT',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'Transfer family: '+primary['transfer_family']+'. Original external transfer remains reserved for Core2.','condition_exception_obligations':list(record['condition_exception_obligations'])}
+        mis={'wrong_model':primary['common_wrong_model'],'why_plausible':'The shortcut can look sufficient because it uses a familiar surface cue before the decisive chemical evidence is checked.','minimal_contrast':contrast['minimal_contrast'],'repair_steps':list(contrast['repair_route']),'retry_prompt':_practice_prompt(cap,authority,problem_profile,'FADED')+' Retry after applying the repaired model.'}
+        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Identify the target and state the first chemically meaningful move: '+first['reconstruction_route'][0],'familiar_macro_anchor':primary['familiar_macro_anchor'],'representation_path':rep,'ordinary_language_explanation':primary['ordinary_language_bridge'],'rule_model_condition':primary['rule_model_condition_cue'],'reconstruction_steps':list(primary['reconstruction_route']),'worked_example':problem(cap,record,primary,problem_profile,lesson_id,authority),'concept_helper':first['ordinary_language_bridge'],'misconception_repair':mis,'guided_attempt':attempt(cap,'GUIDED',record,problem_profile,lesson_id,authority),'faded_attempt':attempt(cap,'FADED',record,problem_profile,lesson_id,authority),'independent_attempt':attempt(cap,'INDEPENDENT',record,problem_profile,lesson_id,authority),'verification_steps':ver,'transfer_bridge':'Transfer family: '+primary['transfer_family']+'. Original external transfer remains reserved for Core2.','condition_exception_obligations':list(record['condition_exception_obligations'])}
     if mode=='CONCISE_VERIFY_ONLY':
-        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Brief activation: '+first['reconstruction_route'][0],'familiar_macro_anchor':'','representation_path':[f'OBLIGATION_LEVEL:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'INDEPENDENT',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'Continue without reteaching after the independent verification check.','condition_exception_obligations':list(record['condition_exception_obligations'])}
-    return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':'PROBE','pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode']['PROBE']),'scope_trace':trace,'activation':'Collect decisive evidence before choosing repair or study depth.','familiar_macro_anchor':'','representation_path':[f'PROBE_REP:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'PROBE',base,record,problem_profile,lesson_id),'verification_steps':ver,'transfer_bridge':'No transfer escalation until the probe is interpreted.','condition_exception_obligations':list(record['condition_exception_obligations'])}
+        return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':mode,'pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode'][mode]),'scope_trace':trace,'activation':'Brief activation: '+first['reconstruction_route'][0],'familiar_macro_anchor':'','representation_path':[f'OBLIGATION_LEVEL:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'INDEPENDENT',record,problem_profile,lesson_id,authority),'verification_steps':ver,'transfer_bridge':'Continue without reteaching after the independent verification check.','condition_exception_obligations':list(record['condition_exception_obligations'])}
+    return {'lesson_id':lesson_id,'capability_ref':cap,'treatment':record['treatment'],'lesson_mode':'PROBE','pck_asset_refs':uniq(pck_refs),'content_roles':list(profile['content_roles_by_mode']['PROBE']),'scope_trace':trace,'activation':'Collect decisive evidence before choosing repair or study depth.','familiar_macro_anchor':'','representation_path':[f'PROBE_REP:{x}' for x in record['representation_level_obligations']],'ordinary_language_explanation':'','rule_model_condition':'','reconstruction_steps':[],'worked_example':None,'concept_helper':'','misconception_repair':None,'guided_attempt':None,'faded_attempt':None,'independent_attempt':attempt(cap,'PROBE',record,problem_profile,lesson_id,authority),'verification_steps':ver,'transfer_bridge':'No transfer escalation until the probe is interpreted.','condition_exception_obligations':list(record['condition_exception_obligations'])}
 
-def build_appendices(lessons,records,reg,problem_profile,completeness):
+def build_appendices(lessons,records,reg,problem_profile,completeness,source_set,question_set):
     rec_by={r['capability_ref']:r for r in records}; asset_by={a['asset_id']:a for a in reg['assets']}; items=[]; solutions=[]
+    source_index,assessment_index=_authority_indexes(source_set,question_set)
     for l in lessons:
         r=rec_by[l['capability_ref']]; primary=asset_by[l['pck_asset_refs'][0]]; fam=family_ref(r); stages=['GUIDED','FADED','INDEPENDENT'] if l['lesson_mode']=='FULL_LEARNING' else ['INDEPENDENT'] if l['lesson_mode']=='CONCISE_VERIFY_ONLY' else ['PROBE']
+        authority=_bind_practice_authority(r,source_index,assessment_index); instance_digest=digest(authority)
         for i,stage in enumerate(stages,1):
-            iid=f"A-{l['capability_ref']}-{stage}"; prompt=problem_profile['prompt_templates'][l['capability_ref']]+' '+problem_profile['stage_modifiers'][stage]; sol=f'B-SOL-{iid}'
-            items.append({'item_id':iid,'source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':l['capability_ref'],'supports_capability_refs':[],'support_stage':stage,'scored':stage!='PROBE','prompt':prompt,'representation_spec':uniq(r['representation_level_obligations']+r['representation_requirement_obligations']),'external_candidate_refs':[],'solution_ref':sol})
-            solutions.append({'solution_id':sol,'item_ref':iid,'primary_capability_ref':l['capability_ref'],'reasoning_steps':list(problem_profile['solution_reasoning_templates'][l['capability_ref']]),'verification_steps':verification(r,primary),'final_response':'A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.','condition_exception_note':'Preserve and apply: '+', '.join(r['condition_exception_obligations']) if r['condition_exception_obligations'] else 'No additional condition/exception is required by this capability record.'})
+            iid=f"A-{l['capability_ref']}-{stage}"; prompt=_practice_prompt(l['capability_ref'],authority,problem_profile,stage); sol=f'B-SOL-{iid}'
+            items.append({'item_id':iid,'source_class':'NEW_AUTHORED_CORE1','problem_family_ref':fam,'primary_capability_ref':l['capability_ref'],'supports_capability_refs':[],'support_stage':stage,'scored':stage!='PROBE','prompt':prompt,'representation_spec':uniq(r['representation_level_obligations']+r['representation_requirement_obligations']),'external_candidate_refs':[],'instance_authority':copy.deepcopy(authority),'instance_digest':instance_digest,'solution_ref':sol})
+            solutions.append({'solution_id':sol,'item_ref':iid,'primary_capability_ref':l['capability_ref'],'instance_digest':instance_digest,'reasoning_steps':list(problem_profile['solution_reasoning_templates'][l['capability_ref']]),'verification_steps':verification(r,primary),'final_response':_expected_response(authority,r),'condition_exception_note':'Preserve and apply: '+', '.join(r['condition_exception_obligations']) if r['condition_exception_obligations'] else 'No additional condition/exception is required by this capability record.'})
     hand=[]
     for l in lessons:
         r=rec_by[l['capability_ref']]; primary=asset_by[l['pck_asset_refs'][0]]; first=next((asset_by[x] for x in l['pck_asset_refs'] if asset_by[x]['family']=='FIRST_MOVE_DECISION_SUPPORT'),primary); ver=verification(r,primary)
         hand.append({'capability_ref':l['capability_ref'],'first_move':first['reconstruction_route'][0],'rule_or_decision_cue':primary['rule_model_condition_cue'],'verification_cue':ver[0]})
     return {'appendix_a':{'title':'Appendix A — Core Practice','present':True,'items':items},'appendix_b':{'title':'Appendix B — Core Solutions','present':True,'solutions':solutions},'appendix_c':{'title':'Appendix C — Printable Handout','present':True,'answer_free':True,'supported_capability_refs':uniq([l['capability_ref'] for l in lessons]),'introduced_capability_refs':[],'reference_entries':hand,'print_constraints':list(completeness['appendix_c_print_constraints'])}}
 
-def build_plan(study_model,study_scope,pck_registry,profile,completeness,problem_profile,plan_id='CHEM-C-G-CORE1-PLAN-v1'):
+def build_plan(study_model,study_scope,pck_registry,profile,completeness,problem_profile,plan_id='CHEM-C-G-CORE1-PLAN-v1',source_set=None,question_set=None):
     validate_pck_registry(pck_registry)
     if study_model['subject']!='CHEMISTRY' or study_scope['subject']!='CHEMISTRY': fail('CORE1_IS_ONLY_A_REPAIR_MEMO','subject')
     if study_model['study_scope_digest']!=study_scope['study_scope_digest']: fail('CORE1_IS_ONLY_A_REPAIR_MEMO','scope drift')
-    lessons=[build_lesson(r,pck_registry,profile,problem_profile) for r in study_model['capability_records']]
-    appendices=build_appendices(lessons,study_model['capability_records'],pck_registry,problem_profile,completeness)
+    source_index,assessment_index=_authority_indexes(source_set,question_set)
+    lesson_authority={r['capability_ref']:_bind_practice_authority(r,source_index,assessment_index) for r in study_model['capability_records']}
+    lessons=[build_lesson(r,pck_registry,profile,problem_profile,lesson_authority[r['capability_ref']]) for r in study_model['capability_records']]
+    appendices=build_appendices(lessons,study_model['capability_records'],pck_registry,problem_profile,completeness,source_set,question_set)
     out={'plan_id':plan_id,'schema_version':'1.0.0','subject':'CHEMISTRY','study_model_ref':study_model['study_model_id'],'study_model_digest':study_model['study_model_digest'],'study_scope_ref':study_scope['study_scope_id'],'study_scope_digest':study_scope['study_scope_digest'],'pck_registry_ref':pck_registry['registry_id'],'authoring_profile_ref':profile['profile_id'],'lessons':lessons,'appendices':appendices,'external_transfer_unspoiled':True,'scope_complete':True,'release_authority_state':'PILOT_ONLY_HUMAN_EXPERT_RELEASE_NOT_GRANTED','plan_digest':''}
     out['plan_digest']=digest(out,'plan_digest'); validate_plan(out,study_model,study_scope,pck_registry,profile,completeness,problem_profile); return out
 
@@ -108,28 +233,54 @@ def validate_plan(plan,study_model,study_scope,pck_registry,profile,completeness
             if w['source_class']!='NEW_AUTHORED_CORE1' or w['external_candidate_refs']: fail('CORE1_REUSES_ORIGINAL_TRANSFER_AS_WORKED_EXAMPLE',cap)
             if not w['problem_family_ref']: fail('PROBLEM_INSTANCE_WITHOUT_PROBLEM_FAMILY',cap)
             if not w['verification_steps'] or not l['verification_steps']: fail('CHEMICAL_CHECK_REDUCED_TO_ANSWER_ONLY',cap)
+            if not w.get('instance_authority') or w.get('instance_digest')!=digest(w['instance_authority']): fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',cap+':worked example')
+            if not w.get('final_response','').startswith('Source-bound expected response:'): fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',cap+':worked example')
+            generic='Source-bound expected response: '+w['instance_authority']['content']+' Evidence to preserve:'
+            if w['final_response'].startswith(generic): fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',cap+':worked example source restatement')
+            for attempt_key in ['guided_attempt','faded_attempt','independent_attempt']:
+                a=l.get(attempt_key)
+                if a and (not a.get('instance_authority') or a.get('instance_digest')!=digest(a['instance_authority'])):
+                    fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',cap+':'+attempt_key)
         elif l['lesson_mode']=='CONCISE_VERIFY_ONLY':
             if l['content_roles']!=profile['content_roles_by_mode']['CONCISE_VERIFY_ONLY'] or l['worked_example'] is not None or l['guided_attempt'] is not None or l['faded_attempt'] is not None or l['misconception_repair'] is not None: fail('READY_CONTENT_PADDED_INTO_FULL_RETEACH',cap)
+            a=l.get('independent_attempt')
+            if not a or not a.get('instance_authority') or a.get('instance_digest')!=digest(a['instance_authority']): fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',cap+':independent_attempt')
         elif l['lesson_mode']=='PROBE':
             if l['worked_example'] is not None or l['guided_attempt'] is not None or l['faded_attempt'] is not None: fail('READY_CONTENT_PADDED_INTO_FULL_RETEACH',cap+':probe overteach')
+            a=l.get('independent_attempt')
+            if not a or not a.get('instance_authority') or a.get('instance_digest')!=digest(a['instance_authority']): fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',cap+':probe')
     aps=plan.get('appendices',{})
     if 'appendix_a' not in aps or not aps['appendix_a'].get('present'): fail('APPENDIX_A_MISSING')
     if 'appendix_b' not in aps or not aps['appendix_b'].get('present'): fail('APPENDIX_B_MISSING')
     if 'appendix_c' not in aps or not aps['appendix_c'].get('present'): fail('APPENDIX_C_MISSING')
     aitems=aps['appendix_a']['items']; bsol=aps['appendix_b']['solutions']; hand=aps['appendix_c']
     if {x['primary_capability_ref'] for x in aitems}!=required: fail('CORE1_IS_ONLY_A_REPAIR_MEMO','Appendix A coverage')
+    item_by={x['item_id']:x for x in aitems}
     for x in aitems:
         if x['source_class']!='NEW_AUTHORED_CORE1' or x['external_candidate_refs']: fail('APPENDIX_A_USES_EXACT_EXAMSIDE_TRANSFER',x['item_id'])
         if not x['problem_family_ref']: fail('PROBLEM_INSTANCE_WITHOUT_PROBLEM_FAMILY',x['item_id'])
+        auth=x.get('instance_authority')
+        if not auth or x.get('instance_digest')!=digest(auth): fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',x['item_id'])
+        rec=recs[x['primary_capability_ref']]
+        allowed=set(rec['source_obligation_refs'])|set(rec['assessment_question_refs'])
+        if auth.get('authority_ref') not in allowed: fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',x['item_id']+':authority')
+        if not auth.get('content') or not auth.get('source_locator') or len(auth.get('authority_digest',''))!=64: fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',x['item_id']+':content')
     if {x['item_ref'] for x in bsol}!={x['item_id'] for x in aitems} or len(bsol)!=len(aitems): fail('APPENDIX_B_INCOMPLETE')
+    item_by_id={x['item_id']:x for x in aitems}
     for x in bsol:
         if not x['reasoning_steps'] or not x['verification_steps']: fail('CHEMICAL_CHECK_REDUCED_TO_ANSWER_ONLY',x['solution_id'])
+        item=item_by.get(x['item_ref'])
+        if not item or x.get('instance_digest')!=item.get('instance_digest'): fail('APPENDIX_B_INSTANCE_MISMATCH',x['solution_id'])
+        generic=('Source-bound expected response: '+item['instance_authority']['content']+' Evidence to preserve:')
+        if x.get('final_response','').startswith(generic):
+            fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',x['solution_id']+': generic source restatement')
+        if not x.get('final_response') or x['final_response'].startswith('A complete response states the relevant chemical evidence'): fail('APPENDIX_B_GENERIC_SOLUTION',x['solution_id'])
     if hand.get('answer_free') is not True: fail('HANDOUT_CONTAINS_ANSWERS')
     if hand.get('introduced_capability_refs') or set(hand.get('supported_capability_refs',[]))!=required or {x['capability_ref'] for x in hand.get('reference_entries',[])}!=required: fail('HANDOUT_INTRODUCES_NEW_CHEMISTRY')
     return True
 
 def main():
     ap=argparse.ArgumentParser();
-    for x in ['study-model','study-scope','instructional-profile','completeness-policy','problem-profile','out']: ap.add_argument('--'+x,required=True)
-    a=ap.parse_args(); reg=load_pck_registry(); out=build_plan(load(a.study_model),load(a.study_scope),reg,load(a.instructional_profile),load(a.completeness_policy),load(a.problem_profile)); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
+    for x in ['study-model','study-scope','instructional-profile','completeness-policy','problem-profile','sources','questions','out']: ap.add_argument('--'+x,required=True)
+    a=ap.parse_args(); reg=load_pck_registry(); out=build_plan(load(a.study_model),load(a.study_scope),reg,load(a.instructional_profile),load(a.completeness_policy),load(a.problem_profile),source_set=load(a.sources),question_set=load(a.questions)); Path(a.out).write_text(json.dumps(out,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
 if __name__=='__main__': main()

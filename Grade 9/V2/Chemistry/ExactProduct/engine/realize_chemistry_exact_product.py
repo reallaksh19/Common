@@ -345,7 +345,7 @@ def render_core1(core1,representations,profile,path):
         if l.get('reconstruction_steps'): w.subheading('Reconstruct the reasoning'); w.bullets(l['reconstruction_steps'])
         ex=l.get('worked_example')
         if ex:
-            w.subheading('Worked example'); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading('Check'); w.bullets(public_list(ex['verification_steps']))
+            w.subheading('Worked example'); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading('Check'); w.bullets(public_list(ex['verification_steps'])); w.subheading('Expected response'); w.para(ex['final_response'])
         if l.get('concept_helper'): w.subheading('Concept helper'); w.para(l['concept_helper'])
         m=l.get('misconception_repair')
         if m:
@@ -392,7 +392,7 @@ def render_core2(core2,representations,profile,path):
     realized=[]; source_figure=False; total=len(core2['pages'])
     w.begin('COVER','PI-COVER')
     w.heading('Chemistry V2 — ExamSIDE Solution & Transfer Book',19,'cover')
-    w.para('Attempt each source-faithful transfer item before opening support. H1 Notice → H2 Rule/Model/Representation → H3 Start. Complete solution and verification follow on a separate page.')
+    w.para('Attempt each source-faithful transfer item before opening support. H1 Notice → H2 Rule/Model/Representation → H3 Start appear on a separate support page. Complete solution and verification follow after support.')
     w.end()
     for n,p in enumerate(core2['pages'],1):
         label=f'Question {n}'; intent='PI-TRANSFER-'+str(n).zfill(2); ref='TRANSFER-'+str(n).zfill(2)
@@ -423,14 +423,14 @@ def render_core2(core2,representations,profile,path):
             if not w.primitive('PARTICLE_MODEL_VIEW',figure,ref+'-SOURCE-FIGURE',intent,label):
                 raise ValueError('source figure could not be realized')
             source_figure=True
-        w.begin(ref,intent)
+        w.new_page(p['question_ref']+' support'); w.begin(ref+'-SUPPORT',intent+'-SUPPORT')
         if p['source_condition_text']: w.para('Recorded condition: '+p['source_condition_text'])
         w.subheading('Workspace'); w.bullets(p['workspace_spec']['fields'])
         w.subheading('H1 — Notice'); w.para(p['hint_ladder']['h1_notice'])
         w.subheading('H2 — Rule / model / representation'); w.para(p['hint_ladder']['h2_rule_model_representation'])
         w.subheading('H3 — Start'); w.para(p['hint_ladder']['h3_start'])
         w.subheading('Reasoning route'); w.bullets(public_list(p['reasoning_route']))
-        w.para(f'Transfer item {n} of {total} — source-faithful, attempted before any support is opened.')
+        w.para(f'Transfer item {n} of {total} — support opened only after the separate attempt page.')
         w.end()
         for spec in p.get('visual_specs') or []:
             primitive_id=spec.get('primitive_id')
@@ -520,6 +520,71 @@ def preflight_pdf(path,expected_pages):
     if leaks: raise ValueError('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK: '+json.dumps(leaks,sort_keys=True))
     return {'vector_pages':vector_pages}
 
+def core2_attempt_before_support(path):
+    import pymupdf
+    doc=pymupdf.open(path)
+    tagged=[]
+    for page in doc:
+        text=page.get_text('text')
+        tagged.append({
+            'attempt':'H0' in text and 'Attempt first' in text,
+            'support':any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start']),
+            'solution':'Complete solution' in text,
+        })
+    attempts=[i for i,x in enumerate(tagged) if x['attempt']]
+    if not attempts: return False
+    for pos,start in enumerate(attempts):
+        if tagged[start]['support'] or tagged[start]['solution']: return False
+        end=attempts[pos+1] if pos+1<len(attempts) else len(tagged)
+        support_pages=[i for i in range(start+1,end) if tagged[i]['support']]
+        solution_pages=[i for i in range(start+1,end) if tagged[i]['solution']]
+        if not support_pages or not solution_pages: return False
+        if min(solution_pages)<=min(support_pages): return False
+    return True
+
+def core1_instance_closure(core1):
+    items=core1['appendices']['appendix_a']['items']
+    solutions=core1['appendices']['appendix_b']['solutions']
+    by_item={x['item_id']:x for x in items}
+    practice_ok=bool(items) and all(
+        x.get('instance_authority')
+        and x.get('instance_digest')==digest(x['instance_authority'])
+        and x['instance_authority'].get('content')
+        for x in items
+    )
+    solution_ok=bool(solutions) and len(solutions)==len(items) and all(
+        s.get('item_ref') in by_item
+        and s.get('instance_digest')==by_item[s['item_ref']].get('instance_digest')
+        and s.get('final_response','').startswith('Source-bound expected response:')
+        and not s.get('final_response','').startswith(
+            'Source-bound expected response: '
+            +by_item[s['item_ref']]['instance_authority']['content']
+            +' Evidence to preserve:'
+        )
+        for s in solutions
+    )
+    return practice_ok,solution_ok
+
+def core1_instructional_depth(core1):
+    """Derive depth from the actual worked-example closure, never hard-code it.
+
+    A FULL_LEARNING lesson is only FULL_INSTRUCTIONAL when its concrete worked
+    example can execute the capability rather than merely report that a
+    required source input is absent. Boundary-aware exercises remain useful,
+    but they do not establish full instructional depth for release.
+    """
+    incomplete=[]
+    for lesson in core1.get('lessons',[]):
+        if lesson.get('lesson_mode')!='FULL_LEARNING':
+            continue
+        worked=lesson.get('worked_example') or {}
+        response=str(worked.get('final_response',''))
+        if ('cannot be completed for this instance' in response
+                or 'source evidence is insufficient for a more specific conclusion' in response
+                or 'state the unresolved boundary' in response):
+            incomplete.append(lesson.get('capability_ref','UNKNOWN'))
+    return ('SUMMARY_LEVEL' if incomplete else 'FULL_INSTRUCTIONAL'), incomplete
+
 def visible_strings(core1,core2):
     vals=[]
     def walk(x):
@@ -542,18 +607,24 @@ def realization(repo_root,out):
     core1_pdf=out/'core-study-guide.pdf'; core2_pdf=out/'examside-solution-transfer-book.pdf'
     m1=render_core1(core1,reps,profile,core1_pdf); m2=render_core2(core2,reps,profile,core2_pdf)
     pre1=preflight_pdf(core1_pdf,m1['page_count']); pre2=preflight_pdf(core2_pdf,m2['page_count'])
+    attempt_before_support=core2_attempt_before_support(core2_pdf)
+    if not attempt_before_support: raise ValueError('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE')
     page1=physical_page_map('CHEM-C-L-PAGEMAP-CORE1','core-study-guide.pdf',m1,sha_file(core1_pdf))
     page2=physical_page_map('CHEM-C-L-PAGEMAP-CORE2','examside-solution-transfer-book.pdf',m2,sha_file(core2_pdf))
     audit1={'audit_id':'CHEM-C-L-AUDIT-CORE1','artifact_sha256':page1['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m1['minimum_font_pt'],'vector_pages':pre1['vector_pages']}
-    audit2={'audit_id':'CHEM-C-L-AUDIT-CORE2','artifact_sha256':page2['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS'},'minimum_font_pt':m2['minimum_font_pt'],'vector_pages':pre2['vector_pages']}
+    audit2={'audit_id':'CHEM-C-L-AUDIT-CORE2','artifact_sha256':page2['artifact_sha256'],'checks':{'PDF_REOPEN':'PASS','RASTER_ALL_PAGES':'PASS','OFF_PAGE_TEXT':'PASS','TEXT_COLLISION':'PASS','MIN_FONT':'PASS','LEARNER_IDENTIFIER_SCAN':'PASS','ACTUAL_PLACEMENT_EVIDENCE':'PASS','ATTEMPT_BEFORE_SUPPORT':'PASS'},'minimum_font_pt':m2['minimum_font_pt'],'vector_pages':pre2['vector_pages']}
     pck=load_pck_registry(repo/'Grade 9/V2/Chemistry/CoreAuthoring/registry/chemistry_promoted_pck.py')
     families=load(repo/'Grade 9/V2/Chemistry/ReasoningSemantics/registry/chemistry-problem-family-registry.json')
     ce=closure['summary']; strings=visible_strings(core1,core2)
+    core1_practice_instance_closure,core1_solution_instance_closure=core1_instance_closure(core1)
+    if not core1_practice_instance_closure: raise ValueError('CORE1_PRACTICE_INSTANCE_MISSING')
+    if not core1_solution_instance_closure: raise ValueError('CORE1_SOLUTION_NOT_INSTANCE_BOUND')
     ascii_leaks=sum(1 for s in strings if any(p in s for p in ['H2O','SO4','Fe3+','Cu2+']))
     realized_kinds=sorted(set(m1['primitive_kinds_realized'])|set(m2['primitive_kinds_realized']))
     selected_kinds=sorted({r['primitive_id'] for r in reps['representations']})
     rep_realized=bool(m1.get('particle_bridge_realized') and m2.get('source_figure_realized'))
-    evidence={'answer_separation_pass':True,'handout_answer_leakage':not core1['appendices']['appendix_c']['answer_free'],'handout_scope_leakage':bool(core1['appendices']['appendix_c']['introduced_capability_refs']),'formula_typography_pass':ascii_leaks==0,'ionic_charge_unambiguous':True,'reaction_notation_fidelity_pass':True,'ascii_chemistry_leaks':ascii_leaks,'off_page_text_count':0,'collision_count':0,'minimum_font_pt':min(m1['minimum_font_pt'],m2['minimum_font_pt']),'broken_internal_links':0,'wrong_external_source_uris':0,'source_hash_match':True,'source_obligations_required':ce['source_obligations_required'],'source_obligations_closed':ce['source_obligations_closed'],'external_candidates_total':ce['external_candidates_total'],'eligible_external_total':ce['eligible_external_total'],'eligible_external_placed_unique':ce['eligible_external_placed_unique'],'duplicate_primary_placements':0,'eligible_missing_core2':0,'hint_failures':0,'solution_failures':0,'primary_supports_correct':True,'macro_particle_symbolic_realized':rep_realized,'core1_instructional_depth':'FULL_INSTRUCTIONAL','visual_usable_actual_size':True,'source_structure_formula_fidelity':True,'hints_distinct_from_solution':True,
+    core1_depth,_core1_incomplete_caps=core1_instructional_depth(core1)
+    evidence={'answer_separation_pass':True,'attempt_before_support_pass':attempt_before_support,'core1_practice_instance_closure_pass':core1_practice_instance_closure,'core1_solution_instance_closure_pass':core1_solution_instance_closure,'handout_answer_leakage':not core1['appendices']['appendix_c']['answer_free'],'handout_scope_leakage':bool(core1['appendices']['appendix_c']['introduced_capability_refs']),'formula_typography_pass':ascii_leaks==0,'ionic_charge_unambiguous':True,'reaction_notation_fidelity_pass':True,'ascii_chemistry_leaks':ascii_leaks,'off_page_text_count':0,'collision_count':0,'minimum_font_pt':min(m1['minimum_font_pt'],m2['minimum_font_pt']),'broken_internal_links':0,'wrong_external_source_uris':0,'source_hash_match':True,'source_obligations_required':ce['source_obligations_required'],'source_obligations_closed':ce['source_obligations_closed'],'external_candidates_total':ce['external_candidates_total'],'eligible_external_total':ce['eligible_external_total'],'eligible_external_placed_unique':ce['eligible_external_placed_unique'],'duplicate_primary_placements':0,'eligible_missing_core2':0,'hint_failures':0,'solution_failures':0,'primary_supports_correct':True,'macro_particle_symbolic_realized':rep_realized,'core1_instructional_depth':core1_depth,'visual_usable_actual_size':True,'source_structure_formula_fidelity':True,'hints_distinct_from_solution':True,
       'teaching_primitive_kinds_selected':selected_kinds,'teaching_primitive_kinds_realized':realized_kinds,
       'teaching_primitives_drawn':len(m1['primitives'])+len(m2['primitives']),
       'teaching_primitives_label_only':sorted(set(selected_kinds)-set(realized_kinds)),

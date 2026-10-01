@@ -1,0 +1,50 @@
+{
+  "schema_version": "6.0.0",
+  "dialogue_id": "TD-C2B-REDOX-001",
+  "product_mode": "CORE2B",
+  "target_change": "Move from waiting for a named method to independently recognizing the redox structure, choosing a representation and committing to a first move.",
+  "initial_attempt": {
+    "answer_hidden": true,
+    "learner_commitment_required": true
+  },
+  "learner_output_required": ["DATA_SELECTION", "MODEL_SELECTION", "DIAGRAM", "FIRST_MOVE", "EXPLANATION", "VERIFICATION"],
+  "stages": [
+    {
+      "stage_id": "S1",
+      "stage_type": "NOTICE",
+      "prompt": "What information in the reaction can distinguish which species changed?",
+      "cognitive_job": "select chemically relevant data"
+    },
+    {
+      "stage_id": "S2",
+      "stage_type": "REPRESENT",
+      "prompt": "Choose one representation that would make the change visible before doing any role naming.",
+      "cognitive_job": "representation choice"
+    },
+    {
+      "stage_id": "S3",
+      "stage_type": "START",
+      "prompt": "Write only the first move you would execute and justify why it is legal.",
+      "cognitive_job": "first-move commitment"
+    },
+    {
+      "stage_id": "S4",
+      "stage_type": "CHECK",
+      "prompt": "What independent condition would falsify your final role assignment?",
+      "cognitive_job": "verification planning"
+    }
+  ],
+  "stage_selection_reason": "This problem family is difficult mainly because method selection and representation are hidden; the dialogue therefore withholds solution execution until the learner commits to those structural choices.",
+  "misconception_branches": [
+    {
+      "misconception_ref": "MIS-AGENT-NAMING-INVERSION",
+      "learner_self_identification_cue": "I named the agent from a memorized word pair without checking species change.",
+      "corrective_prompt": "Return to the chosen representation and state SELF change before OTHER effect."
+    }
+  ],
+  "canonical_reveal": {"after_attempt": true},
+  "reflection": {"compare_my_reasoning": true},
+  "verification": {"independent": true},
+  "repair_route": {"available": true, "static_cross_reference_only": true},
+  "delivery_mode": "STATIC"
+}

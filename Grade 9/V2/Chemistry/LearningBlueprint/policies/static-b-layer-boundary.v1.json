@@ -1,0 +1,95 @@
+{
+  "policy_id": "CHEM-STATIC-B-LAYER-BOUNDARY-v1",
+  "schema_version": "1.0.0",
+  "subject": "CHEMISTRY",
+  "authority_class": "B_LAYER_EXECUTION_BOUNDARY",
+  "delivery_mode": "STATIC",
+  "governing_principles": [
+    "A_LAYERS_AUTHORIZE_B_LAYERS_REALIZE",
+    "B_LAYERS_MAY_NOT_INTRODUCE_NEW_CHEMISTRY",
+    "STATIC_PRODUCT_DOES_NOT_CREATE_LEARNER_EVIDENCE",
+    "OPEN_ENDED_DOES_NOT_MEAN_ANSWERLESS"
+  ],
+  "forbidden_runtime_fields": [
+    "learner_response",
+    "attempt_history",
+    "state_transition",
+    "next_task",
+    "adaptive_branch",
+    "runtime_hint",
+    "repair_route",
+    "mastery_update"
+  ],
+  "core1b": {
+    "control_axis": "INTRINSIC_SUBTOPIC_DIFFICULTY",
+    "upstream_authority": "CORE1A_AND_V4_INSTRUCTION_BUCKET",
+    "forbidden_knowledge_fields": [
+      "student_knowledge_percent",
+      "knowledge_percent",
+      "learner_readiness_percent"
+    ],
+    "authority_scope_required": ["capability_ref", "problem_family_ref"],
+    "module_ref_required": true,
+    "used_representation_refs_must_be_subset_of_approved_representation_refs": true,
+    "research_may_deepen_pedagogy_but_may_not_expand_authorized_representation_scope": true,
+    "new_chemistry_refs_must_be_empty": true,
+    "help_mode": "PROGRESSIVE_FIXED",
+    "help_order": ["H1_ORIENT", "H2_REPRESENT", "H3_PRINCIPLE", "H4_FIRST_MOVE"],
+    "help_may_use_ordered_prefix_or_subsequence": true,
+    "distinct_modules_must_not_share_mechanically_identical_hint_ladders": true,
+    "answer_closure_required": ["task_prompt", "canonical_answer", "check"],
+    "page_envelope_is_ceiling_not_quota": true,
+    "learner_knowledge_must_not_control_depth": true
+  },
+  "core2b": {
+    "control_axis": "LEARNER_CONDITIONING",
+    "upstream_authority": "CORE2A_LEGAL_POOL_AND_V4_CONDITIONING",
+    "new_chemistry_refs_must_be_empty": true,
+    "question_mode": "FROZEN_SOURCE_ITEM",
+    "required_source_identity_fields": [
+      "item_id",
+      "source_locator",
+      "stem",
+      "canonical_answer",
+      "problem_family_ref",
+      "provenance_class"
+    ],
+    "selected_item_must_be_core2a_legal": true,
+    "conditioning_may_change_only": [
+      "support_density",
+      "hint_entry_level",
+      "representation_support",
+      "first_move_support",
+      "solution_delay"
+    ],
+    "conditioning_must_not_change": [
+      "selected_item_id",
+      "source_identity",
+      "source_provenance",
+      "validated_semantic_scope",
+      "canonical_answer"
+    ],
+    "help_mode": "PROGRESSIVE_FIXED",
+    "help_order": [
+      "H1_ORIENT",
+      "H2_STRUCTURE",
+      "H3_REPRESENTATION",
+      "H4_PRINCIPLE",
+      "H5_FIRST_MOVE",
+      "H6_PARTIAL_PATH",
+      "H7_FULL_SOLUTION",
+      "H8_VERIFY_REFLECT"
+    ],
+    "support_hint_entry_may_not_start_after": "H6_PARTIAL_PATH",
+    "allowed_solution_delay": ["AFTER_HINT_LADDER", "AFTER_FULL_ATTEMPT"],
+    "answer_closure_required": ["full_solution", "verify_reflect"],
+    "knowledge_percent_interpretation": "SUPPORT_PRIOR_NOT_MASTERY_MEASUREMENT",
+    "owner_override_must_not_fabricate_knowledge_percent": true
+  },
+  "historical_proof_boundary": {
+    "source_pr": 370,
+    "topic_specific_goldens_are_regression_only": true,
+    "topic_specific_deep_product_builders_are_not_authority": true,
+    "renderer_layout_is_not_part_of_this_authority_contract": true
+  }
+}

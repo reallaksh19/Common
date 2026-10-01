@@ -107,6 +107,120 @@ Current purpose policy is deliberately asymmetric:
 
 `EXTENDED_WITHIN_SCOPE` means harder recombination or less familiar surface form **without adding new chemistry semantics**. It is not permission to import higher-grade content.
 
+## v4 — Core1 bucket depth and Core2 learner conditioning
+
+`v4` separates two control systems that must not be conflated.
+
+### Core1A / Core1B — intrinsic-difficulty bucket control
+
+Core1A and Core1B are always realized **subtopic bucket by subtopic bucket**. A bucket is the smallest coherent teaching unit selected for learner realization. A difficult bucket may be decomposed further into sub-subtopics when research shows that the concept contains distinct cognitive jobs.
+
+```text
+validated Chemistry knowledge
+        ↓
+subtopic bucket
+        ↓
+intrinsic difficulty badge
+EASY / MEDIUM / HARD
+        ↓
+shared bucket authority
+   ┌───────────────┴───────────────┐
+   │                               │
+Core1A                         Core1B
+exposition-first              elicitation-first
+```
+
+The difficulty badge is **intrinsic to the subtopic**. It is not learner readiness, learner mastery, learner knowledge percentage, exam purpose or owner preference.
+
+The normal page envelopes are ceilings, not quotas:
+
+- `EASY`: up to 10 pages; visuals/steps/diagrams required as needed; web research optional by default;
+- `MEDIUM`: up to 20 pages; web research required before realization;
+- `HARD`: up to 30 pages; deep web research required, including representation/misconception questions; sub-subtopic decomposition is permitted whenever the research indicates that one bucket would otherwise hide distinct learning structures.
+
+More difficult does **not** mean more decorative images. Every visual must perform a named reasoning job such as phenomenon view, particle/species model, symbolic model, quantity model, comparison, causal sequence, boundary contrast, error visual or representation bridge.
+
+Core1A and Core1B consume the same bucket authority:
+
+```text
+same capability set
+same learning atoms
+same prerequisites
+same representations
+same misconceptions
+same validity boundaries
+same intrinsic difficulty badge
+same research package
+```
+
+Only learner realization differs. Core1A explains; Core1B elicits reconstruction. A Core1 bucket contract rejects learner-knowledge fields so knowledge percentage cannot silently change Chemistry depth or page budget.
+
+### Core2A / Core2B — learner-conditioning control
+
+Core2 support requires a resolved learner condition before compilation.
+
+The default route is:
+
+```text
+knowledge_percent = 0..100
+```
+
+This is a **support prior**, not a mastery score. It controls scaffold density, hint depth, representation support, first-move support and solution delay. It does not change frozen question identity, source provenance, validated semantic scope or legal answer authority.
+
+If knowledge percentage is unknown, the owner may explicitly waive it:
+
+```text
+mode = OWNER_OVERRIDE
+reason = explicit
+support_profile = explicit
+demand_profile = explicit
+```
+
+The override is auditable and does not fabricate a percentage. It may set support density and the already-authorized demand profile, including transfer distance, interleaving, synthesis width and time pressure.
+
+The fail-closed rule is:
+
+```text
+no knowledge percentage
++ no explicit owner override
+= BLOCK CORE2A / CORE2B COMPILATION
+```
+
+There is no silent default to 50%.
+
+The v4 default support bands are compilation policy rather than empirical mastery claims:
+
+- `0–30`: high support;
+- `31–60`: medium support;
+- `61–80`: low support;
+- `81–100`: minimal initial support.
+
+Owner purpose remains distinct from learner knowledge. Learner knowledge primarily controls **support**; owner purpose controls **transfer distance, mixing, synthesis and time pressure** within existing Core2 legality.
+
+Core2A and Core2B share the same legal question authority. Core2A is exposition-rich guided problem teaching; Core2B is elicitation-first problem-solving tutoring. Open-ended B-layer realization still requires complete static answer closure.
+
+## v4 contracts and policy
+
+```text
+contracts/instruction-bucket-v4.schema.json
+contracts/core2-learner-conditioning-v4.schema.json
+policies/v4-bucket-and-conditioning-policy.json
+engine/validate_blueprint_v4.py
+```
+
+The v4 validator fails closed for, among other things:
+
+```text
+CHEM_V4_CORE1_KNOWLEDGE_CONTAMINATION
+CHEM_V4_BUCKET_PAGE_ENVELOPE_INVALID
+CHEM_V4_MEDIUM_RESEARCH_MISSING
+CHEM_V4_HARD_DEEP_RESEARCH_MISSING
+CHEM_V4_BUCKET_VISUAL_JOB_CLOSURE_MISSING
+CHEM_V4_CONDITIONING_DUAL_AUTHORITY
+CHEM_V4_OWNER_OVERRIDE_REASON_MISSING
+CHEM_CORE2_LEARNER_CONDITION_UNRESOLVED
+```
+
 ## Entry points
 
 ```bash
@@ -125,10 +239,18 @@ python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/run_blueprint_v3.py' \
   --envelope transfer-envelope.json \
   --request transfer-request.json \
   --out-dir build/v3
+
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_blueprint_v4.py' \
+  --policy 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v4-bucket-and-conditioning-policy.json' \
+  --bucket bucket.json
+
+python 'Grade 9/V2/Chemistry/LearningBlueprint/engine/validate_blueprint_v4.py' \
+  --policy 'Grade 9/V2/Chemistry/LearningBlueprint/policies/v4-bucket-and-conditioning-policy.json' \
+  --conditioning core2-conditioning.json
 ```
 
 Add `--realization realization-evidence.json` to v2 only after learner-facing realization exists and there is evidence for the taught-state flags. v3 intentionally requires a `T-*` receipt; it cannot infer taught state from the assimilation plan.
 
 ## Not yet claimed
 
-v3 is an **eligibility compiler**, not yet the final one-command Chemistry product generator. The next milestone is to bind `X-*` release custody into the existing Chemistry Core2A challenge builder and ProductionKit, then drive Core1/Core2/Core1A/Core2A render, visual preflight, answer closure and final audit from the same blueprint authority. Human subject, pedagogy, assessment and visual-usability gates remain separate from machine completion.
+v4 establishes **control authority**, not a learner-outcome claim. It does not infer mastery from a percentage, infer taught state from a PDF, or authorize new Chemistry content. Core1A/Core1B and Core2A/Core2B compilers must consume these controls downstream. Human subject, pedagogy, assessment and visual-usability gates remain separate from machine completion.

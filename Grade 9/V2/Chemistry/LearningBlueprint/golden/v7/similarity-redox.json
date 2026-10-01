@@ -1,0 +1,36 @@
+{
+  "schema_version": "7.0.0",
+  "non_frozen_prose": {
+    "exclusions_applied": true,
+    "verbatim_5gram_overlap": 0.04,
+    "max_identical_contiguous_words": 12
+  },
+  "generated_example_comparisons": [
+    {
+      "relation_type": "STRUCTURAL_SIBLING",
+      "pedagogical_reason": "same Redox family but different evidence chain and representation burden",
+      "components": {
+        "problem_family": 0.8,
+        "givens": 0.4,
+        "numerical_values": 0.0,
+        "target": 0.5,
+        "representation": 0.3,
+        "model_sequence": 0.6,
+        "special_condition": 0.2,
+        "solution_path": 0.5
+      }
+    }
+  ],
+  "ab_comparisons": [
+    {
+      "relation_type": "PEDAGOGICAL_TRANSFORMATION",
+      "review_reason": "Core1A supplies the completed model while Core1B requires reconstruction before reveal",
+      "components": {
+        "example": 0.5,
+        "representation": 0.4,
+        "learner_action": 0.2,
+        "sequence": 0.25
+      }
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-tutor-dialogue-v6.schema.json",
+  "title": "Chemistry Tutor Dialogue v6",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "dialogue_id",
+    "product_mode",
+    "target_change",
+    "initial_attempt",
+    "learner_output_required",
+    "stages",
+    "stage_selection_reason",
+    "misconception_branches",
+    "canonical_reveal",
+    "reflection",
+    "verification",
+    "repair_route",
+    "delivery_mode"
+  ],
+  "properties": {
+    "schema_version": {"const": "6.0.0"},
+    "dialogue_id": {"type": "string", "minLength": 1},
+    "product_mode": {"enum": ["CORE1B", "CORE2B"]},
+    "target_change": {"type": "string", "minLength": 1},
+    "initial_attempt": {
+      "type": "object",
+      "required": ["answer_hidden", "learner_commitment_required"],
+      "properties": {
+        "answer_hidden": {"const": true},
+        "learner_commitment_required": {"const": true}
+      }
+    },
+    "learner_output_required": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"enum": ["PREDICTION", "DIAGRAM", "EXPLANATION", "EQUATION", "MODEL_SELECTION", "CLASSIFICATION", "COMPARISON", "DERIVATION", "COUNTEREXAMPLE", "VERIFICATION", "FIRST_MOVE", "DATA_SELECTION"]}
+    },
+    "stages": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["stage_id", "stage_type", "prompt", "cognitive_job"],
+        "properties": {
+          "stage_id": {"type": "string", "minLength": 1},
+          "stage_type": {"enum": ["ATTEMPT", "NOTICE", "REPRESENT", "EXPLAIN", "CONNECT", "START", "CHECK", "REFLECT"]},
+          "prompt": {"type": "string", "minLength": 1},
+          "cognitive_job": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "stage_selection_reason": {"type": "string", "minLength": 1},
+    "misconception_branches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["misconception_ref", "learner_self_identification_cue", "corrective_prompt"],
+        "properties": {
+          "misconception_ref": {"type": "string", "minLength": 1},
+          "learner_self_identification_cue": {"type": "string", "minLength": 1},
+          "corrective_prompt": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "canonical_reveal": {
+      "type": "object",
+      "required": ["after_attempt"],
+      "properties": {"after_attempt": {"const": true}}
+    },
+    "reflection": {
+      "type": "object",
+      "required": ["compare_my_reasoning"],
+      "properties": {"compare_my_reasoning": {"const": true}}
+    },
+    "verification": {
+      "type": "object",
+      "required": ["independent"],
+      "properties": {"independent": {"const": true}}
+    },
+    "repair_route": {
+      "type": "object",
+      "required": ["available", "static_cross_reference_only"],
+      "properties": {
+        "available": {"const": true},
+        "static_cross_reference_only": {"const": true}
+      }
+    },
+    "delivery_mode": {"const": "STATIC"}
+  },
+  "additionalProperties": true
+}

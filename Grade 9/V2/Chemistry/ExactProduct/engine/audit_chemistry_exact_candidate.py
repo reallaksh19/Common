@@ -21,7 +21,7 @@ PR #309 disclosed:
   are re-derived from the rendered document rather than trusted.
 """
 
-import argparse, copy, hashlib, json, sys
+import argparse, copy, hashlib, json, re, sys
 from pathlib import Path
 import pymupdf
 
@@ -64,6 +64,25 @@ def primitive_realization(page_map,pages):
         hits=_covered((entry['x0'],entry['y0'],entry['x1'],entry['y1']),pages,entry['page'])
         if hits<3: unrealized.append('%s@p%d' % (entry['primitive'],entry['page']))
     return unrealized
+
+def pages_for_intent(page_map_path,pages,intent_id):
+    if page_map_path:
+        page_map=load(page_map_path)
+        page_numbers=set()
+        for intent in page_map.get('page_intents',[]):
+            if intent.get('page_intent_id')==intent_id:
+                page_numbers.update(intent.get('physical_pages',[]))
+        if page_numbers:
+            return [p for p in pages if p['page'] in page_numbers]
+    # Fallback for audits without a page map: slice by rendered Appendix headings.
+    heading={'PI-APPENDIX-A':'Appendix A — Core Practice','PI-APPENDIX-B':'Appendix B — Core Solutions'}[intent_id]
+    start=next((i for i,p in enumerate(pages) if heading in p['text']),None)
+    if start is None: return []
+    if intent_id=='PI-APPENDIX-A':
+        end=next((i for i,p in enumerate(pages[start+1:],start+1) if 'Appendix B — Core Solutions' in p['text']),len(pages))
+    else:
+        end=next((i for i,p in enumerate(pages[start+1:],start+1) if 'Appendix C — Printable Handout' in p['text']),len(pages))
+    return pages[start:end]
 
 def placement_evidence(page_map,pages):
     problems=[]
@@ -116,12 +135,54 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
     if vector_pages==0:
         findings.append('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED: no vector drawing operations in either product')
 
-    # 3. source figure semantics must be a picture, not a dumped structure
+    # 3. attempt-before-support must be physically true in the rendered Core2 PDF
+    tags=[]
+    for p in core2:
+        text=p['text']
+        tags.append({
+            'page':p['page'],
+            'attempt':'H0' in text and 'Attempt first' in text,
+            'support':any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start']),
+            'solution':bool(re.search(r'Question\s+\d+\s+—\s+Complete solution',text)),
+        })
+    attempts=[i for i,x in enumerate(tags) if x['attempt']]
+    attempt_pages=len(attempts)
+    support_pages=sum(1 for x in tags if x['support'])
+    solution_pages=sum(1 for x in tags if x['solution'])
+    attempt_before_support=bool(attempts)
+    for pos,start in enumerate(attempts):
+        if tags[start]['support'] or tags[start]['solution']:
+            findings.append('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE: page %d' % tags[start]['page'])
+            attempt_before_support=False
+        end=attempts[pos+1] if pos+1<len(attempts) else len(tags)
+        supports=[i for i in range(start+1,end) if tags[i]['support']]
+        solutions=[i for i in range(start+1,end) if tags[i]['solution']]
+        if not supports or not solutions or min(solutions)<=min(supports):
+            findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_ORDER_FAILURE: attempt page %d' % tags[start]['page'])
+            attempt_before_support=False
+
+    # 4. Core1 Appendix A/B must render concrete source-bound instances and responses.
+    # Scope the count to the physical Appendix intents; lesson-body instances are
+    # independently governed and must not inflate Appendix closure evidence.
+    appendix_a_text='\n'.join(p['text'] for p in pages_for_intent(page_map_core1,core1,'PI-APPENDIX-A'))
+    appendix_b_text='\n'.join(p['text'] for p in pages_for_intent(page_map_core1,core1,'PI-APPENDIX-B'))
+    practice_count=len(re.findall(r'Practice \d+ —',appendix_a_text))
+    practice_instance_count=appendix_a_text.count('Source-authorized instance:')
+    solution_count=len(re.findall(r'Solution \d+ —',appendix_b_text))
+    solution_instance_count=appendix_b_text.count('Source-bound expected response:')
+    core1_practice_instance_closure=(practice_count>0 and practice_count==practice_instance_count)
+    core1_solution_instance_closure=(solution_count>0 and solution_count==solution_instance_count)
+    if not core1_practice_instance_closure:
+        findings.append('CORE1_PRACTICE_INSTANCE_MISSING: practice=%d concrete=%d' % (practice_count,practice_instance_count))
+    if not core1_solution_instance_closure:
+        findings.append('CORE1_SOLUTION_NOT_INSTANCE_BOUND: solutions=%d concrete=%d' % (solution_count,solution_instance_count))
+
+    # 5. source figure semantics must be a picture, not a dumped structure
     if any(('"model": "PARTICLE_COUNT"' in p['text']) or ('"particles":' in p['text'])
            or ('Source figure semantics' in p['text']) for p in core2):
         findings.append('SOURCE_FIGURE_SEMANTICS_RENDERED_AS_TEXT_NOT_REALIZED_VISUAL')
 
-    # 4. the bridge claim must be backed by an actual drawn bridge
+    # 6. the bridge claim must be backed by an actual drawn bridge
     bridge=[p for p in core1 if 'Same chemical entity across three views' in p['text']]
     realized_bridge=bool(bridge and any(p['drawings'] for p in bridge))
     if not realized_bridge:
@@ -130,6 +191,9 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
     if findings: findings.append('MATURE_DESIGN_QUALITY_NOT_ESTABLISHED_BY_AI_PRE_REVIEW')
 
     candidate['machine_evidence']['macro_particle_symbolic_realized']=realized_bridge
+    candidate['machine_evidence']['attempt_before_support_pass']=attempt_before_support
+    candidate['machine_evidence']['core1_practice_instance_closure_pass']=core1_practice_instance_closure
+    candidate['machine_evidence']['core1_solution_instance_closure_pass']=core1_solution_instance_closure
     candidate['machine_evidence']['learner_internal_identifier_leaks']=len(leaks)
     candidate['package_digest']=digest(candidate,'package_digest')
     Path(candidate_path).write_text(json.dumps(candidate,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
@@ -146,7 +210,17 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
             'evidence':{'realized_primitive_kinds':realized,
                         'label_only_primitive_kinds':list(evidence.get('teaching_primitives_label_only') or []),
                         'pages_with_vector_graphics':vector_pages,
-                        'total_pages':len(core1)+len(core2)}}
+                        'total_pages':len(core1)+len(core2),
+                        'core2_attempt_pages':attempt_pages,
+                        'core2_support_pages':support_pages,
+                        'core2_solution_pages':solution_pages,
+                        'attempt_before_support_pass':attempt_before_support,
+                        'core1_practice_count':practice_count,
+                        'core1_practice_instance_count':practice_instance_count,
+                        'core1_solution_count':solution_count,
+                        'core1_solution_instance_count':solution_instance_count,
+                        'core1_practice_instance_closure_pass':core1_practice_instance_closure,
+                        'core1_solution_instance_closure_pass':core1_solution_instance_closure}}
     Path(out_review).write_text(json.dumps(review,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
     return candidate,review
 

@@ -1,0 +1,45 @@
+{
+  "schema_version": "6.0.0",
+  "ttu_family": "CONCEPT_TTU",
+  "ttu_id": "CT-C1B-REDOX-001",
+  "product_mode": "CORE1B",
+  "identity": {
+    "concept_id": "CON-REDOX-OXSTATE-001",
+    "capability_ids": ["CAP-TRACK-OXIDATION-STATE", "CAP-ATTACH-SPECIES-ROLE"],
+    "learning_atom_ids": ["LA-REDOX-TRACK-001", "LA-REDOX-ELECTRON-002", "LA-REDOX-AGENT-003"],
+    "inferential_jump_ids": ["IJ-STATE-TO-ELECTRON", "IJ-ELECTRON-TO-AGENT"]
+  },
+  "canonical_expert_state": {
+    "concept_statement": "Oxidation-state change identifies oxidation/reduction; electron consequence then determines agent role.",
+    "model": "SAME_SPECIES_IDENTITY_TO_STATE_CHANGE_TO_ELECTRON_CONSEQUENCE_TO_AGENT_ROLE",
+    "prerequisites": ["SPECIES_IDENTITY", "OXIDATION_STATE_RULES"],
+    "conditions": ["COMPARE_THE_SAME_ELEMENT_BEFORE_AND_AFTER_REACTION"],
+    "representations": ["REP-REDOX-STATE-LANE-001", "REP-REDOX-ELECTRON-LEDGER-002"],
+    "equations": ["Zn -> Zn2+ + 2e-", "Cu2+ + 2e- -> Cu"],
+    "representation_equation_bindings": ["Zn 0->+2 binds to electron loss", "Cu +2->0 binds to electron gain"],
+    "reasoning_chain": ["TRACK_IDENTITY", "ASSIGN_STATE", "COMPARE_STATE", "INFER_ELECTRONS", "ATTACH_ROLE"],
+    "misconception_contrasts": ["OXIDATION_STATE_VS_ION_CHARGE", "REDUCING_AGENT_IS_ITSELF_OXIDISED"],
+    "verification": {"electron_balance": "electrons lost = electrons gained", "role_check": "agent role must agree with self change and other effect"}
+  },
+  "learner_transformation": {
+    "before_model": "agent labels treated as memorised names",
+    "target_model": "agent role derived causally from species change and electron consequence",
+    "conceptual_change": "from label recall to reconstructable redox proof"
+  },
+  "reconstruction_options": ["PREDICT", "GENERATE", "SELECT", "DIAGNOSE", "DERIVE", "CONNECT", "VERIFY"],
+  "reconstructable_ttu_refs": ["TTU-C1B-REDOX-ELECTRON-LEDGER-001"],
+  "self_help_closure_ref": "SH-C1B-REDOX-001",
+  "tutor_dialogue_ref": "TD-C1B-REDOX-001",
+  "realization_contract": {
+    "identity": "OPEN_CONCEPT_RECONSTRUCTION_TUTOR",
+    "exposure_mode": "RECONSTRUCT_BEFORE_CANONICAL",
+    "learner_actions": ["PREDICT", "DRAW", "LABEL", "DERIVE", "DIAGNOSE", "TEACH_BACK", "VERIFY"]
+  },
+  "differentiation_fingerprint": {
+    "example": "ZINC_COPPER_INCOMPLETE_CAUSAL_PROOF",
+    "representation": "INCOMPLETE_ELECTRON_LEDGER_AND_ROLE_MAP",
+    "sequence": "PREDICT_BUILD_EXPLAIN_DIAGNOSE_REVEAL_VERIFY",
+    "solution": "CANONICAL_STATE_HIDDEN_UNTIL_RECONSTRUCTION",
+    "learner_action": "RECONSTRUCT_AND_JUSTIFY"
+  }
+}

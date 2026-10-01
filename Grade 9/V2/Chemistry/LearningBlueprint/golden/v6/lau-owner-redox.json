@@ -1,0 +1,47 @@
+{
+  "schema_version": "6.0.0",
+  "router_id": "LAU",
+  "question_id": "Q-REDOX-FROZEN-001",
+  "question_authority_ref": "REG-CHEM-G9-REDOX-001:Q-REDOX-FROZEN-001",
+  "problem_family": "PF-AGENT-ROLE-ASSIGNMENT",
+  "purpose": "COMPETITIVE_EXAM",
+  "conditioning": {
+    "mode": "OWNER_OVERRIDE",
+    "owner_override": {
+      "support_band": "GUIDED",
+      "reason": "knowledge estimate unavailable for this learner",
+      "preserve_system_finding": true
+    }
+  },
+  "task_demand": {
+    "conceptual_demand": 2,
+    "structural_distance": 2,
+    "representation_change": 2,
+    "model_discrimination": 2,
+    "hidden_constraint": 1,
+    "sign_direction_reversal": 0,
+    "reversed_target": 1,
+    "constraint_inversion": 0,
+    "multi_step_bridge": 2,
+    "synthesis": 2,
+    "competitive_mixing": 1,
+    "calculation_load": 1
+  },
+  "resolved_support": {
+    "support_band": "GUIDED",
+    "decision_basis": "OWNER_OVERRIDE_WITH_TASK_DEMAND",
+    "learner_state_used": false,
+    "task_demand_used": true,
+    "purpose_used": true
+  },
+  "core2a_plan": {
+    "product_mode": "CORE2A",
+    "problem_ttu_refs": ["PT-C2A-REDOX-001"],
+    "support_band": "GUIDED"
+  },
+  "core2b_plan": {
+    "product_mode": "CORE2B",
+    "problem_ttu_refs": ["PT-C2B-REDOX-001"],
+    "support_band": "GUIDED"
+  }
+}

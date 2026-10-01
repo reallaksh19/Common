@@ -1,0 +1,20 @@
+{
+  "schema_version": "4.0.0",
+  "mode": "OWNER_OVERRIDE",
+  "owner_override": {
+    "reason": "Learner knowledge percentage unavailable; owner requests guided competition preparation.",
+    "support_profile": {
+      "support_density": "MEDIUM",
+      "hint_entry_level": "H2_STRUCTURE",
+      "representation_support": "AVAILABLE_ON_REQUEST",
+      "first_move_support": "AVAILABLE_ON_REQUEST",
+      "solution_delay": "AFTER_HINT_LADDER"
+    },
+    "demand_profile": {
+      "transfer_distance": "NEAR_TRANSFER",
+      "interleaving": false,
+      "synthesis_width": 1,
+      "time_pressure": "PRACTICE"
+    }
+  }
+}

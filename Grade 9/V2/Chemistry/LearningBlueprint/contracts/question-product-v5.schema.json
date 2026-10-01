@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chemistry-question-product-v5.schema.json",
+  "title": "Chemistry Question Product v5",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "product_mode",
+    "conditioning_ref",
+    "question_ids",
+    "episodes",
+    "coverage_closure",
+    "page_plan",
+    "cross_core_reuse_audit"
+  ],
+  "properties": {
+    "schema_version": {"const": "5.0.0"},
+    "product_mode": {"enum": ["CORE2A", "CORE2B"]},
+    "conditioning_ref": {"type": "string", "minLength": 1},
+    "question_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "episodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "question_id",
+          "source_class",
+          "stem_custody",
+          "provenance_custody",
+          "answer_custody",
+          "required_jobs",
+          "technical_steps",
+          "reconstructable_ttus",
+          "hint_bindings"
+        ],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 1},
+          "source_class": {"enum": ["SOURCE_CORE2", "GENERATED_ORIGINAL"]},
+          "stem_custody": {"enum": ["PRESERVED", "GENERATED_UNDER_AUTHORITY"]},
+          "provenance_custody": {"enum": ["PRESERVED", "GENERATED_PROVENANCE_BOUND"]},
+          "answer_custody": {"enum": ["PRESERVED", "GENERATED_VERIFIED"]},
+          "required_jobs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "technical_steps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["step_id", "job"],
+              "properties": {
+                "step_id": {"type": "string", "minLength": 1},
+                "job": {"type": "string", "minLength": 1}
+              },
+              "additionalProperties": true
+            }
+          },
+          "reconstructable_ttus": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "reconstructable-ttu-v5.schema.json"}
+          },
+          "hint_bindings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["hint_id", "binds_to_step_id"],
+              "properties": {
+                "hint_id": {"type": "string", "minLength": 1},
+                "binds_to_step_id": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "coverage_closure": {
+      "type": "object",
+      "required": ["selected_question_count", "attempt_path_count", "check_path_count", "full_solution_path_count", "ttu_path_count"],
+      "properties": {
+        "selected_question_count": {"type": "integer", "minimum": 1},
+        "attempt_path_count": {"type": "integer", "minimum": 0},
+        "check_path_count": {"type": "integer", "minimum": 0},
+        "full_solution_path_count": {"type": "integer", "minimum": 0},
+        "ttu_path_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "page_plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["page_id", "page_role", "expected_active_area_ratio", "technical_step_ids", "ttu_ids", "learner_action_ids"],
+        "properties": {
+          "page_id": {"type": "string", "minLength": 1},
+          "page_role": {"type": "string", "minLength": 1},
+          "expected_active_area_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+          "technical_step_ids": {"type": "array", "items": {"type": "string"}},
+          "ttu_ids": {"type": "array", "items": {"type": "string"}},
+          "learner_action_ids": {"type": "array", "items": {"type": "string"}},
+          "workspace_justification": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "cross_core_reuse_audit": {
+      "type": "object",
+      "required": ["shared_helper_prose_count", "repeated_generic_template_fraction"],
+      "properties": {
+        "shared_helper_prose_count": {"type": "integer", "minimum": 0},
+        "repeated_generic_template_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "shared_question_stem_ids": {"type": "array", "items": {"type": "string"}},
+        "shared_answer_authority_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "additionalProperties": true
+}
