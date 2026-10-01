@@ -16,6 +16,7 @@ START = "<!-- relay-v3.2:further-task:start -->"
 END = "<!-- relay-v3.2:further-task:end -->"
 RECOVERY_MARKER_PREFIX = "<!-- relay-v3.2:recovery-evidence "
 TITLE_RE = re.compile(r"\s+\{P\d+% · E\d+% · [^{}]+\}\s*$")
+RECOVERY_MODES = {"NONE", "INTERRUPTED_EXECUTOR", "FRONTIER_RECONCILIATION"}
 
 
 class ContinuityError(ValueError):
@@ -96,12 +97,14 @@ def new_snapshot(
     delta: int | None,
     repository: str | None = None,
     issue: int | None = None,
+    protocol_ref: str | None = None,
 ) -> dict[str, Any]:
     units = normalize_units(units)
     return {
         "schema": SCHEMA,
         "authority": AUTHORITY,
         "responsibility": responsibility,
+        "protocol_ref": (protocol_ref or "").strip() or None,
         "state": "PLANNING",
         "plan_ref": plan_ref,
         "units": units,
@@ -111,6 +114,7 @@ def new_snapshot(
         "next": None,
         "owner_decision": "NONE",
         "recovery": {
+            "mode": "NONE",
             "stream_loss_count": 0,
             "recovery_evidence_required": False,
             "handover_plan_triggered_this_lifecycle": False,
@@ -131,8 +135,20 @@ def new_snapshot(
     }
 
 
+def _recovery(snapshot: dict[str, Any]) -> dict[str, Any]:
+    recovery = snapshot.setdefault("recovery", {})
+    recovery.setdefault("mode", "NONE")
+    recovery.setdefault("stream_loss_count", 0)
+    recovery.setdefault("recovery_evidence_required", False)
+    recovery.setdefault("handover_plan_triggered_this_lifecycle", False)
+    recovery.setdefault("plan_for_handover_now", False)
+    recovery.setdefault("recovery_evidence", None)
+    return recovery
+
+
 def event(snapshot: dict[str, Any], name: str, **kwargs: Any) -> dict[str, Any]:
     s = deepcopy(snapshot)
+    recovery = _recovery(s)
     if name == "implementation-start":
         if not s.get("plan_ref"):
             raise ContinuityError("implementation start requires published plan_ref")
@@ -141,7 +157,7 @@ def event(snapshot: dict[str, Any], name: str, **kwargs: Any) -> dict[str, Any]:
         s["state"] = "IMPLEMENTING"
 
     elif name == "stream-loss":
-        recovery = s["recovery"]
+        recovery["mode"] = "INTERRUPTED_EXECUTOR"
         recovery["stream_loss_count"] += 1
         recovery["recovery_evidence_required"] = True
         recovery["recovery_evidence"] = None
@@ -153,8 +169,22 @@ def event(snapshot: dict[str, Any], name: str, **kwargs: Any) -> dict[str, Any]:
             recovery["handover_plan_triggered_this_lifecycle"] = True
         s["state"] = "RECOVERING"
 
+    elif name == "recovery-start":
+        mode = str(kwargs.get("mode") or "FRONTIER_RECONCILIATION")
+        if mode not in RECOVERY_MODES - {"NONE"}:
+            raise ContinuityError(f"invalid recovery mode: {mode}")
+        if (
+            mode == "FRONTIER_RECONCILIATION"
+            and not s.get("frontier", {}).get("recovery_reconciliation_needed")
+        ):
+            raise ContinuityError("frontier reconciliation recovery requires unresolved frontier")
+        recovery["mode"] = mode
+        recovery["recovery_evidence_required"] = True
+        recovery["recovery_evidence"] = None
+        recovery["plan_for_handover_now"] = False
+        s["state"] = "RECOVERING"
+
     elif name == "recovery-evidence":
-        recovery = s["recovery"]
         if not recovery["recovery_evidence_required"]:
             raise ContinuityError("recovery evidence not required")
         material_head = s["frontier"].get("material_head")
@@ -213,14 +243,16 @@ def event(snapshot: dict[str, Any], name: str, **kwargs: Any) -> dict[str, Any]:
 
 def finalize_recovery_evidence(snapshot: dict[str, Any], comment_id: int | None = None) -> dict[str, Any]:
     s = deepcopy(snapshot)
-    evidence = s["recovery"].get("recovery_evidence")
+    recovery = _recovery(s)
+    evidence = recovery.get("recovery_evidence")
     if not evidence:
         raise ContinuityError("no pending recovery evidence to finalize")
     material_head = evidence["observed_material_head"]
     s["frontier"] = frontier(material_head, material_head, 0)
-    s["recovery"]["recovery_evidence_required"] = False
-    s["recovery"]["plan_for_handover_now"] = False
-    s["recovery"]["recovery_evidence"] = {
+    recovery["mode"] = "NONE"
+    recovery["recovery_evidence_required"] = False
+    recovery["plan_for_handover_now"] = False
+    recovery["recovery_evidence"] = {
         **evidence,
         "publication_status": "READ_BACK",
         "provider_comment_id": comment_id,
@@ -273,13 +305,15 @@ def title(snapshot: dict[str, Any], existing: str) -> str:
 
 
 def markdown(snapshot: dict[str, Any]) -> str:
-    p, f, r = snapshot["progress"], snapshot["frontier"], snapshot["recovery"]
+    p, f = snapshot["progress"], snapshot["frontier"]
+    r = _recovery(snapshot)
     done = [u["id"] for u in snapshot["units"] if u["complete"]]
     pending = [u["id"] for u in snapshot["units"] if not u["complete"]]
     lines = [
         "FURTHER_TASK_SNAPSHOT — current",
         "",
         f"AUTHORITY: {AUTHORITY}",
+        f"PROTOCOL_REF: {snapshot.get('protocol_ref') or 'UNKNOWN'}",
         f"STATE: {snapshot['state']}",
         (
             f"PROGRESS: P{p['progress_percent']}% / E{p['evidence_percent']}% "
@@ -293,7 +327,8 @@ def markdown(snapshot: dict[str, Any]) -> str:
             f"material={f['material_head'] or 'UNKNOWN'}; "
             f"semantic/evidence={f['semantic_evidence_head'] or 'UNKNOWN'}; "
             f"relation={f['relation']}; "
-            f"delta={f['delta_commits'] if f['delta_commits'] is not None else 'UNKNOWN'}"
+            f"delta={f['delta_commits'] if f['delta_commits'] is not None else 'UNKNOWN'}; "
+            f"reconciliation_needed={str(bool(f.get('recovery_reconciliation_needed'))).lower()}"
         ),
         "",
         "COMPLETED",
@@ -307,6 +342,7 @@ def markdown(snapshot: dict[str, Any]) -> str:
         f"OWNER_DECISION: {snapshot.get('owner_decision') or 'NONE'}",
         (
             "RECOVERY: "
+            f"mode={r.get('mode', 'NONE')}; "
             f"stream_loss_count={r['stream_loss_count']}; "
             f"evidence_required={str(r['recovery_evidence_required']).lower()}; "
             f"handover_plan_triggered="
@@ -320,7 +356,7 @@ def markdown(snapshot: dict[str, Any]) -> str:
 
 
 def recovery_evidence_markdown(snapshot: dict[str, Any]) -> tuple[str, str]:
-    recovery = snapshot["recovery"]
+    recovery = _recovery(snapshot)
     evidence = recovery.get("recovery_evidence")
     if not evidence:
         raise ContinuityError("no pending recovery evidence")
@@ -334,6 +370,12 @@ def recovery_evidence_markdown(snapshot: dict[str, Any]) -> tuple[str, str]:
             "",
             "RESPONSIBILITY",
             str(snapshot["responsibility"]),
+            "",
+            "PROTOCOL REF",
+            str(snapshot.get("protocol_ref") or "UNKNOWN"),
+            "",
+            "RECOVERY MODE",
+            str(recovery.get("mode") or "NONE"),
             "",
             "OBSERVED MATERIAL",
             f"head: {material}",
@@ -541,6 +583,7 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--responsibility", required=True)
     init.add_argument("--units", type=Path, required=True)
     init.add_argument("--plan-ref")
+    init.add_argument("--protocol-ref")
     init.add_argument("--material-head")
     init.add_argument("--semantic-head")
     init.add_argument("--delta", type=int)
@@ -552,6 +595,15 @@ def main(argv: list[str] | None = None) -> int:
         cmd = sub.add_parser(name)
         cmd.add_argument("--snapshot", type=Path, required=True)
         cmd.add_argument("--output", type=Path)
+
+    recovery_start = sub.add_parser("recovery-start")
+    recovery_start.add_argument("--snapshot", type=Path, required=True)
+    recovery_start.add_argument(
+        "--mode",
+        choices=("FRONTIER_RECONCILIATION", "INTERRUPTED_EXECUTOR"),
+        default="FRONTIER_RECONCILIATION",
+    )
+    recovery_start.add_argument("--output", type=Path)
 
     recovery = sub.add_parser("recovery-evidence")
     recovery.add_argument("--snapshot", type=Path, required=True)
@@ -610,11 +662,14 @@ def main(argv: list[str] | None = None) -> int:
             args.delta,
             args.github_repository,
             args.github_issue,
+            args.protocol_ref,
         )
     else:
         snapshot = load(args.snapshot)
         if args.cmd in ("implementation-start", "stream-loss"):
             snapshot = event(snapshot, args.cmd)
+        elif args.cmd == "recovery-start":
+            snapshot = event(snapshot, args.cmd, mode=args.mode)
         elif args.cmd == "recovery-evidence":
             snapshot = event(
                 snapshot,
