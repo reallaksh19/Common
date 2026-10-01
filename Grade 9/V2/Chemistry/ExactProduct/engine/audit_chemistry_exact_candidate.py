@@ -116,12 +116,35 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
     if vector_pages==0:
         findings.append('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED: no vector drawing operations in either product')
 
-    # 3. source figure semantics must be a picture, not a dumped structure
+    # 3. attempt-before-support must be physically true in the rendered Core2 PDF
+    attempt_pages=0
+    support_pages=0
+    solution_pages=0
+    for p in core2:
+        text=p['text']
+        is_attempt='H0' in text and 'Attempt first' in text
+        has_support=any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start'])
+        has_solution='Complete solution' in text
+        if is_attempt:
+            attempt_pages+=1
+            if has_support or has_solution:
+                findings.append('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE: page %d' % p['page'])
+        if has_support:
+            support_pages+=1
+        if has_solution:
+            solution_pages+=1
+    attempt_before_support=(attempt_pages>0 and attempt_pages==support_pages==solution_pages
+                            and not any(x.startswith('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE') for x in findings))
+    if not attempt_before_support:
+        findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_PAGE_COUNT_MISMATCH: attempts=%d support=%d solutions=%d'
+                        % (attempt_pages,support_pages,solution_pages))
+
+    # 4. source figure semantics must be a picture, not a dumped structure
     if any(('"model": "PARTICLE_COUNT"' in p['text']) or ('"particles":' in p['text'])
            or ('Source figure semantics' in p['text']) for p in core2):
         findings.append('SOURCE_FIGURE_SEMANTICS_RENDERED_AS_TEXT_NOT_REALIZED_VISUAL')
 
-    # 4. the bridge claim must be backed by an actual drawn bridge
+    # 5. the bridge claim must be backed by an actual drawn bridge
     bridge=[p for p in core1 if 'Same chemical entity across three views' in p['text']]
     realized_bridge=bool(bridge and any(p['drawings'] for p in bridge))
     if not realized_bridge:
@@ -130,6 +153,7 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
     if findings: findings.append('MATURE_DESIGN_QUALITY_NOT_ESTABLISHED_BY_AI_PRE_REVIEW')
 
     candidate['machine_evidence']['macro_particle_symbolic_realized']=realized_bridge
+    candidate['machine_evidence']['attempt_before_support_pass']=attempt_before_support
     candidate['machine_evidence']['learner_internal_identifier_leaks']=len(leaks)
     candidate['package_digest']=digest(candidate,'package_digest')
     Path(candidate_path).write_text(json.dumps(candidate,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
@@ -146,7 +170,11 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
             'evidence':{'realized_primitive_kinds':realized,
                         'label_only_primitive_kinds':list(evidence.get('teaching_primitives_label_only') or []),
                         'pages_with_vector_graphics':vector_pages,
-                        'total_pages':len(core1)+len(core2)}}
+                        'total_pages':len(core1)+len(core2),
+                        'core2_attempt_pages':attempt_pages,
+                        'core2_support_pages':support_pages,
+                        'core2_solution_pages':solution_pages,
+                        'attempt_before_support_pass':attempt_before_support}}
     Path(out_review).write_text(json.dumps(review,ensure_ascii=False,indent=2,sort_keys=True)+'\n',encoding='utf-8')
     return candidate,review
 
