@@ -143,7 +143,7 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
             'page':p['page'],
             'attempt':'H0' in text and 'Attempt first' in text,
             'support':any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start']),
-            'solution':'Complete solution' in text,
+            'solution':bool(re.search(r'Question\s+\d+\s+—\s+Complete solution',text)),
         })
     attempts=[i for i,x in enumerate(tags) if x['attempt']]
     attempt_pages=len(attempts)
