@@ -103,10 +103,8 @@ def _practice_prompt(cap,authority,problem_profile,stage):
 
 def _expected_response(authority,record):
     evidence=_representation_evidence(authority['representation'])
-    checks=', '.join(record['verification_requirements']) if record['verification_requirements'] else 'the recorded route-specific verification'
     return ('Source-bound expected response: '+authority['content']+' '
-            +'Evidence to preserve: '+evidence+'. '
-            +'Required check(s): '+checks+'.')
+            +'Evidence to preserve: '+evidence+'.')
 
 def attempt(cap,stage,prompt,record,problem_profile,lesson_id):
     return {'attempt_id':f'{lesson_id}-{stage}','support_stage':stage,'prompt':prompt+' '+problem_profile['stage_modifiers'][stage],'representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations'])}
