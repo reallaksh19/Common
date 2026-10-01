@@ -20,6 +20,13 @@ def expect(code,fn):
     raise AssertionError('expected '+code)
 def redigest_plan(p): p['plan_digest']=''; p['plan_digest']=digest(p,'plan_digest'); return p
 def lesson(p,c): return next(x for x in p['lessons'] if x['capability_ref']==c)
+def _representation_evidence_for_test(rep):
+    keys=('formulas','charges','coefficients','states','conditions','structures','figures','observations','units')
+    parts=[]
+    for key in keys:
+        vals=rep.get(key,[])
+        if vals: parts.append(key.replace('_',' ')+' = '+', '.join(str(x) for x in vals))
+    return '; '.join(parts) if parts else 'no additional representation token is recorded'
 def redigest_pck(reg):
     for a in reg['assets']:
         a['asset_digest']=''; x=copy.deepcopy(a); x.pop('asset_digest'); a['asset_digest']=hashlib.sha256(canonical(x).encode()).hexdigest()
@@ -124,6 +131,14 @@ expect('APPENDIX_B_INSTANCE_MISMATCH',lambda:validate_plan(bad,model_a,study_sco
 bad=copy.deepcopy(plan_a); bad['appendices']['appendix_b']['solutions'][0]['final_response']='A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.'; redigest_plan(bad)
 expect('APPENDIX_B_GENERIC_SOLUTION',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
 
+# 21 CORE1_SOLUTION_NOT_INSTANCE_BOUND — a source restatement is not an answer
+bad=copy.deepcopy(plan_a)
+item=bad['appendices']['appendix_a']['items'][0]
+sol=bad['appendices']['appendix_b']['solutions'][0]
+sol['final_response']='Source-bound expected response: '+item['instance_authority']['content']+' Evidence to preserve: '+_representation_evidence_for_test(item['instance_authority']['representation'])
+redigest_plan(bad)
+expect('CORE1_SOLUTION_NOT_INSTANCE_BOUND',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
 # Treatment-relative sufficiency and authority boundaries.
 assert lesson(plan_b,'CAP-PARSE-ION-CHARGE')['content_roles']==profile['content_roles_by_mode']['CONCISE_VERIFY_ONLY']
 assert all(a['promotion_authority']['subject_expert_release_state']=='NOT_GRANTED' for a in pck['assets'])
@@ -131,7 +146,7 @@ assert all(a['raw_mature_reference_used'] is False for a in pck['assets'])
 # Deterministic replay.
 again=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
 assert json.dumps(plan_a,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
-print('CHEMISTRY C-G required falsifiers = 20 PASS')
+print('CHEMISTRY C-G required falsifiers = 21 PASS')
 print('CHEMISTRY C-G promoted PCK pilot authority = PASS')
 print('CHEMISTRY C-G treatment-relative Core1 authoring = PASS')
 print('CHEMISTRY C-G Appendix A/B/C semantic closure = PASS')
