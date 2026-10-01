@@ -90,8 +90,18 @@ ASSESSMENT_FIRST_CAPS={
     'CAP-VERIFY-CHEMICAL-REPRESENTATION',
 }
 
+def _assessment_refs_by_evidence(record,assessment_index):
+    ranked=[]
+    for ref in record['assessment_question_refs']:
+        a=assessment_index.get(ref)
+        if not a: continue
+        rep=a.get('representation') or {}
+        concrete=sum(len(rep.get(k,[])) for k in REPRESENTATION_KEYS)
+        ranked.append((concrete,1 if '.' in ref else 0,ref))
+    return [ref for _,_,ref in sorted(ranked,key=lambda x:(-x[0],-x[1],x[2]))]
+
 def _bind_practice_authority(record,source_index,assessment_index):
-    refs=sorted(record['assessment_question_refs'],key=lambda x:(0 if '.' in x else 1,x))
+    refs=_assessment_refs_by_evidence(record,assessment_index)
     if record['capability_ref'] in ASSESSMENT_FIRST_CAPS:
         for ref in refs:
             if ref in assessment_index: return copy.deepcopy(assessment_index[ref])
