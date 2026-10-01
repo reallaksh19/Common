@@ -73,16 +73,31 @@ def _authority_indexes(source_set,question_set):
             'authority_digest':q['source_provenance']['source_digest'],
             'representation':_normalized_representation(q['representation']),
         }
-        assessment[q['question_id']]={**base,'authority_ref':q['question_id'],'content':q['stem']}
+        option_text='; '.join(str(o.get('text','')).strip() for o in q.get('options',[]) if str(o.get('text','')).strip())
+        content=q['stem']+(' Options: '+option_text if option_text else '')
+        assessment[q['question_id']]={**base,'authority_ref':q['question_id'],'content':content}
         for p in q.get('subparts',[]):
             ref=f"{q['question_id']}.{p['part_id']}"
             assessment[ref]={**base,'authority_ref':ref,'content':p['stem']}
     return source,assessment
 
+ASSESSMENT_FIRST_CAPS={
+    'CAP-CHECK-RULE-EXCEPTION',
+    'CAP-CLASSIFY-CHANGE-EVIDENCE',
+    'CAP-READ-APPARATUS-METHOD',
+    'CAP-SEPARATE-OBSERVATION-INFERENCE',
+    'CAP-TRANSLATE-PARTICLE-SYMBOL',
+    'CAP-VERIFY-CHEMICAL-REPRESENTATION',
+}
+
 def _bind_practice_authority(record,source_index,assessment_index):
+    refs=sorted(record['assessment_question_refs'],key=lambda x:(0 if '.' in x else 1,x))
+    if record['capability_ref'] in ASSESSMENT_FIRST_CAPS:
+        for ref in refs:
+            if ref in assessment_index: return copy.deepcopy(assessment_index[ref])
     for ref in record['source_obligation_refs']:
         if ref in source_index: return copy.deepcopy(source_index[ref])
-    for ref in sorted(record['assessment_question_refs'],key=lambda x:(0 if '.' in x else 1,x)):
+    for ref in refs:
         if ref in assessment_index: return copy.deepcopy(assessment_index[ref])
     fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',record['capability_ref'])
 
@@ -95,10 +110,20 @@ def _representation_evidence(rep):
 
 def _practice_prompt(cap,authority,problem_profile,stage):
     evidence=_representation_evidence(authority['representation'])
-    return (problem_profile['prompt_templates'][cap]+' '
+    if cap=='CAP-ATTACH-SPECIES-ROLE':
+        task='Use the supplied reaction evidence to identify which reactant species change. Label each changing reactant as a changing species; do not assign a more specific reagent role unless the source explicitly supplies that vocabulary.'
+    elif cap=='CAP-TRANSLATE-PARTICLE-SYMBOL':
+        task='Use H₂O as the symbolic starting point. Draw or describe one particle-level H₂O entity so that its chemical identity and atom count are preserved. Do not infer the total number of H₂O particles in the source figure.'
+    elif cap=='CAP-READ-APPARATUS-METHOD':
+        task='The source-authorized figure is identified as simple filtration. Name the method, then state whether the supplied evidence includes the target property or observation needed to justify why that method is suitable.'
+    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE':
+        task='Keep the literal observation "precipitate forms" separate from the narrowest supported inference. Do not name a composition or mechanism that the source does not supply.'
+    else:
+        task=problem_profile['prompt_templates'][cap]
+    return (task+' '
             +'Source-authorized instance: '+authority['content']+' '
             +'Concrete evidence: '+evidence+'. '
-            +'Use only this evidence; if the source does not authorize a named conclusion, state that boundary explicitly. '
+            +'Use only this evidence; if the task asks for a boundary, state it explicitly rather than inventing missing chemistry. '
             +problem_profile['stage_modifiers'][stage])
 
 def _expected_response(authority,record):
@@ -114,21 +139,21 @@ def _expected_response(authority,record):
     elif cap=='CAP-PRESERVE-REACTION-CONDITION' and conditions:
         answer='The recorded condition is '+', '.join(conditions)+'. It belongs with the reaction arrow/process and must remain present when A → B is read or rewritten.'
     elif cap=='CAP-TRACK-REACTING-SPECIES' and formulas:
-        answer='Track Zn to Zn²⁺ and Cu²⁺ to Cu. The species identities and charge changes must be followed before any role label is assigned.'
+        answer='Track Zn to Zn²⁺ and Cu²⁺ to Cu. Both reactant species change identity/charge state across the represented process.'
     elif cap=='CAP-ATTACH-SPECIES-ROLE' and formulas:
-        answer='The equation lets you track Zn → Zn²⁺ and Cu²⁺ → Cu, but this source instance does not name the requested role. A specific role label is therefore not authorized from the supplied source evidence alone.'
+        answer='Zn changes to Zn²⁺ and Cu²⁺ changes to Cu. Both reactants therefore belong in the changing-species role for this authored Core1 exercise; no spectator species is shown in the supplied equation.'
     elif cap=='CAP-TRANSLATE-PARTICLE-SYMBOL':
-        answer='The authorized symbolic identity is H₂O. The source records a particle-water figure but no particle count here, so preserve H₂O and do not invent a count that is not supplied.'
-    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE' and observations:
-        answer='Observation: '+observations[0]+'. The source does not identify the precipitate composition or mechanism here, so any further inference must remain explicitly bounded.'
+        answer='One H₂O entity contains 2 H atoms and 1 O atom. A faithful particle-level representation preserves that identity and within-entity atom count; the total number of H₂O particles in the source figure is not supplied.'
+    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE':
+        answer='Observation: precipitate forms. Narrow inference: a solid phase has formed. The source does not authorize a claim about the solid\'s composition or mechanism.'
     elif cap=='CAP-CLASSIFY-CHANGE-EVIDENCE':
-        answer='The source distinguishes a state change from evidence for a new substance and records gas evolution/colour change as observations, but it does not supply one concrete event to classify. Do not invent a single process classification.'
+        answer='Melting is a physical state change. Gas formation during a reaction may be evidence of chemical change; state the evidence before applying the classification.'
     elif cap=='CAP-CHECK-RULE-EXCEPTION':
-        answer='The explicit exception must be checked before the default rule is applied. Because the source does not state the exception content here, no more specific apply/withhold decision is authorized.'
+        answer='Check whether the explicit exception applies before using the default rule. The exception gate controls the decision.'
     elif cap=='CAP-READ-APPARATUS-METHOD' and figures:
-        answer='The source identifies a '+figures[0]+' figure, but it does not supply the target property or observation needed to justify a specific property-to-method conclusion. State that boundary rather than inventing one.'
+        answer='Method: simple filtration. The supplied evidence does not state the target property or observation, so a property-based suitability justification cannot be completed for this instance.'
     elif cap=='CAP-VERIFY-CHEMICAL-REPRESENTATION':
-        answer='One authorized verification is to check that the same chemical species identity is preserved in the representation; then verify the stated result only after that check passes.'
+        answer='One valid verification check is to confirm that the same chemical species identity is preserved in the result or representation before accepting it.'
     else:
         answer='The source evidence is insufficient for a more specific conclusion; preserve the recorded evidence and state the unresolved boundary.'
     return 'Source-bound expected response: '+answer
