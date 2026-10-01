@@ -139,6 +139,13 @@ sol['final_response']='Source-bound expected response: '+item['instance_authorit
 redigest_plan(bad)
 expect('CORE1_SOLUTION_NOT_INSTANCE_BOUND',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
 
+# 22 Core1 lesson worked example must retain concrete authority
+bad=copy.deepcopy(plan_a); w=lesson(bad,'CAP-CHECK-ATOM-CONSERVATION')['worked_example']; w['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 23 Core1 lesson attempts must retain concrete authority
+bad=copy.deepcopy(plan_a); a=lesson(bad,'CAP-PARSE-ION-CHARGE')['independent_attempt']; a['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
 # Treatment-relative sufficiency and authority boundaries.
 assert lesson(plan_b,'CAP-PARSE-ION-CHARGE')['content_roles']==profile['content_roles_by_mode']['CONCISE_VERIFY_ONLY']
 assert all(a['promotion_authority']['subject_expert_release_state']=='NOT_GRANTED' for a in pck['assets'])
@@ -146,7 +153,7 @@ assert all(a['raw_mature_reference_used'] is False for a in pck['assets'])
 # Deterministic replay.
 again=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
 assert json.dumps(plan_a,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
-print('CHEMISTRY C-G required falsifiers = 21 PASS')
+print('CHEMISTRY C-G required falsifiers = 23 PASS')
 print('CHEMISTRY C-G promoted PCK pilot authority = PASS')
 print('CHEMISTRY C-G treatment-relative Core1 authoring = PASS')
 print('CHEMISTRY C-G Appendix A/B/C semantic closure = PASS')
