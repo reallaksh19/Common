@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
-"""Test-only changed-file summary utility for Relay V3.2 recovery drill #486.
-
-Commit-A scope established the parser and extension aggregation. This branch is
-intentionally allowed to advance beyond that durable evidence checkpoint so a
-later successor has a real material delta to reconstruct.
-"""
+"""Changed-file summary CLI for the Relay V3.2 recovery drill #486."""
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
 from collections import Counter
-from typing import Iterable
+from pathlib import Path
+from typing import Iterable, Sequence
 
 
 class InputContractError(ValueError):
@@ -52,17 +50,62 @@ def extension_counts(paths: Iterable[str]) -> dict[str, int]:
 
 
 def _parent_directory(path: str) -> str:
-    """Return one normalized parent candidate for later directory aggregation."""
+    """Return the normalized direct parent directory for one changed file path."""
     normalized = path.replace("\\", "/").strip("/")
     if "/" not in normalized:
         return "."
     return normalized.rsplit("/", 1)[0] or "."
 
 
-def summary_seed(paths: Iterable[str]) -> dict[str, object]:
-    """Assemble the already-proved summary fields for later CLI composition."""
+def unique_directories(paths: Iterable[str]) -> list[str]:
+    """Return sorted unique direct parent directories for changed file paths."""
+    return sorted({_parent_directory(path) for path in paths})
+
+
+def summarize(paths: Iterable[str]) -> dict[str, object]:
+    """Build the deterministic changed-file summary."""
     path_list = list(paths)
     return {
         "total_file_count": len(path_list),
         "extensions": extension_counts(path_list),
+        "directories": unique_directories(path_list),
     }
+
+
+def _read_input(source: str) -> str:
+    """Read JSON from stdin (`-`) or a UTF-8 file path."""
+    if source == "-":
+        return sys.stdin.read()
+    return Path(source).read_text(encoding="utf-8")
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Summarize a JSON array of changed file paths."
+    )
+    parser.add_argument(
+        "input",
+        nargs="?",
+        default="-",
+        help="JSON input file, or '-' / omitted to read stdin",
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run the CLI and return a process exit code."""
+    args = _build_parser().parse_args(argv)
+    try:
+        raw_text = _read_input(args.input)
+        paths = parse_changed_paths(raw_text)
+    except (OSError, InputContractError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    json.dump(summarize(paths), sys.stdout, indent=2, sort_keys=True)
+    sys.stdout.write("\n")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
