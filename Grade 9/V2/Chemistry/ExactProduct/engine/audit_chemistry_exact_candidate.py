@@ -65,6 +65,25 @@ def primitive_realization(page_map,pages):
         if hits<3: unrealized.append('%s@p%d' % (entry['primitive'],entry['page']))
     return unrealized
 
+def pages_for_intent(page_map_path,pages,intent_id):
+    if page_map_path:
+        page_map=load(page_map_path)
+        page_numbers=set()
+        for intent in page_map.get('page_intents',[]):
+            if intent.get('page_intent_id')==intent_id:
+                page_numbers.update(intent.get('physical_pages',[]))
+        if page_numbers:
+            return [p for p in pages if p['page'] in page_numbers]
+    # Fallback for audits without a page map: slice by rendered Appendix headings.
+    heading={'PI-APPENDIX-A':'Appendix A — Core Practice','PI-APPENDIX-B':'Appendix B — Core Solutions'}[intent_id]
+    start=next((i for i,p in enumerate(pages) if heading in p['text']),None)
+    if start is None: return []
+    if intent_id=='PI-APPENDIX-A':
+        end=next((i for i,p in enumerate(pages[start+1:],start+1) if 'Appendix B — Core Solutions' in p['text']),len(pages))
+    else:
+        end=next((i for i,p in enumerate(pages[start+1:],start+1) if 'Appendix C — Printable Handout' in p['text']),len(pages))
+    return pages[start:end]
+
 def placement_evidence(page_map,pages):
     problems=[]
     if not page_map.get('actual_placement_evidence'): problems.append('PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE')
@@ -142,12 +161,15 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
             findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_ORDER_FAILURE: attempt page %d' % tags[start]['page'])
             attempt_before_support=False
 
-    # 4. Core1 Appendix A/B must render concrete source-bound instances and responses
-    core1_text='\n'.join(p['text'] for p in core1)
-    practice_count=len(re.findall(r'Practice \d+ —',core1_text))
-    practice_instance_count=core1_text.count('Source-authorized instance:')
-    solution_count=len(re.findall(r'Solution \d+ —',core1_text))
-    solution_instance_count=core1_text.count('Source-bound expected response:')
+    # 4. Core1 Appendix A/B must render concrete source-bound instances and responses.
+    # Scope the count to the physical Appendix intents; lesson-body instances are
+    # independently governed and must not inflate Appendix closure evidence.
+    appendix_a_text='\n'.join(p['text'] for p in pages_for_intent(page_map_core1,core1,'PI-APPENDIX-A'))
+    appendix_b_text='\n'.join(p['text'] for p in pages_for_intent(page_map_core1,core1,'PI-APPENDIX-B'))
+    practice_count=len(re.findall(r'Practice \d+ —',appendix_a_text))
+    practice_instance_count=appendix_a_text.count('Source-authorized instance:')
+    solution_count=len(re.findall(r'Solution \d+ —',appendix_b_text))
+    solution_instance_count=appendix_b_text.count('Source-bound expected response:')
     core1_practice_instance_closure=(practice_count>0 and practice_count==practice_instance_count)
     core1_solution_instance_closure=(solution_count>0 and solution_count==solution_instance_count)
     if not core1_practice_instance_closure:
