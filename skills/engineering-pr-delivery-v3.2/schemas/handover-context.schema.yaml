@@ -1,0 +1,304 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, frozen_at, frozen_basis, target, blind_context, reality_context, accumulated_learning, generator_contract]
+properties:
+  schema_version: {const: relay-v3.1-handover-context}
+  authority: {const: DERIVED_HANDOVER_INPUT}
+  frozen_at: {type: string, format: date-time}
+  frozen_basis:
+    type: object
+    additionalProperties: false
+    required: [roadmap_revision, state_digest, target_digest, material_head, relevant_paths_digest, dependency_digest, coordination_head, checkpoint, ep, lease]
+    properties:
+      roadmap_revision: {type: string, minLength: 1}
+      state_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      target_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      material_head: {type: string, minLength: 7}
+      relevant_paths_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      dependency_digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+      coordination_head: {type: string, minLength: 7}
+      checkpoint: {type: [string, 'null']}
+      ep: {type: [string, 'null']}
+      lease: {type: [string, 'null']}
+  target:
+    type: object
+    additionalProperties: false
+    required: [schema_version, authority, provider, repository, kind, number, title, url, state, observed_at, provider_ref]
+    properties:
+      schema_version: {const: relay-v3.1-handover-target}
+      authority: {const: PROVIDER_READBACK}
+      provider: {const: GITHUB}
+      repository: {type: string, minLength: 3}
+      kind: {enum: [ISSUE, PULL_REQUEST]}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+      state: {enum: [OPEN, CLOSED, DRAFT, READY, MERGED, UNKNOWN]}
+      observed_at: {type: string, format: date-time}
+      provider_ref: {type: string, minLength: 1}
+  blind_context:
+    type: object
+    additionalProperties: false
+    required: [programme, stable_constraints]
+    properties:
+      programme:
+        type: object
+        additionalProperties: false
+        required: [outcome, roadmap_title]
+        properties:
+          outcome: {type: string, minLength: 1}
+          roadmap_title: {type: string, minLength: 1}
+      stable_constraints:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  reality_context:
+    type: object
+    additionalProperties: false
+    required: [programme_reconciliation, local_responsibility, task_constraints, execution, material, evidence, controls, delivery]
+    properties:
+      programme_reconciliation:
+        type: object
+        additionalProperties: false
+        required: [authority, status, current_parent, selected_frontier, selected_frontier_ownership, executable_frontier, alternate_live_frontiers, parents, ordered_roadmap, programme_frontier, execution_blocked, acceptance_debt, delivery_governance_debt, deferred_or_future, graph, reason_codes]
+        properties:
+          authority: {const: DERIVED_PROGRAMME_RECONCILIATION}
+          status: {enum: [NOT_REQUIRED, READY, RECONCILIATION_REQUIRED]}
+          current_parent: {type: [string, 'null']}
+          selected_frontier: {type: [string, 'null']}
+          selected_frontier_ownership:
+            enum: [LANDED, SUPERSEDED, TRANSFERRED, SPLIT, CLOSED_WITH_DEBT, UNKNOWN, BLOCKED, DEFERRED, STILL_REAL, READY_TO_CLOSE, null]
+          executable_frontier: {type: [string, 'null']}
+          alternate_live_frontiers: {type: array, items: {type: string, minLength: 3}}
+          parents:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [order, ref, repository, issue_number, title, state, disposition, ownership, acceptance]
+              properties:
+                order: {type: integer, minimum: 1}
+                ref: {type: string, minLength: 3}
+                repository: {type: string, minLength: 3}
+                issue_number: {type: integer, minimum: 1}
+                title: {type: string, minLength: 1}
+                state: {enum: [OPEN, CLOSED, UNKNOWN]}
+                disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+                ownership: {enum: [LANDED, SUPERSEDED, TRANSFERRED, SPLIT, CLOSED_WITH_DEBT, UNKNOWN, BLOCKED, DEFERRED, STILL_REAL, READY_TO_CLOSE]}
+                acceptance:
+                  type: object
+                  additionalProperties: false
+                  required: [complete, partial, pending, blocked, deferred, not_applicable, unknown, total]
+                  properties:
+                    complete: {type: integer, minimum: 0}
+                    partial: {type: integer, minimum: 0}
+                    pending: {type: integer, minimum: 0}
+                    blocked: {type: integer, minimum: 0}
+                    deferred: {type: integer, minimum: 0}
+                    not_applicable: {type: integer, minimum: 0}
+                    unknown: {type: integer, minimum: 0}
+                    total: {type: integer, minimum: 0}
+          ordered_roadmap:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [order, ref, ownership]
+              properties:
+                order: {type: integer, minimum: 1}
+                ref: {type: string, minLength: 3}
+                ownership: {type: string, minLength: 1}
+          programme_frontier: {type: array, items: {type: string, minLength: 3}}
+          execution_blocked: {type: array, items: {type: string, minLength: 3}}
+          acceptance_debt: {type: array, items: {type: string, minLength: 3}}
+          delivery_governance_debt: {type: array, items: {type: string, minLength: 3}}
+          deferred_or_future: {type: array, items: {type: string, minLength: 3}}
+          graph:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [from, type, to, scope, acceptance_items, provider_refs]
+              properties:
+                from: {type: string, minLength: 3}
+                type: {enum: [RELATED_TO, BLOCKED_BY, FOLLOW_UP, SUPERSEDES, SUPERSEDED_BY, TRANSFERS_TO, SPLIT_INTO]}
+                to: {type: string, minLength: 3}
+                scope: {type: array, items: {type: string}}
+                acceptance_items: {type: array, items: {type: string}}
+                provider_refs: {type: array, items: {type: string}}
+          reason_codes: {type: array, items: {type: string, minLength: 1}}
+      local_responsibility:
+        type: object
+        additionalProperties: false
+        required: [work_package, title, outcome, acceptance_statements]
+        properties:
+          work_package: {type: [string, 'null']}
+          title: {type: [string, 'null']}
+          outcome: {type: [string, 'null']}
+          acceptance_statements:
+            type: array
+            items: {type: string, minLength: 1}
+      task_constraints:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      execution:
+        type: object
+        required: [lifecycle, ep, lease, executor, branch]
+      material:
+        type: object
+        required: [base, head, relevant_paths_digest, dependency_digest, coordination_head]
+      evidence:
+        type: object
+        required: [latest_checkpoint, latest_material_validation]
+      controls:
+        type: object
+        required: [execution_blockers, handover_blockers, delivery_blockers, informational]
+      delivery:
+        type: object
+        required: [issue, pr, lifecycle, merge_authorized]
+  accumulated_learning:
+    type: object
+    additionalProperties: false
+    required: [checkpoint, discoveries, known_limitations, what_changed, what_is_true_now, what_remains_uncertain, do_not_break, attempted_and_rejected, resume_from, first_successor_action, reconstruction_context, continuity, task_snapshot, improvement_view, parent_issue]
+    properties:
+      checkpoint: {type: [string, 'null']}
+      discoveries: {type: array, items: {type: string}}
+      known_limitations: {type: array, items: {type: string}}
+      what_changed: {type: array, items: {type: string}}
+      what_is_true_now: {type: array, items: {type: string}}
+      what_remains_uncertain: {type: array, items: {type: string}}
+      do_not_break: {type: array, items: {type: string}}
+      attempted_and_rejected: {type: array, items: {type: string}}
+      resume_from: {type: array, items: {type: string}}
+      first_successor_action: {type: [string, 'null']}
+      reconstruction_context:
+        type: object
+        additionalProperties: false
+        required: [original_intent, latest_reconciliation, primary_conversation_refs, roadmap_refs, local_agent_refs, rll_refs]
+        properties:
+          original_intent:
+            type: [object, 'null']
+            additionalProperties: false
+            required: [repository, issue_number, url]
+            properties:
+              repository: {type: string, pattern: '^[^/\s]+/[^/\s]+$'}
+              issue_number: {type: integer, minimum: 1}
+              url: {type: string, format: uri}
+              source_ref: {type: [string, 'null']}
+              digest: {type: [string, 'null'], pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          latest_reconciliation:
+            type: [object, 'null']
+            additionalProperties: false
+            required: [ref]
+            properties:
+              ref: {type: string, minLength: 1}
+              observed_at: {type: [string, 'null'], format: date-time}
+              summary: {type: [string, 'null']}
+          primary_conversation_refs:
+            type: array
+            items: {type: string, minLength: 1}
+          roadmap_refs:
+            type: array
+            items: {type: string, minLength: 1}
+          local_agent_refs:
+            type: array
+            items: {type: string, minLength: 1}
+          rll_refs:
+            type: array
+            items: {type: string, minLength: 1}
+      continuity:
+        type: object
+        additionalProperties: false
+        required: [current, further_tasks, predecessor_ref]
+        properties:
+          current:
+            type: [object, 'null']
+            additionalProperties: false
+            required: [ref, custody_epoch, executor, status, continuation, exact_head, updated_at]
+            properties:
+              ref: {type: string, minLength: 1}
+              custody_epoch: {type: integer, minimum: 1}
+              executor: {type: string, minLength: 1}
+              status: {enum: [ACTIVE, HANDOFF_READY, COMPLETE, SUPERSEDED, BLOCKED]}
+              continuation: {enum: [NEW, HANDOFF, RECOVERY]}
+              exact_head: {type: [string, 'null']}
+              updated_at: {type: [string, 'null'], format: date-time}
+          further_tasks:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [id, state, statement, reason_class, dependency, expected_next_observable]
+              properties:
+                id: {type: string, pattern: '^FT-[1-9][0-9]*-[1-9][0-9]*$'}
+                state: {enum: [PENDING, ACTIVE, BLOCKED, DONE, SUPERSEDED, NOT_APPLICABLE]}
+                statement: {type: string, minLength: 1}
+                reason_class:
+                  enum: [CURRENT_TASK, UPSTREAM_DEPENDENCY, SIBLING_WORKSTREAM, PREEXISTING_UNRELATED, INFRASTRUCTURE, PROVIDER, OWNER_DECISION, UNKNOWN]
+                dependency: {type: [string, 'null']}
+                expected_next_observable: {type: [string, 'null']}
+          predecessor_ref: {type: [string, 'null']}
+      task_snapshot:
+        type: object
+        additionalProperties: false
+        required: [digest, source_protocol, ep, work_package, next_action, value]
+        properties:
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          source_protocol: {enum: [V2_5, V3_1]}
+          ep: {type: [string, 'null']}
+          work_package: {type: [string, 'null']}
+          next_action: {type: [string, 'null']}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+      parent_issue:
+        type: object
+        additionalProperties: false
+        required: [repository, number, disposition, relationships]
+        properties:
+          repository: {type: [string, 'null']}
+          number: {type: [integer, 'null'], minimum: 1}
+          disposition: {enum: [NO_CHANGE, UPDATE, LINK, TRANSFER, SPLIT, SUPERSEDE, CLOSE, UNKNOWN]}
+          relationships: {type: array}
+      improvement_view:
+        type: object
+        additionalProperties: false
+        required: [digest, source_protocol, checkpoint, capability_change, evidence_count, value]
+        properties:
+          digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+          source_protocol: {enum: [V2_5, V3_1]}
+          checkpoint: {type: [string, 'null']}
+          capability_change: {type: boolean}
+          evidence_count: {type: integer, minimum: 0}
+          value:
+            type: object
+            required: [schema_version, authority, source_protocol]
+            properties:
+              authority: {const: DERIVED_READ_MODEL}
+            additionalProperties: true
+  generator_contract:
+    type: object
+    additionalProperties: false
+    required: [canonical_launcher, canonical_schema, canonical_validator, protocol_revision_at_freeze, generator_mode, live_main_fetch_required, prompt_sequence, complex_mode, approval_boundary_required]
+    properties:
+      canonical_launcher: {const: skills/two-pass-prompt-generator/SKILL.md}
+      canonical_schema: {const: skills/two-pass-prompt-generator/schema.md}
+      canonical_validator: {const: skills/two-pass-prompt-generator/validate.py}
+      protocol_revision_at_freeze: {type: string, pattern: '^TPG-2P-'}
+      generator_mode: {const: TWO_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 2
+        maxItems: 2
+        prefixItems:
+          - {const: PASS_1_SYSTEM_BASELINE}
+          - {const: PASS_2_IMPROVE_RECONCILE_PLAN}
+        items: false
+      complex_mode: {type: boolean}
+      approval_boundary_required: {const: true}
+additionalProperties: false
