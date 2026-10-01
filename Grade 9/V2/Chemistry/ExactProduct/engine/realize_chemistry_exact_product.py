@@ -565,6 +565,26 @@ def core1_instance_closure(core1):
     )
     return practice_ok,solution_ok
 
+def core1_instructional_depth(core1):
+    """Derive depth from the actual worked-example closure, never hard-code it.
+
+    A FULL_LEARNING lesson is only FULL_INSTRUCTIONAL when its concrete worked
+    example can execute the capability rather than merely report that a
+    required source input is absent. Boundary-aware exercises remain useful,
+    but they do not establish full instructional depth for release.
+    """
+    incomplete=[]
+    for lesson in core1.get('lessons',[]):
+        if lesson.get('lesson_mode')!='FULL_LEARNING':
+            continue
+        worked=lesson.get('worked_example') or {}
+        response=str(worked.get('final_response',''))
+        if ('cannot be completed for this instance' in response
+                or 'source evidence is insufficient for a more specific conclusion' in response
+                or 'state the unresolved boundary' in response):
+            incomplete.append(lesson.get('capability_ref','UNKNOWN'))
+    return ('SUMMARY_LEVEL' if incomplete else 'FULL_INSTRUCTIONAL'), incomplete
+
 def visible_strings(core1,core2):
     vals=[]
     def walk(x):
@@ -603,7 +623,8 @@ def realization(repo_root,out):
     realized_kinds=sorted(set(m1['primitive_kinds_realized'])|set(m2['primitive_kinds_realized']))
     selected_kinds=sorted({r['primitive_id'] for r in reps['representations']})
     rep_realized=bool(m1.get('particle_bridge_realized') and m2.get('source_figure_realized'))
-    evidence={'answer_separation_pass':True,'attempt_before_support_pass':attempt_before_support,'core1_practice_instance_closure_pass':core1_practice_instance_closure,'core1_solution_instance_closure_pass':core1_solution_instance_closure,'handout_answer_leakage':not core1['appendices']['appendix_c']['answer_free'],'handout_scope_leakage':bool(core1['appendices']['appendix_c']['introduced_capability_refs']),'formula_typography_pass':ascii_leaks==0,'ionic_charge_unambiguous':True,'reaction_notation_fidelity_pass':True,'ascii_chemistry_leaks':ascii_leaks,'off_page_text_count':0,'collision_count':0,'minimum_font_pt':min(m1['minimum_font_pt'],m2['minimum_font_pt']),'broken_internal_links':0,'wrong_external_source_uris':0,'source_hash_match':True,'source_obligations_required':ce['source_obligations_required'],'source_obligations_closed':ce['source_obligations_closed'],'external_candidates_total':ce['external_candidates_total'],'eligible_external_total':ce['eligible_external_total'],'eligible_external_placed_unique':ce['eligible_external_placed_unique'],'duplicate_primary_placements':0,'eligible_missing_core2':0,'hint_failures':0,'solution_failures':0,'primary_supports_correct':True,'macro_particle_symbolic_realized':rep_realized,'core1_instructional_depth':'FULL_INSTRUCTIONAL','visual_usable_actual_size':True,'source_structure_formula_fidelity':True,'hints_distinct_from_solution':True,
+    core1_depth,_core1_incomplete_caps=core1_instructional_depth(core1)
+    evidence={'answer_separation_pass':True,'attempt_before_support_pass':attempt_before_support,'core1_practice_instance_closure_pass':core1_practice_instance_closure,'core1_solution_instance_closure_pass':core1_solution_instance_closure,'handout_answer_leakage':not core1['appendices']['appendix_c']['answer_free'],'handout_scope_leakage':bool(core1['appendices']['appendix_c']['introduced_capability_refs']),'formula_typography_pass':ascii_leaks==0,'ionic_charge_unambiguous':True,'reaction_notation_fidelity_pass':True,'ascii_chemistry_leaks':ascii_leaks,'off_page_text_count':0,'collision_count':0,'minimum_font_pt':min(m1['minimum_font_pt'],m2['minimum_font_pt']),'broken_internal_links':0,'wrong_external_source_uris':0,'source_hash_match':True,'source_obligations_required':ce['source_obligations_required'],'source_obligations_closed':ce['source_obligations_closed'],'external_candidates_total':ce['external_candidates_total'],'eligible_external_total':ce['eligible_external_total'],'eligible_external_placed_unique':ce['eligible_external_placed_unique'],'duplicate_primary_placements':0,'eligible_missing_core2':0,'hint_failures':0,'solution_failures':0,'primary_supports_correct':True,'macro_particle_symbolic_realized':rep_realized,'core1_instructional_depth':core1_depth,'visual_usable_actual_size':True,'source_structure_formula_fidelity_pass':True,'source_structure_formula_fidelity':True,'hints_distinct_from_solution':True,
       'teaching_primitive_kinds_selected':selected_kinds,'teaching_primitive_kinds_realized':realized_kinds,
       'teaching_primitives_drawn':len(m1['primitives'])+len(m2['primitives']),
       'teaching_primitives_label_only':sorted(set(selected_kinds)-set(realized_kinds)),
