@@ -47,6 +47,16 @@ The closure compiler never loads an audit because it recognizes a topic or gate 
 - pass the generic source-audit v2 validator;
 - carry exact digest custody into the closure receipt and authorization binding.
 
+## Claim-class provenance custody
+
+Asset bindings cannot manufacture provenance by declaration. The generic source-audit validator requires:
+
+- `SOURCE_DEFINED` claims to cite at least one `SOURCE_DEFINED` or `OFFICIAL_SYLLABUS` source layer;
+- `STANDARD_CHEMISTRY_DERIVED` claims to cite at least one `STANDARD_CHEMISTRY_DERIVED` layer;
+- `AUTHORING_RECOMMENDATION` claims to cite at least one `AUTHORING_RECOMMENDATION` layer.
+
+`SOURCE_SCOPE_HELD` is a scope/custody state rather than a provenance class, so it does not create source authority by itself. These rules are topic-neutral and do not encode Redox identifiers or source names in generic engine control flow.
+
 ## Stress audits cannot authorize products
 
 Two audit roles exist:
