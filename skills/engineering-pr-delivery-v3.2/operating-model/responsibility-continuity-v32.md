@@ -14,9 +14,21 @@ One independently governed engineering responsibility keeps one continuity ident
 
 A continuity-managed responsibility has at most one mutable `FURTHER_TASK_SNAPSHOT` with `AUTHORITY: DERIVED_CONTINUITY_ONLY`.
 
-It contains state, plan reference, declared outcome denominator, P completion frontier, E evidence frontier, active/completed/pending units, material and semantic/evidence heads, current/next, Owner decision, and stream-loss/handover state.
+It contains state, exact protocol provenance, plan reference, declared outcome denominator, P completion frontier, E evidence frontier, active/completed/pending units, material and semantic/evidence heads, current/next, Owner decision, and stream-loss/handover state.
 
 Progress must never be inferred from commits, tests, comments, tool calls, tokens, elapsed time, or executor count.
+
+## Exact protocol provenance
+
+New V3.2 continuity-managed responsibilities SHOULD persist a successor-verifiable exact protocol reference:
+
+```text
+PROTOCOL_REF: owner/repo@<exact-commit>:skills/engineering-pr-delivery-v3.2
+```
+
+When a candidate protocol is not on the responsibility's base/default branch, the exact ref must identify the repository/commit that actually contains the governing candidate implementation. A PR number may be added for navigation, but an exact commit is the reconstructable identity.
+
+`PROTOCOL_REF` is continuity provenance, not authority. Owner intent and repository source truth still govern. Older snapshots without this field remain readable as `UNKNOWN`; successors must discover rather than fabricate a value.
 
 ## Mandatory implementation-start event
 
@@ -46,6 +58,40 @@ SEMANTIC_EVIDENCE_FRONTIER = latest durable task evidence basis explaining/provi
 
 If the semantic head is an ancestor of material HEAD, Git derives the commit distance. Material-ahead distance is reconstruction distance, not progress.
 
+The frontier also exposes:
+
+```text
+RECONCILIATION_NEEDED: true | false
+```
+
+This is a passive material/evidence discrepancy signal. During healthy uninterrupted engineering, material may legitimately advance before the next semantic evidence checkpoint; `RECONCILIATION_NEEDED=true` therefore does **not** automatically impose a recovery publication on the current executor.
+
+## Recovery state
+
+Active recovery is separate from passive frontier discrepancy:
+
+```text
+RECOVERY_MODE:
+NONE
+INTERRUPTED_EXECUTOR
+FRONTIER_RECONCILIATION
+
+RECOVERY_EVIDENCE_REQUIRED: true | false
+```
+
+A replacement executor that observes an unexplained/recovery-relevant frontier gap starts recovery explicitly:
+
+```bash
+python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py recovery-start \
+  --snapshot relay/GENERATED/tasks/<issue>.continuity.json \
+  --mode FRONTIER_RECONCILIATION \
+  --output relay/GENERATED/tasks/<issue>.continuity.json
+```
+
+That transition sets `RECOVERY_EVIDENCE_REQUIRED=true`. A same-lifecycle unexpected stream loss uses `stream-loss`, sets `RECOVERY_MODE=INTERRUPTED_EXECUTOR`, and preserves the consecutive-loss counter semantics.
+
+Only successful durable `TASK_EVIDENCE — RECOVERY` provider readback clears the active recovery obligation and aligns the recovered semantic frontier.
+
 ## Abrupt interruption
 
 Default first-line recovery:
@@ -66,6 +112,8 @@ Minimum recovery evidence:
 ```text
 TASK_EVIDENCE — RECOVERY
 RESPONSIBILITY
+PROTOCOL REF
+RECOVERY MODE
 OBSERVED MATERIAL
 LAST TRUSTED SEMANTIC BASIS
 RECOVERED DELTA
@@ -96,7 +144,7 @@ A successor lifecycle resets the count/trigger. This is continuity preparation, 
 `TASK_RESULT` adds:
 
 ```text
-RESULT_SCOPE: STEP | PRODUCT | RESPONSIBILITY
+RESULT_SCOPE: STEP | PRODUCT | RESPONSONSIBILITY
 COVERAGE: <declared denominator coverage>
 RESPONSIBILITY_COMPLETE: YES | NO | UNKNOWN
 ```
@@ -122,7 +170,7 @@ The title is a glanceable cache only. Percentages may decrease after a legitimat
 
 ## Event-driven provider synchronization
 
-Synchronize only at semantic events such as implementation start, declared outcome completion, evidence/recovery transition, denominator change, genuine Owner-decision state, and task result/completion.
+Synchronize only at semantic events such as implementation start, declared outcome completion, recovery-start/evidence transition, denominator change, genuine Owner-decision state, and task result/completion.
 
 Do not update for timer wake, heartbeat, command, test retry, commit count, tool call, elapsed time, or generic `proceed`.
 
@@ -137,6 +185,7 @@ python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py init
   --responsibility owner/repo#484 \
   --units declared-units.json \
   --plan-ref issuecomment-... \
+  --protocol-ref 'owner/repo@<exact-sha>:skills/engineering-pr-delivery-v3.2' \
   --material-head "$(git rev-parse HEAD)" \
   --github-repository owner/repo \
   --github-issue 484 \
@@ -162,4 +211,4 @@ python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py obse
 
 ## Worth falsifiers
 
-Remove/revise this mechanism if it cannot be rebuilt against durable provider/material truth, provider sync becomes an engineering gate, clean work acquires heartbeat ceremony, P/E rewards activity rather than outcomes/evidence, or fast recovery hides contradictions that require full reconstruction.
+Remove/revise this mechanism if it cannot be rebuilt against durable provider/material truth, provider sync becomes an engineering gate, clean work acquires heartbeat ceremony, P/E rewards activity rather than outcomes/evidence, protocol provenance adds recurring work without improving reconstruction, or fast recovery hides contradictions that require full reconstruction.
