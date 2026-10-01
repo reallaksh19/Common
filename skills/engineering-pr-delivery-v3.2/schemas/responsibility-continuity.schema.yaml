@@ -1,0 +1,40 @@
+$id: relay-v3.2-responsibility-continuity
+type: object
+required: [schema, authority, responsibility, state, progress, frontier, units, recovery, observability]
+properties:
+  schema:
+    const: relay-v3.2-responsibility-continuity
+  authority:
+    const: DERIVED_CONTINUITY_ONLY
+  responsibility:
+    type: string
+    minLength: 1
+  state:
+    enum: [PLANNING, IMPLEMENTING, RECOVERING, EVIDENCING, VERIFYING, OWNER_DECISION, BLOCKED_EXTERNAL, DELIVERY_READY, COMPLETE, SUPERSEDED]
+  plan_ref:
+    type: [string, "null"]
+  progress:
+    type: object
+    required: [denominator, completed_units, evidenced_units, progress_percent, evidence_percent]
+  frontier:
+    type: object
+    required: [material_head, semantic_evidence_head, relation, recovery_reconciliation_needed]
+  units:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [id, complete, evidenced]
+      properties:
+        id: {type: string, minLength: 1}
+        complete: {type: boolean}
+        evidenced: {type: boolean}
+  recovery:
+    type: object
+    required: [stream_loss_count, recovery_evidence_required, handover_plan_triggered_this_lifecycle, plan_for_handover_now]
+  observability:
+    type: object
+    required: [provider_sync_required, provider_sync_failure_blocks_engineering, update_reason]
+  provider:
+    type: object
+additionalProperties: true
