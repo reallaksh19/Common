@@ -345,7 +345,7 @@ def render_core1(core1,representations,profile,path):
         if l.get('reconstruction_steps'): w.subheading('Reconstruct the reasoning'); w.bullets(l['reconstruction_steps'])
         ex=l.get('worked_example')
         if ex:
-            w.subheading('Worked example'); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading('Check'); w.bullets(public_list(ex['verification_steps']))
+            w.subheading('Worked example'); w.para(ex['prompt']); w.bullets(ex['reasoning_steps']); w.subheading('Check'); w.bullets(public_list(ex['verification_steps'])); w.subheading('Expected response'); w.para(ex['final_response'])
         if l.get('concept_helper'): w.subheading('Concept helper'); w.para(l['concept_helper'])
         m=l.get('misconception_repair')
         if m:
