@@ -1,7 +1,7 @@
 {
   "actual_placement_evidence": true,
   "artifact": "examside-solution-transfer-book.pdf",
-  "artifact_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "artifact_sha256": "bdf7bcf3d65542a08a6f9661a8729a48d00d4bb692624535d0d2d26342d0a334",
   "bounds_violations": 0,
   "content_placements": [
     {
@@ -27,31 +27,31 @@
       "y1": 799.89
     },
     {
-      "content_ref": "TRANSFER-01",
+      "content_ref": "TRANSFER-01-SUPPORT",
       "fragment_kind": "START",
-      "page": 2,
-      "page_intent_id": "PI-TRANSFER-01",
+      "page": 3,
+      "page_intent_id": "PI-TRANSFER-01-SUPPORT",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 309.89,
-      "y1": 601.89
+      "y0": 511.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-01-FORMULA_ANATOMY_VIEW",
       "fragment_kind": "START",
-      "page": 2,
+      "page": 3,
       "page_intent_id": "PI-TRANSFER-01",
       "primitive": "FORMULA_ANATOMY_VIEW",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 187.89,
-      "y1": 313.89
+      "y0": 389.89,
+      "y1": 515.89
     },
     {
       "content_ref": "TRANSFER-01-SOLUTION",
       "fragment_kind": "START",
-      "page": 3,
+      "page": 4,
       "page_intent_id": "PI-TRANSFER-01-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -62,7 +62,7 @@
     {
       "content_ref": "TRANSFER-02",
       "fragment_kind": "START",
-      "page": 4,
+      "page": 5,
       "page_intent_id": "PI-TRANSFER-02",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -73,7 +73,7 @@
     {
       "content_ref": "TRANSFER-02-SOURCE-FIGURE",
       "fragment_kind": "START",
-      "page": 4,
+      "page": 5,
       "page_intent_id": "PI-TRANSFER-02",
       "primitive": "PARTICLE_MODEL_VIEW",
       "x0": 42.0,
@@ -82,31 +82,31 @@
       "y1": 601.89
     },
     {
-      "content_ref": "TRANSFER-02",
+      "content_ref": "TRANSFER-02-SUPPORT",
       "fragment_kind": "START",
-      "page": 4,
-      "page_intent_id": "PI-TRANSFER-02",
+      "page": 6,
+      "page_intent_id": "PI-TRANSFER-02-SUPPORT",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 165.89,
-      "y1": 469.89
+      "y0": 499.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-02-PARTICLE_MODEL_VIEW",
       "fragment_kind": "START",
-      "page": 5,
+      "page": 6,
       "page_intent_id": "PI-TRANSFER-02",
       "primitive": "PARTICLE_MODEL_VIEW",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 667.89,
-      "y1": 799.89
+      "y0": 367.89,
+      "y1": 503.89
     },
     {
       "content_ref": "TRANSFER-02-SOLUTION",
       "fragment_kind": "START",
-      "page": 6,
+      "page": 7,
       "page_intent_id": "PI-TRANSFER-02-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -117,7 +117,7 @@
     {
       "content_ref": "TRANSFER-03",
       "fragment_kind": "START",
-      "page": 7,
+      "page": 8,
       "page_intent_id": "PI-TRANSFER-03",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -126,31 +126,31 @@
       "y1": 799.89
     },
     {
-      "content_ref": "TRANSFER-03",
+      "content_ref": "TRANSFER-03-SUPPORT",
       "fragment_kind": "START",
-      "page": 7,
-      "page_intent_id": "PI-TRANSFER-03",
+      "page": 9,
+      "page_intent_id": "PI-TRANSFER-03-SUPPORT",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 309.89,
-      "y1": 601.89
+      "y0": 511.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-03-CONSERVATION_LEDGER",
       "fragment_kind": "START",
-      "page": 7,
+      "page": 9,
       "page_intent_id": "PI-TRANSFER-03",
       "primitive": "CONSERVATION_LEDGER",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 175.89,
-      "y1": 313.89
+      "y0": 377.89,
+      "y1": 515.89
     },
     {
       "content_ref": "TRANSFER-03-SOLUTION",
       "fragment_kind": "START",
-      "page": 8,
+      "page": 10,
       "page_intent_id": "PI-TRANSFER-03-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -161,7 +161,7 @@
     {
       "content_ref": "TRANSFER-04",
       "fragment_kind": "START",
-      "page": 9,
+      "page": 11,
       "page_intent_id": "PI-TRANSFER-04",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -170,31 +170,31 @@
       "y1": 799.89
     },
     {
-      "content_ref": "TRANSFER-04",
+      "content_ref": "TRANSFER-04-SUPPORT",
       "fragment_kind": "START",
-      "page": 9,
-      "page_intent_id": "PI-TRANSFER-04",
+      "page": 12,
+      "page_intent_id": "PI-TRANSFER-04-SUPPORT",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 269.89,
-      "y1": 589.89
+      "y0": 483.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-04-CONDITION_EXCEPTION_GATE",
       "fragment_kind": "START",
-      "page": 9,
+      "page": 12,
       "page_intent_id": "PI-TRANSFER-04",
       "primitive": "CONDITION_EXCEPTION_GATE",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 107.89,
-      "y1": 273.89
+      "y0": 321.89,
+      "y1": 487.89
     },
     {
       "content_ref": "TRANSFER-04-SOLUTION",
       "fragment_kind": "START",
-      "page": 10,
+      "page": 13,
       "page_intent_id": "PI-TRANSFER-04-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -205,7 +205,7 @@
     {
       "content_ref": "TRANSFER-05",
       "fragment_kind": "START",
-      "page": 11,
+      "page": 14,
       "page_intent_id": "PI-TRANSFER-05",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -214,31 +214,31 @@
       "y1": 799.89
     },
     {
-      "content_ref": "TRANSFER-05",
+      "content_ref": "TRANSFER-05-SUPPORT",
       "fragment_kind": "START",
-      "page": 11,
-      "page_intent_id": "PI-TRANSFER-05",
+      "page": 15,
+      "page_intent_id": "PI-TRANSFER-05-SUPPORT",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 249.89,
-      "y1": 601.89
+      "y0": 451.89,
+      "y1": 799.89
     },
     {
       "content_ref": "TRANSFER-05-SPECIES_ROLE_MAP",
       "fragment_kind": "START",
-      "page": 11,
+      "page": 15,
       "page_intent_id": "PI-TRANSFER-05",
       "primitive": "SPECIES_ROLE_MAP",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 75.89,
-      "y1": 253.89
+      "y0": 277.89,
+      "y1": 455.89
     },
     {
       "content_ref": "TRANSFER-05-SOLUTION",
       "fragment_kind": "START",
-      "page": 12,
+      "page": 16,
       "page_intent_id": "PI-TRANSFER-05-SOLUTION",
       "primitive": "TEXT_BLOCK",
       "x0": 42.0,
@@ -248,7 +248,7 @@
     }
   ],
   "orphan_continuations": 0,
-  "page_count": 12,
+  "page_count": 16,
   "page_intents": [
     {
       "content_refs": [
@@ -269,9 +269,10 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-01",
       "physical_pages": [
-        2
+        2,
+        3
       ],
-      "split": false
+      "split": true
     },
     {
       "content_refs": [
@@ -279,6 +280,17 @@
       ],
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-01-SOLUTION",
+      "physical_pages": [
+        4
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "TRANSFER-01-SUPPORT"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-TRANSFER-01-SUPPORT",
       "physical_pages": [
         3
       ],
@@ -293,8 +305,8 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-02",
       "physical_pages": [
-        4,
-        5
+        5,
+        6
       ],
       "split": true
     },
@@ -304,6 +316,17 @@
       ],
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-02-SOLUTION",
+      "physical_pages": [
+        7
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "TRANSFER-02-SUPPORT"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-TRANSFER-02-SUPPORT",
       "physical_pages": [
         6
       ],
@@ -317,9 +340,10 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-03",
       "physical_pages": [
-        7
+        8,
+        9
       ],
-      "split": false
+      "split": true
     },
     {
       "content_refs": [
@@ -328,7 +352,18 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-03-SOLUTION",
       "physical_pages": [
-        8
+        10
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "TRANSFER-03-SUPPORT"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-TRANSFER-03-SUPPORT",
+      "physical_pages": [
+        9
       ],
       "split": false
     },
@@ -340,9 +375,10 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-04",
       "physical_pages": [
-        9
+        11,
+        12
       ],
-      "split": false
+      "split": true
     },
     {
       "content_refs": [
@@ -351,7 +387,18 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-04-SOLUTION",
       "physical_pages": [
-        10
+        13
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "TRANSFER-04-SUPPORT"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-TRANSFER-04-SUPPORT",
+      "physical_pages": [
+        12
       ],
       "split": false
     },
@@ -363,9 +410,10 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-05",
       "physical_pages": [
-        11
+        14,
+        15
       ],
-      "split": false
+      "split": true
     },
     {
       "content_refs": [
@@ -374,7 +422,18 @@
       "continuation_pages": [],
       "page_intent_id": "PI-TRANSFER-05-SOLUTION",
       "physical_pages": [
-        12
+        16
+      ],
+      "split": false
+    },
+    {
+      "content_refs": [
+        "TRANSFER-05-SUPPORT"
+      ],
+      "continuation_pages": [],
+      "page_intent_id": "PI-TRANSFER-05-SUPPORT",
+      "physical_pages": [
+        15
       ],
       "split": false
     }
@@ -394,8 +453,7 @@
       "orphan_continuation": false,
       "page": 2,
       "semantic_content_refs": [
-        "TRANSFER-01",
-        "TRANSFER-01-FORMULA_ANATOMY_VIEW"
+        "TRANSFER-01"
       ]
     },
     {
@@ -403,13 +461,22 @@
       "orphan_continuation": false,
       "page": 3,
       "semantic_content_refs": [
-        "TRANSFER-01-SOLUTION"
+        "TRANSFER-01-FORMULA_ANATOMY_VIEW",
+        "TRANSFER-01-SUPPORT"
       ]
     },
     {
       "bounds_violations": 0,
       "orphan_continuation": false,
       "page": 4,
+      "semantic_content_refs": [
+        "TRANSFER-01-SOLUTION"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 5,
       "semantic_content_refs": [
         "TRANSFER-02",
         "TRANSFER-02-SOURCE-FIGURE"
@@ -418,17 +485,10 @@
     {
       "bounds_violations": 0,
       "orphan_continuation": false,
-      "page": 5,
-      "semantic_content_refs": [
-        "TRANSFER-02-PARTICLE_MODEL_VIEW"
-      ]
-    },
-    {
-      "bounds_violations": 0,
-      "orphan_continuation": false,
       "page": 6,
       "semantic_content_refs": [
-        "TRANSFER-02-SOLUTION"
+        "TRANSFER-02-PARTICLE_MODEL_VIEW",
+        "TRANSFER-02-SUPPORT"
       ]
     },
     {
@@ -436,8 +496,7 @@
       "orphan_continuation": false,
       "page": 7,
       "semantic_content_refs": [
-        "TRANSFER-03",
-        "TRANSFER-03-CONSERVATION_LEDGER"
+        "TRANSFER-02-SOLUTION"
       ]
     },
     {
@@ -445,7 +504,7 @@
       "orphan_continuation": false,
       "page": 8,
       "semantic_content_refs": [
-        "TRANSFER-03-SOLUTION"
+        "TRANSFER-03"
       ]
     },
     {
@@ -453,8 +512,8 @@
       "orphan_continuation": false,
       "page": 9,
       "semantic_content_refs": [
-        "TRANSFER-04",
-        "TRANSFER-04-CONDITION_EXCEPTION_GATE"
+        "TRANSFER-03-CONSERVATION_LEDGER",
+        "TRANSFER-03-SUPPORT"
       ]
     },
     {
@@ -462,7 +521,7 @@
       "orphan_continuation": false,
       "page": 10,
       "semantic_content_refs": [
-        "TRANSFER-04-SOLUTION"
+        "TRANSFER-03-SOLUTION"
       ]
     },
     {
@@ -470,14 +529,47 @@
       "orphan_continuation": false,
       "page": 11,
       "semantic_content_refs": [
-        "TRANSFER-05",
-        "TRANSFER-05-SPECIES_ROLE_MAP"
+        "TRANSFER-04"
       ]
     },
     {
       "bounds_violations": 0,
       "orphan_continuation": false,
       "page": 12,
+      "semantic_content_refs": [
+        "TRANSFER-04-CONDITION_EXCEPTION_GATE",
+        "TRANSFER-04-SUPPORT"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 13,
+      "semantic_content_refs": [
+        "TRANSFER-04-SOLUTION"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 14,
+      "semantic_content_refs": [
+        "TRANSFER-05"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 15,
+      "semantic_content_refs": [
+        "TRANSFER-05-SPECIES_ROLE_MAP",
+        "TRANSFER-05-SUPPORT"
+      ]
+    },
+    {
+      "bounds_violations": 0,
+      "orphan_continuation": false,
+      "page": 16,
       "semantic_content_refs": [
         "TRANSFER-05-SOLUTION"
       ]
@@ -493,62 +585,78 @@
       "page": 2
     },
     {
-      "label": "EXT01 solution",
+      "label": "EXT01 support",
       "page": 3
     },
     {
-      "label": "EXT02 attempt",
+      "label": "EXT01 solution",
       "page": 4
     },
     {
-      "label": "Question 2",
+      "label": "EXT02 attempt",
       "page": 5
     },
     {
-      "label": "EXT02 solution",
+      "label": "EXT02 support",
       "page": 6
     },
     {
-      "label": "EXT03 attempt",
+      "label": "EXT02 solution",
       "page": 7
     },
     {
-      "label": "EXT03 solution",
+      "label": "EXT03 attempt",
       "page": 8
     },
     {
-      "label": "EXT04 attempt",
+      "label": "EXT03 support",
       "page": 9
     },
     {
-      "label": "EXT04 solution",
+      "label": "EXT03 solution",
       "page": 10
     },
     {
-      "label": "EXT05 attempt",
+      "label": "EXT04 attempt",
       "page": 11
     },
     {
-      "label": "EXT05 solution",
+      "label": "EXT04 support",
       "page": 12
+    },
+    {
+      "label": "EXT04 solution",
+      "page": 13
+    },
+    {
+      "label": "EXT05 attempt",
+      "page": 14
+    },
+    {
+      "label": "EXT05 support",
+      "page": 15
+    },
+    {
+      "label": "EXT05 solution",
+      "page": 16
     }
   ],
   "realized_primitives": [
     {
-      "accessibility_text": "Annotated chemical formula with symbol, coefficient, subscript and charge distinguished. Chemical entities: Fe³⁺, SO₄²⁻.",
+      "accessibility_text": "Annotated chemical formula with symbol, coefficient, subscript and charge distinguished. Chemical entities: 2−, CaCl₂, Fe³⁺, SO₄²⁻.",
       "content_ref": "TRANSFER-01-FORMULA_ANATOMY_VIEW",
-      "page": 2,
+      "page": 3,
       "primitive": "FORMULA_ANATOMY_VIEW",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 197.89,
-      "y1": 309.89
+      "y0": 399.89,
+      "y1": 511.89
     },
     {
       "accessibility_text": "Source particle-count figure.",
       "content_ref": "TRANSFER-02-SOURCE-FIGURE",
-      "page": 4,
+      "page": 5,
       "primitive": "PARTICLE_MODEL_VIEW",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
@@ -559,46 +667,46 @@
     {
       "accessibility_text": "Particle model with composition and count taken only from source semantic data. Chemical entities: H₂O.",
       "content_ref": "TRANSFER-02-PARTICLE_MODEL_VIEW",
-      "page": 5,
+      "page": 6,
       "primitive": "PARTICLE_MODEL_VIEW",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 677.89,
-      "y1": 799.89
+      "y0": 377.89,
+      "y1": 499.89
     },
     {
       "accessibility_text": "Conservation ledger showing the required before-and-after bookkeeping. Chemical entities: 2H₂ + O₂ → 2H₂O.",
       "content_ref": "TRANSFER-03-CONSERVATION_LEDGER",
-      "page": 7,
+      "page": 9,
       "primitive": "CONSERVATION_LEDGER",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 185.89,
-      "y1": 309.89
+      "y0": 387.89,
+      "y1": 511.89
     },
     {
       "accessibility_text": "Decision gate showing when a default rule applies and when a condition or exception overrides it. Chemical entities: A → B. Conditions/exceptions: heat.",
       "content_ref": "TRANSFER-04-CONDITION_EXCEPTION_GATE",
-      "page": 9,
+      "page": 12,
       "primitive": "CONDITION_EXCEPTION_GATE",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 117.89,
-      "y1": 269.89
+      "y0": 331.89,
+      "y1": 483.89
     },
     {
-      "accessibility_text": "Species role map separating changing reactants, spectators and products. Chemical entities: Zn + Cu²⁺ → Zn²⁺ + Cu.",
+      "accessibility_text": "Species role map separating changing reactants, spectators and products. Chemical entities: 2+, Zn + Cu²⁺ → Zn²⁺ + Cu.",
       "content_ref": "TRANSFER-05-SPECIES_ROLE_MAP",
-      "page": 11,
+      "page": 15,
       "primitive": "SPECIES_ROLE_MAP",
       "validated_by": "MasterTemplates.VisualSemanticValidator",
       "x0": 42.0,
       "x1": 553.28,
-      "y0": 85.89,
-      "y1": 249.89
+      "y0": 287.89,
+      "y1": 451.89
     }
   ],
   "schema_version": "1.0.0"

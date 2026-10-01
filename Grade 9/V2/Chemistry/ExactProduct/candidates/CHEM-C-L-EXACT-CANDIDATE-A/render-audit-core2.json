@@ -1,8 +1,9 @@
 {
-  "artifact_sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad",
+  "artifact_sha256": "bdf7bcf3d65542a08a6f9661a8729a48d00d4bb692624535d0d2d26342d0a334",
   "audit_id": "CHEM-C-L-AUDIT-CORE2",
   "checks": {
     "ACTUAL_PLACEMENT_EVIDENCE": "PASS",
+    "ATTEMPT_BEFORE_SUPPORT": "PASS",
     "LEARNER_IDENTIFIER_SCAN": "PASS",
     "MIN_FONT": "PASS",
     "OFF_PAGE_TEXT": "PASS",

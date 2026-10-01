@@ -2,71 +2,71 @@
   "ai_pre_review_findings": [],
   "ai_pre_review_state": "PASS",
   "artifact_sha256": {
-    "CORE_STUDY_GUIDE": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1",
-    "EXAMSIDE_SOLUTION_TRANSFER_BOOK": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+    "CORE_STUDY_GUIDE": "0941ae70b41783715cf7ca5b3a371fd8fadc1da180ad7fcde98592646faa6325",
+    "EXAMSIDE_SOLUTION_TRANSFER_BOOK": "bdf7bcf3d65542a08a6f9661a8729a48d00d4bb692624535d0d2d26342d0a334"
   },
-  "candidate_package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "candidate_package_digest": "76b750ba70231f114fc665d2ce69cb5d1b6fae2a9745c113061ab3d779792562",
   "candidate_ref": "CHEM-C-L-EXACT-CANDIDATE-A",
-  "cold_start_report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "cold_start_report_digest": "f5f21d778400584911e48a0bd96f17da6b2b4e399f84456d41e6e8db90403e11",
   "files": [
     {
-      "bytes": 1475,
+      "bytes": 1809,
       "path": "ai-pre-review.json",
       "role": "AI_PRE_REVIEW",
-      "sha256": "50cd8a85591983f65f15a2f7be4a34bd0a870d9a1e3f5657b997f79fb46a72b6"
+      "sha256": "16e90a82b4d0e89c1d6e584b678b6184c1280d95ec0ba7d86cab7b8f34f7223f"
     },
     {
-      "bytes": 75621,
+      "bytes": 75555,
       "path": "cold-start-report.json",
       "role": "COLD_START_REPORT",
-      "sha256": "1cd96dfaa1a9803fef6fab1ca089e2562f49b7771e4adaed159b6c0a9960dba3"
+      "sha256": "b41a20249621796ac2b8ef73f9525d8bdd78006f67f695a1f57b996420a6629f"
     },
     {
-      "bytes": 133407,
+      "bytes": 152380,
       "path": "core-study-guide.pdf",
       "role": "CORE_STUDY_GUIDE_PDF",
-      "sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1"
+      "sha256": "0941ae70b41783715cf7ca5b3a371fd8fadc1da180ad7fcde98592646faa6325"
     },
     {
-      "bytes": 5875,
+      "bytes": 5927,
       "path": "exact-product-candidate.json",
       "role": "EXACT_PRODUCT_CANDIDATE",
-      "sha256": "3665942fc247ed04713768241847cce4edf5a3e9fb569a5c0dd32b7069eeb342"
+      "sha256": "bc68f070246c9a7f4ef9e2a529da7e59a8a35fb1c7afe3e7cb10e7426e834c8d"
     },
     {
-      "bytes": 65704,
+      "bytes": 68106,
       "path": "examside-solution-transfer-book.pdf",
       "role": "EXAMSIDE_SOLUTION_TRANSFER_BOOK_PDF",
-      "sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+      "sha256": "bdf7bcf3d65542a08a6f9661a8729a48d00d4bb692624535d0d2d26342d0a334"
     },
     {
-      "bytes": 61388,
+      "bytes": 66700,
       "path": "physical-page-map-core1.json",
       "role": "PHYSICAL_PAGE_MAP_CORE1",
-      "sha256": "eddea37acea3a8436088c249a621f4406d767c0fbdeca69483a47d36e66dc6a9"
+      "sha256": "1bb71cf7824f331c141612745c90cdde6c8117b05a7a2d2d6531973588200f61"
     },
     {
-      "bytes": 14227,
+      "bytes": 16453,
       "path": "physical-page-map-core2.json",
       "role": "PHYSICAL_PAGE_MAP_CORE2",
-      "sha256": "173e24d7e277f91983bc56900c33ca658f9d8d75e4cba6635c248680becda3f2"
+      "sha256": "5d9c08b8010e3f75412b68082499c2471845dfae7b5fb3dbac8e5a1007528e24"
     },
     {
       "bytes": 417,
       "path": "render-audit-core1.json",
       "role": "RENDER_AUDIT_CORE1",
-      "sha256": "72e98916272ea095ce3ee04eead3351692b69b3458db086bf042af5c13e0f6b0"
+      "sha256": "1c31c6d43b975301509dcb13c6115797ccc08316b72da088197fcc9d80b4eb6f"
     },
     {
-      "bytes": 416,
+      "bytes": 454,
       "path": "render-audit-core2.json",
       "role": "RENDER_AUDIT_CORE2",
-      "sha256": "b1dcb5ee92f3059974a9867c66beef3653b9a737ac09f45f62379dcc43ade678"
+      "sha256": "b8c0f0bf9b003d9e269613390d5b0782020700cb436179382b957ceb76dd93bc"
     }
   ],
   "manifest_id": "CHEM-C-L-FROZEN-CHEM-C-L-EXACT-CANDIDATE-A",
   "note": "Durable copy of the exact reviewed bytes. Engineering custody only; no human review of any kind is recorded or implied by this manifest.",
-  "package_digest": "ab64a8b44c527e836f5abbed1c7e133f21f1ec0a4a7437861b4462efd7ed990b",
+  "package_digest": "17e8e3c93f1e999ee0b1ca9e2e91f3817203981161c5d55671d53e503b824d83",
   "pdfs_included": true,
   "quality_states": {
     "ASSESSMENT_DESIGN": "PENDING",

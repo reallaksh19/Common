@@ -1,35 +1,35 @@
 {
   "artifacts": [
     {
-      "page_count": 37,
+      "page_count": 46,
       "path": "core-study-guide.pdf",
-      "physical_page_map_digest": "04190c459898d5b29411267faa5f6757da7fdc4514c77de5702b87c4a686e378",
+      "physical_page_map_digest": "73526ee5936ac4c3f4aaffa7bc7f70a9490d7b4252b3ebcaa3e3e3975210724b",
       "product_id": "CORE_STUDY_GUIDE",
-      "render_audit_digest": "e7e0c77db8f451f5c626d32fb4502e8170014de50dd2e66118c8b9f627ef7249",
+      "render_audit_digest": "09a40f86ad880e2c9ca00ac0e5a73c4bb459c46d26905960253112a929115c95",
       "required_sections": [
         "MAIN_TEACHING",
         "APPENDIX_A_CORE_PRACTICE",
         "APPENDIX_B_CORE_SOLUTIONS",
         "APPENDIX_C_PRINTABLE_HANDOUT"
       ],
-      "sha256": "2d5e86fdbcd647494061786042f7089765142f67b11c84983c1a3ceda01f11f1"
+      "sha256": "0941ae70b41783715cf7ca5b3a371fd8fadc1da180ad7fcde98592646faa6325"
     },
     {
-      "page_count": 12,
+      "page_count": 16,
       "path": "examside-solution-transfer-book.pdf",
-      "physical_page_map_digest": "25467ce5fe50e3bac545f00fa6b52c977215ebcd85923c584a6bfd15989b49dd",
+      "physical_page_map_digest": "e0459a7f73dc2ecec8a05fa5c27fa6976a91772e03b3a8cb2fc9f95660260ffc",
       "product_id": "EXAMSIDE_SOLUTION_TRANSFER_BOOK",
-      "render_audit_digest": "fec782a4afd25b4600af78c691920a3adde89c72aec4db54a7211978d5bf3def",
+      "render_audit_digest": "87c6afdc359a3381ff292356d0930eba0b2074e4c1a28586fe32fa2fc6260306",
       "required_sections": [
         "TRANSFER_QUESTIONS",
         "COMPLETE_SOLUTIONS"
       ],
-      "sha256": "ca164b20ae1e3f4310bb35e8689081f774564bfe30c75537881dbeb211994aad"
+      "sha256": "bdf7bcf3d65542a08a6f9661a8729a48d00d4bb692624535d0d2d26342d0a334"
     }
   ],
   "candidate_class": "CURRENT_COLD_START",
   "candidate_id": "CHEM-C-L-EXACT-CANDIDATE-A",
-  "cold_start_report_digest": "5ddcc6f3f5cc110a39d327432d771eb6c2e6f7e558214e4c2284f25d14e4f3e2",
+  "cold_start_report_digest": "f5f21d778400584911e48a0bd96f17da6b2b4e399f84456d41e6e8db90403e11",
   "cold_start_report_ref": "CHEM-C-L-EXACT-RUN-A",
   "input_custody": {
     "corpus_digest": "dea4da5ef0a10dcb214d5b1eef4cd71aa0ba2e6794ef1296ca831e4bcd94060d",
@@ -41,9 +41,12 @@
     "actual_placement_evidence": true,
     "answer_separation_pass": true,
     "ascii_chemistry_leaks": 0,
+    "attempt_before_support_pass": true,
     "broken_internal_links": 0,
     "collision_count": 0,
-    "core1_instructional_depth": "FULL_INSTRUCTIONAL",
+    "core1_instructional_depth": "SUMMARY_LEVEL",
+    "core1_practice_instance_closure_pass": true,
+    "core1_solution_instance_closure_pass": true,
     "duplicate_primary_placements": 0,
     "eligible_external_placed_unique": 5,
     "eligible_external_total": 5,
@@ -89,7 +92,6 @@
     "teaching_primitive_kinds_selected": [
       "APPARATUS_METHOD_FLOW",
       "CHARGE_SUBSCRIPT_CONTRAST",
-      "COEFFICIENT_SUBSCRIPT_CONTRAST",
       "CONDITION_EXCEPTION_GATE",
       "CONSERVATION_LEDGER",
       "EVIDENCE_CLAIM_REASONING_CHAIN",
@@ -104,28 +106,26 @@
       "RULE_PRIORITY_LADDER",
       "SPECIES_ROLE_MAP"
     ],
-    "teaching_primitives_drawn": 47,
-    "teaching_primitives_label_only": [
-      "COEFFICIENT_SUBSCRIPT_CONTRAST"
-    ],
+    "teaching_primitives_drawn": 48,
+    "teaching_primitives_label_only": [],
     "visual_semantic_validator_ref": "MasterTemplates.VisualSemanticValidator",
     "visual_usable_actual_size": true,
     "wrong_external_source_uris": 0
   },
-  "package_digest": "234060ba08215a3b3b845b47bf3ef501acfebfffd3452943c7b1e9fdf38c540c",
+  "package_digest": "76b750ba70231f114fc665d2ce69cb5d1b6fae2a9745c113061ab3d779792562",
   "schema_version": "1.0.0",
   "semantic_custody": {
-    "appendix_a_semantic_digest": "032c2b765a844654985437b7f74ea2090449bcc44ba82f894f6f689c13fd4506",
-    "appendix_b_semantic_digest": "1759b7506d3fd2be5a9de2dd43e832d61232d63dbbe566803df1397da513ec07",
+    "appendix_a_semantic_digest": "e998c3cc7e90ab245732b82bf4fea7dd163f7be34ead3ef49f9ce389f4c5f93e",
+    "appendix_b_semantic_digest": "fff7edf38a93569ac18c645111c00d2a72020d05d326be4372b2083cb87c1580",
     "appendix_c_semantic_digest": "68c9c485d2dd522c062c0f6063d56f853b182e78c036e21b1d74db4c46ae9b24",
     "assessment_scope_digest": "911b328836ea075344ffa45e7479a7ca1126575958d98b5415c6c98c7d961f95",
-    "core1_semantic_digest": "63d96f3630619534e0b786356fe91e1aa026a0c53fad4c2315d4487073103c33",
-    "core2_semantic_digest": "b7dbbc8ec061341292e17477251eb92718a44e849f5445a62e213a8825c21036",
-    "coverage_closure_digest": "296148adb18c05c3672a10c1190a09ddd6836c8e13450c1b53a3d0c85ec8adbf",
+    "core1_semantic_digest": "b80821e6afb342d817572f69e2c8b2862313039476f20b61a1c1e78e6bae4999",
+    "core2_semantic_digest": "fb70ad7ea08c868f4377dc2764a156e82db374cf7a52036a590a27852b06ade0",
+    "coverage_closure_digest": "b932358fe24ce752e6c72b732d16cd1d1c8acec27759b9b860dd81e31cf8e54a",
     "learner_study_model_digest": "13ef84201a8043361f05c077109583e013f8fd73e9a9d1ab84c27ab370cb4b8d",
     "pck_authority_digest": "e1c340016e6fbcb4b9e46a1203d6be7bb3fc4e330edbb6cca6caed61e53d1463",
     "problem_family_authority_digest": "2738d85f2de15294b9db090cc389d8d7a981aa3a1fc28f75d7d2713bd461a9d1",
-    "representation_bundle_digest": "e221bdc1e33fe47dd50d0edc6857a2673b3fe4ebc69b53a79447fb9d8c30f08b",
+    "representation_bundle_digest": "634af5bbd71ac700b84b5be1bf9497e7f06ac230f525c7f7ea06d7a51769e19a",
     "source_obligation_ledger_digest": "8f98461e5ee43b753762d0b6aea96f6434fe14c8a20003ac6285a30509e9f364",
     "teaching_primitive_registry_digest": "36dbc9a4e08c80e1ce56500ea738ef673b77394b2114d0cf7684fb07d79571d6"
   },
