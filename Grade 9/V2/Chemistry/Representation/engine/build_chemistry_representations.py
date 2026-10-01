@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, copy, hashlib, json
+import argparse, copy, hashlib, json, re
 from collections import Counter
 from pathlib import Path
 
@@ -14,6 +14,36 @@ def load(p): return json.loads(Path(p).read_text(encoding='utf-8'))
 def fail(code,detail=''): raise ValueError(f'{code}: {detail}' if detail else code)
 def uniq(xs): return sorted(set(xs))
 def primitive_supports_capability(p,cap): return cap in p['capability_refs'] or p['primitive_id'] in GENERIC_INSTANCE_PRIMITIVES
+
+INSTANCE_TOKEN_FIELDS=('formulas','charges','coefficients','structures')
+def instance_authority(lesson):
+    for key in ('worked_example','independent_attempt','guided_attempt','faded_attempt'):
+        obj=lesson.get(key)
+        if obj and obj.get('instance_authority'):
+            return obj['instance_authority']
+    return None
+
+def instance_tokens(lesson,record):
+    auth=instance_authority(lesson) or {}
+    rep=auth.get('representation') or {}
+    tokens=[]
+    for key in INSTANCE_TOKEN_FIELDS:
+        tokens.extend(str(x) for x in rep.get(key,[]) if str(x).strip())
+    return uniq(list(record['chemical_entity_species_obligations'])+tokens)
+
+_SUBSCRIPT_CHARS=set('₀₁₂₃₄₅₆₇₈₉')
+def _has_subscript(token): return any(ch in _SUBSCRIPT_CHARS for ch in str(token))
+def _has_leading_coefficient(token):
+    return bool(re.match(r'^\s*\d+\s*[A-Za-z(]',str(token)))
+
+def primitive_applicable(pid,lesson,record):
+    tokens=instance_tokens(lesson,record)
+    if pid=='COEFFICIENT_SUBSCRIPT_CONTRAST':
+        return any(_has_leading_coefficient(t) and _has_subscript(t) for t in tokens)
+    if pid=='CHARGE_SUBSCRIPT_CONTRAST':
+        charge_marks=('⁺','⁻','+','-')
+        return any(_has_subscript(t) and any(m in str(t) for m in charge_marks) for t in tokens)
+    return True
 
 def validate_registry(reg):
     if reg.get('subject')!='CHEMISTRY': fail('VISUAL_WITHOUT_CAPABILITY_BINDING','registry subject')
@@ -51,11 +81,12 @@ def primitive_ids_for(lesson,record,profile):
     else: ids=ids[:profile['probe_mode_max_primary_primitives']]
     out=[]
     for x in ids:
-        if x not in out: out.append(x)
+        if x not in out and primitive_applicable(x,lesson,record): out.append(x)
+    if not out: fail('VISUAL_WITHOUT_CAPABILITY_BINDING',record['capability_ref']+':no applicable source-authorized primitive')
     return out
 
 def make_spec(i,primitive,lesson,record,notation):
-    entities=list(record['chemical_entity_species_obligations']); conditions=list(record['condition_exception_obligations']); roles=[]
+    entities=instance_tokens(lesson,record); conditions=list(record['condition_exception_obligations']); roles=[]
     if primitive['primitive_id']=='SPECIES_ROLE_MAP': roles=['REACTANT_SPECIES','CHANGING_SPECIES','SPECTATOR_IF_PRESENT','PRODUCT_SPECIES']
     semantic={'source_obligation_refs':list(record['source_obligation_refs']),'assessment_question_refs':list(record['assessment_question_refs']),'representation_levels':list(record['representation_level_obligations']),'representation_requirements':list(record['representation_requirement_obligations']),'chemical_entities':entities,'condition_exception_context':conditions,'verification_requirements':list(record['verification_requirements'])}
     contrast=lesson['lesson_id'] if primitive['primitive_id']=='MINIMAL_CHEMISTRY_CONTRAST' else None
@@ -93,10 +124,10 @@ def validate_bundle(bundle,core1_plan,study_model,registry,profile,notation):
         grouped[cap].append(s); p=by.get(s['primitive_id'])
         if not p or not primitive_supports_capability(p,cap): fail('VISUAL_WITHOUT_CAPABILITY_BINDING',s['primitive_id'])
         if s['instructional_job']!=p['instructional_job'] or s['attention_target']!=p['attention_target']: fail('VISUAL_WITHOUT_INSTRUCTIONAL_JOB',s['representation_id'])
-        r=recs[cap]
-        if set(s['chemical_entities'])!=set(r['chemical_entity_species_obligations']) or set(s['source_semantic_data']['chemical_entities'])!=set(r['chemical_entity_species_obligations']): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id'])
+        r=recs[cap]; allowed_entities=set(instance_tokens(lessons[cap],r))
+        if set(s['chemical_entities'])!=allowed_entities or set(s['source_semantic_data']['chemical_entities'])!=allowed_entities: fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id'])
         if set(s['condition_exception_context'])!=set(r['condition_exception_obligations']) or set(s['source_semantic_data']['condition_exception_context'])!=set(r['condition_exception_obligations']): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id']+':condition')
-        if set(s['notation_tokens'])!=set(r['chemical_entity_species_obligations']): fail('FORMULA_OR_CHARGE_DRIFTS_FROM_SEMANTIC_DATA',s['representation_id'])
+        if set(s['notation_tokens'])!=allowed_entities: fail('FORMULA_OR_CHARGE_DRIFTS_FROM_SEMANTIC_DATA',s['representation_id'])
         if set(s['source_semantic_data']['source_obligation_refs'])!=set(r['source_obligation_refs']) or set(s['source_semantic_data']['assessment_question_refs'])!=set(r['assessment_question_refs']): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id']+':trace')
         if set(s['source_semantic_data']['representation_levels'])!=set(r['representation_level_obligations']) or set(s['source_semantic_data']['representation_requirements'])!=set(r['representation_requirement_obligations']): fail('RENDERER_INVENTS_UNDECLARED_CHEMISTRY_MEANING',s['representation_id']+':representation authority')
         if not set(p['renderer_constraints'])<=set(s['renderer_constraints']):
