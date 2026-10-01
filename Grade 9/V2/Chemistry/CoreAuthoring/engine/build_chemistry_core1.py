@@ -102,9 +102,36 @@ def _practice_prompt(cap,authority,problem_profile,stage):
             +problem_profile['stage_modifiers'][stage])
 
 def _expected_response(authority,record):
-    evidence=_representation_evidence(authority['representation'])
-    return ('Source-bound expected response: '+authority['content']+' '
-            +'Evidence to preserve: '+evidence+'.')
+    cap=record['capability_ref']; rep=authority['representation']
+    formulas=list(rep.get('formulas',[])); charges=list(rep.get('charges',[]))
+    conditions=list(rep.get('conditions',[])); observations=list(rep.get('observations',[])); figures=list(rep.get('figures',[]))
+    if cap=='CAP-CHECK-ATOM-CONSERVATION' and '2H₂ + O₂ → 2H₂O' in formulas:
+        answer='For 2H₂ + O₂ → 2H₂O, H is 4 atoms on each side and O is 2 atoms on each side, so atom conservation passes.'
+    elif cap=='CAP-PARSE-ION-CHARGE':
+        answer='In SO₄²⁻, the subscript 4 counts oxygen atoms while the superscript 2− is the overall ion charge. Do not turn the charge into a subscript or coefficient.'
+    elif cap=='CAP-READ-FORMULA':
+        answer='CaCl₂ contains Ca and Cl with a subscript 2 on Cl; SO₄²⁻ contains S and O with a subscript 4 on O and an overall 2− charge.'
+    elif cap=='CAP-PRESERVE-REACTION-CONDITION' and conditions:
+        answer='The recorded condition is '+', '.join(conditions)+'. It belongs with the reaction arrow/process and must remain present when A → B is read or rewritten.'
+    elif cap=='CAP-TRACK-REACTING-SPECIES' and formulas:
+        answer='Track Zn to Zn²⁺ and Cu²⁺ to Cu. The species identities and charge changes must be followed before any role label is assigned.'
+    elif cap=='CAP-ATTACH-SPECIES-ROLE' and formulas:
+        answer='The equation lets you track Zn → Zn²⁺ and Cu²⁺ → Cu, but this source instance does not name the requested role. A specific role label is therefore not authorized from the supplied source evidence alone.'
+    elif cap=='CAP-TRANSLATE-PARTICLE-SYMBOL':
+        answer='The authorized symbolic identity is H₂O. The source records a particle-water figure but no particle count here, so preserve H₂O and do not invent a count that is not supplied.'
+    elif cap=='CAP-SEPARATE-OBSERVATION-INFERENCE' and observations:
+        answer='Observation: '+observations[0]+'. The source does not identify the precipitate composition or mechanism here, so any further inference must remain explicitly bounded.'
+    elif cap=='CAP-CLASSIFY-CHANGE-EVIDENCE':
+        answer='The source distinguishes a state change from evidence for a new substance and records gas evolution/colour change as observations, but it does not supply one concrete event to classify. Do not invent a single process classification.'
+    elif cap=='CAP-CHECK-RULE-EXCEPTION':
+        answer='The explicit exception must be checked before the default rule is applied. Because the source does not state the exception content here, no more specific apply/withhold decision is authorized.'
+    elif cap=='CAP-READ-APPARATUS-METHOD' and figures:
+        answer='The source identifies a '+figures[0]+' figure, but it does not supply the target property or observation needed to justify a specific property-to-method conclusion. State that boundary rather than inventing one.'
+    elif cap=='CAP-VERIFY-CHEMICAL-REPRESENTATION':
+        answer='One authorized verification is to check that the same chemical species identity is preserved in the representation; then verify the stated result only after that check passes.'
+    else:
+        answer='The source evidence is insufficient for a more specific conclusion; preserve the recorded evidence and state the unresolved boundary.'
+    return 'Source-bound expected response: '+answer
 
 def attempt(cap,stage,prompt,record,problem_profile,lesson_id):
     return {'attempt_id':f'{lesson_id}-{stage}','support_stage':stage,'prompt':prompt+' '+problem_profile['stage_modifiers'][stage],'representation_spec':uniq(record['representation_level_obligations']+record['representation_requirement_obligations'])}
@@ -190,8 +217,15 @@ def validate_plan(plan,study_model,study_scope,pck_registry,profile,completeness
         if auth.get('authority_ref') not in allowed: fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',x['item_id']+':authority')
         if not auth.get('content') or not auth.get('source_locator') or len(auth.get('authority_digest',''))!=64: fail('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',x['item_id']+':content')
     if {x['item_ref'] for x in bsol}!={x['item_id'] for x in aitems} or len(bsol)!=len(aitems): fail('APPENDIX_B_INCOMPLETE')
+    item_by_id={x['item_id']:x for x in aitems}
     for x in bsol:
         if not x['reasoning_steps'] or not x['verification_steps']: fail('CHEMICAL_CHECK_REDUCED_TO_ANSWER_ONLY',x['solution_id'])
+        item=item_by_id.get(x['item_ref'])
+        if item is None or x.get('instance_digest')!=item.get('instance_digest'):
+            fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',x['solution_id']+': instance digest')
+        generic=('Source-bound expected response: '+item['instance_authority']['content']+' Evidence to preserve:')
+        if x.get('final_response','').startswith(generic):
+            fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND',x['solution_id']+': generic source restatement')
         item=item_by.get(x['item_ref'])
         if not item or x.get('instance_digest')!=item.get('instance_digest'): fail('APPENDIX_B_INSTANCE_MISMATCH',x['solution_id'])
         if not x.get('final_response') or x['final_response'].startswith('A complete response states the relevant chemical evidence'): fail('APPENDIX_B_GENERIC_SOLUTION',x['solution_id'])
