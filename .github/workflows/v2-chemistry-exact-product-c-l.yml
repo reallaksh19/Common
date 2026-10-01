@@ -57,12 +57,18 @@ jobs:
           python 'Grade 9/V2/Chemistry/ExactProduct/validator/validate_chemistry_custody.py'
           --out /tmp/chemistry-c-l-exact
           --policy 'Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json'
+      - name: Verify committed durable candidate integrity
+        run: >-
+          python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
+          --verify 'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
       - name: Rebuild durable candidate from the exact reviewed bytes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/v2-chemistry-learning-blueprint-v4-bucket-conditioning'
         run: >-
           python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
           --source /tmp/chemistry-c-l-exact
           --repo-root .
       - name: Verify rebuilt durable candidate manifest
+        if: github.event_name == 'push' && github.ref == 'refs/heads/v2-chemistry-learning-blueprint-v4-bucket-conditioning'
         run: >-
           python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
           --verify 'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
@@ -80,6 +86,7 @@ jobs:
             git push origin HEAD:${GITHUB_REF_NAME}
           fi
       - name: Assert durable candidate matches the exact reviewed bytes
+        if: github.event_name == 'push' && github.ref == 'refs/heads/v2-chemistry-learning-blueprint-v4-bucket-conditioning'
         run: >-
           git diff --exit-code --
           'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
