@@ -61,6 +61,39 @@ class GenericChemistrySourceAuditTests(unittest.TestCase):
             lambda: validate(bad, self.registry),
         )
 
+    def test_claim_class_requires_matching_authority_layer(self):
+        bad = copy.deepcopy(self.audit)
+        target = next(
+            row
+            for row in bad["asset_bindings"]
+            if row["claim_class"] == "STANDARD_CHEMISTRY_DERIVED"
+        )
+        target["authority_layer_ids"] = ["SRC-NCERT-XI-SYLLABUS-REDOX"]
+        self.assert_code(
+            "CHEM_SOURCE_AUDIT_CLAIM_AUTHORITY_MISMATCH",
+            lambda: validate(bad, self.registry),
+        )
+
+        bad = copy.deepcopy(self.audit)
+        target = next(
+            row for row in bad["asset_bindings"] if row["claim_class"] == "SOURCE_DEFINED"
+        )
+        target["authority_layer_ids"] = ["SRC-STANDARD-REDOX-DERIVATION"]
+        self.assert_code(
+            "CHEM_SOURCE_AUDIT_CLAIM_AUTHORITY_MISMATCH",
+            lambda: validate(bad, self.registry),
+        )
+
+        bad = copy.deepcopy(self.audit)
+        target = next(
+            row for row in bad["asset_bindings"] if row["claim_class"] == "SOURCE_DEFINED"
+        )
+        target["claim_class"] = "AUTHORING_RECOMMENDATION"
+        self.assert_code(
+            "CHEM_SOURCE_AUDIT_CLAIM_AUTHORITY_MISMATCH",
+            lambda: validate(bad, self.registry),
+        )
+
     def test_missing_concept_binding_fails_complete_coverage(self):
         bad = copy.deepcopy(self.audit)
         bad["asset_bindings"] = [
