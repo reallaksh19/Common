@@ -117,27 +117,30 @@ def audit(candidate_path,core1_pdf,core2_pdf,out_review,page_map_core1=None,page
         findings.append('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED: no vector drawing operations in either product')
 
     # 3. attempt-before-support must be physically true in the rendered Core2 PDF
-    attempt_pages=0
-    support_pages=0
-    solution_pages=0
+    tags=[]
     for p in core2:
         text=p['text']
-        is_attempt='H0' in text and 'Attempt first' in text
-        has_support=any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start'])
-        has_solution='Complete solution' in text
-        if is_attempt:
-            attempt_pages+=1
-            if has_support or has_solution:
-                findings.append('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE: page %d' % p['page'])
-        if has_support:
-            support_pages+=1
-        if has_solution:
-            solution_pages+=1
-    attempt_before_support=(attempt_pages>0 and attempt_pages==support_pages==solution_pages
-                            and not any(x.startswith('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE') for x in findings))
-    if not attempt_before_support:
-        findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_PAGE_COUNT_MISMATCH: attempts=%d support=%d solutions=%d'
-                        % (attempt_pages,support_pages,solution_pages))
+        tags.append({
+            'page':p['page'],
+            'attempt':'H0' in text and 'Attempt first' in text,
+            'support':any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start']),
+            'solution':'Complete solution' in text,
+        })
+    attempts=[i for i,x in enumerate(tags) if x['attempt']]
+    attempt_pages=len(attempts)
+    support_pages=sum(1 for x in tags if x['support'])
+    solution_pages=sum(1 for x in tags if x['solution'])
+    attempt_before_support=bool(attempts)
+    for pos,start in enumerate(attempts):
+        if tags[start]['support'] or tags[start]['solution']:
+            findings.append('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE: page %d' % tags[start]['page'])
+            attempt_before_support=False
+        end=attempts[pos+1] if pos+1<len(attempts) else len(tags)
+        supports=[i for i in range(start+1,end) if tags[i]['support']]
+        solutions=[i for i in range(start+1,end) if tags[i]['solution']]
+        if not supports or not solutions or min(solutions)<=min(supports):
+            findings.append('CORE2_ATTEMPT_SUPPORT_SOLUTION_ORDER_FAILURE: attempt page %d' % tags[start]['page'])
+            attempt_before_support=False
 
     # 4. Core1 Appendix A/B must render concrete source-bound instances and responses
     core1_text='\n'.join(p['text'] for p in core1)
