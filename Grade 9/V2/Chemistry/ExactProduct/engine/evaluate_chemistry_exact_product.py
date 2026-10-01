@@ -68,6 +68,8 @@ def machine_validate(candidate,cold,policy,artifact_root='.',required_qc_refs=No
     checks=[
       (not e['answer_separation_pass'],'APPENDIX_A_B_ANSWER_SEPARATION_FAILURE'),
       (not e.get('attempt_before_support_pass',False),'CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE'),
+      (not e.get('core1_practice_instance_closure_pass',False),'CORE1_PRACTICE_INSTANCE_MISSING'),
+      (not e.get('core1_solution_instance_closure_pass',False),'CORE1_SOLUTION_NOT_INSTANCE_BOUND'),
       (e['handout_answer_leakage'],'HANDOUT_ANSWER_LEAKAGE'),
       (e['handout_scope_leakage'],'HANDOUT_SCOPE_LEAKAGE'),
       (not e['formula_typography_pass'],'FORMULA_SUBSCRIPT_SUPERSCRIPT_FAILURE'),
@@ -143,6 +145,8 @@ def build_release_decision(candidate,machine_gate,reviews,reference_comparison,p
         if not e['visual_usable_actual_size']: fail('VISUAL_UNUSABLE_AT_ACTUAL_OUTPUT_SIZE')
         if not e['hints_distinct_from_solution']: fail('HINTS_DUPLICATE_SOLUTION_BUT_MARKED_MATURE')
         if not e.get('attempt_before_support_pass',False): fail('CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE')
+        if not e.get('core1_practice_instance_closure_pass',False): fail('CORE1_PRACTICE_INSTANCE_MISSING')
+        if not e.get('core1_solution_instance_closure_pass',False): fail('CORE1_SOLUTION_NOT_INSTANCE_BOUND')
         quality['MATURE_DESIGN_QUALITY']='PASS'; classification=policy['mature_classification']; exit_code=0
     elif machine_gate['status']=='FAIL':
         quality['MATURE_DESIGN_QUALITY']='FAIL'; classification='VALIDATION_FAIL'; exit_code=1
