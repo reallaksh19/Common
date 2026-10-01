@@ -35,6 +35,34 @@ jobs:
           pdftotext -layout "$ROOT/core-study-guide.pdf" "$OUT/core1.txt"
           pdftotext -layout "$ROOT/examside-solution-transfer-book.pdf" "$OUT/core2.txt"
 
+          python - <<'PY'
+          import json, sys
+          from pathlib import Path
+          repo = Path(".").resolve()
+          chem = repo / "Grade 9/V2/Chemistry"
+          sys.path.insert(0, str(chem / "ColdStart" / "engine"))
+          from chemistry_cold_start_runner import run_cold_start
+          def load(p):
+              return json.loads(Path(p).read_text(encoding="utf-8"))
+          f = chem / "AssessmentIntake" / "fixtures"
+          report, internal = run_cold_start(
+              load(f / "mixed-chemistry-source.fixture.json"),
+              load(f / "mixed-chemistry-question-set.fixture.json"),
+              load(f / "mixed-chemistry-external-corpus.fixture.json"),
+              load(f / "mixed-chemistry-topic-scope.fixture.json"),
+              repo_root=repo,
+              run_id="CHEM-C-L-AUDIT-SEMANTICS",
+          )
+          out = Path("audit-export/meta")
+          for name, obj in {
+              "audit-study-model.json": internal["study_model"],
+              "audit-source-ledger.json": internal["source_ledger"],
+              "audit-core1.json": internal["core1"],
+              "audit-core2.json": internal["core2"],
+          }.items():
+              (out / name).write_text(json.dumps(obj, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          PY
+
           pdftoppm -png -r 144 "$ROOT/core-study-guide.pdf" "$OUT/core1/page"
           pdftoppm -png -r 144 "$ROOT/examside-solution-transfer-book.pdf" "$OUT/core2/page"
 
