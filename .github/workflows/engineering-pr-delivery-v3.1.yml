@@ -138,7 +138,8 @@ jobs:
 
       - name: V3.2 bootstrap not applicable
         if: steps.bootstrap.outputs.run_candidate != 'true'
-        run: echo "NOT_APPLICABLE: dedicated V3.2 workflow is already on the base, or V3.2 candidate paths are unchanged."
+        run: |
+          echo "NOT_APPLICABLE: dedicated V3.2 workflow is already on the base, or V3.2 candidate paths are unchanged."
 
       - name: Set up Python
         if: steps.bootstrap.outputs.run_candidate == 'true'
