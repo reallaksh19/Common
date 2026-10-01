@@ -105,27 +105,30 @@ with tempfile.TemporaryDirectory() as td:
     # 19 TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED
     x=copy.deepcopy(c); x['machine_evidence']['teaching_primitive_kinds_realized']=['A']; x['machine_evidence']['teaching_primitives_label_only']=['B','C','D','E','F','G','H']; refresh_candidate(x)
     assert 'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED' in machine_validate(x,cr,policy,root)['failures']
-    # 20 PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE
+    # 20 selected visual may not remain label-only even when global realized-kind floor still passes
+    x=copy.deepcopy(c); x['machine_evidence']['teaching_primitives_label_only']=['H']; refresh_candidate(x)
+    assert 'TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED' in machine_validate(x,cr,policy,root)['failures']
+    # 21 PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE
     x=copy.deepcopy(c); x['machine_evidence']['actual_placement_evidence']=False; refresh_candidate(x)
     assert 'PLANNED_PLACEMENT_PRESENTED_AS_PHYSICAL_EVIDENCE' in machine_validate(x,cr,policy,root)['failures']
-    # 21 PLACEMENT_OUT_OF_PHYSICAL_BOUNDS
+    # 22 PLACEMENT_OUT_OF_PHYSICAL_BOUNDS
     x=copy.deepcopy(c); x['machine_evidence']['placement_bounds_violations']=2; refresh_candidate(x)
     assert 'PLACEMENT_OUT_OF_PHYSICAL_BOUNDS' in machine_validate(x,cr,policy,root)['failures']
-    # 22 ORPHAN_CONTINUATION_FRAGMENT
+    # 23 ORPHAN_CONTINUATION_FRAGMENT
     x=copy.deepcopy(c); x['machine_evidence']['orphan_continuations']=1; refresh_candidate(x)
     assert 'ORPHAN_CONTINUATION_FRAGMENT' in machine_validate(x,cr,policy,root)['failures']
-    # 23 a mature decision cannot survive a learner-facing identifier leak
+    # 24 a mature decision cannot survive a learner-facing identifier leak
     x=copy.deepcopy(c); x['machine_evidence']['learner_internal_identifier_leaks']=1; refresh_candidate(x); r2=reviews(x)
     expect('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK',lambda: build_release_decision(x,{'status':'PASS','failures':[]},r2,ref(),policy))
-    # 24 CORE2_HINTS_VISIBLE_BEFORE_INDEPENDENT_ATTEMPT
+    # 25 CORE2_HINTS_VISIBLE_BEFORE_INDEPENDENT_ATTEMPT
     x=copy.deepcopy(c); x['machine_evidence']['attempt_before_support_pass']=False; refresh_candidate(x)
     assert 'CORE2_SUPPORT_VISIBLE_ON_ATTEMPT_PAGE' in machine_validate(x,cr,policy,root)['failures']
-    # 25 CORE1_PRACTICE_WITHOUT_CONCRETE_AUTHORITY
+    # 26 CORE1_PRACTICE_WITHOUT_CONCRETE_AUTHORITY
     x=copy.deepcopy(c); x['machine_evidence']['core1_practice_instance_closure_pass']=False; refresh_candidate(x)
     assert 'CORE1_PRACTICE_INSTANCE_MISSING' in machine_validate(x,cr,policy,root)['failures']
-    # 26 CORE1_GENERIC_SOLUTION_MARKED_CLOSED
+    # 27 CORE1_GENERIC_SOLUTION_MARKED_CLOSED
     x=copy.deepcopy(c); x['machine_evidence']['core1_solution_instance_closure_pass']=False; refresh_candidate(x)
     assert 'CORE1_SOLUTION_NOT_INSTANCE_BOUND' in machine_validate(x,cr,policy,root)['failures']
 
-print('CHEMISTRY C-L exact-product falsifiers = 26 PASS')
+print('CHEMISTRY C-L exact-product falsifiers = 27 PASS')
 print('CHEMISTRY C-L machine gate = PASS; production release without authorized reviews = BLOCKED/2')
