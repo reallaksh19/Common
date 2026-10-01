@@ -65,6 +65,11 @@ with tempfile.TemporaryDirectory() as td:
     # 5 CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE
     x=copy.deepcopy(c); x['machine_evidence']['core1_instructional_depth']='SUMMARY_LEVEL'; r2,d2=rebind(x,dec)
     expect('CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE',lambda: validate_release_decision(d2,x,r2,policy))
+    # 5b a current summary-level Core1 must report its own falsifier at build time
+    x=copy.deepcopy(c); x['machine_evidence']['core1_instructional_depth']='SUMMARY_LEVEL'; refresh_candidate(x); r2=reviews(x)
+    mg2=machine_validate(x,cr,policy,root); assert mg2['status']=='PASS',mg2
+    expect('CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE',lambda: build_release_decision(x,mg2,r2,ref(),policy))
+
     # 6 MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED
     x=copy.deepcopy(c); x['machine_evidence']['macro_particle_symbolic_realized']=False; r2,d2=rebind(x,dec)
     expect('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED',lambda: validate_release_decision(d2,x,r2,policy))
