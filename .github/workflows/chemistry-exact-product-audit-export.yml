@@ -1,0 +1,50 @@
+name: Chemistry Exact Product Audit Export
+
+on:
+  push:
+    branches:
+      - audit/chemistry-exact-product-artifacts
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PDF inspection tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Render exact frozen learner products
+        shell: bash
+        run: |
+          set -euo pipefail
+          ROOT="Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A"
+          OUT="audit-export"
+          mkdir -p "$OUT/core1" "$OUT/core2" "$OUT/meta"
+
+          sha256sum "$ROOT/core-study-guide.pdf" "$ROOT/examside-solution-transfer-book.pdf" > "$OUT/meta/sha256.txt"
+          pdfinfo "$ROOT/core-study-guide.pdf" > "$OUT/meta/core1-pdfinfo.txt"
+          pdfinfo "$ROOT/examside-solution-transfer-book.pdf" > "$OUT/meta/core2-pdfinfo.txt"
+          pdffonts "$ROOT/core-study-guide.pdf" > "$OUT/meta/core1-fonts.txt"
+          pdffonts "$ROOT/examside-solution-transfer-book.pdf" > "$OUT/meta/core2-fonts.txt"
+          pdfimages -list "$ROOT/core-study-guide.pdf" > "$OUT/meta/core1-images.txt"
+          pdfimages -list "$ROOT/examside-solution-transfer-book.pdf" > "$OUT/meta/core2-images.txt"
+          pdftotext -layout "$ROOT/core-study-guide.pdf" "$OUT/core1.txt"
+          pdftotext -layout "$ROOT/examside-solution-transfer-book.pdf" "$OUT/core2.txt"
+
+          pdftoppm -png -r 144 "$ROOT/core-study-guide.pdf" "$OUT/core1/page"
+          pdftoppm -png -r 144 "$ROOT/examside-solution-transfer-book.pdf" "$OUT/core2/page"
+
+          test "$(find "$OUT/core1" -name 'page-*.png' | wc -l)" -eq 37
+          test "$(find "$OUT/core2" -name 'page-*.png' | wc -l)" -eq 12
+
+      - name: Upload exact render audit artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chemistry-exact-product-audit-export
+          path: audit-export/
+          if-no-files-found: error
+          retention-days: 7
