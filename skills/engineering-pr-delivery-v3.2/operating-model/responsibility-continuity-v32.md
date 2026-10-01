@@ -144,7 +144,7 @@ A successor lifecycle resets the count/trigger. This is continuity preparation, 
 `TASK_RESULT` adds:
 
 ```text
-RESULT_SCOPE: STEP | PRODUCT | RESPONSONSIBILITY
+RESULT_SCOPE: STEP | PRODUCT | RESPONSIBILITY
 COVERAGE: <declared denominator coverage>
 RESPONSIBILITY_COMPLETE: YES | NO | UNKNOWN
 ```
