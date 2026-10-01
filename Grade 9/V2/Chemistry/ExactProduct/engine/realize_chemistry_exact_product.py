@@ -556,6 +556,11 @@ def core1_instance_closure(core1):
         s.get('item_ref') in by_item
         and s.get('instance_digest')==by_item[s['item_ref']].get('instance_digest')
         and s.get('final_response','').startswith('Source-bound expected response:')
+        and not s.get('final_response','').startswith(
+            'Source-bound expected response: '
+            +by_item[s['item_ref']]['instance_authority']['content']
+            +' Evidence to preserve:'
+        )
         for s in solutions
     )
     return practice_ok,solution_ok
