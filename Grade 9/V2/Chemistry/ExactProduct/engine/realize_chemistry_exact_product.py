@@ -523,27 +523,24 @@ def preflight_pdf(path,expected_pages):
 def core2_attempt_before_support(path):
     import pymupdf
     doc=pymupdf.open(path)
-    attempts=0
-    supports=0
-    solutions=0
+    tagged=[]
     for page in doc:
         text=page.get_text('text')
-        is_attempt='H0' in text and 'Attempt first' in text
-        has_support=any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start'])
-        has_solution='Complete solution' in text
-        if is_attempt:
-            attempts+=1
-            if has_support or has_solution:
-                return False
-        if has_support:
-            supports+=1
-            if is_attempt or has_solution:
-                return False
-        if has_solution:
-            solutions+=1
-            if is_attempt:
-                return False
-    return attempts>0 and attempts==supports==solutions
+        tagged.append({
+            'attempt':'H0' in text and 'Attempt first' in text,
+            'support':any(token in text for token in ['H1 — Notice','H2 — Rule / model / representation','H3 — Start']),
+            'solution':'Complete solution' in text,
+        })
+    attempts=[i for i,x in enumerate(tagged) if x['attempt']]
+    if not attempts: return False
+    for pos,start in enumerate(attempts):
+        if tagged[start]['support'] or tagged[start]['solution']: return False
+        end=attempts[pos+1] if pos+1<len(attempts) else len(tagged)
+        support_pages=[i for i in range(start+1,end) if tagged[i]['support']]
+        solution_pages=[i for i in range(start+1,end) if tagged[i]['solution']]
+        if not support_pages or not solution_pages: return False
+        if min(solution_pages)<=min(support_pages): return False
+    return True
 
 def core1_instance_closure(core1):
     items=core1['appendices']['appendix_a']['items']
