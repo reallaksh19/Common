@@ -57,10 +57,32 @@ jobs:
           python 'Grade 9/V2/Chemistry/ExactProduct/validator/validate_chemistry_custody.py'
           --out /tmp/chemistry-c-l-exact
           --policy 'Grade 9/V2/Chemistry/ExactProduct/registry/chemistry-exact-product-quality-policy.json'
-      - name: Verify the durable in-repo frozen candidate is intact
+      - name: Rebuild durable candidate from the exact reviewed bytes
+        run: >-
+          python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
+          --source /tmp/chemistry-c-l-exact
+          --repo-root .
+      - name: Verify rebuilt durable candidate manifest
         run: >-
           python 'Grade 9/V2/Chemistry/ExactProduct/engine/freeze_chemistry_candidate.py'
           --verify 'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
+      - name: Commit synchronized durable candidate on the owning branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/v2-chemistry-learning-blueprint-v4-bucket-conditioning'
+        run: |
+          CAND='Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
+          git add -- "$CAND"
+          if git diff --cached --quiet; then
+            echo 'Durable candidate already matches the exact reviewed bytes.'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'C-L: synchronize durable exact candidate'
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
+      - name: Assert durable candidate matches the exact reviewed bytes
+        run: >-
+          git diff --exit-code --
+          'Grade 9/V2/Chemistry/ExactProduct/candidates/CHEM-C-L-EXACT-CANDIDATE-A'
       - name: Upload exact Chemistry candidate
         uses: actions/upload-artifact@v4
         with:
