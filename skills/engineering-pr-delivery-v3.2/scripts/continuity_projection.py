@@ -409,16 +409,24 @@ def gh_post(endpoint: str, payload: dict[str, Any]) -> Any:
 
 
 def gh_comments(repo: str, issue: int) -> list[dict[str, Any]]:
-    rows = gh_json(
-        "--method",
-        "GET",
-        f"repos/{repo}/issues/{issue}/comments",
-        "-f",
-        "per_page=100",
-    )
-    if not isinstance(rows, list):
-        raise ContinuityError("GitHub comments response must be a list")
-    return rows
+    all_rows: list[dict[str, Any]] = []
+    page = 1
+    while True:
+        rows = gh_json(
+            "--method",
+            "GET",
+            f"repos/{repo}/issues/{issue}/comments",
+            "-f",
+            "per_page=100",
+            "-f",
+            f"page={page}",
+        )
+        if not isinstance(rows, list):
+            raise ContinuityError("GitHub comments response must be a list")
+        all_rows.extend(rows)
+        if len(rows) < 100:
+            return all_rows
+        page += 1
 
 
 def sync_github(snapshot: dict[str, Any]) -> dict[str, Any]:
