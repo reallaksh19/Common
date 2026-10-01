@@ -57,6 +57,18 @@ Three to five sequential replacement agents on one issue remain one responsibili
 
 Programme Handover, RLL, and OFFLOAD traversal are conditional on real references/dependencies. Their mere existence in this copied baseline does not make them mandatory on the simple path.
 
+## Exact protocol provenance
+
+A new V3.2 continuity-managed responsibility SHOULD record an exact successor-verifiable protocol source:
+
+```text
+PROTOCOL_REF: owner/repo@<exact-commit>:skills/engineering-pr-delivery-v3.2
+```
+
+If the candidate protocol is not present on the responsibility's own base/default branch, `PROTOCOL_REF` must point to the repository/commit where the governing candidate actually exists. A PR number may be added for navigation, but it does not replace the exact commit.
+
+This field is continuity provenance, not authority. Older snapshots without it remain readable as `UNKNOWN`; never fabricate a value.
+
 ## Implementation plan → automatic GitHub start update
 
 When an agent begins material implementation of an already-published implementation plan, it MUST emit the V3.2 `implementation-start` semantic event.
@@ -108,6 +120,7 @@ AUTHORITY: DERIVED_CONTINUITY_ONLY
 
 It answers:
 
+- exact protocol provenance (`PROTOCOL_REF`);
 - current state;
 - current plan;
 - declared progress denominator;
@@ -116,6 +129,8 @@ It answers:
 - active/pending units;
 - material frontier;
 - semantic/evidence frontier;
+- passive reconciliation need;
+- active recovery mode/evidence obligation;
 - current / next;
 - genuine Owner decision if any;
 - stream-loss/handover escalation state.
@@ -164,6 +179,14 @@ Material head should be observed from Git/owned PR. Semantic/evidence head comes
 
 A material-ahead distance is reconstruction distance, not progress.
 
+The derived frontier exposes:
+
+```text
+RECONCILIATION_NEEDED: true | false
+```
+
+This is a passive discrepancy signal. During uninterrupted work, material may legitimately run ahead of the latest evidence checkpoint; therefore `RECONCILIATION_NEEDED=true` does not by itself force a recovery publication on the current executor.
+
 Refresh Git frontier mechanically with:
 
 ```bash
@@ -173,13 +196,35 @@ python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py obse
   --output relay/GENERATED/tasks/<issue>.continuity.json
 ```
 
+## Active recovery state
+
+Recovery obligation is separate from passive frontier lag:
+
+```text
+RECOVERY_MODE: NONE | INTERRUPTED_EXECUTOR | FRONTIER_RECONCILIATION
+RECOVERY_EVIDENCE_REQUIRED: true | false
+```
+
+A replacement executor that observes recovery-relevant unexplained frontier lag starts recovery explicitly:
+
+```bash
+python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py recovery-start \
+  --snapshot relay/GENERATED/tasks/<issue>.continuity.json \
+  --mode FRONTIER_RECONCILIATION \
+  --output relay/GENERATED/tasks/<issue>.continuity.json
+```
+
+That event changes state to `RECOVERING` and sets `RECOVERY_EVIDENCE_REQUIRED=true`. A same-lifecycle unexpected loss uses `stream-loss` and sets `RECOVERY_MODE=INTERRUPTED_EXECUTOR`.
+
+Only durable `TASK_EVIDENCE — RECOVERY` provider readback clears the active evidence obligation and aligns the recovered semantic/evidence frontier.
+
 ## Abrupt interruption — fast recovery
 
 Unexpected stream/session loss uses this first-line sequence:
 
 ```text
 1. BASIS
-   verify responsibility and Owner amendments.
+   verify responsibility, PROTOCOL_REF, and Owner amendments.
 
 2. LIVE MATERIAL
    observe PR / branch / base / HEAD / relevant checks.
@@ -248,9 +293,18 @@ This V3.2 directory was forked from the exact V3.1 tree to preserve compatibilit
 - copied V3.1 scripts/schemas not touched by this slice remain compatibility baseline, not evidence that their ceremony is mandatory.
 - V3.1 AGENT_STATUS remains readable as executor history.
 - new responsibility current state is `FURTHER_TASK_SNAPSHOT`.
+- old snapshots missing `PROTOCOL_REF` or recovery `mode` remain readable as UNKNOWN/NONE rather than fabricated provenance/recovery.
 - old TASK_RESULT without explicit responsibility-complete maps to `UNKNOWN`.
 - programme Handover / RLL / OFFLOAD contracts remain readable and are traversed only when relevant.
 - missing V3.2 fields map to UNKNOWN rather than fabricated PASS/completion/authority.
+
+## V3.2 exact-head CI
+
+V3.2 candidate changes must have a dedicated hosted check that validates the candidate itself. The V3.1 workflow may legitimately report V3.2-only changes as `NOT_APPLICABLE`; that is not V3.2 acceptance evidence.
+
+The dedicated workflow is `.github/workflows/engineering-pr-delivery-v3.2.yml`. It must remain scoped to V3.2 candidate paths, compile the V3.2 Python surface, and run the focused continuity/replay regressions that exercise this worth-gated slice.
+
+Retired V2.5/V3 workflows must not be restored merely to create more green checks.
 
 ## Worth gate
 
@@ -258,7 +312,7 @@ No audit recommendation becomes permanent V3.2 behavior merely because it sounds
 
 Retain a change only when replay shows that it addresses an observed failure or recurring measurable operation, materially reduces affected-path protocol work or removes a demonstrated ambiguity/interruption, adds no more recurring ceremony than it removes, keeps clean-path overhead bounded, introduces zero timer/heartbeat work, preserves recorder/material/human-authority invariants, introduces no new Owner gate, and survives real/replayable cases.
 
-The principal replay cases are recorded in Common #483: #375/#379, #376, #377, plus a clean uninterrupted path.
+The principal replay cases are recorded in Common #483: #375/#379, #376, #377, plus the controlled #486/#487 cold-takeover drill.
 
 ## Inherited baseline
 
