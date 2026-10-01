@@ -138,7 +138,8 @@ def build_release_decision(candidate,machine_gate,reviews,reference_comparison,p
     if machine_gate['status']=='PASS' and all_human and reference_comparison['state']=='PASS':
         e=candidate['machine_evidence']
         if candidate['candidate_class']=='LEGACY_NONCONFORMING_REDOX': fail('LEGACY_NONCONFORMING_REDOX_SNAPSHOT_RECEIVES_MATURE_PASS')
-        if candidate['candidate_class']=='KNOWN_THIN_SMOKE' or e['core1_instructional_depth']!='FULL_INSTRUCTIONAL': fail('KNOWN_THIN_SMOKE_SPECIMEN_RECEIVES_MATURE_DESIGN_PASS')
+        if candidate['candidate_class']=='KNOWN_THIN_SMOKE': fail('KNOWN_THIN_SMOKE_SPECIMEN_RECEIVES_MATURE_DESIGN_PASS')
+        if e['core1_instructional_depth']!='FULL_INSTRUCTIONAL': fail('CORE1_SUMMARY_LEVEL_BUT_MARKED_MATURE')
         if not e['macro_particle_symbolic_realized']: fail('MACRO_PARTICLE_SYMBOLIC_BRIDGE_ONLY_LABELLED_NOT_REALIZED')
         if e.get('teaching_primitives_label_only'): fail('TEACHING_PRIMITIVE_LABEL_ONLY_NOT_REALIZED')
         if e.get('learner_internal_identifier_leaks',0)>0: fail('LEARNER_FACING_INTERNAL_IDENTIFIER_LEAK')
