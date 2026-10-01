@@ -114,6 +114,16 @@ expect('HANDOUT_CONTAINS_ANSWERS',lambda:validate_plan(bad,model_a,study_scope,p
 bad=copy.deepcopy(plan_a); bad['appendices']['appendix_c']['introduced_capability_refs']=['CAP-READ-STRUCTURE-SITE']; redigest_plan(bad)
 expect('HANDOUT_INTRODUCES_NEW_CHEMISTRY',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
 
+# 18 CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_a']['items'][0]['instance_authority']={}; bad['appendices']['appendix_a']['items'][0]['instance_digest']='0'*64; redigest_plan(bad)
+expect('CORE1_PRACTICE_INSTANCE_AUTHORITY_MISSING',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 19 APPENDIX_B_INSTANCE_MISMATCH
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_b']['solutions'][0]['instance_digest']='0'*64; redigest_plan(bad)
+expect('APPENDIX_B_INSTANCE_MISMATCH',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+# 20 APPENDIX_B_GENERIC_SOLUTION
+bad=copy.deepcopy(plan_a); bad['appendices']['appendix_b']['solutions'][0]['final_response']='A complete response states the relevant chemical evidence or rule, executes the recorded reasoning route, and gives the conclusion only after the required checks pass.'; redigest_plan(bad)
+expect('APPENDIX_B_GENERIC_SOLUTION',lambda:validate_plan(bad,model_a,study_scope,pck,profile,completeness,problems))
+
 # Treatment-relative sufficiency and authority boundaries.
 assert lesson(plan_b,'CAP-PARSE-ION-CHARGE')['content_roles']==profile['content_roles_by_mode']['CONCISE_VERIFY_ONLY']
 assert all(a['promotion_authority']['subject_expert_release_state']=='NOT_GRANTED' for a in pck['assets'])
@@ -121,7 +131,7 @@ assert all(a['raw_mature_reference_used'] is False for a in pck['assets'])
 # Deterministic replay.
 again=build_plan(copy.deepcopy(model_a),copy.deepcopy(study_scope),copy.deepcopy(pck),copy.deepcopy(profile),copy.deepcopy(completeness),copy.deepcopy(problems),'CHEM-C-G-PLAN-NO-ATTEMPT',source_set=copy.deepcopy(sources),question_set=copy.deepcopy(questions))
 assert json.dumps(plan_a,sort_keys=True,separators=(',',':'),ensure_ascii=False)==json.dumps(again,sort_keys=True,separators=(',',':'),ensure_ascii=False)
-print('CHEMISTRY C-G required falsifiers = 17 PASS')
+print('CHEMISTRY C-G required falsifiers = 20 PASS')
 print('CHEMISTRY C-G promoted PCK pilot authority = PASS')
 print('CHEMISTRY C-G treatment-relative Core1 authoring = PASS')
 print('CHEMISTRY C-G Appendix A/B/C semantic closure = PASS')
