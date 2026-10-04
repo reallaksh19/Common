@@ -1,0 +1,607 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1:stage-record",
+  "type": "object",
+  "properties": {
+    "record": {
+      "const": "STAGE_RECORD"
+    },
+    "version": {
+      "const": "1.0"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stage": {
+      "enum": [
+        "CODER",
+        "REVIEWER",
+        "COORDINATOR",
+        "PARENT_CHECK"
+      ]
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "executor": {
+      "type": "string",
+      "minLength": 1
+    },
+    "previous_record": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "work_periods": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "status": {
+      "enum": [
+        "RUNNING",
+        "PASS",
+        "REWORK",
+        "STALLED",
+        "BLOCKED",
+        "HELD",
+        "PAUSED",
+        "STOPPED",
+        "WAITING_CI",
+        "WAITING_OWNER"
+      ]
+    },
+    "input_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "output_sha": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "validated_sha": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "spec_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parent_spec_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "workspace": {
+      "type": "string",
+      "minLength": 1
+    },
+    "handover": {
+      "type": "object",
+      "properties": {
+        "pr_description_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "child_comment_ref": {
+          "type": "string",
+          "format": "uri"
+        },
+        "parent_comment_ref": {
+          "type": "string",
+          "format": "uri"
+        },
+        "changed_files": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "workspace_notes": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reconciliation": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "pr_description_ref",
+        "child_comment_ref",
+        "parent_comment_ref",
+        "changed_files",
+        "workspace_notes",
+        "reconciliation"
+      ],
+      "additionalProperties": false
+    },
+    "acceptance_checked": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "problem": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "RESOLVED"
+            ]
+          },
+          "resolution": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "problem",
+          "status",
+          "resolution"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "RESOLVED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "resolution": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "validation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "check",
+          "required",
+          "result",
+          "evidence"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "changes": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repeat_stages": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "CODER",
+          "REVIEWER",
+          "COORDINATOR"
+        ]
+      }
+    },
+    "writer_stopped": {
+      "type": "boolean"
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci_wait_started_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "stalled_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "publications": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "object",
+          "properties": {
+            "comment_ref": {
+              "type": "string",
+              "format": "uri"
+            },
+            "published_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "summary": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "comment_ref",
+            "published_at",
+            "summary"
+          ],
+          "additionalProperties": false
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "comment_ref": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "published_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "comment_ref",
+                "published_at",
+                "summary"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "parent_context": {
+      "type": "object",
+      "properties": {
+        "read_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "through_comment_ref": {
+          "type": "string",
+          "format": "uri"
+        },
+        "reconciled_points": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "read_at",
+        "through_comment_ref",
+        "reconciled_points"
+      ],
+      "additionalProperties": false
+    },
+    "workspace_mode": {
+      "enum": [
+        "WRITE",
+        "READ_ONLY"
+      ]
+    },
+    "review_source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "head_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "reference": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "head_sha",
+            "reference"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "record",
+    "version",
+    "record_id",
+    "task_id",
+    "stage",
+    "attempt",
+    "executor",
+    "previous_record",
+    "started_at",
+    "work_periods",
+    "status",
+    "input_sha",
+    "output_sha",
+    "validated_sha",
+    "base_sha",
+    "spec_digest",
+    "parent_spec_digest",
+    "workspace",
+    "handover",
+    "acceptance_checked",
+    "findings",
+    "validation",
+    "changes",
+    "repeat_stages",
+    "writer_stopped",
+    "next_action",
+    "ci_wait_started_at",
+    "stalled_at",
+    "publications",
+    "parent_context",
+    "workspace_mode",
+    "review_source"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "output_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "validated_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "writer_stopped": {
+            "const": true
+          },
+          "validation": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "WAITING_CI"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ci_wait_started_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "STALLED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "stalled_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "HELD",
+              "PAUSED",
+              "STOPPED"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "writer_stopped": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "writer_stopped": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "publications": {
+            "properties": {
+              "end": {
+                "type": "object",
+                "properties": {
+                  "comment_ref": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "published_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "comment_ref",
+                  "published_at",
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "handover": {
+            "properties": {
+              "pr_description_ref": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

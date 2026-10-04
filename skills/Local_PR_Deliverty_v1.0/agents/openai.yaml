@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local_PR_Deliverty_v1.0"
+  short_description: "Coder, Reviewer and parent-owning Coordinator workflow"
+  default_prompt: "Use $local-pr-deliverty-v1-0 to coordinate my parent and child issues through Coder, Reviewer and Coordinator in the same folder, respecting Pause/Hold/Resume and 15/15/45-minute role timers and parent START/END evidence."
