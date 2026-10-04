@@ -83,6 +83,10 @@
     "recorded_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "parent_comment_ref": {
+      "type": "string",
+      "format": "uri"
     }
   },
   "required": [
@@ -100,7 +104,8 @@
     "responsibility_complete",
     "child_results",
     "evidence",
-    "recorded_at"
+    "recorded_at",
+    "parent_comment_ref"
   ],
   "additionalProperties": false,
   "allOf": [

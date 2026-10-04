@@ -280,9 +280,6 @@
                   "type": "integer",
                   "minimum": 1
                 },
-                "target": {
-                  "const": "ALL"
-                },
                 "child_issue": {
                   "type": "null"
                 }
@@ -321,6 +318,82 @@
         "reference"
       ],
       "additionalProperties": false
+    },
+    "start_permissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "child_issue": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "coordinator": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parent_comment_ref": {
+            "type": "string",
+            "format": "uri"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "during_record": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "reviewed_head_sha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mode": {
+            "enum": [
+              "SERIAL",
+              "COORDINATOR_READ_ONLY"
+            ]
+          },
+          "revoked_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "child_issue",
+          "issued_at",
+          "coordinator",
+          "parent_comment_ref",
+          "reason",
+          "during_record",
+          "reviewed_head_sha",
+          "mode",
+          "revoked_at"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
@@ -356,7 +429,8 @@
           "workspace",
           "timers",
           "owner_commands",
-          "merge_authority"
+          "merge_authority",
+          "start_permissions"
         ],
         "properties": {
           "parent_issue": {
@@ -409,6 +483,11 @@
             {
               "required": [
                 "merge_authority"
+              ]
+            },
+            {
+              "required": [
+                "start_permissions"
               ]
             }
           ]

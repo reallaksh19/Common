@@ -5,15 +5,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, FormatChecker
+from pipeline import RecordError, validate_evidence, validate_pipeline, status_details
 
 ROOT = Path(__file__).resolve().parents[1]
 ORDER = ['CODER', 'REVIEWER', 'COORDINATOR']
-DEFAULT_BUDGETS = {stage: 30 for stage in ORDER + ['PARENT_CHECK']}
+DEFAULT_BUDGETS = {'CODER': 15, 'REVIEWER': 15, 'COORDINATOR': 45, 'PARENT_CHECK': 45}
 SCHEMAS = {'TASK': 'task', 'STAGE_RECORD': 'stage-record', 'DELIVERY_RESULT': 'delivery-result'}
-
-
-class RecordError(ValueError):
-    pass
 
 
 def require(condition, message):
@@ -134,12 +131,14 @@ def task_history(task, records, parent, now):
         require((stage == 'PARENT_CHECK') == (task['kind'] == 'PARENT'), 'Parent/child stage mismatch')
         require(record['workspace'] == parent['workspace'], 'Every role must use the declared shared folder')
         validate_periods(record, parent, task, now)
+        validate_evidence(record, parent, task, bundle_observations=None, now=now)
         require(record['attempt'] == attempts.get(stage, 0) + 1, 'Attempt numbers must be consecutive within a role')
         attempts[stage] = record['attempt']
         require(record['previous_record'] == (latest['record_id'] if latest else None), 'Broken issue-comment record chain')
         if latest:
             require(latest['writer_stopped'], 'Previous writer has not acknowledged stop')
             require(instant(record['started_at']) >= instant(latest['work_periods'][-1]['end']), 'Shared-folder writers overlapped')
+            require(instant(record['started_at']) >= instant(latest['publications']['end']['published_at']), 'Next role must wait for published parent END evidence')
             require(record['handover']['reconciliation'], 'Replacement needs issue/PR/workspace reconciliation')
             if latest['output_sha'] and record['input_sha'] != latest['output_sha'] and task['kind'] == 'CHILD':
                 require(record['status'] == 'REWORK', 'External/unexplained HEAD movement requires REWORK reconciliation')
@@ -201,8 +200,13 @@ def validate_bundle(bundle, now=None):
         require(timers['override_reason'], 'Timer override needs an Owner reason')
     for command in commands:
         if command['command'] == 'TIMER':
-            timers['stage_minutes'] = {s: command['minutes'] for s in DEFAULT_BUDGETS}
-            timers['ci_wait_minutes'] = command['minutes']
+            if command['target'] == 'ALL':
+                timers['stage_minutes'] = {s: command['minutes'] for s in DEFAULT_BUDGETS}
+                timers['ci_wait_minutes'] = command['minutes']
+            else:
+                timers['stage_minutes'][command['target']] = command['minutes']
+                if command['target'] == 'COORDINATOR':
+                    timers['stage_minutes']['PARENT_CHECK'] = command['minutes']
     if parent['merge_authority']['mode'] == 'DELEGATED':
         require(parent['merge_authority']['reference'], 'Delegated authority needs an actual Owner instruction')
     for task in tasks.values():
@@ -224,10 +228,10 @@ def validate_bundle(bundle, now=None):
     require(all(r['task_id'] in tasks for r in bundle['stages'] + bundle['results']), 'Unknown task ID')
     history = {key: task_history(task, bundle['stages'], parent, now) for key, task in tasks.items()}
     active = [r for r, _ in history.values() if r and not r['writer_stopped']]
-    require(len(active) <= 1, 'More than one shared-folder writer')
     observations = bundle['observed']
-    intervals = sorted((instant(p['start']), instant(p['end']) if p['end'] else now, r['record_id']) for r in bundle['stages'] for p in r['work_periods'])
-    require(all(left[1] <= right[0] for left, right in zip(intervals, intervals[1:])), 'Shared-folder stage execution periods overlapped')
+    validate_pipeline(parent, tasks, bundle['stages'], observations, now)
+    for record in bundle['stages']:
+        validate_evidence(record, parent, tasks[record['task_id']], observations, now)
     result_map, by_task = {}, {}
     stage_map = {r['record_id']: r for r in bundle['stages']}
     for result in bundle['results']:
@@ -241,8 +245,10 @@ def validate_bundle(bundle, now=None):
         require(not accepted & remaining and accepted | remaining == acceptance_ids(task), 'Result must partition declared acceptance')
         require(result['head_sha'] == final['validated_sha'] and accepted <= set(final['acceptance_checked']), 'Result claims unvalidated material')
         require(not result['responsibility_complete'] or accepted == acceptance_ids(task), 'Incomplete acceptance cannot be complete')
+        require(result['parent_comment_ref'].split('#')[0].rstrip('/').endswith('/issues/' + str(parent['issue'])) and '#' in result['parent_comment_ref'], 'Delivery evidence must be published on parent issue')
         recorded = instant(result['recorded_at'])
         require(instant(final['work_periods'][-1]['end']) <= recorded <= now, 'Result timing invalid')
+        require(instant(final['publications']['end']['published_at']) <= recorded, 'Delivery must follow published final role END evidence')
         require(not blocking_control(commands, task, 'COORDINATOR', recorded), 'Owner command blocks delivery publication/advancement')
         if task['kind'] == 'CHILD':
             require(all(s in passes for s in ORDER) and task['pr'] == result['pr'], 'Child delivery lacks full role chain')
@@ -283,7 +289,9 @@ def validate_bundle(bundle, now=None):
                 current_basis = observations.get('spec_digests', {})
                 workspace = observations.get('workspace', {})
                 current = head == latest['validated_sha'] and observations.get('main_sha') == latest['base_sha'] and current_basis.get(key) == task['spec_digest'] and current_basis.get(parent['task_id']) == parent['spec_digest']
-                if not current or workspace.get('path') != parent['workspace'] or workspace.get('head_sha') != head or workspace.get('unrecorded_changes') is not False:
+                material = observations.get('review_snapshots', {}).get(latest['record_id'], {}) if latest['workspace_mode'] == 'READ_ONLY' else workspace
+                stable_source = latest['workspace_mode'] != 'READ_ONLY' or material.get('reference') == latest['review_source']['reference']
+                if not current or not stable_source or workspace.get('path') != parent['workspace'] or material.get('head_sha') != head or material.get('unrecorded_changes') is not False:
                     stage, status = 'COORDINATOR', 'REWORK'
                 else:
                     checks = observations.get('checks', {}).get(pr)
@@ -320,6 +328,7 @@ def validate_bundle(bundle, now=None):
         parent_state.update(stage=active[0]['stage'], status='RUNNING')
     if parent['task_id'] not in by_task and completed == set(declarations) and not history[parent['task_id']][0]:
         states[str(parent['issue'])]['stage'] = 'PARENT_CHECK'
+    status_details(states, tasks, history, observations, now, parent, by_task)
     return {'record_consistency': 'PASS', 'basis': 'SUPPLIED_ISSUE_PR_AND_WORKSPACE_OBSERVATIONS_ONLY', 'owner_controls': [c['id'] for c in controls_at(commands, now)], 'stage_budget_minutes': timers['stage_minutes'], 'issues': states}
 
 

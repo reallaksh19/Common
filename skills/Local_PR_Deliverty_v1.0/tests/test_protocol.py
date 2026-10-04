@@ -2,9 +2,11 @@ import copy
 import importlib.util
 import json
 import unittest
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
 SPEC = importlib.util.spec_from_file_location('local_pr_validator', ROOT / 'scripts' / 'validate.py')
 checker = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(checker)
@@ -20,7 +22,7 @@ def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minut
 
 def example_bundle():
     common = dict(record='TASK', version='1.0', repository='exampleowner/editor', parent_owner='coordinator', spec_ref='https://example.invalid/issues/85', spec_digest=DIGEST, required_checks=['Required hosted check'], protocol_ref='exampleowner/Common@' + 'a' * 40 + ':skills/Local_PR_Deliverty_v1.0')
-    parent = dict(common, task_id='T85', kind='PARENT', issue=85, parent_issue=None, pr=None, scope='Deliver child and prove integrated parent outcome.', acceptance=[dict(id='P1', requirement='Child capability works in integrated product.', required=True)], children=[dict(issue=86, scope='Native parser foundation.', covers=['P1'], depends_on=[])], workspace=FOLDER, timers=dict(poll_seconds=60, stage_minutes=dict(checker.DEFAULT_BUDGETS), ci_wait_minutes=30, recovery_grace_minutes=5, handover_seconds=0, override_reason=None), owner_commands=[], merge_authority=dict(mode='OWNER_ONLY', reference=None))
+    parent = dict(common, task_id='T85', kind='PARENT', issue=85, parent_issue=None, pr=None, scope='Deliver child and prove integrated parent outcome.', acceptance=[dict(id='P1', requirement='Child capability works in integrated product.', required=True)], children=[dict(issue=86, scope='Native parser foundation.', covers=['P1'], depends_on=[])], workspace=FOLDER, timers=dict(poll_seconds=60, stage_minutes=dict(checker.DEFAULT_BUDGETS), ci_wait_minutes=30, recovery_grace_minutes=5, handover_seconds=0, override_reason=None), owner_commands=[], start_permissions=[dict(id='PERMIT86', child_issue=86, issued_at='2026-10-04T00:00:00Z', coordinator='coordinator', parent_comment_ref='https://example.invalid/issues/85#permission86', reason='Ready independent child', during_record=None, reviewed_head_sha=None, mode='SERIAL', revoked_at=None)], merge_authority=dict(mode='OWNER_ONLY', reference=None))
     child = dict(common, task_id='T86', kind='CHILD', issue=86, parent_issue=85, pr=101, scope='Deliver native parser foundation.', acceptance=[dict(id='A1', requirement='Preserve native source structure.', required=True)], children=[])
     handover = dict(pr_description_ref='https://example.invalid/pull/101', child_comment_ref='https://example.invalid/issues/86#comment', parent_comment_ref='https://example.invalid/issues/85#comment', changed_files=['src/parser.py'], workspace_notes='No unrecorded work; synthetic example.', reconciliation='Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction.')
     stages = []
@@ -28,9 +30,18 @@ def example_bundle():
         start, end = f'2026-10-04T00:0{index}:00Z', f'2026-10-04T00:0{index}:30Z'
         stages.append(dict(record='STAGE_RECORD', version='1.0', record_id='S' + str(index + 1), task_id='T86', stage=stage, attempt=1, executor=executor, previous_record=stages[-1]['record_id'] if stages else None, started_at=start, work_periods=[dict(start=start, end=end)], status='PASS', input_sha=BASE if index == 0 else HEADS[index - 1], output_sha=HEADS[index], validated_sha=HEADS[index], base_sha=BASE, spec_digest=DIGEST, parent_spec_digest=DIGEST, workspace=FOLDER, handover=copy.deepcopy(handover), acceptance_checked=['A1'], findings=[], validation=[dict(check='Synthetic behavior observation', required=True, result='PASS', evidence='Synthetic fixture; no real product test claimed.')], changes='Bounded correction; retained earlier claims checked by Coordinator.', repeat_stages=[], writer_stopped=True, next_action='Handover to eligible role.', ci_wait_started_at=None, stalled_at=None))
     stages.append(dict(stages[-1], record_id='S4', task_id='T85', stage='PARENT_CHECK', previous_record=None, input_sha=MERGE, output_sha=MERGE, validated_sha=MERGE, base_sha=MERGE, acceptance_checked=['P1'], started_at='2026-10-04T00:06:00Z', work_periods=[dict(start='2026-10-04T00:06:00Z', end='2026-10-04T00:06:30Z')]))
-    child_result = dict(record='DELIVERY_RESULT', version='1.0', record_id='D86', task_id='T86', kind='CHILD', final_record='S3', head_sha=HEADS[2], pr=101, merge_commit_sha=MERGE, accepted_ids=['A1'], remaining_ids=[], responsibility_complete=True, child_results=[], evidence='Synthetic provider merge and acceptance.', recorded_at='2026-10-04T00:05:00Z')
-    parent_result = dict(child_result, record_id='D85', task_id='T85', kind='PARENT', final_record='S4', head_sha=MERGE, pr=None, merge_commit_sha=None, accepted_ids=['P1'], child_results=['D86'], recorded_at='2026-10-04T00:07:00Z')
+    child_result = dict(record='DELIVERY_RESULT', version='1.0', record_id='D86', task_id='T86', kind='CHILD', final_record='S3', head_sha=HEADS[2], pr=101, merge_commit_sha=MERGE, accepted_ids=['A1'], remaining_ids=[], responsibility_complete=True, child_results=[], parent_comment_ref='https://example.invalid/issues/85#delivery86', evidence='Synthetic provider merge and acceptance.', recorded_at='2026-10-04T00:05:00Z')
+    parent_result = dict(child_result, parent_comment_ref='https://example.invalid/issues/85#delivery85', record_id='D85', task_id='T85', kind='PARENT', final_record='S4', head_sha=MERGE, pr=None, merge_commit_sha=None, accepted_ids=['P1'], child_results=['D86'], recorded_at='2026-10-04T00:07:00Z')
+    for record in stages:
+        record_id = record['record_id']
+        record['publications'] = dict(start=dict(comment_ref=f'https://example.invalid/issues/85#start-{record_id}', published_at=record['started_at'], summary='Synthetic role start, intended scope and validation.'), end=dict(comment_ref=f'https://example.invalid/issues/85#end-{record_id}', published_at=record['work_periods'][0]['end'], summary='Synthetic findings, output evidence and next eligible role.'))
+        record['parent_context'] = dict(read_at=record['started_at'], through_comment_ref=f'https://example.invalid/issues/85#before-{record_id}', reconciled_points=['Read and reconcile complete prior parent history and active controls.'])
+        record['workspace_mode'] = 'WRITE'
+        record['review_source'] = None
     observed = dict(main_sha=MERGE, pr_heads={'101': HEADS[2]}, spec_digests={'T85': DIGEST, 'T86': DIGEST}, workspace=dict(path=FOLDER, head_sha=HEADS[2], unrecorded_changes=False), merged={'101': dict(head_sha=HEADS[2], merge_commit_sha=MERGE, merged_at='2026-10-04T00:04:00Z')}, checks={'101': [dict(check='Required hosted check', head_sha=HEADS[2], result='PASS')]}, merge_authority_refs={'101': 'Synthetic owner authorization reference'}, external_writer_stopped=True)
+    observed['parent_comment_frontiers'] = {r['record_id']: dict(comment_ref=r['parent_context']['through_comment_ref'], observed_at=r['started_at']) for r in stages}
+    observed['issue_states'] = {'85': 'CLOSED', '86': 'CLOSED'}
+    observed['pr_states'] = {'101': 'MERGED'}
     return dict(tasks=[parent, child], stages=stages, results=[child_result, parent_result], observed=observed)
 
 
@@ -40,6 +51,8 @@ def premerge_bundle():
     bundle['results'] = []
     bundle['observed']['main_sha'] = BASE
     bundle['observed']['merged'] = {}
+    bundle['observed']['pr_states']['101'] = 'DRAFT'
+    bundle['observed']['issue_states'] = {'85': 'OPEN', '86': 'OPEN'}
     return bundle
 
 
@@ -48,6 +61,7 @@ def running_bundle():
     bundle['stages'] = bundle['stages'][:1]
     bundle['stages'][0].update(status='RUNNING', output_sha=None, validated_sha=None, acceptance_checked=[], validation=[], writer_stopped=False)
     bundle['stages'][0]['work_periods'][0]['end'] = None
+    bundle['stages'][0]['publications']['end'] = None
     return bundle
 
 
@@ -81,7 +95,7 @@ class ProtocolTests(unittest.TestCase):
         bundle = example_bundle()
         bundle['stages'] = bundle['stages'][:3]
         bundle['results'] = bundle['results'][:1]
-        self.assertEqual(checker.validate_bundle(bundle)['issues']['85'], {'stage': 'PARENT_CHECK', 'status': 'READY'})
+        self.assertEqual({k: checker.validate_bundle(bundle)['issues']['85'][k] for k in ['stage','status']}, {'stage': 'PARENT_CHECK', 'status': 'READY'})
 
     def test_unvalidated_output_rejected(self):
         bundle = example_bundle()
@@ -116,9 +130,9 @@ class ProtocolTests(unittest.TestCase):
             bundle['observed'][field] = {}
             self.assertEqual(self.state(bundle), status)
 
-    def test_thirty_active_minutes_stalls_never_passes(self):
-        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:29:59Z'), 'RUNNING')
-        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:30:00Z'), 'STALLED')
+    def test_fifteen_coder_minutes_stalls_never_passes(self):
+        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:14:59Z'), 'RUNNING')
+        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:15:00Z'), 'STALLED')
 
     def test_recovery_grace_follows_actual_stall_detection(self):
         bundle = running_bundle()
@@ -163,7 +177,7 @@ class ProtocolTests(unittest.TestCase):
     def test_coordinator_can_repeat_affected_reviewer(self):
         bundle = premerge_bundle()
         bundle['stages'][-1]['repeat_stages'] = ['REVIEWER']
-        self.assertEqual(checker.validate_bundle(bundle)['issues']['86'], {'stage': 'REVIEWER', 'status': 'READY'})
+        self.assertEqual({k: checker.validate_bundle(bundle)['issues']['86'][k] for k in ['stage','status']}, {'stage': 'REVIEWER', 'status': 'READY'})
 
     def test_unknown_fields_duplicate_ids_and_unobserved_merge_rejected(self):
         bundle = example_bundle()
@@ -242,6 +256,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(self.state(bundle, '2026-10-04T04:00:00Z'), 'HOLD_REQUESTED')
         bundle['stages'][0].update(status='HELD', writer_stopped=True)
         bundle['stages'][0]['work_periods'][0]['end'] = '2026-10-04T00:10:05Z'
+        bundle['stages'][0]['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#hold-end', published_at='2026-10-04T00:10:05Z', summary='Hold acknowledgement.')
         self.assertEqual(self.state(bundle, '2026-10-04T04:00:00Z'), 'HELD')
         self.assertEqual(checker.active_seconds(bundle['stages'][0], bundle['tasks'][0]['owner_commands'], bundle['tasks'][1], checker.instant('2026-10-04T04:00:00Z')), 600)
 
@@ -288,6 +303,7 @@ class ProtocolTests(unittest.TestCase):
         bundle['tasks'][0]['owner_commands'] = [command('HOLD', target='CODER', issued='2026-10-04T00:01:00Z'), command('RESUME', target='CODER', issued='2026-10-04T00:03:00Z', identifier='CMD2')]
         bundle['stages'][0].update(status='HELD', writer_stopped=True)
         bundle['stages'][0]['work_periods'][0]['end'] = '2026-10-04T00:01:05Z'
+        bundle['stages'][0]['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#hold-end', published_at='2026-10-04T00:01:05Z', summary='Hold acknowledgement.')
         self.assertEqual(self.state(bundle), 'READY')
 
     def test_repeated_reviewer_requires_fresh_coordinator_even_same_head(self):
@@ -295,8 +311,11 @@ class ProtocolTests(unittest.TestCase):
         bundle['stages'][2]['repeat_stages'] = ['REVIEWER']
         repeated = copy.deepcopy(bundle['stages'][1])
         repeated.update(record_id='SREPEAT', attempt=2, previous_record='S3', input_sha=HEADS[2], output_sha=HEADS[2], validated_sha=HEADS[2], started_at='2026-10-04T00:04:00Z', work_periods=[dict(start='2026-10-04T00:04:00Z', end='2026-10-04T00:04:30Z')])
+        repeated['publications'] = dict(start=dict(comment_ref='https://example.invalid/issues/85#repeat-start', published_at=repeated['started_at'], summary='Repeat reviewer.'), end=dict(comment_ref='https://example.invalid/issues/85#repeat-end', published_at=repeated['work_periods'][0]['end'], summary='Repeated review passed.'))
+        repeated['parent_context'] = dict(read_at=repeated['started_at'], through_comment_ref='https://example.invalid/issues/85#repeat-basis', reconciled_points=['Reconcile review changes.'])
+        bundle['observed']['parent_comment_frontiers']['SREPEAT'] = dict(comment_ref=repeated['parent_context']['through_comment_ref'], observed_at=repeated['started_at'])
         bundle['stages'].append(repeated)
-        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86'], {'stage': 'COORDINATOR', 'status': 'READY'})
+        self.assertEqual({k: checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86'][k] for k in ['stage','status']}, {'stage': 'COORDINATOR', 'status': 'READY'})
 
     def test_historical_overlapping_writers_rejected(self):
         bundle = example_bundle()

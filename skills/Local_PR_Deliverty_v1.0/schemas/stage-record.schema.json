@@ -129,7 +129,10 @@
       "type": "object",
       "properties": {
         "pr_description_ref": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "format": "uri"
         },
         "child_comment_ref": {
@@ -299,6 +302,127 @@
         "null"
       ],
       "format": "date-time"
+    },
+    "publications": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "object",
+          "properties": {
+            "comment_ref": {
+              "type": "string",
+              "format": "uri"
+            },
+            "published_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "summary": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "comment_ref",
+            "published_at",
+            "summary"
+          ],
+          "additionalProperties": false
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "comment_ref": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "published_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "comment_ref",
+                "published_at",
+                "summary"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "additionalProperties": false
+    },
+    "parent_context": {
+      "type": "object",
+      "properties": {
+        "read_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "through_comment_ref": {
+          "type": "string",
+          "format": "uri"
+        },
+        "reconciled_points": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "read_at",
+        "through_comment_ref",
+        "reconciled_points"
+      ],
+      "additionalProperties": false
+    },
+    "workspace_mode": {
+      "enum": [
+        "WRITE",
+        "READ_ONLY"
+      ]
+    },
+    "review_source": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "head_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "reference": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "head_sha",
+            "reference"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -329,7 +453,11 @@
     "writer_stopped",
     "next_action",
     "ci_wait_started_at",
-    "stalled_at"
+    "stalled_at",
+    "publications",
+    "parent_context",
+    "workspace_mode",
+    "review_source"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -410,6 +538,67 @@
         "properties": {
           "writer_stopped": {
             "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "writer_stopped": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "publications": {
+            "properties": {
+              "end": {
+                "type": "object",
+                "properties": {
+                  "comment_ref": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "published_at": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "summary": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "comment_ref",
+                  "published_at",
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "PASS"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "handover": {
+            "properties": {
+              "pr_description_ref": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
           }
         }
       }
