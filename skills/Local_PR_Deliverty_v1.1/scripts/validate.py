@@ -493,7 +493,16 @@ def validate_bundle(bundle, now=None):
     require(all(r['task_id'] in tasks for r in bundle['stages'] + bundle['results']), 'Unknown task ID')
     for waiver in support['waivers'].values():
         task = tasks.get(waiver['task_id'])
-        require(task and waiver['criterion_id'] in task['waivable_criteria'], 'Waiver targets unknown/non-waivable criterion')
+        require(task, 'Waiver targets unknown task')
+        target_kind, target_id = waiver['target_kind'], waiver['target_id']
+        if target_kind == 'CRITERION':
+            require(target_id in task['waivable_criteria'], 'Waiver targets unknown/non-waivable criterion')
+        elif target_kind == 'REQUIRED_CHECK':
+            require(target_id in task['waivable_required_checks'] and target_id in task['required_checks'], 'Waiver targets unknown/non-waivable required check')
+        else:
+            protocol = validate_project_protocol(task, support)
+            gates = applicable_external_gates(task, protocol)
+            require(target_id in gates and gates[target_id]['waivable'] is True, 'Waiver targets unknown/non-waivable external gate')
         require(waiver['owner_principal'] in parent['owner_principals'], 'Waiver principal is not an authorized Owner')
         lease = support['review_leases'].get(waiver['lease_id'])
         require(lease and lease['task_id'] == waiver['task_id'] and lease['candidate_sha'] == waiver['candidate_sha'], 'Waiver is not bound to its candidate lease')
