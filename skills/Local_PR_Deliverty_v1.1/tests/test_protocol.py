@@ -1475,6 +1475,20 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         waiver = self.criterion_waiver(bundle)
         final = bundle['stages'][2]
+        final['findings'] = []
+        final['production_output'].update(
+            defects_found=[],
+            defects_fixed_here=[],
+            fixes_applied=[],
+            regressions_added=[],
+        )
+        final['discovery_freeze']['finding_ids'] = []
+        for evidence_id in final['discovery_freeze']['evidence_ids']:
+            embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+            embedded['result'] = 'PASS'
+            provenance = evidence_provenance(bundle, evidence_id)
+            provenance['result'] = 'PASS'
+            provenance['exit_code'] = 0
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         final['acceptance_results'][0]['result'] = 'NOT_RUN'
