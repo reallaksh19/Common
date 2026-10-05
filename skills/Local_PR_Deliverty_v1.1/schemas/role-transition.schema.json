@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:role-transition",
+  "type": "object",
+  "properties": {
+    "record": {"const": "ROLE_TRANSITION"},
+    "version": {"const": "1"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "pattern": "^PRD-[A-Za-z0-9_.-]+$"},
+    "previous_record_id": {"type": "string", "minLength": 1},
+    "next_record_id": {"type": "string", "minLength": 1},
+    "transition_at": {"type": "string", "format": "date-time"},
+    "role_execution_grant_ref": {"type": ["string", "null"], "minLength": 1},
+    "previous_end_ref": {"type": "string", "minLength": 1},
+    "previous_timer_stop_ref": {"type": "string", "minLength": 1},
+    "next_start_ref": {"type": "string", "minLength": 1},
+    "next_timer_arm_ref": {"type": "string", "minLength": 1},
+    "next_context_start_ref": {"type": "string", "minLength": 1},
+    "fresh_replay_evidence_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "record", "version", "transition_id", "task_id", "previous_record_id",
+    "next_record_id", "transition_at", "role_execution_grant_ref", "previous_end_ref",
+    "previous_timer_stop_ref", "next_start_ref", "next_timer_arm_ref",
+    "next_context_start_ref", "fresh_replay_evidence_refs"
+  ],
+  "additionalProperties": false
+}
