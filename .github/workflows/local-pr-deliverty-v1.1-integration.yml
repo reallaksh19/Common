@@ -24,7 +24,8 @@ jobs:
           python -m py_compile \
             skills/Local_PR_Deliverty_v1.1/scripts/activation.py \
             skills/Local_PR_Deliverty_v1.1/scripts/stage_timer.py \
-            skills/Local_PR_Deliverty_v1.1/scripts/version_guard.py
+            skills/Local_PR_Deliverty_v1.1/scripts/version_guard.py \
+            skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py
       - name: Validate stack manifests
         run: |
           python - <<'PY'
@@ -46,6 +47,10 @@ jobs:
           PY
       - name: Run activation adversarial suite
         run: python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_activation.py' -v
+      - name: Replay live Common selector conflict
+        run: |
+          python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_selector_scan.py' -v
+          python skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py AGENTS.md
       - name: Verify frozen V3.2 tree still exact
         run: |
           set -euo pipefail
