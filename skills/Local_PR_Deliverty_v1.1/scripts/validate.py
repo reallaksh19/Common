@@ -404,7 +404,7 @@ def validate_stage_trust(record, task, parent, support, now):
         require(provenance, 'Stage evidence reference lacks provenance record')
         require(provenance['collected_by_role'] == record['stage'] and provenance['collected_by_principal'] == record['executor'], 'Evidence collector/attester does not match stage executor')
         require(provenance['evidence_class'] == embedded['class'] and provenance['candidate_sha'] == embedded['source_sha'], 'Evidence provenance class/candidate mismatch')
-        require(provenance['verification_method_id'] == embedded['verification_method_id'] and provenance['harness_id'] == embedded['harness_id'] and provenance['external_gate_id'] == embedded['external_gate_id'], 'Evidence method/harness/gate binding mismatch')
+        require(provenance['verification_method_id'] == embedded['verification_method_id'] and provenance['harness_id'] == embedded['harness_id'] and provenance['external_gate_id'] == embedded['external_gate_id'] and provenance['evidence_phase'] == embedded['evidence_phase'], 'Evidence phase/method/harness/gate binding mismatch')
         method = methods.get(provenance['verification_method_id'])
         require(method, 'Evidence references unknown project verification method')
         require(provenance['evidence_class'] in method['required_evidence_classes'], 'Evidence class is not permitted by its verification method')
@@ -552,8 +552,8 @@ def validate_stage_trust(record, task, parent, support, now):
         require(instant(lease['sealed_at']) <= completed, 'Review lease cannot be sealed after stage completion')
         for evidence_id in record['evidence_refs']:
             provenance = support['evidence_records'][evidence_id]
-            if provenance['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
-                require(provenance['review_lease_ref'] == lease['lease_id'], 'Independent evidence is not bound to current review lease')
+            if provenance['evidence_phase'] != 'DISCOVERY' and provenance['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
+                require(provenance['review_lease_ref'] == lease['lease_id'], 'Independent final evidence is not bound to current review lease')
                 require(provenance['acceptance_surface_digest'] == surface['digest'], 'Independent evidence acceptance-surface digest mismatch')
                 require(provenance['acceptance_surface_manifest_digest'] == surface['manifest_digest'], 'Independent evidence transitive acceptance-surface manifest mismatch')
                 require(set(provenance['fixture_digests']) == set(surface['fixture_digests']), 'Independent evidence fixture set differs from protected acceptance surface')
