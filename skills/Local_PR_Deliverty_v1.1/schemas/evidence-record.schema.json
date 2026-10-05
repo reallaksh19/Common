@@ -7,20 +7,6 @@
       "type": "string",
       "minLength": 1
     },
-    "producer_role": {
-      "enum": [
-        "CODER",
-        "REVIEWER",
-        "COORDINATOR",
-        "PARENT_CHECK",
-        "CI_PROVIDER",
-        "EXTERNAL_ORACLE"
-      ]
-    },
-    "producer_principal": {
-      "type": "string",
-      "minLength": 1
-    },
     "evidence_class": {
       "enum": [
         "AUTHOR",
@@ -142,12 +128,90 @@
         "pattern": "^[0-9a-f]{64}$"
       },
       "uniqueItems": true
+    },
+    "origin_kind": {
+      "enum": [
+        "STAGE_EXECUTOR",
+        "CI_PROVIDER",
+        "EXTERNAL_ORACLE",
+        "HUMAN_OBSERVER",
+        "OTHER_AUTHENTICATED_PROVIDER"
+      ]
+    },
+    "origin_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "collected_by_role": {
+      "enum": [
+        "CODER",
+        "REVIEWER",
+        "COORDINATOR",
+        "PARENT_CHECK"
+      ]
+    },
+    "collected_by_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provider_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "verification_method_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "harness_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "external_gate_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "oracle_independence": {
+      "enum": [
+        "PINNED_ORACLE_INDEPENDENT",
+        "PROVIDER_INDEPENDENT",
+        "HUMAN_INDEPENDENT",
+        "NOT_INDEPENDENT",
+        "UNKNOWN"
+      ]
+    },
+    "principal_relationship_to_candidate": {
+      "enum": [
+        "AUTHOR_OF_CANDIDATE",
+        "LAST_PRODUCT_WRITER",
+        "PRIOR_PRODUCT_WRITER",
+        "NON_WRITER_REVIEWER",
+        "EXTERNAL_PROVIDER",
+        "EXTERNAL_HUMAN"
+      ]
+    },
+    "acceptance_surface_manifest_digest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
     "evidence_id",
-    "producer_role",
-    "producer_principal",
     "evidence_class",
     "candidate_sha",
     "project_protocol_digest",
@@ -164,7 +228,18 @@
     "procedure_kind",
     "command_argv",
     "exit_code",
-    "fixture_digests"
+    "fixture_digests",
+    "origin_kind",
+    "origin_principal",
+    "collected_by_role",
+    "collected_by_principal",
+    "provider_ref",
+    "verification_method_id",
+    "harness_id",
+    "external_gate_id",
+    "oracle_independence",
+    "principal_relationship_to_candidate",
+    "acceptance_surface_manifest_digest"
   ],
   "additionalProperties": false
 }
