@@ -1,5 +1,6 @@
 """Read-only consistency checker for supplied issue/PR records; no Git operations."""
 import argparse
+import hashlib
 import json
 from functools import lru_cache
 from datetime import datetime, timedelta, timezone
@@ -35,6 +36,14 @@ def instant(value):
     return parsed.astimezone(timezone.utc)
 
 
+def canonical_digest(record, omit_fields=('digest',)):
+    """Canonical SHA-256 for fully visible in-bundle records."""
+    omit = set(omit_fields)
+    payload = {key: value for key, value in record.items() if key not in omit}
+    encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
+    return hashlib.sha256(encoded).hexdigest()
+
+
 @lru_cache(maxsize=None)
 def schema_validator(schema_name):
     schema = json.loads((ROOT / 'schemas' / (schema_name + '.schema.json')).read_text(encoding='utf-8'))
@@ -63,6 +72,10 @@ def support_index(bundle):
         require(isinstance(records, list), key + ' must be an array')
         for record in records:
             validate_against_schema(record, schema_name)
+            if key in ['environments', 'project_protocols']:
+                require(record['digest'] == canonical_digest(record), key + ' record digest does not match canonical content')
+            elif key == 'review_leases':
+                require(record['lease_id'] == 'sha256:' + canonical_digest(record, ('lease_id',)), 'Review lease ID is not content-addressed to canonical lease content')
         ids = [record[id_field] for record in records]
         require(len(ids) == len(set(ids)), 'Duplicate ' + id_field)
         indexes[key] = {record[id_field]: record for record in records}
@@ -362,6 +375,7 @@ def validate_stage_trust(record, task, parent, support, now):
 
     surface = record['acceptance_surface']
     if surface is not None:
+        require(surface['digest'] == canonical_digest(surface), 'Acceptance-surface digest does not match canonical content')
         protected = protocol['protected_surface']
         require(surface['project_protocol_digest'] == protocol['digest'], 'Acceptance surface project-protocol digest differs from pinned project protocol')
         require(surface['harness_digest'] == protected['harness_digest'], 'Acceptance surface harness differs from pinned project protocol')
