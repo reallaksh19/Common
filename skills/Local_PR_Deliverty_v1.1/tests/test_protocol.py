@@ -749,6 +749,72 @@ class TrustGraphV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+    def test_unauthorized_reviewer_principal_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['executor'] = 'intruder'
+        reviewer['role_integrity']['principal'] = 'intruder'
+        self.rejected(bundle)
+
+    def test_unverified_owner_command_rejected(self):
+        bundle = premerge_bundle()
+        cmd = command('HOLD', issued='2026-10-04T00:03:00Z')
+        cmd['source_kind'] = 'UNVERIFIED'
+        cmd['authentication_status'] = 'UNVERIFIED'
+        bundle['tasks'][0]['owner_commands'] = [cmd]
+        self.rejected(bundle)
+
+    def test_evidence_provenance_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        evidence_id = bundle['stages'][2]['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['producer_role'] = 'REVIEWER'
+        self.rejected(bundle)
+
+    def test_common_protocol_digest_drift_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][2]['common_protocol_digest'] = '1' * 64
+        self.rejected(bundle)
+
+    def test_merge_base_drift_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['merge_base_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_stacked_dependency_head_movement_expires_latest_lease(self):
+        bundle = premerge_bundle()
+        upstream = copy.deepcopy(bundle['tasks'][1])
+        upstream.update(task_id='T87', issue=87, pr=102, scope='Synthetic stacked upstream')
+        upstream['stacked_dependencies'] = []
+        bundle['tasks'].append(upstream)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Synthetic stacked upstream', covers=['P1'], depends_on=[]))
+        bundle['tasks'][1]['stacked_dependencies'] = ['T87']
+        bundle['observed']['dependency_heads'] = {'T87': HEADS[0]}
+        enrich_v11(bundle)
+        bundle['observed']['dependency_heads'] = {'T87': HEADS[0]}
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['dependency_heads'] = [dict(task_id='T87', sha=HEADS[0])]
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+        bundle['observed']['dependency_heads']['T87'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_blocked_cannot_hide_internal_fixable_defect(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['internal_fixable_defects_remaining'] = 1
+        record['production_output']['unresolved_internal_defects'] = ['F-INTERNAL']
+        self.rejected(bundle)
+
+    def test_canonical_post_merge_observation_must_match_provider_record(self):
+        bundle = example_bundle()
+        bundle['results'][0]['canonical_observation']['main_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+
 class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_every_v11_schema_is_valid_draft_2020_12(self):
         from jsonschema import Draft202012Validator
