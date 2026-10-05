@@ -115,6 +115,48 @@
     "target_ref": {
       "type": "string",
       "pattern": "^refs/heads/.+$"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "pr": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "project_protocol_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "certifier_role": {
+      "enum": [
+        "REVIEWER",
+        "COORDINATOR",
+        "PARENT_CHECK"
+      ]
+    },
+    "certifier_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "harness_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "baseline_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "oracle_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -141,7 +183,15 @@
     "common_protocol_digest",
     "merge_base_sha",
     "owner_control_digest",
-    "target_ref"
+    "target_ref",
+    "repository",
+    "pr",
+    "project_protocol_ref",
+    "certifier_role",
+    "certifier_principal",
+    "harness_digest",
+    "baseline_digest",
+    "oracle_digests"
   ],
   "additionalProperties": false
 }
