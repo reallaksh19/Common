@@ -513,7 +513,7 @@ def validate_stage_trust(record, task, parent, support, now):
         if row['result'] == 'PASS':
             continue
         require(row['result'] == 'NOT_RUN', 'Required criterion FAIL/INCONCLUSIVE/NOT_APPLICABLE cannot advance')
-        require(record['status'] == 'APPROVED_WITH_WAIVER', 'Required criterion NOT_RUN needs stage-complete-with-waiver outcome')
+        require(record['status'] == 'STAGE_COMPLETE_WITH_WAIVER', 'Required criterion NOT_RUN needs stage-complete-with-waiver outcome')
         matches = matching_waivers(task, record['review_lease_ref'], record['validated_sha'], 'CRITERION', row['criterion_id'], support, completed, record['waiver_refs'])
         require(len(matches) == 1, 'Required criterion NOT_RUN lacks exact active Owner waiver')
         used_stage_waivers.add(matches[0]['waiver_id'])
@@ -660,35 +660,105 @@ def task_history(task, records, parent, support, now):
         require(set(production['coverage_completed']) <= acceptance_ids(task), 'Production output names unknown acceptance coverage')
         if record['output_sha'] is not None:
             require(production['candidate_changed'] == (record['output_sha'] != record['input_sha']), 'production_output candidate_changed disagrees with actual stage input/output identity')
+        if production['candidate_changed']:
+            require(production['changed_components'], 'Changed candidate must declare changed component classes')
         require(set(production['defects_fixed_here']) <= set(production['defects_found']), 'Stage cannot claim a fixed defect it did not record as found/consumed')
         if production['defects_fixed_here']:
             require(production['candidate_changed'], 'Fixing product defects requires a changed candidate')
-        if record['status'] == 'BLOCKED':
-            require(production['blocking_class'] != 'NONE' and production['external_escalations'] and production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'BLOCKED is reserved for explicit genuine external/authority boundaries, not internal fixable defects')
-        if record['status'] in ADVANCING_STATUSES:
-            require(production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'Advancing outcome cannot push internal fixable defects downstream')
-            require(production['coverage_complete_for_stage'] and not production['early_termination'], 'Advancing outcome requires work-to-exhaustion for the stage')
-            require(production['blocking_class'] == 'NONE', 'Advancing outcome cannot retain a blocking class')
+
         acceptance_rows = record['acceptance_results']
         require(len({r['criterion_id'] for r in acceptance_rows}) == len(acceptance_rows), 'Duplicate acceptance result')
         require({r['criterion_id'] for r in acceptance_rows} <= acceptance_ids(task), 'Acceptance result names unknown criterion')
         evidence = {e['evidence_id']: e for e in record['evidence_manifest']}
         require(len(evidence) == len(record['evidence_manifest']), 'Duplicate evidence ID')
+        provenance = {eid: support['evidence_records'][eid] for eid in evidence}
+        methods = {method['id']: method for method in protocol['verification_methods']}
+
         finding_ids = {finding['id'] for finding in record['findings']}
+        require(set(production['defects_found']) == finding_ids, 'production_output.defects_found must exactly name current-stage findings')
+        fixed_ids = set(production['defects_fixed_here'])
+        escalation_ids = set(production['external_escalations'])
+        for finding in record['findings']:
+            require(set(finding['resolution_evidence_ids']) <= set(evidence), 'Finding resolution references missing stage evidence')
+            if finding['status'] == 'RESOLVED':
+                require(finding['resolution_evidence_ids'], 'Resolved finding needs resolution evidence')
+                require(all(evidence[eid]['result'] == 'PASS' for eid in finding['resolution_evidence_ids']), 'Resolved finding requires PASS resolution evidence')
+            if finding['classification'] == 'BOUNDED_PRODUCT_FIX':
+                require(finding['repair_disposition'] in ['FIXED_HERE', 'OBSERVED_NO_CHANGE'], 'Bounded product finding cannot be delegated externally')
+                if finding['repair_disposition'] == 'FIXED_HERE':
+                    require(finding['id'] in fixed_ids and finding['status'] == 'RESOLVED', 'Fixed-here finding must be resolved and listed in defects_fixed_here')
+                    require(set(finding['affected_components']) & set(production['changed_components']), 'Fixed finding does not intersect declared changed components')
+            else:
+                require(finding['repair_disposition'] == 'ESCALATED', 'Non-bounded finding must use explicit escalation path')
+                require(finding['id'] in escalation_ids, 'Escalated finding missing from production_output.external_escalations')
+                require(finding['id'] not in fixed_ids, 'Material/protocol/external finding cannot be self-certified as fixed here')
+
         carried_ids = {finding['id'] for finding in record['carried_findings']}
         require(len(carried_ids) == len(record['carried_findings']), 'Duplicate carried finding ID')
         require(not (finding_ids & carried_ids), 'Current and carried findings must use distinct IDs')
         for carried in record['carried_findings']:
             require(set(carried['affected_acceptance']) <= acceptance_ids(task), 'Carried finding affects unknown acceptance criterion')
             require(set(carried['resolution_evidence_ids']) <= set(evidence), 'Carried finding resolution references missing stage evidence')
+            if carried['status'] == 'RESOLVED':
+                require(carried['resolution_evidence_ids'], 'Resolved carried finding needs resolution evidence')
+                require(all(evidence[eid]['result'] == 'PASS' for eid in carried['resolution_evidence_ids']), 'Resolved carried finding requires PASS resolution evidence')
+
         for row in acceptance_rows:
             require(set(row['evidence_ids']) <= set(evidence), 'Acceptance result references missing evidence')
             require(set(row['finding_ids']) <= finding_ids | carried_ids, 'Acceptance result references unknown finding')
             declared = acceptance_by_id(task)[row['criterion_id']]
             require(row['required'] == declared['required'], 'Acceptance requiredness differs from TASK')
             require(set(row['verification_method_ids']) == set(declared['verification_method_ids']), 'Acceptance verification methods differ from TASK')
+            cited_methods = {provenance[eid]['verification_method_id'] for eid in row['evidence_ids']}
+            require(cited_methods == set(row['verification_method_ids']), 'Acceptance evidence does not exactly cover declared verification methods')
+            method_results = {}
+            for method_id in row['verification_method_ids']:
+                method = methods[method_id]
+                items = [provenance[eid] for eid in row['evidence_ids'] if provenance[eid]['verification_method_id'] == method_id]
+                require(items, 'Acceptance verification method lacks evidence')
+                require(all(item['evidence_class'] in method['required_evidence_classes'] for item in items), 'Acceptance method cites evidence class outside project method policy')
+                method_results[method_id] = derive_evidence_result(items)
+            derived = derive_criterion_result(method_results)
+            require(row['result'] == derived, 'Acceptance result contradicts cited per-method evidence results')
             if row['result'] != 'NOT_APPLICABLE':
                 require(row['rationale'] is None or row['rationale'], 'Acceptance rationale must be null or non-empty')
+
+        discovery = record['discovery_freeze']
+        if discovery is not None:
+            require(discovery['candidate_sha'] == record['input_sha'], 'Discovery freeze must describe the stage input candidate')
+            frozen_at = instant(discovery['frozen_at'])
+            require(instant(record['started_at']) <= frozen_at <= (instant(record['work_periods'][-1]['end']) if record['work_periods'][-1]['end'] else now), 'Discovery freeze timing is outside stage work period')
+            require(set(discovery['method_ids_attempted']) <= set(methods), 'Discovery freeze names unknown verification method')
+            require(set(discovery['finding_ids']) <= {finding['id'] for finding in record['findings'] if finding['phase_found'] == 'DISCOVERY'}, 'Discovery freeze names finding not frozen during DISCOVERY')
+            require(set(discovery['evidence_ids']) <= set(evidence), 'Discovery freeze references missing evidence')
+            for eid in discovery['evidence_ids']:
+                item = provenance[eid]
+                require(item['candidate_sha'] == record['input_sha'], 'Discovery evidence must be bound to pre-repair input candidate')
+                require(item['verification_method_id'] in discovery['method_ids_attempted'], 'Discovery evidence method not declared attempted')
+                require(instant(item['collected_at']) <= frozen_at, 'Discovery evidence was collected after findings freeze')
+            if production['candidate_changed']:
+                require(discovery['first_repair_at'] is not None, 'Changed Reviewer/Super Reviewer candidate needs first repair timestamp')
+                require(frozen_at < instant(discovery['first_repair_at']) <= instant(record['work_periods'][-1]['end']), 'Repair began before discovery findings were frozen')
+            else:
+                require(discovery['first_repair_at'] is None, 'Unchanged candidate cannot claim a first repair timestamp')
+
+        if record['status'] == 'BLOCKED':
+            require(production['blocking_class'] != 'NONE' and production['external_escalations'] and production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'BLOCKED is reserved for explicit genuine external/authority boundaries, not internal fixable defects')
+        if record['status'] in ADVANCING_STATUSES:
+            require(production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'Advancing outcome cannot push internal fixable defects downstream')
+            require(production['coverage_complete_for_stage'] and not production['early_termination'], 'Advancing outcome requires work-to-exhaustion for the stage')
+            require(production['blocking_class'] == 'NONE', 'Advancing outcome cannot retain a blocking class')
+            require(not escalation_ids, 'Advancing outcome cannot retain material/protocol/external escalations in the same acceptance epoch')
+            if stage in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+                require(discovery is not None and discovery['sweep_complete'], 'Reviewer/Super Reviewer completion requires frozen pre-repair discovery sweep')
+                role_criteria = {
+                    criterion_id for criterion_id, criterion in project_criteria.items()
+                    if (stage == 'REVIEWER' and criterion['reviewer_check_required'])
+                    or (stage in ['COORDINATOR', 'PARENT_CHECK'] and criterion['super_review_required'])
+                }
+                role_methods = set().union(*(set(project_criteria[cid]['verification_method_ids']) for cid in role_criteria)) if role_criteria else set()
+                require(role_methods <= set(discovery['method_ids_attempted']), 'Discovery sweep did not attempt the full role-required verification-method set before repair')
+                require(role_methods <= {provenance[eid]['verification_method_id'] for eid in discovery['evidence_ids']}, 'Discovery sweep lacks pre-repair evidence for a role-required verification method')
         if record['status'] in ADVANCING_STATUSES:
             role_required = set()
             if stage == 'REVIEWER':
@@ -701,8 +771,11 @@ def task_history(task, records, parent, support, now):
             if stage == 'REVIEWER':
                 rows_by_id = {row['criterion_id']: row for row in acceptance_rows}
                 for criterion_id in role_required:
-                    classes = {evidence[eid]['class'] for eid in rows_by_id[criterion_id]['evidence_ids']}
-                    require('REVIEWER_INDEPENDENT' in classes, 'Reviewer-required criterion lacks Reviewer-independent evidence')
+                    row = rows_by_id[criterion_id]
+                    for method_id in row['verification_method_ids']:
+                        method = methods[method_id]
+                        items = [provenance[eid] for eid in row['evidence_ids'] if provenance[eid]['verification_method_id'] == method_id]
+                        require(any(item['evidence_class'] == 'REVIEWER_INDEPENDENT' for item in items) or 'REVIEWER_INDEPENDENT' not in method['required_evidence_classes'], 'Reviewer-required verification method lacks Reviewer-independent evidence')
         if stage in ['COORDINATOR', 'PARENT_CHECK']:
             surface = record['acceptance_surface']
             require(surface and surface['project_protocol_digest'] == task['project_protocol_digest'], 'Super Review acceptance surface does not match pinned project protocol')
@@ -710,8 +783,12 @@ def task_history(task, records, parent, support, now):
             for row in acceptance_rows:
                 declared = acceptance_by_id(task)[row['criterion_id']]
                 if declared['super_review_required']:
-                    classes = {evidence[eid]['class'] for eid in row['evidence_ids']}
-                    require(classes & {'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'}, 'Super-review criterion lacks independent project-harness/oracle evidence')
+                    for method_id in row['verification_method_ids']:
+                        method = methods[method_id]
+                        items = [provenance[eid] for eid in row['evidence_ids'] if provenance[eid]['verification_method_id'] == method_id]
+                        require(items, 'Super-review verification method lacks evidence')
+                        if method['harness_id']:
+                            require(any(item['harness_id'] == method['harness_id'] and item['evidence_class'] in ['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'] for item in items), 'Required project harness method was not executed by independent Super Review/oracle evidence')
         if task['kind'] == 'CHILD':
             expected = next((s for s in ORDER if s not in passes), 'COORDINATOR')
             require(stage == expected or (latest and stage == latest['stage'] and latest['status'] not in ADVANCING_STATUSES), 'Role skipped an unfinished prerequisite')
@@ -796,6 +873,11 @@ def validate_bundle(bundle, now=None):
         contracts = {item['check']: item for item in task['required_check_contracts']}
         require(len(contracts) == len(task['required_check_contracts']) and set(contracts) == set(task['required_checks']), 'required_check_contracts must exactly cover required_checks')
         require(all(item['provider'] == task['required_check_policy']['provider'] and item['policy_source'] == task['required_check_policy']['source_ref'] for item in task['required_check_contracts']), 'Required-check contract is outside trusted policy source/provider')
+        for item in task['required_check_contracts']:
+            if item['certifies'] == 'PR_HEAD':
+                require(item['allowed_checkout_modes'] == ['PR_HEAD'], 'PR_HEAD check contract may only allow PR_HEAD checkout mode')
+            else:
+                require(set(item['allowed_checkout_modes']) <= {'SYNTHETIC_MERGE', 'MERGE_QUEUE'} and item['allowed_checkout_modes'], 'Integration-candidate check contract may only allow SYNTHETIC_MERGE/MERGE_QUEUE')
         require(task['repository'] == parent['repository'] and task['parent_owner'] == parent['parent_owner'] and task['protocol_ref'] == parent['protocol_ref'] and task['protocol_digest'] == parent['protocol_digest'] and task['project_protocol_ref'] == parent['project_protocol_ref'] and task['project_protocol_digest'] == parent['project_protocol_digest'] and task['role_principals'] == parent['role_principals'], 'Inconsistent parent/Common/project protocol or role basis')
         require(set(task['stacked_dependencies']) <= set(tasks) - {task['task_id']}, 'Invalid stacked dependency task ID')
         if task['kind'] == 'CHILD':
