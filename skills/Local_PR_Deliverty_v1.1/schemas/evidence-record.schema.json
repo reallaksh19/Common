@@ -208,6 +208,13 @@
           "type": "null"
         }
       ]
+    },
+    "evidence_phase": {
+      "enum": [
+        "DISCOVERY",
+        "FINAL_ACCEPTANCE",
+        "EXTERNAL_GATE"
+      ]
     }
   },
   "required": [
@@ -239,7 +246,8 @@
     "external_gate_id",
     "oracle_independence",
     "principal_relationship_to_candidate",
-    "acceptance_surface_manifest_digest"
+    "acceptance_surface_manifest_digest",
+    "evidence_phase"
   ],
   "additionalProperties": false
 }
