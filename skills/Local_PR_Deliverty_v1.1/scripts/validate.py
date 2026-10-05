@@ -327,7 +327,7 @@ def validate_stage_trust(record, task, parent, support, now):
     require(instant(start['observed_at']) <= instant(pre['observed_at']) <= completed, 'PRE_VERDICT context snapshot timing invalid')
 
     attestation = record['source_attestation']
-    require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'], 'PASS source attestation does not match validated candidate/base')
+    require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'] and attestation['base_ref'] == task['target_ref'], 'Advancing source attestation does not match validated candidate/base target')
     require(attestation['unrecorded_changes'] is False, 'PASS source attestation reports unrecorded changes')
     require(all(record['freshness'].values()), 'PASS requires every declared freshness dimension current')
     require(not any(item['blocking'] and item['status'] == 'OPEN' for item in record['carried_findings']), 'Advancing outcome has unresolved blocking carried finding')
@@ -356,7 +356,7 @@ def validate_stage_trust(record, task, parent, support, now):
     if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
         lease = support['review_leases'].get(record['review_lease_ref'])
         require(lease and lease['task_id'] == task['task_id'] and lease['stage_record_id'] == record['record_id'], 'Missing/mismatched review lease')
-        require(lease['candidate_sha'] == record['validated_sha'] and lease['base_sha'] == record['base_sha'], 'Review lease is stale for candidate/base')
+        require(lease['candidate_sha'] == record['validated_sha'] and lease['base_sha'] == record['base_sha'] and lease['target_ref'] == task['target_ref'], 'Review lease is stale for candidate/base target')
         require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['common_protocol_digest'] == task['protocol_digest'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
         require(lease['spec_digest'] == task['spec_digest'] and lease['parent_spec_digest'] == parent['spec_digest'], 'Review lease specification basis is stale')
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
@@ -385,7 +385,7 @@ def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
     state = support['observed_states'].get(state_ref) if state_ref else latest_observed_state(task, support)
     require(state, 'Missing structured observed repository/check state')
     require(instant(state['observed_at']) <= at, 'Structured observed repository/check state is from the future')
-    require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
+    require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'] and state['target_ref'] == task['target_ref'], 'Observed repository state is stale for PR head/base target')
     require(state['common_protocol_digest'] == task['protocol_digest'] and state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale protocol basis')
     require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
     require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'] and state['merge_base_sha'] == latest['source_attestation']['merge_base_sha'], 'Observed integration tree/merge base differs from reviewed identity')
@@ -639,7 +639,7 @@ def validate_bundle(bundle, now=None):
                 waiver = support['waivers'].get(waiver_ref)
                 require(waiver and waiver['task_id'] == task['task_id'] and waiver['lease_id'] == result['review_lease_ref'], 'Delivery references invalid waiver')
             merge = observations.get('merged', {}).get(str(result['pr']))
-            require(merge and merge.get('head_sha') == result['head_sha'] and merge.get('merge_commit_sha') == result['merge_commit_sha'], 'Provider merge observation missing/mismatched')
+            require(merge and merge.get('head_sha') == result['head_sha'] and merge.get('merge_commit_sha') == result['merge_commit_sha'] and merge.get('target_ref') == task['target_ref'], 'Provider merge observation missing/mismatched target/head/merge identity')
             merged_at = instant(merge['merged_at'])
             require(instant(final['work_periods'][-1]['end']) <= merged_at <= recorded, 'Merge/result timing invalid')
             require(not blocking_control(commands, task, 'COORDINATOR', merged_at), 'Merge occurred under Owner control')
@@ -647,13 +647,18 @@ def validate_bundle(bundle, now=None):
             expected_waivers = set(final['waiver_refs']) | used_check_waivers
             require(set(result['waiver_refs']) == expected_waivers, 'Delivery waiver_refs must exactly match waivers actually used for engineering/pre-merge advancement')
             canonical = result['canonical_observation']
-            observed_canonical = observations.get('canonical_main_observations', {}).get(str(result['pr']))
-            require(observed_canonical and observed_canonical == canonical, 'Canonical post-merge observation missing/mismatched')
+            observed_canonical = observations.get('canonical_target_observations', {}).get(str(result['pr']))
+            require(observed_canonical and observed_canonical == canonical, 'Canonical post-merge target observation missing/mismatched')
             canonical_at = instant(canonical['observed_at'])
             require(merged_at <= canonical_at <= recorded, 'Canonical post-merge observation timing invalid')
-            require(canonical['integrates_reviewed_candidate'] is True, 'Canonical main does not attest reviewed candidate integration')
+            require(canonical['target_ref'] == task['target_ref'], 'Canonical observation names wrong target ref')
+            require(canonical['reviewed_head_sha'] == result['head_sha'] and canonical['merge_commit_sha'] == result['merge_commit_sha'], 'Canonical observation is not bound to reviewed head/merge commit')
+            if canonical['relation'] == 'EXACT_MERGE_COMMIT':
+                require(canonical['target_sha'] == result['merge_commit_sha'] and canonical['ancestry_proof_ref'] is None, 'Exact canonical relation requires target SHA equal merge commit and no ancestry proof')
+            else:
+                require(canonical['ancestry_proof_ref'], 'Descendant canonical relation requires provider ancestry proof reference')
         else:
-            require(observations.get('main_sha') == result['head_sha'] == final['base_sha'], 'Parent must validate integrated current main')
+            require(observations.get('target_heads', {}).get(task['task_id']) == result['head_sha'] == final['base_sha'], 'Parent must validate its integrated current target ref')
         require(task['task_id'] not in by_task, 'Use latest delivery result per task; preserve history on issues')
         result_map[result['record_id']], by_task[task['task_id']] = result, result
     completed = {tasks[key]['issue'] for key, r in by_task.items() if r['kind'] == 'CHILD' and r['responsibility_complete']}
@@ -685,7 +690,8 @@ def validate_bundle(bundle, now=None):
                 head = observations.get('pr_heads', {}).get(pr)
                 current_basis = observations.get('spec_digests', {})
                 workspace = observations.get('workspace', {})
-                current = head == latest['validated_sha'] and observations.get('main_sha') == latest['base_sha'] and current_basis.get(key) == task['spec_digest'] and current_basis.get(parent['task_id']) == parent['spec_digest']
+                target_head = observations.get('target_heads', {}).get(key)
+                current = head == latest['validated_sha'] and target_head == latest['base_sha'] and current_basis.get(key) == task['spec_digest'] and current_basis.get(parent['task_id']) == parent['spec_digest']
                 material = observations.get('review_snapshots', {}).get(latest['record_id'], {}) if latest['workspace_mode'] == 'READ_ONLY' else workspace
                 stable_source = latest['workspace_mode'] != 'READ_ONLY' or material.get('reference') == latest['review_source']['reference']
                 if not current or not stable_source or workspace.get('path') != parent['workspace'] or material.get('head_sha') != head or material.get('unrecorded_changes') is not False:
