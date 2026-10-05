@@ -352,13 +352,60 @@
             "null"
           ],
           "minLength": 1
+        },
+        "delegate_principal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
         }
       },
       "required": [
         "mode",
-        "reference"
+        "reference",
+        "delegate_principal"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "OWNER_ONLY"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "delegate_principal": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "DELEGATED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "delegate_principal": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "start_permissions": {
       "type": "array",
