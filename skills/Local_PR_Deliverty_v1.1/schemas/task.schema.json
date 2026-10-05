@@ -266,6 +266,10 @@
               "null"
             ],
             "minimum": 1
+          },
+          "owner_principal": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
@@ -276,7 +280,8 @@
           "issued_at",
           "instruction_ref",
           "reason",
-          "minutes"
+          "minutes",
+          "owner_principal"
         ],
         "additionalProperties": false,
         "allOf": [
@@ -416,6 +421,78 @@
     "project_protocol_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "owner_principals": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "required_check_policy": {
+      "type": "object",
+      "properties": {
+        "source_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "source_ref",
+        "digest",
+        "provider"
+      ],
+      "additionalProperties": false
+    },
+    "required_check_contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "workflow_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "policy_source": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "check",
+          "provider",
+          "workflow_digest",
+          "policy_source"
+        ],
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "waivable_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -436,7 +513,11 @@
     "scope",
     "acceptance",
     "children",
-    "required_checks"
+    "required_checks",
+    "owner_principals",
+    "required_check_policy",
+    "required_check_contracts",
+    "waivable_criteria"
   ],
   "additionalProperties": false,
   "allOf": [
