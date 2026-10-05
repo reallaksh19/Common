@@ -50,3 +50,8 @@ A green wrapper with skipped mandatory validation is NOT_RUN, not PASS.
 
 The v1.1 checker validates supplied/provider-observed record consistency. Without stronger external credentials/signatures it cannot cryptographically prove that a human or provider statement is authentic. That stronger trust boundary belongs to later credential/attestation hardening, not fabricated certainty in v1.1.
 
+## Repository policy and merge authority
+
+Repository policy is part of evidence freshness, not an assumption. PRE_MERGE observed state records the trusted policy source reference, policy digest and visibility. Only `CONFIRMED` policy visibility can become merge-ready; `UNKNOWN` or `UNAVAILABLE` is `WAITING_EXTERNAL`.
+
+Merge authority is a separate authenticated observation. It records principal, authority reference, source kind/digest, authentication status and observation time. OWNER_ONLY requires an authorized Owner principal. DELEGATED requires the exact delegated principal and Owner delegation reference. Engineering approval never implies merge authority.
