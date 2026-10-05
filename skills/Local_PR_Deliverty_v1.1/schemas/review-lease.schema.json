@@ -35,6 +35,14 @@
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
+    "acceptance_epoch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "acceptance_profile_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "spec_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
@@ -184,6 +192,8 @@
     "integration_tree_digest",
     "common_protocol_ref",
     "project_protocol_digest",
+    "acceptance_epoch_id",
+    "acceptance_profile_digest",
     "spec_digest",
     "parent_spec_digest",
     "parent_context_digest",
