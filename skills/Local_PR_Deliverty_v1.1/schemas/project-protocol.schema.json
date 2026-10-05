@@ -116,12 +116,20 @@
           },
           "waivable": {
             "type": "boolean"
+          },
+          "applies_to": {
+            "enum": [
+              "CHILD",
+              "PARENT",
+              "ALL"
+            ]
           }
         },
         "required": [
           "id",
           "required",
-          "waivable"
+          "waivable",
+          "applies_to"
         ],
         "additionalProperties": false
       }
@@ -133,6 +141,33 @@
     "digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "protected_surface": {
+      "type": "object",
+      "properties": {
+        "harness_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "baseline_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "oracle_digests": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "harness_digest",
+        "baseline_digest",
+        "oracle_digests"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -143,7 +178,8 @@
     "harnesses",
     "external_gates",
     "source_ref",
-    "digest"
+    "digest",
+    "protected_surface"
   ],
   "additionalProperties": false
 }
