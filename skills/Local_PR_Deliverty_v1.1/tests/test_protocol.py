@@ -32,6 +32,9 @@ CHILD_CONTEXT_DIGEST = 'b' * 64
 PR_DESCRIPTION_DIGEST = 'c' * 64
 OWNER_CONTROL_DIGEST = '9' * 64
 POLICY_SOURCE = 'https://example.invalid/policy/required-checks'
+WORKFLOW_PATH = '.github/workflows/required.yml'
+EXPECTED_APP = 'github-actions'
+ARTIFACT_DIGEST = 'e' * 64
 
 
 def enrich_v11(bundle):
@@ -47,7 +50,7 @@ def enrich_v11(bundle):
         task.setdefault('stacked_dependencies', [])
         task['required_check_policy'] = dict(source_ref=POLICY_SOURCE, digest=POLICY_DIGEST, provider='GITHUB_ACTIONS')
         task['required_check_contracts'] = [
-            dict(check=name, provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE)
+            dict(check=name, provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP)
             for name in task['required_checks']
         ]
         task.setdefault('waivable_criteria', [])
@@ -55,8 +58,33 @@ def enrich_v11(bundle):
             criterion['verification_method_ids'] = ['VM-' + criterion['id']]
             criterion.setdefault('super_review_required', True)
 
-    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[])
+    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[], project_protocols=[])
     bundle['support'] = support
+    criteria = {}
+    for task in bundle['tasks']:
+        for criterion in task['acceptance']:
+            if criterion['id'] not in criteria:
+                criteria[criterion['id']] = dict(
+                    id=criterion['id'],
+                    required=criterion['required'],
+                    reviewer_check_required=True,
+                    super_review_required=criterion['super_review_required'],
+                    verification_method_ids=list(criterion['verification_method_ids']),
+                )
+    support['project_protocols'].append(dict(
+        protocol_id='SYNTHETIC-PROJECT-v1',
+        version='1.0',
+        repository=bundle['tasks'][0]['repository'],
+        source_ref=bundle['tasks'][0]['project_protocol_ref'],
+        digest=PROJECT_DIGEST,
+        acceptance_sets=[dict(id='ALL', criteria=list(criteria.values()))],
+        harnesses=[dict(
+            id='SR-ALL',
+            criteria=[criterion_id for criterion_id, criterion in criteria.items() if criterion['super_review_required']],
+            protected=True,
+        )],
+        external_gates=[],
+    ))
 
     for record in bundle['stages']:
         record['version'] = '1.1'
@@ -232,6 +260,7 @@ def enrich_v11(bundle):
                 acceptance_surface_digest=SURFACE_DIGEST,
                 environment_digest=ENV_DIGEST,
                 dependency_heads=[],
+                owner_control_digest=OWNER_CONTROL_DIGEST,
                 sealed_at=record['work_periods'][-1]['end'],
                 environment_ref=record['environment_ref'],
                 context_pre_verdict_ref=record['context_pre_verdict_ref'],
@@ -276,11 +305,23 @@ def enrich_v11(bundle):
             merge_base_sha=final['base_sha'],
             integration_tree_digest=TREE_DIGEST,
             repository_policy_digest=POLICY_DIGEST,
+            common_protocol_digest=COMMON_DIGEST,
+            environment_digest=ENV_DIGEST,
+            workspace_digest=WORKSPACE_DIGEST,
+            parent_context_digest=PARENT_CONTEXT_DIGEST,
+            child_context_digest=CHILD_CONTEXT_DIGEST,
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            owner_control_digest=OWNER_CONTROL_DIGEST,
             required_checks=[
                 dict(
                     check=contract['check'],
                     provider=contract['provider'],
                     workflow_digest=contract['workflow_digest'],
+                    workflow_path=contract['workflow_path'],
+                    app_identity=contract['expected_app'],
+                    run_id='RUN-' + task['task_id'],
+                    job_id='JOB-' + task['task_id'],
+                    artifact_digests=[ARTIFACT_DIGEST],
                     head_sha=final['validated_sha'],
                     result='PASS',
                     mandatory_steps_executed=True,
@@ -513,7 +554,7 @@ class ProtocolTests(unittest.TestCase):
     def test_omitted_required_check_never_merge_ready(self):
         bundle = premerge_bundle()
         bundle['tasks'][1]['required_checks'].append('Second required check')
-        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE))
+        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP))
         self.assertEqual(self.state(bundle), 'WAITING_CI')
 
     def test_final_ci_failure_and_timeout_block(self):
@@ -829,6 +870,8 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
             'protocol_id': 'example-project-v1',
             'version': '1.0',
             'repository': 'exampleowner/editor',
+            'source_ref': 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json',
+            'digest': PROJECT_DIGEST,
             'acceptance_sets': [{
                 'id': 'A1',
                 'criteria': [{
