@@ -476,6 +476,7 @@ class ProtocolTests(unittest.TestCase):
     def test_omitted_required_check_never_merge_ready(self):
         bundle = premerge_bundle()
         bundle['tasks'][1]['required_checks'].append('Second required check')
+        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE))
         self.assertEqual(self.state(bundle), 'WAITING_CI')
 
     def test_final_ci_failure_and_timeout_block(self):
@@ -490,6 +491,7 @@ class ProtocolTests(unittest.TestCase):
     def test_declared_no_ci_does_not_invent_gate(self):
         bundle = premerge_bundle()
         bundle['tasks'][1]['required_checks'] = []
+        bundle['tasks'][1]['required_check_contracts'] = []
         bundle['observed']['checks']['101'] = []
         self.assertEqual(self.state(bundle), 'MERGE_READY')
 
@@ -639,6 +641,76 @@ class ProductionStageV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         bundle['stages'][2]['evidence_manifest'][0]['class'] = 'AUTHOR'
         self.rejected(bundle)
+
+class TrustGraphV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_stale_review_lease_candidate_rejected(self):
+        bundle = premerge_bundle()
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['candidate_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_stale_pre_verdict_context_rejected(self):
+        bundle = premerge_bundle()
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['parent_context_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_environment_drift_rejected(self):
+        bundle = premerge_bundle()
+        environment_id = bundle['stages'][2]['environment_ref']
+        environment = next(item for item in bundle['support']['environments'] if item['environment_id'] == environment_id)
+        environment['digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_skipped_mandatory_ci_step_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        self.rejected(bundle)
+
+    def test_wrong_repository_policy_digest_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_unauthorized_owner_principal_rejected(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z')]
+        bundle['tasks'][0]['owner_commands'][0]['owner_principal'] = 'not-an-owner'
+        self.rejected(bundle)
+
+    def test_waiver_is_bound_and_never_result_override(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['waivable_criteria'] = ['A1']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == bundle['stages'][2]['review_lease_ref'])
+        bundle['support']['waivers'] = [dict(
+            waiver_id='W1',
+            task_id='T86',
+            criterion_id='A1',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner waiver',
+            reason='Synthetic risk acceptance',
+            risk='Synthetic residual risk',
+            compensating_controls=['Synthetic compensating control'],
+            issued_at='2026-10-04T00:03:00Z',
+            expires_at='2026-10-04T01:00:00Z',
+            non_transitive=True,
+            result_override=False,
+        )]
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+        bundle['support']['waivers'][0]['result_override'] = True
+        self.rejected(bundle)
+
 
 class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_every_v11_schema_is_valid_draft_2020_12(self):
