@@ -1,0 +1,92 @@
+$id: engineering-programme-coordinator-local-v1.1-integrated
+type: object
+additionalProperties: false
+required:
+  - mode
+  - authority
+  - parent_task_id
+  - local_protocol_ref
+  - local_protocol_digest
+  - engineering_evidence_provider_ref
+  - engineering_evidence_provider_digest
+  - responsibilities
+  - non_authorities
+  - legacy_v31_interpretation
+properties:
+  mode:
+    const: LOCAL_V1_1_INTEGRATED
+  authority:
+    const: OBSERVATION_ONLY
+  parent_task_id:
+    type: string
+    minLength: 1
+  local_protocol_ref:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}:skills/Local_PR_Deliverty_v1[.]1$'
+  local_protocol_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  engineering_evidence_provider_ref:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}:skills/engineering-pr-delivery-v3[.]5$'
+  engineering_evidence_provider_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  responsibilities:
+    type: array
+    uniqueItems: true
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - task_id
+        - release_state
+        - acceptance_epoch_ref
+        - acceptance_profile_ref
+        - acceptance_profile_digest
+        - nested_engineering_responsibility
+        - coder_engineering_complete
+        - local_responsibility_complete
+      properties:
+        task_id:
+          type: string
+          pattern: '^PRD-[A-Za-z0-9._-]+$'
+        release_state:
+          enum: [READY, BLOCKED_DEPENDENCY, HELD, COMPLETE]
+        acceptance_epoch_ref:
+          type: string
+          minLength: 1
+        acceptance_profile_ref:
+          type: string
+          minLength: 1
+        acceptance_profile_digest:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+        nested_engineering_responsibility:
+          type: string
+          pattern: '^ENG-PRD-[A-Za-z0-9._-]+-CODER$'
+        coder_engineering_complete:
+          type: boolean
+        local_responsibility_complete:
+          type: boolean
+  non_authorities:
+    type: array
+    minItems: 6
+    uniqueItems: true
+    items:
+      enum:
+        - ENGINEERING_PASS
+        - LOCAL_ROLE_TRANSITION
+        - PRODUCT_WRITE
+        - ACCEPTANCE_POLICY_WRITE
+        - RISK_RELAXATION
+        - MERGE
+    allOf:
+      - contains: {const: ENGINEERING_PASS}
+      - contains: {const: LOCAL_ROLE_TRANSITION}
+      - contains: {const: PRODUCT_WRITE}
+      - contains: {const: ACCEPTANCE_POLICY_WRITE}
+      - contains: {const: RISK_RELAXATION}
+      - contains: {const: MERGE}
+  legacy_v31_interpretation:
+    const: READABLE_COMPATIBILITY_ONLY
