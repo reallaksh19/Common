@@ -1,0 +1,65 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+required: [schema_version, authority, target, handover_context, generator, user_input]
+properties:
+  schema_version: {const: relay-v3.1-three-pass-request}
+  authority: {const: DERIVED_GENERATOR_REQUEST}
+  target:
+    type: object
+    additionalProperties: false
+    required: [schema_version, authority, provider, repository, kind, number, title, url, state, observed_at, provider_ref]
+    properties:
+      schema_version: {const: relay-v3.1-handover-target}
+      authority: {const: PROVIDER_READBACK}
+      provider: {const: GITHUB}
+      repository: {type: string, minLength: 3}
+      kind: {enum: [ISSUE, PULL_REQUEST]}
+      number: {type: integer, minimum: 1}
+      title: {type: string, minLength: 1}
+      url: {type: string, format: uri}
+      state: {enum: [OPEN, CLOSED, DRAFT, READY, MERGED, UNKNOWN]}
+      observed_at: {type: string, format: date-time}
+      provider_ref: {type: string, minLength: 1}
+  handover_context:
+    type: object
+    additionalProperties: false
+    required: [path, digest]
+    properties:
+      path: {const: relay/GENERATED/HANDOVER_CONTEXT.yaml}
+      digest: {type: string, pattern: '^sha256:[0-9a-fA-F]{64}$'}
+  generator:
+    type: object
+    additionalProperties: false
+    required: [launcher, schema, validator, mode, live_main_fetch_required, prompt_sequence, complex_mode, prompt1_q1_q5_required]
+    properties:
+      launcher: {const: skills/three-pass-prompt-generator/SKILL.md}
+      schema: {const: skills/three-pass-prompt-generator/schema.md}
+      validator: {const: skills/three-pass-prompt-generator/validate.py}
+      mode: {const: THREE_PASS_ONLY}
+      live_main_fetch_required: {const: true}
+      prompt_sequence:
+        type: array
+        minItems: 5
+        maxItems: 5
+        prefixItems:
+          - {const: PROMPT_0_5}
+          - {const: PROMPT_1}
+          - {const: PROMPT_2}
+          - {const: PROMPT_2_5}
+          - {const: PROMPT_3}
+        items: false
+      complex_mode: {type: boolean}
+      prompt1_q1_q5_required: {type: boolean}
+  user_input:
+    type: object
+    additionalProperties: false
+    required: [target, human_goal, user_intent, authorized_actions, intent_boundary, intent_completion_test, context_rule]
+    properties:
+      target: {type: string, format: uri}
+      human_goal: {type: string, minLength: 1}
+      user_intent: {type: string, minLength: 1}
+      authorized_actions: {type: string, minLength: 1}
+      intent_boundary: {type: string, minLength: 1}
+      intent_completion_test: {type: string, minLength: 1}
+      context_rule: {type: string, minLength: 1}
+additionalProperties: false
