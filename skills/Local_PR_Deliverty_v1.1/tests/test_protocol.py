@@ -361,6 +361,8 @@ def enrich_v11(bundle):
             merge_base_sha=final['base_sha'],
             integration_tree_digest=TREE_DIGEST,
             repository_policy_digest=POLICY_DIGEST,
+            repository_policy_source_ref=POLICY_SOURCE,
+            repository_policy_visibility='CONFIRMED',
             common_protocol_digest=COMMON_DIGEST,
             environment_digest=ENV_DIGEST,
             workspace_digest=WORKSPACE_DIGEST,
@@ -425,7 +427,7 @@ def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minut
 
 def example_bundle():
     common = dict(record='TASK', version='1.1', repository='exampleowner/editor', parent_owner='coordinator', spec_ref='https://example.invalid/issues/85', spec_digest=DIGEST, required_checks=['Required hosted check'], protocol_ref='exampleowner/Common@' + 'a' * 40 + ':skills/Local_PR_Deliverty_v1.1')
-    parent = dict(common, task_id='T85', kind='PARENT', issue=85, parent_issue=None, pr=None, scope='Deliver child and prove integrated parent outcome.', acceptance=[dict(id='P1', requirement='Child capability works in integrated product.', required=True)], children=[dict(issue=86, scope='Native parser foundation.', covers=['P1'], depends_on=[])], workspace=FOLDER, timers=dict(poll_seconds=60, stage_minutes=dict(checker.DEFAULT_BUDGETS), ci_wait_minutes=30, recovery_grace_minutes=5, handover_seconds=0, override_reason=None), owner_commands=[], start_permissions=[dict(id='PERMIT86', child_issue=86, issued_at='2026-10-04T00:00:00Z', coordinator='coordinator', parent_comment_ref='https://example.invalid/issues/85#permission86', reason='Ready independent child', during_record=None, reviewed_head_sha=None, mode='SERIAL', revoked_at=None)], merge_authority=dict(mode='OWNER_ONLY', reference=None))
+    parent = dict(common, task_id='T85', kind='PARENT', issue=85, parent_issue=None, pr=None, scope='Deliver child and prove integrated parent outcome.', acceptance=[dict(id='P1', requirement='Child capability works in integrated product.', required=True)], children=[dict(issue=86, scope='Native parser foundation.', covers=['P1'], depends_on=[])], workspace=FOLDER, timers=dict(poll_seconds=60, stage_minutes=dict(checker.DEFAULT_BUDGETS), ci_wait_minutes=30, recovery_grace_minutes=5, handover_seconds=0, override_reason=None), owner_commands=[], start_permissions=[dict(id='PERMIT86', child_issue=86, issued_at='2026-10-04T00:00:00Z', coordinator='coordinator', parent_comment_ref='https://example.invalid/issues/85#permission86', reason='Ready independent child', during_record=None, reviewed_head_sha=None, mode='SERIAL', revoked_at=None)], merge_authority=dict(mode='OWNER_ONLY', reference=None, delegate_principal=None))
     child = dict(common, task_id='T86', kind='CHILD', issue=86, parent_issue=85, pr=101, scope='Deliver native parser foundation.', acceptance=[dict(id='A1', requirement='Preserve native source structure.', required=True)], children=[])
     parent['required_checks'] = list(parent['required_checks'])
     child['required_checks'] = list(child['required_checks'])
@@ -443,7 +445,7 @@ def example_bundle():
         record['parent_context'] = dict(read_at=record['started_at'], through_comment_ref=f'https://example.invalid/issues/85#before-{record_id}', reconciled_points=['Read and reconcile complete prior parent history and active controls.'])
         record['workspace_mode'] = 'WRITE'
         record['review_source'] = None
-    observed = dict(main_sha=MERGE, pr_heads={'101': HEADS[2]}, spec_digests={'T85': DIGEST, 'T86': DIGEST}, workspace=dict(path=FOLDER, head_sha=HEADS[2], unrecorded_changes=False), merged={'101': dict(head_sha=HEADS[2], merge_commit_sha=MERGE, merged_at='2026-10-04T00:04:00Z')}, checks={'101': [dict(check='Required hosted check', head_sha=HEADS[2], result='PASS')]}, merge_authority_refs={'101': 'Synthetic owner authorization reference'}, external_writer_stopped=True)
+    observed = dict(main_sha=MERGE, pr_heads={'101': HEADS[2]}, spec_digests={'T85': DIGEST, 'T86': DIGEST}, workspace=dict(path=FOLDER, head_sha=HEADS[2], unrecorded_changes=False), merged={'101': dict(head_sha=HEADS[2], merge_commit_sha=MERGE, merged_at='2026-10-04T00:04:00Z')}, checks={'101': [dict(check='Required hosted check', head_sha=HEADS[2], result='PASS')]}, merge_authority_observations={'101': dict(principal='owner', authority_ref='Synthetic owner authorization reference', source_kind='DIRECT_OWNER_SESSION', source_digest='a' * 64, authentication_status='AUTHENTICATED', observed_at='2026-10-04T00:03:00Z')}, external_writer_stopped=True)
     observed['parent_comment_frontiers'] = {r['record_id']: dict(comment_ref=r['parent_context']['through_comment_ref'], observed_at=r['started_at']) for r in stages}
     observed['issue_states'] = {'85': 'CLOSED', '86': 'CLOSED'}
     observed['pr_states'] = {'101': 'MERGED'}
@@ -538,7 +540,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual((pending['status'], pending['engineering_approved'], pending['merge_ready']), ('WAITING_CI', False, False))
 
         bundle = premerge_bundle()
-        bundle['observed']['merge_authority_refs'] = {}
+        bundle['observed']['merge_authority_observations'] = {}
         owner_wait = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
         self.assertEqual((owner_wait['status'], owner_wait['engineering_approved'], owner_wait['merge_ready']), ('WAITING_OWNER', True, False))
 
@@ -970,6 +972,52 @@ class TrustGraphV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         for task in bundle['tasks']:
             task['role_principals']['REVIEWER'].append('coder')
+        self.rejected(bundle)
+
+
+class PolicyAndMergeAuthorityV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_unknown_repository_policy_visibility_waits_external(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_visibility'] = 'UNKNOWN'
+        result = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((result['status'], result['engineering_approved'], result['merge_ready']), ('WAITING_EXTERNAL', False, False))
+
+    def test_repository_policy_source_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_source_ref'] = 'https://example.invalid/policy/other'
+        self.rejected(bundle)
+
+    def test_unverified_merge_authority_rejected(self):
+        bundle = premerge_bundle()
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority['authentication_status'] = 'UNVERIFIED'
+        self.rejected(bundle)
+
+    def test_non_owner_merge_authority_rejected_under_owner_only(self):
+        bundle = premerge_bundle()
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority['principal'] = 'reviewer'
+        self.rejected(bundle)
+
+    def test_delegated_merge_authority_exact_principal_and_reference(self):
+        bundle = premerge_bundle()
+        parent = bundle['tasks'][0]
+        parent['merge_authority'] = dict(mode='DELEGATED', reference='AUTH-DELEGATE-1', delegate_principal='merger')
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority.update(principal='merger', authority_ref='AUTH-DELEGATE-1')
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+        authority['authority_ref'] = 'AUTH-DELEGATE-OTHER'
+        self.rejected(bundle)
+
+    def test_merge_after_authority_observation_required(self):
+        bundle = example_bundle()
+        bundle['observed']['merge_authority_observations']['101']['observed_at'] = '2026-10-04T00:04:30Z'
         self.rejected(bundle)
 
 
