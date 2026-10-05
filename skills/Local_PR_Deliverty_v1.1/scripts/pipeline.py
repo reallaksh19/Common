@@ -86,7 +86,7 @@ def validate_evidence(record, parent, task, bundle_observations, now):
         if record['stage'] == 'CODER':
             require(instant(grant['issued_at']) <= instant(context['read_at']), 'Coder must reread parent comments after permission')
     if record['status'] in ['STAGE_COMPLETE', 'STAGE_COMPLETE_WITH_WAIVER'] and production_task(task):
-        require(task['pr'] is not None, 'Production responsibility needs an active PR before a production stage can advance')
+        require(task['pr'] is not None, 'Each child needs its own PR; native production responsibility likewise needs its own active PR before a production stage can advance')
 
 
 def validate_pipeline(parent, tasks, records, observations, now):
