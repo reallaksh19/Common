@@ -74,7 +74,12 @@ Use distinct Coder, Reviewer and Coordinator/Super Reviewer identities. Distinct
 
 An END record is incomplete if it only says PASS/FAIL/REWORK. Every attempt records durable production output: deliverables, coverage completed, fixes applied, regressions added, education points, unresolved internal fixable defects, external/authority blocking class, and early-termination state/reason.
 
-PASS requires zero unresolved internal fixable defects, no blocking class, no early termination, and complete stage-appropriate coverage.
+Advancing outcomes require zero unresolved internal fixable defects, no blocking class, no early termination, and complete stage-appropriate coverage.
+
+- `PASS` means all required acceptance for that stage actually passed and MUST NOT depend on a waiver.
+- `APPROVED_WITH_WAIVER` is reserved for Coordinator/Super Reviewer or Parent Check when an otherwise required item is truthfully `NOT_RUN` and an exact, active Owner waiver permits advancement for that candidate lease.
+- A waiver never rewrites `NOT_RUN` to `PASS`.
+- `FAIL` and `INCONCLUSIVE` are never waiver-advancing outcomes.
 
 Findings must be actionable: observed behavior, expected behavior, reproduction/evidence, affected scope, correction constraints, closure checks, and regression lesson. Downstream stages consume the knowledge; they are not assigned the upstream stage's unfinished diagnosis.
 
@@ -82,11 +87,13 @@ Findings must be actionable: observed behavior, expected behavior, reproduction/
 
 The project protocol declares acceptance criteria, verification method IDs, which criteria require Super Review, harness IDs, fixtures/oracles, dependency contracts, performance/release methodology, external gates, and permanent regressions.
 
-Required result vocabulary is PASS, FAIL, NOT_RUN, INCONCLUSIVE, NOT_APPLICABLE. Required FAIL prevents approval. Required NOT_RUN or INCONCLUSIVE prevents approval unless the governing policy permits an explicit scoped Owner waiver. A waiver is risk acceptance, never PASS.
+Required result vocabulary is PASS, FAIL, NOT_RUN, INCONCLUSIVE, NOT_APPLICABLE. Required FAIL prevents approval. Required INCONCLUSIVE prevents approval. A required NOT_RUN may advance only through an exact scoped Owner waiver where the governing project/Common policy explicitly marks that target waivable. A waiver is risk acceptance, never PASS.
 
-For criteria marked super_review_required, Coordinator/Super Reviewer executes project-declared independent evidence against the exact candidate. Author tests are regression evidence and cannot be the sole Super Review evidence.
+For criteria marked `super_review_required`, Coordinator/Super Reviewer executes project-declared independent evidence against the exact candidate. Author tests are regression evidence and cannot be the sole Super Review evidence.
 
-Super Reviewer may fix product defects found by the harness, then MUST rerun the unchanged pinned harness and affected integration checks. Any protected-surface change invalidates that evidence.
+Reviewer/Super Reviewer product fixes invalidate pre-fix source-dependent evidence. Independent evidence used for advancement MUST name the final validated candidate SHA and, where applicable, the final review lease, unchanged harness digest, baseline digest, fixture digests and environment digest.
+
+Super Reviewer may fix product defects found by the harness, then MUST rerun the unchanged pinned harness and affected integration checks on the resulting candidate. Any protected-surface change invalidates that evidence and requires a newly pinned acceptance basis.
 
 ## Parent/context evidence
 
@@ -94,7 +101,7 @@ Every attempt publishes distinct parent START and END evidence. START records ex
 
 Before material work, read the parent body and all earlier comments through the current frontier, child issue, PR description/review threads, and actual files. A prose PASS is a claim to verify, not proof.
 
-Refresh relevant context, Owner controls, PR HEAD, base/main, project protocol and required checks before final verdict and before merge. Material drift invalidates affected evidence.
+Refresh relevant context, Owner controls, PR HEAD, the task's declared `target_ref` and current target head, merge base, project protocol and required checks before final verdict and before merge. Do not assume every child targets `main`; stacked PRs may target predecessor branches. Material drift invalidates affected evidence.
 
 ## Shared workspace
 
@@ -114,9 +121,9 @@ Default active budgets remain Coder 15 minutes, Reviewer 15 minutes, Coordinator
 
 ## Delivery
 
-Before merge verify current PR HEAD, target/main, project-protocol digest, protected acceptance-surface digest, required checks, Owner controls and actual merge authority. Merge authority is separate from engineering PASS.
+Before merge verify current PR HEAD, exact task `target_ref` and target head, merge base, project-protocol digest, protected acceptance-surface digest, required checks, Owner controls, active waivers actually used, and actual merge authority. Merge authority is separate from engineering approval.
 
-After merge observe canonical provider-confirmed main and perform required post-merge/parent integration checks. Merge or issue closure is not engineering completion by itself.
+After merge observe the canonical provider-confirmed **target ref**, not an assumed `main`. Canonical evidence must bind the reviewed head and merge commit and either show the target exactly at that merge commit or provide provider-backed ancestry proof that the later target still contains it. Then perform required parent integration checks. Merge or issue closure is not engineering completion by itself.
 
 ## Records and governing references
 
