@@ -1,0 +1,101 @@
+name: engineering-pr-delivery-v3.5
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+      - 'codex/492-b-v35-*'
+    paths:
+      - 'skills/engineering-pr-delivery-v3.5/**'
+      - '.github/workflows/engineering-pr-delivery-v3.5.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v3-5-embedded-coder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect V3.5 path relevance
+        id: relevance
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" != "pull_request" ]]; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed_paths="$RUNNER_TEMP/relay-v35-changed-paths.txt"
+          if ! git diff --name-only --no-renames "$BASE_SHA" "$HEAD_SHA" > "$changed_paths"; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          relevant=false
+          while IFS= read -r path; do
+            case "$path" in
+              skills/engineering-pr-delivery-v3.5/*|.github/workflows/engineering-pr-delivery-v3.5.yml)
+                relevant=true
+                break
+                ;;
+            esac
+          done < "$changed_paths"
+          echo "relevant=$relevant" >> "$GITHUB_OUTPUT"
+
+      - name: V3.5 scope not applicable
+        if: steps.relevance.outputs.relevant != 'true'
+        run: echo "NOT_APPLICABLE: no engineering-pr-delivery-v3.5 paths changed."
+
+      - name: Set up Python
+        if: steps.relevance.outputs.relevant == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install schema dependency
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Compile V3.5 active Python
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python -m py_compile skills/engineering-pr-delivery-v3.5/scripts/embedded_coder_v35.py
+
+      - name: Validate V3.5 embedded Coder schema
+        if: steps.relevance.outputs.relevant == 'true'
+        run: |
+          python - <<'PY'
+          import pathlib
+          import yaml
+          path = pathlib.Path('skills/engineering-pr-delivery-v3.5/schemas/embedded-coder-context-v35.schema.yaml')
+          document = yaml.safe_load(path.read_text(encoding='utf-8'))
+          assert document['$id'] == 'relay-v3.5-embedded-coder-context'
+          assert document['properties']['role']['const'] == 'CODER'
+          assert document['properties']['authority']['const'] == 'NESTED_ENGINEERING_EXECUTION_ONLY'
+          PY
+
+      - name: Run V3.5 embedded Coder regressions
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_embedded_coder_v35.py' -v
+
+      - name: Verify frozen V3.2 source tree unchanged by V3.5 work
+        if: steps.relevance.outputs.relevant == 'true' && github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$(git diff --name-only --no-renames "$BASE_SHA" "$HEAD_SHA" -- skills/engineering-pr-delivery-v3.2)" ]]; then
+            echo "V3.2 is frozen for #494; V3.5 work must not modify it." >&2
+            git diff --name-status "$BASE_SHA" "$HEAD_SHA" -- skills/engineering-pr-delivery-v3.2 >&2
+            exit 1
+          fi
