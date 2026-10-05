@@ -109,7 +109,22 @@
           "policy_source": "https://example.invalid/policy/required-checks"
         }
       ],
-      "waivable_criteria": []
+      "waivable_criteria": [],
+      "protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role_principals": {
+        "CODER": [
+          "coder",
+          "new-coder",
+          "other-coder"
+        ],
+        "REVIEWER": [
+          "reviewer"
+        ],
+        "COORDINATOR": [
+          "coordinator"
+        ]
+      },
+      "stacked_dependencies": []
     },
     {
       "record": "TASK",
@@ -158,7 +173,22 @@
           "policy_source": "https://example.invalid/policy/required-checks"
         }
       ],
-      "waivable_criteria": []
+      "waivable_criteria": [],
+      "protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role_principals": {
+        "CODER": [
+          "coder",
+          "new-coder",
+          "other-coder"
+        ],
+        "REVIEWER": [
+          "reviewer"
+        ],
+        "COORDINATOR": [
+          "coordinator"
+        ]
+      },
+      "stacked_dependencies": []
     },
     {
       "record": "TASK",
@@ -207,7 +237,22 @@
           "policy_source": "https://example.invalid/policy/required-checks"
         }
       ],
-      "waivable_criteria": []
+      "waivable_criteria": [],
+      "protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role_principals": {
+        "CODER": [
+          "coder",
+          "new-coder",
+          "other-coder"
+        ],
+        "REVIEWER": [
+          "reviewer"
+        ],
+        "COORDINATOR": [
+          "coordinator"
+        ]
+      },
+      "stacked_dependencies": []
     }
   ],
   "stages": [
@@ -359,7 +404,10 @@
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false
       },
-      "review_lease_ref": null
+      "review_lease_ref": null,
+      "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
     },
     {
       "record": "STAGE_RECORD",
@@ -518,7 +566,10 @@
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false
       },
-      "review_lease_ref": "LEASE-S2"
+      "review_lease_ref": "LEASE-S2",
+      "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
     },
     {
       "record": "STAGE_RECORD",
@@ -647,7 +698,10 @@
       "context_start_ref": "CTX-START-S3",
       "context_pre_verdict_ref": null,
       "source_attestation": null,
-      "review_lease_ref": null
+      "review_lease_ref": null,
+      "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
     },
     {
       "record": "STAGE_RECORD",
@@ -797,7 +851,10 @@
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false
       },
-      "review_lease_ref": null
+      "review_lease_ref": null,
+      "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
     },
     {
       "record": "STAGE_RECORD",
@@ -923,7 +980,10 @@
       "context_start_ref": "CTX-START-N2",
       "context_pre_verdict_ref": null,
       "source_attestation": null,
-      "review_lease_ref": null
+      "review_lease_ref": null,
+      "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
     }
   ],
   "results": [],
@@ -987,7 +1047,8 @@
     "pr_states": {
       "105": "OPEN",
       "106": "DRAFT"
-    }
+    },
+    "dependency_heads": {}
   },
   "support": {
     "review_leases": [
@@ -1011,7 +1072,8 @@
         "dependency_heads": [],
         "sealed_at": "2026-10-04T00:01:30Z",
         "environment_ref": "ENV-S2",
-        "context_pre_verdict_ref": "CTX-PRE-S2"
+        "context_pre_verdict_ref": "CTX-PRE-S2",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000"
       }
     ],
     "environments": [
@@ -1232,6 +1294,78 @@
       }
     ],
     "waivers": [],
-    "observed_states": []
+    "observed_states": [],
+    "evidence_records": [
+      {
+        "evidence_id": "EV-S1",
+        "producer_role": "CODER",
+        "producer_principal": "coder",
+        "evidence_class": "AUTHOR",
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": null,
+        "baseline_digest": null,
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "result": "PASS",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null
+      },
+      {
+        "evidence_id": "EV-S2",
+        "producer_role": "REVIEWER",
+        "producer_principal": "reviewer",
+        "evidence_class": "REVIEWER_INDEPENDENT",
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": null,
+        "baseline_digest": null,
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "result": "PASS",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null
+      },
+      {
+        "evidence_id": "EV-S3",
+        "producer_role": "COORDINATOR",
+        "producer_principal": "coordinator",
+        "evidence_class": "SUPER_REVIEW_INDEPENDENT",
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "result": "NOT_RUN",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null
+      },
+      {
+        "evidence_id": "EV-N1",
+        "producer_role": "CODER",
+        "producer_principal": "coder",
+        "evidence_class": "AUTHOR",
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": null,
+        "baseline_digest": null,
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "result": "PASS",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null
+      },
+      {
+        "evidence_id": "EV-N2",
+        "producer_role": "REVIEWER",
+        "producer_principal": "reviewer",
+        "evidence_class": "REVIEWER_INDEPENDENT",
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": null,
+        "baseline_digest": null,
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "result": "NOT_RUN",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null
+      }
+    ]
   }
 }
