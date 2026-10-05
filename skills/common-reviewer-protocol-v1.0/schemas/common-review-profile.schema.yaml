@@ -1,0 +1,149 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: common-review-profile-v1.0
+
+title: Common Review Profile v1.0
+type: object
+additionalProperties: false
+required:
+  - review_profile
+properties:
+  review_profile:
+    type: object
+    additionalProperties: false
+    required:
+      - common_protocol
+      - project_protocol
+      - role
+      - principal_independence
+      - common_criteria
+      - project_method_ids
+    properties:
+      common_protocol:
+        type: object
+        additionalProperties: false
+        required: [ref, version, digest]
+        properties:
+          ref: {type: string, minLength: 1}
+          version: {const: "1.0"}
+          digest: {type: string, minLength: 1}
+      project_protocol:
+        type: object
+        additionalProperties: false
+        required: [ref, digest]
+        properties:
+          ref: {type: string, minLength: 1}
+          digest: {type: string, minLength: 1}
+      role:
+        enum: [SELF_REVIEW, REVIEWER, SUPER_REVIEWER]
+      author_principal:
+        type: string
+        minLength: 1
+      review_principal:
+        type: string
+        minLength: 1
+      principal_independence:
+        enum: [NONE, DISTINCT_PRINCIPAL]
+      context_reset:
+        enum: [FRESH_REVIEW_ATTEMPT, NOT_APPLICABLE]
+      common_criteria:
+        type: object
+        additionalProperties: false
+        required: [CR-01, CR-02, CR-03, CR-04, CR-05, CR-06, CR-07, CR-08, CR-09, CR-10]
+        properties:
+          CR-01: {$ref: '#/$defs/criterion'}
+          CR-02: {$ref: '#/$defs/criterion'}
+          CR-03: {$ref: '#/$defs/criterion'}
+          CR-04: {$ref: '#/$defs/criterion'}
+          CR-05: {$ref: '#/$defs/criterion'}
+          CR-06: {$ref: '#/$defs/criterion'}
+          CR-07: {$ref: '#/$defs/criterion'}
+          CR-08: {$ref: '#/$defs/criterion'}
+          CR-09: {$ref: '#/$defs/criterion'}
+          CR-10: {$ref: '#/$defs/criterion'}
+      project_method_ids:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      specialist_required:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      review_scope:
+        type: object
+        additionalProperties: false
+        properties:
+          included_surfaces:
+            type: array
+            items: {type: string, minLength: 1}
+          excluded_surfaces:
+            type: array
+            items: {type: string, minLength: 1}
+          coverage_basis:
+            type: string
+      findings:
+        type: array
+        items:
+          $ref: '#/$defs/finding'
+      unresolved_required_findings:
+        type: integer
+        minimum: 0
+      final_candidate:
+        type: string
+      result:
+        enum: [COMPLETE, REWORK, BLOCKED, INCONCLUSIVE]
+
+$defs:
+  criterion:
+    type: object
+    additionalProperties: false
+    required: [applicability, result]
+    properties:
+      applicability:
+        enum: [REQUIRED, NOT_APPLICABLE, WAIVED_BY_AUTHORITY]
+      applicability_basis:
+        type: string
+      result:
+        enum: [PASS, FAIL, NOT_RUN, INCONCLUSIVE, NOT_APPLICABLE, WAIVED]
+      evidence_refs:
+        type: array
+        items: {type: string, minLength: 1}
+      waiver_ref:
+        type: string
+    allOf:
+      - if:
+          properties:
+            applicability: {const: NOT_APPLICABLE}
+        then:
+          required: [applicability_basis]
+          properties:
+            result: {const: NOT_APPLICABLE}
+      - if:
+          properties:
+            applicability: {const: WAIVED_BY_AUTHORITY}
+        then:
+          required: [waiver_ref]
+          properties:
+            result: {const: WAIVED}
+  finding:
+    type: object
+    additionalProperties: false
+    required: [id, class, summary, disposition]
+    properties:
+      id: {type: string, minLength: 1}
+      class:
+        enum:
+          - BLOCKING_DEFECT
+          - BOUNDED_PRODUCT_FIX
+          - MATERIAL_SCOPE_CHANGE
+          - ACCEPTANCE_SURFACE_DEFECT
+          - EXTERNAL_DEPENDENCY
+          - ADVISORY
+      summary: {type: string, minLength: 1}
+      affected_surfaces:
+        type: array
+        items: {type: string, minLength: 1}
+      disposition:
+        enum: [OPEN, FIXED_AND_REVERIFIED, SPLIT_REQUIRED, ESCALATED, ACCEPTED_ADVISORY]
+      evidence_refs:
+        type: array
+        items: {type: string, minLength: 1}
