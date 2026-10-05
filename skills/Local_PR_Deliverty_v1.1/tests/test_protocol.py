@@ -45,6 +45,7 @@ def enrich_v11(bundle):
         task['project_protocol_ref'] = 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json'
         task['project_protocol_digest'] = PROJECT_DIGEST
         task['protocol_digest'] = COMMON_DIGEST
+        task.setdefault('target_ref', 'refs/heads/main')
         task['owner_principals'] = ['owner']
         task['role_principals'] = dict(CODER=['coder', 'new-coder', 'other-coder'], REVIEWER=['reviewer'], COORDINATOR=['coordinator'])
         task.setdefault('stacked_dependencies', [])
@@ -213,7 +214,7 @@ def enrich_v11(bundle):
             reconciliation_note='Synthetic START context fully reconciled.',
         ))
 
-        is_pass = record['status'] == 'PASS'
+        is_pass = record['status'] in checker.ADVANCING_STATUSES
         if is_pass:
             pre_ref = 'CTX-PRE-' + record['record_id']
             record['context_pre_verdict_ref'] = pre_ref
@@ -236,6 +237,7 @@ def enrich_v11(bundle):
             record['source_attestation'] = dict(
                 candidate_sha=record['validated_sha'],
                 base_sha=record['base_sha'],
+                base_ref=tasks[record['task_id']]['target_ref'],
                 merge_base_sha=record['base_sha'],
                 integration_tree_digest=TREE_DIGEST,
                 workspace_digest=WORKSPACE_DIGEST,
@@ -254,6 +256,7 @@ def enrich_v11(bundle):
                 stage_record_id=record['record_id'],
                 candidate_sha=record['validated_sha'],
                 base_sha=record['base_sha'],
+                target_ref=tasks[record['task_id']]['target_ref'],
                 merge_base_sha=record['base_sha'],
                 integration_tree_digest=TREE_DIGEST,
                 common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
@@ -277,10 +280,12 @@ def enrich_v11(bundle):
             record['review_lease_ref'] = None
 
     bundle['observed'].setdefault('dependency_heads', {})
-    bundle['observed'].setdefault('canonical_main_observations', {})
+    bundle['observed'].setdefault('target_heads', {})
+    bundle['observed'].setdefault('canonical_target_observations', {})
+    bundle['observed'].pop('canonical_main_observations', None)
     child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
     for task in child_tasks:
-        final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] == 'PASS'), None)
+        final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] in checker.ADVANCING_STATUSES), None)
         if not final:
             continue
         pre_merge_ref = 'CTX-PREMERGE-' + task['task_id']
@@ -305,6 +310,7 @@ def enrich_v11(bundle):
             state_id=state_ref,
             task_id=task['task_id'],
             pr=task['pr'],
+            target_ref=task['target_ref'],
             project_protocol_digest=PROJECT_DIGEST,
             pre_merge_context_ref=pre_merge_ref,
             observed_at='2026-10-04T00:03:00Z',
@@ -337,6 +343,10 @@ def enrich_v11(bundle):
                 for contract in task['required_check_contracts']
             ],
         ))
+        bundle['observed']['target_heads'][task['task_id']] = final['base_sha']
+        merge = bundle['observed'].get('merged', {}).get(str(task['pr']))
+        if merge is not None:
+            merge['target_ref'] = task['target_ref']
 
     for result in bundle['results']:
         result['version'] = '1.1'
@@ -348,12 +358,18 @@ def enrich_v11(bundle):
             result['pre_merge_context_ref'] = 'CTX-PREMERGE-' + task['task_id']
             result['observed_state_ref'] = 'OBS-' + task['task_id']
             result['canonical_observation'] = dict(
-                main_sha=result['merge_commit_sha'],
+                target_ref=task['target_ref'],
+                target_sha=result['merge_commit_sha'],
+                reviewed_head_sha=result['head_sha'],
+                merge_commit_sha=result['merge_commit_sha'],
+                relation='EXACT_MERGE_COMMIT',
                 observed_at='2026-10-04T00:04:30Z',
-                integrates_reviewed_candidate=True,
-                provider_ref='Synthetic canonical main observation',
+                provider_kind='GITHUB_PROVIDER',
+                provider_ref='Synthetic canonical target observation',
+                provider_observation_digest='a' * 64,
+                ancestry_proof_ref=None,
             )
-            bundle['observed']['canonical_main_observations'][str(result['pr'])] = copy.deepcopy(result['canonical_observation'])
+            bundle['observed']['canonical_target_observations'][str(result['pr'])] = copy.deepcopy(result['canonical_observation'])
         else:
             result['review_lease_ref'] = None
             result['pre_merge_context_ref'] = None
@@ -389,6 +405,7 @@ def example_bundle():
     observed['parent_comment_frontiers'] = {r['record_id']: dict(comment_ref=r['parent_context']['through_comment_ref'], observed_at=r['started_at']) for r in stages}
     observed['issue_states'] = {'85': 'CLOSED', '86': 'CLOSED'}
     observed['pr_states'] = {'101': 'MERGED'}
+    observed['target_heads'] = {'T86': BASE, 'T85': MERGE}
     return enrich_v11(dict(tasks=[parent, child], stages=stages, results=[child_result, parent_result], observed=observed))
 
 
@@ -397,6 +414,7 @@ def premerge_bundle():
     bundle['stages'] = bundle['stages'][:3]
     bundle['results'] = []
     bundle['observed']['main_sha'] = BASE
+    bundle['observed']['target_heads']['T86'] = BASE
     bundle['observed']['merged'] = {}
     bundle['observed']['pr_states']['101'] = 'DRAFT'
     bundle['observed']['issue_states'] = {'85': 'OPEN', '86': 'OPEN'}
@@ -466,10 +484,9 @@ class ProtocolTests(unittest.TestCase):
         self.rejected(bundle)
 
     def test_stale_head_base_or_spec_requires_rework(self):
-        for field, key, value in [('pr_heads', '101', HEADS[4]), ('spec_digests', 'T86', 'e' * 64), ('spec_digests', 'T85', 'e' * 64), (None, 'main_sha', MERGE)]:
+        for field, key, value in [('pr_heads', '101', HEADS[4]), ('spec_digests', 'T86', 'e' * 64), ('spec_digests', 'T85', 'e' * 64), ('target_heads', 'T86', MERGE)]:
             bundle = premerge_bundle()
-            target = bundle['observed'][field] if field else bundle['observed']
-            target[key] = value
+            bundle['observed'][field][key] = value
             self.assertEqual(self.state(bundle), 'REWORK')
 
     def test_pending_checks_and_missing_authority_are_distinct(self):
