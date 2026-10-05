@@ -95,6 +95,7 @@ def enrich_v11(bundle):
     for record in bundle['stages']:
         record['version'] = '1.1'
         record['repeat_stages'] = []
+        record['waiver_refs'] = []
         record['role_integrity'] = dict(claimed_role=record['stage'], principal=record['executor'])
         record['common_protocol_ref'] = tasks[record['task_id']]['protocol_ref']
         record['common_protocol_digest'] = tasks[record['task_id']]['protocol_digest']
@@ -911,6 +912,123 @@ class TrustGraphV11Tests(unittest.TestCase):
         for task in bundle['tasks']:
             task['role_principals']['REVIEWER'].append('coder')
         self.rejected(bundle)
+
+
+class WaiverOutcomeV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def criterion_waiver(self, bundle, waiver_id='W-CRITERION', expires='2026-10-04T01:00:00Z'):
+        task = bundle['tasks'][1]
+        task['waivable_criteria'] = ['A1']
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='CRITERION',
+            target_id='A1',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner criterion waiver',
+            reason='Required criterion could not be executed in this environment.',
+            risk='Residual risk explicitly accepted for this exact candidate.',
+            compensating_controls=['Synthetic compensating control'],
+            issued_at='2026-10-04T00:02:20Z',
+            expires_at=expires,
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def check_waiver(self, bundle, waiver_id='W-CHECK', expires='2026-10-04T01:00:00Z'):
+        task = bundle['tasks'][1]
+        task['waivable_required_checks'] = ['Required hosted check']
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='REQUIRED_CHECK',
+            target_id='Required hosted check',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner required-check waiver',
+            reason='Required hosted check is unavailable for this exact candidate.',
+            risk='Residual CI risk explicitly accepted.',
+            compensating_controls=['Independent Super Review already passed.'],
+            issued_at='2026-10-04T00:02:40Z',
+            expires_at=expires,
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def test_required_not_run_advances_only_as_approved_with_waiver(self):
+        bundle = premerge_bundle()
+        waiver = self.criterion_waiver(bundle)
+        final = bundle['stages'][2]
+        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        final['acceptance_results'][0]['result'] = 'NOT_RUN'
+        final['evidence_manifest'][0]['result'] = 'NOT_RUN'
+        evidence_id = final['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['result'] = 'NOT_RUN'
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
+        self.assertEqual(final['acceptance_results'][0]['result'], 'NOT_RUN')
+
+    def test_required_not_run_without_waiver_rejected(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['acceptance_results'][0]['result'] = 'NOT_RUN'
+        final['evidence_manifest'][0]['result'] = 'NOT_RUN'
+        evidence_id = final['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['result'] = 'NOT_RUN'
+        self.rejected(bundle)
+
+    def test_fail_cannot_be_waived(self):
+        bundle = premerge_bundle()
+        waiver = self.criterion_waiver(bundle)
+        final = bundle['stages'][2]
+        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        final['acceptance_results'][0]['result'] = 'FAIL'
+        final['evidence_manifest'][0]['result'] = 'FAIL'
+        evidence_id = final['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['result'] = 'FAIL'
+        self.rejected(bundle)
+
+    def test_required_check_not_run_with_active_waiver_can_be_merge_ready(self):
+        bundle = premerge_bundle()
+        self.check_waiver(bundle)
+        bundle['observed']['checks']['101'][0]['result'] = 'NOT_RUN'
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['result'] = 'NOT_RUN'
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        state['required_checks'][0]['run_id'] = None
+        state['required_checks'][0]['job_id'] = None
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_expired_required_check_waiver_does_not_keep_merge_ready(self):
+        bundle = premerge_bundle()
+        self.check_waiver(bundle, expires='2026-10-04T00:04:00Z')
+        bundle['observed']['checks']['101'][0]['result'] = 'NOT_RUN'
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['result'] = 'NOT_RUN'
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        state['required_checks'][0]['run_id'] = None
+        state['required_checks'][0]['job_id'] = None
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'WAITING_CI')
 
 
 class PrincipalAndDependencyV11Tests(unittest.TestCase):
