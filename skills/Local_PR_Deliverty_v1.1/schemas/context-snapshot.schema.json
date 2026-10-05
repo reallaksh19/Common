@@ -58,9 +58,18 @@
     },
     "reconciled": {
       "const": true
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reconciliation_note": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
+    "task_id",
     "snapshot_id",
     "phase",
     "observed_at",
@@ -72,7 +81,8 @@
     "pr_description_digest",
     "pr_comment_frontier",
     "owner_control_digest",
-    "reconciled"
+    "reconciled",
+    "reconciliation_note"
   ],
   "additionalProperties": false
 }
