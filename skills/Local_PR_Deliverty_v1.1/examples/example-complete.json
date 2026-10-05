@@ -69,7 +69,8 @@
       ],
       "merge_authority": {
         "mode": "OWNER_ONLY",
-        "reference": null
+        "reference": null,
+        "delegate_principal": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -941,9 +942,6 @@
         }
       ]
     },
-    "merge_authority_refs": {
-      "101": "Synthetic owner authorization reference"
-    },
     "external_writer_stopped": true,
     "parent_comment_frontiers": {
       "S1": {
@@ -987,6 +985,16 @@
         "provider_ref": "Synthetic canonical target observation",
         "provider_observation_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "ancestry_proof_ref": null
+      }
+    },
+    "merge_authority_observations": {
+      "101": {
+        "principal": "owner",
+        "authority_ref": "Synthetic owner authorization reference",
+        "source_kind": "DIRECT_OWNER_SESSION",
+        "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authentication_status": "AUTHENTICATED",
+        "observed_at": "2026-10-04T00:03:00Z"
       }
     }
   },
@@ -1746,7 +1754,9 @@
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main"
+        "target_ref": "refs/heads/main",
+        "repository_policy_source_ref": "https://example.invalid/policy/required-checks",
+        "repository_policy_visibility": "CONFIRMED"
       }
     ],
     "evidence_records": [
