@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Deterministic Local v1.1 activation and pre-material-work handshake.
 
-This module does not authenticate a human from text. Authentication/source truth is
-supplied by the provider/session boundary. It resolves whether an authenticated
-Owner instruction semantically activates the Local stack and then enforces the
-required protocol/timer/evidence handshake before material work is authorized.
+Authentication/source truth is supplied by the provider/session boundary. This
+module resolves authenticated Owner activation semantics and enforces protocol
+pins, role timer accounting, START publication/readback and selector resolution
+before material work is authorized.
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ DEFAULT_BUDGETS = {"CODER": 15, "REVIEWER": 15, "COORDINATOR": 45, "PARENT_CHECK
 TRUSTED_OWNER_SOURCES = {"DIRECT_OWNER_SESSION", "GITHUB_OWNER_INSTRUCTION", "OTHER_AUTHENTICATED_PROVIDER"}
 DIRECT_CONTEXTS = {"DIRECT_INSTRUCTION", "OWNER_COMMAND"}
 NEGATIVE_INTENTS = {"EXPLAIN", "REVIEW", "COMPARE", "AUDIT", "QUOTE", "FIXTURE", "DOCUMENTATION_EXAMPLE"}
+SELECTOR_STATUSES = {"PASS", "OVERRIDDEN_SELECTOR_CONFLICT", "FATAL_CONFLICT"}
 ACTIVATION_VERBS = re.compile(r"\b(follow|use|apply|adhere(?:\s+to)?|execute|run|work\s+(?:under|as\s+per))\b", re.I)
 LOCAL_REFERENCE = re.compile(
     r"(?:Local[_\s-]*PR[_\s-]*Deliverty[_\s-]*v?1[.]1|skills/Local_PR_Deliverty_v1[.]1|github\.com/[^\s]+/Common/(?:tree|blob)/[^\s]+/skills/Local_PR_Deliverty_v1[.]1)",
@@ -152,7 +153,7 @@ def build_activation_record(
     acceptance_profile_digest: str,
     timer: dict[str, Any],
     start_evidence: dict[str, Any],
-    legacy_scan: str,
+    selector_status: str,
 ) -> dict[str, Any]:
     require(trigger.get("activated") is True, "Activation trigger did not authorize production stack")
     require(isinstance(owner_instruction_ref, str) and owner_instruction_ref, "Activation needs Owner instruction reference")
@@ -168,7 +169,7 @@ def build_activation_record(
     require(bool(DIGEST.fullmatch(acceptance_profile_digest)), "Acceptance profile digest is invalid")
     require(timer.get("accounting") == "ARMED" and timer.get("role") == role, "Role timer accounting must be armed before material work")
     require(start_evidence.get("read_back") is True, "TASK_EVIDENCE START must be durably published and read back")
-    require(legacy_scan in {"PASS", "CONFLICT"}, "Legacy scan must report PASS or CONFLICT")
+    require(selector_status in SELECTOR_STATUSES, "Unknown selector resolution status")
 
     record = {
         "schema": "local-pr-deliverty-activation/v1",
@@ -184,8 +185,8 @@ def build_activation_record(
         "acceptance_profile_digest": acceptance_profile_digest,
         "timer": deepcopy(timer),
         "start_evidence": deepcopy(start_evidence),
-        "legacy_scan": legacy_scan,
-        "material_work_authorized": legacy_scan == "PASS",
+        "selector_status": selector_status,
+        "material_work_authorized": selector_status in {"PASS", "OVERRIDDEN_SELECTOR_CONFLICT"},
     }
     record["stack_profile_digest"] = canonical_digest({
         "stack_id": STACK_ID,
@@ -213,6 +214,6 @@ def activation_acknowledgement(record: dict[str, Any]) -> str:
         "WATCHDOG: " + timer["watchdog"],
         "START_EVIDENCE: " + evidence["publication_ref"],
         "ACCEPTANCE_PROFILE: " + record["acceptance_profile_ref"],
-        "LEGACY_SCAN: " + record["legacy_scan"],
+        "SELECTOR_RESOLUTION: " + record["selector_status"],
         "MATERIAL_WORK: " + ("AUTHORIZED" if record["material_work_authorized"] else "BLOCKED"),
     ])
