@@ -8,7 +8,32 @@ NOW = '2026-10-04T00:08:00Z'
 
 
 def active(record):
-    record.update(status='RUNNING', output_sha=None, validated_sha=None, acceptance_checked=[], validation=[], writer_stopped=False)
+    record.update(
+        status='RUNNING',
+        output_sha=None,
+        validated_sha=None,
+        acceptance_checked=[],
+        acceptance_results=[],
+        validation=[],
+        evidence_manifest=[],
+        evidence_refs=[],
+        findings=[],
+        discovery_freeze=None,
+        context_pre_verdict_ref=None,
+        source_attestation=None,
+        review_lease_ref=None,
+        writer_stopped=False,
+    )
+    record['production_output'].update(
+        candidate_changed=False,
+        changed_components=[],
+        defects_found=[],
+        defects_fixed_here=[],
+        fixes_applied=[],
+        regressions_added=[],
+        coverage_completed=[],
+        coverage_complete_for_stage=False,
+    )
     record['work_periods'][0]['end'] = None
     record['publications']['end'] = None
 
