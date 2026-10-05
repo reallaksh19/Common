@@ -381,9 +381,10 @@ def validate_stage_trust(record, task, parent, support, now):
                     require(item['baseline_digest'] == surface['baseline_digest'], 'Independent Super Review evidence uses wrong baseline digest')
 
 
-def validate_observed_merge_basis(task, latest, support, now):
-    state = latest_observed_state(task, support)
+def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
+    state = support['observed_states'].get(state_ref) if state_ref else latest_observed_state(task, support)
     require(state, 'Missing structured observed repository/check state')
+    require(instant(state['observed_at']) <= at, 'Structured observed repository/check state is from the future')
     require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
     require(state['common_protocol_digest'] == task['protocol_digest'] and state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale protocol basis')
     require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
@@ -396,6 +397,7 @@ def validate_observed_merge_basis(task, latest, support, now):
     require(context and context['task_id'] == task['task_id'] and context['phase'] == 'PRE_MERGE', 'Missing/mismatched PRE_MERGE context snapshot')
     require(context['parent_frontier_digest'] == lease['parent_context_digest'] and context['child_issue_digest'] == lease['child_context_digest'] and context['pr_description_digest'] == lease['pr_description_digest'] and context['owner_control_digest'] == lease['owner_control_digest'], 'PRE_MERGE context changed after final review; lease expired')
     require(state['parent_context_digest'] == context['parent_frontier_digest'] and state['child_context_digest'] == context['child_issue_digest'] and state['pr_description_digest'] == context['pr_description_digest'] and state['owner_control_digest'] == context['owner_control_digest'], 'Observed state/context snapshot mismatch')
+    used_check_waivers = set()
     contracts = {item['check']: item for item in task['required_check_contracts']}
     observed = {item['check']: item for item in state['required_checks']}
     require(set(contracts) == set(task['required_checks']), 'Required-check contracts must exactly cover required_checks')
@@ -411,8 +413,13 @@ def validate_observed_merge_basis(task, latest, support, now):
         else:
             require(item['result'] == 'NOT_RUN', 'Required check FAIL/PENDING/INCONCLUSIVE cannot be waived')
             require(item['mandatory_steps_executed'] is False, 'NOT_RUN required check cannot claim all mandatory steps executed')
-            require(active_check_waiver(task, latest, name, support, now), 'Required NOT_RUN check lacks active Owner waiver bound to final review lease')
-    return state
+            matches = matching_waivers(task, latest['review_lease_ref'], latest['validated_sha'], 'REQUIRED_CHECK', name, support, at)
+            require(len(matches) == 1, 'Required NOT_RUN check lacks active Owner waiver bound to final review lease')
+            used_check_waivers.add(matches[0]['waiver_id'])
+    for waiver_id in latest['waiver_refs']:
+        waiver = support['waivers'].get(waiver_id)
+        require(waiver and waiver_valid_at(waiver, at), 'Final engineering waiver expired or is unavailable at pre-merge/merge time')
+    return state, used_check_waivers
 
 
 def task_history(task, records, parent, support, now):
@@ -636,6 +643,9 @@ def validate_bundle(bundle, now=None):
             merged_at = instant(merge['merged_at'])
             require(instant(final['work_periods'][-1]['end']) <= merged_at <= recorded, 'Merge/result timing invalid')
             require(not blocking_control(commands, task, 'COORDINATOR', merged_at), 'Merge occurred under Owner control')
+            _merge_state, used_check_waivers = validate_observed_merge_basis(task, final, support, merged_at, result['observed_state_ref'])
+            expected_waivers = set(final['waiver_refs']) | used_check_waivers
+            require(set(result['waiver_refs']) == expected_waivers, 'Delivery waiver_refs must exactly match waivers actually used for engineering/pre-merge advancement')
             canonical = result['canonical_observation']
             observed_canonical = observations.get('canonical_main_observations', {}).get(str(result['pr']))
             require(observed_canonical and observed_canonical == canonical, 'Canonical post-merge observation missing/mismatched')
@@ -680,6 +690,12 @@ def validate_bundle(bundle, now=None):
                 stable_source = latest['workspace_mode'] != 'READ_ONLY' or material.get('reference') == latest['review_source']['reference']
                 if not current or not stable_source or workspace.get('path') != parent['workspace'] or material.get('head_sha') != head or material.get('unrecorded_changes') is not False:
                     stage, status = 'COORDINATOR', 'REWORK'
+                elif latest['status'] == 'APPROVED_WITH_WAIVER' and any(
+                    not support['waivers'].get(waiver_id) or not waiver_valid_at(support['waivers'][waiver_id], now)
+                    for waiver_id in latest['waiver_refs']
+                ):
+                    stage, status = 'DELIVERY', 'WAITING_OWNER'
+                    engineering_approved = False
                 else:
                     checks = observations.get('checks', {}).get(pr)
                     checks_by_name = {c.get('check'): c for c in checks or []}
@@ -694,9 +710,15 @@ def validate_bundle(bundle, now=None):
                     satisfied = checks is not None and required <= set(checks_by_name) and all(legacy_check_satisfied(name) for name in required)
                     if not satisfied:
                         failed = any(checks_by_name.get(name, {}).get('result') in ['FAIL', 'INCONCLUSIVE'] for name in required)
+                        owner_waiver_needed = any(
+                            checks_by_name.get(name, {}).get('result') == 'NOT_RUN'
+                            and name in task['waivable_required_checks']
+                            and not active_check_waiver(task, latest, name, support, now)
+                            for name in required
+                        )
                         wait_start = observations.get('ci_wait_started_at', {}).get(pr)
                         elapsed = (now - instant(wait_start)).total_seconds() - paused_seconds(commands, task, 'COORDINATOR', instant(wait_start), now) if wait_start else 0
-                        status = 'BLOCKED' if failed or elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
+                        status = 'BLOCKED' if failed else 'WAITING_OWNER' if owner_waiver_needed else 'BLOCKED' if elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
                     else:
                         validate_observed_merge_basis(task, latest, support, now)
                         engineering_approved = True
