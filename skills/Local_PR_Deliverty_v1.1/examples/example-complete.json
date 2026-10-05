@@ -73,7 +73,7 @@
         "delegate_principal": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
       "owner_principals": [
         "owner"
       ],
@@ -141,7 +141,7 @@
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
       "owner_principals": [
         "owner"
       ],
@@ -264,7 +264,7 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265"
         }
       ],
       "acceptance_results": [
@@ -427,7 +427,7 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1"
         }
       ],
       "acceptance_results": [
@@ -446,14 +446,14 @@
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -512,7 +512,7 @@
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "base_ref": "refs/heads/main"
       },
-      "review_lease_ref": "LEASE-S2",
+      "review_lease_ref": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -602,7 +602,7 @@
           "artifact_digest": null,
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2"
         }
       ],
       "acceptance_results": [
@@ -621,14 +621,14 @@
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -687,7 +687,7 @@
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "base_ref": "refs/heads/main"
       },
-      "review_lease_ref": "LEASE-S3",
+      "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -777,7 +777,7 @@
           "artifact_digest": null,
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e"
         }
       ],
       "acceptance_results": [
@@ -796,14 +796,14 @@
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -862,7 +862,7 @@
         "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc",
         "base_ref": "refs/heads/main"
       },
-      "review_lease_ref": "LEASE-S4",
+      "review_lease_ref": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -891,7 +891,7 @@
       "evidence": "Synthetic provider merge and acceptance.",
       "recorded_at": "2026-10-04T00:05:00Z",
       "waiver_refs": [],
-      "review_lease_ref": "LEASE-S3",
+      "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
       "pre_merge_context_ref": "CTX-PREMERGE-T86",
       "observed_state_ref": "OBS-T86",
       "canonical_observation": {
@@ -1025,22 +1025,22 @@
   "support": {
     "review_leases": [
       {
-        "lease_id": "LEASE-S2",
+        "lease_id": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
         "task_id": "T86",
         "stage_record_id": "S2",
         "candidate_sha": "2222222222222222222222222222222222222222",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "dependency_heads": [],
         "sealed_at": "2026-10-04T00:01:30Z",
         "environment_ref": "ENV-S2",
@@ -1064,22 +1064,22 @@
         ]
       },
       {
-        "lease_id": "LEASE-S3",
+        "lease_id": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
         "task_id": "T86",
         "stage_record_id": "S3",
         "candidate_sha": "3333333333333333333333333333333333333333",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "dependency_heads": [],
         "sealed_at": "2026-10-04T00:02:30Z",
         "environment_ref": "ENV-S3",
@@ -1103,22 +1103,22 @@
         ]
       },
       {
-        "lease_id": "LEASE-S4",
+        "lease_id": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
         "task_id": "T85",
         "stage_record_id": "S4",
         "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
         "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "dependency_heads": [],
         "sealed_at": "2026-10-04T00:06:30Z",
         "environment_ref": "ENV-S4",
@@ -1158,7 +1158,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1181,7 +1181,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1204,7 +1204,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1227,7 +1227,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1746,7 +1746,7 @@
         "state_id": "OBS-T86",
         "task_id": "T86",
         "pr": 101,
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "pre_merge_context_ref": "CTX-PREMERGE-T86",
         "observed_at": "2026-10-04T00:02:31Z",
         "pr_head_sha": "3333333333333333333333333333333333333333",
@@ -1772,7 +1772,7 @@
         ],
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -1790,10 +1790,10 @@
         "producer_principal": "coder",
         "evidence_class": "AUTHOR",
         "candidate_sha": "1111111111111111111111111111111111111111",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
@@ -1815,16 +1815,16 @@
         "producer_principal": "reviewer",
         "evidence_class": "REVIEWER_INDEPENDENT",
         "candidate_sha": "2222222222222222222222222222222222222222",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "LEASE-S2",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "review_lease_ref": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:01:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1842,16 +1842,16 @@
         "producer_principal": "coordinator",
         "evidence_class": "SUPER_REVIEW_INDEPENDENT",
         "candidate_sha": "3333333333333333333333333333333333333333",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "LEASE-S3",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:02:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1869,16 +1869,16 @@
         "producer_principal": "coordinator",
         "evidence_class": "SUPER_REVIEW_INDEPENDENT",
         "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "LEASE-S4",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "review_lease_ref": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:06:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1897,7 +1897,7 @@
         "version": "1.0",
         "repository": "exampleowner/editor",
         "source_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-        "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "acceptance_sets": [
           {
             "id": "ALL",
