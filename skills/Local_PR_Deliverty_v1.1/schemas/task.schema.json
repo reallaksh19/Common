@@ -496,13 +496,23 @@
           "policy_source": {
             "type": "string",
             "minLength": 1
+          },
+          "workflow_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected_app": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
           "check",
           "provider",
           "workflow_digest",
-          "policy_source"
+          "policy_source",
+          "workflow_path",
+          "expected_app"
         ],
         "additionalProperties": false
       },
