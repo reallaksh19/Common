@@ -1,0 +1,63 @@
+name: engineering-pr-delivery-v3.5
+
+on:
+  push:
+    branches:
+      - 'codex/492-b-v35-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-v3-5-embedded-coder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install schema dependency
+        run: python -m pip install --disable-pip-version-check PyYAML
+
+      - name: Compile V3.5 active Python
+        run: python -m py_compile skills/engineering-pr-delivery-v3.5/scripts/embedded_coder_v35.py
+
+      - name: Validate V3.5 embedded Coder schema
+        run: |
+          python - <<'PY'
+          import pathlib
+          import yaml
+          path = pathlib.Path('skills/engineering-pr-delivery-v3.5/schemas/embedded-coder-context-v35.schema.yaml')
+          document = yaml.safe_load(path.read_text(encoding='utf-8'))
+          assert document['$id'] == 'relay-v3.5-embedded-coder-context'
+          assert document['properties']['role']['const'] == 'CODER'
+          assert document['properties']['authority']['const'] == 'NESTED_ENGINEERING_EXECUTION_ONLY'
+          PY
+
+      - name: Run V3.5 embedded Coder regressions
+        run: python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_embedded_coder_v35.py' -v
+
+      - name: Verify frozen V3.2 tree identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected='88ac97432a811f9a6b8d00bbe45cbec891e70d6a'
+          actual="$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2)"
+          test "$actual" = "$expected" || {
+            echo "V3.2 frozen tree changed: expected $expected, got $actual" >&2
+            exit 1
+          }
+
+      - name: Verify V3.5 lineage metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -F 'SOURCE_V3_2_TREE: 88ac97432a811f9a6b8d00bbe45cbec891e70d6a' skills/engineering-pr-delivery-v3.5/SKILL.md
+          grep -F 'ENG-PRD-017-CODER' skills/engineering-pr-delivery-v3.5/SKILL.md

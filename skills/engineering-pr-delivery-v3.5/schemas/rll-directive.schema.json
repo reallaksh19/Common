@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rll-directive.schema.json",
+  "title": "RELAY_DIRECTIVE_V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sequence",
+    "issue",
+    "action"
+  ],
+  "properties": {
+    "sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "issue": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "action": {
+      "enum": [
+        "CONTINUE",
+        "PAUSE",
+        "RESUME",
+        "REPLAN",
+        "CANCEL"
+      ]
+    },
+    "instruction": {
+      "type": "string"
+    }
+  },
+  "description": "The protocol marker line supplies the envelope discriminator; this schema validates the marker body."
+}

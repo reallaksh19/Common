@@ -1,0 +1,361 @@
+{
+  "schema_version": "relay-v3.1-task-snapshot",
+  "authority": "DERIVED_READ_MODEL",
+  "source_protocol": "V3_1",
+  "identity": {
+    "work_package": "WP-C",
+    "ep": "EP-C",
+    "issue": 201,
+    "delivery_vehicle": 202
+  },
+  "purpose": {
+    "programme_outcome": "Completed outcome",
+    "current_goal": "Closed",
+    "task_outcome": "Completed task",
+    "why_this_task_exists": "Completed responsibility"
+  },
+  "lineage": {
+    "predecessor_checkpoint": null,
+    "upstream_dependencies": [],
+    "roadmap_admission": {
+      "disposition": "MAPPED_EXISTING_WP",
+      "revision": "RM-EXAMPLE",
+      "basis": [
+        "golden-example"
+      ]
+    }
+  },
+  "parent_issue": {
+    "repository": "example/repo",
+    "number": 201,
+    "title": "Completed child",
+    "state": "CLOSED",
+    "url": "https://github.com/example/repo/issues/201",
+    "baseline": null,
+    "current": {
+      "acceptance_items": [
+        {
+          "id": "AC-C-01",
+          "statement": "Child criterion",
+          "state": "PASS",
+          "reason_class": "CURRENT_TASK",
+          "evidence": [],
+          "trace_refs": [],
+          "remaining": [],
+          "owner": null,
+          "weight": null,
+          "parent_mappings": []
+        }
+      ]
+    },
+    "updates": [],
+    "disposition": "NO_CHANGE",
+    "relationships": [],
+    "handover_ledger": null
+  },
+  "programme_parent": {
+    "repository": "example/repo",
+    "number": 200,
+    "title": "Completed programme",
+    "url": "https://github.com/example/repo/issues/200"
+  },
+  "planning": {
+    "state": "PRESENT",
+    "provider_ref": "github:example/repo#201/comment-plan",
+    "revision": 1,
+    "digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "observed_at": "2026-09-24T05:00:00Z",
+    "expected_next_observable": {
+      "statement": "No further task observation required",
+      "evidence": []
+    }
+  },
+  "task_publications": [
+    {
+      "type": "IMPLEMENTATION_PLAN",
+      "ref": "github:example/repo#201/comment-plan",
+      "observed_at": "2026-09-24T05:00:00Z",
+      "summary": "Agent-authored implementation plan.",
+      "exact_head": null
+    }
+  ],
+  "programme_progress": {
+    "criteria": [
+      {
+        "id": "EXIT-C-01",
+        "statement": "Programme criterion",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 1,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "work_issue_progress": {
+    "criteria": [
+      {
+        "id": "AC-C-01",
+        "statement": "Child criterion",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 1,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "plan_progress": {
+    "criteria": [
+      {
+        "id": "STEP-C-01",
+        "statement": "Implement",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 1,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "task_acceptance_progress": {
+    "criteria": [
+      {
+        "id": "EP-C-01",
+        "statement": "Task criterion",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "summary": {
+      "pass": 1,
+      "partial": 0,
+      "fail": 0,
+      "not_run": 0,
+      "pending": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    },
+    "coverage": {
+      "satisfied": 1,
+      "applicable_total": 1,
+      "percent": 100,
+      "basis": "UNWEIGHTED_CRITERIA"
+    }
+  },
+  "verification": {
+    "state": "PASS",
+    "observations": [
+      {
+        "id": "V-C-01",
+        "statement": "Exact-head validation",
+        "state": "PASS",
+        "reason_class": "CURRENT_TASK",
+        "evidence": [],
+        "trace_refs": [],
+        "remaining": [],
+        "owner": null,
+        "weight": null,
+        "parent_mappings": []
+      }
+    ],
+    "failure_origins": {}
+  },
+  "delivery": {
+    "pr": 202,
+    "url": "https://github.com/example/repo/pull/202",
+    "lifecycle": "MERGED",
+    "base": "cccccccccccccccccccccccccccccccccccccccc",
+    "head": "dddddddddddddddddddddddddddddddddddddddd",
+    "mergeability": "MERGED"
+  },
+  "completion": {
+    "overall_state": "COMPLETE",
+    "headline": "#201 COMPLETE — implementation, verification, delivery, child acceptance and programme contribution are satisfied.",
+    "implementation": "COMPLETE",
+    "verification": "PASS",
+    "delivery": "MERGED",
+    "work_issue_acceptance": "SATISFIED",
+    "programme_contribution": "SATISFIED",
+    "provider_issue": "CLOSED",
+    "what_done": [
+      "Child criterion"
+    ],
+    "what_remains": [],
+    "dependencies": [],
+    "owner_decisions": []
+  },
+  "parent_issue_progress": {
+    "checklist": [
+      {
+        "id": "AC-C-01",
+        "statement": "Child criterion",
+        "state": "PASS",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 1,
+      "partial": 0,
+      "pending": 0,
+      "blocked": 0,
+      "deferred": 0,
+      "not_applicable": 0,
+      "unknown": 0,
+      "total": 1
+    }
+  },
+  "current_task_progress": {
+    "checklist": [
+      {
+        "id": "EP-C-01",
+        "statement": "Task criterion",
+        "state": "PASS",
+        "evidence": []
+      }
+    ],
+    "summary": {
+      "complete": 1,
+      "partial": 0,
+      "pending": 0,
+      "blocked": 0,
+      "total": 1
+    }
+  },
+  "offloads": [],
+  "pending_items": [],
+  "known_issues": [],
+  "improvement_vs_original_issue": {
+    "baseline_digest": null,
+    "items": []
+  },
+  "scope": {
+    "write": [],
+    "read": [],
+    "protected": [],
+    "prohibited": []
+  },
+  "inputs": [],
+  "benchmarks": [],
+  "benchmark_debt": {
+    "required_missing": [],
+    "stale": [],
+    "optional": []
+  },
+  "execution": {
+    "lifecycle": "ACTIVE",
+    "lease_or_custody": null,
+    "executor": "example-agent",
+    "route": null,
+    "branch": "example"
+  },
+  "material": {
+    "base": "cccccccccccccccccccccccccccccccccccccccc",
+    "current_head": "dddddddddddddddddddddddddddddddddddddddd"
+  },
+  "acceptance": [
+    {
+      "id": "EP-C-01",
+      "state": "PASS",
+      "statement": "Task criterion",
+      "evidence": []
+    }
+  ],
+  "controls": {
+    "material_write": [],
+    "checkpoint": [],
+    "handover": [],
+    "pr_ready": [],
+    "merge": [],
+    "release": []
+  },
+  "knowledge_state": {
+    "known_true": [],
+    "known_false": [],
+    "unknown": [],
+    "assumptions": []
+  },
+  "negative_knowledge": [],
+  "preserve": {
+    "accepted_do_not_reopen": []
+  },
+  "history": {
+    "recent_events": []
+  },
+  "next": {
+    "immediate_action": "None.",
+    "next_value_frontier": "None",
+    "stop_conditions": []
+  },
+  "reconstruction_sources": [
+    "golden-example"
+  ]
+}

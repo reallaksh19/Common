@@ -1,0 +1,72 @@
+$id: relay-v3.5-embedded-coder-context
+type: object
+additionalProperties: false
+required:
+  - schema
+  - authority
+  - local_parent_task_id
+  - local_responsibility_task_id
+  - engineering_responsibility
+  - role
+  - local_protocol_ref
+  - local_protocol_digest
+  - relay_protocol_ref
+  - relay_protocol_digest
+  - acceptance_epoch_ref
+  - acceptance_profile_ref
+  - acceptance_profile_digest
+  - prohibited_local_authorities
+properties:
+  schema:
+    const: relay-v3.5-embedded-coder-context
+  authority:
+    const: NESTED_ENGINEERING_EXECUTION_ONLY
+  local_parent_task_id:
+    type: string
+    minLength: 1
+  local_responsibility_task_id:
+    type: string
+    pattern: '^PRD-[A-Za-z0-9._-]+$'
+  engineering_responsibility:
+    type: string
+    pattern: '^ENG-PRD-[A-Za-z0-9._-]+-CODER$'
+  role:
+    const: CODER
+  local_protocol_ref:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}:skills/Local_PR_Deliverty_v1[.]1$'
+  local_protocol_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  relay_protocol_ref:
+    type: string
+    pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}:skills/engineering-pr-delivery-v3[.]5$'
+  relay_protocol_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  acceptance_epoch_ref:
+    type: string
+    minLength: 1
+  acceptance_profile_ref:
+    type: string
+    minLength: 1
+  acceptance_profile_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  prohibited_local_authorities:
+    type: array
+    uniqueItems: true
+    minItems: 5
+    items:
+      enum:
+        - LOCAL_ROLE_TRANSITION
+        - LOCAL_TIMER_CONTROL
+        - LOCAL_MERGE
+        - ACCEPTANCE_POLICY_ADOPTION
+        - RISK_RELAXATION
+    allOf:
+      - contains: {const: LOCAL_ROLE_TRANSITION}
+      - contains: {const: LOCAL_TIMER_CONTROL}
+      - contains: {const: LOCAL_MERGE}
+      - contains: {const: ACCEPTANCE_POLICY_ADOPTION}
+      - contains: {const: RISK_RELAXATION}
