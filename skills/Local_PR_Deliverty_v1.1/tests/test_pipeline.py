@@ -41,7 +41,7 @@ def pipeline_bundle():
     observed['pr_heads'] = {'105': HEADS[1], '106': HEADS[0]}
     observed['pr_states'] = {'105': 'OPEN', '106': 'DRAFT'}
     observed['checks'] = {'105': [dict(check='Required hosted check', head_sha=HEADS[1], result='PASS')]}
-    observed['merge_authority_refs'] = {'105': 'Synthetic actual owner instruction'}
+    observed['merge_authority_observations'] = {'105': dict(principal='owner', authority_ref='Synthetic actual owner instruction', source_kind='DIRECT_OWNER_SESSION', source_digest='a' * 64, authentication_status='AUTHENTICATED', observed_at='2026-10-04T00:03:00Z')}
     observed['issue_states']['87'] = 'OPEN'
     observed['spec_digests']['T87'] = first['spec_digest']
     observed['workspace']['head_sha'] = HEADS[0]
