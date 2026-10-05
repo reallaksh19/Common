@@ -8,6 +8,12 @@ This file is a **candidate design contract** for the future V3.5 line. It MUST N
 
 When V3.5 is created, this contract is intended to be incorporated mechanically into its normative `SKILL.md`, continuity schema, provider projection, tests and replay corpus.
 
+Owner-facing checkpoint rendering is governed by the companion candidate contract:
+
+`OWNER_CHECKPOINT_PROJECTION.md`
+
+That contract intentionally keeps the chat projection compact while allowing durable `TASK_EVIDENCE` to remain successor-grade and comprehensive.
+
 ## Governing problem
 
 A recurring failure mode is:
@@ -138,7 +144,7 @@ For `OWNER_REQUIRED`, the barrier order is:
 3. RECALCULATE P/E honestly and advance A only for valid activity
 4. SYNC GitHub current-state + issue-title projection
 5. READ BACK provider state
-6. SURFACE TASK_EVIDENCE checkpoint in chat
+6. SURFACE the compact Owner checkpoint defined by OWNER_CHECKPOINT_PROJECTION.md
 7. CONTINUE to the next substantial work unit
 ```
 
@@ -240,23 +246,22 @@ Possible spinning indicators include:
 
 Spinning detection is advisory/derived. It does not itself decide engineering correctness.
 
-## Checkpoint evidence shape
+## Owner checkpoint projection
 
-Recommended Owner-visible checkpoint:
+The chat checkpoint MUST NOT mirror the complete durable evidence record.
 
-```text
-TASK_EVIDENCE — CHECKPOINT
-{P18% · E14% · A07 · 🟢 ACTIVE}
-CURRENT_UNIT: <unit>
-COMPLETED/LEARNED: <bounded summary>
-MATERIAL_FRONTIER: <sha / working-delta ref>
-SEMANTIC_EVIDENCE_FRONTIER: <ref>
-NEGATIVE_KNOWLEDGE: <only materially useful items>
-GITHUB_PROJECTION: updated + read back
-NEXT: <next substantial work unit>
-```
+Use the companion contract:
 
-The chat checkpoint is an Owner visibility mirror. It does not replace durable provider publication where durable successor evidence is required.
+`OWNER_CHECKPOINT_PROJECTION.md`
+
+It defines:
+
+- the three-view architecture (title / Owner chat / durable evidence);
+- the compact `UNIT / DELTA / BLOCKER / OWNER_ACTION / NEXT / EVIDENCE` shape;
+- the normal information budget;
+- delta-only rendering;
+- the rule that waiting checkpoints are not automatically final `TASK_RESULT` records;
+- tests against evidence-dump / prose-bloat behavior.
 
 ## Recovery after interruption
 
@@ -270,7 +275,7 @@ Recovery sequence:
 5. reconcile active unit/findings/negative knowledge
 6. publish TASK_EVIDENCE — RECOVERY
 7. update/read back GitHub projection
-8. surface recovery evidence in chat
+8. surface compact recovery evidence in chat
 9. continue
 ```
 
@@ -313,6 +318,7 @@ SKILL.md
 continuity/current-state schema
 activity-lease schema
 checkpoint provider projection
+Owner checkpoint renderer
 issue-title projection
 external watcher contract
 recovery logic
@@ -334,6 +340,9 @@ abrupt failure after useful work leaves bounded recovery delta
 watcher can turn stale executor red without executor cooperation
 one missed watcher observation does not declare death
 WAITING_TOOL does not become STALE while declared wait is valid
+Owner checkpoint does not dump durable evidence details
+Owner checkpoint exposes OWNER_ACTION explicitly
+in-progress WAITING checkpoint is not mislabeled as final TASK_RESULT
 ```
 
 ## Replay case — Owner interruption example
@@ -356,7 +365,7 @@ Expected future V3.5 behavior:
 semantic/activity checkpoints occur before large frontier accumulation
 pre-risk checkpoint occurs before provider/branch mutation if useful state is uncheckpointed
 GitHub title/current projection is updated and read back
-Owner sees checkpoint evidence in chat before the next substantial unit
+Owner sees a compact checkpoint in chat before the next substantial unit
 post-failure recovery starts from latest checkpoint and only reconciles the bounded residual delta
 ```
 
