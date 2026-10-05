@@ -88,6 +88,60 @@
     "environment_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "common_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "review_lease_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "acceptance_surface_digest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "collected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "procedure_kind": {
+      "enum": [
+        "COMMAND",
+        "MANUAL",
+        "PROVIDER"
+      ]
+    },
+    "command_argv": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": false
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "fixture_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -102,7 +156,15 @@
     "procedure",
     "artifact_digest",
     "baseline_digest",
-    "environment_digest"
+    "environment_digest",
+    "common_protocol_digest",
+    "review_lease_ref",
+    "acceptance_surface_digest",
+    "collected_at",
+    "procedure_kind",
+    "command_argv",
+    "exit_code",
+    "fixture_digests"
   ],
   "additionalProperties": false
 }
