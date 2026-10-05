@@ -200,6 +200,7 @@ def enrich_v11(bundle):
             record['source_attestation'] = dict(
                 candidate_sha=record['validated_sha'],
                 base_sha=record['base_sha'],
+                merge_base_sha=record['base_sha'],
                 integration_tree_digest=TREE_DIGEST,
                 workspace_digest=WORKSPACE_DIGEST,
                 unrecorded_changes=False,
@@ -217,6 +218,7 @@ def enrich_v11(bundle):
                 stage_record_id=record['record_id'],
                 candidate_sha=record['validated_sha'],
                 base_sha=record['base_sha'],
+                merge_base_sha=record['base_sha'],
                 integration_tree_digest=TREE_DIGEST,
                 common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
                 common_protocol_digest=COMMON_DIGEST,
@@ -238,6 +240,7 @@ def enrich_v11(bundle):
             record['review_lease_ref'] = None
 
     bundle['observed'].setdefault('dependency_heads', {})
+    bundle['observed'].setdefault('canonical_main_observations', {})
     child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
     for task in child_tasks:
         final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] == 'PASS'), None)
@@ -270,6 +273,7 @@ def enrich_v11(bundle):
             observed_at='2026-10-04T00:03:00Z',
             pr_head_sha=final['validated_sha'],
             base_sha=final['base_sha'],
+            merge_base_sha=final['base_sha'],
             integration_tree_digest=TREE_DIGEST,
             repository_policy_digest=POLICY_DIGEST,
             required_checks=[
@@ -294,10 +298,18 @@ def enrich_v11(bundle):
             result['review_lease_ref'] = final['review_lease_ref']
             result['pre_merge_context_ref'] = 'CTX-PREMERGE-' + task['task_id']
             result['observed_state_ref'] = 'OBS-' + task['task_id']
+            result['canonical_observation'] = dict(
+                main_sha=result['merge_commit_sha'],
+                observed_at='2026-10-04T00:04:30Z',
+                integrates_reviewed_candidate=True,
+                provider_ref='Synthetic canonical main observation',
+            )
+            bundle['observed']['canonical_main_observations'][str(result['pr'])] = copy.deepcopy(result['canonical_observation'])
         else:
             result['review_lease_ref'] = None
             result['pre_merge_context_ref'] = None
             result['observed_state_ref'] = None
+            result['canonical_observation'] = None
     return bundle
 
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
