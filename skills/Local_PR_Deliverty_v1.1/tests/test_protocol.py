@@ -152,6 +152,8 @@ def enrich_v11(bundle):
     support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[], project_protocols=[])
     bundle['support'] = support
 
+    verification_methods = list({method['id']: method for method in verification_methods}.values())
+
     manifest = [
         dict(id='MAN-HARNESS', kind='HARNESS_ENTRYPOINT', ref='synthetic://harness/sr-all', digest=HARNESS_DIGEST, transitive=True),
         dict(id='MAN-HELPER', kind='IMPORTED_HELPER', ref='synthetic://harness/helper', digest='a' * 64, transitive=True),
@@ -675,8 +677,10 @@ def readdress_review_lease(bundle, lease):
 
 def refresh_project_protocol_identity(bundle):
     protocol = bundle['support']['project_protocols'][0]
+    protocol['protected_surface']['manifest_digest'] = checker.canonical_value_digest(protocol['protected_surface']['manifest'])
     protocol['digest'] = checker.canonical_digest(protocol)
     project_digest = protocol['digest']
+    manifest_digest = protocol['protected_surface']['manifest_digest']
     for task in bundle['tasks']:
         task['project_protocol_digest'] = project_digest
 
@@ -685,12 +689,14 @@ def refresh_project_protocol_identity(bundle):
         surface = record.get('acceptance_surface')
         if surface is not None:
             surface['project_protocol_digest'] = project_digest
+            surface['manifest_digest'] = manifest_digest
             surface['digest'] = checker.canonical_digest(surface)
         for evidence in bundle['support']['evidence_records']:
-            if evidence['producer_role'] == record['stage'] and evidence['producer_principal'] == record['executor'] and evidence['candidate_sha'] == (record['validated_sha'] or record['output_sha'] or record['input_sha']):
+            if evidence['collected_by_role'] == record['stage'] and evidence['collected_by_principal'] == record['executor']:
                 evidence['project_protocol_digest'] = project_digest
-                if surface is not None and evidence['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT']:
+                if surface is not None and evidence['evidence_phase'] != 'DISCOVERY' and evidence['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
                     evidence['acceptance_surface_digest'] = surface['digest']
+                    evidence['acceptance_surface_manifest_digest'] = manifest_digest
 
     for lease in list(bundle['support']['review_leases']):
         record = stage_by_id.get(lease['stage_record_id'])
@@ -699,6 +705,7 @@ def refresh_project_protocol_identity(bundle):
         lease['project_protocol_digest'] = project_digest
         if record['acceptance_surface'] is not None:
             lease['acceptance_surface_digest'] = record['acceptance_surface']['digest']
+            lease['acceptance_surface_manifest_digest'] = manifest_digest
         readdress_review_lease(bundle, lease)
 
     for state in bundle['support']['observed_states']:
