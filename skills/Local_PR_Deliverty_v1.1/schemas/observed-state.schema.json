@@ -55,6 +55,30 @@
           },
           "mandatory_steps_executed": {
             "type": "boolean"
+          },
+          "workflow_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "app_identity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "run_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "job_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_digests": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "uniqueItems": true
           }
         },
         "required": [
@@ -63,7 +87,12 @@
           "workflow_digest",
           "head_sha",
           "result",
-          "mandatory_steps_executed"
+          "mandatory_steps_executed",
+          "workflow_path",
+          "app_identity",
+          "run_id",
+          "job_id",
+          "artifact_digests"
         ],
         "additionalProperties": false
       }
@@ -91,6 +120,34 @@
     "merge_base_sha": {
       "type": "string",
       "pattern": "^[0-9a-f]{40}$"
+    },
+    "common_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "workspace_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parent_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "child_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pr_description_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "owner_control_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -105,7 +162,14 @@
     "integration_tree_digest",
     "repository_policy_digest",
     "required_checks",
-    "merge_base_sha"
+    "merge_base_sha",
+    "common_protocol_digest",
+    "environment_digest",
+    "workspace_digest",
+    "parent_context_digest",
+    "child_context_digest",
+    "pr_description_digest",
+    "owner_control_digest"
   ],
   "additionalProperties": false
 }
