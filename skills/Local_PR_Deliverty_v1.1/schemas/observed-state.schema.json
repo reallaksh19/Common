@@ -180,6 +180,10 @@
     "owner_control_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "target_ref": {
+      "type": "string",
+      "pattern": "^refs/heads/.+$"
     }
   },
   "required": [
@@ -201,7 +205,8 @@
     "parent_context_digest",
     "child_context_digest",
     "pr_description_digest",
-    "owner_control_digest"
+    "owner_control_digest",
+    "target_ref"
   ],
   "additionalProperties": false
 }
