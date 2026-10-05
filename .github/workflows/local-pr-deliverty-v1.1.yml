@@ -1,0 +1,30 @@
+name: Local PR Delivery v1.1
+
+on:
+  pull_request:
+    paths:
+      - 'skills/Local_PR_Deliverty_v1.1/**'
+      - '.github/workflows/local-pr-deliverty-v1.1.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'skills/Local_PR_Deliverty_v1.1/**'
+      - '.github/workflows/local-pr-deliverty-v1.1.yml'
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install jsonschema
+      - name: Compile
+        run: python -m py_compile skills/Local_PR_Deliverty_v1.1/scripts/*.py
+      - name: Protocol tests
+        run: python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -v
+      - name: Validate examples
+        run: |
+          python skills/Local_PR_Deliverty_v1.1/scripts/validate.py skills/Local_PR_Deliverty_v1.1/examples/example-complete.json --now 2026-10-04T00:08:00Z
+          python skills/Local_PR_Deliverty_v1.1/scripts/validate.py skills/Local_PR_Deliverty_v1.1/examples/example-pipeline.json --now 2026-10-04T00:08:00Z
