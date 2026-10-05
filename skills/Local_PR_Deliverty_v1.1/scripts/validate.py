@@ -1035,7 +1035,7 @@ def validate_bundle(bundle, now=None):
                     required = set(task['required_checks'])
                     def legacy_check_satisfied(name):
                         item = checks_by_name.get(name, {})
-                        if item.get('head_sha') != head:
+                        if item.get('trigger_pr_head_sha') != head:
                             return False
                         if item.get('result') == 'PASS':
                             return True
