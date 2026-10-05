@@ -542,6 +542,8 @@ def validate_bundle(bundle, now=None):
     for key, task in tasks.items():
         latest, passes = history[key]
         result = by_task.get(key)
+        engineering_approved = bool(result)
+        merge_ready = False
         if result:
             stage = 'COMPLETE' if result['responsibility_complete'] else 'DELIVERY'
             status = 'COMPLETE' if result['responsibility_complete'] else 'MERGED' if task['kind'] == 'CHILD' else 'REWORK'
@@ -569,10 +571,12 @@ def validate_bundle(bundle, now=None):
                         status = 'BLOCKED' if failed or elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
                     else:
                         validate_observed_merge_basis(task, latest, support)
+                        engineering_approved = True
                         if not observations.get('merge_authority_refs', {}).get(pr):
                             status = 'WAITING_OWNER'
                         else:
                             stage, status = 'DELIVERY', 'MERGE_READY'
+                            merge_ready = True
             elif status == 'PASS':
                 stage, status = next((s for s in ORDER if s not in passes), 'PARENT_CHECK') if task['kind'] == 'CHILD' else 'PARENT_CHECK', 'READY'
         else:
@@ -582,20 +586,24 @@ def validate_bundle(bundle, now=None):
             stage, status = latest['stage'], 'REWORK' if latest['status'] == 'PASS' else 'READY'
         if not result and cloud_resume_pending(commands, observations, now):
             status = 'BLOCKED'
+            engineering_approved = False
+            merge_ready = False
         if not result:
             command = blocking_control(commands, task, 'COORDINATOR' if stage in ['DELIVERY', 'PARENT_CHECK', 'PLAN'] else stage, now)
             if command:
                 stopped = not latest or latest['writer_stopped']
                 markers = {'HOLD': ('HELD', 'HOLD_REQUESTED'), 'PAUSE': ('PAUSED', 'PAUSE_REQUESTED'), 'STOP': ('STOPPED', 'STOP_REQUESTED')}
                 status = markers[command['command']][0 if stopped else 1]
-        states[str(task['issue'])] = {'stage': stage, 'status': status}
+                engineering_approved = False
+                merge_ready = False
+        states[str(task['issue'])] = {'stage': stage, 'status': status, 'engineering_approved': engineering_approved, 'merge_ready': merge_ready}
     parent_state = states[str(parent['issue'])]
     if parent_state['stage'] == 'PLAN' and active and parent_state['status'] == 'READY':
         parent_state.update(stage=active[0]['stage'], status='RUNNING')
     if parent['task_id'] not in by_task and completed == set(declarations) and not history[parent['task_id']][0]:
         states[str(parent['issue'])]['stage'] = 'PARENT_CHECK'
     status_details(states, tasks, history, observations, now, parent, by_task)
-    return {'record_consistency': 'PASS', 'basis': 'SUPPLIED_ISSUE_PR_AND_WORKSPACE_OBSERVATIONS_ONLY', 'owner_controls': [c['id'] for c in controls_at(commands, now)], 'stage_budget_minutes': timers['stage_minutes'], 'issues': states}
+    return {'record_consistency': 'PASS', 'basis': 'SUPPLIED_ISSUE_PR_WORKSPACE_AND_PINNED_TRUST_RECORDS_ONLY', 'owner_controls': [c['id'] for c in controls_at(commands, now)], 'stage_budget_minutes': timers['stage_minutes'], 'issues': states}
 
 
 def main():
