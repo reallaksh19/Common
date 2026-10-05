@@ -1483,6 +1483,8 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
             regressions_added=[],
         )
         final['discovery_freeze']['finding_ids'] = []
+        for row in final['acceptance_results']:
+            row['finding_ids'] = []
         for evidence_id in final['discovery_freeze']['evidence_ids']:
             embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
             embedded['result'] = 'PASS'
