@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:delivery-result",
+  "type": "object",
+  "properties": {
+    "record": {
+      "const": "DELIVERY_RESULT"
+    },
+    "version": {
+      "const": "1.1"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "CHILD",
+        "PARENT"
+      ]
+    },
+    "final_record": {
+      "type": "string",
+      "minLength": 1
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "pr": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "merge_commit_sha": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "accepted_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "remaining_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "responsibility_complete": {
+      "type": "boolean"
+    },
+    "child_results": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "evidence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recorded_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "parent_comment_ref": {
+      "type": "string",
+      "format": "uri"
+    }
+  },
+  "required": [
+    "record",
+    "version",
+    "record_id",
+    "task_id",
+    "kind",
+    "final_record",
+    "head_sha",
+    "pr",
+    "merge_commit_sha",
+    "accepted_ids",
+    "remaining_ids",
+    "responsibility_complete",
+    "child_results",
+    "evidence",
+    "recorded_at",
+    "parent_comment_ref"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "CHILD"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pr": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "merge_commit_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "child_results": {
+            "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "PARENT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "pr": {
+            "type": "null"
+          },
+          "merge_commit_sha": {
+            "type": "null"
+          },
+          "child_results": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "responsibility_complete": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "remaining_ids": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}
