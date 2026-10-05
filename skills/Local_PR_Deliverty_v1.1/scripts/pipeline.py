@@ -82,7 +82,7 @@ def validate_evidence(record, parent, task, bundle_observations, now):
             except ValueError as error:
                 raise RecordError(str(error)) from error
         grant = permission_at(parent, task, started)
-        require(grant, 'Coder/Reviewer needs the existing Coordinator production permission')
+        require(grant, 'Coder/Reviewer needs the existing Coordinator child permission (native: responsibility permission)')
         if record['stage'] == 'CODER':
             require(instant(grant['issued_at']) <= instant(context['read_at']), 'Coder must reread parent comments after permission')
     if record['status'] in ['STAGE_COMPLETE', 'STAGE_COMPLETE_WITH_WAIVER'] and production_task(task):
@@ -111,7 +111,7 @@ def validate_pipeline(parent, tasks, records, observations, now):
                 raise RecordError(str(error)) from error
     record_map = {r['record_id']: r for r in records}
     production_prs = [t['pr'] for t in tasks.values() if production_task(t) and t['pr'] is not None]
-    require(len(production_prs) == len(set(production_prs)), 'Every concurrently represented responsibility must have a distinct active PR')
+    require(len(production_prs) == len(set(production_prs)), 'Every child must have a different PR; native responsibilities likewise require distinct active PRs')
     refs = []
     for record in records:
         refs.append(record['publications']['start']['comment_ref'])
