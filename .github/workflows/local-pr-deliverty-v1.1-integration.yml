@@ -1,6 +1,7 @@
 name: Local PR Delivery v1.1 integration
 
 on:
+  pull_request:
   push:
     branches:
       - 'codex/492-d-*'
