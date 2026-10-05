@@ -113,6 +113,24 @@ def active_check_waiver(task, record, check, support, at):
     ))
 
 
+def validate_context_snapshot(snapshot, task):
+    observed_at = instant(snapshot['observed_at'])
+    refs = set()
+    kinds = set()
+    for event in snapshot['context_events']:
+        key = (event['source_kind'], event['provider_id'])
+        require(key not in refs, 'Duplicate provider context event identity in snapshot')
+        refs.add(key)
+        kinds.add(event['source_kind'])
+        created, updated = instant(event['created_at']), instant(event['updated_at'])
+        require(created <= updated <= observed_at, 'Context event timestamps exceed snapshot observation time')
+    require('PARENT_ISSUE_BODY' in kinds and 'TASK_ISSUE_BODY' in kinds, 'Context snapshot lacks parent/task issue identity')
+    if snapshot['parent_comment_frontier']:
+        require(any(event['source_kind'] == 'PARENT_COMMENT' and event['provider_ref'] == snapshot['parent_comment_frontier'] for event in snapshot['context_events']), 'Context snapshot lacks provider event for parent comment frontier')
+    if task['pr'] is not None:
+        require('PR_DESCRIPTION' in kinds, 'Child context snapshot lacks PR description provider identity')
+
+
 def validate_project_protocol(task, support):
     matches = [
         protocol for protocol in support['project_protocols'].values()
@@ -151,7 +169,7 @@ def validate_project_protocol(task, support):
         if declared['super_review_required']:
             require(declared['id'] in harness_criteria, 'Super Review criterion is not covered by a protected project harness')
     protected = protocol['protected_surface']
-    require(protected['harness_digest'] and protected['baseline_digest'], 'Pinned project protected surface is incomplete')
+    require(protected['harness_digest'] and protected['baseline_digest'] and isinstance(protected['fixture_digests'], list), 'Pinned project protected surface is incomplete')
     return protocol
 
 
@@ -267,6 +285,7 @@ def validate_stage_trust(record, task, parent, support, now):
 
     start = support['context_snapshots'].get(record['context_start_ref'])
     require(start and start['task_id'] == task['task_id'] and start['phase'] == 'START', 'Missing/mismatched START context snapshot')
+    validate_context_snapshot(start, task)
     require(start['parent_comment_frontier'] == record['parent_context']['through_comment_ref'], 'START context snapshot does not match reconciled parent frontier')
     require(instant(start['observed_at']) <= instant(record['started_at']), 'START context snapshot must precede stage action')
 
@@ -280,10 +299,17 @@ def validate_stage_trust(record, task, parent, support, now):
         require(provenance, 'Stage evidence reference lacks provenance record')
         require(provenance['producer_role'] == record['stage'] and provenance['producer_principal'] == record['executor'], 'Evidence provenance producer does not match stage')
         require(provenance['evidence_class'] == embedded['class'] and provenance['candidate_sha'] == embedded['source_sha'], 'Evidence provenance class/candidate mismatch')
-        require(provenance['project_protocol_digest'] == task['project_protocol_digest'], 'Evidence provenance uses stale project protocol')
+        require(provenance['common_protocol_digest'] == task['protocol_digest'] and provenance['project_protocol_digest'] == task['project_protocol_digest'], 'Evidence provenance uses stale Common/project protocol')
         require(provenance['harness_digest'] == embedded['harness_digest'] and provenance['baseline_digest'] == embedded['baseline_digest'], 'Evidence provenance harness/baseline mismatch')
         require(provenance['environment_digest'] == embedded['environment_digest'], 'Evidence provenance environment mismatch')
         require(provenance['result'] == embedded['result'] and provenance['procedure'] == embedded['procedure'] and provenance['artifact_digest'] == embedded['artifact_digest'], 'Evidence provenance result/procedure/artifact mismatch')
+        collected_at = instant(provenance['collected_at'])
+        record_end = instant(record['work_periods'][-1]['end']) if record['work_periods'][-1]['end'] else now
+        require(instant(record['started_at']) <= collected_at <= record_end, 'Evidence collection time falls outside stage work period')
+        if provenance['procedure_kind'] == 'COMMAND' and provenance['result'] != 'NOT_RUN':
+            require(provenance['command_argv'] and provenance['exit_code'] is not None, 'Executed command evidence needs argv and exit code')
+        elif provenance['procedure_kind'] != 'COMMAND':
+            require(not provenance['command_argv'] and provenance['exit_code'] is None, 'Manual/provider evidence cannot claim command execution fields')
         if provenance['evidence_class'] == 'REVIEWER_INDEPENDENT':
             require(provenance['producer_role'] == 'REVIEWER', 'Reviewer-independent evidence must be produced by Reviewer')
         if provenance['evidence_class'] == 'SUPER_REVIEW_INDEPENDENT':
@@ -305,6 +331,7 @@ def validate_stage_trust(record, task, parent, support, now):
         require(surface['harness_digest'] == protected['harness_digest'], 'Acceptance surface harness differs from pinned project protocol')
         require(surface['baseline_digest'] == protected['baseline_digest'], 'Acceptance surface baseline differs from pinned project protocol')
         require(set(surface['oracle_digests']) == set(protected['oracle_digests']), 'Acceptance surface oracle set differs from pinned project protocol')
+        require(set(surface['fixture_digests']) == set(protected['fixture_digests']), 'Acceptance surface fixture set differs from pinned project protocol')
 
     if record['status'] not in ADVANCING_STATUSES:
         return
@@ -333,7 +360,8 @@ def validate_stage_trust(record, task, parent, support, now):
             used_stage_waivers.add(matches[0]['waiver_id'])
 
     pre = support['context_snapshots'].get(record['context_pre_verdict_ref'])
-    require(pre and pre['task_id'] == task['task_id'] and pre['phase'] == 'PRE_VERDICT', 'PASS needs a PRE_VERDICT context snapshot')
+    require(pre and pre['task_id'] == task['task_id'] and pre['phase'] == 'PRE_VERDICT', 'Advancing outcome needs a PRE_VERDICT context snapshot')
+    validate_context_snapshot(pre, task)
     require(instant(start['observed_at']) <= instant(pre['observed_at']) <= completed, 'PRE_VERDICT context snapshot timing invalid')
 
     attestation = record['source_attestation']
@@ -366,17 +394,28 @@ def validate_stage_trust(record, task, parent, support, now):
     if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
         lease = support['review_leases'].get(record['review_lease_ref'])
         require(lease and lease['task_id'] == task['task_id'] and lease['stage_record_id'] == record['record_id'], 'Missing/mismatched review lease')
+        require(lease['repository'] == task['repository'] and lease['pr'] == task['pr'], 'Review lease repository/PR identity differs from TASK')
+        require(lease['certifier_role'] == record['stage'] and lease['certifier_principal'] == record['executor'], 'Review lease certifier identity differs from stage')
         require(lease['candidate_sha'] == record['validated_sha'] and lease['base_sha'] == record['base_sha'] and lease['target_ref'] == task['target_ref'], 'Review lease is stale for candidate/base target')
-        require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['common_protocol_digest'] == task['protocol_digest'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
+        require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['common_protocol_digest'] == task['protocol_digest'] and lease['project_protocol_ref'] == task['project_protocol_ref'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
         require(lease['spec_digest'] == task['spec_digest'] and lease['parent_spec_digest'] == parent['spec_digest'], 'Review lease specification basis is stale')
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
         require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'] and lease['owner_control_digest'] == pre['owner_control_digest'], 'Review lease context/PR/Owner-control basis is stale')
         require(lease['environment_ref'] == environment['environment_id'] and lease['environment_digest'] == environment['digest'], 'Review lease environment is stale')
         require(lease['integration_tree_digest'] == attestation['integration_tree_digest'] and lease['merge_base_sha'] == attestation['merge_base_sha'], 'Review lease integration tree/merge base differs from source attestation')
         require(lease['required_check_policy_digest'] == task['required_check_policy']['digest'], 'Review lease required-check policy is stale')
-        surface_digest = record['acceptance_surface']['digest'] if record['acceptance_surface'] else task['project_protocol_digest']
-        require(lease['acceptance_surface_digest'] == surface_digest, 'Review lease acceptance surface is stale')
+        surface = record['acceptance_surface']
+        require(surface is not None, 'Independent review lease requires pinned acceptance surface')
+        require(lease['acceptance_surface_digest'] == surface['digest'], 'Review lease acceptance surface is stale')
+        require(lease['harness_digest'] == surface['harness_digest'] and lease['baseline_digest'] == surface['baseline_digest'], 'Review lease harness/baseline differs from stage acceptance surface')
+        require(set(lease['oracle_digests']) == set(surface['oracle_digests']) and set(lease['fixture_digests']) == set(surface['fixture_digests']), 'Review lease oracle/fixture set differs from stage acceptance surface')
         require(instant(lease['sealed_at']) <= completed, 'Review lease cannot be sealed after stage completion')
+        for evidence_id in record['evidence_refs']:
+            provenance = support['evidence_records'][evidence_id]
+            if provenance['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
+                require(provenance['review_lease_ref'] == lease['lease_id'], 'Independent evidence is not bound to current review lease')
+                require(provenance['acceptance_surface_digest'] == surface['digest'], 'Independent evidence acceptance-surface digest mismatch')
+                require(set(provenance['fixture_digests']) == set(surface['fixture_digests']), 'Independent evidence fixture set differs from protected acceptance surface')
 
     if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
         surface = record['acceptance_surface']
@@ -405,6 +444,7 @@ def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
     require(state['environment_digest'] == lease['environment_digest'], 'Observed environment differs from final review lease')
     context = support['context_snapshots'].get(state['pre_merge_context_ref'])
     require(context and context['task_id'] == task['task_id'] and context['phase'] == 'PRE_MERGE', 'Missing/mismatched PRE_MERGE context snapshot')
+    validate_context_snapshot(context, task)
     require(context['parent_frontier_digest'] == lease['parent_context_digest'] and context['child_issue_digest'] == lease['child_context_digest'] and context['pr_description_digest'] == lease['pr_description_digest'] and context['owner_control_digest'] == lease['owner_control_digest'], 'PRE_MERGE context changed after final review; lease expired')
     require(state['parent_context_digest'] == context['parent_frontier_digest'] and state['child_context_digest'] == context['child_issue_digest'] and state['pr_description_digest'] == context['pr_description_digest'] and state['owner_control_digest'] == context['owner_control_digest'], 'Observed state/context snapshot mismatch')
     used_check_waivers = set()
