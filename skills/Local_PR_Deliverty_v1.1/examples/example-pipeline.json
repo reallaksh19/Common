@@ -92,7 +92,24 @@
         "reference": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "owner_principals": [
+        "owner"
+      ],
+      "required_check_policy": {
+        "source_ref": "https://example.invalid/policy/required-checks",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "provider": "GITHUB_ACTIONS"
+      },
+      "required_check_contracts": [
+        {
+          "check": "Required hosted check",
+          "provider": "GITHUB_ACTIONS",
+          "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+          "policy_source": "https://example.invalid/policy/required-checks"
+        }
+      ],
+      "waivable_criteria": []
     },
     {
       "record": "TASK",
@@ -124,7 +141,24 @@
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "owner_principals": [
+        "owner"
+      ],
+      "required_check_policy": {
+        "source_ref": "https://example.invalid/policy/required-checks",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "provider": "GITHUB_ACTIONS"
+      },
+      "required_check_contracts": [
+        {
+          "check": "Required hosted check",
+          "provider": "GITHUB_ACTIONS",
+          "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+          "policy_source": "https://example.invalid/policy/required-checks"
+        }
+      ],
+      "waivable_criteria": []
     },
     {
       "record": "TASK",
@@ -156,7 +190,24 @@
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "owner_principals": [
+        "owner"
+      ],
+      "required_check_policy": {
+        "source_ref": "https://example.invalid/policy/required-checks",
+        "digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "provider": "GITHUB_ACTIONS"
+      },
+      "required_check_contracts": [
+        {
+          "check": "Required hosted check",
+          "provider": "GITHUB_ACTIONS",
+          "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+          "policy_source": "https://example.invalid/policy/required-checks"
+        }
+      ],
+      "waivable_criteria": []
     }
   ],
   "stages": [
@@ -240,7 +291,10 @@
           "result": "PASS",
           "source_sha": "1111111111111111111111111111111111111111",
           "procedure": "Synthetic protocol evidence fixture.",
-          "artifact_digest": null
+          "artifact_digest": null,
+          "harness_digest": null,
+          "baseline_digest": null,
+          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
         }
       ],
       "acceptance_results": [
@@ -275,7 +329,37 @@
         "coverage_complete_for_stage": true,
         "early_termination": false,
         "early_termination_reason": null
-      }
+      },
+      "role_integrity": {
+        "claimed_role": "CODER",
+        "principal": "coder"
+      },
+      "environment_ref": "ENV-S1",
+      "evidence_refs": [
+        "EV-S1"
+      ],
+      "carried_findings": [],
+      "freshness": {
+        "common_protocol_current": true,
+        "project_protocol_current": true,
+        "spec_current": true,
+        "parent_context_current": true,
+        "child_context_current": true,
+        "pr_description_current": true,
+        "acceptance_surface_current": true,
+        "environment_current": true,
+        "dependencies_current": true
+      },
+      "context_start_ref": "CTX-START-S1",
+      "context_pre_verdict_ref": "CTX-PRE-S1",
+      "source_attestation": {
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
+      },
+      "review_lease_ref": null
     },
     {
       "record": "STAGE_RECORD",
@@ -357,7 +441,10 @@
           "result": "PASS",
           "source_sha": "2222222222222222222222222222222222222222",
           "procedure": "Synthetic protocol evidence fixture.",
-          "artifact_digest": null
+          "artifact_digest": null,
+          "harness_digest": null,
+          "baseline_digest": null,
+          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
         }
       ],
       "acceptance_results": [
@@ -373,7 +460,16 @@
           ]
         }
       ],
-      "acceptance_surface": null,
+      "acceptance_surface": {
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "oracle_digests": [
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        ],
+        "mutation_detected": false,
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
       "production_output": {
         "deliverables": [
           "Synthetic REVIEWER production output"
@@ -392,7 +488,37 @@
         "coverage_complete_for_stage": true,
         "early_termination": false,
         "early_termination_reason": null
-      }
+      },
+      "role_integrity": {
+        "claimed_role": "REVIEWER",
+        "principal": "reviewer"
+      },
+      "environment_ref": "ENV-S2",
+      "evidence_refs": [
+        "EV-S2"
+      ],
+      "carried_findings": [],
+      "freshness": {
+        "common_protocol_current": true,
+        "project_protocol_current": true,
+        "spec_current": true,
+        "parent_context_current": true,
+        "child_context_current": true,
+        "pr_description_current": true,
+        "acceptance_surface_current": true,
+        "environment_current": true,
+        "dependencies_current": true
+      },
+      "context_start_ref": "CTX-START-S2",
+      "context_pre_verdict_ref": "CTX-PRE-S2",
+      "source_attestation": {
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
+      },
+      "review_lease_ref": "LEASE-S2"
     },
     {
       "record": "STAGE_RECORD",
@@ -464,7 +590,10 @@
           "result": "NOT_RUN",
           "source_sha": "2222222222222222222222222222222222222222",
           "procedure": "Synthetic protocol evidence fixture.",
-          "artifact_digest": null
+          "artifact_digest": null,
+          "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
         }
       ],
       "acceptance_results": [],
@@ -475,7 +604,8 @@
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
-        "mutation_detected": false
+        "mutation_detected": false,
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
       },
       "production_output": {
         "deliverables": [
@@ -493,7 +623,31 @@
         "coverage_complete_for_stage": false,
         "early_termination": false,
         "early_termination_reason": null
-      }
+      },
+      "role_integrity": {
+        "claimed_role": "COORDINATOR",
+        "principal": "coordinator"
+      },
+      "environment_ref": "ENV-S3",
+      "evidence_refs": [
+        "EV-S3"
+      ],
+      "carried_findings": [],
+      "freshness": {
+        "common_protocol_current": true,
+        "project_protocol_current": true,
+        "spec_current": true,
+        "parent_context_current": true,
+        "child_context_current": true,
+        "pr_description_current": true,
+        "acceptance_surface_current": true,
+        "environment_current": true,
+        "dependencies_current": true
+      },
+      "context_start_ref": "CTX-START-S3",
+      "context_pre_verdict_ref": null,
+      "source_attestation": null,
+      "review_lease_ref": null
     },
     {
       "record": "STAGE_RECORD",
@@ -575,7 +729,10 @@
           "result": "PASS",
           "source_sha": "1111111111111111111111111111111111111111",
           "procedure": "Synthetic protocol evidence fixture.",
-          "artifact_digest": null
+          "artifact_digest": null,
+          "harness_digest": null,
+          "baseline_digest": null,
+          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
         }
       ],
       "acceptance_results": [
@@ -610,7 +767,37 @@
         "coverage_complete_for_stage": true,
         "early_termination": false,
         "early_termination_reason": null
-      }
+      },
+      "role_integrity": {
+        "claimed_role": "CODER",
+        "principal": "coder"
+      },
+      "environment_ref": "ENV-N1",
+      "evidence_refs": [
+        "EV-N1"
+      ],
+      "carried_findings": [],
+      "freshness": {
+        "common_protocol_current": true,
+        "project_protocol_current": true,
+        "spec_current": true,
+        "parent_context_current": true,
+        "child_context_current": true,
+        "pr_description_current": true,
+        "acceptance_surface_current": true,
+        "environment_current": true,
+        "dependencies_current": true
+      },
+      "context_start_ref": "CTX-START-N1",
+      "context_pre_verdict_ref": "CTX-PRE-N1",
+      "source_attestation": {
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
+      },
+      "review_lease_ref": null
     },
     {
       "record": "STAGE_RECORD",
@@ -679,11 +866,23 @@
           "result": "NOT_RUN",
           "source_sha": "1111111111111111111111111111111111111111",
           "procedure": "Synthetic protocol evidence fixture.",
-          "artifact_digest": null
+          "artifact_digest": null,
+          "harness_digest": null,
+          "baseline_digest": null,
+          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
         }
       ],
       "acceptance_results": [],
-      "acceptance_surface": null,
+      "acceptance_surface": {
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "oracle_digests": [
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        ],
+        "mutation_detected": false,
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+      },
       "production_output": {
         "deliverables": [
           "Synthetic REVIEWER production output"
@@ -700,7 +899,31 @@
         "coverage_complete_for_stage": false,
         "early_termination": false,
         "early_termination_reason": null
-      }
+      },
+      "role_integrity": {
+        "claimed_role": "REVIEWER",
+        "principal": "reviewer"
+      },
+      "environment_ref": "ENV-N2",
+      "evidence_refs": [
+        "EV-N2"
+      ],
+      "carried_findings": [],
+      "freshness": {
+        "common_protocol_current": true,
+        "project_protocol_current": true,
+        "spec_current": true,
+        "parent_context_current": true,
+        "child_context_current": true,
+        "pr_description_current": true,
+        "acceptance_surface_current": true,
+        "environment_current": true,
+        "dependencies_current": true
+      },
+      "context_start_ref": "CTX-START-N2",
+      "context_pre_verdict_ref": null,
+      "source_attestation": null,
+      "review_lease_ref": null
     }
   ],
   "results": [],
@@ -765,5 +988,250 @@
       "105": "OPEN",
       "106": "DRAFT"
     }
+  },
+  "support": {
+    "review_leases": [
+      {
+        "lease_id": "LEASE-S2",
+        "task_id": "T86",
+        "stage_record_id": "S2",
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "dependency_heads": [],
+        "sealed_at": "2026-10-04T00:01:30Z",
+        "environment_ref": "ENV-S2",
+        "context_pre_verdict_ref": "CTX-PRE-S2"
+      }
+    ],
+    "environments": [
+      {
+        "environment_id": "ENV-S1",
+        "os": "synthetic-os",
+        "architecture": "synthetic-arch",
+        "toolchain": [
+          {
+            "name": "python",
+            "version": "3.12"
+          }
+        ],
+        "lockfile_digest": null,
+        "container_digest": null,
+        "external_versions": [],
+        "network_policy": "OFFLINE",
+        "secret_values_recorded": false,
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "environment_id": "ENV-S2",
+        "os": "synthetic-os",
+        "architecture": "synthetic-arch",
+        "toolchain": [
+          {
+            "name": "python",
+            "version": "3.12"
+          }
+        ],
+        "lockfile_digest": null,
+        "container_digest": null,
+        "external_versions": [],
+        "network_policy": "OFFLINE",
+        "secret_values_recorded": false,
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "environment_id": "ENV-S3",
+        "os": "synthetic-os",
+        "architecture": "synthetic-arch",
+        "toolchain": [
+          {
+            "name": "python",
+            "version": "3.12"
+          }
+        ],
+        "lockfile_digest": null,
+        "container_digest": null,
+        "external_versions": [],
+        "network_policy": "OFFLINE",
+        "secret_values_recorded": false,
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "environment_id": "ENV-N1",
+        "os": "synthetic-os",
+        "architecture": "synthetic-arch",
+        "toolchain": [
+          {
+            "name": "python",
+            "version": "3.12"
+          }
+        ],
+        "lockfile_digest": null,
+        "container_digest": null,
+        "external_versions": [],
+        "network_policy": "OFFLINE",
+        "secret_values_recorded": false,
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      },
+      {
+        "environment_id": "ENV-N2",
+        "os": "synthetic-os",
+        "architecture": "synthetic-arch",
+        "toolchain": [
+          {
+            "name": "python",
+            "version": "3.12"
+          }
+        ],
+        "lockfile_digest": null,
+        "container_digest": null,
+        "external_versions": [],
+        "network_policy": "OFFLINE",
+        "secret_values_recorded": false,
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+      }
+    ],
+    "context_snapshots": [
+      {
+        "snapshot_id": "CTX-START-S1",
+        "task_id": "T86",
+        "phase": "START",
+        "observed_at": "2026-10-04T00:00:00Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-S1",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/86#comment",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/101",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic START context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-PRE-S1",
+        "task_id": "T86",
+        "phase": "PRE_VERDICT",
+        "observed_at": "2026-10-04T00:00:30Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-S1",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/86#comment",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/101",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-START-S2",
+        "task_id": "T86",
+        "phase": "START",
+        "observed_at": "2026-10-04T00:01:00Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-S2",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/86#comment",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/101",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic START context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-PRE-S2",
+        "task_id": "T86",
+        "phase": "PRE_VERDICT",
+        "observed_at": "2026-10-04T00:01:30Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-S2",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/86#comment",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/101",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-START-S3",
+        "task_id": "T86",
+        "phase": "START",
+        "observed_at": "2026-10-04T00:02:00Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-S3",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/86#comment",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/101",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic START context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-START-N1",
+        "task_id": "T87",
+        "phase": "START",
+        "observed_at": "2026-10-04T00:03:00Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-N1",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/87#handover",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/106",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic START context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-PRE-N1",
+        "task_id": "T87",
+        "phase": "PRE_VERDICT",
+        "observed_at": "2026-10-04T00:03:30Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-N1",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/87#handover",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/106",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+      },
+      {
+        "snapshot_id": "CTX-START-N2",
+        "task_id": "T87",
+        "phase": "START",
+        "observed_at": "2026-10-04T00:04:00Z",
+        "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "parent_comment_frontier": "https://example.invalid/issues/85#before-N2",
+        "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_issue_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "child_comment_frontier": "https://example.invalid/issues/87#handover",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "pr_comment_frontier": "https://example.invalid/pull/106",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "reconciled": true,
+        "reconciliation_note": "Synthetic START context fully reconciled."
+      }
+    ],
+    "waivers": [],
+    "observed_states": []
   }
 }
