@@ -113,6 +113,29 @@ def active_check_waiver(task, record, check, support, at):
     ))
 
 
+def merge_authority_ready(parent, observations, pr, at):
+    authority = observations.get('merge_authority_observations', {}).get(str(pr))
+    if authority is None:
+        return False
+    required = {
+        'principal', 'authority_ref', 'source_kind', 'source_digest',
+        'authentication_status', 'observed_at'
+    }
+    require(set(authority) == required, 'Merge authority observation has unknown/missing fields')
+    require(authority['source_kind'] in ['GITHUB_PROVIDER', 'DIRECT_OWNER_SESSION', 'OTHER_AUTHENTICATED_PROVIDER'], 'Merge authority source is unverified')
+    require(authority['authentication_status'] in ['AUTHENTICATED', 'OBSERVED_TRUSTED_PROVIDER'], 'Merge authority authentication is unverified')
+    require(isinstance(authority['source_digest'], str) and len(authority['source_digest']) == 64 and all(ch in '0123456789abcdef' for ch in authority['source_digest']), 'Merge authority source digest is invalid')
+    require(isinstance(authority['authority_ref'], str) and authority['authority_ref'], 'Merge authority lacks source reference')
+    require(instant(authority['observed_at']) <= at, 'Merge authority was observed after the decision point')
+    policy = parent['merge_authority']
+    if policy['mode'] == 'OWNER_ONLY':
+        require(authority['principal'] in parent['owner_principals'], 'Merge authority principal is not an authorized Owner')
+    else:
+        require(authority['principal'] == policy['delegate_principal'], 'Merge authority principal is not the delegated principal')
+        require(authority['authority_ref'] == policy['reference'], 'Merge authority reference differs from Owner delegation')
+    return True
+
+
 def validate_context_snapshot(snapshot, task):
     observed_at = instant(snapshot['observed_at'])
     refs = set()
@@ -436,6 +459,8 @@ def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
     require(instant(state['observed_at']) <= at, 'Structured observed repository/check state is from the future')
     require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'] and state['target_ref'] == task['target_ref'], 'Observed repository state is stale for PR head/base target')
     require(state['common_protocol_digest'] == task['protocol_digest'] and state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale protocol basis')
+    require(state['repository_policy_visibility'] == 'CONFIRMED', 'Repository policy visibility is not confirmed')
+    require(state['repository_policy_source_ref'] == task['required_check_policy']['source_ref'], 'Observed repository policy source differs from trusted policy source')
     require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
     require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'] and state['merge_base_sha'] == latest['source_attestation']['merge_base_sha'], 'Observed integration tree/merge base differs from reviewed identity')
     require(state['workspace_digest'] == latest['source_attestation']['workspace_digest'], 'Observed workspace digest differs from reviewed candidate')
@@ -593,7 +618,10 @@ def validate_bundle(bundle, now=None):
                 if command['target'] == 'COORDINATOR':
                     timers['stage_minutes']['PARENT_CHECK'] = command['minutes']
     if parent['merge_authority']['mode'] == 'DELEGATED':
-        require(parent['merge_authority']['reference'], 'Delegated authority needs an actual Owner instruction')
+        require(parent['merge_authority']['reference'] and parent['merge_authority']['delegate_principal'], 'Delegated authority needs an actual Owner instruction and principal')
+        require(parent['merge_authority']['delegate_principal'] not in parent['role_principals']['CODER'] + parent['role_principals']['REVIEWER'] + parent['role_principals']['COORDINATOR'], 'Merge delegate must not silently reuse a production-role principal')
+    else:
+        require(parent['merge_authority']['delegate_principal'] is None, 'OWNER_ONLY merge policy cannot declare a delegate')
     for task in tasks.values():
         require(len(acceptance_ids(task)) == len(task['acceptance']), 'Duplicate acceptance ID')
         validate_project_protocol(task, support)
@@ -693,6 +721,7 @@ def validate_bundle(bundle, now=None):
             merged_at = instant(merge['merged_at'])
             require(instant(final['work_periods'][-1]['end']) <= merged_at <= recorded, 'Merge/result timing invalid')
             require(not blocking_control(commands, task, 'COORDINATOR', merged_at), 'Merge occurred under Owner control')
+            require(merge_authority_ready(parent, observations, result['pr'], merged_at), 'Merge occurred without current authenticated merge authority')
             _merge_state, used_check_waivers = validate_observed_merge_basis(task, final, support, merged_at, result['observed_state_ref'])
             expected_waivers = set(final['waiver_refs']) | used_check_waivers
             require(set(result['waiver_refs']) == expected_waivers, 'Delivery waiver_refs must exactly match waivers actually used for engineering/pre-merge advancement')
@@ -776,13 +805,18 @@ def validate_bundle(bundle, now=None):
                         elapsed = (now - instant(wait_start)).total_seconds() - paused_seconds(commands, task, 'COORDINATOR', instant(wait_start), now) if wait_start else 0
                         status = 'BLOCKED' if failed else 'WAITING_OWNER' if owner_waiver_needed else 'BLOCKED' if elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
                     else:
-                        validate_observed_merge_basis(task, latest, support, now)
-                        engineering_approved = True
-                        if not observations.get('merge_authority_refs', {}).get(pr):
-                            status = 'WAITING_OWNER'
+                        policy_state = latest_observed_state(task, support)
+                        if not policy_state or policy_state.get('repository_policy_visibility') != 'CONFIRMED':
+                            stage, status = 'DELIVERY', 'WAITING_EXTERNAL'
+                            engineering_approved = False
                         else:
-                            stage, status = 'DELIVERY', 'MERGE_READY'
-                            merge_ready = True
+                            validate_observed_merge_basis(task, latest, support, now)
+                            engineering_approved = True
+                            if not merge_authority_ready(parent, observations, task['pr'], now):
+                                status = 'WAITING_OWNER'
+                            else:
+                                stage, status = 'DELIVERY', 'MERGE_READY'
+                                merge_ready = True
             elif status in ADVANCING_STATUSES:
                 stage, status = next((s for s in ORDER if s not in passes), 'PARENT_CHECK') if task['kind'] == 'CHILD' else 'PARENT_CHECK', 'READY'
         else:
