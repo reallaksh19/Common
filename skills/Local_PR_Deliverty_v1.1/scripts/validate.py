@@ -11,6 +11,7 @@ from pipeline import RecordError, validate_evidence, validate_pipeline, status_d
 ROOT = Path(__file__).resolve().parents[1]
 ORDER = ['CODER', 'REVIEWER', 'COORDINATOR']
 DEFAULT_BUDGETS = {'CODER': 15, 'REVIEWER': 15, 'COORDINATOR': 45, 'PARENT_CHECK': 45}
+ADVANCING_STATUSES = {'PASS', 'APPROVED_WITH_WAIVER'}
 SCHEMAS = {'TASK': 'task', 'STAGE_RECORD': 'stage-record', 'DELIVERY_RESULT': 'delivery-result'}
 SUPPORT_SCHEMAS = {
     'review_leases': ('review-lease', 'lease_id'),
@@ -73,6 +74,43 @@ def latest_observed_state(task, support):
     if not states:
         return None
     return max(states, key=lambda state: instant(state['observed_at']))
+
+
+def waiver_valid_at(waiver, at):
+    return instant(waiver['issued_at']) <= at and (waiver['expires_at'] is None or at <= instant(waiver['expires_at']))
+
+
+def matching_waivers(task, lease_ref, candidate_sha, target_kind, target_id, support, at, refs=None):
+    allowed_refs = set(refs) if refs is not None else None
+    matches = []
+    for waiver in support['waivers'].values():
+        if allowed_refs is not None and waiver['waiver_id'] not in allowed_refs:
+            continue
+        if (
+            waiver['task_id'] == task['task_id']
+            and waiver['lease_id'] == lease_ref
+            and waiver['candidate_sha'] == candidate_sha
+            and waiver['target_kind'] == target_kind
+            and waiver['target_id'] == target_id
+            and waiver_valid_at(waiver, at)
+        ):
+            matches.append(waiver)
+    require(len(matches) <= 1, 'Multiple active waivers target the same candidate/gate')
+    return matches
+
+
+def has_waiver(task, record, target_kind, target_id, support, at):
+    return bool(matching_waivers(
+        task, record['review_lease_ref'], record['validated_sha'],
+        target_kind, target_id, support, at, record['waiver_refs']
+    ))
+
+
+def active_check_waiver(task, record, check, support, at):
+    return bool(matching_waivers(
+        task, record['review_lease_ref'], record['validated_sha'],
+        'REQUIRED_CHECK', check, support, at
+    ))
 
 
 def validate_project_protocol(task, support):
@@ -258,18 +296,32 @@ def validate_stage_trust(record, task, parent, support, now):
         require(surface['baseline_digest'] == protected['baseline_digest'], 'Acceptance surface baseline differs from pinned project protocol')
         require(set(surface['oracle_digests']) == set(protected['oracle_digests']), 'Acceptance surface oracle set differs from pinned project protocol')
 
-    if record['status'] != 'PASS':
+    if record['status'] not in ADVANCING_STATUSES:
         return
 
+    completed = instant(record['work_periods'][-1]['end'])
+
+    if record['status'] == 'PASS':
+        require(not record['waiver_refs'], 'PASS cannot depend on Owner waivers')
+    else:
+        require(record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] and record['waiver_refs'], 'APPROVED_WITH_WAIVER is reserved for final engineering stages with explicit waivers')
+
+    used_stage_waivers = set()
     if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
-        require(set(row['gate_id'] for row in gate_rows) == set(applicable_gates), 'PASS must account for every applicable project external gate')
+        require(set(row['gate_id'] for row in gate_rows) == set(applicable_gates), 'Final engineering outcome must account for every applicable project external gate')
         rows_by_gate = {row['gate_id']: row for row in gate_rows}
         for gate_id, gate in applicable_gates.items():
-            if gate['required']:
-                require(rows_by_gate[gate_id]['result'] == 'PASS', 'Required project external gate needs actual PASS; waiver is not PASS')
+            if not gate['required']:
+                continue
+            result = rows_by_gate[gate_id]['result']
+            if result == 'PASS':
+                continue
+            require(result == 'NOT_RUN', 'Required project external gate FAIL/INCONCLUSIVE cannot be waived')
+            require(gate['waivable'] is True and record['status'] == 'APPROVED_WITH_WAIVER', 'Required project external gate NOT_RUN needs an explicit waivable policy and approved-with-waiver outcome')
+            matches = matching_waivers(task, record['review_lease_ref'], record['validated_sha'], 'EXTERNAL_GATE', gate_id, support, completed, record['waiver_refs'])
+            require(len(matches) == 1, 'Required external gate NOT_RUN lacks exact active Owner waiver')
+            used_stage_waivers.add(matches[0]['waiver_id'])
 
-
-    completed = instant(record['work_periods'][-1]['end'])
     pre = support['context_snapshots'].get(record['context_pre_verdict_ref'])
     require(pre and pre['task_id'] == task['task_id'] and pre['phase'] == 'PRE_VERDICT', 'PASS needs a PRE_VERDICT context snapshot')
     require(instant(start['observed_at']) <= instant(pre['observed_at']) <= completed, 'PRE_VERDICT context snapshot timing invalid')
@@ -278,7 +330,21 @@ def validate_stage_trust(record, task, parent, support, now):
     require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'], 'PASS source attestation does not match validated candidate/base')
     require(attestation['unrecorded_changes'] is False, 'PASS source attestation reports unrecorded changes')
     require(all(record['freshness'].values()), 'PASS requires every declared freshness dimension current')
-    require(not any(item['blocking'] and item['status'] == 'OPEN' for item in record['carried_findings']), 'PASS has unresolved blocking carried finding')
+    require(not any(item['blocking'] and item['status'] == 'OPEN' for item in record['carried_findings']), 'Advancing outcome has unresolved blocking carried finding')
+
+    for row in record['acceptance_results']:
+        if not row['required']:
+            continue
+        if row['result'] == 'PASS':
+            continue
+        require(row['result'] == 'NOT_RUN', 'Required criterion FAIL/INCONCLUSIVE/NOT_APPLICABLE cannot advance')
+        require(record['status'] == 'APPROVED_WITH_WAIVER', 'Required criterion NOT_RUN needs approved-with-waiver outcome')
+        matches = matching_waivers(task, record['review_lease_ref'], record['validated_sha'], 'CRITERION', row['criterion_id'], support, completed, record['waiver_refs'])
+        require(len(matches) == 1, 'Required criterion NOT_RUN lacks exact active Owner waiver')
+        used_stage_waivers.add(matches[0]['waiver_id'])
+
+    if record['status'] == 'APPROVED_WITH_WAIVER':
+        require(set(record['waiver_refs']) == used_stage_waivers, 'Stage waiver_refs must exactly match required NOT_RUN criterion/external-gate waivers')
 
     referenced = set()
     for row in record['acceptance_results']:
@@ -315,7 +381,7 @@ def validate_stage_trust(record, task, parent, support, now):
                     require(item['baseline_digest'] == surface['baseline_digest'], 'Independent Super Review evidence uses wrong baseline digest')
 
 
-def validate_observed_merge_basis(task, latest, support):
+def validate_observed_merge_basis(task, latest, support, now):
     state = latest_observed_state(task, support)
     require(state, 'Missing structured observed repository/check state')
     require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
@@ -339,9 +405,13 @@ def validate_observed_merge_basis(task, latest, support):
         require(item['provider'] == contract['provider'] and item['workflow_digest'] == contract['workflow_digest'], 'Required check provider/workflow identity mismatch')
         require(item['workflow_path'] == contract['workflow_path'] and item['app_identity'] == contract['expected_app'], 'Required check workflow/app identity mismatch')
         require(item['head_sha'] == latest['validated_sha'], 'Required check ran on wrong candidate SHA')
-        require(item['mandatory_steps_executed'] is True, 'Required check skipped a mandatory validation step')
-        require(item['result'] == 'PASS', 'Required structured check is not PASS')
-        require(item['run_id'] and item['job_id'], 'Required check lacks provider run/job identity')
+        if item['result'] == 'PASS':
+            require(item['mandatory_steps_executed'] is True, 'Required PASS check skipped a mandatory validation step')
+            require(item['run_id'] and item['job_id'], 'Required PASS check lacks provider run/job identity')
+        else:
+            require(item['result'] == 'NOT_RUN', 'Required check FAIL/PENDING/INCONCLUSIVE cannot be waived')
+            require(item['mandatory_steps_executed'] is False, 'NOT_RUN required check cannot claim all mandatory steps executed')
+            require(active_check_waiver(task, latest, name, support, now), 'Required NOT_RUN check lacks active Owner waiver bound to final review lease')
     return state
 
 
@@ -408,14 +478,17 @@ def task_history(task, records, parent, support, now):
         if latest and record['output_sha'] != latest['output_sha']:
             passes.pop('COORDINATOR', None)
         require(not record['repeat_stages'], 'Reverse stage invalidation is forbidden in v1.1')
-        if record['status'] == 'PASS':
-            require(record['output_sha'] == record['validated_sha'], 'PASS needs the actual validated output SHA')
+        if record['status'] in ADVANCING_STATUSES:
+            require(record['output_sha'] == record['validated_sha'], 'Advancing outcome needs the actual validated output SHA')
             require(acceptance_ids(task, True) <= set(record['acceptance_checked']), 'Missing required acceptance coverage')
             rows = {r['criterion_id']: r for r in record['acceptance_results']}
             require(acceptance_ids(task, True) <= set(rows), 'Missing required structured acceptance result')
-            require(all(rows[c]['result'] == 'PASS' for c in acceptance_ids(task, True)), 'Required structured acceptance result is not PASS')
+            if record['status'] == 'PASS':
+                require(all(rows[c]['result'] == 'PASS' for c in acceptance_ids(task, True)), 'PASS requires every required structured acceptance result to be PASS')
+            else:
+                require(all(rows[c]['result'] in ['PASS', 'NOT_RUN'] for c in acceptance_ids(task, True)), 'APPROVED_WITH_WAIVER permits only PASS or explicitly waived NOT_RUN acceptance')
             checks = [c for c in record['validation'] if c['required']]
-            require(checks and all(c['result'] == 'PASS' for c in checks), 'Required validation needs actual PASS')
+            require(checks and all(c['result'] == 'PASS' for c in checks), 'Required stage validation needs actual PASS')
             require(not any(f['status'] == 'OPEN' for f in record['findings']), 'Open blocking finding')
             completed = instant(record['work_periods'][-1]['end'])
             require(not blocking_control(parent['owner_commands'], task, stage, completed), 'Owner control prevents stage advancement')
@@ -507,7 +580,8 @@ def validate_bundle(bundle, now=None):
         require(waiver['owner_principal'] in parent['owner_principals'], 'Waiver principal is not an authorized Owner')
         lease = support['review_leases'].get(waiver['lease_id'])
         require(lease and lease['task_id'] == waiver['task_id'] and lease['candidate_sha'] == waiver['candidate_sha'], 'Waiver is not bound to its candidate lease')
-        require(instant(waiver['issued_at']) <= now and (waiver['expires_at'] is None or instant(waiver['expires_at']) >= now), 'Waiver is future or expired')
+        require(instant(waiver['issued_at']) <= now, 'Waiver is issued in the future')
+        require(waiver['expires_at'] is None or instant(waiver['issued_at']) <= instant(waiver['expires_at']), 'Waiver expiry precedes issuance')
         require(waiver['result_override'] is False and waiver['non_transitive'] is True, 'Waiver cannot convert evidence to PASS or transfer automatically')
     history = {key: task_history(task, bundle['stages'], parent, support, now) for key, task in tasks.items()}
     active = [r for r, _ in history.values() if r and not r['writer_stopped']]
@@ -610,27 +684,34 @@ def validate_bundle(bundle, now=None):
                     checks = observations.get('checks', {}).get(pr)
                     checks_by_name = {c.get('check'): c for c in checks or []}
                     required = set(task['required_checks'])
-                    satisfied = checks is not None and required <= set(checks_by_name) and all(checks_by_name[name].get('head_sha') == head and checks_by_name[name].get('result') == 'PASS' for name in required)
+                    def legacy_check_satisfied(name):
+                        item = checks_by_name.get(name, {})
+                        if item.get('head_sha') != head:
+                            return False
+                        if item.get('result') == 'PASS':
+                            return True
+                        return item.get('result') == 'NOT_RUN' and active_check_waiver(task, latest, name, support, now)
+                    satisfied = checks is not None and required <= set(checks_by_name) and all(legacy_check_satisfied(name) for name in required)
                     if not satisfied:
-                        failed = any(checks_by_name.get(name, {}).get('result') == 'FAIL' for name in required)
+                        failed = any(checks_by_name.get(name, {}).get('result') in ['FAIL', 'INCONCLUSIVE'] for name in required)
                         wait_start = observations.get('ci_wait_started_at', {}).get(pr)
                         elapsed = (now - instant(wait_start)).total_seconds() - paused_seconds(commands, task, 'COORDINATOR', instant(wait_start), now) if wait_start else 0
                         status = 'BLOCKED' if failed or elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
                     else:
-                        validate_observed_merge_basis(task, latest, support)
+                        validate_observed_merge_basis(task, latest, support, now)
                         engineering_approved = True
                         if not observations.get('merge_authority_refs', {}).get(pr):
                             status = 'WAITING_OWNER'
                         else:
                             stage, status = 'DELIVERY', 'MERGE_READY'
                             merge_ready = True
-            elif status == 'PASS':
+            elif status in ADVANCING_STATUSES:
                 stage, status = next((s for s in ORDER if s not in passes), 'PARENT_CHECK') if task['kind'] == 'CHILD' else 'PARENT_CHECK', 'READY'
         else:
             stage = 'PLAN' if task['kind'] == 'PARENT' else 'CODER'
             status = 'READY' if task['kind'] == 'PARENT' or set(declarations[task['issue']]['depends_on']) <= completed else 'BLOCKED'
         if not result and latest and resumes_after(commands, task, latest):
-            stage, status = latest['stage'], 'REWORK' if latest['status'] == 'PASS' else 'READY'
+            stage, status = latest['stage'], 'REWORK' if latest['status'] in ADVANCING_STATUSES else 'READY'
         if not result and cloud_resume_pending(commands, observations, now):
             status = 'BLOCKED'
             engineering_approved = False
