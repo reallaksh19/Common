@@ -23,7 +23,7 @@
           "requirement": "Child capability works in integrated product.",
           "required": true,
           "verification_method_ids": [
-            "VM-P1"
+            "VM-P1-PARENT"
           ],
           "super_review_required": true
         }
@@ -73,7 +73,7 @@
         "delegate_principal": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+      "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
       "owner_principals": [
         "owner"
       ],
@@ -89,7 +89,11 @@
           "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
           "policy_source": "https://example.invalid/policy/required-checks",
           "workflow_path": ".github/workflows/required.yml",
-          "expected_app": "github-actions"
+          "expected_app": "github-actions",
+          "certifies": "INTEGRATION_CANDIDATE",
+          "allowed_checkout_modes": [
+            "SYNTHETIC_MERGE"
+          ]
         }
       ],
       "waivable_criteria": [],
@@ -134,14 +138,16 @@
           "requirement": "Preserve native source structure.",
           "required": true,
           "verification_method_ids": [
-            "VM-A1"
+            "VM-A1-AUTHOR",
+            "VM-A1-REVIEW",
+            "VM-A1-SUPER"
           ],
           "super_review_required": true
         }
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+      "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
       "owner_principals": [
         "owner"
       ],
@@ -157,7 +163,11 @@
           "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
           "policy_source": "https://example.invalid/policy/required-checks",
           "workflow_path": ".github/workflows/required.yml",
-          "expected_app": "github-actions"
+          "expected_app": "github-actions",
+          "certifies": "INTEGRATION_CANDIDATE",
+          "allowed_checkout_modes": [
+            "SYNTHETIC_MERGE"
+          ]
         }
       ],
       "waivable_criteria": [],
@@ -197,7 +207,7 @@
           "end": "2026-10-04T00:00:30Z"
         }
       ],
-      "status": "PASS",
+      "status": "STAGE_COMPLETE",
       "input_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
       "output_sha": "1111111111111111111111111111111111111111",
       "validated_sha": "1111111111111111111111111111111111111111",
@@ -256,15 +266,19 @@
       "review_source": null,
       "evidence_manifest": [
         {
-          "evidence_id": "EV-S1",
+          "evidence_id": "EV-S1-VM-A1-AUTHOR",
           "class": "AUTHOR",
+          "evidence_phase": "FINAL_ACCEPTANCE",
           "result": "PASS",
           "source_sha": "1111111111111111111111111111111111111111",
           "procedure": "Synthetic protocol evidence fixture.",
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265"
+          "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
+          "verification_method_id": "VM-A1-AUTHOR",
+          "harness_id": null,
+          "external_gate_id": null
         }
       ],
       "acceptance_results": [
@@ -273,10 +287,10 @@
           "required": true,
           "result": "PASS",
           "verification_method_ids": [
-            "VM-A1"
+            "VM-A1-AUTHOR"
           ],
           "evidence_ids": [
-            "EV-S1"
+            "EV-S1-VM-A1-AUTHOR"
           ],
           "rationale": null,
           "finding_ids": []
@@ -304,7 +318,10 @@
         "candidate_changed": true,
         "defects_found": [],
         "defects_fixed_here": [],
-        "external_escalations": []
+        "external_escalations": [],
+        "changed_components": [
+          "product"
+        ]
       },
       "role_integrity": {
         "claimed_role": "CODER",
@@ -312,7 +329,7 @@
       },
       "environment_ref": "ENV-S1",
       "evidence_refs": [
-        "EV-S1"
+        "EV-S1-VM-A1-AUTHOR"
       ],
       "carried_findings": [],
       "freshness": {
@@ -330,19 +347,21 @@
       "context_pre_verdict_ref": "CTX-PRE-S1",
       "source_attestation": {
         "candidate_sha": "1111111111111111111111111111111111111111",
+        "candidate_tree_digest": "c43825ca329ece941af4548d5a7043a6d90c5292b884577bbbfa0e5788ccaab6",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false,
+        "base_ref": "refs/heads/main",
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "base_ref": "refs/heads/main"
+        "integration_tree_digest": "a52a1f32e8259c823bc21be5df7c6a3c595a4012e9f55d726dc336eae0e0857d",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "external_gate_results": [],
-      "waiver_refs": []
+      "waiver_refs": [],
+      "discovery_freeze": null
     },
     {
       "record": "STAGE_RECORD",
@@ -360,7 +379,7 @@
           "end": "2026-10-04T00:01:30Z"
         }
       ],
-      "status": "PASS",
+      "status": "STAGE_COMPLETE",
       "input_sha": "1111111111111111111111111111111111111111",
       "output_sha": "2222222222222222222222222222222222222222",
       "validated_sha": "2222222222222222222222222222222222222222",
@@ -381,7 +400,23 @@
       "acceptance_checked": [
         "A1"
       ],
-      "findings": [],
+      "findings": [
+        {
+          "id": "F-S2",
+          "problem": "Synthetic bounded defect discovered before repair.",
+          "status": "RESOLVED",
+          "resolution": "Synthetic product repair completed in the discovering stage.",
+          "classification": "BOUNDED_PRODUCT_FIX",
+          "phase_found": "DISCOVERY",
+          "repair_disposition": "FIXED_HERE",
+          "affected_components": [
+            "product"
+          ],
+          "resolution_evidence_ids": [
+            "EV-S2-VM-A1-REVIEW"
+          ]
+        }
+      ],
       "validation": [
         {
           "check": "Synthetic behavior observation",
@@ -419,15 +454,34 @@
       "review_source": null,
       "evidence_manifest": [
         {
-          "evidence_id": "EV-S2",
+          "evidence_id": "DISC-S2-VM-A1-REVIEW",
           "class": "REVIEWER_INDEPENDENT",
+          "evidence_phase": "DISCOVERY",
+          "result": "FAIL",
+          "source_sha": "1111111111111111111111111111111111111111",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null,
+          "harness_digest": null,
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
+          "verification_method_id": "VM-A1-REVIEW",
+          "harness_id": null,
+          "external_gate_id": null
+        },
+        {
+          "evidence_id": "EV-S2-VM-A1-REVIEW",
+          "class": "REVIEWER_INDEPENDENT",
+          "evidence_phase": "FINAL_ACCEPTANCE",
           "result": "PASS",
           "source_sha": "2222222222222222222222222222222222222222",
           "procedure": "Synthetic protocol evidence fixture.",
           "artifact_digest": null,
           "harness_digest": null,
-          "baseline_digest": null,
-          "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1"
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
+          "verification_method_id": "VM-A1-REVIEW",
+          "harness_id": null,
+          "external_gate_id": null
         }
       ],
       "acceptance_results": [
@@ -436,27 +490,30 @@
           "required": true,
           "result": "PASS",
           "verification_method_ids": [
-            "VM-A1"
+            "VM-A1-REVIEW"
           ],
           "evidence_ids": [
-            "EV-S2"
+            "EV-S2-VM-A1-REVIEW"
           ],
           "rationale": null,
-          "finding_ids": []
+          "finding_ids": [
+            "F-S2"
+          ]
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
-        "mutation_detected": false,
-        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "mutation_detected": false,
+        "digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9"
       },
       "production_output": {
         "deliverables": [
@@ -465,8 +522,12 @@
         "coverage_completed": [
           "A1"
         ],
-        "fixes_applied": [],
-        "regressions_added": [],
+        "fixes_applied": [
+          "F-S2"
+        ],
+        "regressions_added": [
+          "REG-F-S2"
+        ],
         "education_points": [
           "Synthetic forward handoff explains evidence and downstream invariant."
         ],
@@ -477,9 +538,16 @@
         "early_termination": false,
         "early_termination_reason": null,
         "candidate_changed": true,
-        "defects_found": [],
-        "defects_fixed_here": [],
-        "external_escalations": []
+        "defects_found": [
+          "F-S2"
+        ],
+        "defects_fixed_here": [
+          "F-S2"
+        ],
+        "external_escalations": [],
+        "changed_components": [
+          "product"
+        ]
       },
       "role_integrity": {
         "claimed_role": "REVIEWER",
@@ -487,7 +555,8 @@
       },
       "environment_ref": "ENV-S2",
       "evidence_refs": [
-        "EV-S2"
+        "DISC-S2-VM-A1-REVIEW",
+        "EV-S2-VM-A1-REVIEW"
       ],
       "carried_findings": [],
       "freshness": {
@@ -505,19 +574,36 @@
       "context_pre_verdict_ref": "CTX-PRE-S2",
       "source_attestation": {
         "candidate_sha": "2222222222222222222222222222222222222222",
+        "candidate_tree_digest": "9fd9232ea8cdf4c4ce1e8732409a44ab5813c9aa14df148512b6bbfae7c82015",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false,
+        "base_ref": "refs/heads/main",
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "base_ref": "refs/heads/main"
+        "integration_tree_digest": "f13a6f9a930eb3f653f1d57fa5a96b7182d93ce06c39776d0c0b1aef7da7b91f",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
       },
-      "review_lease_ref": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
+      "review_lease_ref": "sha256:8a701063ad6419c3734258d9a27ba6f09de44b4aabd7408c3e91ddbabd293704",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "external_gate_results": [],
-      "waiver_refs": []
+      "waiver_refs": [],
+      "discovery_freeze": {
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "frozen_at": "2026-10-04T00:01:10Z",
+        "first_repair_at": "2026-10-04T00:01:15Z",
+        "method_ids_attempted": [
+          "VM-A1-REVIEW"
+        ],
+        "finding_ids": [
+          "F-S2"
+        ],
+        "evidence_ids": [
+          "DISC-S2-VM-A1-REVIEW"
+        ],
+        "sweep_complete": true,
+        "early_termination_reason": null
+      }
     },
     {
       "record": "STAGE_RECORD",
@@ -535,7 +621,7 @@
           "end": "2026-10-04T00:02:30Z"
         }
       ],
-      "status": "PASS",
+      "status": "STAGE_COMPLETE",
       "input_sha": "2222222222222222222222222222222222222222",
       "output_sha": "3333333333333333333333333333333333333333",
       "validated_sha": "3333333333333333333333333333333333333333",
@@ -556,7 +642,23 @@
       "acceptance_checked": [
         "A1"
       ],
-      "findings": [],
+      "findings": [
+        {
+          "id": "F-S3",
+          "problem": "Synthetic bounded defect discovered before repair.",
+          "status": "RESOLVED",
+          "resolution": "Synthetic product repair completed in the discovering stage.",
+          "classification": "BOUNDED_PRODUCT_FIX",
+          "phase_found": "DISCOVERY",
+          "repair_disposition": "FIXED_HERE",
+          "affected_components": [
+            "product"
+          ],
+          "resolution_evidence_ids": [
+            "EV-S3-VM-A1-SUPER"
+          ]
+        }
+      ],
       "validation": [
         {
           "check": "Synthetic behavior observation",
@@ -594,15 +696,34 @@
       "review_source": null,
       "evidence_manifest": [
         {
-          "evidence_id": "EV-S3",
+          "evidence_id": "DISC-S3-VM-A1-SUPER",
           "class": "SUPER_REVIEW_INDEPENDENT",
+          "evidence_phase": "DISCOVERY",
+          "result": "FAIL",
+          "source_sha": "2222222222222222222222222222222222222222",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null,
+          "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
+          "verification_method_id": "VM-A1-SUPER",
+          "harness_id": "SR-ALL",
+          "external_gate_id": null
+        },
+        {
+          "evidence_id": "EV-S3-VM-A1-SUPER",
+          "class": "SUPER_REVIEW_INDEPENDENT",
+          "evidence_phase": "FINAL_ACCEPTANCE",
           "result": "PASS",
           "source_sha": "3333333333333333333333333333333333333333",
           "procedure": "Synthetic protocol evidence fixture.",
           "artifact_digest": null,
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-          "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2"
+          "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
+          "verification_method_id": "VM-A1-SUPER",
+          "harness_id": "SR-ALL",
+          "external_gate_id": null
         }
       ],
       "acceptance_results": [
@@ -611,27 +732,30 @@
           "required": true,
           "result": "PASS",
           "verification_method_ids": [
-            "VM-A1"
+            "VM-A1-SUPER"
           ],
           "evidence_ids": [
-            "EV-S3"
+            "EV-S3-VM-A1-SUPER"
           ],
           "rationale": null,
-          "finding_ids": []
+          "finding_ids": [
+            "F-S3"
+          ]
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
-        "mutation_detected": false,
-        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "mutation_detected": false,
+        "digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9"
       },
       "production_output": {
         "deliverables": [
@@ -640,8 +764,12 @@
         "coverage_completed": [
           "A1"
         ],
-        "fixes_applied": [],
-        "regressions_added": [],
+        "fixes_applied": [
+          "F-S3"
+        ],
+        "regressions_added": [
+          "REG-F-S3"
+        ],
         "education_points": [
           "Synthetic forward handoff explains evidence and downstream invariant."
         ],
@@ -652,9 +780,16 @@
         "early_termination": false,
         "early_termination_reason": null,
         "candidate_changed": true,
-        "defects_found": [],
-        "defects_fixed_here": [],
-        "external_escalations": []
+        "defects_found": [
+          "F-S3"
+        ],
+        "defects_fixed_here": [
+          "F-S3"
+        ],
+        "external_escalations": [],
+        "changed_components": [
+          "product"
+        ]
       },
       "role_integrity": {
         "claimed_role": "COORDINATOR",
@@ -662,7 +797,8 @@
       },
       "environment_ref": "ENV-S3",
       "evidence_refs": [
-        "EV-S3"
+        "DISC-S3-VM-A1-SUPER",
+        "EV-S3-VM-A1-SUPER"
       ],
       "carried_findings": [],
       "freshness": {
@@ -680,19 +816,36 @@
       "context_pre_verdict_ref": "CTX-PRE-S3",
       "source_attestation": {
         "candidate_sha": "3333333333333333333333333333333333333333",
+        "candidate_tree_digest": "fb2bb31d581ace5a68c9e22077b6e47ad6e5f111d2ee0902916bcc5cf4fbb048",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false,
+        "base_ref": "refs/heads/main",
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "base_ref": "refs/heads/main"
+        "integration_tree_digest": "4381dce055a2bdb40f1e1f49de08c744efa2f48186ea1ba0627575b9f82c2b1a",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
       },
-      "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
+      "review_lease_ref": "sha256:c3351ae359601f2ec00de34911bab21c795b22619af839fec634229843c40ada",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "external_gate_results": [],
-      "waiver_refs": []
+      "waiver_refs": [],
+      "discovery_freeze": {
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "frozen_at": "2026-10-04T00:02:10Z",
+        "first_repair_at": "2026-10-04T00:02:15Z",
+        "method_ids_attempted": [
+          "VM-A1-SUPER"
+        ],
+        "finding_ids": [
+          "F-S3"
+        ],
+        "evidence_ids": [
+          "DISC-S3-VM-A1-SUPER"
+        ],
+        "sweep_complete": true,
+        "early_termination_reason": null
+      }
     },
     {
       "record": "STAGE_RECORD",
@@ -710,7 +863,7 @@
           "end": "2026-10-04T00:06:30Z"
         }
       ],
-      "status": "PASS",
+      "status": "STAGE_COMPLETE",
       "input_sha": "cccccccccccccccccccccccccccccccccccccccc",
       "output_sha": "cccccccccccccccccccccccccccccccccccccccc",
       "validated_sha": "cccccccccccccccccccccccccccccccccccccccc",
@@ -769,15 +922,34 @@
       "review_source": null,
       "evidence_manifest": [
         {
-          "evidence_id": "EV-S4",
+          "evidence_id": "DISC-S4-VM-P1-PARENT",
           "class": "SUPER_REVIEW_INDEPENDENT",
+          "evidence_phase": "DISCOVERY",
           "result": "PASS",
           "source_sha": "cccccccccccccccccccccccccccccccccccccccc",
           "procedure": "Synthetic protocol evidence fixture.",
           "artifact_digest": null,
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-          "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e"
+          "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
+          "verification_method_id": "VM-P1-PARENT",
+          "harness_id": "SR-ALL",
+          "external_gate_id": null
+        },
+        {
+          "evidence_id": "EV-S4-VM-P1-PARENT",
+          "class": "SUPER_REVIEW_INDEPENDENT",
+          "evidence_phase": "FINAL_ACCEPTANCE",
+          "result": "PASS",
+          "source_sha": "cccccccccccccccccccccccccccccccccccccccc",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null,
+          "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
+          "verification_method_id": "VM-P1-PARENT",
+          "harness_id": "SR-ALL",
+          "external_gate_id": null
         }
       ],
       "acceptance_results": [
@@ -786,27 +958,28 @@
           "required": true,
           "result": "PASS",
           "verification_method_ids": [
-            "VM-P1"
+            "VM-P1-PARENT"
           ],
           "evidence_ids": [
-            "EV-S4"
+            "EV-S4-VM-P1-PARENT"
           ],
           "rationale": null,
           "finding_ids": []
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
-        "mutation_detected": false,
-        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "mutation_detected": false,
+        "digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9"
       },
       "production_output": {
         "deliverables": [
@@ -829,7 +1002,8 @@
         "candidate_changed": false,
         "defects_found": [],
         "defects_fixed_here": [],
-        "external_escalations": []
+        "external_escalations": [],
+        "changed_components": []
       },
       "role_integrity": {
         "claimed_role": "PARENT_CHECK",
@@ -837,7 +1011,8 @@
       },
       "environment_ref": "ENV-S4",
       "evidence_refs": [
-        "EV-S4"
+        "DISC-S4-VM-P1-PARENT",
+        "EV-S4-VM-P1-PARENT"
       ],
       "carried_findings": [],
       "freshness": {
@@ -855,19 +1030,34 @@
       "context_pre_verdict_ref": "CTX-PRE-S4",
       "source_attestation": {
         "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "candidate_tree_digest": "d0f3ea3f06adca74426560072e7f62dd67706c90f6136d7d77dc3d4c15d5abfc",
         "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false,
+        "base_ref": "refs/heads/main",
         "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "base_ref": "refs/heads/main"
+        "integration_tree_digest": "382d0f1ed6c885c3caed73f98522c4d3090c95a649eb977bff94c2ebe6e10fe8",
+        "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
+        "unrecorded_changes": false
       },
-      "review_lease_ref": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
+      "review_lease_ref": "sha256:9f74812c30cda77a817077e8cec59597b9458f4006057dd65d39dffd6104bc4a",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "external_gate_results": [],
-      "waiver_refs": []
+      "waiver_refs": [],
+      "discovery_freeze": {
+        "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "frozen_at": "2026-10-04T00:06:10Z",
+        "first_repair_at": null,
+        "method_ids_attempted": [
+          "VM-P1-PARENT"
+        ],
+        "finding_ids": [],
+        "evidence_ids": [
+          "DISC-S4-VM-P1-PARENT"
+        ],
+        "sweep_complete": true,
+        "early_termination_reason": null
+      }
     }
   ],
   "results": [
@@ -891,7 +1081,7 @@
       "evidence": "Synthetic provider merge and acceptance.",
       "recorded_at": "2026-10-04T00:05:00Z",
       "waiver_refs": [],
-      "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
+      "review_lease_ref": "sha256:c3351ae359601f2ec00de34911bab21c795b22619af839fec634229843c40ada",
       "pre_merge_context_ref": "CTX-PREMERGE-T86",
       "observed_state_ref": "OBS-T86",
       "canonical_observation": {
@@ -961,8 +1151,8 @@
       "101": [
         {
           "check": "Required hosted check",
-          "head_sha": "3333333333333333333333333333333333333333",
-          "result": "PASS"
+          "result": "PASS",
+          "trigger_pr_head_sha": "3333333333333333333333333333333333333333"
         }
       ]
     },
@@ -1025,30 +1215,9 @@
   "support": {
     "review_leases": [
       {
-        "lease_id": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
+        "lease_id": "sha256:8a701063ad6419c3734258d9a27ba6f09de44b4aabd7408c3e91ddbabd293704",
         "task_id": "T86",
         "stage_record_id": "S2",
-        "candidate_sha": "2222222222222222222222222222222222222222",
-        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
-        "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
-        "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
-        "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
-        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
-        "dependency_heads": [],
-        "sealed_at": "2026-10-04T00:01:30Z",
-        "environment_ref": "ENV-S2",
-        "context_pre_verdict_ref": "CTX-PRE-S2",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main",
         "repository": "exampleowner/editor",
         "pr": 101,
         "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -1061,33 +1230,35 @@
         ],
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
-      },
-      {
-        "lease_id": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
-        "task_id": "T86",
-        "stage_record_id": "S3",
-        "candidate_sha": "3333333333333333333333333333333333333333",
+        ],
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "candidate_tree_digest": "9fd9232ea8cdf4c4ce1e8732409a44ab5813c9aa14df148512b6bbfae7c82015",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        "target_ref": "refs/heads/main",
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "f13a6f9a930eb3f653f1d57fa5a96b7182d93ce06c39776d0c0b1aef7da7b91f",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
-        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "dependency_heads": [],
-        "sealed_at": "2026-10-04T00:02:30Z",
-        "environment_ref": "ENV-S3",
-        "context_pre_verdict_ref": "CTX-PRE-S3",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main",
+        "sealed_at": "2026-10-04T00:01:30Z",
+        "environment_ref": "ENV-S2",
+        "context_pre_verdict_ref": "CTX-PRE-S2"
+      },
+      {
+        "lease_id": "sha256:c3351ae359601f2ec00de34911bab21c795b22619af839fec634229843c40ada",
+        "task_id": "T86",
+        "stage_record_id": "S3",
         "repository": "exampleowner/editor",
         "pr": 101,
         "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -1100,33 +1271,35 @@
         ],
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
-      },
-      {
-        "lease_id": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
-        "task_id": "T85",
-        "stage_record_id": "S4",
-        "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
+        ],
+        "candidate_sha": "3333333333333333333333333333333333333333",
+        "candidate_tree_digest": "fb2bb31d581ace5a68c9e22077b6e47ad6e5f111d2ee0902916bcc5cf4fbb048",
+        "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "target_ref": "refs/heads/main",
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "4381dce055a2bdb40f1e1f49de08c744efa2f48186ea1ba0627575b9f82c2b1a",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
-        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "dependency_heads": [],
-        "sealed_at": "2026-10-04T00:06:30Z",
-        "environment_ref": "ENV-S4",
-        "context_pre_verdict_ref": "CTX-PRE-S4",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main",
+        "sealed_at": "2026-10-04T00:02:30Z",
+        "environment_ref": "ENV-S3",
+        "context_pre_verdict_ref": "CTX-PRE-S3"
+      },
+      {
+        "lease_id": "sha256:9f74812c30cda77a817077e8cec59597b9458f4006057dd65d39dffd6104bc4a",
+        "task_id": "T85",
+        "stage_record_id": "S4",
         "repository": "exampleowner/editor",
         "pr": null,
         "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -1139,7 +1312,30 @@
         ],
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "candidate_tree_digest": "d0f3ea3f06adca74426560072e7f62dd67706c90f6136d7d77dc3d4c15d5abfc",
+        "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "target_ref": "refs/heads/main",
+        "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "integration_tree_digest": "382d0f1ed6c885c3caed73f98522c4d3090c95a649eb977bff94c2ebe6e10fe8",
+        "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
+        "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
+        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
+        "dependency_heads": [],
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "sealed_at": "2026-10-04T00:06:30Z",
+        "environment_ref": "ENV-S4",
+        "context_pre_verdict_ref": "CTX-PRE-S4"
       }
     ],
     "environments": [
@@ -1158,13 +1354,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
         },
         "locale": "C.UTF-8",
-        "timezone": "UTC"
+        "timezone": "UTC",
+        "digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265"
       },
       {
         "environment_id": "ENV-S2",
@@ -1181,13 +1377,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
         },
         "locale": "C.UTF-8",
-        "timezone": "UTC"
+        "timezone": "UTC",
+        "digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1"
       },
       {
         "environment_id": "ENV-S3",
@@ -1204,13 +1400,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
         },
         "locale": "C.UTF-8",
-        "timezone": "UTC"
+        "timezone": "UTC",
+        "digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2"
       },
       {
         "environment_id": "ENV-S4",
@@ -1227,13 +1423,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
         },
         "locale": "C.UTF-8",
-        "timezone": "UTC"
+        "timezone": "UTC",
+        "digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e"
       }
     ],
     "context_snapshots": [
@@ -1255,7 +1451,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-START-S1",
+            "provider_id": "parent-body-S1",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1265,7 +1461,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-START-S1",
+            "provider_id": "task-body-S1",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1275,7 +1471,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-START-S1",
+            "provider_id": "frontier-S1",
             "provider_ref": "https://example.invalid/issues/85#before-S1",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:00:00Z",
@@ -1285,7 +1481,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-START-S1",
+            "provider_id": "pr-description-S1",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1313,7 +1509,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-PRE-S1",
+            "provider_id": "parent-body-S1",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1323,7 +1519,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-PRE-S1",
+            "provider_id": "task-body-S1",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1333,7 +1529,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-PRE-S1",
+            "provider_id": "frontier-S1",
             "provider_ref": "https://example.invalid/issues/85#before-S1",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:00:00Z",
@@ -1343,7 +1539,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-PRE-S1",
+            "provider_id": "pr-description-S1",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1371,7 +1567,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-START-S2",
+            "provider_id": "parent-body-S2",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1381,7 +1577,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-START-S2",
+            "provider_id": "task-body-S2",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1391,7 +1587,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-START-S2",
+            "provider_id": "frontier-S2",
             "provider_ref": "https://example.invalid/issues/85#before-S2",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:01:00Z",
@@ -1401,7 +1597,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-START-S2",
+            "provider_id": "pr-description-S2",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1429,7 +1625,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-PRE-S2",
+            "provider_id": "parent-body-S2",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1439,7 +1635,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-PRE-S2",
+            "provider_id": "task-body-S2",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1449,7 +1645,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-PRE-S2",
+            "provider_id": "frontier-S2",
             "provider_ref": "https://example.invalid/issues/85#before-S2",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:01:00Z",
@@ -1459,7 +1655,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-PRE-S2",
+            "provider_id": "pr-description-S2",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1487,7 +1683,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-START-S3",
+            "provider_id": "parent-body-S3",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1497,7 +1693,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-START-S3",
+            "provider_id": "task-body-S3",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1507,7 +1703,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-START-S3",
+            "provider_id": "frontier-S3",
             "provider_ref": "https://example.invalid/issues/85#before-S3",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:02:00Z",
@@ -1517,7 +1713,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-START-S3",
+            "provider_id": "pr-description-S3",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1545,7 +1741,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-PRE-S3",
+            "provider_id": "parent-body-S3",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1555,7 +1751,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-PRE-S3",
+            "provider_id": "task-body-S3",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1565,7 +1761,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-PRE-S3",
+            "provider_id": "frontier-S3",
             "provider_ref": "https://example.invalid/issues/85#before-S3",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:02:00Z",
@@ -1575,7 +1771,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-PRE-S3",
+            "provider_id": "pr-description-S3",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1603,7 +1799,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-START-S4",
+            "provider_id": "parent-body-S4",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1613,7 +1809,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-START-S4",
+            "provider_id": "task-body-S4",
             "provider_ref": "synthetic://task/T85",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1623,7 +1819,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-START-S4",
+            "provider_id": "frontier-S4",
             "provider_ref": "https://example.invalid/issues/85#before-S4",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:06:00Z",
@@ -1651,7 +1847,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-PRE-S4",
+            "provider_id": "parent-body-S4",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1661,7 +1857,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-PRE-S4",
+            "provider_id": "task-body-S4",
             "provider_ref": "synthetic://task/T85",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1671,7 +1867,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-PRE-S4",
+            "provider_id": "frontier-S4",
             "provider_ref": "https://example.invalid/issues/85#before-S4",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:06:00Z",
@@ -1685,7 +1881,7 @@
         "snapshot_id": "CTX-PREMERGE-T86",
         "task_id": "T86",
         "phase": "PRE_MERGE",
-        "observed_at": "2026-10-04T00:02:31Z",
+        "observed_at": "2026-10-04T00:03:00Z",
         "parent_issue_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "parent_comment_frontier": "https://example.invalid/issues/85#before-S3",
         "parent_frontier_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -1699,7 +1895,7 @@
         "context_events": [
           {
             "source_kind": "PARENT_ISSUE_BODY",
-            "provider_id": "parent-body-CTX-PREMERGE-T86",
+            "provider_id": "parent-body-S3",
             "provider_ref": "synthetic://parent/body",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1709,7 +1905,7 @@
           },
           {
             "source_kind": "TASK_ISSUE_BODY",
-            "provider_id": "task-body-CTX-PREMERGE-T86",
+            "provider_id": "task-body-S3",
             "provider_ref": "synthetic://task/T86",
             "author_principal": "owner",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1719,7 +1915,7 @@
           },
           {
             "source_kind": "PARENT_COMMENT",
-            "provider_id": "frontier-CTX-PREMERGE-T86",
+            "provider_id": "frontier-S3",
             "provider_ref": "https://example.invalid/issues/85#before-S3",
             "author_principal": "coordinator",
             "created_at": "2026-10-04T00:02:00Z",
@@ -1729,7 +1925,7 @@
           },
           {
             "source_kind": "PR_DESCRIPTION",
-            "provider_id": "pr-description-CTX-PREMERGE-T86",
+            "provider_id": "pr-description-S3",
             "provider_ref": "https://example.invalid/pull/101",
             "author_principal": "coder",
             "created_at": "2026-10-03T23:00:00Z",
@@ -1746,31 +1942,17 @@
         "state_id": "OBS-T86",
         "task_id": "T86",
         "pr": 101,
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "target_ref": "refs/heads/main",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "pre_merge_context_ref": "CTX-PREMERGE-T86",
-        "observed_at": "2026-10-04T00:02:31Z",
+        "observed_at": "2026-10-04T00:03:00Z",
         "pr_head_sha": "3333333333333333333333333333333333333333",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
-        "repository_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "required_checks": [
-          {
-            "check": "Required hosted check",
-            "provider": "GITHUB_ACTIONS",
-            "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
-            "head_sha": "3333333333333333333333333333333333333333",
-            "result": "PASS",
-            "mandatory_steps_executed": true,
-            "workflow_path": ".github/workflows/required.yml",
-            "app_identity": "github-actions",
-            "run_id": "RUN-T86",
-            "job_id": "JOB-T86",
-            "artifact_digests": [
-              "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-            ]
-          }
-        ],
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "integration_tree_digest": "4381dce055a2bdb40f1e1f49de08c744efa2f48186ea1ba0627575b9f82c2b1a",
+        "repository_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "repository_policy_source_ref": "https://example.invalid/policy/required-checks",
+        "repository_policy_visibility": "CONFIRMED",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
@@ -1778,117 +1960,290 @@
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main",
-        "repository_policy_source_ref": "https://example.invalid/policy/required-checks",
-        "repository_policy_visibility": "CONFIRMED"
+        "required_checks": [
+          {
+            "check": "Required hosted check",
+            "provider": "GITHUB_ACTIONS",
+            "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
+            "workflow_path": ".github/workflows/required.yml",
+            "app_identity": "github-actions",
+            "run_id": "RUN-T86",
+            "job_id": "JOB-T86",
+            "artifact_digests": [
+              "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+            ],
+            "trigger_pr_head_sha": "3333333333333333333333333333333333333333",
+            "provider_run_head_sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "tested_commit_sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "tested_tree_digest": "4381dce055a2bdb40f1e1f49de08c744efa2f48186ea1ba0627575b9f82c2b1a",
+            "checkout_mode": "SYNTHETIC_MERGE",
+            "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "integration_tree_digest": "4381dce055a2bdb40f1e1f49de08c744efa2f48186ea1ba0627575b9f82c2b1a",
+            "result": "PASS",
+            "mandatory_steps_executed": true
+          }
+        ]
       }
     ],
     "evidence_records": [
       {
-        "evidence_id": "EV-S1",
-        "producer_role": "CODER",
-        "producer_principal": "coder",
+        "evidence_id": "EV-S1-VM-A1-AUTHOR",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "coder",
+        "collected_by_role": "CODER",
+        "collected_by_principal": "coder",
+        "provider_ref": null,
         "evidence_class": "AUTHOR",
+        "evidence_phase": "FINAL_ACCEPTANCE",
         "candidate_sha": "1111111111111111111111111111111111111111",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": null,
-        "baseline_digest": null,
-        "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
+        "baseline_digest": null,
+        "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "review_lease_ref": null,
         "acceptance_surface_digest": null,
+        "acceptance_surface_manifest_digest": null,
         "collected_at": "2026-10-04T00:00:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
           "synthetic",
-          "check"
+          "check",
+          "VM-A1-AUTHOR"
         ],
         "exit_code": 0,
-        "fixture_digests": []
+        "fixture_digests": [],
+        "verification_method_id": "VM-A1-AUTHOR",
+        "harness_id": null,
+        "external_gate_id": null,
+        "oracle_independence": "NOT_INDEPENDENT",
+        "principal_relationship_to_candidate": "AUTHOR_OF_CANDIDATE"
       },
       {
-        "evidence_id": "EV-S2",
-        "producer_role": "REVIEWER",
-        "producer_principal": "reviewer",
+        "evidence_id": "DISC-S2-VM-A1-REVIEW",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "reviewer",
+        "collected_by_role": "REVIEWER",
+        "collected_by_principal": "reviewer",
+        "provider_ref": null,
         "evidence_class": "REVIEWER_INDEPENDENT",
-        "candidate_sha": "2222222222222222222222222222222222222222",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "evidence_phase": "DISCOVERY",
+        "candidate_sha": "1111111111111111111111111111111111111111",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": null,
-        "baseline_digest": null,
+        "result": "FAIL",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null,
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": null,
+        "acceptance_surface_manifest_digest": null,
+        "collected_at": "2026-10-04T00:01:05Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check",
+          "VM-A1-REVIEW"
+        ],
+        "exit_code": 1,
+        "fixture_digests": [],
+        "verification_method_id": "VM-A1-REVIEW",
+        "harness_id": null,
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "NON_WRITER_REVIEWER"
+      },
+      {
+        "evidence_id": "EV-S2-VM-A1-REVIEW",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "reviewer",
+        "collected_by_role": "REVIEWER",
+        "collected_by_principal": "reviewer",
+        "provider_ref": null,
+        "evidence_class": "REVIEWER_INDEPENDENT",
+        "evidence_phase": "FINAL_ACCEPTANCE",
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
+        "harness_digest": null,
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "sha256:d99cb5999beed53dac97154dfefe79c702a4747f16e9b77a103dd943004a97c0",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "review_lease_ref": "sha256:8a701063ad6419c3734258d9a27ba6f09de44b4aabd7408c3e91ddbabd293704",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
         "collected_at": "2026-10-04T00:01:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
           "synthetic",
-          "check"
+          "check",
+          "VM-A1-REVIEW"
         ],
         "exit_code": 0,
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "verification_method_id": "VM-A1-REVIEW",
+        "harness_id": null,
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "LAST_PRODUCT_WRITER"
       },
       {
-        "evidence_id": "EV-S3",
-        "producer_role": "COORDINATOR",
-        "producer_principal": "coordinator",
+        "evidence_id": "DISC-S3-VM-A1-SUPER",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "coordinator",
+        "collected_by_role": "COORDINATOR",
+        "collected_by_principal": "coordinator",
+        "provider_ref": null,
         "evidence_class": "SUPER_REVIEW_INDEPENDENT",
-        "candidate_sha": "3333333333333333333333333333333333333333",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "evidence_phase": "DISCOVERY",
+        "candidate_sha": "2222222222222222222222222222222222222222",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "result": "FAIL",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null,
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": null,
+        "acceptance_surface_manifest_digest": null,
+        "collected_at": "2026-10-04T00:02:05Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check",
+          "VM-A1-SUPER"
+        ],
+        "exit_code": 1,
+        "fixture_digests": [],
+        "verification_method_id": "VM-A1-SUPER",
+        "harness_id": "SR-ALL",
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "NON_WRITER_REVIEWER"
+      },
+      {
+        "evidence_id": "EV-S3-VM-A1-SUPER",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "coordinator",
+        "collected_by_role": "COORDINATOR",
+        "collected_by_principal": "coordinator",
+        "provider_ref": null,
+        "evidence_class": "SUPER_REVIEW_INDEPENDENT",
+        "evidence_phase": "FINAL_ACCEPTANCE",
+        "candidate_sha": "3333333333333333333333333333333333333333",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "sha256:0846852af3bf8261019cea73ad9594db9e039b31c432ecc1c759a47ac9a75825",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "review_lease_ref": "sha256:c3351ae359601f2ec00de34911bab21c795b22619af839fec634229843c40ada",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
         "collected_at": "2026-10-04T00:02:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
           "synthetic",
-          "check"
+          "check",
+          "VM-A1-SUPER"
         ],
         "exit_code": 0,
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "verification_method_id": "VM-A1-SUPER",
+        "harness_id": "SR-ALL",
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "LAST_PRODUCT_WRITER"
       },
       {
-        "evidence_id": "EV-S4",
-        "producer_role": "PARENT_CHECK",
-        "producer_principal": "coordinator",
+        "evidence_id": "DISC-S4-VM-P1-PARENT",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "coordinator",
+        "collected_by_role": "PARENT_CHECK",
+        "collected_by_principal": "coordinator",
+        "provider_ref": null,
         "evidence_class": "SUPER_REVIEW_INDEPENDENT",
+        "evidence_phase": "DISCOVERY",
         "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
-        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "sha256:2ed1334fe743083cda7fc5bbf1c9db32126f2548876aeeb834e785266a1cda61",
-        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": null,
+        "acceptance_surface_manifest_digest": null,
+        "collected_at": "2026-10-04T00:06:05Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check",
+          "VM-P1-PARENT"
+        ],
+        "exit_code": 0,
+        "fixture_digests": [],
+        "verification_method_id": "VM-P1-PARENT",
+        "harness_id": "SR-ALL",
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "NON_WRITER_REVIEWER"
+      },
+      {
+        "evidence_id": "EV-S4-VM-P1-PARENT",
+        "origin_kind": "STAGE_EXECUTOR",
+        "origin_principal": "coordinator",
+        "collected_by_role": "PARENT_CHECK",
+        "collected_by_principal": "coordinator",
+        "provider_ref": null,
+        "evidence_class": "SUPER_REVIEW_INDEPENDENT",
+        "evidence_phase": "FINAL_ACCEPTANCE",
+        "candidate_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "project_protocol_digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "result": "PASS",
+        "procedure": "Synthetic protocol evidence fixture.",
+        "artifact_digest": null,
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "environment_digest": "93f96b50bdfe2df7b8e4f2101c13e6f30b393c54b230f9c0ed468e10165c1d6e",
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": "sha256:9f74812c30cda77a817077e8cec59597b9458f4006057dd65d39dffd6104bc4a",
+        "acceptance_surface_digest": "760222edd267dc3ad3b02cf366330516e76d2bd2c75b202d1554413a487b68e9",
+        "acceptance_surface_manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a",
         "collected_at": "2026-10-04T00:06:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
           "synthetic",
-          "check"
+          "check",
+          "VM-P1-PARENT"
         ],
         "exit_code": 0,
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-        ]
+        ],
+        "verification_method_id": "VM-P1-PARENT",
+        "harness_id": "SR-ALL",
+        "external_gate_id": null,
+        "oracle_independence": "PINNED_ORACLE_INDEPENDENT",
+        "principal_relationship_to_candidate": "NON_WRITER_REVIEWER"
       }
     ],
     "project_protocols": [
@@ -1897,7 +2252,7 @@
         "version": "1.0",
         "repository": "exampleowner/editor",
         "source_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-        "digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
+        "digest": "c9fe57ef473695aa439a2d9e349e41ceeb0d6ae3e1a674814b9be14ab8d153e6",
         "acceptance_sets": [
           {
             "id": "ALL",
@@ -1905,10 +2260,10 @@
               {
                 "id": "P1",
                 "required": true,
-                "reviewer_check_required": true,
+                "reviewer_check_required": false,
                 "super_review_required": true,
                 "verification_method_ids": [
-                  "VM-P1"
+                  "VM-P1-PARENT"
                 ]
               },
               {
@@ -1917,9 +2272,84 @@
                 "reviewer_check_required": true,
                 "super_review_required": true,
                 "verification_method_ids": [
-                  "VM-A1"
+                  "VM-A1-AUTHOR",
+                  "VM-A1-REVIEW",
+                  "VM-A1-SUPER"
                 ]
               }
+            ]
+          }
+        ],
+        "verification_methods": [
+          {
+            "id": "VM-P1-PARENT",
+            "verification_class": "PRODUCER_CONSUMER",
+            "harness_id": "SR-ALL",
+            "external_gate_id": null,
+            "required_evidence_classes": [
+              "SUPER_REVIEW_INDEPENDENT",
+              "EXTERNAL_ORACLE"
+            ],
+            "material_inputs": [
+              "PRODUCT",
+              "CHILD_RESULTS",
+              "PROJECT_PROTOCOL"
+            ],
+            "rerun_policy": "FULL_REQUIRED_SET",
+            "applies_to_roles": [
+              "PARENT_CHECK"
+            ]
+          },
+          {
+            "id": "VM-A1-AUTHOR",
+            "verification_class": "POSITIVE",
+            "harness_id": null,
+            "external_gate_id": null,
+            "required_evidence_classes": [
+              "AUTHOR"
+            ],
+            "material_inputs": [
+              "PRODUCT"
+            ],
+            "rerun_policy": "FULL_REQUIRED_SET",
+            "applies_to_roles": [
+              "CODER"
+            ]
+          },
+          {
+            "id": "VM-A1-REVIEW",
+            "verification_class": "INVARIANT",
+            "harness_id": null,
+            "external_gate_id": null,
+            "required_evidence_classes": [
+              "REVIEWER_INDEPENDENT"
+            ],
+            "material_inputs": [
+              "PRODUCT",
+              "SPECIFICATION"
+            ],
+            "rerun_policy": "FULL_REQUIRED_SET",
+            "applies_to_roles": [
+              "REVIEWER"
+            ]
+          },
+          {
+            "id": "VM-A1-SUPER",
+            "verification_class": "DIFFERENTIAL",
+            "harness_id": "SR-ALL",
+            "external_gate_id": null,
+            "required_evidence_classes": [
+              "SUPER_REVIEW_INDEPENDENT",
+              "EXTERNAL_ORACLE"
+            ],
+            "material_inputs": [
+              "PRODUCT",
+              "DEPENDENCIES",
+              "PROJECT_PROTOCOL"
+            ],
+            "rerun_policy": "FULL_REQUIRED_SET",
+            "applies_to_roles": [
+              "COORDINATOR"
             ]
           }
         ],
@@ -1930,10 +2360,20 @@
               "P1",
               "A1"
             ],
-            "protected": true
+            "protected": true,
+            "verification_method_ids": [
+              "VM-P1-PARENT",
+              "VM-A1-SUPER"
+            ],
+            "manifest_refs": [
+              "MAN-HARNESS",
+              "MAN-HELPER",
+              "MAN-FIXTURE",
+              "MAN-BASELINE",
+              "MAN-LOCK"
+            ]
           }
         ],
-        "external_gates": [],
         "protected_surface": {
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
@@ -1942,8 +2382,47 @@
           ],
           "fixture_digests": [
             "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-          ]
+          ],
+          "manifest": [
+            {
+              "id": "MAN-HARNESS",
+              "kind": "HARNESS_ENTRYPOINT",
+              "ref": "synthetic://harness/sr-all",
+              "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "transitive": true
+            },
+            {
+              "id": "MAN-HELPER",
+              "kind": "IMPORTED_HELPER",
+              "ref": "synthetic://harness/helper",
+              "digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "transitive": true
+            },
+            {
+              "id": "MAN-FIXTURE",
+              "kind": "FIXTURE",
+              "ref": "synthetic://fixture/all",
+              "digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+              "transitive": true
+            },
+            {
+              "id": "MAN-BASELINE",
+              "kind": "BASELINE",
+              "ref": "synthetic://baseline/all",
+              "digest": "1111111111111111111111111111111111111111111111111111111111111111",
+              "transitive": true
+            },
+            {
+              "id": "MAN-LOCK",
+              "kind": "LOCKFILE",
+              "ref": "synthetic://lock/project",
+              "digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "transitive": true
+            }
+          ],
+          "manifest_digest": "83474e4a22499a52a6856ace6dff937ec0c2609f4d33a0ed98a94b596e2eeb3a"
         },
+        "external_gates": [],
         "regressions": []
       }
     ]
