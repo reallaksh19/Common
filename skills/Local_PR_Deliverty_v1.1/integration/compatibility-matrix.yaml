@@ -1,0 +1,30 @@
+schema: local-pr-deliverty-compatibility/v1
+profiles:
+  LOCAL_V1_1_V35:
+    local:
+      version: '1.1'
+      path: skills/Local_PR_Deliverty_v1.1
+    nested_coder:
+      version: '3.5'
+      path: skills/engineering-pr-delivery-v3.5
+    programme_coordinator:
+      mode: LOCAL_V1_1_INTEGRATED
+      legacy_v31: READABLE_COMPATIBILITY_ONLY
+    active_relay:
+      allowed:
+        - engineering-pr-delivery-v3.5
+      forbidden:
+        - engineering-pr-delivery-v2
+        - engineering-pr-delivery-v2.5
+        - engineering-pr-delivery-v3
+        - engineering-pr-delivery-v3.1
+        - engineering-pr-delivery-v3.2
+    historical_reads:
+      allowed_when_classified:
+        - HISTORICAL
+        - MIGRATION
+        - COMPATIBILITY
+migration:
+  automatic: false
+  owner_authority_required: true
+  preserve_pinned_responsibility_basis: true
