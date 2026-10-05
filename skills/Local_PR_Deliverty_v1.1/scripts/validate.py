@@ -586,7 +586,7 @@ def task_history(task, records, parent, support, now):
                     require(classes & {'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'}, 'Super-review criterion lacks independent project-harness/oracle evidence')
         if task['kind'] == 'CHILD':
             expected = next((s for s in ORDER if s not in passes), 'COORDINATOR')
-            require(stage == expected or (latest and stage == latest['stage'] and latest['status'] != 'PASS'), 'Role skipped an unfinished prerequisite')
+            require(stage == expected or (latest and stage == latest['stage'] and latest['status'] not in ADVANCING_STATUSES), 'Role skipped an unfinished prerequisite')
             for later in ORDER[ORDER.index(stage) + 1:]:
                 passes.pop(later, None)
         if stage in ['COORDINATOR', 'PARENT_CHECK']:
