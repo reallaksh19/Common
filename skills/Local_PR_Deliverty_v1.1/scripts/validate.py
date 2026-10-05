@@ -1,6 +1,7 @@
 """Read-only consistency checker for supplied issue/PR records; no Git operations."""
 import argparse
 import json
+from functools import lru_cache
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -31,11 +32,16 @@ def instant(value):
     return parsed.astimezone(timezone.utc)
 
 
-def validate_against_schema(record, schema_name):
-    require(isinstance(record, dict), 'Each record must be an object')
+@lru_cache(maxsize=None)
+def schema_validator(schema_name):
     schema = json.loads((ROOT / 'schemas' / (schema_name + '.schema.json')).read_text(encoding='utf-8'))
     Draft202012Validator.check_schema(schema)
-    errors = sorted(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(record), key=lambda e: str(e.path))
+    return Draft202012Validator(schema, format_checker=FormatChecker())
+
+
+def validate_against_schema(record, schema_name):
+    require(isinstance(record, dict), 'Each record must be an object')
+    errors = sorted(schema_validator(schema_name).iter_errors(record), key=lambda e: str(e.path))
     require(not errors, '; '.join(e.message for e in errors))
 
 
