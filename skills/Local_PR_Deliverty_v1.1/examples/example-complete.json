@@ -328,7 +328,8 @@
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "external_gate_results": []
     },
     {
       "record": "STAGE_RECORD",
@@ -491,7 +492,8 @@
       "review_lease_ref": "LEASE-S2",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "external_gate_results": []
     },
     {
       "record": "STAGE_RECORD",
@@ -654,7 +656,8 @@
       "review_lease_ref": "LEASE-S3",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "external_gate_results": []
     },
     {
       "record": "STAGE_RECORD",
@@ -817,7 +820,8 @@
       "review_lease_ref": "LEASE-S4",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json"
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "external_gate_results": []
     }
   ],
   "results": [
@@ -1382,7 +1386,14 @@
             "protected": true
           }
         ],
-        "external_gates": []
+        "external_gates": [],
+        "protected_surface": {
+          "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "oracle_digests": [
+            "2222222222222222222222222222222222222222222222222222222222222222"
+          ]
+        }
       }
     ]
   }
