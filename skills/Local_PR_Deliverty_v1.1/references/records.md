@@ -8,7 +8,7 @@ There are three record families. A short current parent table is a derived navig
 
 Schema: [task.schema.json](../schemas/task.schema.json).
 
-PARENT TASK records parent ownership, scope/specification, acceptance, child/dependency list, `workspace`, timer defaults, merge authority, actual Owner command history and `start_permissions`. CHILD TASK records the parent, its own scope/acceptance and its own draft PR (null until allocated). It inherits the shared folder, owner, protocol revision, timers and controls. Each child requires a different PR before passing Coder; reuse that child's PR for its rework.
+PARENT TASK records parent ownership, scope/specification, acceptance, child/dependency list, `workspace`, timer defaults, merge authority, actual Owner command history and `start_permissions`. CHILD TASK records the parent, its own scope/acceptance and its own draft PR (null until allocated). It inherits the shared folder, owner, protocol revision, timers and controls. Each child requires a different PR before completing Coder; reuse that child's PR for its rework.
 
 `protocol_ref` names the exact published/installed full commit and requested directory. Provenance does not grant authority. `spec_ref` points to the preserved adopted specification; `spec_digest` is SHA-256 of that exact UTF-8 text. Retain actual Owner amendments and parent/roadmap references, rather than treating a hash as a substitute for reading intent. A revised specification needs a new adopted TASK identity and explicit reconciliation; retain old records as history, never relabel them as proof of new requirements.
 
@@ -20,7 +20,7 @@ Defaults are Coder 15, Reviewer 15, Coordinator 45 and Parent Check 45 active mi
 
 ### Coordinator start permission inside TASK
 
-Each child needs a Coordinator permission published on the parent before Coder starts. The permission covers automatic Reviewer eligibility after Coder PASS, published END and stopped-writer acknowledgement. Normally grant independent, dependency-ready work; withhold only with a recorded concrete blocker. It never overrides Owner commands or dependency completion.
+Each child needs a Coordinator permission published on the parent before Coder starts. The permission covers automatic Reviewer eligibility after Coder STAGE_COMPLETE, published END and stopped-writer acknowledgement. Normally grant independent, dependency-ready work; withhold only with a recorded concrete blocker. It never overrides Owner commands or dependency completion.
 
 `start_permissions` contains chronological entries with `id`, `child_issue`, `issued_at`, `coordinator`, `parent_comment_ref`, `reason`, `mode`, `during_record`, `reviewed_head_sha` and nullable `revoked_at`. SERIAL mode has null review fields. COORDINATOR_READ_ONLY mode identifies the active prior-child Coordinator record and its fixed input SHA; grant publication must occur during that review. The most recent issued grant supersedes earlier grants for the child; revoking it does not revive an old grant.
 
@@ -96,19 +96,19 @@ handover:
 
 The PR description contains scope, changed files/functions, intended behavior, validation, limitations and next action. Issue records contain responsibility/role/status/commands and findings. Before handover, synchronize both and acknowledge the stopped writer. Local status or absent local differences cannot replace these records. Preserve uncommitted work; never reset/clean/switch the shared folder during takeover without instruction.
 
-PASS requires actual output=validated SHA, required acceptance/check coverage, no open blocking finding, stopped writing and published END. The active work period must be closed before handover. `work_periods` currently has exactly one actual start/end per attempt; null end means work has not acknowledged stop. Hold/Pause/Stop freezes active-work/CI elapsed time. After explicit Resume, create a fresh reconciled attempt with the role's fresh budget (15/15/45); preserve the held attempt. Do not reinterpret a timer restart as acceptance.
+STAGE_COMPLETE requires actual output=validated SHA, required role-applicable acceptance/check coverage, no open blocking finding, stopped writing and published END. The active work period must be closed before handover. `work_periods` currently has exactly one actual start/end per attempt; null end means work has not acknowledged stop. Hold/Pause/Stop freezes active-work/CI elapsed time. After explicit Resume, create a fresh reconciled attempt with the role's fresh budget (15/15/45); preserve the held attempt. Do not reinterpret a timer restart as acceptance.
 
 `stalled_at` records actual stall detection; the 5-minute recovery grace starts there. `ci_wait_started_at` names the actual CI-pending observation. Timers never pass work or stop arbitrary processes. The Coordinator decides useful continuation/replacement after stopped-writer confirmation. Status/Timer commands do not alter the active role.
 
 V1.1 keeps `repeat_stages` only as a compatibility field and requires it to be empty. Reverse stage routing is forbidden. Reviewer fixes defects discovered during Reviewer production; Coordinator/Super Reviewer fixes defects discovered during Super Review production. REWORK continues the same role responsibility. Product changes are allowed with the exclusive writer slot, but the pinned project protocol, Super Reviewer harness, protected oracle/baseline material, and acceptance policy may not be silently changed to certify those fixes.
 
-Acceptance/evidence result truth is `PASS`, `FAIL`, `NOT_RUN`, `INCONCLUSIVE` or `NOT_APPLICABLE`. `NOT_APPLICABLE` requires rationale. Required `FAIL`/`INCONCLUSIVE` never advance. An explicitly waivable required `NOT_RUN` may advance only as `APPROVED_WITH_WAIVER`; its result remains `NOT_RUN`. Reviewer/Super Reviewer role-specific project criteria must appear in their acceptance/coverage ledgers with the required independent evidence class. Evidence names actual execution/inspection, candidate, lease, protected acceptance surface, command/result/artifact, environment and limitations. Record consistency cannot establish that a self-reported command actually ran.
+Acceptance/evidence result truth is `PASS`, `FAIL`, `NOT_RUN`, `INCONCLUSIVE` or `NOT_APPLICABLE`. `NOT_APPLICABLE` requires rationale. Required `FAIL`/`INCONCLUSIVE` never advance. An explicitly waivable required `NOT_RUN` may advance only as `STAGE_COMPLETE_WITH_WAIVER`; its result remains `NOT_RUN`. Stage lifecycle states are separate from acceptance result truth. Reviewer/Super Reviewer role-specific project criteria must appear in their acceptance/coverage ledgers with the required independent evidence class. Evidence names actual execution/inspection, candidate, lease, protected acceptance surface, command/result/artifact, environment and limitations. Record consistency cannot establish that a self-reported command actually ran.
 
 ## DELIVERY_RESULT
 
 Schema: [delivery-result.schema.json](../schemas/delivery-result.schema.json).
 
-CHILD result links the current passing Coordinator record and confirmed provider merge. Required `parent_comment_ref` identifies its actual delivery comment on the parent issue. Partition every acceptance ID into accepted/remaining. Complete means nothing remains. A partially merged child stays incomplete and blocks dependent children. Observe merge confirmation before publication; `recorded_at` must follow final verification, published Coordinator END and observed merge. Publish closure separately after observing actual GitHub issue state; Coder DONE or PR MERGED never implies CLOSED.
+CHILD result links the current completed Coordinator record and confirmed provider merge. Required `parent_comment_ref` identifies its actual delivery comment on the parent issue. Partition every acceptance ID into accepted/remaining. Complete means nothing remains. A partially merged child stays incomplete and blocks dependent children. Observe merge confirmation before publication; `recorded_at` must follow final verification, published Coordinator END and observed merge. Publish closure separately after observing actual GitHub issue state; Coder DONE or PR MERGED never implies CLOSED.
 
 PARENT result links Parent Check on the parent's current integrated target ref and the complete result of every child. It has no invented parent PR/merge SHA. Check every parent acceptance row and cross-child integration independently. Issue closure still requires actual Owner authority.
 
@@ -176,9 +176,22 @@ Every STAGE_RECORD adds:
 - `production_output`: stage deliverables, actual candidate-change flag, coverage, defects found/fixed here, regressions, education, external escalations, unresolved internal defects, blocking class and early-termination state;
 - `repeat_stages`: compatibility-only and always empty.
 
-PASS means the stage completed its own production responsibility. It cannot carry internal fixable defects downstream, cannot terminate early, and cannot retain a blocking class.
+STAGE_COMPLETE means the stage completed its own production responsibility. It cannot carry internal fixable defects downstream, cannot terminate early, and cannot retain a blocking class.
 
 For Super Review criteria, evidence must include `SUPER_REVIEW_INDEPENDENT` or `EXTERNAL_ORACLE`. Author evidence alone cannot satisfy a project criterion marked for Super Review.
+
+### Evidence-to-verdict binding
+
+The project protocol contains normalized `verification_methods`. Each method declares its role applicability, verification class, permitted evidence classes, harness/external-gate binding, material inputs and rerun policy. A STAGE_RECORD acceptance row contains only the methods applicable to that stage.
+
+Every evidence item binds `verification_method_id`, `harness_id` / `external_gate_id` and `evidence_phase`. Criterion and external-gate results are recomputed from cited evidence; the checker rejects a claimed result that contradicts its evidence.
+
+`DISCOVERY` evidence applies to the stage input candidate and is frozen before first repair. `FINAL_ACCEPTANCE` evidence applies to the final validated candidate and final lease. Reviewer/Super Reviewer completion requires a complete pre-repair discovery sweep for its required methods.
+
+Findings classify repair authority as `BOUNDED_PRODUCT_FIX | MATERIAL_SCOPE_CHANGE | ACCEPTANCE_SURFACE_DEFECT | EXTERNAL_DEPENDENCY`. Only bounded product fixes may be repaired/self-verified inside the current acceptance epoch. Other classes require explicit escalation/new basis.
+
+Typed required-CI observations distinguish `trigger_pr_head_sha`, `provider_run_head_sha`, `tested_commit_sha`, `tested_tree_digest`, `checkout_mode`, base/merge-base and integration-tree digest. Trusted check policy declares whether the check certifies the raw PR head or an integration candidate.
+
 
 
 ## V1.1 carried findings
