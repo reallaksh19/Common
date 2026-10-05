@@ -91,6 +91,14 @@
     "sealed_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "environment_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context_pre_verdict_ref": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
@@ -111,7 +119,9 @@
     "acceptance_surface_digest",
     "environment_digest",
     "dependency_heads",
-    "sealed_at"
+    "sealed_at",
+    "environment_ref",
+    "context_pre_verdict_ref"
   ],
   "additionalProperties": false
 }
