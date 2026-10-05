@@ -28,6 +28,7 @@ def require(condition: bool, message: str) -> None:
 
 def transition_contract(
     *,
+    parent_task_id: str,
     task: dict[str, Any],
     previous_stage: str,
     previous_executor: str,
@@ -42,6 +43,7 @@ def transition_contract(
     fresh_reconstruction: bool,
     fresh_role_replay: bool,
 ) -> dict[str, Any]:
+    require(isinstance(parent_task_id, str) and parent_task_id, "Role transition needs Parent TASK identity")
     require(task.get("kind") == "RESPONSIBILITY", "Role-collapse contract applies to native RESPONSIBILITY tasks")
     require(previous_stage in ORDER and next_stage in ORDER, "Unknown production stage")
     require(ORDER.index(next_stage) == ORDER.index(previous_stage) + 1, "Role transition must remain forward-only and adjacent")
@@ -57,13 +59,10 @@ def transition_contract(
     grant_ref = None
     if same_principal:
         scope = {
-            "parent_task_id": task["parent_owner"],
+            "parent_task_id": parent_task_id,
             "responsibility_task_id": task["task_id"],
             "acceptance_epoch_id": task.get("acceptance_epoch_id"),
         }
-        # parent_task_id is replaced below when native TASK supplies the explicit parent identity.
-        if task.get("parent_task_id"):
-            scope["parent_task_id"] = task["parent_task_id"]
         try:
             grant = require_grant(
                 grants,
@@ -78,6 +77,8 @@ def transition_contract(
 
     return {
         "mode": "OWNER_AUTHORIZED_COLLAPSE" if same_principal else "DISTINCT_PRINCIPAL",
+        "parent_task_id": parent_task_id,
+        "responsibility_task_id": task["task_id"],
         "previous_stage": previous_stage,
         "next_stage": next_stage,
         "previous_executor": previous_executor,
