@@ -127,11 +127,21 @@ def validate_project_protocol(task, support):
             require(criterion['id'] not in criteria, 'Duplicate project-protocol criterion ID')
             criteria[criterion['id']] = criterion
     harness_criteria = set()
+    harnesses = {}
     for harness in protocol['harnesses']:
+        require(harness['id'] not in harnesses, 'Duplicate project harness ID')
+        harnesses[harness['id']] = harness
         require(harness['protected'] is True, 'Project Super Review harness must be protected')
         for criterion_id in harness['criteria']:
             require(criterion_id in criteria, 'Project harness references unknown criterion')
             harness_criteria.add(criterion_id)
+    regression_ids = set()
+    for regression in protocol['regressions']:
+        require(regression['id'] not in regression_ids, 'Duplicate project regression ID')
+        regression_ids.add(regression['id'])
+        require(regression['criterion_id'] in criteria, 'Project regression references unknown criterion')
+        harness = harnesses.get(regression['harness_id'])
+        require(harness and regression['criterion_id'] in harness['criteria'], 'Project regression is not bound to a harness covering its criterion')
     for declared in task['acceptance']:
         criterion = criteria.get(declared['id'])
         require(criterion, 'TASK acceptance criterion missing from pinned project protocol')
