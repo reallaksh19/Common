@@ -466,6 +466,21 @@
             },
             "minItems": 1,
             "uniqueItems": true
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "finding_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
           }
         },
         "required": [
@@ -473,9 +488,30 @@
           "required",
           "result",
           "verification_method_ids",
-          "evidence_ids"
+          "evidence_ids",
+          "rationale",
+          "finding_ids"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "result": {
+                  "const": "NOT_APPLICABLE"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "evidence_manifest": {
@@ -699,6 +735,33 @@
             "null"
           ],
           "minLength": 1
+        },
+        "candidate_changed": {
+          "type": "boolean"
+        },
+        "defects_found": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "defects_fixed_here": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "external_escalations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -712,7 +775,11 @@
         "blocking_class",
         "coverage_complete_for_stage",
         "early_termination",
-        "early_termination_reason"
+        "early_termination_reason",
+        "candidate_changed",
+        "defects_found",
+        "defects_fixed_here",
+        "external_escalations"
       ],
       "additionalProperties": false,
       "allOf": [
@@ -903,11 +970,38 @@
           "status": {
             "enum": [
               "OPEN",
-              "RESOLVED"
+              "CARRIED",
+              "RESOLVED",
+              "SUPERSEDED",
+              "NOT_APPLICABLE"
             ]
           },
           "source_ref": {
             "type": "string",
+            "minLength": 1
+          },
+          "affected_acceptance": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "resolution_evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ],
             "minLength": 1
           }
         },
@@ -915,9 +1009,50 @@
           "id",
           "blocking",
           "status",
-          "source_ref"
+          "source_ref",
+          "affected_acceptance",
+          "resolution_evidence_ids",
+          "rationale"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "RESOLVED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "resolution_evidence_ids": {
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "SUPERSEDED",
+                    "NOT_APPLICABLE"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "evidence_refs": {
