@@ -391,7 +391,7 @@ def validate_stage_trust(record, task, parent, support, now):
     require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'] and attestation['base_ref'] == task['target_ref'], 'Advancing source attestation does not match validated candidate/base target')
     require(attestation['unrecorded_changes'] is False, 'PASS source attestation reports unrecorded changes')
     require(all(record['freshness'].values()), 'PASS requires every declared freshness dimension current')
-    require(not any(item['blocking'] and item['status'] == 'OPEN' for item in record['carried_findings']), 'Advancing outcome has unresolved blocking carried finding')
+    require(not any(item['blocking'] and item['status'] in ['OPEN', 'CARRIED'] for item in record['carried_findings']), 'Advancing outcome has unresolved blocking carried finding')
 
     for row in record['acceptance_results']:
         if not row['required']:
@@ -498,6 +498,13 @@ def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
 
 
 def task_history(task, records, parent, support, now):
+    protocol = validate_project_protocol(task, support)
+    project_criteria = {
+        criterion['id']: criterion
+        for acceptance_set in protocol['acceptance_sets']
+        for criterion in acceptance_set['criteria']
+        if criterion['id'] in acceptance_ids(task)
+    }
     history = [r for r in records if r['task_id'] == task['task_id']]
     passes, latest, attempts = {}, None, {}
     for record in history:
@@ -523,22 +530,51 @@ def task_history(task, records, parent, support, now):
         require(not record['repeat_stages'], 'v1.1 forbids reverse stage routing; the current stage owns its production fixes')
         production = record['production_output']
         require(set(production['coverage_completed']) <= acceptance_ids(task), 'Production output names unknown acceptance coverage')
+        if record['output_sha'] is not None:
+            require(production['candidate_changed'] == (record['output_sha'] != record['input_sha']), 'production_output candidate_changed disagrees with actual stage input/output identity')
+        require(set(production['defects_fixed_here']) <= set(production['defects_found']), 'Stage cannot claim a fixed defect it did not record as found/consumed')
+        if production['defects_fixed_here']:
+            require(production['candidate_changed'], 'Fixing product defects requires a changed candidate')
         if record['status'] == 'BLOCKED':
-            require(production['blocking_class'] != 'NONE' and production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'BLOCKED is reserved for genuine external/authority boundaries, not internal fixable defects')
-        if record['status'] == 'PASS':
-            require(production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'PASS cannot push internal fixable defects downstream')
-            require(production['coverage_complete_for_stage'] and not production['early_termination'], 'PASS requires work-to-exhaustion for the stage')
-            require(production['blocking_class'] == 'NONE', 'PASS cannot retain a blocking class')
+            require(production['blocking_class'] != 'NONE' and production['external_escalations'] and production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'BLOCKED is reserved for explicit genuine external/authority boundaries, not internal fixable defects')
+        if record['status'] in ADVANCING_STATUSES:
+            require(production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'Advancing outcome cannot push internal fixable defects downstream')
+            require(production['coverage_complete_for_stage'] and not production['early_termination'], 'Advancing outcome requires work-to-exhaustion for the stage')
+            require(production['blocking_class'] == 'NONE', 'Advancing outcome cannot retain a blocking class')
         acceptance_rows = record['acceptance_results']
         require(len({r['criterion_id'] for r in acceptance_rows}) == len(acceptance_rows), 'Duplicate acceptance result')
         require({r['criterion_id'] for r in acceptance_rows} <= acceptance_ids(task), 'Acceptance result names unknown criterion')
         evidence = {e['evidence_id']: e for e in record['evidence_manifest']}
         require(len(evidence) == len(record['evidence_manifest']), 'Duplicate evidence ID')
+        finding_ids = {finding['id'] for finding in record['findings']}
+        carried_ids = {finding['id'] for finding in record['carried_findings']}
+        require(len(carried_ids) == len(record['carried_findings']), 'Duplicate carried finding ID')
+        require(not (finding_ids & carried_ids), 'Current and carried findings must use distinct IDs')
+        for carried in record['carried_findings']:
+            require(set(carried['affected_acceptance']) <= acceptance_ids(task), 'Carried finding affects unknown acceptance criterion')
+            require(set(carried['resolution_evidence_ids']) <= set(evidence), 'Carried finding resolution references missing stage evidence')
         for row in acceptance_rows:
             require(set(row['evidence_ids']) <= set(evidence), 'Acceptance result references missing evidence')
+            require(set(row['finding_ids']) <= finding_ids | carried_ids, 'Acceptance result references unknown finding')
             declared = acceptance_by_id(task)[row['criterion_id']]
             require(row['required'] == declared['required'], 'Acceptance requiredness differs from TASK')
             require(set(row['verification_method_ids']) == set(declared['verification_method_ids']), 'Acceptance verification methods differ from TASK')
+            if row['result'] != 'NOT_APPLICABLE':
+                require(row['rationale'] is None or row['rationale'], 'Acceptance rationale must be null or non-empty')
+        if record['status'] in ADVANCING_STATUSES:
+            role_required = set()
+            if stage == 'REVIEWER':
+                role_required = {criterion_id for criterion_id, criterion in project_criteria.items() if criterion['reviewer_check_required']}
+            elif stage in ['COORDINATOR', 'PARENT_CHECK']:
+                role_required = {criterion_id for criterion_id, criterion in project_criteria.items() if criterion['super_review_required']}
+            row_ids = {row['criterion_id'] for row in acceptance_rows}
+            require(role_required <= row_ids, 'Advancing stage omitted project-declared role-specific acceptance coverage')
+            require(role_required <= set(record['acceptance_checked']) and role_required <= set(production['coverage_completed']), 'Role-specific acceptance coverage is missing from stage coverage ledgers')
+            if stage == 'REVIEWER':
+                rows_by_id = {row['criterion_id']: row for row in acceptance_rows}
+                for criterion_id in role_required:
+                    classes = {evidence[eid]['class'] for eid in rows_by_id[criterion_id]['evidence_ids']}
+                    require('REVIEWER_INDEPENDENT' in classes, 'Reviewer-required criterion lacks Reviewer-independent evidence')
         if stage in ['COORDINATOR', 'PARENT_CHECK']:
             surface = record['acceptance_surface']
             require(surface and surface['project_protocol_digest'] == task['project_protocol_digest'], 'Super Review acceptance surface does not match pinned project protocol')
@@ -675,7 +711,7 @@ def validate_bundle(bundle, now=None):
     require(isinstance(dependency_heads, dict), 'dependency_heads observation must be an object')
     for key, task in tasks.items():
         latest, _passes = history[key]
-        if not latest or latest['status'] != 'PASS' or not latest['review_lease_ref']:
+        if not latest or latest['status'] not in ADVANCING_STATUSES or not latest['review_lease_ref']:
             continue
         lease = support['review_leases'][latest['review_lease_ref']]
         current = {}
