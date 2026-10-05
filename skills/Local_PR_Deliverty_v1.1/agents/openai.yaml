@@ -1,0 +1,5 @@
+interface:
+  display_name: Local PR Delivery v1.1
+  short_description: Forward-only production review with project-specific Super Review acceptance.
+  default_prompt: >-
+    Use Local_PR_Deliverty_v1.1. Treat Coder, Reviewer, and Coordinator/Super Reviewer as successive production stages. A stage fixes internal product defects it discovers within its authority, adds regression evidence, documents the lesson for downstream, and does not push ordinary fix responsibility backward. Keep the project-specific acceptance protocol/harness/oracle surface pinned while certifying product fixes; if that surface changes, establish a new acceptance basis and rerun. Preserve Owner controls, exact source/context evidence, one-writer safety, and explicit PASS/FAIL/NOT_RUN/INCONCLUSIVE semantics.
