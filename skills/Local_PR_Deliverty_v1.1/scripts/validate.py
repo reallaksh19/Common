@@ -229,7 +229,7 @@ def validate_stage_trust(record, task, parent, support, now):
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
         require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'], 'Review lease context/PR basis is stale')
         require(lease['environment_ref'] == environment['environment_id'] and lease['environment_digest'] == environment['digest'], 'Review lease environment is stale')
-        require(lease['integration_tree_digest'] == attestation['integration_tree_digest'], 'Review lease integration tree differs from source attestation')
+        require(lease['integration_tree_digest'] == attestation['integration_tree_digest'] and lease['merge_base_sha'] == attestation['merge_base_sha'], 'Review lease integration tree/merge base differs from source attestation')
         require(lease['required_check_policy_digest'] == task['required_check_policy']['digest'], 'Review lease required-check policy is stale')
         surface_digest = record['acceptance_surface']['digest'] if record['acceptance_surface'] else task['project_protocol_digest']
         require(lease['acceptance_surface_digest'] == surface_digest, 'Review lease acceptance surface is stale')
@@ -253,7 +253,7 @@ def validate_observed_merge_basis(task, latest, support):
     require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
     require(state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale project protocol')
     require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
-    require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'], 'Observed integration tree differs from reviewed tree')
+    require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'] and state['merge_base_sha'] == latest['source_attestation']['merge_base_sha'], 'Observed integration tree/merge base differs from reviewed identity')
     context = support['context_snapshots'].get(state['pre_merge_context_ref'])
     require(context and context['task_id'] == task['task_id'] and context['phase'] == 'PRE_MERGE', 'Missing/mismatched PRE_MERGE context snapshot')
     contracts = {item['check']: item for item in task['required_check_contracts']}
@@ -475,6 +475,12 @@ def validate_bundle(bundle, now=None):
             merged_at = instant(merge['merged_at'])
             require(instant(final['work_periods'][-1]['end']) <= merged_at <= recorded, 'Merge/result timing invalid')
             require(not blocking_control(commands, task, 'COORDINATOR', merged_at), 'Merge occurred under Owner control')
+            canonical = result['canonical_observation']
+            observed_canonical = observations.get('canonical_main_observations', {}).get(str(result['pr']))
+            require(observed_canonical and observed_canonical == canonical, 'Canonical post-merge observation missing/mismatched')
+            canonical_at = instant(canonical['observed_at'])
+            require(merged_at <= canonical_at <= recorded, 'Canonical post-merge observation timing invalid')
+            require(canonical['integrates_reviewed_candidate'] is True, 'Canonical main does not attest reviewed candidate integration')
         else:
             require(observations.get('main_sha') == result['head_sha'] == final['base_sha'], 'Parent must validate integrated current main')
         require(task['task_id'] not in by_task, 'Use latest delivery result per task; preserve history on issues')
