@@ -277,7 +277,9 @@
           ],
           "evidence_ids": [
             "EV-S1"
-          ]
+          ],
+          "rationale": null,
+          "finding_ids": []
         }
       ],
       "acceptance_surface": null,
@@ -298,7 +300,11 @@
         "blocking_class": "NONE",
         "coverage_complete_for_stage": true,
         "early_termination": false,
-        "early_termination_reason": null
+        "early_termination_reason": null,
+        "candidate_changed": true,
+        "defects_found": [],
+        "defects_fixed_here": [],
+        "external_escalations": []
       },
       "role_integrity": {
         "claimed_role": "CODER",
@@ -434,7 +440,9 @@
           ],
           "evidence_ids": [
             "EV-S2"
-          ]
+          ],
+          "rationale": null,
+          "finding_ids": []
         }
       ],
       "acceptance_surface": {
@@ -467,7 +475,11 @@
         "blocking_class": "NONE",
         "coverage_complete_for_stage": true,
         "early_termination": false,
-        "early_termination_reason": null
+        "early_termination_reason": null,
+        "candidate_changed": true,
+        "defects_found": [],
+        "defects_fixed_here": [],
+        "external_escalations": []
       },
       "role_integrity": {
         "claimed_role": "REVIEWER",
@@ -603,7 +615,9 @@
           ],
           "evidence_ids": [
             "EV-S3"
-          ]
+          ],
+          "rationale": null,
+          "finding_ids": []
         }
       ],
       "acceptance_surface": {
@@ -636,7 +650,11 @@
         "blocking_class": "NONE",
         "coverage_complete_for_stage": true,
         "early_termination": false,
-        "early_termination_reason": null
+        "early_termination_reason": null,
+        "candidate_changed": true,
+        "defects_found": [],
+        "defects_fixed_here": [],
+        "external_escalations": []
       },
       "role_integrity": {
         "claimed_role": "COORDINATOR",
@@ -772,7 +790,9 @@
           ],
           "evidence_ids": [
             "EV-S4"
-          ]
+          ],
+          "rationale": null,
+          "finding_ids": []
         }
       ],
       "acceptance_surface": {
@@ -805,7 +825,11 @@
         "blocking_class": "NONE",
         "coverage_complete_for_stage": true,
         "early_termination": false,
-        "early_termination_reason": null
+        "early_termination_reason": null,
+        "candidate_changed": false,
+        "defects_found": [],
+        "defects_fixed_here": [],
+        "external_escalations": []
       },
       "role_integrity": {
         "claimed_role": "PARENT_CHECK",
