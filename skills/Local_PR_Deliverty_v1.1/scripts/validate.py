@@ -176,6 +176,11 @@ def validate_project_protocol(task, support):
         for criterion_id in harness['criteria']:
             require(criterion_id in criteria, 'Project harness references unknown criterion')
             harness_criteria.add(criterion_id)
+    external_gate_ids = set()
+    for gate in protocol['external_gates']:
+        require(gate['id'] not in external_gate_ids, 'Duplicate project external gate ID')
+        external_gate_ids.add(gate['id'])
+
     regression_ids = set()
     for regression in protocol['regressions']:
         require(regression['id'] not in regression_ids, 'Duplicate project regression ID')
@@ -344,6 +349,14 @@ def validate_stage_trust(record, task, parent, support, now):
     require(set(row['gate_id'] for row in gate_rows) <= set(applicable_gates), 'Stage reports unknown/non-applicable external gate')
     for row in gate_rows:
         require(set(row['evidence_ids']) <= set(evidence), 'External gate result references missing stage evidence')
+        gate = applicable_gates[row['gate_id']]
+        if row['result'] == 'PASS':
+            require(row['evidence_ids'], 'PASS external gate needs evidence')
+            classes = {evidence[eid]['class'] for eid in row['evidence_ids']}
+            require(classes <= set(gate['allowed_evidence_classes']), 'External gate PASS uses evidence class not allowed by project protocol')
+        elif row['evidence_ids']:
+            classes = {evidence[eid]['class'] for eid in row['evidence_ids']}
+            require(classes <= set(gate['allowed_evidence_classes']), 'External gate evidence class is not allowed by project protocol')
     if record['stage'] not in ['COORDINATOR', 'PARENT_CHECK']:
         require(not gate_rows, 'Only Super Reviewer/PARENT_CHECK may certify project external gates')
 
