@@ -2,6 +2,12 @@
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
+from responsibility import (
+    permission_targets_task,
+    validate_material_candidate,
+    validate_native_release,
+)
+
 
 class RecordError(ValueError):
     pass
@@ -23,9 +29,31 @@ def parent_comment(reference, parent):
     return parsed.path.rstrip('/').endswith('/issues/' + str(parent['issue'])) and bool(parsed.fragment)
 
 
-def permission_at(parent, child_issue, at):
-    latest = next((p for p in reversed(parent['start_permissions']) if p['child_issue'] == child_issue and instant(p['issued_at']) <= at), None)
+def production_task(task):
+    return task['kind'] in ['CHILD', 'RESPONSIBILITY']
+
+
+def permission_at(parent, task_or_issue, at):
+    """Resolve native TASK-targeted permissions while retaining legacy issue lookup."""
+    if isinstance(task_or_issue, dict):
+        latest = next((
+            p for p in reversed(parent['start_permissions'])
+            if permission_targets_task(p, task_or_issue) and instant(p['issued_at']) <= at
+        ), None)
+    else:
+        latest = next((
+            p for p in reversed(parent['start_permissions'])
+            if p.get('responsibility_task_id') is None
+            and p.get('child_issue') == task_or_issue
+            and instant(p['issued_at']) <= at
+        ), None)
     return latest if latest and (latest['revoked_at'] is None or at < instant(latest['revoked_at'])) else None
+
+
+def permission_target_task(grant, tasks):
+    matches = [task for task in tasks.values() if production_task(task) and permission_targets_task(grant, task)]
+    require(len(matches) <= 1, 'Start permission ambiguously targets multiple responsibilities')
+    return matches[0] if matches else None
 
 
 def validate_evidence(record, parent, task, bundle_observations, now):
@@ -48,12 +76,17 @@ def validate_evidence(record, parent, task, bundle_observations, now):
         require(frontier and frontier['comment_ref'] == context['through_comment_ref'], 'Action missed the observed parent comment frontier')
         require(instant(frontier['observed_at']) <= instant(context['read_at']), 'Parent reconciliation predates its comment read')
     if record['stage'] in ['CODER', 'REVIEWER']:
-        grant = permission_at(parent, task['issue'], started)
-        require(grant, 'Coder/Reviewer needs the existing Coordinator child permission')
+        if task['kind'] == 'RESPONSIBILITY':
+            try:
+                validate_native_release(parent, task)
+            except ValueError as error:
+                raise RecordError(str(error)) from error
+        grant = permission_at(parent, task, started)
+        require(grant, 'Coder/Reviewer needs the existing Coordinator production permission')
         if record['stage'] == 'CODER':
             require(instant(grant['issued_at']) <= instant(context['read_at']), 'Coder must reread parent comments after permission')
-    if record['status'] in ['STAGE_COMPLETE', 'STAGE_COMPLETE_WITH_WAIVER'] and task['kind'] == 'CHILD':
-        require(task['pr'] is not None, 'Each child needs its own PR before Coder can pass')
+    if record['status'] in ['STAGE_COMPLETE', 'STAGE_COMPLETE_WITH_WAIVER'] and production_task(task):
+        require(task['pr'] is not None, 'Production responsibility needs an active PR before a production stage can advance')
 
 
 def validate_pipeline(parent, tasks, records, observations, now):
@@ -62,10 +95,23 @@ def validate_pipeline(parent, tasks, records, observations, now):
     permissions = parent['start_permissions']
     require(len({p['id'] for p in permissions}) == len(permissions), 'Duplicate start permission ID')
     require(permissions == sorted(permissions, key=lambda p: instant(p['issued_at'])), 'Permissions must be chronological')
-    declared = {c['issue'] for c in parent['children']}
+    declared_legacy = {c['issue'] for c in parent['children']}
+    native_registry = {
+        entry['task_id']
+        for entry in parent.get('control_plane', {}).get('responsibility_registry', [])
+    }
+    native_tasks = {key: task for key, task in tasks.items() if task['kind'] == 'RESPONSIBILITY'}
+    if native_tasks:
+        require(parent.get('control_plane'), 'Native responsibilities require Parent TASK control_plane')
+        require(set(native_tasks) <= native_registry, 'Native responsibility is missing from Parent control-plane registry')
+        for task in native_tasks.values():
+            try:
+                validate_material_candidate(task)
+            except ValueError as error:
+                raise RecordError(str(error)) from error
     record_map = {r['record_id']: r for r in records}
-    child_prs = [t['pr'] for t in tasks.values() if t['kind'] == 'CHILD' and t['pr'] is not None]
-    require(len(child_prs) == len(set(child_prs)), 'Every child must have a different PR')
+    production_prs = [t['pr'] for t in tasks.values() if production_task(t) and t['pr'] is not None]
+    require(len(production_prs) == len(set(production_prs)), 'Every concurrently represented responsibility must have a distinct active PR')
     refs = []
     for record in records:
         refs.append(record['publications']['start']['comment_ref'])
@@ -73,7 +119,12 @@ def validate_pipeline(parent, tasks, records, observations, now):
             refs.append(record['publications']['end']['comment_ref'])
     require(len(refs) == len(set(refs)), 'Role START/END publications need distinct parent comments')
     for grant in permissions:
-        require(grant['coordinator'] == parent['parent_owner'] and grant['child_issue'] in declared, 'Permission must come from parent Coordinator for a declared child')
+        target = permission_target_task(grant, tasks)
+        require(grant['coordinator'] == parent['parent_owner'] and target is not None, 'Permission must come from parent Coordinator for a declared production responsibility')
+        if grant.get('responsibility_task_id') is not None:
+            require(grant['responsibility_task_id'] in native_registry, 'Permission targets an unreleased/undeclared native responsibility')
+        else:
+            require(grant.get('child_issue') in declared_legacy, 'Legacy permission targets an undeclared child')
         require(parent_comment(grant['parent_comment_ref'], parent), 'Permission must be published on parent issue')
         issued = instant(grant['issued_at'])
         require(issued <= now and (grant['revoked_at'] is None or issued <= instant(grant['revoked_at']) <= now), 'Invalid permission timing')
@@ -82,7 +133,7 @@ def validate_pipeline(parent, tasks, records, observations, now):
         else:
             coordinator = record_map.get(grant['during_record'])
             require(coordinator and coordinator['stage'] == 'COORDINATOR' and coordinator['workspace_mode'] == 'READ_ONLY', 'Overlap permission needs a pinned read-only Coordinator review')
-            require(tasks[coordinator['task_id']]['issue'] != grant['child_issue'], 'Overlap permission must target a different child')
+            require(coordinator['task_id'] != target['task_id'], 'Overlap permission must target a different responsibility')
             require(grant['reviewed_head_sha'] == coordinator['input_sha'], 'Permission names wrong Coordinator input')
             end = instant(coordinator['work_periods'][-1]['end']) if coordinator['writer_stopped'] else now
             require(instant(coordinator['started_at']) <= issued <= end, 'Permission must be issued during stated Coordinator review')
@@ -102,8 +153,8 @@ def validate_pipeline(parent, tasks, records, observations, now):
             readonly = left if left['workspace_mode'] == 'READ_ONLY' else right
             writer = right if readonly is left else left
             require(readonly['workspace_mode'] == 'READ_ONLY' and readonly['stage'] == 'COORDINATOR' and writer['workspace_mode'] == 'WRITE' and writer['stage'] in ['CODER', 'REVIEWER'], 'Only one read-only Coordinator may overlap one Coder/Reviewer writer; Coordinator fixes require exclusive WRITE use')
-            require(readonly['task_id'] != writer['task_id'], 'Concurrent review and writing must concern different children')
-            grant = permission_at(parent, tasks[writer['task_id']]['issue'], right_start if writer is right else left_start)
+            require(readonly['task_id'] != writer['task_id'], 'Concurrent review and writing must concern different responsibilities')
+            grant = permission_at(parent, tasks[writer['task_id']], right_start if writer is right else left_start)
             require(grant and grant['mode'] == 'COORDINATOR_READ_ONLY' and grant['during_record'] == readonly['record_id'], 'Concurrent work lacks recorded Coordinator permission')
     workspace = observations.get('workspace', {})
     if workspace.get('unrecorded_changes') is False:
@@ -121,13 +172,13 @@ def status_details(states, tasks, history, observations, now, parent, results):
             roles[latest['stage'].lower()] = state['status']
         if state['stage'] in ['CODER', 'REVIEWER', 'COORDINATOR'] and state['status'] == 'READY':
             roles[state['stage'].lower()] = 'READY'
-        if task['kind'] == 'CHILD' and not latest:
-            grant = permission_at(parent, task['issue'], now)
+        if production_task(task) and not latest:
+            grant = permission_at(parent, task, now)
             if state['status'] == 'READY' and not grant:
                 state['status'] = 'WAITING_PERMISSION'
                 roles['coder'] = 'WAITING_PERMISSION'
-        if task['kind'] == 'CHILD' and state['stage'] in ['CODER', 'REVIEWER'] and state['status'] == 'READY':
-            grant = permission_at(parent, task['issue'], now)
+        if production_task(task) and state['stage'] in ['CODER', 'REVIEWER'] and state['status'] == 'READY':
+            grant = permission_at(parent, task, now)
             if not grant:
                 state['status'] = 'WAITING_PERMISSION'
             elif any(r['task_id'] != key for r in active_writers):
@@ -135,7 +186,7 @@ def status_details(states, tasks, history, observations, now, parent, results):
             elif any(r['task_id'] != key for r in active_coordinators) and not any(grant['mode'] == 'COORDINATOR_READ_ONLY' and grant['during_record'] == r['record_id'] for r in active_coordinators):
                 state['status'] = 'WAITING_PERMISSION'
             roles[state['stage'].lower()] = state['status']
-        if task['kind'] == 'CHILD' and state['stage'] == 'COORDINATOR' and state['status'] == 'READY' and any(r['task_id'] != key for r in active_coordinators):
+        if production_task(task) and state['stage'] == 'COORDINATOR' and state['status'] == 'READY' and any(r['task_id'] != key for r in active_coordinators):
             state['status'] = 'QUEUED'
             roles['coordinator'] = 'QUEUED'
         state.update(roles)
@@ -145,7 +196,7 @@ def status_details(states, tasks, history, observations, now, parent, results):
         state['last_parent_evidence'] = evidence['comment_ref'] if evidence else None
         if key in results:
             state['last_parent_evidence'] = results[key]['parent_comment_ref']
-        grant = permission_at(parent, task['issue'], now) if task['kind'] == 'CHILD' else None
+        grant = permission_at(parent, task, now) if production_task(task) else None
         state['start_permission'] = grant['parent_comment_ref'] if grant else None
         state['next_action'] = latest['next_action'] if latest else 'Coordinator publishes permission; Coder rereads entire parent history.'
         if key in results and state['issue_state'] == 'OPEN':
@@ -153,4 +204,4 @@ def status_details(states, tasks, history, observations, now, parent, results):
         if task['kind'] == 'PARENT':
             state.update(coder='NOT_APPLICABLE', reviewer='NOT_APPLICABLE', coordinator='DONE' if 'PARENT_CHECK' in passes else state['status'])
             if not latest:
-                state['next_action'] = 'Coordinator maintains child permissions, evidence and status; run Parent Check after every child completes.'
+                state['next_action'] = 'Coordinator maintains responsibility permissions, evidence and status; run Parent Check after every responsibility completes.'
