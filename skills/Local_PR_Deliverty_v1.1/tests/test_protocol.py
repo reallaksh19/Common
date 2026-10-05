@@ -1575,7 +1575,7 @@ class ExternalGateV11Tests(unittest.TestCase):
             reason='Synthetic external gate unavailable for this exact candidate.',
             risk='Residual external-gate risk explicitly accepted.',
             compensating_controls=['Pinned Super Review evidence remains current.'],
-            issued_at='2026-10-04T00:02:40Z',
+            issued_at='2026-10-04T00:02:20Z',
             expires_at='2026-10-04T01:00:00Z',
             non_transitive=True,
             result_override=False,
