@@ -127,7 +127,8 @@
         ]
       },
       "stacked_dependencies": [],
-      "waivable_required_checks": []
+      "waivable_required_checks": [],
+      "target_ref": "refs/heads/main"
     },
     {
       "record": "TASK",
@@ -194,7 +195,8 @@
         ]
       },
       "stacked_dependencies": [],
-      "waivable_required_checks": []
+      "waivable_required_checks": [],
+      "target_ref": "refs/heads/main"
     },
     {
       "record": "TASK",
@@ -261,7 +263,8 @@
         ]
       },
       "stacked_dependencies": [],
-      "waivable_required_checks": []
+      "waivable_required_checks": [],
+      "target_ref": "refs/heads/main"
     }
   ],
   "stages": [
@@ -412,7 +415,8 @@
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false,
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "base_ref": "refs/heads/main"
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -577,7 +581,8 @@
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false,
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "base_ref": "refs/heads/main"
       },
       "review_lease_ref": "LEASE-S2",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -867,7 +872,8 @@
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
         "unrecorded_changes": false,
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "base_ref": "refs/heads/main"
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -1071,7 +1077,8 @@
       "106": "DRAFT"
     },
     "dependency_heads": {},
-    "canonical_main_observations": {}
+    "target_heads": {},
+    "canonical_target_observations": {}
   },
   "support": {
     "review_leases": [
@@ -1098,7 +1105,8 @@
         "context_pre_verdict_ref": "CTX-PRE-S2",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999"
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
+        "target_ref": "refs/heads/main"
       }
     ],
     "environments": [
