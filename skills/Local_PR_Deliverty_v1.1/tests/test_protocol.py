@@ -723,6 +723,64 @@ def evidence_provenance(bundle, evidence_id):
 
 
 
+
+def add_optional_reviewer_na(bundle, rationale):
+    task = bundle['tasks'][1]
+    protocol = bundle['support']['project_protocols'][0]
+    method_id = 'VM-A2-REVIEW'
+    task['acceptance'].append(dict(
+        id='A2', requirement='Optional applicability case.', required=False,
+        verification_method_ids=[method_id], super_review_required=False,
+    ))
+    protocol['verification_methods'].append(dict(
+        id=method_id,
+        verification_class='INVARIANT',
+        harness_id=None,
+        external_gate_id=None,
+        required_evidence_classes=['REVIEWER_INDEPENDENT'],
+        material_inputs=['PRODUCT', 'SPECIFICATION'],
+        rerun_policy='FULL_REQUIRED_SET',
+        applies_to_roles=['REVIEWER'],
+    ))
+    protocol['acceptance_sets'][0]['criteria'].append(dict(
+        id='A2', required=False, reviewer_check_required=False,
+        super_review_required=False, verification_method_ids=[method_id],
+    ))
+
+    reviewer = bundle['stages'][1]
+    template_id = final_evidence_id(reviewer)
+    embedded_template = next(item for item in reviewer['evidence_manifest'] if item['evidence_id'] == template_id)
+    provenance_template = evidence_provenance(bundle, template_id)
+    evidence_id = 'EV-S2-' + method_id
+    embedded = copy.deepcopy(embedded_template)
+    embedded.update(
+        evidence_id=evidence_id,
+        result='NOT_APPLICABLE',
+        verification_method_id=method_id,
+        harness_id=None,
+        external_gate_id=None,
+    )
+    provenance = copy.deepcopy(provenance_template)
+    provenance.update(
+        evidence_id=evidence_id,
+        result='NOT_APPLICABLE',
+        verification_method_id=method_id,
+        harness_id=None,
+        external_gate_id=None,
+        command_argv=['synthetic', 'check', method_id],
+        exit_code=0,
+    )
+    reviewer['evidence_manifest'].append(embedded)
+    reviewer['evidence_refs'].append(evidence_id)
+    bundle['support']['evidence_records'].append(provenance)
+    reviewer['acceptance_results'].append(dict(
+        criterion_id='A2', required=False, result='NOT_APPLICABLE',
+        verification_method_ids=[method_id], evidence_ids=[evidence_id],
+        rationale=rationale, finding_ids=[],
+    ))
+    refresh_project_protocol_identity(bundle)
+    return reviewer['acceptance_results'][-1]
+
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
     return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner', source_kind='DIRECT_OWNER_SESSION', source_digest='f' * 64, authentication_status='AUTHENTICATED')
 
@@ -1097,7 +1155,16 @@ class ProductionStageV11Tests(unittest.TestCase):
 
     def test_super_review_required_criterion_needs_independent_evidence(self):
         bundle = premerge_bundle()
-        bundle['stages'][2]['evidence_manifest'][0]['class'] = 'AUTHOR'
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['class'] = 'AUTHOR'
+        provenance.update(
+            evidence_class='AUTHOR',
+            oracle_independence='NOT_INDEPENDENT',
+            principal_relationship_to_candidate='LAST_PRODUCT_WRITER',
+        )
         self.rejected(bundle)
 
 
@@ -1411,9 +1478,10 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         final['acceptance_results'][0]['result'] = 'NOT_RUN'
-        final['evidence_manifest'][0]['result'] = 'NOT_RUN'
-        evidence_id = final['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'NOT_RUN'
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['result'] = 'NOT_RUN'
         state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
         self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
@@ -1424,9 +1492,10 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         final = bundle['stages'][2]
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['acceptance_results'][0]['result'] = 'NOT_RUN'
-        final['evidence_manifest'][0]['result'] = 'NOT_RUN'
-        evidence_id = final['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'NOT_RUN'
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['result'] = 'NOT_RUN'
         self.rejected(bundle)
 
@@ -1437,9 +1506,10 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         final['acceptance_results'][0]['result'] = 'FAIL'
-        final['evidence_manifest'][0]['result'] = 'FAIL'
-        evidence_id = final['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'FAIL'
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['result'] = 'FAIL'
         self.rejected(bundle)
 
@@ -1552,47 +1622,12 @@ class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
 
     def test_optional_not_applicable_requires_rationale(self):
         bundle = premerge_bundle()
-        task = bundle['tasks'][1]
-        task['acceptance'].append(dict(
-            id='A2', requirement='Optional applicability case.', required=False,
-            verification_method_ids=['VM-A2'], super_review_required=False,
-        ))
-        protocol = bundle['support']['project_protocols'][0]
-        protocol['acceptance_sets'][0]['criteria'].append(dict(
-            id='A2', required=False, reviewer_check_required=False,
-            super_review_required=False, verification_method_ids=['VM-A2'],
-        ))
-        reviewer = bundle['stages'][1]
-        evidence_id = reviewer['evidence_refs'][0]
-        reviewer['acceptance_results'].append(dict(
-            criterion_id='A2', required=False, result='NOT_APPLICABLE',
-            verification_method_ids=['VM-A2'], evidence_ids=[evidence_id],
-            rationale=None, finding_ids=[],
-        ))
-        refresh_project_protocol_identity(bundle)
+        add_optional_reviewer_na(bundle, None)
         self.rejected(bundle)
 
     def test_optional_not_applicable_with_rationale_is_truthful(self):
         bundle = premerge_bundle()
-        task = bundle['tasks'][1]
-        task['acceptance'].append(dict(
-            id='A2', requirement='Optional applicability case.', required=False,
-            verification_method_ids=['VM-A2'], super_review_required=False,
-        ))
-        protocol = bundle['support']['project_protocols'][0]
-        protocol['acceptance_sets'][0]['criteria'].append(dict(
-            id='A2', required=False, reviewer_check_required=False,
-            super_review_required=False, verification_method_ids=['VM-A2'],
-        ))
-        reviewer = bundle['stages'][1]
-        evidence_id = reviewer['evidence_refs'][0]
-        reviewer['acceptance_results'].append(dict(
-            criterion_id='A2', required=False, result='NOT_APPLICABLE',
-            verification_method_ids=['VM-A2'], evidence_ids=[evidence_id],
-            rationale='Synthetic criterion does not apply to this child.',
-            finding_ids=[],
-        ))
-        refresh_project_protocol_identity(bundle)
+        add_optional_reviewer_na(bundle, 'Synthetic criterion does not apply to this child.')
         checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
 
     def test_blocking_carried_finding_stops_advancement(self):
@@ -1782,16 +1817,73 @@ class ExternalGateV11Tests(unittest.TestCase):
             checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
 
     def add_gate(self, bundle, *, gate_id='EXT-1', required=True, waivable=True, allowed=None):
+        allowed = allowed or ['SUPER_REVIEW_INDEPENDENT']
         protocol = bundle['support']['project_protocols'][0]
+        method_id = 'VM-' + gate_id
         protocol['external_gates'] = [dict(
             id=gate_id,
             required=required,
             waivable=waivable,
             applies_to='CHILD',
-            allowed_evidence_classes=allowed or ['SUPER_REVIEW_INDEPENDENT'],
+            allowed_evidence_classes=allowed,
         )]
+        protocol['verification_methods'] = [m for m in protocol['verification_methods'] if m['external_gate_id'] != gate_id]
+        protocol['verification_methods'].append(dict(
+            id=method_id,
+            verification_class='EXTERNAL_ORACLE',
+            harness_id=None,
+            external_gate_id=gate_id,
+            required_evidence_classes=allowed,
+            material_inputs=['PRODUCT', 'EXTERNAL_SERVICE'],
+            rerun_policy='FULL_REQUIRED_SET',
+            applies_to_roles=['COORDINATOR'],
+        ))
         refresh_project_protocol_identity(bundle)
-        return protocol['external_gates'][0]
+        return method_id
+
+    def add_gate_evidence(self, bundle, method_id, *, result='PASS', evidence_class='SUPER_REVIEW_INDEPENDENT',
+                          origin_kind='STAGE_EXECUTOR', origin_principal='coordinator',
+                          oracle_independence='PINNED_ORACLE_INDEPENDENT',
+                          relationship='LAST_PRODUCT_WRITER', provider_ref=None):
+        final = bundle['stages'][2]
+        template_id = final_evidence_id(final)
+        embedded_template = next(item for item in final['evidence_manifest'] if item['evidence_id'] == template_id)
+        provenance_template = evidence_provenance(bundle, template_id)
+        evidence_id = 'EV-GATE-' + method_id
+        embedded = copy.deepcopy(embedded_template)
+        embedded.update(
+            evidence_id=evidence_id,
+            **{'class': evidence_class},
+            evidence_phase='EXTERNAL_GATE',
+            result=result,
+            verification_method_id=method_id,
+            harness_id=None,
+            external_gate_id='EXT-1',
+            harness_digest=None,
+        )
+        provenance = copy.deepcopy(provenance_template)
+        provenance.update(
+            evidence_id=evidence_id,
+            evidence_class=evidence_class,
+            evidence_phase='EXTERNAL_GATE',
+            result=result,
+            verification_method_id=method_id,
+            harness_id=None,
+            external_gate_id='EXT-1',
+            harness_digest=None,
+            origin_kind=origin_kind,
+            origin_principal=origin_principal,
+            oracle_independence=oracle_independence,
+            principal_relationship_to_candidate=relationship,
+            provider_ref=provider_ref,
+            command_argv=[] if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else ['synthetic', 'external-gate', method_id],
+            exit_code=None if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else (0 if result == 'PASS' else 1),
+            procedure_kind='PROVIDER' if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else 'COMMAND',
+        )
+        final['evidence_manifest'].append(embedded)
+        final['evidence_refs'].append(evidence_id)
+        bundle['support']['evidence_records'].append(provenance)
+        return evidence_id
 
     def add_gate_waiver(self, bundle, gate_id='EXT-1', waiver_id='W-EXT'):
         final = bundle['stages'][2]
@@ -1823,13 +1915,9 @@ class ExternalGateV11Tests(unittest.TestCase):
 
     def test_external_gate_pass_requires_project_allowed_evidence_class(self):
         bundle = premerge_bundle()
-        self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
-        final = bundle['stages'][2]
-        final['external_gate_results'] = [dict(
-            gate_id='EXT-1',
-            result='PASS',
-            evidence_ids=[final['evidence_refs'][0]],
-        )]
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(bundle, method_id)
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
         self.rejected(bundle)
 
     def test_duplicate_external_gate_ids_rejected(self):
@@ -1844,13 +1932,10 @@ class ExternalGateV11Tests(unittest.TestCase):
 
     def test_required_external_gate_fail_cannot_be_waived(self):
         bundle = premerge_bundle()
-        self.add_gate(bundle)
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='FAIL')
         final = bundle['stages'][2]
-        final['external_gate_results'] = [dict(
-            gate_id='EXT-1',
-            result='FAIL',
-            evidence_ids=[final['evidence_refs'][0]],
-        )]
+        final['external_gate_results'] = [dict(gate_id='EXT-1', result='FAIL', evidence_ids=[evidence_id])]
         waiver = self.add_gate_waiver(bundle)
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
@@ -1860,16 +1945,44 @@ class ExternalGateV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         self.add_gate(bundle)
         final = bundle['stages'][2]
-        final['external_gate_results'] = [dict(
-            gate_id='EXT-1',
-            result='NOT_RUN',
-            evidence_ids=[],
-        )]
+        final['external_gate_results'] = [dict(gate_id='EXT-1', result='NOT_RUN', evidence_ids=[])]
         waiver = self.add_gate_waiver(bundle)
         final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
         self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
+
+    def test_external_oracle_evidence_is_consumed_without_stage_impersonation(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='EXTERNAL_ORACLE',
+            origin_kind='EXTERNAL_ORACLE',
+            origin_principal='oracle-service',
+            oracle_independence='PROVIDER_INDEPENDENT',
+            relationship='EXTERNAL_PROVIDER',
+            provider_ref='synthetic://oracle/run/1',
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_external_oracle_stage_impersonation_rejected(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='EXTERNAL_ORACLE',
+            origin_kind='STAGE_EXECUTOR',
+            origin_principal='coordinator',
+            oracle_independence='PINNED_ORACLE_INDEPENDENT',
+            relationship='LAST_PRODUCT_WRITER',
+            provider_ref=None,
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+
 
 
 class SchemaSurfaceV11Tests(unittest.TestCase):
