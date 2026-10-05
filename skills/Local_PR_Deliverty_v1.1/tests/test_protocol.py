@@ -83,6 +83,11 @@ def enrich_v11(bundle):
             criteria=[criterion_id for criterion_id, criterion in criteria.items() if criterion['super_review_required']],
             protected=True,
         )],
+        protected_surface=dict(
+            harness_digest=HARNESS_DIGEST,
+            baseline_digest=BASELINE_DIGEST,
+            oracle_digests=[ORACLE_DIGEST],
+        ),
         external_gates=[],
     ))
 
@@ -174,6 +179,7 @@ def enrich_v11(bundle):
             early_termination_reason=None,
         )
         record['carried_findings'] = []
+        record['external_gate_results'] = []
         record['freshness'] = dict(
             common_protocol_current=True,
             project_protocol_current=True,
@@ -932,6 +938,11 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
                 }],
             }],
             'harnesses': [{'id': 'SR-A1', 'criteria': ['A1-001'], 'protected': True}],
+            'protected_surface': {
+                'harness_digest': HARNESS_DIGEST,
+                'baseline_digest': BASELINE_DIGEST,
+                'oracle_digests': [ORACLE_DIGEST],
+            },
             'external_gates': [],
         }
         errors = list(Draft202012Validator(schema).iter_errors(sample))
