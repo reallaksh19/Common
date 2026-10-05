@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:observed-state",
+  "type": "object",
+  "properties": {
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "pr_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "integration_tree_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repository_policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "required_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "workflow_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PENDING",
+              "NOT_RUN",
+              "INCONCLUSIVE"
+            ]
+          },
+          "mandatory_steps_executed": {
+            "type": "boolean"
+          },
+          "workflow_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "app_identity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "run_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "job_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "artifact_digests": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "uniqueItems": true
+          },
+          "trigger_pr_head_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "provider_run_head_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "tested_commit_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "tested_tree_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "checkout_mode": {
+            "enum": [
+              "PR_HEAD",
+              "SYNTHETIC_MERGE",
+              "MERGE_QUEUE"
+            ]
+          },
+          "base_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "merge_base_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "integration_tree_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "check",
+          "provider",
+          "workflow_digest",
+          "result",
+          "mandatory_steps_executed",
+          "workflow_path",
+          "app_identity",
+          "run_id",
+          "job_id",
+          "artifact_digests",
+          "trigger_pr_head_sha",
+          "provider_run_head_sha",
+          "tested_commit_sha",
+          "tested_tree_digest",
+          "checkout_mode",
+          "base_sha",
+          "merge_base_sha",
+          "integration_tree_digest"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "result": {
+                  "const": "PASS"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "mandatory_steps_executed": {
+                  "const": true
+                },
+                "run_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "job_id": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "state_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pre_merge_context_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "merge_base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "common_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "environment_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "workspace_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parent_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "child_context_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pr_description_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "owner_control_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "target_ref": {
+      "type": "string",
+      "pattern": "^refs/heads/.+$"
+    },
+    "repository_policy_source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository_policy_visibility": {
+      "enum": [
+        "CONFIRMED",
+        "UNAVAILABLE",
+        "UNKNOWN"
+      ]
+    }
+  },
+  "required": [
+    "state_id",
+    "task_id",
+    "pr",
+    "project_protocol_digest",
+    "pre_merge_context_ref",
+    "observed_at",
+    "pr_head_sha",
+    "base_sha",
+    "integration_tree_digest",
+    "repository_policy_digest",
+    "required_checks",
+    "merge_base_sha",
+    "common_protocol_digest",
+    "environment_digest",
+    "workspace_digest",
+    "parent_context_digest",
+    "child_context_digest",
+    "pr_description_digest",
+    "owner_control_digest",
+    "target_ref",
+    "repository_policy_source_ref",
+    "repository_policy_visibility"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,2258 @@
+import copy
+import importlib.util
+import json
+import unittest
+import sys
+from pathlib import Path
+from datetime import timedelta
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
+SPEC = importlib.util.spec_from_file_location('local_pr_validator', ROOT / 'scripts' / 'validate.py')
+checker = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(checker)
+BASE, MERGE = 'b' * 40, 'c' * 40
+HEADS = [str(i) * 40 for i in range(1, 6)]
+DIGEST = 'd' * 64
+FOLDER = r'C:\Example\SharedEditor'
+
+
+PROJECT_DIGEST = 'e' * 64
+COMMON_DIGEST = '0' * 64
+HARNESS_DIGEST = 'f' * 64
+BASELINE_DIGEST = '1' * 64
+ORACLE_DIGEST = '2' * 64
+POLICY_DIGEST = '3' * 64
+WORKFLOW_DIGEST = '4' * 64
+ENV_DIGEST = '5' * 64
+TREE_DIGEST = '6' * 64
+SURFACE_DIGEST = '7' * 64
+WORKSPACE_DIGEST = '8' * 64
+PARENT_CONTEXT_DIGEST = 'a' * 64
+CHILD_CONTEXT_DIGEST = 'b' * 64
+PR_DESCRIPTION_DIGEST = 'c' * 64
+OWNER_CONTROL_DIGEST = '9' * 64
+POLICY_SOURCE = 'https://example.invalid/policy/required-checks'
+WORKFLOW_PATH = '.github/workflows/required.yml'
+EXPECTED_APP = 'github-actions'
+ARTIFACT_DIGEST = 'e' * 64
+FIXTURE_DIGEST = 'f' * 64
+
+
+def snapshot_events(record, task, observed_at):
+    created = record['started_at']
+    events = [
+        dict(source_kind='PARENT_ISSUE_BODY', provider_id='parent-body-' + record['record_id'], provider_ref='synthetic://parent/body', author_principal='owner', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=PARENT_CONTEXT_DIGEST, mutable=True),
+        dict(source_kind='TASK_ISSUE_BODY', provider_id='task-body-' + record['record_id'], provider_ref='synthetic://task/' + record['task_id'], author_principal='owner', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=CHILD_CONTEXT_DIGEST, mutable=True),
+        dict(source_kind='PARENT_COMMENT', provider_id='frontier-' + record['record_id'], provider_ref=record['parent_context']['through_comment_ref'], author_principal='coordinator', created_at=created, updated_at=created, body_digest=PARENT_CONTEXT_DIGEST, mutable=True),
+    ]
+    if task.get('pr') is not None:
+        events.append(dict(source_kind='PR_DESCRIPTION', provider_id='pr-description-' + record['record_id'], provider_ref=record['handover']['pr_description_ref'], author_principal='coder', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=PR_DESCRIPTION_DIGEST, mutable=True))
+    return events
+
+
+def _plus_seconds(value, seconds):
+    return (checker.instant(value) + timedelta(seconds=seconds)).isoformat().replace('+00:00', 'Z')
+
+
+def enrich_v11(bundle):
+    tasks = {task['task_id']: task for task in bundle['tasks']}
+
+    verification_methods = []
+    criteria = {}
+    for task in bundle['tasks']:
+        task['version'] = '1.1'
+        task['protocol_ref'] = task['protocol_ref'].replace('Local_PR_Deliverty_v1.0', 'Local_PR_Deliverty_v1.1')
+        task['project_protocol_ref'] = 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json'
+        task['project_protocol_digest'] = '0' * 64
+        task['protocol_digest'] = COMMON_DIGEST
+        task.setdefault('target_ref', 'refs/heads/main')
+        task['owner_principals'] = ['owner']
+        task['role_principals'] = dict(CODER=['coder', 'new-coder', 'other-coder'], REVIEWER=['reviewer'], COORDINATOR=['coordinator'])
+        task.setdefault('stacked_dependencies', [])
+        task['required_check_policy'] = dict(source_ref=POLICY_SOURCE, digest=POLICY_DIGEST, provider='GITHUB_ACTIONS')
+        task['required_check_contracts'] = [
+            dict(
+                check=name,
+                provider='GITHUB_ACTIONS',
+                workflow_digest=WORKFLOW_DIGEST,
+                policy_source=POLICY_SOURCE,
+                workflow_path=WORKFLOW_PATH,
+                expected_app=EXPECTED_APP,
+                certifies='INTEGRATION_CANDIDATE',
+                allowed_checkout_modes=['SYNTHETIC_MERGE'],
+            )
+            for name in task['required_checks']
+        ]
+        task.setdefault('waivable_criteria', [])
+        task.setdefault('waivable_required_checks', [])
+
+        for criterion in task['acceptance']:
+            criterion.setdefault('super_review_required', True)
+            method_ids = []
+            if task['kind'] == 'CHILD':
+                author_id = 'VM-' + criterion['id'] + '-AUTHOR'
+                review_id = 'VM-' + criterion['id'] + '-REVIEW'
+                super_id = 'VM-' + criterion['id'] + '-SUPER'
+                method_ids = [author_id, review_id, super_id]
+                verification_methods.extend([
+                    dict(
+                        id=author_id,
+                        verification_class='POSITIVE',
+                        harness_id=None,
+                        external_gate_id=None,
+                        required_evidence_classes=['AUTHOR'],
+                        material_inputs=['PRODUCT'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['CODER'],
+                    ),
+                    dict(
+                        id=review_id,
+                        verification_class='INVARIANT',
+                        harness_id=None,
+                        external_gate_id=None,
+                        required_evidence_classes=['REVIEWER_INDEPENDENT'],
+                        material_inputs=['PRODUCT', 'SPECIFICATION'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['REVIEWER'],
+                    ),
+                    dict(
+                        id=super_id,
+                        verification_class='DIFFERENTIAL',
+                        harness_id='SR-ALL',
+                        external_gate_id=None,
+                        required_evidence_classes=['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'],
+                        material_inputs=['PRODUCT', 'DEPENDENCIES', 'PROJECT_PROTOCOL'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['COORDINATOR'],
+                    ),
+                ])
+            else:
+                parent_id = 'VM-' + criterion['id'] + '-PARENT'
+                method_ids = [parent_id]
+                verification_methods.append(dict(
+                    id=parent_id,
+                    verification_class='PRODUCER_CONSUMER',
+                    harness_id='SR-ALL',
+                    external_gate_id=None,
+                    required_evidence_classes=['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'],
+                    material_inputs=['PRODUCT', 'CHILD_RESULTS', 'PROJECT_PROTOCOL'],
+                    rerun_policy='FULL_REQUIRED_SET',
+                    applies_to_roles=['PARENT_CHECK'],
+                ))
+            criterion['verification_method_ids'] = method_ids
+            criteria[criterion['id']] = dict(
+                id=criterion['id'],
+                required=criterion['required'],
+                reviewer_check_required=criterion['required'] and task['kind'] == 'CHILD',
+                super_review_required=criterion['super_review_required'],
+                verification_method_ids=list(method_ids),
+            )
+
+    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[], project_protocols=[])
+    bundle['support'] = support
+
+    verification_methods = list({method['id']: method for method in verification_methods}.values())
+
+    manifest = [
+        dict(id='MAN-HARNESS', kind='HARNESS_ENTRYPOINT', ref='synthetic://harness/sr-all', digest=HARNESS_DIGEST, transitive=True),
+        dict(id='MAN-HELPER', kind='IMPORTED_HELPER', ref='synthetic://harness/helper', digest='a' * 64, transitive=True),
+        dict(id='MAN-FIXTURE', kind='FIXTURE', ref='synthetic://fixture/all', digest=FIXTURE_DIGEST, transitive=True),
+        dict(id='MAN-BASELINE', kind='BASELINE', ref='synthetic://baseline/all', digest=BASELINE_DIGEST, transitive=True),
+        dict(id='MAN-LOCK', kind='LOCKFILE', ref='synthetic://lock/project', digest='b' * 64, transitive=True),
+    ]
+    manifest_digest = checker.canonical_value_digest(manifest)
+    harness_method_ids = [method['id'] for method in verification_methods if method['harness_id'] == 'SR-ALL']
+
+    project_protocol = dict(
+        protocol_id='SYNTHETIC-PROJECT-v1',
+        version='1.0',
+        repository=bundle['tasks'][0]['repository'],
+        source_ref=bundle['tasks'][0]['project_protocol_ref'],
+        digest='0' * 64,
+        acceptance_sets=[dict(id='ALL', criteria=list(criteria.values()))],
+        verification_methods=verification_methods,
+        harnesses=[dict(
+            id='SR-ALL',
+            criteria=[criterion_id for criterion_id, criterion in criteria.items() if criterion['super_review_required']],
+            protected=True,
+            verification_method_ids=harness_method_ids,
+            manifest_refs=[item['id'] for item in manifest],
+        )],
+        protected_surface=dict(
+            harness_digest=HARNESS_DIGEST,
+            baseline_digest=BASELINE_DIGEST,
+            oracle_digests=[ORACLE_DIGEST],
+            fixture_digests=[FIXTURE_DIGEST],
+            manifest=manifest,
+            manifest_digest=manifest_digest,
+        ),
+        external_gates=[],
+        regressions=[],
+    )
+    project_protocol['digest'] = checker.canonical_digest(project_protocol)
+    project_digest = project_protocol['digest']
+    support['project_protocols'].append(project_protocol)
+    for task in bundle['tasks']:
+        task['project_protocol_digest'] = project_digest
+
+    method_map = {method['id']: method for method in verification_methods}
+
+    for record in bundle['stages']:
+        if record['status'] == 'PASS':
+            record['status'] = 'STAGE_COMPLETE'
+        elif record['status'] == 'STAGE_COMPLETE_WITH_WAIVER':
+            record['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+
+        task = tasks[record['task_id']]
+        record['version'] = '1.1'
+        record['repeat_stages'] = []
+        record['waiver_refs'] = []
+        record['role_integrity'] = dict(claimed_role=record['stage'], principal=record['executor'])
+        record['common_protocol_ref'] = task['protocol_ref']
+        record['common_protocol_digest'] = task['protocol_digest']
+        record['project_protocol_ref'] = task['project_protocol_ref']
+        record['environment_ref'] = 'ENV-' + record['record_id']
+
+        environment = dict(
+            environment_id=record['environment_ref'],
+            os='synthetic-os',
+            architecture='synthetic-arch',
+            toolchain=[dict(name='python', version='3.12')],
+            lockfile_digest=None,
+            container_digest=None,
+            external_versions=[],
+            network_policy='OFFLINE',
+            secret_values_recorded=False,
+            package_manager=dict(name='pip', version='synthetic'),
+            locale='C.UTF-8',
+            timezone='UTC',
+            digest='0' * 64,
+        )
+        environment['digest'] = checker.canonical_digest(environment)
+        environment_digest = environment['digest']
+        support['environments'].append(environment)
+
+        acceptance_surface = None
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+            acceptance_surface = dict(
+                project_protocol_digest=project_digest,
+                harness_digest=HARNESS_DIGEST,
+                baseline_digest=BASELINE_DIGEST,
+                oracle_digests=[ORACLE_DIGEST],
+                fixture_digests=[FIXTURE_DIGEST],
+                manifest_digest=manifest_digest,
+                mutation_detected=False,
+                digest='0' * 64,
+            )
+            acceptance_surface['digest'] = checker.canonical_digest(acceptance_surface)
+        acceptance_surface_digest = acceptance_surface['digest'] if acceptance_surface else None
+
+        checked = list(record['acceptance_checked'])
+        declared = {criterion['id']: criterion for criterion in task['acceptance']}
+        advancing = record['status'] in checker.ADVANCING_STATUSES
+        candidate_changed = record['output_sha'] is not None and record['output_sha'] != record['input_sha']
+        final_source = record['validated_sha'] or record['output_sha'] or record['input_sha']
+
+        if record['stage'] == 'CODER':
+            evidence_class = 'AUTHOR'
+        elif record['stage'] == 'REVIEWER':
+            evidence_class = 'REVIEWER_INDEPENDENT'
+        else:
+            evidence_class = 'SUPER_REVIEW_INDEPENDENT'
+
+        stage_methods = {}
+        for cid in checked:
+            stage_methods[cid] = [mid for mid in declared[cid]['verification_method_ids'] if record['stage'] in method_map[mid]['applies_to_roles']]
+
+        record['evidence_manifest'] = []
+        record['evidence_refs'] = []
+        final_evidence_by_method = {}
+        discovery_evidence_ids = []
+
+        def add_evidence(evidence_id, phase, method_id, source_sha, result, collected_at):
+            method = method_map[method_id]
+            independent = evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT']
+            harness_digest = HARNESS_DIGEST if method['harness_id'] else None
+            baseline_digest = BASELINE_DIGEST if independent else None
+            embedded = dict(
+                evidence_id=evidence_id,
+                **{'class': evidence_class},
+                evidence_phase=phase,
+                result=result,
+                source_sha=source_sha,
+                procedure='Synthetic protocol evidence fixture.',
+                artifact_digest=None,
+                harness_digest=harness_digest,
+                baseline_digest=baseline_digest,
+                environment_digest=environment_digest,
+                verification_method_id=method_id,
+                harness_id=method['harness_id'],
+                external_gate_id=method['external_gate_id'],
+            )
+            record['evidence_manifest'].append(embedded)
+            record['evidence_refs'].append(evidence_id)
+
+            if evidence_class == 'AUTHOR':
+                oracle_independence = 'NOT_INDEPENDENT'
+                relationship = 'AUTHOR_OF_CANDIDATE'
+            else:
+                oracle_independence = 'PINNED_ORACLE_INDEPENDENT'
+                relationship = 'LAST_PRODUCT_WRITER' if candidate_changed and phase == 'FINAL_ACCEPTANCE' else 'NON_WRITER_REVIEWER'
+
+            support['evidence_records'].append(dict(
+                evidence_id=evidence_id,
+                origin_kind='STAGE_EXECUTOR',
+                origin_principal=record['executor'],
+                collected_by_role=record['stage'],
+                collected_by_principal=record['executor'],
+                provider_ref=None,
+                evidence_class=evidence_class,
+                evidence_phase=phase,
+                candidate_sha=source_sha,
+                project_protocol_digest=project_digest,
+                harness_digest=harness_digest,
+                result=result,
+                procedure='Synthetic protocol evidence fixture.',
+                artifact_digest=None,
+                baseline_digest=baseline_digest,
+                environment_digest=environment_digest,
+                common_protocol_digest=COMMON_DIGEST,
+                review_lease_ref=None,
+                acceptance_surface_digest=acceptance_surface_digest if independent and phase != 'DISCOVERY' else None,
+                acceptance_surface_manifest_digest=manifest_digest if independent and phase != 'DISCOVERY' else None,
+                collected_at=collected_at,
+                procedure_kind='COMMAND',
+                command_argv=['synthetic', 'check', method_id],
+                exit_code=0 if result == 'PASS' else 1 if result == 'FAIL' else None,
+                fixture_digests=[FIXTURE_DIGEST] if independent and phase != 'DISCOVERY' else [],
+                verification_method_id=method_id,
+                harness_id=method['harness_id'],
+                external_gate_id=method['external_gate_id'],
+                oracle_independence=oracle_independence,
+                principal_relationship_to_candidate=relationship,
+            ))
+
+        discovery_methods = sorted({mid for mids in stage_methods.values() for mid in mids})
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK'] and discovery_methods:
+            discovery_result = 'FAIL' if candidate_changed else 'PASS'
+            discovery_time = _plus_seconds(record['started_at'], 5)
+            for method_id in discovery_methods:
+                eid = 'DISC-' + record['record_id'] + '-' + method_id
+                add_evidence(eid, 'DISCOVERY', method_id, record['input_sha'], discovery_result, discovery_time)
+                discovery_evidence_ids.append(eid)
+
+        final_result = 'PASS' if advancing else 'NOT_RUN'
+        final_time = record['work_periods'][-1]['end'] or record['started_at']
+        for cid, method_ids in stage_methods.items():
+            for method_id in method_ids:
+                eid = 'EV-' + record['record_id'] + '-' + method_id
+                add_evidence(eid, 'FINAL_ACCEPTANCE', method_id, final_source, final_result, final_time)
+                final_evidence_by_method[method_id] = eid
+
+        record['acceptance_results'] = []
+        for cid in checked:
+            mids = stage_methods[cid]
+            record['acceptance_results'].append(dict(
+                criterion_id=cid,
+                required=declared[cid]['required'],
+                result=final_result,
+                verification_method_ids=list(mids),
+                evidence_ids=[final_evidence_by_method[mid] for mid in mids],
+                rationale=None,
+                finding_ids=[],
+            ))
+
+        finding_ids = []
+        if record['stage'] in ['REVIEWER', 'COORDINATOR'] and candidate_changed and advancing:
+            finding_id = 'F-' + record['record_id']
+            finding_ids = [finding_id]
+            resolution_evidence = list(final_evidence_by_method.values())
+            record['findings'] = [dict(
+                id=finding_id,
+                problem='Synthetic bounded defect discovered before repair.',
+                status='RESOLVED',
+                resolution='Synthetic product repair completed in the discovering stage.',
+                classification='BOUNDED_PRODUCT_FIX',
+                phase_found='DISCOVERY',
+                repair_disposition='FIXED_HERE',
+                affected_components=['product'],
+                resolution_evidence_ids=resolution_evidence,
+            )]
+            for row in record['acceptance_results']:
+                row['finding_ids'] = [finding_id]
+        else:
+            record['findings'] = []
+
+        record['acceptance_surface'] = copy.deepcopy(acceptance_surface)
+        record['production_output'] = dict(
+            deliverables=['Synthetic ' + record['stage'] + ' production output'],
+            coverage_completed=checked,
+            fixes_applied=list(finding_ids),
+            regressions_added=['REG-' + fid for fid in finding_ids],
+            education_points=['Synthetic forward handoff explains evidence and downstream invariant.'],
+            unresolved_internal_defects=[],
+            internal_fixable_defects_remaining=0,
+            blocking_class='NONE',
+            coverage_complete_for_stage=advancing,
+            early_termination=False,
+            early_termination_reason=None,
+            candidate_changed=candidate_changed,
+            defects_found=list(finding_ids),
+            defects_fixed_here=list(finding_ids),
+            external_escalations=[],
+            changed_components=['product'] if candidate_changed else [],
+        )
+        record['carried_findings'] = []
+        record['external_gate_results'] = []
+        record['freshness'] = dict(
+            common_protocol_current=True,
+            project_protocol_current=True,
+            spec_current=True,
+            parent_context_current=True,
+            child_context_current=True,
+            pr_description_current=True,
+            acceptance_surface_current=True,
+            environment_current=True,
+            dependencies_current=True,
+        )
+
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK'] and discovery_methods:
+            record['discovery_freeze'] = dict(
+                candidate_sha=record['input_sha'],
+                frozen_at=_plus_seconds(record['started_at'], 10),
+                first_repair_at=_plus_seconds(record['started_at'], 15) if candidate_changed else None,
+                method_ids_attempted=discovery_methods,
+                finding_ids=list(finding_ids),
+                evidence_ids=discovery_evidence_ids,
+                sweep_complete=True,
+                early_termination_reason=None,
+            )
+        else:
+            record['discovery_freeze'] = None
+
+        start_ref = 'CTX-START-' + record['record_id']
+        record['context_start_ref'] = start_ref
+        support['context_snapshots'].append(dict(
+            snapshot_id=start_ref,
+            task_id=record['task_id'],
+            phase='START',
+            observed_at=record['started_at'],
+            parent_issue_digest=PARENT_CONTEXT_DIGEST,
+            parent_comment_frontier=record['parent_context']['through_comment_ref'],
+            parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+            child_issue_digest=CHILD_CONTEXT_DIGEST,
+            child_comment_frontier=record['handover']['child_comment_ref'],
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            pr_comment_frontier=record['handover']['pr_description_ref'],
+            owner_control_digest=OWNER_CONTROL_DIGEST,
+            reconciled=True,
+            reconciliation_note='Synthetic START context fully reconciled.',
+            context_events=snapshot_events(record, task, record['started_at']),
+        ))
+
+        if advancing:
+            pre_ref = 'CTX-PRE-' + record['record_id']
+            record['context_pre_verdict_ref'] = pre_ref
+            support['context_snapshots'].append(dict(
+                snapshot_id=pre_ref,
+                task_id=record['task_id'],
+                phase='PRE_VERDICT',
+                observed_at=record['work_periods'][-1]['end'],
+                parent_issue_digest=PARENT_CONTEXT_DIGEST,
+                parent_comment_frontier=record['parent_context']['through_comment_ref'],
+                parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+                child_issue_digest=CHILD_CONTEXT_DIGEST,
+                child_comment_frontier=record['handover']['child_comment_ref'],
+                pr_description_digest=PR_DESCRIPTION_DIGEST,
+                pr_comment_frontier=record['handover']['pr_description_ref'],
+                owner_control_digest=OWNER_CONTROL_DIGEST,
+                reconciled=True,
+                reconciliation_note='Synthetic PRE_VERDICT context fully reconciled.',
+                context_events=snapshot_events(record, task, record['work_periods'][-1]['end']),
+            ))
+            candidate_tree_digest = checker.canonical_value_digest(dict(candidate_sha=record['validated_sha']))
+            integration_tree_digest = checker.canonical_value_digest(dict(candidate_sha=record['validated_sha'], base_sha=record['base_sha']))
+            record['source_attestation'] = dict(
+                candidate_sha=record['validated_sha'],
+                candidate_tree_digest=candidate_tree_digest,
+                base_sha=record['base_sha'],
+                base_ref=task['target_ref'],
+                merge_base_sha=record['base_sha'],
+                integration_tree_digest=integration_tree_digest,
+                workspace_digest=WORKSPACE_DIGEST,
+                unrecorded_changes=False,
+            )
+        else:
+            record['context_pre_verdict_ref'] = None
+            record['source_attestation'] = None
+
+        if advancing and record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+            lease = dict(
+                lease_id='sha256:' + '0' * 64,
+                task_id=record['task_id'],
+                stage_record_id=record['record_id'],
+                repository=task['repository'],
+                pr=task['pr'],
+                project_protocol_ref=task['project_protocol_ref'],
+                certifier_role=record['stage'],
+                certifier_principal=record['executor'],
+                harness_digest=HARNESS_DIGEST,
+                baseline_digest=BASELINE_DIGEST,
+                oracle_digests=[ORACLE_DIGEST],
+                fixture_digests=[FIXTURE_DIGEST],
+                candidate_sha=record['validated_sha'],
+                candidate_tree_digest=record['source_attestation']['candidate_tree_digest'],
+                base_sha=record['base_sha'],
+                target_ref=task['target_ref'],
+                merge_base_sha=record['source_attestation']['merge_base_sha'],
+                integration_tree_digest=record['source_attestation']['integration_tree_digest'],
+                common_protocol_ref=task['protocol_ref'],
+                common_protocol_digest=COMMON_DIGEST,
+                project_protocol_digest=project_digest,
+                spec_digest=record['spec_digest'],
+                parent_spec_digest=record['parent_spec_digest'],
+                parent_context_digest=PARENT_CONTEXT_DIGEST,
+                child_context_digest=CHILD_CONTEXT_DIGEST,
+                pr_description_digest=PR_DESCRIPTION_DIGEST,
+                required_check_policy_digest=POLICY_DIGEST,
+                acceptance_surface_digest=acceptance_surface_digest,
+                acceptance_surface_manifest_digest=manifest_digest,
+                environment_digest=environment_digest,
+                dependency_heads=[],
+                owner_control_digest=OWNER_CONTROL_DIGEST,
+                sealed_at=record['work_periods'][-1]['end'],
+                environment_ref=record['environment_ref'],
+                context_pre_verdict_ref=record['context_pre_verdict_ref'],
+            )
+            lease['lease_id'] = 'sha256:' + checker.canonical_digest(lease, ('lease_id',))
+            lease_ref = lease['lease_id']
+            record['review_lease_ref'] = lease_ref
+            support['review_leases'].append(lease)
+            for evidence_id in record['evidence_refs']:
+                item = next(e for e in support['evidence_records'] if e['evidence_id'] == evidence_id)
+                if item['evidence_phase'] != 'DISCOVERY':
+                    item['review_lease_ref'] = lease_ref
+                    item['acceptance_surface_digest'] = acceptance_surface_digest
+                    item['acceptance_surface_manifest_digest'] = manifest_digest
+                    item['fixture_digests'] = [FIXTURE_DIGEST]
+        else:
+            record['review_lease_ref'] = None
+
+    bundle['observed'].setdefault('dependency_heads', {})
+    bundle['observed'].setdefault('target_heads', {})
+    bundle['observed'].setdefault('canonical_target_observations', {})
+    bundle['observed'].pop('canonical_main_observations', None)
+
+    child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
+    for task in child_tasks:
+        final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] in checker.ADVANCING_STATUSES), None)
+        if not final:
+            continue
+
+        pre_merge_ref = 'CTX-PREMERGE-' + task['task_id']
+        support['context_snapshots'].append(dict(
+            snapshot_id=pre_merge_ref,
+            task_id=task['task_id'],
+            phase='PRE_MERGE',
+            observed_at='2026-10-04T00:03:00Z',
+            parent_issue_digest=PARENT_CONTEXT_DIGEST,
+            parent_comment_frontier=final['parent_context']['through_comment_ref'],
+            parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+            child_issue_digest=CHILD_CONTEXT_DIGEST,
+            child_comment_frontier=final['handover']['child_comment_ref'],
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            pr_comment_frontier=final['handover']['pr_description_ref'],
+            owner_control_digest=OWNER_CONTROL_DIGEST,
+            reconciled=True,
+            reconciliation_note='Synthetic PRE_MERGE context fully reconciled.',
+            context_events=snapshot_events(final, task, '2026-10-04T00:03:00Z'),
+        ))
+
+        state_ref = 'OBS-' + task['task_id']
+        integration_sha = 'e' * 40
+        support['observed_states'].append(dict(
+            state_id=state_ref,
+            task_id=task['task_id'],
+            pr=task['pr'],
+            target_ref=task['target_ref'],
+            project_protocol_digest=project_digest,
+            pre_merge_context_ref=pre_merge_ref,
+            observed_at='2026-10-04T00:03:00Z',
+            pr_head_sha=final['validated_sha'],
+            base_sha=final['base_sha'],
+            merge_base_sha=final['source_attestation']['merge_base_sha'],
+            integration_tree_digest=final['source_attestation']['integration_tree_digest'],
+            repository_policy_digest=POLICY_DIGEST,
+            repository_policy_source_ref=POLICY_SOURCE,
+            repository_policy_visibility='CONFIRMED',
+            common_protocol_digest=COMMON_DIGEST,
+            environment_digest=next(item for item in support['environments'] if item['environment_id'] == final['environment_ref'])['digest'],
+            workspace_digest=WORKSPACE_DIGEST,
+            parent_context_digest=PARENT_CONTEXT_DIGEST,
+            child_context_digest=CHILD_CONTEXT_DIGEST,
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            owner_control_digest=OWNER_CONTROL_DIGEST,
+            required_checks=[
+                dict(
+                    check=contract['check'],
+                    provider=contract['provider'],
+                    workflow_digest=contract['workflow_digest'],
+                    workflow_path=contract['workflow_path'],
+                    app_identity=contract['expected_app'],
+                    run_id='RUN-' + task['task_id'],
+                    job_id='JOB-' + task['task_id'],
+                    artifact_digests=[ARTIFACT_DIGEST],
+                    trigger_pr_head_sha=final['validated_sha'],
+                    provider_run_head_sha=integration_sha,
+                    tested_commit_sha=integration_sha,
+                    tested_tree_digest=final['source_attestation']['integration_tree_digest'],
+                    checkout_mode='SYNTHETIC_MERGE',
+                    base_sha=final['base_sha'],
+                    merge_base_sha=final['source_attestation']['merge_base_sha'],
+                    integration_tree_digest=final['source_attestation']['integration_tree_digest'],
+                    result='PASS',
+                    mandatory_steps_executed=True,
+                )
+                for contract in task['required_check_contracts']
+            ],
+        ))
+
+        bundle['observed']['target_heads'][task['task_id']] = final['base_sha']
+        if str(task['pr']) in bundle['observed'].get('checks', {}):
+            for item in bundle['observed']['checks'][str(task['pr'])]:
+                item.pop('head_sha', None)
+                item['trigger_pr_head_sha'] = final['validated_sha']
+        merge = bundle['observed'].get('merged', {}).get(str(task['pr']))
+        if merge is not None:
+            merge['target_ref'] = task['target_ref']
+
+    for result in bundle['results']:
+        result['version'] = '1.1'
+        result.setdefault('waiver_refs', [])
+        task = tasks[result['task_id']]
+        if result['kind'] == 'CHILD':
+            final = next(record for record in bundle['stages'] if record['record_id'] == result['final_record'])
+            result['review_lease_ref'] = final['review_lease_ref']
+            result['pre_merge_context_ref'] = 'CTX-PREMERGE-' + task['task_id']
+            result['observed_state_ref'] = 'OBS-' + task['task_id']
+            result['canonical_observation'] = dict(
+                target_ref=task['target_ref'],
+                target_sha=result['merge_commit_sha'],
+                reviewed_head_sha=result['head_sha'],
+                merge_commit_sha=result['merge_commit_sha'],
+                relation='EXACT_MERGE_COMMIT',
+                observed_at='2026-10-04T00:04:30Z',
+                provider_kind='GITHUB_PROVIDER',
+                provider_ref='Synthetic canonical target observation',
+                provider_observation_digest='a' * 64,
+                ancestry_proof_ref=None,
+            )
+            bundle['observed']['canonical_target_observations'][str(result['pr'])] = copy.deepcopy(result['canonical_observation'])
+        else:
+            result['review_lease_ref'] = None
+            result['pre_merge_context_ref'] = None
+            result['observed_state_ref'] = None
+            result['canonical_observation'] = None
+    return bundle
+
+def readdress_review_lease(bundle, lease):
+    old_id = lease['lease_id']
+    lease['lease_id'] = 'sha256:' + '0' * 64
+    new_id = 'sha256:' + checker.canonical_digest(lease, ('lease_id',))
+    lease['lease_id'] = new_id
+    for record in bundle['stages']:
+        if record.get('review_lease_ref') == old_id:
+            record['review_lease_ref'] = new_id
+    for evidence in bundle['support']['evidence_records']:
+        if evidence.get('review_lease_ref') == old_id:
+            evidence['review_lease_ref'] = new_id
+    for waiver in bundle['support']['waivers']:
+        if waiver.get('lease_id') == old_id:
+            waiver['lease_id'] = new_id
+    for result in bundle['results']:
+        if result.get('review_lease_ref') == old_id:
+            result['review_lease_ref'] = new_id
+    return new_id
+
+
+def refresh_project_protocol_identity(bundle):
+    protocol = bundle['support']['project_protocols'][0]
+    protocol['protected_surface']['manifest_digest'] = checker.canonical_value_digest(protocol['protected_surface']['manifest'])
+    protocol['digest'] = checker.canonical_digest(protocol)
+    project_digest = protocol['digest']
+    manifest_digest = protocol['protected_surface']['manifest_digest']
+    for task in bundle['tasks']:
+        task['project_protocol_digest'] = project_digest
+
+    stage_by_id = {record['record_id']: record for record in bundle['stages']}
+    for record in bundle['stages']:
+        surface = record.get('acceptance_surface')
+        if surface is not None:
+            surface['project_protocol_digest'] = project_digest
+            surface['manifest_digest'] = manifest_digest
+            surface['digest'] = checker.canonical_digest(surface)
+        for evidence in bundle['support']['evidence_records']:
+            if evidence['collected_by_role'] == record['stage'] and evidence['collected_by_principal'] == record['executor']:
+                evidence['project_protocol_digest'] = project_digest
+                if surface is not None and evidence['evidence_phase'] != 'DISCOVERY' and evidence['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
+                    evidence['acceptance_surface_digest'] = surface['digest']
+                    evidence['acceptance_surface_manifest_digest'] = manifest_digest
+
+    for lease in list(bundle['support']['review_leases']):
+        record = stage_by_id.get(lease['stage_record_id'])
+        if record is None:
+            continue
+        lease['project_protocol_digest'] = project_digest
+        if record['acceptance_surface'] is not None:
+            lease['acceptance_surface_digest'] = record['acceptance_surface']['digest']
+            lease['acceptance_surface_manifest_digest'] = manifest_digest
+        readdress_review_lease(bundle, lease)
+
+    for state in bundle['support']['observed_states']:
+        state['project_protocol_digest'] = project_digest
+    return project_digest
+
+
+def final_evidence_id(record, criterion_index=0):
+    return record['acceptance_results'][criterion_index]['evidence_ids'][0]
+
+
+def evidence_provenance(bundle, evidence_id):
+    return next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+
+
+
+
+def add_optional_reviewer_na(bundle, rationale):
+    task = bundle['tasks'][1]
+    protocol = bundle['support']['project_protocols'][0]
+    method_id = 'VM-A2-REVIEW'
+    task['acceptance'].append(dict(
+        id='A2', requirement='Optional applicability case.', required=False,
+        verification_method_ids=[method_id], super_review_required=False,
+    ))
+    protocol['verification_methods'].append(dict(
+        id=method_id,
+        verification_class='INVARIANT',
+        harness_id=None,
+        external_gate_id=None,
+        required_evidence_classes=['REVIEWER_INDEPENDENT'],
+        material_inputs=['PRODUCT', 'SPECIFICATION'],
+        rerun_policy='FULL_REQUIRED_SET',
+        applies_to_roles=['REVIEWER'],
+    ))
+    protocol['acceptance_sets'][0]['criteria'].append(dict(
+        id='A2', required=False, reviewer_check_required=False,
+        super_review_required=False, verification_method_ids=[method_id],
+    ))
+
+    reviewer = bundle['stages'][1]
+    template_id = final_evidence_id(reviewer)
+    embedded_template = next(item for item in reviewer['evidence_manifest'] if item['evidence_id'] == template_id)
+    provenance_template = evidence_provenance(bundle, template_id)
+    evidence_id = 'EV-S2-' + method_id
+    embedded = copy.deepcopy(embedded_template)
+    embedded.update(
+        evidence_id=evidence_id,
+        result='NOT_APPLICABLE',
+        verification_method_id=method_id,
+        harness_id=None,
+        external_gate_id=None,
+    )
+    provenance = copy.deepcopy(provenance_template)
+    provenance.update(
+        evidence_id=evidence_id,
+        result='NOT_APPLICABLE',
+        verification_method_id=method_id,
+        harness_id=None,
+        external_gate_id=None,
+        command_argv=['synthetic', 'check', method_id],
+        exit_code=0,
+    )
+    reviewer['evidence_manifest'].append(embedded)
+    reviewer['evidence_refs'].append(evidence_id)
+    bundle['support']['evidence_records'].append(provenance)
+    reviewer['acceptance_results'].append(dict(
+        criterion_id='A2', required=False, result='NOT_APPLICABLE',
+        verification_method_ids=[method_id], evidence_ids=[evidence_id],
+        rationale=rationale, finding_ids=[],
+    ))
+    refresh_project_protocol_identity(bundle)
+    return reviewer['acceptance_results'][-1]
+
+def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
+    return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner', source_kind='DIRECT_OWNER_SESSION', source_digest='f' * 64, authentication_status='AUTHENTICATED')
+
+
+def example_bundle():
+    common = dict(record='TASK', version='1.1', repository='exampleowner/editor', parent_owner='coordinator', spec_ref='https://example.invalid/issues/85', spec_digest=DIGEST, required_checks=['Required hosted check'], protocol_ref='exampleowner/Common@' + 'a' * 40 + ':skills/Local_PR_Deliverty_v1.1')
+    parent = dict(common, task_id='T85', kind='PARENT', issue=85, parent_issue=None, pr=None, scope='Deliver child and prove integrated parent outcome.', acceptance=[dict(id='P1', requirement='Child capability works in integrated product.', required=True)], children=[dict(issue=86, scope='Native parser foundation.', covers=['P1'], depends_on=[])], workspace=FOLDER, timers=dict(poll_seconds=60, stage_minutes=dict(checker.DEFAULT_BUDGETS), ci_wait_minutes=30, recovery_grace_minutes=5, handover_seconds=0, override_reason=None), owner_commands=[], start_permissions=[dict(id='PERMIT86', child_issue=86, issued_at='2026-10-04T00:00:00Z', coordinator='coordinator', parent_comment_ref='https://example.invalid/issues/85#permission86', reason='Ready independent child', during_record=None, reviewed_head_sha=None, mode='SERIAL', revoked_at=None)], merge_authority=dict(mode='OWNER_ONLY', reference=None, delegate_principal=None))
+    child = dict(common, task_id='T86', kind='CHILD', issue=86, parent_issue=85, pr=101, scope='Deliver native parser foundation.', acceptance=[dict(id='A1', requirement='Preserve native source structure.', required=True)], children=[])
+    parent['required_checks'] = list(parent['required_checks'])
+    child['required_checks'] = list(child['required_checks'])
+    handover = dict(pr_description_ref='https://example.invalid/pull/101', child_comment_ref='https://example.invalid/issues/86#comment', parent_comment_ref='https://example.invalid/issues/85#comment', changed_files=['src/parser.py'], workspace_notes='No unrecorded work; synthetic example.', reconciliation='Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction.')
+    stages = []
+    for index, (stage, executor) in enumerate(zip(checker.ORDER, ['coder', 'reviewer', 'coordinator'])):
+        start, end = f'2026-10-04T00:0{index}:00Z', f'2026-10-04T00:0{index}:30Z'
+        stages.append(dict(record='STAGE_RECORD', version='1.1', record_id='S' + str(index + 1), task_id='T86', stage=stage, attempt=1, executor=executor, previous_record=stages[-1]['record_id'] if stages else None, started_at=start, work_periods=[dict(start=start, end=end)], status='PASS', input_sha=BASE if index == 0 else HEADS[index - 1], output_sha=HEADS[index], validated_sha=HEADS[index], base_sha=BASE, spec_digest=DIGEST, parent_spec_digest=DIGEST, workspace=FOLDER, handover=copy.deepcopy(handover), acceptance_checked=['A1'], findings=[], validation=[dict(check='Synthetic behavior observation', required=True, result='PASS', evidence='Synthetic fixture; no real product test claimed.')], changes='Bounded correction; retained earlier claims checked by Coordinator.', repeat_stages=[], writer_stopped=True, next_action='Handover to eligible role.', ci_wait_started_at=None, stalled_at=None))
+    stages.append(dict(stages[-1], record_id='S4', task_id='T85', stage='PARENT_CHECK', previous_record=None, input_sha=MERGE, output_sha=MERGE, validated_sha=MERGE, base_sha=MERGE, acceptance_checked=['P1'], started_at='2026-10-04T00:06:00Z', work_periods=[dict(start='2026-10-04T00:06:00Z', end='2026-10-04T00:06:30Z')]))
+    child_result = dict(record='DELIVERY_RESULT', version='1.1', record_id='D86', task_id='T86', kind='CHILD', final_record='S3', head_sha=HEADS[2], pr=101, merge_commit_sha=MERGE, accepted_ids=['A1'], remaining_ids=[], responsibility_complete=True, child_results=[], parent_comment_ref='https://example.invalid/issues/85#delivery86', evidence='Synthetic provider merge and acceptance.', recorded_at='2026-10-04T00:05:00Z')
+    parent_result = dict(child_result, parent_comment_ref='https://example.invalid/issues/85#delivery85', record_id='D85', task_id='T85', kind='PARENT', final_record='S4', head_sha=MERGE, pr=None, merge_commit_sha=None, accepted_ids=['P1'], child_results=['D86'], recorded_at='2026-10-04T00:07:00Z')
+    for record in stages:
+        record_id = record['record_id']
+        record['publications'] = dict(start=dict(comment_ref=f'https://example.invalid/issues/85#start-{record_id}', published_at=record['started_at'], summary='Synthetic role start, intended scope and validation.'), end=dict(comment_ref=f'https://example.invalid/issues/85#end-{record_id}', published_at=record['work_periods'][0]['end'], summary='Synthetic findings, output evidence and next eligible role.'))
+        record['parent_context'] = dict(read_at=record['started_at'], through_comment_ref=f'https://example.invalid/issues/85#before-{record_id}', reconciled_points=['Read and reconcile complete prior parent history and active controls.'])
+        record['workspace_mode'] = 'WRITE'
+        record['review_source'] = None
+    observed = dict(main_sha=MERGE, pr_heads={'101': HEADS[2]}, spec_digests={'T85': DIGEST, 'T86': DIGEST}, workspace=dict(path=FOLDER, head_sha=HEADS[2], unrecorded_changes=False), merged={'101': dict(head_sha=HEADS[2], merge_commit_sha=MERGE, merged_at='2026-10-04T00:04:00Z')}, checks={'101': [dict(check='Required hosted check', head_sha=HEADS[2], result='PASS')]}, merge_authority_observations={'101': dict(principal='owner', authority_ref='Synthetic owner authorization reference', source_kind='DIRECT_OWNER_SESSION', source_digest='a' * 64, authentication_status='AUTHENTICATED', observed_at='2026-10-04T00:03:00Z')}, external_writer_stopped=True)
+    observed['parent_comment_frontiers'] = {r['record_id']: dict(comment_ref=r['parent_context']['through_comment_ref'], observed_at=r['started_at']) for r in stages}
+    observed['issue_states'] = {'85': 'CLOSED', '86': 'CLOSED'}
+    observed['pr_states'] = {'101': 'MERGED'}
+    observed['target_heads'] = {'T86': BASE, 'T85': MERGE}
+    return enrich_v11(dict(tasks=[parent, child], stages=stages, results=[child_result, parent_result], observed=observed))
+
+
+def premerge_bundle():
+    bundle = example_bundle()
+    bundle['stages'] = bundle['stages'][:3]
+    bundle['results'] = []
+    bundle['observed']['main_sha'] = BASE
+    bundle['observed']['target_heads']['T86'] = BASE
+    bundle['observed']['merged'] = {}
+    bundle['observed']['pr_states']['101'] = 'DRAFT'
+    bundle['observed']['issue_states'] = {'85': 'OPEN', '86': 'OPEN'}
+    return bundle
+
+
+def running_bundle():
+    bundle = premerge_bundle()
+    bundle['stages'] = bundle['stages'][:1]
+    bundle['stages'][0].update(status='RUNNING', output_sha=None, validated_sha=None, acceptance_checked=[], validation=[], writer_stopped=False)
+    bundle['stages'][0]['work_periods'][0]['end'] = None
+    bundle['stages'][0]['publications']['end'] = None
+    return bundle
+
+
+class ProtocolTests(unittest.TestCase):
+    def rejected(self, bundle, now='2026-10-04T00:08:00Z'):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, now)
+
+    def state(self, bundle, now='2026-10-04T00:08:00Z'):
+        return checker.validate_bundle(bundle, now)['issues']['86']['status']
+
+    def test_cold_reconstruction_complete_without_git(self):
+        state = checker.validate_bundle(json.loads(json.dumps(example_bundle())), '2026-10-04T00:08:00Z')
+        self.assertEqual(state['issues']['85']['status'], 'COMPLETE')
+        self.assertEqual(state['issues']['86']['status'], 'COMPLETE')
+
+    def test_three_named_roles_and_merge_ready(self):
+        self.assertEqual(checker.ORDER, ['CODER', 'REVIEWER', 'COORDINATOR'])
+        self.assertEqual(self.state(premerge_bundle()), 'MERGE_READY')
+
+    def test_partial_child_does_not_complete_parent(self):
+        bundle = example_bundle()
+        bundle['tasks'][1]['acceptance'].append(dict(id='A2', requirement='Follow-up remains declared.', required=False, verification_method_ids=['VM-A2'], super_review_required=False))
+        enrich_v11(bundle)
+        bundle['stages'] = bundle['stages'][:3]
+        bundle['results'] = bundle['results'][:1]
+        bundle['results'][0].update(remaining_ids=['A2'], responsibility_complete=False)
+        self.assertEqual(self.state(bundle), 'MERGED')
+        self.assertNotEqual(checker.validate_bundle(bundle)['issues']['85']['status'], 'COMPLETE')
+
+    def test_child_merge_does_not_replace_parent_check(self):
+        bundle = example_bundle()
+        bundle['stages'] = bundle['stages'][:3]
+        bundle['results'] = bundle['results'][:1]
+        self.assertEqual({k: checker.validate_bundle(bundle)['issues']['85'][k] for k in ['stage','status']}, {'stage': 'PARENT_CHECK', 'status': 'READY'})
+
+    def test_unvalidated_output_rejected(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['validated_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_required_not_run_rejected(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['validation'][0]['result'] = 'NOT_RUN'
+        self.rejected(bundle)
+
+    def test_missing_acceptance_coverage_rejected(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['acceptance_checked'] = []
+        self.rejected(bundle)
+
+    def test_open_finding_rejected(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['findings'] = [dict(id='F1', problem='Unresolved defect', status='OPEN', resolution=None)]
+        self.rejected(bundle)
+
+    def test_stale_head_base_or_spec_requires_rework(self):
+        for field, key, value in [('pr_heads', '101', HEADS[4]), ('spec_digests', 'T86', 'e' * 64), ('spec_digests', 'T85', 'e' * 64), ('target_heads', 'T86', MERGE)]:
+            bundle = premerge_bundle()
+            bundle['observed'][field][key] = value
+            self.assertEqual(self.state(bundle), 'REWORK')
+
+    def test_pending_checks_and_missing_authority_are_distinct(self):
+        bundle = premerge_bundle()
+        bundle['observed']['checks'] = {}
+        pending = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((pending['status'], pending['engineering_approved'], pending['merge_ready']), ('WAITING_CI', False, False))
+
+        bundle = premerge_bundle()
+        bundle['observed']['merge_authority_observations'] = {}
+        owner_wait = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((owner_wait['status'], owner_wait['engineering_approved'], owner_wait['merge_ready']), ('WAITING_OWNER', True, False))
+
+        ready = checker.validate_bundle(premerge_bundle(), '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((ready['status'], ready['engineering_approved'], ready['merge_ready']), ('MERGE_READY', True, True))
+
+    def test_fifteen_coder_minutes_stalls_never_passes(self):
+        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:14:59Z'), 'RUNNING')
+        self.assertEqual(self.state(running_bundle(), '2026-10-04T00:15:00Z'), 'STALLED')
+
+    def test_recovery_grace_follows_actual_stall_detection(self):
+        bundle = running_bundle()
+        bundle['stages'][0].update(status='STALLED', stalled_at='2026-10-04T00:31:00Z')
+        self.assertEqual(self.state(bundle, '2026-10-04T00:37:00Z'), 'BLOCKED')
+
+    def test_ci_wait_thirty_minutes_blocks(self):
+        bundle = running_bundle()
+        bundle['stages'][0].update(status='WAITING_CI', ci_wait_started_at='2026-10-04T00:00:00Z')
+        self.assertEqual(self.state(bundle, '2026-10-04T00:30:00Z'), 'BLOCKED')
+
+    def test_unstopped_writer_cannot_hand_over(self):
+        bundle = premerge_bundle()
+        bundle['stages'][0].update(status='STALLED', stalled_at='2026-10-04T00:00:00Z', writer_stopped=False)
+        self.rejected(bundle)
+
+    def test_concurrent_writers_rejected(self):
+        bundle = running_bundle()
+        child = copy.deepcopy(bundle['tasks'][1])
+        child.update(task_id='T87', issue=87, pr=102)
+        bundle['tasks'].append(child)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope=child['scope'], covers=['P1'], depends_on=[]))
+        bundle['stages'].append(dict(bundle['stages'][0], record_id='S87', task_id='T87', executor='other-coder'))
+        self.rejected(bundle)
+
+    def test_skipped_reviewer_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'].pop(1)
+        bundle['stages'][1].update(previous_record='S1', input_sha=HEADS[0])
+        self.rejected(bundle)
+
+    def test_distinct_role_identities(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['executor'] = 'coder'
+        self.rejected(bundle)
+
+    def test_coordinator_is_parent_owner(self):
+        bundle = example_bundle()
+        bundle['stages'][2]['executor'] = 'other-coordinator'
+        self.rejected(bundle)
+
+    def test_coordinator_cannot_route_back_to_reviewer(self):
+        bundle = premerge_bundle()
+        bundle['stages'][-1]['repeat_stages'] = ['REVIEWER']
+        self.rejected(bundle)
+
+    def test_unknown_fields_duplicate_ids_and_unobserved_merge_rejected(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['guess_completion'] = True
+        self.rejected(bundle)
+        bundle = example_bundle()
+        bundle['stages'][1]['record_id'] = 'S1'
+        self.rejected(bundle)
+        bundle = example_bundle()
+        bundle['observed']['merged'] = {}
+        self.rejected(bundle)
+
+    def test_parent_cannot_ignore_declared_child(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Another deliverable', covers=['P1'], depends_on=[]))
+        self.rejected(bundle)
+
+    def test_dependency_cycle_rejected(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['children'][0]['depends_on'] = [87]
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Another deliverable', covers=['P1'], depends_on=[86]))
+        self.rejected(bundle)
+
+    def test_dependency_start_must_follow_delivery(self):
+        bundle = example_bundle()
+        bundle['stages'] = bundle['stages'][:3]
+        bundle['results'] = bundle['results'][:1]
+        child = copy.deepcopy(bundle['tasks'][1])
+        child.update(task_id='T87', issue=87, pr=102)
+        bundle['tasks'].append(child)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope=child['scope'], covers=['P1'], depends_on=[86]))
+        bundle['stages'].append(dict(bundle['stages'][0], record_id='S87', task_id='T87', executor='new-coder', status='RUNNING', output_sha=None, validated_sha=None, writer_stopped=False))
+        self.rejected(bundle)
+
+    def test_omitted_required_check_never_merge_ready(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][1]['required_checks'].append('Second required check')
+        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP, certifies='INTEGRATION_CANDIDATE', allowed_checkout_modes=['SYNTHETIC_MERGE']))
+        self.assertEqual(self.state(bundle), 'WAITING_CI')
+
+    def test_final_ci_failure_and_timeout_block(self):
+        bundle = premerge_bundle()
+        bundle['observed']['checks']['101'][0]['result'] = 'FAIL'
+        self.assertEqual(self.state(bundle), 'BLOCKED')
+        bundle = premerge_bundle()
+        bundle['observed']['checks']['101'][0]['result'] = 'PENDING'
+        bundle['observed']['ci_wait_started_at'] = {'101': '2026-10-04T00:00:00Z'}
+        self.assertEqual(self.state(bundle, '2026-10-04T00:30:00Z'), 'BLOCKED')
+
+    def test_declared_no_ci_does_not_invent_gate(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][1]['required_checks'] = []
+        bundle['tasks'][1]['required_check_contracts'] = []
+        bundle['observed']['checks']['101'] = []
+        self.assertEqual(self.state(bundle), 'MERGE_READY')
+
+    def test_timer_override_needs_reason(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['timers']['stage_minutes']['CODER'] = 90
+        self.rejected(bundle)
+
+    def test_same_folder_and_unrecorded_work_guards(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['workspace'] = r'C:\OtherFolder'
+        self.rejected(bundle)
+        bundle = premerge_bundle()
+        bundle['observed']['workspace']['unrecorded_changes'] = True
+        self.assertEqual(self.state(bundle), 'REWORK')
+
+    def test_handover_needs_pr_and_issue_anchors(self):
+        bundle = example_bundle()
+        del bundle['stages'][1]['handover']['parent_comment_ref']
+        self.rejected(bundle)
+
+    def test_hold_coder_requires_ack_then_freezes_timer(self):
+        bundle = running_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', target='CODER')]
+        self.assertEqual(self.state(bundle, '2026-10-04T04:00:00Z'), 'HOLD_REQUESTED')
+        bundle['stages'][0].update(status='HELD', writer_stopped=True)
+        bundle['stages'][0]['work_periods'][0]['end'] = '2026-10-04T00:10:05Z'
+        bundle['stages'][0]['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#hold-end', published_at='2026-10-04T00:10:05Z', summary='Hold acknowledgement.')
+        self.assertEqual(self.state(bundle, '2026-10-04T04:00:00Z'), 'HELD')
+        self.assertEqual(checker.active_seconds(bundle['stages'][0], bundle['tasks'][0]['owner_commands'], bundle['tasks'][1], checker.instant('2026-10-04T04:00:00Z')), 600)
+
+    def test_hold_or_pause_blocks_otherwise_ready_merge(self):
+        for name, marker in [('HOLD', 'HELD'), ('PAUSE', 'PAUSED'), ('STOP', 'STOPPED')]:
+            bundle = premerge_bundle()
+            bundle['tasks'][0]['owner_commands'] = [command(name, issued='2026-10-04T00:03:00Z')]
+            self.assertEqual(self.state(bundle), marker)
+
+    def test_targeted_resume_does_not_clear_all_hold(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z'), command('RESUME', target='CODER', issued='2026-10-04T00:04:00Z', identifier='CMD2')]
+        self.assertEqual(self.state(bundle), 'HELD')
+
+    def test_status_and_timer_cannot_release_hold(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z'), command('STATUS', issued='2026-10-04T00:04:00Z', identifier='CMD2'), command('TIMER', issued='2026-10-04T00:05:00Z', identifier='CMD3', minutes=30)]
+        self.assertEqual(self.state(bundle), 'HELD')
+
+    def test_new_stage_cannot_start_under_hold(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:00:45Z')]
+        self.rejected(bundle)
+
+    def test_merge_observed_under_hold_rejected(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z')]
+        self.rejected(bundle)
+
+    def test_coder_hold_does_not_impersonate_coordinator_hold(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', target='CODER', issued='2026-10-04T00:03:00Z')]
+        self.assertEqual(self.state(bundle), 'MERGE_READY')
+
+    def test_resume_requires_fresh_attempt_and_cloud_writer_stop(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('PAUSE', issued='2026-10-04T00:03:00Z'), command('RESUME', issued='2026-10-04T00:04:00Z', identifier='CMD2')]
+        self.assertEqual(self.state(bundle), 'REWORK')
+        bundle['observed']['external_writer_stopped'] = False
+        self.assertEqual(self.state(bundle), 'BLOCKED')
+
+    def test_resume_held_coder_requests_new_reconciled_attempt(self):
+        bundle = running_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', target='CODER', issued='2026-10-04T00:01:00Z'), command('RESUME', target='CODER', issued='2026-10-04T00:03:00Z', identifier='CMD2')]
+        bundle['stages'][0].update(status='HELD', writer_stopped=True)
+        bundle['stages'][0]['work_periods'][0]['end'] = '2026-10-04T00:01:05Z'
+        bundle['stages'][0]['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#hold-end', published_at='2026-10-04T00:01:05Z', summary='Hold acknowledgement.')
+        self.assertEqual(self.state(bundle), 'READY')
+
+    def test_downstream_stage_cannot_reopen_prior_stage(self):
+        bundle = premerge_bundle()
+        bundle['stages'][2]['repeat_stages'] = ['REVIEWER']
+        self.rejected(bundle)
+
+    def test_historical_overlapping_writers_rejected(self):
+        bundle = example_bundle()
+        bundle['stages'][1]['started_at'] = '2026-10-04T00:00:15Z'
+        bundle['stages'][1]['work_periods'][0]['start'] = '2026-10-04T00:00:15Z'
+        self.rejected(bundle)
+
+    def test_delivered_history_is_preserved_after_later_resume(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:08:00Z'), command('RESUME', issued='2026-10-04T00:09:00Z', identifier='CMD2')]
+        self.assertEqual(self.state(bundle, '2026-10-04T00:10:00Z'), 'COMPLETE')
+
+    def test_coordinator_hold_applies_to_parent_check(self):
+        bundle = example_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', target='COORDINATOR', issued='2026-10-04T00:05:30Z')]
+        self.rejected(bundle)
+
+    def test_child_hold_does_not_hold_other_child_or_parent(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', child=86, issued='2026-10-04T00:03:00Z')]
+        result = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+        self.assertEqual(result['issues']['86']['status'], 'HELD')
+        self.assertEqual(result['issues']['85']['status'], 'READY')
+
+    def test_future_or_unordered_owner_commands_rejected(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD')]
+        self.rejected(bundle)
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:05:00Z'), command('RESUME', issued='2026-10-04T00:04:00Z', identifier='CMD2')]
+        self.rejected(bundle)
+
+class ProductionStageV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_reviewer_product_fix_flows_forward(self):
+        bundle = premerge_bundle()
+        self.assertNotEqual(bundle['stages'][0]['output_sha'], bundle['stages'][1]['output_sha'])
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((state['stage'], state['status']), ('DELIVERY', 'MERGE_READY'))
+
+    def test_super_reviewer_product_fix_does_not_reopen_reviewer(self):
+        bundle = premerge_bundle()
+        self.assertNotEqual(bundle['stages'][1]['output_sha'], bundle['stages'][2]['output_sha'])
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual(state['status'], 'MERGE_READY')
+
+    def test_super_review_acceptance_surface_mutation_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][2]['acceptance_surface']['mutation_detected'] = True
+        self.rejected(bundle)
+
+    def test_super_review_project_protocol_digest_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][2]['acceptance_surface']['project_protocol_digest'] = '3' * 64
+        self.rejected(bundle)
+
+    def test_pass_cannot_push_fixable_defect_downstream(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['production_output']['internal_fixable_defects_remaining'] = 1
+        bundle['stages'][1]['production_output']['unresolved_internal_defects'] = ['F-UNFINISHED']
+        self.rejected(bundle)
+
+    def test_super_review_required_criterion_needs_independent_evidence(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['class'] = 'AUTHOR'
+        provenance.update(
+            evidence_class='AUTHOR',
+            oracle_independence='NOT_INDEPENDENT',
+            principal_relationship_to_candidate='LAST_PRODUCT_WRITER',
+        )
+        self.rejected(bundle)
+
+
+    def test_reviewer_fix_cannot_reuse_pre_fix_evidence(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        self.assertTrue(reviewer['production_output']['candidate_changed'])
+        old_sha = reviewer['input_sha']
+        evidence_id = final_evidence_id(reviewer)
+        embedded = next(item for item in reviewer['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['source_sha'] = old_sha
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['candidate_sha'] = old_sha
+        self.rejected(bundle)
+
+    def test_super_reviewer_fix_cannot_reuse_pre_fix_harness_evidence(self):
+        bundle = premerge_bundle()
+        super_review = bundle['stages'][2]
+        self.assertTrue(super_review['production_output']['candidate_changed'])
+        old_sha = super_review['input_sha']
+        evidence_id = final_evidence_id(super_review)
+        embedded = next(item for item in super_review['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['source_sha'] = old_sha
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['candidate_sha'] = old_sha
+        self.rejected(bundle)
+
+class TrustGraphV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_stale_review_lease_candidate_rejected(self):
+        bundle = premerge_bundle()
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['candidate_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_stale_pre_verdict_context_rejected(self):
+        bundle = premerge_bundle()
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['parent_context_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_environment_drift_rejected(self):
+        bundle = premerge_bundle()
+        environment_id = bundle['stages'][2]['environment_ref']
+        environment = next(item for item in bundle['support']['environments'] if item['environment_id'] == environment_id)
+        environment['digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_skipped_mandatory_ci_step_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        self.rejected(bundle)
+
+    def test_wrong_repository_policy_digest_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_unauthorized_owner_principal_rejected(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z')]
+        bundle['tasks'][0]['owner_commands'][0]['owner_principal'] = 'not-an-owner'
+        self.rejected(bundle)
+
+    def test_waiver_is_bound_and_never_result_override(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['waivable_criteria'] = ['A1']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == bundle['stages'][2]['review_lease_ref'])
+        bundle['support']['waivers'] = [dict(
+            waiver_id='W1',
+            task_id='T86',
+            target_kind='CRITERION',
+            target_id='A1',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner waiver',
+            reason='Synthetic risk acceptance',
+            risk='Synthetic residual risk',
+            compensating_controls=['Synthetic compensating control'],
+            issued_at='2026-10-04T00:03:00Z',
+            expires_at='2026-10-04T01:00:00Z',
+            non_transitive=True,
+            result_override=False,
+        )]
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+        bundle['support']['waivers'][0]['result_override'] = True
+        self.rejected(bundle)
+
+
+    def test_unauthorized_reviewer_principal_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['executor'] = 'intruder'
+        reviewer['role_integrity']['principal'] = 'intruder'
+        self.rejected(bundle)
+
+    def test_unverified_owner_command_rejected(self):
+        bundle = premerge_bundle()
+        cmd = command('HOLD', issued='2026-10-04T00:03:00Z')
+        cmd['source_kind'] = 'UNVERIFIED'
+        cmd['authentication_status'] = 'UNVERIFIED'
+        bundle['tasks'][0]['owner_commands'] = [cmd]
+        self.rejected(bundle)
+
+    def test_evidence_provenance_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        evidence_id = final_evidence_id(bundle['stages'][2])
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['collected_by_role'] = 'REVIEWER'
+        self.rejected(bundle)
+
+    def test_common_protocol_digest_drift_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][2]['common_protocol_digest'] = '1' * 64
+        self.rejected(bundle)
+
+    def test_merge_base_drift_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['merge_base_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_stacked_dependency_head_movement_expires_latest_lease(self):
+        bundle = premerge_bundle()
+        upstream = copy.deepcopy(bundle['tasks'][1])
+        upstream.update(task_id='T87', issue=87, pr=102, scope='Synthetic stacked upstream')
+        upstream['stacked_dependencies'] = []
+        bundle['tasks'].append(upstream)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Synthetic stacked upstream', covers=['P1'], depends_on=[]))
+        bundle['tasks'][1]['stacked_dependencies'] = ['T87']
+        bundle['observed']['dependency_heads'] = {'T87': HEADS[0]}
+        enrich_v11(bundle)
+        bundle['observed']['dependency_heads'] = {'T87': HEADS[0]}
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['dependency_heads'] = [dict(task_id='T87', sha=HEADS[0])]
+        readdress_review_lease(bundle, lease)
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+        bundle['observed']['dependency_heads']['T87'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_blocked_cannot_hide_internal_fixable_defect(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['internal_fixable_defects_remaining'] = 1
+        record['production_output']['unresolved_internal_defects'] = ['F-INTERNAL']
+        self.rejected(bundle)
+
+    def test_canonical_post_merge_observation_must_match_provider_record(self):
+        bundle = example_bundle()
+        bundle['results'][0]['canonical_observation']['target_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+
+    def test_task_only_acceptance_criterion_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['acceptance_sets'][0]['criteria'] = [
+            criterion for criterion in protocol['acceptance_sets'][0]['criteria'] if criterion['id'] != 'A1'
+        ]
+        self.rejected(bundle)
+
+    def test_super_review_criterion_without_project_harness_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['harnesses'][0]['criteria'] = ['P1']
+        self.rejected(bundle)
+
+    def test_ci_app_identity_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['app_identity'] = 'unexpected-app'
+        self.rejected(bundle)
+
+    def test_ci_workflow_path_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['workflow_path'] = '.github/workflows/other.yml'
+        self.rejected(bundle)
+
+    def test_pre_merge_context_drift_expires_final_lease(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        context = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == state['pre_merge_context_ref'])
+        context['parent_frontier_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_authorized_role_sets_must_not_overlap(self):
+        bundle = premerge_bundle()
+        for task in bundle['tasks']:
+            task['role_principals']['REVIEWER'].append('coder')
+        self.rejected(bundle)
+
+
+class PolicyAndMergeAuthorityV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_unknown_repository_policy_visibility_waits_external(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_visibility'] = 'UNKNOWN'
+        result = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((result['status'], result['engineering_approved'], result['merge_ready']), ('WAITING_EXTERNAL', False, False))
+
+    def test_repository_policy_source_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['repository_policy_source_ref'] = 'https://example.invalid/policy/other'
+        self.rejected(bundle)
+
+    def test_unverified_merge_authority_rejected(self):
+        bundle = premerge_bundle()
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority['authentication_status'] = 'UNVERIFIED'
+        self.rejected(bundle)
+
+    def test_non_owner_merge_authority_rejected_under_owner_only(self):
+        bundle = premerge_bundle()
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority['principal'] = 'reviewer'
+        self.rejected(bundle)
+
+    def test_delegated_merge_authority_exact_principal_and_reference(self):
+        bundle = premerge_bundle()
+        parent = bundle['tasks'][0]
+        parent['merge_authority'] = dict(mode='DELEGATED', reference='AUTH-DELEGATE-1', delegate_principal='merger')
+        authority = bundle['observed']['merge_authority_observations']['101']
+        authority.update(principal='merger', authority_ref='AUTH-DELEGATE-1')
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+        authority['authority_ref'] = 'AUTH-DELEGATE-OTHER'
+        self.rejected(bundle)
+
+    def test_merge_after_authority_observation_required(self):
+        bundle = example_bundle()
+        bundle['observed']['merge_authority_observations']['101']['observed_at'] = '2026-10-04T00:04:30Z'
+        self.rejected(bundle)
+
+
+class WaiverOutcomeV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def criterion_waiver(self, bundle, waiver_id='W-CRITERION', expires='2026-10-04T01:00:00Z'):
+        task = bundle['tasks'][1]
+        task['waivable_criteria'] = ['A1']
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='CRITERION',
+            target_id='A1',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner criterion waiver',
+            reason='Required criterion could not be executed in this environment.',
+            risk='Residual risk explicitly accepted for this exact candidate.',
+            compensating_controls=['Synthetic compensating control'],
+            issued_at='2026-10-04T00:02:20Z',
+            expires_at=expires,
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def check_waiver(self, bundle, waiver_id='W-CHECK', expires='2026-10-04T01:00:00Z'):
+        task = bundle['tasks'][1]
+        task['waivable_required_checks'] = ['Required hosted check']
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='REQUIRED_CHECK',
+            target_id='Required hosted check',
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner required-check waiver',
+            reason='Required hosted check is unavailable for this exact candidate.',
+            risk='Residual CI risk explicitly accepted.',
+            compensating_controls=['Independent Super Review already passed.'],
+            issued_at='2026-10-04T00:02:40Z',
+            expires_at=expires,
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def test_required_not_run_advances_only_as_approved_with_waiver(self):
+        bundle = premerge_bundle()
+        waiver = self.criterion_waiver(bundle)
+        final = bundle['stages'][2]
+        final['findings'] = []
+        final['production_output'].update(
+            defects_found=[],
+            defects_fixed_here=[],
+            fixes_applied=[],
+            regressions_added=[],
+        )
+        final['discovery_freeze']['finding_ids'] = []
+        for row in final['acceptance_results']:
+            row['finding_ids'] = []
+        for evidence_id in final['discovery_freeze']['evidence_ids']:
+            embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+            embedded['result'] = 'PASS'
+            provenance = evidence_provenance(bundle, evidence_id)
+            provenance['result'] = 'PASS'
+            provenance['exit_code'] = 0
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        final['acceptance_results'][0]['result'] = 'NOT_RUN'
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'NOT_RUN'
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['result'] = 'NOT_RUN'
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
+        self.assertEqual(final['acceptance_results'][0]['result'], 'NOT_RUN')
+
+    def test_required_not_run_without_waiver_rejected(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+        final['acceptance_results'][0]['result'] = 'NOT_RUN'
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'NOT_RUN'
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['result'] = 'NOT_RUN'
+        self.rejected(bundle)
+
+    def test_fail_cannot_be_waived(self):
+        bundle = premerge_bundle()
+        waiver = self.criterion_waiver(bundle)
+        final = bundle['stages'][2]
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        final['acceptance_results'][0]['result'] = 'FAIL'
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['result'] = 'FAIL'
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['result'] = 'FAIL'
+        self.rejected(bundle)
+
+    def test_required_check_not_run_with_active_waiver_can_be_merge_ready(self):
+        bundle = premerge_bundle()
+        self.check_waiver(bundle)
+        bundle['observed']['checks']['101'][0]['result'] = 'NOT_RUN'
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['result'] = 'NOT_RUN'
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        state['required_checks'][0]['run_id'] = None
+        state['required_checks'][0]['job_id'] = None
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_expired_required_check_waiver_does_not_keep_merge_ready(self):
+        bundle = premerge_bundle()
+        self.check_waiver(bundle, expires='2026-10-04T00:04:00Z')
+        bundle['observed']['checks']['101'][0]['result'] = 'NOT_RUN'
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['result'] = 'NOT_RUN'
+        state['required_checks'][0]['mandatory_steps_executed'] = False
+        state['required_checks'][0]['run_id'] = None
+        state['required_checks'][0]['job_id'] = None
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'WAITING_OWNER')
+
+
+class PrincipalAndDependencyV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_role_impersonation_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['executor'] = 'coder'
+        bundle['stages'][1]['role_integrity']['principal'] = 'coder'
+        self.rejected(bundle)
+
+    def test_unverified_owner_command_rejected(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z')]
+        bundle['tasks'][0]['owner_commands'][0]['source_kind'] = 'UNVERIFIED'
+        bundle['tasks'][0]['owner_commands'][0]['authentication_status'] = 'UNVERIFIED'
+        self.rejected(bundle)
+
+    def test_evidence_provenance_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        evidence_id = bundle['stages'][2]['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['candidate_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_super_review_evidence_cannot_claim_wrong_producer_role(self):
+        bundle = premerge_bundle()
+        evidence_id = bundle['stages'][2]['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['producer_role'] = 'REVIEWER'
+        self.rejected(bundle)
+
+    def test_stacked_dependency_head_drift_rejected(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['stacked_dependencies'] = ['TUPSTREAM']
+        upstream = copy.deepcopy(task)
+        upstream.update(task_id='TUPSTREAM', issue=87, pr=102, stacked_dependencies=[])
+        bundle['tasks'].append(upstream)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Synthetic upstream dependency', covers=['P1'], depends_on=[]))
+        bundle['observed']['dependency_heads']['TUPSTREAM'] = HEADS[4]
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['dependency_heads'] = [dict(task_id='TUPSTREAM', sha=HEADS[3])]
+        self.rejected(bundle)
+
+    def test_blocked_cannot_hide_internal_fixable_defect(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['writer_stopped'] = True
+        record['work_periods'][0]['end'] = '2026-10-04T00:00:30Z'
+        record['publications']['end'] = dict(
+            comment_ref='https://example.invalid/issues/85#blocked-end',
+            published_at='2026-10-04T00:00:30Z',
+            summary='Synthetic blocked END.',
+        )
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['internal_fixable_defects_remaining'] = 1
+        record['production_output']['unresolved_internal_defects'] = ['F-INTERNAL']
+        self.rejected(bundle)
+
+
+class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_reviewer_cannot_omit_project_required_reviewer_criterion(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['acceptance_results'] = []
+        reviewer['acceptance_checked'] = []
+        reviewer['production_output']['coverage_completed'] = []
+        self.rejected(bundle)
+
+    def test_super_reviewer_cannot_omit_project_required_super_review_criterion(self):
+        bundle = premerge_bundle()
+        super_review = bundle['stages'][2]
+        super_review['acceptance_results'] = []
+        super_review['acceptance_checked'] = []
+        super_review['production_output']['coverage_completed'] = []
+        self.rejected(bundle)
+
+    def test_optional_not_applicable_requires_rationale(self):
+        bundle = premerge_bundle()
+        add_optional_reviewer_na(bundle, None)
+        self.rejected(bundle)
+
+    def test_optional_not_applicable_with_rationale_is_truthful(self):
+        bundle = premerge_bundle()
+        add_optional_reviewer_na(bundle, 'Synthetic criterion does not apply to this child.')
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_blocking_carried_finding_stops_advancement(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['carried_findings'] = [dict(
+            id='F-CARRIED', blocking=True, status='CARRIED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[], rationale=None,
+        )]
+        self.rejected(bundle)
+
+    def test_resolved_carried_finding_requires_resolution_evidence(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['carried_findings'] = [dict(
+            id='F-RESOLVED', blocking=True, status='RESOLVED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[], rationale=None,
+        )]
+        self.rejected(bundle)
+
+    def test_resolved_carried_finding_with_evidence_can_advance(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        final['carried_findings'] = [dict(
+            id='F-RESOLVED', blocking=True, status='RESOLVED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[evidence_id], rationale=None,
+        )]
+        final['acceptance_results'][0]['finding_ids'] = ['F-RESOLVED']
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_candidate_changed_accounting_must_match_actual_stage_output(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['production_output']['candidate_changed'] = False
+        self.rejected(bundle)
+
+    def test_blocked_stage_requires_explicit_external_escalation(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['external_escalations'] = []
+        self.rejected(bundle)
+
+
+class ProvenanceBindingV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_review_lease_wrong_certifier_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == reviewer['review_lease_ref'])
+        lease['certifier_principal'] = 'coordinator'
+        self.rejected(bundle)
+
+    def test_reviewer_acceptance_surface_tamper_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['acceptance_surface']['fixture_digests'] = ['0' * 64]
+        self.rejected(bundle)
+
+    def test_independent_evidence_wrong_lease_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        evidence_id = final_evidence_id(reviewer)
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['review_lease_ref'] = bundle['stages'][2]['review_lease_ref']
+        self.rejected(bundle)
+
+    def test_independent_evidence_wrong_fixture_set_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        evidence_id = final_evidence_id(reviewer)
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['fixture_digests'] = ['0' * 64]
+        self.rejected(bundle)
+
+    def test_context_event_updated_after_snapshot_rejected(self):
+        bundle = premerge_bundle()
+        start_ref = bundle['stages'][1]['context_start_ref']
+        snapshot = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == start_ref)
+        snapshot['context_events'][0]['updated_at'] = '2026-10-04T00:02:00Z'
+        self.rejected(bundle)
+
+    def test_context_snapshot_requires_provider_frontier_event(self):
+        bundle = premerge_bundle()
+        pre_ref = bundle['stages'][2]['context_pre_verdict_ref']
+        snapshot = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == pre_ref)
+        for event in snapshot['context_events']:
+            if event['source_kind'] == 'PARENT_COMMENT':
+                event['provider_ref'] = 'https://example.invalid/issues/85#different-frontier'
+        self.rejected(bundle)
+
+
+class TargetAndRegressionV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def retarget_child(self, bundle, target_ref):
+        task = bundle['tasks'][1]
+        task['target_ref'] = target_ref
+        for record in bundle['stages']:
+            if record['task_id'] != task['task_id']:
+                continue
+            if record['source_attestation']:
+                record['source_attestation']['base_ref'] = target_ref
+            if record['review_lease_ref']:
+                lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == record['review_lease_ref'])
+                lease['target_ref'] = target_ref
+                readdress_review_lease(bundle, lease)
+        for state in bundle['support']['observed_states']:
+            if state['task_id'] == task['task_id']:
+                state['target_ref'] = target_ref
+
+    def test_child_target_ref_is_independent_of_global_main(self):
+        bundle = premerge_bundle()
+        self.retarget_child(bundle, 'refs/heads/phase-2')
+        bundle['observed']['main_sha'] = HEADS[4]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_wrong_provider_merge_target_ref_rejected(self):
+        bundle = example_bundle()
+        bundle['observed']['merged']['101']['target_ref'] = 'refs/heads/wrong'
+        self.rejected(bundle)
+
+    def test_canonical_reviewed_head_mismatch_rejected(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['reviewed_head_sha'] = HEADS[4]
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_exact_canonical_relation_requires_merge_commit_target(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['target_sha'] = HEADS[4]
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_descendant_canonical_relation_requires_ancestry_proof(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['relation'] = 'DESCENDANT_CONTAINS_MERGE'
+        canonical['target_sha'] = HEADS[4]
+        canonical['ancestry_proof_ref'] = None
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_project_regression_must_bind_known_criterion_and_harness(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['regressions'] = [dict(
+            id='REG-F1',
+            source_finding_ref='F1',
+            criterion_id='UNKNOWN',
+            harness_id='SR-ALL',
+            rationale='Synthetic escaped defect promotion.',
+            active=True,
+        )]
+        refresh_project_protocol_identity(bundle)
+        self.rejected(bundle)
+
+    def test_valid_project_regression_ratchet_is_accepted(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['regressions'] = [dict(
+            id='REG-F1',
+            source_finding_ref='F1',
+            criterion_id='A1',
+            harness_id='SR-ALL',
+            rationale='Synthetic escaped defect becomes permanent Super Review coverage.',
+            active=True,
+        )]
+        refresh_project_protocol_identity(bundle)
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+
+class ExternalGateV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def add_gate(self, bundle, *, gate_id='EXT-1', required=True, waivable=True, allowed=None):
+        allowed = allowed or ['SUPER_REVIEW_INDEPENDENT']
+        protocol = bundle['support']['project_protocols'][0]
+        method_id = 'VM-' + gate_id
+        protocol['external_gates'] = [dict(
+            id=gate_id,
+            required=required,
+            waivable=waivable,
+            applies_to='CHILD',
+            allowed_evidence_classes=allowed,
+        )]
+        protocol['verification_methods'] = [m for m in protocol['verification_methods'] if m['external_gate_id'] != gate_id]
+        protocol['verification_methods'].append(dict(
+            id=method_id,
+            verification_class='EXTERNAL_ORACLE',
+            harness_id=None,
+            external_gate_id=gate_id,
+            required_evidence_classes=allowed,
+            material_inputs=['PRODUCT', 'EXTERNAL_SERVICE'],
+            rerun_policy='FULL_REQUIRED_SET',
+            applies_to_roles=['COORDINATOR'],
+        ))
+        refresh_project_protocol_identity(bundle)
+        return method_id
+
+    def add_gate_evidence(self, bundle, method_id, *, result='PASS', evidence_class='SUPER_REVIEW_INDEPENDENT',
+                          origin_kind='STAGE_EXECUTOR', origin_principal='coordinator',
+                          oracle_independence='PINNED_ORACLE_INDEPENDENT',
+                          relationship='LAST_PRODUCT_WRITER', provider_ref=None):
+        final = bundle['stages'][2]
+        template_id = final_evidence_id(final)
+        embedded_template = next(item for item in final['evidence_manifest'] if item['evidence_id'] == template_id)
+        provenance_template = evidence_provenance(bundle, template_id)
+        evidence_id = 'EV-GATE-' + method_id
+        embedded = copy.deepcopy(embedded_template)
+        embedded.update(
+            evidence_id=evidence_id,
+            **{'class': evidence_class},
+            evidence_phase='EXTERNAL_GATE',
+            result=result,
+            verification_method_id=method_id,
+            harness_id=None,
+            external_gate_id='EXT-1',
+            harness_digest=None,
+        )
+        provenance = copy.deepcopy(provenance_template)
+        provenance.update(
+            evidence_id=evidence_id,
+            evidence_class=evidence_class,
+            evidence_phase='EXTERNAL_GATE',
+            result=result,
+            verification_method_id=method_id,
+            harness_id=None,
+            external_gate_id='EXT-1',
+            harness_digest=None,
+            origin_kind=origin_kind,
+            origin_principal=origin_principal,
+            oracle_independence=oracle_independence,
+            principal_relationship_to_candidate=relationship,
+            provider_ref=provider_ref,
+            command_argv=[] if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else ['synthetic', 'external-gate', method_id],
+            exit_code=None if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else (0 if result == 'PASS' else 1),
+            procedure_kind='PROVIDER' if evidence_class in ['CI_PROVIDER', 'EXTERNAL_ORACLE'] else 'COMMAND',
+        )
+        final['evidence_manifest'].append(embedded)
+        final['evidence_refs'].append(evidence_id)
+        bundle['support']['evidence_records'].append(provenance)
+        return evidence_id
+
+    def add_gate_waiver(self, bundle, gate_id='EXT-1', waiver_id='W-EXT'):
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='EXTERNAL_GATE',
+            target_id=gate_id,
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner external-gate waiver',
+            reason='Synthetic external gate unavailable for this exact candidate.',
+            risk='Residual external-gate risk explicitly accepted.',
+            compensating_controls=['Pinned Super Review evidence remains current.'],
+            issued_at='2026-10-04T00:02:20Z',
+            expires_at='2026-10-04T01:00:00Z',
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def test_required_external_gate_must_be_accounted(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle)
+        self.rejected(bundle)
+
+    def test_external_gate_pass_requires_project_allowed_evidence_class(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(bundle, method_id)
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+    def test_duplicate_external_gate_ids_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['external_gates'] = [
+            dict(id='EXT-1', required=True, waivable=True, applies_to='CHILD', allowed_evidence_classes=['SUPER_REVIEW_INDEPENDENT']),
+            dict(id='EXT-1', required=False, waivable=True, applies_to='CHILD', allowed_evidence_classes=['SUPER_REVIEW_INDEPENDENT']),
+        ]
+        refresh_project_protocol_identity(bundle)
+        self.rejected(bundle)
+
+    def test_required_external_gate_fail_cannot_be_waived(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='FAIL')
+        final = bundle['stages'][2]
+        final['external_gate_results'] = [dict(gate_id='EXT-1', result='FAIL', evidence_ids=[evidence_id])]
+        waiver = self.add_gate_waiver(bundle)
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        self.rejected(bundle)
+
+    def test_required_external_gate_not_run_can_advance_with_exact_waiver(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle)
+        final = bundle['stages'][2]
+        final['external_gate_results'] = [dict(gate_id='EXT-1', result='NOT_RUN', evidence_ids=[])]
+        waiver = self.add_gate_waiver(bundle)
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
+
+    def test_external_oracle_evidence_is_consumed_without_stage_impersonation(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='EXTERNAL_ORACLE',
+            origin_kind='EXTERNAL_ORACLE',
+            origin_principal='oracle-service',
+            oracle_independence='PROVIDER_INDEPENDENT',
+            relationship='EXTERNAL_PROVIDER',
+            provider_ref='synthetic://oracle/run/1',
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_external_oracle_stage_impersonation_rejected(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='EXTERNAL_ORACLE',
+            origin_kind='STAGE_EXECUTOR',
+            origin_principal='coordinator',
+            oracle_independence='PINNED_ORACLE_INDEPENDENT',
+            relationship='LAST_PRODUCT_WRITER',
+            provider_ref=None,
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+
+    def test_external_gate_pass_cannot_override_fail_evidence(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='FAIL')
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+    def test_external_gate_pass_cannot_override_inconclusive_evidence(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='INCONCLUSIVE')
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+    def test_ci_provider_evidence_is_consumed_as_external_origin(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['CI_PROVIDER'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='CI_PROVIDER',
+            origin_kind='CI_PROVIDER',
+            origin_principal='github-actions',
+            oracle_independence='PROVIDER_INDEPENDENT',
+            relationship='EXTERNAL_PROVIDER',
+            provider_ref='synthetic://actions/run/42/job/7',
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_ci_provider_cannot_be_faked_by_stage_executor(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['CI_PROVIDER'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='CI_PROVIDER',
+            origin_kind='STAGE_EXECUTOR',
+            origin_principal='coordinator',
+            oracle_independence='PINNED_ORACLE_INDEPENDENT',
+            relationship='LAST_PRODUCT_WRITER',
+            provider_ref=None,
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+
+
+
+class ReviewedBlockerRegressionTests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def set_final_result(self, bundle, record, result):
+        evidence_id = final_evidence_id(record)
+        embedded = next(item for item in record['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['result'] = result
+        provenance['result'] = result
+        provenance['exit_code'] = 0 if result == 'PASS' else 1 if result == 'FAIL' else None
+        return evidence_id
+
+    def test_criterion_pass_cannot_override_fail_evidence(self):
+        bundle = premerge_bundle()
+        coder = bundle['stages'][0]
+        self.set_final_result(bundle, coder, 'FAIL')
+        self.assertEqual(coder['acceptance_results'][0]['result'], 'PASS')
+        self.rejected(bundle)
+
+    def test_criterion_pass_cannot_override_inconclusive_evidence(self):
+        bundle = premerge_bundle()
+        coder = bundle['stages'][0]
+        self.set_final_result(bundle, coder, 'INCONCLUSIVE')
+        self.assertEqual(coder['acceptance_results'][0]['result'], 'PASS')
+        self.rejected(bundle)
+
+    def test_missing_required_verification_method_evidence_rejected(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        protocol = bundle['support']['project_protocols'][0]
+        method_id = 'VM-A1-REVIEW-SECOND'
+        task['acceptance'][0]['verification_method_ids'].append(method_id)
+        criterion = next(
+            criterion for acceptance_set in protocol['acceptance_sets']
+            for criterion in acceptance_set['criteria'] if criterion['id'] == 'A1'
+        )
+        criterion['verification_method_ids'].append(method_id)
+        protocol['verification_methods'].append(dict(
+            id=method_id,
+            verification_class='BOUNDARY',
+            harness_id=None,
+            external_gate_id=None,
+            required_evidence_classes=['REVIEWER_INDEPENDENT'],
+            material_inputs=['PRODUCT'],
+            rerun_policy='FULL_REQUIRED_SET',
+            applies_to_roles=['REVIEWER'],
+        ))
+        refresh_project_protocol_identity(bundle)
+        self.rejected(bundle)
+
+    def test_wrong_harness_identity_rejected(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['harness_id'] = 'SR-WRONG'
+        provenance['harness_id'] = 'SR-WRONG'
+        self.rejected(bundle)
+
+    def test_synthetic_merge_ci_tracks_trigger_and_tested_commit_separately(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        check = state['required_checks'][0]
+        self.assertEqual(check['trigger_pr_head_sha'], bundle['stages'][2]['validated_sha'])
+        self.assertNotEqual(check['tested_commit_sha'], check['trigger_pr_head_sha'])
+        self.assertEqual(check['checkout_mode'], 'SYNTHETIC_MERGE')
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_ci_wrong_tested_tree_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['tested_tree_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_ci_wrong_trigger_pr_head_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['trigger_pr_head_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_pr_head_policy_rejects_synthetic_merge_checkout(self):
+        bundle = premerge_bundle()
+        contract = bundle['tasks'][1]['required_check_contracts'][0]
+        contract['certifies'] = 'PR_HEAD'
+        contract['allowed_checkout_modes'] = ['PR_HEAD']
+        self.rejected(bundle)
+
+    def test_reviewer_completion_requires_discovery_freeze(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['discovery_freeze'] = None
+        self.rejected(bundle)
+
+    def test_repair_cannot_begin_before_discovery_freeze(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['discovery_freeze']['first_repair_at'] = _plus_seconds(reviewer['started_at'], 5)
+        self.rejected(bundle)
+
+    def test_discovery_sweep_must_cover_all_role_methods(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['discovery_freeze']['method_ids_attempted'] = []
+        reviewer['discovery_freeze']['evidence_ids'] = []
+        self.rejected(bundle)
+
+    def test_material_scope_change_cannot_self_certify_as_bounded_fix(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['findings'][0]['classification'] = 'MATERIAL_SCOPE_CHANGE'
+        self.rejected(bundle)
+
+    def test_independent_class_requires_independent_oracle_basis(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['oracle_independence'] = 'NOT_INDEPENDENT'
+        self.rejected(bundle)
+
+    def test_transitive_manifest_helper_drift_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        helper = next(item for item in protocol['protected_surface']['manifest'] if item['kind'] == 'IMPORTED_HELPER')
+        helper['digest'] = '0' * 64
+        protocol['digest'] = checker.canonical_digest(protocol)
+        for task in bundle['tasks']:
+            task['project_protocol_digest'] = protocol['digest']
+        self.rejected(bundle)
+
+    def test_stage_pass_is_not_a_valid_stage_lifecycle_status(self):
+        bundle = premerge_bundle()
+        bundle['stages'][0]['status'] = 'PASS'
+        self.rejected(bundle)
+
+
+class SchemaSurfaceV11Tests(unittest.TestCase):
+    def test_v10_bundle_is_not_silently_reinterpreted_as_v11(self):
+        v10 = ROOT.parent / 'Local_PR_Deliverty_v1.0' / 'examples' / 'example-complete.json'
+        legacy = json.loads(v10.read_text(encoding='utf-8'))
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(legacy, '2026-10-04T00:08:00Z')
+
+    def test_every_v11_schema_is_valid_draft_2020_12(self):
+        from jsonschema import Draft202012Validator
+        for schema_path in sorted((ROOT / 'schemas').glob('*.schema.json')):
+            with self.subTest(schema=schema_path.name):
+                Draft202012Validator.check_schema(json.loads(schema_path.read_text(encoding='utf-8')))
+
+    def test_project_protocol_schema_accepts_domain_neutral_contract(self):
+        from jsonschema import Draft202012Validator
+        schema = json.loads((ROOT / 'schemas' / 'project-protocol.schema.json').read_text(encoding='utf-8'))
+        manifest = [{
+            'id': 'M-H',
+            'kind': 'HARNESS_ENTRYPOINT',
+            'ref': 'synthetic://harness',
+            'digest': HARNESS_DIGEST,
+            'transitive': True,
+        }]
+        sample = {
+            'protocol_id': 'example-project-v1',
+            'version': '1.0',
+            'repository': 'exampleowner/editor',
+            'source_ref': 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json',
+            'digest': PROJECT_DIGEST,
+            'acceptance_sets': [{
+                'id': 'A1',
+                'criteria': [{
+                    'id': 'A1-001',
+                    'required': True,
+                    'reviewer_check_required': True,
+                    'super_review_required': True,
+                    'verification_method_ids': ['VM-A1-001'],
+                }],
+            }],
+            'verification_methods': [{
+                'id': 'VM-A1-001',
+                'verification_class': 'DIFFERENTIAL',
+                'harness_id': 'SR-A1',
+                'external_gate_id': None,
+                'required_evidence_classes': ['SUPER_REVIEW_INDEPENDENT'],
+                'material_inputs': ['PRODUCT'],
+                'rerun_policy': 'FULL_REQUIRED_SET',
+                'applies_to_roles': ['COORDINATOR'],
+            }],
+            'harnesses': [{
+                'id': 'SR-A1',
+                'criteria': ['A1-001'],
+                'protected': True,
+                'verification_method_ids': ['VM-A1-001'],
+                'manifest_refs': ['M-H'],
+            }],
+            'protected_surface': {
+                'harness_digest': HARNESS_DIGEST,
+                'baseline_digest': BASELINE_DIGEST,
+                'oracle_digests': [ORACLE_DIGEST],
+                'fixture_digests': [FIXTURE_DIGEST],
+                'manifest': manifest,
+                'manifest_digest': checker.canonical_value_digest(manifest),
+            },
+            'external_gates': [],
+            'regressions': [],
+        }
+        errors = list(Draft202012Validator(schema).iter_errors(sample))
+        self.assertEqual(errors, [])
+
+if __name__ == '__main__':
+    unittest.main()

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:waiver",
+  "type": "object",
+  "properties": {
+    "waiver_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "lease_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "candidate_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "owner_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "risk": {
+      "type": "string",
+      "minLength": 1
+    },
+    "compensating_controls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "non_transitive": {
+      "const": true
+    },
+    "result_override": {
+      "const": false
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_kind": {
+      "enum": [
+        "CRITERION",
+        "REQUIRED_CHECK",
+        "EXTERNAL_GATE"
+      ]
+    },
+    "target_id": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "task_id",
+    "waiver_id",
+    "target_kind",
+    "target_id",
+    "lease_id",
+    "candidate_sha",
+    "owner_principal",
+    "authority_ref",
+    "reason",
+    "risk",
+    "compensating_controls",
+    "issued_at",
+    "expires_at",
+    "non_transitive",
+    "result_override"
+  ],
+  "additionalProperties": false
+}
