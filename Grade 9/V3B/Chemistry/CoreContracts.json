@@ -1,0 +1,31 @@
+{
+  "subject": "Chemistry",
+  "contract_version": "1.0.0",
+  "equation_semantic_fields": [
+    "species_and_composition",
+    "conservation_basis",
+    "representation_level",
+    "model_not_mechanism"
+  ],
+  "validator_ids": [
+    "PARTICLE_ATOM_COUNT",
+    "CONSERVATION_LEDGER",
+    "REACTION_EXTENT_COUNTS"
+  ],
+  "risks": [
+    "coefficient versus subscript",
+    "species and charge identity",
+    "macroscopic versus particle interpretation",
+    "stoichiometry versus mechanism"
+  ],
+  "basis": "23d859a8fa0d07e0790d323767dc7fd08f396c5d",
+  "core_roles": {
+    "CORE1": "CONNECTED_SEMANTIC_INTELLIGENCE",
+    "CORE2": "SOURCE_QUESTION_AND_DEMAND_INTELLIGENCE",
+    "CORE1A": "DIFFICULT_CONCEPT_ASSIMILATION",
+    "CORE2A": "OWNER_DIRECTED_PRACTICE"
+  },
+  "source_truth": "ORIGINAL_EVIDENCE_WITH_EXACT_PROVENANCE",
+  "renderer_authority": "COMPOSITION_ONLY",
+  "new_generated_family_policy": "EXPLICIT_VALIDATOR_AND_SUBJECT_REVIEW_REQUIRED"
+}

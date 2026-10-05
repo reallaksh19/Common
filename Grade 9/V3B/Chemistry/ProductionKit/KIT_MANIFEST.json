@@ -1,0 +1,30 @@
+{
+  "kit_id": "V3B-CHEMISTRY-PRODUCTION-1",
+  "version": "0.1.0",
+  "subject": "Chemistry",
+  "entrypoint": "ProductionKit/run.py",
+  "shared_runtime": "../Shared/v3b",
+  "core_contract": "CoreContracts.json",
+  "roles": [
+    "CORE1",
+    "CORE2",
+    "CORE1A",
+    "CORE2A"
+  ],
+  "required_owner_modes": [
+    "STARTER",
+    "PRACTICE",
+    "REVISION",
+    "COMPETITION"
+  ],
+  "dependency_on_V2": false,
+  "source_adaptation_head": "23d859a8fa0d07e0790d323767dc7fd08f396c5d",
+  "implemented_boundary": "NEW_TOPIC_CONTROL_THROUGH_SEMANTIC_PUBLICATION_IR",
+  "automatic_model_authoring": false,
+  "automatic_human_release": false,
+  "validator_ids": [
+    "PARTICLE_ATOM_COUNT",
+    "CONSERVATION_LEDGER",
+    "REACTION_EXTENT_COUNTS"
+  ]
+}

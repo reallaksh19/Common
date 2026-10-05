@@ -1,0 +1,642 @@
+{
+  "id": "PHY-V3B-GATES",
+  "version": "1.0.0",
+  "parent_pr": 350,
+  "parent_head": "f2f22f0cea1c31ebf09da10241db8be0fde39789",
+  "maturity": "ENGINEERING",
+  "gates": [
+    {
+      "id": "PHY-ENERGY-UNITS",
+      "version": 1,
+      "title": "Energy units and mechanical work",
+      "badge": "EASY",
+      "badge_reason": "Single energy-unit bridge; no model branching.",
+      "prerequisites": [],
+      "scope": "Prerequisite bridge supplied by existing Physics knowledge; no enrichment research.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": null,
+      "obligations": [
+        {
+          "id": "PHY-ENERGY-UNITS-C1",
+          "kind": "CONCEPT",
+          "statement": "Energy-transfer terms must have the same dimensions before addition.",
+          "evidence_refs": [
+            "OWNER_DESIGN:energy-unit-prerequisite"
+          ]
+        },
+        {
+          "id": "PHY-ENERGY-UNITS-R1",
+          "kind": "RELATION",
+          "statement": "1 Pa m^3 = 1 N m = 1 J; 1 kPa L = 1 J.",
+          "evidence_refs": [
+            "OWNER_DESIGN:energy-unit-prerequisite"
+          ]
+        },
+        {
+          "id": "PHY-ENERGY-UNITS-V1",
+          "kind": "REPRESENTATION",
+          "statement": "Map pressure times volume into force times displacement using a piston area A.",
+          "evidence_refs": [
+            "OWNER_DESIGN:energy-unit-prerequisite"
+          ],
+          "relation_ids": [
+            "PHY-ENERGY-UNITS-R1"
+          ]
+        },
+        {
+          "id": "PHY-ENERGY-UNITS-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "Do not multiply by 1000 twice when converting kPa L to J.",
+          "evidence_refs": [
+            "OWNER_DESIGN:energy-unit-prerequisite"
+          ]
+        },
+        {
+          "id": "PHY-ENERGY-UNITS-K1",
+          "kind": "CHECK",
+          "statement": "Recompute 150 kPa times 0.40 L as 150000 Pa times 0.00040 m^3 = 60 J.",
+          "evidence_refs": [
+            "OWNER_DESIGN:energy-unit-prerequisite"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-TH-SYSTEM",
+      "version": 1,
+      "title": "System boundary and state",
+      "badge": "MEDIUM",
+      "badge_reason": "Coordinate words, sign conventions and representation with sequential reasoning.",
+      "prerequisites": [
+        "PHY-ENERGY-UNITS"
+      ],
+      "scope": "Closed thermodynamic system; no mass transfer or macroscopic kinetic/potential-energy change.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#thermodynamics",
+      "obligations": [
+        {
+          "id": "PHY-TH-SYSTEM-C1",
+          "kind": "CONCEPT",
+          "statement": "Name the system and its boundary before assigning heat and work signs.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ]
+        },
+        {
+          "id": "PHY-TH-SYSTEM-C2",
+          "kind": "CONCEPT",
+          "statement": "Internal energy is a state property; heat and work describe energy transfer during a process.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ]
+        },
+        {
+          "id": "PHY-TH-SYSTEM-R1",
+          "kind": "RELATION",
+          "statement": "Delta U = U_final - U_initial; Q is positive into the system and W_by is positive out as work.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ]
+        },
+        {
+          "id": "PHY-TH-SYSTEM-V1",
+          "kind": "REPRESENTATION",
+          "statement": "A system-boundary diagram labels the selected matter, heat arrow and work arrow with directions.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ],
+          "relation_ids": [
+            "PHY-TH-SYSTEM-R1"
+          ]
+        },
+        {
+          "id": "PHY-TH-SYSTEM-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "A body does not contain heat as a stored substance; energy crossing due to temperature difference is heat.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ]
+        },
+        {
+          "id": "PHY-TH-SYSTEM-K1",
+          "kind": "CHECK",
+          "statement": "Reverse the stated system boundary and re-evaluate the direction of each transfer.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-TH-PV-WORK",
+      "version": 1,
+      "title": "Boundary work and path dependence",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-TH-SYSTEM"
+      ],
+      "scope": "Closed simple compressible system with only pressure-volume boundary work. System p-V area requires a quasistatic mechanically equilibrated path.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#thermodynamics",
+      "obligations": [
+        {
+          "id": "PHY-TH-PV-WORK-C1",
+          "kind": "CONCEPT",
+          "statement": "Work requires a path; identical end states do not determine boundary work.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-R1",
+          "kind": "RELATION",
+          "statement": "W_by = integral p_ext dV for the stated boundary-work model; along a quasistatic mechanically equilibrated path use the system pressure p.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-R2",
+          "kind": "RELATION",
+          "statement": "At constant opposing pressure W_by = p_ext (V_final - V_initial).",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-R3",
+          "kind": "RELATION",
+          "statement": "At fixed volume the pressure-volume work is zero even if pressure changes.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-V1",
+          "kind": "REPRESENTATION",
+          "statement": "A p-V diagram labels axes and units, directed path segments, end states, and the area contributing to work.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ],
+          "relation_ids": [
+            "PHY-TH-PV-WORK-R1",
+            "PHY-TH-PV-WORK-R2",
+            "PHY-TH-PV-WORK-R3"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "A vertical p-V segment is not zero heat; it is zero pressure-volume work.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-M2",
+          "kind": "MISCONCEPTION",
+          "statement": "Expansion into vacuum has zero opposing-pressure work; do not substitute an undefined intermediate system pressure.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        },
+        {
+          "id": "PHY-TH-PV-WORK-K1",
+          "kind": "CHECK",
+          "statement": "Compare rectangle area with segmentwise work and verify compression gives negative W_by.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-2-work-heat-and-internal-energy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-TH-FIRST-LAW",
+      "version": 1,
+      "title": "First law with explicit energy bookkeeping",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-TH-PV-WORK"
+      ],
+      "scope": "Same closed-system model; no omitted electrical/shaft work, mass flow, or bulk kinetic/potential change.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#thermodynamics",
+      "obligations": [
+        {
+          "id": "PHY-TH-FIRST-LAW-C1",
+          "kind": "CONCEPT",
+          "statement": "Heat entering and work leaving contribute with opposite signs to the internal-energy change.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-R1",
+          "kind": "RELATION",
+          "statement": "Delta U = Q - W_by; equivalently Delta U = Q + W_on with W_on = -W_by.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-R2",
+          "kind": "RELATION",
+          "statement": "Q = Delta U + W_by; adiabatic means Q = 0, not Delta U = 0.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-V1",
+          "kind": "REPRESENTATION",
+          "statement": "Energy-flow arrows map individually to signed terms in the first-law equation.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ],
+          "relation_ids": [
+            "PHY-TH-FIRST-LAW-R1",
+            "PHY-TH-FIRST-LAW-R2"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "Positive work done on a gas is negative work done by that gas.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-M2",
+          "kind": "MISCONCEPTION",
+          "statement": "Equal initial and final states imply equal Delta U, not equal Q or W for different paths.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-K1",
+          "kind": "CHECK",
+          "statement": "500 J enters and 180 J leaves as work: Delta U = 320 J; recombine 320 + 180 = 500 J.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        },
+        {
+          "id": "PHY-TH-FIRST-LAW-K2",
+          "kind": "CHECK",
+          "statement": "For a closed adiabatic compression with W_by = -90 J, Delta U = +90 J.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/ans7870/16/16.unified/thermoF03/chapter_3.htm",
+            "https://openstax.org/books/university-physics-volume-2/pages/3-3-first-law-of-thermodynamics"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-TH-CYCLE",
+      "version": 1,
+      "title": "Cycles and oriented loop work",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-TH-FIRST-LAW"
+      ],
+      "scope": "A closed-system cycle returning to the full initial thermodynamic state; no unmodeled work modes.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#thermodynamics",
+      "obligations": [
+        {
+          "id": "PHY-TH-CYCLE-C1",
+          "kind": "CONCEPT",
+          "statement": "A cycle returns to the same internal energy even though heat and work may be nonzero.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-2/pages/3-4-thermodynamic-processes"
+          ]
+        },
+        {
+          "id": "PHY-TH-CYCLE-R1",
+          "kind": "RELATION",
+          "statement": "Delta U_cycle = 0; Q_net = W_by,net.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-2/pages/3-4-thermodynamic-processes"
+          ]
+        },
+        {
+          "id": "PHY-TH-CYCLE-V1",
+          "kind": "REPRESENTATION",
+          "statement": "An oriented p-V loop separates expansion and compression areas; show direction before net-work sign.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-2/pages/3-4-thermodynamic-processes"
+          ],
+          "relation_ids": [
+            "PHY-TH-CYCLE-R1",
+            "PHY-TH-PV-WORK-R1"
+          ]
+        },
+        {
+          "id": "PHY-TH-CYCLE-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "Zero internal-energy change does not imply zero net work.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-2/pages/3-4-thermodynamic-processes"
+          ]
+        },
+        {
+          "id": "PHY-TH-CYCLE-K1",
+          "kind": "CHECK",
+          "statement": "Reverse the same quasistatic loop: net work changes sign and its magnitude is unchanged.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-2/pages/3-4-thermodynamic-processes"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-GR-NEWTON",
+      "version": 1,
+      "title": "Exterior Newtonian field",
+      "badge": "MEDIUM",
+      "badge_reason": "Coordinate words, sign conventions and representation with sequential reasoning.",
+      "prerequisites": [
+        "PHY-ENERGY-UNITS"
+      ],
+      "scope": "Exterior to a spherical nonrotating source of fixed mass; test particle, Newtonian weak-field nonrelativistic regime.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#gravity",
+      "obligations": [
+        {
+          "id": "PHY-GR-NEWTON-C1",
+          "kind": "CONCEPT",
+          "statement": "Distance r is measured from the source centre and force points inward.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-NEWTON-R1",
+          "kind": "RELATION",
+          "statement": "g(r) = GM/r^2 in magnitude and F_r = -GMm/r^2 with outward-positive radial coordinate.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-NEWTON-V1",
+          "kind": "REPRESENTATION",
+          "statement": "A centre-radius diagram separates source radius R, altitude h, radius r=R+h and inward field.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ],
+          "relation_ids": [
+            "PHY-GR-NEWTON-R1"
+          ]
+        },
+        {
+          "id": "PHY-GR-NEWTON-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "Altitude h alone is not the radius used in the inverse-square law.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-NEWTON-K1",
+          "kind": "CHECK",
+          "statement": "At r=2R, g(r)/g(R)=1/4; a model returning 1/2 is invalid.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-GR-POTENTIAL",
+      "version": 1,
+      "title": "Potential, reference and escape",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-GR-NEWTON"
+      ],
+      "scope": "Conservative exterior Newtonian field; U(infinity)=0; no drag or other energy exchange.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#gravity",
+      "obligations": [
+        {
+          "id": "PHY-GR-POTENTIAL-C1",
+          "kind": "CONCEPT",
+          "statement": "Potential energy belongs to the interacting system and its reference must be declared.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-POTENTIAL-R1",
+          "kind": "RELATION",
+          "statement": "U(r) = -GMm/r; F_r = -dU/dr.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-POTENTIAL-R2",
+          "kind": "RELATION",
+          "statement": "v_escape(r) = sqrt(2GM/r) for zero final speed at infinity in this idealized model.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-POTENTIAL-V1",
+          "kind": "REPRESENTATION",
+          "statement": "Plot U versus r below zero, increasing toward zero; tie its slope to the inward force.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ],
+          "relation_ids": [
+            "PHY-GR-POTENTIAL-R1"
+          ]
+        },
+        {
+          "id": "PHY-GR-POTENTIAL-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "Negative potential energy is not negative mass or an outward gravitational force.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        },
+        {
+          "id": "PHY-GR-POTENTIAL-K1",
+          "kind": "CHECK",
+          "statement": "At r=2R, escape speed is 1/sqrt(2) of its value at R; verify energy at infinity.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-GR-APPROX",
+      "version": 1,
+      "title": "Research extension: validity of constant g",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-GR-POTENTIAL"
+      ],
+      "scope": "Bounded research-method specimen: exact versus constant-g energy for radial altitude h>=0 above spherical radius R; no new scientific claim.",
+      "authority_state": "DRAFT",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#gravity",
+      "obligations": [
+        {
+          "id": "PHY-GR-APPROX-C1",
+          "kind": "CONCEPT",
+          "statement": "Approximation quality requires a defined quantity, error denominator and domain.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ]
+        },
+        {
+          "id": "PHY-GR-APPROX-R1",
+          "kind": "RELATION",
+          "statement": "Delta U_exact = GMm h/[R(R+h)]; Delta U_constant_g = GMm h/R^2.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ]
+        },
+        {
+          "id": "PHY-GR-APPROX-R2",
+          "kind": "RELATION",
+          "statement": "For h>0, (Delta U_constant_g - Delta U_exact)/Delta U_exact = h/R; at h=0 compare the limiting value.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ]
+        },
+        {
+          "id": "PHY-GR-APPROX-V1",
+          "kind": "REPRESENTATION",
+          "statement": "Compare normalized exact x/(1+x) and approximate x against x=h/R; label the error domain.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ],
+          "relation_ids": [
+            "PHY-GR-APPROX-R1",
+            "PHY-GR-APPROX-R2"
+          ]
+        },
+        {
+          "id": "PHY-GR-APPROX-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "A chosen 1 percent error tolerance is a task criterion, not a universal law of acceptable modeling.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ]
+        },
+        {
+          "id": "PHY-GR-APPROX-K1",
+          "kind": "CHECK",
+          "statement": "At h/R=0.01, energy overestimate relative to exact is 1 percent; at h/R=1 it is 100 percent.",
+          "evidence_refs": [
+            "https://openstax.org/books/university-physics-volume-1/pages/13-3-gravitational-potential-energy-and-total-energy",
+            "AUTHOR_DERIVATION:specimens/Gravity-Research.md"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PHY-GR-RELATIVITY",
+      "version": 1,
+      "title": "Advanced research branch: relativity prerequisite map",
+      "badge": "HARD",
+      "badge_reason": "Multiple linked assumptions, competing interpretations, and explicit validity or approximation checks.",
+      "prerequisites": [
+        "PHY-GR-APPROX"
+      ],
+      "scope": "Planning-only branch; graduate derivation-level prerequisites and paper-specific scope unresolved.",
+      "authority_state": "SOURCE_HELD",
+      "maturity": "ENGINEERING",
+      "research_brief_ref": "RESEARCH.md#gravity",
+      "obligations": [
+        {
+          "id": "PHY-GR-RELATIVITY-C1",
+          "kind": "CONCEPT",
+          "statement": "Separate established model statements, experimental evidence, approximations and open questions.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/pages/syllabus/",
+            "https://dcc.ligo.org/P150914/public"
+          ]
+        },
+        {
+          "id": "PHY-GR-RELATIVITY-R1",
+          "kind": "RELATION",
+          "statement": "A Newtonian-limit comparison is required before connecting advanced gravity predictions to school-model results; no unreviewed relativistic equation is authorized here.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/pages/syllabus/",
+            "https://dcc.ligo.org/P150914/public"
+          ]
+        },
+        {
+          "id": "PHY-GR-RELATIVITY-V1",
+          "kind": "REPRESENTATION",
+          "statement": "A model-domain map labels school Newtonian scope, approximation analysis and the held advanced branch.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/pages/syllabus/",
+            "https://dcc.ligo.org/P150914/public"
+          ],
+          "relation_ids": [
+            "PHY-GR-RELATIVITY-R1"
+          ]
+        },
+        {
+          "id": "PHY-GR-RELATIVITY-M1",
+          "kind": "MISCONCEPTION",
+          "statement": "An evocative spacetime picture cannot replace mathematical prerequisites or establish a research result.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/pages/syllabus/",
+            "https://dcc.ligo.org/P150914/public"
+          ]
+        },
+        {
+          "id": "PHY-GR-RELATIVITY-K1",
+          "kind": "CHECK",
+          "statement": "Before authoring a derivation-level unit, verify differential-equation, linear-algebra, tensor and relativistic prerequisite closure and a paper-specific reviewer.",
+          "evidence_refs": [
+            "https://ocw.mit.edu/courses/8-962-general-relativity-spring-2020/pages/syllabus/",
+            "https://dcc.ligo.org/P150914/public"
+          ]
+        }
+      ]
+    }
+  ]
+}

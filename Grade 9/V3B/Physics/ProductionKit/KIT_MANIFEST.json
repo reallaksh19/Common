@@ -1,0 +1,37 @@
+{
+  "kit_id": "V3B-PHYSICS-PRODUCTION-1",
+  "version": "0.1.1",
+  "subject": "Physics",
+  "entrypoint": "ProductionKit/run.py",
+  "shared_runtime": "../Shared/v3b",
+  "core_contract": "CoreContracts.json",
+  "roles": [
+    "CORE1",
+    "CORE2",
+    "CORE1A",
+    "CORE2A"
+  ],
+  "required_owner_modes": [
+    "STARTER",
+    "PRACTICE",
+    "REVISION",
+    "COMPETITION"
+  ],
+  "dependency_on_V2": false,
+  "source_adaptation_head": "1232ecaf6061b38fd692c25662d2af9936d921aa",
+  "implemented_boundary": "NEW_TOPIC_CONTROL_THROUGH_SEMANTIC_PUBLICATION_IR",
+  "automatic_model_authoring": false,
+  "automatic_human_release": false,
+  "validator_ids": [
+    "CONSTANT_ACCELERATION_VELOCITY",
+    "CONSTANT_ACCELERATION_INITIAL_VELOCITY",
+    "CONSTANT_ACCELERATION_EVENT_TIME",
+    "SPEED_FROM_COMPONENTS",
+    "APEX_STATE"
+  ],
+  "runtime_status": "LEGACY_FOUR_CORE_PROTOTYPE_NOT_SIX_CORE_RELEASE",
+  "engineering_checker": "../Engineering/run.cjs",
+  "engineering_owner_board": "../Engineering/OWNER_BOARD.md",
+  "six_core_runtime_integration": "PENDING",
+  "engineering_source_head": "f2f22f0cea1c31ebf09da10241db8be0fde39789"
+}
