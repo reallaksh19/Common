@@ -331,7 +331,8 @@
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "external_gate_results": []
+      "external_gate_results": [],
+      "waiver_refs": []
     },
     {
       "record": "STAGE_RECORD",
@@ -495,7 +496,8 @@
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "external_gate_results": []
+      "external_gate_results": [],
+      "waiver_refs": []
     },
     {
       "record": "STAGE_RECORD",
@@ -659,7 +661,8 @@
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "external_gate_results": []
+      "external_gate_results": [],
+      "waiver_refs": []
     },
     {
       "record": "STAGE_RECORD",
@@ -823,7 +826,8 @@
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "external_gate_results": []
+      "external_gate_results": [],
+      "waiver_refs": []
     }
   ],
   "results": [
