@@ -1,29 +1,94 @@
-# Engineering Relay V3.2 — worth-gated continuity/recovery candidate
+# Engineering Relay V3.5 — embedded Coder continuity/recovery for Local PR Delivery v1.1
 
-## Status
+## Status and lineage
 
-V3.2 is an additive candidate implementation line created from the frozen Engineering Relay V3.1 tree after the evidence-based audit in Common #483.
+V3.5 is an additive protocol line for **nested Coder engineering execution** under `Local_PR_Deliverty_v1.1`.
 
-Until V3.2 is separately accepted/cut over, V3.1 remains the current production protocol. This directory is the implementation/replay surface for the worth-gated V3.2 continuity slice owned by Common #484.
+It was forked without modifying V3.2 from the exact Common basis:
 
-V3.1 is not modified by V3.2 work.
+```text
+SOURCE_COMMIT: a29e67ae8beabaeca8a794343e72c01e37d067af
+SOURCE_V3_2_TREE: 88ac97432a811f9a6b8d00bbe45cbec891e70d6a
+SOURCE_PATH: skills/engineering-pr-delivery-v3.2
+```
 
-## Normative recorder-first rule
+`skills/engineering-pr-delivery-v3.2/**` is frozen by #492/#494 and is not a V3.5 implementation surface.
 
-Relay is a durable **recording, continuity and reconstruction mechanism**. It does not decide whether ordinary engineering work may proceed.
+The copied V3.2-named files under this V3.5 directory are retained only as compatibility/replay baseline. They do **not** select the active V3.5 state machine. Active V3.5 behavior is defined by this file plus the explicitly V3.5-named schema/script/tests.
 
-Preserve these boundaries:
+## Nesting invariant
 
-- Owner/programme intent is human authority.
-- Git / PR / tests / runtime / artifacts are material truth.
-- exact-head evidence proves only the exact basis it names.
-- recorder-integrity failures remain real hard failures.
-- provider/reporting/status failure may reduce observability; it must never reduce production agency.
-- generated/current/progress/Further-Task views are derived and disposable.
-- execution, evidence, verification, delivery, provider lifecycle, and Owner authority remain separate axes.
-- a replacement executor/session does not create a new responsibility.
+Local v1.1 owns the production responsibility and role lifecycle:
 
-The engineering task-publication set remains exactly:
+```text
+LOCAL RESPONSIBILITY
+PRD-017
+  |
+  `-- CODER stage
+        |
+        `-- V3.5 nested engineering execution
+            ENG-PRD-017-CODER
+```
+
+V3.5 owns only continuity/recovery/provenance for the nested Coder engineering execution.
+
+V3.5 MUST NOT own or infer Local:
+
+- Reviewer or Coordinator/Super Reviewer transitions;
+- writer-slot/start permission;
+- Local stage timer accounting or watchdog truth;
+- merge authority;
+- acceptance-policy adoption;
+- risk-relaxation authority;
+- Local responsibility completion.
+
+A V3.5 `TASK_RESULT` may complete `ENG-PRD-017-CODER`; it can never by itself complete `PRD-017`.
+
+## Canonical nested identity
+
+For Local responsibility `PRD-017`, the default nested engineering identity is:
+
+```text
+ENG-PRD-017-CODER
+```
+
+The active binding records both identities:
+
+```yaml
+local_responsibility_task_id: PRD-017
+engineering_responsibility: ENG-PRD-017-CODER
+role: CODER
+result_scope: CODER_ENGINEERING_EXECUTION
+local_responsibility_complete: false
+```
+
+Identity is explicit and durable. Do not derive Local completion from V3.5 state names such as `COMPLETE`.
+
+## Exact protocol provenance
+
+A native V3.5 nested execution records exact immutable refs for both governing layers:
+
+```text
+LOCAL_PROTOCOL_REF: owner/repo@<40-sha>:skills/Local_PR_Deliverty_v1.1
+V3_5_PROTOCOL_REF: owner/repo@<40-sha>:skills/engineering-pr-delivery-v3.5
+```
+
+It also records the Local acceptance epoch/profile references supplied by the Local control plane. Those references are observed/bound context only; V3.5 cannot adopt or mutate them.
+
+## Recorder-first continuity semantics
+
+V3.5 retains the useful V3.2 continuity/recovery invariants for the nested engineering execution:
+
+- material truth comes from Git/PR/tests/runtime/artifacts;
+- durable task publications explain successor-safe engineering truth;
+- material and semantic/evidence frontiers remain separate;
+- passive frontier lag is not an engineering permission gate;
+- replacement executors do not create a new nested responsibility;
+- recovery evidence is required before the next material change after detected interruption/recovery;
+- progress is denominator-based, never activity-count based;
+- provider/reporting failure reduces observability, not engineering agency.
+
+The publication family remains:
 
 ```text
 IMPLEMENTATION_PLAN
@@ -32,292 +97,60 @@ TASK_EVIDENCE
 TASK_RESULT
 ```
 
-No heartbeat/activity publication is added.
+## Embedded Coder contract
 
-## Responsibility-first topology
+The machine-readable active contract is:
 
-Choose coordination topology from engineering responsibility, dependency, and writer topology — never executor count.
+- `schemas/embedded-coder-context-v35.schema.yaml`
+- `scripts/embedded_coder_v35.py`
+- `tests/test_embedded_coder_v35.py`
 
-```text
-R = independently governed responsibilities
-D = cross-responsibility dependency edges
-C = concurrent material writers
+The contract validates:
 
-R = 1
-→ SINGLE_RESPONSIBILITY
+1. exact Local and V3.5 protocol refs/digests;
+2. `PRD-*` Local identity and namespaced `ENG-PRD-*-CODER` engineering identity;
+3. role fixed to `CODER`;
+4. acceptance epoch/profile binding as read-only Local context;
+5. explicit denial of Local transition/timer/merge/policy/risk authority;
+6. Coder-scoped result semantics;
+7. `local_responsibility_complete: false` for every V3.5 result.
 
-R >= 2
-→ PROGRAMME
+## Completion semantics
 
-C >= 2
-→ CONCURRENT_WRITER overlay requiring its own proven conflict/fencing semantics
-```
-
-Three to five sequential replacement agents on one issue remain one responsibility.
-
-Programme Handover, RLL, and OFFLOAD traversal are conditional on real references/dependencies. Their mere existence in this copied baseline does not make them mandatory on the simple path.
-
-## Exact protocol provenance
-
-A new V3.2 continuity-managed responsibility SHOULD record an exact successor-verifiable protocol source:
+V3.5 uses:
 
 ```text
-PROTOCOL_REF: owner/repo@<exact-commit>:skills/engineering-pr-delivery-v3.2
+RESULT_SCOPE = CODER_ENGINEERING_EXECUTION
+ENGINEERING_RESPONSIBILITY_COMPLETE = true | false
+LOCAL_RESPONSIBILITY_COMPLETE = false
 ```
 
-If the candidate protocol is not present on the responsibility's own base/default branch, `PROTOCOL_REF` must point to the repository/commit where the governing candidate actually exists. A PR number may be added for navigation, but it does not replace the exact commit.
-
-This field is continuity provenance, not authority. Older snapshots without it remain readable as `UNKNOWN`; never fabricate a value.
-
-## Implementation plan → automatic GitHub start update
-
-When an agent begins material implementation of an already-published implementation plan, it MUST emit the V3.2 `implementation-start` semantic event.
+Even when engineering responsibility is complete:
 
 ```text
-IMPLEMENTATION_PLAN present
-        ↓
-implementation begins
-        ↓
-implementation-start event
-        ↓
-refresh responsibility current state
-        ↓
-best-effort GitHub Further Task + title projection
-        ↓
-continue engineering
+ENG-PRD-017-CODER COMPLETE
 ```
 
-Starting implementation earns zero progress.
-
-Use:
-
-```bash
-python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py implementation-start \
-  --snapshot relay/GENERATED/tasks/<issue>.continuity.json \
-  --output relay/GENERATED/tasks/<issue>.continuity.json
-```
-
-If the snapshot contains GitHub provider identity and authenticated `gh` is available, the command automatically updates the managed Further Task comment and title suffix.
-
-Provider synchronization failure is recorded as:
+Local remains responsible for:
 
 ```text
-FAILED_OBSERVABILITY_ONLY
+Coder END
+→ Reviewer
+→ Coordinator/Super Reviewer
+→ delivery / merge lifecycle
+→ Local responsibility completion
 ```
 
-and does not block material engineering.
+## Version drift
 
-No timer, heartbeat, commit count, test count, tool call, or elapsed-time event may substitute for this semantic event.
+V3.5 never silently falls back to V3.1/V3.2 as active authority merely because copied files, CI names, migration fixtures, generated state, or historical references contain those versions.
 
-## Responsibility-scoped current state
+Historical/compatibility reads are allowed only when explicitly classified as such.
 
-Use one mutable current surface per continuity-managed responsibility:
+If a later Relay version appears, the current nested execution remains pinned until the Local/Owner control plane authorizes migration.
 
-```text
-FURTHER_TASK_SNAPSHOT
-AUTHORITY: DERIVED_CONTINUITY_ONLY
-```
+## CI
 
-It answers:
+Dedicated V3.5 hosted validation is `.github/workflows/engineering-pr-delivery-v3.5.yml`.
 
-- exact protocol provenance (`PROTOCOL_REF`);
-- current state;
-- current plan;
-- declared progress denominator;
-- P = objectively completed declared units;
-- E = completed units with durable successor-safe evidence;
-- active/pending units;
-- material frontier;
-- semantic/evidence frontier;
-- passive reconciliation need;
-- active recovery mode/evidence obligation;
-- current / next;
-- genuine Owner decision if any;
-- stream-loss/handover escalation state.
-
-The managed provider surface is a cache/read model, not a fifth publication and not authority.
-
-Reference:
-- `operating-model/responsibility-continuity-v32.md`
-- `templates/further-task-v32.md`
-- `schemas/responsibility-continuity.schema.yaml`
-- `scripts/continuity_projection.py`
-
-## Progress semantics
-
-Progress is denominator-based.
-
-```text
-P = objectively completed declared units / denominator
-E = evidenced completed declared units / denominator
-```
-
-A unit cannot be evidenced unless it is complete.
-
-Do not award progress from commits, files, tests, comments/publications, tool calls, tokens, elapsed time, executor/session count, or generic `proceed`.
-
-Percentages may decrease after a legitimate declared-denominator expansion.
-
-The issue title may mirror:
-
-```text
-{P77% · E69% · UNIT-09 · RECOVERING}
-```
-
-but the title is disposable projection only.
-
-## Material vs semantic/evidence frontier
-
-V3.2 separates:
-
-```text
-MATERIAL_FRONTIER
-SEMANTIC_EVIDENCE_FRONTIER
-```
-
-Material head should be observed from Git/owned PR. Semantic/evidence head comes from the latest durable task evidence that explains/proves the relevant responsibility frontier.
-
-A material-ahead distance is reconstruction distance, not progress.
-
-The derived frontier exposes:
-
-```text
-RECONCILIATION_NEEDED: true | false
-```
-
-This is a passive discrepancy signal. During uninterrupted work, material may legitimately run ahead of the latest evidence checkpoint; therefore `RECONCILIATION_NEEDED=true` does not by itself force a recovery publication on the current executor.
-
-Refresh Git frontier mechanically with:
-
-```bash
-python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py observe-frontier \
-  --snapshot relay/GENERATED/tasks/<issue>.continuity.json \
-  --repo-root . \
-  --output relay/GENERATED/tasks/<issue>.continuity.json
-```
-
-## Active recovery state
-
-Recovery obligation is separate from passive frontier lag:
-
-```text
-RECOVERY_MODE: NONE | INTERRUPTED_EXECUTOR | FRONTIER_RECONCILIATION
-RECOVERY_EVIDENCE_REQUIRED: true | false
-```
-
-A replacement executor that observes recovery-relevant unexplained frontier lag starts recovery explicitly:
-
-```bash
-python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py recovery-start \
-  --snapshot relay/GENERATED/tasks/<issue>.continuity.json \
-  --mode FRONTIER_RECONCILIATION \
-  --output relay/GENERATED/tasks/<issue>.continuity.json
-```
-
-That event changes state to `RECOVERING` and sets `RECOVERY_EVIDENCE_REQUIRED=true`. A same-lifecycle unexpected loss uses `stream-loss` and sets `RECOVERY_MODE=INTERRUPTED_EXECUTOR`.
-
-Only durable `TASK_EVIDENCE — RECOVERY` provider readback clears the active evidence obligation and aligns the recovered semantic/evidence frontier.
-
-## Abrupt interruption — fast recovery
-
-Unexpected stream/session loss uses this first-line sequence:
-
-```text
-1. BASIS
-   verify responsibility, PROTOCOL_REF, and Owner amendments.
-
-2. LIVE MATERIAL
-   observe PR / branch / base / HEAD / relevant checks.
-
-3. DELTA
-   compare semantic/evidence frontier to material frontier.
-
-4. RECONCILE
-   validate active/pending work, assumptions, negative knowledge.
-
-5. TASK_EVIDENCE — RECOVERY
-   durably anchor reconstructed truth.
-
-6. CONTRIBUTE + CONTINUE
-   resume useful engineering.
-```
-
-Full/deep reconstruction remains available when task identity, authority, programme dependencies, RLL/OFFLOAD state, negative knowledge, or material/provider state cannot be reconciled.
-
-The recovery publication is required before the next material change after a detected recovery. This is semantic continuity discipline, not `relay_can` permission gating.
-
-## Three consecutive stream losses
-
-Within one executor lifecycle:
-
-```text
-loss 1 → recovery evidence
-loss 2 → recovery evidence
-loss 3 → recovery evidence + Plan for handover once
-loss 4+ → recovery evidence only; no repeat auto trigger
-```
-
-A successor lifecycle resets the count/trigger.
-
-This is continuity preparation, not an engineering failure or Owner-approval gate.
-
-## Scoped task results
-
-`TASK_RESULT` must make completion scope explicit:
-
-```text
-RESULT_SCOPE: STEP | PRODUCT | RESPONSIBILITY
-COVERAGE: <declared coverage>
-RESPONSIBILITY_COMPLETE: YES | NO | UNKNOWN
-```
-
-`RESPONSIBILITY_COMPLETE: YES` requires `RESULT_SCOPE: RESPONSIBILITY`.
-
-Historical V3.1 results without this field are `UNKNOWN`, never guessed complete.
-
-Provider issue closure and PR merge remain separate from responsibility completion.
-
-## Owner decisions
-
-Owner escalation is based on a genuine decision, not executor replacement or ordinary implementation learning.
-
-Ask Owner when the proposed action changes intended outcome/acceptance, independently governed scope, a protected invariant intentionally, a destructive/irreversible choice, reserved merge/release/publication authority, or another explicitly reserved Owner decision.
-
-Do not ask merely because an executor/session changed, implementation detail changed within accepted responsibility, tests/CI need investigation, a predecessor assumption was wrong, status/projection is stale, or provider title/comment sync failed.
-
-## Compatibility posture
-
-This V3.2 directory was forked from the exact V3.1 tree to preserve compatibility while the narrow slice is replayed.
-
-- V3.1 historical records remain immutable.
-- copied V3.1 scripts/schemas not touched by this slice remain compatibility baseline, not evidence that their ceremony is mandatory.
-- V3.1 AGENT_STATUS remains readable as executor history.
-- new responsibility current state is `FURTHER_TASK_SNAPSHOT`.
-- old snapshots missing `PROTOCOL_REF` or recovery `mode` remain readable as UNKNOWN/NONE rather than fabricated provenance/recovery.
-- old TASK_RESULT without explicit responsibility-complete maps to `UNKNOWN`.
-- programme Handover / RLL / OFFLOAD contracts remain readable and are traversed only when relevant.
-- missing V3.2 fields map to UNKNOWN rather than fabricated PASS/completion/authority.
-
-## V3.2 exact-head CI
-
-V3.2 candidate changes must have a dedicated hosted check that validates the candidate itself. The V3.1 workflow may legitimately report V3.2-only changes as `NOT_APPLICABLE`; that is not V3.2 acceptance evidence.
-
-The dedicated workflow is `.github/workflows/engineering-pr-delivery-v3.2.yml`. It must remain scoped to V3.2 candidate paths, compile the V3.2 Python surface, and run the focused continuity/replay regressions that exercise this worth-gated slice.
-
-Retired V2.5/V3 workflows must not be restored merely to create more green checks.
-
-## Worth gate
-
-No audit recommendation becomes permanent V3.2 behavior merely because it sounds cleaner.
-
-Retain a change only when replay shows that it addresses an observed failure or recurring measurable operation, materially reduces affected-path protocol work or removes a demonstrated ambiguity/interruption, adds no more recurring ceremony than it removes, keeps clean-path overhead bounded, introduces zero timer/heartbeat work, preserves recorder/material/human-authority invariants, introduces no new Owner gate, and survives real/replayable cases.
-
-The principal replay cases are recorded in Common #483: #375/#379, #376, #377, plus the controlled #486/#487 cold-takeover drill.
-
-## Inherited baseline
-
-All other files under this V3.2 tree were copied from the audited V3.1 tree at fork time. They remain available for compatibility and regression comparison.
-
-Where inherited V3.1 prose conflicts with this V3.2 document **for the continuity/recovery slice above**, this document is normative for V3.2.
-
-Where this document is silent, preserve the V3.1 recorder/material/acceptance invariant until a separately evidence-backed V3.2 change is implemented and validated.
+It validates the V3.5 active contract and verifies that the frozen `skills/engineering-pr-delivery-v3.2/**` tree is not modified by #494 work.
