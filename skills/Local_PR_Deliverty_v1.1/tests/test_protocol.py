@@ -35,6 +35,19 @@ POLICY_SOURCE = 'https://example.invalid/policy/required-checks'
 WORKFLOW_PATH = '.github/workflows/required.yml'
 EXPECTED_APP = 'github-actions'
 ARTIFACT_DIGEST = 'e' * 64
+FIXTURE_DIGEST = 'f' * 64
+
+
+def snapshot_events(record, task, observed_at):
+    created = record['started_at']
+    events = [
+        dict(source_kind='PARENT_ISSUE_BODY', provider_id='parent-body-' + record['record_id'], provider_ref='synthetic://parent/body', author_principal='owner', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=PARENT_CONTEXT_DIGEST, mutable=True),
+        dict(source_kind='TASK_ISSUE_BODY', provider_id='task-body-' + record['record_id'], provider_ref='synthetic://task/' + record['task_id'], author_principal='owner', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=CHILD_CONTEXT_DIGEST, mutable=True),
+        dict(source_kind='PARENT_COMMENT', provider_id='frontier-' + record['record_id'], provider_ref=record['parent_context']['through_comment_ref'], author_principal='coordinator', created_at=created, updated_at=created, body_digest=PARENT_CONTEXT_DIGEST, mutable=True),
+    ]
+    if task.get('pr') is not None:
+        events.append(dict(source_kind='PR_DESCRIPTION', provider_id='pr-description-' + record['record_id'], provider_ref=record['handover']['pr_description_ref'], author_principal='coder', created_at='2026-10-03T23:00:00Z', updated_at='2026-10-03T23:00:00Z', body_digest=PR_DESCRIPTION_DIGEST, mutable=True))
+    return events
 
 
 def enrich_v11(bundle):
@@ -89,6 +102,7 @@ def enrich_v11(bundle):
             harness_digest=HARNESS_DIGEST,
             baseline_digest=BASELINE_DIGEST,
             oracle_digests=[ORACLE_DIGEST],
+            fixture_digests=[FIXTURE_DIGEST],
         ),
         external_gates=[],
         regressions=[],
@@ -113,6 +127,9 @@ def enrich_v11(bundle):
             external_versions=[],
             network_policy='OFFLINE',
             secret_values_recorded=False,
+            package_manager=dict(name='pip', version='synthetic'),
+            locale='C.UTF-8',
+            timezone='UTC',
             digest=ENV_DIGEST,
         ))
 
@@ -142,9 +159,17 @@ def enrich_v11(bundle):
             harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
             baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
             environment_digest=ENV_DIGEST,
-            result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
+            result='PASS' if record['status'] in checker.ADVANCING_STATUSES else 'NOT_RUN',
             procedure='Synthetic protocol evidence fixture.',
             artifact_digest=None,
+            common_protocol_digest=COMMON_DIGEST,
+            review_lease_ref=None,
+            acceptance_surface_digest=SURFACE_DIGEST if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else None,
+            collected_at=record['work_periods'][-1]['end'] or record['started_at'],
+            procedure_kind='COMMAND',
+            command_argv=['synthetic', 'check'],
+            exit_code=0 if record['status'] in checker.ADVANCING_STATUSES else None,
+            fixture_digests=[FIXTURE_DIGEST] if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else [],
         ))
         declared = {criterion['id']: criterion for criterion in tasks[record['task_id']]['acceptance']}
         record['acceptance_results'] = [
@@ -163,6 +188,7 @@ def enrich_v11(bundle):
                 harness_digest=HARNESS_DIGEST,
                 baseline_digest=BASELINE_DIGEST,
                 oracle_digests=[ORACLE_DIGEST],
+                fixture_digests=[FIXTURE_DIGEST],
                 mutation_detected=False,
                 digest=SURFACE_DIGEST,
             )
@@ -213,6 +239,7 @@ def enrich_v11(bundle):
             owner_control_digest=OWNER_CONTROL_DIGEST,
             reconciled=True,
             reconciliation_note='Synthetic START context fully reconciled.',
+            context_events=snapshot_events(record, tasks[record['task_id']], record['started_at']),
         ))
 
         is_pass = record['status'] in checker.ADVANCING_STATUSES
@@ -234,6 +261,7 @@ def enrich_v11(bundle):
                 owner_control_digest=OWNER_CONTROL_DIGEST,
                 reconciled=True,
                 reconciliation_note='Synthetic PRE_VERDICT context fully reconciled.',
+                context_events=snapshot_events(record, tasks[record['task_id']], record['work_periods'][-1]['end']),
             ))
             record['source_attestation'] = dict(
                 candidate_sha=record['validated_sha'],
@@ -255,6 +283,15 @@ def enrich_v11(bundle):
                 lease_id=lease_ref,
                 task_id=record['task_id'],
                 stage_record_id=record['record_id'],
+                repository=tasks[record['task_id']]['repository'],
+                pr=tasks[record['task_id']]['pr'],
+                project_protocol_ref=tasks[record['task_id']]['project_protocol_ref'],
+                certifier_role=record['stage'],
+                certifier_principal=record['executor'],
+                harness_digest=HARNESS_DIGEST,
+                baseline_digest=BASELINE_DIGEST,
+                oracle_digests=[ORACLE_DIGEST],
+                fixture_digests=[FIXTURE_DIGEST],
                 candidate_sha=record['validated_sha'],
                 base_sha=record['base_sha'],
                 target_ref=tasks[record['task_id']]['target_ref'],
@@ -277,6 +314,9 @@ def enrich_v11(bundle):
                 environment_ref=record['environment_ref'],
                 context_pre_verdict_ref=record['context_pre_verdict_ref'],
             ))
+            provenance = next(item for item in support['evidence_records'] if item['evidence_id'] == evidence_id)
+            provenance['review_lease_ref'] = lease_ref
+            provenance['acceptance_surface_digest'] = SURFACE_DIGEST
         else:
             record['review_lease_ref'] = None
 
@@ -305,6 +345,7 @@ def enrich_v11(bundle):
             owner_control_digest=OWNER_CONTROL_DIGEST,
             reconciled=True,
             reconciliation_note='Synthetic PRE_MERGE context fully reconciled.',
+            context_events=snapshot_events(final, task, '2026-10-04T00:03:00Z'),
         ))
         state_ref = 'OBS-' + task['task_id']
         support['observed_states'].append(dict(
