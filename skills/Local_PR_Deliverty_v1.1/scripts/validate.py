@@ -12,7 +12,7 @@ from pipeline import RecordError, validate_evidence, validate_pipeline, status_d
 ROOT = Path(__file__).resolve().parents[1]
 ORDER = ['CODER', 'REVIEWER', 'COORDINATOR']
 DEFAULT_BUDGETS = {'CODER': 15, 'REVIEWER': 15, 'COORDINATOR': 45, 'PARENT_CHECK': 45}
-ADVANCING_STATUSES = {'PASS', 'APPROVED_WITH_WAIVER'}
+ADVANCING_STATUSES = {'STAGE_COMPLETE', 'STAGE_COMPLETE_WITH_WAIVER'}
 SCHEMAS = {'TASK': 'task', 'STAGE_RECORD': 'stage-record', 'DELIVERY_RESULT': 'delivery-result'}
 SUPPORT_SCHEMAS = {
     'review_leases': ('review-lease', 'lease_id'),
@@ -42,6 +42,43 @@ def canonical_digest(record, omit_fields=('digest',)):
     payload = {key: value for key, value in record.items() if key not in omit}
     encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
     return hashlib.sha256(encoded).hexdigest()
+
+
+def canonical_value_digest(value):
+    encoded = json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode('utf-8')
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def derive_evidence_result(items):
+    """Fail-closed aggregation for evidence that claims one method/gate result."""
+    require(items, 'Cannot derive a result from empty evidence')
+    results = {item['result'] for item in items}
+    if 'FAIL' in results:
+        return 'FAIL'
+    if 'INCONCLUSIVE' in results:
+        return 'INCONCLUSIVE'
+    if 'NOT_APPLICABLE' in results:
+        return 'NOT_APPLICABLE' if results == {'NOT_APPLICABLE'} else 'INCONCLUSIVE'
+    if 'PASS' in results:
+        return 'PASS'
+    if 'NOT_RUN' in results:
+        return 'NOT_RUN'
+    raise RecordError('Unknown evidence-result combination')
+
+
+def derive_criterion_result(method_results):
+    require(method_results, 'Criterion has no verification-method results')
+    values = set(method_results.values())
+    if 'FAIL' in values:
+        return 'FAIL'
+    if 'INCONCLUSIVE' in values:
+        return 'INCONCLUSIVE'
+    if 'NOT_APPLICABLE' in values:
+        return 'NOT_APPLICABLE'
+    if 'NOT_RUN' in values:
+        return 'NOT_RUN'
+    require(values == {'PASS'}, 'Unknown criterion-result combination')
+    return 'PASS'
 
 
 @lru_cache(maxsize=None)
@@ -175,24 +212,48 @@ def validate_project_protocol(task, support):
     require(len(matches) == 1, 'TASK project protocol reference/digest does not resolve uniquely')
     protocol = matches[0]
     require(protocol['repository'] == task['repository'], 'Project protocol repository differs from TASK repository')
+
+    protected = protocol['protected_surface']
+    manifest = protected['manifest']
+    require(protected['manifest_digest'] == canonical_value_digest(manifest), 'Protected-surface manifest digest does not match canonical manifest content')
+    manifest_by_id = {item['id']: item for item in manifest}
+    require(len(manifest_by_id) == len(manifest), 'Duplicate protected-surface manifest ID')
+
+    gates = {gate['id']: gate for gate in protocol['external_gates']}
+    require(len(gates) == len(protocol['external_gates']), 'Duplicate project external gate ID')
+
+    methods = {method['id']: method for method in protocol['verification_methods']}
+    require(len(methods) == len(protocol['verification_methods']), 'Duplicate project verification-method ID')
+    for method in methods.values():
+        require(not (method['harness_id'] and method['external_gate_id']), 'Verification method cannot bind both harness and external gate')
+        if method['harness_id']:
+            require(any(h['id'] == method['harness_id'] for h in protocol['harnesses']), 'Verification method references unknown harness')
+        if method['external_gate_id']:
+            require(method['external_gate_id'] in gates, 'Verification method references unknown external gate')
+            require(set(method['required_evidence_classes']) <= set(gates[method['external_gate_id']]['allowed_evidence_classes']), 'External-gate verification method permits evidence class outside gate policy')
+
     criteria = {}
     for acceptance_set in protocol['acceptance_sets']:
         for criterion in acceptance_set['criteria']:
             require(criterion['id'] not in criteria, 'Duplicate project-protocol criterion ID')
+            require(set(criterion['verification_method_ids']) <= set(methods), 'Project criterion references unknown verification method')
             criteria[criterion['id']] = criterion
+
     harness_criteria = set()
     harnesses = {}
     for harness in protocol['harnesses']:
         require(harness['id'] not in harnesses, 'Duplicate project harness ID')
         harnesses[harness['id']] = harness
         require(harness['protected'] is True, 'Project Super Review harness must be protected')
+        require(set(harness['verification_method_ids']) <= set(methods), 'Project harness references unknown verification method')
+        require(all(methods[mid]['harness_id'] == harness['id'] for mid in harness['verification_method_ids']), 'Harness verification-method list contains method bound elsewhere')
+        require(set(harness['manifest_refs']) <= set(manifest_by_id), 'Project harness references unknown protected-surface manifest entry')
+        require(any(manifest_by_id[mid]['kind'] == 'HARNESS_ENTRYPOINT' for mid in harness['manifest_refs']), 'Project harness lacks a protected HARNESS_ENTRYPOINT manifest entry')
         for criterion_id in harness['criteria']:
             require(criterion_id in criteria, 'Project harness references unknown criterion')
+            criterion_methods = set(criteria[criterion_id]['verification_method_ids'])
+            require(criterion_methods & set(harness['verification_method_ids']), 'Project harness does not execute any verification method declared by its criterion')
             harness_criteria.add(criterion_id)
-    external_gate_ids = set()
-    for gate in protocol['external_gates']:
-        require(gate['id'] not in external_gate_ids, 'Duplicate project external gate ID')
-        external_gate_ids.add(gate['id'])
 
     regression_ids = set()
     for regression in protocol['regressions']:
@@ -201,6 +262,7 @@ def validate_project_protocol(task, support):
         require(regression['criterion_id'] in criteria, 'Project regression references unknown criterion')
         harness = harnesses.get(regression['harness_id'])
         require(harness and regression['criterion_id'] in harness['criteria'], 'Project regression is not bound to a harness covering its criterion')
+
     for declared in task['acceptance']:
         criterion = criteria.get(declared['id'])
         require(criterion, 'TASK acceptance criterion missing from pinned project protocol')
@@ -209,10 +271,9 @@ def validate_project_protocol(task, support):
         require(set(criterion['verification_method_ids']) == set(declared['verification_method_ids']), 'TASK verification methods differ from pinned project protocol')
         if declared['super_review_required']:
             require(declared['id'] in harness_criteria, 'Super Review criterion is not covered by a protected project harness')
-    protected = protocol['protected_surface']
+
     require(protected['harness_digest'] and protected['baseline_digest'] and isinstance(protected['fixture_digests'], list), 'Pinned project protected surface is incomplete')
     return protocol
-
 
 def applicable_external_gates(task, protocol):
     return {
@@ -335,11 +396,20 @@ def validate_stage_trust(record, task, parent, support, now):
 
     evidence = {item['evidence_id']: item for item in record['evidence_manifest']}
     require(set(record['evidence_refs']) == set(evidence), 'evidence_refs must exactly name the stage evidence manifest')
+    methods = {item['id']: item for item in protocol['verification_methods']}
+    harnesses = {item['id']: item for item in protocol['harnesses']}
     for evidence_id, embedded in evidence.items():
         provenance = support['evidence_records'].get(evidence_id)
         require(provenance, 'Stage evidence reference lacks provenance record')
-        require(provenance['producer_role'] == record['stage'] and provenance['producer_principal'] == record['executor'], 'Evidence provenance producer does not match stage')
+        require(provenance['collected_by_role'] == record['stage'] and provenance['collected_by_principal'] == record['executor'], 'Evidence collector/attester does not match stage executor')
         require(provenance['evidence_class'] == embedded['class'] and provenance['candidate_sha'] == embedded['source_sha'], 'Evidence provenance class/candidate mismatch')
+        require(provenance['verification_method_id'] == embedded['verification_method_id'] and provenance['harness_id'] == embedded['harness_id'] and provenance['external_gate_id'] == embedded['external_gate_id'], 'Evidence method/harness/gate binding mismatch')
+        method = methods.get(provenance['verification_method_id'])
+        require(method, 'Evidence references unknown project verification method')
+        require(provenance['evidence_class'] in method['required_evidence_classes'], 'Evidence class is not permitted by its verification method')
+        require(provenance['harness_id'] == method['harness_id'] and provenance['external_gate_id'] == method['external_gate_id'], 'Evidence execution binding differs from project verification method')
+        if provenance['harness_id']:
+            require(provenance['harness_id'] in harnesses, 'Evidence names unknown project harness')
         require(provenance['common_protocol_digest'] == task['protocol_digest'] and provenance['project_protocol_digest'] == task['project_protocol_digest'], 'Evidence provenance uses stale Common/project protocol')
         require(provenance['harness_digest'] == embedded['harness_digest'] and provenance['baseline_digest'] == embedded['baseline_digest'], 'Evidence provenance harness/baseline mismatch')
         require(provenance['environment_digest'] == embedded['environment_digest'], 'Evidence provenance environment mismatch')
@@ -351,10 +421,26 @@ def validate_stage_trust(record, task, parent, support, now):
             require(provenance['command_argv'] and provenance['exit_code'] is not None, 'Executed command evidence needs argv and exit code')
         elif provenance['procedure_kind'] != 'COMMAND':
             require(not provenance['command_argv'] and provenance['exit_code'] is None, 'Manual/provider evidence cannot claim command execution fields')
-        if provenance['evidence_class'] == 'REVIEWER_INDEPENDENT':
-            require(provenance['producer_role'] == 'REVIEWER', 'Reviewer-independent evidence must be produced by Reviewer')
-        if provenance['evidence_class'] == 'SUPER_REVIEW_INDEPENDENT':
-            require(provenance['producer_role'] in ['COORDINATOR', 'PARENT_CHECK'], 'Super-review independent evidence must be produced by Super Reviewer')
+
+        cls = provenance['evidence_class']
+        if cls == 'AUTHOR':
+            require(provenance['origin_kind'] == 'STAGE_EXECUTOR' and provenance['oracle_independence'] == 'NOT_INDEPENDENT', 'AUTHOR evidence must identify a stage-executor origin and non-independent oracle')
+            require(provenance['principal_relationship_to_candidate'] in ['AUTHOR_OF_CANDIDATE', 'LAST_PRODUCT_WRITER', 'PRIOR_PRODUCT_WRITER'], 'AUTHOR evidence has invalid candidate relationship')
+        elif cls == 'REVIEWER_INDEPENDENT':
+            require(record['stage'] == 'REVIEWER' and provenance['origin_kind'] == 'STAGE_EXECUTOR' and provenance['origin_principal'] == record['executor'], 'Reviewer-independent evidence must originate from the Reviewer stage')
+            require(provenance['oracle_independence'] == 'PINNED_ORACLE_INDEPENDENT', 'Reviewer-independent evidence requires a pinned independent oracle/harness')
+            require(provenance['principal_relationship_to_candidate'] in ['NON_WRITER_REVIEWER', 'LAST_PRODUCT_WRITER'], 'Reviewer-independent evidence has invalid candidate relationship')
+        elif cls == 'SUPER_REVIEW_INDEPENDENT':
+            require(record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] and provenance['origin_kind'] == 'STAGE_EXECUTOR' and provenance['origin_principal'] == record['executor'], 'Super-review independent evidence must originate from Super Reviewer')
+            require(provenance['oracle_independence'] == 'PINNED_ORACLE_INDEPENDENT', 'Super-review independent evidence requires pinned-oracle independence')
+            require(provenance['principal_relationship_to_candidate'] in ['NON_WRITER_REVIEWER', 'LAST_PRODUCT_WRITER'], 'Super-review evidence has invalid candidate relationship')
+        elif cls == 'CI_PROVIDER':
+            require(provenance['origin_kind'] == 'CI_PROVIDER' and provenance['provider_ref'], 'CI provider evidence must identify its provider origin')
+            require(provenance['oracle_independence'] == 'PROVIDER_INDEPENDENT' and provenance['principal_relationship_to_candidate'] == 'EXTERNAL_PROVIDER', 'CI provider evidence must be external/provider independent')
+        elif cls == 'EXTERNAL_ORACLE':
+            require(provenance['origin_kind'] in ['EXTERNAL_ORACLE', 'OTHER_AUTHENTICATED_PROVIDER', 'HUMAN_OBSERVER'] and provenance['provider_ref'], 'External-oracle evidence must identify an external origin')
+            require(provenance['oracle_independence'] in ['PROVIDER_INDEPENDENT', 'HUMAN_INDEPENDENT'], 'External-oracle evidence must declare external independence')
+            require(provenance['principal_relationship_to_candidate'] in ['EXTERNAL_PROVIDER', 'EXTERNAL_HUMAN'], 'External-oracle evidence has invalid candidate relationship')
 
     gate_rows = record['external_gate_results']
     require(len({row['gate_id'] for row in gate_rows}) == len(gate_rows), 'Duplicate external gate result')
@@ -363,13 +449,13 @@ def validate_stage_trust(record, task, parent, support, now):
     for row in gate_rows:
         require(set(row['evidence_ids']) <= set(evidence), 'External gate result references missing stage evidence')
         gate = applicable_gates[row['gate_id']]
-        if row['result'] == 'PASS':
-            require(row['evidence_ids'], 'PASS external gate needs evidence')
-            classes = {evidence[eid]['class'] for eid in row['evidence_ids']}
-            require(classes <= set(gate['allowed_evidence_classes']), 'External gate PASS uses evidence class not allowed by project protocol')
-        elif row['evidence_ids']:
+        if row['evidence_ids']:
             classes = {evidence[eid]['class'] for eid in row['evidence_ids']}
             require(classes <= set(gate['allowed_evidence_classes']), 'External gate evidence class is not allowed by project protocol')
+            require(all(support['evidence_records'][eid]['external_gate_id'] == row['gate_id'] for eid in row['evidence_ids']), 'External gate cites evidence bound to another gate')
+            require(row['result'] == derive_evidence_result([support['evidence_records'][eid] for eid in row['evidence_ids']]), 'External gate result contradicts cited evidence results')
+        else:
+            require(row['result'] == 'NOT_RUN', 'External gate without evidence must be NOT_RUN')
     if record['stage'] not in ['COORDINATOR', 'PARENT_CHECK']:
         require(not gate_rows, 'Only Super Reviewer/PARENT_CHECK may certify project external gates')
 
@@ -382,16 +468,17 @@ def validate_stage_trust(record, task, parent, support, now):
         require(surface['baseline_digest'] == protected['baseline_digest'], 'Acceptance surface baseline differs from pinned project protocol')
         require(set(surface['oracle_digests']) == set(protected['oracle_digests']), 'Acceptance surface oracle set differs from pinned project protocol')
         require(set(surface['fixture_digests']) == set(protected['fixture_digests']), 'Acceptance surface fixture set differs from pinned project protocol')
+        require(surface['manifest_digest'] == protected['manifest_digest'], 'Acceptance surface transitive manifest differs from pinned project protocol')
 
     if record['status'] not in ADVANCING_STATUSES:
         return
 
     completed = instant(record['work_periods'][-1]['end'])
 
-    if record['status'] == 'PASS':
-        require(not record['waiver_refs'], 'PASS cannot depend on Owner waivers')
+    if record['status'] == 'STAGE_COMPLETE':
+        require(not record['waiver_refs'], 'STAGE_COMPLETE cannot depend on Owner waivers')
     else:
-        require(record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] and record['waiver_refs'], 'APPROVED_WITH_WAIVER is reserved for final engineering stages with explicit waivers')
+        require(record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] and record['waiver_refs'], 'STAGE_COMPLETE_WITH_WAIVER is reserved for final engineering stages with explicit waivers')
 
     used_stage_waivers = set()
     if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
@@ -404,7 +491,7 @@ def validate_stage_trust(record, task, parent, support, now):
             if result == 'PASS':
                 continue
             require(result == 'NOT_RUN', 'Required project external gate FAIL/INCONCLUSIVE cannot be waived')
-            require(gate['waivable'] is True and record['status'] == 'APPROVED_WITH_WAIVER', 'Required project external gate NOT_RUN needs an explicit waivable policy and approved-with-waiver outcome')
+            require(gate['waivable'] is True and record['status'] == 'STAGE_COMPLETE_WITH_WAIVER', 'Required project external gate NOT_RUN needs an explicit waivable policy and stage-complete-with-waiver outcome')
             matches = matching_waivers(task, record['review_lease_ref'], record['validated_sha'], 'EXTERNAL_GATE', gate_id, support, completed, record['waiver_refs'])
             require(len(matches) == 1, 'Required external gate NOT_RUN lacks exact active Owner waiver')
             used_stage_waivers.add(matches[0]['waiver_id'])
@@ -416,8 +503,8 @@ def validate_stage_trust(record, task, parent, support, now):
 
     attestation = record['source_attestation']
     require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'] and attestation['base_ref'] == task['target_ref'], 'Advancing source attestation does not match validated candidate/base target')
-    require(attestation['unrecorded_changes'] is False, 'PASS source attestation reports unrecorded changes')
-    require(all(record['freshness'].values()), 'PASS requires every declared freshness dimension current')
+    require(attestation['unrecorded_changes'] is False, 'Advancing source attestation reports unrecorded changes')
+    require(all(record['freshness'].values()), 'Advancing outcome requires every declared freshness dimension current')
     require(not any(item['blocking'] and item['status'] in ['OPEN', 'CARRIED'] for item in record['carried_findings']), 'Advancing outcome has unresolved blocking carried finding')
 
     for row in record['acceptance_results']:
@@ -426,7 +513,7 @@ def validate_stage_trust(record, task, parent, support, now):
         if row['result'] == 'PASS':
             continue
         require(row['result'] == 'NOT_RUN', 'Required criterion FAIL/INCONCLUSIVE/NOT_APPLICABLE cannot advance')
-        require(record['status'] == 'APPROVED_WITH_WAIVER', 'Required criterion NOT_RUN needs approved-with-waiver outcome')
+        require(record['status'] == 'APPROVED_WITH_WAIVER', 'Required criterion NOT_RUN needs stage-complete-with-waiver outcome')
         matches = matching_waivers(task, record['review_lease_ref'], record['validated_sha'], 'CRITERION', row['criterion_id'], support, completed, record['waiver_refs'])
         require(len(matches) == 1, 'Required criterion NOT_RUN lacks exact active Owner waiver')
         used_stage_waivers.add(matches[0]['waiver_id'])
@@ -452,11 +539,13 @@ def validate_stage_trust(record, task, parent, support, now):
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
         require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'] and lease['owner_control_digest'] == pre['owner_control_digest'], 'Review lease context/PR/Owner-control basis is stale')
         require(lease['environment_ref'] == environment['environment_id'] and lease['environment_digest'] == environment['digest'], 'Review lease environment is stale')
+        require(lease['candidate_tree_digest'] == attestation['candidate_tree_digest'], 'Review lease candidate tree differs from source attestation')
         require(lease['integration_tree_digest'] == attestation['integration_tree_digest'] and lease['merge_base_sha'] == attestation['merge_base_sha'], 'Review lease integration tree/merge base differs from source attestation')
         require(lease['required_check_policy_digest'] == task['required_check_policy']['digest'], 'Review lease required-check policy is stale')
         surface = record['acceptance_surface']
         require(surface is not None, 'Independent review lease requires pinned acceptance surface')
         require(lease['acceptance_surface_digest'] == surface['digest'], 'Review lease acceptance surface is stale')
+        require(lease['acceptance_surface_manifest_digest'] == surface['manifest_digest'], 'Review lease transitive acceptance-surface manifest is stale')
         require(lease['harness_digest'] == surface['harness_digest'] and lease['baseline_digest'] == surface['baseline_digest'], 'Review lease harness/baseline differs from stage acceptance surface')
         require(set(lease['oracle_digests']) == set(surface['oracle_digests']) and set(lease['fixture_digests']) == set(surface['fixture_digests']), 'Review lease oracle/fixture set differs from stage acceptance surface')
         require(instant(lease['sealed_at']) <= completed, 'Review lease cannot be sealed after stage completion')
@@ -465,11 +554,12 @@ def validate_stage_trust(record, task, parent, support, now):
             if provenance['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
                 require(provenance['review_lease_ref'] == lease['lease_id'], 'Independent evidence is not bound to current review lease')
                 require(provenance['acceptance_surface_digest'] == surface['digest'], 'Independent evidence acceptance-surface digest mismatch')
+                require(provenance['acceptance_surface_manifest_digest'] == surface['manifest_digest'], 'Independent evidence transitive acceptance-surface manifest mismatch')
                 require(set(provenance['fixture_digests']) == set(surface['fixture_digests']), 'Independent evidence fixture set differs from protected acceptance surface')
 
     if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
         surface = record['acceptance_surface']
-        require(surface is not None, 'Super Review PASS needs pinned acceptance surface')
+        require(surface is not None, 'Super Review completion needs pinned acceptance surface')
         for row in record['acceptance_results']:
             if not acceptance_by_id(task)[row['criterion_id']]['super_review_required']:
                 continue
@@ -508,7 +598,18 @@ def validate_observed_merge_basis(task, latest, support, at, state_ref=None):
         item = observed[name]
         require(item['provider'] == contract['provider'] and item['workflow_digest'] == contract['workflow_digest'], 'Required check provider/workflow identity mismatch')
         require(item['workflow_path'] == contract['workflow_path'] and item['app_identity'] == contract['expected_app'], 'Required check workflow/app identity mismatch')
-        require(item['head_sha'] == latest['validated_sha'], 'Required check ran on wrong candidate SHA')
+        require(item['trigger_pr_head_sha'] == latest['validated_sha'], 'Required check was triggered for wrong PR head SHA')
+        require(item['checkout_mode'] in contract['allowed_checkout_modes'], 'Required check checkout mode is not permitted by trusted policy')
+        require(item['base_sha'] == latest['base_sha'] and item['merge_base_sha'] == latest['source_attestation']['merge_base_sha'], 'Required check base/merge-base identity is stale')
+        if contract['certifies'] == 'PR_HEAD':
+            require(item['checkout_mode'] == 'PR_HEAD', 'PR-head certification must actually checkout PR_HEAD')
+            require(item['tested_commit_sha'] == latest['validated_sha'] and item['provider_run_head_sha'] == latest['validated_sha'], 'PR-head check did not execute the reviewed head')
+            require(item['tested_tree_digest'] == latest['source_attestation']['candidate_tree_digest'], 'PR-head check tested wrong candidate tree')
+        else:
+            require(item['checkout_mode'] in ['SYNTHETIC_MERGE', 'MERGE_QUEUE'], 'Integration-candidate check must execute a synthetic merge or merge-queue candidate')
+            require(item['provider_run_head_sha'] == item['tested_commit_sha'], 'Integration provider run head must identify the tested integration commit')
+            require(item['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'], 'Required check integration-tree identity differs from reviewed integration candidate')
+            require(item['tested_tree_digest'] == latest['source_attestation']['integration_tree_digest'], 'Required check tested tree differs from reviewed integration candidate')
         if item['result'] == 'PASS':
             require(item['mandatory_steps_executed'] is True, 'Required PASS check skipped a mandatory validation step')
             require(item['run_id'] and item['job_id'], 'Required PASS check lacks provider run/job identity')
@@ -628,10 +729,10 @@ def task_history(task, records, parent, support, now):
             require(acceptance_ids(task, True) <= set(record['acceptance_checked']), 'Missing required acceptance coverage')
             rows = {r['criterion_id']: r for r in record['acceptance_results']}
             require(acceptance_ids(task, True) <= set(rows), 'Missing required structured acceptance result')
-            if record['status'] == 'PASS':
-                require(all(rows[c]['result'] == 'PASS' for c in acceptance_ids(task, True)), 'PASS requires every required structured acceptance result to be PASS')
+            if record['status'] == 'STAGE_COMPLETE':
+                require(all(rows[c]['result'] == 'PASS' for c in acceptance_ids(task, True)), 'STAGE_COMPLETE requires every required structured acceptance result to be PASS')
             else:
-                require(all(rows[c]['result'] in ['PASS', 'NOT_RUN'] for c in acceptance_ids(task, True)), 'APPROVED_WITH_WAIVER permits only PASS or explicitly waived NOT_RUN acceptance')
+                require(all(rows[c]['result'] in ['PASS', 'NOT_RUN'] for c in acceptance_ids(task, True)), 'STAGE_COMPLETE_WITH_WAIVER permits only PASS or explicitly waived NOT_RUN acceptance')
             checks = [c for c in record['validation'] if c['required']]
             require(checks and all(c['result'] == 'PASS' for c in checks), 'Required stage validation needs actual PASS')
             require(not any(f['status'] == 'OPEN' for f in record['findings']), 'Open blocking finding')
