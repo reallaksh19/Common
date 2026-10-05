@@ -45,28 +45,13 @@ Recommended shape:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-
 🟢/🟡/🔵/🔴 {P__% · E__% · A__ · <STATE>}
-
-UNIT
-<one concise line>
-
-DELTA
-✓ <new meaningful result>
-✓ <new meaningful result>
-△ <new unresolved finding, only if decision-relevant>
-
-BLOCKER
-<NONE | one concise blocker>
-
-OWNER_ACTION
-<NONE | REQUIRED — one explicit decision/action>
-
-NEXT
-<one bounded next substantial work unit>
-
-EVIDENCE
-<1–3 durable refs>
+UNIT: <one concise line>
+DELTA: ✓ <new result>; ✓ <new result>; △ <decision-relevant unresolved finding, optional>
+BLOCKER: <NONE | one concise blocker>
+OWNER_ACTION: <NONE | REQUIRED — one explicit decision/action>
+NEXT: <one bounded next substantial work unit>
+EVIDENCE: <1–3 durable refs>
 ```
 
 ### Information budget
@@ -161,15 +146,13 @@ Do not emit `TASK_RESULT = BLOCKED` merely to communicate that an in-progress re
 Every Owner checkpoint explicitly states:
 
 ```text
-OWNER_ACTION
-NONE
+OWNER_ACTION: NONE
 ```
 
 or:
 
 ```text
-OWNER_ACTION
-REQUIRED — <specific reserved decision/action>
+OWNER_ACTION: REQUIRED — <specific reserved decision/action>
 ```
 
 This prevents ordinary WAITING/CI/tool/provider states from being mistaken for an Owner escalation.
@@ -194,29 +177,13 @@ The compact chat message references detailed evidence; it does not mirror it.
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-
 🟡 {P42% · E36% · A07 · WAITING_EXTERNAL}
-
-UNIT
-Full-stack qualification of #1239 cumulative candidate.
-
-DELTA
-✓ Found #1252 import defect; isolated +1/-1 repair in draft #1253 (`ea2556d`).
-✓ Persistence contract PASS.
-✓ TEXPECTED lower-bound contract PASS.
-△ Independent-seed authored test remains NOT_RUN; honest dependency closure is too broad for stubbing.
-
-BLOCKER
-Executable authenticated checkout / Node `@playwright/test` surface unavailable for browser + full-regression qualification.
-
-OWNER_ACTION
-NONE
-
-NEXT
-Restore executable checkout/test surface, then resume retained browser/full qualification.
-
-EVIDENCE
-#1239/5992101466 · #1239/5990185563 · PR #1253
+UNIT: Full-stack qualification of #1239 cumulative candidate.
+DELTA: ✓ #1252 import defect isolated in draft #1253 (`ea2556d`); ✓ persistence contract PASS; ✓ TEXPECTED lower-bound PASS.
+BLOCKER: Executable authenticated checkout / Node `@playwright/test` unavailable for browser + full-regression qualification.
+OWNER_ACTION: NONE
+NEXT: Restore executable checkout/test surface, then resume retained browser/full qualification.
+EVIDENCE: #1239/5992101466 · #1239/5990185563 · PR #1253
 ```
 
 ## Required implementation tests for future V3.5
