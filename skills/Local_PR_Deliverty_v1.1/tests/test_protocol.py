@@ -409,5 +409,35 @@ class ProductionStageV11Tests(unittest.TestCase):
         bundle['stages'][2]['evidence_manifest'][0]['class'] = 'AUTHOR'
         self.rejected(bundle)
 
+class SchemaSurfaceV11Tests(unittest.TestCase):
+    def test_every_v11_schema_is_valid_draft_2020_12(self):
+        from jsonschema import Draft202012Validator
+        for schema_path in sorted((ROOT / 'schemas').glob('*.schema.json')):
+            with self.subTest(schema=schema_path.name):
+                Draft202012Validator.check_schema(json.loads(schema_path.read_text(encoding='utf-8')))
+
+    def test_project_protocol_schema_accepts_domain_neutral_contract(self):
+        from jsonschema import Draft202012Validator
+        schema = json.loads((ROOT / 'schemas' / 'project-protocol.schema.json').read_text(encoding='utf-8'))
+        sample = {
+            'protocol_id': 'example-project-v1',
+            'version': '1.0',
+            'repository': 'exampleowner/editor',
+            'acceptance_sets': [{
+                'id': 'A1',
+                'criteria': [{
+                    'id': 'A1-001',
+                    'required': True,
+                    'reviewer_check_required': True,
+                    'super_review_required': True,
+                    'verification_method_ids': ['VM-A1-001'],
+                }],
+            }],
+            'harnesses': [{'id': 'SR-A1', 'criteria': ['A1-001'], 'protected': True}],
+            'external_gates': [],
+        }
+        errors = list(Draft202012Validator(schema).iter_errors(sample))
+        self.assertEqual(errors, [])
+
 if __name__ == '__main__':
     unittest.main()
