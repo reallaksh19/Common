@@ -7,10 +7,6 @@
       "type": "string",
       "minLength": 1
     },
-    "criterion_id": {
-      "type": "string",
-      "minLength": 1
-    },
     "lease_id": {
       "type": "string",
       "minLength": 1
@@ -63,12 +59,24 @@
     "task_id": {
       "type": "string",
       "minLength": 1
+    },
+    "target_kind": {
+      "enum": [
+        "CRITERION",
+        "REQUIRED_CHECK",
+        "EXTERNAL_GATE"
+      ]
+    },
+    "target_id": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
     "task_id",
     "waiver_id",
-    "criterion_id",
+    "target_kind",
+    "target_id",
     "lease_id",
     "candidate_sha",
     "owner_principal",
