@@ -53,3 +53,6 @@ Delivery records provider-observed target-ref state after merge. The observation
 
 Common uses “target ref,” not a universal assumption that every child PR merges directly to `main`.
 
+## Merge-decision freshness
+
+PRE_MERGE trust also includes current repository-policy visibility and current merge authority. Unknown policy visibility waits externally; missing authority waits on the Owner. A malformed/unauthenticated authority claim is rejected. Delivery rechecks authority at the actual merge timestamp, so an authorization observed only after merge cannot retroactively justify it.
