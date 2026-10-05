@@ -111,6 +111,10 @@
     "owner_control_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "target_ref": {
+      "type": "string",
+      "pattern": "^refs/heads/.+$"
     }
   },
   "required": [
@@ -136,7 +140,8 @@
     "context_pre_verdict_ref",
     "common_protocol_digest",
     "merge_base_sha",
-    "owner_control_digest"
+    "owner_control_digest",
+    "target_ref"
   ],
   "additionalProperties": false
 }
