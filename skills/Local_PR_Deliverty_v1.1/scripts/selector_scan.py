@@ -15,8 +15,10 @@ from pathlib import Path
 from typing import Any
 
 ACTIVE_RELAY = "skills/engineering-pr-delivery-v3.5"
-OLD_RELAY_RE = re.compile(r"skills/engineering-pr-delivery-v(?:2(?:[.]5)?|3(?:[.]0)?|3[.]1|3[.]2)(?:/SKILL[.]md|/)?")
-V35_RE = re.compile(r"skills/engineering-pr-delivery-v3[.]5(?:/SKILL[.]md|/)?")
+OLD_RELAY_RE = re.compile(
+    r"skills/engineering-pr-delivery-v(?:2(?:[.]5)?|3[.]0|3[.]1|3[.]2|3(?![.][0-9]))(?=/|\b)(?:/SKILL[.]md|/)?"
+)
+V35_RE = re.compile(r"skills/engineering-pr-delivery-v3[.]5(?=/|\b)(?:/SKILL[.]md|/)?")
 
 
 class SelectorScanError(ValueError):
