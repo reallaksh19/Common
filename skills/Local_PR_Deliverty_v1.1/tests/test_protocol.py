@@ -91,6 +91,7 @@ def enrich_v11(bundle):
             oracle_digests=[ORACLE_DIGEST],
         ),
         external_gates=[],
+        regressions=[],
     ))
 
     for record in bundle['stages']:
@@ -1109,6 +1110,87 @@ class PrincipalAndDependencyV11Tests(unittest.TestCase):
         record['production_output']['internal_fixable_defects_remaining'] = 1
         record['production_output']['unresolved_internal_defects'] = ['F-INTERNAL']
         self.rejected(bundle)
+
+
+class TargetAndRegressionV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def retarget_child(self, bundle, target_ref):
+        task = bundle['tasks'][1]
+        task['target_ref'] = target_ref
+        for record in bundle['stages']:
+            if record['task_id'] != task['task_id']:
+                continue
+            if record['source_attestation']:
+                record['source_attestation']['base_ref'] = target_ref
+            if record['review_lease_ref']:
+                lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == record['review_lease_ref'])
+                lease['target_ref'] = target_ref
+        for state in bundle['support']['observed_states']:
+            if state['task_id'] == task['task_id']:
+                state['target_ref'] = target_ref
+
+    def test_child_target_ref_is_independent_of_global_main(self):
+        bundle = premerge_bundle()
+        self.retarget_child(bundle, 'refs/heads/phase-2')
+        bundle['observed']['main_sha'] = HEADS[4]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_wrong_provider_merge_target_ref_rejected(self):
+        bundle = example_bundle()
+        bundle['observed']['merged']['101']['target_ref'] = 'refs/heads/wrong'
+        self.rejected(bundle)
+
+    def test_canonical_reviewed_head_mismatch_rejected(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['reviewed_head_sha'] = HEADS[4]
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_exact_canonical_relation_requires_merge_commit_target(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['target_sha'] = HEADS[4]
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_descendant_canonical_relation_requires_ancestry_proof(self):
+        bundle = example_bundle()
+        canonical = bundle['results'][0]['canonical_observation']
+        canonical['relation'] = 'DESCENDANT_CONTAINS_MERGE'
+        canonical['target_sha'] = HEADS[4]
+        canonical['ancestry_proof_ref'] = None
+        bundle['observed']['canonical_target_observations']['101'] = copy.deepcopy(canonical)
+        self.rejected(bundle)
+
+    def test_project_regression_must_bind_known_criterion_and_harness(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['regressions'] = [dict(
+            id='REG-F1',
+            source_finding_ref='F1',
+            criterion_id='UNKNOWN',
+            harness_id='SR-ALL',
+            rationale='Synthetic escaped defect promotion.',
+            active=True,
+        )]
+        self.rejected(bundle)
+
+    def test_valid_project_regression_ratchet_is_accepted(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['regressions'] = [dict(
+            id='REG-F1',
+            source_finding_ref='F1',
+            criterion_id='A1',
+            harness_id='SR-ALL',
+            rationale='Synthetic escaped defect becomes permanent Super Review coverage.',
+            active=True,
+        )]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
 
 
 class SchemaSurfaceV11Tests(unittest.TestCase):
