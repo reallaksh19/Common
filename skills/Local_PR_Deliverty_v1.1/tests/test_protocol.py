@@ -857,6 +857,46 @@ class TrustGraphV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+    def test_task_only_acceptance_criterion_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['acceptance_sets'][0]['criteria'] = [
+            criterion for criterion in protocol['acceptance_sets'][0]['criteria'] if criterion['id'] != 'A1'
+        ]
+        self.rejected(bundle)
+
+    def test_super_review_criterion_without_project_harness_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['harnesses'][0]['criteria'] = ['P1']
+        self.rejected(bundle)
+
+    def test_ci_app_identity_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['app_identity'] = 'unexpected-app'
+        self.rejected(bundle)
+
+    def test_ci_workflow_path_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['workflow_path'] = '.github/workflows/other.yml'
+        self.rejected(bundle)
+
+    def test_pre_merge_context_drift_expires_final_lease(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        context = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == state['pre_merge_context_ref'])
+        context['parent_frontier_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_authorized_role_sets_must_not_overlap(self):
+        bundle = premerge_bundle()
+        for task in bundle['tasks']:
+            task['role_principals']['REVIEWER'].append('coder')
+        self.rejected(bundle)
+
+
 class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_every_v11_schema_is_valid_draft_2020_12(self):
         from jsonschema import Draft202012Validator
