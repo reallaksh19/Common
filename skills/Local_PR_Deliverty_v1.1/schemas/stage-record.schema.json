@@ -82,7 +82,8 @@
         "WAITING_CI",
         "WAITING_OWNER",
         "INCONCLUSIVE",
-        "WAITING_EXTERNAL"
+        "WAITING_EXTERNAL",
+        "APPROVED_WITH_WAIVER"
       ]
     },
     "input_sha": {
@@ -959,6 +960,14 @@
         ],
         "additionalProperties": false
       }
+    },
+    "waiver_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -1010,7 +1019,8 @@
     "common_protocol_ref",
     "common_protocol_digest",
     "project_protocol_ref",
-    "external_gate_results"
+    "external_gate_results",
+    "waiver_refs"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -1238,6 +1248,61 @@
               },
               "unresolved_internal_defects": {
                 "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "APPROVED_WITH_WAIVER"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "stage": {
+            "enum": [
+              "COORDINATOR",
+              "PARENT_CHECK"
+            ]
+          },
+          "output_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "validated_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "writer_stopped": {
+            "const": true
+          },
+          "validation": {
+            "minItems": 1
+          },
+          "waiver_refs": {
+            "minItems": 1
+          },
+          "production_output": {
+            "properties": {
+              "internal_fixable_defects_remaining": {
+                "const": 0
+              },
+              "unresolved_internal_defects": {
+                "maxItems": 0
+              },
+              "blocking_class": {
+                "const": "NONE"
+              },
+              "coverage_complete_for_stage": {
+                "const": true
+              },
+              "early_termination": {
+                "const": false
               }
             }
           }
