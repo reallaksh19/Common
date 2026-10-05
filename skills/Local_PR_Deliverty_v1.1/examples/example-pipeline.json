@@ -93,7 +93,7 @@
         "delegate_principal": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
       "owner_principals": [
         "owner"
       ],
@@ -161,7 +161,7 @@
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
       "owner_principals": [
         "owner"
       ],
@@ -229,7 +229,7 @@
       ],
       "children": [],
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
       "owner_principals": [
         "owner"
       ],
@@ -352,7 +352,7 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265"
         }
       ],
       "acceptance_results": [
@@ -515,7 +515,7 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1"
         }
       ],
       "acceptance_results": [
@@ -534,14 +534,14 @@
         }
       ],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -600,7 +600,7 @@
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "base_ref": "refs/heads/main"
       },
-      "review_lease_ref": "LEASE-S2",
+      "review_lease_ref": "sha256:16d59bb47b8409c46ae1f20cc6a3100b704500b3091d8016baac4d8dd1e8a85d",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
       "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
@@ -680,19 +680,19 @@
           "artifact_digest": null,
           "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2"
         }
       ],
       "acceptance_results": [],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -831,7 +831,7 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "e37840fd9ab0bd06192a326eb7398fd516ae19d3707a136b7986c928e02aefcf"
         }
       ],
       "acceptance_results": [
@@ -981,19 +981,19 @@
           "artifact_digest": null,
           "harness_digest": null,
           "baseline_digest": null,
-          "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555"
+          "environment_digest": "87a3c9bc6973a42922a3f74690c4da1743bc20170846c2a8600a620eb5c6034f"
         }
       ],
       "acceptance_results": [],
       "acceptance_surface": {
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
         "oracle_digests": [
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "fixture_digests": [
           "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
         ]
@@ -1134,22 +1134,22 @@
   "support": {
     "review_leases": [
       {
-        "lease_id": "LEASE-S2",
+        "lease_id": "sha256:16d59bb47b8409c46ae1f20cc6a3100b704500b3091d8016baac4d8dd1e8a85d",
         "task_id": "T86",
         "stage_record_id": "S2",
         "candidate_sha": "2222222222222222222222222222222222222222",
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
         "parent_context_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "child_context_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "pr_description_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
         "required_check_policy_digest": "3333333333333333333333333333333333333333333333333333333333333333",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "dependency_heads": [],
         "sealed_at": "2026-10-04T00:01:30Z",
         "environment_ref": "ENV-S2",
@@ -1189,7 +1189,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1212,7 +1212,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1235,7 +1235,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1258,7 +1258,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "e37840fd9ab0bd06192a326eb7398fd516ae19d3707a136b7986c928e02aefcf",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1281,7 +1281,7 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "digest": "87a3c9bc6973a42922a3f74690c4da1743bc20170846c2a8600a620eb5c6034f",
         "package_manager": {
           "name": "pip",
           "version": "synthetic"
@@ -1765,10 +1765,10 @@
         "producer_principal": "coder",
         "evidence_class": "AUTHOR",
         "candidate_sha": "1111111111111111111111111111111111111111",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "cd76acd88afa1c44dd2aaf2c25b28090cf4f9318bab6dc1a62a0e9f79f7e5265",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
@@ -1790,16 +1790,16 @@
         "producer_principal": "reviewer",
         "evidence_class": "REVIEWER_INDEPENDENT",
         "candidate_sha": "2222222222222222222222222222222222222222",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "745f911c6c7624a4c56649c1fa8e963e26a95a12fdeb536b72e79ac6b24d5be1",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "review_lease_ref": "LEASE-S2",
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "review_lease_ref": "sha256:16d59bb47b8409c46ae1f20cc6a3100b704500b3091d8016baac4d8dd1e8a85d",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:01:30Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1817,16 +1817,16 @@
         "producer_principal": "coordinator",
         "evidence_class": "SUPER_REVIEW_INDEPENDENT",
         "candidate_sha": "2222222222222222222222222222222222222222",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "ecd5d71d1d8bead3c1f7f8183d43969ce683165c7364d891853404fad03420d2",
         "result": "NOT_RUN",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "review_lease_ref": null,
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:02:00Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1844,10 +1844,10 @@
         "producer_principal": "coder",
         "evidence_class": "AUTHOR",
         "candidate_sha": "1111111111111111111111111111111111111111",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "e37840fd9ab0bd06192a326eb7398fd516ae19d3707a136b7986c928e02aefcf",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
@@ -1869,16 +1869,16 @@
         "producer_principal": "reviewer",
         "evidence_class": "REVIEWER_INDEPENDENT",
         "candidate_sha": "1111111111111111111111111111111111111111",
-        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "project_protocol_digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "harness_digest": null,
         "baseline_digest": null,
-        "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "environment_digest": "87a3c9bc6973a42922a3f74690c4da1743bc20170846c2a8600a620eb5c6034f",
         "result": "NOT_RUN",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null,
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "review_lease_ref": null,
-        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "acceptance_surface_digest": "06476ad16ab959a22461977e2fad06c319fba3ca096862768bad3a4c0a74500f",
         "collected_at": "2026-10-04T00:04:00Z",
         "procedure_kind": "COMMAND",
         "command_argv": [
@@ -1897,7 +1897,7 @@
         "version": "1.0",
         "repository": "exampleowner/editor",
         "source_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
-        "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "digest": "cd36a23ddcb59e7dee396c5eed42fff9d2057e489d7c96bc0383f3ca333c4954",
         "acceptance_sets": [
           {
             "id": "ALL",
