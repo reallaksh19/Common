@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:context-snapshot",
+  "type": "object",
+  "properties": {
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "phase": {
+      "enum": [
+        "START",
+        "PRE_VERDICT",
+        "PRE_MERGE"
+      ]
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "parent_issue_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parent_comment_frontier": {
+      "type": "string",
+      "minLength": 1
+    },
+    "parent_frontier_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "child_issue_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "child_comment_frontier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "pr_description_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pr_comment_frontier": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "owner_control_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "reconciled": {
+      "const": true
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "phase",
+    "observed_at",
+    "parent_issue_digest",
+    "parent_comment_frontier",
+    "parent_frontier_digest",
+    "child_issue_digest",
+    "child_comment_frontier",
+    "pr_description_digest",
+    "pr_comment_frontier",
+    "owner_control_digest",
+    "reconciled"
+  ],
+  "additionalProperties": false
+}
