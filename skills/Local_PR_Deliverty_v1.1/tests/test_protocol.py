@@ -82,7 +82,7 @@ def enrich_v11(bundle):
                 criteria[criterion['id']] = dict(
                     id=criterion['id'],
                     required=criterion['required'],
-                    reviewer_check_required=True,
+                    reviewer_check_required=criterion['required'],
                     super_review_required=criterion['super_review_required'],
                     verification_method_ids=list(criterion['verification_method_ids']),
                 )
@@ -179,6 +179,8 @@ def enrich_v11(bundle):
                 result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
                 verification_method_ids=list(declared[cid]['verification_method_ids']),
                 evidence_ids=[evidence_id],
+                rationale=None,
+                finding_ids=[],
             )
             for cid in checked
         ]
@@ -207,6 +209,10 @@ def enrich_v11(bundle):
             coverage_complete_for_stage=record['status'] == 'PASS',
             early_termination=False,
             early_termination_reason=None,
+            candidate_changed=record['output_sha'] is not None and record['output_sha'] != record['input_sha'],
+            defects_found=[],
+            defects_fixed_here=[],
+            external_escalations=[],
         )
         record['carried_findings'] = []
         record['external_gate_results'] = []
@@ -1201,6 +1207,116 @@ class PrincipalAndDependencyV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_reviewer_cannot_omit_project_required_reviewer_criterion(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['acceptance_results'] = []
+        reviewer['acceptance_checked'] = []
+        reviewer['production_output']['coverage_completed'] = []
+        self.rejected(bundle)
+
+    def test_super_reviewer_cannot_omit_project_required_super_review_criterion(self):
+        bundle = premerge_bundle()
+        super_review = bundle['stages'][2]
+        super_review['acceptance_results'] = []
+        super_review['acceptance_checked'] = []
+        super_review['production_output']['coverage_completed'] = []
+        self.rejected(bundle)
+
+    def test_optional_not_applicable_requires_rationale(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['acceptance'].append(dict(
+            id='A2', requirement='Optional applicability case.', required=False,
+            verification_method_ids=['VM-A2'], super_review_required=False,
+        ))
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['acceptance_sets'][0]['criteria'].append(dict(
+            id='A2', required=False, reviewer_check_required=False,
+            super_review_required=False, verification_method_ids=['VM-A2'],
+        ))
+        reviewer = bundle['stages'][1]
+        evidence_id = reviewer['evidence_refs'][0]
+        reviewer['acceptance_results'].append(dict(
+            criterion_id='A2', required=False, result='NOT_APPLICABLE',
+            verification_method_ids=['VM-A2'], evidence_ids=[evidence_id],
+            rationale=None, finding_ids=[],
+        ))
+        self.rejected(bundle)
+
+    def test_optional_not_applicable_with_rationale_is_truthful(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['acceptance'].append(dict(
+            id='A2', requirement='Optional applicability case.', required=False,
+            verification_method_ids=['VM-A2'], super_review_required=False,
+        ))
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['acceptance_sets'][0]['criteria'].append(dict(
+            id='A2', required=False, reviewer_check_required=False,
+            super_review_required=False, verification_method_ids=['VM-A2'],
+        ))
+        reviewer = bundle['stages'][1]
+        evidence_id = reviewer['evidence_refs'][0]
+        reviewer['acceptance_results'].append(dict(
+            criterion_id='A2', required=False, result='NOT_APPLICABLE',
+            verification_method_ids=['VM-A2'], evidence_ids=[evidence_id],
+            rationale='Synthetic criterion does not apply to this child.',
+            finding_ids=[],
+        ))
+        checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_blocking_carried_finding_stops_advancement(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['carried_findings'] = [dict(
+            id='F-CARRIED', blocking=True, status='CARRIED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[], rationale=None,
+        )]
+        self.rejected(bundle)
+
+    def test_resolved_carried_finding_requires_resolution_evidence(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        final['carried_findings'] = [dict(
+            id='F-RESOLVED', blocking=True, status='RESOLVED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[], rationale=None,
+        )]
+        self.rejected(bundle)
+
+    def test_resolved_carried_finding_with_evidence_can_advance(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final['evidence_refs'][0]
+        final['carried_findings'] = [dict(
+            id='F-RESOLVED', blocking=True, status='RESOLVED',
+            source_ref='https://example.invalid/issues/85#finding',
+            affected_acceptance=['A1'], resolution_evidence_ids=[evidence_id], rationale=None,
+        )]
+        final['acceptance_results'][0]['finding_ids'] = ['F-RESOLVED']
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_candidate_changed_accounting_must_match_actual_stage_output(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['production_output']['candidate_changed'] = False
+        self.rejected(bundle)
+
+    def test_blocked_stage_requires_explicit_external_escalation(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['external_escalations'] = []
+        self.rejected(bundle)
+
+
 class ProvenanceBindingV11Tests(unittest.TestCase):
     def rejected(self, bundle):
         with self.assertRaises(checker.RecordError):
@@ -1334,6 +1450,12 @@ class TargetAndRegressionV11Tests(unittest.TestCase):
 
 
 class SchemaSurfaceV11Tests(unittest.TestCase):
+    def test_v10_bundle_is_not_silently_reinterpreted_as_v11(self):
+        v10 = ROOT.parent / 'Local_PR_Deliverty_v1.0' / 'examples' / 'example-complete.json'
+        legacy = json.loads(v10.read_text(encoding='utf-8'))
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(legacy, '2026-10-04T00:08:00Z')
+
     def test_every_v11_schema_is_valid_draft_2020_12(self):
         from jsonschema import Draft202012Validator
         for schema_path in sorted((ROOT / 'schemas').glob('*.schema.json')):
