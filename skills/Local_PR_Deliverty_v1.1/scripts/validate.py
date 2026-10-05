@@ -102,7 +102,17 @@ def validate_project_protocol(task, support):
         require(set(criterion['verification_method_ids']) == set(declared['verification_method_ids']), 'TASK verification methods differ from pinned project protocol')
         if declared['super_review_required']:
             require(declared['id'] in harness_criteria, 'Super Review criterion is not covered by a protected project harness')
+    protected = protocol['protected_surface']
+    require(protected['harness_digest'] and protected['baseline_digest'], 'Pinned project protected surface is incomplete')
     return protocol
+
+
+def applicable_external_gates(task, protocol):
+    return {
+        gate['id']: gate
+        for gate in protocol['external_gates']
+        if gate['applies_to'] in ['ALL', task['kind']]
+    }
 
 
 def acceptance_ids(task, required_only=False):
@@ -199,6 +209,7 @@ def validate_periods(record, parent, task, now):
 
 
 def validate_stage_trust(record, task, parent, support, now):
+    protocol = validate_project_protocol(task, support)
     role = record['role_integrity']
     require(role['claimed_role'] == record['stage'] and role['principal'] == record['executor'], 'Role-integrity claim does not match stage executor')
     effective_role = 'COORDINATOR' if record['stage'] == 'PARENT_CHECK' else record['stage']
@@ -230,8 +241,33 @@ def validate_stage_trust(record, task, parent, support, now):
         if provenance['evidence_class'] == 'SUPER_REVIEW_INDEPENDENT':
             require(provenance['producer_role'] in ['COORDINATOR', 'PARENT_CHECK'], 'Super-review independent evidence must be produced by Super Reviewer')
 
+    gate_rows = record['external_gate_results']
+    require(len({row['gate_id'] for row in gate_rows}) == len(gate_rows), 'Duplicate external gate result')
+    applicable_gates = applicable_external_gates(task, protocol)
+    require(set(row['gate_id'] for row in gate_rows) <= set(applicable_gates), 'Stage reports unknown/non-applicable external gate')
+    for row in gate_rows:
+        require(set(row['evidence_ids']) <= set(evidence), 'External gate result references missing stage evidence')
+    if record['stage'] not in ['COORDINATOR', 'PARENT_CHECK']:
+        require(not gate_rows, 'Only Super Reviewer/PARENT_CHECK may certify project external gates')
+
+    surface = record['acceptance_surface']
+    if surface is not None:
+        protected = protocol['protected_surface']
+        require(surface['project_protocol_digest'] == protocol['digest'], 'Acceptance surface project-protocol digest differs from pinned project protocol')
+        require(surface['harness_digest'] == protected['harness_digest'], 'Acceptance surface harness differs from pinned project protocol')
+        require(surface['baseline_digest'] == protected['baseline_digest'], 'Acceptance surface baseline differs from pinned project protocol')
+        require(set(surface['oracle_digests']) == set(protected['oracle_digests']), 'Acceptance surface oracle set differs from pinned project protocol')
+
     if record['status'] != 'PASS':
         return
+
+    if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
+        require(set(row['gate_id'] for row in gate_rows) == set(applicable_gates), 'PASS must account for every applicable project external gate')
+        rows_by_gate = {row['gate_id']: row for row in gate_rows}
+        for gate_id, gate in applicable_gates.items():
+            if gate['required']:
+                require(rows_by_gate[gate_id]['result'] == 'PASS', 'Required project external gate needs actual PASS; waiver is not PASS')
+
 
     completed = instant(record['work_periods'][-1]['end'])
     pre = support['context_snapshots'].get(record['context_pre_verdict_ref'])
@@ -268,6 +304,7 @@ def validate_stage_trust(record, task, parent, support, now):
 
     if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
         surface = record['acceptance_surface']
+        require(surface is not None, 'Super Review PASS needs pinned acceptance surface')
         for row in record['acceptance_results']:
             if not acceptance_by_id(task)[row['criterion_id']]['super_review_required']:
                 continue
