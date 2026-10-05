@@ -1,0 +1,28 @@
+protocol:
+  family: common-reviewer-protocol
+  version: "1.0"
+  status: CANDIDATE
+  skill_path: skills/common-reviewer-protocol-v1.0/SKILL.md
+  profile_schema: skills/common-reviewer-protocol-v1.0/schemas/common-review-profile.schema.yaml
+
+capabilities:
+  common_review_catalog: CR-01..CR-10
+  standalone_self_review: true
+  distinct_reviewer_mode: true
+  super_reviewer_mode: true
+  project_protocol_overlay: required
+  same_principal_independence_claim: forbidden
+
+compatible_consumers:
+  engineering-pr-delivery:
+    - v3.2
+    - v3.5
+  Local_PR_Deliverty:
+    - v1.1-candidate
+
+integration_requirements:
+  pin_exact_ref_and_digest: true
+  successor_scan: true
+  silent_migration: forbidden
+  project_protocol_may_strengthen: true
+  project_protocol_may_silently_weaken: false
