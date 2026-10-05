@@ -1265,6 +1265,7 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
                 'harness_digest': HARNESS_DIGEST,
                 'baseline_digest': BASELINE_DIGEST,
                 'oracle_digests': [ORACLE_DIGEST],
+                'fixture_digests': [FIXTURE_DIGEST],
             },
             'external_gates': [],
             'regressions': [],
