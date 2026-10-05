@@ -67,9 +67,34 @@
         ],
         "additionalProperties": false
       }
+    },
+    "state_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pr": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "project_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pre_merge_context_ref": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
+    "state_id",
+    "task_id",
+    "pr",
+    "project_protocol_digest",
+    "pre_merge_context_ref",
     "observed_at",
     "pr_head_sha",
     "base_sha",
