@@ -165,6 +165,14 @@
         "pattern": "^[0-9a-f]{64}$"
       },
       "uniqueItems": true
+    },
+    "candidate_tree_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "acceptance_surface_manifest_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -200,7 +208,9 @@
     "harness_digest",
     "baseline_digest",
     "oracle_digests",
-    "fixture_digests"
+    "fixture_digests",
+    "candidate_tree_digest",
+    "acceptance_surface_manifest_digest"
   ],
   "additionalProperties": false
 }
