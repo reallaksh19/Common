@@ -103,6 +103,10 @@
     "common_protocol_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "merge_base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
     }
   },
   "required": [
@@ -126,7 +130,8 @@
     "sealed_at",
     "environment_ref",
     "context_pre_verdict_ref",
-    "common_protocol_digest"
+    "common_protocol_digest",
+    "merge_base_sha"
   ],
   "additionalProperties": false
 }
