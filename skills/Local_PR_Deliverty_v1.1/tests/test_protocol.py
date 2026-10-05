@@ -439,6 +439,57 @@ def enrich_v11(bundle):
             result['canonical_observation'] = None
     return bundle
 
+
+def readdress_review_lease(bundle, lease):
+    old_id = lease['lease_id']
+    lease['lease_id'] = 'sha256:' + '0' * 64
+    new_id = 'sha256:' + checker.canonical_digest(lease, ('lease_id',))
+    lease['lease_id'] = new_id
+    for record in bundle['stages']:
+        if record.get('review_lease_ref') == old_id:
+            record['review_lease_ref'] = new_id
+    for evidence in bundle['support']['evidence_records']:
+        if evidence.get('review_lease_ref') == old_id:
+            evidence['review_lease_ref'] = new_id
+    for waiver in bundle['support']['waivers']:
+        if waiver.get('lease_id') == old_id:
+            waiver['lease_id'] = new_id
+    for result in bundle['results']:
+        if result.get('review_lease_ref') == old_id:
+            result['review_lease_ref'] = new_id
+    return new_id
+
+
+def refresh_project_protocol_identity(bundle):
+    protocol = bundle['support']['project_protocols'][0]
+    protocol['digest'] = checker.canonical_digest(protocol)
+    project_digest = protocol['digest']
+    for task in bundle['tasks']:
+        task['project_protocol_digest'] = project_digest
+
+    stage_by_id = {record['record_id']: record for record in bundle['stages']}
+    for record in bundle['stages']:
+        surface = record.get('acceptance_surface')
+        if surface is not None:
+            surface['project_protocol_digest'] = project_digest
+            surface['digest'] = checker.canonical_digest(surface)
+        for evidence in bundle['support']['evidence_records']:
+            if evidence['producer_role'] == record['stage'] and evidence['producer_principal'] == record['executor'] and evidence['candidate_sha'] == (record['validated_sha'] or record['output_sha'] or record['input_sha']):
+                evidence['project_protocol_digest'] = project_digest
+                if surface is not None and evidence['evidence_class'] in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT']:
+                    evidence['acceptance_surface_digest'] = surface['digest']
+
+    for lease in list(bundle['support']['review_leases']):
+        record = stage_by_id[lease['stage_record_id']]
+        lease['project_protocol_digest'] = project_digest
+        if record['acceptance_surface'] is not None:
+            lease['acceptance_surface_digest'] = record['acceptance_surface']['digest']
+        readdress_review_lease(bundle, lease)
+
+    for state in bundle['support']['observed_states']:
+        state['project_protocol_digest'] = project_digest
+    return project_digest
+
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
     return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner', source_kind='DIRECT_OWNER_SESSION', source_digest='f' * 64, authentication_status='AUTHENTICATED')
 
@@ -957,6 +1008,7 @@ class TrustGraphV11Tests(unittest.TestCase):
         lease_id = bundle['stages'][2]['review_lease_ref']
         lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
         lease['dependency_heads'] = [dict(task_id='T87', sha=HEADS[0])]
+        readdress_review_lease(bundle, lease)
         checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
         bundle['observed']['dependency_heads']['T87'] = HEADS[4]
         self.rejected(bundle)
@@ -1282,6 +1334,7 @@ class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
             verification_method_ids=['VM-A2'], evidence_ids=[evidence_id],
             rationale=None, finding_ids=[],
         ))
+        refresh_project_protocol_identity(bundle)
         self.rejected(bundle)
 
     def test_optional_not_applicable_with_rationale_is_truthful(self):
@@ -1304,6 +1357,7 @@ class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
             rationale='Synthetic criterion does not apply to this child.',
             finding_ids=[],
         ))
+        refresh_project_protocol_identity(bundle)
         checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
 
     def test_blocking_carried_finding_stops_advancement(self):
@@ -1419,6 +1473,7 @@ class TargetAndRegressionV11Tests(unittest.TestCase):
             if record['review_lease_ref']:
                 lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == record['review_lease_ref'])
                 lease['target_ref'] = target_ref
+                readdress_review_lease(bundle, lease)
         for state in bundle['support']['observed_states']:
             if state['task_id'] == task['task_id']:
                 state['target_ref'] = target_ref
@@ -1468,6 +1523,7 @@ class TargetAndRegressionV11Tests(unittest.TestCase):
             rationale='Synthetic escaped defect promotion.',
             active=True,
         )]
+        refresh_project_protocol_identity(bundle)
         self.rejected(bundle)
 
     def test_valid_project_regression_ratchet_is_accepted(self):
@@ -1481,6 +1537,7 @@ class TargetAndRegressionV11Tests(unittest.TestCase):
             rationale='Synthetic escaped defect becomes permanent Super Review coverage.',
             active=True,
         )]
+        refresh_project_protocol_identity(bundle)
         self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
 
 
