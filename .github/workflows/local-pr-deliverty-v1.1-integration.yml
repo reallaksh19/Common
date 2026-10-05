@@ -1,0 +1,61 @@
+name: Local PR Delivery v1.1 integration
+
+on:
+  pull_request:
+  push:
+    branches:
+      - 'codex/492-d-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  activation-and-version-guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check PyYAML jsonschema
+      - name: Compile integration runtime
+        run: |
+          python -m py_compile \
+            skills/Local_PR_Deliverty_v1.1/scripts/activation.py \
+            skills/Local_PR_Deliverty_v1.1/scripts/stage_timer.py \
+            skills/Local_PR_Deliverty_v1.1/scripts/version_guard.py \
+            skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py
+      - name: Validate stack manifests
+        run: |
+          python - <<'PY'
+          import pathlib
+          import yaml
+          root = pathlib.Path('skills/Local_PR_Deliverty_v1.1/integration')
+          stack = yaml.safe_load((root / 'protocol-stack.yaml').read_text(encoding='utf-8'))
+          matrix = yaml.safe_load((root / 'compatibility-matrix.yaml').read_text(encoding='utf-8'))
+          assert stack['stack_id'] == 'LOCAL_V1_1_V35'
+          assert stack['outer_protocol']['name'] == 'Local_PR_Deliverty_v1.1'
+          assert stack['nested_protocols']['CODER']['name'] == 'engineering-pr-delivery-v3.5'
+          assert stack['coordinator_adapter']['mode'] == 'LOCAL_V1_1_INTEGRATED'
+          assert stack['coordinator_adapter']['role'] == 'OBSERVATION_ONLY'
+          assert 'engineering-pr-delivery-v3.2' in stack['forbidden_active_relay_versions']
+          profile = matrix['profiles']['LOCAL_V1_1_V35']
+          assert profile['nested_coder']['version'] == '3.5'
+          assert profile['programme_coordinator']['legacy_v31'] == 'READABLE_COMPATIBILITY_ONLY'
+          assert matrix['migration']['automatic'] is False
+          PY
+      - name: Run activation adversarial suite
+        run: python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_activation.py' -v
+      - name: Replay live Common selector conflict
+        run: |
+          python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_selector_scan.py' -v
+          python skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py AGENTS.md
+      - name: Verify frozen V3.2 tree still exact
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2)" = '88ac97432a811f9a6b8d00bbe45cbec891e70d6a'
+      - name: Verify integrated coordinator contract is present
+        run: |
+          test -f skills/engineering-programme-coordinator/schemas/local-v1.1-integrated.schema.yaml
+          grep -F 'LOCAL_V1_1_INTEGRATED' skills/engineering-programme-coordinator/references/local-v1.1-v3.5-integrated-mode.md

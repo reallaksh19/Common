@@ -1,0 +1,36 @@
+schema: local-pr-deliverty-stack/v1
+stack_id: LOCAL_V1_1_V35
+outer_protocol:
+  name: Local_PR_Deliverty_v1.1
+  path: skills/Local_PR_Deliverty_v1.1
+  role: PRODUCTION_CONTROL_PLANE
+nested_protocols:
+  CODER:
+    name: engineering-pr-delivery-v3.5
+    path: skills/engineering-pr-delivery-v3.5
+    role: ENGINEERING_CONTINUITY_RECOVERY
+coordinator_adapter:
+  name: engineering-programme-coordinator
+  mode: LOCAL_V1_1_INTEGRATED
+  role: OBSERVATION_ONLY
+forbidden_active_relay_versions:
+  - engineering-pr-delivery-v2
+  - engineering-pr-delivery-v2.5
+  - engineering-pr-delivery-v3
+  - engineering-pr-delivery-v3.1
+  - engineering-pr-delivery-v3.2
+allowed_legacy_reads:
+  - HISTORICAL
+  - MIGRATION
+  - COMPATIBILITY
+upgrade_policy:
+  automatic_switch: false
+  notify_owner_on_successor: true
+  notify_owner_on_same_version_digest_change: true
+activation:
+  material_work_requires:
+    - EXACT_PROTOCOL_PINS
+    - ROLE_RESOLVED
+    - TIMER_ACCOUNTING_ARMED
+    - TASK_EVIDENCE_START_PUBLISHED
+    - TASK_EVIDENCE_START_READ_BACK
