@@ -226,6 +226,7 @@ def validate_project_protocol(task, support):
     require(len(methods) == len(protocol['verification_methods']), 'Duplicate project verification-method ID')
     for method in methods.values():
         require(not (method['harness_id'] and method['external_gate_id']), 'Verification method cannot bind both harness and external gate')
+        require(method['applies_to_roles'], 'Verification method needs at least one production role')
         if method['harness_id']:
             require(any(h['id'] == method['harness_id'] for h in protocol['harnesses']), 'Verification method references unknown harness')
         if method['external_gate_id']:
@@ -708,7 +709,8 @@ def task_history(task, records, parent, support, now):
             require(set(row['finding_ids']) <= finding_ids | carried_ids, 'Acceptance result references unknown finding')
             declared = acceptance_by_id(task)[row['criterion_id']]
             require(row['required'] == declared['required'], 'Acceptance requiredness differs from TASK')
-            require(set(row['verification_method_ids']) == set(declared['verification_method_ids']), 'Acceptance verification methods differ from TASK')
+            expected_methods = {mid for mid in declared['verification_method_ids'] if stage in methods[mid]['applies_to_roles']}
+            require(expected_methods and set(row['verification_method_ids']) == expected_methods, 'Acceptance verification methods differ from project role-applicable method set')
             cited_methods = {provenance[eid]['verification_method_id'] for eid in row['evidence_ids']}
             require(cited_methods == set(row['verification_method_ids']), 'Acceptance evidence does not exactly cover declared verification methods')
             method_results = {}
@@ -756,7 +758,7 @@ def task_history(task, records, parent, support, now):
                     if (stage == 'REVIEWER' and criterion['reviewer_check_required'])
                     or (stage in ['COORDINATOR', 'PARENT_CHECK'] and criterion['super_review_required'])
                 }
-                role_methods = set().union(*(set(project_criteria[cid]['verification_method_ids']) for cid in role_criteria)) if role_criteria else set()
+                role_methods = set().union(*({mid for mid in project_criteria[cid]['verification_method_ids'] if stage in methods[mid]['applies_to_roles']} for cid in role_criteria)) if role_criteria else set()
                 require(role_methods <= set(discovery['method_ids_attempted']), 'Discovery sweep did not attempt the full role-required verification-method set before repair')
                 require(role_methods <= {provenance[eid]['verification_method_id'] for eid in discovery['evidence_ids']}, 'Discovery sweep lacks pre-repair evidence for a role-required verification method')
         if record['status'] in ADVANCING_STATUSES:
