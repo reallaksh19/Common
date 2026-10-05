@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:observed-state",
+  "type": "object",
+  "properties": {
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "pr_head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "integration_tree_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repository_policy_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "required_checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider": {
+            "type": "string",
+            "minLength": 1
+          },
+          "workflow_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "head_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "PENDING",
+              "NOT_RUN",
+              "INCONCLUSIVE"
+            ]
+          },
+          "mandatory_steps_executed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "check",
+          "provider",
+          "workflow_digest",
+          "head_sha",
+          "result",
+          "mandatory_steps_executed"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "observed_at",
+    "pr_head_sha",
+    "base_sha",
+    "integration_tree_digest",
+    "repository_policy_digest",
+    "required_checks"
+  ],
+  "additionalProperties": false
+}
