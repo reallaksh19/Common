@@ -1226,6 +1226,7 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
                 'oracle_digests': [ORACLE_DIGEST],
             },
             'external_gates': [],
+            'regressions': [],
         }
         errors = list(Draft202012Validator(schema).iter_errors(sample))
         self.assertEqual(errors, [])
