@@ -1028,7 +1028,7 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         state['required_checks'][0]['mandatory_steps_executed'] = False
         state['required_checks'][0]['run_id'] = None
         state['required_checks'][0]['job_id'] = None
-        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'WAITING_CI')
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'WAITING_OWNER')
 
 
 class PrincipalAndDependencyV11Tests(unittest.TestCase):
