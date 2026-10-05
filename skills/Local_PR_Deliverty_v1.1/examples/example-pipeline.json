@@ -402,7 +402,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -564,7 +565,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": "LEASE-S2",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -849,7 +851,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -1048,7 +1051,8 @@
       "105": "OPEN",
       "106": "DRAFT"
     },
-    "dependency_heads": {}
+    "dependency_heads": {},
+    "canonical_main_observations": {}
   },
   "support": {
     "review_leases": [
@@ -1073,7 +1077,8 @@
         "sealed_at": "2026-10-04T00:01:30Z",
         "environment_ref": "ENV-S2",
         "context_pre_verdict_ref": "CTX-PRE-S2",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       }
     ],
     "environments": [
