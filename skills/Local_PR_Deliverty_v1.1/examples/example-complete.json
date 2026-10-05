@@ -106,7 +106,8 @@
           "coordinator"
         ]
       },
-      "stacked_dependencies": []
+      "stacked_dependencies": [],
+      "waivable_required_checks": []
     },
     {
       "record": "TASK",
@@ -172,7 +173,8 @@
           "coordinator"
         ]
       },
-      "stacked_dependencies": []
+      "stacked_dependencies": [],
+      "waivable_required_checks": []
     }
   ],
   "stages": [
