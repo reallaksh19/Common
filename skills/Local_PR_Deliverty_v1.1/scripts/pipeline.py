@@ -52,7 +52,7 @@ def validate_evidence(record, parent, task, bundle_observations, now):
         require(grant, 'Coder/Reviewer needs the existing Coordinator child permission')
         if record['stage'] == 'CODER':
             require(instant(grant['issued_at']) <= instant(context['read_at']), 'Coder must reread parent comments after permission')
-    if record['status'] == 'PASS' and task['kind'] == 'CHILD':
+    if record['status'] in ['PASS', 'APPROVED_WITH_WAIVER'] and task['kind'] == 'CHILD':
         require(task['pr'] is not None, 'Each child needs its own PR before Coder can pass')
 
 
@@ -117,7 +117,7 @@ def status_details(states, tasks, history, observations, now, parent, results):
         state = states[str(task['issue'])]
         latest, passes = history[key]
         roles = {role.lower(): 'DONE' if role in passes else 'NOT_STARTED' for role in ['CODER', 'REVIEWER', 'COORDINATOR']}
-        if latest and latest['stage'] in ['CODER', 'REVIEWER', 'COORDINATOR'] and latest['status'] != 'PASS':
+        if latest and latest['stage'] in ['CODER', 'REVIEWER', 'COORDINATOR'] and latest['status'] not in ['PASS', 'APPROVED_WITH_WAIVER']:
             roles[latest['stage'].lower()] = state['status']
         if state['stage'] in ['CODER', 'REVIEWER', 'COORDINATOR'] and state['status'] == 'READY':
             roles[state['stage'].lower()] = 'READY'
