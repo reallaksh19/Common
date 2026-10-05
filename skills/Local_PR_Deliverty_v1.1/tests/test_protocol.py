@@ -56,7 +56,7 @@ def enrich_v11(bundle):
         task['version'] = '1.1'
         task['protocol_ref'] = task['protocol_ref'].replace('Local_PR_Deliverty_v1.0', 'Local_PR_Deliverty_v1.1')
         task['project_protocol_ref'] = 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json'
-        task['project_protocol_digest'] = PROJECT_DIGEST
+        task['project_protocol_digest'] = '0' * 64
         task['protocol_digest'] = COMMON_DIGEST
         task.setdefault('target_ref', 'refs/heads/main')
         task['owner_principals'] = ['owner']
@@ -86,12 +86,12 @@ def enrich_v11(bundle):
                     super_review_required=criterion['super_review_required'],
                     verification_method_ids=list(criterion['verification_method_ids']),
                 )
-    support['project_protocols'].append(dict(
+    project_protocol = dict(
         protocol_id='SYNTHETIC-PROJECT-v1',
         version='1.0',
         repository=bundle['tasks'][0]['repository'],
         source_ref=bundle['tasks'][0]['project_protocol_ref'],
-        digest=PROJECT_DIGEST,
+        digest='0' * 64,
         acceptance_sets=[dict(id='ALL', criteria=list(criteria.values()))],
         harnesses=[dict(
             id='SR-ALL',
@@ -106,7 +106,12 @@ def enrich_v11(bundle):
         ),
         external_gates=[],
         regressions=[],
-    ))
+    )
+    project_protocol['digest'] = checker.canonical_digest(project_protocol)
+    project_digest = project_protocol['digest']
+    support['project_protocols'].append(project_protocol)
+    for task in bundle['tasks']:
+        task['project_protocol_digest'] = project_digest
 
     for record in bundle['stages']:
         record['version'] = '1.1'
@@ -117,7 +122,7 @@ def enrich_v11(bundle):
         record['common_protocol_digest'] = tasks[record['task_id']]['protocol_digest']
         record['project_protocol_ref'] = tasks[record['task_id']]['project_protocol_ref']
         record['environment_ref'] = 'ENV-' + record['record_id']
-        support['environments'].append(dict(
+        environment = dict(
             environment_id=record['environment_ref'],
             os='synthetic-os',
             architecture='synthetic-arch',
@@ -130,8 +135,25 @@ def enrich_v11(bundle):
             package_manager=dict(name='pip', version='synthetic'),
             locale='C.UTF-8',
             timezone='UTC',
-            digest=ENV_DIGEST,
-        ))
+            digest='0' * 64,
+        )
+        environment['digest'] = checker.canonical_digest(environment)
+        environment_digest = environment['digest']
+        support['environments'].append(environment)
+
+        acceptance_surface = None
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+            acceptance_surface = dict(
+                project_protocol_digest=project_digest,
+                harness_digest=HARNESS_DIGEST,
+                baseline_digest=BASELINE_DIGEST,
+                oracle_digests=[ORACLE_DIGEST],
+                fixture_digests=[FIXTURE_DIGEST],
+                mutation_detected=False,
+                digest='0' * 64,
+            )
+            acceptance_surface['digest'] = checker.canonical_digest(acceptance_surface)
+        acceptance_surface_digest = acceptance_surface['digest'] if acceptance_surface else None
 
         checked = list(record['acceptance_checked'])
         evidence_id = 'EV-' + record['record_id']
@@ -146,7 +168,7 @@ def enrich_v11(bundle):
             artifact_digest=None,
             harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
             baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            environment_digest=ENV_DIGEST,
+            environment_digest=environment_digest,
         )]
         record['evidence_refs'] = [evidence_id]
         support['evidence_records'].append(dict(
@@ -155,16 +177,16 @@ def enrich_v11(bundle):
             producer_principal=record['executor'],
             evidence_class=evidence_class,
             candidate_sha=final_source,
-            project_protocol_digest=PROJECT_DIGEST,
+            project_protocol_digest=project_digest,
             harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
             baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            environment_digest=ENV_DIGEST,
+            environment_digest=environment_digest,
             result='PASS' if record['status'] in checker.ADVANCING_STATUSES else 'NOT_RUN',
             procedure='Synthetic protocol evidence fixture.',
             artifact_digest=None,
             common_protocol_digest=COMMON_DIGEST,
             review_lease_ref=None,
-            acceptance_surface_digest=SURFACE_DIGEST if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else None,
+            acceptance_surface_digest=acceptance_surface_digest if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else None,
             collected_at=record['work_periods'][-1]['end'] or record['started_at'],
             procedure_kind='COMMAND',
             command_argv=['synthetic', 'check'],
@@ -184,19 +206,7 @@ def enrich_v11(bundle):
             )
             for cid in checked
         ]
-        record['acceptance_surface'] = (
-            dict(
-                project_protocol_digest=PROJECT_DIGEST,
-                harness_digest=HARNESS_DIGEST,
-                baseline_digest=BASELINE_DIGEST,
-                oracle_digests=[ORACLE_DIGEST],
-                fixture_digests=[FIXTURE_DIGEST],
-                mutation_detected=False,
-                digest=SURFACE_DIGEST,
-            )
-            if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']
-            else None
-        )
+        record['acceptance_surface'] = copy.deepcopy(acceptance_surface)
         record['production_output'] = dict(
             deliverables=['Synthetic ' + record['stage'] + ' production output'],
             coverage_completed=checked,
@@ -283,10 +293,8 @@ def enrich_v11(bundle):
             record['source_attestation'] = None
 
         if is_pass and record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
-            lease_ref = 'LEASE-' + record['record_id']
-            record['review_lease_ref'] = lease_ref
-            support['review_leases'].append(dict(
-                lease_id=lease_ref,
+            lease = dict(
+                lease_id='sha256:' + '0' * 64,
                 task_id=record['task_id'],
                 stage_record_id=record['record_id'],
                 repository=tasks[record['task_id']]['repository'],
@@ -305,24 +313,28 @@ def enrich_v11(bundle):
                 integration_tree_digest=TREE_DIGEST,
                 common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
                 common_protocol_digest=COMMON_DIGEST,
-                project_protocol_digest=PROJECT_DIGEST,
+                project_protocol_digest=project_digest,
                 spec_digest=record['spec_digest'],
                 parent_spec_digest=record['parent_spec_digest'],
                 parent_context_digest=PARENT_CONTEXT_DIGEST,
                 child_context_digest=CHILD_CONTEXT_DIGEST,
                 pr_description_digest=PR_DESCRIPTION_DIGEST,
                 required_check_policy_digest=POLICY_DIGEST,
-                acceptance_surface_digest=SURFACE_DIGEST,
-                environment_digest=ENV_DIGEST,
+                acceptance_surface_digest=acceptance_surface_digest,
+                environment_digest=environment_digest,
                 dependency_heads=[],
                 owner_control_digest=OWNER_CONTROL_DIGEST,
                 sealed_at=record['work_periods'][-1]['end'],
                 environment_ref=record['environment_ref'],
                 context_pre_verdict_ref=record['context_pre_verdict_ref'],
-            ))
+            )
+            lease['lease_id'] = 'sha256:' + checker.canonical_digest(lease, ('lease_id',))
+            lease_ref = lease['lease_id']
+            record['review_lease_ref'] = lease_ref
+            support['review_leases'].append(lease)
             provenance = next(item for item in support['evidence_records'] if item['evidence_id'] == evidence_id)
             provenance['review_lease_ref'] = lease_ref
-            provenance['acceptance_surface_digest'] = SURFACE_DIGEST
+            provenance['acceptance_surface_digest'] = acceptance_surface_digest
         else:
             record['review_lease_ref'] = None
 
@@ -359,7 +371,7 @@ def enrich_v11(bundle):
             task_id=task['task_id'],
             pr=task['pr'],
             target_ref=task['target_ref'],
-            project_protocol_digest=PROJECT_DIGEST,
+            project_protocol_digest=project_digest,
             pre_merge_context_ref=pre_merge_ref,
             observed_at='2026-10-04T00:03:00Z',
             pr_head_sha=final['validated_sha'],
@@ -370,7 +382,7 @@ def enrich_v11(bundle):
             repository_policy_source_ref=POLICY_SOURCE,
             repository_policy_visibility='CONFIRMED',
             common_protocol_digest=COMMON_DIGEST,
-            environment_digest=ENV_DIGEST,
+            environment_digest=next(item for item in support['environments'] if item['environment_id'] == final['environment_ref'])['digest'],
             workspace_digest=WORKSPACE_DIGEST,
             parent_context_digest=PARENT_CONTEXT_DIGEST,
             child_context_digest=CHILD_CONTEXT_DIGEST,
