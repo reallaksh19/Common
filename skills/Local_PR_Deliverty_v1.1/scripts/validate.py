@@ -18,6 +18,7 @@ SUPPORT_SCHEMAS = {
     'context_snapshots': ('context-snapshot', 'snapshot_id'),
     'waivers': ('waiver', 'waiver_id'),
     'observed_states': ('observed-state', 'state_id'),
+    'evidence_records': ('evidence-record', 'evidence_id'),
 }
 
 
@@ -53,7 +54,7 @@ def schema_check(record):
 
 def support_index(bundle):
     support = bundle['support']
-    require(isinstance(support, dict) and set(support) == set(SUPPORT_SCHEMAS), 'Support needs review_leases, environments, context_snapshots, waivers and observed_states only')
+    require(isinstance(support, dict) and set(support) == set(SUPPORT_SCHEMAS), 'Support needs review_leases, environments, context_snapshots, waivers, observed_states and evidence_records only')
     indexes = {}
     for key, (schema_name, id_field) in SUPPORT_SCHEMAS.items():
         records = support[key]
@@ -169,6 +170,10 @@ def validate_periods(record, parent, task, now):
 def validate_stage_trust(record, task, parent, support, now):
     role = record['role_integrity']
     require(role['claimed_role'] == record['stage'] and role['principal'] == record['executor'], 'Role-integrity claim does not match stage executor')
+    effective_role = 'COORDINATOR' if record['stage'] == 'PARENT_CHECK' else record['stage']
+    require(record['executor'] in task['role_principals'][effective_role], 'Stage executor is not an authorized principal for this role')
+    require(record['common_protocol_ref'] == task['protocol_ref'] and record['common_protocol_digest'] == task['protocol_digest'], 'Stage Common protocol basis is stale')
+    require(record['project_protocol_ref'] == task['project_protocol_ref'], 'Stage project protocol reference is stale')
 
     start = support['context_snapshots'].get(record['context_start_ref'])
     require(start and start['task_id'] == task['task_id'] and start['phase'] == 'START', 'Missing/mismatched START context snapshot')
@@ -180,6 +185,19 @@ def validate_stage_trust(record, task, parent, support, now):
 
     evidence = {item['evidence_id']: item for item in record['evidence_manifest']}
     require(set(record['evidence_refs']) == set(evidence), 'evidence_refs must exactly name the stage evidence manifest')
+    for evidence_id, embedded in evidence.items():
+        provenance = support['evidence_records'].get(evidence_id)
+        require(provenance, 'Stage evidence reference lacks provenance record')
+        require(provenance['producer_role'] == record['stage'] and provenance['producer_principal'] == record['executor'], 'Evidence provenance producer does not match stage')
+        require(provenance['evidence_class'] == embedded['class'] and provenance['candidate_sha'] == embedded['source_sha'], 'Evidence provenance class/candidate mismatch')
+        require(provenance['project_protocol_digest'] == task['project_protocol_digest'], 'Evidence provenance uses stale project protocol')
+        require(provenance['harness_digest'] == embedded['harness_digest'] and provenance['baseline_digest'] == embedded['baseline_digest'], 'Evidence provenance harness/baseline mismatch')
+        require(provenance['environment_digest'] == embedded['environment_digest'], 'Evidence provenance environment mismatch')
+        require(provenance['result'] == embedded['result'] and provenance['procedure'] == embedded['procedure'] and provenance['artifact_digest'] == embedded['artifact_digest'], 'Evidence provenance result/procedure/artifact mismatch')
+        if provenance['evidence_class'] == 'REVIEWER_INDEPENDENT':
+            require(provenance['producer_role'] == 'REVIEWER', 'Reviewer-independent evidence must be produced by Reviewer')
+        if provenance['evidence_class'] == 'SUPER_REVIEW_INDEPENDENT':
+            require(provenance['producer_role'] in ['COORDINATOR', 'PARENT_CHECK'], 'Super-review independent evidence must be produced by Super Reviewer')
 
     if record['status'] != 'PASS':
         return
@@ -206,7 +224,7 @@ def validate_stage_trust(record, task, parent, support, now):
         lease = support['review_leases'].get(record['review_lease_ref'])
         require(lease and lease['task_id'] == task['task_id'] and lease['stage_record_id'] == record['record_id'], 'Missing/mismatched review lease')
         require(lease['candidate_sha'] == record['validated_sha'] and lease['base_sha'] == record['base_sha'], 'Review lease is stale for candidate/base')
-        require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
+        require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['common_protocol_digest'] == task['protocol_digest'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
         require(lease['spec_digest'] == task['spec_digest'] and lease['parent_spec_digest'] == parent['spec_digest'], 'Review lease specification basis is stale')
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
         require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'], 'Review lease context/PR basis is stale')
@@ -277,6 +295,8 @@ def task_history(task, records, parent, support, now):
         require(not record['repeat_stages'], 'v1.1 forbids reverse stage routing; the current stage owns its production fixes')
         production = record['production_output']
         require(set(production['coverage_completed']) <= acceptance_ids(task), 'Production output names unknown acceptance coverage')
+        if record['status'] == 'BLOCKED':
+            require(production['blocking_class'] != 'NONE' and production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'BLOCKED is reserved for genuine external/authority boundaries, not internal fixable defects')
         if record['status'] == 'PASS':
             require(production['internal_fixable_defects_remaining'] == 0 and not production['unresolved_internal_defects'], 'PASS cannot push internal fixable defects downstream')
             require(production['coverage_complete_for_stage'] and not production['early_termination'], 'PASS requires work-to-exhaustion for the stage')
@@ -349,6 +369,7 @@ def validate_bundle(bundle, now=None):
     require(len(declarations) == len(parent['children']) and parent['issue'] not in declarations, 'Invalid child declarations')
     commands = parent['owner_commands']
     require(all(command['owner_principal'] in parent['owner_principals'] for command in commands), 'Owner command principal is not authorized by TASK')
+    require(all(command['source_kind'] != 'UNVERIFIED' and command['authentication_status'] != 'UNVERIFIED' for command in commands), 'Owner command source/authentication is unverified')
     require(len({c['id'] for c in commands}) == len(commands), 'Duplicate Owner command ID')
     require(all(instant(c['issued_at']) <= now for c in commands), 'Future Owner command')
     require(commands == sorted(commands, key=lambda c: instant(c['issued_at'])), 'Owner commands must be chronological')
@@ -370,12 +391,17 @@ def validate_bundle(bundle, now=None):
     for task in tasks.values():
         require(len(acceptance_ids(task)) == len(task['acceptance']), 'Duplicate acceptance ID')
         require(set(task['waivable_criteria']) <= acceptance_ids(task), 'waivable_criteria names unknown acceptance ID')
+        role_sets = [set(task['role_principals'][name]) for name in ['CODER', 'REVIEWER', 'COORDINATOR']]
+        require(not (role_sets[0] & role_sets[1] or role_sets[0] & role_sets[2] or role_sets[1] & role_sets[2]), 'Authorized role principal sets must be disjoint')
         contracts = {item['check']: item for item in task['required_check_contracts']}
         require(len(contracts) == len(task['required_check_contracts']) and set(contracts) == set(task['required_checks']), 'required_check_contracts must exactly cover required_checks')
         require(all(item['provider'] == task['required_check_policy']['provider'] and item['policy_source'] == task['required_check_policy']['source_ref'] for item in task['required_check_contracts']), 'Required-check contract is outside trusted policy source/provider')
-        require(task['repository'] == parent['repository'] and task['parent_owner'] == parent['parent_owner'] and task['protocol_ref'] == parent['protocol_ref'] and task['project_protocol_ref'] == parent['project_protocol_ref'] and task['project_protocol_digest'] == parent['project_protocol_digest'], 'Inconsistent parent/Common/project protocol basis')
+        require(task['repository'] == parent['repository'] and task['parent_owner'] == parent['parent_owner'] and task['protocol_ref'] == parent['protocol_ref'] and task['protocol_digest'] == parent['protocol_digest'] and task['project_protocol_ref'] == parent['project_protocol_ref'] and task['project_protocol_digest'] == parent['project_protocol_digest'] and task['role_principals'] == parent['role_principals'], 'Inconsistent parent/Common/project protocol or role basis')
+        require(set(task['stacked_dependencies']) <= set(tasks) - {task['task_id']}, 'Invalid stacked dependency task ID')
         if task['kind'] == 'CHILD':
             require(task['issue'] in declarations and task['parent_issue'] == parent['issue'], 'Undeclared child')
+        else:
+            require(not task['stacked_dependencies'], 'Parent TASK cannot declare stacked dependencies')
     for child in declarations.values():
         require(set(child['covers']) <= acceptance_ids(parent), 'Child covers unknown parent requirement')
         require(set(child['depends_on']) <= set(declarations) and child['issue'] not in child['depends_on'], 'Invalid dependency')
@@ -399,6 +425,19 @@ def validate_bundle(bundle, now=None):
     history = {key: task_history(task, bundle['stages'], parent, support, now) for key, task in tasks.items()}
     active = [r for r, _ in history.values() if r and not r['writer_stopped']]
     observations = bundle['observed']
+    dependency_heads = observations.get('dependency_heads', {})
+    require(isinstance(dependency_heads, dict), 'dependency_heads observation must be an object')
+    for key, task in tasks.items():
+        latest, _passes = history[key]
+        if not latest or latest['status'] != 'PASS' or not latest['review_lease_ref']:
+            continue
+        lease = support['review_leases'][latest['review_lease_ref']]
+        current = {}
+        for dependency in task['stacked_dependencies']:
+            require(dependency in dependency_heads, 'Missing current stacked dependency head observation')
+            current[dependency] = dependency_heads[dependency]
+        recorded = {item['task_id']: item['sha'] for item in lease['dependency_heads']}
+        require(recorded == current, 'Stacked dependency head moved; current review lease expired')
     validate_pipeline(parent, tasks, bundle['stages'], observations, now)
     for record in bundle['stages']:
         validate_evidence(record, parent, tasks[record['task_id']], observations, now)
