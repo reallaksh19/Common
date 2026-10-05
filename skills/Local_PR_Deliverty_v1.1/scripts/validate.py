@@ -518,7 +518,7 @@ def validate_stage_trust(record, task, parent, support, now):
         require(len(matches) == 1, 'Required criterion NOT_RUN lacks exact active Owner waiver')
         used_stage_waivers.add(matches[0]['waiver_id'])
 
-    if record['status'] == 'APPROVED_WITH_WAIVER':
+    if record['status'] == 'STAGE_COMPLETE_WITH_WAIVER':
         require(set(record['waiver_refs']) == used_stage_waivers, 'Stage waiver_refs must exactly match required NOT_RUN criterion/external-gate waivers')
 
     referenced = set()
@@ -1021,7 +1021,7 @@ def validate_bundle(bundle, now=None):
                 stable_source = latest['workspace_mode'] != 'READ_ONLY' or material.get('reference') == latest['review_source']['reference']
                 if not current or not stable_source or workspace.get('path') != parent['workspace'] or material.get('head_sha') != head or material.get('unrecorded_changes') is not False:
                     stage, status = 'COORDINATOR', 'REWORK'
-                elif latest['status'] == 'APPROVED_WITH_WAIVER' and any(
+                elif latest['status'] == 'STAGE_COMPLETE_WITH_WAIVER' and any(
                     not support['waivers'].get(waiver_id) or not waiver_valid_at(support['waivers'][waiver_id], now)
                     for waiver_id in latest['waiver_refs']
                 ):
