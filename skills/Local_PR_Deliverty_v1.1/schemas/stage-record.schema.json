@@ -924,6 +924,41 @@
     "project_protocol_ref": {
       "type": "string",
       "minLength": 1
+    },
+    "external_gate_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "NOT_RUN",
+              "INCONCLUSIVE",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "gate_id",
+          "result",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
@@ -974,7 +1009,8 @@
     "evidence_refs",
     "common_protocol_ref",
     "common_protocol_digest",
-    "project_protocol_ref"
+    "project_protocol_ref",
+    "external_gate_results"
   ],
   "additionalProperties": false,
   "allOf": [
