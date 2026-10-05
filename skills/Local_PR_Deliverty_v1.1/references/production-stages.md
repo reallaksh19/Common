@@ -17,3 +17,9 @@ Production stages may change product source and normal regression tests. They ma
 ## Education
 
 Each stage documents what assumption failed, why earlier evidence did not catch it, which invariant matters, what regression was added, and what downstream stages must preserve. Education moves forward with the improved candidate; responsibility does not move backward.
+
+## Production accounting
+
+Every stage END records whether the candidate actually changed, defects found, defects fixed in that stage, regression additions, education points and external escalations. `candidate_changed` must agree with input/output identity. A stage cannot claim a fixed defect it did not record as found/consumed. BLOCKED requires an explicit genuine external/Owner/provider/protected-policy escalation and zero unresolved internal fixable defects.
+
+Reviewer advancement must cover every project criterion marked `reviewer_check_required` with Reviewer-independent evidence. Super Reviewer advancement must cover every criterion marked `super_review_required` with Super Review/external-oracle evidence. Optional `NOT_APPLICABLE` results require explicit rationale.
