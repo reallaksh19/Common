@@ -4,6 +4,7 @@ import json
 import unittest
 import sys
 from pathlib import Path
+from datetime import timedelta
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -50,8 +51,15 @@ def snapshot_events(record, task, observed_at):
     return events
 
 
+def _plus_seconds(value, seconds):
+    return (checker.instant(value) + timedelta(seconds=seconds)).isoformat().replace('+00:00', 'Z')
+
+
 def enrich_v11(bundle):
     tasks = {task['task_id']: task for task in bundle['tasks']}
+
+    verification_methods = []
+    criteria = {}
     for task in bundle['tasks']:
         task['version'] = '1.1'
         task['protocol_ref'] = task['protocol_ref'].replace('Local_PR_Deliverty_v1.0', 'Local_PR_Deliverty_v1.1')
@@ -64,28 +72,96 @@ def enrich_v11(bundle):
         task.setdefault('stacked_dependencies', [])
         task['required_check_policy'] = dict(source_ref=POLICY_SOURCE, digest=POLICY_DIGEST, provider='GITHUB_ACTIONS')
         task['required_check_contracts'] = [
-            dict(check=name, provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP)
+            dict(
+                check=name,
+                provider='GITHUB_ACTIONS',
+                workflow_digest=WORKFLOW_DIGEST,
+                policy_source=POLICY_SOURCE,
+                workflow_path=WORKFLOW_PATH,
+                expected_app=EXPECTED_APP,
+                certifies='INTEGRATION_CANDIDATE',
+                allowed_checkout_modes=['SYNTHETIC_MERGE'],
+            )
             for name in task['required_checks']
         ]
         task.setdefault('waivable_criteria', [])
         task.setdefault('waivable_required_checks', [])
+
         for criterion in task['acceptance']:
-            criterion['verification_method_ids'] = ['VM-' + criterion['id']]
             criterion.setdefault('super_review_required', True)
+            method_ids = []
+            if task['kind'] == 'CHILD':
+                author_id = 'VM-' + criterion['id'] + '-AUTHOR'
+                review_id = 'VM-' + criterion['id'] + '-REVIEW'
+                super_id = 'VM-' + criterion['id'] + '-SUPER'
+                method_ids = [author_id, review_id, super_id]
+                verification_methods.extend([
+                    dict(
+                        id=author_id,
+                        verification_class='POSITIVE',
+                        harness_id=None,
+                        external_gate_id=None,
+                        required_evidence_classes=['AUTHOR'],
+                        material_inputs=['PRODUCT'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['CODER'],
+                    ),
+                    dict(
+                        id=review_id,
+                        verification_class='INVARIANT',
+                        harness_id=None,
+                        external_gate_id=None,
+                        required_evidence_classes=['REVIEWER_INDEPENDENT'],
+                        material_inputs=['PRODUCT', 'SPECIFICATION'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['REVIEWER'],
+                    ),
+                    dict(
+                        id=super_id,
+                        verification_class='DIFFERENTIAL',
+                        harness_id='SR-ALL',
+                        external_gate_id=None,
+                        required_evidence_classes=['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'],
+                        material_inputs=['PRODUCT', 'DEPENDENCIES', 'PROJECT_PROTOCOL'],
+                        rerun_policy='FULL_REQUIRED_SET',
+                        applies_to_roles=['COORDINATOR'],
+                    ),
+                ])
+            else:
+                parent_id = 'VM-' + criterion['id'] + '-PARENT'
+                method_ids = [parent_id]
+                verification_methods.append(dict(
+                    id=parent_id,
+                    verification_class='PRODUCER_CONSUMER',
+                    harness_id='SR-ALL',
+                    external_gate_id=None,
+                    required_evidence_classes=['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE'],
+                    material_inputs=['PRODUCT', 'CHILD_RESULTS', 'PROJECT_PROTOCOL'],
+                    rerun_policy='FULL_REQUIRED_SET',
+                    applies_to_roles=['PARENT_CHECK'],
+                ))
+            criterion['verification_method_ids'] = method_ids
+            criteria[criterion['id']] = dict(
+                id=criterion['id'],
+                required=criterion['required'],
+                reviewer_check_required=criterion['required'] and task['kind'] == 'CHILD',
+                super_review_required=criterion['super_review_required'],
+                verification_method_ids=list(method_ids),
+            )
 
     support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[], project_protocols=[])
     bundle['support'] = support
-    criteria = {}
-    for task in bundle['tasks']:
-        for criterion in task['acceptance']:
-            if criterion['id'] not in criteria:
-                criteria[criterion['id']] = dict(
-                    id=criterion['id'],
-                    required=criterion['required'],
-                    reviewer_check_required=criterion['required'],
-                    super_review_required=criterion['super_review_required'],
-                    verification_method_ids=list(criterion['verification_method_ids']),
-                )
+
+    manifest = [
+        dict(id='MAN-HARNESS', kind='HARNESS_ENTRYPOINT', ref='synthetic://harness/sr-all', digest=HARNESS_DIGEST, transitive=True),
+        dict(id='MAN-HELPER', kind='IMPORTED_HELPER', ref='synthetic://harness/helper', digest='a' * 64, transitive=True),
+        dict(id='MAN-FIXTURE', kind='FIXTURE', ref='synthetic://fixture/all', digest=FIXTURE_DIGEST, transitive=True),
+        dict(id='MAN-BASELINE', kind='BASELINE', ref='synthetic://baseline/all', digest=BASELINE_DIGEST, transitive=True),
+        dict(id='MAN-LOCK', kind='LOCKFILE', ref='synthetic://lock/project', digest='b' * 64, transitive=True),
+    ]
+    manifest_digest = checker.canonical_value_digest(manifest)
+    harness_method_ids = [method['id'] for method in verification_methods if method['harness_id'] == 'SR-ALL']
+
     project_protocol = dict(
         protocol_id='SYNTHETIC-PROJECT-v1',
         version='1.0',
@@ -93,16 +169,21 @@ def enrich_v11(bundle):
         source_ref=bundle['tasks'][0]['project_protocol_ref'],
         digest='0' * 64,
         acceptance_sets=[dict(id='ALL', criteria=list(criteria.values()))],
+        verification_methods=verification_methods,
         harnesses=[dict(
             id='SR-ALL',
             criteria=[criterion_id for criterion_id, criterion in criteria.items() if criterion['super_review_required']],
             protected=True,
+            verification_method_ids=harness_method_ids,
+            manifest_refs=[item['id'] for item in manifest],
         )],
         protected_surface=dict(
             harness_digest=HARNESS_DIGEST,
             baseline_digest=BASELINE_DIGEST,
             oracle_digests=[ORACLE_DIGEST],
             fixture_digests=[FIXTURE_DIGEST],
+            manifest=manifest,
+            manifest_digest=manifest_digest,
         ),
         external_gates=[],
         regressions=[],
@@ -113,15 +194,24 @@ def enrich_v11(bundle):
     for task in bundle['tasks']:
         task['project_protocol_digest'] = project_digest
 
+    method_map = {method['id']: method for method in verification_methods}
+
     for record in bundle['stages']:
+        if record['status'] == 'PASS':
+            record['status'] = 'STAGE_COMPLETE'
+        elif record['status'] == 'APPROVED_WITH_WAIVER':
+            record['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
+
+        task = tasks[record['task_id']]
         record['version'] = '1.1'
         record['repeat_stages'] = []
         record['waiver_refs'] = []
         record['role_integrity'] = dict(claimed_role=record['stage'], principal=record['executor'])
-        record['common_protocol_ref'] = tasks[record['task_id']]['protocol_ref']
-        record['common_protocol_digest'] = tasks[record['task_id']]['protocol_digest']
-        record['project_protocol_ref'] = tasks[record['task_id']]['project_protocol_ref']
+        record['common_protocol_ref'] = task['protocol_ref']
+        record['common_protocol_digest'] = task['protocol_digest']
+        record['project_protocol_ref'] = task['project_protocol_ref']
         record['environment_ref'] = 'ENV-' + record['record_id']
+
         environment = dict(
             environment_id=record['environment_ref'],
             os='synthetic-os',
@@ -149,6 +239,7 @@ def enrich_v11(bundle):
                 baseline_digest=BASELINE_DIGEST,
                 oracle_digests=[ORACLE_DIGEST],
                 fixture_digests=[FIXTURE_DIGEST],
+                manifest_digest=manifest_digest,
                 mutation_detected=False,
                 digest='0' * 64,
             )
@@ -156,73 +247,159 @@ def enrich_v11(bundle):
         acceptance_surface_digest = acceptance_surface['digest'] if acceptance_surface else None
 
         checked = list(record['acceptance_checked'])
-        evidence_id = 'EV-' + record['record_id']
-        evidence_class = 'SUPER_REVIEW_INDEPENDENT' if record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] else 'REVIEWER_INDEPENDENT' if record['stage'] == 'REVIEWER' else 'AUTHOR'
+        declared = {criterion['id']: criterion for criterion in task['acceptance']}
+        advancing = record['status'] in checker.ADVANCING_STATUSES
+        candidate_changed = record['output_sha'] is not None and record['output_sha'] != record['input_sha']
         final_source = record['validated_sha'] or record['output_sha'] or record['input_sha']
-        record['evidence_manifest'] = [dict(
-            evidence_id=evidence_id,
-            **{'class': evidence_class},
-            result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
-            source_sha=final_source,
-            procedure='Synthetic protocol evidence fixture.',
-            artifact_digest=None,
-            harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            environment_digest=environment_digest,
-        )]
-        record['evidence_refs'] = [evidence_id]
-        support['evidence_records'].append(dict(
-            evidence_id=evidence_id,
-            producer_role=record['stage'],
-            producer_principal=record['executor'],
-            evidence_class=evidence_class,
-            candidate_sha=final_source,
-            project_protocol_digest=project_digest,
-            harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
-            environment_digest=environment_digest,
-            result='PASS' if record['status'] in checker.ADVANCING_STATUSES else 'NOT_RUN',
-            procedure='Synthetic protocol evidence fixture.',
-            artifact_digest=None,
-            common_protocol_digest=COMMON_DIGEST,
-            review_lease_ref=None,
-            acceptance_surface_digest=acceptance_surface_digest if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else None,
-            collected_at=record['work_periods'][-1]['end'] or record['started_at'],
-            procedure_kind='COMMAND',
-            command_argv=['synthetic', 'check'],
-            exit_code=0 if record['status'] in checker.ADVANCING_STATUSES else None,
-            fixture_digests=[FIXTURE_DIGEST] if evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT'] else [],
-        ))
-        declared = {criterion['id']: criterion for criterion in tasks[record['task_id']]['acceptance']}
-        record['acceptance_results'] = [
-            dict(
+
+        if record['stage'] == 'CODER':
+            evidence_class = 'AUTHOR'
+        elif record['stage'] == 'REVIEWER':
+            evidence_class = 'REVIEWER_INDEPENDENT'
+        else:
+            evidence_class = 'SUPER_REVIEW_INDEPENDENT'
+
+        stage_methods = {}
+        for cid in checked:
+            stage_methods[cid] = [mid for mid in declared[cid]['verification_method_ids'] if record['stage'] in method_map[mid]['applies_to_roles']]
+
+        record['evidence_manifest'] = []
+        record['evidence_refs'] = []
+        final_evidence_by_method = {}
+        discovery_evidence_ids = []
+
+        def add_evidence(evidence_id, phase, method_id, source_sha, result, collected_at):
+            method = method_map[method_id]
+            independent = evidence_class in ['REVIEWER_INDEPENDENT', 'SUPER_REVIEW_INDEPENDENT']
+            harness_digest = HARNESS_DIGEST if method['harness_id'] else None
+            baseline_digest = BASELINE_DIGEST if independent else None
+            embedded = dict(
+                evidence_id=evidence_id,
+                **{'class': evidence_class},
+                evidence_phase=phase,
+                result=result,
+                source_sha=source_sha,
+                procedure='Synthetic protocol evidence fixture.',
+                artifact_digest=None,
+                harness_digest=harness_digest,
+                baseline_digest=baseline_digest,
+                environment_digest=environment_digest,
+                verification_method_id=method_id,
+                harness_id=method['harness_id'],
+                external_gate_id=method['external_gate_id'],
+            )
+            record['evidence_manifest'].append(embedded)
+            record['evidence_refs'].append(evidence_id)
+
+            if evidence_class == 'AUTHOR':
+                oracle_independence = 'NOT_INDEPENDENT'
+                relationship = 'AUTHOR_OF_CANDIDATE'
+            else:
+                oracle_independence = 'PINNED_ORACLE_INDEPENDENT'
+                relationship = 'LAST_PRODUCT_WRITER' if candidate_changed and phase == 'FINAL_ACCEPTANCE' else 'NON_WRITER_REVIEWER'
+
+            support['evidence_records'].append(dict(
+                evidence_id=evidence_id,
+                origin_kind='STAGE_EXECUTOR',
+                origin_principal=record['executor'],
+                collected_by_role=record['stage'],
+                collected_by_principal=record['executor'],
+                provider_ref=None,
+                evidence_class=evidence_class,
+                evidence_phase=phase,
+                candidate_sha=source_sha,
+                project_protocol_digest=project_digest,
+                harness_digest=harness_digest,
+                result=result,
+                procedure='Synthetic protocol evidence fixture.',
+                artifact_digest=None,
+                baseline_digest=baseline_digest,
+                environment_digest=environment_digest,
+                common_protocol_digest=COMMON_DIGEST,
+                review_lease_ref=None,
+                acceptance_surface_digest=acceptance_surface_digest if independent and phase != 'DISCOVERY' else None,
+                acceptance_surface_manifest_digest=manifest_digest if independent and phase != 'DISCOVERY' else None,
+                collected_at=collected_at,
+                procedure_kind='COMMAND',
+                command_argv=['synthetic', 'check', method_id],
+                exit_code=0 if result == 'PASS' else 1 if result == 'FAIL' else None,
+                fixture_digests=[FIXTURE_DIGEST] if independent and phase != 'DISCOVERY' else [],
+                verification_method_id=method_id,
+                harness_id=method['harness_id'],
+                external_gate_id=method['external_gate_id'],
+                oracle_independence=oracle_independence,
+                principal_relationship_to_candidate=relationship,
+            ))
+
+        discovery_methods = sorted({mid for mids in stage_methods.values() for mid in mids})
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK'] and discovery_methods:
+            discovery_result = 'FAIL' if candidate_changed else 'PASS'
+            discovery_time = _plus_seconds(record['started_at'], 5)
+            for method_id in discovery_methods:
+                eid = 'DISC-' + record['record_id'] + '-' + method_id
+                add_evidence(eid, 'DISCOVERY', method_id, record['input_sha'], discovery_result, discovery_time)
+                discovery_evidence_ids.append(eid)
+
+        final_result = 'PASS' if advancing else 'NOT_RUN'
+        final_time = record['work_periods'][-1]['end'] or record['started_at']
+        for cid, method_ids in stage_methods.items():
+            for method_id in method_ids:
+                eid = 'EV-' + record['record_id'] + '-' + method_id
+                add_evidence(eid, 'FINAL_ACCEPTANCE', method_id, final_source, final_result, final_time)
+                final_evidence_by_method[method_id] = eid
+
+        record['acceptance_results'] = []
+        for cid in checked:
+            mids = stage_methods[cid]
+            record['acceptance_results'].append(dict(
                 criterion_id=cid,
                 required=declared[cid]['required'],
-                result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
-                verification_method_ids=list(declared[cid]['verification_method_ids']),
-                evidence_ids=[evidence_id],
+                result=final_result,
+                verification_method_ids=list(mids),
+                evidence_ids=[final_evidence_by_method[mid] for mid in mids],
                 rationale=None,
                 finding_ids=[],
-            )
-            for cid in checked
-        ]
+            ))
+
+        finding_ids = []
+        if record['stage'] in ['REVIEWER', 'COORDINATOR'] and candidate_changed and advancing:
+            finding_id = 'F-' + record['record_id']
+            finding_ids = [finding_id]
+            resolution_evidence = list(final_evidence_by_method.values())
+            record['findings'] = [dict(
+                id=finding_id,
+                problem='Synthetic bounded defect discovered before repair.',
+                status='RESOLVED',
+                resolution='Synthetic product repair completed in the discovering stage.',
+                classification='BOUNDED_PRODUCT_FIX',
+                phase_found='DISCOVERY',
+                repair_disposition='FIXED_HERE',
+                affected_components=['product'],
+                resolution_evidence_ids=resolution_evidence,
+            )]
+            for row in record['acceptance_results']:
+                row['finding_ids'] = [finding_id]
+        else:
+            record['findings'] = []
+
         record['acceptance_surface'] = copy.deepcopy(acceptance_surface)
         record['production_output'] = dict(
             deliverables=['Synthetic ' + record['stage'] + ' production output'],
             coverage_completed=checked,
-            fixes_applied=[],
-            regressions_added=[],
+            fixes_applied=list(finding_ids),
+            regressions_added=['REG-' + fid for fid in finding_ids],
             education_points=['Synthetic forward handoff explains evidence and downstream invariant.'],
             unresolved_internal_defects=[],
             internal_fixable_defects_remaining=0,
             blocking_class='NONE',
-            coverage_complete_for_stage=record['status'] == 'PASS',
+            coverage_complete_for_stage=advancing,
             early_termination=False,
             early_termination_reason=None,
-            candidate_changed=record['output_sha'] is not None and record['output_sha'] != record['input_sha'],
-            defects_found=[],
-            defects_fixed_here=[],
+            candidate_changed=candidate_changed,
+            defects_found=list(finding_ids),
+            defects_fixed_here=list(finding_ids),
             external_escalations=[],
+            changed_components=['product'] if candidate_changed else [],
         )
         record['carried_findings'] = []
         record['external_gate_results'] = []
@@ -237,6 +414,20 @@ def enrich_v11(bundle):
             environment_current=True,
             dependencies_current=True,
         )
+
+        if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK'] and discovery_methods:
+            record['discovery_freeze'] = dict(
+                candidate_sha=record['input_sha'],
+                frozen_at=_plus_seconds(record['started_at'], 10),
+                first_repair_at=_plus_seconds(record['started_at'], 15) if candidate_changed else None,
+                method_ids_attempted=discovery_methods,
+                finding_ids=list(finding_ids),
+                evidence_ids=discovery_evidence_ids,
+                sweep_complete=True,
+                early_termination_reason=None,
+            )
+        else:
+            record['discovery_freeze'] = None
 
         start_ref = 'CTX-START-' + record['record_id']
         record['context_start_ref'] = start_ref
@@ -255,11 +446,10 @@ def enrich_v11(bundle):
             owner_control_digest=OWNER_CONTROL_DIGEST,
             reconciled=True,
             reconciliation_note='Synthetic START context fully reconciled.',
-            context_events=snapshot_events(record, tasks[record['task_id']], record['started_at']),
+            context_events=snapshot_events(record, task, record['started_at']),
         ))
 
-        is_pass = record['status'] in checker.ADVANCING_STATUSES
-        if is_pass:
+        if advancing:
             pre_ref = 'CTX-PRE-' + record['record_id']
             record['context_pre_verdict_ref'] = pre_ref
             support['context_snapshots'].append(dict(
@@ -277,14 +467,17 @@ def enrich_v11(bundle):
                 owner_control_digest=OWNER_CONTROL_DIGEST,
                 reconciled=True,
                 reconciliation_note='Synthetic PRE_VERDICT context fully reconciled.',
-                context_events=snapshot_events(record, tasks[record['task_id']], record['work_periods'][-1]['end']),
+                context_events=snapshot_events(record, task, record['work_periods'][-1]['end']),
             ))
+            candidate_tree_digest = checker.canonical_value_digest(dict(candidate_sha=record['validated_sha']))
+            integration_tree_digest = checker.canonical_value_digest(dict(candidate_sha=record['validated_sha'], base_sha=record['base_sha']))
             record['source_attestation'] = dict(
                 candidate_sha=record['validated_sha'],
+                candidate_tree_digest=candidate_tree_digest,
                 base_sha=record['base_sha'],
-                base_ref=tasks[record['task_id']]['target_ref'],
+                base_ref=task['target_ref'],
                 merge_base_sha=record['base_sha'],
-                integration_tree_digest=TREE_DIGEST,
+                integration_tree_digest=integration_tree_digest,
                 workspace_digest=WORKSPACE_DIGEST,
                 unrecorded_changes=False,
             )
@@ -292,14 +485,14 @@ def enrich_v11(bundle):
             record['context_pre_verdict_ref'] = None
             record['source_attestation'] = None
 
-        if is_pass and record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+        if advancing and record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
             lease = dict(
                 lease_id='sha256:' + '0' * 64,
                 task_id=record['task_id'],
                 stage_record_id=record['record_id'],
-                repository=tasks[record['task_id']]['repository'],
-                pr=tasks[record['task_id']]['pr'],
-                project_protocol_ref=tasks[record['task_id']]['project_protocol_ref'],
+                repository=task['repository'],
+                pr=task['pr'],
+                project_protocol_ref=task['project_protocol_ref'],
                 certifier_role=record['stage'],
                 certifier_principal=record['executor'],
                 harness_digest=HARNESS_DIGEST,
@@ -307,11 +500,12 @@ def enrich_v11(bundle):
                 oracle_digests=[ORACLE_DIGEST],
                 fixture_digests=[FIXTURE_DIGEST],
                 candidate_sha=record['validated_sha'],
+                candidate_tree_digest=record['source_attestation']['candidate_tree_digest'],
                 base_sha=record['base_sha'],
-                target_ref=tasks[record['task_id']]['target_ref'],
-                merge_base_sha=record['base_sha'],
-                integration_tree_digest=TREE_DIGEST,
-                common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
+                target_ref=task['target_ref'],
+                merge_base_sha=record['source_attestation']['merge_base_sha'],
+                integration_tree_digest=record['source_attestation']['integration_tree_digest'],
+                common_protocol_ref=task['protocol_ref'],
                 common_protocol_digest=COMMON_DIGEST,
                 project_protocol_digest=project_digest,
                 spec_digest=record['spec_digest'],
@@ -321,6 +515,7 @@ def enrich_v11(bundle):
                 pr_description_digest=PR_DESCRIPTION_DIGEST,
                 required_check_policy_digest=POLICY_DIGEST,
                 acceptance_surface_digest=acceptance_surface_digest,
+                acceptance_surface_manifest_digest=manifest_digest,
                 environment_digest=environment_digest,
                 dependency_heads=[],
                 owner_control_digest=OWNER_CONTROL_DIGEST,
@@ -332,9 +527,12 @@ def enrich_v11(bundle):
             lease_ref = lease['lease_id']
             record['review_lease_ref'] = lease_ref
             support['review_leases'].append(lease)
-            provenance = next(item for item in support['evidence_records'] if item['evidence_id'] == evidence_id)
-            provenance['review_lease_ref'] = lease_ref
-            provenance['acceptance_surface_digest'] = acceptance_surface_digest
+            for item in support['evidence_records']:
+                if item['collected_by_role'] == record['stage'] and item['collected_by_principal'] == record['executor'] and item['evidence_phase'] != 'DISCOVERY' and item['candidate_sha'] == record['validated_sha']:
+                    item['review_lease_ref'] = lease_ref
+                    item['acceptance_surface_digest'] = acceptance_surface_digest
+                    item['acceptance_surface_manifest_digest'] = manifest_digest
+                    item['fixture_digests'] = [FIXTURE_DIGEST]
         else:
             record['review_lease_ref'] = None
 
@@ -342,11 +540,13 @@ def enrich_v11(bundle):
     bundle['observed'].setdefault('target_heads', {})
     bundle['observed'].setdefault('canonical_target_observations', {})
     bundle['observed'].pop('canonical_main_observations', None)
+
     child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
     for task in child_tasks:
         final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] in checker.ADVANCING_STATUSES), None)
         if not final:
             continue
+
         pre_merge_ref = 'CTX-PREMERGE-' + task['task_id']
         support['context_snapshots'].append(dict(
             snapshot_id=pre_merge_ref,
@@ -365,7 +565,9 @@ def enrich_v11(bundle):
             reconciliation_note='Synthetic PRE_MERGE context fully reconciled.',
             context_events=snapshot_events(final, task, '2026-10-04T00:03:00Z'),
         ))
+
         state_ref = 'OBS-' + task['task_id']
+        integration_sha = 'e' * 40
         support['observed_states'].append(dict(
             state_id=state_ref,
             task_id=task['task_id'],
@@ -376,8 +578,8 @@ def enrich_v11(bundle):
             observed_at='2026-10-04T00:03:00Z',
             pr_head_sha=final['validated_sha'],
             base_sha=final['base_sha'],
-            merge_base_sha=final['base_sha'],
-            integration_tree_digest=TREE_DIGEST,
+            merge_base_sha=final['source_attestation']['merge_base_sha'],
+            integration_tree_digest=final['source_attestation']['integration_tree_digest'],
             repository_policy_digest=POLICY_DIGEST,
             repository_policy_source_ref=POLICY_SOURCE,
             repository_policy_visibility='CONFIRMED',
@@ -398,14 +600,26 @@ def enrich_v11(bundle):
                     run_id='RUN-' + task['task_id'],
                     job_id='JOB-' + task['task_id'],
                     artifact_digests=[ARTIFACT_DIGEST],
-                    head_sha=final['validated_sha'],
+                    trigger_pr_head_sha=final['validated_sha'],
+                    provider_run_head_sha=integration_sha,
+                    tested_commit_sha=integration_sha,
+                    tested_tree_digest=final['source_attestation']['integration_tree_digest'],
+                    checkout_mode='SYNTHETIC_MERGE',
+                    base_sha=final['base_sha'],
+                    merge_base_sha=final['source_attestation']['merge_base_sha'],
+                    integration_tree_digest=final['source_attestation']['integration_tree_digest'],
                     result='PASS',
                     mandatory_steps_executed=True,
                 )
                 for contract in task['required_check_contracts']
             ],
         ))
+
         bundle['observed']['target_heads'][task['task_id']] = final['base_sha']
+        if str(task['pr']) in bundle['observed'].get('checks', {}):
+            for item in bundle['observed']['checks'][str(task['pr'])]:
+                item.pop('head_sha', None)
+                item['trigger_pr_head_sha'] = final['validated_sha']
         merge = bundle['observed'].get('merged', {}).get(str(task['pr']))
         if merge is not None:
             merge['target_ref'] = task['target_ref']
@@ -438,7 +652,6 @@ def enrich_v11(bundle):
             result['observed_state_ref'] = None
             result['canonical_observation'] = None
     return bundle
-
 
 def readdress_review_lease(bundle, lease):
     old_id = lease['lease_id']
