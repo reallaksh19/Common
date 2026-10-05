@@ -1153,6 +1153,57 @@ class PrincipalAndDependencyV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+class ProvenanceBindingV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_review_lease_wrong_certifier_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == reviewer['review_lease_ref'])
+        lease['certifier_principal'] = 'coordinator'
+        self.rejected(bundle)
+
+    def test_reviewer_acceptance_surface_tamper_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['acceptance_surface']['fixture_digests'] = ['0' * 64]
+        self.rejected(bundle)
+
+    def test_independent_evidence_wrong_lease_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        evidence_id = reviewer['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['review_lease_ref'] = bundle['stages'][2]['review_lease_ref']
+        self.rejected(bundle)
+
+    def test_independent_evidence_wrong_fixture_set_rejected(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        evidence_id = reviewer['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['fixture_digests'] = ['0' * 64]
+        self.rejected(bundle)
+
+    def test_context_event_updated_after_snapshot_rejected(self):
+        bundle = premerge_bundle()
+        start_ref = bundle['stages'][1]['context_start_ref']
+        snapshot = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == start_ref)
+        snapshot['context_events'][0]['updated_at'] = '2026-10-04T00:02:00Z'
+        self.rejected(bundle)
+
+    def test_context_snapshot_requires_provider_frontier_event(self):
+        bundle = premerge_bundle()
+        pre_ref = bundle['stages'][2]['context_pre_verdict_ref']
+        snapshot = next(item for item in bundle['support']['context_snapshots'] if item['snapshot_id'] == pre_ref)
+        for event in snapshot['context_events']:
+            if event['source_kind'] == 'PARENT_COMMENT':
+                event['provider_ref'] = 'https://example.invalid/issues/85#different-frontier'
+        self.rejected(bundle)
+
+
 class TargetAndRegressionV11Tests(unittest.TestCase):
     def rejected(self, bundle):
         with self.assertRaises(checker.RecordError):
