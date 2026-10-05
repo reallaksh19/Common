@@ -101,7 +101,7 @@ def validate_pipeline(parent, tasks, records, observations, now):
                 continue
             readonly = left if left['workspace_mode'] == 'READ_ONLY' else right
             writer = right if readonly is left else left
-            require(readonly['workspace_mode'] == 'READ_ONLY' and readonly['stage'] == 'COORDINATOR' and writer['workspace_mode'] == 'WRITE' and writer['stage'] in ['CODER', 'REVIEWER'], 'Only one pinned read-only Coordinator may overlap one Coder/Reviewer product writer; Coordinator fixes require exclusive WRITE use')
+            require(readonly['workspace_mode'] == 'READ_ONLY' and readonly['stage'] == 'COORDINATOR' and writer['workspace_mode'] == 'WRITE' and writer['stage'] in ['CODER', 'REVIEWER'], 'Only one read-only Coordinator may overlap one Coder/Reviewer writer; Coordinator fixes require exclusive WRITE use')
             require(readonly['task_id'] != writer['task_id'], 'Concurrent review and writing must concern different children')
             grant = permission_at(parent, tasks[writer['task_id']]['issue'], right_start if writer is right else left_start)
             require(grant and grant['mode'] == 'COORDINATOR_READ_ONLY' and grant['during_record'] == readonly['record_id'], 'Concurrent work lacks recorded Coordinator permission')
