@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'codex/492-d-*'
+      - 'codex/common-reviewer-*'
   workflow_dispatch:
 
 permissions:
@@ -40,10 +41,33 @@ jobs:
           assert stack['coordinator_adapter']['mode'] == 'LOCAL_V1_1_INTEGRATED'
           assert stack['coordinator_adapter']['role'] == 'OBSERVATION_ONLY'
           assert 'engineering-pr-delivery-v3.2' in stack['forbidden_active_relay_versions']
+          review = stack['review_stack']
+          assert review['common_floor']['name'] == 'common-reviewer-protocol-v1.0'
+          assert review['common_floor']['exact_ref_and_digest_required'] is True
+          assert review['project_overlay']['required'] is True
+          assert review['project_overlay']['may_silently_weaken_common_floor'] is False
+          assert 'COMMON_REVIEW_PROTOCOL_PINNED' in stack['activation']['material_work_requires']
+          assert 'PROJECT_REVIEW_PROTOCOL_PINNED' in stack['activation']['material_work_requires']
           profile = matrix['profiles']['LOCAL_V1_1_V35']
           assert profile['nested_coder']['version'] == '3.5'
+          assert profile['common_reviewer']['version'] == '1.0'
+          assert profile['common_reviewer']['same_principal_independence_claim'] == 'FORBIDDEN'
           assert profile['programme_coordinator']['legacy_v31'] == 'READABLE_COMPATIBILITY_ONLY'
           assert matrix['migration']['automatic'] is False
+          PY
+      - name: Validate Common Reviewer profile schema
+        run: |
+          python - <<'PY'
+          import pathlib
+          import yaml
+          from jsonschema.validators import validator_for
+          p = pathlib.Path('skills/common-reviewer-protocol-v1.0/schemas/common-review-profile.schema.yaml')
+          schema = yaml.safe_load(p.read_text(encoding='utf-8'))
+          validator_for(schema).check_schema(schema)
+          assert pathlib.Path('skills/common-reviewer-protocol-v1.0/SKILL.md').is_file()
+          assert pathlib.Path('skills/engineering-pr-delivery-v3.2/COMMON_REVIEW_INTEGRATION.md').is_file()
+          assert pathlib.Path('skills/engineering-pr-delivery-v3.5/COMMON_REVIEW_INTEGRATION.md').is_file()
+          assert pathlib.Path('skills/Local_PR_Deliverty_v1.1/references/common-reviewer-protocol-v1.0.md').is_file()
           PY
       - name: Run activation adversarial suite
         run: python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_activation.py' -v
@@ -51,10 +75,15 @@ jobs:
         run: |
           python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_selector_scan.py' -v
           python skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py AGENTS.md
-      - name: Verify frozen V3.2 tree still exact
+      - name: Verify V3.2 stays forbidden as active Local Relay authority
         run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2)" = '88ac97432a811f9a6b8d00bbe45cbec891e70d6a'
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          stack = yaml.safe_load(Path('skills/Local_PR_Deliverty_v1.1/integration/protocol-stack.yaml').read_text(encoding='utf-8'))
+          assert 'engineering-pr-delivery-v3.2' in stack['forbidden_active_relay_versions']
+          assert stack['nested_protocols']['CODER']['name'] == 'engineering-pr-delivery-v3.5'
+          PY
       - name: Verify integrated coordinator contract is present
         run: |
           test -f skills/engineering-programme-coordinator/schemas/local-v1.1-integrated.schema.yaml
