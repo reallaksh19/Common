@@ -122,27 +122,65 @@
         {
           "type": "object",
           "properties": {
-            "main_sha": {
+            "target_ref": {
+              "type": "string",
+              "pattern": "^refs/heads/.+$"
+            },
+            "target_sha": {
               "type": "string",
               "pattern": "^[0-9a-f]{40}$"
+            },
+            "reviewed_head_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "merge_commit_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "relation": {
+              "enum": [
+                "EXACT_MERGE_COMMIT",
+                "DESCENDANT_CONTAINS_MERGE"
+              ]
             },
             "observed_at": {
               "type": "string",
               "format": "date-time"
             },
-            "integrates_reviewed_candidate": {
-              "const": true
+            "provider_kind": {
+              "enum": [
+                "GITHUB_PROVIDER",
+                "OTHER_AUTHENTICATED_PROVIDER"
+              ]
             },
             "provider_ref": {
               "type": "string",
               "minLength": 1
+            },
+            "provider_observation_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "ancestry_proof_ref": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
             }
           },
           "required": [
-            "main_sha",
+            "target_ref",
+            "target_sha",
+            "reviewed_head_sha",
+            "merge_commit_sha",
+            "relation",
             "observed_at",
-            "integrates_reviewed_candidate",
-            "provider_ref"
+            "provider_kind",
+            "provider_ref",
+            "provider_observation_digest",
+            "ancestry_proof_ref"
           ],
           "additionalProperties": false
         },
