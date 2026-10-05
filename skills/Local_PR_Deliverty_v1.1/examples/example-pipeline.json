@@ -532,7 +532,10 @@
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       },
       "production_output": {
         "deliverables": [
@@ -676,7 +679,10 @@
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       },
       "production_output": {
         "deliverables": [
@@ -964,7 +970,10 @@
           "2222222222222222222222222222222222222222222222222222222222222222"
         ],
         "mutation_detected": false,
-        "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+        "digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       },
       "production_output": {
         "deliverables": [
@@ -1106,7 +1115,20 @@
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
         "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
-        "target_ref": "refs/heads/main"
+        "target_ref": "refs/heads/main",
+        "repository": "exampleowner/editor",
+        "pr": 105,
+        "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+        "certifier_role": "REVIEWER",
+        "certifier_principal": "reviewer",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "oracle_digests": [
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        ],
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       }
     ],
     "environments": [
@@ -1125,7 +1147,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "package_manager": {
+          "name": "pip",
+          "version": "synthetic"
+        },
+        "locale": "C.UTF-8",
+        "timezone": "UTC"
       },
       {
         "environment_id": "ENV-S2",
@@ -1142,7 +1170,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "package_manager": {
+          "name": "pip",
+          "version": "synthetic"
+        },
+        "locale": "C.UTF-8",
+        "timezone": "UTC"
       },
       {
         "environment_id": "ENV-S3",
@@ -1159,7 +1193,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "package_manager": {
+          "name": "pip",
+          "version": "synthetic"
+        },
+        "locale": "C.UTF-8",
+        "timezone": "UTC"
       },
       {
         "environment_id": "ENV-N1",
@@ -1176,7 +1216,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "package_manager": {
+          "name": "pip",
+          "version": "synthetic"
+        },
+        "locale": "C.UTF-8",
+        "timezone": "UTC"
       },
       {
         "environment_id": "ENV-N2",
@@ -1193,7 +1239,13 @@
         "external_versions": [],
         "network_policy": "OFFLINE",
         "secret_values_recorded": false,
-        "digest": "5555555555555555555555555555555555555555555555555555555555555555"
+        "digest": "5555555555555555555555555555555555555555555555555555555555555555",
+        "package_manager": {
+          "name": "pip",
+          "version": "synthetic"
+        },
+        "locale": "C.UTF-8",
+        "timezone": "UTC"
       }
     ],
     "context_snapshots": [
@@ -1211,7 +1263,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/101",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic START context fully reconciled."
+        "reconciliation_note": "Synthetic START context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-START-S1",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-START-S1",
+            "provider_ref": "synthetic://task/T86",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-START-S1",
+            "provider_ref": "https://example.invalid/issues/85#before-S1",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:00:00Z",
+            "updated_at": "2026-10-04T00:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-START-S1",
+            "provider_ref": "https://example.invalid/pull/101",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-PRE-S1",
@@ -1227,7 +1321,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/101",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-PRE-S1",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-PRE-S1",
+            "provider_ref": "synthetic://task/T86",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-PRE-S1",
+            "provider_ref": "https://example.invalid/issues/85#before-S1",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:00:00Z",
+            "updated_at": "2026-10-04T00:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-PRE-S1",
+            "provider_ref": "https://example.invalid/pull/101",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-START-S2",
@@ -1243,7 +1379,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/101",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic START context fully reconciled."
+        "reconciliation_note": "Synthetic START context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-START-S2",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-START-S2",
+            "provider_ref": "synthetic://task/T86",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-START-S2",
+            "provider_ref": "https://example.invalid/issues/85#before-S2",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:01:00Z",
+            "updated_at": "2026-10-04T00:01:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-START-S2",
+            "provider_ref": "https://example.invalid/pull/101",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-PRE-S2",
@@ -1259,7 +1437,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/101",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-PRE-S2",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-PRE-S2",
+            "provider_ref": "synthetic://task/T86",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-PRE-S2",
+            "provider_ref": "https://example.invalid/issues/85#before-S2",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:01:00Z",
+            "updated_at": "2026-10-04T00:01:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-PRE-S2",
+            "provider_ref": "https://example.invalid/pull/101",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-START-S3",
@@ -1275,7 +1495,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/101",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic START context fully reconciled."
+        "reconciliation_note": "Synthetic START context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-START-S3",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-START-S3",
+            "provider_ref": "synthetic://task/T86",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-START-S3",
+            "provider_ref": "https://example.invalid/issues/85#before-S3",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:02:00Z",
+            "updated_at": "2026-10-04T00:02:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-START-S3",
+            "provider_ref": "https://example.invalid/pull/101",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-START-N1",
@@ -1291,7 +1553,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/106",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic START context fully reconciled."
+        "reconciliation_note": "Synthetic START context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-START-N1",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-START-N1",
+            "provider_ref": "synthetic://task/T87",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-START-N1",
+            "provider_ref": "https://example.invalid/issues/85#before-N1",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:03:00Z",
+            "updated_at": "2026-10-04T00:03:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-START-N1",
+            "provider_ref": "https://example.invalid/pull/106",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-PRE-N1",
@@ -1307,7 +1611,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/106",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled."
+        "reconciliation_note": "Synthetic PRE_VERDICT context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-PRE-N1",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-PRE-N1",
+            "provider_ref": "synthetic://task/T87",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-PRE-N1",
+            "provider_ref": "https://example.invalid/issues/85#before-N1",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:03:00Z",
+            "updated_at": "2026-10-04T00:03:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-PRE-N1",
+            "provider_ref": "https://example.invalid/pull/106",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       },
       {
         "snapshot_id": "CTX-START-N2",
@@ -1323,7 +1669,49 @@
         "pr_comment_frontier": "https://example.invalid/pull/106",
         "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999",
         "reconciled": true,
-        "reconciliation_note": "Synthetic START context fully reconciled."
+        "reconciliation_note": "Synthetic START context fully reconciled.",
+        "context_events": [
+          {
+            "source_kind": "PARENT_ISSUE_BODY",
+            "provider_id": "parent-body-CTX-START-N2",
+            "provider_ref": "synthetic://parent/body",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "TASK_ISSUE_BODY",
+            "provider_id": "task-body-CTX-START-N2",
+            "provider_ref": "synthetic://task/T87",
+            "author_principal": "owner",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "mutable": true
+          },
+          {
+            "source_kind": "PARENT_COMMENT",
+            "provider_id": "frontier-CTX-START-N2",
+            "provider_ref": "https://example.invalid/issues/85#before-N2",
+            "author_principal": "coordinator",
+            "created_at": "2026-10-04T00:04:00Z",
+            "updated_at": "2026-10-04T00:04:00Z",
+            "body_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "mutable": true
+          },
+          {
+            "source_kind": "PR_DESCRIPTION",
+            "provider_id": "pr-description-CTX-START-N2",
+            "provider_ref": "https://example.invalid/pull/106",
+            "author_principal": "coder",
+            "created_at": "2026-10-03T23:00:00Z",
+            "updated_at": "2026-10-03T23:00:00Z",
+            "body_digest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+            "mutable": true
+          }
+        ]
       }
     ],
     "waivers": [],
@@ -1341,7 +1729,18 @@
         "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
-        "artifact_digest": null
+        "artifact_digest": null,
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": null,
+        "collected_at": "2026-10-04T00:00:30Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check"
+        ],
+        "exit_code": 0,
+        "fixture_digests": []
       },
       {
         "evidence_id": "EV-S2",
@@ -1355,7 +1754,20 @@
         "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
-        "artifact_digest": null
+        "artifact_digest": null,
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": "LEASE-S2",
+        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "collected_at": "2026-10-04T00:01:30Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check"
+        ],
+        "exit_code": 0,
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       },
       {
         "evidence_id": "EV-S3",
@@ -1369,7 +1781,20 @@
         "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
         "result": "NOT_RUN",
         "procedure": "Synthetic protocol evidence fixture.",
-        "artifact_digest": null
+        "artifact_digest": null,
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "collected_at": "2026-10-04T00:02:00Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check"
+        ],
+        "exit_code": null,
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       },
       {
         "evidence_id": "EV-N1",
@@ -1383,7 +1808,18 @@
         "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
         "result": "PASS",
         "procedure": "Synthetic protocol evidence fixture.",
-        "artifact_digest": null
+        "artifact_digest": null,
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": null,
+        "collected_at": "2026-10-04T00:03:30Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check"
+        ],
+        "exit_code": 0,
+        "fixture_digests": []
       },
       {
         "evidence_id": "EV-N2",
@@ -1397,7 +1833,20 @@
         "environment_digest": "5555555555555555555555555555555555555555555555555555555555555555",
         "result": "NOT_RUN",
         "procedure": "Synthetic protocol evidence fixture.",
-        "artifact_digest": null
+        "artifact_digest": null,
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "review_lease_ref": null,
+        "acceptance_surface_digest": "7777777777777777777777777777777777777777777777777777777777777777",
+        "collected_at": "2026-10-04T00:04:00Z",
+        "procedure_kind": "COMMAND",
+        "command_argv": [
+          "synthetic",
+          "check"
+        ],
+        "exit_code": null,
+        "fixture_digests": [
+          "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        ]
       }
     ],
     "project_protocols": [
@@ -1448,6 +1897,9 @@
           "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
           "oracle_digests": [
             "2222222222222222222222222222222222222222222222222222222222222222"
+          ],
+          "fixture_digests": [
+            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
           ]
         },
         "regressions": []
