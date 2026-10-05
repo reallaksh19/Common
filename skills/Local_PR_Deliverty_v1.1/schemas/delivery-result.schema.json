@@ -87,6 +87,35 @@
     "parent_comment_ref": {
       "type": "string",
       "format": "uri"
+    },
+    "review_lease_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "pre_merge_context_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "observed_state_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "waiver_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -105,7 +134,11 @@
     "child_results",
     "evidence",
     "recorded_at",
-    "parent_comment_ref"
+    "parent_comment_ref",
+    "review_lease_ref",
+    "pre_merge_context_ref",
+    "observed_state_ref",
+    "waiver_refs"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -167,6 +200,31 @@
         "properties": {
           "remaining_ids": {
             "maxItems": 0
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "CHILD"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "review_lease_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pre_merge_context_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observed_state_ref": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }
