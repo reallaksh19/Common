@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:evidence-record",
+  "type": "object",
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "producer_role": {
+      "enum": [
+        "CODER",
+        "REVIEWER",
+        "COORDINATOR",
+        "PARENT_CHECK",
+        "CI_PROVIDER",
+        "EXTERNAL_ORACLE"
+      ]
+    },
+    "producer_principal": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_class": {
+      "enum": [
+        "AUTHOR",
+        "REVIEWER_INDEPENDENT",
+        "SUPER_REVIEW_INDEPENDENT",
+        "CI_PROVIDER",
+        "EXTERNAL_ORACLE",
+        "MANUAL_OBSERVATION"
+      ]
+    },
+    "candidate_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "project_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "harness_digest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "NOT_RUN",
+        "INCONCLUSIVE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "procedure": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact_digest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "evidence_id",
+    "producer_role",
+    "producer_principal",
+    "evidence_class",
+    "candidate_sha",
+    "project_protocol_digest",
+    "harness_digest",
+    "result",
+    "procedure",
+    "artifact_digest"
+  ],
+  "additionalProperties": false
+}
