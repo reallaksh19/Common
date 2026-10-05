@@ -106,7 +106,9 @@
           "check": "Required hosted check",
           "provider": "GITHUB_ACTIONS",
           "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
-          "policy_source": "https://example.invalid/policy/required-checks"
+          "policy_source": "https://example.invalid/policy/required-checks",
+          "workflow_path": ".github/workflows/required.yml",
+          "expected_app": "github-actions"
         }
       ],
       "waivable_criteria": [],
@@ -170,7 +172,9 @@
           "check": "Required hosted check",
           "provider": "GITHUB_ACTIONS",
           "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
-          "policy_source": "https://example.invalid/policy/required-checks"
+          "policy_source": "https://example.invalid/policy/required-checks",
+          "workflow_path": ".github/workflows/required.yml",
+          "expected_app": "github-actions"
         }
       ],
       "waivable_criteria": [],
@@ -234,7 +238,9 @@
           "check": "Required hosted check",
           "provider": "GITHUB_ACTIONS",
           "workflow_digest": "4444444444444444444444444444444444444444444444444444444444444444",
-          "policy_source": "https://example.invalid/policy/required-checks"
+          "policy_source": "https://example.invalid/policy/required-checks",
+          "workflow_path": ".github/workflows/required.yml",
+          "expected_app": "github-actions"
         }
       ],
       "waivable_criteria": [],
@@ -1078,7 +1084,8 @@
         "environment_ref": "ENV-S2",
         "context_pre_verdict_ref": "CTX-PRE-S2",
         "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
-        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "owner_control_digest": "9999999999999999999999999999999999999999999999999999999999999999"
       }
     ],
     "environments": [
@@ -1370,6 +1377,51 @@
         "result": "NOT_RUN",
         "procedure": "Synthetic protocol evidence fixture.",
         "artifact_digest": null
+      }
+    ],
+    "project_protocols": [
+      {
+        "protocol_id": "SYNTHETIC-PROJECT-v1",
+        "version": "1.0",
+        "repository": "exampleowner/editor",
+        "source_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+        "digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "acceptance_sets": [
+          {
+            "id": "ALL",
+            "criteria": [
+              {
+                "id": "P1",
+                "required": true,
+                "reviewer_check_required": true,
+                "super_review_required": true,
+                "verification_method_ids": [
+                  "VM-P1"
+                ]
+              },
+              {
+                "id": "A1",
+                "required": true,
+                "reviewer_check_required": true,
+                "super_review_required": true,
+                "verification_method_ids": [
+                  "VM-A1"
+                ]
+              }
+            ]
+          }
+        ],
+        "harnesses": [
+          {
+            "id": "SR-ALL",
+            "criteria": [
+              "P1",
+              "A1"
+            ],
+            "protected": true
+          }
+        ],
+        "external_gates": []
       }
     ]
   }
