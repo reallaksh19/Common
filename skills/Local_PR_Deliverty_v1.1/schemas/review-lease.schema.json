@@ -5,7 +5,7 @@
   "properties": {
     "lease_id": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^sha256:[0-9a-f]{64}$"
     },
     "task_id": {
       "type": "string",
