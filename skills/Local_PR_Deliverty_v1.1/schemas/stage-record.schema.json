@@ -907,6 +907,18 @@
         "minLength": 1
       },
       "uniqueItems": true
+    },
+    "common_protocol_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "common_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "project_protocol_ref": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
@@ -954,7 +966,10 @@
     "source_attestation",
     "freshness",
     "carried_findings",
-    "evidence_refs"
+    "evidence_refs",
+    "common_protocol_ref",
+    "common_protocol_digest",
+    "project_protocol_ref"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -1153,6 +1168,37 @@
         "properties": {
           "acceptance_surface": {
             "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "BLOCKED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "production_output": {
+            "properties": {
+              "blocking_class": {
+                "enum": [
+                  "OWNER",
+                  "EXTERNAL",
+                  "PROVIDER",
+                  "PROTECTED_ACCEPTANCE_SURFACE"
+                ]
+              },
+              "internal_fixable_defects_remaining": {
+                "const": 0
+              },
+              "unresolved_internal_defects": {
+                "maxItems": 0
+              }
+            }
           }
         }
       }
