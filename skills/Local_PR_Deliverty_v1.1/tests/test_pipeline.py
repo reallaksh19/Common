@@ -2,7 +2,7 @@
 import copy
 import unittest
 
-from test_protocol import checker, premerge_bundle, running_bundle, example_bundle, HEADS, BASE, command
+from test_protocol import checker, premerge_bundle, running_bundle, example_bundle, enrich_v11, HEADS, BASE, command
 
 NOW = '2026-10-04T00:08:00Z'
 
@@ -46,7 +46,7 @@ def pipeline_bundle():
     observed['spec_digests']['T87'] = first['spec_digest']
     observed['workspace']['head_sha'] = HEADS[0]
     observed['parent_comment_frontiers'] = {r['record_id']: dict(comment_ref=r['parent_context']['through_comment_ref'], observed_at=r['started_at']) for r in bundle['stages']}
-    return bundle
+    return enrich_v11(bundle)
 
 
 class PipelineTests(unittest.TestCase):
@@ -153,6 +153,7 @@ class PipelineTests(unittest.TestCase):
         reviewer.update(status='PASS', output_sha=HEADS[1], validated_sha=HEADS[1], acceptance_checked=['A1'], validation=copy.deepcopy(bundle['stages'][1]['validation']), writer_stopped=True)
         reviewer['work_periods'][0]['end'] = '2026-10-04T00:04:30Z'
         reviewer['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#end-N2', published_at='2026-10-04T00:04:30Z', summary='Synthetic Reviewer PASS')
+        enrich_v11(bundle)
         self.assertEqual(self.state(bundle, 87)['coordinator'], 'QUEUED')
 
     def test_write_coordinator_cannot_overlap(self):
@@ -217,6 +218,7 @@ class PipelineTests(unittest.TestCase):
         coordinator['work_periods'][0]['end'] = '2026-10-04T00:07:00Z'
         coordinator['publications']['end'] = dict(comment_ref='https://example.invalid/issues/85#end-S3', published_at='2026-10-04T00:07:00Z', summary='Synthetic pinned final review PASS')
         bundle['observed']['review_snapshots'] = {'S3': dict(reference=coordinator['review_source']['reference'], head_sha=HEADS[1], unrecorded_changes=False)}
+        enrich_v11(bundle)
         self.assertEqual(self.state(bundle)['status'], 'MERGE_READY')
         bundle['observed']['review_snapshots']['S3']['head_sha'] = HEADS[0]
         self.assertEqual(self.state(bundle)['status'], 'REWORK')
