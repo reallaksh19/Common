@@ -99,6 +99,10 @@
     "context_pre_verdict_ref": {
       "type": "string",
       "minLength": 1
+    },
+    "common_protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -121,7 +125,8 @@
     "dependency_heads",
     "sealed_at",
     "environment_ref",
-    "context_pre_verdict_ref"
+    "context_pre_verdict_ref",
+    "common_protocol_digest"
   ],
   "additionalProperties": false
 }
