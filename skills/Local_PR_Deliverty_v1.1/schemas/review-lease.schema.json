@@ -157,6 +157,14 @@
         "pattern": "^[0-9a-f]{64}$"
       },
       "uniqueItems": true
+    },
+    "fixture_digests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -191,7 +199,8 @@
     "certifier_principal",
     "harness_digest",
     "baseline_digest",
-    "oracle_digests"
+    "oracle_digests",
+    "fixture_digests"
   ],
   "additionalProperties": false
 }
