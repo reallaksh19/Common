@@ -184,6 +184,17 @@
     "target_ref": {
       "type": "string",
       "pattern": "^refs/heads/.+$"
+    },
+    "repository_policy_source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository_policy_visibility": {
+      "enum": [
+        "CONFIRMED",
+        "UNAVAILABLE",
+        "UNKNOWN"
+      ]
     }
   },
   "required": [
@@ -206,7 +217,9 @@
     "child_context_digest",
     "pr_description_digest",
     "owner_control_digest",
-    "target_ref"
+    "target_ref",
+    "repository_policy_source_ref",
+    "repository_policy_visibility"
   ],
   "additionalProperties": false
 }
