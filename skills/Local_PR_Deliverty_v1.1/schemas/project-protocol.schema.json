@@ -123,13 +123,27 @@
               "PARENT",
               "ALL"
             ]
+          },
+          "allowed_evidence_classes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "SUPER_REVIEW_INDEPENDENT",
+                "CI_PROVIDER",
+                "EXTERNAL_ORACLE",
+                "MANUAL_OBSERVATION"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
           }
         },
         "required": [
           "id",
           "required",
           "waivable",
-          "applies_to"
+          "applies_to",
+          "allowed_evidence_classes"
         ],
         "additionalProperties": false
       }
