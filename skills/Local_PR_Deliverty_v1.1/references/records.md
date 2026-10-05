@@ -14,9 +14,9 @@ PARENT TASK records parent ownership, scope/specification, acceptance, child/dep
 
 Child `covers` IDs name the parent acceptance rows it contributes to. `depends_on` names children whose completed delivery is needed before it starts. Every declared child still has to complete before the final parent check. Parent integration/acceptance is independent of merged PR count.
 
-`required_checks` lists the effective named required CI checks for each task/PR; include actual repository requirements. Use an empty list only when there actually are none. Required local validation belongs in the stage evidence. Missing required checks are WAITING_CI, and FAIL blocks immediately.
+`required_checks` lists the effective named required CI checks for each task/PR. `required_check_policy` pins the trusted policy source/provider/digest and `required_check_contracts` pins each check's provider, workflow path/digest and expected app identity. Use an empty list only when trusted policy actually confirms there are none. Repository-policy visibility is explicit: UNKNOWN/UNAVAILABLE never becomes merge-ready. Required local validation belongs in stage evidence.
 
-Defaults are Coder 15, Reviewer 15, Coordinator 45 and Parent Check 45 active minutes; required CI wait is 30 minutes; poll is 60 seconds; recovery grace is 5 minutes. Explicit overrides need an Owner instruction/reason. Merge remains governed by actual Owner authorization and repository rules. A `DELEGATED` authority mode needs its real instruction reference.
+Defaults are Coder 15, Reviewer 15, Coordinator 45 and Parent Check 45 active minutes; required CI wait is 30 minutes; poll is 60 seconds; recovery grace is 5 minutes. Explicit overrides need an Owner instruction/reason. Merge remains governed by actual Owner authorization and repository rules. `merge_authority` is either `OWNER_ONLY` with no delegate, or `DELEGATED` with an exact instruction reference and delegate principal. Fresh `merge_authority_observations` bind the acting principal, authority reference, authenticated source/digest and observation time; a free-form string is not merge authority.
 
 ### Coordinator start permission inside TASK
 
@@ -102,7 +102,7 @@ PASS requires actual output=validated SHA, required acceptance/check coverage, n
 
 V1.1 keeps `repeat_stages` only as a compatibility field and requires it to be empty. Reverse stage routing is forbidden. Reviewer fixes defects discovered during Reviewer production; Coordinator/Super Reviewer fixes defects discovered during Super Review production. REWORK continues the same role responsibility. Product changes are allowed with the exclusive writer slot, but the pinned project protocol, Super Reviewer harness, protected oracle/baseline material, and acceptance policy may not be silently changed to certify those fixes.
 
-Validation is PASS, FAIL, NOT_RUN or NOT_APPLICABLE. Required acceptance/checks need PASS. Evidence names actual execution/inspection, command, result/log/artifact, environment and limitations. Record consistency cannot establish that the stated commands actually ran.
+Acceptance/evidence result truth is `PASS`, `FAIL`, `NOT_RUN`, `INCONCLUSIVE` or `NOT_APPLICABLE`. `NOT_APPLICABLE` requires rationale. Required `FAIL`/`INCONCLUSIVE` never advance. An explicitly waivable required `NOT_RUN` may advance only as `APPROVED_WITH_WAIVER`; its result remains `NOT_RUN`. Reviewer/Super Reviewer role-specific project criteria must appear in their acceptance/coverage ledgers with the required independent evidence class. Evidence names actual execution/inspection, candidate, lease, protected acceptance surface, command/result/artifact, environment and limitations. Record consistency cannot establish that a self-reported command actually ran.
 
 ## DELIVERY_RESULT
 
@@ -110,7 +110,7 @@ Schema: [delivery-result.schema.json](../schemas/delivery-result.schema.json).
 
 CHILD result links the current passing Coordinator record and confirmed provider merge. Required `parent_comment_ref` identifies its actual delivery comment on the parent issue. Partition every acceptance ID into accepted/remaining. Complete means nothing remains. A partially merged child stays incomplete and blocks dependent children. Observe merge confirmation before publication; `recorded_at` must follow final verification, published Coordinator END and observed merge. Publish closure separately after observing actual GitHub issue state; Coder DONE or PR MERGED never implies CLOSED.
 
-PARENT result links Parent Check on current integrated main and the complete result of every child. It has no invented parent PR/merge SHA. Check every parent acceptance row and cross-child integration independently. Issue closure still requires actual Owner authority.
+PARENT result links Parent Check on the parent's current integrated target ref and the complete result of every child. It has no invented parent PR/merge SHA. Check every parent acceptance row and cross-child integration independently. Issue closure still requires actual Owner authority.
 
 Existing externally merged work needs actual post-merge reconciliation/review, not fabricated historical stage records. Existing closed issues need remaining acceptance tracked and provider state reconciled. Neither merged nor closed alone is completion evidence.
 
@@ -118,20 +118,24 @@ Existing externally merged work needs actual post-merge reconciliation/review, n
 
 The transport bundle has `tasks`, chronological `stages`, latest `results` and `observed`. This is not a publication type/database. Assemble it from actual parent/child comments, PR description and fresh observations; the checker makes no network/provider/material writes and performs no source/test execution.
 
-`observed` supplies:
+`observed` supplies live/provider observations used alongside typed support records:
 
-- `main_sha`, `pr_heads`: actual current main and live PR commits.
+- `pr_heads`: current PR heads.
+- `target_heads`: current head for each TASK's exact `target_ref`; Common does not assume every child targets main.
 - `spec_digests`: current adopted specification digest per TASK.
-- `workspace`: shared path, published head_sha and explicit unrecorded_changes boolean. Reconcile preserved files, then inspect and validate their correspondence with published tested material; this assertion alone is not proof.
-- `checks`: named required checks with tested head_sha and result.
+- `workspace`: shared path, current head and explicit unrecorded-changes state.
+- `checks`: lightweight current check-state view used for waiting/timeout classification. The authoritative pre-merge check identity lives in typed `observed_states`.
 - `ci_wait_started_at`: first pending required-CI observation per PR.
-- `merge_authority_refs`: actual Owner permission per PR; this does not release holds.
-- `external_writer_stopped`: observed acknowledgement before local continuation after a cloud Pause.
-- `merged`: provider-confirmed head_sha, merge_commit_sha and merged_at per PR.
-- `parent_comment_frontiers`: per record ID, last parent `comment_ref` and `observed_at`, collected before its recorded parent read. Refresh immediately before START.
-- `issue_states`: actual OPEN/CLOSED per issue number; missing means UNKNOWN.
-- `pr_states`: actual DRAFT/OPEN/CLOSED/MERGED per PR number; missing means UNKNOWN (unallocated PR is NONE).
-- `review_snapshots`: per READ_ONLY Coordinator record ID, observed full-source `reference`, fixed `head_sha` and `unrecorded_changes: false`. Final review uses this immutable material while another child's authoring workspace may advance. The reference and SHA must match the recorded source and live reviewed PR; stale main/spec/checks still require rework.
+- `merge_authority_observations`: authenticated principal/source/digest/reference/timestamp for current merge authority.
+- `external_writer_stopped`: observed acknowledgement before continuation after an external/cloud Pause.
+- `merged`: provider-confirmed reviewed head, merge commit, target ref and merge time per PR.
+- `canonical_target_observations`: provider-observed post-merge target identity, reviewed head/merge binding and ancestry proof when the target advanced after merge.
+- `dependency_heads`: current stacked/predecessor task heads used to expire downstream leases.
+- `parent_comment_frontiers`: per-stage parent frontier collected before its recorded read.
+- `issue_states` and `pr_states`: provider lifecycle states.
+- `review_snapshots`: immutable source identity for permitted overlapping read-only Coordinator inspection.
+
+Typed support records carry the stronger trust graph: project protocols, START/PRE_VERDICT/PRE_MERGE context snapshots, environments, evidence provenance, review leases, observed repository/check state and Owner waivers. `observed-state` includes repository-policy source/digest/visibility; visibility must be `CONFIRMED` before merge readiness.
 
 The checker tests schema/lineage, acceptance, stage order, cooperative writer periods, controls, stale material and supplied merge observations. It cannot authenticate people, verify referenced comments, compare the actual source tree, or certify product behavior. Do not treat `record_consistency: PASS` as real tests/review PASS. Refresh live controls/head/base/description/comments immediately before handover/merge; preserve actual repository rules.
 
@@ -150,7 +154,7 @@ If the dependency is unavailable, report NOT_RUN or install it in an isolated to
 python skills/Local_PR_Deliverty_v1.1/scripts/validate.py skills/Local_PR_Deliverty_v1.1/examples/example-complete.json --now 2026-10-04T00:08:00Z
 ```
 
-The response identifies its basis as `SUPPLIED_ISSUE_PR_AND_WORKSPACE_OBSERVATIONS_ONLY`, then shows effective controls, role budgets, Coder/Reviewer/Coordinator statuses, latest parent evidence, permission, observed issue/PR state and next action. WAITING_PERMISSION means Coordinator permission is needed; QUEUED means the required workspace/Coordinator slot is busy. COMPLETE and observed CLOSED are separate columns.
+The response identifies its basis as `SUPPLIED_ISSUE_PR_WORKSPACE_AND_PINNED_TRUST_RECORDS_ONLY`, then shows effective controls, role budgets, Coder/Reviewer/Coordinator statuses, latest parent evidence, permission, observed issue/PR state and next action. WAITING_PERMISSION means Coordinator permission is needed; QUEUED means the required workspace/Coordinator slot is busy. COMPLETE and observed CLOSED are separate columns.
 
 [example-pipeline.json](../examples/example-pipeline.json) demonstrates synthetic PR105 Coordinator RUNNING while PR106 Coder DONE and Reviewer RUNNING under the same grant:
 
@@ -166,12 +170,21 @@ Every TASK pins `project_protocol_ref` and `project_protocol_digest`. Every acce
 
 Every STAGE_RECORD adds:
 
-- `acceptance_results`: explicit per-criterion result and evidence references;
+- `acceptance_results`: explicit per-criterion result, rationale, finding linkage and evidence references;
 - `evidence_manifest`: evidence class and procedure;
-- `acceptance_surface`: mandatory for Coordinator/PARENT_CHECK and pinned to the project-protocol digest;
-- `production_output`: stage deliverables, coverage, fixes, regressions, education, unresolved internal defects, blocking class and early-termination state;
+- `acceptance_surface`: mandatory for Reviewer and Coordinator/PARENT_CHECK, pinned to the project protocol's protected harness/baseline/oracle/fixture set;
+- `production_output`: stage deliverables, actual candidate-change flag, coverage, defects found/fixed here, regressions, education, external escalations, unresolved internal defects, blocking class and early-termination state;
 - `repeat_stages`: compatibility-only and always empty.
 
 PASS means the stage completed its own production responsibility. It cannot carry internal fixable defects downstream, cannot terminate early, and cannot retain a blocking class.
 
 For Super Review criteria, evidence must include `SUPER_REVIEW_INDEPENDENT` or `EXTERNAL_ORACLE`. Author evidence alone cannot satisfy a project criterion marked for Super Review.
+
+
+## V1.1 carried findings
+
+`carried_findings` uses lifecycle `OPEN | CARRIED | RESOLVED | SUPERSEDED | NOT_APPLICABLE`. Each entry names affected acceptance IDs. A blocking OPEN/CARRIED finding prevents an advancing outcome. RESOLVED findings require stage evidence; SUPERSEDED/NOT_APPLICABLE require rationale. Acceptance-result `finding_ids` link criterion truth back to current or carried findings.
+
+## V1.1 migration boundary
+
+V1.0 bundles are historical records and are not silently reinterpreted as v1.1. Start a fresh v1.1 attempt with the new Common/project basis and trust records; preserve v1.0 evidence as history.
