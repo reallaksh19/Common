@@ -647,6 +647,13 @@
               "null"
             ],
             "minLength": 1
+          },
+          "evidence_phase": {
+            "enum": [
+              "DISCOVERY",
+              "FINAL_ACCEPTANCE",
+              "EXTERNAL_GATE"
+            ]
           }
         },
         "required": [
@@ -661,7 +668,8 @@
           "environment_digest",
           "verification_method_id",
           "harness_id",
-          "external_gate_id"
+          "external_gate_id",
+          "evidence_phase"
         ],
         "additionalProperties": false
       }
