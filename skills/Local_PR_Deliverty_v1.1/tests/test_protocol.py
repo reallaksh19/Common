@@ -201,7 +201,7 @@ def enrich_v11(bundle):
     for record in bundle['stages']:
         if record['status'] == 'PASS':
             record['status'] = 'STAGE_COMPLETE'
-        elif record['status'] == 'APPROVED_WITH_WAIVER':
+        elif record['status'] == 'STAGE_COMPLETE_WITH_WAIVER':
             record['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
 
         task = tasks[record['task_id']]
@@ -529,8 +529,9 @@ def enrich_v11(bundle):
             lease_ref = lease['lease_id']
             record['review_lease_ref'] = lease_ref
             support['review_leases'].append(lease)
-            for item in support['evidence_records']:
-                if item['collected_by_role'] == record['stage'] and item['collected_by_principal'] == record['executor'] and item['evidence_phase'] != 'DISCOVERY' and item['candidate_sha'] == record['validated_sha']:
+            for evidence_id in record['evidence_refs']:
+                item = next(e for e in support['evidence_records'] if e['evidence_id'] == evidence_id)
+                if item['evidence_phase'] != 'DISCOVERY':
                     item['review_lease_ref'] = lease_ref
                     item['acceptance_surface_digest'] = acceptance_surface_digest
                     item['acceptance_surface_manifest_digest'] = manifest_digest
@@ -711,6 +712,16 @@ def refresh_project_protocol_identity(bundle):
     for state in bundle['support']['observed_states']:
         state['project_protocol_digest'] = project_digest
     return project_digest
+
+
+def final_evidence_id(record, criterion_index=0):
+    return record['acceptance_results'][criterion_index]['evidence_ids'][0]
+
+
+def evidence_provenance(bundle, evidence_id):
+    return next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+
+
 
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
     return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner', source_kind='DIRECT_OWNER_SESSION', source_digest='f' * 64, authentication_status='AUTHENTICATED')
@@ -923,7 +934,7 @@ class ProtocolTests(unittest.TestCase):
     def test_omitted_required_check_never_merge_ready(self):
         bundle = premerge_bundle()
         bundle['tasks'][1]['required_checks'].append('Second required check')
-        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP))
+        bundle['tasks'][1]['required_check_contracts'].append(dict(check='Second required check', provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE, workflow_path=WORKFLOW_PATH, expected_app=EXPECTED_APP, certifies='INTEGRATION_CANDIDATE', allowed_checkout_modes=['SYNTHETIC_MERGE']))
         self.assertEqual(self.state(bundle), 'WAITING_CI')
 
     def test_final_ci_failure_and_timeout_block(self):
@@ -1095,9 +1106,10 @@ class ProductionStageV11Tests(unittest.TestCase):
         reviewer = bundle['stages'][1]
         self.assertTrue(reviewer['production_output']['candidate_changed'])
         old_sha = reviewer['input_sha']
-        evidence_id = reviewer['evidence_refs'][0]
-        reviewer['evidence_manifest'][0]['source_sha'] = old_sha
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(reviewer)
+        embedded = next(item for item in reviewer['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['source_sha'] = old_sha
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['candidate_sha'] = old_sha
         self.rejected(bundle)
 
@@ -1106,9 +1118,10 @@ class ProductionStageV11Tests(unittest.TestCase):
         super_review = bundle['stages'][2]
         self.assertTrue(super_review['production_output']['candidate_changed'])
         old_sha = super_review['input_sha']
-        evidence_id = super_review['evidence_refs'][0]
-        super_review['evidence_manifest'][0]['source_sha'] = old_sha
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(super_review)
+        embedded = next(item for item in super_review['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        embedded['source_sha'] = old_sha
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['candidate_sha'] = old_sha
         self.rejected(bundle)
 
@@ -1200,9 +1213,9 @@ class TrustGraphV11Tests(unittest.TestCase):
 
     def test_evidence_provenance_mismatch_rejected(self):
         bundle = premerge_bundle()
-        evidence_id = bundle['stages'][2]['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
-        provenance['producer_role'] = 'REVIEWER'
+        evidence_id = final_evidence_id(bundle['stages'][2])
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['collected_by_role'] = 'REVIEWER'
         self.rejected(bundle)
 
     def test_common_protocol_digest_drift_rejected(self):
@@ -1395,7 +1408,7 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         waiver = self.criterion_waiver(bundle)
         final = bundle['stages'][2]
-        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         final['acceptance_results'][0]['result'] = 'NOT_RUN'
         final['evidence_manifest'][0]['result'] = 'NOT_RUN'
@@ -1409,7 +1422,7 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
     def test_required_not_run_without_waiver_rejected(self):
         bundle = premerge_bundle()
         final = bundle['stages'][2]
-        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['acceptance_results'][0]['result'] = 'NOT_RUN'
         final['evidence_manifest'][0]['result'] = 'NOT_RUN'
         evidence_id = final['evidence_refs'][0]
@@ -1421,7 +1434,7 @@ class WaiverOutcomeV11Tests(unittest.TestCase):
         bundle = premerge_bundle()
         waiver = self.criterion_waiver(bundle)
         final = bundle['stages'][2]
-        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         final['acceptance_results'][0]['result'] = 'FAIL'
         final['evidence_manifest'][0]['result'] = 'FAIL'
@@ -1605,7 +1618,7 @@ class AcceptanceCoverageAndFindingsV11Tests(unittest.TestCase):
     def test_resolved_carried_finding_with_evidence_can_advance(self):
         bundle = premerge_bundle()
         final = bundle['stages'][2]
-        evidence_id = final['evidence_refs'][0]
+        evidence_id = final_evidence_id(final)
         final['carried_findings'] = [dict(
             id='F-RESOLVED', blocking=True, status='RESOLVED',
             source_ref='https://example.invalid/issues/85#finding',
@@ -1649,16 +1662,16 @@ class ProvenanceBindingV11Tests(unittest.TestCase):
     def test_independent_evidence_wrong_lease_rejected(self):
         bundle = premerge_bundle()
         reviewer = bundle['stages'][1]
-        evidence_id = reviewer['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(reviewer)
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['review_lease_ref'] = bundle['stages'][2]['review_lease_ref']
         self.rejected(bundle)
 
     def test_independent_evidence_wrong_fixture_set_rejected(self):
         bundle = premerge_bundle()
         reviewer = bundle['stages'][1]
-        evidence_id = reviewer['evidence_refs'][0]
-        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        evidence_id = final_evidence_id(reviewer)
+        provenance = evidence_provenance(bundle, evidence_id)
         provenance['fixture_digests'] = ['0' * 64]
         self.rejected(bundle)
 
@@ -1839,7 +1852,7 @@ class ExternalGateV11Tests(unittest.TestCase):
             evidence_ids=[final['evidence_refs'][0]],
         )]
         waiver = self.add_gate_waiver(bundle)
-        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         self.rejected(bundle)
 
@@ -1853,7 +1866,7 @@ class ExternalGateV11Tests(unittest.TestCase):
             evidence_ids=[],
         )]
         waiver = self.add_gate_waiver(bundle)
-        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['status'] = 'STAGE_COMPLETE_WITH_WAIVER'
         final['waiver_refs'] = [waiver['waiver_id']]
         state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
         self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
