@@ -168,6 +168,46 @@
         "oracle_digests"
       ],
       "additionalProperties": false
+    },
+    "regressions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_finding_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criterion_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "harness_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1
+          },
+          "active": {
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "source_finding_ref",
+          "criterion_id",
+          "harness_id",
+          "rationale",
+          "active"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [
@@ -179,7 +219,8 @@
     "external_gates",
     "source_ref",
     "digest",
-    "protected_surface"
+    "protected_surface",
+    "regressions"
   ],
   "additionalProperties": false
 }
