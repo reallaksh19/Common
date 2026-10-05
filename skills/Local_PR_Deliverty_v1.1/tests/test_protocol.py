@@ -911,6 +911,69 @@ class TrustGraphV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+class PrincipalAndDependencyV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def test_role_impersonation_rejected(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['executor'] = 'coder'
+        bundle['stages'][1]['role_integrity']['principal'] = 'coder'
+        self.rejected(bundle)
+
+    def test_unverified_owner_command_rejected(self):
+        bundle = premerge_bundle()
+        bundle['tasks'][0]['owner_commands'] = [command('HOLD', issued='2026-10-04T00:03:00Z')]
+        bundle['tasks'][0]['owner_commands'][0]['source_kind'] = 'UNVERIFIED'
+        bundle['tasks'][0]['owner_commands'][0]['authentication_status'] = 'UNVERIFIED'
+        self.rejected(bundle)
+
+    def test_evidence_provenance_mismatch_rejected(self):
+        bundle = premerge_bundle()
+        evidence_id = bundle['stages'][2]['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['candidate_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_super_review_evidence_cannot_claim_wrong_producer_role(self):
+        bundle = premerge_bundle()
+        evidence_id = bundle['stages'][2]['evidence_refs'][0]
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['producer_role'] = 'REVIEWER'
+        self.rejected(bundle)
+
+    def test_stacked_dependency_head_drift_rejected(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        task['stacked_dependencies'] = ['TUPSTREAM']
+        upstream = copy.deepcopy(task)
+        upstream.update(task_id='TUPSTREAM', issue=87, pr=102, stacked_dependencies=[])
+        bundle['tasks'].append(upstream)
+        bundle['tasks'][0]['children'].append(dict(issue=87, scope='Synthetic upstream dependency', covers=['P1'], depends_on=[]))
+        bundle['observed']['dependency_heads']['TUPSTREAM'] = HEADS[4]
+        lease_id = bundle['stages'][2]['review_lease_ref']
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == lease_id)
+        lease['dependency_heads'] = [dict(task_id='TUPSTREAM', sha=HEADS[3])]
+        self.rejected(bundle)
+
+    def test_blocked_cannot_hide_internal_fixable_defect(self):
+        bundle = running_bundle()
+        record = bundle['stages'][0]
+        record['status'] = 'BLOCKED'
+        record['writer_stopped'] = True
+        record['work_periods'][0]['end'] = '2026-10-04T00:00:30Z'
+        record['publications']['end'] = dict(
+            comment_ref='https://example.invalid/issues/85#blocked-end',
+            published_at='2026-10-04T00:00:30Z',
+            summary='Synthetic blocked END.',
+        )
+        record['production_output']['blocking_class'] = 'EXTERNAL'
+        record['production_output']['internal_fixable_defects_remaining'] = 1
+        record['production_output']['unresolved_internal_defects'] = ['F-INTERNAL']
+        self.rejected(bundle)
+
+
 class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_every_v11_schema_is_valid_draft_2020_12(self):
         from jsonschema import Draft202012Validator
