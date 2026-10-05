@@ -27,6 +27,14 @@ The lease names:
 - acceptance-surface digest;
 - explicit harness, baseline, oracle and fixture digests.
 
+## Content-addressed identity
+
+`lease_id` is not a free-form label. It is `sha256:<canonical-lease-content>`, computed from the complete visible lease record excluding the `lease_id` field itself.
+
+Changing any bound lease field therefore changes the lease ID. Stages, evidence records, waivers and delivery results that reference the old lease do not silently follow the edit; they become stale until a newly sealed lease is referenced explicitly.
+
+The validator recomputes this identity and rejects a lease whose claimed ID does not match its canonical content.
+
 ## Expiry
 
 A lease is stale when any bound assumption changes materially. Examples include candidate head, target head, merge base, stacked predecessor head, Common/project protocol, specification, context frontier, Owner control, environment, required-check policy, protected harness/baseline/oracle/fixture set or integration tree.
