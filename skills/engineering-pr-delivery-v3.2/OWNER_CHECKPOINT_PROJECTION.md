@@ -33,15 +33,7 @@ Recommended shape:
 🟢 {P42% · E36% · A07 · U03 · ACTIVE} <issue title>
 ```
 
-The title SHOULD expose only:
-
-- liveness/motion signal;
-- P and E;
-- activity epoch A;
-- current unit when useful;
-- compact work state.
-
-The title MUST NOT become a detailed evidence store.
+The title SHOULD expose only liveness/motion, P/E, activity epoch, current unit when useful, and compact work state. It MUST NOT become a detailed evidence store.
 
 ## 2. Owner chat checkpoint
 
@@ -63,28 +55,13 @@ Use:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-
 🟢/🟡/🔵/🔴 {P__% · E__% · A__ · <STATE>}
-
-UNIT
-<one concise line>
-
-DELTA
-✓ <new meaningful result>
-✓ <new meaningful result>
-△ <new unresolved finding, only if decision-relevant>
-
-BLOCKER
-<NONE | one concise blocking condition>
-
-OWNER_ACTION
-<NONE | REQUIRED — one explicit decision/action>
-
-NEXT
-<one bounded next substantial work unit>
-
-EVIDENCE
-<1–3 durable refs>
+UNIT: <one concise line>
+DELTA: ✓ <new result>; ✓ <new result>; △ <decision-relevant unresolved finding, optional>
+BLOCKER: <NONE | one concise blocking condition>
+OWNER_ACTION: <NONE | REQUIRED — one explicit decision/action>
+NEXT: <one bounded next substantial work unit>
+EVIDENCE: <1–3 durable refs>
 ```
 
 ### Hard information budget
@@ -122,10 +99,7 @@ all test names still pending
 exact command transcript
 ```
 
-Include one of those only when:
-
-1. it changed since the previous checkpoint; or
-2. it is necessary to understand the current delta/blocker/Owner action.
+Include one of those only when it changed since the previous checkpoint or is necessary to understand the current delta/blocker/Owner action.
 
 ### Durable-ref rule
 
@@ -188,15 +162,13 @@ Every Owner-facing checkpoint MUST explicitly say whether Owner action is requir
 Examples:
 
 ```text
-OWNER_ACTION
-NONE
+OWNER_ACTION: NONE
 ```
 
 or:
 
 ```text
-OWNER_ACTION
-REQUIRED — choose whether to relax protected acceptance criterion X
+OWNER_ACTION: REQUIRED — choose whether to relax protected acceptance criterion X
 ```
 
 `WAITING_EXTERNAL`, `WAITING_CI`, or `QUIET` do not by themselves imply Owner action.
@@ -225,29 +197,13 @@ Preferred Owner projection:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-
 🟡 {P42% · E36% · A07 · WAITING_EXTERNAL}
-
-UNIT
-Full-stack qualification of #1239 cumulative candidate.
-
-DELTA
-✓ Found #1252 import defect; isolated +1/-1 repair in draft #1253 (`ea2556d`).
-✓ Persistence contract PASS.
-✓ TEXPECTED lower-bound contract PASS.
-△ Independent-seed authored test remains NOT_RUN; honest dependency closure is too broad for stubbing.
-
-BLOCKER
-Executable authenticated checkout / Node `@playwright/test` surface unavailable for browser + full-regression qualification.
-
-OWNER_ACTION
-NONE
-
-NEXT
-Restore the executable checkout/test surface, then resume retained browser/full qualification.
-
-EVIDENCE
-#1239/5992101466 · #1239/5990185563 · PR #1253
+UNIT: Full-stack qualification of #1239 cumulative candidate.
+DELTA: ✓ #1252 import defect isolated in draft #1253 (`ea2556d`); ✓ persistence contract PASS; ✓ TEXPECTED lower-bound PASS.
+BLOCKER: Executable authenticated checkout / Node `@playwright/test` unavailable for browser + full-regression qualification.
+OWNER_ACTION: NONE
+NEXT: Restore executable checkout/test surface, then resume retained browser/full qualification.
+EVIDENCE: #1239/5992101466 · #1239/5990185563 · PR #1253
 ```
 
 The durable evidence may still record the exact main SHA, provider blob, changed-file count, dependency hashes, full remaining qualification list and exact commands.
