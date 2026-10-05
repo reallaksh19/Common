@@ -1,0 +1,700 @@
+{
+  "tasks": [
+    {
+      "record": "TASK",
+      "version": "1.1",
+      "repository": "exampleowner/editor",
+      "parent_owner": "coordinator",
+      "spec_ref": "https://example.invalid/issues/85",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "required_checks": [
+        "Required hosted check"
+      ],
+      "protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "task_id": "T85",
+      "kind": "PARENT",
+      "issue": 85,
+      "parent_issue": null,
+      "pr": null,
+      "scope": "Deliver child and prove integrated parent outcome.",
+      "acceptance": [
+        {
+          "id": "P1",
+          "requirement": "Child capability works in integrated product.",
+          "required": true,
+          "verification_method_ids": [
+            "VM-P1"
+          ],
+          "super_review_required": true
+        }
+      ],
+      "children": [
+        {
+          "issue": 86,
+          "scope": "Native parser foundation.",
+          "covers": [
+            "P1"
+          ],
+          "depends_on": []
+        }
+      ],
+      "workspace": "C:\\Example\\SharedEditor",
+      "timers": {
+        "poll_seconds": 60,
+        "stage_minutes": {
+          "CODER": 15,
+          "REVIEWER": 15,
+          "COORDINATOR": 45,
+          "PARENT_CHECK": 45
+        },
+        "ci_wait_minutes": 30,
+        "recovery_grace_minutes": 5,
+        "handover_seconds": 0,
+        "override_reason": null
+      },
+      "owner_commands": [],
+      "start_permissions": [
+        {
+          "id": "PERMIT86",
+          "child_issue": 86,
+          "issued_at": "2026-10-04T00:00:00Z",
+          "coordinator": "coordinator",
+          "parent_comment_ref": "https://example.invalid/issues/85#permission86",
+          "reason": "Ready independent child",
+          "during_record": null,
+          "reviewed_head_sha": null,
+          "mode": "SERIAL",
+          "revoked_at": null
+        }
+      ],
+      "merge_authority": {
+        "mode": "OWNER_ONLY",
+        "reference": null
+      },
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    },
+    {
+      "record": "TASK",
+      "version": "1.1",
+      "repository": "exampleowner/editor",
+      "parent_owner": "coordinator",
+      "spec_ref": "https://example.invalid/issues/85",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "required_checks": [
+        "Required hosted check"
+      ],
+      "protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
+      "task_id": "T86",
+      "kind": "CHILD",
+      "issue": 86,
+      "parent_issue": 85,
+      "pr": 101,
+      "scope": "Deliver native parser foundation.",
+      "acceptance": [
+        {
+          "id": "A1",
+          "requirement": "Preserve native source structure.",
+          "required": true,
+          "verification_method_ids": [
+            "VM-A1"
+          ],
+          "super_review_required": true
+        }
+      ],
+      "children": [],
+      "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
+      "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  ],
+  "stages": [
+    {
+      "record": "STAGE_RECORD",
+      "version": "1.1",
+      "record_id": "S1",
+      "task_id": "T86",
+      "stage": "CODER",
+      "attempt": 1,
+      "executor": "coder",
+      "previous_record": null,
+      "started_at": "2026-10-04T00:00:00Z",
+      "work_periods": [
+        {
+          "start": "2026-10-04T00:00:00Z",
+          "end": "2026-10-04T00:00:30Z"
+        }
+      ],
+      "status": "PASS",
+      "input_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "output_sha": "1111111111111111111111111111111111111111",
+      "validated_sha": "1111111111111111111111111111111111111111",
+      "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "workspace": "C:\\Example\\SharedEditor",
+      "handover": {
+        "pr_description_ref": "https://example.invalid/pull/101",
+        "child_comment_ref": "https://example.invalid/issues/86#comment",
+        "parent_comment_ref": "https://example.invalid/issues/85#comment",
+        "changed_files": [
+          "src/parser.py"
+        ],
+        "workspace_notes": "No unrecorded work; synthetic example.",
+        "reconciliation": "Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction."
+      },
+      "acceptance_checked": [
+        "A1"
+      ],
+      "findings": [],
+      "validation": [
+        {
+          "check": "Synthetic behavior observation",
+          "required": true,
+          "result": "PASS",
+          "evidence": "Synthetic fixture; no real product test claimed."
+        }
+      ],
+      "changes": "Bounded correction; retained earlier claims checked by Coordinator.",
+      "repeat_stages": [],
+      "writer_stopped": true,
+      "next_action": "Handover to eligible role.",
+      "ci_wait_started_at": null,
+      "stalled_at": null,
+      "publications": {
+        "start": {
+          "comment_ref": "https://example.invalid/issues/85#start-S1",
+          "published_at": "2026-10-04T00:00:00Z",
+          "summary": "Synthetic role start, intended scope and validation."
+        },
+        "end": {
+          "comment_ref": "https://example.invalid/issues/85#end-S1",
+          "published_at": "2026-10-04T00:00:30Z",
+          "summary": "Synthetic findings, output evidence and next eligible role."
+        }
+      },
+      "parent_context": {
+        "read_at": "2026-10-04T00:00:00Z",
+        "through_comment_ref": "https://example.invalid/issues/85#before-S1",
+        "reconciled_points": [
+          "Read and reconcile complete prior parent history and active controls."
+        ]
+      },
+      "workspace_mode": "WRITE",
+      "review_source": null,
+      "evidence_manifest": [
+        {
+          "evidence_id": "EV-S1",
+          "class": "AUTHOR",
+          "result": "PASS",
+          "source_sha": "1111111111111111111111111111111111111111",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null
+        }
+      ],
+      "acceptance_results": [
+        {
+          "criterion_id": "A1",
+          "required": true,
+          "result": "PASS",
+          "verification_method_ids": [
+            "VM-A1"
+          ],
+          "evidence_ids": [
+            "EV-S1"
+          ]
+        }
+      ],
+      "acceptance_surface": null,
+      "production_output": {
+        "deliverables": [
+          "Synthetic CODER production output"
+        ],
+        "coverage_completed": [
+          "A1"
+        ],
+        "fixes_applied": [],
+        "regressions_added": [],
+        "education_points": [
+          "Synthetic forward handoff explains evidence and downstream invariant."
+        ],
+        "unresolved_internal_defects": [],
+        "internal_fixable_defects_remaining": 0,
+        "blocking_class": "NONE",
+        "coverage_complete_for_stage": true,
+        "early_termination": false,
+        "early_termination_reason": null
+      }
+    },
+    {
+      "record": "STAGE_RECORD",
+      "version": "1.1",
+      "record_id": "S2",
+      "task_id": "T86",
+      "stage": "REVIEWER",
+      "attempt": 1,
+      "executor": "reviewer",
+      "previous_record": "S1",
+      "started_at": "2026-10-04T00:01:00Z",
+      "work_periods": [
+        {
+          "start": "2026-10-04T00:01:00Z",
+          "end": "2026-10-04T00:01:30Z"
+        }
+      ],
+      "status": "PASS",
+      "input_sha": "1111111111111111111111111111111111111111",
+      "output_sha": "2222222222222222222222222222222222222222",
+      "validated_sha": "2222222222222222222222222222222222222222",
+      "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "workspace": "C:\\Example\\SharedEditor",
+      "handover": {
+        "pr_description_ref": "https://example.invalid/pull/101",
+        "child_comment_ref": "https://example.invalid/issues/86#comment",
+        "parent_comment_ref": "https://example.invalid/issues/85#comment",
+        "changed_files": [
+          "src/parser.py"
+        ],
+        "workspace_notes": "No unrecorded work; synthetic example.",
+        "reconciliation": "Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction."
+      },
+      "acceptance_checked": [
+        "A1"
+      ],
+      "findings": [],
+      "validation": [
+        {
+          "check": "Synthetic behavior observation",
+          "required": true,
+          "result": "PASS",
+          "evidence": "Synthetic fixture; no real product test claimed."
+        }
+      ],
+      "changes": "Bounded correction; retained earlier claims checked by Coordinator.",
+      "repeat_stages": [],
+      "writer_stopped": true,
+      "next_action": "Handover to eligible role.",
+      "ci_wait_started_at": null,
+      "stalled_at": null,
+      "publications": {
+        "start": {
+          "comment_ref": "https://example.invalid/issues/85#start-S2",
+          "published_at": "2026-10-04T00:01:00Z",
+          "summary": "Synthetic role start, intended scope and validation."
+        },
+        "end": {
+          "comment_ref": "https://example.invalid/issues/85#end-S2",
+          "published_at": "2026-10-04T00:01:30Z",
+          "summary": "Synthetic findings, output evidence and next eligible role."
+        }
+      },
+      "parent_context": {
+        "read_at": "2026-10-04T00:01:00Z",
+        "through_comment_ref": "https://example.invalid/issues/85#before-S2",
+        "reconciled_points": [
+          "Read and reconcile complete prior parent history and active controls."
+        ]
+      },
+      "workspace_mode": "WRITE",
+      "review_source": null,
+      "evidence_manifest": [
+        {
+          "evidence_id": "EV-S2",
+          "class": "REVIEWER_INDEPENDENT",
+          "result": "PASS",
+          "source_sha": "2222222222222222222222222222222222222222",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null
+        }
+      ],
+      "acceptance_results": [
+        {
+          "criterion_id": "A1",
+          "required": true,
+          "result": "PASS",
+          "verification_method_ids": [
+            "VM-A1"
+          ],
+          "evidence_ids": [
+            "EV-S2"
+          ]
+        }
+      ],
+      "acceptance_surface": null,
+      "production_output": {
+        "deliverables": [
+          "Synthetic REVIEWER production output"
+        ],
+        "coverage_completed": [
+          "A1"
+        ],
+        "fixes_applied": [],
+        "regressions_added": [],
+        "education_points": [
+          "Synthetic forward handoff explains evidence and downstream invariant."
+        ],
+        "unresolved_internal_defects": [],
+        "internal_fixable_defects_remaining": 0,
+        "blocking_class": "NONE",
+        "coverage_complete_for_stage": true,
+        "early_termination": false,
+        "early_termination_reason": null
+      }
+    },
+    {
+      "record": "STAGE_RECORD",
+      "version": "1.1",
+      "record_id": "S3",
+      "task_id": "T86",
+      "stage": "COORDINATOR",
+      "attempt": 1,
+      "executor": "coordinator",
+      "previous_record": "S2",
+      "started_at": "2026-10-04T00:02:00Z",
+      "work_periods": [
+        {
+          "start": "2026-10-04T00:02:00Z",
+          "end": "2026-10-04T00:02:30Z"
+        }
+      ],
+      "status": "PASS",
+      "input_sha": "2222222222222222222222222222222222222222",
+      "output_sha": "3333333333333333333333333333333333333333",
+      "validated_sha": "3333333333333333333333333333333333333333",
+      "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "workspace": "C:\\Example\\SharedEditor",
+      "handover": {
+        "pr_description_ref": "https://example.invalid/pull/101",
+        "child_comment_ref": "https://example.invalid/issues/86#comment",
+        "parent_comment_ref": "https://example.invalid/issues/85#comment",
+        "changed_files": [
+          "src/parser.py"
+        ],
+        "workspace_notes": "No unrecorded work; synthetic example.",
+        "reconciliation": "Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction."
+      },
+      "acceptance_checked": [
+        "A1"
+      ],
+      "findings": [],
+      "validation": [
+        {
+          "check": "Synthetic behavior observation",
+          "required": true,
+          "result": "PASS",
+          "evidence": "Synthetic fixture; no real product test claimed."
+        }
+      ],
+      "changes": "Bounded correction; retained earlier claims checked by Coordinator.",
+      "repeat_stages": [],
+      "writer_stopped": true,
+      "next_action": "Handover to eligible role.",
+      "ci_wait_started_at": null,
+      "stalled_at": null,
+      "publications": {
+        "start": {
+          "comment_ref": "https://example.invalid/issues/85#start-S3",
+          "published_at": "2026-10-04T00:02:00Z",
+          "summary": "Synthetic role start, intended scope and validation."
+        },
+        "end": {
+          "comment_ref": "https://example.invalid/issues/85#end-S3",
+          "published_at": "2026-10-04T00:02:30Z",
+          "summary": "Synthetic findings, output evidence and next eligible role."
+        }
+      },
+      "parent_context": {
+        "read_at": "2026-10-04T00:02:00Z",
+        "through_comment_ref": "https://example.invalid/issues/85#before-S3",
+        "reconciled_points": [
+          "Read and reconcile complete prior parent history and active controls."
+        ]
+      },
+      "workspace_mode": "WRITE",
+      "review_source": null,
+      "evidence_manifest": [
+        {
+          "evidence_id": "EV-S3",
+          "class": "SUPER_REVIEW_INDEPENDENT",
+          "result": "PASS",
+          "source_sha": "3333333333333333333333333333333333333333",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null
+        }
+      ],
+      "acceptance_results": [
+        {
+          "criterion_id": "A1",
+          "required": true,
+          "result": "PASS",
+          "verification_method_ids": [
+            "VM-A1"
+          ],
+          "evidence_ids": [
+            "EV-S3"
+          ]
+        }
+      ],
+      "acceptance_surface": {
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "oracle_digests": [
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        ],
+        "mutation_detected": false
+      },
+      "production_output": {
+        "deliverables": [
+          "Synthetic COORDINATOR production output"
+        ],
+        "coverage_completed": [
+          "A1"
+        ],
+        "fixes_applied": [],
+        "regressions_added": [],
+        "education_points": [
+          "Synthetic forward handoff explains evidence and downstream invariant."
+        ],
+        "unresolved_internal_defects": [],
+        "internal_fixable_defects_remaining": 0,
+        "blocking_class": "NONE",
+        "coverage_complete_for_stage": true,
+        "early_termination": false,
+        "early_termination_reason": null
+      }
+    },
+    {
+      "record": "STAGE_RECORD",
+      "version": "1.1",
+      "record_id": "S4",
+      "task_id": "T85",
+      "stage": "PARENT_CHECK",
+      "attempt": 1,
+      "executor": "coordinator",
+      "previous_record": null,
+      "started_at": "2026-10-04T00:06:00Z",
+      "work_periods": [
+        {
+          "start": "2026-10-04T00:06:00Z",
+          "end": "2026-10-04T00:06:30Z"
+        }
+      ],
+      "status": "PASS",
+      "input_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "output_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "validated_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "parent_spec_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "workspace": "C:\\Example\\SharedEditor",
+      "handover": {
+        "pr_description_ref": "https://example.invalid/pull/101",
+        "child_comment_ref": "https://example.invalid/issues/86#comment",
+        "parent_comment_ref": "https://example.invalid/issues/85#comment",
+        "changed_files": [
+          "src/parser.py"
+        ],
+        "workspace_notes": "No unrecorded work; synthetic example.",
+        "reconciliation": "Read parent/child comments and PR description; inspect actual current files, no diff-based reconstruction."
+      },
+      "acceptance_checked": [
+        "P1"
+      ],
+      "findings": [],
+      "validation": [
+        {
+          "check": "Synthetic behavior observation",
+          "required": true,
+          "result": "PASS",
+          "evidence": "Synthetic fixture; no real product test claimed."
+        }
+      ],
+      "changes": "Bounded correction; retained earlier claims checked by Coordinator.",
+      "repeat_stages": [],
+      "writer_stopped": true,
+      "next_action": "Handover to eligible role.",
+      "ci_wait_started_at": null,
+      "stalled_at": null,
+      "publications": {
+        "start": {
+          "comment_ref": "https://example.invalid/issues/85#start-S4",
+          "published_at": "2026-10-04T00:06:00Z",
+          "summary": "Synthetic role start, intended scope and validation."
+        },
+        "end": {
+          "comment_ref": "https://example.invalid/issues/85#end-S4",
+          "published_at": "2026-10-04T00:06:30Z",
+          "summary": "Synthetic findings, output evidence and next eligible role."
+        }
+      },
+      "parent_context": {
+        "read_at": "2026-10-04T00:06:00Z",
+        "through_comment_ref": "https://example.invalid/issues/85#before-S4",
+        "reconciled_points": [
+          "Read and reconcile complete prior parent history and active controls."
+        ]
+      },
+      "workspace_mode": "WRITE",
+      "review_source": null,
+      "evidence_manifest": [
+        {
+          "evidence_id": "EV-S4",
+          "class": "SUPER_REVIEW_INDEPENDENT",
+          "result": "PASS",
+          "source_sha": "cccccccccccccccccccccccccccccccccccccccc",
+          "procedure": "Synthetic protocol evidence fixture.",
+          "artifact_digest": null
+        }
+      ],
+      "acceptance_results": [
+        {
+          "criterion_id": "P1",
+          "required": true,
+          "result": "PASS",
+          "verification_method_ids": [
+            "VM-P1"
+          ],
+          "evidence_ids": [
+            "EV-S4"
+          ]
+        }
+      ],
+      "acceptance_surface": {
+        "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "harness_digest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "baseline_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "oracle_digests": [
+          "2222222222222222222222222222222222222222222222222222222222222222"
+        ],
+        "mutation_detected": false
+      },
+      "production_output": {
+        "deliverables": [
+          "Synthetic PARENT_CHECK production output"
+        ],
+        "coverage_completed": [
+          "P1"
+        ],
+        "fixes_applied": [],
+        "regressions_added": [],
+        "education_points": [
+          "Synthetic forward handoff explains evidence and downstream invariant."
+        ],
+        "unresolved_internal_defects": [],
+        "internal_fixable_defects_remaining": 0,
+        "blocking_class": "NONE",
+        "coverage_complete_for_stage": true,
+        "early_termination": false,
+        "early_termination_reason": null
+      }
+    }
+  ],
+  "results": [
+    {
+      "record": "DELIVERY_RESULT",
+      "version": "1.1",
+      "record_id": "D86",
+      "task_id": "T86",
+      "kind": "CHILD",
+      "final_record": "S3",
+      "head_sha": "3333333333333333333333333333333333333333",
+      "pr": 101,
+      "merge_commit_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "accepted_ids": [
+        "A1"
+      ],
+      "remaining_ids": [],
+      "responsibility_complete": true,
+      "child_results": [],
+      "parent_comment_ref": "https://example.invalid/issues/85#delivery86",
+      "evidence": "Synthetic provider merge and acceptance.",
+      "recorded_at": "2026-10-04T00:05:00Z"
+    },
+    {
+      "record": "DELIVERY_RESULT",
+      "version": "1.1",
+      "record_id": "D85",
+      "task_id": "T85",
+      "kind": "PARENT",
+      "final_record": "S4",
+      "head_sha": "cccccccccccccccccccccccccccccccccccccccc",
+      "pr": null,
+      "merge_commit_sha": null,
+      "accepted_ids": [
+        "P1"
+      ],
+      "remaining_ids": [],
+      "responsibility_complete": true,
+      "child_results": [
+        "D86"
+      ],
+      "parent_comment_ref": "https://example.invalid/issues/85#delivery85",
+      "evidence": "Synthetic provider merge and acceptance.",
+      "recorded_at": "2026-10-04T00:07:00Z"
+    }
+  ],
+  "observed": {
+    "main_sha": "cccccccccccccccccccccccccccccccccccccccc",
+    "pr_heads": {
+      "101": "3333333333333333333333333333333333333333"
+    },
+    "spec_digests": {
+      "T85": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "T86": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "workspace": {
+      "path": "C:\\Example\\SharedEditor",
+      "head_sha": "3333333333333333333333333333333333333333",
+      "unrecorded_changes": false
+    },
+    "merged": {
+      "101": {
+        "head_sha": "3333333333333333333333333333333333333333",
+        "merge_commit_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "merged_at": "2026-10-04T00:04:00Z"
+      }
+    },
+    "checks": {
+      "101": [
+        {
+          "check": "Required hosted check",
+          "head_sha": "3333333333333333333333333333333333333333",
+          "result": "PASS"
+        }
+      ]
+    },
+    "merge_authority_refs": {
+      "101": "Synthetic owner authorization reference"
+    },
+    "external_writer_stopped": true,
+    "parent_comment_frontiers": {
+      "S1": {
+        "comment_ref": "https://example.invalid/issues/85#before-S1",
+        "observed_at": "2026-10-04T00:00:00Z"
+      },
+      "S2": {
+        "comment_ref": "https://example.invalid/issues/85#before-S2",
+        "observed_at": "2026-10-04T00:01:00Z"
+      },
+      "S3": {
+        "comment_ref": "https://example.invalid/issues/85#before-S3",
+        "observed_at": "2026-10-04T00:02:00Z"
+      },
+      "S4": {
+        "comment_ref": "https://example.invalid/issues/85#before-S4",
+        "observed_at": "2026-10-04T00:06:00Z"
+      }
+    },
+    "issue_states": {
+      "85": "CLOSED",
+      "86": "CLOSED"
+    },
+    "pr_states": {
+      "101": "MERGED"
+    }
+  }
+}
