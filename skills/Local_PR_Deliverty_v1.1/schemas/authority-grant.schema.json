@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:authority-grant",
+  "type": "object",
+  "properties": {
+    "record": {"const": "AUTHORITY_GRANT"},
+    "version": {"const": "1"},
+    "grant_id": {"type": "string", "minLength": 1},
+    "principal": {"type": "string", "minLength": 1},
+    "capability": {
+      "enum": [
+        "ROLE_EXECUTION",
+        "PRODUCT_WRITE",
+        "ACCEPTANCE_POLICY_WRITE",
+        "RISK_RELAXATION",
+        "MERGE"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "properties": {
+        "parent_task_id": {"type": "string", "minLength": 1},
+        "responsibility_task_id": {"type": ["string", "null"], "minLength": 1},
+        "acceptance_epoch_id": {"type": ["string", "null"], "minLength": 1}
+      },
+      "required": ["parent_task_id", "responsibility_task_id", "acceptance_epoch_id"],
+      "additionalProperties": false
+    },
+    "issued_by": {"type": "string", "minLength": 1},
+    "instruction_ref": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "revoked_at": {"type": ["string", "null"], "format": "date-time"},
+    "source_kind": {
+      "enum": ["GITHUB_PROVIDER", "DIRECT_OWNER_SESSION", "OTHER_AUTHENTICATED_PROVIDER", "UNVERIFIED"]
+    },
+    "source_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "authentication_status": {
+      "enum": ["AUTHENTICATED", "OBSERVED_TRUSTED_PROVIDER", "UNVERIFIED"]
+    }
+  },
+  "required": [
+    "record", "version", "grant_id", "principal", "capability", "scope",
+    "issued_by", "instruction_ref", "issued_at", "expires_at", "revoked_at",
+    "source_kind", "source_digest", "authentication_status"
+  ],
+  "additionalProperties": false
+}

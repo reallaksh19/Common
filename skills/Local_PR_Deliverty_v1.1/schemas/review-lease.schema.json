@@ -3,213 +3,73 @@
   "$id": "urn:local-pr-deliverty:v1.1:review-lease",
   "type": "object",
   "properties": {
-    "lease_id": {
-      "type": "string",
-      "pattern": "^sha256:[0-9a-f]{64}$"
-    },
-    "task_id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "stage_record_id": {
-      "type": "string",
-      "minLength": 1
-    },
-    "candidate_sha": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{40}$"
-    },
-    "base_sha": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{40}$"
-    },
-    "integration_tree_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "common_protocol_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "project_protocol_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "spec_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "parent_spec_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "parent_context_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "child_context_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "pr_description_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "required_check_policy_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "acceptance_surface_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "environment_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
+    "lease_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "task_id": {"type": "string", "minLength": 1},
+    "stage_record_id": {"type": "string", "minLength": 1},
+    "candidate_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "integration_tree_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "common_protocol_ref": {"type": "string", "minLength": 1},
+    "project_protocol_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "acceptance_epoch_id": {"type": "string", "minLength": 1},
+    "acceptance_profile_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "spec_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "parent_spec_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "parent_context_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "child_context_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "pr_description_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "required_check_policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "acceptance_surface_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "environment_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "dependency_heads": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "task_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "sha": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{40}$"
-          }
+          "task_id": {"type": "string", "minLength": 1},
+          "sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}
         },
-        "required": [
-          "task_id",
-          "sha"
-        ],
+        "required": ["task_id", "sha"],
         "additionalProperties": false
       }
     },
-    "sealed_at": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "environment_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "context_pre_verdict_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "common_protocol_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "merge_base_sha": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{40}$"
-    },
-    "owner_control_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "target_ref": {
-      "type": "string",
-      "pattern": "^refs/heads/.+$"
-    },
-    "repository": {
-      "type": "string",
-      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
-    },
-    "pr": {
-      "type": [
-        "integer",
-        "null"
-      ],
-      "minimum": 1
-    },
-    "project_protocol_ref": {
-      "type": "string",
-      "minLength": 1
-    },
-    "certifier_role": {
-      "enum": [
-        "REVIEWER",
-        "COORDINATOR",
-        "PARENT_CHECK"
-      ]
-    },
-    "certifier_principal": {
-      "type": "string",
-      "minLength": 1
-    },
-    "harness_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "baseline_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
+    "sealed_at": {"type": "string", "format": "date-time"},
+    "environment_ref": {"type": "string", "minLength": 1},
+    "context_pre_verdict_ref": {"type": "string", "minLength": 1},
+    "common_protocol_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "merge_base_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "owner_control_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "target_ref": {"type": "string", "pattern": "^refs/heads/.+$"},
+    "repository": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"},
+    "pr": {"type": ["integer", "null"], "minimum": 1},
+    "project_protocol_ref": {"type": "string", "minLength": 1},
+    "certifier_role": {"enum": ["REVIEWER", "COORDINATOR", "PARENT_CHECK"]},
+    "certifier_principal": {"type": "string", "minLength": 1},
+    "harness_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "baseline_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "oracle_digests": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{64}$"
-      },
+      "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
       "uniqueItems": true
     },
     "fixture_digests": {
       "type": "array",
-      "items": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{64}$"
-      },
+      "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
       "uniqueItems": true
     },
-    "candidate_tree_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    },
-    "acceptance_surface_manifest_digest": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{64}$"
-    }
+    "candidate_tree_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "acceptance_surface_manifest_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
   },
   "required": [
-    "lease_id",
-    "task_id",
-    "stage_record_id",
-    "candidate_sha",
-    "base_sha",
-    "integration_tree_digest",
-    "common_protocol_ref",
-    "project_protocol_digest",
-    "spec_digest",
-    "parent_spec_digest",
-    "parent_context_digest",
-    "child_context_digest",
-    "pr_description_digest",
-    "required_check_policy_digest",
-    "acceptance_surface_digest",
-    "environment_digest",
-    "dependency_heads",
-    "sealed_at",
-    "environment_ref",
-    "context_pre_verdict_ref",
-    "common_protocol_digest",
-    "merge_base_sha",
-    "owner_control_digest",
-    "target_ref",
-    "repository",
-    "pr",
-    "project_protocol_ref",
-    "certifier_role",
-    "certifier_principal",
-    "harness_digest",
-    "baseline_digest",
-    "oracle_digests",
-    "fixture_digests",
-    "candidate_tree_digest",
+    "lease_id", "task_id", "stage_record_id", "candidate_sha", "base_sha",
+    "integration_tree_digest", "common_protocol_ref", "project_protocol_digest",
+    "spec_digest", "parent_spec_digest", "parent_context_digest", "child_context_digest",
+    "pr_description_digest", "required_check_policy_digest", "acceptance_surface_digest",
+    "environment_digest", "dependency_heads", "sealed_at", "environment_ref",
+    "context_pre_verdict_ref", "common_protocol_digest", "merge_base_sha",
+    "owner_control_digest", "target_ref", "repository", "pr", "project_protocol_ref",
+    "certifier_role", "certifier_principal", "harness_digest", "baseline_digest",
+    "oracle_digests", "fixture_digests", "candidate_tree_digest",
     "acceptance_surface_manifest_digest"
   ],
   "additionalProperties": false

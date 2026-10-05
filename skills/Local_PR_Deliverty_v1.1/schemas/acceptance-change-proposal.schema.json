@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:acceptance-change-proposal",
+  "type": "object",
+  "properties": {
+    "record": {"const": "ACCEPTANCE_CHANGE_PROPOSAL"},
+    "version": {"const": "1"},
+    "proposal_id": {"type": "string", "minLength": 1},
+    "parent_task_id": {"type": "string", "minLength": 1},
+    "responsibility_task_id": {"type": ["string", "null"], "minLength": 1},
+    "previous_epoch_id": {"type": ["string", "null"], "minLength": 1},
+    "new_epoch_id": {"type": "string", "minLength": 1},
+    "proposed_by": {"type": "string", "minLength": 1},
+    "implemented_by": {"type": ["string", "null"], "minLength": 1},
+    "adopted_by": {"type": ["string", "null"], "minLength": 1},
+    "risk_accepted_by": {"type": ["string", "null"], "minLength": 1},
+    "change_kind": {
+      "enum": [
+        "DEFECT_REPAIR", "COVERAGE_EXTENSION", "METHOD_CHANGE", "ORACLE_CHANGE",
+        "BASELINE_CHANGE", "TOLERANCE_CHANGE", "REQUIREMENT_CHANGE", "CLARIFICATION"
+      ]
+    },
+    "risk_effect": {"enum": ["STRENGTHENING", "NEUTRAL", "RELAXING", "UNKNOWN"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "evidence_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "proposed_project_protocol_ref": {"type": "string", "minLength": 1},
+    "proposed_project_protocol_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "proposed_protected_surface_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "affected_profile_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "affected_method_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "status": {"enum": ["PROPOSED", "ADOPTED", "REJECTED"]},
+    "proposed_at": {"type": "string", "format": "date-time"},
+    "adopted_at": {"type": ["string", "null"], "format": "date-time"},
+    "adoption_ref": {"type": ["string", "null"], "minLength": 1},
+    "risk_acceptance_ref": {"type": ["string", "null"], "minLength": 1}
+  },
+  "required": [
+    "record", "version", "proposal_id", "parent_task_id", "responsibility_task_id",
+    "previous_epoch_id", "new_epoch_id", "proposed_by", "implemented_by", "adopted_by",
+    "risk_accepted_by", "change_kind", "risk_effect", "rationale", "evidence_refs",
+    "proposed_project_protocol_ref", "proposed_project_protocol_digest",
+    "proposed_protected_surface_digest", "affected_profile_ids", "affected_method_ids",
+    "status", "proposed_at", "adopted_at", "adoption_ref", "risk_acceptance_ref"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "ADOPTED"}}},
+      "then": {
+        "properties": {
+          "adopted_by": {"type": "string", "minLength": 1},
+          "adopted_at": {"type": "string", "format": "date-time"},
+          "adoption_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"risk_effect": {"enum": ["RELAXING", "UNKNOWN"]}}},
+      "then": {
+        "properties": {
+          "risk_accepted_by": {"type": "string", "minLength": 1},
+          "risk_acceptance_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  ]
+}

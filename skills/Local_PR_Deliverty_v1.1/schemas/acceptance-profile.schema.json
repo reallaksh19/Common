@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:local-pr-deliverty:v1.1:acceptance-profile",
+  "type": "object",
+  "properties": {
+    "record": {"const": "ACCEPTANCE_PROFILE"},
+    "version": {"const": "1"},
+    "profile_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "acceptance_epoch_id": {"type": "string", "minLength": 1},
+    "project_protocol_ref": {"type": "string", "minLength": 1},
+    "project_protocol_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "acceptance_set_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "criterion_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "excluded_criteria": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "parameters": {"type": "object"},
+    "role_bindings": {
+      "type": "object",
+      "properties": {
+        "REVIEWER": {"$ref": "#/$defs/bindings"},
+        "COORDINATOR": {"$ref": "#/$defs/bindings"}
+      },
+      "required": ["REVIEWER", "COORDINATOR"],
+      "additionalProperties": false
+    },
+    "external_gate_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "dependency_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": {"type": "string", "minLength": 1},
+          "required_output": {"type": "string", "minLength": 1}
+        },
+        "required": ["task_id", "required_output"],
+        "additionalProperties": false
+      },
+      "uniqueItems": true
+    },
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "bindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "criterion_id": {"type": "string", "minLength": 1},
+          "verification_method_id": {"type": "string", "minLength": 1},
+          "harness_id": {"type": ["string", "null"], "minLength": 1},
+          "external_gate_id": {"type": ["string", "null"], "minLength": 1},
+          "required_evidence_classes": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "AUTHOR", "REVIEWER_INDEPENDENT", "SUPER_REVIEW_INDEPENDENT",
+                "CI_PROVIDER", "EXTERNAL_ORACLE", "MANUAL_OBSERVATION"
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "criterion_id", "verification_method_id", "harness_id",
+          "external_gate_id", "required_evidence_classes"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "record", "version", "profile_id", "task_id", "acceptance_epoch_id",
+    "project_protocol_ref", "project_protocol_digest", "acceptance_set_refs",
+    "criterion_refs", "excluded_criteria", "parameters", "role_bindings",
+    "external_gate_ids", "dependency_requirements", "digest"
+  ],
+  "additionalProperties": false
+}
