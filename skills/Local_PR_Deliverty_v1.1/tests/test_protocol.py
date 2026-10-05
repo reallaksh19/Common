@@ -465,10 +465,18 @@ class ProtocolTests(unittest.TestCase):
             self.assertEqual(self.state(bundle), 'REWORK')
 
     def test_pending_checks_and_missing_authority_are_distinct(self):
-        for field, status in [('checks', 'WAITING_CI'), ('merge_authority_refs', 'WAITING_OWNER')]:
-            bundle = premerge_bundle()
-            bundle['observed'][field] = {}
-            self.assertEqual(self.state(bundle), status)
+        bundle = premerge_bundle()
+        bundle['observed']['checks'] = {}
+        pending = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((pending['status'], pending['engineering_approved'], pending['merge_ready']), ('WAITING_CI', False, False))
+
+        bundle = premerge_bundle()
+        bundle['observed']['merge_authority_refs'] = {}
+        owner_wait = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((owner_wait['status'], owner_wait['engineering_approved'], owner_wait['merge_ready']), ('WAITING_OWNER', True, False))
+
+        ready = checker.validate_bundle(premerge_bundle(), '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((ready['status'], ready['engineering_approved'], ready['merge_ready']), ('MERGE_READY', True, True))
 
     def test_fifteen_coder_minutes_stalls_never_passes(self):
         self.assertEqual(self.state(running_bundle(), '2026-10-04T00:14:59Z'), 'RUNNING')
