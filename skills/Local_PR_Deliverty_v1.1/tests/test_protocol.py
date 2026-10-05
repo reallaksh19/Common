@@ -1543,6 +1543,102 @@ class TargetAndRegressionV11Tests(unittest.TestCase):
         self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
 
 
+class ExternalGateV11Tests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def add_gate(self, bundle, *, gate_id='EXT-1', required=True, waivable=True, allowed=None):
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['external_gates'] = [dict(
+            id=gate_id,
+            required=required,
+            waivable=waivable,
+            applies_to='CHILD',
+            allowed_evidence_classes=allowed or ['SUPER_REVIEW_INDEPENDENT'],
+        )]
+        refresh_project_protocol_identity(bundle)
+        return protocol['external_gates'][0]
+
+    def add_gate_waiver(self, bundle, gate_id='EXT-1', waiver_id='W-EXT'):
+        final = bundle['stages'][2]
+        lease = next(item for item in bundle['support']['review_leases'] if item['lease_id'] == final['review_lease_ref'])
+        waiver = dict(
+            waiver_id=waiver_id,
+            task_id='T86',
+            target_kind='EXTERNAL_GATE',
+            target_id=gate_id,
+            lease_id=lease['lease_id'],
+            candidate_sha=lease['candidate_sha'],
+            owner_principal='owner',
+            authority_ref='Synthetic Owner external-gate waiver',
+            reason='Synthetic external gate unavailable for this exact candidate.',
+            risk='Residual external-gate risk explicitly accepted.',
+            compensating_controls=['Pinned Super Review evidence remains current.'],
+            issued_at='2026-10-04T00:02:40Z',
+            expires_at='2026-10-04T01:00:00Z',
+            non_transitive=True,
+            result_override=False,
+        )
+        bundle['support']['waivers'].append(waiver)
+        return waiver
+
+    def test_required_external_gate_must_be_accounted(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle)
+        self.rejected(bundle)
+
+    def test_external_gate_pass_requires_project_allowed_evidence_class(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle, allowed=['EXTERNAL_ORACLE'])
+        final = bundle['stages'][2]
+        final['external_gate_results'] = [dict(
+            gate_id='EXT-1',
+            result='PASS',
+            evidence_ids=[final['evidence_refs'][0]],
+        )]
+        self.rejected(bundle)
+
+    def test_duplicate_external_gate_ids_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        protocol['external_gates'] = [
+            dict(id='EXT-1', required=True, waivable=True, applies_to='CHILD', allowed_evidence_classes=['SUPER_REVIEW_INDEPENDENT']),
+            dict(id='EXT-1', required=False, waivable=True, applies_to='CHILD', allowed_evidence_classes=['SUPER_REVIEW_INDEPENDENT']),
+        ]
+        refresh_project_protocol_identity(bundle)
+        self.rejected(bundle)
+
+    def test_required_external_gate_fail_cannot_be_waived(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle)
+        final = bundle['stages'][2]
+        final['external_gate_results'] = [dict(
+            gate_id='EXT-1',
+            result='FAIL',
+            evidence_ids=[final['evidence_refs'][0]],
+        )]
+        waiver = self.add_gate_waiver(bundle)
+        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        self.rejected(bundle)
+
+    def test_required_external_gate_not_run_can_advance_with_exact_waiver(self):
+        bundle = premerge_bundle()
+        self.add_gate(bundle)
+        final = bundle['stages'][2]
+        final['external_gate_results'] = [dict(
+            gate_id='EXT-1',
+            result='NOT_RUN',
+            evidence_ids=[],
+        )]
+        waiver = self.add_gate_waiver(bundle)
+        final['status'] = 'APPROVED_WITH_WAIVER'
+        final['waiver_refs'] = [waiver['waiver_id']]
+        state = checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']
+        self.assertEqual((state['status'], state['engineering_approved']), ('MERGE_READY', True))
+
+
 class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_v10_bundle_is_not_silently_reinterpreted_as_v11(self):
         v10 = ROOT.parent / 'Local_PR_Deliverty_v1.0' / 'examples' / 'example-complete.json'
