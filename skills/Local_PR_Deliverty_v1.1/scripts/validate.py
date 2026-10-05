@@ -468,6 +468,7 @@ def validate_bundle(bundle, now=None):
         require(len(acceptance_ids(task)) == len(task['acceptance']), 'Duplicate acceptance ID')
         validate_project_protocol(task, support)
         require(set(task['waivable_criteria']) <= acceptance_ids(task), 'waivable_criteria names unknown acceptance ID')
+        require(set(task['waivable_required_checks']) <= set(task['required_checks']), 'waivable_required_checks names unknown required check')
         role_sets = [set(task['role_principals'][name]) for name in ['CODER', 'REVIEWER', 'COORDINATOR']]
         require(not (role_sets[0] & role_sets[1] or role_sets[0] & role_sets[2] or role_sets[1] & role_sets[2]), 'Authorized role principal sets must be disjoint')
         contracts = {item['check']: item for item in task['required_check_contracts']}
