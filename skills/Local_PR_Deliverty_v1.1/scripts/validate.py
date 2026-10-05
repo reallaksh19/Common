@@ -11,6 +11,13 @@ ROOT = Path(__file__).resolve().parents[1]
 ORDER = ['CODER', 'REVIEWER', 'COORDINATOR']
 DEFAULT_BUDGETS = {'CODER': 15, 'REVIEWER': 15, 'COORDINATOR': 45, 'PARENT_CHECK': 45}
 SCHEMAS = {'TASK': 'task', 'STAGE_RECORD': 'stage-record', 'DELIVERY_RESULT': 'delivery-result'}
+SUPPORT_SCHEMAS = {
+    'review_leases': ('review-lease', 'lease_id'),
+    'environments': ('environment-record', 'environment_id'),
+    'context_snapshots': ('context-snapshot', 'snapshot_id'),
+    'waivers': ('waiver', 'waiver_id'),
+    'observed_states': ('observed-state', 'state_id'),
+}
 
 
 def require(condition, message):
@@ -24,14 +31,40 @@ def instant(value):
     return parsed.astimezone(timezone.utc)
 
 
-def schema_check(record):
+def validate_against_schema(record, schema_name):
     require(isinstance(record, dict), 'Each record must be an object')
-    family = record.get('record')
-    require(family in SCHEMAS, 'Unknown record family')
-    schema = json.loads((ROOT / 'schemas' / (SCHEMAS[family] + '.schema.json')).read_text(encoding='utf-8'))
+    schema = json.loads((ROOT / 'schemas' / (schema_name + '.schema.json')).read_text(encoding='utf-8'))
     Draft202012Validator.check_schema(schema)
     errors = sorted(Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(record), key=lambda e: str(e.path))
     require(not errors, '; '.join(e.message for e in errors))
+
+
+def schema_check(record):
+    family = record.get('record')
+    require(family in SCHEMAS, 'Unknown record family')
+    validate_against_schema(record, SCHEMAS[family])
+
+
+def support_index(bundle):
+    support = bundle['support']
+    require(isinstance(support, dict) and set(support) == set(SUPPORT_SCHEMAS), 'Support needs review_leases, environments, context_snapshots, waivers and observed_states only')
+    indexes = {}
+    for key, (schema_name, id_field) in SUPPORT_SCHEMAS.items():
+        records = support[key]
+        require(isinstance(records, list), key + ' must be an array')
+        for record in records:
+            validate_against_schema(record, schema_name)
+        ids = [record[id_field] for record in records]
+        require(len(ids) == len(set(ids)), 'Duplicate ' + id_field)
+        indexes[key] = {record[id_field]: record for record in records}
+    return indexes
+
+
+def latest_observed_state(task, support):
+    states = [state for state in support['observed_states'].values() if state['task_id'] == task['task_id']]
+    if not states:
+        return None
+    return max(states, key=lambda state: instant(state['observed_at']))
 
 
 def acceptance_ids(task, required_only=False):
@@ -127,7 +160,92 @@ def validate_periods(record, parent, task, now):
     require(len(periods) == 1, 'Resume uses a fresh reconciled attempt, not another period on the old attempt')
 
 
-def task_history(task, records, parent, now):
+def validate_stage_trust(record, task, parent, support, now):
+    role = record['role_integrity']
+    require(role['claimed_role'] == record['stage'] and role['principal'] == record['executor'], 'Role-integrity claim does not match stage executor')
+
+    start = support['context_snapshots'].get(record['context_start_ref'])
+    require(start and start['task_id'] == task['task_id'] and start['phase'] == 'START', 'Missing/mismatched START context snapshot')
+    require(start['parent_comment_frontier'] == record['parent_context']['through_comment_ref'], 'START context snapshot does not match reconciled parent frontier')
+    require(instant(start['observed_at']) <= instant(record['started_at']), 'START context snapshot must precede stage action')
+
+    environment = support['environments'].get(record['environment_ref'])
+    require(environment, 'Missing environment record')
+
+    evidence = {item['evidence_id']: item for item in record['evidence_manifest']}
+    require(set(record['evidence_refs']) == set(evidence), 'evidence_refs must exactly name the stage evidence manifest')
+
+    if record['status'] != 'PASS':
+        return
+
+    completed = instant(record['work_periods'][-1]['end'])
+    pre = support['context_snapshots'].get(record['context_pre_verdict_ref'])
+    require(pre and pre['task_id'] == task['task_id'] and pre['phase'] == 'PRE_VERDICT', 'PASS needs a PRE_VERDICT context snapshot')
+    require(instant(start['observed_at']) <= instant(pre['observed_at']) <= completed, 'PRE_VERDICT context snapshot timing invalid')
+
+    attestation = record['source_attestation']
+    require(attestation and attestation['candidate_sha'] == record['validated_sha'] and attestation['base_sha'] == record['base_sha'], 'PASS source attestation does not match validated candidate/base')
+    require(attestation['unrecorded_changes'] is False, 'PASS source attestation reports unrecorded changes')
+    require(all(record['freshness'].values()), 'PASS requires every declared freshness dimension current')
+    require(not any(item['blocking'] and item['status'] == 'OPEN' for item in record['carried_findings']), 'PASS has unresolved blocking carried finding')
+
+    referenced = set()
+    for row in record['acceptance_results']:
+        if row['required']:
+            referenced.update(row['evidence_ids'])
+    require(all(evidence[eid]['source_sha'] == record['validated_sha'] for eid in referenced), 'Required acceptance evidence is not bound to final validated candidate')
+    require(all(evidence[eid]['environment_digest'] == environment['digest'] for eid in referenced), 'Required acceptance evidence environment differs from stage environment')
+
+    if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+        lease = support['review_leases'].get(record['review_lease_ref'])
+        require(lease and lease['task_id'] == task['task_id'] and lease['stage_record_id'] == record['record_id'], 'Missing/mismatched review lease')
+        require(lease['candidate_sha'] == record['validated_sha'] and lease['base_sha'] == record['base_sha'], 'Review lease is stale for candidate/base')
+        require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
+        require(lease['spec_digest'] == task['spec_digest'] and lease['parent_spec_digest'] == parent['spec_digest'], 'Review lease specification basis is stale')
+        require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
+        require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'], 'Review lease context/PR basis is stale')
+        require(lease['environment_ref'] == environment['environment_id'] and lease['environment_digest'] == environment['digest'], 'Review lease environment is stale')
+        require(lease['integration_tree_digest'] == attestation['integration_tree_digest'], 'Review lease integration tree differs from source attestation')
+        require(lease['required_check_policy_digest'] == task['required_check_policy']['digest'], 'Review lease required-check policy is stale')
+        surface_digest = record['acceptance_surface']['digest'] if record['acceptance_surface'] else task['project_protocol_digest']
+        require(lease['acceptance_surface_digest'] == surface_digest, 'Review lease acceptance surface is stale')
+        require(instant(lease['sealed_at']) <= completed, 'Review lease cannot be sealed after stage completion')
+
+    if record['stage'] in ['COORDINATOR', 'PARENT_CHECK']:
+        surface = record['acceptance_surface']
+        for row in record['acceptance_results']:
+            if not acceptance_by_id(task)[row['criterion_id']]['super_review_required']:
+                continue
+            for evidence_id in row['evidence_ids']:
+                item = evidence[evidence_id]
+                if item['class'] in ['SUPER_REVIEW_INDEPENDENT', 'EXTERNAL_ORACLE']:
+                    require(item['harness_digest'] == surface['harness_digest'], 'Independent Super Review evidence uses wrong harness digest')
+                    require(item['baseline_digest'] == surface['baseline_digest'], 'Independent Super Review evidence uses wrong baseline digest')
+
+
+def validate_observed_merge_basis(task, latest, support):
+    state = latest_observed_state(task, support)
+    require(state, 'Missing structured observed repository/check state')
+    require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
+    require(state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale project protocol')
+    require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
+    require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'], 'Observed integration tree differs from reviewed tree')
+    context = support['context_snapshots'].get(state['pre_merge_context_ref'])
+    require(context and context['task_id'] == task['task_id'] and context['phase'] == 'PRE_MERGE', 'Missing/mismatched PRE_MERGE context snapshot')
+    contracts = {item['check']: item for item in task['required_check_contracts']}
+    observed = {item['check']: item for item in state['required_checks']}
+    require(set(contracts) == set(task['required_checks']), 'Required-check contracts must exactly cover required_checks')
+    require(set(contracts) <= set(observed), 'Structured observed state is missing required check')
+    for name, contract in contracts.items():
+        item = observed[name]
+        require(item['provider'] == contract['provider'] and item['workflow_digest'] == contract['workflow_digest'], 'Required check provider/workflow identity mismatch')
+        require(item['head_sha'] == latest['validated_sha'], 'Required check ran on wrong candidate SHA')
+        require(item['mandatory_steps_executed'] is True, 'Required check skipped a mandatory validation step')
+        require(item['result'] == 'PASS', 'Required structured check is not PASS')
+    return state
+
+
+def task_history(task, records, parent, support, now):
     history = [r for r in records if r['task_id'] == task['task_id']]
     passes, latest, attempts = {}, None, {}
     for record in history:
@@ -136,6 +254,7 @@ def task_history(task, records, parent, now):
         require(record['workspace'] == parent['workspace'], 'Every role must use the declared shared folder')
         validate_periods(record, parent, task, now)
         validate_evidence(record, parent, task, bundle_observations=None, now=now)
+        validate_stage_trust(record, task, parent, support, now)
         require(record['attempt'] == attempts.get(stage, 0) + 1, 'Attempt numbers must be consecutive within a role')
         attempts[stage] = record['attempt']
         require(record['previous_record'] == (latest['record_id'] if latest else None), 'Broken issue-comment record chain')
@@ -209,8 +328,9 @@ def task_history(task, records, parent, now):
 
 def validate_bundle(bundle, now=None):
     now = instant(now) if isinstance(now, str) else now or datetime.now(timezone.utc)
-    require(isinstance(bundle, dict) and set(bundle) == {'tasks', 'stages', 'results', 'observed'}, 'Bundle needs tasks, stages, results, observed only')
+    require(isinstance(bundle, dict) and set(bundle) == {'tasks', 'stages', 'results', 'observed', 'support'}, 'Bundle needs tasks, stages, results, observed and support only')
     require(all(isinstance(bundle[k], list) for k in ['tasks', 'stages', 'results']) and isinstance(bundle['observed'], dict), 'Invalid record collections')
+    support = support_index(bundle)
     for record in bundle['tasks'] + bundle['stages'] + bundle['results']:
         schema_check(record)
     tasks = {t['task_id']: t for t in bundle['tasks']}
@@ -222,6 +342,7 @@ def validate_bundle(bundle, now=None):
     declarations = {c['issue']: c for c in parent['children']}
     require(len(declarations) == len(parent['children']) and parent['issue'] not in declarations, 'Invalid child declarations')
     commands = parent['owner_commands']
+    require(all(command['owner_principal'] in parent['owner_principals'] for command in commands), 'Owner command principal is not authorized by TASK')
     require(len({c['id'] for c in commands}) == len(commands), 'Duplicate Owner command ID')
     require(all(instant(c['issued_at']) <= now for c in commands), 'Future Owner command')
     require(commands == sorted(commands, key=lambda c: instant(c['issued_at'])), 'Owner commands must be chronological')
@@ -242,6 +363,10 @@ def validate_bundle(bundle, now=None):
         require(parent['merge_authority']['reference'], 'Delegated authority needs an actual Owner instruction')
     for task in tasks.values():
         require(len(acceptance_ids(task)) == len(task['acceptance']), 'Duplicate acceptance ID')
+        require(set(task['waivable_criteria']) <= acceptance_ids(task), 'waivable_criteria names unknown acceptance ID')
+        contracts = {item['check']: item for item in task['required_check_contracts']}
+        require(len(contracts) == len(task['required_check_contracts']) and set(contracts) == set(task['required_checks']), 'required_check_contracts must exactly cover required_checks')
+        require(all(item['provider'] == task['required_check_policy']['provider'] and item['policy_source'] == task['required_check_policy']['source_ref'] for item in task['required_check_contracts']), 'Required-check contract is outside trusted policy source/provider')
         require(task['repository'] == parent['repository'] and task['parent_owner'] == parent['parent_owner'] and task['protocol_ref'] == parent['protocol_ref'] and task['project_protocol_ref'] == parent['project_protocol_ref'] and task['project_protocol_digest'] == parent['project_protocol_digest'], 'Inconsistent parent/Common/project protocol basis')
         if task['kind'] == 'CHILD':
             require(task['issue'] in declarations and task['parent_issue'] == parent['issue'], 'Undeclared child')
@@ -257,7 +382,15 @@ def validate_bundle(bundle, now=None):
     ids = [r['record_id'] for r in bundle['stages'] + bundle['results']]
     require(len(ids) == len(set(ids)), 'Duplicate record ID')
     require(all(r['task_id'] in tasks for r in bundle['stages'] + bundle['results']), 'Unknown task ID')
-    history = {key: task_history(task, bundle['stages'], parent, now) for key, task in tasks.items()}
+    for waiver in support['waivers'].values():
+        task = tasks.get(waiver['task_id'])
+        require(task and waiver['criterion_id'] in task['waivable_criteria'], 'Waiver targets unknown/non-waivable criterion')
+        require(waiver['owner_principal'] in parent['owner_principals'], 'Waiver principal is not an authorized Owner')
+        lease = support['review_leases'].get(waiver['lease_id'])
+        require(lease and lease['task_id'] == waiver['task_id'] and lease['candidate_sha'] == waiver['candidate_sha'], 'Waiver is not bound to its candidate lease')
+        require(instant(waiver['issued_at']) <= now and (waiver['expires_at'] is None or instant(waiver['expires_at']) >= now), 'Waiver is future or expired')
+        require(waiver['result_override'] is False and waiver['non_transitive'] is True, 'Waiver cannot convert evidence to PASS or transfer automatically')
+    history = {key: task_history(task, bundle['stages'], parent, support, now) for key, task in tasks.items()}
     active = [r for r, _ in history.values() if r and not r['writer_stopped']]
     observations = bundle['observed']
     validate_pipeline(parent, tasks, bundle['stages'], observations, now)
@@ -283,6 +416,15 @@ def validate_bundle(bundle, now=None):
         require(not blocking_control(commands, task, 'COORDINATOR', recorded), 'Owner command blocks delivery publication/advancement')
         if task['kind'] == 'CHILD':
             require(all(s in passes for s in ORDER) and task['pr'] == result['pr'], 'Child delivery lacks full role chain')
+            require(result['review_lease_ref'] == final['review_lease_ref'], 'Delivery does not reference final review lease')
+            pre_merge = support['context_snapshots'].get(result['pre_merge_context_ref'])
+            observed_state = support['observed_states'].get(result['observed_state_ref'])
+            require(pre_merge and pre_merge['task_id'] == task['task_id'] and pre_merge['phase'] == 'PRE_MERGE', 'Delivery lacks valid PRE_MERGE context')
+            require(observed_state and observed_state['task_id'] == task['task_id'] and observed_state['pre_merge_context_ref'] == pre_merge['snapshot_id'], 'Delivery lacks matching observed state')
+            require(observed_state['pr_head_sha'] == result['head_sha'], 'Delivery observed-state head differs from delivered head')
+            for waiver_ref in result['waiver_refs']:
+                waiver = support['waivers'].get(waiver_ref)
+                require(waiver and waiver['task_id'] == task['task_id'] and waiver['lease_id'] == result['review_lease_ref'], 'Delivery references invalid waiver')
             merge = observations.get('merged', {}).get(str(result['pr']))
             require(merge and merge.get('head_sha') == result['head_sha'] and merge.get('merge_commit_sha') == result['merge_commit_sha'], 'Provider merge observation missing/mismatched')
             merged_at = instant(merge['merged_at'])
@@ -334,10 +476,12 @@ def validate_bundle(bundle, now=None):
                         wait_start = observations.get('ci_wait_started_at', {}).get(pr)
                         elapsed = (now - instant(wait_start)).total_seconds() - paused_seconds(commands, task, 'COORDINATOR', instant(wait_start), now) if wait_start else 0
                         status = 'BLOCKED' if failed or elapsed >= timers['ci_wait_minutes'] * 60 else 'WAITING_CI'
-                    elif not observations.get('merge_authority_refs', {}).get(pr):
-                        status = 'WAITING_OWNER'
                     else:
-                        stage, status = 'DELIVERY', 'MERGE_READY'
+                        validate_observed_merge_basis(task, latest, support)
+                        if not observations.get('merge_authority_refs', {}).get(pr):
+                            status = 'WAITING_OWNER'
+                        else:
+                            stage, status = 'DELIVERY', 'MERGE_READY'
             elif status == 'PASS':
                 stage, status = next((s for s in ORDER if s not in passes), 'PARENT_CHECK') if task['kind'] == 'CHILD' else 'PARENT_CHECK', 'READY'
         else:
