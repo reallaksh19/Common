@@ -233,6 +233,9 @@ def validate_project_protocol(task, support):
             require(method['external_gate_id'] in gates, 'Verification method references unknown external gate')
             require(set(method['required_evidence_classes']) <= set(gates[method['external_gate_id']]['allowed_evidence_classes']), 'External-gate verification method permits evidence class outside gate policy')
 
+    for gate_id in gates:
+        require(any(method['external_gate_id'] == gate_id for method in methods.values()), 'Project external gate has no bound verification method')
+
     criteria = {}
     for acceptance_set in protocol['acceptance_sets']:
         for criterion in acceptance_set['criteria']:
