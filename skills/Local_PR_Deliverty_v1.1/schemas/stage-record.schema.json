@@ -808,6 +808,10 @@
             },
             "unrecorded_changes": {
               "const": false
+            },
+            "merge_base_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
             }
           },
           "required": [
@@ -815,7 +819,8 @@
             "base_sha",
             "integration_tree_digest",
             "workspace_digest",
-            "unrecorded_changes"
+            "unrecorded_changes",
+            "merge_base_sha"
           ],
           "additionalProperties": false
         },
