@@ -575,6 +575,14 @@
         "minLength": 1
       },
       "uniqueItems": true
+    },
+    "waivable_required_checks": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -602,7 +610,8 @@
     "waivable_criteria",
     "protocol_digest",
     "role_principals",
-    "stacked_dependencies"
+    "stacked_dependencies",
+    "waivable_required_checks"
   ],
   "additionalProperties": false,
   "allOf": [
