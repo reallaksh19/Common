@@ -318,7 +318,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": null,
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -480,7 +481,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": "LEASE-S2",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -642,7 +644,8 @@
         "base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       "review_lease_ref": "LEASE-S3",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -804,7 +807,8 @@
         "base_sha": "cccccccccccccccccccccccccccccccccccccccc",
         "integration_tree_digest": "6666666666666666666666666666666666666666666666666666666666666666",
         "workspace_digest": "8888888888888888888888888888888888888888888888888888888888888888",
-        "unrecorded_changes": false
+        "unrecorded_changes": false,
+        "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc"
       },
       "review_lease_ref": "LEASE-S4",
       "common_protocol_ref": "exampleowner/Common@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:skills/Local_PR_Deliverty_v1.1",
@@ -835,7 +839,13 @@
       "waiver_refs": [],
       "review_lease_ref": "LEASE-S3",
       "pre_merge_context_ref": "CTX-PREMERGE-T86",
-      "observed_state_ref": "OBS-T86"
+      "observed_state_ref": "OBS-T86",
+      "canonical_observation": {
+        "main_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "observed_at": "2026-10-04T00:04:30Z",
+        "integrates_reviewed_candidate": true,
+        "provider_ref": "Synthetic canonical main observation"
+      }
     },
     {
       "record": "DELIVERY_RESULT",
@@ -861,7 +871,8 @@
       "waiver_refs": [],
       "review_lease_ref": null,
       "pre_merge_context_ref": null,
-      "observed_state_ref": null
+      "observed_state_ref": null,
+      "canonical_observation": null
     }
   ],
   "observed": {
@@ -923,7 +934,15 @@
     "pr_states": {
       "101": "MERGED"
     },
-    "dependency_heads": {}
+    "dependency_heads": {},
+    "canonical_main_observations": {
+      "101": {
+        "main_sha": "cccccccccccccccccccccccccccccccccccccccc",
+        "observed_at": "2026-10-04T00:04:30Z",
+        "integrates_reviewed_candidate": true,
+        "provider_ref": "Synthetic canonical main observation"
+      }
+    }
   },
   "support": {
     "review_leases": [
@@ -948,7 +967,8 @@
         "sealed_at": "2026-10-04T00:01:30Z",
         "environment_ref": "ENV-S2",
         "context_pre_verdict_ref": "CTX-PRE-S2",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       {
         "lease_id": "LEASE-S3",
@@ -971,7 +991,8 @@
         "sealed_at": "2026-10-04T00:02:30Z",
         "environment_ref": "ENV-S3",
         "context_pre_verdict_ref": "CTX-PRE-S3",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       },
       {
         "lease_id": "LEASE-S4",
@@ -994,7 +1015,8 @@
         "sealed_at": "2026-10-04T00:06:30Z",
         "environment_ref": "ENV-S4",
         "context_pre_verdict_ref": "CTX-PRE-S4",
-        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000"
+        "common_protocol_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "merge_base_sha": "cccccccccccccccccccccccccccccccccccccccc"
       }
     ],
     "environments": [
@@ -1235,7 +1257,8 @@
             "result": "PASS",
             "mandatory_steps_executed": true
           }
-        ]
+        ],
+        "merge_base_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       }
     ],
     "evidence_records": [
