@@ -804,6 +804,29 @@ class ProductionStageV11Tests(unittest.TestCase):
         bundle['stages'][2]['evidence_manifest'][0]['class'] = 'AUTHOR'
         self.rejected(bundle)
 
+
+    def test_reviewer_fix_cannot_reuse_pre_fix_evidence(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        self.assertTrue(reviewer['production_output']['candidate_changed'])
+        old_sha = reviewer['input_sha']
+        evidence_id = reviewer['evidence_refs'][0]
+        reviewer['evidence_manifest'][0]['source_sha'] = old_sha
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['candidate_sha'] = old_sha
+        self.rejected(bundle)
+
+    def test_super_reviewer_fix_cannot_reuse_pre_fix_harness_evidence(self):
+        bundle = premerge_bundle()
+        super_review = bundle['stages'][2]
+        self.assertTrue(super_review['production_output']['candidate_changed'])
+        old_sha = super_review['input_sha']
+        evidence_id = super_review['evidence_refs'][0]
+        super_review['evidence_manifest'][0]['source_sha'] = old_sha
+        provenance = next(item for item in bundle['support']['evidence_records'] if item['evidence_id'] == evidence_id)
+        provenance['candidate_sha'] = old_sha
+        self.rejected(bundle)
+
 class TrustGraphV11Tests(unittest.TestCase):
     def rejected(self, bundle):
         with self.assertRaises(checker.RecordError):
@@ -937,7 +960,7 @@ class TrustGraphV11Tests(unittest.TestCase):
 
     def test_canonical_post_merge_observation_must_match_provider_record(self):
         bundle = example_bundle()
-        bundle['results'][0]['canonical_observation']['main_sha'] = HEADS[4]
+        bundle['results'][0]['canonical_observation']['target_sha'] = HEADS[4]
         self.rejected(bundle)
 
 
