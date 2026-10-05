@@ -118,10 +118,24 @@ Before merge verify current PR HEAD, target/main, project-protocol digest, prote
 
 After merge observe canonical provider-confirmed main and perform required post-merge/parent integration checks. Merge or issue closure is not engineering completion by itself.
 
-## Records
+## Records and governing references
 
-- TASK pins Common/project protocol basis, scope, acceptance, dependencies, checks, timers, permissions and Owner controls.
-- STAGE_RECORD records one production attempt, structured acceptance results, evidence manifest, protected acceptance surface, production output, parent evidence and exact source basis.
-- DELIVERY_RESULT records observed delivery and accepted/remaining criteria.
+Read these together with the machine schemas:
 
-The checker remains a record-integrity checker. It cannot prove a human identity from a string, prove an asserted command actually ran, or replace a project oracle. Missing evidence stays missing; never manufacture PASS.
+- [responsibility-boundary.md](references/responsibility-boundary.md) — Common vs project ownership and forward-only production roles.
+- [project-acceptance.md](references/project-acceptance.md) — project-specific acceptance contract.
+- [review-lease.md](references/review-lease.md) — exact candidate/target/context/dependency lease and invalidation.
+- [evidence-provenance.md](references/evidence-provenance.md) — evidence classes, provenance and CI identity.
+- [context-freshness.md](references/context-freshness.md) — START/PRE_VERDICT/PRE_MERGE context and post-merge target evidence.
+- [records.md](references/records.md) — TASK / STAGE_RECORD / DELIVERY_RESULT field semantics.
+- [task-evidence.md](references/task-evidence.md) — parent-visible START/END evidence.
+- [migration-v1.0-to-v1.1.md](references/migration-v1.0-to-v1.1.md) — non-destructive migration.
+- [adversarial-cases.md](examples/adversarial-cases.md) — negative-control catalog backed by executable tests.
+
+TASK pins Common/project protocol basis, target ref, scope, acceptance, dependencies, checks, timers, permissions and Owner controls.
+
+STAGE_RECORD records one production attempt, structured acceptance results, evidence manifest, protected acceptance surface, production output, parent evidence and exact source basis.
+
+DELIVERY_RESULT records observed delivery, exact waivers used, canonical target evidence and accepted/remaining criteria.
+
+The checker remains a record-integrity checker. It cannot cryptographically prove a human/provider identity from a string, prove an asserted command actually ran without trusted external attestation, or replace a project oracle. Missing evidence stays missing; never manufacture PASS.
