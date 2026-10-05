@@ -116,6 +116,40 @@
         "minLength": 1
       },
       "uniqueItems": true
+    },
+    "canonical_observation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "main_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "observed_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "integrates_reviewed_candidate": {
+              "const": true
+            },
+            "provider_ref": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "main_sha",
+            "observed_at",
+            "integrates_reviewed_candidate",
+            "provider_ref"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -138,7 +172,8 @@
     "review_lease_ref",
     "pre_merge_context_ref",
     "observed_state_ref",
-    "waiver_refs"
+    "waiver_refs",
+    "canonical_observation"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -225,6 +260,29 @@
           "observed_state_ref": {
             "type": "string",
             "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "CHILD"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "canonical_observation": {
+            "type": "object"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "canonical_observation": {
+            "type": "null"
           }
         }
       }
