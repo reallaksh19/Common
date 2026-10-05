@@ -523,6 +523,32 @@
                 "type": "null"
               }
             ]
+          },
+          "harness_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline_digest": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "environment_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
           }
         },
         "required": [
@@ -531,7 +557,10 @@
           "result",
           "source_sha",
           "procedure",
-          "artifact_digest"
+          "artifact_digest",
+          "harness_digest",
+          "baseline_digest",
+          "environment_digest"
         ],
         "additionalProperties": false
       }
@@ -563,6 +592,10 @@
             },
             "mutation_detected": {
               "const": false
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
             }
           },
           "required": [
@@ -570,7 +603,8 @@
             "harness_digest",
             "baseline_digest",
             "oracle_digests",
-            "mutation_detected"
+            "mutation_detected",
+            "digest"
           ],
           "additionalProperties": false
         },
@@ -706,6 +740,173 @@
           }
         }
       ]
+    },
+    "role_integrity": {
+      "type": "object",
+      "properties": {
+        "claimed_role": {
+          "enum": [
+            "CODER",
+            "REVIEWER",
+            "COORDINATOR",
+            "PARENT_CHECK"
+          ]
+        },
+        "principal": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "claimed_role",
+        "principal"
+      ],
+      "additionalProperties": false
+    },
+    "review_lease_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "context_start_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context_pre_verdict_ref": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "environment_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_attestation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "candidate_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "base_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "integration_tree_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "workspace_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "unrecorded_changes": {
+              "const": false
+            }
+          },
+          "required": [
+            "candidate_sha",
+            "base_sha",
+            "integration_tree_digest",
+            "workspace_digest",
+            "unrecorded_changes"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "freshness": {
+      "type": "object",
+      "properties": {
+        "common_protocol_current": {
+          "type": "boolean"
+        },
+        "project_protocol_current": {
+          "type": "boolean"
+        },
+        "spec_current": {
+          "type": "boolean"
+        },
+        "parent_context_current": {
+          "type": "boolean"
+        },
+        "child_context_current": {
+          "type": "boolean"
+        },
+        "pr_description_current": {
+          "type": "boolean"
+        },
+        "acceptance_surface_current": {
+          "type": "boolean"
+        },
+        "environment_current": {
+          "type": "boolean"
+        },
+        "dependencies_current": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "common_protocol_current",
+        "project_protocol_current",
+        "spec_current",
+        "parent_context_current",
+        "child_context_current",
+        "pr_description_current",
+        "acceptance_surface_current",
+        "environment_current",
+        "dependencies_current"
+      ],
+      "additionalProperties": false
+    },
+    "carried_findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "OPEN",
+              "RESOLVED"
+            ]
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "blocking",
+          "status",
+          "source_ref"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -744,7 +945,16 @@
     "acceptance_results",
     "evidence_manifest",
     "acceptance_surface",
-    "production_output"
+    "production_output",
+    "role_integrity",
+    "review_lease_ref",
+    "context_start_ref",
+    "context_pre_verdict_ref",
+    "environment_ref",
+    "source_attestation",
+    "freshness",
+    "carried_findings",
+    "evidence_refs"
   ],
   "additionalProperties": false,
   "allOf": [
