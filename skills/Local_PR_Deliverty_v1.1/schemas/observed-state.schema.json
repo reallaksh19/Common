@@ -40,10 +40,6 @@
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
-          "head_sha": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{40}$"
-          },
           "result": {
             "enum": [
               "PASS",
@@ -85,20 +81,62 @@
               "pattern": "^[0-9a-f]{64}$"
             },
             "uniqueItems": true
+          },
+          "trigger_pr_head_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "provider_run_head_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "tested_commit_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "tested_tree_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "checkout_mode": {
+            "enum": [
+              "PR_HEAD",
+              "SYNTHETIC_MERGE",
+              "MERGE_QUEUE"
+            ]
+          },
+          "base_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "merge_base_sha": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "integration_tree_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
           }
         },
         "required": [
           "check",
           "provider",
           "workflow_digest",
-          "head_sha",
           "result",
           "mandatory_steps_executed",
           "workflow_path",
           "app_identity",
           "run_id",
           "job_id",
-          "artifact_digests"
+          "artifact_digests",
+          "trigger_pr_head_sha",
+          "provider_run_head_sha",
+          "tested_commit_sha",
+          "tested_tree_digest",
+          "checkout_mode",
+          "base_sha",
+          "merge_base_sha",
+          "integration_tree_digest"
         ],
         "additionalProperties": false,
         "allOf": [
