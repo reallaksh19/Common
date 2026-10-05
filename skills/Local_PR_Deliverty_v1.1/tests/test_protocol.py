@@ -54,6 +54,7 @@ def enrich_v11(bundle):
             for name in task['required_checks']
         ]
         task.setdefault('waivable_criteria', [])
+        task.setdefault('waivable_required_checks', [])
         for criterion in task['acceptance']:
             criterion['verification_method_ids'] = ['VM-' + criterion['id']]
             criterion.setdefault('super_review_required', True)
@@ -787,7 +788,8 @@ class TrustGraphV11Tests(unittest.TestCase):
         bundle['support']['waivers'] = [dict(
             waiver_id='W1',
             task_id='T86',
-            criterion_id='A1',
+            target_kind='CRITERION',
+            target_id='A1',
             lease_id=lease['lease_id'],
             candidate_sha=lease['candidate_sha'],
             owner_principal='owner',
