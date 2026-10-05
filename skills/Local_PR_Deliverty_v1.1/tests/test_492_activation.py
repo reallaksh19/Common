@@ -90,7 +90,7 @@ class ActivationTriggerTests(unittest.TestCase):
 
 
 class ActivationHandshakeTests(unittest.TestCase):
-    def build(self, role="CODER", read_back=True, legacy_scan="PASS"):
+    def build(self, role="CODER", read_back=True, selector_status="PASS"):
         return activation.build_activation_record(
             trigger=positive_trigger(),
             owner_instruction_ref="session://owner/instruction/1",
@@ -103,7 +103,7 @@ class ActivationHandshakeTests(unittest.TestCase):
             acceptance_profile_digest=D,
             timer=activation.arm_timer_accounting(role, started_at="2026-10-05T09:00:00Z"),
             start_evidence=start_evidence(read_back),
-            legacy_scan=legacy_scan,
+            selector_status=selector_status,
         )
 
     def test_coder_activation_binds_v35_and_authorizes_only_after_readback(self):
@@ -123,7 +123,7 @@ class ActivationHandshakeTests(unittest.TestCase):
                 role="CODER", responsibility_task_id="PRD-X", acceptance_epoch_ref="AE-1",
                 acceptance_profile_ref="APR-X", acceptance_profile_digest=D,
                 timer=activation.arm_timer_accounting("CODER", started_at="2026-10-05T09:00:00Z"),
-                start_evidence=start_evidence(), legacy_scan="PASS",
+                start_evidence=start_evidence(), selector_status="PASS",
             )
 
     def test_reviewer_does_not_activate_v35(self):
@@ -138,15 +138,22 @@ class ActivationHandshakeTests(unittest.TestCase):
                 role="REVIEWER", responsibility_task_id="PRD-X", acceptance_epoch_ref="AE-1",
                 acceptance_profile_ref="APR-X", acceptance_profile_digest=D,
                 timer=activation.arm_timer_accounting("REVIEWER", started_at="2026-10-05T09:00:00Z"),
-                start_evidence=start_evidence(), legacy_scan="PASS",
+                start_evidence=start_evidence(), selector_status="PASS",
             )
 
     def test_material_work_blocked_until_start_evidence_read_back(self):
         with self.assertRaisesRegex(activation.ActivationError, "read back"):
             self.build(read_back=False)
 
-    def test_active_selector_conflict_blocks_material_work(self):
-        record = self.build(legacy_scan="CONFLICT")
+    def test_lower_selector_conflict_is_visible_but_owner_precedence_can_continue(self):
+        record = self.build(selector_status="OVERRIDDEN_SELECTOR_CONFLICT")
+        self.assertTrue(record["material_work_authorized"])
+        ack = activation.activation_acknowledgement(record)
+        self.assertIn("SELECTOR_RESOLUTION: OVERRIDDEN_SELECTOR_CONFLICT", ack)
+        self.assertIn("MATERIAL_WORK: AUTHORIZED", ack)
+
+    def test_fatal_authority_conflict_blocks_material_work(self):
+        record = self.build(selector_status="FATAL_CONFLICT")
         self.assertFalse(record["material_work_authorized"])
         self.assertIn("MATERIAL_WORK: BLOCKED", activation.activation_acknowledgement(record))
 
@@ -207,7 +214,29 @@ class VersionGuardTests(unittest.TestCase):
         self.assertFalse(notice["automatic_migration"])
         self.assertEqual(notice["effective_ref"], V35)
 
-    def test_mixed_active_selector_scan_fails_closed(self):
+    def test_repository_agents_v32_is_overridden_but_reported(self):
+        resolution = guard.resolve_selector_conflicts([
+            {"ref": V32, "usage": "ACTIVE", "source": "AGENTS.md", "source_level": "REPOSITORY_SELECTOR"},
+        ])
+        self.assertEqual(resolution["status"], "OVERRIDDEN_SELECTOR_CONFLICT")
+        self.assertEqual(resolution["effective_relay_path"], "skills/engineering-pr-delivery-v3.5")
+        self.assertEqual(resolution["overridden"][0]["resolution"], "OVERRIDDEN_BY_OWNER_STACK_PRECEDENCE")
+
+    def test_existing_task_pin_does_not_silently_migrate(self):
+        resolution = guard.resolve_selector_conflicts([
+            {"ref": V32, "usage": "ACTIVE", "source": "TASK PRD-old", "source_level": "TASK_PIN"},
+        ])
+        self.assertEqual(resolution["status"], "FATAL_CONFLICT")
+        self.assertIn("REQUIRES_MIGRATION_AUTHORITY", resolution["fatal"][0]["resolution"])
+
+    def test_owner_authorized_task_migration_can_override_old_pin(self):
+        resolution = guard.resolve_selector_conflicts([
+            {"ref": V32, "usage": "ACTIVE", "source": "TASK PRD-old", "source_level": "TASK_PIN"},
+        ], migration_authorized=True)
+        self.assertEqual(resolution["status"], "OVERRIDDEN_SELECTOR_CONFLICT")
+        self.assertEqual(resolution["overridden"][0]["resolution"], "OWNER_AUTHORIZED_MIGRATION")
+
+    def test_mixed_generic_reference_scan_still_surfaces_conflict(self):
         scan = guard.scan_references([
             {"ref": V35, "usage": "ACTIVE", "source": "owner stack"},
             {"ref": V31, "usage": "ACTIVE", "source": "downstream AGENTS"},
