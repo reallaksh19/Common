@@ -114,7 +114,7 @@ class ProtocolTests(unittest.TestCase):
 
     def test_partial_child_does_not_complete_parent(self):
         bundle = example_bundle()
-        bundle['tasks'][1]['acceptance'].append(dict(id='A2', requirement='Follow-up remains declared.', required=False))
+        bundle['tasks'][1]['acceptance'].append(dict(id='A2', requirement='Follow-up remains declared.', required=False, verification_method_ids=['VM-A2'], super_review_required=False))
         bundle['stages'] = bundle['stages'][:3]
         bundle['results'] = bundle['results'][:1]
         bundle['results'][0].update(remaining_ids=['A2'], responsibility_complete=False)
