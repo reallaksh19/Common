@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""No-silent-migration guards for Local v1.1 + nested Relay v3.5."""
+"""No-silent-migration and selector-precedence guards for Local v1.1 + V3.5."""
 from __future__ import annotations
 
 import re
@@ -17,7 +17,15 @@ FORBIDDEN_ACTIVE_RELAY = {
     "skills/engineering-pr-delivery-v3.1",
     "skills/engineering-pr-delivery-v3.2",
 }
-LEGACY_CLASSES = {"HISTORICAL", "MIGRATION", "COMPATIBILITY"}
+LEGACY_CLASSES = {"HISTORICAL", "MIGRATION", "COMPATIBILITY", "POLICY_DECLARATION"}
+SOURCE_LEVELS = {
+    "OWNER_INSTRUCTION",
+    "LOCAL_STACK_MANIFEST",
+    "TASK_PIN",
+    "REPOSITORY_SELECTOR",
+    "GLOBAL_SELECTOR",
+    "HISTORICAL_SOURCE",
+}
 
 
 class VersionGuardError(ValueError):
@@ -85,19 +93,72 @@ def scan_references(references: list[dict[str, str]]) -> dict[str, Any]:
         result = classify_protocol_reference(ref=item["ref"], usage=item.get("usage", "ACTIVE"))
         if not result["allowed"]:
             findings.append({**deepcopy(item), **result})
+    return {"result": "PASS" if not findings else "CONFLICT", "findings": findings}
+
+
+def resolve_selector_conflicts(
+    references: list[dict[str, str]],
+    *,
+    migration_authorized: bool = False,
+) -> dict[str, Any]:
+    """Apply #492 precedence without silently rewriting an existing TASK pin.
+
+    Direct Owner activation outranks repository/global selectors. Those conflicts are
+    surfaced but overridden. A conflicting responsibility TASK pin remains blocking
+    unless the Owner has explicitly authorized migration. Contradictory stack/Owner
+    authority is always blocking.
+    """
+    overridden = []
+    fatal = []
+    observed = []
+    for item in references:
+        source_level = str(item.get("source_level", "")).upper()
+        require(source_level in SOURCE_LEVELS, "Unknown selector source level")
+        result = classify_protocol_reference(ref=item["ref"], usage=item.get("usage", "ACTIVE"))
+        row = {**deepcopy(item), **result, "source_level": source_level}
+        observed.append(row)
+        if result["allowed"]:
+            continue
+        if result["severity"] == "UNKNOWN_PROTOCOL_PATH":
+            row["resolution"] = "FATAL_UNKNOWN_PROTOCOL"
+            fatal.append(row)
+        elif source_level in {"REPOSITORY_SELECTOR", "GLOBAL_SELECTOR"}:
+            row["resolution"] = "OVERRIDDEN_BY_OWNER_STACK_PRECEDENCE"
+            overridden.append(row)
+        elif source_level == "TASK_PIN" and migration_authorized:
+            row["resolution"] = "OWNER_AUTHORIZED_MIGRATION"
+            overridden.append(row)
+        elif source_level == "TASK_PIN":
+            row["resolution"] = "FATAL_PINNED_RESPONSIBILITY_REQUIRES_MIGRATION_AUTHORITY"
+            fatal.append(row)
+        else:
+            row["resolution"] = "FATAL_AUTHORITY_CONTRADICTION"
+            fatal.append(row)
+
+    if fatal:
+        status = "FATAL_CONFLICT"
+    elif overridden:
+        status = "OVERRIDDEN_SELECTOR_CONFLICT"
+    else:
+        status = "PASS"
     return {
-        "result": "PASS" if not findings else "CONFLICT",
-        "findings": findings,
+        "status": status,
+        "effective_relay_path": ACTIVE_RELAY,
+        "automatic_migration": False,
+        "migration_authorized": bool(migration_authorized),
+        "overridden": overridden,
+        "fatal": fatal,
+        "observed": observed,
     }
 
 
-def effective_stack(*, local_ref: str, relay_ref: str, selector_refs: list[dict[str, str]]) -> dict[str, Any]:
+def effective_stack(*, local_ref: str, relay_ref: str, selector_refs: list[dict[str, str]], migration_authorized: bool = False) -> dict[str, Any]:
     require(parse_exact_ref(local_ref) == ACTIVE_LOCAL, "Outer protocol must be Local v1.1")
     require(parse_exact_ref(relay_ref) == ACTIVE_RELAY, "Nested Coder protocol must be v3.5")
-    scan = scan_references(selector_refs)
+    resolution = resolve_selector_conflicts(selector_refs, migration_authorized=migration_authorized)
     return {
         "local_ref": local_ref,
         "nested_coder_ref": relay_ref,
-        "legacy_scan": scan,
-        "usable": scan["result"] == "PASS",
+        "selector_resolution": resolution,
+        "usable": resolution["status"] in {"PASS", "OVERRIDDEN_SELECTOR_CONFLICT"},
     }
