@@ -20,6 +20,18 @@ PROJECT_DIGEST = 'e' * 64
 HARNESS_DIGEST = 'f' * 64
 BASELINE_DIGEST = '1' * 64
 ORACLE_DIGEST = '2' * 64
+POLICY_DIGEST = '3' * 64
+WORKFLOW_DIGEST = '4' * 64
+ENV_DIGEST = '5' * 64
+TREE_DIGEST = '6' * 64
+SURFACE_DIGEST = '7' * 64
+WORKSPACE_DIGEST = '8' * 64
+PARENT_CONTEXT_DIGEST = 'a' * 64
+CHILD_CONTEXT_DIGEST = 'b' * 64
+PR_DESCRIPTION_DIGEST = 'c' * 64
+OWNER_CONTROL_DIGEST = '9' * 64
+POLICY_SOURCE = 'https://example.invalid/policy/required-checks'
+
 
 def enrich_v11(bundle):
     tasks = {task['task_id']: task for task in bundle['tasks']}
@@ -28,26 +40,245 @@ def enrich_v11(bundle):
         task['protocol_ref'] = task['protocol_ref'].replace('Local_PR_Deliverty_v1.0', 'Local_PR_Deliverty_v1.1')
         task['project_protocol_ref'] = 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json'
         task['project_protocol_digest'] = PROJECT_DIGEST
+        task['owner_principals'] = ['owner']
+        task['required_check_policy'] = dict(source_ref=POLICY_SOURCE, digest=POLICY_DIGEST, provider='GITHUB_ACTIONS')
+        task['required_check_contracts'] = [
+            dict(check=name, provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE)
+            for name in task['required_checks']
+        ]
+        task.setdefault('waivable_criteria', [])
         for criterion in task['acceptance']:
             criterion['verification_method_ids'] = ['VM-' + criterion['id']]
-            criterion['super_review_required'] = True
+            criterion.setdefault('super_review_required', True)
+
+    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[])
+    bundle['support'] = support
+
     for record in bundle['stages']:
         record['version'] = '1.1'
         record['repeat_stages'] = []
+        record['role_integrity'] = dict(claimed_role=record['stage'], principal=record['executor'])
+        record['environment_ref'] = 'ENV-' + record['record_id']
+        support['environments'].append(dict(
+            environment_id=record['environment_ref'],
+            os='synthetic-os',
+            architecture='synthetic-arch',
+            toolchain=[dict(name='python', version='3.12')],
+            lockfile_digest=None,
+            container_digest=None,
+            external_versions=[],
+            network_policy='OFFLINE',
+            secret_values_recorded=False,
+            digest=ENV_DIGEST,
+        ))
+
         checked = list(record['acceptance_checked'])
         evidence_id = 'EV-' + record['record_id']
         evidence_class = 'SUPER_REVIEW_INDEPENDENT' if record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] else 'REVIEWER_INDEPENDENT' if record['stage'] == 'REVIEWER' else 'AUTHOR'
-        record['evidence_manifest'] = [dict(evidence_id=evidence_id, **{'class': evidence_class}, result='PASS' if record['status'] == 'PASS' else 'NOT_RUN', source_sha=record['validated_sha'] or record['output_sha'] or record['input_sha'], procedure='Synthetic protocol evidence fixture.', artifact_digest=None)]
+        final_source = record['validated_sha'] or record['output_sha'] or record['input_sha']
+        record['evidence_manifest'] = [dict(
+            evidence_id=evidence_id,
+            **{'class': evidence_class},
+            result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
+            source_sha=final_source,
+            procedure='Synthetic protocol evidence fixture.',
+            artifact_digest=None,
+            harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
+            baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
+            environment_digest=ENV_DIGEST,
+        )]
+        record['evidence_refs'] = [evidence_id]
         declared = {criterion['id']: criterion for criterion in tasks[record['task_id']]['acceptance']}
-        record['acceptance_results'] = [dict(criterion_id=cid, required=declared[cid]['required'], result='PASS' if record['status'] == 'PASS' else 'NOT_RUN', verification_method_ids=list(declared[cid]['verification_method_ids']), evidence_ids=[evidence_id]) for cid in checked]
-        record['acceptance_surface'] = dict(project_protocol_digest=PROJECT_DIGEST, harness_digest=HARNESS_DIGEST, baseline_digest=BASELINE_DIGEST, oracle_digests=[ORACLE_DIGEST], mutation_detected=False) if record['stage'] in ['COORDINATOR', 'PARENT_CHECK'] else None
-        record['production_output'] = dict(deliverables=['Synthetic ' + record['stage'] + ' production output'], coverage_completed=checked, fixes_applied=[], regressions_added=[], education_points=['Synthetic forward handoff explains evidence and downstream invariant.'], unresolved_internal_defects=[], internal_fixable_defects_remaining=0, blocking_class='NONE', coverage_complete_for_stage=record['status'] == 'PASS', early_termination=False, early_termination_reason=None)
+        record['acceptance_results'] = [
+            dict(
+                criterion_id=cid,
+                required=declared[cid]['required'],
+                result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
+                verification_method_ids=list(declared[cid]['verification_method_ids']),
+                evidence_ids=[evidence_id],
+            )
+            for cid in checked
+        ]
+        record['acceptance_surface'] = (
+            dict(
+                project_protocol_digest=PROJECT_DIGEST,
+                harness_digest=HARNESS_DIGEST,
+                baseline_digest=BASELINE_DIGEST,
+                oracle_digests=[ORACLE_DIGEST],
+                mutation_detected=False,
+                digest=SURFACE_DIGEST,
+            )
+            if record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']
+            else None
+        )
+        record['production_output'] = dict(
+            deliverables=['Synthetic ' + record['stage'] + ' production output'],
+            coverage_completed=checked,
+            fixes_applied=[],
+            regressions_added=[],
+            education_points=['Synthetic forward handoff explains evidence and downstream invariant.'],
+            unresolved_internal_defects=[],
+            internal_fixable_defects_remaining=0,
+            blocking_class='NONE',
+            coverage_complete_for_stage=record['status'] == 'PASS',
+            early_termination=False,
+            early_termination_reason=None,
+        )
+        record['carried_findings'] = []
+        record['freshness'] = dict(
+            common_protocol_current=True,
+            project_protocol_current=True,
+            spec_current=True,
+            parent_context_current=True,
+            child_context_current=True,
+            pr_description_current=True,
+            acceptance_surface_current=True,
+            environment_current=True,
+            dependencies_current=True,
+        )
+
+        start_ref = 'CTX-START-' + record['record_id']
+        record['context_start_ref'] = start_ref
+        support['context_snapshots'].append(dict(
+            snapshot_id=start_ref,
+            task_id=record['task_id'],
+            phase='START',
+            observed_at=record['started_at'],
+            parent_issue_digest=PARENT_CONTEXT_DIGEST,
+            parent_comment_frontier=record['parent_context']['through_comment_ref'],
+            parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+            child_issue_digest=CHILD_CONTEXT_DIGEST,
+            child_comment_frontier=record['handover']['child_comment_ref'],
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            pr_comment_frontier=record['handover']['pr_description_ref'],
+            owner_control_digest=OWNER_CONTROL_DIGEST,
+            reconciled=True,
+            reconciliation_note='Synthetic START context fully reconciled.',
+        ))
+
+        is_pass = record['status'] == 'PASS'
+        if is_pass:
+            pre_ref = 'CTX-PRE-' + record['record_id']
+            record['context_pre_verdict_ref'] = pre_ref
+            support['context_snapshots'].append(dict(
+                snapshot_id=pre_ref,
+                task_id=record['task_id'],
+                phase='PRE_VERDICT',
+                observed_at=record['work_periods'][-1]['end'],
+                parent_issue_digest=PARENT_CONTEXT_DIGEST,
+                parent_comment_frontier=record['parent_context']['through_comment_ref'],
+                parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+                child_issue_digest=CHILD_CONTEXT_DIGEST,
+                child_comment_frontier=record['handover']['child_comment_ref'],
+                pr_description_digest=PR_DESCRIPTION_DIGEST,
+                pr_comment_frontier=record['handover']['pr_description_ref'],
+                owner_control_digest=OWNER_CONTROL_DIGEST,
+                reconciled=True,
+                reconciliation_note='Synthetic PRE_VERDICT context fully reconciled.',
+            ))
+            record['source_attestation'] = dict(
+                candidate_sha=record['validated_sha'],
+                base_sha=record['base_sha'],
+                integration_tree_digest=TREE_DIGEST,
+                workspace_digest=WORKSPACE_DIGEST,
+                unrecorded_changes=False,
+            )
+        else:
+            record['context_pre_verdict_ref'] = None
+            record['source_attestation'] = None
+
+        if is_pass and record['stage'] in ['REVIEWER', 'COORDINATOR', 'PARENT_CHECK']:
+            lease_ref = 'LEASE-' + record['record_id']
+            record['review_lease_ref'] = lease_ref
+            support['review_leases'].append(dict(
+                lease_id=lease_ref,
+                task_id=record['task_id'],
+                stage_record_id=record['record_id'],
+                candidate_sha=record['validated_sha'],
+                base_sha=record['base_sha'],
+                integration_tree_digest=TREE_DIGEST,
+                common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
+                project_protocol_digest=PROJECT_DIGEST,
+                spec_digest=record['spec_digest'],
+                parent_spec_digest=record['parent_spec_digest'],
+                parent_context_digest=PARENT_CONTEXT_DIGEST,
+                child_context_digest=CHILD_CONTEXT_DIGEST,
+                pr_description_digest=PR_DESCRIPTION_DIGEST,
+                required_check_policy_digest=POLICY_DIGEST,
+                acceptance_surface_digest=SURFACE_DIGEST,
+                environment_digest=ENV_DIGEST,
+                dependency_heads=[],
+                sealed_at=record['work_periods'][-1]['end'],
+                environment_ref=record['environment_ref'],
+                context_pre_verdict_ref=record['context_pre_verdict_ref'],
+            ))
+        else:
+            record['review_lease_ref'] = None
+
+    child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
+    for task in child_tasks:
+        final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] == 'PASS'), None)
+        if not final:
+            continue
+        pre_merge_ref = 'CTX-PREMERGE-' + task['task_id']
+        support['context_snapshots'].append(dict(
+            snapshot_id=pre_merge_ref,
+            task_id=task['task_id'],
+            phase='PRE_MERGE',
+            observed_at='2026-10-04T00:03:00Z',
+            parent_issue_digest=PARENT_CONTEXT_DIGEST,
+            parent_comment_frontier=final['parent_context']['through_comment_ref'],
+            parent_frontier_digest=PARENT_CONTEXT_DIGEST,
+            child_issue_digest=CHILD_CONTEXT_DIGEST,
+            child_comment_frontier=final['handover']['child_comment_ref'],
+            pr_description_digest=PR_DESCRIPTION_DIGEST,
+            pr_comment_frontier=final['handover']['pr_description_ref'],
+            owner_control_digest=OWNER_CONTROL_DIGEST,
+            reconciled=True,
+            reconciliation_note='Synthetic PRE_MERGE context fully reconciled.',
+        ))
+        state_ref = 'OBS-' + task['task_id']
+        support['observed_states'].append(dict(
+            state_id=state_ref,
+            task_id=task['task_id'],
+            pr=task['pr'],
+            project_protocol_digest=PROJECT_DIGEST,
+            pre_merge_context_ref=pre_merge_ref,
+            observed_at='2026-10-04T00:03:00Z',
+            pr_head_sha=final['validated_sha'],
+            base_sha=final['base_sha'],
+            integration_tree_digest=TREE_DIGEST,
+            repository_policy_digest=POLICY_DIGEST,
+            required_checks=[
+                dict(
+                    check=contract['check'],
+                    provider=contract['provider'],
+                    workflow_digest=contract['workflow_digest'],
+                    head_sha=final['validated_sha'],
+                    result='PASS',
+                    mandatory_steps_executed=True,
+                )
+                for contract in task['required_check_contracts']
+            ],
+        ))
+
     for result in bundle['results']:
         result['version'] = '1.1'
+        result.setdefault('waiver_refs', [])
+        task = tasks[result['task_id']]
+        if result['kind'] == 'CHILD':
+            final = next(record for record in bundle['stages'] if record['record_id'] == result['final_record'])
+            result['review_lease_ref'] = final['review_lease_ref']
+            result['pre_merge_context_ref'] = 'CTX-PREMERGE-' + task['task_id']
+            result['observed_state_ref'] = 'OBS-' + task['task_id']
+        else:
+            result['review_lease_ref'] = None
+            result['pre_merge_context_ref'] = None
+            result['observed_state_ref'] = None
     return bundle
 
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
-    return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes)
+    return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner')
 
 
 def example_bundle():
