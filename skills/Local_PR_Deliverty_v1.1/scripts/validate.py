@@ -19,6 +19,7 @@ SUPPORT_SCHEMAS = {
     'waivers': ('waiver', 'waiver_id'),
     'observed_states': ('observed-state', 'state_id'),
     'evidence_records': ('evidence-record', 'evidence_id'),
+    'project_protocols': ('project-protocol', 'protocol_id'),
 }
 
 
@@ -54,7 +55,7 @@ def schema_check(record):
 
 def support_index(bundle):
     support = bundle['support']
-    require(isinstance(support, dict) and set(support) == set(SUPPORT_SCHEMAS), 'Support needs review_leases, environments, context_snapshots, waivers, observed_states and evidence_records only')
+    require(isinstance(support, dict) and set(support) == set(SUPPORT_SCHEMAS), 'Support needs review_leases, environments, context_snapshots, waivers, observed_states, evidence_records and project_protocols only')
     indexes = {}
     for key, (schema_name, id_field) in SUPPORT_SCHEMAS.items():
         records = support[key]
@@ -72,6 +73,36 @@ def latest_observed_state(task, support):
     if not states:
         return None
     return max(states, key=lambda state: instant(state['observed_at']))
+
+
+def validate_project_protocol(task, support):
+    matches = [
+        protocol for protocol in support['project_protocols'].values()
+        if protocol['source_ref'] == task['project_protocol_ref'] and protocol['digest'] == task['project_protocol_digest']
+    ]
+    require(len(matches) == 1, 'TASK project protocol reference/digest does not resolve uniquely')
+    protocol = matches[0]
+    require(protocol['repository'] == task['repository'], 'Project protocol repository differs from TASK repository')
+    criteria = {}
+    for acceptance_set in protocol['acceptance_sets']:
+        for criterion in acceptance_set['criteria']:
+            require(criterion['id'] not in criteria, 'Duplicate project-protocol criterion ID')
+            criteria[criterion['id']] = criterion
+    harness_criteria = set()
+    for harness in protocol['harnesses']:
+        require(harness['protected'] is True, 'Project Super Review harness must be protected')
+        for criterion_id in harness['criteria']:
+            require(criterion_id in criteria, 'Project harness references unknown criterion')
+            harness_criteria.add(criterion_id)
+    for declared in task['acceptance']:
+        criterion = criteria.get(declared['id'])
+        require(criterion, 'TASK acceptance criterion missing from pinned project protocol')
+        require(criterion['required'] == declared['required'], 'TASK acceptance requiredness differs from pinned project protocol')
+        require(criterion['super_review_required'] == declared['super_review_required'], 'TASK Super Review requirement differs from pinned project protocol')
+        require(set(criterion['verification_method_ids']) == set(declared['verification_method_ids']), 'TASK verification methods differ from pinned project protocol')
+        if declared['super_review_required']:
+            require(declared['id'] in harness_criteria, 'Super Review criterion is not covered by a protected project harness')
+    return protocol
 
 
 def acceptance_ids(task, required_only=False):
@@ -227,7 +258,7 @@ def validate_stage_trust(record, task, parent, support, now):
         require(lease['common_protocol_ref'] == task['protocol_ref'] and lease['common_protocol_digest'] == task['protocol_digest'] and lease['project_protocol_digest'] == task['project_protocol_digest'], 'Review lease protocol basis is stale')
         require(lease['spec_digest'] == task['spec_digest'] and lease['parent_spec_digest'] == parent['spec_digest'], 'Review lease specification basis is stale')
         require(lease['context_pre_verdict_ref'] == pre['snapshot_id'], 'Review lease does not name PRE_VERDICT context')
-        require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'], 'Review lease context/PR basis is stale')
+        require(lease['parent_context_digest'] == pre['parent_frontier_digest'] and lease['child_context_digest'] == pre['child_issue_digest'] and lease['pr_description_digest'] == pre['pr_description_digest'] and lease['owner_control_digest'] == pre['owner_control_digest'], 'Review lease context/PR/Owner-control basis is stale')
         require(lease['environment_ref'] == environment['environment_id'] and lease['environment_digest'] == environment['digest'], 'Review lease environment is stale')
         require(lease['integration_tree_digest'] == attestation['integration_tree_digest'] and lease['merge_base_sha'] == attestation['merge_base_sha'], 'Review lease integration tree/merge base differs from source attestation')
         require(lease['required_check_policy_digest'] == task['required_check_policy']['digest'], 'Review lease required-check policy is stale')
@@ -251,11 +282,17 @@ def validate_observed_merge_basis(task, latest, support):
     state = latest_observed_state(task, support)
     require(state, 'Missing structured observed repository/check state')
     require(state['pr'] == task['pr'] and state['pr_head_sha'] == latest['validated_sha'] and state['base_sha'] == latest['base_sha'], 'Observed repository state is stale for PR head/base')
-    require(state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale project protocol')
+    require(state['common_protocol_digest'] == task['protocol_digest'] and state['project_protocol_digest'] == task['project_protocol_digest'], 'Observed repository state has stale protocol basis')
     require(state['repository_policy_digest'] == task['required_check_policy']['digest'], 'Observed repository policy differs from trusted required-check policy')
     require(state['integration_tree_digest'] == latest['source_attestation']['integration_tree_digest'] and state['merge_base_sha'] == latest['source_attestation']['merge_base_sha'], 'Observed integration tree/merge base differs from reviewed identity')
+    require(state['workspace_digest'] == latest['source_attestation']['workspace_digest'], 'Observed workspace digest differs from reviewed candidate')
+    lease = support['review_leases'].get(latest['review_lease_ref'])
+    require(lease, 'Final review lease missing at pre-merge refresh')
+    require(state['environment_digest'] == lease['environment_digest'], 'Observed environment differs from final review lease')
     context = support['context_snapshots'].get(state['pre_merge_context_ref'])
     require(context and context['task_id'] == task['task_id'] and context['phase'] == 'PRE_MERGE', 'Missing/mismatched PRE_MERGE context snapshot')
+    require(context['parent_frontier_digest'] == lease['parent_context_digest'] and context['child_issue_digest'] == lease['child_context_digest'] and context['pr_description_digest'] == lease['pr_description_digest'] and context['owner_control_digest'] == lease['owner_control_digest'], 'PRE_MERGE context changed after final review; lease expired')
+    require(state['parent_context_digest'] == context['parent_frontier_digest'] and state['child_context_digest'] == context['child_issue_digest'] and state['pr_description_digest'] == context['pr_description_digest'] and state['owner_control_digest'] == context['owner_control_digest'], 'Observed state/context snapshot mismatch')
     contracts = {item['check']: item for item in task['required_check_contracts']}
     observed = {item['check']: item for item in state['required_checks']}
     require(set(contracts) == set(task['required_checks']), 'Required-check contracts must exactly cover required_checks')
@@ -263,9 +300,11 @@ def validate_observed_merge_basis(task, latest, support):
     for name, contract in contracts.items():
         item = observed[name]
         require(item['provider'] == contract['provider'] and item['workflow_digest'] == contract['workflow_digest'], 'Required check provider/workflow identity mismatch')
+        require(item['workflow_path'] == contract['workflow_path'] and item['app_identity'] == contract['expected_app'], 'Required check workflow/app identity mismatch')
         require(item['head_sha'] == latest['validated_sha'], 'Required check ran on wrong candidate SHA')
         require(item['mandatory_steps_executed'] is True, 'Required check skipped a mandatory validation step')
         require(item['result'] == 'PASS', 'Required structured check is not PASS')
+        require(item['run_id'] and item['job_id'], 'Required check lacks provider run/job identity')
     return state
 
 
@@ -390,6 +429,7 @@ def validate_bundle(bundle, now=None):
         require(parent['merge_authority']['reference'], 'Delegated authority needs an actual Owner instruction')
     for task in tasks.values():
         require(len(acceptance_ids(task)) == len(task['acceptance']), 'Duplicate acceptance ID')
+        validate_project_protocol(task, support)
         require(set(task['waivable_criteria']) <= acceptance_ids(task), 'waivable_criteria names unknown acceptance ID')
         role_sets = [set(task['role_principals'][name]) for name in ['CODER', 'REVIEWER', 'COORDINATOR']]
         require(not (role_sets[0] & role_sets[1] or role_sets[0] & role_sets[2] or role_sets[1] & role_sets[2]), 'Authorized role principal sets must be disjoint')
