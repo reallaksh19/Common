@@ -87,6 +87,10 @@
     "pre_merge_context_ref": {
       "type": "string",
       "minLength": 1
+    },
+    "merge_base_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
     }
   },
   "required": [
@@ -100,7 +104,8 @@
     "base_sha",
     "integration_tree_digest",
     "repository_policy_digest",
-    "required_checks"
+    "required_checks",
+    "merge_base_sha"
   ],
   "additionalProperties": false
 }
