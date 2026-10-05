@@ -59,9 +59,14 @@
     },
     "result_override": {
       "const": false
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "required": [
+    "task_id",
     "waiver_id",
     "criterion_id",
     "lease_id",
