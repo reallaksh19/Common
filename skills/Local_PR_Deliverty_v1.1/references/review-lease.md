@@ -11,7 +11,7 @@ The lease names:
 - repository and PR;
 - task/stage record;
 - certifier role and principal;
-- candidate SHA;
+- candidate SHA and candidate-tree digest;
 - target ref and target-base SHA;
 - merge-base SHA;
 - integration-tree digest;
@@ -24,7 +24,7 @@ The lease names:
 - Owner-control digest;
 - required-check policy digest;
 - environment ref/digest;
-- acceptance-surface digest;
+- acceptance-surface digest and transitive acceptance-surface manifest digest;
 - explicit harness, baseline, oracle and fixture digests.
 
 ## Content-addressed identity
