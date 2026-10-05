@@ -1999,6 +1999,189 @@ class ExternalGateV11Tests(unittest.TestCase):
         self.rejected(bundle)
 
 
+    def test_external_gate_pass_cannot_override_fail_evidence(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='FAIL')
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+    def test_external_gate_pass_cannot_override_inconclusive_evidence(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle)
+        evidence_id = self.add_gate_evidence(bundle, method_id, result='INCONCLUSIVE')
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+    def test_ci_provider_evidence_is_consumed_as_external_origin(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['CI_PROVIDER'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='CI_PROVIDER',
+            origin_kind='CI_PROVIDER',
+            origin_principal='github-actions',
+            oracle_independence='PROVIDER_INDEPENDENT',
+            relationship='EXTERNAL_PROVIDER',
+            provider_ref='synthetic://actions/run/42/job/7',
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_ci_provider_cannot_be_faked_by_stage_executor(self):
+        bundle = premerge_bundle()
+        method_id = self.add_gate(bundle, allowed=['CI_PROVIDER'])
+        evidence_id = self.add_gate_evidence(
+            bundle, method_id,
+            evidence_class='CI_PROVIDER',
+            origin_kind='STAGE_EXECUTOR',
+            origin_principal='coordinator',
+            oracle_independence='PINNED_ORACLE_INDEPENDENT',
+            relationship='LAST_PRODUCT_WRITER',
+            provider_ref=None,
+        )
+        bundle['stages'][2]['external_gate_results'] = [dict(gate_id='EXT-1', result='PASS', evidence_ids=[evidence_id])]
+        self.rejected(bundle)
+
+
+
+
+class ReviewedBlockerRegressionTests(unittest.TestCase):
+    def rejected(self, bundle):
+        with self.assertRaises(checker.RecordError):
+            checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')
+
+    def set_final_result(self, bundle, record, result):
+        evidence_id = final_evidence_id(record)
+        embedded = next(item for item in record['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['result'] = result
+        provenance['result'] = result
+        provenance['exit_code'] = 0 if result == 'PASS' else 1 if result == 'FAIL' else None
+        return evidence_id
+
+    def test_criterion_pass_cannot_override_fail_evidence(self):
+        bundle = premerge_bundle()
+        coder = bundle['stages'][0]
+        self.set_final_result(bundle, coder, 'FAIL')
+        self.assertEqual(coder['acceptance_results'][0]['result'], 'PASS')
+        self.rejected(bundle)
+
+    def test_criterion_pass_cannot_override_inconclusive_evidence(self):
+        bundle = premerge_bundle()
+        coder = bundle['stages'][0]
+        self.set_final_result(bundle, coder, 'INCONCLUSIVE')
+        self.assertEqual(coder['acceptance_results'][0]['result'], 'PASS')
+        self.rejected(bundle)
+
+    def test_missing_required_verification_method_evidence_rejected(self):
+        bundle = premerge_bundle()
+        task = bundle['tasks'][1]
+        protocol = bundle['support']['project_protocols'][0]
+        method_id = 'VM-A1-REVIEW-SECOND'
+        task['acceptance'][0]['verification_method_ids'].append(method_id)
+        criterion = next(
+            criterion for acceptance_set in protocol['acceptance_sets']
+            for criterion in acceptance_set['criteria'] if criterion['id'] == 'A1'
+        )
+        criterion['verification_method_ids'].append(method_id)
+        protocol['verification_methods'].append(dict(
+            id=method_id,
+            verification_class='BOUNDARY',
+            harness_id=None,
+            external_gate_id=None,
+            required_evidence_classes=['REVIEWER_INDEPENDENT'],
+            material_inputs=['PRODUCT'],
+            rerun_policy='FULL_REQUIRED_SET',
+            applies_to_roles=['REVIEWER'],
+        ))
+        refresh_project_protocol_identity(bundle)
+        self.rejected(bundle)
+
+    def test_wrong_harness_identity_rejected(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        embedded = next(item for item in final['evidence_manifest'] if item['evidence_id'] == evidence_id)
+        provenance = evidence_provenance(bundle, evidence_id)
+        embedded['harness_id'] = 'SR-WRONG'
+        provenance['harness_id'] = 'SR-WRONG'
+        self.rejected(bundle)
+
+    def test_synthetic_merge_ci_tracks_trigger_and_tested_commit_separately(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        check = state['required_checks'][0]
+        self.assertEqual(check['trigger_pr_head_sha'], bundle['stages'][2]['validated_sha'])
+        self.assertNotEqual(check['tested_commit_sha'], check['trigger_pr_head_sha'])
+        self.assertEqual(check['checkout_mode'], 'SYNTHETIC_MERGE')
+        self.assertEqual(checker.validate_bundle(bundle, '2026-10-04T00:08:00Z')['issues']['86']['status'], 'MERGE_READY')
+
+    def test_ci_wrong_tested_tree_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['tested_tree_digest'] = '0' * 64
+        self.rejected(bundle)
+
+    def test_ci_wrong_trigger_pr_head_rejected(self):
+        bundle = premerge_bundle()
+        state = next(item for item in bundle['support']['observed_states'] if item['task_id'] == 'T86')
+        state['required_checks'][0]['trigger_pr_head_sha'] = HEADS[4]
+        self.rejected(bundle)
+
+    def test_pr_head_policy_rejects_synthetic_merge_checkout(self):
+        bundle = premerge_bundle()
+        contract = bundle['tasks'][1]['required_check_contracts'][0]
+        contract['certifies'] = 'PR_HEAD'
+        contract['allowed_checkout_modes'] = ['PR_HEAD']
+        self.rejected(bundle)
+
+    def test_reviewer_completion_requires_discovery_freeze(self):
+        bundle = premerge_bundle()
+        bundle['stages'][1]['discovery_freeze'] = None
+        self.rejected(bundle)
+
+    def test_repair_cannot_begin_before_discovery_freeze(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['discovery_freeze']['first_repair_at'] = _plus_seconds(reviewer['started_at'], 5)
+        self.rejected(bundle)
+
+    def test_discovery_sweep_must_cover_all_role_methods(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['discovery_freeze']['method_ids_attempted'] = []
+        reviewer['discovery_freeze']['evidence_ids'] = []
+        self.rejected(bundle)
+
+    def test_material_scope_change_cannot_self_certify_as_bounded_fix(self):
+        bundle = premerge_bundle()
+        reviewer = bundle['stages'][1]
+        reviewer['findings'][0]['classification'] = 'MATERIAL_SCOPE_CHANGE'
+        self.rejected(bundle)
+
+    def test_independent_class_requires_independent_oracle_basis(self):
+        bundle = premerge_bundle()
+        final = bundle['stages'][2]
+        evidence_id = final_evidence_id(final)
+        provenance = evidence_provenance(bundle, evidence_id)
+        provenance['oracle_independence'] = 'NOT_INDEPENDENT'
+        self.rejected(bundle)
+
+    def test_transitive_manifest_helper_drift_rejected(self):
+        bundle = premerge_bundle()
+        protocol = bundle['support']['project_protocols'][0]
+        helper = next(item for item in protocol['protected_surface']['manifest'] if item['kind'] == 'IMPORTED_HELPER')
+        helper['digest'] = '0' * 64
+        protocol['digest'] = checker.canonical_digest(protocol)
+        for task in bundle['tasks']:
+            task['project_protocol_digest'] = protocol['digest']
+        self.rejected(bundle)
+
+    def test_stage_pass_is_not_a_valid_stage_lifecycle_status(self):
+        bundle = premerge_bundle()
+        bundle['stages'][0]['status'] = 'PASS'
+        self.rejected(bundle)
 
 
 class SchemaSurfaceV11Tests(unittest.TestCase):
