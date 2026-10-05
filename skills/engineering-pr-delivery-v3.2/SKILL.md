@@ -18,7 +18,7 @@ Preserve these boundaries:
 - Git / PR / tests / runtime / artifacts are material truth.
 - exact-head evidence proves only the exact basis it names.
 - recorder-integrity failures remain real hard failures.
-- provider/reporting/status failure may reduce observability; it must never reduce production agency.
+- provider/reporting/status failure may reduce observability; it must never reduce production agency except when the active responsibility has explicitly enabled the Owner-visible checkpoint barrier described below.
 - generated/current/progress/Further-Task views are derived and disposable.
 - execution, evidence, verification, delivery, provider lifecycle, and Owner authority remain separate axes.
 - a replacement executor/session does not create a new responsibility.
@@ -32,7 +32,7 @@ TASK_EVIDENCE
 TASK_RESULT
 ```
 
-No heartbeat/activity publication is added.
+No periodic heartbeat/activity publication is added. Event-gated checkpoint evidence reuses `TASK_EVIDENCE`; it is not a fifth publication family and never earns progress merely by existing.
 
 ## Responsibility-first topology
 
@@ -105,7 +105,7 @@ Provider synchronization failure is recorded as:
 FAILED_OBSERVABILITY_ONLY
 ```
 
-and does not block material engineering.
+and does not normally block material engineering. When an active responsibility explicitly enables `CHECKPOINT_VISIBILITY_MODE=OWNER_REQUIRED`, checkpoint-boundary provider synchronization is different: the executor MUST NOT start the next substantial work unit until the required GitHub projection has been written and read back, or until the Owner explicitly waives that visibility requirement. This narrow barrier does not convert arbitrary provider failures into engineering truth.
 
 No timer, heartbeat, commit count, test count, tool call, or elapsed-time event may substitute for this semantic event.
 
@@ -133,7 +133,11 @@ It answers:
 - active recovery mode/evidence obligation;
 - current / next;
 - genuine Owner decision if any;
-- stream-loss/handover escalation state.
+- stream-loss/handover escalation state;
+- activity epoch (`A<n>`) for observable checkpoint motion;
+- last meaningful activity classification;
+- last material/semantic frontier-advance checkpoint;
+- derived liveness projection when a watcher/provider supports it.
 
 The managed provider surface is a cache/read model, not a fifth publication and not authority.
 
@@ -154,17 +158,189 @@ E = evidenced completed declared units / denominator
 
 A unit cannot be evidenced unless it is complete.
 
-Do not award progress from commits, files, tests, comments/publications, tool calls, tokens, elapsed time, executor/session count, or generic `proceed`.
+Do not award progress from commits, files, tests, comments/publications, tool calls, tokens, elapsed time, executor/session count, activity epochs, checkpoint count, or generic `proceed`.
 
 Percentages may decrease after a legitimate declared-denominator expansion.
 
 The issue title may mirror:
 
 ```text
-{P77% · E69% · UNIT-09 · RECOVERING}
+🟢 {P77% · E69% · A12 · UNIT-09 · ACTIVE}
 ```
 
-but the title is disposable projection only.
+but the title is disposable projection only. `A12` means the twelfth valid activity/checkpoint epoch; it is not progress.
+
+## Checkpoint-before-continue — write-ahead continuity barrier
+
+V3.2 now distinguishes ordinary passive frontier lag from a **checkpoint threshold**. Passive material-ahead state may still exist during uninterrupted work, but once a checkpoint threshold is crossed the executor must bound interruption loss before beginning another substantial work unit.
+
+Normative invariant:
+
+> When the material, semantic, evidence, or investigation frontier crosses a checkpoint threshold, the executor MUST reconcile current truth, refresh the responsibility snapshot, synchronize the configured GitHub projection, verify provider readback where required, and surface the checkpoint to the Owner in chat before beginning the next substantial work unit.
+
+This is write-ahead continuity discipline. It is not an approval gate and does not award P/E.
+
+### Checkpoint threshold — semantic/evidence movement
+
+Checkpoint before continuing when any of the following becomes true:
+
+- a declared implementation unit becomes complete;
+- P or E legitimately changes;
+- a root cause, blocker, architecture decision, or finding is established and changes the next action;
+- a material hypothesis is eliminated and the negative knowledge would materially help a successor;
+- a finding is resolved in a way that changes the material or validation frontier;
+- the candidate/material head changes in a way that would increase recovery distance;
+- a focused validation, benchmark, browser/runtime check, or external-oracle batch completes and materially changes engineering knowledge.
+
+When semantic/evidence truth advanced, use the existing publication family:
+
+```text
+TASK_EVIDENCE — CHECKPOINT
+```
+
+A checkpoint evidence record should identify, as applicable:
+
+```text
+RESPONSIBILITY
+CURRENT_UNIT
+P / E
+ACTIVITY_EPOCH
+MATERIAL_FRONTIER
+SEMANTIC_EVIDENCE_FRONTIER
+COMPLETED_UNITS
+NEW_FINDINGS / RESOLVED_FINDINGS
+NEGATIVE_KNOWLEDGE
+VALIDATION_RESULT
+NEXT_SUBSTANTIAL_WORK_UNIT
+```
+
+Durable provider publication is required when the checkpoint contains successor-relevant semantic/evidence truth that would otherwise be lost in a stream/session failure.
+
+### Checkpoint threshold — substantial activity without semantic completion
+
+Substantial investigation may prove liveness without earning progress. The following are default checkpoint triggers unless a project-specific profile chooses stricter thresholds:
+
+```text
+READ/RECONSTRUCTION
+- >= 3000 NEW substantive source/document lines inspected; OR
+- >= 8 NEW meaningful files inspected; OR
+- one complete subsystem/interface boundary reconstructed.
+
+CODE/EDIT ACTIVITY
+- >= 250 newly authored reviewable lines; OR
+- >= 400 materially modified reviewable lines.
+
+HARD CHECKPOINT CEILING
+- >= 500 newly authored reviewable lines; OR
+- >= 700 materially modified reviewable lines.
+```
+
+Repeatedly rereading the same material, rerunning the same unchanged failing test, generic tool calls, token generation, comments, or elapsed time do not renew meaningful activity by themselves.
+
+An activity-only checkpoint:
+
+- increments `ACTIVITY_EPOCH`;
+- refreshes current-state / title projection;
+- records what materially new work was observed;
+- leaves P and E unchanged unless declared units independently satisfy progress semantics;
+- need not create a new durable GitHub issue comment if no successor-relevant semantic/evidence frontier advanced;
+- MUST still be mirrored to the Owner in chat before the executor begins the next substantial work unit when `CHECKPOINT_VISIBILITY_MODE=OWNER_REQUIRED`.
+
+### Pre-risk checkpoint
+
+Before starting a higher interruption/latency-risk operation, an executor with meaningful uncheckpointed state MUST checkpoint first. Examples include:
+
+```text
+long test or benchmark suite
+browser automation
+large build or static analysis
+external-service/oracle invocation
+large repository traversal
+generation of a large patch
+branch switch / rebase / history rewrite
+provider mutation that changes issue/PR/branch state
+other operations known to be stream/tool interruption-prone
+```
+
+The pre-risk checkpoint may be activity-only when no semantic unit has completed. Its purpose is to bound reconstruction distance.
+
+### Checkpoint barrier order
+
+For `CHECKPOINT_VISIBILITY_MODE=OWNER_REQUIRED`, perform this order before continuing:
+
+```text
+1. OBSERVE
+   Observe exact live material/provider frontier.
+
+2. RECONCILE
+   Reconcile material, semantic/evidence, active unit, findings and negative knowledge.
+
+3. PROJECT
+   Recalculate P/E honestly and increment the activity epoch without manufacturing progress.
+
+4. SYNC GITHUB
+   Update the managed current-state surface and issue-title projection.
+
+5. READ BACK
+   Verify that the intended provider state is actually visible.
+
+6. TASK EVIDENCE IN CHAT
+   Surface a concise checkpoint to the Owner, including P/E, current unit,
+   frontier, what changed, provider readback status, and next substantial work unit.
+
+7. CONTINUE
+   Only now begin the next substantial work unit.
+```
+
+If GitHub synchronization/readback fails in Owner-required mode, surface:
+
+```text
+WAITING_PROVIDER_VISIBILITY
+```
+
+and do not silently cross the checkpoint barrier. Owner may explicitly waive the visibility barrier for that responsibility; such a waiver affects observability only and never rewrites engineering truth.
+
+### Chat checkpoint shape
+
+The user-visible checkpoint should be compact and reconstructable, for example:
+
+```text
+TASK_EVIDENCE — CHECKPOINT
+{P18% · E14% · A07 · 🟢 ACTIVE}
+CURRENT_UNIT: qualification / persistence blocker reconstruction
+COMPLETED: benchmark overlay path reconstructed; persistence blocker identified; audit test written
+MATERIAL_FRONTIER: <sha / working-delta ref>
+SEMANTIC_FRONTIER: <checkpoint ref>
+GITHUB_PROJECTION: updated + read back
+NEXT: create bounded repair branch and continue implementation
+```
+
+The chat checkpoint is a mirror for Owner visibility. It does not replace durable provider evidence when durable evidence is required.
+
+## Liveness / motion projection
+
+Progress, evidence, liveness, and motion are separate axes:
+
+```text
+P = semantic completion
+E = successor-safe evidenced completion
+A = valid activity/checkpoint epoch
+L = derived liveness/motion state
+```
+
+Recommended provider projection states:
+
+```text
+🟢 ACTIVE   recent meaningful activity and recent frontier movement
+🟡 QUIET    executor activity exists but frontier has not moved materially
+🔴 STALE    external watcher observes an expired activity lease / missed checkpoints
+🔵 WAITING  explicitly waiting on CI/tool/external dependency with a named wait condition
+✅ COMPLETE responsibility has ended normally
+```
+
+A running executor may publish ACTIVE or WAITING from observed truth. A dead executor cannot mark itself STALE; reliable STALE detection therefore requires an external watcher or provider-side observer. One missed observation must not by itself prove death.
+
+Do not manipulate P/E merely to show that an executor is alive. A stable P/E with advancing `A<n>` is a legitimate sign of active investigation.
 
 ## Material vs semantic/evidence frontier
 
@@ -185,7 +361,7 @@ The derived frontier exposes:
 RECONCILIATION_NEEDED: true | false
 ```
 
-This is a passive discrepancy signal. During uninterrupted work, material may legitimately run ahead of the latest evidence checkpoint; therefore `RECONCILIATION_NEEDED=true` does not by itself force a recovery publication on the current executor.
+This remains a passive discrepancy signal when no checkpoint threshold has been crossed. During uninterrupted work, material may legitimately run ahead of the latest evidence checkpoint for the current micro-unit; however, once a threshold above is crossed, the checkpoint-before-continue rule applies and the executor may not begin the next substantial work unit with that thresholded delta uncheckpointed.
 
 Refresh Git frontier mechanically with:
 
@@ -226,25 +402,33 @@ Unexpected stream/session loss uses this first-line sequence:
 1. BASIS
    verify responsibility, PROTOCOL_REF, and Owner amendments.
 
-2. LIVE MATERIAL
+2. LAST CHECKPOINT
+   read the latest valid activity/semantic checkpoint and provider projection.
+
+3. LIVE MATERIAL
    observe PR / branch / base / HEAD / relevant checks.
 
-3. DELTA
-   compare semantic/evidence frontier to material frontier.
+4. DELTA
+   compare the last checkpoint semantic/evidence frontier to the material frontier.
 
-4. RECONCILE
+5. RECONCILE
    validate active/pending work, assumptions, negative knowledge.
 
-5. TASK_EVIDENCE — RECOVERY
+6. TASK_EVIDENCE — RECOVERY
    durably anchor reconstructed truth.
 
-6. CONTRIBUTE + CONTINUE
+7. OWNER-VISIBLE READBACK
+   synchronize/read back the current GitHub projection and mirror recovery evidence in chat.
+
+8. CONTRIBUTE + CONTINUE
    resume useful engineering.
 ```
 
 Full/deep reconstruction remains available when task identity, authority, programme dependencies, RLL/OFFLOAD state, negative knowledge, or material/provider state cannot be reconciled.
 
 The recovery publication is required before the next material change after a detected recovery. This is semantic continuity discipline, not `relay_can` permission gating.
+
+Checkpoint-before-continue is intended to keep the reconstruction delta bounded to the current uncheckpointed micro-unit rather than an entire lost executor session.
 
 ## Three consecutive stream losses
 
@@ -285,6 +469,8 @@ Ask Owner when the proposed action changes intended outcome/acceptance, independ
 
 Do not ask merely because an executor/session changed, implementation detail changed within accepted responsibility, tests/CI need investigation, a predecessor assumption was wrong, status/projection is stale, or provider title/comment sync failed.
 
+A configured `CHECKPOINT_VISIBILITY_MODE=OWNER_REQUIRED` is itself an Owner observability requirement; inability to satisfy it is surfaced as `WAITING_PROVIDER_VISIBILITY`, not disguised as engineering failure.
+
 ## Compatibility posture
 
 This V3.2 directory was forked from the exact V3.1 tree to preserve compatibility while the narrow slice is replayed.
@@ -295,6 +481,7 @@ This V3.2 directory was forked from the exact V3.1 tree to preserve compatibilit
 - new responsibility current state is `FURTHER_TASK_SNAPSHOT`.
 - old snapshots missing `PROTOCOL_REF` or recovery `mode` remain readable as UNKNOWN/NONE rather than fabricated provenance/recovery.
 - old TASK_RESULT without explicit responsibility-complete maps to `UNKNOWN`.
+- old snapshots without activity/checkpoint fields remain readable with unknown activity epoch/liveness; do not fabricate historical liveness.
 - programme Handover / RLL / OFFLOAD contracts remain readable and are traversed only when relevant.
 - missing V3.2 fields map to UNKNOWN rather than fabricated PASS/completion/authority.
 
@@ -310,14 +497,14 @@ Retired V2.5/V3 workflows must not be restored merely to create more green check
 
 No audit recommendation becomes permanent V3.2 behavior merely because it sounds cleaner.
 
-Retain a change only when replay shows that it addresses an observed failure or recurring measurable operation, materially reduces affected-path protocol work or removes a demonstrated ambiguity/interruption, adds no more recurring ceremony than it removes, keeps clean-path overhead bounded, introduces zero timer/heartbeat work, preserves recorder/material/human-authority invariants, introduces no new Owner gate, and survives real/replayable cases.
+Retain a change only when replay shows that it addresses an observed failure or recurring measurable operation, materially reduces affected-path protocol work or removes a demonstrated ambiguity/interruption, adds no more recurring ceremony than it removes, keeps clean-path overhead bounded, introduces zero periodic timer/heartbeat ceremony, preserves recorder/material/human-authority invariants, introduces no new Owner decision gate, and survives real/replayable cases. Event-gated checkpoints are permitted only when they materially bound reconstruction loss or improve Owner observability without manufacturing progress.
 
-The principal replay cases are recorded in Common #483: #375/#379, #376, #377, plus the controlled #486/#487 cold-takeover drill.
+The principal replay cases are recorded in Common #483: #375/#379, #376, #377, plus the controlled #486/#487 cold-takeover drill. The interruption sequence described by the Owner on 2026-10-05 — multiple useful reconstruction/coding steps followed by stream/tool failure before a durable checkpoint — is an additional replay case for this checkpoint slice.
 
 ## Inherited baseline
 
 All other files under this V3.2 tree were copied from the audited V3.1 tree at fork time. They remain available for compatibility and regression comparison.
 
-Where inherited V3.1 prose conflicts with this V3.2 document **for the continuity/recovery slice above**, this document is normative for V3.2.
+Where inherited V3.1 prose conflicts with this V3.2 document **for the continuity/recovery/checkpoint slice above**, this document is normative for V3.2.
 
 Where this document is silent, preserve the V3.1 recorder/material/acceptance invariant until a separately evidence-backed V3.2 change is implemented and validated.
