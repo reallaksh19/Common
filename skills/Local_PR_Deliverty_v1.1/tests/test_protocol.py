@@ -2001,6 +2001,13 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
     def test_project_protocol_schema_accepts_domain_neutral_contract(self):
         from jsonschema import Draft202012Validator
         schema = json.loads((ROOT / 'schemas' / 'project-protocol.schema.json').read_text(encoding='utf-8'))
+        manifest = [{
+            'id': 'M-H',
+            'kind': 'HARNESS_ENTRYPOINT',
+            'ref': 'synthetic://harness',
+            'digest': HARNESS_DIGEST,
+            'transitive': True,
+        }]
         sample = {
             'protocol_id': 'example-project-v1',
             'version': '1.0',
@@ -2017,12 +2024,30 @@ class SchemaSurfaceV11Tests(unittest.TestCase):
                     'verification_method_ids': ['VM-A1-001'],
                 }],
             }],
-            'harnesses': [{'id': 'SR-A1', 'criteria': ['A1-001'], 'protected': True}],
+            'verification_methods': [{
+                'id': 'VM-A1-001',
+                'verification_class': 'DIFFERENTIAL',
+                'harness_id': 'SR-A1',
+                'external_gate_id': None,
+                'required_evidence_classes': ['SUPER_REVIEW_INDEPENDENT'],
+                'material_inputs': ['PRODUCT'],
+                'rerun_policy': 'FULL_REQUIRED_SET',
+                'applies_to_roles': ['COORDINATOR'],
+            }],
+            'harnesses': [{
+                'id': 'SR-A1',
+                'criteria': ['A1-001'],
+                'protected': True,
+                'verification_method_ids': ['VM-A1-001'],
+                'manifest_refs': ['M-H'],
+            }],
             'protected_surface': {
                 'harness_digest': HARNESS_DIGEST,
                 'baseline_digest': BASELINE_DIGEST,
                 'oracle_digests': [ORACLE_DIGEST],
                 'fixture_digests': [FIXTURE_DIGEST],
+                'manifest': manifest,
+                'manifest_digest': checker.canonical_value_digest(manifest),
             },
             'external_gates': [],
             'regressions': [],
