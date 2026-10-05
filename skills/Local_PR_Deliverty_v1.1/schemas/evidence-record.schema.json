@@ -73,6 +73,21 @@
           "type": "null"
         }
       ]
+    },
+    "baseline_digest": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "environment_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -85,7 +100,9 @@
     "harness_digest",
     "result",
     "procedure",
-    "artifact_digest"
+    "artifact_digest",
+    "baseline_digest",
+    "environment_digest"
   ],
   "additionalProperties": false
 }
