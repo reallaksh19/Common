@@ -480,7 +480,9 @@ def refresh_project_protocol_identity(bundle):
                     evidence['acceptance_surface_digest'] = surface['digest']
 
     for lease in list(bundle['support']['review_leases']):
-        record = stage_by_id[lease['stage_record_id']]
+        record = stage_by_id.get(lease['stage_record_id'])
+        if record is None:
+            continue
         lease['project_protocol_digest'] = project_digest
         if record['acceptance_surface'] is not None:
             lease['acceptance_surface_digest'] = record['acceptance_surface']['digest']
