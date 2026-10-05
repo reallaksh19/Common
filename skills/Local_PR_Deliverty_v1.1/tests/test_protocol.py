@@ -17,6 +17,7 @@ FOLDER = r'C:\Example\SharedEditor'
 
 
 PROJECT_DIGEST = 'e' * 64
+COMMON_DIGEST = '0' * 64
 HARNESS_DIGEST = 'f' * 64
 BASELINE_DIGEST = '1' * 64
 ORACLE_DIGEST = '2' * 64
@@ -40,7 +41,10 @@ def enrich_v11(bundle):
         task['protocol_ref'] = task['protocol_ref'].replace('Local_PR_Deliverty_v1.0', 'Local_PR_Deliverty_v1.1')
         task['project_protocol_ref'] = 'exampleowner/editor@' + '9' * 40 + ':review/project-protocol.json'
         task['project_protocol_digest'] = PROJECT_DIGEST
+        task['protocol_digest'] = COMMON_DIGEST
         task['owner_principals'] = ['owner']
+        task['role_principals'] = dict(CODER=['coder', 'new-coder', 'other-coder'], REVIEWER=['reviewer'], COORDINATOR=['coordinator'])
+        task.setdefault('stacked_dependencies', [])
         task['required_check_policy'] = dict(source_ref=POLICY_SOURCE, digest=POLICY_DIGEST, provider='GITHUB_ACTIONS')
         task['required_check_contracts'] = [
             dict(check=name, provider='GITHUB_ACTIONS', workflow_digest=WORKFLOW_DIGEST, policy_source=POLICY_SOURCE)
@@ -51,13 +55,16 @@ def enrich_v11(bundle):
             criterion['verification_method_ids'] = ['VM-' + criterion['id']]
             criterion.setdefault('super_review_required', True)
 
-    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[])
+    support = dict(review_leases=[], environments=[], context_snapshots=[], waivers=[], observed_states=[], evidence_records=[])
     bundle['support'] = support
 
     for record in bundle['stages']:
         record['version'] = '1.1'
         record['repeat_stages'] = []
         record['role_integrity'] = dict(claimed_role=record['stage'], principal=record['executor'])
+        record['common_protocol_ref'] = tasks[record['task_id']]['protocol_ref']
+        record['common_protocol_digest'] = tasks[record['task_id']]['protocol_digest']
+        record['project_protocol_ref'] = tasks[record['task_id']]['project_protocol_ref']
         record['environment_ref'] = 'ENV-' + record['record_id']
         support['environments'].append(dict(
             environment_id=record['environment_ref'],
@@ -88,6 +95,20 @@ def enrich_v11(bundle):
             environment_digest=ENV_DIGEST,
         )]
         record['evidence_refs'] = [evidence_id]
+        support['evidence_records'].append(dict(
+            evidence_id=evidence_id,
+            producer_role=record['stage'],
+            producer_principal=record['executor'],
+            evidence_class=evidence_class,
+            candidate_sha=final_source,
+            project_protocol_digest=PROJECT_DIGEST,
+            harness_digest=HARNESS_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
+            baseline_digest=BASELINE_DIGEST if evidence_class == 'SUPER_REVIEW_INDEPENDENT' else None,
+            environment_digest=ENV_DIGEST,
+            result='PASS' if record['status'] == 'PASS' else 'NOT_RUN',
+            procedure='Synthetic protocol evidence fixture.',
+            artifact_digest=None,
+        ))
         declared = {criterion['id']: criterion for criterion in tasks[record['task_id']]['acceptance']}
         record['acceptance_results'] = [
             dict(
@@ -198,6 +219,7 @@ def enrich_v11(bundle):
                 base_sha=record['base_sha'],
                 integration_tree_digest=TREE_DIGEST,
                 common_protocol_ref=tasks[record['task_id']]['protocol_ref'],
+                common_protocol_digest=COMMON_DIGEST,
                 project_protocol_digest=PROJECT_DIGEST,
                 spec_digest=record['spec_digest'],
                 parent_spec_digest=record['parent_spec_digest'],
@@ -215,6 +237,7 @@ def enrich_v11(bundle):
         else:
             record['review_lease_ref'] = None
 
+    bundle['observed'].setdefault('dependency_heads', {})
     child_tasks = [task for task in bundle['tasks'] if task['kind'] == 'CHILD' and task.get('pr') is not None]
     for task in child_tasks:
         final = next((record for record in reversed(bundle['stages']) if record['task_id'] == task['task_id'] and record['stage'] == 'COORDINATOR' and record['status'] == 'PASS'), None)
@@ -278,7 +301,7 @@ def enrich_v11(bundle):
     return bundle
 
 def command(name, target='ALL', child=None, issued='2026-10-04T00:10:00Z', minutes=None, identifier='CMD1'):
-    return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner')
+    return dict(id=identifier, command=name, target=target, child_issue=child, issued_at=issued, instruction_ref='Synthetic human instruction reference', reason='Synthetic command behavior test', minutes=minutes, owner_principal='owner', source_kind='DIRECT_OWNER_SESSION', source_digest='f' * 64, authentication_status='AUTHENTICATED')
 
 
 def example_bundle():
