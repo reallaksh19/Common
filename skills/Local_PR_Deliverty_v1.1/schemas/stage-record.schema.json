@@ -597,6 +597,14 @@
             "digest": {
               "type": "string",
               "pattern": "^[0-9a-f]{64}$"
+            },
+            "fixture_digests": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "uniqueItems": true
             }
           },
           "required": [
@@ -605,7 +613,8 @@
             "baseline_digest",
             "oracle_digests",
             "mutation_detected",
-            "digest"
+            "digest",
+            "fixture_digests"
           ],
           "additionalProperties": false
         },
