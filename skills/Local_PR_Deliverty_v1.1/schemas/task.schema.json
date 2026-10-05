@@ -270,6 +270,25 @@
           "owner_principal": {
             "type": "string",
             "minLength": 1
+          },
+          "source_kind": {
+            "enum": [
+              "GITHUB_PROVIDER",
+              "DIRECT_OWNER_SESSION",
+              "OTHER_AUTHENTICATED_PROVIDER",
+              "UNVERIFIED"
+            ]
+          },
+          "source_digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "authentication_status": {
+            "enum": [
+              "AUTHENTICATED",
+              "OBSERVED_TRUSTED_PROVIDER",
+              "UNVERIFIED"
+            ]
           }
         },
         "required": [
@@ -281,7 +300,10 @@
           "instruction_ref",
           "reason",
           "minutes",
-          "owner_principal"
+          "owner_principal",
+          "source_kind",
+          "source_digest",
+          "authentication_status"
         ],
         "additionalProperties": false,
         "allOf": [
@@ -493,6 +515,56 @@
         "minLength": 1
       },
       "uniqueItems": true
+    },
+    "protocol_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "role_principals": {
+      "type": "object",
+      "properties": {
+        "CODER": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "REVIEWER": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "COORDINATOR": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "CODER",
+        "REVIEWER",
+        "COORDINATOR"
+      ],
+      "additionalProperties": false
+    },
+    "stacked_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
     }
   },
   "required": [
@@ -517,7 +589,10 @@
     "owner_principals",
     "required_check_policy",
     "required_check_contracts",
-    "waivable_criteria"
+    "waivable_criteria",
+    "protocol_digest",
+    "role_principals",
+    "stacked_dependencies"
   ],
   "additionalProperties": false,
   "allOf": [
