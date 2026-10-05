@@ -72,7 +72,7 @@
     "status": {
       "enum": [
         "RUNNING",
-        "PASS",
+        "STAGE_COMPLETE",
         "REWORK",
         "STALLED",
         "BLOCKED",
@@ -83,7 +83,7 @@
         "WAITING_OWNER",
         "INCONCLUSIVE",
         "WAITING_EXTERNAL",
-        "APPROVED_WITH_WAIVER"
+        "STAGE_COMPLETE_WITH_WAIVER"
       ]
     },
     "input_sha": {
@@ -206,13 +206,56 @@
               "null"
             ],
             "minLength": 1
+          },
+          "classification": {
+            "enum": [
+              "BOUNDED_PRODUCT_FIX",
+              "MATERIAL_SCOPE_CHANGE",
+              "ACCEPTANCE_SURFACE_DEFECT",
+              "EXTERNAL_DEPENDENCY"
+            ]
+          },
+          "phase_found": {
+            "enum": [
+              "DISCOVERY",
+              "POST_REPAIR"
+            ]
+          },
+          "repair_disposition": {
+            "enum": [
+              "FIXED_HERE",
+              "ESCALATED",
+              "OBSERVED_NO_CHANGE"
+            ]
+          },
+          "affected_components": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "resolution_evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
           }
         },
         "required": [
           "id",
           "problem",
           "status",
-          "resolution"
+          "resolution",
+          "classification",
+          "phase_found",
+          "repair_disposition",
+          "affected_components",
+          "resolution_evidence_ids"
         ],
         "additionalProperties": false,
         "allOf": [
@@ -586,6 +629,24 @@
           "environment_digest": {
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
+          },
+          "verification_method_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "harness_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "external_gate_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
           }
         },
         "required": [
@@ -597,7 +658,10 @@
           "artifact_digest",
           "harness_digest",
           "baseline_digest",
-          "environment_digest"
+          "environment_digest",
+          "verification_method_id",
+          "harness_id",
+          "external_gate_id"
         ],
         "additionalProperties": false
       }
@@ -641,6 +705,10 @@
                 "pattern": "^[0-9a-f]{64}$"
               },
               "uniqueItems": true
+            },
+            "manifest_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
             }
           },
           "required": [
@@ -650,7 +718,8 @@
             "oracle_digests",
             "mutation_detected",
             "digest",
-            "fixture_digests"
+            "fixture_digests",
+            "manifest_digest"
           ],
           "additionalProperties": false
         },
@@ -762,6 +831,14 @@
             "minLength": 1
           },
           "uniqueItems": true
+        },
+        "changed_components": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
         }
       },
       "required": [
@@ -779,7 +856,8 @@
         "candidate_changed",
         "defects_found",
         "defects_fixed_here",
-        "external_escalations"
+        "external_escalations",
+        "changed_components"
       ],
       "additionalProperties": false,
       "allOf": [
@@ -893,6 +971,10 @@
             "base_ref": {
               "type": "string",
               "pattern": "^refs/heads/.+$"
+            },
+            "candidate_tree_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
             }
           },
           "required": [
@@ -902,7 +984,8 @@
             "workspace_digest",
             "unrecorded_changes",
             "merge_base_sha",
-            "base_ref"
+            "base_ref",
+            "candidate_tree_digest"
           ],
           "additionalProperties": false
         },
@@ -1117,6 +1200,113 @@
         "minLength": 1
       },
       "uniqueItems": true
+    },
+    "discovery_freeze": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "candidate_sha": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "frozen_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "first_repair_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "date-time"
+            },
+            "method_ids_attempted": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "finding_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "evidence_ids": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "sweep_complete": {
+              "type": "boolean"
+            },
+            "early_termination_reason": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "minLength": 1
+            }
+          },
+          "required": [
+            "candidate_sha",
+            "frozen_at",
+            "first_repair_at",
+            "method_ids_attempted",
+            "finding_ids",
+            "evidence_ids",
+            "sweep_complete",
+            "early_termination_reason"
+          ],
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "sweep_complete": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "early_termination_reason": {
+                    "type": "null"
+                  }
+                }
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "sweep_complete": {
+                    "const": false
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "early_termination_reason": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -1169,7 +1359,8 @@
     "common_protocol_digest",
     "project_protocol_ref",
     "external_gate_results",
-    "waiver_refs"
+    "waiver_refs",
+    "discovery_freeze"
   ],
   "additionalProperties": false,
   "allOf": [
@@ -1177,7 +1368,7 @@
       "if": {
         "properties": {
           "status": {
-            "const": "PASS"
+            "const": "STAGE_COMPLETE"
           }
         }
       },
@@ -1298,7 +1489,7 @@
       "if": {
         "properties": {
           "status": {
-            "const": "PASS"
+            "const": "STAGE_COMPLETE"
           }
         }
       },
@@ -1319,7 +1510,7 @@
       "if": {
         "properties": {
           "status": {
-            "const": "PASS"
+            "const": "STAGE_COMPLETE"
           }
         }
       },
@@ -1407,7 +1598,7 @@
       "if": {
         "properties": {
           "status": {
-            "const": "APPROVED_WITH_WAIVER"
+            "const": "STAGE_COMPLETE_WITH_WAIVER"
           }
         }
       },
