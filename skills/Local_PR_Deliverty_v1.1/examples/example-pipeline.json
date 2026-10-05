@@ -89,7 +89,8 @@
       ],
       "merge_authority": {
         "mode": "OWNER_ONLY",
-        "reference": null
+        "reference": null,
+        "delegate_principal": null
       },
       "project_protocol_ref": "exampleowner/editor@9999999999999999999999999999999999999999:review/project-protocol.json",
       "project_protocol_digest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
@@ -1050,9 +1051,6 @@
         }
       ]
     },
-    "merge_authority_refs": {
-      "105": "Synthetic actual owner instruction"
-    },
     "external_writer_stopped": true,
     "parent_comment_frontiers": {
       "S1": {
@@ -1087,7 +1085,25 @@
     },
     "dependency_heads": {},
     "target_heads": {},
-    "canonical_target_observations": {}
+    "canonical_target_observations": {},
+    "merge_authority_observations": {
+      "105": {
+        "principal": "owner",
+        "authority_ref": "Synthetic owner authorization reference",
+        "source_kind": "DIRECT_OWNER_SESSION",
+        "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authentication_status": "AUTHENTICATED",
+        "observed_at": "2026-10-04T00:03:00Z"
+      },
+      "106": {
+        "principal": "owner",
+        "authority_ref": "Synthetic owner authorization reference",
+        "source_kind": "DIRECT_OWNER_SESSION",
+        "source_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "authentication_status": "AUTHENTICATED",
+        "observed_at": "2026-10-04T00:03:00Z"
+      }
+    }
   },
   "support": {
     "review_leases": [
