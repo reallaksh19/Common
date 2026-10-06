@@ -79,6 +79,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/phase2_self_review_qualification.py \
             skills/engineering-programme-coordinator/scripts/self_review_expectation_freeze.py \
             skills/engineering-programme-coordinator/scripts/project_outcome_falsification.py \
+            skills/engineering-programme-coordinator/scripts/principal_independence.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -260,6 +261,16 @@ jobs:
           assert project_falsification['properties']['authority']['const'] == 'SAME_PRINCIPAL_PROJECT_OUTCOME_FALSIFICATION_EVIDENCE'
           assert project_falsification['properties']['principal_independence']['const'] == 'NONE'
           assert 'PASS' not in project_falsification['properties']['falsification_status']['enum']
+
+          principal_truth = yaml.safe_load(
+              (root / 'principal-independence-truth.schema.yaml').read_text()
+          )
+          assert principal_truth['$id'] == 'engineering-programme-coordinator-principal-independence-truth-v1'
+          assert principal_truth['properties']['schema_version']['const'] == 'PRINCIPAL_INDEPENDENCE_TRUTH_V1'
+          assert principal_truth['properties']['authority']['const'] == 'DERIVED_PRINCIPAL_IDENTITY_TRUTH'
+          canonical_independence = principal_truth['properties']['principals']['properties']['principal_independence']['enum']
+          assert canonical_independence == ['NONE', 'DISTINCT_PRINCIPAL']
+          assert 'DEGRADED' not in canonical_independence
           PY
 
       - name: Run integrated-mode regressions
@@ -273,6 +284,9 @@ jobs:
 
       - name: Run project-outcome falsification regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_project_outcome_falsification.py' -v
+
+      - name: Run principal-independence truth regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_principal_independence.py' -v
 
       - name: Run production readiness regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_production_readiness.py' -v
