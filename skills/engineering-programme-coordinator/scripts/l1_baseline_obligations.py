@@ -76,7 +76,7 @@ def manifest_semantic_errors(manifest:dict[str,Any])->list[str]:
         if r["baseline_observation"]["value_digest"]!=canonical_digest(r["baseline_observation"]["value"]): errors.append(f"{r['id']}: baseline value digest mismatch")
     return errors
 
-def validate_manifest(manifest:Any,label="l1-baseline-obligation-manifest")->list[str]:
+def _validate_manifest_semantics(manifest:Any,label="l1-baseline-obligation-manifest")->list[str]:
     errors=schema_validate("l1-baseline-obligation-manifest",manifest,label)
     if errors:return errors
     return [f"{label}: {e}" for e in manifest_semantic_errors(manifest)]
@@ -150,17 +150,34 @@ def compile_source(source:dict[str,Any],repo_root:Path)->dict[str,Any]:
          "obligations":obligations,"forbidden_outcomes":list(source["forbidden_outcomes"]),"non_goals":list(source["non_goals"]),
          "authority_boundaries":{"consumes_candidate_state":False,"consumes_candidate_diff":False,"consumes_implementation_evidence":False,"consumes_coder_rationale":False,"consumes_reviewer_verdict":False,"emits_engineering_pass":False,"performs_lifecycle_advance":False,"grants_merge_authority":False,"grants_production_cutover":False}}
     out["manifest_digest"]=manifest_digest(out)
-    errors=validate_manifest(out)
+    errors=_validate_manifest_semantics(out)
     if errors: raise ValueError("; ".join(errors))
     return out
 
-def validate_stored(source:dict[str,Any],manifest:dict[str,Any],repo_root:Path)->list[str]:
-    errors=validate_source(source,"source"); errors.extend(validate_manifest(manifest,"manifest"))
+def validate_manifest(
+    manifest:Any,
+    source:Any|None=None,
+    repo_root:Path|None=None,
+    label="l1-baseline-obligation-manifest",
+)->list[str]:
+    errors=_validate_manifest_semantics(manifest,label)
     if errors:return errors
-    if manifest["source"]["digest"]!=canonical_digest(source): return ["manifest: source.digest does not match supplied source"]
-    fresh=compile_source(source,repo_root)
-    if fresh!=manifest: errors.append("manifest: stored content does not equal fresh exact-base replay")
+    if source is None or repo_root is None:
+        return [f"{label}: source-bound exact-base replay is required"]
+    source_errors=validate_source(source,"l1-source")
+    if source_errors:return source_errors
+    if manifest["source"]["digest"]!=canonical_digest(source):
+        return [f"{label}: source.digest does not match supplied source"]
+    try:
+        fresh=compile_source(source,repo_root)
+    except Exception as exc:
+        return [f"{label}: exact-base replay failed: {exc}"]
+    if fresh!=manifest:
+        errors.append(f"{label}: stored content does not equal fresh exact-base replay")
     return errors
+
+def validate_stored(source:dict[str,Any],manifest:dict[str,Any],repo_root:Path)->list[str]:
+    return validate_manifest(manifest,source,repo_root,"manifest")
 
 def main()->None:
     p=argparse.ArgumentParser(); sub=p.add_subparsers(dest="command",required=True)
@@ -172,7 +189,7 @@ def main()->None:
         if a.output: Path(a.output).write_text(rendered,encoding="utf-8")
         else: print(rendered,end="")
     else:
-        m=load_yaml(Path(a.manifest)); errors=validate_stored(source,m,root)
+        m=load_yaml(Path(a.manifest)); errors=validate_manifest(m,source,root,Path(a.manifest).name)
         if errors:
             for e in errors: print(e)
             raise SystemExit(1)
