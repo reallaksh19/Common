@@ -73,6 +73,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/l0_task_obligations.py \
             skills/engineering-programme-coordinator/scripts/l1_baseline_obligations.py \
             skills/engineering-programme-coordinator/scripts/l2_diff_impact.py \
+            skills/engineering-programme-coordinator/scripts/exact_candidate_evidence.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -196,6 +197,20 @@ jobs:
           assert l2_manifest['$id'] == 'engineering-programme-coordinator-l2-impact-obligation-manifest-v1'
           assert l2_manifest['properties']['schema_version']['const'] == 'L2_IMPACT_OBLIGATION_MANIFEST_V1'
           assert l2_manifest['properties']['authority']['const'] == 'DIFF_DERIVED_IMPACT_EXPECTATIONS'
+
+          evidence_source = yaml.safe_load(
+              (root / 'exact-candidate-evidence-source.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert evidence_source['$id'] == 'engineering-programme-coordinator-exact-candidate-evidence-source-v1'
+          assert evidence_source['properties']['schema_version']['const'] == 'EXACT_CANDIDATE_EVIDENCE_SOURCE_V1'
+          assert evidence_source['properties']['authority']['const'] == 'CLOSED_DENOMINATOR_EVIDENCE_INPUT'
+
+          evidence_ledger = yaml.safe_load(
+              (root / 'exact-candidate-evidence-ledger.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert evidence_ledger['$id'] == 'engineering-programme-coordinator-exact-candidate-evidence-ledger-v1'
+          assert evidence_ledger['properties']['schema_version']['const'] == 'EXACT_CANDIDATE_EVIDENCE_LEDGER_V1'
+          assert evidence_ledger['properties']['authority']['const'] == 'CLOSED_DENOMINATOR_EVIDENCE_ACCOUNTING'
           PY
 
       - name: Run integrated-mode regressions
@@ -426,6 +441,126 @@ jobs:
               if key != 'consumes_candidate_diff'
           )
           print('P2-S3 retained real diff projection: PASS')
+          PY
+
+      - name: Attest P2-S4 source, PR522 and historical evidence identity
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+          import urllib.request
+
+          scripts = pathlib.Path('skills/engineering-programme-coordinator/scripts')
+          sys.path.insert(0, str(scripts))
+          from coordlib import load_yaml
+          from exact_candidate_evidence import canonical_digest, extract_precommitted_source
+
+          def get_json(url, agent):
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                      'User-Agent': agent,
+                  },
+              )
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+
+          issue = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/issues/564',
+              'Common-P2-S4-source-attestation',
+          )
+          pull = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/pulls/522',
+              'Common-P2-S4-PR522-attestation',
+          )
+          run = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/runs/37408270193',
+              'Common-P2-S4-run-attestation',
+          )
+          job = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/jobs/112090640333',
+              'Common-P2-S4-job-attestation',
+          )
+
+          live = extract_precommitted_source(issue['body'])
+          retained = load_yaml(
+              pathlib.Path(
+                  'skills/engineering-programme-coordinator/references/p2-s4-evidence-source.yaml'
+              )
+          )
+          assert live == retained
+          assert canonical_digest(live) == '41a70b1580aadc31c278d9659ef785e9ef73eccc7d00ae7e4f4e98761910bd8b'
+
+          candidate = retained['candidate']
+          assert candidate['repository'] == 'reallaksh19/Common'
+          assert candidate['pr_number'] == 522
+          assert pull['head']['repo']['full_name'] == candidate['repository']
+          assert pull['head']['ref'] == candidate['ref']
+          assert pull['head']['sha'] == candidate['sha']
+
+          assert run['id'] == 37408270193
+          assert run['head_sha'] == candidate['sha']
+          assert run['conclusion'] == 'success'
+          assert job['id'] == 112090640333
+          assert job['name'] == 'validate-local-v11-integrated-mode'
+          assert job['conclusion'] == 'success'
+          steps = {step['number']: step for step in job['steps']}
+          assert steps[7]['name'] == 'Validate coordinator schemas'
+          assert steps[7]['conclusion'] == 'success'
+          assert steps[8]['name'] == 'Run coordinator regressions'
+          assert steps[8]['conclusion'] == 'success'
+          print('P2-S4 live source + exact candidate + historical evidence attestation: PASS')
+          PY
+
+      - name: Run exact-candidate evidence ledger regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_exact_candidate_evidence.py' -v
+
+      - name: Replay retained P2-S4 closed evidence ledger
+        run: |
+          python skills/engineering-programme-coordinator/scripts/exact_candidate_evidence.py validate \
+            skills/engineering-programme-coordinator/references/p2-s4-evidence-source.yaml \
+            skills/engineering-programme-coordinator/references/p2-s4-evidence-ledger.yaml \
+            --repo-root .
+          python - <<'PY'
+          import pathlib
+          import yaml
+
+          ledger = yaml.safe_load(
+              pathlib.Path(
+                  'skills/engineering-programme-coordinator/references/p2-s4-evidence-ledger.yaml'
+              ).read_text(encoding='utf-8')
+          )
+          assert ledger['denominator'] == {
+              'obligation_count': 13,
+              'requirement_count': 13,
+          }
+          assert ledger['accounting'] == {
+              'obligations_with_evidence': 4,
+              'obligations_without_evidence': 9,
+              'requirements_with_evidence': 4,
+              'requirements_without_evidence': 9,
+              'evidence_item_count': 4,
+          }
+          assert ledger['source']['digest'] == '41a70b1580aadc31c278d9659ef785e9ef73eccc7d00ae7e4f4e98761910bd8b'
+          assert ledger['ledger_digest'] == '3b0fda09e7de65318dfd9346771c6ecde2e1fe06a9157a1741c4cf6fdf36b840'
+          forbidden_keys = {
+              'state', 'verdict', 'pass', 'waiver', 'not_applicable',
+              'gate', 'lifecycle', 'merge_authority', 'production_mode',
+          }
+          assert not forbidden_keys.intersection(ledger)
+          assert ledger['authority_boundaries']['assigns_evidence_verdict'] is False
+          assert ledger['authority_boundaries']['applies_criticality_policy'] is False
+          assert ledger['authority_boundaries']['performs_repair_invalidation'] is False
+          assert ledger['authority_boundaries']['performs_lifecycle_advance'] is False
+          assert ledger['authority_boundaries']['grants_merge_authority'] is False
+          assert ledger['authority_boundaries']['grants_production_cutover'] is False
+          print('P2-S4 retained closed-denominator projection: PASS')
           PY
 
       - name: Run authenticated retained real-artifact replay

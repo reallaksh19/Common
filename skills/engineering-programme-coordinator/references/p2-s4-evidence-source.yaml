@@ -1,0 +1,69 @@
+schema_version: EXACT_CANDIDATE_EVIDENCE_SOURCE_V1
+authority: CLOSED_DENOMINATOR_EVIDENCE_INPUT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S4
+  child_ref: SELF:PRD-527-P2-S4
+  contract_version: P2-S4-v1
+candidate:
+  repository: reallaksh19/Common
+  pr_number: 522
+  ref: prod/512-proof-obligations-v1
+  sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+manifests:
+  l0:
+    path: skills/engineering-programme-coordinator/references/p2-s1-l0-manifest.yaml
+    digest: 85a05f6c308a5035ecf9308328f2bc13da42536a578de02031a92e53a91012e9
+  l1:
+    path: skills/engineering-programme-coordinator/references/p2-s2-l1-manifest.yaml
+    digest: 076206cb658d9d1fa9c3950cf1a1741b95987ea24efcc85e2abf72ca5da1aa98
+  l2:
+    path: skills/engineering-programme-coordinator/references/p2-s3-l2-manifest.yaml
+    digest: 243e352a0cecaa091fb2258a4fe63918bc04840a1520447fee3676d30a678e45
+evidence_items:
+- evidence_id: EVID-P2S4-SCHEMA-LEDGER
+  requirement_id: REQ-L2-SCHEMA-5D3B0FDADE7B
+  method: SCHEMA_CHECK
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  refs:
+  - github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-7
+  verifier_kind: DETERMINISTIC_TOOL
+  verifier_identity: engineering-programme-coordinator-integrated
+- evidence_id: EVID-P2S4-SCHEMA-MANIFEST
+  requirement_id: REQ-L2-SCHEMA-5D991D4D6BC1
+  method: SCHEMA_CHECK
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  refs:
+  - github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-7
+  verifier_kind: DETERMINISTIC_TOOL
+  verifier_identity: engineering-programme-coordinator-integrated
+- evidence_id: EVID-P2S4-RUNTIME-PROOF
+  requirement_id: REQ-L2-RUNTIME-17D147C9F024
+  method: UNIT_TEST
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  refs:
+  - github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-8
+  verifier_kind: DETERMINISTIC_TOOL
+  verifier_identity: engineering-programme-coordinator-integrated
+- evidence_id: EVID-P2S4-RUNTIME-VALIDATE
+  requirement_id: REQ-L2-RUNTIME-2BBF91714371
+  method: UNIT_TEST
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  refs:
+  - github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-8
+  verifier_kind: DETERMINISTIC_TOOL
+  verifier_identity: engineering-programme-coordinator-integrated
+forbidden_outcomes:
+- any L0/L1/L2 obligation is omitted from the ledger
+- any declared evidence requirement is omitted from the ledger
+- undeclared obligations or requirements are accepted
+- evidence for another candidate SHA is accepted
+- missing evidence is silently dropped from denominator accounting
+- ledger assigns VERIFIED REFUTED UNKNOWN NOT_APPLICABLE WAIVER or aggregate PASS semantics
+non_goals:
+- evidence verdict semantics or criticality policy
+- repair invalidation and final-candidate replay
+- Reviewer or Super-Reviewer implementation
+- evidence-gate disposition
+- lifecycle advance merge authority or production-mode transition
