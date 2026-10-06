@@ -1,0 +1,5 @@
+schema_version: SELF_CHECK_EXPECTATION_TEST_V1
+task_ref: issue://574
+required_outcomes:
+  - exact candidate is checked against a frozen manifest
+  - author reasoning is not acceptance evidence
