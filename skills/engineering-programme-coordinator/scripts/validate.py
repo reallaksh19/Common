@@ -13,6 +13,10 @@ from l0_task_obligations import (
     validate_manifest as validate_l0_manifest,
     validate_source as validate_l0_source,
 )
+from l1_baseline_obligations import (
+    validate_manifest as validate_l1_manifest,
+    validate_source as validate_l1_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -38,6 +42,8 @@ SCHEMAS = {
     "evidence-freshness",
     "l0-task-contract-source",
     "l0-task-obligation-manifest",
+    "l1-baseline-source",
+    "l1-baseline-obligation-manifest",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -54,6 +60,8 @@ def main() -> None:
     parser.add_argument("--freshness-request")
     parser.add_argument("--phase1-replay-request")
     parser.add_argument("--l0-source")
+    parser.add_argument("--l1-source")
+    parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
@@ -113,6 +121,20 @@ def main() -> None:
         errors = validate_l0_manifest(
             value,
             l0_source,
+            Path(args.path).name,
+        )
+    elif args.schema == "l1-baseline-source":
+        errors = validate_l1_source(value, Path(args.path).name)
+    elif args.schema == "l1-baseline-obligation-manifest":
+        l1_source = (
+            load_yaml(Path(args.l1_source))
+            if args.l1_source
+            else None
+        )
+        errors = validate_l1_manifest(
+            value,
+            l1_source,
+            Path(args.repo_root).resolve() if l1_source is not None else None,
             Path(args.path).name,
         )
     else:

@@ -1,0 +1,135 @@
+schema_version: L1_BASELINE_OBLIGATION_MANIFEST_V1
+authority: BASELINE_DERIVED_EXPECTATIONS
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S2
+  child_ref: SELF:PRD-527-P2-S2
+  contract_version: P2-S2-v1
+source:
+  kind: BASELINE_SELECTION_CONTRACT
+  digest: 49228fa2e05b8b2a000e5116625e59ed8634bd293c2a62a730b6ee321490987a
+baseline:
+  ref: main
+  sha: 5a0077c9342938192f8d2861e9b9faaba106aedc
+freeze:
+  state: FROZEN
+  basis: EXACT_GIT_BASE
+  freeze_ref: git:5a0077c9342938192f8d2861e9b9faaba106aedc
+obligations:
+- id: L1-PRESERVE-L0-CONTRACT-CLOSED
+  severity: CRITICAL
+  claim:
+    type: PRESERVATION
+    statement: Preserve the baseline value selected from skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/additionalProperties at the declared base.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+  expected_observation: A later acceptance candidate retains the selected baseline value or carries an explicit governed disposition before this preservation obligation can be treated as satisfied.
+  plausible_green_but_wrong: Candidate-focused tests remain green while the selected baseline contract changes and no explicit preservation disposition exists.
+  oracle_refs:
+  - git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/additionalProperties
+  evidence_required:
+    id: REQ-L1-CONTRACT-CLOSED
+    method: SCHEMA_CHECK
+    independence: BASELINE_DERIVED
+    oracle_ref: git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/additionalProperties
+  source_refs:
+  - git:5a0077c9342938192f8d2861e9b9faaba106aedc:skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/additionalProperties
+  baseline_observation:
+    path: skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+    pointer: /additionalProperties
+    value: false
+    value_digest: fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa
+- id: L1-PRESERVE-L0-SOURCE-AUTHORITY
+  severity: CRITICAL
+  claim:
+    type: AUTHORITY
+    statement: Preserve the baseline authority value selected from skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/properties/authority/const at the declared base.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+  expected_observation: A later acceptance candidate retains the selected baseline value or carries an explicit governed disposition before this preservation obligation can be treated as satisfied.
+  plausible_green_but_wrong: Candidate-focused tests remain green while the selected baseline contract changes and no explicit preservation disposition exists.
+  oracle_refs:
+  - git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/properties/authority/const
+  evidence_required:
+    id: REQ-L1-SOURCE-AUTHORITY
+    method: SCHEMA_CHECK
+    independence: BASELINE_DERIVED
+    oracle_ref: git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/properties/authority/const
+  source_refs:
+  - git:5a0077c9342938192f8d2861e9b9faaba106aedc:skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml#/properties/authority/const
+  baseline_observation:
+    path: skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+    pointer: /properties/authority/const
+    value: CHILD_CONTRACT_PROJECTION
+    value_digest: 6da8b9aee63e0616bd0e7418c182ee23f5a5e1c217a002d68dab8e41bbb36be3
+- id: L1-PRESERVE-L0-MANIFEST-AUTHORITY
+  severity: CRITICAL
+  claim:
+    type: AUTHORITY
+    statement: Preserve the baseline authority value selected from skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority/const at the declared base.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+  expected_observation: A later acceptance candidate retains the selected baseline value or carries an explicit governed disposition before this preservation obligation can be treated as satisfied.
+  plausible_green_but_wrong: Candidate-focused tests remain green while the selected baseline contract changes and no explicit preservation disposition exists.
+  oracle_refs:
+  - git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority/const
+  evidence_required:
+    id: REQ-L1-MANIFEST-AUTHORITY
+    method: SCHEMA_CHECK
+    independence: BASELINE_DERIVED
+    oracle_ref: git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority/const
+  source_refs:
+  - git:5a0077c9342938192f8d2861e9b9faaba106aedc:skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority/const
+  baseline_observation:
+    path: skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+    pointer: /properties/authority/const
+    value: FROZEN_PREIMPLEMENTATION_EXPECTATIONS
+    value_digest: e36997dae6f731b92f3c276ff9e851f9ce184c3c0e8649aed314118967b5cb7b
+- id: L1-PRESERVE-L0-CANDIDATE-NONCONSUMPTION
+  severity: CRITICAL
+  claim:
+    type: AUTHORITY
+    statement: Preserve the baseline authority value selected from skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority_boundaries/properties/consumes_candidate_state/const at the declared base.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+  expected_observation: A later acceptance candidate retains the selected baseline value or carries an explicit governed disposition before this preservation obligation can be treated as satisfied.
+  plausible_green_but_wrong: Candidate-focused tests remain green while the selected baseline contract changes and no explicit preservation disposition exists.
+  oracle_refs:
+  - git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority_boundaries/properties/consumes_candidate_state/const
+  evidence_required:
+    id: REQ-L1-CANDIDATE-NONCONSUMPTION
+    method: SCHEMA_CHECK
+    independence: BASELINE_DERIVED
+    oracle_ref: git-baseline://5a0077c9342938192f8d2861e9b9faaba106aedc/skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority_boundaries/properties/consumes_candidate_state/const
+  source_refs:
+  - git:5a0077c9342938192f8d2861e9b9faaba106aedc:skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml#/properties/authority_boundaries/properties/consumes_candidate_state/const
+  baseline_observation:
+    path: skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+    pointer: /properties/authority_boundaries/properties/consumes_candidate_state/const
+    value: false
+    value_digest: fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa
+forbidden_outcomes:
+- candidate SHA or candidate diff influences L1 extraction
+- current working-tree value substitutes for the declared exact base object
+- missing selector or missing base object is silently omitted
+- duplicate obligation or evidence-requirement IDs are accepted
+- aggregate PASS or Reviewer confidence is emitted by the L1 extractor
+non_goals:
+- L2 candidate-diff impact analysis
+- exact-candidate evidence ledger
+- repair invalidation/final-candidate replay
+- verdict or waiver policy
+- Reviewer/Super-Reviewer implementation
+- production-mode transition
+authority_boundaries:
+  consumes_candidate_state: false
+  consumes_candidate_diff: false
+  consumes_implementation_evidence: false
+  consumes_coder_rationale: false
+  consumes_reviewer_verdict: false
+  emits_engineering_pass: false
+  performs_lifecycle_advance: false
+  grants_merge_authority: false
+  grants_production_cutover: false
+manifest_digest: 076206cb658d9d1fa9c3950cf1a1741b95987ea24efcc85e2abf72ca5da1aa98
