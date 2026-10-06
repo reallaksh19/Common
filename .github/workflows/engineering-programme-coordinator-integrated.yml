@@ -59,6 +59,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/production_readiness.py \
             skills/engineering-programme-coordinator/scripts/execution_kernel.py \
             skills/engineering-programme-coordinator/scripts/proof_obligations.py \
+            skills/engineering-programme-coordinator/scripts/evidence_gate.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -104,6 +105,21 @@ jobs:
           assert ledger['$id'] == 'engineering-programme-coordinator-evidence-ledger-v1'
           assert ledger['properties']['schema_version']['const'] == 'EVIDENCE_LEDGER_V1'
           assert ledger['properties']['authority']['const'] == 'EXACT_CANDIDATE_EVIDENCE_LEDGER'
+
+          review = yaml.safe_load(
+              (root / 'review-context.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert review['$id'] == 'engineering-programme-coordinator-review-context-v1'
+          assert review['properties']['schema_version']['const'] == 'REVIEW_CONTEXT_V1'
+          assert review['properties']['authority']['const'] == 'FRESH_REVIEW_CONTEXT'
+
+          gate = yaml.safe_load(
+              (root / 'evidence-gate-result.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert gate['$id'] == 'engineering-programme-coordinator-evidence-gate-result-v1'
+          assert gate['properties']['schema_version']['const'] == 'EVIDENCE_GATE_RESULT_V1'
+          assert gate['properties']['authority']['const'] == 'DETERMINISTIC_EVIDENCE_GATE'
+          assert 'PASS' not in gate['properties']['decision']['enum']
           PY
 
       - name: Run coordinator regressions
