@@ -1,0 +1,129 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-real-artifact-replay-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - artifact_class
+  - artifact_id
+  - provider_attestation
+  - historical_identity
+  - local_observation
+  - v35
+  - coordinator_super_review
+  - historical_residuals
+  - production_readiness
+  - assertions
+  - authority_boundaries
+properties:
+  schema_version:
+    const: REAL_ARTIFACT_REPLAY_V1
+  authority:
+    const: REAL_PROVIDER_REPLAY_PROJECTION
+  artifact_class:
+    const: RETAINED_REAL_PROVIDER_ATTESTED
+  artifact_id:
+    type: string
+    minLength: 1
+  provider_attestation:
+    type: object
+    additionalProperties: false
+    required: [live_verified, repository, comments_verified, exact_commit_verified, pr_historical_binding_verified, protocol_trees_verified, workflow_runs_verified]
+    properties:
+      live_verified: {const: true}
+      repository: {type: string, minLength: 1}
+      comments_verified: {type: integer, minimum: 1}
+      exact_commit_verified: {const: true}
+      pr_historical_binding_verified: {const: true}
+      protocol_trees_verified: {const: true}
+      workflow_runs_verified: {type: integer, minimum: 1}
+  historical_identity:
+    type: object
+    additionalProperties: false
+    required: [parent_issue, child_issue, pr, responsibility_task_id, nested_engineering_responsibility, target_sha, exact_head, acceptance_epoch_id, acceptance_profile_ref, acceptance_profile_digest]
+    properties:
+      parent_issue: {type: integer, minimum: 1}
+      child_issue: {type: integer, minimum: 1}
+      pr: {type: integer, minimum: 1}
+      responsibility_task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      nested_engineering_responsibility: {type: string, minLength: 1}
+      target_sha: {$ref: '#/$defs/sha'}
+      exact_head: {$ref: '#/$defs/sha'}
+      acceptance_epoch_id: {type: string, minLength: 1}
+      acceptance_profile_ref: {type: string, minLength: 1}
+      acceptance_profile_digest: {$ref: '#/$defs/digest'}
+  local_observation:
+    type: object
+    additionalProperties: false
+    required: [task_id, release_state, acceptance_epoch_id, acceptance_profile_ref, acceptance_profile_digest, local_responsibility_complete]
+    properties:
+      task_id: {type: string, minLength: 1}
+      release_state: {enum: [READY, BLOCKED_DEPENDENCY, HELD, STOPPED]}
+      acceptance_epoch_id: {type: string, minLength: 1}
+      acceptance_profile_ref: {type: string, minLength: 1}
+      acceptance_profile_digest: {$ref: '#/$defs/digest'}
+      local_responsibility_complete: {const: false}
+  v35:
+    type: object
+    additionalProperties: false
+    required: [context_valid, task_result_valid, engineering_responsibility, engineering_responsibility_complete, local_responsibility_complete]
+    properties:
+      context_valid: {const: true}
+      task_result_valid: {const: true}
+      engineering_responsibility: {type: string, minLength: 1}
+      engineering_responsibility_complete: {const: false}
+      local_responsibility_complete: {const: false}
+  coordinator_super_review:
+    type: object
+    additionalProperties: false
+    required: [role, exact_head, base_sha, local_suite, coordinator_suite, authority_change, merge_authority]
+    properties:
+      role: {const: OWNER_DESIGNATED_COORDINATOR_SUPER_REVIEWER}
+      exact_head: {$ref: '#/$defs/sha'}
+      base_sha: {$ref: '#/$defs/sha'}
+      local_suite: {const: PASS_258_OF_258}
+      coordinator_suite: {const: PASS_37_OF_37}
+      authority_change: {const: NONE}
+      merge_authority: {const: NOT_GRANTED}
+  historical_residuals:
+    type: array
+    uniqueItems: true
+    minItems: 1
+    items: {type: string, minLength: 1}
+  production_readiness:
+    type: object
+  assertions:
+    type: object
+    additionalProperties: false
+    required:
+      - provider_truth_live
+      - historical_failures_preserved
+      - exact_candidate_bound
+      - digest_namespaces_preserved
+      - real_artifact_horizontal_integration
+      - production_mode
+    properties:
+      provider_truth_live: {const: true}
+      historical_failures_preserved: {const: true}
+      exact_candidate_bound: {const: true}
+      digest_namespaces_preserved: {const: true}
+      real_artifact_horizontal_integration: {const: VERIFIED}
+      production_mode: {const: 'OFF'}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required: [performs_local_stage_transition, performs_provider_mutation, emits_engineering_pass, grants_merge_authority, grants_production_cutover]
+    properties:
+      performs_local_stage_transition: {const: false}
+      performs_provider_mutation: {const: false}
+      emits_engineering_pass: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'

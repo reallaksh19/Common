@@ -28,6 +28,9 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  issues: read
+  pull-requests: read
 
 jobs:
   validate-local-v11-integrated-mode:
@@ -66,6 +69,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/authority_resolver.py \
             skills/engineering-programme-coordinator/scripts/evidence_freshness.py \
             skills/engineering-programme-coordinator/scripts/phase1_runtime_replay.py \
+            skills/engineering-programme-coordinator/scripts/real_artifact_replay.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -140,6 +144,13 @@ jobs:
           assert phase1['$id'] == 'engineering-programme-coordinator-phase1-runtime-replay-v1'
           assert phase1['properties']['schema_version']['const'] == 'PHASE1_RUNTIME_REPLAY_V1'
           assert phase1['properties']['authority']['const'] == 'INTEGRATION_PROJECTION_ONLY'
+
+          real = yaml.safe_load(
+              (root / 'real-artifact-replay.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert real['$id'] == 'engineering-programme-coordinator-real-artifact-replay-v1'
+          assert real['properties']['schema_version']['const'] == 'REAL_ARTIFACT_REPLAY_V1'
+          assert real['properties']['artifact_class']['const'] == 'RETAINED_REAL_PROVIDER_ATTESTED'
           PY
 
       - name: Run integrated-mode regressions
@@ -168,6 +179,41 @@ jobs:
 
       - name: Run Phase-1 runtime horizontal replay
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_phase1_runtime_replay.py' -v
+
+      - name: Run retained real-artifact replay regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_real_artifact_replay.py' -v
+
+      - name: Run authenticated retained real-artifact replay
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CANDIDATE_SHA="$(git rev-parse HEAD)"
+          python skills/engineering-programme-coordinator/scripts/real_artifact_replay.py \
+            skills/engineering-programme-coordinator/references/p1-i-b-real-artifact-manifest.yaml \
+            --candidate-sha "$CANDIDATE_SHA" \
+            --repository-root . \
+            > /tmp/p1-i-b-real-artifact.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          result = json.loads(Path('/tmp/p1-i-b-real-artifact.json').read_text(encoding='utf-8'))
+          assert result['artifact_class'] == 'RETAINED_REAL_PROVIDER_ATTESTED'
+          assert result['provider_attestation']['live_verified'] is True
+          assert result['provider_attestation']['comments_verified'] == 6
+          assert result['provider_attestation']['workflow_runs_verified'] == 4
+          assert result['provider_attestation']['protocol_trees_verified'] is True
+          assert result['production_readiness']['components']['real_artifact_horizontal_integration']['state'] == 'VERIFIED'
+          assert result['production_readiness']['production_mode'] == 'OFF'
+          assert 'P1I-REAL-ARTIFACT-MISSING' not in {
+              row['id'] for row in result['production_readiness']['cutover_blockers']
+          }
+          assert result['assertions']['historical_failures_preserved'] is True
+          assert result['assertions']['exact_candidate_bound'] is True
+          assert not any(result['authority_boundaries'].values())
+          print('P1-I-B live real-artifact replay: PASS')
+          PY
 
       - name: Validate Common Reviewer authority boundary
         run: |
