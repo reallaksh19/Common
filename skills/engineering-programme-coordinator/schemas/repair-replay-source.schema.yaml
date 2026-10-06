@@ -1,0 +1,110 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-repair-replay-source-v1
+type: object
+additionalProperties: false
+required: [schema_version, authority, identity, candidate_lineage, templates, prior_evidence, provider_fixture, expected_transition, forbidden_outcomes, non_goals]
+properties:
+  schema_version: {const: REPAIR_REPLAY_SOURCE_V1}
+  authority: {const: EXACT_REPAIR_REPLAY_INPUT}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  candidate_lineage:
+    type: object
+    additionalProperties: false
+    required: [repository, pr_number, base_ref, base_sha, initial_ref, initial_sha, final_ref, final_sha, diff_mode]
+    properties:
+      repository: {type: string, minLength: 1}
+      pr_number: {type: integer, minimum: 1}
+      base_ref: {type: string, minLength: 1}
+      base_sha: {$ref: '#/$defs/sha'}
+      initial_ref: {type: string, minLength: 1}
+      initial_sha: {$ref: '#/$defs/sha'}
+      final_ref: {type: string, minLength: 1}
+      final_sha: {$ref: '#/$defs/sha'}
+      diff_mode: {const: NO_RENAMES_PATH_SET}
+  templates:
+    type: object
+    additionalProperties: false
+    required: [l2_source, l0_manifest, l1_manifest]
+    properties:
+      l2_source: {$ref: '#/$defs/ref_digest'}
+      l0_manifest: {$ref: '#/$defs/ref_digest'}
+      l1_manifest: {$ref: '#/$defs/ref_digest'}
+  prior_evidence:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/prior_evidence'}
+  provider_fixture:
+    type: object
+    additionalProperties: false
+    required: [initial_run, final_run, repair_finding_ref]
+    properties:
+      initial_run: {$ref: '#/$defs/run'}
+      final_run: {$ref: '#/$defs/run'}
+      repair_finding_ref: {type: string, minLength: 1}
+  expected_transition:
+    type: object
+    additionalProperties: false
+    required: [repair_changed_paths, final_changed_path_count, final_l2_obligation_count, final_closed_obligation_count, final_closed_requirement_count, prior_evidence_invalidated, carried_prior_evidence]
+    properties:
+      repair_changed_paths:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      final_changed_path_count: {type: integer, minimum: 1}
+      final_l2_obligation_count: {type: integer, minimum: 1}
+      final_closed_obligation_count: {type: integer, minimum: 1}
+      final_closed_requirement_count: {type: integer, minimum: 1}
+      prior_evidence_invalidated: {type: integer, minimum: 1}
+      carried_prior_evidence: {const: 0}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+$defs:
+  sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
+  method:
+    enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]
+  ref_digest:
+    type: object
+    additionalProperties: false
+    required: [path, digest]
+    properties:
+      path: {type: string, minLength: 1}
+      digest: {$ref: '#/$defs/digest'}
+  prior_evidence:
+    type: object
+    additionalProperties: false
+    required: [evidence_id, method, candidate_sha, refs]
+    properties:
+      evidence_id: {type: string, pattern: '^EVID-[A-Za-z0-9._-]+$'}
+      method: {$ref: '#/$defs/method'}
+      candidate_sha: {$ref: '#/$defs/sha'}
+      refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  run:
+    type: object
+    additionalProperties: false
+    required: [run_id, job_id, conclusion]
+    properties:
+      run_id: {type: integer, minimum: 1}
+      job_id: {type: integer, minimum: 1}
+      conclusion: {enum: [success, failure]}
