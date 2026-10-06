@@ -78,6 +78,23 @@ def semantic_errors(value: dict[str, Any]) -> list[str]:
 
     authorization = value.get("cutover_authorization") or {}
     authorized = authorization.get("authorized") is True
+    authorized_mode = authorization.get("authorized_mode")
+
+    if mode == "OFF":
+        if authorized or authorized_mode is not None:
+            errors.append(
+                "production_mode OFF cannot carry an active cutover authorization"
+            )
+    else:
+        if not authorized:
+            errors.append(
+                f"production_mode {mode} requires explicit Owner cutover_authorization"
+            )
+        elif authorized_mode != mode:
+            errors.append(
+                f"cutover_authorization.authorized_mode must equal production_mode {mode}"
+            )
+
     if authorized:
         if not authorization.get("authority_ref"):
             errors.append(
@@ -87,11 +104,6 @@ def semantic_errors(value: dict[str, Any]) -> list[str]:
             errors.append(
                 "cutover_authorization.authorized_at is required when authorized=true"
             )
-
-    if mode != "OFF" and not authorized:
-        errors.append(
-            f"production_mode {mode} requires explicit Owner cutover_authorization"
-        )
 
     blockers = value.get("cutover_blockers") or []
     open_hard = [
