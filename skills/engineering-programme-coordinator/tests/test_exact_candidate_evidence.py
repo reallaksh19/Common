@@ -2,6 +2,7 @@
 from __future__ import annotations
 import copy
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -186,6 +187,38 @@ class ExactCandidateEvidenceTests(unittest.TestCase):
     def test_unbound_ledger_validation_fails_closed(self) -> None:
         errors = validate_ledger(self.ledger)
         self.assertTrue(any("source-bound denominator replay is required" in e for e in errors), errors)
+
+    def test_generic_validator_requires_source_and_repo_basis(self) -> None:
+        unbound = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "validate.py"),
+                "exact-candidate-evidence-ledger",
+                str(LEDGER_PATH),
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(0, unbound.returncode)
+        self.assertIn("source-bound denominator replay is required", unbound.stdout)
+
+        bound = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "validate.py"),
+                "exact-candidate-evidence-ledger",
+                str(LEDGER_PATH),
+                "--evidence-source",
+                str(SOURCE_PATH),
+                "--repo-root",
+                str(REPO_ROOT),
+            ],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, bound.returncode, bound.stdout + bound.stderr)
 
     def test_recomputed_tamper_digest_does_not_bypass_replay(self) -> None:
         ledger = copy.deepcopy(self.ledger)
