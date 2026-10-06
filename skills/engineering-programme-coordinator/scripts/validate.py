@@ -25,6 +25,10 @@ from exact_candidate_evidence import (
     validate_ledger as validate_exact_evidence_ledger,
     validate_source as validate_exact_evidence_source,
 )
+from repair_replay import (
+    validate_result as validate_repair_replay_result,
+    validate_source as validate_repair_replay_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -56,6 +60,8 @@ SCHEMAS = {
     "l2-impact-obligation-manifest",
     "exact-candidate-evidence-source",
     "exact-candidate-evidence-ledger",
+    "repair-replay-source",
+    "repair-replay-result",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -75,6 +81,7 @@ def main() -> None:
     parser.add_argument("--l1-source")
     parser.add_argument("--l2-source")
     parser.add_argument("--evidence-source")
+    parser.add_argument("--repair-source")
     parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
@@ -177,6 +184,20 @@ def main() -> None:
             value,
             evidence_source,
             Path(args.repo_root).resolve() if evidence_source is not None else None,
+            Path(args.path).name,
+        )
+    elif args.schema == "repair-replay-source":
+        errors = validate_repair_replay_source(value, Path(args.path).name)
+    elif args.schema == "repair-replay-result":
+        repair_source = (
+            load_yaml(Path(args.repair_source))
+            if args.repair_source
+            else None
+        )
+        errors = validate_repair_replay_result(
+            value,
+            repair_source,
+            Path(args.repo_root).resolve() if repair_source is not None else None,
             Path(args.path).name,
         )
     else:
