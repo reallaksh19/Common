@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
-from l1_baseline_obligations import compile_source, extract_precommitted_source, manifest_digest, resolve_pointer, validate_source, validate_stored
+from l1_baseline_obligations import compile_source, extract_precommitted_source, manifest_digest, resolve_pointer, validate_manifest, validate_source, validate_stored
 
 class L1BaselineObligationsTests(unittest.TestCase):
     def setUp(self):
@@ -56,6 +56,27 @@ class L1BaselineObligationsTests(unittest.TestCase):
     def test_json_pointer_escaping(self): self.assertEqual(20,resolve_pointer({"a/b":{"~key":[10,20]}},"/a~1b/~0key/1"))
     def test_invalid_pointer_escape_rejected(self):
         with self.assertRaises(ValueError): resolve_pointer({"x":1},"/~2")
+    def test_unbound_manifest_validation_fails_closed(self):
+        manifest=compile_source(self.source,self.repo)
+        errors=validate_manifest(manifest)
+        self.assertTrue(any("source-bound exact-base replay is required" in e for e in errors))
+    def test_generic_validator_requires_source_and_exact_repo(self):
+        manifest=compile_source(self.source,self.repo)
+        source_path=self.repo/"l1-source.yaml"
+        manifest_path=self.repo/"l1-manifest.yaml"
+        source_path.write_text(yaml.safe_dump(self.source,sort_keys=False),encoding="utf-8")
+        manifest_path.write_text(yaml.safe_dump(manifest,sort_keys=False),encoding="utf-8")
+        unbound=subprocess.run(
+            [sys.executable,str(SCRIPTS/"validate.py"),"l1-baseline-obligation-manifest",str(manifest_path)],
+            cwd=self.repo,capture_output=True,text=True,
+        )
+        self.assertNotEqual(0,unbound.returncode)
+        self.assertIn("source-bound exact-base replay is required",unbound.stdout)
+        bound=subprocess.run(
+            [sys.executable,str(SCRIPTS/"validate.py"),"l1-baseline-obligation-manifest",str(manifest_path),"--l1-source",str(source_path),"--repo-root",str(self.repo)],
+            cwd=self.repo,capture_output=True,text=True,
+        )
+        self.assertEqual(0,bound.returncode,bound.stdout+bound.stderr)
     def test_extracts_precommitted_issue_source(self):
         md = (
             "# Child\n\n"
