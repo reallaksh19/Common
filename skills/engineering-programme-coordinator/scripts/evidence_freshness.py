@@ -25,6 +25,7 @@ BINDING_KEYS = {
     "evidence_id",
     "evidence_ref",
     "evidence_digest",
+    "source_evidence",
     "verification_method_id",
     "provenance_state",
     "candidate_sha",
@@ -137,6 +138,41 @@ def _validate_binding(binding: Any) -> dict[str, Any]:
     for key in ("evidence_id", "evidence_ref", "verification_method_id", "acceptance_epoch_id"):
         require(isinstance(binding[key], str) and bool(binding[key]), f"{key} is required")
     _validate_digest(binding["evidence_digest"], "evidence_digest")
+    source = binding["source_evidence"]
+    require(isinstance(source, dict), "source_evidence must be object")
+    for key in (
+        "evidence_id",
+        "candidate_sha",
+        "verification_method_id",
+        "project_protocol_digest",
+        "environment_digest",
+    ):
+        require(key in source, f"source_evidence missing {key}")
+    require(
+        canonical_digest(source) == binding["evidence_digest"],
+        "evidence_digest does not match immutable source_evidence",
+    )
+    require(
+        source["evidence_id"] == binding["evidence_id"],
+        "freshness binding evidence_id differs from source_evidence",
+    )
+    require(
+        source["candidate_sha"] == binding["candidate_sha"],
+        "freshness binding candidate_sha differs from source_evidence",
+    )
+    require(
+        source["verification_method_id"] == binding["verification_method_id"],
+        "freshness binding verification_method_id differs from source_evidence",
+    )
+    require(
+        source["project_protocol_digest"] == binding["project_protocol_digest"],
+        "freshness binding project_protocol_digest differs from source_evidence",
+    )
+    require(
+        source["environment_digest"] == binding["environment_digest"],
+        "freshness binding environment_digest differs from source_evidence",
+    )
+
     _validate_sha(binding["candidate_sha"], "candidate_sha")
     for key in (
         "project_protocol_digest",
@@ -152,10 +188,9 @@ def _validate_binding(binding: Any) -> dict[str, Any]:
         "provenance_state must be VERIFIED or UNKNOWN",
     )
     heads = _validate_heads(binding["dependency_heads"], "dependency_heads")
-    return {
-        **copy.deepcopy(binding),
-        "dependency_heads": dict(sorted(heads.items())),
-    }
+    normalized = copy.deepcopy(binding)
+    normalized["dependency_heads"] = dict(sorted(heads.items()))
+    return normalized
 
 
 def _ledger_digest(bindings: list[dict[str, Any]]) -> str:
