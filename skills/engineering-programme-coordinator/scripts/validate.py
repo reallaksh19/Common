@@ -5,6 +5,10 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from review_basis import (
+    review_context_semantic_errors,
+    self_check_context_semantic_errors,
+)
 
 
 SCHEMAS = {
@@ -15,6 +19,8 @@ SCHEMAS = {
     "owner-coordination-report",
     "programme-record",
     "relay-handover",
+    "review-context",
+    "self-check-context",
 }
 
 
@@ -26,6 +32,16 @@ def main() -> None:
 
     value = load_yaml(Path(args.path))
     errors = validate(args.schema, value, Path(args.path).name)
+    if not errors and args.schema == "review-context":
+        errors.extend(
+            f"{Path(args.path).name}: {error}"
+            for error in review_context_semantic_errors(value)
+        )
+    if not errors and args.schema == "self-check-context":
+        errors.extend(
+            f"{Path(args.path).name}: {error}"
+            for error in self_check_context_semantic_errors(value)
+        )
     if errors:
         for error in errors:
             print(error)
