@@ -71,6 +71,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/phase1_runtime_replay.py \
             skills/engineering-programme-coordinator/scripts/real_artifact_replay.py \
             skills/engineering-programme-coordinator/scripts/l0_task_obligations.py \
+            skills/engineering-programme-coordinator/scripts/l1_baseline_obligations.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -166,6 +167,20 @@ jobs:
           assert l0_manifest['$id'] == 'engineering-programme-coordinator-l0-task-obligation-manifest-v1'
           assert l0_manifest['properties']['schema_version']['const'] == 'L0_TASK_OBLIGATION_MANIFEST_V1'
           assert l0_manifest['properties']['authority']['const'] == 'FROZEN_PREIMPLEMENTATION_EXPECTATIONS'
+
+          l1_source = yaml.safe_load(
+              (root / 'l1-baseline-source.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert l1_source['$id'] == 'engineering-programme-coordinator-l1-baseline-source-v1'
+          assert l1_source['properties']['schema_version']['const'] == 'L1_BASELINE_SOURCE_V1'
+          assert l1_source['properties']['authority']['const'] == 'BASELINE_SELECTION_CONTRACT'
+
+          l1_manifest = yaml.safe_load(
+              (root / 'l1-baseline-obligation-manifest.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert l1_manifest['$id'] == 'engineering-programme-coordinator-l1-baseline-obligation-manifest-v1'
+          assert l1_manifest['properties']['schema_version']['const'] == 'L1_BASELINE_OBLIGATION_MANIFEST_V1'
+          assert l1_manifest['properties']['authority']['const'] == 'BASELINE_DERIVED_EXPECTATIONS'
           PY
 
       - name: Run integrated-mode regressions
@@ -244,6 +259,57 @@ jobs:
           python skills/engineering-programme-coordinator/scripts/l0_task_obligations.py validate \
             skills/engineering-programme-coordinator/references/p2-s1-l0-source.yaml \
             skills/engineering-programme-coordinator/references/p2-s1-l0-manifest.yaml
+
+      - name: Fetch exact P2-S2 baseline object
+        run: git fetch --no-tags --depth=1 origin 5a0077c9342938192f8d2861e9b9faaba106aedc
+
+      - name: Attest precommitted P2-S2 selector source from GitHub issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+          import urllib.request
+
+          scripts = pathlib.Path('skills/engineering-programme-coordinator/scripts')
+          sys.path.insert(0, str(scripts))
+          from coordlib import load_yaml
+          from l1_baseline_obligations import canonical_digest, extract_precommitted_source
+
+          request = urllib.request.Request(
+              'https://api.github.com/repos/reallaksh19/Common/issues/560',
+              headers={
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                  'User-Agent': 'Common-P2-S2-L1-attestation',
+              },
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              issue = json.load(response)
+
+          live = extract_precommitted_source(issue['body'])
+          retained = load_yaml(
+              pathlib.Path(
+                  'skills/engineering-programme-coordinator/references/p2-s2-l1-source.yaml'
+              )
+          )
+          assert live == retained
+          assert canonical_digest(live) == '49228fa2e05b8b2a000e5116625e59ed8634bd293c2a62a730b6ee321490987a'
+          print('P2-S2 live child-contract source attestation: PASS')
+          PY
+
+      - name: Run L1 baseline-obligation regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_l1_baseline_obligations.py' -v
+
+      - name: Replay retained P2-S2 exact-base L1 manifest
+        run: |
+          python skills/engineering-programme-coordinator/scripts/l1_baseline_obligations.py validate \
+            skills/engineering-programme-coordinator/references/p2-s2-l1-source.yaml \
+            skills/engineering-programme-coordinator/references/p2-s2-l1-manifest.yaml \
+            --repo-root .
 
       - name: Run authenticated retained real-artifact replay
         env:
