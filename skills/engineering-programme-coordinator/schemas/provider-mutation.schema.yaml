@@ -1,0 +1,120 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-provider-mutation-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - mutation
+  - lookup
+  - readback
+  - next_action
+properties:
+  schema_version:
+    const: PROVIDER_MUTATION_V1
+  authority:
+    const: PROVIDER_MUTATION_TRANSACTION
+  identity:
+    type: object
+    additionalProperties: false
+    required:
+      - programme_or_parent_id
+      - prd_id
+      - resource_kind
+      - mutation_slot
+      - canonical_key
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      prd_id:
+        type: string
+        pattern: '^PRD-[A-Za-z0-9._-]+$'
+      resource_kind:
+        enum: [ISSUE, COMMENT, PULL_REQUEST, REF, MERGE]
+      mutation_slot: {type: string, minLength: 1}
+      canonical_key: {type: string, minLength: 1}
+  mutation:
+    type: object
+    additionalProperties: false
+    required:
+      - class
+      - operation
+      - payload_digest
+      - attempted
+      - attempt_id
+      - provider_id
+    properties:
+      class:
+        enum: [CREATE_ONCE, MUTATE_EXISTING_ONCE]
+      operation:
+        enum:
+          - CREATE_ISSUE
+          - PUBLISH_COMMENT
+          - CREATE_PULL_REQUEST
+          - UPDATE_ISSUE
+          - UPDATE_PULL_REQUEST
+          - UPDATE_REF
+          - MERGE_PULL_REQUEST
+      payload_digest: {$ref: '#/$defs/digest'}
+      attempted: {type: boolean}
+      attempt_id: {type: [string, 'null']}
+      provider_id: {type: [string, 'null']}
+  lookup:
+    type: object
+    additionalProperties: false
+    required: [performed, matches]
+    properties:
+      performed: {type: boolean}
+      matches:
+        type: array
+        uniqueItems: true
+        items:
+          type: object
+          additionalProperties: false
+          required: [provider_id, canonical_key]
+          properties:
+            provider_id: {type: string, minLength: 1}
+            canonical_key: {type: string, minLength: 1}
+  readback:
+    type: object
+    additionalProperties: false
+    required: [performed, provider_id, canonical_key, payload_digest]
+    properties:
+      performed: {type: boolean}
+      provider_id: {type: [string, 'null']}
+      canonical_key: {type: [string, 'null']}
+      payload_digest:
+        anyOf:
+          - {type: 'null'}
+          - {$ref: '#/$defs/digest'}
+  next_action:
+    type: object
+    additionalProperties: false
+    required: [type, reason_code]
+    properties:
+      type:
+        enum:
+          - LOOKUP
+          - CREATE_ONCE
+          - MUTATE_ONCE
+          - READBACK_EXISTING
+          - READBACK_AFTER_MUTATION
+          - COMPLETE
+          - RECONCILE_DUPLICATES
+          - RECONCILE_MISSING_TARGET
+          - RECONCILE_MISMATCH
+      reason_code:
+        enum:
+          - LOOKUP_REQUIRED
+          - CREATE_ALLOWED
+          - MUTATION_ALLOWED
+          - EXISTING_RESOURCE_REUSE
+          - MUTATION_READBACK_REQUIRED
+          - TRANSACTION_COMPLETE
+          - DUPLICATE_MACHINE_IDENTITY
+          - TARGET_NOT_FOUND
+          - READBACK_MISMATCH
+$defs:
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
