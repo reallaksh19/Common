@@ -261,6 +261,7 @@ def _current_readiness(
     repo_root: Path,
     candidate_sha: str,
     source_refs: list[str],
+    real_provider_verified: bool,
 ) -> dict[str, Any]:
     local_ref = f"{repository}@{candidate_sha}:skills/Local_PR_Deliverty_v1.1"
     v35_ref = f"{repository}@{candidate_sha}:skills/engineering-pr-delivery-v3.5"
@@ -307,7 +308,14 @@ def _current_readiness(
             ),
             "acceptance_denominator_closure": not_implemented("Later programme responsibility."),
             "reviewer_definition": verified([reviewer_ref]),
-            "real_artifact_horizontal_integration": verified(source_refs + [replay_ref]),
+            "real_artifact_horizontal_integration": (
+                verified(source_refs + [replay_ref])
+                if real_provider_verified
+                else conditional(
+                    [replay_ref],
+                    "Test-double replay exercises logic only; live GitHub provider attestation is required.",
+                )
+            ),
             "exact_candidate_verification": verified([source_refs[-2], source_refs[-1], replay_ref]),
             "provider_idempotency": verified([prior_ref + "#P1-R3A"]),
             "execution_kernel": verified([prior_ref + "#P1-R2"]),
@@ -323,7 +331,15 @@ def _current_readiness(
             "authority_ref": None,
             "authorized_at": None,
         },
-        "cutover_blockers": [{
+        "cutover_blockers": ([
+            {
+                "id": "P1I-REAL-ARTIFACT-MISSING",
+                "severity": "HARD",
+                "state": "OPEN",
+                "reason": "Live GitHub provider attestation has not been executed.",
+                "evidence_refs": [replay_ref],
+            }
+        ] if not real_provider_verified else []) + [{
             "id": "LATER-PHASES-UNQUALIFIED",
             "severity": "HARD",
             "state": "OPEN",
@@ -338,36 +354,13 @@ def _current_readiness(
     return value
 
 
-def semantic_errors(value: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
-    if value["artifact_class"] != "RETAINED_REAL_PROVIDER_ATTESTED":
-        errors.append("real replay must be provider-attested")
-    if value["production_readiness"]["components"]["real_artifact_horizontal_integration"]["state"] != "VERIFIED":
-        errors.append("real artifact horizontal integration must be VERIFIED")
-    if any(row["id"] == "P1I-REAL-ARTIFACT-MISSING" for row in value["production_readiness"]["cutover_blockers"]):
-        errors.append("real-artifact-missing blocker must be absent after live attestation")
-    expected_failures = {
-        "Local PR Delivery v1.1",
-        "Local PR Delivery v1.1 integration",
-    }
-    observed_failures = {
-        row["name"]
-        for row in value["provider_attestation_detail"]["workflow_runs"]
-        if row["conclusion"] == "failure"
-    } if "provider_attestation_detail" in value else expected_failures
-    if observed_failures != expected_failures:
-        errors.append("historical hosted failures were not preserved exactly")
-    if any(value["authority_boundaries"].values()):
-        errors.append("real-artifact replay cannot grant lifecycle/merge/cutover authority")
-    return errors
-
-
-def run_real_artifact_replay(
+def _run_replay(
     manifest: dict[str, Any],
     provider: Any,
     *,
     repo_root: Path,
     candidate_sha: str,
+    real_provider_verified: bool,
 ) -> dict[str, Any]:
     require(
         manifest.get("schema_version") == "P1_I_B_REAL_ARTIFACT_MANIFEST_V1",
@@ -401,15 +394,20 @@ def run_real_artifact_replay(
         repo_root=repo_root,
         candidate_sha=candidate_sha,
         source_refs=comment_refs,
+        real_provider_verified=real_provider_verified,
     )
 
     result = {
         "schema_version": "REAL_ARTIFACT_REPLAY_V1",
         "authority": "REAL_PROVIDER_REPLAY_PROJECTION",
-        "artifact_class": "RETAINED_REAL_PROVIDER_ATTESTED",
+        "artifact_class": (
+            "RETAINED_REAL_PROVIDER_ATTESTED"
+            if real_provider_verified
+            else "TEST_DOUBLE_UNATTESTED"
+        ),
         "artifact_id": manifest["artifact_id"],
         "provider_attestation": {
-            "live_verified": True,
+            "live_verified": real_provider_verified,
             "repository": repository,
             "comments_verified": len(verified_comments),
             "exact_commit_verified": True,
@@ -461,7 +459,9 @@ def run_real_artifact_replay(
                 and manifest["protocol_identity"]["v35"]["release_start_digest"]
                 != manifest["protocol_identity"]["v35"]["precode_benchmark_digest"]
             ),
-            "real_artifact_horizontal_integration": "VERIFIED",
+            "real_artifact_horizontal_integration": (
+                "VERIFIED" if real_provider_verified else "NOT_QUALIFIED"
+            ),
             "production_mode": readiness["production_mode"],
         },
         "authority_boundaries": {
@@ -475,8 +475,9 @@ def run_real_artifact_replay(
 
     # Detailed provider rows are intentionally not part of the durable schema/output;
     # semantic preservation is asserted above and pinned by the manifest/provider reads.
-    schema_errors = schema_validate("real-artifact-replay", result, "real-artifact-replay")
-    require(not schema_errors, "; ".join(schema_errors))
+    if real_provider_verified:
+        schema_errors = schema_validate("real-artifact-replay", result, "real-artifact-replay")
+        require(not schema_errors, "; ".join(schema_errors))
     if not result["assertions"]["historical_failures_preserved"]:
         raise RealArtifactReplayError("Historical hosted failures were not preserved")
     if not result["assertions"]["exact_candidate_bound"]:
@@ -486,6 +487,45 @@ def run_real_artifact_replay(
     if any(result["authority_boundaries"].values()):
         raise RealArtifactReplayError("Replay crossed an authority boundary")
     return result
+
+
+def run_test_double_replay(
+    manifest: dict[str, Any],
+    provider: Any,
+    *,
+    repo_root: Path,
+    candidate_sha: str,
+) -> dict[str, Any]:
+    """Exercise replay logic without conferring provider-attested qualification."""
+    require(type(provider) is not GitHubProvider, "Test-double path cannot accept live provider")
+    return _run_replay(
+        manifest,
+        provider,
+        repo_root=repo_root,
+        candidate_sha=candidate_sha,
+        real_provider_verified=False,
+    )
+
+
+def run_real_artifact_replay(
+    manifest: dict[str, Any],
+    provider: GitHubProvider,
+    *,
+    repo_root: Path,
+    candidate_sha: str,
+) -> dict[str, Any]:
+    """Qualifying entry point: only the concrete live GitHub provider may emit RETAINED_REAL."""
+    require(
+        type(provider) is GitHubProvider,
+        "Qualifying real-artifact replay requires concrete live GitHubProvider",
+    )
+    return _run_replay(
+        manifest,
+        provider,
+        repo_root=repo_root,
+        candidate_sha=candidate_sha,
+        real_provider_verified=True,
+    )
 
 
 def main() -> None:
