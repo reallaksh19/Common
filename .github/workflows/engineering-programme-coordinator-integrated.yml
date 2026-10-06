@@ -198,6 +198,44 @@ jobs:
       - name: Run retained real-artifact replay regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_real_artifact_replay.py' -v
 
+      - name: Attest precommitted P2-S1 source from GitHub issue
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+          import urllib.request
+
+          scripts = pathlib.Path('skills/engineering-programme-coordinator/scripts')
+          sys.path.insert(0, str(scripts))
+          from coordlib import load_yaml
+          from l0_task_obligations import canonical_digest, extract_precommitted_source
+
+          request = urllib.request.Request(
+              'https://api.github.com/repos/reallaksh19/Common/issues/558',
+              headers={
+                  'Accept': 'application/vnd.github+json',
+                  'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                  'User-Agent': 'Common-P2-S1-L0-attestation',
+              },
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              issue = json.load(response)
+
+          live = extract_precommitted_source(issue['body'])
+          retained = load_yaml(
+              pathlib.Path(
+                  'skills/engineering-programme-coordinator/references/p2-s1-l0-source.yaml'
+              )
+          )
+          assert live == retained
+          assert canonical_digest(live) == '5be577a4b69a0d9f34e0f660fa15efcdde0eb944aad9d1c0f568311c5d1fc09e'
+          print('P2-S1 live child-contract source attestation: PASS')
+          PY
+
       - name: Run L0 task-obligation compiler regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_l0_task_obligations.py' -v
 
