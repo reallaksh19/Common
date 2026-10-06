@@ -1,0 +1,83 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-l2-impact-source-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - candidate
+  - rules
+  - unknown_policy
+  - forbidden_outcomes
+  - non_goals
+properties:
+  schema_version: {const: L2_IMPACT_SOURCE_V1}
+  authority: {const: CANDIDATE_DIFF_SELECTION_CONTRACT}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  candidate:
+    type: object
+    additionalProperties: false
+    required: [repository, pr_number, base_ref, base_sha, head_ref, head_sha, diff_mode]
+    properties:
+      repository: {type: string, minLength: 1}
+      pr_number: {type: integer, minimum: 1}
+      base_ref: {type: string, minLength: 1}
+      base_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+      head_ref: {type: string, minLength: 1}
+      head_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+      diff_mode: {const: NO_RENAMES_PATH_SET}
+  rules:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/rule'}
+  unknown_policy: {$ref: '#/$defs/unknown_policy'}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+$defs:
+  method:
+    enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]
+  evidence_template:
+    type: object
+    additionalProperties: false
+    required: [id_prefix, method]
+    properties:
+      id_prefix: {type: string, pattern: '^REQ-[A-Za-z0-9._-]+$'}
+      method: {$ref: '#/$defs/method'}
+  rule:
+    type: object
+    additionalProperties: false
+    required: [id, path_glob, severity, impact_statement, expected_observation, plausible_green_but_wrong, evidence_requirement]
+    properties:
+      id: {type: string, pattern: '^L2-RULE-[A-Za-z0-9._-]+$'}
+      path_glob: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      impact_statement: {type: string, minLength: 1}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      evidence_requirement: {$ref: '#/$defs/evidence_template'}
+  unknown_policy:
+    type: object
+    additionalProperties: false
+    required: [severity, expected_observation, plausible_green_but_wrong, evidence_requirement]
+    properties:
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      evidence_requirement: {$ref: '#/$defs/evidence_template'}
