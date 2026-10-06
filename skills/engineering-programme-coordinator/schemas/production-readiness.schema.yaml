@@ -100,9 +100,11 @@ properties:
   cutover_authorization:
     type: object
     additionalProperties: false
-    required: [authorized, authority_ref, authorized_at]
+    required: [authorized, authorized_mode, authority_ref, authorized_at]
     properties:
       authorized: {type: boolean}
+      authorized_mode:
+        enum: [null, SHADOW_ONLY, CRITICAL_GATE, DEFAULT_GATE]
       authority_ref: {type: [string, 'null']}
       authorized_at: {type: [string, 'null'], format: date-time}
   cutover_blockers:
