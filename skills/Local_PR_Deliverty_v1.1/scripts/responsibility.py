@@ -1,13 +1,26 @@
 """Canonical Production Responsibility helpers for Local PR Delivery v1.1.
 
 Native responsibilities use TASK.task_id as the durable engineering identity. Legacy
-CHILD tasks remain historical records; this module exposes a deterministic read view
+CHILD tasks remain historical records; this module exposes deterministic read views
 without rewriting their stored identity.
 """
 from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any
+
+
+CANONICAL_RELEASE_STATES = frozenset({
+    "READY",
+    "BLOCKED_DEPENDENCY",
+    "HELD",
+    "STOPPED",
+})
+SYNTHETIC_OBSERVATION_FIELDS = frozenset({
+    "acceptance_epoch_ref",
+    "release_state",
+    "responsibility_complete",
+})
 
 
 class ResponsibilityError(ValueError):
@@ -92,6 +105,67 @@ def release_entry(parent_task: dict[str, Any], responsibility_task: dict[str, An
     ]
     require(len(matches) <= 1, "Duplicate Parent control-plane responsibility registry entry")
     return matches[0] if matches else None
+
+
+def observation_release_entry(
+    parent_task: dict[str, Any],
+    responsibility_task: dict[str, Any],
+) -> dict[str, Any]:
+    """Resolve canonical Parent registry truth for read-only responsibility observation."""
+    require(
+        responsibility_task.get("kind") == "RESPONSIBILITY",
+        "Canonical observation applies only to RESPONSIBILITY tasks",
+    )
+    for field in SYNTHETIC_OBSERVATION_FIELDS:
+        require(
+            field not in responsibility_task,
+            f"Native RESPONSIBILITY must not carry synthetic observation field: {field}",
+        )
+
+    control = parent_task.get("control_plane")
+    require(control, "Canonical observation requires Parent TASK control_plane")
+    require(control["bootstrap_state"] == "ESTABLISHED", "Parent bootstrap is not established")
+
+    entry = release_entry(parent_task, responsibility_task)
+    require(entry is not None, "Responsibility is absent from Parent control-plane registry")
+    require(
+        entry["acceptance_profile_ref"] == responsibility_task["acceptance_profile_ref"],
+        "Parent registry Acceptance Profile ref differs from TASK",
+    )
+    require(
+        entry["acceptance_profile_digest"] == responsibility_task["acceptance_profile_digest"],
+        "Parent registry Acceptance Profile digest differs from TASK",
+    )
+    require(
+        entry["release_state"] in CANONICAL_RELEASE_STATES,
+        "Parent registry contains non-canonical responsibility release state",
+    )
+    return deepcopy(entry)
+
+
+def responsibility_observation(
+    parent_task: dict[str, Any],
+    responsibility_task: dict[str, Any],
+) -> dict[str, Any]:
+    """Return Local-owned canonical read fields without authorizing execution.
+
+    SU-1 intentionally does not accept a caller-provided completion assertion or
+    delivery-result flag. Until a later unit binds an actual Local validation path
+    to DELIVERY_RESULT evidence, Local completion remains false in this base
+    observation. This keeps observation safe for READY, BLOCKED_DEPENDENCY, HELD,
+    and STOPPED responsibilities without converting observation into release authority.
+    """
+    view = responsibility_view(responsibility_task)
+    entry = observation_release_entry(parent_task, responsibility_task)
+
+    return {
+        "task_id": view["task_id"],
+        "release_state": entry["release_state"],
+        "acceptance_epoch_id": view["acceptance_epoch_id"],
+        "acceptance_profile_ref": view["acceptance_profile_ref"],
+        "acceptance_profile_digest": view["acceptance_profile_digest"],
+        "local_responsibility_complete": False,
+    }
 
 
 def validate_native_release(parent_task: dict[str, Any], responsibility_task: dict[str, Any]) -> None:
