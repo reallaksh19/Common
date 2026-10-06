@@ -1,0 +1,158 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-evidence-freshness-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - candidate_sha
+  - source_ledger
+  - current_basis
+  - required_method_ids
+  - evidence_results
+  - method_results
+  - overall
+  - replay_plan
+  - authority_boundaries
+properties:
+  schema_version:
+    const: EVIDENCE_FRESHNESS_V1
+  authority:
+    const: EVIDENCE_FRESHNESS_PROJECTION
+  candidate_sha: {$ref: '#/$defs/sha'}
+  source_ledger:
+    type: object
+    additionalProperties: false
+    required: [ledger_ref, ledger_digest, evidence_count]
+    properties:
+      ledger_ref: {type: string, minLength: 1}
+      ledger_digest: {$ref: '#/$defs/digest'}
+      evidence_count: {type: integer, minimum: 0}
+  current_basis:
+    type: object
+    additionalProperties: false
+    required:
+      - acceptance_epoch_id
+      - project_protocol_digest
+      - acceptance_profile_digest
+      - protected_surface_digest
+      - environment_digest
+      - dependency_heads
+    properties:
+      acceptance_epoch_id: {type: string, minLength: 1}
+      project_protocol_digest: {$ref: '#/$defs/digest'}
+      acceptance_profile_digest: {$ref: '#/$defs/digest'}
+      protected_surface_digest: {$ref: '#/$defs/digest'}
+      environment_digest:
+        anyOf:
+          - {type: 'null'}
+          - {$ref: '#/$defs/digest'}
+      dependency_heads:
+        type: object
+        additionalProperties: {$ref: '#/$defs/sha'}
+  required_method_ids:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  evidence_results:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - evidence_id
+        - evidence_ref
+        - evidence_digest
+        - verification_method_id
+        - state
+        - reasons
+      properties:
+        evidence_id: {type: string, minLength: 1}
+        evidence_ref: {type: string, minLength: 1}
+        evidence_digest: {$ref: '#/$defs/digest'}
+        verification_method_id: {type: string, minLength: 1}
+        state: {enum: [CURRENT, STALE, UNKNOWN]}
+        reasons:
+          type: array
+          uniqueItems: true
+          items:
+            enum:
+              - CANDIDATE_CHANGED
+              - ACCEPTANCE_BASIS_CHANGED
+              - PROJECT_PROTOCOL_CHANGED
+              - ACCEPTANCE_PROFILE_CHANGED
+              - PROTECTED_SURFACE_CHANGED
+              - ENVIRONMENT_CHANGED
+              - DEPENDENCY_HEAD_CHANGED
+              - PROVENANCE_UNKNOWN
+  method_results:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [method_id, state, evidence_ids]
+      properties:
+        method_id: {type: string, minLength: 1}
+        state: {enum: [CURRENT, STALE, UNKNOWN, MISSING]}
+        evidence_ids:
+          type: array
+          uniqueItems: true
+          items: {type: string, minLength: 1}
+  overall:
+    type: object
+    additionalProperties: false
+    required:
+      - evidence_state
+      - evidence_candidate_sha
+      - evidence_ledger_ref
+    properties:
+      evidence_state: {enum: [CURRENT, STALE, UNKNOWN, MISSING]}
+      evidence_candidate_sha:
+        anyOf:
+          - {type: 'null'}
+          - {$ref: '#/$defs/sha'}
+      evidence_ledger_ref: {type: [string, 'null'], minLength: 1}
+  replay_plan:
+    type: object
+    additionalProperties: false
+    required: [mode, changed_inputs, rerun_method_ids]
+    properties:
+      mode:
+        enum:
+          - NO_REPLAY
+          - GAP_REPLAY
+          - SELECTIVE_DECLARED_INPUTS
+          - SELECTIVE_PLUS_GAPS
+          - FULL_REQUIRED_SET
+          - CONSERVATIVE_FULL_REQUIRED_SET
+      changed_inputs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      rerun_method_ids:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - mutates_source_evidence
+      - emits_engineering_pass
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      mutates_source_evidence: {const: false}
+      emits_engineering_pass: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
