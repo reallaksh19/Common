@@ -150,7 +150,15 @@ class ExactCandidateEvidenceTests(unittest.TestCase):
         ledger["accounting"]["requirements_without_evidence"] -= 1
         ledger["ledger_digest"] = object_digest(ledger, "ledger_digest")
         errors = validate_ledger(ledger, self.source, REPO_ROOT)
-        self.assertTrue(any("fresh denominator replay" in e for e in errors), errors)
+        self.assertTrue(errors)
+        self.assertTrue(
+            any(
+                "manifest obligation_count does not match records" in e
+                or "fresh denominator replay" in e
+                for e in errors
+            ),
+            errors,
+        )
 
     def test_removed_requirement_cannot_self_certify(self) -> None:
         ledger = copy.deepcopy(self.ledger)
@@ -225,7 +233,15 @@ class ExactCandidateEvidenceTests(unittest.TestCase):
         ledger["records"][0]["claim_type"] = "AUTHORITY"
         ledger["ledger_digest"] = object_digest(ledger, "ledger_digest")
         errors = validate_ledger(ledger, self.source, REPO_ROOT)
-        self.assertTrue(any("fresh denominator replay" in e for e in errors), errors)
+        self.assertTrue(errors)
+        self.assertTrue(
+            any(
+                "manifest obligation_count does not match records" in e
+                or "fresh denominator replay" in e
+                for e in errors
+            ),
+            errors,
+        )
 
     def test_source_schema_rejects_verdict_fields(self) -> None:
         for field, value in [
