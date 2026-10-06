@@ -60,6 +60,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/local_v11_integrated.py \
             skills/engineering-programme-coordinator/scripts/review_basis.py \
             skills/engineering-programme-coordinator/scripts/production_readiness.py \
+            skills/engineering-programme-coordinator/scripts/execution_kernel.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -89,6 +90,16 @@ jobs:
           required_basis = set(readiness['properties']['exact_basis']['required'])
           assert 'common_reviewer_ref' in required_basis
           assert 'common_reviewer_digest' in required_basis
+
+          execution = yaml.safe_load(
+              (root / 'execution-state.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert execution['$id'] == 'engineering-programme-coordinator-execution-state-v1'
+          assert execution['properties']['schema_version']['const'] == 'EXECUTION_STATE_V1'
+          assert execution['properties']['authority']['const'] == 'EXECUTION_STATE_PROJECTION'
+          action_enum = execution['properties']['next_action']['properties']['type']['enum']
+          assert 'REQUEST_STAGE_ADVANCE' in action_enum
+          assert 'ADVANCE_STAGE' not in action_enum
           PY
 
       - name: Run integrated-mode regressions
@@ -99,6 +110,9 @@ jobs:
 
       - name: Run production readiness regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_production_readiness.py' -v
+
+      - name: Run execution-kernel regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_execution_kernel.py' -v
 
       - name: Validate Common Reviewer authority boundary
         run: |
