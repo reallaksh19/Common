@@ -65,6 +65,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/current_state.py \
             skills/engineering-programme-coordinator/scripts/authority_resolver.py \
             skills/engineering-programme-coordinator/scripts/evidence_freshness.py \
+            skills/engineering-programme-coordinator/scripts/phase1_runtime_replay.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -132,6 +133,13 @@ jobs:
           assert freshness['$id'] == 'engineering-programme-coordinator-evidence-freshness-v1'
           assert freshness['properties']['schema_version']['const'] == 'EVIDENCE_FRESHNESS_V1'
           assert freshness['properties']['authority']['const'] == 'EVIDENCE_FRESHNESS_PROJECTION'
+
+          phase1 = yaml.safe_load(
+              (root / 'phase1-runtime-replay.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert phase1['$id'] == 'engineering-programme-coordinator-phase1-runtime-replay-v1'
+          assert phase1['properties']['schema_version']['const'] == 'PHASE1_RUNTIME_REPLAY_V1'
+          assert phase1['properties']['authority']['const'] == 'INTEGRATION_PROJECTION_ONLY'
           PY
 
       - name: Run integrated-mode regressions
@@ -157,6 +165,9 @@ jobs:
 
       - name: Run evidence-freshness regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_evidence_freshness.py' -v
+
+      - name: Run Phase-1 runtime horizontal replay
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_phase1_runtime_replay.py' -v
 
       - name: Validate Common Reviewer authority boundary
         run: |

@@ -1,0 +1,118 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-phase1-runtime-replay-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - task_id
+  - source_digests
+  - local_observation
+  - v35
+  - authority_resolution
+  - freshness
+  - execution_state
+  - current_state
+  - provider_transaction
+  - production_readiness
+  - assertions
+  - authority_boundaries
+properties:
+  schema_version:
+    const: PHASE1_RUNTIME_REPLAY_V1
+  authority:
+    const: INTEGRATION_PROJECTION_ONLY
+  task_id:
+    type: string
+    pattern: '^PRD-[A-Za-z0-9._-]+$'
+  source_digests:
+    type: object
+    additionalProperties: false
+    required: [local_bundle, v35_context, v35_result, provider_transaction]
+    properties:
+      local_bundle: {$ref: '#/$defs/digest'}
+      v35_context: {$ref: '#/$defs/digest'}
+      v35_result: {$ref: '#/$defs/digest'}
+      provider_transaction: {$ref: '#/$defs/digest'}
+  local_observation:
+    type: object
+  v35:
+    type: object
+    additionalProperties: false
+    required:
+      - engineering_responsibility
+      - engineering_responsibility_complete
+      - local_responsibility_complete
+    properties:
+      engineering_responsibility: {type: string, minLength: 1}
+      engineering_responsibility_complete: {type: boolean}
+      local_responsibility_complete: {const: false}
+  authority_resolution:
+    type: object
+  freshness:
+    type: object
+  execution_state:
+    type: object
+  current_state:
+    type: object
+  provider_transaction:
+    type: object
+    additionalProperties: false
+    required: [next_action, mutation_performed_by_replay]
+    properties:
+      next_action: {type: string, minLength: 1}
+      mutation_performed_by_replay: {const: false}
+  production_readiness:
+    type: object
+  assertions:
+    type: object
+    additionalProperties: false
+    required:
+      - evidence_state
+      - evidence_candidate_sha
+      - execution_next_action
+      - execution_reason_code
+      - production_mode
+      - artifact_class
+      - local_native_validation
+      - local_source_unchanged
+      - v35_source_unchanged
+      - provider_source_unchanged
+    properties:
+      evidence_state: {enum: [CURRENT, STALE, UNKNOWN, MISSING]}
+      evidence_candidate_sha:
+        anyOf:
+          - {type: 'null'}
+          - {$ref: '#/$defs/sha'}
+      execution_next_action: {type: string, minLength: 1}
+      execution_reason_code: {type: string, minLength: 1}
+      production_mode: {const: 'OFF'}
+      artifact_class: {const: CANONICAL_SYNTHETIC}
+      local_native_validation: {const: PASS}
+      local_source_unchanged: {const: true}
+      v35_source_unchanged: {const: true}
+      provider_source_unchanged: {const: true}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - performs_local_stage_transition
+      - performs_provider_mutation
+      - emits_engineering_pass
+      - emits_evidence_gate_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      performs_local_stage_transition: {const: false}
+      performs_provider_mutation: {const: false}
+      emits_engineering_pass: {const: false}
+      emits_evidence_gate_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
