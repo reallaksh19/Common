@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from authority_resolver import validate_authority_resolution
 from current_state import validate_current_state
 from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
@@ -27,6 +28,7 @@ SCHEMAS = {
     "execution-state",
     "provider-mutation",
     "current-state",
+    "authority-resolution",
     "review-context",
     "self-check-context",
 }
@@ -37,6 +39,8 @@ def main() -> None:
     parser.add_argument("schema", choices=sorted(SCHEMAS))
     parser.add_argument("path")
     parser.add_argument("--execution-state")
+    parser.add_argument("--local-bundle")
+    parser.add_argument("--observed-at")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
@@ -49,6 +53,18 @@ def main() -> None:
         errors = validate_current_state(
             value,
             execution_state,
+            Path(args.path).name,
+        )
+    elif args.schema == "authority-resolution":
+        local_bundle = (
+            load_yaml(Path(args.local_bundle))
+            if args.local_bundle
+            else None
+        )
+        errors = validate_authority_resolution(
+            value,
+            local_bundle,
+            args.observed_at,
             Path(args.path).name,
         )
     else:
