@@ -9,7 +9,11 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from real_artifact_replay import run_real_artifact_replay, RealArtifactReplayError
+from real_artifact_replay import (
+    run_real_artifact_replay,
+    run_test_double_replay,
+    RealArtifactReplayError,
+)
 
 
 MANIFEST_PATH = ROOT / "references" / "p1-i-b-real-artifact-manifest.yaml"
@@ -79,25 +83,38 @@ class RealArtifactReplayTests(unittest.TestCase):
     def replay(self, value=None, data=None):
         value = value or manifest()
         data = data or fake_provider_data(value)
-        return run_real_artifact_replay(
+        return run_test_double_replay(
             value,
             FakeProvider(data),
             repo_root=ROOT.parents[1],
             candidate_sha=current_head(),
         )
 
-    def test_real_provider_attestation_qualifies_horizontal_integration(self):
+    def test_test_double_cannot_qualify_horizontal_integration(self):
         result = self.replay()
-        self.assertEqual(result["artifact_class"], "RETAINED_REAL_PROVIDER_ATTESTED")
-        self.assertTrue(result["provider_attestation"]["live_verified"])
+        self.assertEqual(result["artifact_class"], "TEST_DOUBLE_UNATTESTED")
+        self.assertFalse(result["provider_attestation"]["live_verified"])
         self.assertEqual(
             result["production_readiness"]["components"]["real_artifact_horizontal_integration"]["state"],
-            "VERIFIED",
+            "CONDITIONALLY_QUALIFIED",
         )
-        self.assertNotIn(
+        self.assertIn(
             "P1I-REAL-ARTIFACT-MISSING",
             {row["id"] for row in result["production_readiness"]["cutover_blockers"]},
         )
+
+    def test_qualifying_entrypoint_rejects_test_double(self):
+        value = manifest()
+        with self.assertRaisesRegex(
+            RealArtifactReplayError,
+            "requires concrete live GitHubProvider",
+        ):
+            run_real_artifact_replay(
+                value,
+                FakeProvider(fake_provider_data(value)),
+                repo_root=ROOT.parents[1],
+                candidate_sha=current_head(),
+            )
 
     def test_current_local_projection_consumes_retained_control_truth(self):
         result = self.replay()
