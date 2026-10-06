@@ -166,63 +166,68 @@ class CurrentStateTests(unittest.TestCase):
     def test_candidate_none_rejects_head(self):
         value = current_state()
         value["candidate"]["state"] = "NONE"
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("candidate NONE" in error for error in errors), errors)
 
     def test_active_candidate_requires_exact_coordinates(self):
         value = current_state()
         value["candidate"]["head_sha"] = None
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("ACTIVE requires head_sha" in error for error in errors), errors)
 
     def test_verified_dependency_requires_exact_evidence(self):
         value = current_state()
         value["dependencies"][0]["exact_result_ref"] = None
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("requires evidence_ref and exact_result_ref" in error for error in errors), errors)
 
     def test_refuted_dependency_requires_exact_evidence(self):
         value = current_state()
         value["dependencies"][0]["observed_state"] = "REFUTED"
         value["dependencies"][0]["evidence_ref"] = None
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("REFUTED requires" in error for error in errors), errors)
 
     def test_off_mode_forbids_authority_ref(self):
         value = current_state()
         value["production"]["authority_ref"] = "owner://stale-cutover"
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("OFF cannot carry" in error for error in errors), errors)
 
     def test_non_off_mode_requires_authority_ref(self):
         value = current_state()
         value["production"]["mode"] = "SHADOW_ONLY"
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("requires authority_ref" in error for error in errors), errors)
 
     def test_owner_merge_grant_requires_authority_ref(self):
         value = current_state()
         value["merge_authority"]["state"] = "OWNER_GRANTED"
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("OWNER_GRANTED" in error for error in errors), errors)
 
     def test_not_granted_merge_forbids_authority_ref(self):
         value = current_state()
         value["merge_authority"]["authority_ref"] = "owner://old-merge"
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("NOT_GRANTED" in error for error in errors), errors)
 
     def test_next_action_cannot_also_be_forbidden(self):
         value = current_state()
         value["forbidden_next_actions"].append(value["next_action"]["type"])
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("cannot also appear" in error for error in errors), errors)
 
     def test_required_source_refs_must_be_present(self):
         value = current_state()
         value["source_refs"].remove("issue://548")
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("source_refs must include" in error for error in errors), errors)
+
+    def test_unbound_current_state_validation_is_rejected(self):
+        value = current_state()
+        errors = validate_current_state(value, None)
+        self.assertTrue(any("requires bound EXECUTION_STATE_V1" in error for error in errors), errors)
 
     def test_execution_digest_mismatch_is_rejected(self):
         value = current_state()
@@ -254,7 +259,7 @@ class CurrentStateTests(unittest.TestCase):
     def test_extra_authority_field_is_rejected(self):
         value = current_state()
         value["merge_now"] = True
-        errors = validate_current_state(value)
+        errors = validate_current_state(value, execution_state())
         self.assertTrue(any("Additional properties are not allowed" in error for error in errors), errors)
 
 
