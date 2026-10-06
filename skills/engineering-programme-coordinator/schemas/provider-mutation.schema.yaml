@@ -30,7 +30,7 @@ properties:
         type: string
         pattern: '^PRD-[A-Za-z0-9._-]+$'
       resource_kind:
-        enum: [ISSUE, COMMENT, PULL_REQUEST, REF, MERGE]
+        enum: [ISSUE, COMMENT, PULL_REQUEST, REF]
       mutation_slot: {type: string, minLength: 1}
       canonical_key:
         type: string
