@@ -29,13 +29,14 @@ properties:
   provider_attestation:
     type: object
     additionalProperties: false
-    required: [live_verified, repository, comments_verified, exact_commit_verified, pr_historical_binding_verified, workflow_runs_verified]
+    required: [live_verified, repository, comments_verified, exact_commit_verified, pr_historical_binding_verified, protocol_trees_verified, workflow_runs_verified]
     properties:
       live_verified: {const: true}
       repository: {type: string, minLength: 1}
       comments_verified: {type: integer, minimum: 1}
       exact_commit_verified: {const: true}
       pr_historical_binding_verified: {const: true}
+      protocol_trees_verified: {const: true}
       workflow_runs_verified: {type: integer, minimum: 1}
   historical_identity:
     type: object
