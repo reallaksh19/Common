@@ -52,7 +52,7 @@ def object_digest(value: dict[str, Any], field: str) -> str:
 
 def _safe_path(repo_root: Path, value: str) -> Path:
     path = Path(value)
-    if path.is_absolute() or "\" in value or ".." in path.parts:
+    if path.is_absolute() or "\\" in value or ".." in path.parts:
         raise ValueError(f"unsafe repository path: {value}")
     resolved = (repo_root / path).resolve()
     try:
@@ -109,7 +109,7 @@ def source_semantic_errors(source: dict[str, Any]) -> list[str]:
     if len(paths) != len(set(paths)):
         errors.append("template paths must be distinct")
     for value in paths:
-        if Path(value).is_absolute() or "\" in value or ".." in Path(value).parts:
+        if Path(value).is_absolute() or "\\" in value or ".." in Path(value).parts:
             errors.append(f"unsafe template path: {value}")
     expected = source["expected_transition"]
     if expected["prior_evidence_invalidated"] != len(source["prior_evidence"]):
