@@ -345,7 +345,12 @@ class Phase1RuntimeReplayTests(unittest.TestCase):
         self.assertEqual(readiness["production_mode"], "OFF")
         self.assertEqual(
             readiness["components"]["real_artifact_horizontal_integration"]["state"],
-            "VERIFIED",
+            "CONDITIONALLY_QUALIFIED",
+        )
+        self.assertEqual(result["assertions"]["artifact_class"], "CANONICAL_SYNTHETIC")
+        self.assertIn(
+            "P1I-REAL-ARTIFACT-MISSING",
+            {row["id"] for row in readiness["cutover_blockers"]},
         )
         self.assertEqual(
             readiness["components"]["proof_obligation_runtime"]["state"],
@@ -354,6 +359,15 @@ class Phase1RuntimeReplayTests(unittest.TestCase):
         self.assertEqual(
             readiness["components"]["evidence_gate"]["state"],
             "NOT_IMPLEMENTED",
+        )
+
+    def test_synthetic_replay_cannot_self_certify_real_artifact(self):
+        result = run_phase1_replay(request())
+        forged = copy.deepcopy(result)
+        forged["production_readiness"]["components"]["real_artifact_horizontal_integration"]["state"] = "VERIFIED"
+        from phase1_runtime_replay import semantic_errors
+        self.assertTrue(
+            any("cannot mark real-artifact" in error for error in semantic_errors(forged))
         )
 
     def test_source_artifacts_are_immutable(self):
