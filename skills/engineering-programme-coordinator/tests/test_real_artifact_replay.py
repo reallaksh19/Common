@@ -43,6 +43,7 @@ def fake_provider_data(value):
             "user": {"login": spec["author"]},
             "created_at": spec["created_at"],
             "updated_at": spec["updated_at"],
+            "html_url": f"https://github.com/{repo}/issues/{spec['issue']}#issuecomment-{spec['id']}",
             "body": "\n".join(spec["required_tokens"]),
         }
     data[f"/repos/{repo}/pulls/{source['pr']}"] = {
@@ -149,6 +150,27 @@ class RealArtifactReplayTests(unittest.TestCase):
         with self.assertRaisesRegex(RealArtifactReplayError, "edited after pin"):
             self.replay(value, data)
 
+    def test_comment_must_belong_to_pinned_issue(self):
+        value = manifest()
+        data = fake_provider_data(value)
+        spec = value["comments"]["release_basis"]
+        path = f"/repos/{value['repository']}/issues/comments/{spec['id']}"
+        data[path]["html_url"] = (
+            f"https://github.com/{value['repository']}/issues/999"
+            f"#issuecomment-{spec['id']}"
+        )
+        with self.assertRaisesRegex(RealArtifactReplayError, "comment issue/ref mismatch"):
+            self.replay(value, data)
+
+    def test_qualifying_manifest_is_hard_bound_to_p1_i_b_source(self):
+        value = manifest()
+        value["source"]["exact_head"] = "f" * 40
+        with self.assertRaisesRegex(
+            RealArtifactReplayError,
+            "Unexpected retained artifact source field: exact_head",
+        ):
+            self.replay(value, fake_provider_data(value))
+
     def test_missing_semantic_token_invalidates_provider_attestation(self):
         value = manifest()
         data = fake_provider_data(value)
@@ -203,6 +225,22 @@ class RealArtifactReplayTests(unittest.TestCase):
         result = self.replay()
         self.assertFalse(any(result["authority_boundaries"].values()))
         self.assertEqual(result["production_readiness"]["production_mode"], "OFF")
+
+    def test_readiness_uses_actual_phase1_pull_request_refs(self):
+        result = self.replay()
+        components = result["production_readiness"]["components"]
+        self.assertIn(
+            "https://github.com/reallaksh19/Common/pull/551",
+            components["active_authority_resolution"]["evidence_refs"],
+        )
+        self.assertIn(
+            "https://github.com/reallaksh19/Common/pull/544",
+            components["execution_kernel"]["evidence_refs"],
+        )
+        self.assertIn(
+            "https://github.com/reallaksh19/Common/pull/547",
+            components["provider_idempotency"]["evidence_refs"],
+        )
 
     def test_source_residuals_are_retained(self):
         result = self.replay()
