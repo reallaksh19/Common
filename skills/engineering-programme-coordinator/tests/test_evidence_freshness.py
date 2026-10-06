@@ -11,6 +11,7 @@ from evidence_freshness import (
     canonical_digest,
     derive_evidence_freshness,
     semantic_errors,
+    validate_evidence_freshness,
 )
 
 
@@ -283,6 +284,37 @@ class EvidenceFreshnessTests(unittest.TestCase):
         result["overall"]["evidence_candidate_sha"] = SHA
         errors = semantic_errors(result)
         self.assertTrue(any("non-CURRENT" in error for error in errors), errors)
+
+    def test_unbound_projection_validation_is_rejected(self):
+        request = {
+            "evidence_bindings": [binding()],
+            "current": current(),
+            "ledger_ref": "ledger://P1-R5",
+            "required_method_ids": ["VM-1"],
+            "method_material_inputs": {"VM-1": ["CANDIDATE"]},
+            "method_rerun_policy": {"VM-1": "DECLARED_MATERIAL_INPUTS"},
+        }
+        result = derive_evidence_freshness(**copy.deepcopy(request))
+        errors = validate_evidence_freshness(result, None)
+        self.assertTrue(any("requires source request" in error for error in errors), errors)
+
+    def test_forged_current_projection_fails_bound_replay(self):
+        request = {
+            "evidence_bindings": [binding()],
+            "current": current(),
+            "ledger_ref": "ledger://P1-R5",
+            "required_method_ids": ["VM-1"],
+            "method_material_inputs": {"VM-1": ["CANDIDATE"]},
+            "method_rerun_policy": {"VM-1": "DECLARED_MATERIAL_INPUTS"},
+        }
+        result = derive_evidence_freshness(**copy.deepcopy(request))
+        forged = copy.deepcopy(result)
+        forged["source_ledger"]["ledger_digest"] = "f" * 64
+        errors = validate_evidence_freshness(forged, request)
+        self.assertTrue(
+            any("must exactly equal source-request derivation" in error for error in errors),
+            errors,
+        )
 
     def test_projection_carries_no_pass_or_lifecycle_authority(self):
         result = derive()
