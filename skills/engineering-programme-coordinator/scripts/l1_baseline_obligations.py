@@ -42,7 +42,7 @@ def manifest_digest(manifest: dict[str, Any]) -> str:
     payload=dict(manifest); payload.pop("manifest_digest",None); return canonical_digest(payload)
 
 def _safe_repo_path(path:str)->bool:
-    if not path or path.startswith("/") or "\" in path: return False
+    if not path or path.startswith("/") or "\\" in path: return False
     normalized=posixpath.normpath(path)
     return normalized==path and normalized not in {".",".."} and all(p not in {"",".",".."} for p in path.split("/"))
 
