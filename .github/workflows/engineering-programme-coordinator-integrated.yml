@@ -44,7 +44,7 @@ jobs:
           [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
           ACTUAL_SHA="$(git rev-parse HEAD)"
           test "$ACTUAL_SHA" = "$EXPECTED_SHA"
-          echo "Validated candidate: `$ACTUAL_SHA`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Validated candidate SHA: $ACTUAL_SHA" >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/setup-python@v5
         with:
