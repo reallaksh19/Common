@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +20,140 @@ COMMON_PROFILE_SCHEMA = (
     / "schemas"
     / "common-review-profile.schema.yaml"
 )
+
+
+SELF_CHECK_BASIS_KEYS = {
+    "original_task_ref",
+    "base_sha",
+    "candidate_sha",
+    "manifest_ref",
+    "manifest_path",
+    "manifest_digest",
+    "repository_context_refs",
+}
+
+
+def _canonical_digest(value: Any) -> str:
+    return hashlib.sha256(
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+def _safe_repo_path(repo_root: Path, value: str) -> Path:
+    path = Path(value)
+    if path.is_absolute() or chr(92) in value or ".." in path.parts:
+        raise ValueError(f"unsafe repository path: {value}")
+    root = repo_root.resolve()
+    resolved = (root / path).resolve()
+    try:
+        resolved.relative_to(root)
+    except ValueError as exc:
+        raise ValueError(f"repository path escapes root: {value}") from exc
+    return resolved
+
+
+def validate_self_check_basis(
+    value: Any,
+    repo_root: Path,
+    label: str = "self-check-governing-basis",
+) -> list[str]:
+    if not isinstance(value, dict):
+        return [f"{label}: governing basis must be an object"]
+    errors: list[str] = []
+    unknown = sorted(set(value) - SELF_CHECK_BASIS_KEYS)
+    missing = sorted(SELF_CHECK_BASIS_KEYS - set(value))
+    if unknown:
+        errors.append(f"{label}: unknown fields: {', '.join(unknown)}")
+    if missing:
+        errors.append(f"{label}: missing fields: {', '.join(missing)}")
+    if errors:
+        return errors
+
+    for key in ("original_task_ref", "manifest_ref", "manifest_path"):
+        if not isinstance(value[key], str) or not value[key]:
+            errors.append(f"{label}.{key}: must be a non-empty string")
+    for key in ("base_sha", "candidate_sha"):
+        item = value[key]
+        if not isinstance(item, str) or len(item) != 40 or any(c not in "0123456789abcdef" for c in item):
+            errors.append(f"{label}.{key}: must be a lowercase 40-hex SHA")
+    digest = value["manifest_digest"]
+    if not isinstance(digest, str) or len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
+        errors.append(f"{label}.manifest_digest: must be a lowercase 64-hex digest")
+    refs = value["repository_context_refs"]
+    if (
+        not isinstance(refs, list)
+        or not refs
+        or len(refs) != len(set(refs))
+        or any(not isinstance(item, str) or not item for item in refs)
+    ):
+        errors.append(
+            f"{label}.repository_context_refs: must be a non-empty unique string list"
+        )
+    if errors:
+        return errors
+
+    try:
+        manifest_path = _safe_repo_path(repo_root, value["manifest_path"])
+    except ValueError as exc:
+        return [f"{label}: {exc}"]
+    if not manifest_path.is_file():
+        return [f"{label}: frozen manifest path does not exist: {value['manifest_path']}"]
+    try:
+        with manifest_path.open("r", encoding="utf-8") as fh:
+            manifest = yaml.safe_load(fh)
+    except Exception as exc:
+        return [f"{label}: cannot read frozen manifest: {exc}"]
+    if not isinstance(manifest, dict):
+        return [f"{label}: frozen manifest must be an object"]
+
+    actual_digest = manifest.get("manifest_digest")
+    if actual_digest != value["manifest_digest"]:
+        errors.append(
+            f"{label}: frozen manifest declared digest does not match governing basis"
+        )
+    if actual_digest is not None:
+        payload = dict(manifest)
+        payload.pop("manifest_digest", None)
+        if actual_digest != _canonical_digest(payload):
+            errors.append(
+                f"{label}: frozen manifest self-digest does not match its content"
+            )
+    return errors
+
+
+def self_check_binding_errors(
+    context: dict[str, Any],
+    basis: dict[str, Any],
+) -> list[str]:
+    policy = context["reconstruction_policy"]
+    errors: list[str] = []
+    exact_pairs = (
+        ("candidate_sha", context["candidate_sha"], basis["candidate_sha"]),
+        ("reconstruction_policy.candidate_sha", policy["candidate_sha"], basis["candidate_sha"]),
+        ("reconstruction_policy.base_sha", policy["base_sha"], basis["base_sha"]),
+        ("reconstruction_policy.original_task_ref", policy["original_task_ref"], basis["original_task_ref"]),
+        ("manifest_ref", context["manifest_ref"], basis["manifest_ref"]),
+        ("manifest_digest", context["manifest_digest"], basis["manifest_digest"]),
+    )
+    for label, actual, expected in exact_pairs:
+        if actual != expected:
+            errors.append(f"{label} must equal the frozen governing basis")
+
+    missing_refs = sorted(
+        set(basis["repository_context_refs"])
+        - set(policy["repository_context_refs"])
+    )
+    if missing_refs:
+        errors.append(
+            "reconstruction_policy.repository_context_refs missing governing refs: "
+            + ", ".join(missing_refs)
+        )
+    return errors
 
 
 def _schema_errors(schema: dict[str, Any], value: Any, label: str) -> list[str]:
@@ -110,6 +246,8 @@ def common_profile_semantic_errors(value: dict[str, Any]) -> list[str]:
             errors.append("SELF_REVIEW must record principal_independence NONE")
         if author != reviewer:
             errors.append("SELF_REVIEW author_principal and review_principal must match")
+        if not review.get("final_candidate"):
+            errors.append("SELF_REVIEW requires exact final_candidate binding")
     else:
         if independence == "NONE":
             errors.append(f"{role} cannot record principal_independence NONE")
@@ -143,6 +281,8 @@ def common_profile_semantic_errors(value: dict[str, Any]) -> list[str]:
 def review_basis_errors(
     profile: Any,
     assessment_context: Any,
+    governing_basis: Any | None = None,
+    repo_root: Path | None = None,
 ) -> list[str]:
     errors = validate_common_profile(profile)
     errors.extend(validate_assessment_context(assessment_context))
@@ -160,6 +300,23 @@ def review_basis_errors(
             principal = assessment_context["principal"]
             if principal["identity"] != review["review_principal"]:
                 errors.append("self-check principal identity must match review_principal")
+            if governing_basis is None or repo_root is None:
+                errors.append(
+                    "SELF_REVIEW requires source-bound governing basis and repository root"
+                )
+            else:
+                basis_errors = validate_self_check_basis(
+                    governing_basis,
+                    repo_root,
+                )
+                errors.extend(basis_errors)
+                if not basis_errors:
+                    errors.extend(
+                        self_check_binding_errors(
+                            assessment_context,
+                            governing_basis,
+                        )
+                    )
     else:
         if version != "REVIEW_CONTEXT_V1":
             errors.append(f"{role} requires REVIEW_CONTEXT_V1")
@@ -194,6 +351,11 @@ def main() -> None:
     )
     parser.add_argument("profile")
     parser.add_argument("assessment_context")
+    parser.add_argument(
+        "--governing-basis",
+        help="YAML frozen basis required for SELF_REVIEW source-bound validation",
+    )
+    parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
     with Path(args.profile).open("r", encoding="utf-8") as fh:
@@ -201,7 +363,17 @@ def main() -> None:
     with Path(args.assessment_context).open("r", encoding="utf-8") as fh:
         context = yaml.safe_load(fh)
 
-    errors = review_basis_errors(profile, context)
+    basis = None
+    if args.governing_basis:
+        with Path(args.governing_basis).open("r", encoding="utf-8") as fh:
+            basis = yaml.safe_load(fh)
+
+    errors = review_basis_errors(
+        profile,
+        context,
+        basis,
+        Path(args.repo_root).resolve(),
+    )
     if errors:
         for error in errors:
             print(error)
