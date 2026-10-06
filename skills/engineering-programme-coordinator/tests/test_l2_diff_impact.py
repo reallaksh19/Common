@@ -232,6 +232,53 @@ class L2DiffImpactTests(unittest.TestCase):
         manifest = compile_source(self.source, self.repo)
         self.assertTrue(any("source-bound exact-diff replay is required" in e for e in validate_manifest(manifest)))
 
+    def test_generic_validator_requires_source_and_exact_repo(self) -> None:
+        manifest = compile_source(self.source, self.repo)
+        source_path = self.repo / "l2-source.yaml"
+        manifest_path = self.repo / "l2-manifest.yaml"
+        source_path.write_text(
+            yaml.safe_dump(self.source, sort_keys=False),
+            encoding="utf-8",
+        )
+        manifest_path.write_text(
+            yaml.safe_dump(manifest, sort_keys=False),
+            encoding="utf-8",
+        )
+
+        unbound = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "validate.py"),
+                "l2-impact-obligation-manifest",
+                str(manifest_path),
+            ],
+            cwd=self.repo,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(0, unbound.returncode)
+        self.assertIn(
+            "source-bound exact-diff replay is required",
+            unbound.stdout,
+        )
+
+        bound = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "validate.py"),
+                "l2-impact-obligation-manifest",
+                str(manifest_path),
+                "--l2-source",
+                str(source_path),
+                "--repo-root",
+                str(self.repo),
+            ],
+            cwd=self.repo,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, bound.returncode, bound.stdout + bound.stderr)
+
     def test_recomputed_tamper_digest_does_not_bypass_replay(self) -> None:
         manifest = compile_source(self.source, self.repo)
         manifest["obligations"][0]["claim"]["statement"] = "forged"
