@@ -1,17 +1,37 @@
 import copy
+import hashlib
+import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from review_basis import review_basis_errors
+from review_basis import (
+    review_basis_errors,
+    validate_assessment_context,
+    validate_self_check_basis,
+)
 
 
 CANDIDATE = "c" * 40
 BASE = "a" * 40
-DIGEST = "d" * 64
+PROFILE_DIGEST = "d" * 64
+
+
+def canonical_digest(value):
+    return hashlib.sha256(
+        json.dumps(
+            value,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+    ).hexdigest()
 
 
 def criterion(result="PASS"):
@@ -21,42 +41,48 @@ def criterion(result="PASS"):
     return item
 
 
-def profile(role="SELF_REVIEW", independence="NONE", author="agent://1", reviewer="agent://1"):
-    return {
-        "review_profile": {
-            "common_protocol": {
-                "ref": "repo://common-reviewer@exact",
-                "version": "1.0",
-                "digest": DIGEST,
-            },
-            "project_protocol": {
-                "ref": "issue://project-review",
-                "digest": DIGEST,
-            },
-            "role": role,
-            "author_principal": author,
-            "review_principal": reviewer,
-            "principal_independence": independence,
-            "context_reset": "FRESH_REVIEW_ATTEMPT",
-            "common_criteria": {
-                f"CR-{index:02d}": criterion()
-                for index in range(1, 11)
-            },
-            "project_method_ids": ["PROJECT-METHOD-1"],
-            "unresolved_required_findings": 0,
-            "final_candidate": CANDIDATE,
-            "result": "COMPLETE",
-        }
+def profile(
+    role="SELF_REVIEW",
+    independence="NONE",
+    author="agent://1",
+    reviewer="agent://1",
+    final_candidate=CANDIDATE,
+):
+    review = {
+        "common_protocol": {
+            "ref": "repo://common-reviewer@exact",
+            "version": "1.0",
+            "digest": PROFILE_DIGEST,
+        },
+        "project_protocol": {
+            "ref": "issue://project-review",
+            "digest": PROFILE_DIGEST,
+        },
+        "role": role,
+        "author_principal": author,
+        "review_principal": reviewer,
+        "principal_independence": independence,
+        "context_reset": "FRESH_REVIEW_ATTEMPT",
+        "common_criteria": {
+            f"CR-{index:02d}": criterion()
+            for index in range(1, 11)
+        },
+        "project_method_ids": ["PROJECT-METHOD-1"],
+        "unresolved_required_findings": 0,
+        "result": "COMPLETE",
     }
+    if final_candidate is not None:
+        review["final_candidate"] = final_candidate
+    return {"review_profile": review}
 
 
-def self_context():
+def self_context(manifest_digest, manifest_ref="manifest://1"):
     return {
         "schema_version": "SELF_CHECK_CONTEXT_V1",
         "authority": "SOLO_SELF_CHECK_CONTEXT",
         "candidate_sha": CANDIDATE,
-        "manifest_ref": "manifest://1",
-        "manifest_digest": DIGEST,
+        "manifest_ref": manifest_ref,
+        "manifest_digest": manifest_digest,
         "principal": {
             "kind": "SOLO_PRINCIPAL",
             "identity": "agent://1",
@@ -65,10 +91,14 @@ def self_context():
             "blindness_claim": "NONE",
         },
         "reconstruction_policy": {
-            "original_task_ref": "issue://537",
+            "original_task_ref": "issue://574",
             "base_sha": BASE,
             "candidate_sha": CANDIDATE,
-            "repository_context_refs": ["repo://base", "repo://candidate"],
+            "repository_context_refs": [
+                "repo://base",
+                "repo://candidate",
+                "repo://common-reviewer",
+            ],
             "expectation_manifest_frozen": True,
             "author_reasoning_used_as_evidence": False,
             "coder_confidence_used_as_evidence": False,
@@ -79,13 +109,18 @@ def self_context():
     }
 
 
-def review_context(kind="SAME_PRINCIPAL_FRESH_CONTEXT", independence="DEGRADED", identity="agent://1"):
+def review_context(
+    manifest_digest,
+    kind="SAME_PRINCIPAL_FRESH_CONTEXT",
+    independence="DEGRADED",
+    identity="agent://1",
+):
     return {
         "schema_version": "REVIEW_CONTEXT_V1",
         "authority": "FRESH_REVIEW_CONTEXT",
         "candidate_sha": CANDIDATE,
         "manifest_ref": "manifest://1",
-        "manifest_digest": DIGEST,
+        "manifest_digest": manifest_digest,
         "reviewer": {
             "kind": kind,
             "identity": identity,
@@ -93,7 +128,7 @@ def review_context(kind="SAME_PRINCIPAL_FRESH_CONTEXT", independence="DEGRADED",
             "fresh_context": True,
         },
         "context_policy": {
-            "original_task_ref": "issue://537",
+            "original_task_ref": "issue://574",
             "base_sha": BASE,
             "candidate_sha": CANDIDATE,
             "repository_context_refs": ["repo://base", "repo://candidate"],
@@ -110,22 +145,124 @@ def review_context(kind="SAME_PRINCIPAL_FRESH_CONTEXT", independence="DEGRADED",
 
 
 class ReviewBasisTests(unittest.TestCase):
-    def test_solo_self_review_basis_is_valid(self):
-        self.assertEqual(review_basis_errors(profile(), self_context()), [])
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.repo = Path(cls.tmp.name)
+        manifest_dir = cls.repo / "manifests"
+        manifest_dir.mkdir(parents=True)
+        payload = {
+            "schema_version": "TEST_EXPECTATION_MANIFEST_V1",
+            "authority": "FROZEN_TEST_EXPECTATIONS",
+            "claims": ["fresh reconstruction", "exact candidate"],
+        }
+        cls.manifest_digest = canonical_digest(payload)
+        manifest = dict(payload)
+        manifest["manifest_digest"] = cls.manifest_digest
+        (manifest_dir / "frozen.yaml").write_text(
+            yaml.safe_dump(manifest, sort_keys=False),
+            encoding="utf-8",
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def basis(self):
+        return {
+            "original_task_ref": "issue://574",
+            "base_sha": BASE,
+            "candidate_sha": CANDIDATE,
+            "manifest_ref": "manifest://1",
+            "manifest_path": "manifests/frozen.yaml",
+            "manifest_digest": self.manifest_digest,
+            "repository_context_refs": [
+                "repo://base",
+                "repo://candidate",
+                "repo://common-reviewer",
+            ],
+        }
+
+    def self_errors(self, ctx=None, prof=None, basis=None):
+        return review_basis_errors(
+            prof or profile(),
+            ctx or self_context(self.manifest_digest),
+            self.basis() if basis is None else basis,
+            self.repo,
+        )
+
+    def test_scx10_clean_solo_self_review_context_is_valid_basis_only(self):
+        errors = self.self_errors()
+        self.assertEqual([], errors)
+        self.assertIsInstance(errors, list)
+
+    def test_self_review_requires_source_bound_governing_basis(self):
+        errors = review_basis_errors(
+            profile(),
+            self_context(self.manifest_digest),
+        )
+        self.assertTrue(
+            any("source-bound governing basis" in error for error in errors),
+            errors,
+        )
+
+    def test_self_review_requires_exact_final_candidate_binding(self):
+        errors = review_basis_errors(
+            profile(final_candidate=None),
+            self_context(self.manifest_digest),
+            self.basis(),
+            self.repo,
+        )
+        self.assertTrue(
+            any("exact final_candidate binding" in error for error in errors),
+            errors,
+        )
 
     def test_self_review_requires_self_check_context(self):
-        errors = review_basis_errors(profile(), review_context())
-        self.assertTrue(any("SELF_CHECK_CONTEXT_V1" in error for error in errors), errors)
+        errors = review_basis_errors(
+            profile(),
+            review_context(self.manifest_digest),
+        )
+        self.assertTrue(
+            any("SELF_CHECK_CONTEXT_V1" in error for error in errors),
+            errors,
+        )
 
-    def test_self_review_cannot_claim_degraded_independence(self):
-        value = profile(independence="DEGRADED")
-        errors = review_basis_errors(value, self_context())
-        self.assertTrue(errors)
+    def test_scx01_independence_inflation_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["principal"]["principal_independence"] = "DEGRADED"
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any(
+                "principal_independence" in error
+                or "NONE" in error
+                for error in errors
+            ),
+            errors,
+        )
 
-    def test_self_check_rejects_author_reasoning_as_evidence(self):
-        ctx = self_context()
+    def test_scx02_fake_blindness_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["principal"]["blindness_claim"] = "BLINDED_REVIEW"
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any("blindness_claim" in error or "blinded" in error for error in errors),
+            errors,
+        )
+
+    def test_scx03_candidate_mismatch_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["candidate_sha"] = "e" * 40
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any("candidate_sha" in error for error in errors),
+            errors,
+        )
+
+    def test_scx04_author_reasoning_as_evidence_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
         ctx["reconstruction_policy"]["author_reasoning_used_as_evidence"] = True
-        errors = review_basis_errors(profile(), ctx)
+        errors = self.self_errors(ctx=ctx)
         self.assertTrue(
             any(
                 "author_reasoning_used_as_evidence" in error
@@ -135,9 +272,121 @@ class ReviewBasisTests(unittest.TestCase):
             errors,
         )
 
+    def test_scx05_coder_confidence_as_evidence_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["coder_confidence_used_as_evidence"] = True
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any(
+                "coder_confidence_used_as_evidence" in error
+                or "coder confidence" in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_scx06_prior_self_check_as_evidence_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["prior_self_check_used_as_evidence"] = True
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any(
+                "prior_self_check_used_as_evidence" in error
+                or "prior self-check" in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_scx07_no_fresh_reconstruction_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["principal"]["fresh_reconstruction"] = False
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any(
+                "fresh_reconstruction" in error
+                or "fresh reconstruction" in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_scx08_schema_valid_stale_manifest_binding_is_rejected_source_bound(self):
+        ctx = self_context("f" * 64)
+        self.assertEqual([], validate_assessment_context(ctx))
+        errors = review_basis_errors(
+            profile(),
+            ctx,
+            self.basis(),
+            self.repo,
+        )
+        self.assertTrue(
+            any("manifest_digest" in error for error in errors),
+            errors,
+        )
+
+    def test_scx08_basis_digest_must_match_actual_frozen_manifest(self):
+        basis = self.basis()
+        basis["manifest_digest"] = "f" * 64
+        errors = validate_self_check_basis(basis, self.repo)
+        self.assertTrue(
+            any("declared digest" in error for error in errors),
+            errors,
+        )
+
+    def test_scx09_wrong_candidate_effective_profile_is_rejected(self):
+        errors = self.self_errors(
+            prof=profile(final_candidate="e" * 40),
+        )
+        self.assertTrue(
+            any("profile final_candidate" in error for error in errors),
+            errors,
+        )
+
+    def test_wrong_task_binding_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["original_task_ref"] = "issue://wrong"
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any("original_task_ref" in error for error in errors),
+            errors,
+        )
+
+    def test_wrong_base_binding_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["base_sha"] = "b" * 40
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any("base_sha" in error for error in errors),
+            errors,
+        )
+
+    def test_missing_required_repository_context_is_rejected(self):
+        ctx = self_context(self.manifest_digest)
+        ctx["reconstruction_policy"]["repository_context_refs"].remove(
+            "repo://common-reviewer"
+        )
+        errors = self.self_errors(ctx=ctx)
+        self.assertTrue(
+            any("missing governing refs" in error for error in errors),
+            errors,
+        )
+
+    def test_basis_rejects_unknown_field(self):
+        basis = self.basis()
+        basis["engineering_pass"] = True
+        errors = validate_self_check_basis(basis, self.repo)
+        self.assertTrue(any("unknown fields" in error for error in errors), errors)
+
     def test_same_principal_reviewer_must_be_degraded(self):
         value = profile(role="REVIEWER", independence="DEGRADED")
-        self.assertEqual(review_basis_errors(value, review_context()), [])
+        self.assertEqual(
+            review_basis_errors(
+                value,
+                review_context(self.manifest_digest),
+            ),
+            [],
+        )
 
     def test_distinct_reviewer_requires_distinct_identity(self):
         value = profile(
@@ -146,6 +395,7 @@ class ReviewBasisTests(unittest.TestCase):
             reviewer="agent://2",
         )
         ctx = review_context(
+            self.manifest_digest,
             kind="DISTINCT_PRINCIPAL",
             independence="DISTINCT",
             identity="agent://2",
@@ -154,17 +404,32 @@ class ReviewBasisTests(unittest.TestCase):
 
     def test_distinct_claim_with_same_identity_is_rejected(self):
         value = profile(role="REVIEWER", independence="DISTINCT_PRINCIPAL")
-        errors = review_basis_errors(value, review_context(
-            kind="DISTINCT_PRINCIPAL",
-            independence="DISTINCT",
-        ))
-        self.assertTrue(any("distinct principal identities" in error for error in errors), errors)
+        errors = review_basis_errors(
+            value,
+            review_context(
+                self.manifest_digest,
+                kind="DISTINCT_PRINCIPAL",
+                independence="DISTINCT",
+            ),
+        )
+        self.assertTrue(
+            any("distinct principal identities" in error for error in errors),
+            errors,
+        )
 
     def test_required_pass_needs_evidence(self):
         value = profile()
         value["review_profile"]["common_criteria"]["CR-05"].pop("evidence_refs")
-        errors = review_basis_errors(value, self_context())
-        self.assertTrue(any("CR-05: PASS requires" in error for error in errors), errors)
+        errors = review_basis_errors(
+            value,
+            self_context(self.manifest_digest),
+            self.basis(),
+            self.repo,
+        )
+        self.assertTrue(
+            any("CR-05: PASS requires" in error for error in errors),
+            errors,
+        )
 
     def test_not_applicable_needs_basis(self):
         value = profile()
@@ -172,21 +437,30 @@ class ReviewBasisTests(unittest.TestCase):
             "applicability": "NOT_APPLICABLE",
             "result": "NOT_APPLICABLE",
         }
-        errors = review_basis_errors(value, self_context())
-        self.assertTrue(any("applicability_basis" in error for error in errors), errors)
+        errors = review_basis_errors(
+            value,
+            self_context(self.manifest_digest),
+            self.basis(),
+            self.repo,
+        )
+        self.assertTrue(
+            any("applicability_basis" in error for error in errors),
+            errors,
+        )
 
     def test_complete_cannot_hide_not_run_required_criterion(self):
         value = profile()
         value["review_profile"]["common_criteria"]["CR-08"] = criterion("NOT_RUN")
-        errors = review_basis_errors(value, self_context())
-        self.assertTrue(any("COMPLETE review requires PASS" in error for error in errors), errors)
-
-    def test_candidate_mismatch_is_rejected(self):
-        ctx = self_context()
-        ctx["candidate_sha"] = "e" * 40
-        ctx["reconstruction_policy"]["candidate_sha"] = "e" * 40
-        errors = review_basis_errors(profile(), ctx)
-        self.assertTrue(any("profile final_candidate" in error for error in errors), errors)
+        errors = review_basis_errors(
+            value,
+            self_context(self.manifest_digest),
+            self.basis(),
+            self.repo,
+        )
+        self.assertTrue(
+            any("COMPLETE review requires PASS" in error for error in errors),
+            errors,
+        )
 
 
 if __name__ == "__main__":
