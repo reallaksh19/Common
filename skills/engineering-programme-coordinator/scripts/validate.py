@@ -74,6 +74,8 @@ SCHEMAS = {
     "verdict-projection",
     "phase2-self-review-qualification-source",
     "phase2-self-review-qualification-result",
+    "deterministic-evidence-gate-source",
+    "deterministic-evidence-gate-result",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
