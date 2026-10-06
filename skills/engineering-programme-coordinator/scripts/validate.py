@@ -9,6 +9,10 @@ from authority_resolver import validate_authority_resolution
 from current_state import validate_current_state
 from evidence_freshness import validate_evidence_freshness
 from execution_kernel import semantic_errors as execution_state_semantic_errors
+from l0_task_obligations import (
+    validate_manifest as validate_l0_manifest,
+    validate_source as validate_l0_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -32,6 +36,8 @@ SCHEMAS = {
     "current-state",
     "authority-resolution",
     "evidence-freshness",
+    "l0-task-contract-source",
+    "l0-task-obligation-manifest",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -47,6 +53,7 @@ def main() -> None:
     parser.add_argument("--observed-at")
     parser.add_argument("--freshness-request")
     parser.add_argument("--phase1-replay-request")
+    parser.add_argument("--l0-source")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
@@ -93,6 +100,19 @@ def main() -> None:
         errors = validate_phase1_replay(
             value,
             replay_request,
+            Path(args.path).name,
+        )
+    elif args.schema == "l0-task-contract-source":
+        errors = validate_l0_source(value, Path(args.path).name)
+    elif args.schema == "l0-task-obligation-manifest":
+        l0_source = (
+            load_yaml(Path(args.l0_source))
+            if args.l0_source
+            else None
+        )
+        errors = validate_l0_manifest(
+            value,
+            l0_source,
             Path(args.path).name,
         )
     else:

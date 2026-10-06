@@ -1,0 +1,128 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-l0-task-contract-source-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - one_primary_outcome
+  - contract_claims
+  - forbidden_outcomes
+  - dependency_requirements
+  - non_goals
+properties:
+  schema_version:
+    const: L0_TASK_CONTRACT_SOURCE_V1
+  authority:
+    const: CHILD_CONTRACT_PROJECTION
+  identity:
+    type: object
+    additionalProperties: false
+    required:
+      - programme_or_parent_id
+      - parent_ref
+      - task_id
+      - child_ref
+      - contract_version
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id:
+        type: string
+        pattern: '^PRD-[A-Za-z0-9._-]+$'
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  one_primary_outcome: {type: string, minLength: 1}
+  contract_claims:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/contract_claim'}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  dependency_requirements:
+    type: array
+    items: {$ref: '#/$defs/dependency'}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+$defs:
+  contract_claim:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - severity
+      - claim
+      - expected_observation
+      - plausible_green_but_wrong
+      - oracle_refs
+      - evidence_required
+    properties:
+      id: {type: string, minLength: 1}
+      severity:
+        enum: [CRITICAL, HIGH, NORMAL]
+      claim: {$ref: '#/$defs/claim'}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      oracle_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      evidence_required:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/evidence_requirement'}
+  claim:
+    type: object
+    additionalProperties: false
+    required: [type, statement, subject_refs]
+    properties:
+      type:
+        enum:
+          - BEHAVIOR
+          - INVARIANT
+          - PRESERVATION
+          - COMPATIBILITY
+          - AUTHORITY
+          - NEGATIVE_OUTCOME
+      statement: {type: string, minLength: 1}
+      subject_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  evidence_requirement:
+    type: object
+    additionalProperties: false
+    required: [id, method, independence, oracle_ref]
+    properties:
+      id: {type: string, minLength: 1}
+      method:
+        enum:
+          - UNIT_TEST
+          - INTEGRATION_TEST
+          - PROPERTY_TEST
+          - CONTRACT_TEST
+          - STATIC_ANALYSIS
+          - RUNTIME_TRACE
+          - SCHEMA_CHECK
+          - FAULT_INJECTION
+          - MANUAL_REVIEW
+          - OTHER
+      independence:
+        const: PRECOMMITTED
+      oracle_ref: {type: string, minLength: 1}
+  dependency:
+    type: object
+    additionalProperties: false
+    required: [producer, required_state, exact_result_ref]
+    properties:
+      producer: {type: string, minLength: 1}
+      required_state: {type: string, minLength: 1}
+      exact_result_ref: {type: string, minLength: 1}
