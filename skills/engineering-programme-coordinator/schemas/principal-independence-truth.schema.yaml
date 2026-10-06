@@ -1,0 +1,106 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-principal-independence-truth-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - candidate_sha
+  - source
+  - review_mode
+  - review_role
+  - principals
+  - separation
+  - compatibility
+  - oracle_independence
+  - authority_boundaries
+  - truth_digest
+properties:
+  schema_version:
+    const: PRINCIPAL_INDEPENDENCE_TRUTH_V1
+  authority:
+    const: DERIVED_PRINCIPAL_IDENTITY_TRUTH
+  candidate_sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  source:
+    type: object
+    additionalProperties: false
+    required:
+      - profile_identity_digest
+      - context_identity_digest
+      - profile_input_independence
+      - context_input_independence
+    properties:
+      profile_identity_digest: {$ref: '#/$defs/digest'}
+      context_identity_digest: {$ref: '#/$defs/digest'}
+      profile_input_independence:
+        enum: [NONE, DEGRADED, DISTINCT_PRINCIPAL]
+      context_input_independence:
+        enum: [NONE, DEGRADED, DISTINCT]
+  review_mode:
+    enum: [SELF_REVIEW, GOVERNED_REVIEW]
+  review_role:
+    enum: [SELF_REVIEW, REVIEWER, SUPER_REVIEWER]
+  principals:
+    type: object
+    additionalProperties: false
+    required: [author, reviewer, relationship, principal_independence]
+    properties:
+      author: {type: string, minLength: 1}
+      reviewer: {type: string, minLength: 1}
+      relationship:
+        enum: [SAME_PRINCIPAL, DISTINCT_PRINCIPAL]
+      principal_independence:
+        enum: [NONE, DISTINCT_PRINCIPAL]
+  separation:
+    type: object
+    additionalProperties: false
+    required: [fresh_context, fresh_role_boundary, methodological_independence]
+    properties:
+      fresh_context: {const: true}
+      fresh_role_boundary:
+        enum:
+          - NOT_APPLICABLE
+          - SAME_PRINCIPAL_FRESH_ROLE
+          - DISTINCT_PRINCIPAL_ROLE
+      methodological_independence:
+        enum:
+          - FRESH_RECONSTRUCTION_ONLY
+          - DISTINCT_PRINCIPAL_AND_FRESH_RECONSTRUCTION
+  compatibility:
+    type: object
+    additionalProperties: false
+    required: [legacy_degraded_input_consumed, legacy_labels_are_authority]
+    properties:
+      legacy_degraded_input_consumed: {type: boolean}
+      legacy_labels_are_authority: {const: false}
+  oracle_independence:
+    type: object
+    additionalProperties: false
+    required: [derived_from_principal_identity, project_oracle_requirement_preserved]
+    properties:
+      derived_from_principal_identity: {const: false}
+      project_oracle_requirement_preserved: {const: true}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - emits_independent_review_verdict
+      - emits_engineering_pass
+      - emits_evidence_gate_decision
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      emits_independent_review_verdict: {const: false}
+      emits_engineering_pass: {const: false}
+      emits_evidence_gate_decision: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  truth_digest: {$ref: '#/$defs/digest'}
+$defs:
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
