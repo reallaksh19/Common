@@ -259,6 +259,31 @@ class ProviderMutationTests(unittest.TestCase):
         errors = validate_provider_mutation(value)
         self.assertTrue(any("requires resource_kind PULL_REQUEST" in error for error in errors), errors)
 
+    def test_merge_is_one_shot_mutation_of_existing_pull_request(self):
+        value = transaction(
+            "MUTATE_EXISTING_ONCE",
+            "MERGE_PULL_REQUEST",
+            "PULL_REQUEST",
+        )
+        key = value["identity"]["canonical_key"]
+        value["lookup"] = {
+            "performed": True,
+            "matches": [{"provider_id": "pr://547", "canonical_key": key}],
+        }
+        set_derived(value)
+        self.assertEqual(value["next_action"]["type"], "MUTATE_ONCE")
+        self.assertEqual(validate_provider_mutation(value), [])
+
+    def test_merge_cannot_target_synthetic_merge_resource(self):
+        value = transaction(
+            "MUTATE_EXISTING_ONCE",
+            "MERGE_PULL_REQUEST",
+            "MERGE",
+        )
+        set_derived(value)
+        errors = validate_provider_mutation(value)
+        self.assertTrue(errors)
+
     def test_operation_mutation_class_must_match(self):
         value = transaction(
             "CREATE_ONCE",
