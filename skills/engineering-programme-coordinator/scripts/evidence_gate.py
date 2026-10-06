@@ -34,6 +34,14 @@ INPUT_KEYS = (
     "principal_truth",
 )
 
+BOUNDARY_REF_PREFIXES = (
+    "owner://",
+    "authority://",
+    "provider://",
+    "external://",
+    "protected://",
+)
+
 
 def canonical_bytes(value: Any) -> bytes:
     return json.dumps(
@@ -54,11 +62,41 @@ def object_digest(value: dict[str, Any], field: str) -> str:
     return canonical_digest(payload)
 
 
+def source_semantic_errors(value: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    seen_subjects: set[str] = set()
+    for row in value["local_resolution"]:
+        subject_ref = row["subject_ref"]
+        if subject_ref in seen_subjects:
+            errors.append(
+                "local_resolution subject_ref values must be unique; "
+                f"duplicate {subject_ref!r}"
+            )
+        seen_subjects.add(subject_ref)
+
+        if row["state"] == "LOCAL_RESOLUTION_EXHAUSTED":
+            boundary_ref = row["boundary_ref"]
+            if not isinstance(boundary_ref, str) or not boundary_ref.startswith(
+                BOUNDARY_REF_PREFIXES
+            ):
+                errors.append(
+                    f"{subject_ref}: exhausted local resolution requires an "
+                    "owner://, authority://, provider://, external://, or "
+                    "protected:// boundary_ref"
+                )
+    return errors
+
+
 def validate_source(
     value: Any,
     label: str = "deterministic-evidence-gate-source",
 ) -> list[str]:
-    return schema_validate("deterministic-evidence-gate-source", value, label)
+    errors = schema_validate("deterministic-evidence-gate-source", value, label)
+    if errors:
+        return errors
+    if not isinstance(value, dict):
+        return [f"{label}: gate source must be an object"]
+    return [f"{label}: {error}" for error in source_semantic_errors(value)]
 
 
 def _actual_bindings(
@@ -329,19 +367,22 @@ def _all_unresolved_exhausted(
     source: dict[str, Any],
     unresolved_refs: list[str],
 ) -> bool:
-    records = {
-        row["subject_ref"]: row
-        for row in source["local_resolution"]
-    }
     if not unresolved_refs:
         return False
     for ref in unresolved_refs:
-        row = records.get(ref)
-        if row is None:
+        matches = [
+            row
+            for row in source["local_resolution"]
+            if row["subject_ref"] == ref
+        ]
+        if len(matches) != 1:
             return False
+        row = matches[0]
         if row["state"] != "LOCAL_RESOLUTION_EXHAUSTED":
             return False
         if not row["evidence_refs"] or not row["boundary_ref"]:
+            return False
+        if not row["boundary_ref"].startswith(BOUNDARY_REF_PREFIXES):
             return False
     return True
 
@@ -363,20 +404,62 @@ def compile_gate(
     principal_truth: Any,
     repo_root: Path,
 ) -> dict[str, Any]:
-    source_errors = validate_source(source)
-    if source_errors:
-        raise ValueError("; ".join(source_errors))
-
-    actual = _actual_bindings(
-        verdict_projection,
-        self_check_context,
-        governing_basis,
-        profile,
-        expectation_freeze,
-        project_falsification,
-        principal_truth,
+    source_shape_errors = schema_validate(
+        "deterministic-evidence-gate-source",
+        source,
+        "deterministic-evidence-gate-source",
     )
 
+    try:
+        actual = _actual_bindings(
+            verdict_projection,
+            self_check_context,
+            governing_basis,
+            profile,
+            expectation_freeze,
+            project_falsification,
+            principal_truth,
+        )
+        candidate_sha = source["candidate"]["sha"]
+        source["inputs"]
+        source["local_resolution"]
+    except (KeyError, TypeError) as exc:
+        raise ValueError(
+            "gate source is not structurally readable enough to emit a safe disposition"
+        ) from exc
+
+    if source_shape_errors:
+        return _checked_result(
+            _result(
+                source,
+                actual,
+                "REPLAY",
+                ["SOURCE_REPLAY_INVALID"],
+                [
+                    f"source-shape://{index + 1}"
+                    for index in range(len(source_shape_errors))
+                ],
+                [],
+            )
+        )
+
+    source_semantic = source_semantic_errors(source)
+    if source_semantic:
+        return _checked_result(
+            _result(
+                source,
+                actual,
+                "REPLAY",
+                ["SOURCE_REPLAY_INVALID"],
+                [
+                    f"source-semantic://{index + 1}"
+                    for index in range(len(source_semantic))
+                ],
+                [],
+            )
+        )
+
+    _ = candidate_sha
     binding_errors, candidate_mismatch = _source_binding_errors(source, actual)
     if binding_errors:
         reasons = ["SOURCE_REPLAY_INVALID"]
