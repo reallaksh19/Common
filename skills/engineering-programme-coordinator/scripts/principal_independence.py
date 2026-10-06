@@ -140,7 +140,7 @@ def compile_truth(
             raise ValueError("SELF_REVIEW requires fresh reconstruction")
         review_mode = "SELF_REVIEW"
         canonical_independence = "NONE"
-        fresh_role_boundary = "NOT_APPLICABLE"
+        context_separation = "SELF_CHECK_FRESH_RECONSTRUCTION"
         methodological = "FRESH_RECONSTRUCTION_ONLY"
     else:
         if context["schema_version"] != "REVIEW_CONTEXT_V1":
@@ -167,7 +167,7 @@ def compile_truth(
                     "same-principal governed review requires legacy DEGRADED context input"
                 )
             canonical_independence = "NONE"
-            fresh_role_boundary = "SAME_PRINCIPAL_FRESH_ROLE"
+            context_separation = "GOVERNED_SAME_PRINCIPAL_FRESH_CONTEXT"
             methodological = "FRESH_RECONSTRUCTION_ONLY"
             legacy_degraded = True
         else:
@@ -184,7 +184,7 @@ def compile_truth(
                     "distinct-principal governed review requires legacy DISTINCT context input"
                 )
             canonical_independence = "DISTINCT_PRINCIPAL"
-            fresh_role_boundary = "DISTINCT_PRINCIPAL_ROLE"
+            context_separation = "GOVERNED_DISTINCT_PRINCIPAL_FRESH_CONTEXT"
             methodological = "DISTINCT_PRINCIPAL_AND_FRESH_RECONSTRUCTION"
 
     result = {
@@ -211,8 +211,8 @@ def compile_truth(
         },
         "separation": {
             "fresh_context": True,
-            "fresh_role_boundary": fresh_role_boundary,
-            "methodological_independence": methodological,
+            "context_separation": context_separation,
+            "methodological_separation": methodological,
         },
         "compatibility": {
             "legacy_degraded_input_consumed": legacy_degraded,
@@ -250,14 +250,14 @@ def truth_semantic_errors(value: dict[str, Any]) -> list[str]:
             "canonical principal_independence does not match principal identity truth"
         )
     if principals["principal_independence"] == "NONE" and value["separation"][
-        "methodological_independence"
+        "methodological_separation"
     ] != "FRESH_RECONSTRUCTION_ONLY":
         errors.append(
             "same-principal truth may record only fresh-reconstruction methodological separation"
         )
     if (
         principals["principal_independence"] == "DISTINCT_PRINCIPAL"
-        and value["separation"]["methodological_independence"]
+        and value["separation"]["methodological_separation"]
         != "DISTINCT_PRINCIPAL_AND_FRESH_RECONSTRUCTION"
     ):
         errors.append(
@@ -269,20 +269,20 @@ def truth_semantic_errors(value: dict[str, Any]) -> list[str]:
             errors.append("SELF_REVIEW mode requires SELF_REVIEW role")
         if not same:
             errors.append("SELF_REVIEW mode must be same principal")
-        if value["separation"]["fresh_role_boundary"] != "NOT_APPLICABLE":
-            errors.append("SELF_REVIEW must not fabricate a separate role boundary")
+        if value["separation"]["context_separation"] != "SELF_CHECK_FRESH_RECONSTRUCTION":
+            errors.append("SELF_REVIEW must record self-check fresh reconstruction context")
         if value["compatibility"]["legacy_degraded_input_consumed"]:
             errors.append("SELF_REVIEW cannot consume legacy DEGRADED label")
     else:
         if value["review_role"] not in {"REVIEWER", "SUPER_REVIEWER"}:
             errors.append("GOVERNED_REVIEW requires REVIEWER or SUPER_REVIEWER role")
-        expected_boundary = (
-            "SAME_PRINCIPAL_FRESH_ROLE"
+        expected_context = (
+            "GOVERNED_SAME_PRINCIPAL_FRESH_CONTEXT"
             if same
-            else "DISTINCT_PRINCIPAL_ROLE"
+            else "GOVERNED_DISTINCT_PRINCIPAL_FRESH_CONTEXT"
         )
-        if value["separation"]["fresh_role_boundary"] != expected_boundary:
-            errors.append("governed-review role boundary does not match identity truth")
+        if value["separation"]["context_separation"] != expected_context:
+            errors.append("governed-review context separation does not match identity truth")
         if same and not value["compatibility"]["legacy_degraded_input_consumed"]:
             errors.append(
                 "same-principal governed review must expose consumed DEGRADED compatibility input"
