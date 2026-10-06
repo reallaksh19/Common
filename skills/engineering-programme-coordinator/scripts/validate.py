@@ -21,6 +21,10 @@ from l2_diff_impact import (
     validate_manifest as validate_l2_manifest,
     validate_source as validate_l2_source,
 )
+from exact_candidate_evidence import (
+    validate_ledger as validate_exact_evidence_ledger,
+    validate_source as validate_exact_evidence_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -50,6 +54,8 @@ SCHEMAS = {
     "l1-baseline-obligation-manifest",
     "l2-impact-source",
     "l2-impact-obligation-manifest",
+    "exact-candidate-evidence-source",
+    "exact-candidate-evidence-ledger",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -68,6 +74,7 @@ def main() -> None:
     parser.add_argument("--l0-source")
     parser.add_argument("--l1-source")
     parser.add_argument("--l2-source")
+    parser.add_argument("--evidence-source")
     parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
@@ -156,6 +163,20 @@ def main() -> None:
             value,
             l2_source,
             Path(args.repo_root).resolve() if l2_source is not None else None,
+            Path(args.path).name,
+        )
+    elif args.schema == "exact-candidate-evidence-source":
+        errors = validate_exact_evidence_source(value, Path(args.path).name)
+    elif args.schema == "exact-candidate-evidence-ledger":
+        evidence_source = (
+            load_yaml(Path(args.evidence_source))
+            if args.evidence_source
+            else None
+        )
+        errors = validate_exact_evidence_ledger(
+            value,
+            evidence_source,
+            Path(args.repo_root).resolve() if evidence_source is not None else None,
             Path(args.path).name,
         )
     else:
