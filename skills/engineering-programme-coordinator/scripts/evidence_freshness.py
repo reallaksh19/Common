@@ -534,6 +534,47 @@ def derive_evidence_freshness(
     return result
 
 
+def validate_evidence_freshness(
+    value: Any,
+    request: Any,
+    label: str = "evidence-freshness",
+) -> list[str]:
+    errors = schema_validate("evidence-freshness", value, label)
+    if errors:
+        return errors
+    if not isinstance(value, dict):
+        return [f"{label}: evidence freshness projection must be an object"]
+    errors = [f"{label}: {error}" for error in semantic_errors(value)]
+
+    if not isinstance(request, dict):
+        errors.append(f"{label}: evidence freshness validation requires source request")
+        return errors
+
+    expected = {
+        "evidence_bindings",
+        "current",
+        "ledger_ref",
+        "required_method_ids",
+        "method_material_inputs",
+        "method_rerun_policy",
+    }
+    if set(request) != expected:
+        errors.append(f"{label}: source request has unexpected/missing fields")
+        return errors
+
+    try:
+        derived = derive_evidence_freshness(**copy.deepcopy(request))
+    except Exception as exc:
+        errors.append(f"{label}: source request replay failed: {exc}")
+        return errors
+
+    if value != derived:
+        errors.append(
+            f"{label}: stored freshness projection must exactly equal source-request derivation"
+        )
+    return errors
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Derive exact-candidate evidence freshness without mutating historical evidence."
