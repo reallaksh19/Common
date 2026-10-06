@@ -144,7 +144,7 @@ class ShadowRolloutTests(unittest.TestCase):
         value = observation()
         value["production_effect"] = "BLOCK"
         errors = validate_observation(value)
-        self.assertTrue(any("NONE was expected" in error for error in errors), errors)
+        self.assertTrue(any("'NONE' was expected" in error for error in errors), errors)
 
     def test_summary_counts_without_composite_score(self):
         samples = [
