@@ -117,11 +117,58 @@ properties:
     properties:
       state: {enum: [NOT_GRANTED, OWNER_GRANTED]}
       authority_ref: {type: [string, 'null']}
-  next_single_action: {type: string, minLength: 1}
+  next_single_action:
+    type: object
+    additionalProperties: false
+    required:
+      - type
+      - reason_code
+      - basis_refs
+      - execution_state_ref
+      - execution_state_digest
+    properties:
+      type:
+        enum:
+          - STOPPED
+          - RECONCILE
+          - WAIT_DEPENDENCY
+          - IMPLEMENT
+          - VERIFY_CANDIDATE
+          - REPAIR_CANDIDATE
+          - ESCALATE
+          - REQUEST_STAGE_ADVANCE
+      reason_code: {type: string, minLength: 1}
+      basis_refs:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      execution_state_ref: {type: string, minLength: 1}
+      execution_state_digest:
+        type: string
+        pattern: '^[0-9a-f]{64}
+  source_refs:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+
   forbidden_next_actions:
     type: array
     uniqueItems: true
-    items: {type: string, minLength: 1}
+    items:
+      enum:
+        - STOPPED
+        - RECONCILE
+        - WAIT_DEPENDENCY
+        - IMPLEMENT
+        - VERIFY_CANDIDATE
+        - REPAIR_CANDIDATE
+        - ESCALATE
+        - REQUEST_STAGE_ADVANCE
   source_refs:
     type: array
     minItems: 1
