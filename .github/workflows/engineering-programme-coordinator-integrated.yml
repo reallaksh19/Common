@@ -58,6 +58,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/local_v11_integrated.py \
             skills/engineering-programme-coordinator/scripts/production_readiness.py \
             skills/engineering-programme-coordinator/scripts/execution_kernel.py \
+            skills/engineering-programme-coordinator/scripts/proof_obligations.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -89,6 +90,20 @@ jobs:
           assert execution['$id'] == 'engineering-programme-coordinator-execution-state-v1'
           assert execution['properties']['schema_version']['const'] == 'EXECUTION_STATE_V1'
           assert execution['properties']['authority']['const'] == 'CANONICAL_EXECUTION_STATE'
+
+          manifest = yaml.safe_load(
+              (root / 'proof-obligation-manifest.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert manifest['$id'] == 'engineering-programme-coordinator-proof-obligation-manifest-v1'
+          assert manifest['properties']['schema_version']['const'] == 'PROOF_OBLIGATION_MANIFEST_V1'
+          assert manifest['properties']['authority']['const'] == 'FROZEN_EXPECTATION_MANIFEST'
+
+          ledger = yaml.safe_load(
+              (root / 'evidence-ledger.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert ledger['$id'] == 'engineering-programme-coordinator-evidence-ledger-v1'
+          assert ledger['properties']['schema_version']['const'] == 'EVIDENCE_LEDGER_V1'
+          assert ledger['properties']['authority']['const'] == 'EXACT_CANDIDATE_EVIDENCE_LEDGER'
           PY
 
       - name: Run coordinator regressions

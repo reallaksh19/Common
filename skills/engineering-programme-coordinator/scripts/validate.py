@@ -7,6 +7,10 @@ from pathlib import Path
 from coordlib import load_yaml, validate
 from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
+from proof_obligations import (
+    ledger_semantic_errors,
+    manifest_semantic_errors,
+)
 
 
 SCHEMAS = {
@@ -19,6 +23,8 @@ SCHEMAS = {
     "relay-handover",
     "production-readiness",
     "execution-state",
+    "proof-obligation-manifest",
+    "evidence-ledger",
 }
 
 
@@ -31,6 +37,7 @@ def main() -> None:
     path = Path(args.path)
     value = load_yaml(path)
     errors = validate(args.schema, value, path.name)
+
     if not errors and args.schema == "production-readiness":
         errors.extend(
             f"{path.name}: {error}"
@@ -41,6 +48,17 @@ def main() -> None:
             f"{path.name}: {error}"
             for error in execution_state_semantic_errors(value)
         )
+    if not errors and args.schema == "proof-obligation-manifest":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in manifest_semantic_errors(value)
+        )
+    if not errors and args.schema == "evidence-ledger":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in ledger_semantic_errors(value)
+        )
+
     if errors:
         for error in errors:
             print(error)
