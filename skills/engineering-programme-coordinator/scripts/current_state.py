@@ -120,21 +120,40 @@ def execution_binding_errors(
 
     candidate = value["candidate"]
     execution_repo = execution_state.get("repository") or {}
+    execution_identity = execution_state.get("identity") or {}
+
+    if value["parent"]["programme_or_parent_id"] != execution_identity.get("parent"):
+        errors.append(
+            "CURRENT_STATE parent identity must equal execution-state parent identity"
+        )
+    if value["parent"]["main_sha"] != execution_repo.get("target_sha"):
+        errors.append(
+            "CURRENT_STATE parent.main_sha must equal execution-state target_sha"
+        )
+    if value["active"]["prd_id"] != execution_identity.get("responsibility"):
+        errors.append(
+            "CURRENT_STATE active.prd_id must equal execution-state responsibility"
+        )
+    if value["active"]["attempt"] != execution_identity.get("attempt"):
+        errors.append(
+            "CURRENT_STATE active.attempt must equal execution-state attempt"
+        )
+
     if candidate["state"] == "ACTIVE":
-        if candidate["head_sha"] != execution_repo.get("candidate_sha"):
-            errors.append(
-                "ACTIVE CURRENT_STATE candidate head_sha must equal execution-state candidate_sha"
-            )
+        expected_pairs = (
+            ("branch", execution_repo.get("branch")),
+            ("pr", execution_repo.get("pr")),
+            ("base_sha", execution_repo.get("target_sha")),
+            ("head_sha", execution_repo.get("candidate_sha")),
+        )
+        for field, expected in expected_pairs:
+            if candidate[field] != expected:
+                errors.append(
+                    f"ACTIVE CURRENT_STATE candidate {field} must equal execution-state repository value"
+                )
     elif execution_repo.get("candidate_sha") is not None:
         errors.append(
             "CURRENT_STATE candidate NONE conflicts with execution-state candidate_sha"
-        )
-
-    if value["active"]["prd_id"] != (
-        (execution_state.get("identity") or {}).get("responsibility")
-    ):
-        errors.append(
-            "CURRENT_STATE active.prd_id must equal execution-state responsibility"
         )
 
     return errors
