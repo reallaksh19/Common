@@ -9,6 +9,7 @@ from authority_resolver import validate_authority_resolution
 from current_state import validate_current_state
 from evidence_freshness import validate_evidence_freshness
 from execution_kernel import semantic_errors as execution_state_semantic_errors
+from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
 from review_basis import (
@@ -31,6 +32,7 @@ SCHEMAS = {
     "current-state",
     "authority-resolution",
     "evidence-freshness",
+    "phase1-runtime-replay",
     "review-context",
     "self-check-context",
 }
@@ -44,6 +46,7 @@ def main() -> None:
     parser.add_argument("--local-bundle")
     parser.add_argument("--observed-at")
     parser.add_argument("--freshness-request")
+    parser.add_argument("--phase1-replay-request")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
@@ -79,6 +82,17 @@ def main() -> None:
         errors = validate_evidence_freshness(
             value,
             freshness_request,
+            Path(args.path).name,
+        )
+    elif args.schema == "phase1-runtime-replay":
+        replay_request = (
+            load_yaml(Path(args.phase1_replay_request))
+            if args.phase1_replay_request
+            else None
+        )
+        errors = validate_phase1_replay(
+            value,
+            replay_request,
             Path(args.path).name,
         )
     else:
