@@ -105,27 +105,10 @@ def derive_next_action(state: dict[str, Any]) -> dict[str, Any]:
             verification.get("expectation_manifest_ref") or "state://expectation-manifest",
         )
 
-    unresolved = verification["unresolved_critical"]
-    refuted = [row for row in unresolved if row["state"] == "REFUTED"]
-    if refuted:
-        return _capability_or_reconcile(
-            allowed,
-            "REPAIR_CANDIDATE",
-            "REPAIR_CANDIDATE",
-            "REPAIR_REQUIRED",
-            *(f"obligation://{row['id']}" for row in refuted),
-        )
-
-    unknown = [row for row in unresolved if row["state"] == "UNKNOWN"]
-    if unknown:
-        return _capability_or_reconcile(
-            allowed,
-            "RUN_VERIFICATION",
-            "VERIFY_CANDIDATE",
-            "CRITICAL_UNKNOWN",
-            *(f"obligation://{row['id']}" for row in unknown),
-        )
-
+    # Once evidence is CURRENT and bound to the exact candidate, the deterministic
+    # evidence gate is the single disposition selector. Visible unresolved critical
+    # rows remain semantic consistency inputs, but they must not pre-empt a current
+    # gate decision (for example, a source-valid ESCALATE after local exhaustion).
     gate = verification["gate"]
     disposition = gate["disposition"]
     gate_ref = gate.get("result_ref") or "state://evidence-gate"
@@ -258,11 +241,31 @@ def semantic_errors(state: dict[str, Any]) -> list[str]:
         if not gate_ref or not gate_digest:
             errors.append("evidence-gate result requires result_ref and result_digest")
 
+    refuted = [row for row in unresolved if row["state"] == "REFUTED"]
+    unknown = [row for row in unresolved if row["state"] == "UNKNOWN"]
+
     if gate_disposition == "ADVANCE_ELIGIBLE":
         if evidence_state != "CURRENT" or evidence_sha != candidate_sha:
             errors.append("ADVANCE_ELIGIBLE requires CURRENT exact-candidate evidence")
         if unresolved:
             errors.append("ADVANCE_ELIGIBLE cannot coexist with unresolved critical obligations")
+
+    if gate_disposition in {"REPLAY", "ESCALATE"} and refuted:
+        errors.append(
+            f"{gate_disposition} cannot coexist with critical REFUTED obligations; "
+            "current gate must select REPAIR"
+        )
+
+    if gate_disposition == "ESCALATE" and evidence_state != "CURRENT":
+        errors.append("ESCALATE requires CURRENT exact-candidate evidence")
+
+    if gate_disposition == "REPAIR" and evidence_state != "CURRENT":
+        errors.append("REPAIR requires CURRENT exact-candidate evidence")
+
+    # UNKNOWN is compatible with either REPLAY (local work remains) or ESCALATE
+    # (local exhaustion is proven by the source-bound gate compiler). The compact
+    # execution projection intentionally does not duplicate that exhaustion record.
+    _ = unknown
 
     derived = derive_next_action(state)
     stored = state["next_action"]
