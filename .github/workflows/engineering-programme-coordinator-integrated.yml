@@ -203,6 +203,7 @@ jobs:
           assert result['provider_attestation']['live_verified'] is True
           assert result['provider_attestation']['comments_verified'] == 6
           assert result['provider_attestation']['workflow_runs_verified'] == 4
+          assert result['provider_attestation']['protocol_trees_verified'] is True
           assert result['production_readiness']['components']['real_artifact_horizontal_integration']['state'] == 'VERIFIED'
           assert result['production_readiness']['production_mode'] == 'OFF'
           assert 'P1I-REAL-ARTIFACT-MISSING' not in {
