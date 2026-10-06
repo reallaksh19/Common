@@ -76,6 +76,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/exact_candidate_evidence.py \
             skills/engineering-programme-coordinator/scripts/repair_replay.py \
             skills/engineering-programme-coordinator/scripts/verdict_policy.py \
+            skills/engineering-programme-coordinator/scripts/phase2_self_review_qualification.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -234,6 +235,13 @@ jobs:
           assert verdict_source['properties']['authority']['const'] == 'EVIDENCE_VERDICT_POLICY_INPUT'
           assert verdict_projection['$id'] == 'engineering-programme-coordinator-verdict-projection-v1'
           assert verdict_projection['properties']['authority']['const'] == 'EVIDENCE_VERDICT_AND_CRITICALITY_PROJECTION'
+
+          phase2_source = yaml.safe_load((root / 'phase2-self-review-qualification-source.schema.yaml').read_text())
+          phase2_result = yaml.safe_load((root / 'phase2-self-review-qualification-result.schema.yaml').read_text())
+          assert phase2_source['$id'] == 'engineering-programme-coordinator-phase2-self-review-qualification-source-v1'
+          assert phase2_source['properties']['authority']['const'] == 'PHASE2_SELF_REVIEW_QUALIFICATION_INPUT'
+          assert phase2_result['$id'] == 'engineering-programme-coordinator-phase2-self-review-qualification-result-v1'
+          assert phase2_result['properties']['authority']['const'] == 'PHASE2_SELF_REVIEW_QUALIFICATION_EVIDENCE'
           PY
 
       - name: Run integrated-mode regressions
@@ -804,6 +812,85 @@ jobs:
           assert value['authority_boundaries']['emits_evidence_gate_decision'] is False
           print('P2-S6 verdict projection: PASS')
           print('P2-S6 projection digest:', value['projection_digest'])
+          PY
+
+      - name: Attest P2-I source and complete Phase-2 predecessor chain
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, sys, urllib.request
+          sys.path.insert(0, 'skills/engineering-programme-coordinator/scripts')
+          from coordlib import load_yaml
+          from phase2_self_review_qualification import canonical_digest, extract_precommitted_source
+
+          def get(url):
+              req = urllib.request.Request(
+                  url,
+                  headers={'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'User-Agent': 'Common-P2-I-attestation'},
+              )
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response)
+
+          issue = get('https://api.github.com/repos/reallaksh19/Common/issues/571')
+          live = extract_precommitted_source(issue['body'])
+          retained = load_yaml(pathlib.Path(
+              'skills/engineering-programme-coordinator/references/p2-i-self-review-qualification-source.yaml'
+          ))
+          assert live == retained
+          assert canonical_digest(live) == '817adca790051a23acc890f9d01e7fafba1d4f3a68a6490f88e06410cb5caa60'
+
+          chain = [
+              (558, 559, '5a0077c9342938192f8d2861e9b9faaba106aedc'),
+              (560, 561, 'f120ffe43070e7bdbfe5658d02acd1edf5a5a232'),
+              (562, 563, '7bc9340343f7a50b056717e73fc5b8e776332b61'),
+              (564, 565, '44c779bafdabe20637270f6e34a3b865f584a26e'),
+              (566, 567, 'b47f16746a2f9029e7dcd7f523536046a847dc67'),
+              (568, 569, '84637339da809c81b1486e9fad15b095071884fb'),
+          ]
+          for issue_no, pr_no, merge_sha in chain:
+              child = get(f'https://api.github.com/repos/reallaksh19/Common/issues/{issue_no}')
+              pull = get(f'https://api.github.com/repos/reallaksh19/Common/pulls/{pr_no}')
+              assert child['state'] == 'closed'
+              assert '[COMPLETE]' in child['title']
+              assert pull['merged'] is True
+              assert pull['merge_commit_sha'] == merge_sha
+          assert retained['target']['sha'] == chain[-1][2]
+          print('P2-I live source + Phase-2 predecessor chain attestation: PASS')
+          PY
+
+      - name: Run Phase-2 self-review qualification regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_phase2_self_review_qualification.py' -v
+
+      - name: Compile and validate P2-I retained-real mutation qualification
+        run: |
+          python skills/engineering-programme-coordinator/scripts/phase2_self_review_qualification.py compile \
+            skills/engineering-programme-coordinator/references/p2-i-self-review-qualification-source.yaml \
+            --repo-root . --output /tmp/p2-i-qualification.yaml
+          python skills/engineering-programme-coordinator/scripts/validate.py \
+            phase2-self-review-qualification-result /tmp/p2-i-qualification.yaml \
+            --phase2-qualification-source skills/engineering-programme-coordinator/references/p2-i-self-review-qualification-source.yaml \
+            --repo-root .
+          python - <<'PY'
+          import pathlib, yaml
+          value = yaml.safe_load(pathlib.Path('/tmp/p2-i-qualification.yaml').read_text())
+          assert value['qualification_status'] == 'QUALIFIED'
+          assert len(value['clean_replay']) == 6
+          assert all(row['replay_clean'] for row in value['clean_replay'])
+          assert len(value['mutation_cases']) == 6
+          assert all(row['shallow_green'] for row in value['mutation_cases'])
+          assert all(row['semantic_rejected'] for row in value['mutation_cases'])
+          assert value['accounting']['seeded_detected'] == 6
+          assert value['accounting']['seeded_missed'] == 0
+          assert value['accounting']['clean_false_blocks'] == 0
+          assert value['historical_lanes']['monolithic_synthetic_candidate'] is False
+          assert value['authority_boundaries']['emits_engineering_pass'] is False
+          assert value['authority_boundaries']['emits_independent_review'] is False
+          assert value['authority_boundaries']['emits_evidence_gate_decision'] is False
+          print('P2-I retained-real green-but-wrong qualification: PASS')
+          print('P2-I result digest:', value['result_digest'])
           PY
 
       - name: Run authenticated retained real-artifact replay
