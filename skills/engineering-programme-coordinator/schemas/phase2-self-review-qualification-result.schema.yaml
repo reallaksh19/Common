@@ -1,0 +1,102 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-phase2-self-review-qualification-result-v1
+type: object
+additionalProperties: false
+required: [schema_version, authority, identity, source, target, historical_lanes, clean_replay, mutation_cases, accounting, qualification_status, authority_boundaries, result_digest]
+properties:
+  schema_version: {const: PHASE2_SELF_REVIEW_QUALIFICATION_RESULT_V1}
+  authority: {const: PHASE2_SELF_REVIEW_QUALIFICATION_EVIDENCE}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {const: PRD-527-P2-I}
+      child_ref: {const: SELF:PRD-527-P2-I}
+      contract_version: {const: P2-I-v1}
+  source:
+    type: object
+    additionalProperties: false
+    required: [digest]
+    properties:
+      digest: {$ref: '#/$defs/digest'}
+  target:
+    type: object
+    additionalProperties: false
+    required: [repository, ref, sha]
+    properties:
+      repository: {const: reallaksh19/Common}
+      ref: {const: main}
+      sha: {$ref: '#/$defs/sha'}
+  historical_lanes:
+    type: object
+    additionalProperties: false
+    required: [pr522_stages, pr565_stages, monolithic_synthetic_candidate]
+    properties:
+      pr522_stages: {const: [P2-S1, P2-S2, P2-S3, P2-S4, P2-S6]}
+      pr565_stages: {const: [P2-S5]}
+      monolithic_synthetic_candidate: {const: false}
+  clean_replay:
+    type: array
+    minItems: 6
+    maxItems: 6
+    items: {$ref: '#/$defs/clean_stage'}
+  mutation_cases:
+    type: array
+    minItems: 6
+    maxItems: 6
+    items: {$ref: '#/$defs/mutation_case'}
+  accounting:
+    type: object
+    additionalProperties: false
+    required: [clean_controls, clean_false_blocks, seeded_green_but_wrong, seeded_detected, seeded_missed, shallow_green_seeded]
+    properties:
+      clean_controls: {const: 1}
+      clean_false_blocks: {const: 0}
+      seeded_green_but_wrong: {const: 6}
+      seeded_detected: {const: 6}
+      seeded_missed: {const: 0}
+      shallow_green_seeded: {const: 6}
+  qualification_status: {enum: [QUALIFIED, FAILED]}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required: [consumes_retained_real_artifacts, applies_seed_overlays_in_memory_only, mutates_retained_artifacts, emits_engineering_pass, emits_independent_review, emits_evidence_gate_decision, performs_lifecycle_advance, grants_merge_authority, grants_production_cutover]
+    properties:
+      consumes_retained_real_artifacts: {const: true}
+      applies_seed_overlays_in_memory_only: {const: true}
+      mutates_retained_artifacts: {const: false}
+      emits_engineering_pass: {const: false}
+      emits_independent_review: {const: false}
+      emits_evidence_gate_decision: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  result_digest: {$ref: '#/$defs/digest'}
+$defs:
+  sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
+  clean_stage:
+    type: object
+    additionalProperties: false
+    required: [stage, replay_clean, artifact_digest]
+    properties:
+      stage: {enum: [P2-S1, P2-S2, P2-S3, P2-S4, P2-S5, P2-S6]}
+      replay_clean: {const: true}
+      artifact_digest: {$ref: '#/$defs/digest'}
+  mutation_case:
+    type: object
+    additionalProperties: false
+    required: [id, stage, shallow_green, semantic_rejected, detector, rejection_errors]
+    properties:
+      id: {type: string, minLength: 1}
+      stage: {enum: [P2-S1, P2-S2, P2-S3, P2-S4, P2-S5, P2-S6]}
+      shallow_green: {const: true}
+      semantic_rejected: {const: true}
+      detector: {type: string, minLength: 1}
+      rejection_errors:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
