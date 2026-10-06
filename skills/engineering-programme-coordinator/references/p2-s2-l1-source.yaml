@@ -1,0 +1,57 @@
+schema_version: L1_BASELINE_SOURCE_V1
+authority: BASELINE_SELECTION_CONTRACT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S2
+  child_ref: SELF:PRD-527-P2-S2
+  contract_version: P2-S2-v1
+base:
+  ref: main
+  sha: 5a0077c9342938192f8d2861e9b9faaba106aedc
+selectors:
+  - id: L1-PRESERVE-L0-CONTRACT-CLOSED
+    severity: CRITICAL
+    preservation_kind: PRESERVATION
+    path: skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+    pointer: /additionalProperties
+    evidence_requirement:
+      id: REQ-L1-CONTRACT-CLOSED
+      method: SCHEMA_CHECK
+  - id: L1-PRESERVE-L0-SOURCE-AUTHORITY
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+    pointer: /properties/authority/const
+    evidence_requirement:
+      id: REQ-L1-SOURCE-AUTHORITY
+      method: SCHEMA_CHECK
+  - id: L1-PRESERVE-L0-MANIFEST-AUTHORITY
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+    pointer: /properties/authority/const
+    evidence_requirement:
+      id: REQ-L1-MANIFEST-AUTHORITY
+      method: SCHEMA_CHECK
+  - id: L1-PRESERVE-L0-CANDIDATE-NONCONSUMPTION
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+    pointer: /properties/authority_boundaries/properties/consumes_candidate_state/const
+    evidence_requirement:
+      id: REQ-L1-CANDIDATE-NONCONSUMPTION
+      method: SCHEMA_CHECK
+forbidden_outcomes:
+  - candidate SHA or candidate diff influences L1 extraction
+  - current working-tree value substitutes for the declared exact base object
+  - missing selector or missing base object is silently omitted
+  - duplicate obligation or evidence-requirement IDs are accepted
+  - aggregate PASS or Reviewer confidence is emitted by the L1 extractor
+non_goals:
+  - L2 candidate-diff impact analysis
+  - exact-candidate evidence ledger
+  - repair invalidation/final-candidate replay
+  - verdict or waiver policy
+  - Reviewer/Super-Reviewer implementation
+  - production-mode transition
