@@ -143,7 +143,6 @@ $defs:
           - PRESERVATION
           - COMPATIBILITY
           - AUTHORITY
-          - IMPACT
           - NEGATIVE_OUTCOME
       statement: {type: string, minLength: 1}
       subject_refs:
