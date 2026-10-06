@@ -17,6 +17,10 @@ from l1_baseline_obligations import (
     validate_manifest as validate_l1_manifest,
     validate_source as validate_l1_source,
 )
+from l2_diff_impact import (
+    validate_manifest as validate_l2_manifest,
+    validate_source as validate_l2_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -44,6 +48,8 @@ SCHEMAS = {
     "l0-task-obligation-manifest",
     "l1-baseline-source",
     "l1-baseline-obligation-manifest",
+    "l2-impact-source",
+    "l2-impact-obligation-manifest",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -61,6 +67,7 @@ def main() -> None:
     parser.add_argument("--phase1-replay-request")
     parser.add_argument("--l0-source")
     parser.add_argument("--l1-source")
+    parser.add_argument("--l2-source")
     parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
@@ -135,6 +142,20 @@ def main() -> None:
             value,
             l1_source,
             Path(args.repo_root).resolve() if l1_source is not None else None,
+            Path(args.path).name,
+        )
+    elif args.schema == "l2-impact-source":
+        errors = validate_l2_source(value, Path(args.path).name)
+    elif args.schema == "l2-impact-obligation-manifest":
+        l2_source = (
+            load_yaml(Path(args.l2_source))
+            if args.l2_source
+            else None
+        )
+        errors = validate_l2_manifest(
+            value,
+            l2_source,
+            Path(args.repo_root).resolve() if l2_source is not None else None,
             Path(args.path).name,
         )
     else:
