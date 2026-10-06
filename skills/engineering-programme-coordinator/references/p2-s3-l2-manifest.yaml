@@ -1,0 +1,196 @@
+schema_version: L2_IMPACT_OBLIGATION_MANIFEST_V1
+authority: DIFF_DERIVED_IMPACT_EXPECTATIONS
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S3
+  child_ref: SELF:PRD-527-P2-S3
+  contract_version: P2-S3-v1
+source:
+  kind: CANDIDATE_DIFF_SELECTION_CONTRACT
+  digest: 2d7ec848316f2d0f981363e4bc2e2862bf721a05ea3d70f1c5f84be8a814342e
+candidate:
+  repository: reallaksh19/Common
+  pr_number: 522
+  base_ref: prod/512-execution-kernel-v1
+  base_sha: b5cdf39852bd2d403339f4d9ca0f819222f680c7
+  head_ref: prod/512-proof-obligations-v1
+  head_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  diff_mode: NO_RENAMES_PATH_SET
+diff:
+  changed_path_count: 6
+  changed_paths_digest: 7b4d9019add69635a2016d2230abeba155bc1b1c22f5b3598444c67a425132d3
+obligations:
+- id: L2-IMPACT-EB694ABB68D1
+  severity: HIGH
+  claim:
+    type: IMPACT
+    statement: 'Impact for changed path .github/workflows/engineering-programme-coordinator-integrated.yml is UNKNOWN: No precommitted impact rule matched the changed path.'
+    subject_refs:
+    - .github/workflows/engineering-programme-coordinator-integrated.yml
+  expected_observation: The changed path is explicitly reviewed and either mapped to a governed impact rule or retained as unresolved impact uncertainty.
+  plausible_green_but_wrong: An unmatched or ambiguously matched changed path disappears from L2 because the engine guesses or drops it.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/.github/workflows/engineering-programme-coordinator-integrated.yml
+  evidence_required:
+    id: REQ-L2-UNKNOWN-EB694ABB68D1
+    method: MANUAL_REVIEW
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/.github/workflows/engineering-programme-coordinator-integrated.yml
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:M:.github/workflows/engineering-programme-coordinator-integrated.yml
+  impact_classification: UNKNOWN_UNMAPPED
+  matched_rule_ids: []
+  unknown_reason: No precommitted impact rule matched the changed path
+  diff_observation:
+    status: M
+    path: .github/workflows/engineering-programme-coordinator-integrated.yml
+- id: L2-IMPACT-5D3B0FDADE7B
+  severity: CRITICAL
+  claim:
+    type: IMPACT
+    statement: A coordinator schema change may alter accepted, rejected, or authoritative object shape.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/evidence-ledger.schema.yaml
+  expected_observation: Candidate-specific schema validation or contract evidence addresses the changed schema surface.
+  plausible_green_but_wrong: Unrelated tests remain green while the schema accepts or rejects materially different coordinator state.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/schemas/evidence-ledger.schema.yaml
+  evidence_required:
+    id: REQ-L2-SCHEMA-5D3B0FDADE7B
+    method: SCHEMA_CHECK
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/schemas/evidence-ledger.schema.yaml
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:A:skills/engineering-programme-coordinator/schemas/evidence-ledger.schema.yaml
+  impact_classification: KNOWN
+  matched_rule_ids:
+  - L2-RULE-SCHEMA
+  unknown_reason: null
+  diff_observation:
+    status: A
+    path: skills/engineering-programme-coordinator/schemas/evidence-ledger.schema.yaml
+- id: L2-IMPACT-5D991D4D6BC1
+  severity: CRITICAL
+  claim:
+    type: IMPACT
+    statement: A coordinator schema change may alter accepted, rejected, or authoritative object shape.
+    subject_refs:
+    - skills/engineering-programme-coordinator/schemas/proof-obligation-manifest.schema.yaml
+  expected_observation: Candidate-specific schema validation or contract evidence addresses the changed schema surface.
+  plausible_green_but_wrong: Unrelated tests remain green while the schema accepts or rejects materially different coordinator state.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/schemas/proof-obligation-manifest.schema.yaml
+  evidence_required:
+    id: REQ-L2-SCHEMA-5D991D4D6BC1
+    method: SCHEMA_CHECK
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/schemas/proof-obligation-manifest.schema.yaml
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:A:skills/engineering-programme-coordinator/schemas/proof-obligation-manifest.schema.yaml
+  impact_classification: KNOWN
+  matched_rule_ids:
+  - L2-RULE-SCHEMA
+  unknown_reason: null
+  diff_observation:
+    status: A
+    path: skills/engineering-programme-coordinator/schemas/proof-obligation-manifest.schema.yaml
+- id: L2-IMPACT-17D147C9F024
+  severity: HIGH
+  claim:
+    type: IMPACT
+    statement: A coordinator runtime change may alter deterministic control-plane behavior.
+    subject_refs:
+    - skills/engineering-programme-coordinator/scripts/proof_obligations.py
+  expected_observation: Candidate-specific executable tests exercise the changed runtime surface and its relevant negative cases.
+  plausible_green_but_wrong: Static shape checks remain green while runtime behavior changes or silently drops a control invariant.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/scripts/proof_obligations.py
+  evidence_required:
+    id: REQ-L2-RUNTIME-17D147C9F024
+    method: UNIT_TEST
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/scripts/proof_obligations.py
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:A:skills/engineering-programme-coordinator/scripts/proof_obligations.py
+  impact_classification: KNOWN
+  matched_rule_ids:
+  - L2-RULE-RUNTIME
+  unknown_reason: null
+  diff_observation:
+    status: A
+    path: skills/engineering-programme-coordinator/scripts/proof_obligations.py
+- id: L2-IMPACT-2BBF91714371
+  severity: HIGH
+  claim:
+    type: IMPACT
+    statement: A coordinator runtime change may alter deterministic control-plane behavior.
+    subject_refs:
+    - skills/engineering-programme-coordinator/scripts/validate.py
+  expected_observation: Candidate-specific executable tests exercise the changed runtime surface and its relevant negative cases.
+  plausible_green_but_wrong: Static shape checks remain green while runtime behavior changes or silently drops a control invariant.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/scripts/validate.py
+  evidence_required:
+    id: REQ-L2-RUNTIME-2BBF91714371
+    method: UNIT_TEST
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/scripts/validate.py
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:M:skills/engineering-programme-coordinator/scripts/validate.py
+  impact_classification: KNOWN
+  matched_rule_ids:
+  - L2-RULE-RUNTIME
+  unknown_reason: null
+  diff_observation:
+    status: M
+    path: skills/engineering-programme-coordinator/scripts/validate.py
+- id: L2-IMPACT-0B67A6F5B20A
+  severity: NORMAL
+  claim:
+    type: IMPACT
+    statement: A coordinator test-surface change may alter what behavior is exercised without itself proving production behavior.
+    subject_refs:
+    - skills/engineering-programme-coordinator/tests/test_proof_obligations.py
+  expected_observation: Review establishes that changed tests preserve adversarial coverage and do not merely weaken the oracle.
+  plausible_green_but_wrong: Tests are edited to pass while the production defect or missing oracle remains.
+  oracle_refs:
+  - git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/tests/test_proof_obligations.py
+  evidence_required:
+    id: REQ-L2-TEST-SURFACE-0B67A6F5B20A
+    method: MANUAL_REVIEW
+    independence: IMPACT_DERIVED
+    oracle_ref: git-diff://b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7/skills/engineering-programme-coordinator/tests/test_proof_obligations.py
+  source_refs:
+  - git-diff:b5cdf39852bd2d403339f4d9ca0f819222f680c7..ff72a6a8fea215d2dc046655aa6bd9064282d3b7:A:skills/engineering-programme-coordinator/tests/test_proof_obligations.py
+  impact_classification: KNOWN
+  matched_rule_ids:
+  - L2-RULE-TEST-SURFACE
+  unknown_reason: null
+  diff_observation:
+    status: A
+    path: skills/engineering-programme-coordinator/tests/test_proof_obligations.py
+forbidden_outcomes:
+- changed candidate path is silently omitted
+- unmatched changed path is treated as known
+- multiple matching impact rules are silently resolved by rule order
+- working-tree diff substitutes for the declared exact base/head objects
+- implementation evidence, Coder rationale, Reviewer verdict or aggregate PASS influences L2 extraction
+non_goals:
+- L0 contract obligation compilation
+- L1 baseline/preservation extraction
+- exact-candidate evidence ledger
+- repair invalidation/final-candidate replay
+- verdict or waiver policy
+- Reviewer/Super-Reviewer implementation
+- production-mode transition
+authority_boundaries:
+  consumes_candidate_diff: true
+  consumes_implementation_evidence: false
+  consumes_coder_rationale: false
+  consumes_reviewer_verdict: false
+  emits_engineering_pass: false
+  performs_lifecycle_advance: false
+  grants_merge_authority: false
+  grants_production_cutover: false
+manifest_digest: 243e352a0cecaa091fb2258a4fe63918bc04840a1520447fee3676d30a678e45
