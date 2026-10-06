@@ -1,0 +1,74 @@
+schema_version: REPAIR_REPLAY_SOURCE_V1
+authority: EXACT_REPAIR_REPLAY_INPUT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S5
+  child_ref: SELF:PRD-527-P2-S5
+  contract_version: P2-S5-v1
+candidate_lineage:
+  repository: reallaksh19/Common
+  pr_number: 565
+  base_ref: main
+  base_sha: 7bc9340343f7a50b056717e73fc5b8e776332b61
+  initial_ref: prod/527-p2-s4-evidence-ledger
+  initial_sha: 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+  final_ref: prod/527-p2-s4-evidence-ledger
+  final_sha: 616160895f1273321e84d070fdad0dafa2e8da83
+  diff_mode: NO_RENAMES_PATH_SET
+templates:
+  l2_source:
+    path: skills/engineering-programme-coordinator/references/p2-s3-l2-source.yaml
+    digest: 2d7ec848316f2d0f981363e4bc2e2862bf721a05ea3d70f1c5f84be8a814342e
+  l0_manifest:
+    path: skills/engineering-programme-coordinator/references/p2-s1-l0-manifest.yaml
+    digest: 85a05f6c308a5035ecf9308328f2bc13da42536a578de02031a92e53a91012e9
+  l1_manifest:
+    path: skills/engineering-programme-coordinator/references/p2-s2-l1-manifest.yaml
+    digest: 076206cb658d9d1fa9c3950cf1a1741b95987ea24efcc85e2abf72ca5da1aa98
+prior_evidence:
+- evidence_id: EVID-P2S5-INITIAL-COMPILE
+  method: STATIC_ANALYSIS
+  candidate_sha: 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+  refs:
+  - github-actions://reallaksh19/Common/runs/37462046706/jobs/112263758926#step-6
+- evidence_id: EVID-P2S5-INITIAL-SCHEMA
+  method: SCHEMA_CHECK
+  candidate_sha: 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+  refs:
+  - github-actions://reallaksh19/Common/runs/37462046706/jobs/112263758926#step-7
+- evidence_id: EVID-P2S5-INITIAL-SOURCE-ATTESTATION
+  method: OTHER
+  candidate_sha: 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+  refs:
+  - github-actions://reallaksh19/Common/runs/37462046706/jobs/112263758926#step-29
+provider_fixture:
+  initial_run:
+    run_id: 37462046706
+    job_id: 112263758926
+    conclusion: failure
+  final_run:
+    run_id: 37462275044
+    job_id: 112264537730
+    conclusion: success
+  repair_finding_ref: https://github.com/reallaksh19/Common/issues/527#issuecomment-6016045959
+expected_transition:
+  repair_changed_paths:
+  - skills/engineering-programme-coordinator/tests/test_exact_candidate_evidence.py
+  final_changed_path_count: 8
+  final_l2_obligation_count: 8
+  final_closed_obligation_count: 15
+  final_closed_requirement_count: 15
+  prior_evidence_invalidated: 3
+  carried_prior_evidence: 0
+forbidden_outcomes:
+- prior exact-candidate evidence remains current after candidate SHA changes
+- final replay reuses the old candidate L2 manifest or old evidence ledger
+- unchanged changed-path identity is treated as proof that old evidence is current
+- repair invalidation assigns VERIFIED REFUTED UNKNOWN NOT_APPLICABLE WAIVER or aggregate PASS
+- repair replay performs lifecycle advance merge authority or production cutover
+non_goals:
+- evidence verdict semantics or criticality policy
+- Reviewer or Super-Reviewer implementation
+- evidence-gate disposition
+- lifecycle advance merge authority or production-mode transition

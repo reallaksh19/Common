@@ -1,0 +1,125 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-repair-replay-result-v1
+type: object
+additionalProperties: false
+required: [schema_version, authority, identity, source, candidate_lineage, repair_delta, invalidation, initial_l2, final_l2, final_ledger, assertions, authority_boundaries, result_digest]
+properties:
+  schema_version: {const: REPAIR_REPLAY_RESULT_V1}
+  authority: {const: EXACT_REPAIR_REPLAY_PROJECTION}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  source:
+    type: object
+    additionalProperties: false
+    required: [digest]
+    properties:
+      digest: {$ref: '#/$defs/digest'}
+  candidate_lineage:
+    type: object
+    additionalProperties: false
+    required: [repository, pr_number, base_sha, initial_sha, final_sha]
+    properties:
+      repository: {type: string, minLength: 1}
+      pr_number: {type: integer, minimum: 1}
+      base_sha: {$ref: '#/$defs/sha'}
+      initial_sha: {$ref: '#/$defs/sha'}
+      final_sha: {$ref: '#/$defs/sha'}
+  repair_delta:
+    type: object
+    additionalProperties: false
+    required: [changed_path_count, changed_paths_digest, changes]
+    properties:
+      changed_path_count: {type: integer, minimum: 1}
+      changed_paths_digest: {$ref: '#/$defs/digest'}
+      changes:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/change'}
+  invalidation:
+    type: object
+    additionalProperties: false
+    required: [reason, invalidated_evidence_ids, carried_prior_evidence_ids, invalidated_count, carried_count]
+    properties:
+      reason: {const: CANDIDATE_CHANGED}
+      invalidated_evidence_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      carried_prior_evidence_ids:
+        type: array
+        maxItems: 0
+      invalidated_count: {type: integer, minimum: 1}
+      carried_count: {const: 0}
+  initial_l2: {$ref: '#/$defs/l2_summary'}
+  final_l2: {$ref: '#/$defs/l2_summary'}
+  final_ledger:
+    type: object
+    additionalProperties: false
+    required: [ledger_digest, obligation_count, requirement_count, requirements_with_evidence, requirements_without_evidence, evidence_item_count]
+    properties:
+      ledger_digest: {$ref: '#/$defs/digest'}
+      obligation_count: {type: integer, minimum: 1}
+      requirement_count: {type: integer, minimum: 1}
+      requirements_with_evidence: {const: 0}
+      requirements_without_evidence: {type: integer, minimum: 1}
+      evidence_item_count: {const: 0}
+  assertions:
+    type: object
+    additionalProperties: false
+    required: [candidate_changed, repair_descendant, initial_final_changed_paths_equal, initial_final_obligation_ids_equal, initial_final_manifest_digest_differs, final_candidate_exact, no_prior_evidence_carried]
+    properties:
+      candidate_changed: {const: true}
+      repair_descendant: {const: true}
+      initial_final_changed_paths_equal: {type: boolean}
+      initial_final_obligation_ids_equal: {type: boolean}
+      initial_final_manifest_digest_differs: {const: true}
+      final_candidate_exact: {const: true}
+      no_prior_evidence_carried: {const: true}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required: [consumes_repair_lineage, consumes_prior_candidate_evidence, performs_repair_invalidation, replays_final_candidate, assigns_evidence_verdict, applies_criticality_policy, performs_lifecycle_advance, grants_merge_authority, grants_production_cutover]
+    properties:
+      consumes_repair_lineage: {const: true}
+      consumes_prior_candidate_evidence: {const: true}
+      performs_repair_invalidation: {const: true}
+      replays_final_candidate: {const: true}
+      assigns_evidence_verdict: {const: false}
+      applies_criticality_policy: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  result_digest: {$ref: '#/$defs/digest'}
+$defs:
+  sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
+  change:
+    type: object
+    additionalProperties: false
+    required: [status, path]
+    properties:
+      status: {type: string, minLength: 1}
+      path: {type: string, minLength: 1}
+  l2_summary:
+    type: object
+    additionalProperties: false
+    required: [candidate_sha, manifest_digest, changed_path_count, changed_paths_digest, obligation_ids]
+    properties:
+      candidate_sha: {$ref: '#/$defs/sha'}
+      manifest_digest: {$ref: '#/$defs/digest'}
+      changed_path_count: {type: integer, minimum: 1}
+      changed_paths_digest: {$ref: '#/$defs/digest'}
+      obligation_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
