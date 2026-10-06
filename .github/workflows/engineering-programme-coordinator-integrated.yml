@@ -74,6 +74,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/l1_baseline_obligations.py \
             skills/engineering-programme-coordinator/scripts/l2_diff_impact.py \
             skills/engineering-programme-coordinator/scripts/exact_candidate_evidence.py \
+            skills/engineering-programme-coordinator/scripts/repair_replay.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -211,6 +212,20 @@ jobs:
           assert evidence_ledger['$id'] == 'engineering-programme-coordinator-exact-candidate-evidence-ledger-v1'
           assert evidence_ledger['properties']['schema_version']['const'] == 'EXACT_CANDIDATE_EVIDENCE_LEDGER_V1'
           assert evidence_ledger['properties']['authority']['const'] == 'CLOSED_DENOMINATOR_EVIDENCE_ACCOUNTING'
+
+          repair_source = yaml.safe_load(
+              (root / 'repair-replay-source.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert repair_source['$id'] == 'engineering-programme-coordinator-repair-replay-source-v1'
+          assert repair_source['properties']['schema_version']['const'] == 'REPAIR_REPLAY_SOURCE_V1'
+          assert repair_source['properties']['authority']['const'] == 'EXACT_REPAIR_REPLAY_INPUT'
+
+          repair_result = yaml.safe_load(
+              (root / 'repair-replay-result.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert repair_result['$id'] == 'engineering-programme-coordinator-repair-replay-result-v1'
+          assert repair_result['properties']['schema_version']['const'] == 'REPAIR_REPLAY_RESULT_V1'
+          assert repair_result['properties']['authority']['const'] == 'EXACT_REPAIR_REPLAY_PROJECTION'
           PY
 
       - name: Run integrated-mode regressions
@@ -561,6 +576,155 @@ jobs:
           assert ledger['authority_boundaries']['grants_merge_authority'] is False
           assert ledger['authority_boundaries']['grants_production_cutover'] is False
           print('P2-S4 retained closed-denominator projection: PASS')
+          PY
+
+      - name: Fetch exact P2-S5 repair lineage objects
+        run: |
+          git fetch --no-tags --depth=1 origin 7bc9340343f7a50b056717e73fc5b8e776332b61
+          git fetch --no-tags --depth=1 origin 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+          git fetch --no-tags --depth=1 origin 616160895f1273321e84d070fdad0dafa2e8da83
+
+      - name: Attest P2-S5 source, PR565 repair lineage and provider history
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+          import urllib.request
+
+          scripts = pathlib.Path('skills/engineering-programme-coordinator/scripts')
+          sys.path.insert(0, str(scripts))
+          from coordlib import load_yaml
+          from repair_replay import canonical_digest, extract_precommitted_source
+
+          def get_json(url, agent):
+              request = urllib.request.Request(
+                  url,
+                  headers={
+                      'Accept': 'application/vnd.github+json',
+                      'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
+                      'User-Agent': agent,
+                  },
+              )
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  return json.load(response)
+
+          issue = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/issues/566',
+              'Common-P2-S5-source-attestation',
+          )
+          pull = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/pulls/565',
+              'Common-P2-S5-PR565-attestation',
+          )
+          initial_run = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/runs/37462046706',
+              'Common-P2-S5-initial-run-attestation',
+          )
+          initial_job = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/jobs/112263758926',
+              'Common-P2-S5-initial-job-attestation',
+          )
+          final_run = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/runs/37462275044',
+              'Common-P2-S5-final-run-attestation',
+          )
+          final_job = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/actions/jobs/112264537730',
+              'Common-P2-S5-final-job-attestation',
+          )
+          finding = get_json(
+              'https://api.github.com/repos/reallaksh19/Common/issues/comments/6016045959',
+              'Common-P2-S5-finding-attestation',
+          )
+
+          live = extract_precommitted_source(issue['body'])
+          retained = load_yaml(
+              pathlib.Path(
+                  'skills/engineering-programme-coordinator/references/p2-s5-repair-replay-source.yaml'
+              )
+          )
+          assert live == retained
+          assert canonical_digest(live) == '9a5ee85cfb923834641db67b6d1e56cc8825ba70308ab1f101e26e4fb86ba3d6'
+
+          lineage = retained['candidate_lineage']
+          assert pull['base']['sha'] == lineage['base_sha']
+          assert pull['head']['sha'] == lineage['final_sha']
+          assert pull['head']['ref'] == lineage['final_ref']
+          assert pull['head']['repo']['full_name'] == lineage['repository']
+
+          assert initial_run['head_sha'] == lineage['initial_sha']
+          assert initial_run['conclusion'] == 'failure'
+          assert final_run['head_sha'] == lineage['final_sha']
+          assert final_run['conclusion'] == 'success'
+
+          assert initial_job['id'] == 112263758926
+          assert final_job['id'] == 112264537730
+          initial_steps = {step['number']: step for step in initial_job['steps']}
+          final_steps = {step['number']: step for step in final_job['steps']}
+          assert initial_steps[6]['conclusion'] == 'success'
+          assert initial_steps[7]['conclusion'] == 'success'
+          assert initial_steps[29]['conclusion'] == 'success'
+          assert initial_steps[30]['conclusion'] == 'failure'
+          assert final_steps[30]['conclusion'] == 'success'
+          assert final_steps[31]['conclusion'] == 'success'
+          assert 'P2S4-CODER-01' in finding['body']
+          print('P2-S5 live repair lineage + provider history attestation: PASS')
+          PY
+
+      - name: Run repair invalidation and final replay regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_repair_replay.py' -v
+
+      - name: Compile and validate P2-S5 exact final-candidate replay
+        run: |
+          python skills/engineering-programme-coordinator/scripts/repair_replay.py compile \
+            skills/engineering-programme-coordinator/references/p2-s5-repair-replay-source.yaml \
+            --repo-root . \
+            --output /tmp/p2-s5-repair-replay.yaml
+          python skills/engineering-programme-coordinator/scripts/validate.py \
+            repair-replay-result \
+            /tmp/p2-s5-repair-replay.yaml \
+            --repair-source skills/engineering-programme-coordinator/references/p2-s5-repair-replay-source.yaml \
+            --repo-root .
+          python - <<'PY'
+          import pathlib
+          import yaml
+
+          result = yaml.safe_load(
+              pathlib.Path('/tmp/p2-s5-repair-replay.yaml').read_text(encoding='utf-8')
+          )
+          assert result['candidate_lineage']['initial_sha'] == '53c9914be7ec6dd3ab80441eb97056484e20fd1b'
+          assert result['candidate_lineage']['final_sha'] == '616160895f1273321e84d070fdad0dafa2e8da83'
+          assert result['repair_delta']['changed_path_count'] == 1
+          assert result['repair_delta']['changes'] == [{
+              'status': 'M',
+              'path': 'skills/engineering-programme-coordinator/tests/test_exact_candidate_evidence.py',
+          }]
+          assert result['invalidation']['invalidated_count'] == 3
+          assert result['invalidation']['carried_count'] == 0
+          assert result['assertions']['initial_final_changed_paths_equal'] is True
+          assert result['assertions']['initial_final_obligation_ids_equal'] is True
+          assert result['assertions']['initial_final_manifest_digest_differs'] is True
+          assert result['final_l2']['changed_path_count'] == 8
+          assert len(result['final_l2']['obligation_ids']) == 8
+          assert result['final_ledger']['obligation_count'] == 15
+          assert result['final_ledger']['requirement_count'] == 15
+          assert result['final_ledger']['requirements_with_evidence'] == 0
+          assert result['final_ledger']['requirements_without_evidence'] == 15
+          assert result['final_ledger']['evidence_item_count'] == 0
+          assert result['authority_boundaries']['assigns_evidence_verdict'] is False
+          assert result['authority_boundaries']['applies_criticality_policy'] is False
+          assert result['authority_boundaries']['performs_lifecycle_advance'] is False
+          assert result['authority_boundaries']['grants_merge_authority'] is False
+          assert result['authority_boundaries']['grants_production_cutover'] is False
+          print('P2-S5 exact final-candidate replay: PASS')
+          print('P2-S5 result digest:', result['result_digest'])
+          print('P2-S5 initial L2 digest:', result['initial_l2']['manifest_digest'])
+          print('P2-S5 final L2 digest:', result['final_l2']['manifest_digest'])
+          print('P2-S5 final ledger digest:', result['final_ledger']['ledger_digest'])
           PY
 
       - name: Run authenticated retained real-artifact replay
