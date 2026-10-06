@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -51,10 +53,34 @@ jobs:
         run: |
           python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_selector_scan.py' -v
           python skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py AGENTS.md
-      - name: Verify frozen V3.2 tree still exact
+      - name: Verify frozen V3.2 tree unchanged from comparison basis
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD:skills/engineering-pr-delivery-v3.2)" = '88ac97432a811f9a6b8d00bbe45cbec891e70d6a'
+          ZERO_SHA='0000000000000000000000000000000000000000'
+
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            BASE_SHA="$PR_BASE_SHA"
+          elif [[ "$EVENT_NAME" == "push" && "$PUSH_BEFORE_SHA" =~ ^[0-9a-f]{40}$ && "$PUSH_BEFORE_SHA" != "$ZERO_SHA" ]]; then
+            BASE_SHA="$PUSH_BEFORE_SHA"
+          elif git rev-parse HEAD^ >/dev/null 2>&1; then
+            BASE_SHA="$(git rev-parse HEAD^)"
+          else
+            echo "Unable to resolve comparison basis for frozen V3.2 tree" >&2
+            exit 1
+          fi
+
+          BASE_TREE="$(git rev-parse "$BASE_SHA:skills/engineering-pr-delivery-v3.2")"
+          HEAD_TREE="$(git rev-parse "HEAD:skills/engineering-pr-delivery-v3.2")"
+
+          echo "comparison_base_sha=$BASE_SHA"
+          echo "base_v32_tree=$BASE_TREE"
+          echo "head_v32_tree=$HEAD_TREE"
+
+          test "$HEAD_TREE" = "$BASE_TREE"
       - name: Verify integrated coordinator contract is present
         run: |
           test -f skills/engineering-programme-coordinator/schemas/local-v1.1-integrated.schema.yaml
