@@ -29,6 +29,10 @@ from repair_replay import (
     validate_result as validate_repair_replay_result,
     validate_source as validate_repair_replay_source,
 )
+from verdict_policy import (
+    validate_projection as validate_verdict_projection,
+    validate_source as validate_verdict_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -62,6 +66,8 @@ SCHEMAS = {
     "exact-candidate-evidence-ledger",
     "repair-replay-source",
     "repair-replay-result",
+    "verdict-policy-source",
+    "verdict-projection",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -82,6 +88,7 @@ def main() -> None:
     parser.add_argument("--l2-source")
     parser.add_argument("--evidence-source")
     parser.add_argument("--repair-source")
+    parser.add_argument("--verdict-source")
     parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
@@ -198,6 +205,20 @@ def main() -> None:
             value,
             repair_source,
             Path(args.repo_root).resolve() if repair_source is not None else None,
+            Path(args.path).name,
+        )
+    elif args.schema == "verdict-policy-source":
+        errors = validate_verdict_source(value, Path(args.path).name)
+    elif args.schema == "verdict-projection":
+        verdict_source = (
+            load_yaml(Path(args.verdict_source))
+            if args.verdict_source
+            else None
+        )
+        errors = validate_verdict_projection(
+            value,
+            verdict_source,
+            Path(args.repo_root).resolve() if verdict_source is not None else None,
             Path(args.path).name,
         )
     else:

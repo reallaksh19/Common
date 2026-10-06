@@ -1,0 +1,83 @@
+schema_version: VERDICT_POLICY_SOURCE_V1
+authority: EVIDENCE_VERDICT_POLICY_INPUT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S6
+  child_ref: SELF:PRD-527-P2-S6
+  contract_version: P2-S6-v1
+ledger_basis:
+  evidence_source:
+    path: skills/engineering-programme-coordinator/references/p2-s4-evidence-source.yaml
+    digest: 41a70b1580aadc31c278d9659ef785e9ef73eccc7d00ae7e4f4e98761910bd8b
+  evidence_ledger:
+    path: skills/engineering-programme-coordinator/references/p2-s4-evidence-ledger.yaml
+    digest: 3b0fda09e7de65318dfd9346771c6ecde2e1fe06a9157a1741c4cf6fdf36b840
+  candidate:
+    repository: reallaksh19/Common
+    pr_number: 522
+    ref: prod/512-proof-obligations-v1
+    sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+evidence_evaluations:
+- evidence_id: EVID-P2S4-RUNTIME-PROOF
+  requirement_id: REQ-L2-RUNTIME-17D147C9F024
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  outcome: SATISFIES
+  basis_ref: github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-8
+- evidence_id: EVID-P2S4-RUNTIME-VALIDATE
+  requirement_id: REQ-L2-RUNTIME-2BBF91714371
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  outcome: SATISFIES
+  basis_ref: github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-8
+- evidence_id: EVID-P2S4-SCHEMA-LEDGER
+  requirement_id: REQ-L2-SCHEMA-5D3B0FDADE7B
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  outcome: SATISFIES
+  basis_ref: github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-7
+- evidence_id: EVID-P2S4-SCHEMA-MANIFEST
+  requirement_id: REQ-L2-SCHEMA-5D991D4D6BC1
+  candidate_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  outcome: SATISFIES
+  basis_ref: github-actions://reallaksh19/Common/runs/37408270193/jobs/112090640333#step-7
+dispositions: []
+criticality_policy:
+  critical_severity: CRITICAL
+  unresolved_states:
+  - REFUTED
+  - UNKNOWN
+  not_applicable_counts_as_verified: false
+  waiver_counts_as_verified: false
+  waiver_requires_owner_authority: true
+expected_projection:
+  obligation_count: 13
+  state_counts:
+    VERIFIED: 4
+    REFUTED: 0
+    UNKNOWN: 9
+    NOT_APPLICABLE: 0
+    WAIVER: 0
+  critical:
+    obligation_count: 9
+    VERIFIED: 2
+    REFUTED: 0
+    UNKNOWN: 7
+    NOT_APPLICABLE: 0
+    WAIVER: 0
+  unresolved_critical_refuted: 0
+  unresolved_critical_unknown: 7
+  waived_critical: 0
+  not_applicable_critical: 0
+forbidden_outcomes:
+- UNKNOWN counts as VERIFIED
+- NOT_APPLICABLE lacks explicit disposition basis
+- WAIVER lacks explicit Owner authority
+- WAIVER or NOT_APPLICABLE masquerades as VERIFIED
+- evidence for another candidate or undeclared requirement influences verdicts
+- provider evidence is relabelled as Coder-executed evidence
+- verdict projection emits aggregate PASS or evidence-gate disposition
+- verdict projection performs lifecycle advance merge authority or production cutover
+non_goals:
+- repair invalidation or final-candidate replay
+- Reviewer or Super-Reviewer implementation
+- deterministic evidence-gate REPLAY REPAIR ESCALATE ADVANCE_ELIGIBLE
+- lifecycle advance merge authority or production-mode transition
