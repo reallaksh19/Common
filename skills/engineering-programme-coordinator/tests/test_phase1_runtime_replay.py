@@ -99,7 +99,7 @@ def active_native_bundle():
         "coverage_completed": [],
         "fixes_applied": [],
         "regressions_added": [],
-        "education_points": [],
+        "education_points": ["Active rework has no verdict yet; prior accepted evidence remains historical only."],
         "unresolved_internal_defects": [],
         "internal_fixable_defects_remaining": 0,
         "blocking_class": "NONE",
