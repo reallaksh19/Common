@@ -1,0 +1,65 @@
+schema_version: L2_IMPACT_SOURCE_V1
+authority: CANDIDATE_DIFF_SELECTION_CONTRACT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S3
+  child_ref: SELF:PRD-527-P2-S3
+  contract_version: P2-S3-v1
+candidate:
+  repository: reallaksh19/Common
+  pr_number: 522
+  base_ref: prod/512-execution-kernel-v1
+  base_sha: b5cdf39852bd2d403339f4d9ca0f819222f680c7
+  head_ref: prod/512-proof-obligations-v1
+  head_sha: ff72a6a8fea215d2dc046655aa6bd9064282d3b7
+  diff_mode: NO_RENAMES_PATH_SET
+rules:
+- id: L2-RULE-SCHEMA
+  path_glob: skills/engineering-programme-coordinator/schemas/*
+  severity: CRITICAL
+  impact_statement: A coordinator schema change may alter accepted, rejected, or authoritative object shape.
+  expected_observation: Candidate-specific schema validation or contract evidence addresses the changed schema surface.
+  plausible_green_but_wrong: Unrelated tests remain green while the schema accepts or rejects materially different coordinator state.
+  evidence_requirement:
+    id_prefix: REQ-L2-SCHEMA
+    method: SCHEMA_CHECK
+- id: L2-RULE-RUNTIME
+  path_glob: skills/engineering-programme-coordinator/scripts/*
+  severity: HIGH
+  impact_statement: A coordinator runtime change may alter deterministic control-plane behavior.
+  expected_observation: Candidate-specific executable tests exercise the changed runtime surface and its relevant negative cases.
+  plausible_green_but_wrong: Static shape checks remain green while runtime behavior changes or silently drops a control invariant.
+  evidence_requirement:
+    id_prefix: REQ-L2-RUNTIME
+    method: UNIT_TEST
+- id: L2-RULE-TEST-SURFACE
+  path_glob: skills/engineering-programme-coordinator/tests/*
+  severity: NORMAL
+  impact_statement: A coordinator test-surface change may alter what behavior is exercised without itself proving production behavior.
+  expected_observation: Review establishes that changed tests preserve adversarial coverage and do not merely weaken the oracle.
+  plausible_green_but_wrong: Tests are edited to pass while the production defect or missing oracle remains.
+  evidence_requirement:
+    id_prefix: REQ-L2-TEST-SURFACE
+    method: MANUAL_REVIEW
+unknown_policy:
+  severity: HIGH
+  expected_observation: The changed path is explicitly reviewed and either mapped to a governed impact rule or retained as unresolved impact uncertainty.
+  plausible_green_but_wrong: An unmatched or ambiguously matched changed path disappears from L2 because the engine guesses or drops it.
+  evidence_requirement:
+    id_prefix: REQ-L2-UNKNOWN
+    method: MANUAL_REVIEW
+forbidden_outcomes:
+- changed candidate path is silently omitted
+- unmatched changed path is treated as known
+- multiple matching impact rules are silently resolved by rule order
+- working-tree diff substitutes for the declared exact base/head objects
+- implementation evidence, Coder rationale, Reviewer verdict or aggregate PASS influences L2 extraction
+non_goals:
+- L0 contract obligation compilation
+- L1 baseline/preservation extraction
+- exact-candidate evidence ledger
+- repair invalidation/final-candidate replay
+- verdict or waiver policy
+- Reviewer/Super-Reviewer implementation
+- production-mode transition
