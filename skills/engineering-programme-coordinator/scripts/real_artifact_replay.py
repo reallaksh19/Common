@@ -22,6 +22,21 @@ COORDINATOR_ROOT = Path(__file__).resolve().parents[1]
 LOCAL_RUNTIME = ROOT / "Local_PR_Deliverty_v1.1" / "scripts" / "responsibility.py"
 V35_RUNTIME = ROOT / "engineering-pr-delivery-v3.5" / "scripts" / "embedded_coder_v35.py"
 
+EXPECTED_ARTIFACT = {
+    "artifact_id": "P1-I-B-REAL-506-507-SU3",
+    "repository": "reallaksh19/Common",
+    "parent_issue": 506,
+    "child_issue": 507,
+    "pr": 510,
+    "responsibility_task_id": "PRD-506-P0-R1",
+    "nested_engineering_responsibility": "ENG-PRD-506-P0-R1-CODER",
+    "target_sha": "97bbc92f29e0be9e7303ee1031a409f56633db45",
+    "exact_head": "836964b0f82b23f1294d79e3fd48df140baa81f0",
+    "acceptance_epoch_id": "BENCH-506-AE-1",
+    "acceptance_profile_ref": "BENCHMARK-PROJECT-REVIEW-ACCEPTANCE-V1",
+    "acceptance_profile_digest": "222e44d3493b9ba639fddb0c6d3b7d00daaa9ceb3f83c20a4bdc463c0392c94b",
+}
+
 
 class RealArtifactReplayError(ValueError):
     pass
@@ -71,6 +86,26 @@ class GitHubProvider:
             ) from exc
 
 
+def _validate_expected_artifact(manifest: dict[str, Any]) -> None:
+    require(manifest.get("artifact_id") == EXPECTED_ARTIFACT["artifact_id"], "Unexpected retained artifact identity")
+    require(manifest.get("repository") == EXPECTED_ARTIFACT["repository"], "Unexpected retained artifact repository")
+    source = manifest.get("source")
+    require(isinstance(source, dict), "Retained artifact source is missing")
+    for key in [
+        "parent_issue",
+        "child_issue",
+        "pr",
+        "responsibility_task_id",
+        "nested_engineering_responsibility",
+        "target_sha",
+        "exact_head",
+        "acceptance_epoch_id",
+        "acceptance_profile_ref",
+        "acceptance_profile_digest",
+    ]:
+        require(source.get(key) == EXPECTED_ARTIFACT[key], f"Unexpected retained artifact source field: {key}")
+
+
 def _comment_ref(repository: str, issue: int, comment_id: int) -> str:
     return f"https://github.com/{repository}/issues/{issue}#issuecomment-{comment_id}"
 
@@ -86,6 +121,8 @@ def _verify_comment(
     require(value.get("user", {}).get("login") == spec["author"], f"{name}: comment author mismatch")
     require(value.get("created_at") == spec["created_at"], f"{name}: comment created_at mismatch")
     require(value.get("updated_at") == spec["updated_at"], f"{name}: comment was edited after pin")
+    expected_ref = _comment_ref(repository, spec["issue"], spec["id"])
+    require(value.get("html_url") == expected_ref, f"{name}: comment issue/ref mismatch")
     body = value.get("body")
     require(isinstance(body, str), f"{name}: comment body missing")
     for token in spec["required_tokens"]:
@@ -269,7 +306,15 @@ def _current_readiness(
         "note": note,
     }
     replay_ref = "artifact://P1-I-B/real-provider-replay"
-    prior_ref = "https://github.com/reallaksh19/Common/pull/555"
+    phase1_refs = {
+        "r1": "https://github.com/reallaksh19/Common/pull/542",
+        "r2": "https://github.com/reallaksh19/Common/pull/544",
+        "r3a": "https://github.com/reallaksh19/Common/pull/547",
+        "r3b": "https://github.com/reallaksh19/Common/pull/549",
+        "r4": "https://github.com/reallaksh19/Common/pull/551",
+        "r5": "https://github.com/reallaksh19/Common/pull/553",
+        "p1ia": "https://github.com/reallaksh19/Common/pull/555",
+    }
     value = {
         "schema_version": "PRODUCTION_READINESS_V1",
         "authority": "PRODUCTION_READINESS_PROJECTION",
@@ -291,8 +336,8 @@ def _current_readiness(
         },
         "components": {
             "canonical_local_projection": verified([source_refs[0], replay_ref + "#local"]),
-            "active_authority_resolution": verified([prior_ref + "#P1-R4", replay_ref]),
-            "activation_state_derivation": verified([prior_ref + "#P1-R2", replay_ref]),
+            "active_authority_resolution": verified([phase1_refs["r4"], replay_ref]),
+            "activation_state_derivation": verified([phase1_refs["r2"], replay_ref]),
             "role_succession_semantics": conditional(
                 [replay_ref],
                 "Retained slice proves real role/authority records but is not a fresh Local adjacent-role transition qualification.",
@@ -308,8 +353,8 @@ def _current_readiness(
                 )
             ),
             "exact_candidate_verification": verified([source_refs[-2], source_refs[-1], replay_ref]),
-            "provider_idempotency": verified([prior_ref + "#P1-R3A"]),
-            "execution_kernel": verified([prior_ref + "#P1-R2"]),
+            "provider_idempotency": verified([phase1_refs["r3a"]]),
+            "execution_kernel": verified([phase1_refs["r2"]]),
             "proof_obligation_runtime": not_implemented("Phase 2 responsibility."),
             "evidence_gate": not_implemented("Phase 3 responsibility."),
             "shadow_rollout": not_implemented("Phase 4 responsibility."),
@@ -357,6 +402,7 @@ def _run_replay(
         manifest.get("schema_version") == "P1_I_B_REAL_ARTIFACT_MANIFEST_V1",
         "Wrong real-artifact manifest schema",
     )
+    _validate_expected_artifact(manifest)
     repository = manifest["repository"]
     source = manifest["source"]
 
