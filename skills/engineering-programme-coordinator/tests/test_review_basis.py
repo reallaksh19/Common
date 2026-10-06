@@ -126,7 +126,14 @@ class ReviewBasisTests(unittest.TestCase):
         ctx = self_context()
         ctx["reconstruction_policy"]["author_reasoning_used_as_evidence"] = True
         errors = review_basis_errors(profile(), ctx)
-        self.assertTrue(any("author reasoning" in error for error in errors), errors)
+        self.assertTrue(
+            any(
+                "author_reasoning_used_as_evidence" in error
+                or "author reasoning" in error
+                for error in errors
+            ),
+            errors,
+        )
 
     def test_same_principal_reviewer_must_be_degraded(self):
         value = profile(role="REVIEWER", independence="DEGRADED")
