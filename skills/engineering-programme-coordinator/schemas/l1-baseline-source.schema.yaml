@@ -1,0 +1,64 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-l1-baseline-source-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - base
+  - selectors
+  - forbidden_outcomes
+  - non_goals
+properties:
+  schema_version: {const: L1_BASELINE_SOURCE_V1}
+  authority: {const: BASELINE_SELECTION_CONTRACT}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  base:
+    type: object
+    additionalProperties: false
+    required: [ref, sha]
+    properties:
+      ref: {type: string, minLength: 1}
+      sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  selectors:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/selector'}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+$defs:
+  selector:
+    type: object
+    additionalProperties: false
+    required: [id, severity, preservation_kind, path, pointer, evidence_requirement]
+    properties:
+      id: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      preservation_kind: {enum: [PRESERVATION, COMPATIBILITY, AUTHORITY]}
+      path: {type: string, minLength: 1}
+      pointer: {type: string, pattern: '^/'}
+      evidence_requirement:
+        type: object
+        additionalProperties: false
+        required: [id, method]
+        properties:
+          id: {type: string, minLength: 1}
+          method:
+            enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]
