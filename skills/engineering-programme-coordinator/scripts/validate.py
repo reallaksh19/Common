@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from current_state import validate_current_state
 from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -25,6 +26,7 @@ SCHEMAS = {
     "production-readiness",
     "execution-state",
     "provider-mutation",
+    "current-state",
     "review-context",
     "self-check-context",
 }
@@ -34,10 +36,23 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Validate engineering programme coordinator objects.")
     parser.add_argument("schema", choices=sorted(SCHEMAS))
     parser.add_argument("path")
+    parser.add_argument("--execution-state")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
-    errors = validate(args.schema, value, Path(args.path).name)
+    if args.schema == "current-state":
+        execution_state = (
+            load_yaml(Path(args.execution_state))
+            if args.execution_state
+            else None
+        )
+        errors = validate_current_state(
+            value,
+            execution_state,
+            Path(args.path).name,
+        )
+    else:
+        errors = validate(args.schema, value, Path(args.path).name)
     if not errors and args.schema == "production-readiness":
         errors.extend(
             f"{Path(args.path).name}: {error}"
