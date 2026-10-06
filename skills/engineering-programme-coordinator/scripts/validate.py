@@ -60,6 +60,8 @@ def main() -> None:
     parser.add_argument("--freshness-request")
     parser.add_argument("--phase1-replay-request")
     parser.add_argument("--l0-source")
+    parser.add_argument("--l1-source")
+    parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
     value = load_yaml(Path(args.path))
@@ -124,7 +126,17 @@ def main() -> None:
     elif args.schema == "l1-baseline-source":
         errors = validate_l1_source(value, Path(args.path).name)
     elif args.schema == "l1-baseline-obligation-manifest":
-        errors = validate_l1_manifest(value, Path(args.path).name)
+        l1_source = (
+            load_yaml(Path(args.l1_source))
+            if args.l1_source
+            else None
+        )
+        errors = validate_l1_manifest(
+            value,
+            l1_source,
+            Path(args.repo_root).resolve() if l1_source is not None else None,
+            Path(args.path).name,
+        )
     else:
         errors = validate(args.schema, value, Path(args.path).name)
     if not errors and args.schema == "production-readiness":
