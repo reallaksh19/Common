@@ -288,6 +288,9 @@ jobs:
       - name: Run principal-independence truth regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_principal_independence.py' -v
 
+      - name: Run deterministic evidence-gate contract regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_evidence_gate_contract.py' -v
+
       - name: Run production readiness regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_production_readiness.py' -v
 
