@@ -64,6 +64,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/provider_mutation.py \
             skills/engineering-programme-coordinator/scripts/current_state.py \
             skills/engineering-programme-coordinator/scripts/authority_resolver.py \
+            skills/engineering-programme-coordinator/scripts/evidence_freshness.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -124,6 +125,13 @@ jobs:
           assert authority['$id'] == 'engineering-programme-coordinator-authority-resolution-v1'
           assert authority['properties']['schema_version']['const'] == 'AUTHORITY_RESOLUTION_V1'
           assert authority['properties']['authority']['const'] == 'LOCAL_AUTHORITY_RESOLUTION'
+
+          freshness = yaml.safe_load(
+              (root / 'evidence-freshness.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert freshness['$id'] == 'engineering-programme-coordinator-evidence-freshness-v1'
+          assert freshness['properties']['schema_version']['const'] == 'EVIDENCE_FRESHNESS_V1'
+          assert freshness['properties']['authority']['const'] == 'EVIDENCE_FRESHNESS_PROJECTION'
           PY
 
       - name: Run integrated-mode regressions
@@ -146,6 +154,9 @@ jobs:
 
       - name: Run authority-resolver regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_authority_resolver.py' -v
+
+      - name: Run evidence-freshness regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_evidence_freshness.py' -v
 
       - name: Validate Common Reviewer authority boundary
         run: |
