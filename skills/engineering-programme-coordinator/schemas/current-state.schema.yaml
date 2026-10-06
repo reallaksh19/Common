@@ -42,7 +42,8 @@ properties:
         type: string
         pattern: '^PRD-[A-Za-z0-9._-]+$'
       issue_ref: {type: string, minLength: 1}
-      role: {type: string, minLength: 1}
+      role:
+        enum: [CODER, REVIEWER, COORDINATOR, NONE]
       attempt: {type: integer, minimum: 1}
   candidate:
     type: object
