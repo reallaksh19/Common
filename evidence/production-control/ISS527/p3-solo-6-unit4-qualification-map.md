@@ -1,7 +1,8 @@
 # Common #527 / P3-SOLO-6 — Unit 4 falsifier and authority map
 
-Candidate: `728a8f0551171f5c7bb1cfd46974bac7dd6cb3ce`  
+Runtime qualification baseline entering Unit 4: `728a8f0551171f5c7bb1cfd46974bac7dd6cb3ce`  
 Base: `a05db7c57fdacc2f5fcb0e55e300d6d76f70e4cd`  
+Exact self-review candidate: current head of PR #585, frozen by durable SELF_REVIEW_START / SELF_REVIEW_END records and exact-head hosted run identity  
 PR: #585  
 Production mode: OFF
 
@@ -21,7 +22,7 @@ Production mode: OFF
 | EG-10 caller “cannot resolve” shortcut cannot manufacture escalation | gate source schema `test_source_rejects_caller_cannot_resolve_shortcut` plus exhausted-record evidence/boundary requirement |
 | EG-11 same-principal fresh context stays NONE | principal suite `test_pis01_self_review_same_principal_is_none`, `test_pis08_fresh_context_does_not_upgrade_same_principal` |
 | EG-12 legacy DEGRADED is not canonical independence | principal suite `test_pis03_governed_same_principal_degraded_input_canonicalizes_to_none`, `test_pis12_canonical_principal_independence_never_contains_degraded` |
-| EG-13 ADVANCE_ELIGIBLE + unresolved critical -> reject | execution-kernel semantic validation of ADVANCE_ELIGIBLE with unresolved rows |
+| EG-13 ADVANCE_ELIGIBLE + unresolved critical -> reject | `test_advance_eligible_with_unresolved_critical_is_rejected` |
 | EG-14 gate candidate mismatch -> reject/replay | gate compiler `test_candidate_binding_mismatch_replays` + kernel `test_gate_candidate_mismatch_is_rejected` |
 | EG-15 gate cannot contain engineering PASS/lifecycle/merge/cutover authority | contract tests `test_result_rejects_pass_and_legacy_replay_evidence_tokens`, `test_result_rejects_engineering_pass_authority`, `test_result_rejects_lifecycle_merge_and_cutover_authority` |
 | EG-16 current ESCALATE reachable in kernel | `test_gate_escalate_with_unknown_is_reachable` |
