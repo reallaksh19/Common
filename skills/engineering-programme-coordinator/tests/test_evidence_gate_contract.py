@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from coordlib import validate
+from evidence_gate import validate_source
 
 
 CANDIDATE = "c" * 40
@@ -123,6 +124,26 @@ class EvidenceGateContractTests(unittest.TestCase):
         value["local_resolution"][0]["cannot_resolve_locally"] = True
         errors = validate("deterministic-evidence-gate-source", value)
         self.assertTrue(any("Additional properties are not allowed" in error for error in errors), errors)
+
+    def test_source_rejects_duplicate_local_resolution_subject_refs(self):
+        value = source()
+        value["local_resolution"].append(dict(value["local_resolution"][0]))
+        errors = validate_source(value)
+        self.assertTrue(
+            any("subject_ref values must be unique" in error for error in errors),
+            errors,
+        )
+
+    def test_source_rejects_arbitrary_exhaustion_boundary_label(self):
+        value = source()
+        value["local_resolution"][0]["state"] = "LOCAL_RESOLUTION_EXHAUSTED"
+        value["local_resolution"][0]["evidence_refs"] = ["provider://attempts/1"]
+        value["local_resolution"][0]["boundary_ref"] = "caller-says-exhausted"
+        errors = validate("deterministic-evidence-gate-source", value)
+        self.assertTrue(
+            any("does not match" in error or "pattern" in error for error in errors),
+            errors,
+        )
 
     def test_result_accepts_only_canonical_gate_dispositions(self):
         for disposition in ["REPLAY", "REPAIR", "ESCALATE", "ADVANCE_ELIGIBLE"]:
