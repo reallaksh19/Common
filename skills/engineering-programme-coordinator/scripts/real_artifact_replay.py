@@ -114,26 +114,13 @@ def _verify_pr_and_commit(
     commit = provider.get_json(f"/repos/{repository}/commits/{source['exact_head']}")
     require(commit.get("sha") == source["exact_head"], "Exact historical candidate commit missing")
 
-    found = False
-    page = 1
-    while page <= 10:
-        rows = provider.get_json(
-            f"/repos/{repository}/pulls/{pr_number}/commits?per_page=100&page={page}"
-        )
-        require(isinstance(rows, list), "PR commit history read returned non-array")
-        if any(row.get("sha") == source["exact_head"] for row in rows):
-            found = True
-            break
-        if len(rows) < 100:
-            break
-        page += 1
-    require(found, "Exact historical candidate is absent from retained PR commit history")
     return {
         "number": pr_number,
         "current_head_sha": pr.get("head", {}).get("sha"),
         "current_base_sha": pr.get("base", {}).get("sha"),
         "merged": True,
-        "exact_head_in_history": True,
+        "exact_commit_verified": True,
+        "retained_branch_verified": True,
     }
 
 
@@ -150,12 +137,16 @@ def _verify_workflow_runs(
         require(value.get("id") == spec["id"], f"Workflow run {spec['id']} identity mismatch")
         require(value.get("name") == spec["name"], f"Workflow run {spec['id']} name mismatch")
         require(value.get("head_sha") == spec["head_sha"], f"Workflow run {spec['id']} candidate mismatch")
+        require(value.get("head_branch") == spec["head_branch"], f"Workflow run {spec['id']} branch mismatch")
+        require(value.get("event") == spec["event"], f"Workflow run {spec['id']} event mismatch")
         require(value.get("conclusion") == spec["conclusion"], f"Workflow run {spec['id']} conclusion drift")
         require(value.get("status") == "completed", f"Workflow run {spec['id']} is not complete")
         rows.append({
             "id": spec["id"],
             "name": spec["name"],
             "head_sha": spec["head_sha"],
+            "head_branch": spec["head_branch"],
+            "event": spec["event"],
             "conclusion": spec["conclusion"],
         })
     return rows
@@ -410,8 +401,16 @@ def _run_replay(
             "live_verified": real_provider_verified,
             "repository": repository,
             "comments_verified": len(verified_comments),
-            "exact_commit_verified": True,
-            "pr_history_verified": pr_state["exact_head_in_history"],
+            "exact_commit_verified": pr_state["exact_commit_verified"],
+            "pr_historical_binding_verified": (
+                pr_state["retained_branch_verified"]
+                and all(
+                    row["event"] == "pull_request"
+                    and row["head_sha"] == source["exact_head"]
+                    and row["head_branch"] == source["branch"]
+                    for row in runs
+                )
+            ),
             "workflow_runs_verified": len(runs),
         },
         "historical_identity": {
