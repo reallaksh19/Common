@@ -67,6 +67,7 @@ def readiness():
         "production_mode": "OFF",
         "cutover_authorization": {
             "authorized": False,
+            "authorized_mode": None,
             "authority_ref": None,
             "authorized_at": None,
         },
@@ -150,6 +151,7 @@ class ProductionReadinessTests(unittest.TestCase):
         value["production_mode"] = "SHADOW_ONLY"
         value["cutover_authorization"] = {
             "authorized": True,
+            "authorized_mode": "SHADOW_ONLY",
             "authority_ref": "owner://decision/shadow-only",
             "authorized_at": "2026-10-06T05:00:00Z",
         }
@@ -161,6 +163,7 @@ class ProductionReadinessTests(unittest.TestCase):
         value["production_mode"] = "CRITICAL_GATE"
         value["cutover_authorization"] = {
             "authorized": True,
+            "authorized_mode": "CRITICAL_GATE",
             "authority_ref": "owner://decision/critical-gate",
             "authorized_at": "2026-10-06T05:00:00Z",
         }
@@ -172,6 +175,7 @@ class ProductionReadinessTests(unittest.TestCase):
         value["production_mode"] = "CRITICAL_GATE"
         value["cutover_authorization"] = {
             "authorized": True,
+            "authorized_mode": "CRITICAL_GATE",
             "authority_ref": "owner://decision/critical-gate",
             "authorized_at": "2026-10-06T05:00:00Z",
         }
@@ -191,6 +195,7 @@ class ProductionReadinessTests(unittest.TestCase):
         value["production_mode"] = "DEFAULT_GATE"
         value["cutover_authorization"] = {
             "authorized": True,
+            "authorized_mode": "DEFAULT_GATE",
             "authority_ref": "owner://decision/default-gate",
             "authorized_at": "2026-10-06T05:00:00Z",
         }
@@ -214,11 +219,37 @@ class ProductionReadinessTests(unittest.TestCase):
         value["production_mode"] = "DEFAULT_GATE"
         value["cutover_authorization"] = {
             "authorized": True,
+            "authorized_mode": "DEFAULT_GATE",
             "authority_ref": "owner://decision/default-gate",
             "authorized_at": "2026-10-06T05:00:00Z",
         }
         errors = validate_readiness(value)
         self.assertTrue(any("verified shadow_rollout" in error for error in errors), errors)
+
+
+    def test_authorization_is_bound_to_exact_mode(self):
+        value = readiness()
+        verify(CRITICAL_REQUIRED, value)
+        value["production_mode"] = "CRITICAL_GATE"
+        value["cutover_authorization"] = {
+            "authorized": True,
+            "authorized_mode": "SHADOW_ONLY",
+            "authority_ref": "owner://decision/shadow-only",
+            "authorized_at": "2026-10-06T05:00:00Z",
+        }
+        errors = validate_readiness(value)
+        self.assertTrue(any("authorized_mode" in error for error in errors), errors)
+
+    def test_off_rejects_stale_active_authorization(self):
+        value = readiness()
+        value["cutover_authorization"] = {
+            "authorized": True,
+            "authorized_mode": "SHADOW_ONLY",
+            "authority_ref": "owner://decision/shadow-only",
+            "authorized_at": "2026-10-06T05:00:00Z",
+        }
+        errors = validate_readiness(value)
+        self.assertTrue(any("OFF cannot carry" in error for error in errors), errors)
 
     def test_exact_protocol_refs_are_sha_bound(self):
         value = readiness()
