@@ -21,6 +21,13 @@ COMMON_PROFILE_SCHEMA = (
     / "common-review-profile.schema.yaml"
 )
 
+COMMON_PROTOCOL_MANIFEST = (
+    SKILLS
+    / "common-reviewer-protocol-v1.0"
+    / "protocol-manifest.yaml"
+)
+COMMON_CRITERIA = tuple(f"CR-{index:02d}" for index in range(1, 11))
+
 
 SELF_CHECK_BASIS_KEYS = {
     "original_task_ref",
@@ -42,6 +49,147 @@ def _canonical_digest(value: Any) -> str:
             ensure_ascii=False,
         ).encode("utf-8")
     ).hexdigest()
+
+
+def load_common_protocol_manifest() -> dict[str, Any]:
+    with COMMON_PROTOCOL_MANIFEST.open("r", encoding="utf-8") as fh:
+        value = yaml.safe_load(fh)
+    if not isinstance(value, dict):
+        raise ValueError("Common Reviewer protocol manifest must be an object")
+    return value
+
+
+def active_common_protocol_digest() -> str:
+    return _canonical_digest(load_common_protocol_manifest())
+
+
+def active_common_protocol_ref() -> str:
+    manifest = load_common_protocol_manifest()
+    protocol = manifest.get("protocol") or {}
+    ref = protocol.get("canonical_ref")
+    if not isinstance(ref, str) or not ref:
+        raise ValueError("Common Reviewer protocol manifest lacks canonical_ref")
+    return ref
+
+
+def common_manifest_semantic_errors(manifest: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    protocol = manifest.get("protocol")
+    capabilities = manifest.get("capabilities")
+    floor = manifest.get("self_review_floor")
+    if not isinstance(protocol, dict):
+        return ["Common Reviewer protocol manifest lacks protocol object"]
+    if protocol.get("version") != "1.0":
+        errors.append("Common Reviewer protocol version must be 1.0")
+    if protocol.get("status") != "ACTIVE":
+        errors.append("Common Reviewer protocol must be ACTIVE")
+    if protocol.get("canonical_ref") != "skills/common-reviewer-protocol-v1.0":
+        errors.append("Common Reviewer canonical_ref must identify the active v1.0 package")
+    if not isinstance(capabilities, dict) or capabilities.get("common_review_catalog") != "CR-01..CR-10":
+        errors.append("Common Reviewer manifest must declare CR-01..CR-10 catalog")
+    if not isinstance(floor, dict):
+        return errors + ["Common Reviewer manifest lacks self_review_floor"]
+
+    criteria = floor.get("criteria")
+    na_policy = floor.get("not_applicable")
+    waiver = floor.get("waiver")
+    overlay = floor.get("project_overlay")
+    if floor.get("role") != "SELF_REVIEW":
+        errors.append("self_review_floor.role must be SELF_REVIEW")
+    if not isinstance(criteria, dict):
+        errors.append("self_review_floor.criteria must be an object")
+        return errors
+
+    always = criteria.get("always_required")
+    conditional = criteria.get("conditionally_applicable")
+    if not isinstance(always, list) or not isinstance(conditional, list):
+        errors.append("self_review_floor criteria sets must be lists")
+        return errors
+    if len(always) != len(set(always)) or len(conditional) != len(set(conditional)):
+        errors.append("self_review_floor criteria sets must not contain duplicates")
+    if set(always) & set(conditional):
+        errors.append("self_review_floor criteria sets must be disjoint")
+    if set(always) | set(conditional) != set(COMMON_CRITERIA):
+        errors.append("self_review_floor must cover CR-01..CR-10 exactly")
+    if set(always) != {"CR-01", "CR-02", "CR-03", "CR-04", "CR-05", "CR-10"}:
+        errors.append("self_review_floor always-required set does not match Common v1.0")
+    if set(conditional) != {"CR-06", "CR-07", "CR-08", "CR-09"}:
+        errors.append("self_review_floor conditional set does not match Common v1.0")
+
+    if not isinstance(na_policy, dict):
+        errors.append("self_review_floor.not_applicable must be an object")
+    else:
+        if na_policy.get("permitted_only_for_conditionally_applicable") is not True:
+            errors.append("N/A must be limited to conditionally applicable Common criteria")
+        if na_policy.get("explicit_basis_required") is not True:
+            errors.append("N/A must require explicit applicability basis")
+
+    if not isinstance(waiver, dict):
+        errors.append("self_review_floor.waiver must be an object")
+    else:
+        if waiver.get("self_review_may_grant") is not False:
+            errors.append("SELF_REVIEW must not grant its own Common-criterion waiver")
+        if waiver.get("authoritative_external_waiver_validation") != "LOCAL_ACCEPTANCE_AUTHORITY":
+            errors.append("external waiver validation must remain Local acceptance authority")
+
+    if not isinstance(overlay, dict):
+        errors.append("self_review_floor.project_overlay must be an object")
+    else:
+        if overlay.get("required") is not True:
+            errors.append("project overlay must remain required")
+        if overlay.get("may_strengthen_common_floor") is not True:
+            errors.append("project overlay must be allowed to strengthen Common floor")
+        if overlay.get("may_silently_weaken_common_floor") is not False:
+            errors.append("project overlay must not silently weaken Common floor")
+    return errors
+
+
+def self_review_floor_errors(value: dict[str, Any]) -> list[str]:
+    review = value["review_profile"]
+    if review["role"] != "SELF_REVIEW":
+        return []
+
+    try:
+        manifest = load_common_protocol_manifest()
+    except Exception as exc:
+        return [f"cannot load active Common Reviewer manifest: {exc}"]
+    errors = common_manifest_semantic_errors(manifest)
+    if errors:
+        return errors
+
+    protocol = manifest["protocol"]
+    common_protocol = review["common_protocol"]
+    if common_protocol["ref"] != protocol["canonical_ref"]:
+        errors.append("SELF_REVIEW common_protocol.ref must equal active Common Reviewer canonical_ref")
+    if common_protocol["version"] != protocol["version"]:
+        errors.append("SELF_REVIEW common_protocol.version must equal active Common Reviewer version")
+    if common_protocol["digest"] != _canonical_digest(manifest):
+        errors.append("SELF_REVIEW common_protocol.digest must equal active Common Reviewer manifest digest")
+
+    floor = manifest["self_review_floor"]["criteria"]
+    always = set(floor["always_required"])
+    conditional = set(floor["conditionally_applicable"])
+    criteria = review["common_criteria"]
+
+    for criterion_id in sorted(always):
+        if criteria[criterion_id]["applicability"] != "REQUIRED":
+            errors.append(
+                f"{criterion_id}: SELF_REVIEW Common floor requires applicability REQUIRED"
+            )
+
+    for criterion_id in sorted(conditional):
+        applicability = criteria[criterion_id]["applicability"]
+        if applicability not in {"REQUIRED", "NOT_APPLICABLE"}:
+            errors.append(
+                f"{criterion_id}: SELF_REVIEW Common floor permits only REQUIRED or NOT_APPLICABLE"
+            )
+
+    for criterion_id, criterion in criteria.items():
+        if criterion["applicability"] == "WAIVED_BY_AUTHORITY":
+            errors.append(
+                f"{criterion_id}: SELF_REVIEW cannot grant or consume a Common-floor waiver in profile validation"
+            )
+    return errors
 
 
 def _safe_repo_path(repo_root: Path, value: str) -> Path:
@@ -171,7 +319,9 @@ def validate_common_profile(value: Any, label: str = "common-review-profile") ->
     errors = _schema_errors(schema, value, label)
     if errors:
         return errors
-    return [f"{label}: {error}" for error in common_profile_semantic_errors(value)]
+    semantic = common_profile_semantic_errors(value)
+    semantic.extend(self_review_floor_errors(value))
+    return [f"{label}: {error}" for error in semantic]
 
 
 def review_context_semantic_errors(context: dict[str, Any]) -> list[str]:
