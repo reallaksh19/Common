@@ -121,7 +121,81 @@ def review_context(m, l, *, kind="SAME_PRINCIPAL_FRESH_CONTEXT", independence="D
     }
 
 
+def self_check_context(m, l):
+    return {
+        "schema_version": "SELF_CHECK_CONTEXT_V1",
+        "authority": "SOLO_SELF_CHECK_CONTEXT",
+        "candidate_sha": CANDIDATE,
+        "manifest_ref": l["manifest_ref"],
+        "manifest_digest": canonical_manifest_digest(m),
+        "principal": {
+            "kind": "SOLO_PRINCIPAL",
+            "identity": "solo://coder-1",
+            "principal_independence": "NONE",
+            "fresh_reconstruction": True,
+            "blindness_claim": "NONE",
+        },
+        "reconstruction_policy": {
+            "original_task_ref": "issue://528",
+            "base_sha": BASE,
+            "candidate_sha": CANDIDATE,
+            "repository_context_refs": ["repo://base", "repo://candidate"],
+            "expectation_manifest_frozen": True,
+            "author_reasoning_used_as_evidence": False,
+            "coder_confidence_used_as_evidence": False,
+            "prior_self_check_used_as_evidence": False,
+            "outcome_falsification_required": True,
+        },
+        "tool_access": ["repository", "tests", "static-analysis"],
+    }
+
+
 class EvidenceGateTests(unittest.TestCase):
+    def test_solo_self_check_closed_verified_denominator_is_advance_eligible(self):
+        m = manifest()
+        l = ledger(m)
+        ctx = self_check_context(m, l)
+        result = gate_decision(m, l, ctx)
+        self.assertEqual(result["decision"], "ADVANCE_ELIGIBLE")
+        self.assertEqual(result["reason_codes"], ["CLOSED_DENOMINATOR"])
+        self.assertEqual(validate_gate_result(result), [])
+
+    def test_solo_self_check_cannot_claim_review_independence(self):
+        m = manifest()
+        l = ledger(m)
+        ctx = self_check_context(m, l)
+        ctx["principal"]["principal_independence"] = "DEGRADED"
+        result = gate_decision(m, l, ctx)
+        self.assertEqual(result["decision"], "REPLAY_EVIDENCE")
+        self.assertEqual(result["reason_codes"], ["INVALID_SELF_CHECK_BASIS"])
+        self.assertTrue(result["validation_errors"])
+
+    def test_solo_self_check_cannot_claim_blindness(self):
+        m = manifest()
+        l = ledger(m)
+        ctx = self_check_context(m, l)
+        ctx["principal"]["blindness_claim"] = "BLINDED"
+        result = gate_decision(m, l, ctx)
+        self.assertEqual(result["decision"], "REPLAY_EVIDENCE")
+        self.assertEqual(result["reason_codes"], ["INVALID_SELF_CHECK_BASIS"])
+
+    def test_solo_self_check_cannot_use_author_reasoning_as_evidence(self):
+        m = manifest()
+        l = ledger(m)
+        ctx = self_check_context(m, l)
+        ctx["reconstruction_policy"]["author_reasoning_used_as_evidence"] = True
+        result = gate_decision(m, l, ctx)
+        self.assertEqual(result["decision"], "REPLAY_EVIDENCE")
+        self.assertEqual(result["reason_codes"], ["INVALID_SELF_CHECK_BASIS"])
+
+    def test_solo_self_check_unknown_still_escalates(self):
+        m = manifest()
+        l = ledger(m, state="UNKNOWN")
+        ctx = self_check_context(m, l)
+        result = gate_decision(m, l, ctx)
+        self.assertEqual(result["decision"], "ESCALATE")
+        self.assertEqual(result["blocking_obligations"], ["L0-1"])
+
     def test_closed_verified_denominator_is_advance_eligible(self):
         m = manifest()
         l = ledger(m)
