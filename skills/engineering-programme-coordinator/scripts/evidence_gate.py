@@ -45,6 +45,31 @@ def review_context_semantic_errors(context: dict[str, Any]) -> list[str]:
     return errors
 
 
+def self_check_context_semantic_errors(context: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    principal = context["principal"]
+    policy = context["reconstruction_policy"]
+
+    if policy["candidate_sha"] != context["candidate_sha"]:
+        errors.append(
+            "reconstruction_policy.candidate_sha must equal self-check candidate_sha"
+        )
+    if principal["principal_independence"] != "NONE":
+        errors.append(
+            "solo self-check must record principal_independence NONE"
+        )
+    if principal["blindness_claim"] != "NONE":
+        errors.append(
+            "solo self-check cannot claim blinded or independent review"
+        )
+    if not principal["fresh_reconstruction"]:
+        errors.append(
+            "solo self-check requires a fresh reconstruction pass"
+        )
+
+    return errors
+
+
 def validate_review_context(
     context: Any,
     label: str = "review-context",
@@ -58,10 +83,47 @@ def validate_review_context(
     ]
 
 
+def validate_self_check_context(
+    context: Any,
+    label: str = "self-check-context",
+) -> list[str]:
+    errors = schema_validate("self-check-context", context, label)
+    if errors:
+        return errors
+    return [
+        f"{label}: {error}"
+        for error in self_check_context_semantic_errors(context)
+    ]
+
+
+def validate_assessment_context(
+    context: Any,
+    label: str = "assessment-context",
+) -> list[str]:
+    if not isinstance(context, dict):
+        return [f"{label}: assessment context must be an object"]
+
+    version = context.get("schema_version")
+    if version == "REVIEW_CONTEXT_V1":
+        return validate_review_context(context, label)
+    if version == "SELF_CHECK_CONTEXT_V1":
+        return validate_self_check_context(context, label)
+
+    return [
+        f"{label}: unsupported assessment context schema_version: {version!r}"
+    ]
+
+
+def _policy(context: dict[str, Any]) -> dict[str, Any]:
+    if context.get("schema_version") == "SELF_CHECK_CONTEXT_V1":
+        return context.get("reconstruction_policy") or {}
+    return context.get("context_policy") or {}
+
+
 def _result_basis(
     manifest: Any,
     ledger: Any,
-    review_context: Any,
+    assessment_context: Any,
 ) -> tuple[str, str]:
     candidate = None
     digest = None
@@ -70,10 +132,10 @@ def _result_basis(
         candidate = ledger.get("candidate_sha")
         digest = ledger.get("manifest_digest")
 
-    if not candidate and isinstance(review_context, dict):
-        candidate = review_context.get("candidate_sha")
-    if not digest and isinstance(review_context, dict):
-        digest = review_context.get("manifest_digest")
+    if not candidate and isinstance(assessment_context, dict):
+        candidate = assessment_context.get("candidate_sha")
+    if not digest and isinstance(assessment_context, dict):
+        digest = assessment_context.get("manifest_digest")
 
     if not candidate and isinstance(manifest, dict):
         candidate = (manifest.get("basis") or {}).get("candidate_sha")
@@ -86,13 +148,22 @@ def _result_basis(
     return candidate, digest
 
 
+def _invalid_basis_reason(assessment_context: Any) -> str:
+    if (
+        isinstance(assessment_context, dict)
+        and assessment_context.get("schema_version") == "SELF_CHECK_CONTEXT_V1"
+    ):
+        return "INVALID_SELF_CHECK_BASIS"
+    return "INVALID_REVIEW_BASIS"
+
+
 def gate_decision(
     manifest: Any,
     ledger: Any,
-    review_context: Any,
+    assessment_context: Any,
 ) -> dict[str, Any]:
     errors = validate_pair(manifest, ledger)
-    errors.extend(validate_review_context(review_context))
+    errors.extend(validate_assessment_context(assessment_context))
 
     if not errors:
         actual_digest = canonical_manifest_digest(manifest)
@@ -100,28 +171,30 @@ def gate_decision(
             errors.append(
                 "evidence-ledger: manifest_digest does not match canonical manifest"
             )
-        if review_context["manifest_digest"] != actual_digest:
+        if assessment_context["manifest_digest"] != actual_digest:
             errors.append(
-                "review-context: manifest_digest does not match canonical manifest"
+                "assessment-context: manifest_digest does not match canonical manifest"
             )
-        if review_context["manifest_ref"] != ledger["manifest_ref"]:
+        if assessment_context["manifest_ref"] != ledger["manifest_ref"]:
             errors.append(
-                "review-context.manifest_ref must equal evidence-ledger.manifest_ref"
+                "assessment-context.manifest_ref must equal evidence-ledger.manifest_ref"
             )
-        if review_context["candidate_sha"] != ledger["candidate_sha"]:
+        if assessment_context["candidate_sha"] != ledger["candidate_sha"]:
             errors.append(
-                "review-context candidate_sha must equal evidence-ledger candidate_sha"
+                "assessment-context candidate_sha must equal evidence-ledger candidate_sha"
             )
-        if review_context["candidate_sha"] != manifest["basis"]["candidate_sha"]:
+        if assessment_context["candidate_sha"] != manifest["basis"]["candidate_sha"]:
             errors.append(
-                "review-context candidate_sha must equal manifest candidate_sha"
-            )
-        if review_context["context_policy"]["base_sha"] != manifest["basis"]["base_sha"]:
-            errors.append(
-                "review-context base_sha must equal manifest base_sha"
+                "assessment-context candidate_sha must equal manifest candidate_sha"
             )
 
-    candidate, digest = _result_basis(manifest, ledger, review_context)
+        policy = _policy(assessment_context)
+        if policy.get("base_sha") != manifest["basis"]["base_sha"]:
+            errors.append(
+                "assessment-context base_sha must equal manifest base_sha"
+            )
+
+    candidate, digest = _result_basis(manifest, ledger, assessment_context)
 
     if errors:
         return {
@@ -130,7 +203,7 @@ def gate_decision(
             "decision": "REPLAY_EVIDENCE",
             "candidate_sha": candidate,
             "manifest_digest": digest,
-            "reason_codes": ["INVALID_REVIEW_BASIS"],
+            "reason_codes": [_invalid_basis_reason(assessment_context)],
             "blocking_obligations": [],
             "validation_errors": errors,
         }
@@ -190,18 +263,21 @@ def validate_gate_result(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Evaluate exact-candidate proof evidence under a fresh review context."
+        description=(
+            "Evaluate exact-candidate proof evidence under either a truthful solo "
+            "self-check context or an optional fresh review context."
+        )
     )
     parser.add_argument("manifest")
     parser.add_argument("ledger")
-    parser.add_argument("review_context")
+    parser.add_argument("assessment_context")
     args = parser.parse_args()
 
     manifest = load_yaml(Path(args.manifest))
     ledger = load_yaml(Path(args.ledger))
-    review_context = load_yaml(Path(args.review_context))
+    assessment_context = load_yaml(Path(args.assessment_context))
 
-    result = gate_decision(manifest, ledger, review_context)
+    result = gate_decision(manifest, ledger, assessment_context)
     errors = validate_gate_result(result)
     if errors:
         for error in errors:

@@ -34,6 +34,7 @@ properties:
     items:
       enum:
         - INVALID_REVIEW_BASIS
+        - INVALID_SELF_CHECK_BASIS
         - REFUTED_OBLIGATION
         - UNKNOWN_OBLIGATION
         - CLOSED_DENOMINATOR
