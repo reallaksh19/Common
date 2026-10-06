@@ -8,8 +8,11 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from coordlib import load_yaml
 from l0_task_obligations import (
+    L0TaskObligationError,
+    SOURCE_HEADING,
     canonical_digest,
     compile_l0,
+    extract_precommitted_source,
     validate_manifest,
     validate_source,
 )
@@ -53,6 +56,27 @@ class L0TaskObligationTests(unittest.TestCase):
             "5be577a4b69a0d9f34e0f660fa15efcdde0eb944aad9d1c0f568311c5d1fc09e",
         )
         self.assertEqual(value["freeze"]["freeze_ref"], "sha256:" + value["source"]["digest"])
+
+    def test_issue_markdown_source_extracts_exact_retained_source(self):
+        markdown = (
+            "# Child\n\n"
+            + SOURCE_HEADING
+            + "\n\n\`\`\`yaml\n"
+            + SOURCE_PATH.read_text(encoding="utf-8")
+            + "\`\`\`\n"
+        )
+        self.assertEqual(extract_precommitted_source(markdown), source())
+
+    def test_issue_markdown_duplicate_source_heading_is_rejected(self):
+        markdown = SOURCE_HEADING + "\n" + SOURCE_HEADING
+        with self.assertRaisesRegex(L0TaskObligationError, "exactly one"):
+            extract_precommitted_source(markdown)
+
+    def test_issue_markdown_source_with_candidate_field_is_rejected(self):
+        payload = SOURCE_PATH.read_text(encoding="utf-8") + "\ncandidate_sha: " + ("a" * 40) + "\n"
+        markdown = SOURCE_HEADING + "\n\n\`\`\`yaml\n" + payload + "\`\`\`\n"
+        with self.assertRaisesRegex(L0TaskObligationError, "Additional properties"):
+            extract_precommitted_source(markdown)
 
     def test_candidate_field_is_not_legal_contract_input(self):
         value = source()
