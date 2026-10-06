@@ -56,15 +56,15 @@ properties:
   separation:
     type: object
     additionalProperties: false
-    required: [fresh_context, fresh_role_boundary, methodological_independence]
+    required: [fresh_context, context_separation, methodological_separation]
     properties:
       fresh_context: {const: true}
-      fresh_role_boundary:
+      context_separation:
         enum:
-          - NOT_APPLICABLE
-          - SAME_PRINCIPAL_FRESH_ROLE
-          - DISTINCT_PRINCIPAL_ROLE
-      methodological_independence:
+          - SELF_CHECK_FRESH_RECONSTRUCTION
+          - GOVERNED_SAME_PRINCIPAL_FRESH_CONTEXT
+          - GOVERNED_DISTINCT_PRINCIPAL_FRESH_CONTEXT
+      methodological_separation:
         enum:
           - FRESH_RECONSTRUCTION_ONLY
           - DISTINCT_PRINCIPAL_AND_FRESH_RECONSTRUCTION
