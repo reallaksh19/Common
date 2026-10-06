@@ -312,6 +312,25 @@ class ExecutionKernelTests(unittest.TestCase):
         errors = validate_execution_state(value)
         self.assertTrue(any("current gate must select REPAIR" in error for error in errors), errors)
 
+    def test_advance_eligible_with_unresolved_critical_is_rejected(self):
+        value = current_candidate(state())
+        value["capability"]["allowed_actions"] = ["REQUEST_STAGE_ADVANCE"]
+        value["verification"]["unresolved_critical"] = [{
+            "id": "L2-CRIT-2",
+            "state": "UNKNOWN",
+            "evidence_refs": [],
+        }]
+        value["verification"]["gate"] = gate("ADVANCE_ELIGIBLE")
+        set_derived(value)
+        errors = validate_execution_state(value)
+        self.assertTrue(
+            any(
+                "ADVANCE_ELIGIBLE cannot coexist with unresolved critical obligations" in error
+                for error in errors
+            ),
+            errors,
+        )
+
     def test_advance_eligible_only_requests_local_stage_advance(self):
         value = current_candidate(state())
         value["capability"]["allowed_actions"] = ["REQUEST_STAGE_ADVANCE"]
