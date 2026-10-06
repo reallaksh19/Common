@@ -41,7 +41,7 @@ properties:
       required:
         - task_id
         - release_state
-        - acceptance_epoch_ref
+        - acceptance_epoch_id
         - acceptance_profile_ref
         - acceptance_profile_digest
         - nested_engineering_responsibility
@@ -52,8 +52,8 @@ properties:
           type: string
           pattern: '^PRD-[A-Za-z0-9._-]+$'
         release_state:
-          enum: [READY, BLOCKED_DEPENDENCY, HELD, COMPLETE]
-        acceptance_epoch_ref:
+          enum: [READY, BLOCKED_DEPENDENCY, HELD, STOPPED]
+        acceptance_epoch_id:
           type: string
           minLength: 1
         acceptance_profile_ref:
