@@ -57,6 +57,7 @@ jobs:
           python -m py_compile \
             skills/engineering-programme-coordinator/scripts/local_v11_integrated.py \
             skills/engineering-programme-coordinator/scripts/production_readiness.py \
+            skills/engineering-programme-coordinator/scripts/execution_kernel.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -81,6 +82,13 @@ jobs:
           assert readiness['$id'] == 'engineering-programme-coordinator-production-readiness-v1'
           assert readiness['properties']['schema_version']['const'] == 'PRODUCTION_READINESS_V1'
           assert readiness['properties']['authority']['const'] == 'PRODUCTION_READINESS_PROJECTION'
+
+          execution = yaml.safe_load(
+              (root / 'execution-state.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert execution['$id'] == 'engineering-programme-coordinator-execution-state-v1'
+          assert execution['properties']['schema_version']['const'] == 'EXECUTION_STATE_V1'
+          assert execution['properties']['authority']['const'] == 'CANONICAL_EXECUTION_STATE'
           PY
 
       - name: Run coordinator regressions
