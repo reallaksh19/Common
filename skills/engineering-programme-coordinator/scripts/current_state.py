@@ -138,6 +138,12 @@ def execution_binding_errors(
         errors.append(
             "CURRENT_STATE active.attempt must equal execution-state attempt"
         )
+    if value["active"]["role"] != (
+        (execution_state.get("capability") or {}).get("active_role")
+    ):
+        errors.append(
+            "CURRENT_STATE active.role must equal execution-state active_role"
+        )
 
     if candidate["state"] == "ACTIVE":
         expected_pairs = (
