@@ -1,0 +1,235 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-self-review-expectation-freeze-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - source_manifests
+  - review_basis
+  - expectations
+  - challenges
+  - freeze
+  - authority_boundaries
+  - freeze_digest
+properties:
+  schema_version:
+    const: SELF_REVIEW_EXPECTATION_CHALLENGE_FREEZE_V1
+  authority:
+    const: FROZEN_SELF_REVIEW_EXPECTATIONS
+  identity:
+    type: object
+    additionalProperties: false
+    required: [responsibility_id, base_sha, candidate_sha]
+    properties:
+      responsibility_id:
+        type: string
+        pattern: '^PRD-[A-Za-z0-9._-]+$'
+      base_sha: {$ref: '#/$defs/sha'}
+      candidate_sha: {$ref: '#/$defs/sha'}
+  source_manifests:
+    type: object
+    additionalProperties: false
+    required: [l0, l1, l2]
+    properties:
+      l0: {$ref: '#/$defs/source_manifest'}
+      l1: {$ref: '#/$defs/source_manifest'}
+      l2: {$ref: '#/$defs/source_manifest'}
+  review_basis:
+    type: object
+    additionalProperties: false
+    required:
+      - digest
+      - common_protocol
+      - project_protocol
+      - role
+      - common_criteria
+      - project_method_ids
+      - specialist_required
+      - final_candidate
+    properties:
+      digest: {$ref: '#/$defs/digest'}
+      common_protocol: {$ref: '#/$defs/common_protocol'}
+      project_protocol: {$ref: '#/$defs/project_protocol'}
+      role: {const: SELF_REVIEW}
+      common_criteria:
+        type: object
+        additionalProperties: false
+        required: [CR-01, CR-02, CR-03, CR-04, CR-05, CR-06, CR-07, CR-08, CR-09, CR-10]
+        properties:
+          CR-01: {$ref: '#/$defs/criterion_plan'}
+          CR-02: {$ref: '#/$defs/criterion_plan'}
+          CR-03: {$ref: '#/$defs/criterion_plan'}
+          CR-04: {$ref: '#/$defs/criterion_plan'}
+          CR-05: {$ref: '#/$defs/criterion_plan'}
+          CR-06: {$ref: '#/$defs/criterion_plan'}
+          CR-07: {$ref: '#/$defs/criterion_plan'}
+          CR-08: {$ref: '#/$defs/criterion_plan'}
+          CR-09: {$ref: '#/$defs/criterion_plan'}
+          CR-10: {$ref: '#/$defs/criterion_plan'}
+      project_method_ids:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      specialist_required:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      final_candidate: {$ref: '#/$defs/sha'}
+  expectations:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/expectation'}
+  challenges:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/challenge'}
+  freeze:
+    type: object
+    additionalProperties: false
+    required:
+      - state
+      - stage
+      - candidate_evidence_consumed
+      - coder_rationale_consumed
+      - coder_confidence_consumed
+      - prior_self_review_consumed
+      - review_result_consumed
+    properties:
+      state: {const: FROZEN}
+      stage: {const: SELF_REVIEW_START}
+      candidate_evidence_consumed: {const: false}
+      coder_rationale_consumed: {const: false}
+      coder_confidence_consumed: {const: false}
+      prior_self_review_consumed: {const: false}
+      review_result_consumed: {const: false}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - consumes_candidate_diff_via_l2
+      - consumes_exact_candidate_evidence
+      - consumes_coder_rationale
+      - consumes_coder_confidence
+      - consumes_prior_self_review
+      - consumes_review_result
+      - emits_engineering_pass
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      consumes_candidate_diff_via_l2: {const: true}
+      consumes_exact_candidate_evidence: {const: false}
+      consumes_coder_rationale: {const: false}
+      consumes_coder_confidence: {const: false}
+      consumes_prior_self_review: {const: false}
+      consumes_review_result: {const: false}
+      emits_engineering_pass: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  freeze_digest: {$ref: '#/$defs/digest'}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  source_manifest:
+    type: object
+    additionalProperties: false
+    required: [schema_version, task_id, manifest_digest]
+    properties:
+      schema_version: {type: string, minLength: 1}
+      task_id:
+        type: string
+        pattern: '^PRD-[A-Za-z0-9._-]+$'
+      manifest_digest: {$ref: '#/$defs/digest'}
+  common_protocol:
+    type: object
+    additionalProperties: false
+    required: [ref, version, digest]
+    properties:
+      ref: {type: string, minLength: 1}
+      version: {const: '1.0'}
+      digest: {$ref: '#/$defs/digest'}
+  project_protocol:
+    type: object
+    additionalProperties: false
+    required: [ref, digest]
+    properties:
+      ref: {type: string, minLength: 1}
+      digest: {type: string, minLength: 1}
+  criterion_plan:
+    type: object
+    additionalProperties: false
+    required: [applicability]
+    properties:
+      applicability:
+        enum: [REQUIRED, NOT_APPLICABLE]
+      applicability_basis: {type: string, minLength: 1}
+  claim:
+    type: object
+    additionalProperties: false
+    required: [type, statement, subject_refs]
+    properties:
+      type:
+        enum: [BEHAVIOR, INVARIANT, PRESERVATION, COMPATIBILITY, AUTHORITY, NEGATIVE_OUTCOME, IMPACT]
+      statement: {type: string, minLength: 1}
+      subject_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  expectation:
+    type: object
+    additionalProperties: false
+    required: [layer, obligation_id, severity, claim, expected_observation, source_refs]
+    properties:
+      layer: {enum: [L0, L1, L2]}
+      obligation_id: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      claim: {$ref: '#/$defs/claim'}
+      expected_observation: {type: string, minLength: 1}
+      source_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  evidence_requirement:
+    type: object
+    additionalProperties: false
+    required: [id, method, independence, oracle_ref]
+    properties:
+      id: {type: string, minLength: 1}
+      method:
+        enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]
+      independence:
+        enum: [PRECOMMITTED, BASELINE_DERIVED, IMPACT_DERIVED]
+      oracle_ref: {type: string, minLength: 1}
+  challenge:
+    type: object
+    additionalProperties: false
+    required:
+      - challenge_id
+      - layer
+      - obligation_id
+      - plausible_green_but_wrong
+      - oracle_refs
+      - evidence_requirements
+    properties:
+      challenge_id: {type: string, minLength: 1}
+      layer: {enum: [L0, L1, L2]}
+      obligation_id: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      oracle_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      evidence_requirements:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/evidence_requirement'}
