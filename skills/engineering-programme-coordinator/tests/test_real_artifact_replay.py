@@ -62,6 +62,8 @@ def fake_provider_data(value):
             "id": spec["id"],
             "name": spec["name"],
             "head_sha": spec["head_sha"],
+            "head_branch": spec["head_branch"],
+            "event": spec["event"],
             "conclusion": spec["conclusion"],
             "status": "completed",
         }
@@ -159,13 +161,31 @@ class RealArtifactReplayTests(unittest.TestCase):
         with self.assertRaisesRegex(RealArtifactReplayError, "required provider token missing"):
             self.replay(value, data)
 
-    def test_exact_head_must_remain_in_pr_history(self):
+    def test_exact_historical_commit_must_still_resolve(self):
         value = manifest()
         data = fake_provider_data(value)
         source = value["source"]
-        path = f"/repos/{value['repository']}/pulls/{source['pr']}/commits?per_page=100&page=1"
-        data[path] = []
-        with self.assertRaisesRegex(RealArtifactReplayError, "absent from retained PR commit history"):
+        data[f"/repos/{value['repository']}/commits/{source['exact_head']}"] = {
+            "sha": "f" * 40,
+        }
+        with self.assertRaisesRegex(RealArtifactReplayError, "candidate commit missing"):
+            self.replay(value, data)
+
+    def test_retained_pr_branch_identity_must_match(self):
+        value = manifest()
+        data = fake_provider_data(value)
+        source = value["source"]
+        data[f"/repos/{value['repository']}/pulls/{source['pr']}"]["head"]["ref"] = "other-branch"
+        with self.assertRaisesRegex(RealArtifactReplayError, "PR branch mismatch"):
+            self.replay(value, data)
+
+    def test_workflow_event_and_branch_are_historical_binding_evidence(self):
+        value = manifest()
+        data = fake_provider_data(value)
+        run = value["workflow_runs"][0]
+        path = f"/repos/{value['repository']}/actions/runs/{run['id']}"
+        data[path]["event"] = "push"
+        with self.assertRaisesRegex(RealArtifactReplayError, "event mismatch"):
             self.replay(value, data)
 
     def test_noncanonical_local_release_state_is_rejected_by_current_local_runtime(self):
