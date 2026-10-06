@@ -1,0 +1,139 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-proof-obligation-manifest-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - basis
+  - l0
+  - l1
+  - l2
+properties:
+  schema_version:
+    const: PROOF_OBLIGATION_MANIFEST_V1
+  authority:
+    const: FROZEN_EXPECTATION_MANIFEST
+  identity:
+    type: object
+    additionalProperties: false
+    required: [task_id, parent_ref]
+    properties:
+      task_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+  basis:
+    type: object
+    additionalProperties: false
+    required: [base_ref, base_sha, candidate_sha]
+    properties:
+      base_ref: {type: string, minLength: 1}
+      base_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+      candidate_sha:
+        anyOf:
+          - {type: 'null'}
+          - {type: string, pattern: '^[0-9a-f]{40}$'}
+  l0:
+    type: object
+    additionalProperties: false
+    required: [frozen, frozen_ref, obligations]
+    properties:
+      frozen:
+        const: true
+      frozen_ref: {type: string, minLength: 1}
+      obligations:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/obligation'}
+  l1:
+    type: object
+    additionalProperties: false
+    required: [baseline_ref, baseline_sha, obligations]
+    properties:
+      baseline_ref: {type: string, minLength: 1}
+      baseline_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+      obligations:
+        type: array
+        items: {$ref: '#/$defs/obligation'}
+  l2:
+    type: object
+    additionalProperties: false
+    required: [impact_ref, candidate_sha, obligations]
+    properties:
+      impact_ref: {type: [string, 'null']}
+      candidate_sha:
+        anyOf:
+          - {type: 'null'}
+          - {type: string, pattern: '^[0-9a-f]{40}$'}
+      obligations:
+        type: array
+        items: {$ref: '#/$defs/obligation'}
+$defs:
+  obligation:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - severity
+      - claim
+      - source_refs
+      - evidence_required
+    properties:
+      id: {type: string, minLength: 1}
+      severity:
+        enum: [CRITICAL, HIGH, NORMAL]
+      claim:
+        type: object
+        additionalProperties: false
+        required: [type, statement, subject_refs]
+        properties:
+          type:
+            enum:
+              - BEHAVIOR
+              - INVARIANT
+              - PRESERVATION
+              - COMPATIBILITY
+              - AUTHORITY
+              - IMPACT
+              - NEGATIVE_OUTCOME
+          statement: {type: string, minLength: 1}
+          subject_refs:
+            type: array
+            items: {type: string, minLength: 1}
+      source_refs:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      evidence_required:
+        type: array
+        items: {$ref: '#/$defs/evidence_requirement'}
+  evidence_requirement:
+    type: object
+    additionalProperties: false
+    required: [id, method, independence, oracle_ref]
+    properties:
+      id: {type: string, minLength: 1}
+      method: {$ref: '#/$defs/evidence_method'}
+      independence:
+        enum:
+          - PRECOMMITTED
+          - BASELINE_DERIVED
+          - IMPACT_DERIVED
+          - REVIEWER_GENERATED
+      oracle_ref: {type: [string, 'null']}
+  evidence_method:
+    enum:
+      - UNIT_TEST
+      - INTEGRATION_TEST
+      - PROPERTY_TEST
+      - CONTRACT_TEST
+      - STATIC_ANALYSIS
+      - RUNTIME_TRACE
+      - SCHEMA_CHECK
+      - FAULT_INJECTION
+      - MANUAL_REVIEW
+      - OTHER
