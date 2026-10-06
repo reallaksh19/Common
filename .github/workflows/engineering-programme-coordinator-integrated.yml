@@ -78,6 +78,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/verdict_policy.py \
             skills/engineering-programme-coordinator/scripts/phase2_self_review_qualification.py \
             skills/engineering-programme-coordinator/scripts/self_review_expectation_freeze.py \
+            skills/engineering-programme-coordinator/scripts/project_outcome_falsification.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -250,6 +251,15 @@ jobs:
           assert self_review_freeze['$id'] == 'engineering-programme-coordinator-self-review-expectation-freeze-v1'
           assert self_review_freeze['properties']['schema_version']['const'] == 'SELF_REVIEW_EXPECTATION_CHALLENGE_FREEZE_V1'
           assert self_review_freeze['properties']['authority']['const'] == 'FROZEN_SELF_REVIEW_EXPECTATIONS'
+
+          project_falsification = yaml.safe_load(
+              (root / 'project-outcome-falsification.schema.yaml').read_text()
+          )
+          assert project_falsification['$id'] == 'engineering-programme-coordinator-project-outcome-falsification-v1'
+          assert project_falsification['properties']['schema_version']['const'] == 'PROJECT_OUTCOME_FALSIFICATION_RESULT_V1'
+          assert project_falsification['properties']['authority']['const'] == 'SAME_PRINCIPAL_PROJECT_OUTCOME_FALSIFICATION_EVIDENCE'
+          assert project_falsification['properties']['principal_independence']['const'] == 'NONE'
+          assert 'PASS' not in project_falsification['properties']['falsification_status']['enum']
           PY
 
       - name: Run integrated-mode regressions
@@ -260,6 +270,9 @@ jobs:
 
       - name: Run self-review expectation challenge freeze regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_self_review_expectation_freeze.py' -v
+
+      - name: Run project-outcome falsification regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_project_outcome_falsification.py' -v
 
       - name: Run production readiness regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_production_readiness.py' -v

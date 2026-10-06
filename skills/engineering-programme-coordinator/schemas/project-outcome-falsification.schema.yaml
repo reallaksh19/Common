@@ -1,0 +1,220 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-project-outcome-falsification-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - source
+  - review_mode
+  - principal_independence
+  - method_plan
+  - observations
+  - accounting
+  - falsification_status
+  - interpretation
+  - authority_boundaries
+  - result_digest
+properties:
+  schema_version:
+    const: PROJECT_OUTCOME_FALSIFICATION_RESULT_V1
+  authority:
+    const: SAME_PRINCIPAL_PROJECT_OUTCOME_FALSIFICATION_EVIDENCE
+  identity:
+    type: object
+    additionalProperties: false
+    required: [responsibility_id, candidate_sha]
+    properties:
+      responsibility_id:
+        type: string
+        pattern: '^PRD-[A-Za-z0-9._-]+$'
+      candidate_sha: {$ref: '#/$defs/sha'}
+  source:
+    type: object
+    additionalProperties: false
+    required:
+      - freeze_digest
+      - review_basis_digest
+      - project_protocol_ref
+      - project_protocol_digest
+      - protected_surface_manifest_digest
+      - observations_digest
+    properties:
+      freeze_digest: {$ref: '#/$defs/digest'}
+      review_basis_digest: {$ref: '#/$defs/digest'}
+      project_protocol_ref: {type: string, minLength: 1}
+      project_protocol_digest: {$ref: '#/$defs/digest'}
+      protected_surface_manifest_digest: {$ref: '#/$defs/digest'}
+      observations_digest: {$ref: '#/$defs/digest'}
+  review_mode: {const: SELF_REVIEW}
+  principal_independence: {const: NONE}
+  method_plan:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/method_plan'}
+  observations:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/observation'}
+  accounting:
+    type: object
+    additionalProperties: false
+    required: [selected_methods, observed_methods, result_counts]
+    properties:
+      selected_methods: {type: integer, minimum: 1}
+      observed_methods: {type: integer, minimum: 1}
+      result_counts:
+        type: object
+        additionalProperties: false
+        required: [PASS, FAIL, NOT_RUN, INCONCLUSIVE]
+        properties:
+          PASS: {type: integer, minimum: 0}
+          FAIL: {type: integer, minimum: 0}
+          NOT_RUN: {type: integer, minimum: 0}
+          INCONCLUSIVE: {type: integer, minimum: 0}
+  falsification_status:
+    enum: [FALSIFIED, INCONCLUSIVE, NOT_RUN, NOT_FALSIFIED]
+  interpretation:
+    const: NON_AUTHORITATIVE_PROJECT_OUTCOME_FALSIFICATION_ONLY
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - consumes_expectation_challenge_freeze
+      - consumes_project_protocol
+      - consumes_same_principal_method_observations
+      - claims_principal_independence
+      - emits_engineering_pass
+      - emits_project_acceptance_pass
+      - emits_evidence_gate_decision
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      consumes_expectation_challenge_freeze: {const: true}
+      consumes_project_protocol: {const: true}
+      consumes_same_principal_method_observations: {const: true}
+      claims_principal_independence: {const: false}
+      emits_engineering_pass: {const: false}
+      emits_project_acceptance_pass: {const: false}
+      emits_evidence_gate_decision: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  result_digest: {$ref: '#/$defs/digest'}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  evidence_class:
+    enum:
+      - AUTHOR
+      - REVIEWER_INDEPENDENT
+      - SUPER_REVIEW_INDEPENDENT
+      - CI_PROVIDER
+      - EXTERNAL_ORACLE
+      - MANUAL_OBSERVATION
+  verification_class:
+    enum:
+      - POSITIVE
+      - NEGATIVE
+      - BOUNDARY
+      - INVARIANT
+      - ROUND_TRIP
+      - METAMORPHIC
+      - PROPERTY
+      - DIFFERENTIAL
+      - FAULT_INJECTION
+      - ROLLBACK
+      - IDEMPOTENCY
+      - REPLAY
+      - CONCURRENCY
+      - PRODUCER_CONSUMER
+      - FUZZ
+      - PERFORMANCE
+      - EXTERNAL_ORACLE
+      - MANUAL_VISUAL
+      - SECURITY
+      - CI
+  method_plan:
+    type: object
+    additionalProperties: false
+    required:
+      - method_id
+      - verification_class
+      - criterion_ids
+      - harness_id
+      - external_gate_id
+      - harness_manifest_refs
+      - required_evidence_classes
+      - material_inputs
+      - rerun_policy
+      - applies_to_roles
+    properties:
+      method_id: {type: string, minLength: 1}
+      verification_class: {$ref: '#/$defs/verification_class'}
+      criterion_ids:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      harness_id:
+        type: [string, 'null']
+        minLength: 1
+      external_gate_id:
+        type: [string, 'null']
+        minLength: 1
+      harness_manifest_refs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      required_evidence_classes:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {$ref: '#/$defs/evidence_class'}
+      material_inputs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      rerun_policy:
+        enum: [FULL_REQUIRED_SET, DECLARED_MATERIAL_INPUTS]
+      applies_to_roles:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items:
+          enum: [CODER, REVIEWER, COORDINATOR, PARENT_CHECK]
+  observation:
+    type: object
+    additionalProperties: false
+    required:
+      - method_id
+      - candidate_sha
+      - result
+      - evidence_origin
+      - evidence_refs
+      - procedure
+      - limitation
+    properties:
+      method_id: {type: string, minLength: 1}
+      candidate_sha: {$ref: '#/$defs/sha'}
+      result:
+        enum: [PASS, FAIL, NOT_RUN, INCONCLUSIVE]
+      evidence_origin:
+        enum:
+          - SAME_PRINCIPAL_EXECUTION
+          - CI_PROVIDER
+          - EXTERNAL_ORACLE
+          - MANUAL_OBSERVATION
+      evidence_refs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      procedure: {type: string, minLength: 1}
+      limitation:
+        type: [string, 'null']
+        minLength: 1
