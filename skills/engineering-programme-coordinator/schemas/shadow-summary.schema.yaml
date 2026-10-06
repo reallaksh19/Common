@@ -1,0 +1,65 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-shadow-summary-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - production_effect
+  - sample_count
+  - adjudicated_count
+  - counts
+  - relative_counts
+  - candidate_refs
+properties:
+  schema_version:
+    const: SHADOW_SUMMARY_V1
+  authority:
+    const: NON_BLOCKING_SHADOW_SUMMARY
+  production_effect:
+    const: NONE
+  sample_count:
+    type: integer
+    minimum: 0
+  adjudicated_count:
+    type: integer
+    minimum: 0
+  counts:
+    type: object
+    additionalProperties: false
+    required:
+      - TRUE_CLEAR
+      - TRUE_BLOCK
+      - FALSE_CLEAR
+      - FALSE_BLOCK
+      - PROTECTIVE_ESCALATION
+      - CONSERVATIVE_ESCALATION
+      - PENDING_ADJUDICATION
+    properties:
+      TRUE_CLEAR: {type: integer, minimum: 0}
+      TRUE_BLOCK: {type: integer, minimum: 0}
+      FALSE_CLEAR: {type: integer, minimum: 0}
+      FALSE_BLOCK: {type: integer, minimum: 0}
+      PROTECTIVE_ESCALATION: {type: integer, minimum: 0}
+      CONSERVATIVE_ESCALATION: {type: integer, minimum: 0}
+      PENDING_ADJUDICATION: {type: integer, minimum: 0}
+  relative_counts:
+    type: object
+    additionalProperties: false
+    required:
+      - SAME
+      - CAUGHT_INCUMBENT_MISS
+      - AVOIDED_INCUMBENT_FALSE_BLOCK
+      - DIVERGENT
+      - PENDING
+    properties:
+      SAME: {type: integer, minimum: 0}
+      CAUGHT_INCUMBENT_MISS: {type: integer, minimum: 0}
+      AVOIDED_INCUMBENT_FALSE_BLOCK: {type: integer, minimum: 0}
+      DIVERGENT: {type: integer, minimum: 0}
+      PENDING: {type: integer, minimum: 0}
+  candidate_refs:
+    type: array
+    items:
+      type: string
+      pattern: '^[0-9a-f]{40}$'

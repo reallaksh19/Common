@@ -1,0 +1,74 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-shadow-observation-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - candidate_sha
+  - gate_result
+  - incumbent
+  - adjudication
+  - production_effect
+  - classification
+  - relative_outcome
+properties:
+  schema_version:
+    const: SHADOW_OBSERVATION_V1
+  authority:
+    const: NON_BLOCKING_SHADOW_OBSERVATION
+  candidate_sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  gate_result:
+    type: object
+    additionalProperties: false
+    required: [ref, decision]
+    properties:
+      ref: {type: string, minLength: 1}
+      decision:
+        enum:
+          - REPLAY_EVIDENCE
+          - REPAIR
+          - ESCALATE
+          - ADVANCE_ELIGIBLE
+  incumbent:
+    type: object
+    additionalProperties: false
+    required: [decision, evidence_refs]
+    properties:
+      decision:
+        enum: [ADVANCE, BLOCK, ESCALATE, UNKNOWN]
+      evidence_refs:
+        type: array
+        items: {type: string, minLength: 1}
+  adjudication:
+    type: object
+    additionalProperties: false
+    required: [state, severity, evidence_refs]
+    properties:
+      state:
+        enum: [CORRECT, DEFECT, UNKNOWN]
+      severity:
+        enum: [CRITICAL, HIGH, NORMAL, null]
+      evidence_refs:
+        type: array
+        items: {type: string, minLength: 1}
+  production_effect:
+    const: NONE
+  classification:
+    enum:
+      - TRUE_CLEAR
+      - TRUE_BLOCK
+      - FALSE_CLEAR
+      - FALSE_BLOCK
+      - PROTECTIVE_ESCALATION
+      - CONSERVATIVE_ESCALATION
+      - PENDING_ADJUDICATION
+  relative_outcome:
+    enum:
+      - SAME
+      - CAUGHT_INCUMBENT_MISS
+      - AVOIDED_INCUMBENT_FALSE_BLOCK
+      - DIVERGENT
+      - PENDING
