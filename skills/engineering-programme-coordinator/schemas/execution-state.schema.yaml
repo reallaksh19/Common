@@ -85,6 +85,7 @@ properties:
         enum: [CODER, REVIEWER, COORDINATOR, NONE]
       capability_basis:
         type: array
+        minItems: 1
         uniqueItems: true
         items: {type: string, minLength: 1}
       allowed_actions:
