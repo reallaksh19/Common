@@ -61,9 +61,9 @@ class L0TaskObligationTests(unittest.TestCase):
         markdown = (
             "# Child\n\n"
             + SOURCE_HEADING
-            + "\n\n\`\`\`yaml\n"
+            + "\n\n```yaml\n"
             + SOURCE_PATH.read_text(encoding="utf-8")
-            + "\`\`\`\n"
+            + "```\n"
         )
         self.assertEqual(extract_precommitted_source(markdown), source())
 
@@ -74,7 +74,7 @@ class L0TaskObligationTests(unittest.TestCase):
 
     def test_issue_markdown_source_with_candidate_field_is_rejected(self):
         payload = SOURCE_PATH.read_text(encoding="utf-8") + "\ncandidate_sha: " + ("a" * 40) + "\n"
-        markdown = SOURCE_HEADING + "\n\n\`\`\`yaml\n" + payload + "\`\`\`\n"
+        markdown = SOURCE_HEADING + "\n\n```yaml\n" + payload + "```\n"
         with self.assertRaisesRegex(L0TaskObligationError, "Additional properties"):
             extract_precommitted_source(markdown)
 
