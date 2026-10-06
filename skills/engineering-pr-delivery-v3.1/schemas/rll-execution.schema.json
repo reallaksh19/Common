@@ -20,6 +20,14 @@
       "type": "string",
       "minLength": 1
     },
+    "local_execution_request": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(?:LOCAL-[A-Za-z0-9][A-Za-z0-9._-]*|LOCAL\\.(?:[1-9][0-9]*|REPO|INTERNAL)\\.[1-9][0-9]*)$",
+      "description": "Optional correlation to a native V3.1 LOCAL_EXECUTION_EXPORT request. This field is derived context and does not create engineering authority."
+    },
     "mode": {
       "enum": [
         "BRANCH_RESUME",

@@ -413,10 +413,12 @@ allow_material_write: false
                 "owner/repo", 42, value,
                 {"head": "abc123", "branch": "feature/work", "clean": True},
                 "codex",
+                "LOCAL-EP13-7-616bd4c268e6",
             )
         self.assertEqual("https://example.invalid/evidence", result["evidence_comment_url"])
         joined = " ".join(api.call_args.args)
         self.assertIn("abc123", joined)
+        self.assertIn("LOCAL-EP13-7-616bd4c268e6", joined)
         self.assertIn("focused tests PASS", joined)
 
     def test_duration_seconds_is_bounded_and_explicit(self):
@@ -471,6 +473,7 @@ allow_material_write: false
 
 transport: RLL-1
 worker: codex-local
+local_execution_request: LOCAL-EP13-7-616bd4c268e6
 mode: BRANCH_RESUME
 repository: owner/repo
 branch: feature/work
@@ -483,6 +486,80 @@ commit_message: bounded codex change
         value = rll.parse_exec(issue, [], {"owner"})
         self.assertEqual(["src/owned", "validation/example.json"], value["allowed_paths"])
         self.assertEqual("bounded codex change", value["commit_message"])
+        self.assertEqual("LOCAL-EP13-7-616bd4c268e6", value["local_execution_request"])
+
+    def test_local_execution_request_roundtrips_to_prompt_and_task_evidence(self):
+        request_id = "LOCAL-SMOKE-abc123"
+        issue = {
+            "author": {"login": "owner"},
+            "number": 42,
+            "title": "Smoke correlation",
+            "body": f"""RLL_EXECUTION_V1
+
+transport: RLL-1
+worker: codex-local
+local_execution_request: {request_id}
+mode: EXACT_HEAD_EVIDENCE
+repository: owner/repo
+head_sha: deadbeef
+base_sha: abc123
+allow_material_write: false
+""",
+        }
+
+        envelope = rll.parse_exec(issue, [], {"owner"})
+        self.assertEqual(request_id, envelope["local_execution_request"])
+
+        prompt = rll.prompt("owner/repo", 42, envelope, [], "codex", issue, [])
+        self.assertIn(request_id, prompt)
+
+        result = {
+            "schema": "RLL_RUN_RESULT_V1",
+            "transport_state": "REVIEW_READY",
+            "current": "done",
+            "next": "review",
+            "evidence_comment_url": None,
+            "evidence_markdown": "smoke evidence PASS",
+            "engineering_summary": "smoke PASS",
+            "notes": [],
+        }
+        with patch.object(
+            rll,
+            "ghj",
+            return_value={"html_url": "https://example.invalid/evidence"},
+        ) as api:
+            returned = rll.publish_executor_evidence(
+                "owner/repo",
+                42,
+                result,
+                {"head": "deadbeef", "branch": "", "clean": True},
+                "codex",
+                envelope["local_execution_request"],
+            )
+
+        self.assertEqual("https://example.invalid/evidence", returned["evidence_comment_url"])
+        posted = " ".join(api.call_args.args)
+        self.assertIn(request_id, posted)
+        self.assertIn("deadbeef", posted)
+        self.assertIn("smoke evidence PASS", posted)
+
+    def test_local_execution_request_rejects_invalid_identifier(self):
+        issue = {
+            "author": {"login": "owner"},
+            "body": """RLL_EXECUTION_V1
+
+transport: RLL-1
+worker: codex-local
+local_execution_request: ../../not-a-request
+mode: EXACT_HEAD_EVIDENCE
+repository: owner/repo
+head_sha: deadbeef
+base_sha: abc123
+allow_material_write: false
+""",
+        }
+        with self.assertRaises(rll.RllError):
+            rll.parse_exec(issue, [], {"owner"})
 
     def test_codex_prompt_embeds_issue_context_and_forbids_provider_control(self):
         issue = {"number": 42, "title": "Bounded task", "body": "Do the bounded work."}
@@ -494,12 +571,14 @@ commit_message: bounded codex change
             "head_sha": None,
             "write": True,
             "allowed_paths": ["src/owned"],
+            "local_execution_request": "LOCAL-EP13-7-616bd4c268e6",
         }
         text = rll.prompt("owner/repo", 42, envelope, [], "codex", issue, comments)
         self.assertIn("DURABLE ISSUE CONTEXT", text)
         self.assertIn("Do the bounded work.", text)
         self.assertIn("Do not invoke gh", text)
         self.assertIn("Do not commit, push, rebase, merge", text)
+        self.assertIn("LOCAL-EP13-7-616bd4c268e6", text)
         self.assertIn("src/owned", text)
 
     def test_codex_scrubs_github_token_environment(self):
