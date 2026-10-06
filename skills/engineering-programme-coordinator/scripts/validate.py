@@ -7,6 +7,7 @@ from pathlib import Path
 from coordlib import load_yaml, validate
 from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
+from provider_mutation import semantic_errors as provider_mutation_semantic_errors
 from review_basis import (
     review_context_semantic_errors,
     self_check_context_semantic_errors,
@@ -23,6 +24,7 @@ SCHEMAS = {
     "relay-handover",
     "production-readiness",
     "execution-state",
+    "provider-mutation",
     "review-context",
     "self-check-context",
 }
@@ -45,6 +47,11 @@ def main() -> None:
         errors.extend(
             f"{Path(args.path).name}: {error}"
             for error in execution_state_semantic_errors(value)
+        )
+    if not errors and args.schema == "provider-mutation":
+        errors.extend(
+            f"{Path(args.path).name}: {error}"
+            for error in provider_mutation_semantic_errors(value)
         )
     if not errors and args.schema == "review-context":
         errors.extend(
