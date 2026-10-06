@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 
 
@@ -17,6 +18,7 @@ SCHEMAS = {
     "programme-record",
     "relay-handover",
     "production-readiness",
+    "execution-state",
 }
 
 
@@ -33,6 +35,11 @@ def main() -> None:
         errors.extend(
             f"{path.name}: {error}"
             for error in production_readiness_semantic_errors(value)
+        )
+    if not errors and args.schema == "execution-state":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in execution_state_semantic_errors(value)
         )
     if errors:
         for error in errors:
