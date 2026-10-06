@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from production_readiness import semantic_errors as production_readiness_semantic_errors
 from review_basis import (
     review_context_semantic_errors,
     self_check_context_semantic_errors,
@@ -19,6 +20,7 @@ SCHEMAS = {
     "owner-coordination-report",
     "programme-record",
     "relay-handover",
+    "production-readiness",
     "review-context",
     "self-check-context",
 }
@@ -32,6 +34,11 @@ def main() -> None:
 
     value = load_yaml(Path(args.path))
     errors = validate(args.schema, value, Path(args.path).name)
+    if not errors and args.schema == "production-readiness":
+        errors.extend(
+            f"{Path(args.path).name}: {error}"
+            for error in production_readiness_semantic_errors(value)
+        )
     if not errors and args.schema == "review-context":
         errors.extend(
             f"{Path(args.path).name}: {error}"

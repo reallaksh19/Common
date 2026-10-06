@@ -54,23 +54,41 @@ jobs:
 
       - run: python -m pip install --disable-pip-version-check PyYAML jsonschema
 
-      - name: Compile integrated adapter and review-basis runtime
+      - name: Compile coordinator runtimes
         run: |
           python -m py_compile \
             skills/engineering-programme-coordinator/scripts/local_v11_integrated.py \
-            skills/engineering-programme-coordinator/scripts/review_basis.py
+            skills/engineering-programme-coordinator/scripts/review_basis.py \
+            skills/engineering-programme-coordinator/scripts/production_readiness.py \
+            skills/engineering-programme-coordinator/scripts/validate.py
 
-      - name: Validate integrated schema
+      - name: Validate coordinator schemas
         run: |
           python - <<'PY'
           import pathlib
           import yaml
-          path = pathlib.Path('skills/engineering-programme-coordinator/schemas/local-v1.1-integrated.schema.yaml')
-          document = yaml.safe_load(path.read_text(encoding='utf-8'))
-          assert document['$id'] == 'engineering-programme-coordinator-local-v1.1-integrated'
-          assert document['properties']['mode']['const'] == 'LOCAL_V1_1_INTEGRATED'
-          assert document['properties']['authority']['const'] == 'OBSERVATION_ONLY'
-          assert document['properties']['legacy_v31_interpretation']['const'] == 'READABLE_COMPATIBILITY_ONLY'
+          root = pathlib.Path('skills/engineering-programme-coordinator/schemas')
+
+          integrated = yaml.safe_load(
+              (root / 'local-v1.1-integrated.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert integrated['$id'] == 'engineering-programme-coordinator-local-v1.1-integrated'
+          assert integrated['properties']['mode']['const'] == 'LOCAL_V1_1_INTEGRATED'
+          assert integrated['properties']['authority']['const'] == 'OBSERVATION_ONLY'
+          assert integrated['properties']['legacy_v31_interpretation']['const'] == 'READABLE_COMPATIBILITY_ONLY'
+
+          readiness = yaml.safe_load(
+              (root / 'production-readiness.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert readiness['$id'] == 'engineering-programme-coordinator-production-readiness-v1'
+          assert readiness['properties']['schema_version']['const'] == 'PRODUCTION_READINESS_V1'
+          assert readiness['properties']['authority']['const'] == 'PRODUCTION_READINESS_PROJECTION'
+          assert readiness['properties']['production_mode']['enum'] == [
+              'OFF', 'SHADOW_ONLY', 'CRITICAL_GATE', 'DEFAULT_GATE'
+          ]
+          required_basis = set(readiness['properties']['exact_basis']['required'])
+          assert 'common_reviewer_ref' in required_basis
+          assert 'common_reviewer_digest' in required_basis
           PY
 
       - name: Run integrated-mode regressions
@@ -78,6 +96,9 @@ jobs:
 
       - name: Run Common Reviewer basis regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_review_basis.py' -v
+
+      - name: Run production readiness regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_production_readiness.py' -v
 
       - name: Validate Common Reviewer authority boundary
         run: |
