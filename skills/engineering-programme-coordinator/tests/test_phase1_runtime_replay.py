@@ -57,8 +57,6 @@ def active_native_bundle():
         row for row in bundle["stages"]
         if row["task_id"] == native_fixture.PRD and row["stage"] == "COORDINATOR"
     )
-    coordinator["repeat_stages"] = ["COORDINATOR"]
-
     rework = copy.deepcopy(coordinator)
     rework["record_id"] = "S3-REWORK"
     rework["attempt"] = coordinator["attempt"] + 1
@@ -92,8 +90,28 @@ def active_native_bundle():
     rework["source_attestation"] = None
     rework["review_lease_ref"] = None
     rework["evidence_refs"] = []
-    if "acceptance_results" in rework:
-        rework["acceptance_results"] = []
+    rework["evidence_manifest"] = []
+    rework["acceptance_results"] = []
+    rework["carried_findings"] = []
+    rework["discovery_freeze"] = None
+    rework["production_output"] = {
+        "deliverables": ["Fresh Coordinator rework is active."],
+        "coverage_completed": [],
+        "fixes_applied": [],
+        "regressions_added": [],
+        "education_points": [],
+        "unresolved_internal_defects": [],
+        "internal_fixable_defects_remaining": 0,
+        "blocking_class": "NONE",
+        "coverage_complete_for_stage": False,
+        "early_termination": False,
+        "early_termination_reason": None,
+        "candidate_changed": False,
+        "defects_found": [],
+        "defects_fixed_here": [],
+        "external_escalations": [],
+        "changed_components": [],
+    }
     bundle["stages"].append(rework)
     bundle["observed"]["parent_comment_frontiers"][rework["record_id"]] = {
         "comment_ref": rework["parent_context"]["through_comment_ref"],
