@@ -73,6 +73,7 @@ properties:
       - execution_next_action
       - execution_reason_code
       - production_mode
+      - artifact_class
       - local_native_validation
       - local_source_unchanged
       - v35_source_unchanged
@@ -86,6 +87,7 @@ properties:
       execution_next_action: {type: string, minLength: 1}
       execution_reason_code: {type: string, minLength: 1}
       production_mode: {const: 'OFF'}
+      artifact_class: {const: CANONICAL_SYNTHETIC}
       local_native_validation: {const: PASS}
       local_source_unchanged: {const: true}
       v35_source_unchanged: {const: true}
