@@ -108,7 +108,7 @@ properties:
       exact_candidate_bound: {const: true}
       digest_namespaces_preserved: {const: true}
       real_artifact_horizontal_integration: {const: VERIFIED}
-      production_mode: {const: OFF}
+      production_mode: {const: 'OFF'}
   authority_boundaries:
     type: object
     additionalProperties: false
