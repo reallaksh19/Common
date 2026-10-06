@@ -93,7 +93,7 @@ def current_state():
             "phase": "PHASE-1-CANONICAL-RUNTIME",
             "prd_id": "PRD-527-P1-R3B",
             "issue_ref": "issue://548",
-            "role": "SOLO_CODER",
+            "role": "CODER",
             "attempt": 1,
         },
         "candidate": {
@@ -285,6 +285,14 @@ class CurrentStateTests(unittest.TestCase):
         value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
         errors = validate_current_state(value, execution)
         self.assertTrue(any("active.attempt" in error for error in errors), errors)
+
+    def test_execution_role_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["capability"]["active_role"] = "REVIEWER"
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(any("active.role" in error for error in errors), errors)
 
     def test_execution_parent_identity_mismatch_is_rejected(self):
         value = current_state()
