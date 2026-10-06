@@ -37,7 +37,7 @@ from repair_replay import (
     compile_source as compile_repair,
     object_digest as repair_object_digest,
     validate_result as validate_repair_result,
-    validate_result_shape,
+    validate_result_shape as validate_repair_result_shape,
 )
 from verdict_policy import (
     canonical_digest as verdict_source_digest,
@@ -379,7 +379,7 @@ def _mutate_s5(
     value = copy.deepcopy(clean_result)
     value["repair_delta"]["changes"][0]["path"] += ".seeded-wrong"
     value["result_digest"] = repair_object_digest(value, "result_digest")
-    shallow = validate_result_shape(value, spec["id"])
+    shallow = validate_repair_result_shape(value, spec["id"])
     bound = validate_repair_result(
         value, retained["repair_source"], repo_root, spec["id"]
     )
