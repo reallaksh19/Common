@@ -12,6 +12,10 @@ from proof_obligations import (
     ledger_semantic_errors,
     manifest_semantic_errors,
 )
+from shadow_rollout import (
+    semantic_errors as shadow_observation_semantic_errors,
+    validate_summary as validate_shadow_summary,
+)
 
 
 SCHEMAS = {
@@ -28,6 +32,8 @@ SCHEMAS = {
     "evidence-ledger",
     "review-context",
     "evidence-gate-result",
+    "shadow-observation",
+    "shadow-summary",
 }
 
 
@@ -66,6 +72,13 @@ def main() -> None:
             f"{path.name}: {error}"
             for error in review_context_semantic_errors(value)
         )
+    if not errors and args.schema == "shadow-observation":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in shadow_observation_semantic_errors(value)
+        )
+    if not errors and args.schema == "shadow-summary":
+        errors.extend(validate_shadow_summary(value, path.name))
 
     if errors:
         for error in errors:
