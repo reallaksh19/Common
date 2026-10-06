@@ -7,6 +7,27 @@ profiles:
     nested_coder:
       version: '3.5'
       path: skills/engineering-pr-delivery-v3.5
+    common_reviewer:
+      version: '1.0'
+      path: skills/common-reviewer-protocol-v1.0
+      profile_schema: skills/common-reviewer-protocol-v1.0/schemas/common-review-profile.schema.yaml
+      project_overlay_required: true
+      same_principal_independence_claim: FORBIDDEN
+      emits_engineering_pass: false
+    review_execution:
+      solo:
+        context_schema: SELF_CHECK_CONTEXT_V1
+        required_independence: NONE
+      governed:
+        context_schema: REVIEW_CONTEXT_V1
+        allowed_independence:
+          - DEGRADED
+          - DISTINCT
+      advancement_gate:
+        state: DOWNSTREAM_DEPENDENCY
+        requires:
+          - PROOF_OBLIGATION_MANIFEST
+          - EXACT_CANDIDATE_EVIDENCE_LEDGER
     programme_coordinator:
       mode: LOCAL_V1_1_INTEGRATED
       legacy_v31: READABLE_COMPATIBILITY_ONLY
@@ -28,3 +49,4 @@ migration:
   automatic: false
   owner_authority_required: true
   preserve_pinned_responsibility_basis: true
+  review_protocol_revision_requires_impact_classification: true
