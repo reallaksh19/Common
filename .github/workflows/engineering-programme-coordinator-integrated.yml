@@ -580,9 +580,12 @@ jobs:
 
       - name: Fetch exact P2-S5 repair lineage objects
         run: |
-          git fetch --no-tags --depth=1 origin 7bc9340343f7a50b056717e73fc5b8e776332b61
-          git fetch --no-tags --depth=1 origin 53c9914be7ec6dd3ab80441eb97056484e20fd1b
-          git fetch --no-tags --depth=1 origin 616160895f1273321e84d070fdad0dafa2e8da83
+          git fetch --no-tags --depth=32 origin prod/527-p2-s4-evidence-ledger
+          git cat-file -e 7bc9340343f7a50b056717e73fc5b8e776332b61^{commit}
+          git cat-file -e 53c9914be7ec6dd3ab80441eb97056484e20fd1b^{commit}
+          git cat-file -e 616160895f1273321e84d070fdad0dafa2e8da83^{commit}
+          git merge-base --is-ancestor 7bc9340343f7a50b056717e73fc5b8e776332b61 53c9914be7ec6dd3ab80441eb97056484e20fd1b
+          git merge-base --is-ancestor 53c9914be7ec6dd3ab80441eb97056484e20fd1b 616160895f1273321e84d070fdad0dafa2e8da83
 
       - name: Attest P2-S5 source, PR565 repair lineage and provider history
         env:
