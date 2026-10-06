@@ -1,9 +1,11 @@
 import copy
+import hashlib
 import sys
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from review_basis import review_basis_errors
@@ -12,6 +14,10 @@ from review_basis import review_basis_errors
 CANDIDATE = "c" * 40
 BASE = "a" * 40
 DIGEST = "d" * 64
+MANIFEST_REL = "skills/engineering-programme-coordinator/tests/fixtures/self-check-expectation-manifest.yaml"
+MANIFEST_REF = f"repo://{MANIFEST_REL}"
+MANIFEST_DIGEST = hashlib.sha256((REPO_ROOT / MANIFEST_REL).read_bytes()).hexdigest()
+REVIEW_BASIS_REF = "repo://skills/engineering-programme-coordinator/scripts/review_basis.py"
 
 
 def criterion(result="PASS"):
@@ -55,8 +61,8 @@ def self_context():
         "schema_version": "SELF_CHECK_CONTEXT_V1",
         "authority": "SOLO_SELF_CHECK_CONTEXT",
         "candidate_sha": CANDIDATE,
-        "manifest_ref": "manifest://1",
-        "manifest_digest": DIGEST,
+        "manifest_ref": MANIFEST_REF,
+        "manifest_digest": MANIFEST_DIGEST,
         "principal": {
             "kind": "SOLO_PRINCIPAL",
             "identity": "agent://1",
@@ -68,7 +74,7 @@ def self_context():
             "original_task_ref": "issue://537",
             "base_sha": BASE,
             "candidate_sha": CANDIDATE,
-            "repository_context_refs": ["repo://base", "repo://candidate"],
+            "repository_context_refs": [MANIFEST_REF, REVIEW_BASIS_REF],
             "expectation_manifest_frozen": True,
             "author_reasoning_used_as_evidence": False,
             "coder_confidence_used_as_evidence": False,
@@ -132,6 +138,35 @@ class ReviewBasisTests(unittest.TestCase):
                 or "author reasoning" in error
                 for error in errors
             ),
+            errors,
+        )
+
+    def test_self_check_rejects_stale_manifest_digest(self):
+        ctx = self_context()
+        ctx["manifest_digest"] = "e" * 64
+        errors = review_basis_errors(profile(), ctx)
+        self.assertTrue(
+            any("manifest_digest does not match" in error for error in errors),
+            errors,
+        )
+
+    def test_self_check_rejects_unattestable_manifest_ref(self):
+        ctx = self_context()
+        ctx["manifest_ref"] = "manifest://self-asserted"
+        errors = review_basis_errors(profile(), ctx)
+        self.assertTrue(
+            any("manifest_ref: unsupported ref scheme" in error for error in errors),
+            errors,
+        )
+
+    def test_self_check_requires_source_bound_repository_context(self):
+        ctx = self_context()
+        ctx["reconstruction_policy"]["repository_context_refs"] = [
+            "provider://candidate",
+        ]
+        errors = review_basis_errors(profile(), ctx)
+        self.assertTrue(
+            any("source-bound repo:// reference" in error for error in errors),
             errors,
         )
 
