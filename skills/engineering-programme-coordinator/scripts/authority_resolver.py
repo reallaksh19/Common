@@ -156,13 +156,16 @@ def _principal_independence(
     if role == "CODER":
         return "NONE", None
 
-    prior = next(
-        (
-            row for row in reversed(stages[:-1])
-            if row["stage"] != latest["stage"]
-        ),
-        None,
-    )
+    # Same-role REWORK attempts do not create a new Local role boundary. Find the
+    # first attempt in the current contiguous role block, then resolve the actual
+    # adjacent prior-role boundary against that first attempt.
+    current_index = stages.index(latest)
+    block_start = current_index
+    while block_start > 0 and stages[block_start - 1]["stage"] == latest["stage"]:
+        block_start -= 1
+    first_current = stages[block_start]
+    prior = stages[block_start - 1] if block_start > 0 else None
+
     if prior is None or prior["executor"] != latest["executor"]:
         return "DISTINCT", None
 
@@ -171,7 +174,7 @@ def _principal_independence(
             row for row in bundle["native_support"]["role_transitions"]
             if row["task_id"] == latest["task_id"]
             and row["previous_record_id"] == prior["record_id"]
-            and row["next_record_id"] == latest["record_id"]
+            and row["next_record_id"] == first_current["record_id"]
         ),
         None,
     )
@@ -370,11 +373,22 @@ def _derive_ready(
         transition_ref = None
         next_role = "NONE"
     else:
-        lifecycle_state = (
-            control["command"]
-            if control is not None and control["command"] in {"HOLD", "PAUSE"}
-            else effective_status
-        )
+        lifecycle_state = {
+            "RUNNING": "ACTIVE",
+            "REWORK": "REWORK",
+            "WAITING_CI": "WAITING_CI",
+            "WAITING_OWNER": "WAITING_OWNER",
+            "WAITING_EXTERNAL": "WAITING_EXTERNAL",
+            "BLOCKED": "BLOCKED",
+            "STALLED": "STALLED",
+            "INCONCLUSIVE": "INCONCLUSIVE",
+            "HELD": "HELD",
+            "PAUSED": "PAUSED",
+        }.get(effective_status, effective_status)
+        if control is not None and control["command"] == "HOLD":
+            lifecycle_state = "HELD"
+        elif control is not None and control["command"] == "PAUSE":
+            lifecycle_state = "PAUSED"
         active_role = role
         active_principal = latest["executor"]
         independence, transition_ref = _principal_independence(
@@ -532,6 +546,42 @@ def resolve_authority(
     )
     require(not errors, "; ".join(errors))
     return result
+
+
+def validate_authority_resolution(
+    value: Any,
+    bundle: Any,
+    observed_at: str | None,
+    label: str = "authority-resolution",
+) -> list[str]:
+    errors = schema_validate("authority-resolution", value, label)
+    if errors:
+        return errors
+    if not isinstance(value, dict):
+        return [f"{label}: authority resolution must be an object"]
+    errors = [f"{label}: {error}" for error in semantic_errors(value)]
+
+    if not isinstance(bundle, dict):
+        errors.append(f"{label}: authority resolution requires raw Local native bundle")
+        return errors
+    if not isinstance(observed_at, str) or not observed_at:
+        errors.append(f"{label}: authority resolution requires explicit observed_at")
+        return errors
+    if value["source"]["observed_at"] != observed_at:
+        errors.append(f"{label}: observed_at differs from projected source time")
+        return errors
+
+    try:
+        derived = resolve_authority(bundle, value["task_id"], observed_at)
+    except Exception as exc:
+        errors.append(f"{label}: bound Local replay failed: {exc}")
+        return errors
+
+    if value != derived:
+        errors.append(
+            f"{label}: stored authority resolution must exactly equal raw Local-bundle derivation"
+        )
+    return errors
 
 
 def main() -> None:
