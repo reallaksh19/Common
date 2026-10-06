@@ -1,0 +1,99 @@
+schema_version: L0_TASK_OBLIGATION_MANIFEST_V1
+authority: FROZEN_PREIMPLEMENTATION_EXPECTATIONS
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P2-S1
+  child_ref: https://github.com/reallaksh19/Common/issues/558
+  contract_version: P2-S1-v1
+source:
+  kind: CHILD_CONTRACT_PROJECTION
+  ref: https://github.com/reallaksh19/Common/issues/558
+  digest: 5be577a4b69a0d9f34e0f660fa15efcdde0eb944aad9d1c0f568311c5d1fc09e
+freeze:
+  state: FROZEN
+  basis: CONTRACT_ONLY
+  freeze_ref: sha256:5be577a4b69a0d9f34e0f660fa15efcdde0eb944aad9d1c0f568311c5d1fc09e
+one_primary_outcome: Deterministically compile frozen L0 obligations from child-contract facts only, before implementation evidence is used.
+obligations:
+  - id: L0-COMPILER-DETERMINISM
+    severity: CRITICAL
+    claim:
+      type: BEHAVIOR
+      statement: The same valid child-contract source always compiles to the same frozen L0 manifest and digest.
+      subject_refs:
+        - skills/engineering-programme-coordinator/scripts/l0_task_obligations.py
+    expected_observation: Replaying compilation from the same source produces byte-equivalent canonical content and the same manifest digest.
+    plausible_green_but_wrong: A stored manifest validates by schema even though it differs from a fresh replay of the source contract.
+    oracle_refs:
+      - contract://P2-S1/replay-equality
+    evidence_required:
+      - id: REQ-L0-COMPILER-REPLAY
+        method: CONTRACT_TEST
+        independence: PRECOMMITTED
+        oracle_ref: contract://P2-S1/replay-equality
+    source_refs:
+      - https://github.com/reallaksh19/Common/issues/558
+  - id: L0-CONTRACT-ONLY-BASIS
+    severity: CRITICAL
+    claim:
+      type: AUTHORITY
+      statement: L0 compilation can consume child-contract facts only and cannot consume candidate, diff, implementation-evidence, Coder-rationale or verdict fields.
+      subject_refs:
+        - skills/engineering-programme-coordinator/schemas/l0-task-contract-source.schema.yaml
+    expected_observation: Inputs carrying implementation-derived or verdict fields are rejected before compilation.
+    plausible_green_but_wrong: A caller injects implementation evidence or candidate state and changes the L0 denominator while retaining a valid-looking manifest.
+    oracle_refs:
+      - contract://P2-S1/contract-only-input
+    evidence_required:
+      - id: REQ-L0-CONTRACT-ONLY
+        method: SCHEMA_CHECK
+        independence: PRECOMMITTED
+        oracle_ref: contract://P2-S1/contract-only-input
+    source_refs:
+      - https://github.com/reallaksh19/Common/issues/558
+  - id: L0-CLOSED-PRECOMMITTED-EXPECTATIONS
+    severity: CRITICAL
+    claim:
+      type: INVARIANT
+      statement: Every compiled L0 obligation retains claim, expected observation, plausible green-but-wrong case, oracle and precommitted evidence requirement.
+      subject_refs:
+        - skills/engineering-programme-coordinator/schemas/l0-task-obligation-manifest.schema.yaml
+    expected_observation: No obligation can be frozen without the complete precommitted expectation chain.
+    plausible_green_but_wrong: The compiler emits a claim-only checklist with no falsification case, oracle or evidence requirement.
+    oracle_refs:
+      - contract://P2-S1/expectation-chain
+    evidence_required:
+      - id: REQ-L0-EXPECTATION-CHAIN
+        method: CONTRACT_TEST
+        independence: PRECOMMITTED
+        oracle_ref: contract://P2-S1/expectation-chain
+    source_refs:
+      - https://github.com/reallaksh19/Common/issues/558
+forbidden_outcomes:
+  - aggregate PASS or reviewer-confidence field in L0 source/manifest
+  - candidate SHA, diff impact, implementation result or evidence result influences L0 compilation
+  - empty L0 denominator
+  - non-PRECOMMITTED L0 evidence requirement
+dependency_requirements:
+  - producer: PRD-527-P1-I-B
+    required_state: VERIFIED_AND_MERGED
+    exact_result_ref: 3d048d8d51abbfcc7278be38d1cae7a5cc27fd40
+non_goals:
+  - L1 baseline/preservation extraction
+  - L2 candidate-diff impact analysis
+  - exact-candidate evidence ledger
+  - repair invalidation/replay
+  - evidence verdict policy
+  - Reviewer/Super-Reviewer implementation
+  - production-mode transition
+authority_boundaries:
+  consumes_candidate_state: false
+  consumes_implementation_evidence: false
+  consumes_coder_rationale: false
+  consumes_reviewer_verdict: false
+  emits_engineering_pass: false
+  performs_lifecycle_advance: false
+  grants_merge_authority: false
+  grants_production_cutover: false
+manifest_digest: 85a05f6c308a5035ecf9308328f2bc13da42536a578de02031a92e53a91012e9
