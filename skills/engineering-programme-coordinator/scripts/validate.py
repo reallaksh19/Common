@@ -5,7 +5,10 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
-from evidence_gate import review_context_semantic_errors
+from evidence_gate import (
+    review_context_semantic_errors,
+    self_check_context_semantic_errors,
+)
 from execution_kernel import semantic_errors as execution_state_semantic_errors
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from proof_obligations import (
@@ -31,6 +34,7 @@ SCHEMAS = {
     "proof-obligation-manifest",
     "evidence-ledger",
     "review-context",
+    "self-check-context",
     "evidence-gate-result",
     "shadow-observation",
     "shadow-summary",
@@ -71,6 +75,11 @@ def main() -> None:
         errors.extend(
             f"{path.name}: {error}"
             for error in review_context_semantic_errors(value)
+        )
+    if not errors and args.schema == "self-check-context":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in self_check_context_semantic_errors(value)
         )
     if not errors and args.schema == "shadow-observation":
         errors.extend(
