@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -12,6 +13,7 @@ from coordlib import validate as schema_validate
 
 
 SKILLS = Path(__file__).resolve().parents[2]
+REPO_ROOT = SKILLS.parent
 COMMON_PROFILE_SCHEMA = (
     SKILLS
     / "common-reviewer-protocol-v1.0"
@@ -26,6 +28,87 @@ def _schema_errors(schema: dict[str, Any], value: Any, label: str) -> list[str]:
     for error in sorted(validator.iter_errors(value), key=lambda item: list(item.path)):
         where = ".".join(str(part) for part in error.path)
         errors.append(f"{label}{'.' + where if where else ''}: {error.message}")
+    return errors
+
+
+def _resolve_repo_ref(
+    ref: str,
+    *,
+    repository_root: Path = REPO_ROOT,
+) -> tuple[Path | None, str | None]:
+    prefix = "repo://"
+    if not ref.startswith(prefix):
+        return None, "unsupported ref scheme; expected repo://<relative-path>"
+    relative = ref[len(prefix):]
+    if not relative:
+        return None, "repo ref is empty"
+
+    root = repository_root.resolve()
+    candidate = (root / relative).resolve()
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        return None, "repo ref escapes repository root"
+    return candidate, None
+
+
+def _file_digest(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def self_check_basis_attestation_errors(
+    context: dict[str, Any],
+    *,
+    repository_root: Path = REPO_ROOT,
+) -> list[str]:
+    """Attest locally provable SELF_CHECK_CONTEXT_V1 basis claims.
+
+    The manifest is mandatory and source-bound through a repo:// reference whose
+    raw-file SHA-256 must equal manifest_digest. Repository context may include
+    provider refs, but at least one repo:// context ref must resolve so a
+    same-principal self-check cannot be grounded only in self-asserted labels.
+
+    Provider-owned task identity and historical base availability are intentionally
+    not guessed here; this validator attests only evidence the current checkout can
+    prove.
+    """
+    errors: list[str] = []
+    manifest_ref = context["manifest_ref"]
+    manifest_path, manifest_error = _resolve_repo_ref(
+        manifest_ref,
+        repository_root=repository_root,
+    )
+    if manifest_error:
+        errors.append(f"manifest_ref: {manifest_error}")
+    elif manifest_path is None or not manifest_path.is_file():
+        errors.append(f"manifest_ref does not resolve to a repository file: {manifest_ref}")
+    else:
+        actual = _file_digest(manifest_path)
+        expected = context["manifest_digest"]
+        if actual != expected:
+            errors.append(
+                "manifest_digest does not match source-bound manifest_ref "
+                f"(expected {expected}, observed {actual})"
+            )
+
+    policy = context["reconstruction_policy"]
+    source_bound_contexts = 0
+    for ref in policy["repository_context_refs"]:
+        if not ref.startswith("repo://"):
+            continue
+        source_bound_contexts += 1
+        path, ref_error = _resolve_repo_ref(ref, repository_root=repository_root)
+        if ref_error:
+            errors.append(f"repository_context_ref {ref!r}: {ref_error}")
+        elif path is None or not path.exists():
+            errors.append(f"repository_context_ref does not resolve: {ref}")
+
+    if source_bound_contexts == 0:
+        errors.append(
+            "reconstruction_policy.repository_context_refs must include at least "
+            "one source-bound repo:// reference"
+        )
+
     return errors
 
 
@@ -148,6 +231,11 @@ def review_basis_errors(
     errors.extend(validate_assessment_context(assessment_context))
     if errors:
         return errors
+
+    if assessment_context["schema_version"] == "SELF_CHECK_CONTEXT_V1":
+        errors.extend(self_check_basis_attestation_errors(assessment_context))
+        if errors:
+            return errors
 
     review = profile["review_profile"]
     role = review["role"]
