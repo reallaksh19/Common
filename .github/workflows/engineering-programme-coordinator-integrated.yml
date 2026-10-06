@@ -70,6 +70,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/evidence_freshness.py \
             skills/engineering-programme-coordinator/scripts/phase1_runtime_replay.py \
             skills/engineering-programme-coordinator/scripts/real_artifact_replay.py \
+            skills/engineering-programme-coordinator/scripts/l0_task_obligations.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -151,6 +152,20 @@ jobs:
           assert real['$id'] == 'engineering-programme-coordinator-real-artifact-replay-v1'
           assert real['properties']['schema_version']['const'] == 'REAL_ARTIFACT_REPLAY_V1'
           assert real['properties']['artifact_class']['const'] == 'RETAINED_REAL_PROVIDER_ATTESTED'
+
+          l0_source = yaml.safe_load(
+              (root / 'l0-task-contract-source.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert l0_source['$id'] == 'engineering-programme-coordinator-l0-task-contract-source-v1'
+          assert l0_source['properties']['schema_version']['const'] == 'L0_TASK_CONTRACT_SOURCE_V1'
+          assert l0_source['properties']['authority']['const'] == 'CHILD_CONTRACT_PROJECTION'
+
+          l0_manifest = yaml.safe_load(
+              (root / 'l0-task-obligation-manifest.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert l0_manifest['$id'] == 'engineering-programme-coordinator-l0-task-obligation-manifest-v1'
+          assert l0_manifest['properties']['schema_version']['const'] == 'L0_TASK_OBLIGATION_MANIFEST_V1'
+          assert l0_manifest['properties']['authority']['const'] == 'FROZEN_PREIMPLEMENTATION_EXPECTATIONS'
           PY
 
       - name: Run integrated-mode regressions
@@ -182,6 +197,15 @@ jobs:
 
       - name: Run retained real-artifact replay regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_real_artifact_replay.py' -v
+
+      - name: Run L0 task-obligation compiler regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_l0_task_obligations.py' -v
+
+      - name: Replay retained P2-S1 L0 source
+        run: |
+          python skills/engineering-programme-coordinator/scripts/l0_task_obligations.py validate \
+            skills/engineering-programme-coordinator/references/p2-s1-l0-source.yaml \
+            skills/engineering-programme-coordinator/references/p2-s1-l0-manifest.yaml
 
       - name: Run authenticated retained real-artifact replay
         env:
