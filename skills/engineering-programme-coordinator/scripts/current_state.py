@@ -142,7 +142,7 @@ def execution_binding_errors(
 
 def validate_current_state(
     value: Any,
-    execution_state: Any | None = None,
+    execution_state: Any,
     label: str = "current-state",
 ) -> list[str]:
     errors = schema_validate("current-state", value, label)
@@ -153,15 +153,17 @@ def validate_current_state(
 
     errors = [f"{label}: {error}" for error in semantic_errors(value)]
 
-    if execution_state is not None:
-        if not isinstance(execution_state, dict):
-            errors.append(f"{label}: bound execution state must be an object")
-        else:
-            errors.extend(
-                f"{label}: {error}"
-                for error in execution_binding_errors(value, execution_state)
-            )
+    if execution_state is None:
+        errors.append(f"{label}: CURRENT_STATE_V1 requires bound EXECUTION_STATE_V1")
+        return errors
+    if not isinstance(execution_state, dict):
+        errors.append(f"{label}: bound execution state must be an object")
+        return errors
 
+    errors.extend(
+        f"{label}: {error}"
+        for error in execution_binding_errors(value, execution_state)
+    )
     return errors
 
 
@@ -170,16 +172,12 @@ def main() -> None:
         description="Validate CURRENT_STATE_V1 and optional exact EXECUTION_STATE_V1 binding."
     )
     parser.add_argument("path")
-    parser.add_argument("--execution-state")
+    parser.add_argument("--execution-state", required=True)
     args = parser.parse_args()
 
     path = Path(args.path)
     value = load_yaml(path)
-    execution_state = (
-        load_yaml(Path(args.execution_state))
-        if args.execution_state
-        else None
-    )
+    execution_state = load_yaml(Path(args.execution_state))
     errors = validate_current_state(value, execution_state, path.name)
     if errors:
         for error in errors:
