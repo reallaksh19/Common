@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'skills/engineering-programme-coordinator/**'
+      - 'skills/common-reviewer-protocol-v1.0/**'
       - 'skills/Local_PR_Deliverty_v1.1/**'
       - 'skills/engineering-pr-delivery-v3.5/**'
       - '.github/workflows/engineering-programme-coordinator-integrated.yml'
@@ -14,6 +15,7 @@ on:
       - 'prod/**'
     paths:
       - 'skills/engineering-programme-coordinator/**'
+      - 'skills/common-reviewer-protocol-v1.0/**'
       - 'skills/Local_PR_Deliverty_v1.1/**'
       - 'skills/engineering-pr-delivery-v3.5/**'
       - '.github/workflows/engineering-programme-coordinator-integrated.yml'
@@ -52,8 +54,11 @@ jobs:
 
       - run: python -m pip install --disable-pip-version-check PyYAML jsonschema
 
-      - name: Compile integrated adapter
-        run: python -m py_compile skills/engineering-programme-coordinator/scripts/local_v11_integrated.py
+      - name: Compile integrated adapter and review-basis runtime
+        run: |
+          python -m py_compile \
+            skills/engineering-programme-coordinator/scripts/local_v11_integrated.py \
+            skills/engineering-programme-coordinator/scripts/review_basis.py
 
       - name: Validate integrated schema
         run: |
@@ -70,6 +75,24 @@ jobs:
 
       - name: Run integrated-mode regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_local_v11_integrated.py' -v
+
+      - name: Run Common Reviewer basis regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_review_basis.py' -v
+
+      - name: Validate Common Reviewer authority boundary
+        run: |
+          python - <<'PY'
+          import pathlib
+          import yaml
+          manifest = yaml.safe_load(pathlib.Path('skills/common-reviewer-protocol-v1.0/protocol-manifest.yaml').read_text(encoding='utf-8'))
+          protocol = manifest['protocol']
+          assert protocol['version'] == '1.0'
+          assert protocol['status'] == 'ACTIVE'
+          assert manifest['capabilities']['emits_engineering_pass'] is False
+          assert manifest['capabilities']['emits_lifecycle_advance'] is False
+          assert manifest['execution_contexts']['solo_default']['schema'] == 'SELF_CHECK_CONTEXT_V1'
+          assert manifest['execution_contexts']['governed_review']['schema'] == 'REVIEW_CONTEXT_V1'
+          PY
 
       - name: Verify V3.5 provider is explicit
         run: |

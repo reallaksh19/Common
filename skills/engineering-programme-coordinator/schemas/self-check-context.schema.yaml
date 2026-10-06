@@ -1,0 +1,84 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-self-check-context-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - candidate_sha
+  - manifest_ref
+  - manifest_digest
+  - principal
+  - reconstruction_policy
+  - tool_access
+properties:
+  schema_version:
+    const: SELF_CHECK_CONTEXT_V1
+  authority:
+    const: SOLO_SELF_CHECK_CONTEXT
+  candidate_sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  manifest_ref: {type: string, minLength: 1}
+  manifest_digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  principal:
+    type: object
+    additionalProperties: false
+    required:
+      - kind
+      - identity
+      - principal_independence
+      - fresh_reconstruction
+      - blindness_claim
+    properties:
+      kind:
+        const: SOLO_PRINCIPAL
+      identity: {type: string, minLength: 1}
+      principal_independence:
+        const: NONE
+      fresh_reconstruction:
+        const: true
+      blindness_claim:
+        const: NONE
+  reconstruction_policy:
+    type: object
+    additionalProperties: false
+    required:
+      - original_task_ref
+      - base_sha
+      - candidate_sha
+      - repository_context_refs
+      - expectation_manifest_frozen
+      - author_reasoning_used_as_evidence
+      - coder_confidence_used_as_evidence
+      - prior_self_check_used_as_evidence
+      - outcome_falsification_required
+    properties:
+      original_task_ref: {type: string, minLength: 1}
+      base_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+      candidate_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+      repository_context_refs:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+      expectation_manifest_frozen:
+        const: true
+      author_reasoning_used_as_evidence:
+        const: false
+      coder_confidence_used_as_evidence:
+        const: false
+      prior_self_check_used_as_evidence:
+        const: false
+      outcome_falsification_required:
+        const: true
+  tool_access:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}

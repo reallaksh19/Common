@@ -1,0 +1,44 @@
+protocol:
+  family: common-reviewer-protocol
+  version: "1.0"
+  status: ACTIVE
+  skill_path: skills/common-reviewer-protocol-v1.0/SKILL.md
+  profile_schema: skills/common-reviewer-protocol-v1.0/schemas/common-review-profile.schema.yaml
+
+capabilities:
+  common_review_catalog: CR-01..CR-10
+  standalone_self_review: true
+  fresh_review_context: true
+  project_protocol_overlay: required
+  same_principal_independence_claim: forbidden
+  emits_engineering_pass: false
+  emits_lifecycle_advance: false
+
+execution_contexts:
+  solo_default:
+    schema: SELF_CHECK_CONTEXT_V1
+    path: skills/engineering-programme-coordinator/schemas/self-check-context.schema.yaml
+    principal_independence: NONE
+  governed_review:
+    schema: REVIEW_CONTEXT_V1
+    path: skills/engineering-programme-coordinator/schemas/review-context.schema.yaml
+    independence: DEGRADED_OR_DISTINCT
+
+compatible_consumers:
+  engineering-pr-delivery:
+    v3.5: ACTIVE_BINDING
+    v3.2: STANDALONE_COMPATIBILITY_REQUIRES_SEPARATE_BINDING
+  Local_PR_Deliverty:
+    v1.1: ACTIVE_BINDING
+
+downstream_gate:
+  owner: engineering-programme-coordinator
+  status: DEPENDS_ON_PROOF_OBLIGATION_AND_EVIDENCE_LEDGER_RUNTIME
+  may_be_bypassed_by_common_review: false
+
+integration_requirements:
+  pin_exact_ref_and_digest: true
+  successor_scan: true
+  silent_migration: forbidden
+  project_protocol_may_strengthen: true
+  project_protocol_may_silently_weaken: false
