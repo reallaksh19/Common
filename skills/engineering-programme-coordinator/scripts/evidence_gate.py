@@ -283,9 +283,20 @@ def _repair_and_unresolved_refs(
         ref = f"finding://{finding['id']}"
         if finding["class"] in {"BLOCKING_DEFECT", "BOUNDED_PRODUCT_FIX"} and disposition == "OPEN":
             repair_refs.append(ref)
+            repair_reasons.append("REQUIRED_FINDING_OPEN")
         else:
             unresolved_refs.append(ref)
             unresolved_reasons.append("REQUIRED_EVIDENCE_INCOMPLETE")
+
+    unresolved_required = review.get("unresolved_required_findings", 0)
+    if unresolved_required and not any(ref.startswith("finding://") for ref in repair_refs + unresolved_refs):
+        unresolved_refs.append("review://unresolved-required-findings")
+        unresolved_reasons.append("REQUIRED_EVIDENCE_INCOMPLETE")
+
+    review_result = review.get("result")
+    if review_result != "COMPLETE" and not repair_refs and not unresolved_refs:
+        unresolved_refs.append(f"review://result/{review_result or 'MISSING'}")
+        unresolved_reasons.append("REQUIRED_EVIDENCE_INCOMPLETE")
 
     falsification_status = project_falsification["falsification_status"]
     observations = project_falsification["observations"]
