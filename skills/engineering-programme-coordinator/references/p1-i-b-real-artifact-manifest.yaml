@@ -1,0 +1,186 @@
+schema_version: P1_I_B_REAL_ARTIFACT_MANIFEST_V1
+artifact_id: P1-I-B-REAL-506-507-SU3
+repository: reallaksh19/Common
+
+source:
+  parent_issue: 506
+  child_issue: 507
+  pr: 510
+  parent_task_id: PARENT-506
+  responsibility_task_id: PRD-506-P0-R1
+  nested_engineering_responsibility: ENG-PRD-506-P0-R1-CODER
+  branch: bench/506-p0-r1-canonical-local-projection
+  target_sha: 97bbc92f29e0be9e7303ee1031a409f56633db45
+  initialization_head: 6ca7109b7b7dcdee58b1a3e646191317e4acfdf6
+  exact_head: 836964b0f82b23f1294d79e3fd48df140baa81f0
+  acceptance_epoch_id: BENCH-506-AE-1
+  acceptance_profile_ref: BENCHMARK-PROJECT-REVIEW-ACCEPTANCE-V1
+  acceptance_profile_digest: 222e44d3493b9ba639fddb0c6d3b7d00daaa9ceb3f83c20a4bdc463c0392c94b
+  release_state: READY
+
+protocol_identity:
+  local:
+    ref: reallaksh19/Common@97bbc92f29e0be9e7303ee1031a409f56633db45:skills/Local_PR_Deliverty_v1.1
+    tree_sha1: f9ccc25ea49ad5e8a1aded98ec22ad75a309bf0a
+    release_start_digest: e8b749b24433d3f9c0df1627a0c37e39eff427758540aad96f39d16b5d495821
+    precode_benchmark_digest: eebb339a0e5413b98c28a1f3bd8fc0b14082b8d7c8dc79e479aee1fdf2c0aa94
+  v35:
+    ref: reallaksh19/Common@97bbc92f29e0be9e7303ee1031a409f56633db45:skills/engineering-pr-delivery-v3.5
+    tree_sha1: a08cd360bd3892f723ae7a1f6536e484a0674b9d
+    release_start_digest: 7206c1e8355a89f9d4789a3db8569ebd45c583b48dcc70a624c9228701bdb517
+    precode_benchmark_digest: acf904293004f6aa8c934e8d422719f93c7b8ee12ca6b6fa9a52d6aeec884608
+
+comments:
+  release_basis:
+    id: 5997797660
+    issue: 506
+    author: reallaksh19
+    created_at: '2026-10-05T15:39:03Z'
+    updated_at: '2026-10-05T15:39:03Z'
+    required_tokens:
+      - '# LOCAL_RELEASE_BASIS — PRD-506-P0-R1 — rev 1'
+      - 'responsibility_task_id: PRD-506-P0-R1'
+      - 'nested_engineering_responsibility: ENG-PRD-506-P0-R1-CODER'
+      - 'target_sha: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'draft_pr: 510'
+      - 'directory_git_tree_sha1: f9ccc25ea49ad5e8a1aded98ec22ad75a309bf0a'
+      - 'digest: e8b749b24433d3f9c0df1627a0c37e39eff427758540aad96f39d16b5d495821'
+      - 'directory_git_tree_sha1: a08cd360bd3892f723ae7a1f6536e484a0674b9d'
+      - 'digest: 7206c1e8355a89f9d4789a3db8569ebd45c583b48dcc70a624c9228701bdb517'
+      - 'acceptance_epoch_id: BENCH-506-AE-1'
+      - 'profile_id: BENCHMARK-PROJECT-REVIEW-ACCEPTANCE-V1'
+      - 'release_state: READY'
+      - 'merge_authority: NOT_GRANTED'
+
+  start_permission:
+    id: 5997805924
+    issue: 506
+    author: reallaksh19
+    created_at: '2026-10-05T15:39:30Z'
+    updated_at: '2026-10-05T15:39:30Z'
+    required_tokens:
+      - '# START_PERMISSION — PRD-506-P0-R1 — CODER attempt 1'
+      - 'responsibility_task_id: PRD-506-P0-R1'
+      - 'role: CODER'
+      - 'attempt: 1'
+      - 'exact_input_head_sha: 6ca7109b7b7dcdee58b1a3e646191317e4acfdf6'
+      - 'target_sha: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'local_protocol_digest: e8b749b24433d3f9c0df1627a0c37e39eff427758540aad96f39d16b5d495821'
+      - 'v35_protocol_digest: 7206c1e8355a89f9d4789a3db8569ebd45c583b48dcc70a624c9228701bdb517'
+      - 'acceptance_epoch_id: BENCH-506-AE-1'
+      - 'acceptance_profile_ref: BENCHMARK-PROJECT-REVIEW-ACCEPTANCE-V1'
+      - 'nested_result_scope: CODER_ENGINEERING_EXECUTION'
+      - 'nested_local_responsibility_complete_must_remain: false'
+      - 'merge_authority: NOT_GRANTED'
+
+  coder_start:
+    id: 5997819369
+    issue: 506
+    author: reallaksh19
+    created_at: '2026-10-05T15:40:16Z'
+    updated_at: '2026-10-05T15:40:16Z'
+    required_tokens:
+      - '# TASK_EVIDENCE — START — PRD-506-P0-R1 — CODER attempt 1'
+      - 'local_role: CODER'
+      - 'responsibility_task_id: PRD-506-P0-R1'
+      - 'nested_engineering_responsibility: ENG-PRD-506-P0-R1-CODER'
+      - 'nested_result_scope: CODER_ENGINEERING_EXECUTION'
+      - 'local_responsibility_complete: false'
+      - 'input_head_sha: 6ca7109b7b7dcdee58b1a3e646191317e4acfdf6'
+      - 'target_sha: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'mode: LOCAL_V1_1_INTEGRATED'
+      - 'authority: OBSERVATION_ONLY'
+      - 'acceptance_epoch_id: BENCH-506-AE-1'
+      - 'profile_id: BENCHMARK-PROJECT-REVIEW-ACCEPTANCE-V1'
+      - 'must_not_claim_local_completion: true'
+
+  v35_precode:
+    id: 5999516759
+    issue: 507
+    author: reallaksh19
+    created_at: '2026-10-05T17:21:18Z'
+    updated_at: '2026-10-05T17:21:18Z'
+    required_tokens:
+      - '# P0-R1 PRE-CODE FREEZE — v1'
+      - 'schema: V35_EXECUTION_MANIFEST_V1'
+      - 'local_prd: PRD-506-P0-R1'
+      - 'nested_engineering_responsibility: ENG-PRD-506-P0-R1-CODER'
+      - 'input_base_sha: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'branch: bench/506-p0-r1-canonical-local-projection'
+      - 'pr: Common#510'
+      - 'result_scope: CODER_ENGINEERING_EXECUTION'
+      - 'local_responsibility_complete: false'
+      - 'tree_sha1: f9ccc25ea49ad5e8a1aded98ec22ad75a309bf0a'
+      - 'benchmark_digest_sha256: eebb339a0e5413b98c28a1f3bd8fc0b14082b8d7c8dc79e479aee1fdf2c0aa94'
+      - 'tree_sha1: a08cd360bd3892f723ae7a1f6536e484a0674b9d'
+      - 'benchmark_digest_sha256: acf904293004f6aa8c934e8d422719f93c7b8ee12ca6b6fa9a52d6aeec884608'
+
+  super_review:
+    id: 6007633056
+    issue: 507
+    author: reallaksh19
+    created_at: '2026-10-06T01:46:14Z'
+    updated_at: '2026-10-06T01:46:14Z'
+    required_tokens:
+      - '# SUPER_REVIEW_NOTE — CP-R1-SU3 exact-head runtime evidence'
+      - 'reviewer_role: OWNER_DESIGNATED_COORDINATOR_SUPER_REVIEWER'
+      - 'pr: Common#510'
+      - 'branch: bench/506-p0-r1-canonical-local-projection'
+      - 'exact_head: 836964b0f82b23f1294d79e3fd48df140baa81f0'
+      - 'base: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'local_suite_result: PASS_258_OF_258'
+      - 'coordinator_suite_result: PASS_37_OF_37'
+      - 'authority_change: NONE'
+      - 'merge_authority: NOT_GRANTED'
+      - 'record authenticity (F3_AUTHENTICITY), ASD-506-01, and the standalone workflow gap remain OPEN residuals'
+
+  certification:
+    id: 6007649708
+    issue: 507
+    author: reallaksh19
+    created_at: '2026-10-06T01:47:46Z'
+    updated_at: '2026-10-06T01:47:46Z'
+    required_tokens:
+      - '# CP-R1-SU3 — SUPERSEDING EXACT-HEAD CERTIFICATION'
+      - 'state: CERTIFIED_AT_EXACT_HEAD_WITH_EXPLICIT_RESIDUALS'
+      - 'exact_head: 836964b0f82b23f1294d79e3fd48df140baa81f0'
+      - 'base: 97bbc92f29e0be9e7303ee1031a409f56633db45'
+      - 'pr: reallaksh19/Common#510'
+      - 'source_role: OWNER_DESIGNATED_COORDINATOR_SUPER_REVIEWER'
+      - 'exact_head_binding: 836964b0f82b23f1294d79e3fd48df140baa81f0'
+      - 'full_local_suite: PASS_258_OF_258'
+      - 'coordinator_suite: PASS_37_OF_37'
+      - 'run: 37370180585'
+      - 'run: 37370180793'
+      - 'run: 37370180930'
+      - 'run: 37370180741'
+      - 'nested_engineering_responsibility_complete: false'
+      - 'local_responsibility_complete: false'
+      - 'merge_authority: NOT_GRANTED'
+
+workflow_runs:
+  - id: 37370180585
+    name: engineering-pr-delivery-v3.1
+    head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    conclusion: success
+  - id: 37370180793
+    name: engineering-pr-delivery-v3.2
+    head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    conclusion: success
+  - id: 37370180741
+    name: Local PR Delivery v1.1
+    head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    conclusion: failure
+  - id: 37370180930
+    name: Local PR Delivery v1.1 integration
+    head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    conclusion: failure
+
+historical_residuals:
+  - F3_AUTHENTICITY
+  - F3_STANDALONE_COORDINATOR_WORKFLOW
+  - ASD-506-01
+  - HOSTED_PROTOCOL_JOB_CANCELLED
+  - M03
+  - M04
+  - M06
