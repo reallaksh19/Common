@@ -155,7 +155,7 @@ def exact_changed_paths(
             raise ValueError("candidate diff contains non-UTF-8 path data") from exc
         if not status or not path:
             raise ValueError("candidate diff contains empty status/path field")
-        if path.startswith("/") or "\" in path or ".." in path.split("/"):
+        if path.startswith("/") or "\\" in path or ".." in path.split("/"):
             raise ValueError(f"candidate diff contains unsafe path: {path}")
         changes.append({"status": status, "path": path})
     changes.sort(key=lambda row: (row["path"], row["status"]))
