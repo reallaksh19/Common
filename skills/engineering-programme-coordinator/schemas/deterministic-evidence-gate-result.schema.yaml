@@ -1,0 +1,96 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-deterministic-evidence-gate-result-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - candidate_sha
+  - source
+  - disposition
+  - reason_codes
+  - blocking_refs
+  - unresolved_refs
+  - authority_boundaries
+  - result_digest
+properties:
+  schema_version:
+    const: DETERMINISTIC_EVIDENCE_GATE_RESULT_V1
+  authority:
+    const: EVIDENCE_GATE_DISPOSITION_ONLY
+  candidate_sha:
+    $ref: '#/$defs/sha'
+  source:
+    type: object
+    additionalProperties: false
+    required:
+      - source_digest
+      - verdict_projection_digest
+      - self_check_basis_digest
+      - common_review_floor_digest
+      - expectation_challenge_digest
+      - project_falsification_digest
+      - principal_truth_digest
+      - local_resolution_digest
+    properties:
+      source_digest: {$ref: '#/$defs/digest'}
+      verdict_projection_digest: {$ref: '#/$defs/digest'}
+      self_check_basis_digest: {$ref: '#/$defs/digest'}
+      common_review_floor_digest: {$ref: '#/$defs/digest'}
+      expectation_challenge_digest: {$ref: '#/$defs/digest'}
+      project_falsification_digest: {$ref: '#/$defs/digest'}
+      principal_truth_digest: {$ref: '#/$defs/digest'}
+      local_resolution_digest: {$ref: '#/$defs/digest'}
+  disposition:
+    enum: [REPLAY, REPAIR, ESCALATE, ADVANCE_ELIGIBLE]
+  reason_codes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items:
+      enum:
+        - SOURCE_REPLAY_INVALID
+        - CANDIDATE_MISMATCH
+        - REQUIRED_EVIDENCE_INCOMPLETE
+        - CRITICAL_REFUTED
+        - COMMON_CRITERION_FAIL
+        - REQUIRED_FINDING_OPEN
+        - PROJECT_OUTCOME_FALSIFIED
+        - CRITICAL_UNKNOWN_LOCAL_WORK_REMAINING
+        - LOCAL_RESOLUTION_EXHAUSTED
+        - AUTHORITY_OR_EXTERNAL_BOUNDARY
+        - CLOSED_CURRENT_DENOMINATOR
+  blocking_refs:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  unresolved_refs:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - emits_engineering_pass
+      - emits_project_acceptance_pass
+      - emits_independent_review_verdict
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      emits_engineering_pass: {const: false}
+      emits_project_acceptance_pass: {const: false}
+      emits_independent_review_verdict: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  result_digest:
+    $ref: '#/$defs/digest'
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'

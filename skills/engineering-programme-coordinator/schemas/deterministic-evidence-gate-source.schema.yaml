@@ -1,0 +1,135 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-deterministic-evidence-gate-source-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - candidate
+  - inputs
+  - local_resolution
+  - decision_policy
+  - authority_boundaries
+properties:
+  schema_version:
+    const: DETERMINISTIC_EVIDENCE_GATE_SOURCE_V1
+  authority:
+    const: DETERMINISTIC_EVIDENCE_GATE_INPUT
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {const: COMMON-PROD-CONTROL-V1}
+      parent_ref: {const: https://github.com/reallaksh19/Common/issues/527}
+      task_id: {const: PRD-527-P3-SOLO-6}
+      child_ref: {const: SELF:PRD-527-P3-SOLO-6}
+      contract_version: {const: P3-SOLO-6-v1}
+  candidate:
+    type: object
+    additionalProperties: false
+    required: [repository, ref, sha]
+    properties:
+      repository: {const: reallaksh19/Common}
+      ref: {type: string, minLength: 1}
+      sha: {$ref: '#/$defs/sha'}
+  inputs:
+    type: object
+    additionalProperties: false
+    required:
+      - verdict_projection
+      - self_check_context
+      - common_review_floor
+      - expectation_challenge
+      - project_falsification
+      - principal_truth
+    properties:
+      verdict_projection: {$ref: '#/$defs/input_binding'}
+      self_check_context: {$ref: '#/$defs/input_binding'}
+      common_review_floor: {$ref: '#/$defs/input_binding'}
+      expectation_challenge: {$ref: '#/$defs/input_binding'}
+      project_falsification: {$ref: '#/$defs/input_binding'}
+      principal_truth: {$ref: '#/$defs/input_binding'}
+  local_resolution:
+    type: array
+    items: {$ref: '#/$defs/local_resolution_record'}
+  decision_policy:
+    type: object
+    additionalProperties: false
+    required:
+      - stale_or_invalid
+      - proven_repairable_defect
+      - unknown_local_work_remaining
+      - unknown_local_resolution_exhausted
+      - closed_current_denominator
+    properties:
+      stale_or_invalid: {const: REPLAY}
+      proven_repairable_defect: {const: REPAIR}
+      unknown_local_work_remaining: {const: REPLAY}
+      unknown_local_resolution_exhausted: {const: ESCALATE}
+      closed_current_denominator: {const: ADVANCE_ELIGIBLE}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - emits_engineering_pass
+      - emits_project_acceptance_pass
+      - emits_independent_review_verdict
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      emits_engineering_pass: {const: false}
+      emits_project_acceptance_pass: {const: false}
+      emits_independent_review_verdict: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+$defs:
+  sha:
+    type: string
+    pattern: '^[0-9a-f]{40}$'
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  input_binding:
+    type: object
+    additionalProperties: false
+    required: [ref, digest, candidate_sha]
+    properties:
+      ref: {type: string, minLength: 1}
+      digest: {$ref: '#/$defs/digest'}
+      candidate_sha: {$ref: '#/$defs/sha'}
+  local_resolution_record:
+    type: object
+    additionalProperties: false
+    required: [subject_ref, candidate_sha, state, evidence_refs, boundary_ref]
+    properties:
+      subject_ref: {type: string, minLength: 1}
+      candidate_sha: {$ref: '#/$defs/sha'}
+      state:
+        enum: [LOCAL_WORK_REMAINING, LOCAL_RESOLUTION_EXHAUSTED]
+      evidence_refs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      boundary_ref:
+        type: [string, 'null']
+        minLength: 1
+    allOf:
+      - if:
+          properties:
+            state: {const: LOCAL_RESOLUTION_EXHAUSTED}
+          required: [state]
+        then:
+          properties:
+            evidence_refs: {minItems: 1}
+            boundary_ref: {type: string, minLength: 1}
+      - if:
+          properties:
+            state: {const: LOCAL_WORK_REMAINING}
+          required: [state]
+        then:
+          properties:
+            boundary_ref: {type: 'null'}
