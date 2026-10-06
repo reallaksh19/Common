@@ -6,6 +6,8 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+
+import yaml
 from typing import Any
 
 from coordlib import dump_yaml, load_yaml, validate as schema_validate
@@ -75,6 +77,39 @@ def validate_source(
     if not isinstance(source, dict):
         return [f"{label}: source must be object"]
     return [f"{label}: {error}" for error in source_semantic_errors(source)]
+
+
+
+
+
+SOURCE_HEADING = "## Precommitted L0 source for this child"
+
+
+def extract_precommitted_source(markdown: str) -> dict[str, Any]:
+    if not isinstance(markdown, str):
+        raise L0TaskObligationError("GitHub issue body must be text")
+    heading_count = markdown.count(SOURCE_HEADING)
+    if heading_count != 1:
+        raise L0TaskObligationError(
+            "GitHub issue must contain exactly one precommitted L0 source heading"
+        )
+    tail = markdown.split(SOURCE_HEADING, 1)[1]
+    start = tail.find("```yaml")
+    if start < 0:
+        raise L0TaskObligationError("Precommitted L0 source must use a yaml code fence")
+    after = tail[start + len("```yaml"):]
+    end = after.find("```")
+    if end < 0:
+        raise L0TaskObligationError("Precommitted L0 source code fence is not closed")
+    payload = after[:end].strip()
+    try:
+        value = yaml.safe_load(payload)
+    except yaml.YAMLError as exc:
+        raise L0TaskObligationError(f"Precommitted L0 source is invalid YAML: {exc}") from exc
+    errors = validate_source(value, "github-child-contract-source")
+    if errors:
+        raise L0TaskObligationError("; ".join(errors))
+    return value
 
 
 def _manifest_without_digest(manifest: dict[str, Any]) -> dict[str, Any]:
