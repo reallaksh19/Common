@@ -115,8 +115,11 @@ $defs:
         uniqueItems: true
         items: {type: string, minLength: 1}
       boundary_ref:
-        type: [string, 'null']
-        minLength: 1
+        anyOf:
+          - {type: 'null'}
+          - type: string
+            minLength: 1
+            pattern: '^(owner|authority|provider|external|protected)://[^ ]+$'
     allOf:
       - if:
           properties:
@@ -125,7 +128,10 @@ $defs:
         then:
           properties:
             evidence_refs: {minItems: 1}
-            boundary_ref: {type: string, minLength: 1}
+            boundary_ref:
+              type: string
+              minLength: 1
+              pattern: '^(owner|authority|provider|external|protected)://[^ ]+$'
       - if:
           properties:
             state: {const: LOCAL_WORK_REMAINING}

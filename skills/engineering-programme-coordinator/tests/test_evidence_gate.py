@@ -308,6 +308,61 @@ class DeterministicEvidenceGateTests(unittest.TestCase):
         self.assertIn("LOCAL_RESOLUTION_EXHAUSTED", result["reason_codes"])
         self.assertIn("AUTHORITY_OR_EXTERNAL_BOUNDARY", result["reason_codes"])
 
+    def test_conflicting_duplicate_resolution_records_replay_not_escalate(self):
+        v = verdict()
+        v["criticality"]["unresolved_unknown_ids"] = ["L2-CRIT-2"]
+        src = source(v=v)
+        src["local_resolution"] = [
+            {
+                "subject_ref": "obligation://L2-CRIT-2",
+                "candidate_sha": CANDIDATE,
+                "state": "LOCAL_WORK_REMAINING",
+                "evidence_refs": [],
+                "boundary_ref": None,
+            },
+            {
+                "subject_ref": "obligation://L2-CRIT-2",
+                "candidate_sha": CANDIDATE,
+                "state": "LOCAL_RESOLUTION_EXHAUSTED",
+                "evidence_refs": ["provider://attempts/1"],
+                "boundary_ref": "owner://decision-required",
+            },
+        ]
+        result = compile_case(v=v, src=src)
+        self.assertEqual("REPLAY", result["disposition"])
+        self.assertIn("SOURCE_REPLAY_INVALID", result["reason_codes"])
+
+    def test_fake_boundary_label_replays_not_escalates(self):
+        v = verdict()
+        v["criticality"]["unresolved_unknown_ids"] = ["L2-CRIT-2"]
+        src = source(v=v)
+        src["local_resolution"] = [{
+            "subject_ref": "obligation://L2-CRIT-2",
+            "candidate_sha": CANDIDATE,
+            "state": "LOCAL_RESOLUTION_EXHAUSTED",
+            "evidence_refs": ["provider://attempts/1"],
+            "boundary_ref": "caller-says-exhausted",
+        }]
+        result = compile_case(v=v, src=src)
+        self.assertEqual("REPLAY", result["disposition"])
+        self.assertIn("SOURCE_REPLAY_INVALID", result["reason_codes"])
+
+    def test_cannot_resolve_boolean_shortcut_replays_not_escalates(self):
+        v = verdict()
+        v["criticality"]["unresolved_unknown_ids"] = ["L2-CRIT-2"]
+        src = source(v=v)
+        src["local_resolution"] = [{
+            "subject_ref": "obligation://L2-CRIT-2",
+            "candidate_sha": CANDIDATE,
+            "state": "LOCAL_RESOLUTION_EXHAUSTED",
+            "evidence_refs": ["provider://attempts/1"],
+            "boundary_ref": "owner://decision-required",
+            "cannot_resolve_locally": True,
+        }]
+        result = compile_case(v=v, src=src)
+        self.assertEqual("REPLAY", result["disposition"])
+        self.assertIn("SOURCE_REPLAY_INVALID", result["reason_codes"])
+
     def test_eg09_required_not_run_replays(self):
         prof = profile()
         prof["review_profile"]["common_criteria"]["CR-04"]["result"] = "NOT_RUN"
