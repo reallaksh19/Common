@@ -1,0 +1,136 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-authority-resolution-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - task_id
+  - source
+  - release_state
+  - local_validation
+  - lifecycle
+  - active_role
+  - active_principal
+  - principal_independence
+  - next_eligible_role
+  - role_transition_ref
+  - owner_control
+  - allowed_actions
+  - forbidden_actions
+  - capability_basis
+  - authority_boundaries
+properties:
+  schema_version:
+    const: AUTHORITY_RESOLUTION_V1
+  authority:
+    const: LOCAL_AUTHORITY_RESOLUTION
+  task_id:
+    type: string
+    pattern: '^PRD-[A-Za-z0-9._-]+$'
+  source:
+    type: object
+    additionalProperties: false
+    required:
+      - bundle_digest
+      - observed_at
+      - local_protocol_ref
+      - local_protocol_digest
+      - acceptance_epoch_id
+      - acceptance_profile_ref
+      - acceptance_profile_digest
+    properties:
+      bundle_digest: {$ref: '#/$defs/digest'}
+      observed_at: {type: string, format: date-time}
+      local_protocol_ref:
+        type: string
+        pattern: '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+@[0-9a-f]{40}:skills/Local_PR_Deliverty_v1[.]1$'
+      local_protocol_digest: {$ref: '#/$defs/digest'}
+      acceptance_epoch_id: {type: string, minLength: 1}
+      acceptance_profile_ref: {type: string, minLength: 1}
+      acceptance_profile_digest: {$ref: '#/$defs/digest'}
+  release_state:
+    enum: [READY, BLOCKED_DEPENDENCY, HELD, STOPPED]
+  local_validation:
+    enum: [PASS, NOT_REQUIRED_NO_CAPABILITY]
+  lifecycle:
+    type: object
+    additionalProperties: false
+    required: [state, stage_record_id, stage_status]
+    properties:
+      state:
+        enum:
+          - NOT_STARTED
+          - ACTIVE
+          - REWORK
+          - WAITING_CI
+          - WAITING_OWNER
+          - WAITING_EXTERNAL
+          - BLOCKED
+          - HELD
+          - PAUSED
+          - STALLED
+          - INCONCLUSIVE
+          - STAGE_COMPLETE
+          - STOPPED
+          - COMPLETE
+      stage_record_id: {type: [string, 'null']}
+      stage_status: {type: [string, 'null']}
+  active_role:
+    enum: [CODER, REVIEWER, COORDINATOR, NONE]
+  active_principal: {type: [string, 'null']}
+  principal_independence:
+    enum: [NONE, DEGRADED, DISTINCT, NOT_APPLICABLE]
+  next_eligible_role:
+    enum: [CODER, REVIEWER, COORDINATOR, NONE]
+  role_transition_ref: {type: [string, 'null']}
+  owner_control:
+    anyOf:
+      - type: 'null'
+      - type: object
+        additionalProperties: false
+        required: [id, command, instruction_ref]
+        properties:
+          id: {type: string, minLength: 1}
+          command: {enum: [HOLD, PAUSE, STOP]}
+          instruction_ref: {type: string, minLength: 1}
+  allowed_actions:
+    type: array
+    uniqueItems: true
+    items: {$ref: '#/$defs/action'}
+  forbidden_actions:
+    type: array
+    uniqueItems: true
+    items: {$ref: '#/$defs/action'}
+  capability_basis:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - performs_local_stage_transition
+      - grants_merge_authority
+      - grants_production_cutover
+      - accepts_caller_role_assertion
+      - accepts_caller_capability_assertion
+    properties:
+      performs_local_stage_transition: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+      accepts_caller_role_assertion: {const: false}
+      accepts_caller_capability_assertion: {const: false}
+$defs:
+  digest:
+    type: string
+    pattern: '^[0-9a-f]{64}$'
+  action:
+    enum:
+      - WRITE_CANDIDATE
+      - RUN_VERIFICATION
+      - REPAIR_CANDIDATE
+      - PUBLISH_EVIDENCE
+      - REQUEST_STAGE_ADVANCE
+      - ESCALATE
