@@ -195,7 +195,7 @@ class ExecutionKernelTests(unittest.TestCase):
         errors = validate_execution_state(value)
         self.assertTrue(any("exact candidate_sha" in error for error in errors), errors)
 
-    def test_refuted_critical_derives_repair(self):
+    def test_current_refuted_without_gate_requires_gate_first(self):
         value = current_candidate(state())
         value["capability"]["allowed_actions"] = ["RUN_VERIFICATION", "REPAIR_CANDIDATE"]
         value["capability"]["forbidden_actions"] = ["REQUEST_STAGE_ADVANCE"]
@@ -205,10 +205,11 @@ class ExecutionKernelTests(unittest.TestCase):
             "evidence_refs": ["evidence://failure"],
         }]
         set_derived(value)
-        self.assertEqual(value["next_action"]["type"], "REPAIR_CANDIDATE")
+        self.assertEqual(value["next_action"]["type"], "VERIFY_CANDIDATE")
+        self.assertEqual(value["next_action"]["reason_code"], "GATE_REQUIRED")
         self.assertEqual(validate_execution_state(value), [])
 
-    def test_unknown_critical_derives_more_verification(self):
+    def test_current_unknown_without_gate_requires_gate_first(self):
         value = current_candidate(state())
         value["verification"]["unresolved_critical"] = [{
             "id": "L2-CRIT-2",
@@ -217,7 +218,7 @@ class ExecutionKernelTests(unittest.TestCase):
         }]
         set_derived(value)
         self.assertEqual(value["next_action"]["type"], "VERIFY_CANDIDATE")
-        self.assertEqual(value["next_action"]["reason_code"], "CRITICAL_UNKNOWN")
+        self.assertEqual(value["next_action"]["reason_code"], "GATE_REQUIRED")
         self.assertEqual(validate_execution_state(value), [])
 
     def test_current_evidence_alone_cannot_advance_without_gate(self):
@@ -254,6 +255,62 @@ class ExecutionKernelTests(unittest.TestCase):
         set_derived(value)
         self.assertEqual(value["next_action"]["type"], "ESCALATE")
         self.assertEqual(validate_execution_state(value), [])
+
+    def test_gate_escalate_with_unknown_is_reachable(self):
+        value = current_candidate(state())
+        value["capability"]["allowed_actions"] = ["ESCALATE"]
+        value["capability"]["forbidden_actions"] = ["REQUEST_STAGE_ADVANCE"]
+        value["verification"]["unresolved_critical"] = [{
+            "id": "L2-CRIT-2",
+            "state": "UNKNOWN",
+            "evidence_refs": [],
+        }]
+        value["verification"]["gate"] = gate("ESCALATE")
+        set_derived(value)
+        self.assertEqual(value["next_action"]["type"], "ESCALATE")
+        self.assertEqual(value["next_action"]["reason_code"], "GATE_ESCALATE")
+        self.assertEqual(validate_execution_state(value), [])
+
+    def test_gate_repair_with_refuted_is_reachable(self):
+        value = current_candidate(state())
+        value["capability"]["allowed_actions"] = ["REPAIR_CANDIDATE"]
+        value["capability"]["forbidden_actions"] = ["REQUEST_STAGE_ADVANCE"]
+        value["verification"]["unresolved_critical"] = [{
+            "id": "L0-CRIT-1",
+            "state": "REFUTED",
+            "evidence_refs": ["evidence://failure"],
+        }]
+        value["verification"]["gate"] = gate("REPAIR")
+        set_derived(value)
+        self.assertEqual(value["next_action"]["type"], "REPAIR_CANDIDATE")
+        self.assertEqual(value["next_action"]["reason_code"], "GATE_REPAIR")
+        self.assertEqual(validate_execution_state(value), [])
+
+    def test_gate_replay_cannot_hide_refuted_critical(self):
+        value = current_candidate(state())
+        value["verification"]["unresolved_critical"] = [{
+            "id": "L0-CRIT-1",
+            "state": "REFUTED",
+            "evidence_refs": ["evidence://failure"],
+        }]
+        value["verification"]["gate"] = gate("REPLAY")
+        set_derived(value)
+        errors = validate_execution_state(value)
+        self.assertTrue(any("current gate must select REPAIR" in error for error in errors), errors)
+
+    def test_gate_escalate_cannot_hide_refuted_critical(self):
+        value = current_candidate(state())
+        value["capability"]["allowed_actions"] = ["ESCALATE"]
+        value["capability"]["forbidden_actions"] = ["REQUEST_STAGE_ADVANCE"]
+        value["verification"]["unresolved_critical"] = [{
+            "id": "L0-CRIT-1",
+            "state": "REFUTED",
+            "evidence_refs": ["evidence://failure"],
+        }]
+        value["verification"]["gate"] = gate("ESCALATE")
+        set_derived(value)
+        errors = validate_execution_state(value)
+        self.assertTrue(any("current gate must select REPAIR" in error for error in errors), errors)
 
     def test_advance_eligible_only_requests_local_stage_advance(self):
         value = current_candidate(state())
