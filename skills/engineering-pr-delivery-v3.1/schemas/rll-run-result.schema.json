@@ -11,13 +11,16 @@
     "next",
     "evidence_comment_url",
     "engineering_summary",
+    "evidence_markdown",
     "notes"
   ],
   "properties": {
     "schema": {
+      "type": "string",
       "const": "RLL_RUN_RESULT_V1"
     },
     "transport_state": {
+      "type": "string",
       "enum": [
         "ACTIVE",
         "RETRY_WAIT",
