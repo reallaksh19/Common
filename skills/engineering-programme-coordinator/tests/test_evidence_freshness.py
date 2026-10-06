@@ -41,10 +41,20 @@ def binding(
     method_id="VM-1",
     provenance="VERIFIED",
 ):
+    source = {
+        "evidence_id": evidence_id,
+        "candidate_sha": SHA,
+        "verification_method_id": method_id,
+        "project_protocol_digest": D1,
+        "environment_digest": ENV,
+        "result": "PASS",
+        "procedure": "synthetic immutable evidence",
+    }
     return {
         "evidence_id": evidence_id,
         "evidence_ref": f"evidence://{evidence_id}",
-        "evidence_digest": D4,
+        "evidence_digest": canonical_digest(source),
+        "source_evidence": source,
         "verification_method_id": method_id,
         "provenance_state": provenance,
         "candidate_sha": SHA,
@@ -55,6 +65,12 @@ def binding(
         "environment_digest": ENV,
         "dependency_heads": {"PRD-UPSTREAM": "c" * 40},
     }
+
+
+def bind_source_field(row, key, value):
+    row[key] = value
+    row["source_evidence"][key] = value
+    row["evidence_digest"] = canonical_digest(row["source_evidence"])
 
 
 def derive(
@@ -95,7 +111,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_candidate_movement_marks_evidence_stale_and_replays(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive([evidence])
         self.assertEqual(result["overall"]["evidence_state"], "STALE")
         self.assertIn("CANDIDATE_CHANGED", result["evidence_results"][0]["reasons"])
@@ -103,6 +119,24 @@ class EvidenceFreshnessTests(unittest.TestCase):
             result["replay_plan"]["rerun_method_ids"],
             ["VM-1"],
         )
+
+    def test_binding_cannot_lie_about_source_evidence_candidate(self):
+        evidence = binding()
+        evidence["candidate_sha"] = OLD_SHA
+        with self.assertRaisesRegex(Exception, "candidate_sha differs from source_evidence"):
+            derive([evidence])
+
+    def test_binding_cannot_lie_about_source_evidence_method(self):
+        evidence = binding()
+        evidence["verification_method_id"] = "VM-OTHER"
+        with self.assertRaisesRegex(Exception, "verification_method_id differs from source_evidence"):
+            derive([evidence])
+
+    def test_evidence_digest_must_bind_source_evidence_content(self):
+        evidence = binding()
+        evidence["source_evidence"]["procedure"] = "mutated after digest"
+        with self.assertRaisesRegex(Exception, "evidence_digest does not match"):
+            derive([evidence])
 
     def test_acceptance_epoch_drift_is_stale(self):
         evidence = binding()
@@ -112,7 +146,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_project_protocol_drift_is_stale(self):
         evidence = binding()
-        evidence["project_protocol_digest"] = "9" * 64
+        bind_source_field(evidence, "project_protocol_digest", "9" * 64)
         result = derive([evidence])
         self.assertIn("PROJECT_PROTOCOL_CHANGED", result["evidence_results"][0]["reasons"])
 
@@ -130,7 +164,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_material_environment_drift_is_stale(self):
         evidence = binding()
-        evidence["environment_digest"] = "6" * 64
+        bind_source_field(evidence, "environment_digest", "6" * 64)
         result = derive([evidence])
         self.assertIn("ENVIRONMENT_CHANGED", result["evidence_results"][0]["reasons"])
 
@@ -194,7 +228,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_stale_reason_dominates_unknown_provenance(self):
         evidence = binding(provenance="UNKNOWN")
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive([evidence])
         self.assertEqual(result["overall"]["evidence_state"], "STALE")
         self.assertEqual(result["evidence_results"][0]["state"], "STALE")
@@ -210,7 +244,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_unknown_rerun_policy_for_stale_method_forces_full_set(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive(
             [evidence],
             required=["VM-1", "VM-2"],
@@ -225,7 +259,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_full_required_set_policy_forces_full_replay(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive(
             [evidence],
             required=["VM-1", "VM-2"],
@@ -239,7 +273,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_selective_replay_requires_declared_material_input_match(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive(
             [evidence],
             required=["VM-1", "VM-2"],
@@ -253,7 +287,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_unexplained_stale_method_forces_conservative_full_replay(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive(
             [evidence],
             materials={"VM-1": ["PROJECT_PROTOCOL"]},
@@ -279,7 +313,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_non_current_projection_cannot_claim_exact_evidence_candidate(self):
         evidence = binding()
-        evidence["candidate_sha"] = OLD_SHA
+        bind_source_field(evidence, "candidate_sha", OLD_SHA)
         result = derive([evidence])
         result["overall"]["evidence_candidate_sha"] = SHA
         errors = semantic_errors(result)
