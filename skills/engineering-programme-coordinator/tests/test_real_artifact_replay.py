@@ -55,6 +55,31 @@ def fake_provider_data(value):
     data[f"/repos/{repo}/commits/{source['exact_head']}"] = {
         "sha": source["exact_head"],
     }
+    root_tree = "1" * 40
+    skills_tree = "2" * 40
+    data[f"/repos/{repo}/commits/{source['target_sha']}"] = {
+        "sha": source["target_sha"],
+        "commit": {"tree": {"sha": root_tree}},
+    }
+    data[f"/repos/{repo}/git/trees/{root_tree}"] = {
+        "sha": root_tree,
+        "tree": [{"path": "skills", "type": "tree", "sha": skills_tree}],
+    }
+    data[f"/repos/{repo}/git/trees/{skills_tree}"] = {
+        "sha": skills_tree,
+        "tree": [
+            {
+                "path": "Local_PR_Deliverty_v1.1",
+                "type": "tree",
+                "sha": value["protocol_identity"]["local"]["tree_sha1"],
+            },
+            {
+                "path": "engineering-pr-delivery-v3.5",
+                "type": "tree",
+                "sha": value["protocol_identity"]["v35"]["tree_sha1"],
+            },
+        ],
+    }
     data[f"/repos/{repo}/pulls/{source['pr']}/commits?per_page=100&page=1"] = [
         {"sha": source["exact_head"]},
     ]
@@ -215,6 +240,21 @@ class RealArtifactReplayTests(unittest.TestCase):
         value["source"]["release_state"] = "COMPLETE"
         data = fake_provider_data(value)
         with self.assertRaisesRegex(Exception, "non-canonical"):
+            self.replay(value, data)
+
+    def test_historical_protocol_tree_must_match_live_target_commit(self):
+        value = manifest()
+        data = fake_provider_data(value)
+        root = data[
+            f"/repos/{value['repository']}/commits/{value['source']['target_sha']}"
+        ]["commit"]["tree"]["sha"]
+        skills = data[f"/repos/{value['repository']}/git/trees/{root}"]["tree"][0]["sha"]
+        rows = data[f"/repos/{value['repository']}/git/trees/{skills}"]["tree"]
+        next(
+            row for row in rows
+            if row["path"] == "engineering-pr-delivery-v3.5"
+        )["sha"] = "f" * 40
+        with self.assertRaisesRegex(RealArtifactReplayError, "protocol tree SHA mismatch"):
             self.replay(value, data)
 
     def test_digest_namespaces_are_preserved_not_collapsed(self):
