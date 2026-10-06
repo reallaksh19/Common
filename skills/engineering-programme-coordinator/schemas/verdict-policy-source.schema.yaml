@@ -49,12 +49,16 @@ properties:
       obligation_count: {type: integer, minimum: 0}
       state_counts: {$ref: '#/$defs/state_counts'}
       critical:
-        allOf:
-          - {$ref: '#/$defs/state_counts'}
-          - type: object
-            required: [obligation_count]
-            properties:
-              obligation_count: {type: integer, minimum: 0}
+        type: object
+        additionalProperties: false
+        required: [obligation_count, VERIFIED, REFUTED, UNKNOWN, NOT_APPLICABLE, WAIVER]
+        properties:
+          obligation_count: {type: integer, minimum: 0}
+          VERIFIED: {type: integer, minimum: 0}
+          REFUTED: {type: integer, minimum: 0}
+          UNKNOWN: {type: integer, minimum: 0}
+          NOT_APPLICABLE: {type: integer, minimum: 0}
+          WAIVER: {type: integer, minimum: 0}
       unresolved_critical_refuted: {type: integer, minimum: 0}
       unresolved_critical_unknown: {type: integer, minimum: 0}
       waived_critical: {type: integer, minimum: 0}
