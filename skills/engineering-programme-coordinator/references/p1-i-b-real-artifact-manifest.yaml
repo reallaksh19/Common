@@ -127,6 +127,7 @@ comments:
       - 'pr: Common#510'
       - 'branch: bench/506-p0-r1-canonical-local-projection'
       - 'exact_head: 836964b0f82b23f1294d79e3fd48df140baa81f0'
+      - 'head_unchanged_at_posting: true'
       - 'base: 97bbc92f29e0be9e7303ee1031a409f56633db45'
       - 'local_suite_result: PASS_258_OF_258'
       - 'coordinator_suite_result: PASS_37_OF_37'
@@ -148,6 +149,7 @@ comments:
       - 'pr: reallaksh19/Common#510'
       - 'source_role: OWNER_DESIGNATED_COORDINATOR_SUPER_REVIEWER'
       - 'exact_head_binding: 836964b0f82b23f1294d79e3fd48df140baa81f0'
+      - 'live_pr_head_matches_runtime_evidence: true'
       - 'full_local_suite: PASS_258_OF_258'
       - 'coordinator_suite: PASS_37_OF_37'
       - 'run: 37370180585'
@@ -162,18 +164,26 @@ workflow_runs:
   - id: 37370180585
     name: engineering-pr-delivery-v3.1
     head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    head_branch: bench/506-p0-r1-canonical-local-projection
+    event: pull_request
     conclusion: success
   - id: 37370180793
     name: engineering-pr-delivery-v3.2
     head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    head_branch: bench/506-p0-r1-canonical-local-projection
+    event: pull_request
     conclusion: success
   - id: 37370180741
     name: Local PR Delivery v1.1
     head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    head_branch: bench/506-p0-r1-canonical-local-projection
+    event: pull_request
     conclusion: failure
   - id: 37370180930
     name: Local PR Delivery v1.1 integration
     head_sha: 836964b0f82b23f1294d79e3fd48df140baa81f0
+    head_branch: bench/506-p0-r1-canonical-local-projection
+    event: pull_request
     conclusion: failure
 
 historical_residuals:
