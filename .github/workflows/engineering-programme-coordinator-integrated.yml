@@ -62,6 +62,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/production_readiness.py \
             skills/engineering-programme-coordinator/scripts/execution_kernel.py \
             skills/engineering-programme-coordinator/scripts/provider_mutation.py \
+            skills/engineering-programme-coordinator/scripts/current_state.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -108,6 +109,13 @@ jobs:
           assert provider['$id'] == 'engineering-programme-coordinator-provider-mutation-v1'
           assert provider['properties']['schema_version']['const'] == 'PROVIDER_MUTATION_V1'
           assert provider['properties']['authority']['const'] == 'PROVIDER_MUTATION_TRANSACTION'
+
+          current = yaml.safe_load(
+              (root / 'current-state.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert current['$id'] == 'engineering-programme-coordinator-current-state-v1'
+          assert current['properties']['schema_version']['const'] == 'CURRENT_STATE_V1'
+          assert current['properties']['authority']['const'] == 'CURRENT_STATE_PROJECTION'
           PY
 
       - name: Run integrated-mode regressions
@@ -124,6 +132,9 @@ jobs:
 
       - name: Run provider-mutation regressions
         run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_provider_mutation.py' -v
+
+      - name: Run current-state regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_current_state.py' -v
 
       - name: Validate Common Reviewer authority boundary
         run: |
