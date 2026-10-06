@@ -2,6 +2,7 @@ protocol:
   family: common-reviewer-protocol
   version: "1.0"
   status: ACTIVE
+  canonical_ref: skills/common-reviewer-protocol-v1.0
   skill_path: skills/common-reviewer-protocol-v1.0/SKILL.md
   profile_schema: skills/common-reviewer-protocol-v1.0/schemas/common-review-profile.schema.yaml
 
@@ -13,6 +14,33 @@ capabilities:
   same_principal_independence_claim: forbidden
   emits_engineering_pass: false
   emits_lifecycle_advance: false
+
+
+self_review_floor:
+  role: SELF_REVIEW
+  criteria:
+    always_required:
+      - CR-01
+      - CR-02
+      - CR-03
+      - CR-04
+      - CR-05
+      - CR-10
+    conditionally_applicable:
+      - CR-06
+      - CR-07
+      - CR-08
+      - CR-09
+  not_applicable:
+    permitted_only_for_conditionally_applicable: true
+    explicit_basis_required: true
+  waiver:
+    self_review_may_grant: false
+    authoritative_external_waiver_validation: LOCAL_ACCEPTANCE_AUTHORITY
+  project_overlay:
+    required: true
+    may_strengthen_common_floor: true
+    may_silently_weaken_common_floor: false
 
 execution_contexts:
   solo_default:
