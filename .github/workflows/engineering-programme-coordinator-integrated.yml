@@ -60,6 +60,7 @@ jobs:
             skills/engineering-programme-coordinator/scripts/execution_kernel.py \
             skills/engineering-programme-coordinator/scripts/proof_obligations.py \
             skills/engineering-programme-coordinator/scripts/evidence_gate.py \
+            skills/engineering-programme-coordinator/scripts/shadow_rollout.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -70,56 +71,80 @@ jobs:
 
           root = pathlib.Path('skills/engineering-programme-coordinator/schemas')
 
+          expected = {
+              'local-v1.1-integrated.schema.yaml': (
+                  'engineering-programme-coordinator-local-v1.1-integrated',
+                  None,
+                  None,
+              ),
+              'production-readiness.schema.yaml': (
+                  'engineering-programme-coordinator-production-readiness-v1',
+                  'PRODUCTION_READINESS_V1',
+                  'PRODUCTION_READINESS_PROJECTION',
+              ),
+              'execution-state.schema.yaml': (
+                  'engineering-programme-coordinator-execution-state-v1',
+                  'EXECUTION_STATE_V1',
+                  'CANONICAL_EXECUTION_STATE',
+              ),
+              'proof-obligation-manifest.schema.yaml': (
+                  'engineering-programme-coordinator-proof-obligation-manifest-v1',
+                  'PROOF_OBLIGATION_MANIFEST_V1',
+                  'FROZEN_EXPECTATION_MANIFEST',
+              ),
+              'evidence-ledger.schema.yaml': (
+                  'engineering-programme-coordinator-evidence-ledger-v1',
+                  'EVIDENCE_LEDGER_V1',
+                  'EXACT_CANDIDATE_EVIDENCE_LEDGER',
+              ),
+              'review-context.schema.yaml': (
+                  'engineering-programme-coordinator-review-context-v1',
+                  'REVIEW_CONTEXT_V1',
+                  'FRESH_REVIEW_CONTEXT',
+              ),
+              'evidence-gate-result.schema.yaml': (
+                  'engineering-programme-coordinator-evidence-gate-result-v1',
+                  'EVIDENCE_GATE_RESULT_V1',
+                  'DETERMINISTIC_EVIDENCE_GATE',
+              ),
+              'shadow-observation.schema.yaml': (
+                  'engineering-programme-coordinator-shadow-observation-v1',
+                  'SHADOW_OBSERVATION_V1',
+                  'NON_BLOCKING_SHADOW_OBSERVATION',
+              ),
+              'shadow-summary.schema.yaml': (
+                  'engineering-programme-coordinator-shadow-summary-v1',
+                  'SHADOW_SUMMARY_V1',
+                  'NON_BLOCKING_SHADOW_SUMMARY',
+              ),
+          }
+
+          for filename, (schema_id, version, authority) in expected.items():
+              document = yaml.safe_load(
+                  (root / filename).read_text(encoding='utf-8')
+              )
+              assert document['$id'] == schema_id
+              if version is not None:
+                  assert document['properties']['schema_version']['const'] == version
+              if authority is not None:
+                  assert document['properties']['authority']['const'] == authority
+
           integrated = yaml.safe_load(
               (root / 'local-v1.1-integrated.schema.yaml').read_text(encoding='utf-8')
           )
-          assert integrated['$id'] == 'engineering-programme-coordinator-local-v1.1-integrated'
           assert integrated['properties']['mode']['const'] == 'LOCAL_V1_1_INTEGRATED'
           assert integrated['properties']['authority']['const'] == 'OBSERVATION_ONLY'
           assert integrated['properties']['legacy_v31_interpretation']['const'] == 'READABLE_COMPATIBILITY_ONLY'
 
-          readiness = yaml.safe_load(
-              (root / 'production-readiness.schema.yaml').read_text(encoding='utf-8')
-          )
-          assert readiness['$id'] == 'engineering-programme-coordinator-production-readiness-v1'
-          assert readiness['properties']['schema_version']['const'] == 'PRODUCTION_READINESS_V1'
-          assert readiness['properties']['authority']['const'] == 'PRODUCTION_READINESS_PROJECTION'
-
-          execution = yaml.safe_load(
-              (root / 'execution-state.schema.yaml').read_text(encoding='utf-8')
-          )
-          assert execution['$id'] == 'engineering-programme-coordinator-execution-state-v1'
-          assert execution['properties']['schema_version']['const'] == 'EXECUTION_STATE_V1'
-          assert execution['properties']['authority']['const'] == 'CANONICAL_EXECUTION_STATE'
-
-          manifest = yaml.safe_load(
-              (root / 'proof-obligation-manifest.schema.yaml').read_text(encoding='utf-8')
-          )
-          assert manifest['$id'] == 'engineering-programme-coordinator-proof-obligation-manifest-v1'
-          assert manifest['properties']['schema_version']['const'] == 'PROOF_OBLIGATION_MANIFEST_V1'
-          assert manifest['properties']['authority']['const'] == 'FROZEN_EXPECTATION_MANIFEST'
-
-          ledger = yaml.safe_load(
-              (root / 'evidence-ledger.schema.yaml').read_text(encoding='utf-8')
-          )
-          assert ledger['$id'] == 'engineering-programme-coordinator-evidence-ledger-v1'
-          assert ledger['properties']['schema_version']['const'] == 'EVIDENCE_LEDGER_V1'
-          assert ledger['properties']['authority']['const'] == 'EXACT_CANDIDATE_EVIDENCE_LEDGER'
-
-          review = yaml.safe_load(
-              (root / 'review-context.schema.yaml').read_text(encoding='utf-8')
-          )
-          assert review['$id'] == 'engineering-programme-coordinator-review-context-v1'
-          assert review['properties']['schema_version']['const'] == 'REVIEW_CONTEXT_V1'
-          assert review['properties']['authority']['const'] == 'FRESH_REVIEW_CONTEXT'
-
           gate = yaml.safe_load(
               (root / 'evidence-gate-result.schema.yaml').read_text(encoding='utf-8')
           )
-          assert gate['$id'] == 'engineering-programme-coordinator-evidence-gate-result-v1'
-          assert gate['properties']['schema_version']['const'] == 'EVIDENCE_GATE_RESULT_V1'
-          assert gate['properties']['authority']['const'] == 'DETERMINISTIC_EVIDENCE_GATE'
           assert 'PASS' not in gate['properties']['decision']['enum']
+
+          shadow = yaml.safe_load(
+              (root / 'shadow-observation.schema.yaml').read_text(encoding='utf-8')
+          )
+          assert shadow['properties']['production_effect']['const'] == 'NONE'
           PY
 
       - name: Run coordinator regressions
