@@ -1,0 +1,130 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-l1-baseline-obligation-manifest-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - source
+  - baseline
+  - freeze
+  - obligations
+  - forbidden_outcomes
+  - non_goals
+  - authority_boundaries
+  - manifest_digest
+properties:
+  schema_version: {const: L1_BASELINE_OBLIGATION_MANIFEST_V1}
+  authority: {const: BASELINE_DERIVED_EXPECTATIONS}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {type: string, minLength: 1}
+      parent_ref: {type: string, minLength: 1}
+      task_id: {type: string, pattern: '^PRD-[A-Za-z0-9._-]+$'}
+      child_ref: {type: string, minLength: 1}
+      contract_version: {type: string, minLength: 1}
+  source:
+    type: object
+    additionalProperties: false
+    required: [kind, digest]
+    properties:
+      kind: {const: BASELINE_SELECTION_CONTRACT}
+      digest: {$ref: '#/$defs/digest'}
+  baseline:
+    type: object
+    additionalProperties: false
+    required: [ref, sha]
+    properties:
+      ref: {type: string, minLength: 1}
+      sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  freeze:
+    type: object
+    additionalProperties: false
+    required: [state, basis, freeze_ref]
+    properties:
+      state: {const: FROZEN}
+      basis: {const: EXACT_GIT_BASE}
+      freeze_ref: {type: string, pattern: '^git:[0-9a-f]{40}$'}
+  obligations:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/obligation'}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required: [consumes_candidate_state, consumes_candidate_diff, consumes_implementation_evidence, consumes_coder_rationale, consumes_reviewer_verdict, emits_engineering_pass, performs_lifecycle_advance, grants_merge_authority, grants_production_cutover]
+    properties:
+      consumes_candidate_state: {const: false}
+      consumes_candidate_diff: {const: false}
+      consumes_implementation_evidence: {const: false}
+      consumes_coder_rationale: {const: false}
+      consumes_reviewer_verdict: {const: false}
+      emits_engineering_pass: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  manifest_digest: {$ref: '#/$defs/digest'}
+$defs:
+  obligation:
+    type: object
+    additionalProperties: false
+    required: [id, severity, claim, expected_observation, plausible_green_but_wrong, oracle_refs, evidence_required, source_refs, baseline_observation]
+    properties:
+      id: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      claim:
+        type: object
+        additionalProperties: false
+        required: [type, statement, subject_refs]
+        properties:
+          type: {enum: [PRESERVATION, COMPATIBILITY, AUTHORITY]}
+          statement: {type: string, minLength: 1}
+          subject_refs:
+            type: array
+            minItems: 1
+            uniqueItems: true
+            items: {type: string, minLength: 1}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      oracle_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      evidence_required:
+        type: object
+        additionalProperties: false
+        required: [id, method, independence, oracle_ref]
+        properties:
+          id: {type: string, minLength: 1}
+          method: {enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]}
+          independence: {const: BASELINE_DERIVED}
+          oracle_ref: {type: string, minLength: 1}
+      source_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      baseline_observation:
+        type: object
+        additionalProperties: false
+        required: [path, pointer, value, value_digest]
+        properties:
+          path: {type: string, minLength: 1}
+          pointer: {type: string, pattern: '^/'}
+          value: {}
+          value_digest: {$ref: '#/$defs/digest'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
