@@ -12,6 +12,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from review_basis import (
+    active_common_protocol_digest,
+    active_common_protocol_ref,
+    common_manifest_semantic_errors,
+    load_common_protocol_manifest,
     review_basis_errors,
     validate_assessment_context,
     validate_self_check_basis,
@@ -20,7 +24,8 @@ from review_basis import (
 
 CANDIDATE = "c" * 40
 BASE = "a" * 40
-PROFILE_DIGEST = "d" * 64
+PROFILE_DIGEST = active_common_protocol_digest()
+COMMON_PROTOCOL_REF = active_common_protocol_ref()
 
 
 def canonical_digest(value):
@@ -34,10 +39,19 @@ def canonical_digest(value):
     ).hexdigest()
 
 
-def criterion(result="PASS"):
-    item = {"applicability": "REQUIRED", "result": result}
+def criterion(
+    result="PASS",
+    applicability="REQUIRED",
+    applicability_basis=None,
+    waiver_ref=None,
+):
+    item = {"applicability": applicability, "result": result}
     if result == "PASS":
         item["evidence_refs"] = ["evidence://review"]
+    if applicability_basis is not None:
+        item["applicability_basis"] = applicability_basis
+    if waiver_ref is not None:
+        item["waiver_ref"] = waiver_ref
     return item
 
 
@@ -50,7 +64,7 @@ def profile(
 ):
     review = {
         "common_protocol": {
-            "ref": "repo://common-reviewer@exact",
+            "ref": COMMON_PROTOCOL_REF,
             "version": "1.0",
             "digest": PROFILE_DIGEST,
         },
@@ -145,6 +159,146 @@ def review_context(
 
 
 class ReviewBasisTests(unittest.TestCase):
+    def test_crf01_active_common_manifest_floor_is_coherent(self):
+        manifest = load_common_protocol_manifest()
+        self.assertEqual([], common_manifest_semantic_errors(manifest))
+        self.assertEqual(
+            "skills/common-reviewer-protocol-v1.0",
+            active_common_protocol_ref(),
+        )
+        self.assertEqual(64, len(active_common_protocol_digest()))
+
+    def test_crf02_cr01_cannot_be_not_applicable(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-01"] = criterion(
+            result="NOT_APPLICABLE",
+            applicability="NOT_APPLICABLE",
+            applicability_basis="seed://not-applicable",
+        )
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "CR-01: SELF_REVIEW Common floor requires applicability REQUIRED"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf03_cr05_cannot_be_not_applicable(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-05"] = criterion(
+            result="NOT_APPLICABLE",
+            applicability="NOT_APPLICABLE",
+            applicability_basis="seed://not-applicable",
+        )
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "CR-05: SELF_REVIEW Common floor requires applicability REQUIRED"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf04_cr10_cannot_be_not_applicable(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-10"] = criterion(
+            result="NOT_APPLICABLE",
+            applicability="NOT_APPLICABLE",
+            applicability_basis="seed://not-applicable",
+        )
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "CR-10: SELF_REVIEW Common floor requires applicability REQUIRED"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf05_conditional_cr06_can_be_not_applicable_with_basis(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-06"] = criterion(
+            result="NOT_APPLICABLE",
+            applicability="NOT_APPLICABLE",
+            applicability_basis="project://no-interface-change",
+        )
+        self.assertEqual([], self.self_errors(prof=value))
+
+    def test_crf06_conditional_na_without_basis_is_rejected(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-06"] = criterion(
+            result="NOT_APPLICABLE",
+            applicability="NOT_APPLICABLE",
+        )
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any("applicability_basis" in error for error in errors),
+            errors,
+        )
+
+    def test_crf07_project_overlay_can_strengthen_conditional_cr06(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-06"] = criterion()
+        value["review_profile"]["project_method_ids"] = [
+            "PROJECT-METHOD-1",
+            "PROJECT-METHOD-INTERFACE",
+        ]
+        self.assertEqual([], self.self_errors(prof=value))
+
+    def test_crf08_self_review_common_floor_waiver_is_rejected(self):
+        value = profile()
+        value["review_profile"]["common_criteria"]["CR-06"] = criterion(
+            result="WAIVED",
+            applicability="WAIVED_BY_AUTHORITY",
+            waiver_ref="waiver://caller-supplied",
+        )
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "SELF_REVIEW cannot grant or consume a Common-floor waiver"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf09_fake_common_protocol_digest_is_rejected(self):
+        value = profile()
+        value["review_profile"]["common_protocol"]["digest"] = "f" * 64
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "common_protocol.digest must equal active Common Reviewer manifest digest"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf09_wrong_common_protocol_ref_is_rejected(self):
+        value = profile()
+        value["review_profile"]["common_protocol"]["ref"] = "repo://wrong-common-reviewer"
+        errors = self.self_errors(prof=value)
+        self.assertTrue(
+            any(
+                "common_protocol.ref must equal active Common Reviewer canonical_ref"
+                in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_crf10_project_methods_remain_additive_without_authority(self):
+        value = profile()
+        methods = ["PROJECT-METHOD-1", "PROJECT-METHOD-NEGATIVE-CASE"]
+        value["review_profile"]["project_method_ids"] = methods
+        self.assertEqual([], self.self_errors(prof=value))
+        self.assertEqual(methods, value["review_profile"]["project_method_ids"])
+
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
