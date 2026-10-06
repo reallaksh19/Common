@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from coordlib import load_yaml, validate
+from production_readiness import semantic_errors as production_readiness_semantic_errors
 
 
 SCHEMAS = {
@@ -15,6 +16,7 @@ SCHEMAS = {
     "owner-coordination-report",
     "programme-record",
     "relay-handover",
+    "production-readiness",
 }
 
 
@@ -24,8 +26,14 @@ def main() -> None:
     parser.add_argument("path")
     args = parser.parse_args()
 
-    value = load_yaml(Path(args.path))
-    errors = validate(args.schema, value, Path(args.path).name)
+    path = Path(args.path)
+    value = load_yaml(path)
+    errors = validate(args.schema, value, path.name)
+    if not errors and args.schema == "production-readiness":
+        errors.extend(
+            f"{path.name}: {error}"
+            for error in production_readiness_semantic_errors(value)
+        )
     if errors:
         for error in errors:
             print(error)
