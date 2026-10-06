@@ -13,6 +13,10 @@ from l0_task_obligations import (
     validate_manifest as validate_l0_manifest,
     validate_source as validate_l0_source,
 )
+from l1_baseline_obligations import (
+    validate_manifest as validate_l1_manifest,
+    validate_source as validate_l1_source,
+)
 from phase1_runtime_replay import validate_phase1_replay
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
@@ -38,6 +42,8 @@ SCHEMAS = {
     "evidence-freshness",
     "l0-task-contract-source",
     "l0-task-obligation-manifest",
+    "l1-baseline-source",
+    "l1-baseline-obligation-manifest",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -115,6 +121,10 @@ def main() -> None:
             l0_source,
             Path(args.path).name,
         )
+    elif args.schema == "l1-baseline-source":
+        errors = validate_l1_source(value, Path(args.path).name)
+    elif args.schema == "l1-baseline-obligation-manifest":
+        errors = validate_l1_manifest(value, Path(args.path).name)
     else:
         errors = validate(args.schema, value, Path(args.path).name)
     if not errors and args.schema == "production-readiness":
