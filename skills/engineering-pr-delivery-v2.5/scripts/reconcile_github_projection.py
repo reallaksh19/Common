@@ -34,6 +34,26 @@ def _verify_observation(op:dict,obs:dict)->list[str]:
                 if rel not in seen:e.append(f"{kind} verification missing desired relationship {rel}")
     return e
 
+def _archive_verified_observed(projection:dict,gid:str):
+    observed=projection.get("observed")
+    if not isinstance(observed,dict):return
+    old_id=str(observed.get("operation_id") or "")
+    if not old_id or old_id==gid:return
+    history=projection.setdefault("superseded_operations",[])
+    if any(isinstance(x,dict) and str(x.get("operation_id") or "")==old_id for x in history):return
+    basis=list(observed.get("basis") or [])
+    basis.extend([f"verified_predecessor:{old_id}",f"superseded_by:{gid}"])
+    history.append({
+        "operation_id":old_id,
+        "target":observed.get("target"),
+        "roadmap_revision":observed.get("roadmap_revision"),
+        "execution_ref":observed.get("execution_ref"),
+        "disposition":"SUPERSEDED_AFTER_VERIFIED_PUBLICATION",
+        "superseded_by":gid,
+        "receipt":observed.get("receipt"),
+        "basis":list(dict.fromkeys(basis)),
+    })
+
 def _apply_effects(graph:dict,op:dict,obs:dict):
     nodes={_key(n):n for n in _list(graph.get("nodes"))};node_id=str((op.get("subject") or {}).get("issue_node") or "");rb=obs.get("readback") or {}
     for effect in _list((op.get("reconciliation") or {}).get("issue_graph_effects")):
@@ -93,7 +113,7 @@ def reconcile(root:Path,observation_path:Path,apply:bool=False)->dict:
 
     ops=_list(plan.get("operations"));all_done=bool(ops) and all(x.get("state") in DONE for x in ops);uncertain=[x for x in ops if x.get("state") in {"ATTEMPTED_UNCONFIRMED","PUBLISHED_UNCONFIRMED"}]
     if all_done:
-        plan["generation"]["state"]="IN_SYNC";state["projection"].update({"state":"IN_SYNC","receipt":f"github-generation:{gid}","basis":list(dict.fromkeys(list(state["projection"].get("basis") or [])+list(obs.get("candidate_basis") or [])+list(rb.get("basis") or [])))})
+        plan["generation"]["state"]="IN_SYNC";projection=state["projection"];_archive_verified_observed(projection,gid);receipt=f"github-generation:{gid}";basis=list(dict.fromkeys(list(projection.get("basis") or [])+list(obs.get("candidate_basis") or [])+list(rb.get("basis") or [])));projection.update({"state":"IN_SYNC","receipt":receipt,"basis":basis,"observed":{"operation_id":gid,"target":projection.get("target"),"roadmap_revision":projection.get("roadmap_revision"),"execution_ref":projection.get("execution_ref"),"receipt":receipt,"basis":list(dict.fromkeys(list(obs.get("candidate_basis") or [])+list(rb.get("basis") or [])))}})
         state["relay_readiness"]["projection_ready"]=True;state["relay_readiness"]["handover_ready"]=bool(state["relay_readiness"].get("baton_ready"))
     elif uncertain:
         plan["generation"]["state"]="PUBLISHED_UNCONFIRMED";with_receipt=next((x for x in uncertain if (x.get("publication") or {}).get("receipt") not in {None,""}),None)

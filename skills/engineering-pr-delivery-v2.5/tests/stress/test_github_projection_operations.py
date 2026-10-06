@@ -21,8 +21,8 @@ def operation(oid,kind,node,related=None,depends=None,desired=None,effects=None)
     if kind in {"CREATE","UPDATE","PUBLISH_HANDOVER","SUPERSEDE","REVISE"}:desired.setdefault("body_marker",f"<!-- relay-operation:{oid} -->")
     return {"id":oid,"kind":kind,"state":"PREPARED","idempotency_key":f"relay:GHGEN-1:{oid}","depends_on":list(depends or []),"subject":{"issue_node":node,"related_nodes":list(related or [])},"preconditions":{},"desired":desired,"publication":publication(),"verification":verification(),"reconciliation":{"issue_graph_effects":list(effects or []),"complete_when":["external desired state verified by readback"]}}
 
-def observation(oid,*,result="VERIFIED",issue_number=11,issue_id="gid-11",github_state="OPEN",marker=True,relationships=None,receipt=None,attempted=False):
-    return {"schema_version":"relay-v2.5-github-observation","generation_id":"GHGEN-1","operation_id":oid,"candidate_basis":[f"connector-attempt:{oid}"],"publication":{"attempted":attempted,"receipt":receipt,"error":None},"readback":{"performed":True,"found":github_state!="ABSENT","issue_number":issue_number,"issue_id":issue_id,"github_state":github_state,"marker_present":marker,"relationships":list(relationships or []),"body_digest":"digest","basis":[f"readback:{oid}"]},"result":result,"reason":"synthetic readback"}
+def observation(oid,*,generation_id="GHGEN-1",result="VERIFIED",issue_number=11,issue_id="gid-11",github_state="OPEN",marker=True,relationships=None,receipt=None,attempted=False):
+    return {"schema_version":"relay-v2.5-github-observation","generation_id":generation_id,"operation_id":oid,"candidate_basis":[f"connector-attempt:{oid}"],"publication":{"attempted":attempted,"receipt":receipt,"error":None},"readback":{"performed":True,"found":github_state!="ABSENT","issue_number":issue_number,"issue_id":issue_id,"github_state":github_state,"marker_present":marker,"relationships":list(relationships or []),"body_digest":"digest","basis":[f"readback:{oid}"]},"result":result,"reason":"synthetic readback"}
 
 def setup_projection(root:Path):
     _,_,_,state=good(root);state["repository"]["remote"]="owner/synthetic"
@@ -85,6 +85,21 @@ class GitHubProjectionOperationStressTests(unittest.TestCase):
             ops=[operation("GHOP-SUPER","SUPERSEDE","OLD",related=["NEW"],desired={"body_projection":"supersession handover","relationships":[rel]}),operation("GHOP-REVISE","REVISE","NEW",desired={"body_projection":"revised issue projection"}),operation("GHOP-UPDATE","UPDATE","NEW",desired={"body_projection":"updated status"})]
             plan={"schema_version":"relay-v2.5-github-projection","generation":{"id":"GHGEN-1","repository":"owner/synthetic","roadmap_revision":"RM-0001","issue_graph_revision":"IG-1","execution_ref":"EP-1","state":"PREPARED","supersedes_generation":None,"basis":["test"]},"operations":ops};dump(root/"agents/relay/projection/generations/GHGEN-1.yaml",plan);self.assertEqual([],github_projection(root)[0])
             graph["relationships"]=[];dump(root/"agents/relay/roadmap/ISSUE_GRAPH.yaml",graph);self.assertTrue(any("SUPERSEDES relationship" in x for x in github_projection(root)[0]))
+
+    def test_verified_generation_moves_from_observed_to_history_when_successor_converges(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);relation={"from":"ISSUE-PARENT","relation":"PARENT_OF","to":"ISSUE-CHILD"};setup_projection(root)
+            begin(root,["before-call:GHOP-CREATE"],True);reconcile(root,write_obs(root,observation("GHOP-CREATE",receipt="create-receipt")),True)
+            begin(root,["before-call:GHOP-LINK"],True);reconcile(root,write_obs(root,observation("GHOP-LINK",relationships=[relation],receipt="link-receipt"),"LINK.yaml"),True)
+            begin(root,["before-call:GHOP-HANDOVER"],True);reconcile(root,write_obs(root,observation("GHOP-HANDOVER",issue_number=10,issue_id="gid-10",receipt="handover-receipt"),"HANDOVER.yaml"),True)
+            state=yaml.safe_load((root/"agents/relay/REPO_STATE.yaml").read_text());self.assertEqual("GHGEN-1",state["projection"]["observed"]["operation_id"])
+            new=operation("GHOP-NEW","PUBLISH_HANDOVER","ISSUE-PARENT",desired={"body_projection":"new verified generation"});new["idempotency_key"]="relay:GHGEN-2:GHOP-NEW"
+            new_plan={"schema_version":"relay-v2.5-github-projection","generation":{"id":"GHGEN-2","repository":"owner/synthetic","roadmap_revision":"RM-0001","issue_graph_revision":"IG-1","execution_ref":"EP-1","state":"PREPARED","supersedes_generation":None,"basis":["new desired generation"]},"operations":[new]};new_rel="agents/relay/projection/generations/GHGEN-2.yaml";dump(root/new_rel,new_plan)
+            activate(root,new_rel,True);begin(root,["before-call:GHOP-NEW"],True);reconcile(root,write_obs(root,observation("GHOP-NEW",generation_id="GHGEN-2",issue_number=10,issue_id="gid-10",receipt="new-receipt"),"NEW.yaml"),True)
+            state=yaml.safe_load((root/"agents/relay/REPO_STATE.yaml").read_text());hist=state["projection"]["superseded_operations"]
+            self.assertEqual("IN_SYNC",state["projection"]["state"]);self.assertEqual("GHGEN-2",state["projection"]["observed"]["operation_id"]);self.assertEqual("github-generation:GHGEN-2",state["projection"]["observed"]["receipt"])
+            self.assertEqual(1,len(hist));self.assertEqual("GHGEN-1",hist[0]["operation_id"]);self.assertEqual("SUPERSEDED_AFTER_VERIFIED_PUBLICATION",hist[0]["disposition"]);self.assertEqual("GHGEN-2",hist[0]["superseded_by"]);self.assertEqual("github-generation:GHGEN-1",hist[0]["receipt"])
+            self.assertEqual([],projection_convergence(root)[0]);self.assertEqual([],generation_history(root)[0])
 
     def test_uncertain_generation_can_be_superseded_without_fabricating_receipt(self):
         with tempfile.TemporaryDirectory() as td:
