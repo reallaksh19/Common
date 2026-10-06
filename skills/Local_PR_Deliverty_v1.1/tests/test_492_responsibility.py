@@ -100,6 +100,89 @@ class ResponsibilityTests(unittest.TestCase):
         with self.assertRaises(responsibility.ResponsibilityError):
             responsibility.validate_native_release(parent, native_task())
 
+    def test_observation_preserves_every_canonical_release_state_without_authorizing(self):
+        for release in sorted(responsibility.CANONICAL_RELEASE_STATES):
+            with self.subTest(release=release):
+                row = responsibility.responsibility_observation(parent_task(release), native_task())
+                self.assertEqual(row["release_state"], release)
+
+    def test_observation_sources_native_identity_and_acceptance_fields(self):
+        row = responsibility.responsibility_observation(parent_task(), native_task())
+        self.assertEqual(row, {
+            "task_id": "PRD-017",
+            "release_state": "READY",
+            "acceptance_epoch_id": "AE-002",
+            "acceptance_profile_ref": "APR-PRD-017-AE002",
+            "acceptance_profile_digest": "a" * 64,
+            "local_responsibility_complete": False,
+        })
+
+    def test_observation_rejects_synthetic_duplicate_fields_on_native_task(self):
+        for field, value in (
+            ("acceptance_epoch_ref", "AE-002"),
+            ("release_state", "READY"),
+            ("responsibility_complete", True),
+        ):
+            with self.subTest(field=field):
+                task = native_task()
+                task[field] = value
+                with self.assertRaisesRegex(responsibility.ResponsibilityError, "synthetic observation field"):
+                    responsibility.responsibility_observation(parent_task(), task)
+
+    def test_observation_rejects_parent_profile_mismatch(self):
+        parent = parent_task()
+        parent["control_plane"]["responsibility_registry"][0]["acceptance_profile_digest"] = "b" * 64
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "Profile digest differs"):
+            responsibility.responsibility_observation(parent, native_task())
+
+    def test_observation_keeps_local_completion_false_until_validation_binding_exists(self):
+        for release in sorted(responsibility.CANONICAL_RELEASE_STATES):
+            with self.subTest(release=release):
+                row = responsibility.responsibility_observation(parent_task(release), native_task())
+                self.assertFalse(row["local_responsibility_complete"])
+
+    def test_observation_has_no_caller_completion_override(self):
+        with self.assertRaises(TypeError):
+            responsibility.responsibility_observation(
+                parent_task(),
+                native_task(),
+                validated_delivery_result={
+                    "record": "DELIVERY_RESULT",
+                    "task_id": "PRD-017",
+                    "responsibility_complete": True,
+                },
+            )
+
+    # Mutation-envelope amendment requested by the SU-1 Coordinator/Super-Reviewer.
+    def test_observation_rejects_release_state_complete(self):
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "non-canonical"):
+            responsibility.responsibility_observation(parent_task("COMPLETE"), native_task())
+
+    def test_observation_rejects_missing_registry_entry(self):
+        parent = parent_task()
+        parent["control_plane"]["responsibility_registry"] = []
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "absent"):
+            responsibility.responsibility_observation(parent, native_task())
+
+    def test_observation_rejects_duplicate_registry_entry(self):
+        parent = parent_task()
+        entry = copy.deepcopy(parent["control_plane"]["responsibility_registry"][0])
+        parent["control_plane"]["responsibility_registry"].append(entry)
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "Duplicate"):
+            responsibility.responsibility_observation(parent, native_task())
+
+    def test_observation_rejects_unestablished_bootstrap(self):
+        parent = parent_task()
+        parent["control_plane"]["bootstrap_state"] = "PENDING"
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "not established"):
+            responsibility.responsibility_observation(parent, native_task())
+
+    def test_observation_rejects_non_responsibility_task(self):
+        task = native_task()
+        task["kind"] = "CHILD"
+        with self.assertRaisesRegex(responsibility.ResponsibilityError, "only to RESPONSIBILITY"):
+            responsibility.responsibility_observation(parent_task(), task)
+
 
 if __name__ == "__main__":
     unittest.main()
