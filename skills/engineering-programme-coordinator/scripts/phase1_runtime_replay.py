@@ -236,7 +236,17 @@ def _freshness_request_from_local(
             "dependency_heads": _lease_heads(source_lease),
         })
 
-    required_methods = sorted({row["verification_method_id"] for row in bindings})
+    certifier_role = lease["certifier_role"]
+    profile_role = "COORDINATOR" if certifier_role == "PARENT_CHECK" else certifier_role
+    role_bindings = profile.get("role_bindings", {}).get(profile_role, [])
+    required_methods = sorted({
+        row["verification_method_id"]
+        for row in role_bindings
+    })
+    require(
+        required_methods,
+        f"Acceptance Profile has no required methods for lease certifier role {certifier_role}",
+    )
     protocol_methods = {
         row["id"]: row
         for row in protocol.get("verification_methods", [])
@@ -255,6 +265,29 @@ def _freshness_request_from_local(
         _lease_heads(lease),
     )
 
+    task_stages = [
+        row for row in bundle.get("stages", [])
+        if row.get("task_id") == task["task_id"]
+    ]
+    task_stages.sort(key=lambda row: row.get("started_at") or "")
+    active_stage = task_stages[-1] if task_stages else None
+
+    current_surface_digest = lease["acceptance_surface_digest"]
+    current_environment_digest = lease["environment_digest"]
+    if active_stage is not None:
+        surface = active_stage.get("acceptance_surface")
+        if isinstance(surface, dict) and surface.get("digest"):
+            current_surface_digest = surface["digest"]
+        environment_ref = active_stage.get("environment_ref")
+        if environment_ref:
+            environments = {
+                row["environment_id"]: row
+                for row in bundle.get("support", {}).get("environments", [])
+            }
+            environment = environments.get(environment_ref)
+            require(environment is not None, "Active Local stage references missing environment")
+            current_environment_digest = environment["digest"]
+
     return {
         "evidence_bindings": bindings,
         "current": {
@@ -262,8 +295,8 @@ def _freshness_request_from_local(
             "acceptance_epoch_id": task["acceptance_epoch_id"],
             "project_protocol_digest": profile["project_protocol_digest"],
             "acceptance_profile_digest": profile["digest"],
-            "protected_surface_digest": lease["acceptance_surface_digest"],
-            "environment_digest": lease["environment_digest"],
+            "protected_surface_digest": current_surface_digest,
+            "environment_digest": current_environment_digest,
             "dependency_heads": current_dependencies,
         },
         "ledger_ref": f"local://review-lease/{lease['lease_id']}",
