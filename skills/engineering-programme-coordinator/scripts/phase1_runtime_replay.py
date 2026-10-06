@@ -532,7 +532,10 @@ def _readiness(
             ),
             "acceptance_denominator_closure": not_implemented("Programme denominator runtime is outside Phase-1 integration."),
             "reviewer_definition": verified(replay_ref + "#common-reviewer"),
-            "real_artifact_horizontal_integration": verified(replay_ref),
+            "real_artifact_horizontal_integration": conditional(
+                replay_ref,
+                "Actual runtimes are replayed over canonical synthetic Local records; retained real #527 Local native artifact is not yet available.",
+            ),
             "exact_candidate_verification": verified(execution_ref),
             "provider_idempotency": verified(replay_ref + "#provider"),
             "execution_kernel": verified(execution_ref),
@@ -549,6 +552,13 @@ def _readiness(
             "authorized_at": None,
         },
         "cutover_blockers": [
+            {
+                "id": "P1I-REAL-ARTIFACT-MISSING",
+                "severity": "HARD",
+                "state": "OPEN",
+                "reason": "Retained real Local/V3.5/Coordinator record replay is still required; current qualification uses canonical synthetic Local records.",
+                "evidence_refs": [replay_ref],
+            },
             {
                 "id": "P1I-LATER-PHASES",
                 "severity": "HARD",
@@ -573,6 +583,11 @@ def semantic_errors(value: dict[str, Any]) -> list[str]:
     assertions = value["assertions"]
     if assertions["production_mode"] != "OFF":
         errors.append("Phase-1 replay must remain production mode OFF")
+    if assertions.get("artifact_class") != "CANONICAL_SYNTHETIC":
+        errors.append("P1-I-A replay must truthfully identify canonical synthetic artifact class")
+    horizontal = value["production_readiness"]["components"]["real_artifact_horizontal_integration"]
+    if horizontal["state"] == "VERIFIED":
+        errors.append("canonical synthetic replay cannot mark real-artifact integration VERIFIED")
     if value["execution_state"]["verification"]["gate"]["disposition"] == "ADVANCE_ELIGIBLE":
         errors.append("Phase-1 replay cannot manufacture evidence-gate advancement")
     boundaries = value["authority_boundaries"]
@@ -706,6 +721,7 @@ def run_phase1_replay(request: dict[str, Any]) -> dict[str, Any]:
             "execution_next_action": execution["next_action"]["type"],
             "execution_reason_code": execution["next_action"]["reason_code"],
             "production_mode": readiness["production_mode"],
+            "artifact_class": "CANONICAL_SYNTHETIC",
             "local_native_validation": "PASS",
             "local_source_unchanged": before["local_bundle"] == after["local_bundle"],
             "v35_source_unchanged": (
