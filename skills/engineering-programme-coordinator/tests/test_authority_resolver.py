@@ -17,6 +17,7 @@ from authority_resolver import (
     _derive_ready,
     resolve_authority,
     semantic_errors,
+    validate_authority_resolution,
 )
 
 
@@ -72,8 +73,7 @@ class AuthorityResolverTests(unittest.TestCase):
 
     def test_ready_bundle_cannot_self_authorize_when_native_validation_fails(self):
         bundle = fixture.make_native_bundle()
-        task = next(task for task in bundle["tasks"] if task.get("task_id") == PRD)
-        task["acceptance_profile_digest"] = "f" * 64
+        bundle["native_support"]["acceptance_profiles"][0]["digest"] = "f" * 64
         with self.assertRaisesRegex(Exception, "READY responsibility failed Local native validation"):
             resolve_authority(bundle, PRD, NOW)
 
@@ -154,7 +154,7 @@ class AuthorityResolverTests(unittest.TestCase):
             "authentication_status": "AUTHENTICATED",
         })
         result = derive_without_full_revalidation(bundle)
-        self.assertEqual(result["lifecycle"]["state"], "HOLD")
+        self.assertEqual(result["lifecycle"]["state"], "HELD")
         self.assertEqual(result["active_role"], "CODER")
         self.assertNotIn("WRITE_CANDIDATE", result["allowed_actions"])
         self.assertNotIn("REPAIR_CANDIDATE", result["allowed_actions"])
@@ -224,6 +224,54 @@ class AuthorityResolverTests(unittest.TestCase):
         bundle["native_support"]["role_transitions"] = []
         with self.assertRaisesRegex(Exception, "lacks validated ROLE_TRANSITION"):
             derive_without_full_revalidation(bundle)
+
+    def test_real_ready_incomplete_bundle_validates_without_self_activating_successor(self):
+        bundle = fixture.make_native_bundle(complete=False)
+        result = resolve_authority(bundle, PRD, NOW)
+        self.assertEqual(result["local_validation"], "PASS")
+        self.assertEqual(result["lifecycle"]["state"], "STAGE_COMPLETE")
+        self.assertEqual(result["active_role"], "NONE")
+        self.assertEqual(result["allowed_actions"], [])
+
+    def test_schema_valid_forged_projection_requires_raw_bundle_replay(self):
+        bundle = fixture.make_native_bundle()
+        result = resolve_authority(bundle, PRD, NOW)
+        forged = copy.deepcopy(result)
+        forged["lifecycle"]["state"] = "ACTIVE"
+        forged["active_role"] = "CODER"
+        forged["active_principal"] = "attacker"
+        forged["principal_independence"] = "NONE"
+        forged["allowed_actions"] = ["WRITE_CANDIDATE"]
+        forged["forbidden_actions"] = sorted(set(ALL_ACTIONS) - {"WRITE_CANDIDATE"})
+        errors = validate_authority_resolution(forged, bundle, NOW)
+        self.assertTrue(any("must exactly equal raw Local-bundle derivation" in e for e in errors), errors)
+
+    def test_unbound_projection_validation_is_rejected(self):
+        bundle = fixture.make_native_bundle()
+        result = resolve_authority(bundle, PRD, NOW)
+        errors = validate_authority_resolution(result, None, NOW)
+        self.assertTrue(any("requires raw Local native bundle" in e for e in errors), errors)
+
+    def test_same_role_rework_retains_original_transition_basis(self):
+        bundle = fixture.make_native_bundle(collapse=True, complete=False)
+        stages = responsibility_stages(bundle)
+        coordinator = next(row for row in stages if row["stage"] == "COORDINATOR")
+        coordinator["status"] = "STAGE_COMPLETE"
+        rework = copy.deepcopy(coordinator)
+        rework["record_id"] = "S3-REWORK"
+        rework["attempt"] = coordinator["attempt"] + 1
+        rework["status"] = "REWORK"
+        rework["started_at"] = "2026-10-04T00:02:30Z"
+        rework["work_periods"] = [{"start": "2026-10-04T00:02:30Z", "end": None}]
+        rework["publications"]["start"]["comment_ref"] = "https://example.invalid/issues/85#s3-rework-start"
+        rework["publications"]["start"]["published_at"] = "2026-10-04T00:02:29Z"
+        rework["publications"]["end"] = None
+        rework["writer_stopped"] = False
+        bundle["stages"].append(rework)
+        result = derive_without_full_revalidation(bundle)
+        self.assertEqual(result["active_role"], "COORDINATOR")
+        self.assertEqual(result["principal_independence"], "DEGRADED")
+        self.assertEqual(result["role_transition_ref"], "RT-REVIEWER-COORDINATOR-1")
 
     def test_allowed_and_forbidden_are_exact_complement(self):
         bundle = fixture.make_native_bundle()
