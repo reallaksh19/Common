@@ -86,6 +86,23 @@ def active_native_bundle():
         "reconciled_points": ["Reconstructed prior Local responsibility evidence."],
     }
     rework["context_start_ref"] = "CTX-START-S3-REWORK"
+    start_snapshot = next(
+        row for row in bundle["support"]["context_snapshots"]
+        if row["snapshot_id"] == coordinator["context_start_ref"]
+    )
+    rework_start = copy.deepcopy(start_snapshot)
+    rework_start["snapshot_id"] = rework["context_start_ref"]
+    rework_start["task_id"] = rework["task_id"]
+    rework_start["observed_at"] = "2026-10-04T00:03:00Z"
+    rework_start["parent_comment_frontier"] = rework["parent_context"]["through_comment_ref"]
+    rework_start["reconciliation_note"] = "Fresh Coordinator rework START context reconstructed from durable provider state."
+    for index, event in enumerate(rework_start["context_events"], start=1):
+        event["provider_id"] = f"rework-start-{index}"
+        if event["source_kind"] == "PARENT_COMMENT":
+            event["provider_ref"] = rework["parent_context"]["through_comment_ref"]
+            event["created_at"] = "2026-10-04T00:03:00Z"
+            event["updated_at"] = "2026-10-04T00:03:00Z"
+    bundle["support"]["context_snapshots"].append(rework_start)
     rework["context_pre_verdict_ref"] = None
     rework["source_attestation"] = None
     rework["review_lease_ref"] = None
