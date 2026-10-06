@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -190,6 +191,54 @@ class RepairReplayTests(unittest.TestCase):
             any("must equal prior evidence count" in e for e in errors),
             errors,
         )
+
+    def test_generic_validator_requires_source_and_repo_basis(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            result_path = Path(td) / "repair-replay-result.yaml"
+            result_path.write_text(
+                yaml.safe_dump(self.result, sort_keys=False),
+                encoding="utf-8",
+            )
+
+            unbound = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts" / "validate.py"),
+                    "repair-replay-result",
+                    str(result_path),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(0, unbound.returncode)
+            self.assertIn(
+                "source-bound exact-object replay is required",
+                unbound.stdout,
+            )
+
+            bound = subprocess.run(
+                [
+                    sys.executable,
+                    str(ROOT / "scripts" / "validate.py"),
+                    "repair-replay-result",
+                    str(result_path),
+                    "--repair-source",
+                    str(SOURCE_PATH),
+                    "--repo-root",
+                    str(REPO_ROOT),
+                ],
+                cwd=REPO_ROOT,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(
+                0,
+                bound.returncode,
+                bound.stdout + bound.stderr,
+            )
 
     def test_unbound_result_validation_fails_closed(self) -> None:
         errors = validate_result(self.result)
