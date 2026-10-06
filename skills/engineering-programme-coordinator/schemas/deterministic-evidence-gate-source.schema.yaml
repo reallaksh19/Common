@@ -115,8 +115,54 @@ $defs:
         uniqueItems: true
         items: {type: string, minLength: 1}
       boundary_ref:
-        type: [string, 'null']
-        minLength: 1
+        anyOf:
+          - {type: 'null'}
+          - type: string
+            minLength: 1
+            pattern: '^(owner|authority|provider|external|protected)://[^\\s]+    allOf:
+      - if:
+          properties:
+            state: {const: LOCAL_RESOLUTION_EXHAUSTED}
+          required: [state]
+        then:
+          properties:
+            evidence_refs: {minItems: 1}
+            boundary_ref:
+              type: string
+              minLength: 1
+              pattern: '^(owner|authority|provider|external|protected)://[^\\s]+      - if:
+          properties:
+            state: {const: LOCAL_WORK_REMAINING}
+          required: [state]
+        then:
+          properties:
+            boundary_ref: {type: 'null'}
+
+    allOf:
+      - if:
+          properties:
+            state: {const: LOCAL_RESOLUTION_EXHAUSTED}
+          required: [state]
+        then:
+          properties:
+            evidence_refs: {minItems: 1}
+            boundary_ref: {type: string, minLength: 1}
+      - if:
+          properties:
+            state: {const: LOCAL_WORK_REMAINING}
+          required: [state]
+        then:
+          properties:
+            boundary_ref: {type: 'null'}
+
+      - if:
+          properties:
+            state: {const: LOCAL_WORK_REMAINING}
+          required: [state]
+        then:
+          properties:
+            boundary_ref: {type: 'null'}
+
     allOf:
       - if:
           properties:
