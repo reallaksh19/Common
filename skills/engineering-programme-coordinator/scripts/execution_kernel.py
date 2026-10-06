@@ -266,14 +266,10 @@ def semantic_errors(state: dict[str, Any]) -> list[str]:
 
     derived = derive_next_action(state)
     stored = state["next_action"]
-    if stored["type"] != derived["type"]:
+    if stored != derived:
         errors.append(
-            f"next_action.type {stored['type']} does not match derived {derived['type']}"
-        )
-    if stored["reason_code"] != derived["reason_code"]:
-        errors.append(
-            "next_action.reason_code "
-            f"{stored['reason_code']} does not match derived {derived['reason_code']}"
+            "stored next_action must exactly equal kernel-derived next_action "
+            f"(stored={stored!r}, derived={derived!r})"
         )
 
     return errors
