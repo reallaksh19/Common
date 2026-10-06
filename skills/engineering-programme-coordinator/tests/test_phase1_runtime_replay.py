@@ -234,6 +234,29 @@ class Phase1RuntimeReplayTests(unittest.TestCase):
         self.assertGreater(freshness["source_ledger"]["evidence_count"], 0)
         self.assertNotIn("evidence_bindings", result)
 
+    def test_required_method_denominator_comes_from_acceptance_profile(self):
+        req = request()
+        result = run_phase1_replay(req)
+        bundle = req["local_bundle"]
+        task = next(row for row in bundle["tasks"] if row["kind"] == "RESPONSIBILITY")
+        profile = next(
+            row for row in bundle["native_support"]["acceptance_profiles"]
+            if row["profile_id"] == task["acceptance_profile_ref"]
+        )
+        lease_id = result["freshness"]["source_ledger"]["ledger_ref"].split(
+            "local://review-lease/", 1
+        )[1]
+        lease = next(
+            row for row in bundle["support"]["review_leases"]
+            if row["lease_id"] == lease_id
+        )
+        role = "COORDINATOR" if lease["certifier_role"] == "PARENT_CHECK" else lease["certifier_role"]
+        expected = sorted({
+            row["verification_method_id"]
+            for row in profile["role_bindings"][role]
+        })
+        self.assertEqual(result["freshness"]["required_method_ids"], expected)
+
     def test_nominal_replay_composes_execution_and_current_state(self):
         result = run_phase1_replay(request())
         execution = result["execution_state"]
@@ -258,6 +281,32 @@ class Phase1RuntimeReplayTests(unittest.TestCase):
         self.assertEqual(result["execution_state"]["next_action"]["type"], "VERIFY_CANDIDATE")
         self.assertEqual(result["execution_state"]["next_action"]["reason_code"], "VERIFICATION_REQUIRED")
         self.assertNotEqual(result["execution_state"]["next_action"]["type"], "REQUEST_STAGE_ADVANCE")
+
+    def test_active_stage_environment_movement_invalidates_historical_evidence(self):
+        req = request()
+        bundle = req["local_bundle"]
+        task = next(row for row in bundle["tasks"] if row["kind"] == "RESPONSIBILITY")
+        active = [
+            row for row in bundle["stages"]
+            if row["task_id"] == task["task_id"]
+        ][-1]
+        alternatives = [
+            row for row in bundle["support"]["environments"]
+            if row["environment_id"] != active["environment_ref"]
+        ]
+        self.assertTrue(alternatives)
+        active["environment_ref"] = alternatives[0]["environment_id"]
+        result = run_phase1_replay(req)
+        self.assertEqual(result["freshness"]["overall"]["evidence_state"], "STALE")
+        self.assertIn(
+            "ENVIRONMENT_CHANGED",
+            {
+                reason
+                for row in result["freshness"]["evidence_results"]
+                for reason in row["reasons"]
+            },
+        )
+        self.assertEqual(result["execution_state"]["next_action"]["type"], "VERIFY_CANDIDATE")
 
     def test_dependency_movement_invalidates_prior_evidence_and_forces_verification(self):
         req = request()
