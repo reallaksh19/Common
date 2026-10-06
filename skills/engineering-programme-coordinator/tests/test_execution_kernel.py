@@ -297,7 +297,18 @@ class ExecutionKernelTests(unittest.TestCase):
             "basis_refs": ["fake://basis"],
         }
         errors = validate_execution_state(value)
-        self.assertTrue(any("does not match derived" in error for error in errors), errors)
+        self.assertTrue(any("exactly equal" in error for error in errors), errors)
+
+
+    def test_stored_basis_refs_cannot_replace_derived_provenance(self):
+        value = state()
+        value["next_action"] = {
+            "type": "IMPLEMENT",
+            "reason_code": "IMPLEMENTATION_REQUIRED",
+            "basis_refs": ["caller://fabricated-basis"],
+        }
+        errors = validate_execution_state(value)
+        self.assertTrue(any("exactly equal" in error for error in errors), errors)
 
     def test_schema_rejects_advance_stage_capability(self):
         value = state()
