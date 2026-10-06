@@ -248,6 +248,52 @@ class CurrentStateTests(unittest.TestCase):
         errors = validate_current_state(value, execution)
         self.assertTrue(any("candidate head_sha" in error for error in errors), errors)
 
+    def test_execution_branch_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["repository"]["branch"] = "prod/other"
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(any("candidate branch" in error for error in errors), errors)
+
+    def test_execution_base_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["repository"]["target_sha"] = "e" * 40
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(
+            any(
+                "parent.main_sha" in error or "candidate base_sha" in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_execution_pr_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["repository"]["pr"] = 999
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(any("candidate pr" in error for error in errors), errors)
+
+    def test_execution_attempt_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["identity"]["attempt"] = 2
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(any("active.attempt" in error for error in errors), errors)
+
+    def test_execution_parent_identity_mismatch_is_rejected(self):
+        value = current_state()
+        execution = execution_state()
+        execution["identity"]["parent"] = "OTHER-PARENT"
+        value["next_action"]["execution_state_digest"] = canonical_document_digest(execution)
+        errors = validate_current_state(value, execution)
+        self.assertTrue(any("parent identity" in error for error in errors), errors)
+
     def test_execution_responsibility_mismatch_is_rejected(self):
         value = current_state()
         execution = execution_state()
