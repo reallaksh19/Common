@@ -161,6 +161,53 @@ def _verify_pr_and_commit(
     }
 
 
+def _tree_entry(rows: list[dict[str, Any]], name: str) -> dict[str, Any]:
+    matches = [row for row in rows if row.get("path") == name and row.get("type") == "tree"]
+    require(len(matches) == 1, f"Historical Git tree missing unique directory: {name}")
+    return matches[0]
+
+
+def _verify_protocol_trees(
+    provider: Any,
+    repository: str,
+    source: dict[str, Any],
+    protocols: dict[str, Any],
+) -> dict[str, Any]:
+    target = provider.get_json(f"/repos/{repository}/commits/{source['target_sha']}")
+    require(target.get("sha") == source["target_sha"], "Historical target commit missing")
+    root_tree_sha = (
+        target.get("commit", {}).get("tree", {}).get("sha")
+    )
+    require(isinstance(root_tree_sha, str) and len(root_tree_sha) == 40, "Historical target root tree missing")
+
+    root = provider.get_json(f"/repos/{repository}/git/trees/{root_tree_sha}")
+    skills = _tree_entry(root.get("tree", []), "skills")
+    skills_tree = provider.get_json(
+        f"/repos/{repository}/git/trees/{skills['sha']}"
+    )
+
+    observed = {}
+    for key, dirname in [
+        ("local", "Local_PR_Deliverty_v1.1"),
+        ("v35", "engineering-pr-delivery-v3.5"),
+    ]:
+        entry = _tree_entry(skills_tree.get("tree", []), dirname)
+        expected_tree = protocols[key]["tree_sha1"]
+        require(entry.get("sha") == expected_tree, f"Historical {key} protocol tree SHA mismatch")
+        recomputed = hashlib.sha256(
+            ("git-tree-sha1:" + expected_tree).encode("utf-8")
+        ).hexdigest()
+        require(
+            recomputed == protocols[key]["release_start_digest"],
+            f"Historical {key} release/start digest mismatch",
+        )
+        observed[key] = {
+            "tree_sha1": expected_tree,
+            "release_start_digest": recomputed,
+        }
+    return observed
+
+
 def _verify_workflow_runs(
     provider: Any,
     repository: str,
@@ -413,6 +460,12 @@ def _run_replay(
     comment_refs = [row["ref"] for row in verified_comments]
 
     pr_state = _verify_pr_and_commit(provider, repository, source)
+    protocol_trees = _verify_protocol_trees(
+        provider,
+        repository,
+        source,
+        manifest["protocol_identity"],
+    )
     runs = _verify_workflow_runs(provider, repository, manifest["workflow_runs"])
 
     # Cross-record material identity is ref + Git tree SHA. Historical digest namespaces
@@ -456,6 +509,12 @@ def _run_replay(
                     and row["head_branch"] == source["branch"]
                     for row in runs
                 )
+            ),
+            "protocol_trees_verified": (
+                protocol_trees["local"]["tree_sha1"]
+                == manifest["protocol_identity"]["local"]["tree_sha1"]
+                and protocol_trees["v35"]["tree_sha1"]
+                == manifest["protocol_identity"]["v35"]["tree_sha1"]
             ),
             "workflow_runs_verified": len(runs),
         },
