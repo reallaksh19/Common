@@ -96,7 +96,7 @@ properties:
       shadow_rollout: {$ref: '#/$defs/component'}
       rollback: {$ref: '#/$defs/component'}
   production_mode:
-    enum: [OFF, SHADOW_ONLY, CRITICAL_GATE, DEFAULT_GATE]
+    enum: ['OFF', 'SHADOW_ONLY', 'CRITICAL_GATE', 'DEFAULT_GATE']
   cutover_authorization:
     type: object
     additionalProperties: false
