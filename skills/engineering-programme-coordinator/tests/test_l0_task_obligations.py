@@ -99,6 +99,12 @@ class L0TaskObligationTests(unittest.TestCase):
             errors = validate_source(value)
             self.assertTrue(errors, field)
 
+    def test_l2_impact_claim_type_is_rejected_from_l0_source(self):
+        value = source()
+        value["contract_claims"][0]["claim"]["type"] = "IMPACT"
+        errors = validate_source(value)
+        self.assertTrue(errors)
+
     def test_empty_contract_denominator_is_rejected(self):
         value = source()
         value["contract_claims"] = []
