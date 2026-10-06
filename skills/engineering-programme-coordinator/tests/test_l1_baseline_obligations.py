@@ -57,13 +57,21 @@ class L1BaselineObligationsTests(unittest.TestCase):
     def test_invalid_pointer_escape_rejected(self):
         with self.assertRaises(ValueError): resolve_pointer({"x":1},"/~2")
     def test_extracts_precommitted_issue_source(self):
-        md="# Child\n\n## Precommitted L1 selector source\n\n```yaml
-"+yaml.safe_dump(self.source,sort_keys=False)+"```
-"; self.assertEqual(self.source,extract_precommitted_source(md))
+        md = (
+            "# Child\n\n"
+            "## Precommitted L1 selector source\n\n"
+            "```yaml\n"
+            + yaml.safe_dump(self.source, sort_keys=False)
+            + "```\n"
+        )
+        self.assertEqual(self.source, extract_precommitted_source(md))
     def test_duplicate_precommitted_heading_rejected(self):
-        block="## Precommitted L1 selector source
-```yaml
-"+yaml.safe_dump(self.source,sort_keys=False)+"```
-"
-        with self.assertRaises(ValueError): extract_precommitted_source(block+block)
+        block = (
+            "## Precommitted L1 selector source\n"
+            "```yaml\n"
+            + yaml.safe_dump(self.source, sort_keys=False)
+            + "```\n"
+        )
+        with self.assertRaises(ValueError):
+            extract_precommitted_source(block + block)
 if __name__=="__main__": unittest.main()
