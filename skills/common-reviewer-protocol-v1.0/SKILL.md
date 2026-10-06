@@ -304,7 +304,7 @@ Super Review uses the same Common floor where applicable plus its independent pr
 
 ## Effective review profile schema
 
-Each responsibility SHOULD resolve a machine-readable effective profile before review:
+Each responsibility MUST resolve a machine-readable effective profile before review:
 
 ```yaml
 review_profile:
