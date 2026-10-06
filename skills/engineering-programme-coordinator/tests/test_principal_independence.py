@@ -173,12 +173,12 @@ class PrincipalIndependenceTruthTests(unittest.TestCase):
         self.assertEqual("SAME_PRINCIPAL", value["principals"]["relationship"])
         self.assertEqual("NONE", value["principals"]["principal_independence"])
         self.assertEqual(
-            "SAME_PRINCIPAL_FRESH_ROLE",
-            value["separation"]["fresh_role_boundary"],
+            "GOVERNED_SAME_PRINCIPAL_FRESH_CONTEXT",
+            value["separation"]["context_separation"],
         )
         self.assertEqual(
             "FRESH_RECONSTRUCTION_ONLY",
-            value["separation"]["methodological_independence"],
+            value["separation"]["methodological_separation"],
         )
         self.assertTrue(value["compatibility"]["legacy_degraded_input_consumed"])
 
@@ -202,7 +202,7 @@ class PrincipalIndependenceTruthTests(unittest.TestCase):
         )
         self.assertEqual(
             "DISTINCT_PRINCIPAL_AND_FRESH_RECONSTRUCTION",
-            value["separation"]["methodological_independence"],
+            value["separation"]["methodological_separation"],
         )
         self.assertFalse(value["compatibility"]["legacy_degraded_input_consumed"])
 
