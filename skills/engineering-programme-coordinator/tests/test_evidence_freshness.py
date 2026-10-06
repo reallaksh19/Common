@@ -170,7 +170,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_environment_not_declared_material_is_not_invented(self):
         evidence = binding()
-        evidence["environment_digest"] = "6" * 64
+        bind_source_field(evidence, "environment_digest", "6" * 64)
         now = current()
         now["environment_digest"] = None
         result = derive([evidence], current_value=now)
@@ -236,7 +236,7 @@ class EvidenceFreshnessTests(unittest.TestCase):
 
     def test_one_current_evidence_can_satisfy_method_despite_stale_history(self):
         old = binding("EV-OLD")
-        old["candidate_sha"] = OLD_SHA
+        bind_source_field(old, "candidate_sha", OLD_SHA)
         fresh = binding("EV-NEW")
         result = derive([old, fresh])
         self.assertEqual(result["method_results"][0]["state"], "CURRENT")
