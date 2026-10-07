@@ -5007,15 +5007,14 @@ def classify_fact_custody(
         "provider_updated_at": None,
     }
 
-    if not isinstance(fact_execution, Mapping):
-        return {
-            **base,
-            "relation": "UNBOUND",
-            "reason": "FACT_EXECUTION_UNBOUND",
-        }
-
     provider = entry.get("provider")
     if not isinstance(provider, Mapping) or provider.get("kind") != "GITHUB_ISSUE_COMMENT":
+        if not isinstance(fact_execution, Mapping):
+            return {
+                **base,
+                "relation": "UNBOUND",
+                "reason": "FACT_EXECUTION_UNBOUND_PROVIDER_TIME_UNAVAILABLE",
+            }
         return {
             **base,
             "relation": "UNKNOWN",
@@ -5031,6 +5030,25 @@ def classify_fact_custody(
         "LEASE.custody.granted_at",
     )
     base["provider_updated_at"] = updated_text
+
+    if not isinstance(fact_execution, Mapping):
+        if updated < granted:
+            return {
+                **base,
+                "relation": "UNBOUND",
+                "reason": "UNBOUND_PUBLISHED_BEFORE_CURRENT_GRANT",
+            }
+        if updated > granted:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "UNBOUND_POST_FENCE_CANNOT_PROVE_CURRENT_CUSTODY",
+            }
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "UNBOUND_FENCE_TIMESTAMP_TIE",
+        }
 
     fact_epoch = int(fact_execution["custody_epoch"])
     active_epoch = int(fence["custody_epoch"])
