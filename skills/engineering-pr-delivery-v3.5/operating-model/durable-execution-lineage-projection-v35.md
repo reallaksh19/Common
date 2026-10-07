@@ -391,6 +391,23 @@ The projector derives `graph_digest` from a canonical graph basis; omitted gener
 explicit generation of 1 have the same digest. The digest is plan/currentness evidence only and
 never moves P/E/D.
 
+
+Each stable-identity LEAF also declares a positive `spec_generation`. The engine derives the
+leaf's current `contract_digest` mechanically; callers do not need to calculate or copy it.
+The digest covers the stable Responsibility identity plus the semantic/execution contract:
+observable outcome, unit ids and verify/outcome text, delivery-gate ids, accepted verification
+vocabulary, write surface, resolved dependency Responsibility ids, size budget and work class.
+
+It deliberately excludes provider/topology/projection metadata: issue locator, parent, PR/branch,
+programme/leaf/unit weights, `graph_generation`, `spec_generation` itself, and derived/provider
+status. Reparenting, reweighting or changing a PR therefore does not stale the semantic contract.
+
+`graph-diff` compares the derived digest by stable `responsibility_id`. If the digest changes
+without a higher `spec_generation`, the re-plan is rejected with
+`SPEC_GENERATION_NOT_BUMPED`. A generation bump with an unchanged digest is advisory only.
+Legacy graphs may continue to carry an asserted `contract_digest`; in stable-identity mode an
+asserted value must equal the derived value and is unnecessary.
+
 ## Invariants (each is pinned by a test)
 
 1. Every artifact resolves to exactly one owning leaf; every leaf resolves to exactly one programme lineage.
