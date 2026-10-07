@@ -205,6 +205,7 @@ STATE_LIGHT = {
     "WAITING_TOOL": LIGHT_WAITING,
     "WAITING_EXTERNAL": LIGHT_WAITING,
     "WAITING_PROVIDER_VISIBILITY": LIGHT_WAITING,
+    "WAITING_DEPENDENCY": LIGHT_WAITING,
     "WAITING": LIGHT_WAITING,
     "RECOVERING": LIGHT_ATTENTION,
     "QUIET": LIGHT_ATTENTION,
@@ -2044,6 +2045,29 @@ def project(
             if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
+    # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
+    # from predecessor projections; agents never author it and it never changes P/E/D.
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        declared_dependencies = list(nodes[ref]["depends_on"])
+        blocking_dependencies = [
+            {
+                "ref": dep,
+                "state": results[dep]["state"],
+                "lifecycle": results[dep]["lifecycle"],
+            }
+            for dep in declared_dependencies
+            if results[dep]["lifecycle"] != "COMPLETE"
+        ]
+        results[ref]["dependencies"] = {
+            "declared": declared_dependencies,
+            "ready": not blocking_dependencies,
+            "blocking": blocking_dependencies,
+        }
+        if blocking_dependencies and results[ref]["state"] in {"ACTIVE", "NOT_STARTED"}:
+            results[ref]["state"] = "WAITING_DEPENDENCY"
+
     health_mode = indexed["health_policy"]["mode"]
     if health_mode != "OFF":
         # Advisory telemetry for leaves that have started and are not finished: it adds a block, never a state or a number.
@@ -2292,6 +2316,15 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
             "RECONCILE_HANDOFF before this high-risk unit — "
             + str(leaf["successor_policy"].get("decision_at_risk") or "successor grounding required")
         )
+    elif leaf.get("dependencies") and not leaf["dependencies"]["ready"]:
+        action = "WAIT_DEPENDENCY"
+        blocked = ", ".join(
+            f"{row['ref']}:{row['lifecycle']}" for row in leaf["dependencies"]["blocking"]
+        )
+        next_text = (
+            f"WAIT_DEPENDENCY before coding — {blocked}; only COMPLETE predecessors satisfy depends_on, "
+            "then reproject from durable facts"
+        )
     elif leaf["active_unit"]:
         action = "CONTINUE_UNIT"
         tail = f" — {leaf['next']['action']}" if leaf["next"]["action"] else ""
@@ -2325,6 +2358,9 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     if leaf.get("handover") is not None:
         report["handover"] = leaf["handover"]
         report["handover_reconciliation_required"] = action == "RECONCILE_HANDOFF"
+    if leaf.get("dependencies") is not None:
+        report["dependencies"] = leaf["dependencies"]
+        report["dependency_wait_required"] = action == "WAIT_DEPENDENCY"
     if plan:  # present only when the decomposition gate is not OFF
         report["plan"] = plan
         report["plan_fix_required"] = action == "FIX_PLAN"
@@ -2380,6 +2416,15 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
             lines.append(f"PLAN: RELEASABLE — ADVISORY: {', '.join(a['code'] for a in plan['advisories'])}")
         else:
             lines.append("PLAN: RELEASABLE")
+    dependencies = report.get("dependencies")
+    if dependencies and dependencies["declared"]:
+        if dependencies["ready"]:
+            lines.append("DEPENDENCIES: READY — " + ", ".join(dependencies["declared"]))
+        else:
+            shown = ", ".join(
+                f"{row['ref']}:{row['lifecycle']}" for row in dependencies["blocking"]
+            )
+            lines.append("DEPENDENCIES: BLOCKED — " + shown)
     handover = report.get("handover")
     if handover:
         lines.append(
@@ -2419,6 +2464,7 @@ _FRONTIER_INPUTS = (
     ("PR_STATE", ("observed", "pr_state")),
     ("LIVENESS", ("observed", "liveness")),
     ("FACTS", ("inputs", "facts", "digest")),
+    ("DEPENDENCY_FACTS", ("inputs", "dependencies", "digest")),
     ("PLAN", ("inputs", "graph")),
 )
 _FRONTIER_CONSEQUENCES = (
@@ -2427,6 +2473,7 @@ _FRONTIER_CONSEQUENCES = (
     ("PROGRESS_P", ("derived", "progress", "P")),
     ("PROGRESS_E", ("derived", "progress", "E")),
     ("ACTIVE_UNIT", ("derived", "active_unit")),
+    ("DEPENDENCIES", ("derived", "dependencies")),
 )
 
 
@@ -2456,6 +2503,10 @@ def frontier(
     leaf = projection["nodes"][ref]
     accepted, _ = partition_ledger(indexed, ledger)
     mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
+    dependency_facts = {
+        dep: [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(dep, [])]
+        for dep in indexed["nodes"][ref]["depends_on"]
+    }
     material = leaf["material"]
     observed = {k: material[k] for k in ("base_sha", "candidate_sha", "pr_state", "ahead_by", "behind_by") if material.get(k) is not None}
     if leaf.get("liveness"):
@@ -2474,6 +2525,7 @@ def frontier(
         "next": dict(leaf["next"]),
         "blocker": leaf["blocker"],
         "owner_action": leaf["owner_action"],
+        "dependencies": copy.deepcopy(leaf.get("dependencies") or {"declared": [], "ready": True, "blocking": []}),
     }
     if "plan" in leaf:
         derived["plan"] = {"mode": leaf["plan"]["mode"], "releasable": leaf["plan"]["releasable"], "blockers": [b["code"] for b in leaf["plan"]["blockers"]]}
@@ -2483,7 +2535,14 @@ def frontier(
         "leaf": ref,
         "observed": observed,
         "derived": derived,
-        "inputs": {"graph": indexed["digest"], "facts": {"accepted": len(mine), "digest": canonical_digest(mine)}},
+        "inputs": {
+            "graph": indexed["digest"],
+            "facts": {"accepted": len(mine), "digest": canonical_digest(mine)},
+            "dependencies": {
+                "accepted": {dep: len(records) for dep, records in dependency_facts.items()},
+                "digest": canonical_digest(dependency_facts),
+            },
+        },
     }
     ancestors = [projection["nodes"][r] for r in leaf["identity"]["lineage"][:-1]]
     return {
@@ -2522,6 +2581,12 @@ def frontier_drift(snapshot: Mapping[str, Any], live: Mapping[str, Any]) -> dict
         if row["what"] == "FACTS":  # show the count, not two digests
             row["was"], row["now"] = _dig(snapshot, ("inputs", "facts", "accepted")), _dig(live, ("inputs", "facts", "accepted"))
             row["detail"] = "accepted facts records (content differs)" if row["was"] == row["now"] else "accepted facts records"
+        elif row["what"] == "DEPENDENCY_FACTS":
+            row["was"], row["now"] = (
+                _dig(snapshot, ("inputs", "dependencies", "accepted")),
+                _dig(live, ("inputs", "dependencies", "accepted")),
+            )
+            row["detail"] = "accepted dependency facts changed"
         elif row["what"] == "PLAN":
             row["was"], row["now"] = str(row["was"])[:19], str(row["now"])[:19]
     return {
