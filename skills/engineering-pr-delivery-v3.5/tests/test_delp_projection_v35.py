@@ -1115,6 +1115,27 @@ class ProviderObservationContract(unittest.TestCase):
                     M.require_facts(record)
 
 
+    def test_wrong_repository_same_issue_number_cannot_supply_provider_truth(self):
+        wrong = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_B, "pr_state": "MERGED"},
+        }
+        with self.assertRaises(M.DelpError):
+            M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], {"other/repo#592": wrong})
+
+    def test_duplicate_aliases_for_one_leaf_fail_closed(self):
+        with self.assertRaises(M.DelpError):
+            M.project(
+                graph(),
+                [],
+                {
+                    "Common#592": {"candidate_sha": SHA_A},
+                    "592": {"candidate_sha": SHA_B},
+                },
+            )
+
+
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
 
