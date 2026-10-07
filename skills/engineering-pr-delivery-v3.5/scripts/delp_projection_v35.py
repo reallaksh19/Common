@@ -3791,6 +3791,8 @@ def partition_ledger(
         order = entry.get("order")
         record = dict(facts)
         record["_source"] = source
+        if isinstance((entry or {}).get("provider"), Mapping):
+            record["_provider"] = copy.deepcopy(entry["provider"])
         accepted.setdefault(leaf_ref, []).append(
             (int(order) if isinstance(order, int) and not isinstance(order, bool) else position, position, record)
         )
@@ -3890,8 +3892,10 @@ def project(
     ledger: Iterable[Mapping[str, Any]] = (),
     observations: Mapping[str, Mapping[str, Any]] | None = None,
     topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
+    custody_state: Mapping[str, Any] | None = None,
+    custody_lease: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Recompute every node from plan, facts, provider truth and topology observations."""
+    """Recompute every node from plan, facts, provider truth, topology and optional active custody."""
     ledger = list(ledger)
     if topology_observations is None:
         topology_observations = {}
@@ -3900,7 +3904,19 @@ def project(
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
     observations = normalize_observations(indexed, observations)
-    accepted, rejected = partition_ledger(indexed, ledger)
+    accepted_all, rejected = partition_ledger(indexed, ledger)
+    if (custody_state is None) != (custody_lease is None):
+        raise DelpError("custody_state and custody_lease must be supplied together")
+    accepted = accepted_all
+    fenced_facts: list[dict[str, Any]] = []
+    custody_summaries: dict[str, dict[str, Any]] = {}
+    custody_fence = None
+    if custody_state is not None and custody_lease is not None:
+        accepted, fenced_facts, custody_summaries, custody_fence = apply_custody_fact_fence(
+            accepted_all,
+            custody_state,
+            custody_lease,
+        )
     results: dict[str, dict[str, Any]] = {}
     mode = indexed["policy"]["mode"]
 
@@ -3908,7 +3924,21 @@ def project(
         if nodes[ref]["kind"] == "LEAF":
             records = accepted.get(ref, [])
             results[ref] = compute_leaf(nodes[ref], records, observations.get(nodes[ref]["number"]))
-            results[ref]["execution_provenance"] = execution_provenance(records)
+            results[ref]["execution_provenance"] = execution_provenance(accepted_all.get(ref, []))
+            if custody_fence is not None:
+                results[ref]["custody_fence"] = custody_summaries.get(
+                    ref,
+                    {
+                        "active_execution": {
+                            key: custody_fence[key]
+                            for key in ("ep", "lease", "executor", "custody_epoch")
+                        },
+                        "granted_at": custody_fence["granted_at"],
+                        "effective_fact_count": 0,
+                        "fenced_fact_count": 0,
+                        "fenced_sources": [],
+                    },
+                )
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
@@ -4131,13 +4161,24 @@ def project(
         "root": indexed["root"],
         "nodes": out_nodes,
         "rejected_facts": rejected,
+        "fenced_facts": fenced_facts,
         "input_digest": canonical_digest(
             {
                 "graph": indexed["digest"],
                 "ledger": [
-                    {"source": str((e or {}).get("source") or ""), "order": (e or {}).get("order"), "facts": (e or {}).get("facts")}
+                    {
+                        "source": str((e or {}).get("source") or ""),
+                        "order": (e or {}).get("order"),
+                        "facts": (e or {}).get("facts"),
+                        **(
+                            {"provider": (e or {}).get("provider")}
+                            if custody_fence is not None
+                            else {}
+                        ),
+                    }
                     for e in ledger
                 ],
+                "custody_fence": custody_fence,
                 "observations": {str(k): v for k, v in sorted(observations.items())},
                 "topology_observations": {
                     str(k): v
@@ -5100,6 +5141,68 @@ def classify_fact_custody(
         "relation": "UNKNOWN",
         "reason": "FENCE_TIMESTAMP_TIE",
     }
+
+
+def apply_custody_fact_fence(
+    accepted: Mapping[str, list[dict[str, Any]]],
+    state: Mapping[str, Any],
+    lease: Mapping[str, Any],
+) -> tuple[
+    dict[str, list[dict[str, Any]]],
+    list[dict[str, Any]],
+    dict[str, dict[str, Any]],
+    dict[str, Any],
+]:
+    """Return effective semantic facts while retaining fenced facts as audit evidence."""
+    fence = custody_fence_from_state_lease(state, lease)
+    active_execution = {
+        key: fence[key]
+        for key in ("ep", "lease", "executor", "custody_epoch")
+    }
+    effective: dict[str, list[dict[str, Any]]] = {}
+    fenced: list[dict[str, Any]] = []
+    summaries: dict[str, dict[str, Any]] = {}
+
+    for ref, records in accepted.items():
+        kept: list[dict[str, Any]] = []
+        leaf_fenced: list[str] = []
+        for record in records:
+            facts = {
+                key: copy.deepcopy(value)
+                for key, value in record.items()
+                if not str(key).startswith("_")
+            }
+            entry: dict[str, Any] = {"facts": facts}
+            if isinstance(record.get("_provider"), Mapping):
+                entry["provider"] = copy.deepcopy(record["_provider"])
+            relation = classify_fact_custody(entry, state, lease)
+            unsafe = relation["relation"] in {"STALE_POST_FENCE", "UNKNOWN"}
+            if unsafe:
+                source = str(record.get("_source") or "")
+                leaf_fenced.append(source)
+                fenced.append(
+                    {
+                        "leaf": ref,
+                        "source": source,
+                        "relation": relation["relation"],
+                        "reason": relation["reason"],
+                        "fact_execution": copy.deepcopy(relation["fact_execution"]),
+                        "provider_updated_at": relation["provider_updated_at"],
+                        "fence_granted_at": relation["fence_granted_at"],
+                    }
+                )
+            else:
+                kept.append(record)
+        effective[ref] = kept
+        summaries[ref] = {
+            "active_execution": copy.deepcopy(active_execution),
+            "granted_at": fence["granted_at"],
+            "effective_fact_count": len(kept),
+            "fenced_fact_count": len(leaf_fenced),
+            "fenced_sources": sorted(source for source in leaf_fenced if source),
+        }
+
+    return effective, fenced, summaries, fence
 
 
 def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
