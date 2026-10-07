@@ -34,7 +34,11 @@ TASK_EVIDENCE — CHECKPOINT
 
 ```yaml
 CHECKPOINT_FACTS_V1:
-  responsibility: {issue: Common#592, id: P3-I-R2}
+  responsibility:
+    issue: Common#592
+    id: P3-I-R2
+    spec_generation: 3
+    contract_digest: sha256:<derived-current-contract-digest>
   material: {pr: Common#593, candidate_sha: 0123456789abcdef0123456789abcdef01234567}
   units:
     - id: U04
@@ -47,11 +51,13 @@ CHECKPOINT_FACTS_V1:
 ```
 ````
 
-Allowed fields: `responsibility`, `material`, `units[]` (`id`, `state`, `result`, `evidence_refs`, optional `candidate_sha`, `contract_digest`), `gates[]` (reviewer/super-reviewer delivery gates: `id`, `result`, `evidence_refs`), `activity` (`ACTIVE`, `WAITING_CI`, `WAITING_TOOL`, `WAITING_EXTERNAL`, `WAITING_PROVIDER_VISIBILITY`, `RECOVERING`, `PAUSED`), `next`, `blocker`, `owner_action`, `result` (scope + `responsibility_complete`, optional `superseded_by`).
+Allowed fields: `responsibility` (provider `issue` plus optional stable `id`, `spec_generation`, `contract_digest`), `material`, `units[]` (`id`, `state`, `result`, `evidence_refs`, optional `candidate_sha`, `contract_digest`), `gates[]` (reviewer/super-reviewer delivery gates: `id`, `result`, `evidence_refs`), `activity` (`ACTIVE`, `WAITING_CI`, `WAITING_TOOL`, `WAITING_EXTERNAL`, `WAITING_PROVIDER_VISIBILITY`, `RECOVERING`, `PAUSED`), `next`, `blocker`, `owner_action`, `result` (scope + `responsibility_complete`, optional `superseded_by`).
 
 **Rejected, recursively, at any depth:** `progress`, `percent`, `p`/`e`/`d`, `title`, `parent_progress`, `programme_progress`, `frontier(_count)`, `activity_epoch`, `evidence_health`, `projection`, `light`, `denominator`, `weight(s)`, `reserve(_weight)`, `evidenced`, and any string that contains projection notation (`R:P…/E…`, `Φ:D…/E…`, `Π:D…/E…`, `{P…% · E…%`). `QUIET` and `STALE` can never be declared: a dead executor cannot report its own death, so liveness comes only from an external observer. Weights are plan authority and live only in the execution graph.
 
-`python scripts/delp_projection_v35.py validate-facts <file>` exits non-zero on any violation. The projector applies the same validation to every ledger record: an invalid record is listed under `rejected_facts` and contributes nothing.
+`python scripts/delp_projection_v35.py validate-facts <file>` exits non-zero on any structural violation. Before publishing against a stable-identity graph, use `bind-facts --graph G --facts F`: it stamps the current planned Responsibility id, spec generation and mechanically derived contract digest and refuses to overwrite a conflicting existing binding. The executor never calculates the digest.
+
+The projector applies the same validation to every ledger record. On a stable-identity graph, a fact missing any of the three semantic bindings, or carrying a stale/mismatched binding, is retained in the audit trail but rejected from the current projection and contributes nothing. Legacy graphs retain locator-only admission.
 
 **Who may publish facts.** Anyone can comment on a public issue, so `sync-github` believes a facts block only from a trusted author: an explicit `programme.fact_authors` login list in the execution graph, or, when absent, a repository `OWNER`/`MEMBER`/`COLLABORATOR`. A block from anyone else is kept in the ledger, rejected with `author … is not a trusted fact author` and counted nowhere. Facts must also name a declared **leaf** (and the planned `responsibility_id` when both exist); a record for a parent issue or an unknown issue is rejected.
 
@@ -341,7 +347,8 @@ Each agent writes facts only to its own leaf. No agent authors parent or program
 
 ```text
 validate-graph --graph G                         plan is structurally valid
-validate-facts F...                              reject agent-authored projections (exit 1)
+validate-facts F...                              reject malformed/agent-authored projection fields (exit 1)
+bind-facts --graph G --facts F [--output B]        stamp current Responsibility id/generation/digest before publication
 project --graph G --facts F... --observations O  deterministic projection JSON (+ expected titles)
 admit --graph G --facts F --observations O --leaf L --command continue
 health --graph G --facts F --observations O [--leaf L] [--mode M] [--json]   advisory delivery-continuity health of started leaves (always exits 0)
