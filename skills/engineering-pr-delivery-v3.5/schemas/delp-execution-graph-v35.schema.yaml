@@ -164,13 +164,78 @@ properties:
           type: string
           minLength: 1
           description: Stable semantic Responsibility identity; never synthesized from the GitHub issue locator.
+        spec_generation:
+          type: integer
+          minimum: 1
+          description: Monotonic generation of this Responsibility's semantic/execution contract.
         primary_pr: {type: string}
         candidate_ref: {type: string, description: Branch/tag whose head is the candidate when there is no PR yet.}
         critical: {type: boolean}
         verification:
           type: array
           items: {enum: [VERIFIED, PARTIAL, FAILED, NOT_RUN, PENDING]}
-        contract_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+        contract_digest:
+          type: string
+          pattern: '^sha256:[0-9a-f]{64}
+        work_class:
+          enum: [PRODUCT, MECHANICAL, GATE]
+          description: PRODUCT (default) is held to the unit-count floor and share cap; MECHANICAL and GATE leaves are exempt from those two rules only.
+        outcome: {type: string, description: One sentence - what is observably true when the leaf is done.}
+        size_budget: {$ref: '#/$defs/size_budget'}
+        write_surface:
+          type: array
+          description: Repo-relative file paths or directory prefixes ending in '/'. No globs, no '..', no absolute paths.
+          items: {type: string, minLength: 1, pattern: '^[^*?\[\]\\]+$'}
+        depends_on:
+          type: array
+          items: {$ref: '#/$defs/ref'}
+          description: Leaves that must finish first. Orders leaves whose write surfaces overlap.
+        parallel_ok:
+          type: array
+          items: {$ref: '#/$defs/ref'}
+          description: Leaves whose overlapping write surface is safe to edit in parallel; needs parallel_ok_basis.
+        parallel_ok_basis: {type: string}
+        units:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [id, weight]
+            properties:
+              id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+              weight: {type: integer, minimum: 1}
+              verify: {type: string, description: The check, command or evidence that proves this unit.}
+              outcome: {type: string}
+              moved_from: {$ref: '#/$defs/ref', description: The leaf this unit used to live in (same unit id). Only meaningful in the plan that moves it.}
+        coder_weight: {type: integer, minimum: 1}
+        delivery_gates:
+          type: array
+          items:
+            type: object
+            required: [id, weight]
+            properties:
+              id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+              weight: {type: integer, minimum: 1}
+      allOf:
+        - if: {properties: {kind: {const: LEAF}}}
+          then: {required: [parent, weight, units]}
+        - if: {properties: {kind: {const: INTERMEDIATE}}}
+          then: {required: [parent, weight]}
+
+allOf:
+  - if:
+      properties:
+        programme:
+          required: [graph_generation]
+    then:
+      properties:
+        nodes:
+          items:
+            allOf:
+              - if: {properties: {kind: {const: LEAF}}}
+                then: {required: [responsibility_id, spec_generation]}
+
+          description: Legacy compatibility assertion; stable-identity mode derives the current digest mechanically.
         work_class:
           enum: [PRODUCT, MECHANICAL, GATE]
           description: PRODUCT (default) is held to the unit-count floor and share cap; MECHANICAL and GATE leaves are exempt from those two rules only.
