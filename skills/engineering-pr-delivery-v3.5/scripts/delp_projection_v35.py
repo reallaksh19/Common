@@ -82,6 +82,8 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 HANDOVER_EVENTS = {"OFFERED", "ACCEPTED"}
 HANDOVER_MODES = {"CONTINUITY", "INDEPENDENT_RECONSTRUCTION"}
 HANDOVER_RESULTS = {"RECONCILED", "DRIFT_FOUND", "INSUFFICIENT_GROUNDING", "OWNER_DECISION_REQUIRED"}
+ENTRY_EVENTS = {"PREPARED", "EXECUTION_END"}
+ENTRY_MODES = {"TAKEOVER_RECONCILE"}
 
 # Decomposition gate. A graph without `programme.decomposition_policy` behaves exactly as before
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
@@ -231,6 +233,7 @@ _ALLOWED_FACT_TOP = frozenset(
         "next",
         "blocker",
         "owner_action",
+        "entry",
         "handover",
         "result",
     }
@@ -916,6 +919,62 @@ def validate_facts(facts: Any) -> list[str]:
 
     if facts.get("activity") is not None and facts["activity"] not in ACTIVITY_FACTS:
         errors.append(f"activity: one of {sorted(ACTIVITY_FACTS)} (QUIET/STALE are observed, never declared)")
+
+    entry_fact = facts.get("entry")
+    if entry_fact is not None:
+        if not isinstance(entry_fact, Mapping):
+            errors.append("entry: must be a mapping")
+        else:
+            allowed = {
+                "event", "mode", "session_digest", "plan_digest", "child_ref", "child_contract_digest",
+                "sequence", "phase_plan_ref", "reconciliation_ref", "previous_leaf_ref",
+                "previous_evidence_ref", "evidence_refs",
+            }
+            extra = set(map(str, entry_fact)) - allowed
+            if extra:
+                errors.append(f"entry: unknown fields {sorted(extra)}")
+            event = entry_fact.get("event")
+            if event not in ENTRY_EVENTS:
+                errors.append(f"entry.event: one of {sorted(ENTRY_EVENTS)}")
+            if entry_fact.get("mode") not in ENTRY_MODES:
+                errors.append(f"entry.mode: one of {sorted(ENTRY_MODES)}")
+            for key in ("session_digest", "plan_digest"):
+                if not _DIGEST.fullmatch(str(entry_fact.get(key) or "")):
+                    errors.append(f"entry.{key}: required sha256:<64 hex>")
+            contract = entry_fact.get("child_contract_digest")
+            if contract is not None and not _DIGEST.fullmatch(str(contract)):
+                errors.append("entry.child_contract_digest: sha256:<64 hex> when present")
+            for key in ("child_ref", "previous_leaf_ref"):
+                value = entry_fact.get(key)
+                if value is not None:
+                    try:
+                        parse_ref(value)
+                    except DelpError as exc:
+                        errors.append(f"entry.{key}: {exc}")
+            if entry_fact.get("child_ref") is None:
+                errors.append("entry.child_ref: required")
+            sequence = entry_fact.get("sequence")
+            if isinstance(sequence, bool) or not isinstance(sequence, int) or sequence < 1:
+                errors.append("entry.sequence: positive integer required")
+                sequence = None
+            _check_refs(entry_fact.get("evidence_refs"), "entry.evidence_refs", errors)
+            if not entry_fact.get("evidence_refs"):
+                errors.append("entry.evidence_refs: at least one durable evidence ref required")
+            if event == "PREPARED":
+                for key in ("phase_plan_ref", "reconciliation_ref"):
+                    value = entry_fact.get(key)
+                    if not isinstance(value, str) or not value.strip():
+                        errors.append(f"entry.{key}: non-empty string required for PREPARED")
+            for key in ("phase_plan_ref", "reconciliation_ref", "previous_evidence_ref"):
+                value = entry_fact.get(key)
+                if value is not None and (not isinstance(value, str) or not value.strip()):
+                    errors.append(f"entry.{key}: non-empty string when present")
+            previous_leaf = entry_fact.get("previous_leaf_ref")
+            previous_evidence = entry_fact.get("previous_evidence_ref")
+            if sequence is not None and sequence > 1 and (not previous_leaf or not previous_evidence):
+                errors.append("entry: sequence >1 requires previous_leaf_ref and previous_evidence_ref")
+            if sequence == 1 and (previous_leaf is not None or previous_evidence is not None):
+                errors.append("entry: sequence 1 cannot carry previous entry linkage")
 
     nxt = facts.get("next")
     if nxt is not None:
@@ -2550,6 +2609,8 @@ def compute_leaf(
     last_owner_action = None
     handover_offer: Mapping[str, Any] | None = None
     handover_accept: Mapping[str, Any] | None = None
+    entry_prepared: Mapping[str, Any] | None = None
+    entry_end: Mapping[str, Any] | None = None
     for rec in records:
         latest = rec
         if rec.get("next") is not None:
@@ -2569,6 +2630,14 @@ def compute_leaf(
                 handover_accept = None
             else:
                 handover_accept = h
+        if rec.get("entry") is not None:
+            e = dict(rec["entry"])
+            e["_source"] = rec.get("_source")
+            e["_candidate_sha"] = (rec.get("material") or {}).get("candidate_sha")
+            if e.get("event") == "PREPARED":
+                entry_prepared = e
+            else:
+                entry_end = e
         record_candidate = (rec.get("material") or {}).get("candidate_sha")
         record_pr = (rec.get("material") or {}).get("pr")
         record_contract_digest = (rec.get("responsibility") or {}).get("contract_digest")
@@ -2837,6 +2906,11 @@ def compute_leaf(
     }
     if handover_projection is not None:
         result["handover"] = handover_projection
+    if entry_prepared is not None or entry_end is not None:
+        result["entry"] = {
+            "prepared": dict(entry_prepared) if entry_prepared is not None else None,
+            "execution_end": dict(entry_end) if entry_end is not None else None,
+        }
     if unmaterialized:
         result["materialization"] = {"status": "UNMATERIALIZED", "provider_signal": provider_signal}
     return result
@@ -3384,8 +3458,110 @@ def classify_continuation(text: str) -> bool:
     return bool(CONTINUATION_COMMANDS.match(str(text or "")))
 
 
-def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue") -> dict[str, Any]:
-    """Compact reconstruction proof for a continuation command. Pure; changes nothing."""
+def _takeover_entry_requirement(owner_intent: Any) -> dict[str, Any] | None:
+    if owner_intent is None:
+        return None
+    if not isinstance(owner_intent, Mapping):
+        raise DelpError("owner_intent: must be a mapping")
+    payload = owner_intent.get("owner_intent") if isinstance(owner_intent.get("owner_intent"), Mapping) else owner_intent
+    intent = owner_intent.get("intent")
+    deliverables = payload.get("requested_deliverables") or []
+    kinds = {row.get("type") for row in deliverables if isinstance(row, Mapping) and isinstance(row.get("type"), str)}
+    takeover = intent == "TAKEOVER_RECONCILE" or {
+        "ENTRY_RECONCILIATION", "PHASE_PLAN_REFRESH", "BOUNDED_CHILD_BLOCK"
+    }.issubset(kinds)
+    if not takeover:
+        return None
+    source_ref = payload.get("source_ref")
+    if not isinstance(source_ref, str) or not source_ref.strip():
+        return {"error": "OWNER_INTENT_SOURCE_REQUIRED", "detail": "takeover/lateral admission requires durable owner_intent.source_ref"}
+    basis = {
+        "source_ref": source_ref,
+        "verbatim_request": payload.get("verbatim_request"),
+        "target": payload.get("target"),
+        "requested_deliverables": deliverables,
+        "boundary_constraints": payload.get("boundary_constraints") or [],
+    }
+    return {"session_digest": canonical_digest(basis), "source_ref": source_ref}
+
+
+def entry_session_digest(owner_intent: Any) -> str:
+    requirement = _takeover_entry_requirement(owner_intent)
+    if requirement is None:
+        raise DelpError("owner_intent is not a takeover/lateral entry")
+    if requirement.get("error"):
+        raise DelpError(str(requirement["detail"]))
+    return str(requirement["session_digest"])
+
+
+def _entry_admission(projection: Mapping[str, Any], leaf_ref: str, owner_intent: Any) -> dict[str, Any] | None:
+    requirement = _takeover_entry_requirement(owner_intent)
+    if requirement is None:
+        return None
+    if requirement.get("error"):
+        return {"code": requirement["error"], "detail": requirement["detail"]}
+    leaf = projection["nodes"][leaf_ref]
+    plan = leaf.get("plan")
+    if not plan or plan.get("mode") != "ENFORCED" or not plan.get("releasable"):
+        return {"code": "ENTRY_PLAN_NOT_RELEASEABLE", "detail": "takeover/lateral coding requires the current bounded child to pass the ENFORCED decomposition gate"}
+    prepared = (leaf.get("entry") or {}).get("prepared")
+    if not prepared:
+        return {"code": "ENTRY_PREPARED_EVIDENCE_MISSING", "detail": "publish current PREPARED entry evidence after reconciliation, phase-plan refresh and bounded-child materialization"}
+    if prepared.get("session_digest") != requirement["session_digest"]:
+        return {"code": "ENTRY_OWNER_SESSION_MISMATCH", "detail": "PREPARED evidence is not bound to the active Owner entry request"}
+    live_plan_digest = projection.get("plan_digest") or projection.get("graph_digest")
+    if prepared.get("plan_digest") != live_plan_digest:
+        return {"code": "ENTRY_PLAN_STALE", "detail": "PREPARED evidence covers a different execution graph; refresh the phase plan and evidence"}
+    try:
+        child_matches = same_ref(prepared.get("child_ref"), leaf_ref)
+    except DelpError:
+        child_matches = False
+    if not child_matches:
+        return {"code": "ENTRY_CHILD_MISMATCH", "detail": "PREPARED evidence names a different bounded child"}
+    planned_contract = (leaf.get("identity") or {}).get("contract_digest")
+    if planned_contract and prepared.get("child_contract_digest") != planned_contract:
+        return {"code": "ENTRY_CHILD_CONTRACT_MISMATCH", "detail": "PREPARED evidence does not match the bounded child's current contract digest"}
+    if not prepared.get("phase_plan_ref") or not prepared.get("reconciliation_ref") or not prepared.get("evidence_refs"):
+        return {"code": "ENTRY_GROUNDING_MISSING", "detail": "phase-plan, reconciliation and durable evidence references are required"}
+    sequence = int(prepared.get("sequence") or 0)
+    if sequence == 1:
+        for ref, other in projection["nodes"].items():
+            if ref == leaf_ref or other.get("kind") != "LEAF":
+                continue
+            other_prepared = (other.get("entry") or {}).get("prepared")
+            if other_prepared and other_prepared.get("session_digest") == requirement["session_digest"]:
+                return {"code": "ENTRY_SEQUENCE_RESTART", "detail": f"the Owner entry session already prepared {ref}; next child must use sequence >1 and link its execution-end evidence"}
+    elif sequence > 1:
+        previous_ref = prepared.get("previous_leaf_ref")
+        previous_source = prepared.get("previous_evidence_ref")
+        if not previous_ref or not previous_source or previous_ref not in projection["nodes"]:
+            return {"code": "ENTRY_PREVIOUS_END_MISSING", "detail": "sequence >1 requires the exact previous leaf and execution-end evidence"}
+        previous = projection["nodes"][previous_ref]
+        previous_end = (previous.get("entry") or {}).get("execution_end")
+        if not previous_end:
+            return {"code": "ENTRY_PREVIOUS_END_MISSING", "detail": f"{previous_ref} has no accepted EXECUTION_END entry evidence"}
+        if (
+            previous_end.get("session_digest") != requirement["session_digest"]
+            or previous_end.get("sequence") != sequence - 1
+            or previous_end.get("_source") != previous_source
+        ):
+            return {"code": "ENTRY_PREVIOUS_END_MISMATCH", "detail": "previous execution-end evidence does not match this Owner entry sequence"}
+        if previous.get("evidence", {}).get("health") != "CURRENT":
+            return {"code": "ENTRY_PREVIOUS_END_STALE", "detail": f"{previous_ref} execution-end evidence is not current"}
+        if previous_end.get("_candidate_sha") != previous.get("material", {}).get("candidate_sha"):
+            return {"code": "ENTRY_PREVIOUS_END_STALE", "detail": f"{previous_ref} material moved after its execution-end evidence"}
+    else:
+        return {"code": "ENTRY_SEQUENCE_INVALID", "detail": "PREPARED entry evidence requires sequence >=1"}
+    return None
+
+
+def admit(
+    projection: Mapping[str, Any],
+    leaf_ref: str,
+    command: str = "continue",
+    owner_intent: Any = None,
+) -> dict[str, Any]:
+    """Compact reconstruction proof for continuation/takeover commands. Pure; changes nothing."""
     nodes = projection["nodes"]
     if leaf_ref not in nodes or nodes[leaf_ref]["kind"] != "LEAF":
         raise DelpError(f"{leaf_ref} is not a LEAF in the projection")
@@ -3397,6 +3573,8 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     plan = leaf.get("plan")
     materialization = leaf.get("materialization")
     plan_blocked = bool(plan and plan["mode"] == "ENFORCED" and not plan["releasable"])
+    entry_block = _entry_admission(projection, leaf_ref, owner_intent)
+    entry_required = _takeover_entry_requirement(owner_intent) is not None
     if leaf["lifecycle"] in _TERMINAL:
         action = "NONE"
         next_text = f"{leaf['lifecycle']} — no further unit; select the next responsibility from the plan"
@@ -3425,6 +3603,9 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         action = "RECOVER_EVIDENCE"
         detail = ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) or health
         next_text = f"RECOVER_EVIDENCE before new coding — {detail}"
+    elif entry_block:
+        action = "RECONCILE_ENTRY"
+        next_text = f"RECONCILE_ENTRY before coding — {entry_block['code']}: {entry_block['detail']}"
     elif (
         leaf.get("successor_policy")
         and leaf["successor_policy"].get("mode") == "INDEPENDENT_RECONSTRUCTION"
@@ -3473,6 +3654,13 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         "evidence_candidate": leaf["frontier"]["evidence_candidate"],
         "authority_effects": [],  # a continuation never changes parent, denominator, scope or merge authority
     }
+    if entry_required:
+        report["entry_admission"] = {
+            "required": True,
+            "ready": entry_block is None,
+            "blocker": entry_block,
+            "session_digest": (_takeover_entry_requirement(owner_intent) or {}).get("session_digest"),
+        }
     if leaf.get("successor_policy") is not None:
         report["successor_policy"] = leaf["successor_policy"]
     if leaf.get("handover") is not None:
@@ -4304,6 +4492,7 @@ def main(argv: list[str] | None = None) -> int:
     ad.add_argument("--topology-observations", type=Path)
     ad.add_argument("--leaf", required=True)
     ad.add_argument("--command", default="continue")
+    ad.add_argument("--owner-intent", type=Path, help="Parsed Owner command/envelope; TAKEOVER_RECONCILE enables entry admission.")
     ad.add_argument("--json", action="store_true")
 
     vt = sub.add_parser("verify-titles", help="Report hand-edited, stale, missing or legacy titles; exit 2 on drift.")
@@ -4502,7 +4691,8 @@ def main(argv: list[str] | None = None) -> int:
             _emit(projection, args.output)
             return 0
         if args.cmd == "admit":
-            report = admit(projection, args.leaf, args.command)
+            owner_intent = _load_structured(args.owner_intent) if args.owner_intent else None
+            report = admit(projection, args.leaf, args.command, owner_intent)
             if args.json:
                 _emit(report, None)
             else:
