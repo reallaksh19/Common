@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import sys
 import unittest
 from pathlib import Path
@@ -9,6 +10,7 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+import delp_projection_v35 as M
 from owner_commands import parse_owner_command
 
 
@@ -250,6 +252,129 @@ class OwnerIntentEnvelopeTests(unittest.TestCase):
             envelope["boundary_constraints"],
         )
 
+
+
+class TakeoverEntryAdmissionV35Tests(unittest.TestCase):
+    SHA_A = "a" * 40
+    SHA_B = "b" * 40
+
+    def owner(self):
+        return parse_owner_command(
+            "take over",
+            source_ref="chat://owner/benchmark-680-v35",
+            target={"ref": "Common#681"},
+        )
+
+    def graph(self):
+        return {
+            "schema": M.GRAPH_SCHEMA,
+            "programme": {
+                "id": "BENCH-680-V35",
+                "root": "Common#680",
+                "decomposition_policy": {"mode": "ENFORCED"},
+            },
+            "nodes": [
+                {"ref": "Common#680", "kind": "ROOT"},
+                {
+                    "ref": "Common#681",
+                    "kind": "LEAF",
+                    "parent": "Common#680",
+                    "weight": 1,
+                    "work_class": "PRODUCT",
+                    "outcome": "takeover entry is mechanically admitted",
+                    "size_budget": {
+                        "target_loc": 300,
+                        "hard_loc": 700,
+                        "target_minutes": 15,
+                        "hard_minutes": 20,
+                    },
+                    "write_surface": ["src/entry/"],
+                    "units": [
+                        {"id": "U1", "weight": 40, "verify": "focused test"},
+                        {"id": "U2", "weight": 30, "verify": "focused test"},
+                        {"id": "U3", "weight": 30, "verify": "focused test"},
+                    ],
+                },
+            ],
+        }
+
+    def fact(self, graph, receipt=None, sha=None):
+        indexed = M.validate_graph(graph)
+        record = {
+            "schema": M.FACTS_SCHEMA,
+            "responsibility": {"issue": "Common#681"},
+            "material": {"candidate_sha": sha or self.SHA_A},
+            "units": [{
+                "id": "U1",
+                "state": "COMPLETE",
+                "result": "VERIFIED",
+                "evidence_refs": ["Common#681#evidence-U1"],
+                "contract_digest": indexed["nodes"]["Common#681"]["contract_digest"],
+            }],
+        }
+        if receipt is not None:
+            record["entry"] = receipt
+        return record
+
+    def receipt(self, graph, **extra):
+        indexed = M.validate_graph(graph)
+        row = {
+            "event": "PREPARED",
+            "mode": "TAKEOVER_RECONCILE",
+            "session_digest": M.entry_session_digest(self.owner()),
+            "plan_digest": indexed["digest"],
+            "child_ref": "Common#681",
+            "child_contract_digest": indexed["nodes"]["Common#681"]["contract_digest"],
+            "sequence": 1,
+            "phase_plan_ref": "Common#680#phase-plan",
+            "reconciliation_ref": "Common#680#reconcile",
+            "evidence_refs": ["Common#681#entry-evidence"],
+        }
+        row.update(extra)
+        return row
+
+    def project(self, graph, record, moved=False):
+        return M.project(
+            graph,
+            [{"source": "entry", "order": 1, "facts": record}],
+            {"Common#681": {"candidate_sha": self.SHA_B if moved else self.SHA_A}},
+        )
+
+    def test_missing_entry_receipt_blocks_takeover_but_not_ordinary_continue(self):
+        g = self.graph()
+        projection = self.project(g, self.fact(g))
+        takeover = M.admit(projection, "Common#681", "take over", self.owner())
+        self.assertEqual("ENTRY_PREPARED_EVIDENCE_MISSING", takeover["entry_admission"]["blocker"]["code"])
+        ordinary = M.admit(projection, "Common#681", "continue")
+        self.assertEqual(("CONTINUE_UNIT", "U2"), (ordinary["action"], ordinary["child"]["unit"]))
+
+    def test_current_receipt_uses_v35_contract_digest_and_admits(self):
+        g = self.graph()
+        receipt = self.receipt(g)
+        projection = self.project(g, self.fact(g, receipt))
+        report = M.admit(projection, "Common#681", "take over", self.owner())
+        self.assertEqual(("CONTINUE_UNIT", "U2"), (report["action"], report["child"]["unit"]))
+        self.assertTrue(report["entry_admission"]["ready"])
+
+    def test_stale_plan_or_material_fails_closed(self):
+        g = self.graph()
+        stale = self.receipt(g, plan_digest="sha256:" + "f" * 64)
+        report = M.admit(self.project(g, self.fact(g, stale)), "Common#681", "take over", self.owner())
+        self.assertEqual("ENTRY_PLAN_STALE", report["entry_admission"]["blocker"]["code"])
+
+        current = self.receipt(g)
+        moved = M.admit(self.project(g, self.fact(g, current), moved=True), "Common#681", "take over", self.owner())
+        self.assertEqual("RECOVER_EVIDENCE", moved["action"])
+
+    def test_entry_fact_validation_is_strict(self):
+        g = self.graph()
+        good = self.receipt(g)
+        self.assertEqual([], M.validate_facts(self.fact(g, good)))
+        for key, value in (("sequence", 0), ("plan_digest", "bad"), ("evidence_refs", [])):
+            bad = copy.deepcopy(good)
+            bad[key] = value
+            with self.subTest(key=key):
+                self.assertTrue(M.validate_facts(self.fact(g, bad)))
 
 
 if __name__ == "__main__":
