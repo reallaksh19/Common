@@ -2930,5 +2930,129 @@ class MaterializationSchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertTrue(self.schema_errors("execution-graph", g))
 
 
+
+class SuccessorAwareHandover(unittest.TestCase):
+    @staticmethod
+    def graph_with_policy(mode="INDEPENDENT_RECONSTRUCTION"):
+        g = graph()
+        leaf = next(n for n in g["nodes"] if n["ref"] == "Common#592")
+        u04 = next(u for u in leaf["units"] if u["id"] == "U04")
+        u04["successor_policy"] = {
+            "mode": mode,
+            "decision_at_risk": "ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION",
+            "protected_invariants": ["P/E never moves from handover"],
+        }
+        return g
+
+    @staticmethod
+    def offer(mode="INDEPENDENT_RECONSTRUCTION", digest=DIGEST, decision=None):
+        return facts(
+            units=[],
+            activity="PAUSED",
+            handover={
+                "event": "OFFERED",
+                "mode": mode,
+                "frontier_digest": digest,
+                "decision_at_risk": decision or ("ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION"),
+            },
+        )
+
+    @staticmethod
+    def accept(mode="INDEPENDENT_RECONSTRUCTION", digest=DIGEST, decision=None, result=None, predecessor="offer"):
+        h = {
+            "event": "ACCEPTED",
+            "mode": mode,
+            "predecessor_ref": predecessor,
+            "frontier_digest": digest,
+            "decision_at_risk": decision or ("ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION"),
+        }
+        if result is not None:
+            h["result"] = result
+        return facts(units=[], activity="ACTIVE", handover=h)
+
+    def base_ledger(self):
+        return [entry(facts(units=[unit("U01"), unit("U02"), unit("U03")], next={"unit": "U04", "action": "repair"}), 1)]
+
+    def test_successor_policy_is_plan_authority_and_does_not_move_progress(self):
+        base = M.project(graph(), self.base_ledger(), OBS_A)["nodes"]["Common#592"]
+        planned = M.project(self.graph_with_policy(), self.base_ledger(), OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(base["progress"], planned["progress"])
+        self.assertEqual(base["state"], planned["state"])
+        self.assertEqual("INDEPENDENT_RECONSTRUCTION", planned["successor_policy"]["mode"])
+        self.assertEqual("ROOT_CAUSE_LAYER", planned["successor_policy"]["decision_at_risk"])
+
+    def test_independent_reconstruction_offer_derives_handoff_without_moving_pe(self):
+        ledger = self.base_ledger() + [entry(self.offer(), 2, "offer")]
+        node = M.project(self.graph_with_policy(), ledger, OBS_A)["nodes"]["Common#592"]
+        self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual("HANDOFF", node["state"])
+        self.assertIn("R:P75/E75 · U04 · HANDOFF", node["title_prefix"])
+        report = M.admit(M.project(self.graph_with_policy(), ledger, OBS_A), "Common#592")
+        self.assertEqual("RECONCILE_HANDOFF", report["action"])
+        self.assertEqual([], report["authority_effects"])
+
+    def test_successor_acceptance_without_reconciliation_is_reconstructing(self):
+        ledger = self.base_ledger() + [entry(self.offer(), 2, "offer"), entry(self.accept(), 3, "accept")]
+        projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual("RECONSTRUCTING", node["state"])
+        self.assertTrue(node["handover"]["matched"])
+        self.assertEqual("RECONCILE_HANDOFF", M.admit(projection, "Common#592")["action"])
+
+    def test_matching_reconciled_acceptance_returns_to_active_and_continues_unit(self):
+        ledger = self.base_ledger() + [
+            entry(self.offer(), 2, "offer"),
+            entry(self.accept(result="RECONCILED"), 3, "accept"),
+        ]
+        projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual("ACTIVE", node["state"])
+        self.assertEqual("RECONCILED", node["handover"]["status"])
+        self.assertEqual("CONTINUE_UNIT", M.admit(projection, "Common#592")["action"])
+
+    def test_mismatched_frontier_digest_cannot_satisfy_acceptance(self):
+        ledger = self.base_ledger() + [
+            entry(self.offer(), 2, "offer"),
+            entry(self.accept(digest="sha256:" + "e" * 64, result="RECONCILED"), 3, "accept"),
+        ]
+        projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual("RECONSTRUCTING", node["state"])
+        self.assertFalse(node["handover"]["matched"])
+        self.assertIn("HANDOVER_ACCEPTANCE_MISMATCH", node["warnings"])
+        self.assertEqual("RECONCILE_HANDOFF", M.admit(projection, "Common#592")["action"])
+
+    def test_continuity_offer_is_visible_but_never_becomes_a_new_gate(self):
+        g = self.graph_with_policy("CONTINUITY")
+        ledger = self.base_ledger() + [entry(self.offer(mode="CONTINUITY"), 2, "offer")]
+        projection = M.project(g, ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual("HANDOFF", node["state"])
+        self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
+        self.assertEqual("CONTINUE_UNIT", M.admit(projection, "Common#592")["action"])
+
+    def test_existing_evidence_recovery_precedes_handover_reconciliation(self):
+        ledger = self.base_ledger() + [entry(self.offer(), 2, "offer")]
+        projection = M.project(self.graph_with_policy(), ledger, {"Common#592": {"candidate_sha": SHA_B}})
+        self.assertEqual("EVIDENCE_STALE", projection["nodes"]["Common#592"]["state"])
+        self.assertEqual("RECOVER_EVIDENCE", M.admit(projection, "Common#592")["action"])
+
+    def test_handover_facts_are_strict_and_cannot_author_progress(self):
+        bad = self.offer()
+        bad["handover"]["result"] = "RECONCILED"
+        self.assertTrue(M.validate_facts(bad))
+        bad = self.accept(result="RECONCILED")
+        bad["handover"]["progress"] = 100
+        self.assertTrue(M.validate_facts(bad))
+
+    def test_independent_reconstruction_requires_decision_at_risk_in_plan(self):
+        g = graph()
+        leaf = next(n for n in g["nodes"] if n["ref"] == "Common#592")
+        next(u for u in leaf["units"] if u["id"] == "U04")["successor_policy"] = {"mode": "INDEPENDENT_RECONSTRUCTION"}
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+
+
 if __name__ == "__main__":
     unittest.main()
