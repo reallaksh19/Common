@@ -85,6 +85,33 @@ POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
 WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
 CLAIM_KINDS = ("SEMANTIC", "DELIVERY_GATE")
 CLAIM_RELATIONS = ("OWN", "ENABLES", "GATE")
+TOPOLOGY_PROPOSAL_KINDS = ("LEAF", "ADJACENT_CHILDREN")
+TOPOLOGY_SEMANTIC_COHESION = ("COHESIVE", "MIXED", "UNKNOWN")
+TOPOLOGY_DEPENDENCY_CLOSURE = ("CLOSED", "OPEN", "UNKNOWN")
+TOPOLOGY_VERIFICATION_CLOSURE = ("CLOSED", "DEFERRED", "UNKNOWN")
+TOPOLOGY_UNCERTAINTY = ("LOW", "MATERIAL", "BLOCKING")
+TOPOLOGY_CHANGE_IMPACT = ("LOCAL", "BOUNDED_MULTI_STAGE", "CROSS_CUTTING", "UNKNOWN")
+TOPOLOGY_EXECUTION_HORIZON = ("SHORT", "MULTI_STEP", "LONG_OR_AMBIGUOUS")
+TOPOLOGY_MUTATION_DOMAINS = (
+    "LOCAL_FILES",
+    "GIT_HISTORY",
+    "REMOTE_BRANCH",
+    "GITHUB_ISSUE",
+    "GITHUB_PR",
+    "CI",
+    "BROWSER",
+    "EXTERNAL_SERVICE",
+)
+TOPOLOGY_RECOVERY_RADIUS = ("SMALL", "MULTI_SURFACE", "AMBIGUOUS_EXTERNAL")
+TOPOLOGY_HANDOFF_COST = ("LOW", "MATERIAL", "HIGH")
+TOPOLOGY_CROSS_CHILD_COHESION = ("LOW", "HIGH")
+TOPOLOGY_STABLE_CUT_FIELDS = (
+    "output_contract",
+    "independent_oracle",
+    "consumer_stable",
+    "risk_reduction",
+    "handoff_economy",
+)
 TRANSFORMATION_BOUNDARIES = (
     "WIRE_SCHEMA",
     "ENGINE_VALIDATION",
@@ -1160,6 +1187,149 @@ def _claim_relationships(
     return sorted(rows, key=lambda row: (row["claim_id"], row["relation"]))
 
 
+
+def _topology_assessments(
+    value: Any,
+    nodes: Mapping[str, Mapping[str, Any]],
+    order: Iterable[str],
+) -> list[dict[str, Any]]:
+    """Normalize plan-authority topology assessments using stable Responsibility ids."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError("programme.topology_assessments: must be an array")
+
+    id_to_ref = {
+        str(nodes[ref].get("responsibility_id")): ref
+        for ref in order
+        if nodes[ref]["kind"] == "LEAF" and nodes[ref].get("responsibility_id")
+    }
+    rows: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    seen_subjects: set[tuple[str, tuple[str, ...]]] = set()
+
+    enum_fields = {
+        "proposal_kind": TOPOLOGY_PROPOSAL_KINDS,
+        "semantic_cohesion": TOPOLOGY_SEMANTIC_COHESION,
+        "dependency_closure": TOPOLOGY_DEPENDENCY_CLOSURE,
+        "verification_closure": TOPOLOGY_VERIFICATION_CLOSURE,
+        "uncertainty": TOPOLOGY_UNCERTAINTY,
+        "change_impact": TOPOLOGY_CHANGE_IMPACT,
+        "execution_horizon": TOPOLOGY_EXECUTION_HORIZON,
+        "recovery_radius": TOPOLOGY_RECOVERY_RADIUS,
+        "handoff_cost": TOPOLOGY_HANDOFF_COST,
+        "cross_child_cohesion": TOPOLOGY_CROSS_CHILD_COHESION,
+    }
+    allowed = {
+        "id",
+        "proposal_kind",
+        "responsibility_ids",
+        "semantic_cohesion",
+        "dependency_closure",
+        "verification_closure",
+        "uncertainty",
+        "change_impact",
+        "execution_horizon",
+        "mutation_domains",
+        "recovery_radius",
+        "handoff_cost",
+        "cross_child_cohesion",
+        "stable_cut",
+        "source_refs",
+    }
+
+    for index, raw in enumerate(value):
+        where = f"programme.topology_assessments[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        extra = sorted(set(map(str, raw)) - allowed)
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
+
+        assessment_id = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(assessment_id) or assessment_id in seen_ids:
+            raise GraphError(f"{where}.id: invalid or duplicate assessment id {assessment_id!r}")
+        seen_ids.add(assessment_id)
+
+        normalized: dict[str, Any] = {"id": assessment_id}
+        for field, choices in enum_fields.items():
+            item = raw.get(field)
+            if item not in choices:
+                raise GraphError(f"{where}.{field}: one of {list(choices)}")
+            normalized[field] = item
+
+        ids = raw.get("responsibility_ids")
+        if (
+            not isinstance(ids, list)
+            or not ids
+            or any(not isinstance(item, str) or not item.strip() for item in ids)
+        ):
+            raise GraphError(f"{where}.responsibility_ids: non-empty array of stable Responsibility ids")
+        subject_ids = sorted(item.strip() for item in ids)
+        if len(subject_ids) != len(set(subject_ids)):
+            raise GraphError(f"{where}.responsibility_ids: values must be unique")
+        missing = [item for item in subject_ids if item not in id_to_ref]
+        if missing:
+            raise GraphError(f"{where}.responsibility_ids: undeclared stable ids {missing}")
+
+        proposal_kind = normalized["proposal_kind"]
+        if proposal_kind == "LEAF" and len(subject_ids) != 1:
+            raise GraphError(f"{where}.responsibility_ids: LEAF requires exactly one subject")
+        if proposal_kind == "ADJACENT_CHILDREN":
+            if len(subject_ids) < 2:
+                raise GraphError(f"{where}.responsibility_ids: ADJACENT_CHILDREN requires at least two subjects")
+            parents = {nodes[id_to_ref[item]].get("parent_ref") for item in subject_ids}
+            if len(parents) != 1:
+                raise GraphError(f"{where}.responsibility_ids: ADJACENT_CHILDREN subjects must be siblings")
+
+        signature = (proposal_kind, tuple(subject_ids))
+        if signature in seen_subjects:
+            raise GraphError(f"{where}: duplicate assessment subject set {list(subject_ids)}")
+        seen_subjects.add(signature)
+        normalized["responsibility_ids"] = subject_ids
+
+        domains = raw.get("mutation_domains")
+        if not isinstance(domains, list) or any(not isinstance(item, str) for item in domains):
+            raise GraphError(f"{where}.mutation_domains: must be an array")
+        if len(domains) != len(set(domains)):
+            raise GraphError(f"{where}.mutation_domains: values must be unique")
+        unknown_domains = sorted(set(domains) - set(TOPOLOGY_MUTATION_DOMAINS))
+        if unknown_domains:
+            raise GraphError(f"{where}.mutation_domains: unknown values {unknown_domains}")
+        normalized["mutation_domains"] = sorted(domains)
+
+        stable_cut = raw.get("stable_cut")
+        if not isinstance(stable_cut, Mapping):
+            raise GraphError(f"{where}.stable_cut: must be a mapping")
+        stable_keys = set(map(str, stable_cut))
+        required_stable = set(TOPOLOGY_STABLE_CUT_FIELDS)
+        if stable_keys != required_stable:
+            raise GraphError(
+                f"{where}.stable_cut: expected exactly {sorted(required_stable)}, got {sorted(stable_keys)}"
+            )
+        for field in TOPOLOGY_STABLE_CUT_FIELDS:
+            if not isinstance(stable_cut.get(field), bool):
+                raise GraphError(f"{where}.stable_cut.{field}: must be boolean")
+        normalized["stable_cut"] = {
+            field: bool(stable_cut[field]) for field in TOPOLOGY_STABLE_CUT_FIELDS
+        }
+
+        refs = raw.get("source_refs")
+        if (
+            not isinstance(refs, list)
+            or not refs
+            or any(not isinstance(item, str) or not item.strip() for item in refs)
+        ):
+            raise GraphError(f"{where}.source_refs: non-empty array of refs required")
+        source_refs = sorted(item.strip() for item in refs)
+        if len(source_refs) != len(set(source_refs)):
+            raise GraphError(f"{where}.source_refs: values must be unique")
+        normalized["source_refs"] = source_refs
+        rows.append(normalized)
+
+    return sorted(rows, key=lambda row: row["id"])
+
+
 def resolve_policy(overrides: Any) -> dict[str, Any]:
     """Merge `programme.decomposition_policy` over the defaults and validate it. Raises GraphError."""
     policy = copy.deepcopy(DEFAULT_POLICY)
@@ -1486,6 +1656,12 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if ref not in walk_state:
             walk(ref)
 
+    topology_assessments = _topology_assessments(
+        programme.get("topology_assessments"),
+        nodes,
+        order,
+    )
+
     # Stable-identity graphs derive each leaf contract digest mechanically. Locator/topology/provider
     # metadata and weights are intentionally excluded so transfers/reparenting/reweighting do not stale evidence.
     if declared_graph_generation:
@@ -1502,6 +1678,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
 
     normalized_programme = dict(programme)
     normalized_programme["graph_generation"] = graph_generation
+    if "topology_assessments" in programme:
+        normalized_programme["topology_assessments"] = topology_assessments
     return {
         "programme": normalized_programme,
         "stable_identity_mode": declared_graph_generation,
@@ -1509,6 +1687,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "health_policy": health_policy,
         "acceptance_claims": acceptance_claims,
         "claims_by_id": claims_by_id,
+        "topology_assessments": topology_assessments,
+        "topology_assessments_by_id": {row["id"]: row for row in topology_assessments},
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,

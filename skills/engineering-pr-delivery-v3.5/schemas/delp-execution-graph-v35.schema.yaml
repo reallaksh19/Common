@@ -28,6 +28,63 @@ $defs:
     properties:
       claim_id: {$ref: '#/$defs/claim_id'}
       relation: {enum: [OWN, ENABLES, GATE]}
+  stable_cut:
+    type: object
+    additionalProperties: false
+    required: [output_contract, independent_oracle, consumer_stable, risk_reduction, handoff_economy]
+    properties:
+      output_contract: {type: boolean}
+      independent_oracle: {type: boolean}
+      consumer_stable: {type: boolean}
+      risk_reduction: {type: boolean}
+      handoff_economy: {type: boolean}
+  topology_assessment:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - proposal_kind
+      - responsibility_ids
+      - semantic_cohesion
+      - dependency_closure
+      - verification_closure
+      - uncertainty
+      - change_impact
+      - execution_horizon
+      - mutation_domains
+      - recovery_radius
+      - handoff_cost
+      - cross_child_cohesion
+      - stable_cut
+      - source_refs
+    properties:
+      id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      proposal_kind: {enum: [LEAF, ADJACENT_CHILDREN]}
+      responsibility_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '.*\S.*'}
+      semantic_cohesion: {enum: [COHESIVE, MIXED, UNKNOWN]}
+      dependency_closure: {enum: [CLOSED, OPEN, UNKNOWN]}
+      verification_closure: {enum: [CLOSED, DEFERRED, UNKNOWN]}
+      uncertainty: {enum: [LOW, MATERIAL, BLOCKING]}
+      change_impact: {enum: [LOCAL, BOUNDED_MULTI_STAGE, CROSS_CUTTING, UNKNOWN]}
+      execution_horizon: {enum: [SHORT, MULTI_STEP, LONG_OR_AMBIGUOUS]}
+      mutation_domains:
+        type: array
+        uniqueItems: true
+        items:
+          enum: [LOCAL_FILES, GIT_HISTORY, REMOTE_BRANCH, GITHUB_ISSUE, GITHUB_PR, CI, BROWSER, EXTERNAL_SERVICE]
+      recovery_radius: {enum: [SMALL, MULTI_SURFACE, AMBIGUOUS_EXTERNAL]}
+      handoff_cost: {enum: [LOW, MATERIAL, HIGH]}
+      cross_child_cohesion: {enum: [LOW, HIGH]}
+      stable_cut: {$ref: '#/$defs/stable_cut'}
+      source_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '.*\S.*'}
   size_budget:
     type: object
     additionalProperties: false
@@ -78,6 +135,14 @@ properties:
         description: >-
           Parent outcome claims used by the V3.5 Responsibility topology. SEMANTIC claims describe the
           programme/product/architecture outcome; DELIVERY_GATE claims describe qualification/delivery conditions.
+      topology_assessments:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/topology_assessment'}
+        description: >-
+          Coordinator/plan-authority semantic topology basis keyed by stable Responsibility ids.
+          These records are planning/admission metadata: they may move graph identity but do not themselves
+          change a leaf product contract or mint progress/evidence.
       health_policy:
         type: object
         additionalProperties: false

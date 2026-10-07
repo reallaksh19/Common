@@ -2628,6 +2628,59 @@ def stable_claim_topology_graph():
     return g
 
 
+def topology_assessment_planned():
+    g = stable_claim_topology_graph()
+    g["programme"]["topology_assessments"] = [
+        {
+            "id": "TA-LEAF",
+            "proposal_kind": "LEAF",
+            "responsibility_ids": ["P3-I-R2"],
+            "semantic_cohesion": "COHESIVE",
+            "dependency_closure": "CLOSED",
+            "verification_closure": "CLOSED",
+            "uncertainty": "LOW",
+            "change_impact": "LOCAL",
+            "execution_horizon": "SHORT",
+            "mutation_domains": ["LOCAL_FILES"],
+            "recovery_radius": "SMALL",
+            "handoff_cost": "LOW",
+            "cross_child_cohesion": "LOW",
+            "stable_cut": {
+                "output_contract": False,
+                "independent_oracle": False,
+                "consumer_stable": False,
+                "risk_reduction": False,
+                "handoff_economy": False,
+            },
+            "source_refs": ["Common#648#topology-release"],
+        },
+        {
+            "id": "TA-PAIR",
+            "proposal_kind": "ADJACENT_CHILDREN",
+            "responsibility_ids": ["RESP-594", "P3-I-R2"],
+            "semantic_cohesion": "COHESIVE",
+            "dependency_closure": "CLOSED",
+            "verification_closure": "CLOSED",
+            "uncertainty": "LOW",
+            "change_impact": "LOCAL",
+            "execution_horizon": "MULTI_STEP",
+            "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY"],
+            "recovery_radius": "MULTI_SURFACE",
+            "handoff_cost": "HIGH",
+            "cross_child_cohesion": "HIGH",
+            "stable_cut": {
+                "output_contract": False,
+                "independent_oracle": False,
+                "consumer_stable": False,
+                "risk_reduction": False,
+                "handoff_economy": False,
+            },
+            "source_refs": ["Common#651#retained-replay"],
+        },
+    ]
+    return g
+
+
 def with_weights(g, ref, weights):
     leaf_of(g, ref)["units"] = [{"id": f"U{i}", "weight": w, "verify": "check passes"} for i, w in enumerate(weights, 1)]
     return g
@@ -2822,6 +2875,93 @@ class ClaimTopologyContract(unittest.TestCase):
         indexed = M.validate_graph(planned())
         self.assertEqual([], indexed["acceptance_claims"])
         self.assertEqual([], indexed["nodes"]["Common#592"]["claim_relationships"])
+
+
+class TopologyAssessmentPlanContract(unittest.TestCase):
+    def test_topology_assessment_schema_and_engine_agree(self):
+        g = topology_assessment_planned()
+        self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("execution-graph", g))
+        indexed = M.validate_graph(g)
+        self.assertEqual(["TA-LEAF", "TA-PAIR"], [row["id"] for row in indexed["topology_assessments"]])
+        pair = indexed["topology_assessments_by_id"]["TA-PAIR"]
+        self.assertEqual(["P3-I-R2", "RESP-594"], pair["responsibility_ids"])
+        self.assertEqual(["GIT_HISTORY", "LOCAL_FILES"], pair["mutation_domains"])
+
+    def test_topology_assessment_shape_errors_fail_schema_and_engine(self):
+        cases = []
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["proposal_kind"] = "PIPELINE"
+        cases.append(("proposal kind", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["source_refs"] = []
+        cases.append(("source refs", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["stable_cut"]["risk_reduction"] = "yes"
+        cases.append(("stable cut bool", g))
+
+        for label, bad in cases:
+            with self.subTest(label):
+                self.assertTrue(SchemasAgreeWithTheEngine().schema_errors("execution-graph", bad))
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_topology_assessment_relational_invariants_fail_closed(self):
+        cases = []
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["responsibility_ids"] = ["NO-SUCH-RID"]
+        cases.append(("unknown stable id", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][0]["responsibility_ids"] = ["P3-I-R2", "RESP-594"]
+        cases.append(("leaf cardinality", g))
+
+        g = topology_assessment_planned()
+        g["programme"]["topology_assessments"][1]["responsibility_ids"] = ["P3-I-R2", "RESP-612"]
+        cases.append(("non sibling pair", g))
+
+        g = topology_assessment_planned()
+        duplicate = copy.deepcopy(g["programme"]["topology_assessments"][0])
+        duplicate["id"] = "TA-DUP"
+        g["programme"]["topology_assessments"].append(duplicate)
+        cases.append(("duplicate subject set", g))
+
+        g = topology_assessment_planned()
+        duplicate = copy.deepcopy(g["programme"]["topology_assessments"][0])
+        duplicate["responsibility_ids"] = ["RESP-594"]
+        g["programme"]["topology_assessments"].append(duplicate)
+        cases.append(("duplicate assessment id", g))
+
+        for label, bad in cases:
+            with self.subTest(label), self.assertRaises(M.GraphError):
+                M.validate_graph(bad)
+
+    def test_topology_assessment_is_plan_metadata_not_product_contract(self):
+        base = stable_claim_topology_graph()
+        before = M.validate_graph(base)
+        before_digest = before["nodes"]["Common#592"]["contract_digest"]
+
+        planned = topology_assessment_planned()
+        after = M.validate_graph(planned)
+        self.assertEqual(before_digest, after["nodes"]["Common#592"]["contract_digest"])
+        self.assertNotEqual(before["digest"], after["digest"])
+
+        record = bound_facts(base, units=[unit("U01")])
+        before_projection = M.project(base, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        after_projection = M.project(planned, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(before_projection["progress"], after_projection["progress"])
+        self.assertEqual(
+            before_projection["identity"]["contract_digest"],
+            after_projection["identity"]["contract_digest"],
+        )
+
+    def test_r2_plan_basis_has_no_r1_admission_side_effect(self):
+        with_basis = M.decomposition_report(topology_assessment_planned())
+        without_basis = M.decomposition_report(stable_claim_topology_graph())
+        self.assertEqual(without_basis, with_basis)
 
 
 class ClaimTopologyReport(unittest.TestCase):
