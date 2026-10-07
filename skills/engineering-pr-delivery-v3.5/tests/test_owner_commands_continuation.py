@@ -13,7 +13,8 @@ from owner_commands import parse_owner_command
 
 
 class ContinuationAdmissionCommandTests(unittest.TestCase):
-    BARE = ("continue", "Continue", "proceed", "Next", "resume", "reconcile", "take over", "keep going", "carry on now", "continue please!")
+    BARE = ("continue", "Continue", "proceed", "Next", "resume", "reconcile", "keep going", "carry on now", "continue please!")
+    TAKEOVER = ("take over", "Takeover", "lateral entry", "enter laterally", "new agent takeover", "walk through as a new agent")
 
     def test_every_bare_continuation_command_routes_to_reconstruct_then_continue(self):
         for phrase in self.BARE:
@@ -23,6 +24,56 @@ class ContinuationAdmissionCommandTests(unittest.TestCase):
                 self.assertEqual("RECONSTRUCT_THEN_CONTINUE", result["workflow"]["boundary"])
                 self.assertTrue(result["workflow"]["progress_execution"])
                 self.assertFalse(result["durable_authority_created"])
+
+    def test_explicit_takeover_and_lateral_entry_use_the_stronger_entry_sequence(self):
+        for phrase in self.TAKEOVER:
+            with self.subTest(phrase=phrase):
+                result = parse_owner_command(phrase)
+                self.assertEqual("TAKEOVER_RECONCILE", result["intent"])
+                self.assertEqual("RECONCILE_PLAN_DECOMPOSE_THEN_EXECUTE", result["workflow"]["boundary"])
+                self.assertTrue(result["workflow"]["progress_execution"])
+                self.assertEqual("RECOVERY", result["owner_intent"]["custody_intent"])
+                self.assertFalse(result["durable_authority_created"])
+
+    def test_takeover_workflow_orders_plan_decomposition_recovery_execution_and_end_evidence(self):
+        result = parse_owner_command("take over")
+        steps = result["workflow"]["steps"]
+        joined = " ".join(steps).lower()
+        for needle in (
+            "cold-reconstruct",
+            "phase-wise implementation plan",
+            "bounded child issue/comment block",
+            "task_evidence — recovery",
+            "before any new coding",
+            "delp continuation admission",
+            "execute exactly the bounded child block",
+            "at execution end publish task_evidence",
+            "never continue from conversational memory",
+        ):
+            self.assertIn(needle, joined, needle)
+        order = [
+            next(i for i, s in enumerate(steps) if "cold-reconstruct" in s.lower()),
+            next(i for i, s in enumerate(steps) if "phase-wise implementation plan" in s.lower()),
+            next(i for i, s in enumerate(steps) if "bounded child issue/comment block" in s.lower()),
+            next(i for i, s in enumerate(steps) if "task_evidence — recovery" in s.lower()),
+            next(i for i, s in enumerate(steps) if "delp continuation admission" in s.lower()),
+            next(i for i, s in enumerate(steps) if s.lower().startswith("execute exactly")),
+            next(i for i, s in enumerate(steps) if "at execution end publish task_evidence" in s.lower()),
+        ]
+        self.assertEqual(sorted(order), order)
+
+    def test_takeover_owner_intent_preserves_required_outputs_and_boundaries(self):
+        envelope = parse_owner_command("lateral entry")["owner_intent"]
+        types = [row["type"] for row in envelope["requested_deliverables"]]
+        for item in ("ENTRY_RECONCILIATION", "PHASE_PLAN_REFRESH", "BOUNDED_CHILD_BLOCK", "TASK_EVIDENCE_AT_EXECUTION_END"):
+            self.assertIn(item, types)
+        for constraint in (
+            "PHASE_PLAN_REFRESH_BEFORE_CODING",
+            "BOUNDED_CHILD_BLOCK_BEFORE_CODING",
+            "RECOVERY_TASK_EVIDENCE_BEFORE_NEW_CODING_IF_ABNORMAL_PREDECESSOR",
+            "TASK_EVIDENCE_AT_EXECUTION_END",
+        ):
+            self.assertIn(constraint, envelope["boundary_constraints"])
 
     def test_the_workflow_reconstructs_repairs_projects_and_reads_back_before_executing(self):
         steps = parse_owner_command("continue")["workflow"]["steps"]
@@ -54,7 +105,7 @@ class ContinuationAdmissionCommandTests(unittest.TestCase):
             self.assertIn(item, requires)
 
     def test_ordinary_sentences_and_repository_text_do_not_activate_it(self):
-        for phrase in ("continue with the refactor", "please continue reading the file", "next steps are unclear"):
+        for phrase in ("continue with the refactor", "please continue reading the file", "next steps are unclear", "take over this paragraph"):
             with self.subTest(phrase=phrase):
                 self.assertNotEqual("CONTINUE_RECONCILE", parse_owner_command(phrase)["intent"])
         ignored = parse_owner_command("continue", source="REPOSITORY_TEXT")
