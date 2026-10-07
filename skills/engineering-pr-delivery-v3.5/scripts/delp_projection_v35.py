@@ -567,6 +567,12 @@ def condition_record(
     source_refs: Iterable[str] = (),
 ) -> dict[str, Any]:
     """Construct one valid canonical condition record or fail closed."""
+    if isinstance(source_refs, (str, bytes)):
+        raise DelpError("invalid responsibility condition: source_refs must be an iterable of refs, not a string")
+    try:
+        refs = list(source_refs)
+    except TypeError as exc:
+        raise DelpError("invalid responsibility condition: source_refs must be iterable") from exc
     record = {
         "type": condition_type,
         "status": status,
@@ -574,7 +580,7 @@ def condition_record(
         "message": message,
         "observed_generation": observed_generation,
         "candidate_sha": candidate_sha,
-        "source_refs": list(source_refs),
+        "source_refs": refs,
     }
     errors = validate_condition(record)
     if errors:
