@@ -6,6 +6,8 @@
 
 This file is a candidate future contract for the V3.5 line. It MUST NOT be treated as an active selector by itself. When V3.5 is implemented, these semantics should be incorporated into its normative planning, continuity, schema, projection, tests and replay surfaces.
 
+> **Implementation status (DELP).** The progress/title projection and the rule that executors report facts but never author percentages or titles are now implemented and mechanically enforced by `operating-model/durable-execution-lineage-projection-v35.md` (`scripts/delp_projection_v35.py`, `schemas/delp-*-v35.schema.yaml`, `tests/test_delp_projection_v35.py`). Where this document shows an older title form, the DELP grammar governs. The rest of this document keeps its existing status.
+
 ## Governing invariant
 
 > **Coordinator planning defines the denominator; executors contribute evidence against it. Percentage is mechanically projected from the plan and evidence. Splits conserve weight, progressive decomposition consumes reserve, true scope expansion changes the denominator explicitly, and liveness remains independent from percentage.**
@@ -182,7 +184,7 @@ P = completed semantic-unit weight / total semantic-unit weight
 E = completed semantic-unit weight with current valid durable evidence / total semantic-unit weight
 ```
 
-Executors update unit/evidence state; deterministic tooling computes P/E.
+Executors publish unit/evidence facts (`CHECKPOINT_FACTS_V1`); deterministic tooling computes P/E/D. An executor can never set a projected number: the projector rejects any facts record that carries one.
 
 ## Local delivery denominator
 
@@ -379,25 +381,27 @@ Do not average colors.
 
 ## Title projections
 
-Responsibility:
+Implemented by the DELP projector (`operating-model/durable-execution-lineage-projection-*.md`); these grammars supersede the earlier brace forms.
+
+Responsibility (leaf):
 
 ```text
-🟢 {P60% · E45% · A07 · U3} <responsibility title>
+🟢 [#527 › #588 › #592 → PR#593] R:P60/E45 · U3 · ACTIVE — <responsibility title>
 ```
 
-Phase:
+Phase (intermediate):
 
 ```text
-🟡 {D43% · E36% | 🟢2 🟡1 🔵1} <phase title>
+🟡 [#527 › #588 → #592/PR#593] Φ:D43/E36 · F4 · EVIDENCE_GAP — <phase title>
 ```
 
-Programme:
+Programme (root):
 
 ```text
-🟡 {D28% · E22% | 🟢4 🟡1 🔴0 🔵1} <programme title>
+🟡 [#527] Π:D28/E22 · F6 · EVIDENCE_GAP — <programme title>
 ```
 
-Titles are read models, never authority.
+Titles are read models, never authority: they are generated from the execution graph (this manifest in machine-readable form), `CHECKPOINT_FACTS_V1` and observed material truth, never typed by an executor. The per-colour issue counts of the earlier form are replaced by the frontier count `F` and the derived state word; colours are still never averaged.
 
 ## Decomposition Validation Gate
 

@@ -1,0 +1,100 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.5-delp-checkpoint-facts
+title: CHECKPOINT_FACTS_V1
+description: >-
+  The ONLY thing an engineering agent publishes about progress. It states facts about the agent's own leaf
+  responsibility: which declared units it reports complete, the verification result, the durable evidence refs,
+  the candidate those refs cover, and the next unit. It carries no percentage, title, weight, frontier count,
+  activity epoch, parent/programme number or evidence-health verdict: every such field is rejected
+  (additionalProperties: false), because those are derived by the DELP projector.
+type: object
+additionalProperties: false
+required: [responsibility, material]
+properties:
+  schema:
+    const: relay-v3.5-delp-checkpoint-facts
+  responsibility:
+    type: object
+    additionalProperties: false
+    required: [issue]
+    properties:
+      issue:
+        type: string
+        description: The leaf issue this record is evidence for. Must be a LEAF in the execution graph.
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+      id:
+        type: string
+        minLength: 1
+        description: Optional responsibility id; must equal the planned responsibility_id when both exist.
+  material:
+    type: object
+    additionalProperties: false
+    required: [candidate_sha]
+    properties:
+      pr:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+      candidate_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+        description: Exact candidate commit the evidence in this record covers.
+      base_sha:
+        type: string
+        pattern: '^[0-9a-f]{40}$'
+  units:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, state]
+      properties:
+        id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+        state: {enum: [COMPLETE, IN_PROGRESS, NOT_STARTED]}
+        result: {enum: [VERIFIED, PARTIAL, FAILED, NOT_RUN, PENDING]}
+        evidence_refs:
+          type: array
+          items: {type: string, minLength: 1}
+        candidate_sha:
+          type: string
+          pattern: '^[0-9a-f]{40}$'
+          description: Defaults to material.candidate_sha.
+        contract_digest:
+          type: string
+          pattern: '^sha256:[0-9a-f]{64}$'
+  gates:
+    type: array
+    description: Delivery-gate facts published by the reviewer / super-reviewer for this leaf.
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, result]
+      properties:
+        id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+        result: {enum: [PASSED, FAILED, NOT_RUN]}
+        evidence_refs:
+          type: array
+          items: {type: string, minLength: 1}
+        candidate_sha:
+          type: string
+          pattern: '^[0-9a-f]{40}$'
+  activity:
+    enum: [ACTIVE, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, PAUSED]
+    description: QUIET and STALE are observed by a watcher and can never be declared by the executor.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'

@@ -18,6 +18,15 @@ RECOVERY_MARKER_PREFIX = "<!-- relay-v3.2:recovery-evidence "
 TITLE_RE = re.compile(r"\s+\{P\d+% · E\d+% · [^{}]+\}\s*$")
 RECOVERY_MODES = {"NONE", "INTERRUPTED_EXECUTOR", "FRONTIER_RECONCILIATION"}
 
+# Who may say a unit is "evidenced"?
+#   LEGACY_AGENT_ASSERTED  the agent sets the flag itself (historical snapshots only; readable, never new)
+#   DERIVED_FROM_FACTS     the flag is computed: complete AND durable evidence refs AND the evidence
+#                          candidate equals the observed material head. Agents publish facts only.
+PROJECTION_LEGACY = "LEGACY_AGENT_ASSERTED"
+PROJECTION_DERIVED = "DERIVED_FROM_FACTS"
+PROJECTION_MODES = {PROJECTION_LEGACY, PROJECTION_DERIVED}
+_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
 
 class ContinuityError(ValueError):
     pass
@@ -27,7 +36,33 @@ def pct(n: int, d: int) -> int:
     return round(100 * n / d) if d else 0
 
 
-def normalize_units(units: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def pct_derived(n: int, d: int) -> int:
+    """Half-up percent that never shows 100 unless full or 0 unless empty (matches DELP)."""
+    if not d or n <= 0:
+        return 0
+    if n >= d:
+        return 100
+    return min(99, max(1, (200 * n + d) // (2 * d)))
+
+
+def _derived_evidenced(unit: dict[str, Any], material_head: str | None) -> bool:
+    return bool(
+        unit.get("complete")
+        and [ref for ref in unit.get("evidence_refs") or [] if str(ref).strip()]
+        and material_head
+        and unit.get("evidence_candidate") == material_head
+    )
+
+
+def normalize_units(
+    units: list[dict[str, Any]],
+    *,
+    derived: bool = False,
+    material_head: str | None = None,
+    from_agent: bool = False,
+) -> list[dict[str, Any]]:
+    """Validate units. `from_agent=True` marks input an agent just supplied (declaration time);
+    stored units already carry a *derived* `evidenced` value that is recomputed, not trusted."""
     if not units:
         raise ContinuityError("at least one declared progress unit is required")
     out, seen = [], set()
@@ -37,26 +72,59 @@ def normalize_units(units: list[dict[str, Any]]) -> list[dict[str, Any]]:
             raise ContinuityError(f"invalid/duplicate unit id: {uid!r}")
         seen.add(uid)
         complete = bool(raw.get("complete"))
+        weight = raw.get("weight", 1)
+        if isinstance(weight, bool) or not isinstance(weight, int) or weight < 1:
+            raise ContinuityError(f"{uid}: weight must be a positive integer")
+        if derived:
+            if from_agent and raw.get("evidenced"):
+                raise ContinuityError(
+                    f"{uid}: 'evidenced' is derived, never asserted; publish evidence_refs "
+                    "and the evidence_candidate the refs cover"
+                )
+            unit = {**raw, "id": uid, "complete": complete, "weight": weight}
+            unit["evidenced"] = _derived_evidenced(unit, material_head)
+            out.append(unit)
+            continue
         evidenced = bool(raw.get("evidenced"))
         if evidenced and not complete:
             raise ContinuityError(f"{uid}: evidence cannot lead completion")
-        out.append({**raw, "id": uid, "complete": complete, "evidenced": evidenced})
+        out.append({**raw, "id": uid, "complete": complete, "evidenced": evidenced, "weight": weight})
     return out
 
 
-def progress(units: list[dict[str, Any]]) -> dict[str, Any]:
-    units = normalize_units(units)
-    denominator = len(units)
-    completed = sum(unit["complete"] for unit in units)
-    evidenced = sum(unit["evidenced"] for unit in units)
+def progress(
+    units: list[dict[str, Any]],
+    *,
+    derived: bool = False,
+    material_head: str | None = None,
+) -> dict[str, Any]:
+    units = normalize_units(units, derived=derived, material_head=material_head)
+    denominator = sum(unit["weight"] for unit in units)
+    completed = sum(unit["weight"] for unit in units if unit["complete"])
+    evidenced = sum(unit["weight"] for unit in units if unit["evidenced"])
+    percent = pct_derived if derived else pct
     return {
         "denominator": denominator,
         "completed_units": completed,
         "evidenced_units": evidenced,
-        "progress_percent": pct(completed, denominator),
-        "evidence_percent": pct(evidenced, denominator),
+        "progress_percent": percent(completed, denominator),
+        "evidence_percent": percent(evidenced, denominator),
         "active_unit": next((unit["id"] for unit in units if not unit["complete"]), None),
     }
+
+
+def _is_derived(snapshot: dict[str, Any]) -> bool:
+    return snapshot.get("projection_mode") == PROJECTION_DERIVED
+
+
+def reproject(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Recompute unit.evidenced and progress from facts. Idempotent; the only writer of P/E."""
+    s = deepcopy(snapshot)
+    derived = _is_derived(s)
+    head = (s.get("frontier") or {}).get("material_head")
+    s["units"] = normalize_units(s["units"], derived=derived, material_head=head)
+    s["progress"] = progress(s["units"], derived=derived, material_head=head)
+    return s
 
 
 def frontier(
@@ -98,17 +166,23 @@ def new_snapshot(
     repository: str | None = None,
     issue: int | None = None,
     protocol_ref: str | None = None,
+    projection_mode: str = PROJECTION_LEGACY,
 ) -> dict[str, Any]:
-    units = normalize_units(units)
+    if projection_mode not in PROJECTION_MODES:
+        raise ContinuityError(f"invalid projection mode: {projection_mode}")
+    derived = projection_mode == PROJECTION_DERIVED
+    head = (material or "").strip() or None
+    units = normalize_units(units, derived=derived, material_head=head, from_agent=True)
     return {
         "schema": SCHEMA,
         "authority": AUTHORITY,
+        "projection_mode": projection_mode,
         "responsibility": responsibility,
         "protocol_ref": (protocol_ref or "").strip() or None,
         "state": "PLANNING",
         "plan_ref": plan_ref,
         "units": units,
-        "progress": progress(units),
+        "progress": progress(units, derived=derived, material_head=head),
         "frontier": frontier(material, semantic, delta),
         "current": None,
         "next": None,
@@ -204,19 +278,35 @@ def event(snapshot: dict[str, Any], name: str, **kwargs: Any) -> dict[str, Any]:
 
     elif name == "unit-update":
         uid = kwargs["unit_id"]
+        derived = _is_derived(s)
+        if derived and kwargs.get("evidenced") is not None:
+            raise ContinuityError(
+                "evidenced is derived from evidence_refs + evidence_candidate; "
+                "agents publish facts, never the E flag"
+            )
         found = False
         for unit in s["units"]:
             if unit["id"] == uid:
                 found = True
                 if kwargs.get("complete") is not None:
                     unit["complete"] = kwargs["complete"]
-                if kwargs.get("evidenced") is not None:
-                    unit["evidenced"] = kwargs["evidenced"]
-                if unit["evidenced"] and not unit["complete"]:
-                    raise ContinuityError(f"{uid}: evidence cannot lead completion")
+                if kwargs.get("evidence_refs") is not None:
+                    unit["evidence_refs"] = [str(r).strip() for r in kwargs["evidence_refs"] if str(r).strip()]
+                if kwargs.get("evidence_candidate") is not None:
+                    candidate = str(kwargs["evidence_candidate"]).strip()
+                    if not _SHA_RE.fullmatch(candidate):
+                        raise ContinuityError("evidence_candidate must be a 40-hex lowercase commit")
+                    unit["evidence_candidate"] = candidate
+                if not derived:
+                    if kwargs.get("evidenced") is not None:
+                        unit["evidenced"] = kwargs["evidenced"]
+                    if unit["evidenced"] and not unit["complete"]:
+                        raise ContinuityError(f"{uid}: evidence cannot lead completion")
+                elif not unit["complete"]:
+                    unit["evidence_refs"], unit["evidence_candidate"] = [], None
         if not found:
             raise ContinuityError(f"unknown unit: {uid}")
-        s["progress"] = progress(s["units"])
+        s = reproject(s)
 
     elif name == "task-result":
         scope = kwargs["scope"]
@@ -249,6 +339,8 @@ def finalize_recovery_evidence(snapshot: dict[str, Any], comment_id: int | None 
         raise ContinuityError("no pending recovery evidence to finalize")
     material_head = evidence["observed_material_head"]
     s["frontier"] = frontier(material_head, material_head, 0)
+    s = reproject(s)
+    recovery = _recovery(s)
     recovery["mode"] = "NONE"
     recovery["recovery_evidence_required"] = False
     recovery["plan_for_handover_now"] = False
@@ -315,6 +407,14 @@ def markdown(snapshot: dict[str, Any]) -> str:
         f"AUTHORITY: {AUTHORITY}",
         f"PROTOCOL_REF: {snapshot.get('protocol_ref') or 'UNKNOWN'}",
         f"STATE: {snapshot['state']}",
+        (
+            f"PROJECTION_MODE: {snapshot.get('projection_mode') or PROJECTION_LEGACY}"
+            + (
+                " (E is computed from evidence refs + candidate; titles are written only by the DELP runner)"
+                if _is_derived(snapshot)
+                else " (historical: E was asserted by an agent; new responsibilities use DERIVED_FROM_FACTS)"
+            )
+        ),
         (
             f"PROGRESS: P{p['progress_percent']}% / E{p['evidence_percent']}% "
             f"({p['completed_units']}/{p['denominator']} complete; "
@@ -531,7 +631,14 @@ def sync_github(snapshot: dict[str, Any]) -> dict[str, Any]:
             )
             status_comment_id = int(created["id"])
 
-        desired_title = title(s, str(issue_obj.get("title") or ""))
+        if _is_derived(s):
+            # One title writer per issue: the DELP runner owns lineage/roll-up titles, so a
+            # DERIVED snapshot never patches the title (no dual writers, no format fights).
+            desired_title = str(issue_obj.get("title") or "")
+            s["observability"]["title_authority"] = "DELP_RUNNER"
+        else:
+            desired_title = title(s, str(issue_obj.get("title") or ""))
+            s["observability"]["title_authority"] = "LEGACY_CONTINUITY_PROJECTION"
         if desired_title != str(issue_obj.get("title") or ""):
             gh_patch(
                 f"repos/{repo}/issues/{issue}",
@@ -589,6 +696,13 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument("--delta", type=int)
     init.add_argument("--github-repository")
     init.add_argument("--github-issue", type=int)
+    init.add_argument(
+        "--projection-mode",
+        choices=sorted(PROJECTION_MODES),
+        default=PROJECTION_DERIVED,
+        help="DERIVED_FROM_FACTS (default): agents publish facts, E is computed. "
+        "LEGACY_AGENT_ASSERTED exists only to re-open historical snapshots.",
+    )
     init.add_argument("--output", type=Path)
 
     for name in ("implementation-start", "stream-loss"):
@@ -626,6 +740,17 @@ def main(argv: list[str] | None = None) -> int:
         "--evidenced",
         choices=("YES", "NO", "UNCHANGED"),
         default="UNCHANGED",
+        help="Legacy snapshots only. DERIVED_FROM_FACTS snapshots reject it: publish --evidence-ref instead.",
+    )
+    unit.add_argument(
+        "--evidence-ref",
+        action="append",
+        dest="evidence_refs",
+        help="Durable evidence ref for this unit (repeatable).",
+    )
+    unit.add_argument(
+        "--evidence-candidate",
+        help="40-hex commit the evidence refs cover; E counts only while it equals the observed material head.",
     )
     unit.add_argument("--output", type=Path)
 
@@ -663,6 +788,7 @@ def main(argv: list[str] | None = None) -> int:
             args.github_repository,
             args.github_issue,
             args.protocol_ref,
+            args.projection_mode,
         )
     else:
         snapshot = load(args.snapshot)
@@ -688,6 +814,8 @@ def main(argv: list[str] | None = None) -> int:
                 unit_id=args.unit_id,
                 complete=values[args.complete],
                 evidenced=values[args.evidenced],
+                evidence_refs=args.evidence_refs,
+                evidence_candidate=args.evidence_candidate,
             )
         elif args.cmd == "observe-frontier":
             snapshot["frontier"] = git_frontier(
@@ -695,6 +823,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.semantic_head
                 or snapshot["frontier"].get("semantic_evidence_head"),
             )
+            snapshot = reproject(snapshot)  # E depends on the observed head
             snapshot["observability"]["provider_sync_required"] = True
             snapshot["observability"]["update_reason"] = "MATERIAL_FRONTIER_REFRESH"
         elif args.cmd == "task-result":

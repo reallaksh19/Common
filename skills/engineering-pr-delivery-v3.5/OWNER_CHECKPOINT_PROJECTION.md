@@ -8,6 +8,8 @@ This file is a **candidate future contract** for the V3.5 line. It MUST NOT be t
 
 When V3.5 is implemented, this contract is intended to become normative alongside the checkpoint/liveness mechanics. Where the current V3.5 checkpoint seed's Owner-facing example is more verbose than this contract, this file defines the intended compact Owner projection.
 
+> **Implementation status (DELP).** The progress/title projection and the rule that executors report facts but never author percentages or titles are now implemented and mechanically enforced by `operating-model/durable-execution-lineage-projection-v35.md` (`scripts/delp_projection_v35.py`, `schemas/delp-*-v35.schema.yaml`, `tests/test_delp_projection_v35.py`). Where this document shows an older title form, the DELP grammar governs. The rest of this document keeps its existing status.
+
 ## Three-view architecture
 
 V3.5 MUST keep these distinct:
@@ -30,10 +32,10 @@ Do not make one message serve all three audiences.
 Recommended:
 
 ```text
-🟢 {P42% · E36% · A07 · U03 · ACTIVE} <issue title>
+🟢 [#527 › #588 › #592 → PR#593] R:P42/E36 · U03 · ACTIVE — <responsibility>
 ```
 
-The title exposes liveness/motion, semantic/evidence progress, activity epoch, current unit where useful and compact work state. It is disposable projection only.
+The title is **generated, never authored**: lineage (`›` ownership, `→` the PR), scoped semantic/evidence progress (`R:` leaf, `Φ:` phase, `Π:` programme), the current unit (leaf) or frontier count `F<n>` (ancestors), and compact work state. It is written only by the DELP runner from `CHECKPOINT_FACTS_V1`, the execution graph and observed material truth (`operating-model/durable-execution-lineage-projection-*.md`); this grammar supersedes the earlier `{P · E · A · U · STATE}` form. The activity epoch `A<n>` is carried in `LIVE_STATUS_V1`, not the title. It is disposable projection only.
 
 ## Owner chat checkpoint
 
@@ -45,7 +47,7 @@ Recommended shape:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-🟢/🟡/🔵/🔴 {P__% · E__% · A__ · <STATE>}
+🟢/🟡/🔵/🔴 R:P__/E__ · A__ · <STATE>      (rendered by the projector; the agent supplies facts, not these numbers)
 UNIT: <one concise line>
 DELTA: ✓ <new result>; ✓ <new result>; △ <decision-relevant unresolved finding, optional>
 BLOCKER: <NONE | one concise blocker>
@@ -177,7 +179,7 @@ The compact chat message references detailed evidence; it does not mirror it.
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-🟡 {P42% · E36% · A07 · WAITING_EXTERNAL}
+🟡 R:P42/E36 · A07 · WAITING_EXTERNAL
 UNIT: Full-stack qualification of #1239 cumulative candidate.
 DELTA: ✓ #1252 import defect isolated in draft #1253 (`ea2556d`); ✓ persistence contract PASS; ✓ TEXPECTED lower-bound PASS.
 BLOCKER: Executable authenticated checkout / Node `@playwright/test` unavailable for browser + full-regression qualification.
