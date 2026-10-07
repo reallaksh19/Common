@@ -1791,6 +1791,73 @@ class DecompositionRepositoryObserverTests(unittest.TestCase):
                 )
 
 
+class DecompositionRepositoryObservationCurrentness(unittest.TestCase):
+    def graph(self):
+        return DecompositionRepositoryObserverTests().graph()
+
+    def init_repo(self, root):
+        return DecompositionRepositoryObserverTests().init_repo(
+            root, {"pkg/a.py": "a", "other/x.py": "x"}
+        )
+
+    def test_current_observation_matches_public_plan_basis_helper(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            graph_value = self.graph()
+            observation = O.observe_repository_basis(
+                graph_value, leaf_ref="Common#1", repo_root=root
+            )
+            basis = O.repository_plan_basis(graph_value, "Common#1")
+            self.assertEqual(basis["digest"], observation["plan_basis_digest"])
+            current = O.repository_observation_currentness(
+                graph_value, "Common#1", observation
+            )
+            self.assertEqual("CURRENT", current["state"])
+            self.assertEqual(basis["digest"], current["expected_plan_basis_digest"])
+
+    def test_plan_basis_move_marks_existing_observation_moved(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            graph_value = self.graph()
+            observation = O.observe_repository_basis(
+                graph_value, leaf_ref="Common#1", repo_root=root
+            )
+            moved = copy.deepcopy(graph_value)
+            moved["nodes"][0]["write_surface"] = ["pkg/a.py"]
+            current = O.repository_observation_currentness(
+                moved, "Common#1", observation
+            )
+            self.assertEqual("MOVED", current["state"])
+            self.assertNotEqual(
+                current["expected_plan_basis_digest"],
+                current["observed_plan_basis_digest"],
+            )
+
+    def test_missing_observation_is_explicit_missing_not_clean(self):
+        graph_value = self.graph()
+        current = O.repository_observation_currentness(
+            graph_value, "Common#1", None
+        )
+        self.assertEqual("MISSING", current["state"])
+        self.assertIsNone(current["observed_plan_basis_digest"])
+
+    def test_wrong_authority_or_subject_fails_closed(self):
+        graph_value = self.graph()
+        basis = O.repository_plan_basis(graph_value, "Common#1")
+        good = {
+            "authority": "OBSERVED_REPOSITORY_BASIS",
+            "subject": "Common#1",
+            "plan_basis_digest": basis["digest"],
+        }
+        bad_authority = dict(good, authority="EXECUTOR")
+        bad_subject = dict(good, subject="Common#2")
+        for bad in (bad_authority, bad_subject):
+            with self.subTest(bad=bad), self.assertRaises(O.ObservationError):
+                O.repository_observation_currentness(graph_value, "Common#1", bad)
+
+
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
 class DecompositionRepositoryObservationSchemaContract(unittest.TestCase):
     def test_observer_output_matches_schema(self):
