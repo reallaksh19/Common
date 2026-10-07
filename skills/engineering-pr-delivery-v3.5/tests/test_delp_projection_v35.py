@@ -3761,6 +3761,353 @@ class DecompositionInProjection(unittest.TestCase):
         self.assertEqual("NOT_RELEASEABLE", M.project(g, forged, OBS_A)["nodes"]["Common#594"]["state"])
 
 
+class CanonicalPlanSpecConditions(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_off_plan_is_ready_without_fabricating_spec_currentness(self):
+        g = stable_graph()
+        g["programme"]["decomposition_policy"] = {"mode": "OFF"}
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["PlanReady"]["status"])
+        self.assertEqual("PLAN_GATE_OFF", conditions["PlanReady"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["SpecCurrent"]["status"])
+        self.assertEqual("SPEC_BINDING_UNOBSERVED", conditions["SpecCurrent"]["reason"])
+
+    def test_advisory_would_block_is_ready_but_exposes_the_blockers(self):
+        g = broken("ADVISORY", "Common#592")
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertFalse(node["plan"]["releasable"])
+        self.assertEqual("TRUE", conditions["PlanReady"]["status"])
+        self.assertEqual("PLAN_ADVISORY_WOULD_BLOCK", conditions["PlanReady"]["reason"])
+        self.assertIn("OUTCOME_MISSING", conditions["PlanReady"]["message"])
+
+    def test_enforced_plan_ready_tracks_the_existing_releasability_only(self):
+        good = M.project(planned(), [], OBS_A)["nodes"]["Common#592"]
+        bad = M.project(broken(ref="Common#592"), [], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual("TRUE", self.by_type(good)["PlanReady"]["status"])
+        self.assertEqual("FALSE", self.by_type(bad)["PlanReady"]["status"])
+        self.assertEqual("PLAN_NOT_RELEASEABLE", self.by_type(bad)["PlanReady"]["reason"])
+
+    def test_health_and_title_do_not_author_plan_ready(self):
+        g = broken("ADVISORY", "Common#592")
+        base = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        observed = {
+            **OBS_A,
+            "Common#592": {
+                **OBS_A["Common#592"],
+                "liveness": "STALE",
+                "additions": 9999,
+                "deletions": 9999,
+            },
+        }
+        changed = M.project(g, [], observed)["nodes"]["Common#592"]
+        self.assertEqual(
+            self.by_type(base)["PlanReady"],
+            self.by_type(changed)["PlanReady"],
+        )
+
+    def test_current_bound_fact_makes_spec_current_true(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1, "current-fact")], OBS_A)["nodes"]["Common#592"]
+        spec = self.by_type(node)["SpecCurrent"]
+        self.assertEqual("TRUE", spec["status"])
+        self.assertEqual("SPEC_BINDING_CURRENT", spec["reason"])
+        self.assertEqual(1, spec["observed_generation"])
+        self.assertEqual(["current-fact"], spec["source_refs"])
+
+    def test_graph_only_reparent_reweight_preserves_spec_current(self):
+        old = stable_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        moved = copy.deepcopy(old)
+        leaf = leaf_of(moved, "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        node = M.project(moved, [entry(record, 1, "bound-before-move")], OBS_A)["nodes"]["Common#592"]
+        spec = self.by_type(node)["SpecCurrent"]
+        self.assertEqual("TRUE", spec["status"])
+        self.assertEqual("SPEC_BINDING_CURRENT", spec["reason"])
+
+    def test_stale_contract_fact_is_rejected_and_cannot_make_spec_current_true(self):
+        old = stable_graph()
+        stale = bound_facts(old, units=[unit("U01")])
+        changed = copy.deepcopy(old)
+        leaf = leaf_of(changed, "Common#592")
+        leaf["outcome"] = "changed semantic contract"
+        leaf["spec_generation"] = 2
+        out = M.project(changed, [entry(stale, 1, "stale-contract")], OBS_A)
+        spec = self.by_type(out["nodes"]["Common#592"])["SpecCurrent"]
+        self.assertEqual("UNKNOWN", spec["status"])
+        self.assertEqual("SPEC_BINDING_UNOBSERVED", spec["reason"])
+        self.assertEqual(["stale-contract"], [row["source"] for row in out["rejected_facts"]])
+
+    def test_terminal_leaf_plan_ready_is_not_applicable(self):
+        g = stable_graph()
+        done = bound_facts(
+            g,
+            leaf="Common#612",
+            pr="Common#613",
+            units=[unit("W1")],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+        )
+        node = M.project(g, [entry(done, 1)], OBS_A)["nodes"]["Common#612"]
+        self.assertEqual("COMPLETE", node["lifecycle"])
+        plan = self.by_type(node)["PlanReady"]
+        self.assertEqual("NOT_APPLICABLE", plan["status"])
+        self.assertEqual("PLAN_NOT_APPLICABLE_TERMINAL", plan["reason"])
+
+
+class CanonicalProviderEvidenceConditions(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_legacy_observed_candidate_makes_provider_and_material_true(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["ProviderVisible"]["status"])
+        self.assertEqual("TRUE", conditions["MaterialObserved"]["status"])
+        self.assertEqual(SHA_A, conditions["MaterialObserved"]["candidate_sha"])
+        self.assertEqual("UNKNOWN", conditions["EvidenceCurrent"]["status"])
+
+    def test_explicit_provider_unavailable_is_unknown_not_failure(self):
+        observations = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "UNAVAILABLE",
+            }
+        }
+        node = M.project(stable_graph(), [], observations)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("UNKNOWN", conditions["ProviderVisible"]["status"])
+        self.assertEqual("PROVIDER_UNAVAILABLE", conditions["ProviderVisible"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["MaterialObserved"]["status"])
+        self.assertEqual("MATERIAL_UNAVAILABLE", conditions["MaterialObserved"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["EvidenceCurrent"]["status"])
+
+    def test_observed_provider_with_no_material_signal_reports_material_false(self):
+        observations = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {"ahead_by": 0, "behind_by": 0},
+            }
+        }
+        node = M.project(stable_graph(), [], observations)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["ProviderVisible"]["status"])
+        self.assertEqual("FALSE", conditions["MaterialObserved"]["status"])
+        self.assertEqual("MATERIAL_NOT_PRESENT", conditions["MaterialObserved"]["reason"])
+
+    def test_current_accepted_evidence_is_true(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1, "current-evidence")], OBS_A)["nodes"]["Common#592"]
+        evidence = self.by_type(node)["EvidenceCurrent"]
+        self.assertEqual("TRUE", evidence["status"])
+        self.assertEqual("EVIDENCE_CURRENT", evidence["reason"])
+        self.assertEqual(SHA_A, evidence["candidate_sha"])
+        self.assertEqual(["current-evidence"], evidence["source_refs"])
+
+    def test_stale_candidate_and_gap_are_false(self):
+        g = stable_graph()
+        current = bound_facts(g, units=[unit("U01")])
+        stale = M.project(
+            g,
+            [entry(current, 1)],
+            {**OBS_A, "Common#592": {"candidate_sha": SHA_B}},
+        )["nodes"]["Common#592"]
+        self.assertEqual("FALSE", self.by_type(stale)["EvidenceCurrent"]["status"])
+        self.assertEqual(
+            "EVIDENCE_STALE_CANDIDATE",
+            self.by_type(stale)["EvidenceCurrent"]["reason"],
+        )
+
+        gap_record = bound_facts(g, units=[unit("U01", refs=())])
+        gap = M.project(g, [entry(gap_record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual("FALSE", self.by_type(gap)["EvidenceCurrent"]["status"])
+        self.assertEqual("EVIDENCE_GAP", self.by_type(gap)["EvidenceCurrent"]["reason"])
+
+    def test_unobserved_candidate_makes_existing_evidence_unknown(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1)], {})["nodes"]["Common#592"]
+        evidence = self.by_type(node)["EvidenceCurrent"]
+        self.assertEqual("UNKNOWN", evidence["status"])
+        self.assertEqual("EVIDENCE_UNVERIFIABLE", evidence["reason"])
+
+    def test_optional_failed_check_does_not_change_provider_material_or_evidence_conditions(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        base_obs = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {"candidate_sha": SHA_A},
+            }
+        }
+        check_obs = copy.deepcopy(base_obs)
+        check_obs["Common#592"]["check"] = {
+            "result": "FAILURE",
+            "candidate_sha": SHA_A,
+            "name": "optional-check",
+        }
+        before = self.by_type(M.project(g, [entry(record, 1)], base_obs)["nodes"]["Common#592"])
+        after = self.by_type(M.project(g, [entry(record, 1)], check_obs)["nodes"]["Common#592"])
+        for kind in ("ProviderVisible", "MaterialObserved", "EvidenceCurrent"):
+            self.assertEqual(before[kind], after[kind], kind)
+
+
+class CanonicalDependencyCondition(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_no_declared_dependencies_is_not_applicable(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("NOT_APPLICABLE", condition["status"])
+        self.assertEqual("NO_DECLARED_DEPENDENCIES", condition["reason"])
+
+    def test_all_declared_dependencies_complete_is_true(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        done = bound_facts(
+            g,
+            leaf="Common#612",
+            pr="Common#613",
+            units=[unit("W1")],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+        )
+        node = M.project(g, [entry(done, 1)], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("TRUE", condition["status"])
+        self.assertEqual("DEPENDENCIES_COMPLETE", condition["reason"])
+        self.assertEqual(["Common#612"], condition["source_refs"])
+
+    def test_known_noncomplete_dependency_is_false(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("FALSE", condition["status"])
+        self.assertEqual("DEPENDENCIES_INCOMPLETE", condition["reason"])
+        self.assertIn("Common#612:NOT_STARTED", condition["message"])
+
+    def test_provider_pr_merge_does_not_complete_a_dependency(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        observations = {
+            **OBS_A,
+            "Common#612": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": SHA_A,
+                    "pr_state": "MERGED",
+                },
+            },
+        }
+        node = M.project(g, [], observations)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("FALSE", condition["status"])
+        self.assertEqual("DEPENDENCIES_INCOMPLETE", condition["reason"])
+
+    def test_undeclared_sibling_state_does_not_affect_dependency_condition(self):
+        g = stable_graph()
+        base = self.by_type(M.project(g, [], OBS_A)["nodes"]["Common#592"])["DependenciesReady"]
+        active = bound_facts(g, leaf="Common#612", pr="Common#613", units=[unit("W1", state="IN_PROGRESS")])
+        changed = self.by_type(
+            M.project(g, [entry(active, 1)], OBS_A)["nodes"]["Common#592"]
+        )["DependenciesReady"]
+        self.assertEqual(base, changed)
+
+
+class CanonicalConditionSetAssembly(unittest.TestCase):
+    def test_every_leaf_has_exactly_eight_conditions_in_canonical_order(self):
+        out = M.project(stable_graph(), [], OBS_A)
+        for ref, node in out["nodes"].items():
+            if node["kind"] != "LEAF":
+                continue
+            self.assertEqual(
+                list(M.CONDITION_ORDER),
+                [row["type"] for row in node["conditions"]],
+                ref,
+            )
+            self.assertEqual(8, len(node["conditions"]))
+            for row in node["conditions"]:
+                self.assertEqual([], M.validate_condition(row), (ref, row))
+
+    def test_custody_and_assurance_are_never_fabricated_true_before_p3_p4(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        rows = {row["type"]: row for row in node["conditions"]}
+        self.assertEqual("NOT_APPLICABLE", rows["CustodySafe"]["status"])
+        self.assertEqual("CUSTODY_POLICY_NOT_IMPLEMENTED", rows["CustodySafe"]["reason"])
+        self.assertEqual("NOT_APPLICABLE", rows["AssuranceSatisfied"]["status"])
+        self.assertEqual("ASSURANCE_POLICY_NOT_IMPLEMENTED", rows["AssuranceSatisfied"]["reason"])
+        self.assertNotEqual("TRUE", rows["CustodySafe"]["status"])
+        self.assertNotEqual("TRUE", rows["AssuranceSatisfied"]["status"])
+
+    def test_condition_assembly_does_not_change_progress_math(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01"), unit("U02")])
+        indexed = M.validate_graph(g)
+        accepted, _ = M.partition_ledger(indexed, [entry(record, 1)])
+        normalized = M.normalize_observations(indexed, OBS_A)
+        raw_leaf = M.compute_leaf(
+            indexed["nodes"]["Common#592"],
+            accepted["Common#592"],
+            normalized[592],
+        )
+        projected = M.project(g, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(raw_leaf["progress"], projected["progress"])
+
+    def test_advisory_health_changes_do_not_change_condition_set(self):
+        g = stable_graph()
+        g["programme"]["health_policy"] = {"mode": "ADVISORY"}
+        base = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        stressed_obs = {
+            **OBS_A,
+            "Common#592": {
+                "candidate_sha": SHA_A,
+                "liveness": "STALE",
+                "additions": 5000,
+                "deletions": 5000,
+                "interruptions": {
+                    "coverage_from": "start",
+                    "losses": [{"kind": "stream"}, {"kind": "stream"}, {"kind": "stream"}],
+                },
+            },
+        }
+        stressed = M.project(g, [], stressed_obs)["nodes"]["Common#592"]
+        self.assertIn("health", stressed)
+        self.assertEqual(base["conditions"], stressed["conditions"])
+
+    def test_conditions_are_not_prematurely_published_to_live_status(self):
+        projection = M.project(stable_graph(), [], OBS_A)
+        leaf = projection["nodes"]["Common#592"]
+        self.assertEqual(8, len(leaf["conditions"]))
+        status = M.status_document(
+            leaf,
+            version=0,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        self.assertNotIn("conditions", status["node"])
+
+    def test_finalizer_rejects_duplicate_or_incomplete_sets(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        complete = node["conditions"]
+        with self.assertRaises(M.DelpError):
+            M._finalize_condition_set([*complete, copy.deepcopy(complete[0])])
+        with self.assertRaises(M.DelpError):
+            M._finalize_condition_set(complete[:-1])
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)

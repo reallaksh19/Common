@@ -557,6 +557,16 @@ CONDITION_TYPES = frozenset(
         "ProviderVisible",
     }
 )
+CONDITION_ORDER = (
+    "PlanReady",
+    "SpecCurrent",
+    "MaterialObserved",
+    "EvidenceCurrent",
+    "DependenciesReady",
+    "CustodySafe",
+    "AssuranceSatisfied",
+    "ProviderVisible",
+)
 CONDITION_STATUSES = frozenset({"TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"})
 _CONDITION_FIELDS = frozenset(
     {"type", "status", "reason", "message", "observed_generation", "candidate_sha", "source_refs"}
@@ -650,6 +660,341 @@ def condition_record(
         raise DelpError("invalid responsibility condition: " + "; ".join(errors))
     return record
 
+
+
+
+def _plan_spec_conditions(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+    accepted_records: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Derive PlanReady and SpecCurrent from existing plan/spec authority only."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    lifecycle = str(leaf.get("lifecycle") or "")
+    mode = indexed["policy"]["mode"]
+    plan = leaf.get("plan")
+
+    if lifecycle in _TERMINAL:
+        plan_status = "NOT_APPLICABLE"
+        plan_reason = "PLAN_NOT_APPLICABLE_TERMINAL"
+        plan_message = f"{lifecycle} Responsibility has no further execution plan to release."
+    elif mode == "OFF":
+        plan_status = "TRUE"
+        plan_reason = "PLAN_GATE_OFF"
+        plan_message = "Decomposition enforcement is OFF; plan readiness does not block execution."
+    elif mode == "ADVISORY":
+        plan_status = "TRUE"
+        blockers = list((plan or {}).get("blockers") or [])
+        if blockers:
+            plan_reason = "PLAN_ADVISORY_WOULD_BLOCK"
+            codes = ", ".join(sorted({str(row["code"]) for row in blockers}))
+            plan_message = f"Advisory decomposition findings would block if enforced: {codes}."
+        else:
+            plan_reason = "PLAN_RELEASEABLE"
+            plan_message = "The current advisory plan has no blocking decomposition findings."
+    elif plan is None:
+        plan_status = "UNKNOWN"
+        plan_reason = "PLAN_RELEASEABILITY_UNOBSERVED"
+        plan_message = "Enforced plan readiness was not projected."
+    elif plan["releasable"]:
+        plan_status = "TRUE"
+        plan_reason = "PLAN_RELEASEABLE"
+        plan_message = "The current enforced plan is releaseable."
+    else:
+        plan_status = "FALSE"
+        plan_reason = "PLAN_NOT_RELEASEABLE"
+        codes = ", ".join(sorted({str(row["code"]) for row in plan["blockers"]}))
+        plan_message = f"The current enforced plan is not releaseable: {codes or 'blocking finding'}."
+
+    records = list(accepted_records)
+    if not indexed["stable_identity_mode"] or generation is None or not node.get("contract_digest"):
+        spec_status = "UNKNOWN"
+        spec_reason = "SPEC_BINDING_UNAVAILABLE"
+        spec_message = "Stable Responsibility contract binding is unavailable."
+        spec_sources = [f"{ref}:contract"]
+    elif records:
+        spec_status = "TRUE"
+        spec_reason = "SPEC_BINDING_CURRENT"
+        spec_message = (
+            "Accepted facts are bound to the current Responsibility id, spec generation and contract digest."
+        )
+        spec_sources = []
+        for record in records:
+            source = str(record.get("_source") or "").strip()
+            if source and source not in spec_sources:
+                spec_sources.append(source)
+        if not spec_sources:
+            spec_sources = [f"{ref}:accepted-facts"]
+    else:
+        spec_status = "UNKNOWN"
+        spec_reason = "SPEC_BINDING_UNOBSERVED"
+        spec_message = "No accepted fact basis establishes current Responsibility contract binding."
+        spec_sources = [f"{ref}:accepted-facts"]
+
+    return [
+        condition_record(
+            "PlanReady",
+            plan_status,
+            plan_reason,
+            plan_message,
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:plan"],
+        ),
+        condition_record(
+            "SpecCurrent",
+            spec_status,
+            spec_reason,
+            spec_message,
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=spec_sources,
+        ),
+    ]
+
+
+
+def _provider_evidence_conditions(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+    observation: Mapping[str, Any] | None,
+    accepted_records: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Derive provider/material/evidence conditions from normalized existing truth."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    observation = dict(observation or {})
+    meta = observation.get("_observation") if isinstance(observation.get("_observation"), Mapping) else {}
+    visibility = str(meta.get("visibility") or "")
+    categories = meta.get("categories") if isinstance(meta.get("categories"), Mapping) else {}
+    material_visibility = str(categories.get("MATERIAL") or "")
+
+    if visibility == "OBSERVED":
+        provider_status = "TRUE"
+        provider_reason = "PROVIDER_VISIBLE"
+        provider_message = "Provider observation was successfully obtained."
+    else:
+        provider_status = "UNKNOWN"
+        provider_reason = "PROVIDER_UNAVAILABLE" if visibility == "UNAVAILABLE" else "PROVIDER_UNOBSERVED"
+        provider_message = (
+            "Provider observation is unavailable."
+            if visibility == "UNAVAILABLE"
+            else "Provider visibility was not observed."
+        )
+
+    candidate = observation.get("candidate_sha")
+    candidate_sha = str(candidate) if isinstance(candidate, str) and _SHA.fullmatch(candidate) else None
+    material_signal = candidate_sha is not None or _provider_signal(observation) is not None
+    if material_visibility == "OBSERVED":
+        if material_signal:
+            material_status = "TRUE"
+            material_reason = "MATERIAL_OBSERVED"
+            material_message = "Provider observation contains current material or candidate signal."
+        else:
+            material_status = "FALSE"
+            material_reason = "MATERIAL_NOT_PRESENT"
+            material_message = "Provider material was observed but no current material/candidate signal exists."
+    else:
+        material_status = "UNKNOWN"
+        material_reason = (
+            "MATERIAL_UNAVAILABLE" if material_visibility == "UNAVAILABLE" else "MATERIAL_UNOBSERVED"
+        )
+        material_message = (
+            "Provider material visibility is unavailable."
+            if material_visibility == "UNAVAILABLE"
+            else "Provider material visibility was not observed."
+        )
+
+    records = list(accepted_records)
+    evidence_health = str((leaf.get("evidence") or {}).get("health") or "")
+    if not records:
+        evidence_status = "UNKNOWN"
+        evidence_reason = "EVIDENCE_BASIS_UNOBSERVED"
+        evidence_message = "No accepted fact basis exists from which to establish evidence currentness."
+    elif evidence_health == "CURRENT":
+        evidence_status = "TRUE"
+        evidence_reason = "EVIDENCE_CURRENT"
+        evidence_message = "Accepted evidence is current for the observed candidate."
+    elif evidence_health in {"GAP", "STALE_CANDIDATE"}:
+        evidence_status = "FALSE"
+        evidence_reason = (
+            "EVIDENCE_STALE_CANDIDATE"
+            if evidence_health == "STALE_CANDIDATE"
+            else "EVIDENCE_GAP"
+        )
+        evidence_message = (
+            "Accepted evidence is stale against the observed candidate."
+            if evidence_health == "STALE_CANDIDATE"
+            else "Accepted facts contain incomplete or invalid current evidence."
+        )
+    else:
+        evidence_status = "UNKNOWN"
+        evidence_reason = "EVIDENCE_UNVERIFIABLE"
+        evidence_message = "Evidence currentness cannot be established from the available provider truth."
+
+    evidence_source = str((leaf.get("evidence") or {}).get("latest_source") or "").strip()
+    return [
+        condition_record(
+            "ProviderVisible",
+            provider_status,
+            provider_reason,
+            provider_message,
+            observed_generation=generation,
+            candidate_sha=candidate_sha,
+            source_refs=[f"{ref}:provider"],
+        ),
+        condition_record(
+            "MaterialObserved",
+            material_status,
+            material_reason,
+            material_message,
+            observed_generation=generation,
+            candidate_sha=candidate_sha,
+            source_refs=[f"{ref}:provider-material"],
+        ),
+        condition_record(
+            "EvidenceCurrent",
+            evidence_status,
+            evidence_reason,
+            evidence_message,
+            observed_generation=generation,
+            candidate_sha=leaf.get("frontier", {}).get("evidence_candidate"),
+            source_refs=[evidence_source or f"{ref}:evidence"],
+        ),
+    ]
+
+
+
+def _dependency_condition(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Derive DependenciesReady from the already-derived declared dependency projection only."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    dependencies = leaf.get("dependencies")
+    if not isinstance(dependencies, Mapping):
+        return condition_record(
+            "DependenciesReady",
+            "UNKNOWN",
+            "DEPENDENCY_STATE_UNOBSERVED",
+            "Dependency readiness was not projected.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:dependencies"],
+        )
+
+    declared = [str(value) for value in dependencies.get("declared") or []]
+    if not declared:
+        return condition_record(
+            "DependenciesReady",
+            "NOT_APPLICABLE",
+            "NO_DECLARED_DEPENDENCIES",
+            "The Responsibility declares no execution dependencies.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:dependencies"],
+        )
+
+    blocking = list(dependencies.get("blocking") or [])
+    if bool(dependencies.get("ready")) and not blocking:
+        return condition_record(
+            "DependenciesReady",
+            "TRUE",
+            "DEPENDENCIES_COMPLETE",
+            "Every declared predecessor Responsibility is complete.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=declared,
+        )
+
+    unresolved = [
+        row
+        for row in blocking
+        if not isinstance(row, Mapping)
+        or not str(row.get("lifecycle") or "").strip()
+    ]
+    if unresolved:
+        return condition_record(
+            "DependenciesReady",
+            "UNKNOWN",
+            "DEPENDENCY_STATE_UNKNOWN",
+            "At least one declared predecessor has unresolved lifecycle truth.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=declared,
+        )
+
+    shown = ", ".join(
+        f"{row['ref']}:{row['lifecycle']}"
+        for row in blocking
+        if isinstance(row, Mapping)
+    )
+    return condition_record(
+        "DependenciesReady",
+        "FALSE",
+        "DEPENDENCIES_INCOMPLETE",
+        f"Declared predecessor Responsibilities are not complete: {shown}.",
+        observed_generation=generation,
+        candidate_sha=None,
+        source_refs=declared,
+    )
+
+
+
+def _custody_assurance_placeholders(
+    indexed: Mapping[str, Any],
+    ref: str,
+) -> list[dict[str, Any]]:
+    """Represent not-yet-implemented P3/P4 axes without fabricating safe/satisfied truth."""
+    generation = indexed["nodes"][ref].get("spec_generation")
+    return [
+        condition_record(
+            "CustodySafe",
+            "NOT_APPLICABLE",
+            "CUSTODY_POLICY_NOT_IMPLEMENTED",
+            "P3 custody epoch/fencing authority is not implemented in the current kernel.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=["programme:P3-custody"],
+        ),
+        condition_record(
+            "AssuranceSatisfied",
+            "NOT_APPLICABLE",
+            "ASSURANCE_POLICY_NOT_IMPLEMENTED",
+            "P4 assurance actor/policy authority is not implemented in the current kernel.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=["programme:P4-assurance"],
+        ),
+    ]
+
+
+def _finalize_condition_set(
+    conditions: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Validate and canonically order one complete eight-condition read model."""
+    rows = [dict(row) for row in conditions]
+    by_type: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        errors = validate_condition(row)
+        if errors:
+            raise DelpError("invalid derived responsibility condition: " + "; ".join(errors))
+        kind = str(row["type"])
+        if kind in by_type:
+            raise DelpError(f"duplicate derived responsibility condition {kind}")
+        by_type[kind] = row
+    missing = [kind for kind in CONDITION_ORDER if kind not in by_type]
+    extra = sorted(set(by_type) - set(CONDITION_ORDER))
+    if missing or extra:
+        raise DelpError(
+            f"incomplete derived responsibility condition set: missing={missing}, extra={extra}"
+        )
+    return [by_type[kind] for kind in CONDITION_ORDER]
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
@@ -3150,6 +3495,25 @@ def project(
             if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        results[ref]["conditions"] = [
+            *_plan_spec_conditions(
+                indexed,
+                ref,
+                results[ref],
+                accepted.get(ref, []),
+            ),
+            *_provider_evidence_conditions(
+                indexed,
+                ref,
+                results[ref],
+                observations.get(nodes[ref]["number"]),
+                accepted.get(ref, []),
+            ),
+        ]
+
     # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
     # from predecessor projections; agents never author it and it never changes P/E/D.
     for ref in indexed["order"]:
@@ -3172,6 +3536,19 @@ def project(
         }
         if blocking_dependencies and results[ref]["state"] in {"ACTIVE", "NOT_STARTED"}:
             results[ref]["state"] = "WAITING_DEPENDENCY"
+
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        results[ref]["conditions"].append(
+            _dependency_condition(indexed, ref, results[ref])
+        )
+        results[ref]["conditions"].extend(
+            _custody_assurance_placeholders(indexed, ref)
+        )
+        results[ref]["conditions"] = _finalize_condition_set(
+            results[ref]["conditions"]
+        )
 
     health_mode = indexed["health_policy"]["mode"]
     if health_mode != "OFF":
@@ -3793,7 +4170,13 @@ def render_frontier_drift(report: Mapping[str, Any]) -> str:
 
 def status_document(node_projection: Mapping[str, Any], *, version: int, digest: str, programme: Mapping[str, Any]) -> dict[str, Any]:
     """LIVE_STATUS_V1 document written to the provider for one node."""
-    body = {k: v for k, v in node_projection.items() if k not in {"title_prefix"}}
+    # Conditions remain an in-memory derived read model until the dedicated P2 projection-integration
+    # Responsibility adopts them into LIVE_STATUS/title/frontier/admit. Do not collapse those responsibilities here.
+    body = {
+        k: v
+        for k, v in node_projection.items()
+        if k not in {"title_prefix", "conditions"}
+    }
     return {
         "schema": STATUS_SCHEMA,
         "authority": AUTHORITY,
