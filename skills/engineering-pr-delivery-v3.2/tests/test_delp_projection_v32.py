@@ -235,6 +235,77 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
             {f["code"] for f in report["leaves"]["R-SEM"]["blockers"]},
         )
 
+
+    def materialized_proposal_graph(self):
+        g = self.proposal_graph()
+        g["nodes"] = [
+            {"ref": "Common#703", "kind": "ROOT"},
+            {
+                "ref": "Common#704",
+                "kind": "LEAF",
+                "parent": "Common#703",
+                "weight": 90,
+                "responsibility_id": "R-SEM",
+                "work_class": "PRODUCT",
+                "owns_claims": ["PA-SEM"],
+                "units": [
+                    {"id": "S1", "weight": 34},
+                    {"id": "S2", "weight": 33},
+                    {"id": "S3", "weight": 33},
+                ],
+            },
+            {
+                "ref": "Common#705",
+                "kind": "LEAF",
+                "parent": "Common#703",
+                "weight": 10,
+                "responsibility_id": "G-DELIVERY",
+                "work_class": "GATE",
+                "owns_claims": ["PG-DELIVERY"],
+                "units": [{"id": "G1", "weight": 100}],
+            },
+        ]
+        pre = M.decomposition_report(g)
+        digest = pre["proposal_digest"]
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": "R-SEM", "ref": "Common#704"},
+            {"responsibility_id": "G-DELIVERY", "ref": "Common#705"},
+        ]
+        return g
+
+    def test_releaseable_proposal_can_bind_provider_refs_without_changing_identity_or_weight(self):
+        g = self.materialized_proposal_graph()
+        report = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", report["release_state"])
+        self.assertTrue(all(row["releasable"] for row in report["leaves"].values()), report)
+
+    def test_binding_invalid_proposal_is_blocked_as_materialization_before_release(self):
+        g = self.materialized_proposal_graph()
+        product = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        product["semantic_units"] = product["semantic_units"][:2]
+        report = M.decomposition_report(g)
+        codes = {f["code"] for f in report["leaves"]["R-SEM"]["blockers"]}
+        self.assertIn("SEMANTIC_UNITS_BELOW_MIN", codes)
+        self.assertIn("MATERIALIZATION_BEFORE_RELEASE", codes)
+
+    def test_binding_requires_exact_released_proposal_digest(self):
+        g = self.materialized_proposal_graph()
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = "sha256:" + "0" * 64
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        self.assertIn("PROPOSAL_RELEASE_DIGEST_MISMATCH", {f["code"] for f in row["blockers"]})
+
+    def test_binding_rejects_identity_claim_and_weight_drift(self):
+        g = self.materialized_proposal_graph()
+        g["nodes"][1]["responsibility_id"] = "OTHER"
+        g["nodes"][1]["owns_claims"] = ["PG-DELIVERY"]
+        g["nodes"][1]["weight"] = 80
+        report = M.decomposition_report(g)
+        codes = {f["code"] for f in report["leaves"]["R-SEM"]["blockers"]}
+        self.assertIn("BINDING_IDENTITY_MISMATCH", codes)
+        self.assertIn("BINDING_CLAIM_MISMATCH", codes)
+        self.assertIn("BINDING_WEIGHT_MISMATCH", codes)
+
     def test_mechanism_shaped_product_boundary_requires_explicit_parent_exception(self):
         g = self.proposal_graph()
         r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
