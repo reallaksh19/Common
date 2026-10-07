@@ -870,6 +870,135 @@ class ResponsibilityContractBinding(unittest.TestCase):
         self.assertEqual([], out["rejected_facts"])
 
 
+class ResponsibilityCurrentnessProjection(unittest.TestCase):
+    def test_stable_projection_exposes_currentness_on_every_node(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        out = M.project(g, [entry(record, 1)], OBS_A)
+        self.assertEqual(out["graph_digest"], out["nodes"]["Common#527"]["currentness"]["graph_digest"])
+        for ref, node in out["nodes"].items():
+            with self.subTest(ref=ref):
+                current = node["currentness"]
+                self.assertEqual("STABLE", current["mode"])
+                self.assertEqual(1, current["graph_generation"])
+                self.assertEqual(out["graph_digest"], current["graph_digest"])
+                if node["kind"] == "LEAF":
+                    self.assertEqual(node["identity"]["spec_generation"], current["spec_generation"])
+                    self.assertEqual(node["identity"]["contract_digest"], current["contract_digest"])
+                    self.assertTrue(current["fact_binding_required"])
+                else:
+                    self.assertIsNone(current["spec_generation"])
+                    self.assertIsNone(current["contract_digest"])
+                    self.assertFalse(current["fact_binding_required"])
+
+    def test_legacy_projection_exposes_legacy_currentness_without_changing_progress(self):
+        ledger = [entry(facts(units=[unit("U01")]), 1)]
+        out = M.project(graph(), ledger, OBS_A)
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual((20, 20), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertEqual(
+            {
+                "mode": "LEGACY",
+                "graph_generation": 1,
+                "graph_digest": out["graph_digest"],
+                "spec_generation": None,
+                "contract_digest": None,
+                "fact_binding_required": False,
+            },
+            leaf["currentness"],
+        )
+
+    def test_old_generation_fact_on_new_semantic_contract_is_rejected_and_currentness_moves(self):
+        old = stable_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        old_digest = M.validate_graph(old)["nodes"]["Common#592"]["contract_digest"]
+        new = copy.deepcopy(old)
+        leaf = next(n for n in new["nodes"] if n["ref"] == "Common#592")
+        leaf["outcome"] = "changed semantic contract"
+        leaf["spec_generation"] = 2
+        out = M.project(new, [entry(record, 1)], OBS_A)
+        projected = out["nodes"]["Common#592"]
+        self.assertEqual((0, 0), (projected["progress"]["P"], projected["progress"]["E"]))
+        self.assertEqual(2, projected["currentness"]["spec_generation"])
+        self.assertNotEqual(old_digest, projected["currentness"]["contract_digest"])
+        reasons = out["rejected_facts"][0]["reasons"]
+        self.assertTrue(any("spec_generation" in reason for reason in reasons))
+        self.assertTrue(any("contract_digest" in reason for reason in reasons))
+
+    def test_correct_candidate_with_wrong_contract_digest_is_rejected(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        planned = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+        wrong = "sha256:" + ("0" * 64 if planned != "sha256:" + "0" * 64 else "1" * 64)
+        record["responsibility"]["contract_digest"] = wrong
+        out = M.project(g, [entry(record, 1)], OBS_A)
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual((0, 0), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertEqual(planned, leaf["currentness"]["contract_digest"])
+        self.assertTrue(any("contract_digest" in r for r in out["rejected_facts"][0]["reasons"]))
+
+    def test_candidate_move_with_current_contract_keeps_P_and_drops_E(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        before = M.project(g, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        moved_obs = copy.deepcopy(OBS_A)
+        moved_obs["Common#592"]["candidate_sha"] = SHA_B
+        after = M.project(g, [entry(record, 1)], moved_obs)["nodes"]["Common#592"]
+        self.assertEqual((20, 20), (before["progress"]["P"], before["progress"]["E"]))
+        self.assertEqual((20, 0), (after["progress"]["P"], after["progress"]["E"]))
+        self.assertEqual(before["currentness"], after["currentness"])
+        self.assertEqual("CANDIDATE_MISMATCH", after["evidence"]["gaps"][0]["reason"])
+
+    def test_reparent_and_reweight_preserve_leaf_contract_and_leaf_progress(self):
+        old = stable_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        before = M.project(old, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        moved = copy.deepcopy(old)
+        leaf = next(n for n in moved["nodes"] if n["ref"] == "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        after = M.project(moved, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(before["identity"]["contract_digest"], after["identity"]["contract_digest"])
+        self.assertEqual(before["currentness"]["contract_digest"], after["currentness"]["contract_digest"])
+        self.assertEqual(before["progress"], after["progress"])
+        self.assertNotEqual(before["currentness"]["graph_digest"], after["currentness"]["graph_digest"])
+
+    def test_editorial_title_change_does_not_mutate_projection_or_currentness(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        out = M.project(g, [entry(record, 1)], OBS_A)
+        snapshot = copy.deepcopy(out["nodes"]["Common#592"])
+        before = M.expected_titles(out, {"Common#592": "Before editorial title"})["Common#592"]
+        after = M.expected_titles(out, {"Common#592": "After editorial title"})["Common#592"]
+        self.assertNotEqual(before, after)
+        self.assertEqual(snapshot, out["nodes"]["Common#592"])
+
+    def test_unknown_unit_moves_no_progress_and_currentness_stays_derived(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("NOPE")])
+        out = M.project(g, [entry(record, 1)], OBS_A)
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual((0, 0), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertIn("UNKNOWN_UNIT:NOPE", leaf["warnings"])
+        self.assertEqual("STABLE", leaf["currentness"]["mode"])
+        self.assertTrue(leaf["currentness"]["fact_binding_required"])
+
+    def test_agent_cannot_author_currentness_projection_fields(self):
+        forbidden = [
+            {"currentness": {"mode": "STABLE"}},
+            {"graph_generation": 99},
+            {"graph_digest": "sha256:" + "1" * 64},
+            {"observed_generation": 99},
+            {"contract_current": True},
+        ]
+        for extra in forbidden:
+            with self.subTest(extra=extra):
+                record = facts(units=[unit("U01")], **extra)
+                self.assertTrue(M.validate_facts(record))
+                with self.assertRaises(M.ForbiddenProjectionField):
+                    M.require_facts(record)
+
+
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
 
@@ -1363,6 +1492,18 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
             document = M.status_document(node, version=1, digest=projection["input_digest"], programme=projection["programme"])
             with self.subTest(ref=ref):
                 self.assertEqual([], self.schema_errors("live-status", json.loads(M.canonical_json(document))))
+
+
+    def test_stable_currentness_projection_satisfies_live_status_schema(self):
+        g = stable_graph()
+        projection = M.project(g, [entry(bound_facts(g, units=[unit("U01")]), 1)], OBS_A)
+        leaf = projection["nodes"]["Common#592"]
+        document = M.status_document(
+            leaf, version=1, digest=projection["input_digest"], programme=projection["programme"]
+        )
+        self.assertEqual([], self.schema_errors("live-status", json.loads(M.canonical_json(document))))
+        self.assertEqual("STABLE", document["node"]["currentness"]["mode"])
+        self.assertTrue(document["node"]["currentness"]["fact_binding_required"])
 
 
 class CommandLine(unittest.TestCase):
