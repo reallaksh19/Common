@@ -366,31 +366,6 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 
 `skills/engineering-pr-delivery-v3.2/**` was frozen by #492/#494 and is guarded in CI. The Owner explicitly instructed that this fix land in both V3.2 and V3.5. The V3.2 changes are therefore an **additive amendment**: new `delp_projection_v32.py`, its schemas and tests, the DERIVED mode of `continuity_projection.py`, the `CONTINUE_RECONCILE` intent, and the documentation updates. The freeze guard permits exactly the paths listed in `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml` and fails on any other change. Governance-critical: merge remains Owner-controlled.
 
-## Responsibility identity and graph generation
-
-A GitHub issue is a provider locator, not the semantic identity of a Responsibility.
-
-New graphs may opt into the stable identity contract by declaring:
-
-```yaml
-programme:
-  graph_generation: 1
-
-nodes:
-  - ref: Common#592
-    kind: LEAF
-    responsibility_id: P3-I-R2
-```
-
-When `graph_generation` is explicitly present, every LEAF must have one unique
-`responsibility_id`. The id is never synthesized from the issue number, so a future
-provider-locator transfer can preserve Responsibility identity.
-
-Legacy graphs that omit `graph_generation` remain readable and are normalized to generation 1.
-The projector derives `graph_digest` from a canonical graph basis; omitted generation and an
-explicit generation of 1 have the same digest. The digest is plan/currentness evidence only and
-never moves P/E/D.
-
 ## Invariants (each is pinned by a test)
 
 1. Every artifact resolves to exactly one owning leaf; every leaf resolves to exactly one programme lineage.
