@@ -1670,6 +1670,28 @@ class DecompositionRepositoryObserverTests(unittest.TestCase):
             self.assertEqual(["other/x.py"], out["candidate_diff"]["outside_sample"])
             self.assertEqual("CROSS_CUTTING", out["change_impact"])
 
+    def test_rename_observes_both_old_and_new_paths(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            base = self.init_repo(root, {"outside/a.py": "a", "pkg/keep.py": "k"})
+            (root / "pkg").mkdir(exist_ok=True)
+            (root / "outside/a.py").rename(root / "pkg/a.py")
+            subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
+            subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "rename"], check=True)
+            candidate = subprocess.check_output(
+                ["git", "-C", str(root), "rev-parse", "HEAD"], text=True
+            ).strip()
+            out = O.observe_repository_basis(
+                self.graph(),
+                leaf_ref="Common#1",
+                repo_root=root,
+                base_ref=base,
+                candidate_ref=candidate,
+            )
+            self.assertEqual(2, out["candidate_diff"]["changed_count"])
+            self.assertEqual(["outside/a.py"], out["candidate_diff"]["outside_sample"])
+            self.assertEqual("CROSS_CUTTING", out["change_impact"])
+
     def test_invalid_git_ref_fails_closed(self):
         with tempfile.TemporaryDirectory() as td:
             root = pathlib.Path(td)

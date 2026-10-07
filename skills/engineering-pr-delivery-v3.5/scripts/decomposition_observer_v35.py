@@ -45,6 +45,34 @@ def _zpaths(data: bytes) -> list[str]:
     )
 
 
+def _name_status_paths(data: bytes) -> list[str]:
+    """All paths touched by --name-status -z, including both sides of rename/copy."""
+    tokens = [
+        item.decode("utf-8", errors="strict")
+        for item in data.split(b"\0")
+        if item
+    ]
+    paths: set[str] = set()
+    index = 0
+    while index < len(tokens):
+        status = tokens[index]
+        index += 1
+        if not status:
+            raise ObservationError("git diff returned an empty name-status token")
+        if status[0] in {"R", "C"}:
+            if index + 1 >= len(tokens):
+                raise ObservationError("git diff returned a truncated rename/copy record")
+            paths.add(tokens[index])
+            paths.add(tokens[index + 1])
+            index += 2
+        else:
+            if index >= len(tokens):
+                raise ObservationError("git diff returned a truncated name-status record")
+            paths.add(tokens[index])
+            index += 1
+    return sorted(paths)
+
+
 def _tracked_files(root: Path) -> list[str]:
     return _zpaths(_git(root, "ls-files", "-z"))
 
@@ -196,7 +224,9 @@ def observe_repository_basis(
     else:
         base_sha = _resolve_ref(root, str(base_ref))
         candidate_sha = _resolve_ref(root, str(candidate_ref))
-        changed = _zpaths(_git(root, "diff", "--name-only", "-z", f"{base_sha}...{candidate_sha}"))
+        changed = _name_status_paths(
+            _git(root, "diff", "--name-status", "-z", f"{base_sha}...{candidate_sha}")
+        )
         outside = [
             path
             for path in changed
