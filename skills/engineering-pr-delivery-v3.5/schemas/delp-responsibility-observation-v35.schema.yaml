@@ -46,7 +46,7 @@ properties:
     properties:
       result: {enum: [SUCCESS, FAILURE, PENDING]}
       candidate_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
-      name: {type: string, minLength: 1}
+      name: {type: string, minLength: 1, pattern: '.*\S.*'}
   diff:
     type: object
     additionalProperties: false
