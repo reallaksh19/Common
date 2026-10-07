@@ -21,6 +21,17 @@ $defs:
       kind: {enum: [SEMANTIC, DELIVERY_GATE, MECHANICAL]}
       outcome: {type: string, minLength: 1, pattern: '.*\\S.*'}
       verify: {type: string, minLength: 1, pattern: '.*\\S.*'}
+  mechanism_exception:
+    type: object
+    additionalProperties: false
+    required: [basis, claim_ids]
+    properties:
+      basis: {type: string, minLength: 1, pattern: '.*\\S.*'}
+      claim_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {$ref: '#/$defs/claim_id'}
   proposed_responsibility:
     type: object
     additionalProperties: false
@@ -35,6 +46,7 @@ $defs:
         items: {$ref: '#/$defs/claim_id'}
       outcome: {type: string, minLength: 1, pattern: '.*\\S.*'}
       independence_basis: {type: string, minLength: 1, pattern: '.*\\S.*'}
+      mechanism_exception: {$ref: '#/$defs/mechanism_exception'}
       semantic_units:
         type: array
         minItems: 1
@@ -61,6 +73,12 @@ $defs:
         type: boolean
         default: false
         description: True only when multiple leaves deliberately share responsibility for the same parent claim.
+      mechanism_exception_allowed:
+        type: boolean
+        default: false
+        description: >-
+          True only when this parent outcome is genuinely infrastructure/verification work for which a mechanism-shaped
+          PRODUCT responsibility boundary is semantically legitimate. The responsibility must still cite an explicit basis.
   size_budget:
     type: object
     additionalProperties: false
