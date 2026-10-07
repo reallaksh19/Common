@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import sys
 import unittest
 from pathlib import Path
@@ -9,6 +10,7 @@ SCRIPTS = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
+import delp_projection_v32 as M
 from owner_commands import parse_owner_command
 
 
@@ -250,6 +252,188 @@ class OwnerIntentEnvelopeTests(unittest.TestCase):
             envelope["boundary_constraints"],
         )
 
+
+
+class TakeoverEntryAdmissionTests(unittest.TestCase):
+    SHA_A = "a" * 40
+    SHA_B = "b" * 40
+    CONTRACT_A = "sha256:" + "1" * 64
+    CONTRACT_B = "sha256:" + "2" * 64
+
+    def owner(self):
+        return parse_owner_command(
+            "take over",
+            source_ref="chat://owner/benchmark-680",
+            target={"ref": "Common#681"},
+        )
+
+    def graph(self):
+        def leaf(ref, weight, claim, contract, surface):
+            return {
+                "ref": ref,
+                "kind": "LEAF",
+                "parent": "Common#680",
+                "weight": weight,
+                "work_class": "PRODUCT",
+                "outcome": f"{claim} is observably complete",
+                "owns_claims": [claim],
+                "independence_basis": f"{claim} has its own admission oracle",
+                "contract_digest": contract,
+                "size_budget": {
+                    "target_loc": 300,
+                    "hard_loc": 700,
+                    "target_minutes": 15,
+                    "hard_minutes": 20,
+                },
+                "write_surface": [surface],
+                "units": [
+                    {"id": "U1", "weight": 40, "verify": "focused test"},
+                    {"id": "U2", "weight": 30, "verify": "focused test"},
+                    {"id": "U3", "weight": 30, "verify": "focused test"},
+                ],
+            }
+        return {
+            "schema": M.GRAPH_SCHEMA,
+            "programme": {
+                "id": "BENCH-680",
+                "root": "Common#680",
+                "acceptance_claims": [
+                    {"id": "PC1", "claim": "entry lifecycle is admitted safely", "kind": "SEMANTIC"},
+                    {"id": "PC2", "claim": "successor evidence is admitted safely", "kind": "SEMANTIC"},
+                ],
+                "decomposition_policy": {
+                    "mode": "ENFORCED",
+                    "claim_first": {"mode": "ENFORCED", "require_independence_basis": True},
+                },
+            },
+            "nodes": [
+                {"ref": "Common#680", "kind": "ROOT"},
+                leaf("Common#681", 1, "PC1", self.CONTRACT_A, "src/a/"),
+                leaf("Common#682", 1, "PC2", self.CONTRACT_B, "src/b/"),
+            ],
+        }
+
+    def fact(self, leaf="Common#681", sha=None, entry=None, units=("U1",)):
+        row = {
+            "schema": M.FACTS_SCHEMA,
+            "responsibility": {"issue": leaf},
+            "material": {"candidate_sha": sha or self.SHA_A},
+            "units": [
+                {
+                    "id": uid,
+                    "state": "COMPLETE",
+                    "result": "VERIFIED",
+                    "evidence_refs": [f"{leaf}#evidence-{uid}"],
+                }
+                for uid in units
+            ],
+        }
+        if entry is not None:
+            row["entry"] = entry
+        return row
+
+    def receipt(self, graph, leaf="Common#681", sequence=1, event="PREPARED", **extra):
+        contracts = {"Common#681": self.CONTRACT_A, "Common#682": self.CONTRACT_B}
+        row = {
+            "event": event,
+            "mode": "TAKEOVER_RECONCILE",
+            "session_digest": M.entry_session_digest(self.owner()),
+            "plan_digest": M.validate_graph(graph)["digest"],
+            "child_ref": leaf,
+            "child_contract_digest": contracts[leaf],
+            "sequence": sequence,
+            "evidence_refs": [f"{leaf}#entry-evidence"],
+        }
+        if event == "PREPARED":
+            row.update({
+                "phase_plan_ref": "Common#680#phase-plan",
+                "reconciliation_ref": "Common#680#reconcile",
+            })
+        row.update(extra)
+        return row
+
+    def project(self, graph, ledger, moved=False):
+        observations = {
+            "Common#681": {"candidate_sha": self.SHA_B if moved else self.SHA_A},
+            "Common#682": {"candidate_sha": self.SHA_A},
+        }
+        wrapped = [{"source": source, "order": i, "facts": fact} for i, (source, fact) in enumerate(ledger, 1)]
+        return M.project(graph, wrapped, observations)
+
+    def test_takeover_blocks_without_current_prepared_entry_evidence(self):
+        g = self.graph()
+        p = self.project(g, [("facts", self.fact())])
+        report = M.admit(p, "Common#681", "take over", self.owner())
+        self.assertEqual("RECONCILE_ENTRY", report["action"])
+        self.assertEqual("ENTRY_PREPARED_EVIDENCE_MISSING", report["entry_admission"]["blocker"]["code"])
+
+    def test_current_prepared_receipt_admits_only_the_bounded_child(self):
+        g = self.graph()
+        p = self.project(g, [("prep", self.fact(entry=self.receipt(g)))])
+        report = M.admit(p, "Common#681", "take over", self.owner())
+        self.assertEqual(("CONTINUE_UNIT", "U2"), (report["action"], report["child"]["unit"]))
+        self.assertTrue(report["entry_admission"]["ready"])
+
+    def test_recovery_precedes_entry_admission_when_material_moved(self):
+        g = self.graph()
+        p = self.project(g, [("facts", self.fact())], moved=True)
+        report = M.admit(p, "Common#681", "take over", self.owner())
+        self.assertEqual("RECOVER_EVIDENCE", report["action"])
+
+    def test_stale_plan_or_wrong_child_contract_fails_closed(self):
+        g = self.graph()
+        cases = (
+            ({"plan_digest": "sha256:" + "f" * 64}, "ENTRY_PLAN_STALE"),
+            ({"child_contract_digest": "sha256:" + "e" * 64}, "ENTRY_CHILD_CONTRACT_MISMATCH"),
+            ({"child_ref": "Common#682"}, "ENTRY_CHILD_MISMATCH"),
+        )
+        for overrides, expected in cases:
+            with self.subTest(expected=expected):
+                receipt = self.receipt(g, **overrides)
+                p = self.project(g, [("prep", self.fact(entry=receipt))])
+                report = M.admit(p, "Common#681", "take over", self.owner())
+                self.assertEqual(expected, report["entry_admission"]["blocker"]["code"])
+
+    def test_second_child_requires_exact_previous_execution_end(self):
+        g = self.graph()
+        prep1 = self.fact(entry=self.receipt(g))
+        prep2 = self.fact(
+            leaf="Common#682",
+            entry=self.receipt(
+                g,
+                leaf="Common#682",
+                sequence=2,
+                previous_leaf_ref="Common#681",
+                previous_evidence_ref="end-681",
+            ),
+        )
+        blocked = self.project(g, [("prep-681", prep1), ("prep-682", prep2)])
+        report = M.admit(blocked, "Common#682", "take over", self.owner())
+        self.assertEqual("ENTRY_PREVIOUS_END_MISSING", report["entry_admission"]["blocker"]["code"])
+
+        end1 = self.fact(entry=self.receipt(g, event="EXECUTION_END"))
+        allowed = self.project(g, [("prep-681", prep1), ("end-681", end1), ("prep-682", prep2)])
+        report = M.admit(allowed, "Common#682", "take over", self.owner())
+        self.assertEqual(("CONTINUE_UNIT", "U2"), (report["action"], report["child"]["unit"]))
+
+    def test_entry_receipt_is_strict_and_never_moves_progress(self):
+        g = self.graph()
+        good = self.receipt(g)
+        self.assertEqual([], M.validate_facts(self.fact(entry=good)))
+        baseline = self.project(g, [("facts", self.fact())])["nodes"]["Common#681"]["progress"]
+        with_entry = self.project(g, [("prep", self.fact(entry=good))])["nodes"]["Common#681"]["progress"]
+        self.assertEqual(baseline, with_entry)
+
+        for key, value in (
+            ("sequence", 0),
+            ("plan_digest", "bad"),
+            ("event", "STARTED"),
+            ("evidence_refs", []),
+        ):
+            bad = copy.deepcopy(good)
+            bad[key] = value
+            with self.subTest(key=key):
+                self.assertTrue(M.validate_facts(self.fact(entry=bad)))
 
 
 if __name__ == "__main__":
