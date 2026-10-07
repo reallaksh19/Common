@@ -704,6 +704,16 @@ class GraphValidation(unittest.TestCase):
         legacy["programme"].pop("graph_generation")
         self.assertEqual(M.validate_graph(explicit)["digest"], M.validate_graph(legacy)["digest"])
 
+    def test_matching_asserted_contract_digest_does_not_change_stable_graph_digest(self):
+        without_assertion = stable_graph()
+        derived = M.validate_graph(without_assertion)["nodes"]["Common#592"]["contract_digest"]
+        with_assertion = copy.deepcopy(without_assertion)
+        next(n for n in with_assertion["nodes"] if n["ref"] == "Common#592")["contract_digest"] = derived
+        self.assertEqual(
+            M.validate_graph(without_assertion)["digest"],
+            M.validate_graph(with_assertion)["digest"],
+        )
+
     def test_responsibility_id_is_not_synthesized_from_issue_locator(self):
         g = stable_graph()
         leaf = next(n for n in g["nodes"] if n["ref"] == "Common#592")
@@ -843,6 +853,16 @@ class ResponsibilityContractBinding(unittest.TestCase):
         record["responsibility"]["id"] = "WRONG"
         with self.assertRaises(M.DelpError):
             M.bind_facts_to_graph(g, record)
+
+    def test_wrong_repository_same_issue_number_is_not_bound_or_admitted(self):
+        g = stable_graph()
+        raw = facts(units=[unit("U01")])
+        raw["responsibility"]["issue"] = "other/repo#592"
+        with self.assertRaises(M.DelpError):
+            M.bind_facts_to_graph(g, raw)
+        out = M.project(g, [entry(raw, 1)], OBS_A)
+        self.assertEqual(0, out["nodes"]["Common#592"]["progress"]["P"])
+        self.assertIn("not a declared LEAF", out["rejected_facts"][0]["reasons"][0])
 
     def test_legacy_locator_only_fact_remains_admissible(self):
         out = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], OBS_A)
