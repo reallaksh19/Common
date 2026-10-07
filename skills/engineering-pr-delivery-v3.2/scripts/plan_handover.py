@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from handover_context import build_context, build_request, render_request
+from handover_context import build_context
 from intelligence_projection import build_improvement, build_task
 from lease_liveness import active_lease_renewal
 from programme_reconciliation import assess_boundary
@@ -93,9 +93,6 @@ def plan_handover(
         raise TransactionError("task snapshot changed while freezing handover context")
     if canonical_digest(improvement_view) != improvement_meta.get("digest"):
         raise TransactionError("improvement view changed while freezing handover context")
-    request = build_request(context)
-    request_md = render_request(request).encode("utf-8")
-
     state = load_yaml(root / "relay/STATE.yaml")
     snapshot_path = str((state.get("generated") or {}).get("snapshot"))
     events, event_errors = load_events(root / "relay/EVENTS.jsonl")
@@ -110,15 +107,13 @@ def plan_handover(
         [
             tx_id,
             target["provider_ref"],
-            request["handover_context"]["digest"],
+            canonical_digest(context),
             task_meta["digest"],
             improvement_meta["digest"],
             canonical_digest(programme_reconciliation),
         ],
         {
-            "complex_mode": bool(complex_mode),
-            "prompt_count": len(request["generator"]["prompt_sequence"]),
-            "generator_mode": request["generator"]["mode"],
+            "reasoning_request_generated": False,
             "programme_parent_count": len(programme_reconciliation.get("parents") or []),
             "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
             "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
@@ -130,8 +125,6 @@ def plan_handover(
     replacements = {
         snapshot_path: yaml_bytes(snapshot),
         "relay/GENERATED/HANDOVER_CONTEXT.yaml": yaml_bytes(context),
-        "relay/GENERATED/TWO_PASS_REQUEST.yaml": yaml_bytes(request),
-        "relay/GENERATED/TWO_PASS_REQUEST.md": request_md,
         "relay/EVENTS.jsonl": jsonl_bytes(events),
     }
     renewal = active_lease_renewal(root, state, actor, base_ref=base_ref)
@@ -151,7 +144,7 @@ def plan_handover(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Freeze V3 relay truth and create a verified request for the standalone current two-pass generator."
+        description="Freeze V3 relay custody truth without implicitly generating a reasoning request."
     )
     parser.add_argument("repo_root", nargs="?", default=".")
     parser.add_argument(
