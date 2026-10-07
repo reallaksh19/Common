@@ -443,6 +443,51 @@ Programme (root) title:
 
 Titles are disposable read models, generated from the execution graph (this manifest in machine-readable form), `CHECKPOINT_FACTS_V1` and observed material truth, never typed by an executor. The manifests/evidence are authority for reconstruction. The per-colour issue counts of the earlier form are replaced by the frontier count `F` and the derived state word; colours are still never averaged.
 
+## Claim-first Responsibility Decomposition Gate
+
+For every **new** programme decomposition, responsibility topology is derived from parent outcome claims before files, workflows, CI lanes or evidence mechanics are assigned.
+
+Required order:
+
+```text
+PARENT OUTCOME
+  -> falsifiable acceptance claims
+  -> independently governable responsibility partition
+  -> parent-claim coverage proof
+  -> leaf independence proof
+  -> implementation/evidence/write surfaces
+  -> child materialization
+```
+
+The execution graph represents this with:
+
+```yaml
+programme:
+  acceptance_claims:
+    - {id: PA1, claim: learner constructs the reusable model, kind: SEMANTIC}
+    - {id: PG1, claim: exact-head integration is qualified, kind: DELIVERY_GATE}
+  decomposition_policy:
+    mode: ENFORCED
+    claim_first: {mode: ENFORCED, require_independence_basis: true}
+
+nodes:
+  - kind: LEAF
+    work_class: PRODUCT
+    owns_claims: [PA1]
+    independence_basis: can receive RESPONSIBILITY_COMPLETE YES/NO from its own artifact and oracle
+```
+
+Rules:
+- every parent acceptance claim is owned by at least one leaf;
+- every leaf owns at least one declared parent claim;
+- duplicate ownership is a blocker unless that claim explicitly sets `shared: true`;
+- every `PRODUCT` leaf owns at least one `SEMANTIC` claim;
+- every claim-first leaf states why it can be independently accepted/rejected;
+- browser, tests, evidence, workflow, migration and handoff mechanics normally live inside acceptance methods or explicit `GATE` leaves rather than defining PRODUCT responsibility boundaries;
+- child issues MUST NOT be materialized until the claim-first gate is RELEASEABLE.
+
+Historical V3.2 graphs without the claim fields remain readable; the compatibility default is `claim_first.mode: OFF`. That compatibility default is not permission for a new programme to omit the gate.
+
 ## Decomposition Validation Gate
 
 Before first production release, the Coordinator SHOULD produce a machine-verifiable decomposition quality result proving at least:

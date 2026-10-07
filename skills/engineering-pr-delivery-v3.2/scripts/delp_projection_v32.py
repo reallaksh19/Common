@@ -81,6 +81,7 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
 POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
 WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
+CLAIM_KINDS = ("SEMANTIC", "DELIVERY_GATE")
 PLAN_UPDATE_KINDS = ("SCOPE_EXPANSION", "SCOPE_REDUCTION", "UNIT_REWEIGHT", "UNIT_DROPPED", "POLICY_CHANGE")
 # Display scale for "unit points". Percentages never use it: every share is an exact Fraction of the programme.
 DEFAULT_TOTAL_WEIGHT = 10000
@@ -97,6 +98,8 @@ DEFAULT_POLICY: dict[str, Any] = {
     "leaf_budget": {"target_loc": 700, "hard_loc": 1500, "target_minutes": 15, "hard_minutes": 20},
     "min_leaf_target_loc": 50,
     "require": {"outcome": True, "verify": True, "write_surface": True, "size_budget": True},
+    # Backward compatible for historical graphs. New programme decompositions MUST opt in with ENFORCED.
+    "claim_first": {"mode": "OFF", "require_independence_basis": True},
 }
 _BUDGET_KEYS = ("target_loc", "hard_loc", "target_minutes", "hard_minutes")
 
@@ -627,6 +630,35 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
+    """Normalize parent acceptance claims. Claims describe outcomes; leaves own them."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError("programme.acceptance_claims: must be an array")
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        where = f"programme.acceptance_claims[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        cid = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(cid) or cid in seen:
+            raise GraphError(f"{where}.id: invalid or duplicate claim id {cid!r}")
+        claim = raw.get("claim")
+        if not isinstance(claim, str) or not claim.strip():
+            raise GraphError(f"{where}.claim: must be a non-empty string")
+        kind = raw.get("kind")
+        if kind not in CLAIM_KINDS:
+            raise GraphError(f"{where}.kind: one of {list(CLAIM_KINDS)}")
+        shared = raw.get("shared", False)
+        if not isinstance(shared, bool):
+            raise GraphError(f"{where}.shared: must be boolean")
+        seen.add(cid)
+        rows.append({"id": cid, "claim": claim.strip(), "kind": kind, "shared": shared})
+    return rows
+
+
 def resolve_policy(overrides: Any) -> dict[str, Any]:
     """Merge `programme.decomposition_policy` over the defaults and validate it. Raises GraphError."""
     policy = copy.deepcopy(DEFAULT_POLICY)
@@ -642,7 +674,7 @@ def resolve_policy(overrides: Any) -> dict[str, Any]:
             if value not in POLICY_MODES:
                 raise GraphError(f"programme.decomposition_policy.mode: one of {list(POLICY_MODES)}")
             policy["mode"] = value
-        elif key in ("units", "leaf_budget", "require"):
+        elif key in ("units", "leaf_budget", "require", "claim_first"):
             if not isinstance(value, Mapping):
                 raise GraphError(f"programme.decomposition_policy.{key}: must be a mapping")
             extra = sorted(set(map(str, value)) - set(policy[key]))
@@ -666,6 +698,11 @@ def resolve_policy(overrides: Any) -> dict[str, Any]:
         raise GraphError("programme.decomposition_policy.min_leaf_target_loc: must be a non-negative integer")
     if not all(isinstance(v, bool) for v in policy["require"].values()):
         raise GraphError("programme.decomposition_policy.require: values must be booleans")
+    claim_first = policy["claim_first"]
+    if claim_first["mode"] not in POLICY_MODES:
+        raise GraphError(f"programme.decomposition_policy.claim_first.mode: one of {list(POLICY_MODES)}")
+    if not isinstance(claim_first["require_independence_basis"], bool):
+        raise GraphError("programme.decomposition_policy.claim_first.require_independence_basis: must be boolean")
     return policy
 
 
@@ -718,6 +755,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         raise GraphError(f"programme.root: {exc}") from exc
     policy = resolve_policy(programme.get("decomposition_policy"))
     health_policy = resolve_health_policy(programme.get("health_policy"))
+    acceptance_claims = _acceptance_claims(programme.get("acceptance_claims"))
+    claims_by_id = {row["id"]: row for row in acceptance_claims}
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -813,6 +852,15 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             basis = raw.get("parallel_ok_basis")
             if basis is not None and not isinstance(basis, str):
                 raise GraphError(f"{ref}.parallel_ok_basis: must be a string")
+            independence_basis = raw.get("independence_basis")
+            if independence_basis is not None and not isinstance(independence_basis, str):
+                raise GraphError(f"{ref}.independence_basis: must be a string")
+            owns_claims = _str_list(raw.get("owns_claims"), f"{ref}.owns_claims")
+            for cid in owns_claims:
+                if not _UNIT_ID.fullmatch(cid):
+                    raise GraphError(f"{ref}.owns_claims: invalid claim id {cid!r}")
+            if len(owns_claims) != len(set(owns_claims)):
+                raise GraphError(f"{ref}.owns_claims: claim ids must be unique")
             node.update(
                 {
                     "units": clean_units,
@@ -833,6 +881,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "depends_on": _ref_list(raw.get("depends_on"), f"{ref}.depends_on"),
                     "parallel_ok": _ref_list(raw.get("parallel_ok"), f"{ref}.parallel_ok"),
                     "parallel_ok_basis": (basis or "").strip() or None,
+                    "owns_claims": sorted(set(owns_claims)),
+                    "independence_basis": (independence_basis or "").strip() or None,
                 }
             )
             if node["primary_pr"] is not None:
@@ -914,6 +964,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "programme": dict(programme),
         "policy": policy,
         "health_policy": health_policy,
+        "acceptance_claims": acceptance_claims,
+        "claims_by_id": claims_by_id,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
@@ -959,12 +1011,41 @@ def _parts_at_target(budget: Mapping[str, int], limits: Mapping[str, int]) -> in
     return parts
 
 
-def _leaf_findings(node: Mapping[str, Any], policy: Mapping[str, Any]) -> list[dict[str, str]]:
-    """Every per-leaf rule. MECHANICAL and GATE leaves are exempt from the unit-count floor and the share cap only."""
+def _leaf_findings(
+    node: Mapping[str, Any], policy: Mapping[str, Any], claims_by_id: Mapping[str, Mapping[str, Any]]
+) -> list[dict[str, str]]:
+    """Every per-leaf rule. Claim-first checks are explicit topology checks, never keyword inference."""
     unit_rules, limits, require = policy["units"], policy["leaf_budget"], policy["require"]
     product = node["work_class"] == "PRODUCT"
     rows = node["units"]
     found: list[dict[str, str]] = []
+    claim_policy = policy["claim_first"]
+    if claim_policy["mode"] != "OFF":
+        severity = "ADVISORY" if claim_policy["mode"] == "ADVISORY" else "BLOCKER"
+        owned = node["owns_claims"]
+        if not owned:
+            found.append(_finding("LEAF_CLAIM_MISSING", "claim-first plan requires every leaf to own at least one parent acceptance claim", severity))
+        unknown = [cid for cid in owned if cid not in claims_by_id]
+        if unknown:
+            found.append(_finding("CLAIM_UNKNOWN", f"owns undeclared parent claim(s): {_id_list(unknown)}", severity))
+        if product and owned and not any(
+            claims_by_id[cid]["kind"] == "SEMANTIC" for cid in owned if cid in claims_by_id
+        ):
+            found.append(
+                _finding(
+                    "PRODUCT_SEMANTIC_CLAIM_MISSING",
+                    "PRODUCT leaf owns only DELIVERY_GATE claims; implementation mechanics belong in acceptance methods or a GATE leaf",
+                    severity,
+                )
+            )
+        if claim_policy["require_independence_basis"] and not node["independence_basis"]:
+            found.append(
+                _finding(
+                    "INDEPENDENCE_BASIS_MISSING",
+                    "state why this leaf can receive an independent RESPONSIBILITY_COMPLETE YES/NO without completing its siblings",
+                    severity,
+                )
+            )
     if len(rows) > unit_rules["max"]:
         found.append(_finding("UNITS_ABOVE_MAX", f"{len(rows)} units (max {unit_rules['max']}): split the leaf"))
     if product and len(rows) < unit_rules["min"]:
@@ -1038,7 +1119,42 @@ def _decomposition(
     closed = set(closed)
     leaves = [ref for ref in indexed["order"] if nodes[ref]["kind"] == "LEAF"]
     active = [ref for ref in leaves if ref not in closed]
-    found = {ref: _leaf_findings(nodes[ref], policy) for ref in active}
+    claims_by_id = indexed["claims_by_id"]
+    found = {ref: _leaf_findings(nodes[ref], policy, claims_by_id) for ref in active}
+
+    claim_policy = policy["claim_first"]
+    if claim_policy["mode"] != "OFF" and active:
+        severity = "ADVISORY" if claim_policy["mode"] == "ADVISORY" else "BLOCKER"
+        if not claims_by_id:
+            finding = _finding(
+                "PARENT_CLAIMS_MISSING",
+                "claim-first plan requires programme.acceptance_claims before child release",
+                severity,
+            )
+            for ref in active:
+                found[ref].append(finding)
+        else:
+            owners: dict[str, list[str]] = {cid: [] for cid in claims_by_id}
+            for ref in leaves:
+                for cid in nodes[ref]["owns_claims"]:
+                    if cid in owners:
+                        owners[cid].append(ref)
+            uncovered = [cid for cid, refs in owners.items() if not refs]
+            if uncovered:
+                finding = _finding(
+                    "PARENT_CLAIM_UNCOVERED",
+                    f"no leaf owns parent acceptance claim(s): {_id_list(uncovered)}",
+                    severity,
+                )
+                for ref in active:
+                    found[ref].append(finding)
+            for cid, refs in owners.items():
+                if len(refs) <= 1 or claims_by_id[cid]["shared"]:
+                    continue
+                detail = f"{cid} is owned by {_id_list(refs)}; set claim.shared=true only when joint ownership is intentional"
+                targets = [ref for ref in refs if ref in found]
+                for ref in targets:
+                    found[ref].append(_finding("DUPLICATE_CLAIM_OWNERSHIP", detail, severity))
 
     reach: dict[str, set[str]] = {}
 

@@ -11,6 +11,19 @@ description: >-
 $defs:
   ref: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
   item_key: {type: string, pattern: '^[^:\s]+:(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  claim_id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  acceptance_claim:
+    type: object
+    additionalProperties: false
+    required: [id, claim, kind]
+    properties:
+      id: {$ref: '#/$defs/claim_id'}
+      claim: {type: string, minLength: 1, pattern: '.*\S.*'}
+      kind: {enum: [SEMANTIC, DELIVERY_GATE]}
+      shared:
+        type: boolean
+        default: false
+        description: True only when multiple leaves deliberately share responsibility for the same parent claim.
   size_budget:
     type: object
     additionalProperties: false
@@ -47,6 +60,14 @@ properties:
         type: integer
         minimum: 1
         description: Display scale for unit points (default 10000). Shares are exact fractions; this never changes a percentage.
+      acceptance_claims:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/acceptance_claim'}
+        description: >-
+          Parent outcome claims to be partitioned across leaves. SEMANTIC claims describe product/academic/architecture/
+          research outcomes; DELIVERY_GATE claims describe integration, verification, publication or other delivery gates.
+          New programme decompositions enable claim_first ENFORCED before releasing children.
       health_policy:
         type: object
         additionalProperties: false
@@ -101,6 +122,15 @@ properties:
               target_minutes: {type: integer, minimum: 1}
               hard_minutes: {type: integer, minimum: 1}
           min_leaf_target_loc: {type: integer, minimum: 0}
+          claim_first:
+            type: object
+            additionalProperties: false
+            description: >-
+              Claim-first decomposition is OFF for historical graph compatibility. New programme decompositions MUST set
+              mode ENFORCED before child release. ADVISORY reports topology findings without blocking.
+            properties:
+              mode: {enum: [OFF, ADVISORY, ENFORCED]}
+              require_independence_basis: {type: boolean}
           require:
             type: object
             additionalProperties: false
@@ -180,6 +210,16 @@ properties:
           items: {$ref: '#/$defs/ref'}
           description: Leaves whose overlapping write surface is safe to edit in parallel; needs parallel_ok_basis.
         parallel_ok_basis: {type: string}
+        owns_claims:
+          type: array
+          uniqueItems: true
+          items: {$ref: '#/$defs/claim_id'}
+          description: Parent acceptance claim IDs owned by this leaf.
+        independence_basis:
+          type: string
+          minLength: 1
+          pattern: '.*\S.*'
+          description: Why this leaf can receive an independent responsibility verdict without completing its siblings.
         units:
           type: array
           minItems: 1
