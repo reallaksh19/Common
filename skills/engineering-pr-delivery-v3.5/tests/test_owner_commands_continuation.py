@@ -309,6 +309,7 @@ class TakeoverEntryAdmissionV35Tests(unittest.TestCase):
                 "state": "COMPLETE",
                 "result": "VERIFIED",
                 "evidence_refs": ["Common#681#evidence-U1"],
+                "contract_digest": indexed["nodes"]["Common#681"]["contract_digest"],
             }],
         }
         if receipt is not None:

@@ -314,6 +314,7 @@ class TakeoverEntryAdmissionTests(unittest.TestCase):
         }
 
     def fact(self, leaf="Common#681", sha=None, entry=None, units=("U1",)):
+        contracts = {"Common#681": self.CONTRACT_A, "Common#682": self.CONTRACT_B}
         row = {
             "schema": M.FACTS_SCHEMA,
             "responsibility": {"issue": leaf},
@@ -324,6 +325,7 @@ class TakeoverEntryAdmissionTests(unittest.TestCase):
                     "state": "COMPLETE",
                     "result": "VERIFIED",
                     "evidence_refs": [f"{leaf}#evidence-{uid}"],
+                    "contract_digest": contracts[leaf],
                 }
                 for uid in units
             ],
