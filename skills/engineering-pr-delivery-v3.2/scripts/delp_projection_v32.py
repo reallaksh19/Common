@@ -859,6 +859,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             for cid in owns_claims:
                 if not _UNIT_ID.fullmatch(cid):
                     raise GraphError(f"{ref}.owns_claims: invalid claim id {cid!r}")
+            if len(owns_claims) != len(set(owns_claims)):
+                raise GraphError(f"{ref}.owns_claims: claim ids must be unique")
             node.update(
                 {
                     "units": clean_units,
@@ -1150,7 +1152,7 @@ def _decomposition(
                 if len(refs) <= 1 or claims_by_id[cid]["shared"]:
                     continue
                 detail = f"{cid} is owned by {_id_list(refs)}; set claim.shared=true only when joint ownership is intentional"
-                targets = [ref for ref in refs if ref in found] or active
+                targets = [ref for ref in refs if ref in found]
                 for ref in targets:
                     found[ref].append(_finding("DUPLICATE_CLAIM_OWNERSHIP", detail, severity))
 
