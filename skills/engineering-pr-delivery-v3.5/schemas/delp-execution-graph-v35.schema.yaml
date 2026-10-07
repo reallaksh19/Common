@@ -116,6 +116,7 @@ properties:
               verify: {type: boolean}
               write_surface: {type: boolean}
               size_budget: {type: boolean}
+              transformation_boundaries: {type: boolean}
   plan_updates:
     type: array
     description: >-
@@ -197,6 +198,31 @@ properties:
           items: {$ref: '#/$defs/ref'}
           description: Leaves whose overlapping write surface is safe to edit in parallel; needs parallel_ok_basis.
         parallel_ok_basis: {type: string}
+        transformation_boundaries:
+          type: array
+          uniqueItems: true
+          description: >-
+            Independently falsifiable transformation/authority boundaries crossed by this leaf.
+            Ordinary atomic leaves normally declare exactly one boundary when the programme requires it.
+          items:
+            enum:
+              - WIRE_SCHEMA
+              - ENGINE_VALIDATION
+              - COMPATIBILITY_NORMALIZATION
+              - PROVIDER_ADAPTER
+              - AUTHORITY_POLICY
+              - DERIVED_RECONCILIATION
+              - ACTUATION_UI_PROJECTION
+              - CUSTODY_FENCING
+              - ASSURANCE_POLICY
+              - MIGRATION
+              - QUALIFICATION_DOCS
+              - PRODUCT_IMPLEMENTATION
+        integration_basis:
+          type: string
+          minLength: 1
+          pattern: '.*\S.*'
+          description: Exceptional justification for intentionally keeping multiple independently falsifiable boundaries in one leaf.
         units:
           type: array
           minItems: 1
