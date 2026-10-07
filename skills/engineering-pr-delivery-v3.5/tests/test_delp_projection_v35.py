@@ -1841,6 +1841,24 @@ class DecompositionRepositoryObservationCurrentness(unittest.TestCase):
                 current["observed_plan_basis_digest"],
             )
 
+    def test_provider_locator_move_preserves_stable_repository_plan_basis(self):
+        g = self.graph()
+        g["nodes"][0]["responsibility_id"] = "RID-1"
+        g["nodes"][1]["responsibility_id"] = "RID-2"
+        first = O.repository_plan_basis(g, "Common#1")
+
+        moved = copy.deepcopy(g)
+        moved["nodes"][0]["ref"] = "Common#101"
+        moved["nodes"][1]["ref"] = "Common#202"
+        second = O.repository_plan_basis(moved, "Common#101")
+
+        self.assertEqual("RID-1", first["value"]["subject"])
+        self.assertEqual(
+            [{"responsibility_id": "RID-2", "write_surface": ["other/"]}],
+            first["value"]["siblings"],
+        )
+        self.assertEqual(first["digest"], second["digest"])
+
     def test_missing_observation_is_explicit_missing_not_clean(self):
         graph_value = self.graph()
         current = O.repository_observation_currentness(
@@ -1848,6 +1866,20 @@ class DecompositionRepositoryObservationCurrentness(unittest.TestCase):
         )
         self.assertEqual("MISSING", current["state"])
         self.assertIsNone(current["observed_plan_basis_digest"])
+
+    def test_dependency_basis_uses_stable_responsibility_identity(self):
+        g = self.graph()
+        g["nodes"][0]["responsibility_id"] = "RID-1"
+        g["nodes"][1]["responsibility_id"] = "RID-2"
+        g["nodes"][0]["depends_on"] = ["Common#2"]
+        first = O.repository_plan_basis(g, "Common#1")
+        self.assertEqual(["RID-2"], first["value"]["declared_dependencies"])
+
+        moved = copy.deepcopy(g)
+        moved["nodes"][1]["ref"] = "Common#202"
+        moved["nodes"][0]["depends_on"] = ["Common#202"]
+        second = O.repository_plan_basis(moved, "Common#1")
+        self.assertEqual(first["digest"], second["digest"])
 
     def test_wrong_authority_or_subject_fails_closed(self):
         graph_value = self.graph()

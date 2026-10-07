@@ -143,25 +143,42 @@ def _string_list(value: Any, label: str) -> list[str]:
 
 
 def repository_plan_basis(graph: Mapping[str, Any], leaf_ref: str) -> dict[str, Any]:
-    """Return the deterministic graph-only basis bound by repository observations."""
+    """Return graph-only repository basis keyed by stable Responsibility identity.
+
+    GitHub refs remain observation locators only. Moving/recreating an issue must
+    not stale repository-plan basis when the stable Responsibility contract is unchanged.
+    """
     node = _leaf(graph, leaf_ref)
     surfaces = _surface_list(node)
-    sibling_basis: list[dict[str, Any]] = []
     nodes = graph.get("nodes") or []
+    by_ref = {
+        str(item.get("ref") or ""): item
+        for item in nodes
+        if isinstance(item, Mapping)
+    }
+
+    def stable_identity(item: Mapping[str, Any]) -> str:
+        return str(item.get("responsibility_id") or item.get("ref") or "")
+
+    sibling_basis: list[dict[str, Any]] = []
     for sibling in nodes:
         if not isinstance(sibling, Mapping) or sibling is node or sibling.get("kind") != "LEAF":
             continue
         sibling_basis.append(
             {
-                "ref": str(sibling.get("ref") or ""),
+                "responsibility_id": stable_identity(sibling),
                 "write_surface": _surface_list(sibling),
             }
         )
-    sibling_basis.sort(key=lambda row: row["ref"])
+    sibling_basis.sort(key=lambda row: row["responsibility_id"])
     boundaries = _string_list(node.get("transformation_boundaries"), "transformation_boundaries")
-    dependencies = _string_list(node.get("depends_on"), "depends_on")
+    raw_dependencies = _string_list(node.get("depends_on"), "depends_on")
+    dependencies = sorted(
+        stable_identity(by_ref[ref]) if ref in by_ref else ref
+        for ref in raw_dependencies
+    )
     value = {
-        "subject": leaf_ref,
+        "subject": stable_identity(node),
         "write_surface": surfaces,
         "transformation_boundaries": boundaries,
         "declared_dependencies": dependencies,
