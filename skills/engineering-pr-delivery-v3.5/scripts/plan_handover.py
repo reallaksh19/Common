@@ -113,7 +113,6 @@ def plan_handover(
             canonical_digest(programme_reconciliation),
         ],
         {
-            "complex_mode": bool(complex_mode),
             "reasoning_request_generated": False,
             "programme_parent_count": len(programme_reconciliation.get("parents") or []),
             "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
