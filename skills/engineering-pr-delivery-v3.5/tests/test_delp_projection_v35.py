@@ -4087,6 +4087,18 @@ class CanonicalConditionSetAssembly(unittest.TestCase):
         self.assertIn("health", stressed)
         self.assertEqual(base["conditions"], stressed["conditions"])
 
+    def test_conditions_are_not_prematurely_published_to_live_status(self):
+        projection = M.project(stable_graph(), [], OBS_A)
+        leaf = projection["nodes"]["Common#592"]
+        self.assertEqual(8, len(leaf["conditions"]))
+        status = M.status_document(
+            leaf,
+            version=0,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        self.assertNotIn("conditions", status["node"])
+
     def test_finalizer_rejects_duplicate_or_incomplete_sets(self):
         node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
         complete = node["conditions"]
