@@ -960,7 +960,14 @@ jobs:
           PY
 
       - name: Fetch exact P3-I base object
-        run: git fetch --no-tags --depth=1 origin 6beb162cddd02100bc61079e53ad84d8563bb300
+        shell: bash
+        run: |
+          set -euo pipefail
+          P3I_BASE_SHA="$(python -c "import pathlib,yaml; print(yaml.safe_load(pathlib.Path('skills/engineering-programme-coordinator/references/p3-i-integration-source.yaml').read_text(encoding='utf-8'))['base']['sha'])")"
+          [[ "$P3I_BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git fetch --no-tags --depth=1 origin "$P3I_BASE_SHA"
+          git cat-file -e "$P3I_BASE_SHA^{commit}"
+          echo "Fetched P3-I base: $P3I_BASE_SHA" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Validate frozen P3-I integration source
         run: |
