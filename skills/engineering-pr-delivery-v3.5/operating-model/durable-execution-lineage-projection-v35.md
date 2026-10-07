@@ -190,6 +190,46 @@ An observed head alone is **not** a signal (a fresh branch points at its base), 
 
 Pinned by `RealScenarioReplay`, which replays the #527 / P3-I situation (the real issue and PR numbers, merge commits, branch head and ahead-9 / behind-4 divergence; the closed weights and the 10000 denominator) through the projector.
 
+## Responsibility observations — provider truth, normalized once
+
+Provider state enters reconciliation through `RESPONSIBILITY_OBSERVATION_V1`. It is an **ephemeral observation contract**, not an executor fact, not an append-only poll log, and not a requirement to publish every provider read back to GitHub.
+
+```yaml
+schema: relay-v3.5-delp-responsibility-observation
+visibility: OBSERVED                 # OBSERVED | UNAVAILABLE
+material:                            # MATERIAL
+  candidate_sha: <40-hex>
+  base_sha: <40-hex>
+  pr_state: OPEN                    # OPEN | MERGED | CLOSED | UNKNOWN
+  ahead_by: 2
+  behind_by: 1
+custody:                             # CUSTODY telemetry only; fencing semantics are P3
+  interruptions:
+    coverage_from: "2026-10-07T00:00:00Z"
+    losses: []
+liveness: {value: ACTIVE}            # LIVENESS: ACTIVE | QUIET | STALE
+check:                               # CHECK is optional and is not a universal delivery gate
+  name: optional-provider-check
+  result: SUCCESS                    # SUCCESS | FAILURE | PENDING
+  candidate_sha: <40-hex>
+diff:                                # DIFF
+  additions: 100
+  deletions: 2
+  since_checkpoint: {additions: 20, deletions: 1}
+```
+
+The categories are `MATERIAL`, `CUSTODY`, `LIVENESS`, optional `CHECK`, and optional `DIFF`.
+
+- A missing optional category is **UNOBSERVED**, never PASS and never FAIL.
+- `visibility: UNAVAILABLE` means the provider could not be observed; all categories are unavailable and no zero/failure value is fabricated.
+- An absent CI/check record does not block ordinary semantic work. A later explicit responsibility policy may make a particular check relevant, but the observation itself carries no such authority.
+- Executors cannot publish provider observations through `CHECKPOINT_FACTS_V1`; observation/currentness keys are forbidden facts fields.
+- Existing flat observation fixtures remain readable. `normalize_observation()` maps both the typed contract and legacy flat input into the existing pure projection vocabulary, so P2-B1 changes the observation boundary rather than changing progress semantics.
+- `observe_github()` emits the typed material observation for PR/branch provider reads. Diff, liveness and interruption telemetry remain unobserved until an observer actually supplies them.
+- Normalization is in-memory. There is no second persistence system and no requirement to retain every provider poll.
+
+This gives later conditions/actual-next logic one authority-separated input without making the agent copy provider-known SHAs, checks, liveness or diff telemetry by hand.
+
 ## Frontier — what a handover may carry, and how a successor checks it is still true
 
 A handover is the predecessor's view of a leaf **at one instant**, never current truth. Written by hand it carries numbers (a base commit, a branch head, "ahead 9 / behind 4", a percentage) that nothing can check, and the successor is told to re-read them all. DELP derives that view and checks it mechanically.
@@ -370,6 +410,8 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 - The compact Owner chat checkpoint (`TASK_EVIDENCE — CHECKPOINT … UNIT / DELTA / BLOCKER / OWNER_ACTION / NEXT / EVIDENCE`) is unchanged and is rendered from the same projection; the `CONTINUE CHECKPOINT` above is the admission-time form.
 
 ## Amendment of V3.2
+
+> **Current #600 implementation boundary:** V3.2 is read-only reference/history. The text below documents the earlier repository amendment; it is not authority for this Responsibility-kernel programme to modify V3.2 or restore cross-version byte parity.
 
 `skills/engineering-pr-delivery-v3.2/**` was frozen by #492/#494 and is guarded in CI. The Owner explicitly instructed that this fix land in both V3.2 and V3.5. The V3.2 changes are therefore an **additive amendment**: new `delp_projection_v32.py`, its schemas and tests, the DERIVED mode of `continuity_projection.py`, the `CONTINUE_RECONCILE` intent, and the documentation updates. The freeze guard permits exactly the paths listed in `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml` and fails on any other change. Governance-critical: merge remains Owner-controlled.
 
