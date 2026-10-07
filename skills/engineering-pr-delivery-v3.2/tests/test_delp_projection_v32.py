@@ -215,6 +215,30 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         rows = M.decomposition_report(g)["leaves"]
         self.assertTrue(all("PARENT_CLAIM_WEIGHT_TOTAL" in {f["code"] for f in row["blockers"]} for row in rows.values()))
 
+    def test_delivery_gate_weight_cannot_silently_dominate_semantic_weight(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["weight"] = 40
+        g["programme"]["acceptance_claims"][1]["weight"] = 60
+        g["programme"]["decomposition_proposal"]["responsibilities"][0]["claim_allocations"][0]["weight"] = 40
+        g["programme"]["decomposition_proposal"]["responsibilities"][1]["claim_allocations"][0]["weight"] = 60
+        report = M.decomposition_report(g)
+        self.assertTrue(
+            all(
+                "DELIVERY_GATE_WEIGHT_DOMINATES" in {f["code"] for f in row["blockers"]}
+                for row in report["leaves"].values()
+            )
+        )
+        g["programme"]["decomposition_proposal"]["delivery_gate_weight_exception_basis"] = (
+            "Owner-approved infrastructure programme where delivery qualification is itself load-bearing"
+        )
+        report = M.decomposition_report(g)
+        self.assertTrue(
+            all(
+                "DELIVERY_GATE_WEIGHT_DOMINATES" not in {f["code"] for f in row["blockers"]}
+                for row in report["leaves"].values()
+            )
+        )
+
     def test_responsibility_claim_allocation_must_match_parent_claim_weight(self):
         g = self.proposal_graph()
         g["programme"]["decomposition_proposal"]["responsibilities"][0]["claim_allocations"][0]["weight"] = 80
