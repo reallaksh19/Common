@@ -166,3 +166,18 @@ amendments:
     allowed_paths:
       - skills/engineering-pr-delivery-v3.2/tests/test_agent_health_retained_replay_v32.py
 
+  - id: AMEND-V32-AGENT-REPLAY-DISCOVERY-009
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'you will not work on v3.5' and
+      'proceed next', plus Common #689 PLAN_UPDATE for G-REPLAY hosted-discovery repair.
+      This draft amendment MUST NOT merge until the corrected Proposal-V2 digest for
+      the discoverable replay path is machine RELEASEABLE and recorded here.
+    summary: >-
+      Draft-only V3.2 amendment for Common #689/#713 G-REPLAY to move the retained
+      Agent Health replay onto the existing hosted V3.2 discovery pattern. It authorizes
+      only the discoverable test path below; no runtime, DELP control, handover, title,
+      admission or V3.5 surface is authorized.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_health_retained_replay.py
+
