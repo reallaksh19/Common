@@ -888,8 +888,11 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     seen: set[str] = set()
     for index, raw in enumerate(raw_rows):
         where = f"programme.decomposition_proposal.responsibilities[{index}]"
-        required = {"id", "work_class", "owns_claims", "claim_allocations", "outcome", "independence_basis", "semantic_units"}
-        allowed = required | {"mechanism_exception"}
+        required = {
+            "id", "work_class", "owns_claims", "claim_allocations", "outcome", "independence_basis",
+            "semantic_units", "size_budget", "write_surface", "acceptance_methods",
+        }
+        allowed = required | {"mechanism_exception", "depends_on", "parallel_ok", "parallel_ok_basis"}
         if not isinstance(raw, Mapping) or not required.issubset(set(map(str, raw))) or set(map(str, raw)) - allowed:
             raise GraphError(f"{where}: exact pre-materialization responsibility fields required")
         rid = str(raw.get("id") or "")
@@ -918,6 +921,22 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
             allocations.append({"claim_id": claim_id, "weight": _positive_int(allocation.get("weight"), f"{awhere}.weight")})
         if set(seen_allocations) != set(owns_claims):
             raise GraphError(f"{where}.claim_allocations: claim ids must exactly match owns_claims")
+
+        size_budget = _size_budget(raw.get("size_budget"), where)
+        write_surface = _write_surface(raw.get("write_surface"), where)
+        acceptance_methods = _str_list(raw.get("acceptance_methods"), f"{where}.acceptance_methods")
+        if not acceptance_methods or len(acceptance_methods) != len(set(acceptance_methods)):
+            raise GraphError(f"{where}.acceptance_methods: non-empty unique strings required")
+        depends_on = _str_list(raw.get("depends_on"), f"{where}.depends_on")
+        parallel_ok = _str_list(raw.get("parallel_ok"), f"{where}.parallel_ok")
+        for field, values in (("depends_on", depends_on), ("parallel_ok", parallel_ok)):
+            if any(not _UNIT_ID.fullmatch(value) for value in values) or len(values) != len(set(values)):
+                raise GraphError(f"{where}.{field}: unique responsibility ids required")
+            if rid in values:
+                raise GraphError(f"{where}.{field}: responsibility cannot reference itself")
+        parallel_basis = raw.get("parallel_ok_basis")
+        if parallel_basis is not None and (not isinstance(parallel_basis, str) or not parallel_basis.strip()):
+            raise GraphError(f"{where}.parallel_ok_basis: non-empty string required when present")
 
         outcome = raw.get("outcome")
         basis = raw.get("independence_basis")
@@ -977,10 +996,39 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
                 "outcome": outcome.strip(),
                 "independence_basis": basis.strip(),
                 "mechanism_exception": clean_exception,
+                "size_budget": size_budget,
+                "write_surface": write_surface,
+                "acceptance_methods": sorted(acceptance_methods),
+                "depends_on": sorted(depends_on),
+                "parallel_ok": sorted(parallel_ok),
+                "parallel_ok_basis": parallel_basis.strip() if isinstance(parallel_basis, str) else None,
                 "semantic_units": units,
             }
         )
     proposal_ids = {row["id"] for row in rows}
+    for row in rows:
+        for field in ("depends_on", "parallel_ok"):
+            unknown = sorted(set(row[field]) - proposal_ids)
+            if unknown:
+                raise GraphError(
+                    f"programme.decomposition_proposal.{row['id']}.{field}: unknown responsibility id(s) {_id_list(unknown)}"
+                )
+    walk_state: dict[str, int] = {}
+    by_id = {row["id"]: row for row in rows}
+
+    def walk(rid: str) -> None:
+        walk_state[rid] = 1
+        for dep in by_id[rid]["depends_on"]:
+            if walk_state.get(dep) == 1:
+                raise GraphError(f"programme.decomposition_proposal.depends_on cycle through {rid} and {dep}")
+            if dep not in walk_state:
+                walk(dep)
+        walk_state[rid] = 2
+
+    for rid in proposal_ids:
+        if rid not in walk_state:
+            walk(rid)
+
     unknown_bindings = sorted(set(seen_binding_ids) - proposal_ids)
     if unknown_bindings:
         raise GraphError(
@@ -1672,6 +1720,20 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                     _finding("MECHANICAL_UNIT_KIND_INVALID", f"MECHANICAL responsibility has non-mechanical unit(s): {_id_list(wrong)}")
                 )
 
+        if policy["require"]["write_surface"] and not row["write_surface"]:
+            findings[rid].append(_finding("WRITE_SURFACE_MISSING", "declare pre-materialization write_surface"))
+        budget = row["size_budget"] or {}
+        absent = [k for k in _BUDGET_KEYS if k not in budget]
+        if policy["require"]["size_budget"] and absent:
+            findings[rid].append(_finding("SIZE_BUDGET_MISSING", f"declare size_budget keys {_id_list(absent)}"))
+        for dim in ("loc", "minutes"):
+            target, hard = budget.get(f"target_{dim}"), budget.get(f"hard_{dim}")
+            if target is not None and hard is not None and target > hard:
+                findings[rid].append(_finding("SIZE_BUDGET_INCONSISTENT", f"target_{dim} {target} exceeds hard_{dim} {hard}"))
+            if hard is not None and hard > policy["leaf_budget"][f"hard_{dim}"]:
+                findings[rid].append(_finding("SIZE_OVER_HARD", f"hard_{dim} {hard} exceeds policy hard {policy['leaf_budget'][f'hard_{dim}']}"))
+        if row["parallel_ok"] and not row["parallel_ok_basis"]:
+            findings[rid].append(_finding("PARALLEL_BASIS_MISSING", "parallel_ok needs a basis"))
         if row["work_class"] == "PRODUCT":
             mechanism_terms = _mechanism_terms(row["id"], row["outcome"])
             if mechanism_terms:
@@ -1731,6 +1793,31 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                             "DUPLICATE_CLAIM_OWNERSHIP",
                             f"{cid} is owned by {_id_list(refs)}; set claim.shared=true only when intentional",
                             claim_severity,
+                        )
+                    )
+
+    reach: dict[str, set[str]] = {}
+    proposal_by_id = {row["id"]: row for row in proposal["responsibilities"]}
+
+    def reachable(rid: str) -> set[str]:
+        if rid not in reach:
+            reach[rid] = set()
+            for dep in proposal_by_id[rid]["depends_on"]:
+                reach[rid] |= {dep} | reachable(dep)
+        return reach[rid]
+
+    proposal_rows = proposal["responsibilities"]
+    for index, left in enumerate(proposal_rows):
+        for right in proposal_rows[index + 1:]:
+            hits = _surface_overlap(left["write_surface"], right["write_surface"])
+            ordered = right["id"] in reachable(left["id"]) or left["id"] in reachable(right["id"])
+            parallel = right["id"] in left["parallel_ok"] or left["id"] in right["parallel_ok"]
+            if hits and not ordered and not parallel:
+                for me, other in ((left, right), (right, left)):
+                    findings[me["id"]].append(
+                        _finding(
+                            "WRITE_SURFACE_COLLISION",
+                            f"overlaps {other['id']} on {_id_list(hits, 3)} with no depends_on order or parallel_ok",
                         )
                     )
 
@@ -1797,6 +1884,42 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                         f"{requested_ref} claim ownership differs from the released proposal",
                     )
                 )
+            proposed = proposal_by_id[rid]
+            if node.get("work_class") != proposed["work_class"]:
+                findings[rid].append(_finding("BINDING_CLASS_MISMATCH", f"{requested_ref} work_class differs from proposal"))
+            if node.get("outcome") != proposed["outcome"]:
+                findings[rid].append(_finding("BINDING_OUTCOME_MISMATCH", f"{requested_ref} outcome differs from proposal"))
+            if node.get("independence_basis") != proposed["independence_basis"]:
+                findings[rid].append(_finding("BINDING_INDEPENDENCE_MISMATCH", f"{requested_ref} independence basis differs"))
+            if node.get("size_budget") != proposed["size_budget"]:
+                findings[rid].append(_finding("BINDING_SIZE_BUDGET_MISMATCH", f"{requested_ref} size budget differs"))
+            if node.get("write_surface") != proposed["write_surface"]:
+                findings[rid].append(_finding("BINDING_WRITE_SURFACE_MISMATCH", f"{requested_ref} write surface differs"))
+            expected_units = [
+                {
+                    "id": unit["id"],
+                    "weight": unit["weight"],
+                    "verify": unit["verify"],
+                    "outcome": unit["outcome"],
+                }
+                for unit in proposed["semantic_units"]
+            ]
+            actual_units = [
+                {
+                    "id": unit["id"],
+                    "weight": unit["weight"],
+                    "verify": unit["verify"],
+                    "outcome": unit["outcome"],
+                }
+                for unit in node["units"]
+            ]
+            if actual_units != expected_units:
+                findings[rid].append(_finding("BINDING_UNIT_MISMATCH", f"{requested_ref} units differ from proposal"))
+            binding_by_id = {b["responsibility_id"]: b["ref"] for b in bindings}
+            expected_deps = {binding_by_id[dep] for dep in proposed["depends_on"] if dep in binding_by_id}
+            actual_deps = set(node.get("depends_on") or [])
+            if {ref_number(x) for x in actual_deps} != {ref_number(x) for x in expected_deps}:
+                findings[rid].append(_finding("BINDING_DEPENDENCY_MISMATCH", f"{requested_ref} dependencies differ from proposal"))
             share = Fraction(1)
             chain = lineage(indexed, target)
             for child_ref in chain[1:]:
