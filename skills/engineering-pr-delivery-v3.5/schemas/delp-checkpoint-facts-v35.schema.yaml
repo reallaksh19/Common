@@ -25,7 +25,15 @@ properties:
       id:
         type: string
         minLength: 1
-        description: Optional responsibility id; must equal the planned responsibility_id when both exist.
+        description: Stable Responsibility identity. Required by admission when the execution graph is in stable-identity mode.
+      spec_generation:
+        type: integer
+        minimum: 1
+        description: Exact Responsibility semantic-contract generation this facts record was produced against.
+      contract_digest:
+        type: string
+        pattern: '^sha256:[0-9a-f]{64}$'
+        description: Exact mechanically derived Responsibility contract digest this facts record was produced against.
   material:
     type: object
     additionalProperties: false

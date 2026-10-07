@@ -255,6 +255,58 @@ def canonical_digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
+def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
+    """Canonical graph input used for identity/currentness.
+
+    Legacy graphs that omit programme.graph_generation are normalized to generation 1,
+    so adding the explicit default does not manufacture semantic drift. In stable-identity
+    mode a leaf contract_digest is derived data, so an optional matching assertion is not
+    allowed to manufacture graph drift merely by being present or absent.
+    """
+    value = copy.deepcopy(dict(graph))
+    programme = dict(value.get("programme") or {})
+    stable_identity_mode = "graph_generation" in programme
+    programme["graph_generation"] = programme.get("graph_generation", 1)
+    value["programme"] = programme
+    if stable_identity_mode:
+        for node in value.get("nodes") or []:
+            if isinstance(node, dict) and node.get("kind") == "LEAF":
+                node.pop("contract_digest", None)
+    return value
+
+
+def responsibility_contract_basis(node: Mapping[str, Any], nodes: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Semantic/execution contract whose digest binds evidence, excluding provider/topology metadata."""
+    dependencies = sorted(
+        str(nodes[ref].get("responsibility_id") or ref)
+        for ref in node.get("depends_on") or []
+    )
+    return {
+        "responsibility_id": node.get("responsibility_id"),
+        "outcome": node.get("outcome"),
+        "units": sorted(
+            (
+                {
+                    "id": unit["id"],
+                    "verify": unit.get("verify"),
+                    "outcome": unit.get("outcome"),
+                }
+                for unit in node.get("units") or []
+            ),
+            key=lambda row: row["id"],
+        ),
+        "delivery_gates": sorted(
+            ({"id": gate["id"]} for gate in node.get("delivery_gates") or []),
+            key=lambda row: row["id"],
+        ),
+        "verification": sorted(node.get("verification") or []),
+        "write_surface": sorted(node.get("write_surface") or []),
+        "depends_on": dependencies,
+        "size_budget": node.get("size_budget"),
+        "work_class": node.get("work_class"),
+    }
+
+
 def percent(value: Fraction) -> int:
     """Display percent: half-up, never 100 unless exactly full, never 0 unless exactly empty."""
     if value <= 0:
@@ -368,7 +420,19 @@ def validate_facts(facts: Any) -> list[str]:
             parse_ref(responsibility["issue"])
         except DelpError as exc:
             errors.append(f"responsibility.issue: {exc}")
-        extra = set(map(str, responsibility)) - {"issue", "id"}
+        if responsibility.get("id") is not None and (
+            not isinstance(responsibility["id"], str) or not responsibility["id"].strip()
+        ):
+            errors.append("responsibility.id: must be a non-empty string")
+        spec_generation = responsibility.get("spec_generation")
+        if spec_generation is not None and (
+            isinstance(spec_generation, bool) or not isinstance(spec_generation, int) or spec_generation < 1
+        ):
+            errors.append("responsibility.spec_generation: must be a positive integer")
+        contract_digest = responsibility.get("contract_digest")
+        if contract_digest is not None and not _DIGEST.fullmatch(str(contract_digest)):
+            errors.append("responsibility.contract_digest: must be sha256:<64 hex>")
+        extra = set(map(str, responsibility)) - {"issue", "id", "spec_generation", "contract_digest"}
         if extra:
             errors.append(f"responsibility: unknown fields {sorted(extra)}")
 
@@ -709,6 +773,10 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     if graph.get("schema") not in (None, GRAPH_SCHEMA):
         raise GraphError(f"schema: must be {GRAPH_SCHEMA}")
     programme = graph.get("programme") or {}
+    declared_graph_generation = "graph_generation" in programme
+    graph_generation = programme.get("graph_generation", 1)
+    if isinstance(graph_generation, bool) or not isinstance(graph_generation, int) or graph_generation < 1:
+        raise GraphError("programme.graph_generation: must be a positive integer")
     root_ref = programme.get("root")
     if not root_ref:
         raise GraphError("programme.root: required")
@@ -819,6 +887,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "delivery_gates": gates,
                     "coder_weight": coder_weight if gates else 1,
                     "responsibility_id": raw.get("responsibility_id"),
+                    "spec_generation": raw.get("spec_generation"),
                     "primary_pr": raw.get("primary_pr"),
                     # Branch/tag whose head is the candidate when the leaf has no PR yet.
                     "candidate_ref": (str(raw["candidate_ref"]) if raw.get("candidate_ref") else None),
@@ -835,6 +904,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "parallel_ok_basis": (basis or "").strip() or None,
                 }
             )
+            if node["spec_generation"] is not None:
+                node["spec_generation"] = _positive_int(node["spec_generation"], f"{ref}.spec_generation")
             if node["primary_pr"] is not None:
                 try:
                     parse_ref(node["primary_pr"])
@@ -880,6 +951,27 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if node["kind"] != "LEAF" and not node["children"]:
             raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
 
+    # Stable identity is distinct from the provider locator. Legacy graphs may omit it;
+    # once graph_generation is explicitly declared, every leaf must carry a unique Responsibility id.
+    seen_responsibility_ids: dict[str, str] = {}
+    for ref, node in nodes.items():
+        if node["kind"] != "LEAF":
+            continue
+        rid = node.get("responsibility_id")
+        if declared_graph_generation and not rid:
+            raise GraphError(f"{ref}.responsibility_id: required when programme.graph_generation is declared")
+        if declared_graph_generation and node.get("spec_generation") is None:
+            raise GraphError(f"{ref}.spec_generation: required when programme.graph_generation is declared")
+        if rid is not None:
+            rid = str(rid).strip()
+            if not rid:
+                raise GraphError(f"{ref}.responsibility_id: must be a non-empty string")
+            other = seen_responsibility_ids.get(rid)
+            if other is not None:
+                raise GraphError(f"{ref}.responsibility_id: duplicate stable id {rid!r} already used by {other}")
+            seen_responsibility_ids[rid] = ref
+            node["responsibility_id"] = rid
+
     # leaf-to-leaf references (ordering and declared parallelism) must name declared leaves
     leaf_by_number = {n["number"]: ref for ref, n in nodes.items() if n["kind"] == "LEAF"}
     for ref, node in nodes.items():
@@ -910,8 +1002,25 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if ref not in walk_state:
             walk(ref)
 
+    # Stable-identity graphs derive each leaf contract digest mechanically. Locator/topology/provider
+    # metadata and weights are intentionally excluded so transfers/reparenting/reweighting do not stale evidence.
+    if declared_graph_generation:
+        for ref in leaf_by_number.values():
+            node = nodes[ref]
+            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes))
+            asserted_digest = node.get("contract_digest")
+            if asserted_digest is not None and asserted_digest != derived_digest:
+                raise GraphError(
+                    f"{ref}.contract_digest: asserted {asserted_digest} does not match derived {derived_digest}; "
+                    "omit the field and let the engine derive it"
+                )
+            node["contract_digest"] = derived_digest
+
+    normalized_programme = dict(programme)
+    normalized_programme["graph_generation"] = graph_generation
     return {
-        "programme": dict(programme),
+        "programme": normalized_programme,
+        "stable_identity_mode": declared_graph_generation,
         "policy": policy,
         "health_policy": health_policy,
         "total_weight": total_weight,
@@ -920,7 +1029,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "order": order,
         "root": roots[0],
         "by_number": by_number,
-        "digest": canonical_digest(graph),
+        "digest": canonical_digest(graph_digest_basis(graph)),
     }
 
 
@@ -1347,6 +1456,40 @@ def graph_diff(old_graph: Any, new_graph: Any) -> dict[str, Any]:
     def add(code: str, detail: str, severity: str = "BLOCKER") -> None:
         findings.append(_finding(code, detail, severity))
 
+    contracts_changed = 0
+    generation_bumps = 0
+    old_by_id = {
+        str(node["responsibility_id"]): node
+        for node in old["nodes"].values()
+        if node["kind"] == "LEAF" and node.get("responsibility_id") and node.get("spec_generation") is not None
+    }
+    new_by_id = {
+        str(node["responsibility_id"]): node
+        for node in new["nodes"].values()
+        if node["kind"] == "LEAF" and node.get("responsibility_id") and node.get("spec_generation") is not None
+    }
+    for rid in sorted(set(old_by_id) & set(new_by_id)):
+        before, after = old_by_id[rid], new_by_id[rid]
+        old_gen, new_gen = before["spec_generation"], after["spec_generation"]
+        changed = before.get("contract_digest") != after.get("contract_digest")
+        if new_gen < old_gen:
+            add("SPEC_GENERATION_REGRESSED", f"{rid} spec_generation {old_gen} -> {new_gen}")
+        if changed:
+            contracts_changed += 1
+            if new_gen <= old_gen:
+                add(
+                    "SPEC_GENERATION_NOT_BUMPED",
+                    f"{rid} semantic contract changed but spec_generation stayed {old_gen} -> {new_gen}",
+                )
+        elif new_gen != old_gen:
+            add(
+                "SPEC_GENERATION_BUMP_WITHOUT_CONTRACT_CHANGE",
+                f"{rid} spec_generation {old_gen} -> {new_gen} but the derived contract digest is unchanged",
+                "ADVISORY",
+            )
+        if new_gen > old_gen:
+            generation_bumps += 1
+
     previous = {u["id"]: u for u in old["plan_updates"]}
     current = {u["id"]: u for u in new["plan_updates"]}
     for pid, u in previous.items():
@@ -1529,6 +1672,7 @@ def compute_leaf(
             last_owner_action = rec["owner_action"]
         record_candidate = (rec.get("material") or {}).get("candidate_sha")
         record_pr = (rec.get("material") or {}).get("pr")
+        record_contract_digest = (rec.get("responsibility") or {}).get("contract_digest")
         for unit in rec.get("units") or []:
             if unit["id"] not in declared:
                 warnings.append(f"UNKNOWN_UNIT:{unit['id']}")
@@ -1538,7 +1682,7 @@ def compute_leaf(
                 "result": unit.get("result") or "NOT_RUN",
                 "evidence_refs": [str(r) for r in unit.get("evidence_refs") or []],
                 "candidate_sha": unit.get("candidate_sha") or record_candidate,
-                "contract_digest": unit.get("contract_digest"),
+                "contract_digest": unit.get("contract_digest") or record_contract_digest,
                 "pr": record_pr,
                 "source": rec.get("_source"),
             }
@@ -1829,13 +1973,55 @@ def _frontier_summary(indexed: Mapping[str, Any], leaves: list[str]) -> str:
     return ", ".join(parts)
 
 
+def bind_facts_to_graph(graph: Any, facts: Mapping[str, Any]) -> dict[str, Any]:
+    """Stamp current Responsibility contract identity into one facts record before publication.
+
+    This is a pure publication helper. It never repairs a conflicting pre-existing binding.
+    """
+    errors = validate_facts(facts)
+    if errors:
+        raise DelpError("cannot bind invalid facts: " + "; ".join(errors))
+    indexed = validate_graph(graph)
+    claimed_issue = facts["responsibility"]["issue"]
+    leaf_ref = next(
+        (
+            ref
+            for ref, node in indexed["nodes"].items()
+            if node["kind"] == "LEAF" and same_ref(ref, claimed_issue)
+        ),
+        None,
+    )
+    if leaf_ref is None:
+        raise DelpError(f"responsibility.issue: {facts['responsibility']['issue']} is not a declared LEAF")
+    node = indexed["nodes"][leaf_ref]
+    bound = copy.deepcopy(dict(facts))
+    responsibility = dict(bound["responsibility"])
+
+    expected: dict[str, Any] = {}
+    if node.get("responsibility_id") is not None:
+        expected["id"] = node["responsibility_id"]
+    if indexed["stable_identity_mode"]:
+        expected["spec_generation"] = node["spec_generation"]
+        expected["contract_digest"] = node["contract_digest"]
+
+    for field, value in expected.items():
+        current = responsibility.get(field)
+        if current is not None and current != value:
+            raise DelpError(
+                f"responsibility.{field}: existing {current!r} conflicts with current planned {value!r}"
+            )
+        responsibility[field] = value
+    bound["responsibility"] = responsibility
+    return bound
+
+
 def partition_ledger(
     indexed: Mapping[str, Any], ledger: Iterable[Mapping[str, Any]]
 ) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]]]:
     """Validate every facts record. Invalid/forbidden/unknown records are rejected, never trusted."""
     accepted: dict[str, list[tuple[int, int, dict[str, Any]]]] = {}
     rejected: list[dict[str, Any]] = []
-    leaves = {n["number"]: ref for ref, n in indexed["nodes"].items() if n["kind"] == "LEAF"}
+    leaves = [ref for ref, n in indexed["nodes"].items() if n["kind"] == "LEAF"]
     for position, entry in enumerate(ledger):
         facts = entry.get("facts") if isinstance(entry, Mapping) else None
         source = str((entry or {}).get("source") or f"ledger[{position}]")
@@ -1843,14 +2029,29 @@ def partition_ledger(
         if not errors and (entry or {}).get("untrusted_author"):
             errors = [f"author {(entry or {})['untrusted_author']} is not a trusted fact author for this programme"]
         if not errors:
-            number = ref_number(facts["responsibility"]["issue"])
-            leaf_ref = leaves.get(number)
+            claimed_issue = facts["responsibility"]["issue"]
+            leaf_ref = next((ref for ref in leaves if same_ref(ref, claimed_issue)), None)
             if leaf_ref is None:
                 errors = [f"responsibility.issue: {facts['responsibility']['issue']} is not a declared LEAF"]
             else:
-                declared_id = indexed["nodes"][leaf_ref].get("responsibility_id")
-                claimed_id = facts["responsibility"].get("id")
-                if declared_id and claimed_id and declared_id != claimed_id:
+                node = indexed["nodes"][leaf_ref]
+                declared_id = node.get("responsibility_id")
+                claimed = facts["responsibility"]
+                claimed_id = claimed.get("id")
+                if indexed["stable_identity_mode"]:
+                    expected = {
+                        "id": declared_id,
+                        "spec_generation": node.get("spec_generation"),
+                        "contract_digest": node.get("contract_digest"),
+                    }
+                    for field, value in expected.items():
+                        if claimed.get(field) is None:
+                            errors.append(f"responsibility.{field}: required for stable-identity facts")
+                        elif claimed.get(field) != value:
+                            errors.append(
+                                f"responsibility.{field}: {claimed.get(field)} does not match planned {value}"
+                            )
+                elif declared_id and claimed_id and declared_id != claimed_id:
                     errors = [f"responsibility.id: {claimed_id} does not match planned {declared_id}"]
         if errors:
             rejected.append({"source": source, "reasons": errors})
@@ -2000,6 +2201,8 @@ def project(
                     "root": indexed["root"],
                     "lineage": chain,
                     "responsibility_id": node.get("responsibility_id"),
+                    "spec_generation": node.get("spec_generation"),
+                    "contract_digest": node.get("contract_digest"),
                 },
                 "weight": node["weight"],
             }
@@ -2024,6 +2227,7 @@ def project(
         "authority": AUTHORITY,
         "protocol_line": PROTOCOL_LINE,
         "programme": indexed["programme"],
+        "graph_digest": indexed["digest"],
         "root": indexed["root"],
         "nodes": out_nodes,
         "rejected_facts": rejected,
@@ -2831,6 +3035,14 @@ def main(argv: list[str] | None = None) -> int:
     vf = sub.add_parser("validate-facts", help="Reject agent-authored progress/titles; exit 1 on any violation.")
     vf.add_argument("facts", type=Path, nargs="+")
 
+    bf = sub.add_parser(
+        "bind-facts",
+        help="Stamp current Responsibility id/spec_generation/contract_digest from the graph before publication.",
+    )
+    bf.add_argument("--graph", type=Path, required=True)
+    bf.add_argument("--facts", type=Path, required=True, help="Exactly one facts record or one CHECKPOINT_FACTS_V1 block.")
+    bf.add_argument("--output", type=Path)
+
     dc = sub.add_parser(
         "decompose-check",
         help="Judge the plan against the decomposition policy; exit 1 on blockers when the effective mode is ENFORCED.",
@@ -2933,6 +3145,13 @@ def main(argv: list[str] | None = None) -> int:
                         for error in errors:
                             print(f"  - {error}", file=sys.stderr)
             return 1 if failed else 0
+        if args.cmd == "bind-facts":
+            rows = _load_ledger([args.facts])
+            if len(rows) != 1:
+                raise DelpError(f"bind-facts requires exactly one facts record; found {len(rows)}")
+            bound = bind_facts_to_graph(_load_structured(args.graph), rows[0]["facts"])
+            _emit(bound, args.output)
+            return 0
         if args.cmd == "graph-diff":
             diff = graph_diff(_load_structured(args.old), _load_structured(args.new))
             if args.json:

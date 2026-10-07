@@ -14,7 +14,11 @@ TASK_EVIDENCE — CHECKPOINT
 
 ```yaml
 CHECKPOINT_FACTS_V1:
-  responsibility: {issue: <owner/repo#leaf or #leaf>, id: <responsibility id, optional>}
+  responsibility:
+    issue: <owner/repo#leaf or #leaf>
+    id: <stamped stable responsibility id>
+    spec_generation: <stamped positive integer>
+    contract_digest: <stamped sha256 digest>
   material:
     pr: <#PR>                          # the leaf's primary PR (omit while there is none)
     candidate_sha: <40-hex commit the evidence below covers>
@@ -41,6 +45,9 @@ Rules of thumb:
 - Evidence covers **one candidate**. After a push, the old evidence stops counting until you replay it on the new head and republish the facts with the new `candidate_sha`.
 - `QUIET` and `STALE` are never declared; only an observer can say an executor is quiet or stale.
 - Parent issues are not workspaces. Facts addressed to a parent/phase issue are rejected; material work lives in a leaf.
+- On a stable-identity graph, do **not** calculate or copy the semantic binding fields by hand. Stamp them from the current graph before publication:
+  `python skills/engineering-pr-delivery-v3.5/scripts/delp_projection_v35.py bind-facts --graph <graph> --facts <draft-facts> --output <bound-facts>`.
+  The binder refuses an existing conflicting id/generation/digest instead of overwriting it.
 - Validate before posting when you can run scripts: `python skills/engineering-pr-delivery-v3.5/scripts/delp_projection_v35.py validate-facts <file>`.
 
 On `continue` / `proceed` / `next` / `resume` / `reconcile` / `take over` / `keep going`: reconstruct first (lineage, live candidate, latest facts), repair any evidence gap, let the projector refresh titles and status, show the compact `CONTINUE CHECKPOINT`, then do exactly the next bounded unit.

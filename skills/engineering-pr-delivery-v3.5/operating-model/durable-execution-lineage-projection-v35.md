@@ -34,7 +34,11 @@ TASK_EVIDENCE — CHECKPOINT
 
 ```yaml
 CHECKPOINT_FACTS_V1:
-  responsibility: {issue: Common#592, id: P3-I-R2}
+  responsibility:
+    issue: Common#592
+    id: P3-I-R2
+    spec_generation: 3
+    contract_digest: sha256:<derived-current-contract-digest>
   material: {pr: Common#593, candidate_sha: 0123456789abcdef0123456789abcdef01234567}
   units:
     - id: U04
@@ -47,11 +51,13 @@ CHECKPOINT_FACTS_V1:
 ```
 ````
 
-Allowed fields: `responsibility`, `material`, `units[]` (`id`, `state`, `result`, `evidence_refs`, optional `candidate_sha`, `contract_digest`), `gates[]` (reviewer/super-reviewer delivery gates: `id`, `result`, `evidence_refs`), `activity` (`ACTIVE`, `WAITING_CI`, `WAITING_TOOL`, `WAITING_EXTERNAL`, `WAITING_PROVIDER_VISIBILITY`, `RECOVERING`, `PAUSED`), `next`, `blocker`, `owner_action`, `result` (scope + `responsibility_complete`, optional `superseded_by`).
+Allowed fields: `responsibility` (provider `issue` plus optional stable `id`, `spec_generation`, `contract_digest`), `material`, `units[]` (`id`, `state`, `result`, `evidence_refs`, optional `candidate_sha`, `contract_digest`), `gates[]` (reviewer/super-reviewer delivery gates: `id`, `result`, `evidence_refs`), `activity` (`ACTIVE`, `WAITING_CI`, `WAITING_TOOL`, `WAITING_EXTERNAL`, `WAITING_PROVIDER_VISIBILITY`, `RECOVERING`, `PAUSED`), `next`, `blocker`, `owner_action`, `result` (scope + `responsibility_complete`, optional `superseded_by`).
 
 **Rejected, recursively, at any depth:** `progress`, `percent`, `p`/`e`/`d`, `title`, `parent_progress`, `programme_progress`, `frontier(_count)`, `activity_epoch`, `evidence_health`, `projection`, `light`, `denominator`, `weight(s)`, `reserve(_weight)`, `evidenced`, and any string that contains projection notation (`R:P…/E…`, `Φ:D…/E…`, `Π:D…/E…`, `{P…% · E…%`). `QUIET` and `STALE` can never be declared: a dead executor cannot report its own death, so liveness comes only from an external observer. Weights are plan authority and live only in the execution graph.
 
-`python scripts/delp_projection_v35.py validate-facts <file>` exits non-zero on any violation. The projector applies the same validation to every ledger record: an invalid record is listed under `rejected_facts` and contributes nothing.
+`python scripts/delp_projection_v35.py validate-facts <file>` exits non-zero on any structural violation. Before publishing against a stable-identity graph, use `bind-facts --graph G --facts F`: it stamps the current planned Responsibility id, spec generation and mechanically derived contract digest and refuses to overwrite a conflicting existing binding. The executor never calculates the digest.
+
+The projector applies the same validation to every ledger record. On a stable-identity graph, a fact missing any of the three semantic bindings, or carrying a stale/mismatched binding, is retained in the audit trail but rejected from the current projection and contributes nothing. Legacy graphs retain locator-only admission.
 
 **Who may publish facts.** Anyone can comment on a public issue, so `sync-github` believes a facts block only from a trusted author: an explicit `programme.fact_authors` login list in the execution graph, or, when absent, a repository `OWNER`/`MEMBER`/`COLLABORATOR`. A block from anyone else is kept in the ledger, rejected with `author … is not a trusted fact author` and counted nowhere. Facts must also name a declared **leaf** (and the planned `responsibility_id` when both exist); a record for a parent issue or an unknown issue is rejected.
 
@@ -341,7 +347,8 @@ Each agent writes facts only to its own leaf. No agent authors parent or program
 
 ```text
 validate-graph --graph G                         plan is structurally valid
-validate-facts F...                              reject agent-authored projections (exit 1)
+validate-facts F...                              reject malformed/agent-authored projection fields (exit 1)
+bind-facts --graph G --facts F [--output B]        stamp current Responsibility id/generation/digest before publication
 project --graph G --facts F... --observations O  deterministic projection JSON (+ expected titles)
 admit --graph G --facts F --observations O --leaf L --command continue
 health --graph G --facts F --observations O [--leaf L] [--mode M] [--json]   advisory delivery-continuity health of started leaves (always exits 0)
@@ -365,6 +372,48 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 ## Amendment of V3.2
 
 `skills/engineering-pr-delivery-v3.2/**` was frozen by #492/#494 and is guarded in CI. The Owner explicitly instructed that this fix land in both V3.2 and V3.5. The V3.2 changes are therefore an **additive amendment**: new `delp_projection_v32.py`, its schemas and tests, the DERIVED mode of `continuity_projection.py`, the `CONTINUE_RECONCILE` intent, and the documentation updates. The freeze guard permits exactly the paths listed in `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml` and fails on any other change. Governance-critical: merge remains Owner-controlled.
+
+## Responsibility identity and graph generation
+
+A GitHub issue is a provider locator, not the semantic identity of a Responsibility.
+
+New graphs may opt into the stable identity contract by declaring:
+
+```yaml
+programme:
+  graph_generation: 1
+
+nodes:
+  - ref: Common#592
+    kind: LEAF
+    responsibility_id: P3-I-R2
+```
+
+When `graph_generation` is explicitly present, every LEAF must have one unique
+`responsibility_id`. The id is never synthesized from the issue number, so a future
+provider-locator transfer can preserve Responsibility identity.
+
+Legacy graphs that omit `graph_generation` remain readable and are normalized to generation 1.
+The projector derives `graph_digest` from a canonical graph basis; omitted generation and an
+explicit generation of 1 have the same digest. The digest is plan/currentness evidence only and
+never moves P/E/D.
+
+
+Each stable-identity LEAF also declares a positive `spec_generation`. The engine derives the
+leaf's current `contract_digest` mechanically; callers do not need to calculate or copy it.
+The digest covers the stable Responsibility identity plus the semantic/execution contract:
+observable outcome, unit ids and verify/outcome text, delivery-gate ids, accepted verification
+vocabulary, write surface, resolved dependency Responsibility ids, size budget and work class.
+
+It deliberately excludes provider/topology/projection metadata: issue locator, parent, PR/branch,
+programme/leaf/unit weights, `graph_generation`, `spec_generation` itself, and derived/provider
+status. Reparenting, reweighting or changing a PR therefore does not stale the semantic contract.
+
+`graph-diff` compares the derived digest by stable `responsibility_id`. If the digest changes
+without a higher `spec_generation`, the re-plan is rejected with
+`SPEC_GENERATION_NOT_BUMPED`. A generation bump with an unchanged digest is advisory only.
+Legacy graphs may continue to carry an asserted `contract_digest`; in stable-identity mode an
+asserted value must equal the derived value and is unnecessary.
 
 ## Invariants (each is pinned by a test)
 

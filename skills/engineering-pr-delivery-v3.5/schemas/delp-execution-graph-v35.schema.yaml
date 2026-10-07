@@ -30,6 +30,13 @@ properties:
     properties:
       id: {type: string, minLength: 1}
       root: {$ref: '#/$defs/ref'}
+      graph_generation:
+        type: integer
+        minimum: 1
+        description: >-
+          Monotonic semantic generation of the programme graph. Omitted legacy graphs are read as generation 1.
+          A graph that declares this field is in stable-identity mode: every LEAF must declare responsibility_id
+          and spec_generation.
       repository:
         type: string
         description: >-
@@ -154,14 +161,24 @@ properties:
           type: integer
           minimum: 0
           description: Undecomposed reserve on ROOT/INTERMEDIATE; counts as zero progress and blocks COMPLETE.
-        responsibility_id: {type: string}
+        responsibility_id:
+          type: string
+          minLength: 1
+          description: Stable semantic Responsibility identity; never synthesized from the GitHub issue locator.
+        spec_generation:
+          type: integer
+          minimum: 1
+          description: Monotonic generation of this Responsibility's semantic/execution contract.
         primary_pr: {type: string}
         candidate_ref: {type: string, description: Branch/tag whose head is the candidate when there is no PR yet.}
         critical: {type: boolean}
         verification:
           type: array
           items: {enum: [VERIFIED, PARTIAL, FAILED, NOT_RUN, PENDING]}
-        contract_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+        contract_digest:
+          type: string
+          pattern: '^sha256:[0-9a-f]{64}$'
+          description: Legacy compatibility assertion; stable-identity mode derives the current digest mechanically.
         work_class:
           enum: [PRODUCT, MECHANICAL, GATE]
           description: PRODUCT (default) is held to the unit-count floor and share cap; MECHANICAL and GATE leaves are exempt from those two rules only.
@@ -206,3 +223,16 @@ properties:
           then: {required: [parent, weight, units]}
         - if: {properties: {kind: {const: INTERMEDIATE}}}
           then: {required: [parent, weight]}
+
+allOf:
+  - if:
+      properties:
+        programme:
+          required: [graph_generation]
+    then:
+      properties:
+        nodes:
+          items:
+            allOf:
+              - if: {properties: {kind: {const: LEAF}}}
+                then: {required: [responsibility_id, spec_generation]}
