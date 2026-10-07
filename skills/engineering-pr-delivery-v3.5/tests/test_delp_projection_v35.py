@@ -3861,6 +3861,107 @@ class CanonicalPlanSpecConditions(unittest.TestCase):
         self.assertEqual("PLAN_NOT_APPLICABLE_TERMINAL", plan["reason"])
 
 
+class CanonicalProviderEvidenceConditions(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_legacy_observed_candidate_makes_provider_and_material_true(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["ProviderVisible"]["status"])
+        self.assertEqual("TRUE", conditions["MaterialObserved"]["status"])
+        self.assertEqual(SHA_A, conditions["MaterialObserved"]["candidate_sha"])
+        self.assertEqual("UNKNOWN", conditions["EvidenceCurrent"]["status"])
+
+    def test_explicit_provider_unavailable_is_unknown_not_failure(self):
+        observations = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "UNAVAILABLE",
+            }
+        }
+        node = M.project(stable_graph(), [], observations)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("UNKNOWN", conditions["ProviderVisible"]["status"])
+        self.assertEqual("PROVIDER_UNAVAILABLE", conditions["ProviderVisible"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["MaterialObserved"]["status"])
+        self.assertEqual("MATERIAL_UNAVAILABLE", conditions["MaterialObserved"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["EvidenceCurrent"]["status"])
+
+    def test_observed_provider_with_no_material_signal_reports_material_false(self):
+        observations = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {"ahead_by": 0, "behind_by": 0},
+            }
+        }
+        node = M.project(stable_graph(), [], observations)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["ProviderVisible"]["status"])
+        self.assertEqual("FALSE", conditions["MaterialObserved"]["status"])
+        self.assertEqual("MATERIAL_NOT_PRESENT", conditions["MaterialObserved"]["reason"])
+
+    def test_current_accepted_evidence_is_true(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1, "current-evidence")], OBS_A)["nodes"]["Common#592"]
+        evidence = self.by_type(node)["EvidenceCurrent"]
+        self.assertEqual("TRUE", evidence["status"])
+        self.assertEqual("EVIDENCE_CURRENT", evidence["reason"])
+        self.assertEqual(SHA_A, evidence["candidate_sha"])
+        self.assertEqual(["current-evidence"], evidence["source_refs"])
+
+    def test_stale_candidate_and_gap_are_false(self):
+        g = stable_graph()
+        current = bound_facts(g, units=[unit("U01")])
+        stale = M.project(
+            g,
+            [entry(current, 1)],
+            {**OBS_A, "Common#592": {"candidate_sha": SHA_B}},
+        )["nodes"]["Common#592"]
+        self.assertEqual("FALSE", self.by_type(stale)["EvidenceCurrent"]["status"])
+        self.assertEqual(
+            "EVIDENCE_STALE_CANDIDATE",
+            self.by_type(stale)["EvidenceCurrent"]["reason"],
+        )
+
+        gap_record = bound_facts(g, units=[unit("U01", refs=())])
+        gap = M.project(g, [entry(gap_record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual("FALSE", self.by_type(gap)["EvidenceCurrent"]["status"])
+        self.assertEqual("EVIDENCE_GAP", self.by_type(gap)["EvidenceCurrent"]["reason"])
+
+    def test_unobserved_candidate_makes_existing_evidence_unknown(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1)], {})["nodes"]["Common#592"]
+        evidence = self.by_type(node)["EvidenceCurrent"]
+        self.assertEqual("UNKNOWN", evidence["status"])
+        self.assertEqual("EVIDENCE_UNVERIFIABLE", evidence["reason"])
+
+    def test_optional_failed_check_does_not_change_provider_material_or_evidence_conditions(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        base_obs = {
+            "Common#592": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {"candidate_sha": SHA_A},
+            }
+        }
+        check_obs = copy.deepcopy(base_obs)
+        check_obs["Common#592"]["check"] = {
+            "result": "FAILURE",
+            "candidate_sha": SHA_A,
+            "name": "optional-check",
+        }
+        before = self.by_type(M.project(g, [entry(record, 1)], base_obs)["nodes"]["Common#592"])
+        after = self.by_type(M.project(g, [entry(record, 1)], check_obs)["nodes"]["Common#592"])
+        for kind in ("ProviderVisible", "MaterialObserved", "EvidenceCurrent"):
+            self.assertEqual(before[kind], after[kind], kind)
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)

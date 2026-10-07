@@ -744,6 +744,118 @@ def _plan_spec_conditions(
         ),
     ]
 
+
+
+def _provider_evidence_conditions(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+    observation: Mapping[str, Any] | None,
+    accepted_records: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Derive provider/material/evidence conditions from normalized existing truth."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    observation = dict(observation or {})
+    meta = observation.get("_observation") if isinstance(observation.get("_observation"), Mapping) else {}
+    visibility = str(meta.get("visibility") or "")
+    categories = meta.get("categories") if isinstance(meta.get("categories"), Mapping) else {}
+    material_visibility = str(categories.get("MATERIAL") or "")
+
+    if visibility == "OBSERVED":
+        provider_status = "TRUE"
+        provider_reason = "PROVIDER_VISIBLE"
+        provider_message = "Provider observation was successfully obtained."
+    else:
+        provider_status = "UNKNOWN"
+        provider_reason = "PROVIDER_UNAVAILABLE" if visibility == "UNAVAILABLE" else "PROVIDER_UNOBSERVED"
+        provider_message = (
+            "Provider observation is unavailable."
+            if visibility == "UNAVAILABLE"
+            else "Provider visibility was not observed."
+        )
+
+    candidate = observation.get("candidate_sha")
+    candidate_sha = str(candidate) if isinstance(candidate, str) and _SHA.fullmatch(candidate) else None
+    material_signal = candidate_sha is not None or _provider_signal(observation) is not None
+    if material_visibility == "OBSERVED":
+        if material_signal:
+            material_status = "TRUE"
+            material_reason = "MATERIAL_OBSERVED"
+            material_message = "Provider observation contains current material or candidate signal."
+        else:
+            material_status = "FALSE"
+            material_reason = "MATERIAL_NOT_PRESENT"
+            material_message = "Provider material was observed but no current material/candidate signal exists."
+    else:
+        material_status = "UNKNOWN"
+        material_reason = (
+            "MATERIAL_UNAVAILABLE" if material_visibility == "UNAVAILABLE" else "MATERIAL_UNOBSERVED"
+        )
+        material_message = (
+            "Provider material visibility is unavailable."
+            if material_visibility == "UNAVAILABLE"
+            else "Provider material visibility was not observed."
+        )
+
+    records = list(accepted_records)
+    evidence_health = str((leaf.get("evidence") or {}).get("health") or "")
+    if not records:
+        evidence_status = "UNKNOWN"
+        evidence_reason = "EVIDENCE_BASIS_UNOBSERVED"
+        evidence_message = "No accepted fact basis exists from which to establish evidence currentness."
+    elif evidence_health == "CURRENT":
+        evidence_status = "TRUE"
+        evidence_reason = "EVIDENCE_CURRENT"
+        evidence_message = "Accepted evidence is current for the observed candidate."
+    elif evidence_health in {"GAP", "STALE_CANDIDATE"}:
+        evidence_status = "FALSE"
+        evidence_reason = (
+            "EVIDENCE_STALE_CANDIDATE"
+            if evidence_health == "STALE_CANDIDATE"
+            else "EVIDENCE_GAP"
+        )
+        evidence_message = (
+            "Accepted evidence is stale against the observed candidate."
+            if evidence_health == "STALE_CANDIDATE"
+            else "Accepted facts contain incomplete or invalid current evidence."
+        )
+    else:
+        evidence_status = "UNKNOWN"
+        evidence_reason = "EVIDENCE_UNVERIFIABLE"
+        evidence_message = "Evidence currentness cannot be established from the available provider truth."
+
+    evidence_source = str((leaf.get("evidence") or {}).get("latest_source") or "").strip()
+    return [
+        condition_record(
+            "ProviderVisible",
+            provider_status,
+            provider_reason,
+            provider_message,
+            observed_generation=generation,
+            candidate_sha=candidate_sha,
+            source_refs=[f"{ref}:provider"],
+        ),
+        condition_record(
+            "MaterialObserved",
+            material_status,
+            material_reason,
+            material_message,
+            observed_generation=generation,
+            candidate_sha=candidate_sha,
+            source_refs=[f"{ref}:provider-material"],
+        ),
+        condition_record(
+            "EvidenceCurrent",
+            evidence_status,
+            evidence_reason,
+            evidence_message,
+            observed_generation=generation,
+            candidate_sha=leaf.get("frontier", {}).get("evidence_candidate"),
+            source_refs=[evidence_source or f"{ref}:evidence"],
+        ),
+    ]
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
@@ -3246,12 +3358,21 @@ def project(
     for ref in indexed["order"]:
         if nodes[ref]["kind"] != "LEAF":
             continue
-        results[ref]["conditions"] = _plan_spec_conditions(
-            indexed,
-            ref,
-            results[ref],
-            accepted.get(ref, []),
-        )
+        results[ref]["conditions"] = [
+            *_plan_spec_conditions(
+                indexed,
+                ref,
+                results[ref],
+                accepted.get(ref, []),
+            ),
+            *_provider_evidence_conditions(
+                indexed,
+                ref,
+                results[ref],
+                observations.get(nodes[ref]["number"]),
+                accepted.get(ref, []),
+            ),
+        ]
 
     # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
     # from predecessor projections; agents never author it and it never changes P/E/D.
