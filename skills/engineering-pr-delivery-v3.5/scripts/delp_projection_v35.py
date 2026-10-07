@@ -273,7 +273,8 @@ def validate_observation(observation: Any) -> list[str]:
     allowed_top = {"schema", "visibility", "material", "custody", "liveness", "check", "diff"}
     if observation.get("schema") != OBSERVATION_SCHEMA:
         errors.append(f"schema: must be {OBSERVATION_SCHEMA}")
-    if observation.get("visibility") not in OBSERVATION_VISIBILITY:
+    visibility = observation.get("visibility")
+    if not isinstance(visibility, str) or visibility not in OBSERVATION_VISIBILITY:
         errors.append(f"visibility: one of {sorted(OBSERVATION_VISIBILITY)}")
     extra = sorted(set(map(str, observation)) - allowed_top)
     if extra:
@@ -300,8 +301,10 @@ def validate_observation(observation: Any) -> list[str]:
             value = material.get(key)
             if value is not None and not _SHA.fullmatch(str(value)):
                 errors.append(f"material.{key}: must be 40-hex lowercase or null")
-        if "pr_state" in material and material["pr_state"] not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
-            errors.append("material.pr_state: OPEN, MERGED, CLOSED or UNKNOWN")
+        if "pr_state" in material:
+            state = material["pr_state"]
+            if not isinstance(state, str) or state not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
+                errors.append("material.pr_state: OPEN, MERGED, CLOSED or UNKNOWN")
         for key in ("ahead_by", "behind_by"):
             if key in material and not nonnegative(material[key]):
                 errors.append(f"material.{key}: must be a non-negative integer")
@@ -324,13 +327,17 @@ def validate_observation(observation: Any) -> list[str]:
                 errors.append("custody.interruptions.losses: must be an array of mappings")
 
     liveness = mapping("liveness", {"value"})
-    if liveness is not None and liveness.get("value") not in OBSERVED_LIVENESS:
-        errors.append(f"liveness.value: one of {sorted(OBSERVED_LIVENESS)}")
+    if liveness is not None:
+        value = liveness.get("value")
+        if not isinstance(value, str) or value not in OBSERVED_LIVENESS:
+            errors.append(f"liveness.value: one of {sorted(OBSERVED_LIVENESS)}")
 
     check = mapping("check", {"result", "candidate_sha", "name"})
     if check is not None:
-        if "result" in check and check["result"] not in {"SUCCESS", "FAILURE", "PENDING"}:
-            errors.append("check.result: SUCCESS, FAILURE or PENDING")
+        if "result" in check:
+            result = check["result"]
+            if not isinstance(result, str) or result not in {"SUCCESS", "FAILURE", "PENDING"}:
+                errors.append("check.result: SUCCESS, FAILURE or PENDING")
         if "candidate_sha" in check and not _SHA.fullmatch(str(check["candidate_sha"])):
             errors.append("check.candidate_sha: must be 40-hex lowercase")
         if "name" in check and (not isinstance(check["name"], str) or not check["name"].strip()):
