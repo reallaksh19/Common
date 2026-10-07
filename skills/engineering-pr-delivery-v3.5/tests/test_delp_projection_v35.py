@@ -72,7 +72,6 @@ def graph(**overrides):
             "kind": "LEAF",
             "parent": "Common#588",
             "weight": 1,
-            "responsibility_id": "P3-I-R3",
             "primary_pr": "Common#595",
             "units": [{"id": "V1", "weight": 50}, {"id": "V2", "weight": 50}],
         },
@@ -81,12 +80,21 @@ def graph(**overrides):
             "kind": "LEAF",
             "parent": "Common#610",
             "weight": 1,
-            "responsibility_id": "P3-I-R4",
             "primary_pr": "Common#613",
             "units": [{"id": "W1", "weight": 100}],
         },
     ]
-    value = {"schema": M.GRAPH_SCHEMA, "programme": {"id": "COMMON-PROD-CONTROL-V1", "root": "Common#527", "graph_generation": 1}, "nodes": nodes}
+    value = {"schema": M.GRAPH_SCHEMA, "programme": {"id": "COMMON-PROD-CONTROL-V1", "root": "Common#527"}, "nodes": nodes}
+    value.update(overrides)
+    return value
+
+
+def stable_graph(**overrides):
+    value = graph()
+    value["programme"]["graph_generation"] = 1
+    for node in value["nodes"]:
+        if node["kind"] == "LEAF" and not node.get("responsibility_id"):
+            node["responsibility_id"] = f"RESP-{M.ref_number(node['ref'])}"
     value.update(overrides)
     return value
 
@@ -655,38 +663,43 @@ class GraphValidation(unittest.TestCase):
         self.assertTrue(M.validate_facts(facts(units=[unit("U01", weight=999)])))
 
     def test_graph_generation_and_stable_responsibility_identity(self):
-        indexed = M.validate_graph(graph())
+        g = stable_graph()
+        indexed = M.validate_graph(g)
         self.assertEqual(1, indexed["programme"]["graph_generation"])
         self.assertEqual("P3-I-R2", indexed["nodes"]["Common#592"]["responsibility_id"])
-        self.assertEqual(indexed["digest"], M.project(graph(), [], OBS_A)["graph_digest"])
+        self.assertEqual(indexed["digest"], M.project(g, [], OBS_A)["graph_digest"])
 
     def test_declared_graph_generation_requires_every_leaf_identity(self):
-        self.bad(lambda g: g["nodes"][4].pop("responsibility_id"))
+        g = stable_graph()
+        g["nodes"][4].pop("responsibility_id")
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
 
     def test_responsibility_identity_must_be_unique(self):
-        self.bad(lambda g: g["nodes"][4].__setitem__("responsibility_id", "P3-I-R2"))
+        g = stable_graph()
+        g["nodes"][4]["responsibility_id"] = "P3-I-R2"
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
 
     def test_graph_generation_must_be_positive_integer(self):
-        self.bad(lambda g: g["programme"].__setitem__("graph_generation", 0))
-        self.bad(lambda g: g["programme"].__setitem__("graph_generation", True))
+        for value in (0, True):
+            g = stable_graph()
+            g["programme"]["graph_generation"] = value
+            with self.assertRaises(M.GraphError):
+                M.validate_graph(g)
 
     def test_legacy_graph_without_generation_remains_readable_and_normalizes_to_one(self):
-        g = graph()
-        g["programme"].pop("graph_generation")
-        for node in g["nodes"]:
-            if node["kind"] == "LEAF":
-                node.pop("responsibility_id", None)
-        indexed = M.validate_graph(g)
+        indexed = M.validate_graph(graph())
         self.assertEqual(1, indexed["programme"]["graph_generation"])
 
     def test_explicit_default_generation_does_not_change_graph_digest(self):
-        explicit = graph()
+        explicit = stable_graph()
         legacy = copy.deepcopy(explicit)
         legacy["programme"].pop("graph_generation")
         self.assertEqual(M.validate_graph(explicit)["digest"], M.validate_graph(legacy)["digest"])
 
     def test_responsibility_id_is_not_synthesized_from_issue_locator(self):
-        g = graph()
+        g = stable_graph()
         leaf = next(n for n in g["nodes"] if n["ref"] == "Common#592")
         stable_id = leaf["responsibility_id"]
         leaf["ref"] = "Common#999"
