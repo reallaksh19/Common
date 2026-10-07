@@ -88,6 +88,20 @@ properties:
   activity:
     enum: [ACTIVE, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, PAUSED]
     description: QUIET and STALE are observed by a watcher and can never be declared by the executor.
+  handover:
+    type: object
+    additionalProperties: false
+    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
   next:
     type: object
     additionalProperties: false
