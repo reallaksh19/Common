@@ -4170,7 +4170,13 @@ def render_frontier_drift(report: Mapping[str, Any]) -> str:
 
 def status_document(node_projection: Mapping[str, Any], *, version: int, digest: str, programme: Mapping[str, Any]) -> dict[str, Any]:
     """LIVE_STATUS_V1 document written to the provider for one node."""
-    body = {k: v for k, v in node_projection.items() if k not in {"title_prefix"}}
+    # Conditions remain an in-memory derived read model until the dedicated P2 projection-integration
+    # Responsibility adopts them into LIVE_STATUS/title/frontier/admit. Do not collapse those responsibilities here.
+    body = {
+        k: v
+        for k, v in node_projection.items()
+        if k not in {"title_prefix", "conditions"}
+    }
     return {
         "schema": STATUS_SCHEMA,
         "authority": AUTHORITY,
