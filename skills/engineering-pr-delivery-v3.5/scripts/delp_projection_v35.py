@@ -464,10 +464,9 @@ def normalize_observations(
     for supplied_ref, observation in observations.items():
         try:
             supplied_repo, _ = parse_ref(supplied_ref)
-            if supplied_repo and declared_repository:
+            if supplied_repo and declared_repository and "/" in supplied_repo:
                 supplied_repo = supplied_repo.lower()
-                expected = declared_repository if "/" in supplied_repo else declared_repository.split("/")[-1]
-                if supplied_repo != expected:
+                if supplied_repo != declared_repository:
                     raise DelpError(
                         f"repository qualifier {supplied_repo!r} does not match programme.repository {declared_repository!r}"
                     )
