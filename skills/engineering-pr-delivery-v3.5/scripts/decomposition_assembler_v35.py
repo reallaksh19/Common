@@ -22,6 +22,13 @@ CLASSIFIER = _load_sibling("decomposition_classifier_v35_for_assembler", "decomp
 OBSERVER = _load_sibling("decomposition_observer_v35_for_assembler", "decomposition_observer_v35.py")
 
 AUTHORITY = "DERIVED_TOPOLOGY_ADMISSION_ONLY"
+RELEASE_FINDINGS_AUTHORITY = "DERIVED_TOPOLOGY_RELEASE_FINDINGS"
+DECISION_BLOCKERS = {
+    "SPLIT": "TOPOLOGY_SPLIT_REQUIRED",
+    "MERGE": "TOPOLOGY_MERGE_REQUIRED",
+    "DISCOVER_FIRST": "TOPOLOGY_DISCOVERY_REQUIRED",
+    "REPLAN": "TOPOLOGY_REPLAN_REQUIRED",
+}
 
 
 class AssemblyError(ValueError):
@@ -153,4 +160,149 @@ def assemble_topology_admission(
         "repository_currentness": currentness_rows,
         "assessment": assessment,
         "decision": decision,
+    }
+
+
+def topology_release_findings(
+    graph: Mapping[str, Any],
+    *,
+    observations: Mapping[str, Mapping[str, Any]] | None = None,
+    closed: set[str] | frozenset[str] | None = None,
+) -> dict[str, Any]:
+    """Pure per-leaf release findings from canonical R2 topology admissions.
+
+    This function does not alter DELP projection/admission. It only translates
+    existing R2 decisions into deterministic blocker-shaped facts for R3.
+    """
+    if observations is None:
+        observations = {}
+    if not isinstance(observations, Mapping):
+        raise AssemblyError("observations must be a mapping keyed by leaf ref")
+    closed_refs = set(closed or ())
+    try:
+        indexed = DELP.validate_graph(graph)
+    except Exception as exc:
+        raise AssemblyError(f"invalid execution graph: {exc}") from exc
+
+    claim_first_active = bool(
+        indexed.get("acceptance_claims") or indexed.get("topology_assessments")
+    )
+    if not claim_first_active:
+        return {
+            "authority": RELEASE_FINDINGS_AUTHORITY,
+            "active": False,
+            "leaves": {},
+            "summary": {
+                "evaluated": 0,
+                "blocked": 0,
+                "missing_assessment": 0,
+                "admissions": 0,
+            },
+        }
+
+    id_to_ref = _stable_id_to_ref(indexed)
+    active_refs = [
+        ref
+        for ref in indexed["order"]
+        if indexed["nodes"][ref]["kind"] == "LEAF" and ref not in closed_refs
+    ]
+    rows: dict[str, dict[str, Any]] = {
+        ref: {
+            "responsibility_id": indexed["nodes"][ref].get("responsibility_id"),
+            "admissions": [],
+            "blockers": [],
+        }
+        for ref in active_refs
+    }
+    covered: set[str] = set()
+    admission_count = 0
+
+    for basis in indexed["topology_assessments"]:
+        admission = assemble_topology_admission(
+            graph,
+            assessment_id=basis["id"],
+            observations=observations,
+        )
+        decision = str(admission["decision"]["decision"])
+        reasons = list(admission["decision"].get("reasons") or [])
+        subjects = list(admission["responsibility_ids"])
+        currentness = [
+            {
+                "responsibility_id": row["responsibility_id"],
+                "state": row["state"],
+            }
+            for row in admission["repository_currentness"]
+        ]
+        meta = {
+            "assessment_id": basis["id"],
+            "authority": admission["authority"],
+            "decision": decision,
+            "reasons": reasons,
+            "responsibility_ids": subjects,
+            "repository_currentness": currentness,
+        }
+        admission_count += 1
+
+        for responsibility_id in subjects:
+            ref = id_to_ref.get(responsibility_id)
+            if ref is None:
+                raise AssemblyError(
+                    f"{basis['id']}: missing current leaf for Responsibility {responsibility_id!r}"
+                )
+            if ref not in rows:
+                continue
+            covered.add(ref)
+            rows[ref]["admissions"].append(copy.deepcopy(meta))
+            blocker_code = DECISION_BLOCKERS.get(decision)
+            if blocker_code:
+                detail = (
+                    f"{basis['id']} decided {decision} for {', '.join(subjects)}"
+                    + (f" — reasons: {', '.join(reasons)}" if reasons else "")
+                )
+                rows[ref]["blockers"].append(
+                    {
+                        "code": blocker_code,
+                        "detail": detail,
+                        "assessment_id": basis["id"],
+                        "decision": decision,
+                    }
+                )
+            elif decision != "PASS":
+                raise AssemblyError(f"{basis['id']}: unsupported topology decision {decision!r}")
+
+    missing = 0
+    for ref in active_refs:
+        if ref not in covered:
+            missing += 1
+            rid = rows[ref]["responsibility_id"] or ref
+            rows[ref]["blockers"].append(
+                {
+                    "code": "TOPOLOGY_ADMISSION_MISSING",
+                    "detail": (
+                        f"{rid} has no current topology assessment subject in a claim-first plan"
+                    ),
+                    "assessment_id": None,
+                    "decision": "MISSING",
+                }
+            )
+        rows[ref]["admissions"].sort(key=lambda row: row["assessment_id"])
+        rows[ref]["blockers"].sort(
+            key=lambda row: (
+                row["code"],
+                row["assessment_id"] or "",
+                row["detail"],
+            )
+        )
+
+    blocked = sum(1 for row in rows.values() if row["blockers"])
+    return {
+        "authority": RELEASE_FINDINGS_AUTHORITY,
+        "active": True,
+        "leaves": rows,
+        "summary": {
+            "evaluated": len(rows),
+            "blocked": blocked,
+            "missing_assessment": missing,
+            "admissions": admission_count,
+        },
     }

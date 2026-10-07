@@ -3326,6 +3326,132 @@ class TopologyAdmissionAssembler(unittest.TestCase):
             )
 
 
+class TopologyReleaseFindings(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def test_legacy_graph_has_no_topology_release_findings(self):
+        out = A.topology_release_findings(stable_graph(), observations={})
+        self.assertFalse(out["active"])
+        self.assertEqual({}, out["leaves"])
+        self.assertEqual(0, out["summary"]["blocked"])
+
+    def test_pass_adds_no_blocker_but_unassessed_leaf_is_explicit(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            g["programme"]["topology_assessments"] = [
+                copy.deepcopy(g["programme"]["topology_assessments"][0])
+            ]
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.topology_release_findings(
+                g,
+                observations=observations,
+                closed={"Common#594"},
+            )
+            self.assertEqual([], out["leaves"]["Common#592"]["blockers"])
+            self.assertEqual(
+                "PASS",
+                out["leaves"]["Common#592"]["admissions"][0]["decision"],
+            )
+            self.assertEqual(
+                ["TOPOLOGY_ADMISSION_MISSING"],
+                [b["code"] for b in out["leaves"]["Common#612"]["blockers"]],
+            )
+
+    def test_existing_pair_merge_maps_to_both_subject_leaves(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            out = A.topology_release_findings(
+                g,
+                observations=observations,
+                closed={"Common#612"},
+            )
+            for ref in ("Common#592", "Common#594"):
+                self.assertIn(
+                    "TOPOLOGY_MERGE_REQUIRED",
+                    [b["code"] for b in out["leaves"][ref]["blockers"]],
+                )
+            self.assertEqual("MERGE", out["leaves"]["Common#594"]["admissions"][0]["decision"])
+
+    def test_split_discover_and_replan_map_without_reinterpreting_r2(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+
+            split = topology_assessment_planned()
+            split["programme"]["topology_assessments"] = [
+                copy.deepcopy(split["programme"]["topology_assessments"][0])
+            ]
+            split["programme"]["topology_assessments"][0]["semantic_cohesion"] = "MIXED"
+            split_obs = self.observations(split, root, ["Common#592"])
+            split_out = A.topology_release_findings(
+                split, observations=split_obs, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_SPLIT_REQUIRED"],
+                [b["code"] for b in split_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+            missing = topology_assessment_planned()
+            missing["programme"]["topology_assessments"] = [
+                copy.deepcopy(missing["programme"]["topology_assessments"][0])
+            ]
+            missing_out = A.topology_release_findings(
+                missing, observations={}, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_DISCOVERY_REQUIRED"],
+                [b["code"] for b in missing_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+            original = topology_assessment_planned()
+            original["programme"]["topology_assessments"] = [
+                copy.deepcopy(original["programme"]["topology_assessments"][0])
+            ]
+            stale_obs = self.observations(original, root, ["Common#592"])
+            moved = copy.deepcopy(original)
+            leaf_of(moved, "Common#592")["write_surface"] = ["pkg/"]
+            moved_out = A.topology_release_findings(
+                moved, observations=stale_obs, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_REPLAN_REQUIRED"],
+                [b["code"] for b in moved_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+    def test_findings_are_deterministic(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            first = M.canonical_json(
+                A.topology_release_findings(g, observations=observations, closed={"Common#612"})
+            )
+            g["programme"]["topology_assessments"].reverse()
+            second = M.canonical_json(
+                A.topology_release_findings(g, observations=observations, closed={"Common#612"})
+            )
+            self.assertEqual(first, second)
+
+
 class ClaimTopologyReport(unittest.TestCase):
     def test_report_distinguishes_ownership_enabling_and_gate_coverage(self):
         report = M.claim_topology_report(claim_topology_planned())
