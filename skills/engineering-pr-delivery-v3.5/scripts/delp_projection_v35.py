@@ -651,6 +651,99 @@ def condition_record(
     return record
 
 
+
+
+def _plan_spec_conditions(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+    accepted_records: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Derive PlanReady and SpecCurrent from existing plan/spec authority only."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    lifecycle = str(leaf.get("lifecycle") or "")
+    mode = indexed["policy"]["mode"]
+    plan = leaf.get("plan")
+
+    if lifecycle in _TERMINAL:
+        plan_status = "NOT_APPLICABLE"
+        plan_reason = "PLAN_NOT_APPLICABLE_TERMINAL"
+        plan_message = f"{lifecycle} Responsibility has no further execution plan to release."
+    elif mode == "OFF":
+        plan_status = "TRUE"
+        plan_reason = "PLAN_GATE_OFF"
+        plan_message = "Decomposition enforcement is OFF; plan readiness does not block execution."
+    elif mode == "ADVISORY":
+        plan_status = "TRUE"
+        blockers = list((plan or {}).get("blockers") or [])
+        if blockers:
+            plan_reason = "PLAN_ADVISORY_WOULD_BLOCK"
+            codes = ", ".join(sorted({str(row["code"]) for row in blockers}))
+            plan_message = f"Advisory decomposition findings would block if enforced: {codes}."
+        else:
+            plan_reason = "PLAN_RELEASEABLE"
+            plan_message = "The current advisory plan has no blocking decomposition findings."
+    elif plan is None:
+        plan_status = "UNKNOWN"
+        plan_reason = "PLAN_RELEASEABILITY_UNOBSERVED"
+        plan_message = "Enforced plan readiness was not projected."
+    elif plan["releasable"]:
+        plan_status = "TRUE"
+        plan_reason = "PLAN_RELEASEABLE"
+        plan_message = "The current enforced plan is releaseable."
+    else:
+        plan_status = "FALSE"
+        plan_reason = "PLAN_NOT_RELEASEABLE"
+        codes = ", ".join(sorted({str(row["code"]) for row in plan["blockers"]}))
+        plan_message = f"The current enforced plan is not releaseable: {codes or 'blocking finding'}."
+
+    records = list(accepted_records)
+    if not indexed["stable_identity_mode"] or generation is None or not node.get("contract_digest"):
+        spec_status = "UNKNOWN"
+        spec_reason = "SPEC_BINDING_UNAVAILABLE"
+        spec_message = "Stable Responsibility contract binding is unavailable."
+        spec_sources = [f"{ref}:contract"]
+    elif records:
+        spec_status = "TRUE"
+        spec_reason = "SPEC_BINDING_CURRENT"
+        spec_message = (
+            "Accepted facts are bound to the current Responsibility id, spec generation and contract digest."
+        )
+        spec_sources = []
+        for record in records:
+            source = str(record.get("_source") or "").strip()
+            if source and source not in spec_sources:
+                spec_sources.append(source)
+        if not spec_sources:
+            spec_sources = [f"{ref}:accepted-facts"]
+    else:
+        spec_status = "UNKNOWN"
+        spec_reason = "SPEC_BINDING_UNOBSERVED"
+        spec_message = "No accepted fact basis establishes current Responsibility contract binding."
+        spec_sources = [f"{ref}:accepted-facts"]
+
+    return [
+        condition_record(
+            "PlanReady",
+            plan_status,
+            plan_reason,
+            plan_message,
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:plan"],
+        ),
+        condition_record(
+            "SpecCurrent",
+            spec_status,
+            spec_reason,
+            spec_message,
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=spec_sources,
+        ),
+    ]
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
@@ -3149,6 +3242,16 @@ def project(
                 )
             if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
+
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        results[ref]["conditions"] = _plan_spec_conditions(
+            indexed,
+            ref,
+            results[ref],
+            accepted.get(ref, []),
+        )
 
     # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
     # from predecessor projections; agents never author it and it never changes P/E/D.

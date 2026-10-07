@@ -3761,6 +3761,106 @@ class DecompositionInProjection(unittest.TestCase):
         self.assertEqual("NOT_RELEASEABLE", M.project(g, forged, OBS_A)["nodes"]["Common#594"]["state"])
 
 
+class CanonicalPlanSpecConditions(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_off_plan_is_ready_without_fabricating_spec_currentness(self):
+        g = stable_graph()
+        g["programme"]["decomposition_policy"] = {"mode": "OFF"}
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertEqual("TRUE", conditions["PlanReady"]["status"])
+        self.assertEqual("PLAN_GATE_OFF", conditions["PlanReady"]["reason"])
+        self.assertEqual("UNKNOWN", conditions["SpecCurrent"]["status"])
+        self.assertEqual("SPEC_BINDING_UNOBSERVED", conditions["SpecCurrent"]["reason"])
+
+    def test_advisory_would_block_is_ready_but_exposes_the_blockers(self):
+        g = broken("ADVISORY", "Common#592")
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        conditions = self.by_type(node)
+        self.assertFalse(node["plan"]["releasable"])
+        self.assertEqual("TRUE", conditions["PlanReady"]["status"])
+        self.assertEqual("PLAN_ADVISORY_WOULD_BLOCK", conditions["PlanReady"]["reason"])
+        self.assertIn("OUTCOME_MISSING", conditions["PlanReady"]["message"])
+
+    def test_enforced_plan_ready_tracks_the_existing_releasability_only(self):
+        good = M.project(planned(), [], OBS_A)["nodes"]["Common#592"]
+        bad = M.project(broken(ref="Common#592"), [], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual("TRUE", self.by_type(good)["PlanReady"]["status"])
+        self.assertEqual("FALSE", self.by_type(bad)["PlanReady"]["status"])
+        self.assertEqual("PLAN_NOT_RELEASEABLE", self.by_type(bad)["PlanReady"]["reason"])
+
+    def test_health_and_title_do_not_author_plan_ready(self):
+        g = broken("ADVISORY", "Common#592")
+        base = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        observed = {
+            **OBS_A,
+            "Common#592": {
+                **OBS_A["Common#592"],
+                "liveness": "STALE",
+                "additions": 9999,
+                "deletions": 9999,
+            },
+        }
+        changed = M.project(g, [], observed)["nodes"]["Common#592"]
+        self.assertEqual(
+            self.by_type(base)["PlanReady"],
+            self.by_type(changed)["PlanReady"],
+        )
+
+    def test_current_bound_fact_makes_spec_current_true(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01")])
+        node = M.project(g, [entry(record, 1, "current-fact")], OBS_A)["nodes"]["Common#592"]
+        spec = self.by_type(node)["SpecCurrent"]
+        self.assertEqual("TRUE", spec["status"])
+        self.assertEqual("SPEC_BINDING_CURRENT", spec["reason"])
+        self.assertEqual(1, spec["observed_generation"])
+        self.assertEqual(["current-fact"], spec["source_refs"])
+
+    def test_graph_only_reparent_reweight_preserves_spec_current(self):
+        old = stable_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        moved = copy.deepcopy(old)
+        leaf = leaf_of(moved, "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        node = M.project(moved, [entry(record, 1, "bound-before-move")], OBS_A)["nodes"]["Common#592"]
+        spec = self.by_type(node)["SpecCurrent"]
+        self.assertEqual("TRUE", spec["status"])
+        self.assertEqual("SPEC_BINDING_CURRENT", spec["reason"])
+
+    def test_stale_contract_fact_is_rejected_and_cannot_make_spec_current_true(self):
+        old = stable_graph()
+        stale = bound_facts(old, units=[unit("U01")])
+        changed = copy.deepcopy(old)
+        leaf = leaf_of(changed, "Common#592")
+        leaf["outcome"] = "changed semantic contract"
+        leaf["spec_generation"] = 2
+        out = M.project(changed, [entry(stale, 1, "stale-contract")], OBS_A)
+        spec = self.by_type(out["nodes"]["Common#592"])["SpecCurrent"]
+        self.assertEqual("UNKNOWN", spec["status"])
+        self.assertEqual("SPEC_BINDING_UNOBSERVED", spec["reason"])
+        self.assertEqual(["stale-contract"], [row["source"] for row in out["rejected_facts"]])
+
+    def test_terminal_leaf_plan_ready_is_not_applicable(self):
+        g = stable_graph()
+        done = bound_facts(
+            g,
+            leaf="Common#612",
+            pr="Common#613",
+            units=[unit("W1")],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+        )
+        node = M.project(g, [entry(done, 1)], OBS_A)["nodes"]["Common#612"]
+        self.assertEqual("COMPLETE", node["lifecycle"])
+        plan = self.by_type(node)["PlanReady"]
+        self.assertEqual("NOT_APPLICABLE", plan["status"])
+        self.assertEqual("PLAN_NOT_APPLICABLE_TERMINAL", plan["reason"])
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)
