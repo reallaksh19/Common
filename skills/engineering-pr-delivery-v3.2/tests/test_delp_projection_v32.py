@@ -14,7 +14,6 @@ import io
 import itertools
 import json
 import pathlib
-import sys
 import tempfile
 import unittest
 
@@ -23,13 +22,6 @@ spec = importlib.util.spec_from_file_location("delp_projection_v32", MODULE_PATH
 M = importlib.util.module_from_spec(spec)
 assert spec.loader
 spec.loader.exec_module(M)
-
-SCRIPTS = MODULE_PATH.parent
-if str(SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS))
-import agent_quality_metrics_v32 as AQ1
-import agent_quality_trajectory_v32 as AQ2
-import agent_intervention_v32 as AQ3
 
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
@@ -3661,193 +3653,469 @@ class LowMemoryDecompositionRelay(unittest.TestCase):
         self.assertTrue(M.validate_facts(bad))
 
 
-
-
-# --------------------------------------------------------------------------
-# unified agent-health read model: quality is advisory and orthogonal to DELP control
-# --------------------------------------------------------------------------
-
-READMODEL_BASIS_REF = "Common#689#agent-quality-benchmark-v1"
-READMODEL_BASIS_DIGEST = "sha256:" + "b" * 64
-
-
-def rm_observation(oid, kind, disposition, *, critical=False, covered=None, repairs=0):
-    row = {
-        "id": oid,
-        "class": kind,
-        "critical": critical,
-        "disposition": disposition,
-        "repairs": repairs,
-        "evidence_refs": [READMODEL_BASIS_REF, f"Common#708#{oid}"],
-    }
-    if covered is not None:
-        row["impact_expected"] = 1
-        row["impact_covered"] = covered
-    return row
-
-
-def rm_quality(window_id, *, degraded=False):
-    rows = [
-        rm_observation("M1", "MUTATION", "DETECTED", critical=True, covered=1),
-        rm_observation("M2", "MUTATION", "MISSED" if degraded else "DETECTED", critical=True, covered=0 if degraded else 1),
-        rm_observation("C1", "CLEAN_CONTROL", "CLEAN_ACCEPTED"),
-        rm_observation("C2", "CLEAN_CONTROL", "FALSE_POSITIVE" if degraded else "CLEAN_ACCEPTED"),
-    ]
-    return AQ1.evaluate({"schema": AQ1.WINDOW_SCHEMA, "window_id": window_id, "observations": rows})
-
-
-def rm_chain():
-    q1 = rm_quality("RM-W1")
-    q2 = rm_quality("RM-W2")
-    trajectory = AQ2.evaluate({
-        "schema": AQ2.INPUT_SCHEMA,
-        "trajectory_id": "RM-TRAJ",
-        "comparison_basis": {"ref": READMODEL_BASIS_REF, "digest": READMODEL_BASIS_DIGEST},
-        "windows": [{"sequence": 1, "result": q1}, {"sequence": 2, "result": q2}],
-    })
-    intervention = AQ3.evaluate({"schema": AQ3.INPUT_SCHEMA, "trajectory": trajectory})
-    return q2, trajectory, intervention
-
-
-class AgentHealthReadModel(unittest.TestCase):
-    def project(self, agent_quality=None, *, health=True):
-        obs = dict(FULL_OBS)
-        if agent_quality is not None:
-            obs["agent_quality"] = agent_quality
-        g = with_health() if health else graph()
-        return M.project(g, STARTED, {"Common#592": obs})
-
-    def test_four_dimensions_are_orthogonal_not_a_single_score(self):
-        quality, trajectory, intervention = rm_chain()
-        projection = self.project({
-            "quality_result": quality,
-            "trajectory_result": trajectory,
-            "intervention_result": intervention,
-        })
-        leaf = projection["nodes"]["Common#592"]
-        model = leaf["agent_health"]
-        self.assertEqual(M._AGENT_HEALTH_AUTHORITY, model["authority"])
-        self.assertTrue(model["advisory"])
-        self.assertEqual(
-            {"operational", "quality", "trajectory", "intervention"},
-            {k for k in model if k not in {"authority", "advisory", "read_model_digest"}},
-        )
-        self.assertEqual({"AVAILABLE"}, {model[k]["status"] for k in ("operational", "quality", "trajectory", "intervention")})
-        self.assertEqual("HEALTHY", model["operational"]["verdict"])
-        self.assertEqual("STABLE", model["trajectory"]["trajectory"])
-        self.assertEqual("NONE", model["intervention"]["recommendation"])
-        self.assertNotIn("score", model)
-        self.assertRegex(model["read_model_digest"], r"^sha256:[0-9a-f]{64}$")
-
-    def test_unavailable_dimensions_are_explicit_never_healthy_or_zero(self):
-        model = self.project()["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("AVAILABLE", model["operational"]["status"])
-        for key in ("quality", "trajectory", "intervention"):
-            self.assertEqual("UNAVAILABLE", model[key]["status"])
-            self.assertTrue(model[key]["reason"])
-
-        quality, trajectory, intervention = rm_chain()
-        off = self.project({
-            "quality_result": quality,
-            "trajectory_result": trajectory,
-            "intervention_result": intervention,
-        }, health=False)["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual(("UNAVAILABLE", "OPERATIONAL_HEALTH_NOT_PROJECTED"), (off["operational"]["status"], off["operational"]["reason"]))
-        self.assertEqual("AVAILABLE", off["quality"]["status"])
-
-    def test_quality_only_does_not_fabricate_trajectory_or_advice(self):
-        quality, _, _ = rm_chain()
-        model = self.project({"quality_result": quality})["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("AVAILABLE", model["quality"]["status"])
-        self.assertEqual("UNAVAILABLE", model["trajectory"]["status"])
-        self.assertEqual("UNAVAILABLE", model["intervention"]["status"])
-
-    def test_trajectory_requires_matching_latest_quality_provenance(self):
-        quality, trajectory, intervention = rm_chain()
-        wrong_quality = rm_quality("RM-WX")
-        model = self.project({
-            "quality_result": wrong_quality,
-            "trajectory_result": trajectory,
-            "intervention_result": intervention,
-        })["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("AVAILABLE", model["quality"]["status"])
-        self.assertEqual("INVALID", model["trajectory"]["status"])
-        self.assertIn("provenance", model["trajectory"]["reason"])
-        self.assertEqual("INVALID", model["intervention"]["status"])
-
-        no_quality = self.project({
-            "trajectory_result": trajectory,
-            "intervention_result": intervention,
-        })["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("INVALID", no_quality["trajectory"]["status"])
-        self.assertIn("QUALITY_RESULT_REQUIRED", no_quality["trajectory"]["reason"])
-
-    def test_tampered_trajectory_or_intervention_is_invalid_advisory_data(self):
-        quality, trajectory, intervention = rm_chain()
-        bad_trajectory = copy.deepcopy(trajectory)
-        bad_trajectory["trajectory_digest"] = "sha256:" + "0" * 64
-        model = self.project({
-            "quality_result": quality,
-            "trajectory_result": bad_trajectory,
-            "intervention_result": intervention,
-        })["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("INVALID", model["trajectory"]["status"])
-        self.assertEqual("INVALID", model["intervention"]["status"])
-
-        forged = copy.deepcopy(intervention)
-        forged["recommendation"] = "CHECKPOINT"
-        model = self.project({
-            "quality_result": quality,
-            "trajectory_result": trajectory,
-            "intervention_result": forged,
-        })["nodes"]["Common#592"]["agent_health"]
-        self.assertEqual("AVAILABLE", model["trajectory"]["status"])
-        self.assertEqual("INVALID", model["intervention"]["status"])
-        self.assertIn("exact recomputation", model["intervention"]["reason"])
-
-    def test_agent_quality_changes_only_read_model_and_projection_input_digest(self):
-        quality, trajectory, intervention = rm_chain()
-        base_obs = dict(FULL_OBS)
-        rich_obs = {
-            **FULL_OBS,
-            "agent_quality": {
-                "quality_result": quality,
-                "trajectory_result": trajectory,
-                "intervention_result": intervention,
-            },
-        }
-        g = with_health()
-        base = M.project(g, STARTED, {"Common#592": base_obs})
-        rich = M.project(g, STARTED, {"Common#592": rich_obs})
-        a, b = base["nodes"]["Common#592"], rich["nodes"]["Common#592"]
-
-        for key in (
-            "lifecycle", "state", "light", "progress", "active_unit", "next", "evidence",
-            "frontier", "dependencies", "plan", "health", "material", "title_prefix",
-        ):
-            self.assertEqual(a.get(key), b.get(key), key)
-        self.assertNotEqual(base["input_digest"], rich["input_digest"])
-        self.assertIn("agent_health", a)
-        self.assertIn("agent_health", b)
-        self.assertEqual("UNAVAILABLE", a["agent_health"]["quality"]["status"])
-        self.assertEqual("AVAILABLE", b["agent_health"]["quality"]["status"])
-
-        admit_a = M.admit(base, "Common#592")
-        admit_b = M.admit(rich, "Common#592")
-        for key in ("state", "evidence_health", "action", "recovery_required", "next"):
-            self.assertEqual(admit_a[key], admit_b[key], key)
-
-    def test_root_and_intermediate_do_not_gain_hidden_quality_aggregation(self):
-        quality, trajectory, intervention = rm_chain()
-        projection = self.project({
-            "quality_result": quality,
-            "trajectory_result": trajectory,
-            "intervention_result": intervention,
-        })
-        self.assertIn("agent_health", projection["nodes"]["Common#592"])
-        for ref, node in projection["nodes"].items():
-            if node["kind"] != "LEAF":
-                self.assertNotIn("agent_health", node, ref)
-
 if __name__ == "__main__":
     unittest.main()
+
+class AgentMetrics689ProposalV2Gate(unittest.TestCase):
+    def proposal(self):
+        return {
+            "schema": M.GRAPH_SCHEMA,
+            "programme": {
+                "id": "V32-AGENT-METRICS-689",
+                "root": "Common#689",
+                "total_weight": 100,
+                "acceptance_claims": [
+                    {
+                        "id": "PA-QOBS",
+                        "claim": "Exact evaluation observations reduce to truthful agent/reviewer quality facts with explicit UNKNOWN semantics and no self-confidence or engineering-authority leakage.",
+                        "kind": "SEMANTIC",
+                        "weight": 25,
+                    },
+                    {
+                        "id": "PA-TRAJECTORY",
+                        "claim": "Comparable quality windows classify conservatively as stable, improving, degrading, or insufficient without unrelated evidence bases or invented calibrated thresholds.",
+                        "kind": "SEMANTIC",
+                        "weight": 20,
+                    },
+                    {
+                        "id": "PA-INTERVENTION",
+                        "claim": "Exact quality/trajectory state yields bounded execution-safety advice without becoming product/review truth, DELP admission, custody, merge authority, or release authority.",
+                        "kind": "SEMANTIC",
+                        "weight": 20,
+                    },
+                    {
+                        "id": "PA-READMODEL",
+                        "claim": "V3.2 exposes operational health plus quality, trajectory, and advisory state as one coherent derived agent-health read model while preserving P/E, title, decomposition, handover, and admission semantics.",
+                        "kind": "SEMANTIC",
+                        "weight": 30,
+                    },
+                    {
+                        "id": "PG-REPLAY",
+                        "claim": "Retained end-to-end replay qualifies clean controls, semantic-defect sensitivity, UNKNOWN handling, degradation/recovery behavior, and zero authority leakage at the accepted integrated head.",
+                        "kind": "DELIVERY_GATE",
+                        "weight": 5,
+                    },
+                ],
+                "decomposition_policy": {
+                    "mode": "ENFORCED",
+                    "claim_first": {"mode": "ENFORCED", "require_independence_basis": True},
+                },
+                "decomposition_proposal": {
+                    "version": "V2",
+                    "responsibilities": [
+                        {
+                            "id": "R-QOBS",
+                            "work_class": "PRODUCT",
+                            "owns_claims": ["PA-QOBS"],
+                            "claim_allocations": [{"claim_id": "PA-QOBS", "weight": 25}],
+                            "outcome": "Truthful per-window agent/reviewer quality observation semantics.",
+                            "independence_basis": "Can be accepted or rejected from one evaluation-window contract and its semantic-mutation/clean-control oracle without trajectory, advisory, or read-model completion.",
+                            "semantic_units": [
+                                {
+                                    "id": "QO-OBSERVATION-INTEGRITY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 34,
+                                    "outcome": "Only explicit durable observations with valid class/disposition and provenance contribute to quality facts.",
+                                    "verify": "malformed/cross-class/missing-provenance falsifier replay",
+                                },
+                                {
+                                    "id": "QO-SENSITIVITY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Mutation sensitivity, clean-control specificity, critical recall, impact coverage, and repair burden are exactly derivable.",
+                                    "verify": "semantic mutation and clean-control oracle",
+                                },
+                                {
+                                    "id": "QO-UNKNOWN-AUTHORITY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Missing denominators remain UNKNOWN and derived quality observations cannot author engineering verdict/progress authority.",
+                                    "verify": "zero-denominator and authority-leakage replay",
+                                },
+                            ],
+                            "size_budget": {"target_loc": 450, "hard_loc": 800, "target_minutes": 15, "hard_minutes": 20},
+                            "write_surface": [
+                                "skills/engineering-pr-delivery-v3.2/schemas/agent-quality-window-v32.schema.yaml",
+                                "skills/engineering-pr-delivery-v3.2/scripts/agent_quality_metrics_v32.py",
+                                "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_quality.py",
+                            ],
+                            "acceptance_methods": [
+                                "exact semantic-mutation and clean-control oracle",
+                                "malformed/UNKNOWN negative controls",
+                                "exact-head V3.2 regression qualification",
+                            ],
+                        },
+                        {
+                            "id": "R-TRAJECTORY",
+                            "work_class": "PRODUCT",
+                            "owns_claims": ["PA-TRAJECTORY"],
+                            "claim_allocations": [{"claim_id": "PA-TRAJECTORY", "weight": 20}],
+                            "depends_on": ["R-QOBS"],
+                            "outcome": "Directional quality state across comparable evaluation windows.",
+                            "independence_basis": "Can be accepted or rejected from ordered comparable R-QOBS results without choosing an intervention or integrating with operational health/DELP.",
+                            "semantic_units": [
+                                {
+                                    "id": "TR-COMPARABILITY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 34,
+                                    "outcome": "Only windows sharing one explicit durable comparison basis can form a trajectory.",
+                                    "verify": "unrelated-basis rejection replay",
+                                },
+                                {
+                                    "id": "TR-DIRECTION",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Comparable quality components classify exact monotonic stable, improving, or degrading direction without weighted scoring.",
+                                    "verify": "stable/improving/degrading exact-fraction oracle",
+                                },
+                                {
+                                    "id": "TR-INCONCLUSIVE",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Missing, reversing, or conflicting component observations remain explicitly insufficient rather than being forced into a capability verdict.",
+                                    "verify": "incomplete/mixed/conflicting retained cases",
+                                },
+                            ],
+                            "size_budget": {"target_loc": 500, "hard_loc": 850, "target_minutes": 15, "hard_minutes": 20},
+                            "write_surface": [
+                                "skills/engineering-pr-delivery-v3.2/schemas/agent-quality-trajectory-v32.schema.yaml",
+                                "skills/engineering-pr-delivery-v3.2/scripts/agent_quality_trajectory_v32.py",
+                                "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_quality_trajectory.py",
+                            ],
+                            "acceptance_methods": [
+                                "comparison-basis falsifier replay",
+                                "exact monotonic trajectory oracle",
+                                "mixed/UNKNOWN conflict controls",
+                                "exact-head V3.2 regression qualification",
+                            ],
+                        },
+                        {
+                            "id": "R-INTERVENTION",
+                            "work_class": "PRODUCT",
+                            "owns_claims": ["PA-INTERVENTION"],
+                            "claim_allocations": [{"claim_id": "PA-INTERVENTION", "weight": 20}],
+                            "depends_on": ["R-TRAJECTORY"],
+                            "outcome": "Bounded quality-derived execution-safety recommendation semantics.",
+                            "independence_basis": "Can receive RESPONSIBILITY_COMPLETE YES/NO from exact R-TRAJECTORY inputs and a precommitted advisory-policy oracle without DELP/read-model integration.",
+                            "semantic_units": [
+                                {
+                                    "id": "IN-INCONCLUSIVE-SAFETY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 34,
+                                    "outcome": "Incomplete, reversing, or conflicting quality observations produce conservative bounded execution-safety advice rather than a fabricated capability conclusion.",
+                                    "verify": "incomplete/mixed/conflicting policy oracle",
+                                },
+                                {
+                                    "id": "IN-DEGRADATION-SAFETY",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Any classifiable trajectory with unresolved critical uncertainty requires reconstruction-oriented safety advice; degradation with rising repair burden maps to the narrowest justified scope-control advice.",
+                                    "verify": "critical-unknown/degradation/repair-rate oracle",
+                                },
+                                {
+                                    "id": "IN-AUTHORITY-ISOLATION",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Quality-only advice cannot infer handover, replan, candidate/review truth, DELP admission, progress, merge, or release authority.",
+                                    "verify": "authority-injection and forbidden-action negative controls",
+                                },
+                            ],
+                            "size_budget": {"target_loc": 450, "hard_loc": 800, "target_minutes": 15, "hard_minutes": 20},
+                            "write_surface": [
+                                "skills/engineering-pr-delivery-v3.2/schemas/agent-intervention-v32.schema.yaml",
+                                "skills/engineering-pr-delivery-v3.2/scripts/agent_intervention_v32.py",
+                                "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_intervention.py",
+                            ],
+                            "acceptance_methods": [
+                                "precommitted trajectory-to-advice oracle",
+                                "tampered-M2 negative controls",
+                                "authority-leakage replay",
+                                "exact-head V3.2 regression qualification",
+                            ],
+                        },
+                        {
+                            "id": "R-READMODEL",
+                            "work_class": "PRODUCT",
+                            "owns_claims": ["PA-READMODEL"],
+                            "claim_allocations": [{"claim_id": "PA-READMODEL", "weight": 30}],
+                            "depends_on": ["R-QOBS", "R-TRAJECTORY", "R-INTERVENTION"],
+                            "outcome": "One coherent derived V3.2 agent-health read model combining operational continuity health with quality, trajectory, and advisory observations.",
+                            "independence_basis": "Can be accepted or rejected from composition and authority-preservation invariants after its semantic inputs are stable; final retained replay is a separate delivery gate.",
+                            "semantic_units": [
+                                {
+                                    "id": "RM-ORTHOGONAL-COMPOSITION",
+                                    "kind": "SEMANTIC",
+                                    "weight": 34,
+                                    "outcome": "Existing operational health and new quality/trajectory/advisory state coexist as distinguishable derived dimensions rather than one opaque score.",
+                                    "verify": "read-model composition oracle",
+                                },
+                                {
+                                    "id": "RM-CONTROL-INVARIANTS",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Agent-health observations do not move P/E, title, claim ownership, handover state, admission truth, or engineering verdict authority.",
+                                    "verify": "before/after DELP control-invariant replay",
+                                },
+                                {
+                                    "id": "RM-TRACEABLE-CONSUMPTION",
+                                    "kind": "SEMANTIC",
+                                    "weight": 33,
+                                    "outcome": "Every exposed quality/trajectory/advisory field retains exact source provenance and can be consumed without confusing observation with authority.",
+                                    "verify": "source-digest/provenance and consumer replay",
+                                },
+                            ],
+                            "size_budget": {"target_loc": 650, "hard_loc": 1200, "target_minutes": 15, "hard_minutes": 20},
+                            "write_surface": [
+                                "skills/engineering-pr-delivery-v3.2/schemas/delp-live-status-v32.schema.yaml",
+                                "skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py",
+                                "skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py",
+                            ],
+                            "acceptance_methods": [
+                                "composition/read-model semantic oracle",
+                                "P/E/title/admission before-after invariants",
+                                "source-provenance replay",
+                                "exact-head V3.2 and DELP regression qualification",
+                            ],
+                        },
+                        {
+                            "id": "G-REPLAY",
+                            "work_class": "GATE",
+                            "owns_claims": ["PG-REPLAY"],
+                            "claim_allocations": [{"claim_id": "PG-REPLAY", "weight": 5}],
+                            "depends_on": ["R-READMODEL"],
+                            "outcome": "Retained integrated qualification of the accepted semantic responsibilities.",
+                            "independence_basis": "Can pass or fail from the frozen integrated candidate and retained corpus; owns no semantic product claim and cannot substitute for any PRODUCT responsibility.",
+                            "semantic_units": [
+                                {
+                                    "id": "G1",
+                                    "kind": "DELIVERY_GATE",
+                                    "weight": 100,
+                                    "outcome": "Replay the retained clean, injected-defect, UNKNOWN, degradation, intervention, and zero-authority-leakage corpus at exact head.",
+                                    "verify": "retained end-to-end qualification run",
+                                }
+                            ],
+                            "size_budget": {"target_loc": 150, "hard_loc": 300, "target_minutes": 10, "hard_minutes": 20},
+                            "write_surface": [
+                                "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_health_retained_replay.py"
+                            ],
+                            "acceptance_methods": [
+                                "retained exact-head end-to-end replay",
+                                "hosted V3.2 regression qualification",
+                            ],
+                        },
+                    ],
+                },
+            },
+            "nodes": [{"ref": "Common#689", "kind": "ROOT"}],
+        }
+
+    def test_689_claim_first_proposal_is_releaseable(self):
+        report = M.decomposition_report(self.proposal())
+        print("PROPOSAL_689_RELEASE_STATE=" + report["release_state"])
+        print("PROPOSAL_689_DIGEST=" + report["proposal_digest"])
+        print("PROPOSAL_689_REPORT=" + json.dumps(report, sort_keys=True))
+        self.assertEqual("RELEASEABLE", report["release_state"], report)
+        self.assertTrue(all(row["releasable"] for row in report["leaves"].values()), report)
+
+    def test_699_provider_binding_conserves_released_intervention_contract(self):
+        g = self.proposal()
+        released = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", released["release_state"], released)
+        digest = released["proposal_digest"]
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": "R-INTERVENTION", "ref": "Common#699"}
+        ]
+        g["nodes"] = [
+            {"ref": "Common#689", "kind": "ROOT", "reserve_weight": 80},
+            {
+                "ref": "Common#699",
+                "kind": "LEAF",
+                "parent": "Common#689",
+                "weight": 20,
+                "responsibility_id": "R-INTERVENTION",
+                "work_class": "PRODUCT",
+                "owns_claims": ["PA-INTERVENTION"],
+                "outcome": "Bounded quality-derived execution-safety recommendation semantics.",
+                "independence_basis": "Can receive RESPONSIBILITY_COMPLETE YES/NO from exact R-TRAJECTORY inputs and a precommitted advisory-policy oracle without DELP/read-model integration.",
+                "size_budget": {
+                    "target_loc": 450,
+                    "hard_loc": 800,
+                    "target_minutes": 15,
+                    "hard_minutes": 20,
+                },
+                "write_surface": [
+                    "skills/engineering-pr-delivery-v3.2/schemas/agent-intervention-v32.schema.yaml",
+                    "skills/engineering-pr-delivery-v3.2/scripts/agent_intervention_v32.py",
+                    "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_intervention.py",
+                ],
+                "acceptance_methods": [
+                    "precommitted trajectory-to-advice oracle",
+                    "tampered-M2 negative controls",
+                    "authority-leakage replay",
+                    "exact-head V3.2 regression qualification",
+                ],
+                "units": [
+                    {
+                        "id": "IN-INCONCLUSIVE-SAFETY",
+                        "weight": 34,
+                        "outcome": "Incomplete, reversing, or conflicting quality observations produce conservative bounded execution-safety advice rather than a fabricated capability conclusion.",
+                        "verify": "incomplete/mixed/conflicting policy oracle",
+                    },
+                    {
+                        "id": "IN-DEGRADATION-SAFETY",
+                        "weight": 33,
+                        "outcome": "Any classifiable trajectory with unresolved critical uncertainty requires reconstruction-oriented safety advice; degradation with rising repair burden maps to the narrowest justified scope-control advice.",
+                        "verify": "critical-unknown/degradation/repair-rate oracle",
+                    },
+                    {
+                        "id": "IN-AUTHORITY-ISOLATION",
+                        "weight": 33,
+                        "outcome": "Quality-only advice cannot infer handover, replan, candidate/review truth, DELP admission, progress, merge, or release authority.",
+                        "verify": "authority-injection and forbidden-action negative controls",
+                    },
+                ],
+            },
+        ]
+        report = M.decomposition_report(g)
+        print("BINDING_699_RELEASE_STATE=" + report["release_state"])
+        print("BINDING_699_DIGEST=" + report["proposal_digest"])
+        print("BINDING_699_REPORT=" + json.dumps(report, sort_keys=True))
+        row = report["leaves"]["R-INTERVENTION"]
+        self.assertTrue(row["releasable"], report)
+        self.assertEqual([], row["blockers"], report)
+        self.assertEqual(20, row["weight"])
+        self.assertEqual(digest, report["released_proposal_digest"])
+
+    def test_708_provider_binding_conserves_released_product_topology(self):
+        g = self.proposal()
+        released = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", released["release_state"], released)
+        digest = released["proposal_digest"]
+
+        bindings = {
+            "R-QOBS": "Common#690",
+            "R-TRAJECTORY": "Common#694",
+            "R-INTERVENTION": "Common#699",
+            "R-READMODEL": "Common#708",
+        }
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": rid, "ref": ref} for rid, ref in bindings.items()
+        ]
+
+        proposals = {
+            row["id"]: row
+            for row in g["programme"]["decomposition_proposal"]["responsibilities"]
+        }
+
+        def materialized(rid):
+            row = proposals[rid]
+            return {
+                "ref": bindings[rid],
+                "kind": "LEAF",
+                "parent": "Common#689",
+                "weight": sum(a["weight"] for a in row["claim_allocations"]),
+                "responsibility_id": rid,
+                "work_class": row["work_class"],
+                "owns_claims": list(row["owns_claims"]),
+                "outcome": row["outcome"],
+                "independence_basis": row["independence_basis"],
+                "size_budget": dict(row["size_budget"]),
+                "write_surface": list(row["write_surface"]),
+                "acceptance_methods": list(row["acceptance_methods"]),
+                "depends_on": [bindings[dep] for dep in row.get("depends_on", [])],
+                "units": [
+                    {
+                        "id": unit["id"],
+                        "weight": unit["weight"],
+                        "outcome": unit["outcome"],
+                        "verify": unit["verify"],
+                    }
+                    for unit in row["semantic_units"]
+                ],
+            }
+
+        g["nodes"] = [
+            {"ref": "Common#689", "kind": "ROOT", "reserve_weight": 5},
+            materialized("R-QOBS"),
+            materialized("R-TRAJECTORY"),
+            materialized("R-INTERVENTION"),
+            materialized("R-READMODEL"),
+        ]
+
+        report = M.decomposition_report(g)
+        print("BINDING_708_RELEASE_STATE=" + report["release_state"])
+        print("BINDING_708_DIGEST=" + report["proposal_digest"])
+        print("BINDING_708_REPORT=" + json.dumps(report, sort_keys=True))
+        self.assertEqual("RELEASEABLE", report["release_state"], report)
+        self.assertEqual(digest, report["released_proposal_digest"])
+        self.assertEqual([], report["leaves"]["R-READMODEL"]["blockers"])
+        self.assertEqual(30, report["leaves"]["R-READMODEL"]["weight"])
+
+    def test_713_provider_binding_closes_released_topology(self):
+        g = self.proposal()
+        released = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", released["release_state"], released)
+        digest = released["proposal_digest"]
+
+        bindings = {
+            "R-QOBS": "Common#690",
+            "R-TRAJECTORY": "Common#694",
+            "R-INTERVENTION": "Common#699",
+            "R-READMODEL": "Common#708",
+            "G-REPLAY": "Common#713",
+        }
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": rid, "ref": ref} for rid, ref in bindings.items()
+        ]
+        proposals = {
+            row["id"]: row
+            for row in g["programme"]["decomposition_proposal"]["responsibilities"]
+        }
+
+        def materialized(rid):
+            row = proposals[rid]
+            return {
+                "ref": bindings[rid],
+                "kind": "LEAF",
+                "parent": "Common#689",
+                "weight": sum(a["weight"] for a in row["claim_allocations"]),
+                "responsibility_id": rid,
+                "work_class": row["work_class"],
+                "owns_claims": list(row["owns_claims"]),
+                "outcome": row["outcome"],
+                "independence_basis": row["independence_basis"],
+                "size_budget": dict(row["size_budget"]),
+                "write_surface": list(row["write_surface"]),
+                "acceptance_methods": list(row["acceptance_methods"]),
+                "depends_on": [bindings[dep] for dep in row.get("depends_on", [])],
+                "units": [
+                    {
+                        "id": unit["id"],
+                        "weight": unit["weight"],
+                        "outcome": unit["outcome"],
+                        "verify": unit["verify"],
+                    }
+                    for unit in row["semantic_units"]
+                ],
+            }
+
+        g["nodes"] = [
+            {"ref": "Common#689", "kind": "ROOT"},
+            materialized("R-QOBS"),
+            materialized("R-TRAJECTORY"),
+            materialized("R-INTERVENTION"),
+            materialized("R-READMODEL"),
+            materialized("G-REPLAY"),
+        ]
+        report = M.decomposition_report(g)
+        print("BINDING_713_RELEASE_STATE=" + report["release_state"])
+        print("BINDING_713_DIGEST=" + report["proposal_digest"])
+        print("BINDING_713_REPORT=" + json.dumps(report, sort_keys=True))
+        self.assertEqual("RELEASEABLE", report["release_state"], report)
+        self.assertEqual(digest, report["released_proposal_digest"])
+        self.assertEqual([], report["leaves"]["G-REPLAY"]["blockers"])
+        self.assertEqual(5, report["leaves"]["G-REPLAY"]["weight"])
+
