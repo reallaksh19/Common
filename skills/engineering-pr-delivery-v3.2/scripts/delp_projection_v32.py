@@ -79,6 +79,13 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 HANDOVER_EVENTS = {"OFFERED", "ACCEPTED"}
 HANDOVER_MODES = {"CONTINUITY", "INDEPENDENT_RECONSTRUCTION"}
 HANDOVER_RESULTS = {"RECONCILED", "DRIFT_FOUND", "INSUFFICIENT_GROUNDING", "OWNER_DECISION_REQUIRED"}
+HANDOVER_AUTHORITY_CLASSES = {
+    "PRODUCTION",
+    "CANDIDATE_GENERATION",
+    "REVIEW_ONLY",
+    "VALIDATION_BENCHMARK",
+    "HISTORICAL",
+}
 ENTRY_EVENTS = {"PREPARED", "EXECUTION_END"}
 ENTRY_MODES = {"TAKEOVER_RECONCILE"}
 
@@ -525,7 +532,8 @@ def validate_facts(facts: Any) -> list[str]:
             errors.append("handover: must be a mapping")
         else:
             extra = set(map(str, handover)) - {
-                "event", "mode", "predecessor_ref", "frontier_digest", "decision_at_risk", "result"
+                "event", "mode", "predecessor_ref", "frontier_digest", "decision_at_risk", "result",
+                "challenge_digest", "question_ids", "answer_evidence", "root_classification",
             }
             if extra:
                 errors.append(f"handover: unknown fields {sorted(extra)}")
@@ -547,10 +555,117 @@ def validate_facts(facts: Any) -> list[str]:
             hresult = handover.get("result")
             if hresult is not None and hresult not in HANDOVER_RESULTS:
                 errors.append(f"handover.result: one of {sorted(HANDOVER_RESULTS)}")
-            if event == "OFFERED" and hresult is not None:
-                errors.append("handover.result: OFFERED cannot carry a successor result")
-            if event == "ACCEPTED" and not predecessor:
-                errors.append("handover.predecessor_ref: required for ACCEPTED")
+
+            challenge_digest = handover.get("challenge_digest")
+            if challenge_digest is not None and not _DIGEST.fullmatch(str(challenge_digest)):
+                errors.append("handover.challenge_digest: sha256:<64 hex> when present")
+            question_ids = handover.get("question_ids")
+            if question_ids is not None:
+                if (
+                    not isinstance(question_ids, list)
+                    or not question_ids
+                    or not all(isinstance(q, str) and re.fullmatch(r"Q[1-9][0-9]*", q) for q in question_ids)
+                    or len(question_ids) != len(set(question_ids))
+                ):
+                    errors.append("handover.question_ids: non-empty unique Q<n> list when present")
+
+            answer_evidence = handover.get("answer_evidence")
+            answer_ids: list[str] = []
+            if answer_evidence is not None:
+                if not isinstance(answer_evidence, list) or not answer_evidence:
+                    errors.append("handover.answer_evidence: non-empty array when present")
+                else:
+                    for index, answer in enumerate(answer_evidence):
+                        label = f"handover.answer_evidence[{index}]"
+                        if not isinstance(answer, Mapping):
+                            errors.append(f"{label}: must be a mapping")
+                            continue
+                        extra_answer = set(map(str, answer)) - {
+                            "question_id", "evidence_refs", "live_refs", "evidence_summary", "authority_classifications"
+                        }
+                        if extra_answer:
+                            errors.append(f"{label}: unknown fields {sorted(extra_answer)}")
+                        qid = answer.get("question_id")
+                        if not isinstance(qid, str) or not re.fullmatch(r"Q[1-9][0-9]*", qid):
+                            errors.append(f"{label}.question_id: required Q<n>")
+                        else:
+                            answer_ids.append(qid)
+                        _check_refs(answer.get("evidence_refs"), f"{label}.evidence_refs", errors)
+                        if not answer.get("evidence_refs"):
+                            errors.append(f"{label}.evidence_refs: at least one durable evidence ref required")
+                        live_refs = answer.get("live_refs")
+                        if not isinstance(live_refs, list) or not live_refs:
+                            errors.append(f"{label}.live_refs: at least one live repository/provider ref required")
+                        else:
+                            for live_index, live in enumerate(live_refs):
+                                live_label = f"{label}.live_refs[{live_index}]"
+                                if not isinstance(live, Mapping) or set(map(str, live)) - {"kind", "ref"}:
+                                    errors.append(f"{live_label}: mapping with only kind/ref")
+                                    continue
+                                kind, ref = live.get("kind"), live.get("ref")
+                                if kind not in {"REPOSITORY", "PROVIDER"}:
+                                    errors.append(f"{live_label}.kind: REPOSITORY or PROVIDER")
+                                if not isinstance(ref, str) or not ref.strip():
+                                    errors.append(f"{live_label}.ref: non-empty string required")
+                                elif kind == "REPOSITORY" and not re.match(r"^(?:path|function|commit|blob|tree):\S+", ref):
+                                    errors.append(f"{live_label}.ref: repository live ref must start path:/function:/commit:/blob:/tree:")
+                                elif kind == "PROVIDER" and not re.match(r"^(?:provider|pr|branch|commit):\S+", ref):
+                                    errors.append(f"{live_label}.ref: provider live ref must start provider:/pr:/branch:/commit:")
+                        summary = answer.get("evidence_summary")
+                        if not isinstance(summary, str) or len(summary.strip()) < 20 or len(summary) > 1000:
+                            errors.append(f"{label}.evidence_summary: 20..1000 characters required")
+                        classes = answer.get("authority_classifications")
+                        if classes is not None and (
+                            not isinstance(classes, list)
+                            or not classes
+                            or len(classes) != len(set(classes))
+                            or any(value not in HANDOVER_AUTHORITY_CLASSES for value in classes)
+                        ):
+                            errors.append(f"{label}.authority_classifications: unique values from {sorted(HANDOVER_AUTHORITY_CLASSES)}")
+                    if len(answer_ids) != len(set(answer_ids)):
+                        errors.append("handover.answer_evidence: duplicate question_id")
+
+            root = handover.get("root_classification")
+            if root is not None:
+                if not isinstance(root, Mapping):
+                    errors.append("handover.root_classification: must be a mapping")
+                else:
+                    allowed_root = {
+                        "classification", "owning_layer", "upstream_boundary",
+                        "downstream_boundary", "proof_required", "evidence_refs",
+                    }
+                    extra_root = set(map(str, root)) - allowed_root
+                    if extra_root:
+                        errors.append(f"handover.root_classification: unknown fields {sorted(extra_root)}")
+                    for key in ("classification", "owning_layer", "upstream_boundary", "downstream_boundary", "proof_required"):
+                        value = root.get(key)
+                        if not isinstance(value, str) or not value.strip() or len(value) > 500:
+                            errors.append(f"handover.root_classification.{key}: non-empty string up to 500 characters")
+                    _check_refs(root.get("evidence_refs"), "handover.root_classification.evidence_refs", errors)
+                    if not root.get("evidence_refs"):
+                        errors.append("handover.root_classification.evidence_refs: at least one durable evidence ref required")
+
+            if event == "OFFERED":
+                if hresult is not None:
+                    errors.append("handover.result: OFFERED cannot carry a successor result")
+                if answer_evidence is not None or root is not None:
+                    errors.append("handover: OFFERED cannot carry successor answer evidence/root classification")
+                if challenge_digest is not None and not question_ids:
+                    errors.append("handover.question_ids: required when OFFERED carries challenge_digest")
+                if question_ids is not None and challenge_digest is None:
+                    errors.append("handover.challenge_digest: required when OFFERED carries question_ids")
+            if event == "ACCEPTED":
+                if not predecessor:
+                    errors.append("handover.predecessor_ref: required for ACCEPTED")
+                if question_ids is not None:
+                    errors.append("handover.question_ids: ACCEPTED must use the predecessor OFFERED question set")
+                if (answer_evidence is not None or root is not None) and challenge_digest is None:
+                    errors.append("handover.challenge_digest: required when ACCEPTED carries challenge evidence")
+                if hresult == "RECONCILED" and challenge_digest is not None:
+                    if not answer_evidence:
+                        errors.append("handover.answer_evidence: required for challenged RECONCILED acceptance")
+                    if root is None:
+                        errors.append("handover.root_classification: required for challenged RECONCILED acceptance")
 
     result = facts.get("result")
     if result is not None:
@@ -1926,6 +2041,55 @@ def compute_leaf(
     handover_projection = None
     if handover_offer is not None:
         accepted = handover_accept is not None
+        offered_challenge_digest = handover_offer.get("challenge_digest")
+        expected_question_ids = list(handover_offer.get("question_ids") or [])
+        accepted_answers = list((handover_accept or {}).get("answer_evidence") or [])
+        answered_question_ids = [row.get("question_id") for row in accepted_answers if isinstance(row, Mapping)]
+        accepted_challenge_digest = (handover_accept or {}).get("challenge_digest")
+        challenge_identity_matched = (
+            offered_challenge_digest is None
+            or accepted_challenge_digest == offered_challenge_digest
+        )
+        coverage_matched = (
+            offered_challenge_digest is None
+            or answered_question_ids == expected_question_ids
+        )
+        answers_grounded = bool(
+            offered_challenge_digest is None
+            or (
+                accepted_answers
+                and all(row.get("evidence_refs") and row.get("live_refs") for row in accepted_answers if isinstance(row, Mapping))
+            )
+        )
+        by_id = {
+            row.get("question_id"): row
+            for row in accepted_answers
+            if isinstance(row, Mapping) and row.get("question_id")
+        }
+        q1_grounded = (
+            "Q1" not in expected_question_ids
+            or any(live.get("kind") == "REPOSITORY" for live in (by_id.get("Q1") or {}).get("live_refs") or [] if isinstance(live, Mapping))
+        )
+        q2_authority = (
+            "Q2" not in expected_question_ids
+            or bool((by_id.get("Q2") or {}).get("authority_classifications"))
+        )
+        root_classification = (handover_accept or {}).get("root_classification")
+        q3_rooted = (
+            "Q3" not in expected_question_ids
+            or bool(root_classification and root_classification.get("evidence_refs"))
+        )
+        challenge_evidence_complete = bool(
+            offered_challenge_digest is None
+            or (
+                challenge_identity_matched
+                and coverage_matched
+                and answers_grounded
+                and q1_grounded
+                and q2_authority
+                and q3_rooted
+            )
+        )
         matched = bool(
             accepted
             and handover_accept.get("mode") == handover_offer.get("mode")
@@ -1933,9 +2097,12 @@ def compute_leaf(
             and handover_accept.get("frontier_digest") == handover_offer.get("frontier_digest")
             and handover_accept.get("predecessor_ref") == handover_offer.get("_source")
             and handover_accept.get("_candidate_sha") == handover_offer.get("_candidate_sha")
+            and challenge_identity_matched
         )
         if accepted and not matched:
             warnings.append("HANDOVER_ACCEPTANCE_MISMATCH")
+        if accepted and offered_challenge_digest is not None and not challenge_evidence_complete:
+            warnings.append("HANDOVER_CHALLENGE_EVIDENCE_INCOMPLETE")
         if successor_policy and handover_offer.get("mode") != successor_policy.get("mode"):
             warnings.append("HANDOVER_MODE_DIFFERS_FROM_ACTIVE_UNIT_POLICY")
         if (
@@ -1946,7 +2113,7 @@ def compute_leaf(
             warnings.append("HANDOVER_DECISION_DIFFERS_FROM_ACTIVE_UNIT_POLICY")
         if not accepted:
             handover_status = "HANDOFF"
-        elif matched and handover_accept.get("result") == "RECONCILED":
+        elif matched and handover_accept.get("result") == "RECONCILED" and challenge_evidence_complete:
             handover_status = "RECONCILED"
         else:
             handover_status = "RECONSTRUCTING"
@@ -1955,6 +2122,15 @@ def compute_leaf(
             "mode": handover_offer.get("mode"),
             "decision_at_risk": handover_offer.get("decision_at_risk"),
             "frontier_digest": handover_offer.get("frontier_digest"),
+            "challenge_digest": offered_challenge_digest,
+            "expected_question_ids": expected_question_ids,
+            "answered_question_ids": answered_question_ids,
+            "challenge_evidence_complete": challenge_evidence_complete,
+            "root_classification": (
+                root_classification.get("classification")
+                if isinstance(root_classification, Mapping)
+                else None
+            ),
             "predecessor_ref": handover_accept.get("predecessor_ref") if accepted else None,
             "result": handover_accept.get("result") if accepted else None,
             "matched": matched,

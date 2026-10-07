@@ -2932,6 +2932,37 @@ class MaterializationSchemasAgreeWithTheEngine(unittest.TestCase):
 
 
 class SuccessorAwareHandover(unittest.TestCase):
+    CHALLENGE_DIGEST = "sha256:" + "c" * 64
+
+    @staticmethod
+    def challenge_answers(ids=("Q1", "Q2", "Q3")):
+        rows = []
+        for qid in ids:
+            row = {
+                "question_id": qid,
+                "evidence_refs": [f"Common#592#answer-{qid}"],
+                "live_refs": [
+                    {"kind": "REPOSITORY", "ref": f"path:skills/example/{qid}.py"},
+                    {"kind": "PROVIDER", "ref": f"commit:{SHA_A}"},
+                ],
+                "evidence_summary": f"Current repository/provider evidence for {qid} establishes the requested engineering fact.",
+            }
+            if qid == "Q2":
+                row["authority_classifications"] = ["PRODUCTION", "VALIDATION_BENCHMARK"]
+            rows.append(row)
+        return rows
+
+    @staticmethod
+    def root_classification():
+        return {
+            "classification": "EARLIEST_OWNING_LAYER",
+            "owning_layer": "skills/example/runtime.py",
+            "upstream_boundary": "Owner intent and plan authority",
+            "downstream_boundary": "renderer / delivery consumers",
+            "proof_required": "Focused exact-head regression proving the owning layer before coding",
+            "evidence_refs": ["Common#592#root-evidence"],
+        }
+
     @staticmethod
     def graph_with_policy(mode="INDEPENDENT_RECONSTRUCTION"):
         g = graph()
@@ -2945,20 +2976,32 @@ class SuccessorAwareHandover(unittest.TestCase):
         return g
 
     @staticmethod
-    def offer(mode="INDEPENDENT_RECONSTRUCTION", digest=DIGEST, decision=None):
-        return facts(
-            units=[],
-            activity="PAUSED",
-            handover={
-                "event": "OFFERED",
-                "mode": mode,
-                "frontier_digest": digest,
-                "decision_at_risk": decision or ("ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION"),
-            },
-        )
+    def offer(mode="INDEPENDENT_RECONSTRUCTION", digest=DIGEST, decision=None, challenged=False):
+        handover = {
+            "event": "OFFERED",
+            "mode": mode,
+            "frontier_digest": digest,
+            "decision_at_risk": decision or ("ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION"),
+        }
+        if challenged:
+            handover.update({
+                "challenge_digest": SuccessorAwareHandover.CHALLENGE_DIGEST,
+                "question_ids": ["Q1", "Q2", "Q3"],
+            })
+        return facts(units=[], activity="PAUSED", handover=handover)
 
     @staticmethod
-    def accept(mode="INDEPENDENT_RECONSTRUCTION", digest=DIGEST, decision=None, result=None, predecessor="offer"):
+    def accept(
+        mode="INDEPENDENT_RECONSTRUCTION",
+        digest=DIGEST,
+        decision=None,
+        result=None,
+        predecessor="offer",
+        challenged=False,
+        answer_ids=("Q1", "Q2", "Q3"),
+        challenge_digest=None,
+        include_root=True,
+    ):
         h = {
             "event": "ACCEPTED",
             "mode": mode,
@@ -2966,6 +3009,11 @@ class SuccessorAwareHandover(unittest.TestCase):
             "frontier_digest": digest,
             "decision_at_risk": decision or ("ROOT_CAUSE_LAYER" if mode == "INDEPENDENT_RECONSTRUCTION" else "SAFE_CONTINUATION"),
         }
+        if challenged:
+            h["challenge_digest"] = challenge_digest or SuccessorAwareHandover.CHALLENGE_DIGEST
+            h["answer_evidence"] = SuccessorAwareHandover.challenge_answers(answer_ids)
+            if include_root:
+                h["root_classification"] = SuccessorAwareHandover.root_classification()
         if result is not None:
             h["result"] = result
         return facts(units=[], activity="ACTIVE", handover=h)
@@ -3021,6 +3069,75 @@ class SuccessorAwareHandover(unittest.TestCase):
         self.assertEqual("RECONSTRUCTING", node["state"])
         self.assertFalse(node["handover"]["matched"])
         self.assertIn("HANDOVER_ACCEPTANCE_MISMATCH", node["warnings"])
+        self.assertEqual("RECONCILE_HANDOFF", M.admit(projection, "Common#592")["action"])
+
+    def test_challenged_reconciliation_requires_exact_engineering_answer_evidence(self):
+        ledger = self.base_ledger() + [
+            entry(self.offer(challenged=True), 2, "offer"),
+            entry(self.accept(result="RECONCILED", challenged=True), 3, "accept"),
+        ]
+        projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual("RECONCILED", node["handover"]["status"])
+        self.assertTrue(node["handover"]["challenge_evidence_complete"])
+        self.assertEqual(["Q1", "Q2", "Q3"], node["handover"]["answered_question_ids"])
+        self.assertEqual("EARLIEST_OWNING_LAYER", node["handover"]["root_classification"])
+        self.assertEqual("CONTINUE_UNIT", M.admit(projection, "Common#592")["action"])
+
+    def test_challenged_reconciliation_rejects_partial_or_stale_exam_evidence(self):
+        cases = (
+            (
+                self.accept(result="RECONCILED", challenged=True, answer_ids=("Q1", "Q2")),
+                "partial",
+            ),
+            (
+                self.accept(
+                    result="RECONCILED",
+                    challenged=True,
+                    challenge_digest="sha256:" + "e" * 64,
+                ),
+                "wrong digest",
+            ),
+        )
+        for accepted, label in cases:
+            with self.subTest(label=label):
+                ledger = self.base_ledger() + [entry(self.offer(challenged=True), 2, "offer"), entry(accepted, 3, "accept")]
+                projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+                node = projection["nodes"]["Common#592"]
+                self.assertEqual("RECONSTRUCTING", node["state"])
+                self.assertFalse(node["handover"]["challenge_evidence_complete"])
+                self.assertIn("HANDOVER_CHALLENGE_EVIDENCE_INCOMPLETE", node["warnings"])
+                self.assertEqual("RECONCILE_HANDOFF", M.admit(projection, "Common#592")["action"])
+
+    def test_challenged_reconciled_fact_requires_root_and_rejects_issue_prose_as_live_repo_evidence(self):
+        missing_root = self.accept(result="RECONCILED", challenged=True, include_root=False)
+        self.assertTrue(M.validate_facts(missing_root))
+
+        issue_only = self.accept(result="RECONCILED", challenged=True)
+        issue_only["handover"]["answer_evidence"][0]["live_refs"] = [
+            {"kind": "REPOSITORY", "ref": "issue:Common#680"}
+        ]
+        errors = M.validate_facts(issue_only)
+        self.assertTrue(any("repository live ref" in error for error in errors))
+
+    def test_challenge_answer_cannot_author_progress_or_review_authority(self):
+        base = M.project(self.graph_with_policy(), self.base_ledger(), OBS_A)["nodes"]["Common#592"]["progress"]
+        ledger = self.base_ledger() + [
+            entry(self.offer(challenged=True), 2, "offer"),
+            entry(self.accept(result="RECONCILED", challenged=True), 3, "accept"),
+        ]
+        self.assertEqual(base, M.project(self.graph_with_policy(), ledger, OBS_A)["nodes"]["Common#592"]["progress"])
+        bad = self.accept(result="RECONCILED", challenged=True)
+        bad["handover"]["review_authority"] = "GRANTED"
+        self.assertTrue(M.validate_facts(bad))
+
+    def test_challenged_predecessor_answer_reuse_cannot_reconcile_new_offer(self):
+        ledger = self.base_ledger() + [
+            entry(self.offer(challenged=True), 2, "new-offer"),
+            entry(self.accept(result="RECONCILED", challenged=True, predecessor="old-offer"), 3, "accept"),
+        ]
+        projection = M.project(self.graph_with_policy(), ledger, OBS_A)
+        self.assertEqual("RECONSTRUCTING", projection["nodes"]["Common#592"]["state"])
         self.assertEqual("RECONCILE_HANDOFF", M.admit(projection, "Common#592")["action"])
 
     def test_continuity_offer_is_visible_but_never_becomes_a_new_gate(self):
