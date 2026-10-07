@@ -1,0 +1,42 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.5-delp-responsibility-condition
+title: RESPONSIBILITY_CONDITION_V1
+description: >-
+  One derived Responsibility condition record. Conditions are projection outputs, not executor facts.
+type: object
+additionalProperties: false
+required: [type, status, reason, message, observed_generation, candidate_sha, source_refs]
+properties:
+  type:
+    enum:
+      - PlanReady
+      - SpecCurrent
+      - MaterialObserved
+      - EvidenceCurrent
+      - DependenciesReady
+      - CustodySafe
+      - AssuranceSatisfied
+      - ProviderVisible
+  status:
+    enum: [TRUE, FALSE, UNKNOWN, NOT_APPLICABLE]
+  reason:
+    type: string
+    minLength: 1
+    pattern: '.*\S.*'
+  message:
+    type: string
+    minLength: 1
+    pattern: '.*\S.*'
+  observed_generation:
+    type: [integer, "null"]
+    minimum: 1
+  candidate_sha:
+    type: [string, "null"]
+    pattern: '^[0-9a-f]{40}$'
+  source_refs:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+      minLength: 1
+      pattern: '.*\S.*'
