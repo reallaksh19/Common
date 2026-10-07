@@ -1,0 +1,41 @@
+schema: frozen-v32-amendments
+policy: >-
+  skills/engineering-pr-delivery-v3.2/** is frozen (#492/#494). A change to it is permitted only for the exact paths
+  listed by an owner_authorized amendment below, and only when this manifest is already present at the pull-request
+  base (scripts/frozen_tree_guard.py reads it from the base commit, never from the PR head): a pull request cannot
+  authorise its own edits to the frozen tree. Anything not listed, including deletions and renames, still fails.
+amendments:
+  - id: AMEND-V32-DELP-001
+    owner_authorized: true
+    owner_basis: >-
+      Owner instruction in chat, 2026-10-07: 'Fix this once and for all in v3.2 and v3.5!' and 'First upgrade v3.2 and
+      v3.5 as per this concept note' (Durable Execution Lineage and Projection: agents publish facts, everything else
+      is recomputed). Merge explicitly granted by the Owner in the same chat session ('Merge.', 2026-10-07).
+    summary: >-
+      Additive amendment: DELP projector (delp_projection_v32.py), its schemas/tests/docs/examples, DERIVED_FROM_FACTS
+      mode in continuity_projection.py, the CONTINUE_RECONCILE owner-command intent, and the documentation updates that
+      supersede the earlier agent-authored title/progress forms. No existing V3.2 behaviour is removed: LEGACY_AGENT_ASSERTED
+      snapshots stay readable and unchanged.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/OWNER_CHECKPOINT_PROJECTION.md
+      - skills/engineering-pr-delivery-v3.2/PROGRAMME_DECOMPOSITION_PROGRESS.md
+      - skills/engineering-pr-delivery-v3.2/SKILL.md
+      - skills/engineering-pr-delivery-v3.2/examples/delp/checkpoint-facts.md
+      - skills/engineering-pr-delivery-v3.2/examples/delp/execution-graph.yaml
+      - skills/engineering-pr-delivery-v3.2/examples/delp/observations.json
+      - skills/engineering-pr-delivery-v3.2/examples/publications/task-evidence.md
+      - skills/engineering-pr-delivery-v3.2/operating-model/durable-execution-lineage-projection-v32.md
+      - skills/engineering-pr-delivery-v3.2/operating-model/responsibility-continuity-v32.md
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-checkpoint-facts-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-execution-graph-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-live-status-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/schemas/responsibility-continuity.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/scripts/owner_commands.py
+      - skills/engineering-pr-delivery-v3.2/templates/checkpoint-facts-v32.md
+      - skills/engineering-pr-delivery-v3.2/templates/delp-cron-workflow-v32.yml
+      - skills/engineering-pr-delivery-v3.2/templates/further-task-v32.md
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_derived_projection.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_owner_commands_continuation.py

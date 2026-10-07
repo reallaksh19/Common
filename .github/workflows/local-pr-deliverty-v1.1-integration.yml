@@ -27,7 +27,8 @@ jobs:
             skills/Local_PR_Deliverty_v1.1/scripts/activation.py \
             skills/Local_PR_Deliverty_v1.1/scripts/stage_timer.py \
             skills/Local_PR_Deliverty_v1.1/scripts/version_guard.py \
-            skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py
+            skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py \
+            skills/Local_PR_Deliverty_v1.1/scripts/frozen_tree_guard.py
       - name: Validate stack manifests
         run: |
           python - <<'PY'
@@ -68,7 +69,9 @@ jobs:
         run: |
           python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_492_selector_scan.py' -v
           python skills/Local_PR_Deliverty_v1.1/scripts/selector_scan.py AGENTS.md
-      - name: Verify frozen V3.2 tree unchanged from comparison basis
+      - name: Frozen-tree guard tests
+        run: python -m unittest discover -s skills/Local_PR_Deliverty_v1.1/tests -p 'test_frozen_tree_guard.py' -v
+      - name: Verify frozen V3.2 tree unchanged (or amended only by a base-pinned Owner amendment)
         env:
           EVENT_NAME: ${{ github.event_name }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
@@ -95,7 +98,14 @@ jobs:
           echo "base_v32_tree=$BASE_TREE"
           echo "head_v32_tree=$HEAD_TREE"
 
-          test "$HEAD_TREE" = "$BASE_TREE"
+          if [[ "$HEAD_TREE" == "$BASE_TREE" ]]; then
+            echo "frozen V3.2 tree unchanged"
+            exit 0
+          fi
+
+          # Changed. Permitted only for exact paths authorised by an owner_authorized amendment that is
+          # already present at the comparison base: a pull request cannot authorise its own edits.
+          python skills/Local_PR_Deliverty_v1.1/scripts/frozen_tree_guard.py --base "$BASE_SHA" --head HEAD
       - name: Verify integrated coordinator and Common Reviewer contracts are present
         run: |
           test -f skills/engineering-programme-coordinator/schemas/local-v1.1-integrated.schema.yaml
