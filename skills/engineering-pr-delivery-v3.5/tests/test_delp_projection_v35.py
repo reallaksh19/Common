@@ -2748,6 +2748,61 @@ class ClaimTopologyContract(unittest.TestCase):
         self.assertEqual([], indexed["nodes"]["Common#592"]["claim_relationships"])
 
 
+class ClaimTopologyReport(unittest.TestCase):
+    def test_report_distinguishes_ownership_enabling_and_gate_coverage(self):
+        report = M.claim_topology_report(claim_topology_planned())
+        rows = {row["id"]: row for row in report["claims"]}
+        self.assertEqual("OWNED", rows["PC-PRODUCT"]["coverage"])
+        self.assertEqual(["Common#592"], rows["PC-PRODUCT"]["owners"])
+        self.assertEqual("UNCOVERED", rows["PC-ENABLE"]["coverage"])
+        self.assertEqual(["Common#592"], rows["PC-ENABLE"]["enablers"])
+        self.assertEqual("COVERED", rows["PC-GATE"]["coverage"])
+        self.assertEqual(["Common#594"], rows["PC-GATE"]["gates"])
+        self.assertEqual(1, report["summary"]["uncovered_claims"])
+        self.assertEqual(1, report["summary"]["orphan_responsibilities"])
+        self.assertEqual("DERIVED_CLAIM_TOPOLOGY_ONLY", report["authority"])
+
+    def test_enables_and_gate_do_not_masquerade_as_semantic_ownership(self):
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"] = [
+            {"claim_id": "PC-PRODUCT", "relation": "GATE"},
+            {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+        ]
+        report = M.claim_topology_report(g)
+        rows = {row["id"]: row for row in report["claims"]}
+        self.assertEqual("UNCOVERED", rows["PC-PRODUCT"]["coverage"])
+        self.assertEqual([], rows["PC-PRODUCT"]["owners"])
+        self.assertEqual(["Common#592"], rows["PC-PRODUCT"]["gates"])
+
+    def test_duplicate_nonshared_ownership_is_observed_not_enforced(self):
+        g = claim_topology_planned()
+        leaf_of(g, "Common#594")["claim_relationships"] = [
+            {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+            {"claim_id": "PC-GATE", "relation": "GATE"},
+        ]
+        report = M.claim_topology_report(g)
+        product = next(row for row in report["claims"] if row["id"] == "PC-PRODUCT")
+        self.assertEqual(["Common#592", "Common#594"], product["duplicate_owners"])
+        self.assertEqual(1, report["summary"]["duplicate_nonshared_ownership"])
+        # R1 reports the fact only: the existing decompose-check remains unchanged.
+        self.assertTrue(M.decomposition_report(g)["leaves"]["Common#592"]["releasable"])
+
+        for claim in g["programme"]["acceptance_claims"]:
+            if claim["id"] == "PC-PRODUCT":
+                claim["shared"] = True
+        shared = M.claim_topology_report(g)
+        product = next(row for row in shared["claims"] if row["id"] == "PC-PRODUCT")
+        self.assertEqual([], product["duplicate_owners"])
+
+    def test_report_is_deterministic_under_claim_and_relation_input_order(self):
+        g = claim_topology_planned()
+        first = M.canonical_json(M.claim_topology_report(g))
+        g["programme"]["acceptance_claims"].reverse()
+        leaf_of(g, "Common#592")["claim_relationships"].reverse()
+        second = M.canonical_json(M.claim_topology_report(g))
+        self.assertEqual(first, second)
+
+
 class DecompositionRules(unittest.TestCase):
     def codes(self, g, ref="Common#592", kind="blockers"):
         return [f["code"] for f in M.decomposition_report(g)["leaves"][ref][kind]]

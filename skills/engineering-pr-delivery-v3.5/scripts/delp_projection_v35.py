@@ -1513,6 +1513,78 @@ def lineage(indexed: Mapping[str, Any], ref: str) -> list[str]:
 # --------------------------------------------------------------------------
 
 
+
+def claim_topology_report(graph: Any) -> dict[str, Any]:
+    """Pure claim/Responsibility relationship facts; never an admission or progress verdict."""
+    indexed = validate_graph(graph)
+    claims = indexed["acceptance_claims"]
+    nodes = indexed["nodes"]
+
+    by_claim: dict[str, dict[str, Any]] = {}
+    for claim in claims:
+        by_claim[claim["id"]] = {
+            "id": claim["id"],
+            "claim": claim["claim"],
+            "kind": claim["kind"],
+            "shared": claim["shared"],
+            "owners": [],
+            "enablers": [],
+            "gates": [],
+        }
+
+    responsibility_rows: list[dict[str, Any]] = []
+    for ref in indexed["order"]:
+        node = nodes[ref]
+        if node["kind"] != "LEAF":
+            continue
+        relations = list(node.get("claim_relationships") or [])
+        responsibility_rows.append(
+            {
+                "ref": ref,
+                "responsibility_id": node.get("responsibility_id"),
+                "relations": relations,
+                "orphan": not relations,
+            }
+        )
+        for rel in relations:
+            bucket = {
+                "OWN": "owners",
+                "ENABLES": "enablers",
+                "GATE": "gates",
+            }[rel["relation"]]
+            by_claim[rel["claim_id"]][bucket].append(ref)
+
+    claim_rows: list[dict[str, Any]] = []
+    for claim in claims:
+        row = by_claim[claim["id"]]
+        row["owners"].sort(key=ref_number)
+        row["enablers"].sort(key=ref_number)
+        row["gates"].sort(key=ref_number)
+        if claim["kind"] == "SEMANTIC":
+            coverage = "OWNED" if row["owners"] else "UNCOVERED"
+        else:
+            coverage = "COVERED" if row["owners"] or row["gates"] else "UNCOVERED"
+        row["coverage"] = coverage
+        row["duplicate_owners"] = (
+            list(row["owners"]) if len(row["owners"]) > 1 and not claim["shared"] else []
+        )
+        claim_rows.append(row)
+
+    claim_rows.sort(key=lambda row: row["id"])
+    responsibility_rows.sort(key=lambda row: ref_number(row["ref"]))
+    return {
+        "authority": "DERIVED_CLAIM_TOPOLOGY_ONLY",
+        "claims": claim_rows,
+        "responsibilities": responsibility_rows,
+        "summary": {
+            "claims": len(claim_rows),
+            "uncovered_claims": sum(1 for row in claim_rows if row["coverage"] == "UNCOVERED"),
+            "orphan_responsibilities": sum(1 for row in responsibility_rows if row["orphan"]),
+            "duplicate_nonshared_ownership": sum(1 for row in claim_rows if row["duplicate_owners"]),
+        },
+    }
+
+
 def _finding(code: str, detail: str, severity: str = "BLOCKER") -> dict[str, str]:
     return {"code": code, "severity": severity, "detail": detail}
 
