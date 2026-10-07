@@ -1467,6 +1467,11 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
             lambda x: x.__setitem__("liveness", None),
             lambda x: x.__setitem__("check", None),
             lambda x: x.__setitem__("diff", None),
+            lambda x: x.__setitem__("visibility", []),
+            lambda x: x["material"].__setitem__("pr_state", {}),
+            lambda x: x.__setitem__("liveness", {"value": []}),
+            lambda x: x.__setitem__("check", {"result": {}}),
+            lambda x: x.__setitem__("check", {"name": "   "}),
         ):
             row = copy.deepcopy(good)
             mutate(row)
