@@ -387,6 +387,40 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
             M.validate_graph(duplicate)
 
 
+
+class ProposalV2CompatibilityAndAuthority(unittest.TestCase):
+    def test_proposal_v2_requires_enforced_gate_before_release(self):
+        g = PreMaterializationProposalIdentity().proposal_graph()
+        g["programme"]["decomposition_policy"]["claim_first"]["mode"] = "OFF"
+        report = M.decomposition_report(g)
+        self.assertEqual("NOT_RELEASEABLE", report["release_state"])
+        self.assertTrue(
+            all(
+                "PROPOSAL_GATE_NOT_ENFORCED" in {f["code"] for f in row["blockers"]}
+                for row in report["leaves"].values()
+            )
+        )
+
+    def test_historical_graph_without_proposal_keeps_legacy_gate_path(self):
+        indexed = M.validate_graph(graph())
+        self.assertIsNone(indexed["decomposition_proposal"])
+        report = M.decomposition_report(graph())
+        self.assertNotIn("proposal_version", report)
+        self.assertEqual({"Common#592", "Common#594", "Common#612"}, set(report["leaves"]))
+
+    def test_agent_facts_cannot_author_proposal_release_or_binding_state(self):
+        bad = facts(
+            units=[unit("U01")],
+            decomposition_proposal={"version": "V2"},
+            released_proposal_digest="sha256:" + "0" * 64,
+            materialization_bindings=[{"responsibility_id": "R", "ref": "Common#1"}],
+        )
+        errors = M.validate_facts(bad)
+        self.assertTrue(any("decomposition_proposal" in err for err in errors), errors)
+        self.assertTrue(any("released_proposal_digest" in err for err in errors), errors)
+        self.assertTrue(any("materialization_bindings" in err for err in errors), errors)
+
+
 class FactsAreTheOnlyAgentInput(unittest.TestCase):
     def test_agent_authored_projection_fields_are_rejected(self):
         bad = [
