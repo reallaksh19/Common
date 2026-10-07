@@ -69,6 +69,49 @@ If the candidate protocol is not present on the responsibility's own base/defaul
 
 This field is continuity provenance, not authority. Older snapshots without it remain readable as `UNKNOWN`; never fabricate a value.
 
+## Lossless Owner intent envelope
+
+Direct Owner instructions are captured before workflow normalization. The canonical parser is `scripts/owner_commands.py`.
+
+For a direct Owner utterance it preserves:
+
+```yaml
+owner_intent:
+  verbatim_request:
+  source_ref:
+  primary_purpose:
+  requested_deliverables: []
+  target:
+  custody_intent:
+  assurance_request:
+  modifiers: []
+  boundary_constraints: []
+  authority_ref:
+```
+
+The envelope is lossless request/custody/assurance context, not a new permission system:
+
+- preserve `verbatim_request` exactly; normalization never replaces it;
+- `source_ref` and `authority_ref` are references supplied by the caller and are never fabricated;
+- compound deliverables remain compound (for example, handover package plus an exact-count successor reconstruction challenge);
+- existing scalar `intent`, `workflow`, `reasoning_modes` and question-suppression fields remain derived compatibility views;
+- quoted repository/file/fixture text cannot create an Owner envelope;
+- the envelope creates no durable authority, role transition, merge authority or production authority.
+
+Custody and reasoning are orthogonal. In particular:
+
+```text
+PLAN_HANDOVER
+= prepare custody transfer
+
+PLAN_HANDOVER
+!= automatic Two-Pass request
+!= automatic replanning
+!= independent reconstruction
+```
+
+A handover workflow may reconcile live material and publish custody context, but it must not manufacture a new reasoning request merely because custody is changing. Replanning/assurance is separate and must be explicitly requested or independently required by the governing responsibility.
+
 ## Implementation plan → automatic GitHub start update
 
 When an agent begins material implementation of an already-published implementation plan, it MUST emit the V3.2 `implementation-start` semantic event.
