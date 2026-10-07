@@ -88,6 +88,190 @@ properties:
   activity:
     enum: [ACTIVE, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, PAUSED]
     description: QUIET and STALE are observed by a watcher and can never be declared by the executor.
+  entry:
+    type: object
+    additionalProperties: false
+    description: >-
+      Optional takeover/lateral-entry evidence inside TASK_EVIDENCE. PREPARED binds the current Owner entry session to
+      the graph and bounded child before coding; EXECUTION_END closes that child before the session advances. It carries
+      no progress or authority.
+    required: [event, mode, session_digest, plan_digest, child_ref, sequence, evidence_refs]
+    properties:
+      event: {enum: [PREPARED, EXECUTION_END]}
+      mode: {const: TAKEOVER_RECONCILE}
+      session_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+}
+      plan_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+}
+      child_ref:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+
+      child_contract_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+}
+      sequence: {type: integer, minimum: 1}
+      phase_plan_ref: {type: string, minLength: 1}
+      reconciliation_ref: {type: string, minLength: 1}
+      previous_leaf_ref:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*    required: [event, mode, frontier_digest, decision_at_risk]
+    properties:
+      event: {enum: [OFFERED, ACCEPTED]}
+      mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+      predecessor_ref: {type: [string, "null"], minLength: 1}
+      frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+      decision_at_risk: {type: string, minLength: 1, maxLength: 200, pattern: '^[^\\n]*$'}
+      result: {enum: [RECONCILED, DRIFT_FOUND, INSUFFICIENT_GROUNDING, OWNER_DECISION_REQUIRED]}
+    description: >-
+      Optional custody/reconstruction fact inside TASK_EVIDENCE. It never carries progress or title authority.
+      OFFERED begins a handover frontier. ACCEPTED references the predecessor publication and may remain unreconciled.
+  next:
+    type: object
+    additionalProperties: false
+    properties:
+      unit: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+      action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  blocker: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  owner_action: {type: string, maxLength: 200, pattern: '^[^\n]*$'}
+  result:
+    type: object
+    additionalProperties: false
+    required: [scope]
+    properties:
+      scope: {enum: [STEP, PRODUCT, RESPONSIBILITY]}
+      responsibility_complete: {enum: ['YES', 'NO', UNKNOWN]}
+      superseded_by:
+        type: string
+        pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'
+
+      previous_evidence_ref: {type: string, minLength: 1}
+      evidence_refs:
+        type: array
+        minItems: 1
+        items: {type: string, minLength: 1}
+    allOf:
+      - if: {properties: {event: {const: PREPARED}}, required: [event]}
+        then: {required: [phase_plan_ref, reconciliation_ref]}
+      - if: {properties: {sequence: {minimum: 2}}, required: [sequence]}
+        then: {required: [previous_leaf_ref, previous_evidence_ref]}
+      - if: {properties: {sequence: {const: 1}}, required: [sequence]}
+        then:
+          not:
+            anyOf:
+              - {required: [previous_leaf_ref]}
+              - {required: [previous_evidence_ref]}
   handover:
     type: object
     additionalProperties: false
