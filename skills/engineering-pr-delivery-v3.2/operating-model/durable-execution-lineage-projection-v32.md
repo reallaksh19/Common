@@ -1,6 +1,6 @@
 # Durable Execution Lineage and Projection (DELP) — V3.2
 
-Status: **normative for V3.2 as an Owner-directed additive amendment** of the otherwise frozen V3.2 tree (see [Amendment of V3.2](#amendment-of-v32)). Implemented by `scripts/delp_projection_v32.py`, validated by `schemas/delp-*-v32.schema.yaml` and pinned by `tests/test_delp_projection_v32.py`. The same contract is the active design of V3.5 (`skills/engineering-pr-delivery-v3.5/operating-model/durable-execution-lineage-projection-v35.md`); the two modules are identical apart from their protocol-line and schema-id constants.
+Status: **normative for V3.2 as an Owner-directed additive amendment** of the otherwise frozen V3.2 tree (see [Amendment of V3.2](#amendment-of-v32)). Implemented by `scripts/delp_projection_v32.py`, validated by `schemas/delp-*-v32.schema.yaml` and pinned by `tests/test_delp_projection_v32.py`. V3.5 has its own active DELP evolution; compatibility is intentional where documented, but whole-engine text equality is not an authority requirement.
 
 ## The rule
 
