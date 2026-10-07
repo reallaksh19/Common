@@ -536,9 +536,35 @@ class FactCustodyRelationClassifier(unittest.TestCase):
             (tied["relation"], tied["reason"]),
         )
 
-    def test_unbound_and_missing_provider_time_remain_non_authoritative(self):
-        unbound = self.relation(self.row(execution=None))
-        self.assertEqual("UNBOUND", unbound["relation"])
+    def test_unbound_legacy_before_fence_survives_but_late_unbound_is_unknown(self):
+        historical = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T09:59:59Z")
+        )
+        self.assertEqual(
+            ("UNBOUND", "UNBOUND_PUBLISHED_BEFORE_CURRENT_GRANT"),
+            (historical["relation"], historical["reason"]),
+        )
+        late = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T10:00:01Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "UNBOUND_POST_FENCE_CANNOT_PROVE_CURRENT_CUSTODY"),
+            (late["relation"], late["reason"]),
+        )
+        tied = self.relation(
+            self.row(execution=None, updated_at="2026-10-07T10:00:00Z")
+        )
+        self.assertEqual(
+            ("UNKNOWN", "UNBOUND_FENCE_TIMESTAMP_TIE"),
+            (tied["relation"], tied["reason"]),
+        )
+
+    def test_missing_provider_time_is_unbound_offline_compatibility_or_unknown_when_bound(self):
+        unbound = self.relation(self.row(execution=None, provider=False))
+        self.assertEqual(
+            ("UNBOUND", "FACT_EXECUTION_UNBOUND_PROVIDER_TIME_UNAVAILABLE"),
+            (unbound["relation"], unbound["reason"]),
+        )
         missing = self.relation(
             self.row(execution=self.bound(epoch=7), provider=False)
         )
