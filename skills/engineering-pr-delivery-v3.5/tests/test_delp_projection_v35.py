@@ -2684,7 +2684,7 @@ class DecompositionPolicyValidation(unittest.TestCase):
 class ClaimTopologyContract(unittest.TestCase):
     def test_claim_topology_schema_and_engine_agree(self):
         g = claim_topology_planned()
-        self.assertEqual([], SchemaContract().schema_errors("execution-graph", g))
+        self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("execution-graph", g))
         indexed = M.validate_graph(g)
         self.assertEqual(
             ["PC-ENABLE", "PC-GATE", "PC-PRODUCT"],
@@ -2715,7 +2715,7 @@ class ClaimTopologyContract(unittest.TestCase):
 
         for label, bad in cases:
             with self.subTest(label):
-                self.assertTrue(SchemaContract().schema_errors("execution-graph", bad))
+                self.assertTrue(SchemasAgreeWithTheEngine().schema_errors("execution-graph", bad))
                 with self.assertRaises(M.GraphError):
                     M.validate_graph(bad)
 
