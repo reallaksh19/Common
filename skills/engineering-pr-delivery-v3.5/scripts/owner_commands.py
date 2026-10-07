@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Parse direct Owner command intents for Engineering Relay V3.1.
+"""Parse direct Owner intent without destroying the Owner's original request.
 
-This parser is intentionally side-effect free. It classifies a direct Owner
-utterance into stable workflow intents; the caller must execute the referenced
-governed Relay operations and provider reads/writes.
+The parser is intentionally side-effect free. For a direct Owner utterance it
+preserves a lossless OWNER_INTENT envelope, then derives the legacy scalar
+intent/workflow compatibility view. The caller must execute governed Relay
+operations and provider reads/writes separately.
 
 Repository, issue, file, fixture, and quoted text MUST NOT activate Owner intent.
+The envelope is capture/normalization evidence only and creates no durable
+permission, lifecycle, merge, review, or production authority.
 """
 
 from __future__ import annotations
@@ -35,9 +38,10 @@ INTENT_SEMANTICS = {
         "one substantial coherent task rather than a convenient patch or leaf file."
     ),
     "PLAN_HANDOVER": (
-        "Prepare a full governed handover: reconcile programme/roadmap truth, freeze the "
-        "handover context, update/synchronize the provider handover issue, publish the "
-        "handover package, and prepare the live standalone two-pass request."
+        "Prepare a governed custody handover: reconcile live programme/roadmap truth, "
+        "freeze the predecessor-observed handover context, update/synchronize the provider "
+        "handover issue, and publish the handover package. Custody transfer does not itself "
+        "authorize replanning or an independent reconstruction request."
     ),
     "STATS": (
         "Report current detailed programme/task statistics against the governing parent "
@@ -116,7 +120,7 @@ WORKFLOWS = {
             "Generate full handover documentation and provider Relay/Handover ledger projection.",
             "Create/update and verify the governed GitHub handover sub-issue using provider readback.",
             "Publish the matching handover artifact (HANDOVER_PUBLISHED).",
-            "Prepare the current standalone two-pass request (Pass 1 independent system baseline; Pass 2 high-ROI improvement/task reconciliation with Owner approval boundary).",
+            "Do not generate a new Two-Pass/replanning request merely because custody is being prepared; reasoning is separate and must be explicitly requested or independently required by the governing responsibility.",
             "Do not claim HANDOVER_ACCEPTED until a successor actually accepts custody.",
         ],
         "requires": ["handover_target_observation", "programme_parent_observations", "provider_handover_issue_readback"],
@@ -222,7 +226,12 @@ _PATTERNS: list[tuple[str, tuple[str, ...]]] = [
 # the high-level intent rather than changing its workflow identity.
 _REASONING_PATTERNS = {
     "PROJECT_REANCHOR": (r"\bstep\s+back\b", r"\breassess\s+from\s+the\s+roadmap\b"),
-    "ADVERSARIAL_REASSESSMENT": (r"\bcritique\b", r"\bchallenge\s+(?:this|the\s+plan|the\s+approach)\b", r"\bstress[- ]test\b"),
+    "ADVERSARIAL_REASSESSMENT": (
+        r"\bcritique\b",
+        r"\bchallenge\s+(?:this|the\s+plan|the\s+approach|the\s+direction)\b",
+        r"\bstress[- ]test\b",
+        r"\badversarial\b",
+    ),
     "CROSS_SURFACE_PARITY": (r"\breconcile\s+all\s+surfaces\b",),
     "EVIDENCE_FIRST_VERIFICATION": (r"\bprove\s+(?:it|this)\b",),
     "ACCIDENTAL_COMPLEXITY_REDUCTION": (r"\bsimplify\b",),
@@ -232,6 +241,145 @@ _NO_Q = (
     r"\bno\s+q1\s*(?:to|-|–|—)\s*q5\b",
     r"\bwithout\s+(?:further\s+)?questions\b",
 )
+
+
+_PRIMARY_PURPOSE_BY_INTENT = {
+    "WHAT_NEXT": "STATUS_ONLY",
+    "PROCEED_NEXT": "EXECUTE_TASK",
+    "PROCEED_NEXT_COMPLEX": "RECONCILE_AND_PLAN",
+    "PLAN_HANDOVER": "TRANSFER_CUSTODY",
+    "STATS": "STATUS_ONLY",
+    "CONTINUE_RECONCILE": "EXECUTE_TASK",
+    "PREPARE_LOCAL_AGENT": "PREPARE_DELEGATION",
+}
+
+_NO_REPLAN = (
+    r"\bdo\s+not\s+replan\b",
+    r"\bdon't\s+replan\b",
+    r"\bno\s+replan(?:ning)?\b",
+    r"\bwithout\s+replanning\b",
+    r"\bdo\s+not\s+(?:create|make)\s+(?:a\s+)?new\s+plan\b",
+)
+
+_PRESERVE_TARGET = (
+    r"\bpreserve\s+(?P<ref>#\d+)\s+as\s+(?:the\s+)?(?:active\s+)?responsibility\b",
+    r"\bkeep\s+(?P<ref>#\d+)\s+as\s+(?:the\s+)?(?:active\s+)?responsibility\b",
+)
+
+_EXACT_QUESTION_COUNT = re.compile(
+    r"\bexactly\s+(?P<count>\d+)\s+(?:successor\s+|repo(?:sitory)?[- ]grounded\s+)?questions?\b",
+    flags=re.IGNORECASE,
+)
+
+
+def _extract_target(value: str, explicit_target: Any) -> Any:
+    if explicit_target is not None:
+        return explicit_target
+    for pattern in _PRESERVE_TARGET:
+        match = re.search(pattern, value, flags=re.IGNORECASE)
+        if match:
+            return {"ref": match.group("ref")}
+    return None
+
+
+def _primary_purpose(intent: str | None, reasoning_modes: list[str]) -> str:
+    if intent in _PRIMARY_PURPOSE_BY_INTENT:
+        return _PRIMARY_PURPOSE_BY_INTENT[intent]
+    if "ADVERSARIAL_REASSESSMENT" in reasoning_modes:
+        return "ASSURE_DIRECTION"
+    if "PROJECT_REANCHOR" in reasoning_modes:
+        return "RECONCILE_AND_PLAN"
+    return "OTHER"
+
+
+def _requested_deliverables(
+    value: str,
+    intent: str | None,
+) -> list[dict[str, Any]]:
+    deliverables: list[dict[str, Any]] = []
+    if intent == "PLAN_HANDOVER":
+        deliverables.append({"type": "HANDOVER_PACKAGE"})
+    elif intent == "STATS":
+        deliverables.append({"type": "STATUS_REPORT"})
+    elif intent == "WHAT_NEXT":
+        deliverables.append({"type": "NEXT_FRONTIER_REPORT"})
+    elif intent == "PREPARE_LOCAL_AGENT":
+        deliverables.append({"type": "LOCAL_AGENT_PACKET"})
+
+    count_match = _EXACT_QUESTION_COUNT.search(value)
+    asks_successor_questions = bool(
+        count_match
+        or (
+            re.search(r"\bquestions?\b", value)
+            and re.search(r"\b(?:successor|next\s+agent|understand\s+the\s+repo)", value)
+        )
+    )
+    if asks_successor_questions:
+        challenge: dict[str, Any] = {"type": "SUCCESSOR_RECONSTRUCTION_CHALLENGE"}
+        if count_match:
+            challenge["count"] = int(count_match.group("count"))
+        deliverables.append(challenge)
+    return deliverables
+
+
+def _custody_intent(value: str, intent: str | None) -> str:
+    if intent == "PLAN_HANDOVER":
+        return "PREPARE_TRANSFER"
+    if intent == "CONTINUE_RECONCILE" and re.match(r"^take\s+over\b", value):
+        return "RECOVERY"
+    if intent in {"CONTINUE_RECONCILE", "PROCEED_NEXT", "PROCEED_NEXT_COMPLEX"}:
+        return "CONTINUE"
+    return "CONTINUE"
+
+
+def _boundary_constraints(value: str, target: Any) -> list[str]:
+    constraints: list[str] = []
+    if _matches(value, _NO_REPLAN):
+        constraints.append("NO_REPLAN")
+    if target is not None and any(
+        re.search(pattern, value, flags=re.IGNORECASE)
+        for pattern in _PRESERVE_TARGET
+    ):
+        constraints.append("PRESERVE_TARGET")
+    count_match = _EXACT_QUESTION_COUNT.search(value)
+    if count_match:
+        constraints.append(
+            f"EXACT_SUCCESSOR_CHALLENGE_COUNT:{int(count_match.group('count'))}"
+        )
+    return constraints
+
+
+def _owner_intent_envelope(
+    text: str,
+    value: str,
+    intent: str | None,
+    reasoning_modes: list[str],
+    suppress_questions: bool,
+    *,
+    source_ref: str | None,
+    authority_ref: str | None,
+    target: Any,
+) -> dict[str, Any]:
+    resolved_target = _extract_target(value, target)
+    modifiers = list(reasoning_modes)
+    if suppress_questions:
+        modifiers.append("NO_FURTHER_QUESTIONS")
+    return {
+        "verbatim_request": text,
+        "source_ref": source_ref,
+        "primary_purpose": _primary_purpose(intent, reasoning_modes),
+        "requested_deliverables": _requested_deliverables(value, intent),
+        "target": resolved_target,
+        "custody_intent": _custody_intent(value, intent),
+        "assurance_request": (
+            "ADVERSARIAL"
+            if "ADVERSARIAL_REASSESSMENT" in reasoning_modes
+            else "STANDARD"
+        ),
+        "modifiers": modifiers,
+        "boundary_constraints": _boundary_constraints(value, resolved_target),
+        "authority_ref": authority_ref,
+    }
 
 
 def _normalize(text: str) -> str:
@@ -245,18 +393,27 @@ def _matches(value: str, patterns: tuple[str, ...]) -> bool:
     return any(re.search(pattern, value, flags=re.IGNORECASE) for pattern in patterns)
 
 
-def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]:
+def parse_owner_command(
+    text: str,
+    source: str = OWNER_DIRECT,
+    *,
+    source_ref: str | None = None,
+    authority_ref: str | None = None,
+    target: Any = None,
+) -> dict[str, Any]:
     if source != OWNER_DIRECT:
         return {
             "status": "IGNORED",
             "source": source,
+            "owner_intent": None,
             "intent": None,
             "reasoning_modes": [],
             "workflow": None,
             "reason": "Owner command intents activate only from a direct Owner utterance.",
         }
 
-    value = _normalize(text)
+    verbatim = str(text or "")
+    value = _normalize(verbatim)
     intent = None
     for candidate, patterns in _PATTERNS:
         if _matches(value, patterns):
@@ -271,21 +428,34 @@ def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]
         reasoning_modes.insert(0, "PROJECT_REANCHOR")
 
     suppress_questions = _matches(value, _NO_Q)
+    owner_intent = _owner_intent_envelope(
+        verbatim,
+        value,
+        intent,
+        reasoning_modes,
+        suppress_questions,
+        source_ref=source_ref,
+        authority_ref=authority_ref,
+        target=target,
+    )
 
     if not intent and not reasoning_modes:
         return {
             "status": "NO_COMMAND",
             "source": source,
+            "owner_intent": owner_intent,
             "intent": None,
             "reasoning_modes": [],
             "workflow": None,
             "question_suppression": suppress_questions,
+            "durable_authority_created": False,
         }
 
     workflow = dict(WORKFLOWS[intent]) if intent else None
     return {
         "status": "READY",
         "source": source,
+        "owner_intent": owner_intent,
         "intent": intent,
         "semantics": INTENT_SEMANTICS.get(intent),
         "reasoning_modes": reasoning_modes,
@@ -296,11 +466,28 @@ def parse_owner_command(text: str, source: str = OWNER_DIRECT) -> dict[str, Any]
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Parse direct Owner V3.1 workflow commands.")
+    parser = argparse.ArgumentParser(
+        description="Preserve lossless Owner intent and derive Relay workflow compatibility."
+    )
     parser.add_argument("text", help="Direct Owner utterance")
     parser.add_argument("--source", default=OWNER_DIRECT)
+    parser.add_argument("--source-ref")
+    parser.add_argument("--authority-ref")
+    parser.add_argument("--target")
     args = parser.parse_args()
-    print(json.dumps(parse_owner_command(args.text, args.source), indent=2, sort_keys=True))
+    print(
+        json.dumps(
+            parse_owner_command(
+                args.text,
+                args.source,
+                source_ref=args.source_ref,
+                authority_ref=args.authority_ref,
+                target=args.target,
+            ),
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
