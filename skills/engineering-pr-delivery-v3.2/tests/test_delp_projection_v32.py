@@ -3983,3 +3983,69 @@ class AgentMetrics689ProposalV2Gate(unittest.TestCase):
         self.assertEqual(20, row["weight"])
         self.assertEqual(digest, report["released_proposal_digest"])
 
+    def test_708_provider_binding_conserves_released_product_topology(self):
+        g = self.proposal()
+        released = M.decomposition_report(g)
+        self.assertEqual("RELEASEABLE", released["release_state"], released)
+        digest = released["proposal_digest"]
+
+        bindings = {
+            "R-QOBS": "Common#690",
+            "R-TRAJECTORY": "Common#694",
+            "R-INTERVENTION": "Common#699",
+            "R-READMODEL": "Common#708",
+        }
+        g["programme"]["decomposition_proposal"]["released_proposal_digest"] = digest
+        g["programme"]["decomposition_proposal"]["bindings"] = [
+            {"responsibility_id": rid, "ref": ref} for rid, ref in bindings.items()
+        ]
+
+        proposals = {
+            row["id"]: row
+            for row in g["programme"]["decomposition_proposal"]["responsibilities"]
+        }
+
+        def materialized(rid):
+            row = proposals[rid]
+            return {
+                "ref": bindings[rid],
+                "kind": "LEAF",
+                "parent": "Common#689",
+                "weight": sum(a["weight"] for a in row["claim_allocations"]),
+                "responsibility_id": rid,
+                "work_class": row["work_class"],
+                "owns_claims": list(row["owns_claims"]),
+                "outcome": row["outcome"],
+                "independence_basis": row["independence_basis"],
+                "size_budget": dict(row["size_budget"]),
+                "write_surface": list(row["write_surface"]),
+                "acceptance_methods": list(row["acceptance_methods"]),
+                "depends_on": [bindings[dep] for dep in row.get("depends_on", [])],
+                "units": [
+                    {
+                        "id": unit["id"],
+                        "weight": unit["weight"],
+                        "outcome": unit["outcome"],
+                        "verify": unit["verify"],
+                    }
+                    for unit in row["semantic_units"]
+                ],
+            }
+
+        g["nodes"] = [
+            {"ref": "Common#689", "kind": "ROOT", "reserve_weight": 5},
+            materialized("R-QOBS"),
+            materialized("R-TRAJECTORY"),
+            materialized("R-INTERVENTION"),
+            materialized("R-READMODEL"),
+        ]
+
+        report = M.decomposition_report(g)
+        print("BINDING_708_RELEASE_STATE=" + report["release_state"])
+        print("BINDING_708_DIGEST=" + report["proposal_digest"])
+        print("BINDING_708_REPORT=" + json.dumps(report, sort_keys=True))
+        self.assertEqual("RELEASEABLE", report["release_state"], report)
+        self.assertEqual(digest, report["released_proposal_digest"])
+        self.assertEqual([], report["leaves"]["R-READMODEL"]["blockers"])
+        self.assertEqual(30, report["leaves"]["R-READMODEL"]["weight"])
+
