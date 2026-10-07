@@ -4966,6 +4966,124 @@ def _github_comment_provider_envelope(comment: Mapping[str, Any]) -> dict[str, A
     }
 
 
+def custody_fence_from_state_lease(
+    state: Mapping[str, Any], lease: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Derive the active custody fence without creating a second custody authority."""
+    binding = execution_binding_from_state_lease(state, lease)
+    custody = lease.get("custody")
+    granted_raw = custody.get("granted_at") if isinstance(custody, Mapping) else None
+    granted_at, _ = _provider_comment_timestamp(
+        granted_raw,
+        "LEASE.custody.granted_at",
+    )
+    return {
+        **binding,
+        "granted_at": granted_at,
+    }
+
+
+def classify_fact_custody(
+    entry: Mapping[str, Any],
+    state: Mapping[str, Any],
+    lease: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Classify one fact against active custody without filtering or changing the fact."""
+    if not isinstance(entry, Mapping) or not isinstance(entry.get("facts"), Mapping):
+        raise DelpError("custody classification requires one ledger entry with facts")
+    errors = validate_facts(entry["facts"])
+    if errors:
+        raise DelpError("cannot classify invalid facts: " + "; ".join(errors))
+
+    fact_execution = entry["facts"].get("execution")
+    fence = custody_fence_from_state_lease(state, lease)
+    base = {
+        "active_execution": {
+            key: fence[key]
+            for key in ("ep", "lease", "executor", "custody_epoch")
+        },
+        "fence_granted_at": fence["granted_at"],
+        "fact_execution": copy.deepcopy(fact_execution),
+        "provider_updated_at": None,
+    }
+
+    if not isinstance(fact_execution, Mapping):
+        return {
+            **base,
+            "relation": "UNBOUND",
+            "reason": "FACT_EXECUTION_UNBOUND",
+        }
+
+    provider = entry.get("provider")
+    if not isinstance(provider, Mapping) or provider.get("kind") != "GITHUB_ISSUE_COMMENT":
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "PROVIDER_TIME_UNAVAILABLE",
+        }
+
+    updated_text, updated = _provider_comment_timestamp(
+        provider.get("updated_at"),
+        "ledger provider.updated_at",
+    )
+    _, granted = _provider_comment_timestamp(
+        fence["granted_at"],
+        "LEASE.custody.granted_at",
+    )
+    base["provider_updated_at"] = updated_text
+
+    fact_epoch = int(fact_execution["custody_epoch"])
+    active_epoch = int(fence["custody_epoch"])
+    exact_binding = all(
+        fact_execution.get(key) == fence[key]
+        for key in ("ep", "lease", "executor", "custody_epoch")
+    )
+
+    if fact_epoch == active_epoch:
+        if not exact_binding:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "CURRENT_EPOCH_IDENTITY_MISMATCH",
+            }
+        if updated < granted:
+            return {
+                **base,
+                "relation": "UNKNOWN",
+                "reason": "CURRENT_EPOCH_PREDATES_GRANT",
+            }
+        return {
+            **base,
+            "relation": "CURRENT_EPOCH",
+            "reason": "ACTIVE_EXECUTION_BINDING_MATCH",
+        }
+
+    if fact_epoch > active_epoch:
+        return {
+            **base,
+            "relation": "UNKNOWN",
+            "reason": "FUTURE_CUSTODY_EPOCH",
+        }
+
+    if updated < granted:
+        return {
+            **base,
+            "relation": "HISTORICAL_PRE_FENCE",
+            "reason": "OLDER_EPOCH_PUBLISHED_BEFORE_CURRENT_GRANT",
+        }
+    if updated > granted:
+        return {
+            **base,
+            "relation": "STALE_POST_FENCE",
+            "reason": "OLDER_EPOCH_PUBLISHED_AFTER_CURRENT_GRANT",
+        }
+    return {
+        **base,
+        "relation": "UNKNOWN",
+        "reason": "FENCE_TIMESTAMP_TIE",
+    }
+
+
 def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
     """Collect CHECKPOINT_FACTS_V1 blocks from each declared leaf issue's comments, oldest first.
 
