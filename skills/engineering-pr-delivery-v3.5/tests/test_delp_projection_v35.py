@@ -3965,6 +3965,100 @@ class DecompositionAdmission(unittest.TestCase):
         self.assertEqual("NONE", report["action"])
 
 
+class SemanticTopologyContinuationAndFrontier(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def graph(self, mode):
+        g = topology_assessment_planned()
+        g["programme"]["decomposition_policy"] = {"mode": mode}
+        return g
+
+    def ledger(self, graph_value):
+        return [
+            entry(
+                bound_facts(
+                    graph_value,
+                    units=[unit("U01"), unit("U02")],
+                    next={"unit": "U03", "action": "continue bounded unit"},
+                ),
+                1,
+            )
+        ]
+
+    def test_enforced_topology_blocker_uses_existing_fix_plan_action(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            projection = M.project(g, self.ledger(g), OBS_A, topology_observations=topo)
+            report = M.admit(projection, "Common#592", "continue")
+            self.assertEqual("FIX_PLAN", report["action"])
+            self.assertTrue(report["plan_fix_required"])
+            self.assertIn(
+                "TOPOLOGY_MERGE_REQUIRED",
+                [b["code"] for b in report["plan"]["blockers"]],
+            )
+            self.assertIn("PLAN: NOT_RELEASEABLE", M.render_checkpoint(report))
+
+    def test_advisory_topology_blocker_does_not_stop_continuation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ADVISORY")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            projection = M.project(g, self.ledger(g), OBS_A, topology_observations=topo)
+            report = M.admit(projection, "Common#592", "continue")
+            self.assertEqual("CONTINUE_UNIT", report["action"])
+            self.assertFalse(report["plan_fix_required"])
+            self.assertIn("PLAN: WOULD_BLOCK (advisory)", M.render_checkpoint(report))
+
+    def test_frontier_snapshots_topology_plan_and_topology_observation_input(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            snap = M.frontier(
+                g,
+                self.ledger(g),
+                OBS_A,
+                "Common#592",
+                topology_observations=topo,
+            )
+            self.assertIn("TOPOLOGY_MERGE_REQUIRED", snap["derived"]["plan"]["blockers"])
+            self.assertIn("topology_observations", snap["inputs"])
+
+            missing = M.frontier(
+                g,
+                self.ledger(g),
+                OBS_A,
+                "Common#592",
+                topology_observations={},
+            )
+            drift = M.frontier_drift(snap, missing)
+            self.assertEqual("MOVED", drift["status"])
+            self.assertIn("TOPOLOGY_OBSERVATIONS", [row["what"] for row in drift["moved"]])
+            self.assertIn("PLAN_RESULT", [row["what"] for row in drift["changed"]])
+
+    def test_legacy_frontier_shape_does_not_gain_topology_input_when_omitted(self):
+        snap = M.frontier(graph(), [], OBS_A, "Common#592")
+        self.assertNotIn("topology_observations", snap["inputs"])
+
+
 class DecompositionGitHubSync(unittest.TestCase):
     def sync(self, gh, g):
         titles = {f"Common#{n}": t for n, t in gh.issues.items()}

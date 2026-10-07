@@ -3472,6 +3472,7 @@ _FRONTIER_INPUTS = (
     ("FACTS", ("inputs", "facts", "digest")),
     ("DEPENDENCY_FACTS", ("inputs", "dependencies", "digest")),
     ("PLAN", ("inputs", "graph")),
+    ("TOPOLOGY_OBSERVATIONS", ("inputs", "topology_observations")),
 )
 _FRONTIER_CONSEQUENCES = (
     ("STATE", ("derived", "state")),
@@ -3480,6 +3481,7 @@ _FRONTIER_CONSEQUENCES = (
     ("PROGRESS_E", ("derived", "progress", "E")),
     ("ACTIVE_UNIT", ("derived", "active_unit")),
     ("DEPENDENCIES", ("derived", "dependencies")),
+    ("PLAN_RESULT", ("derived", "plan")),
 )
 
 
@@ -3494,6 +3496,7 @@ def frontier(
     ledger: Iterable[Mapping[str, Any]],
     observations: Mapping[str, Mapping[str, Any]] | None,
     leaf_ref: str,
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """One leaf's frontier at this moment: provider-observed material, derived state, and the digests of its inputs.
 
@@ -3505,7 +3508,12 @@ def frontier(
     ref = indexed["by_number"].get(ref_number(leaf_ref))
     if ref is None or indexed["nodes"][ref]["kind"] != "LEAF":
         raise DelpError(f"{leaf_ref} is not a LEAF in the graph")
-    projection = project(graph, ledger, observations)
+    projection = project(
+        graph,
+        ledger,
+        observations,
+        topology_observations=topology_observations,
+    )
     leaf = projection["nodes"][ref]
     accepted, _ = partition_ledger(indexed, ledger)
     mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
@@ -3550,6 +3558,16 @@ def frontier(
             },
         },
     }
+    if topology_observations is not None:
+        body["inputs"]["topology_observations"] = canonical_digest(
+            {
+                str(key): value
+                for key, value in sorted(
+                    topology_observations.items(),
+                    key=lambda item: str(item[0]),
+                )
+            }
+        )
     ancestors = [projection["nodes"][r] for r in leaf["identity"]["lineage"][:-1]]
     return {
         "schema": f"{SCHEMA_PREFIX}-frontier",
