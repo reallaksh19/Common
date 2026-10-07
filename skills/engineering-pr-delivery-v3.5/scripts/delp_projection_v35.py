@@ -362,6 +362,127 @@ def validate_observation(observation: Any) -> list[str]:
     return errors
 
 
+def normalize_observation(observation: Any) -> dict[str, Any]:
+    """Normalize typed or legacy-flat observer input to DELP's existing flat projection vocabulary."""
+    if observation is None:
+        return {}
+    if not isinstance(observation, Mapping):
+        raise DelpError("observation: must be a mapping")
+
+    if "schema" not in observation:
+        typed_only = {"visibility", "material", "custody", "diff"} & set(map(str, observation))
+        if typed_only or isinstance(observation.get("liveness"), Mapping):
+            raise DelpError(
+                "typed-shaped observation is missing required schema: "
+                + ", ".join(sorted(typed_only or {"liveness"}))
+            )
+        out = dict(observation)
+        category_fields = {
+            "MATERIAL": {"candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"},
+            "CUSTODY": {"interruptions"},
+            "LIVENESS": {"liveness"},
+            "CHECK": {"check"},
+            "DIFF": {"additions", "deletions", "since_checkpoint"},
+        }
+        out["_observation"] = {
+            "schema": "LEGACY_FLAT_OBSERVATION",
+            "visibility": "OBSERVED",
+            "categories": {
+                category: ("OBSERVED" if any(key in observation for key in fields) else "UNOBSERVED")
+                for category, fields in category_fields.items()
+            },
+        }
+        return out
+
+    errors = validate_observation(observation)
+    if errors:
+        raise DelpError("invalid RESPONSIBILITY_OBSERVATION_V1: " + "; ".join(errors))
+
+    visibility = str(observation["visibility"])
+    sections = {
+        "MATERIAL": observation.get("material"),
+        "CUSTODY": observation.get("custody"),
+        "LIVENESS": observation.get("liveness"),
+        "CHECK": observation.get("check"),
+        "DIFF": observation.get("diff"),
+    }
+    categories = {
+        category: (
+            "UNAVAILABLE"
+            if visibility == "UNAVAILABLE"
+            else "OBSERVED"
+            if isinstance(section, Mapping) and bool(section)
+            else "UNOBSERVED"
+        )
+        for category, section in sections.items()
+    }
+    out: dict[str, Any] = {}
+    if visibility == "OBSERVED":
+        material = observation.get("material") or {}
+        for key in ("candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"):
+            if key in material and material[key] is not None:
+                out[key] = material[key]
+
+        custody = observation.get("custody") or {}
+        if "interruptions" in custody:
+            out["interruptions"] = copy.deepcopy(custody["interruptions"])
+
+        liveness = observation.get("liveness") or {}
+        if "value" in liveness:
+            out["liveness"] = liveness["value"]
+
+        check = observation.get("check") or {}
+        if check:
+            out["check"] = copy.deepcopy(check)
+
+        diff = observation.get("diff") or {}
+        for key in ("additions", "deletions", "since_checkpoint"):
+            if key in diff:
+                out[key] = copy.deepcopy(diff[key])
+
+    out["_observation"] = {
+        "schema": OBSERVATION_SCHEMA,
+        "visibility": visibility,
+        "categories": categories,
+    }
+    return out
+
+
+def normalize_observations(
+    indexed: Mapping[str, Any],
+    observations: Mapping[Any, Any] | None,
+) -> dict[int, dict[str, Any]]:
+    """Resolve observation locators to declared leaves without crossing repository boundaries."""
+    if observations is None:
+        return {}
+    if not isinstance(observations, Mapping):
+        raise DelpError("observations: must be a mapping keyed by declared leaf reference")
+
+    leaves = [ref for ref, node in indexed["nodes"].items() if node["kind"] == "LEAF"]
+    declared_repository = str(indexed["programme"].get("repository") or "").strip().lower()
+    normalized: dict[int, dict[str, Any]] = {}
+    for supplied_ref, observation in observations.items():
+        try:
+            supplied_repo, _ = parse_ref(supplied_ref)
+            if supplied_repo and declared_repository and "/" in supplied_repo:
+                supplied_repo = supplied_repo.lower()
+                if supplied_repo != declared_repository:
+                    raise DelpError(
+                        f"repository qualifier {supplied_repo!r} does not match programme.repository {declared_repository!r}"
+                    )
+            leaf_ref = next((ref for ref in leaves if same_ref(ref, supplied_ref)), None)
+        except DelpError as exc:
+            raise DelpError(f"observation key {supplied_ref!r}: {exc}") from exc
+        if leaf_ref is None:
+            raise DelpError(f"observation key {supplied_ref!r}: not a declared LEAF in this graph")
+
+        number = indexed["nodes"][leaf_ref]["number"]
+        if number in normalized:
+            raise DelpError(f"observation key {supplied_ref!r}: duplicate observation for {leaf_ref}")
+        normalized[number] = normalize_observation(observation)
+    return normalized
+
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
@@ -2184,7 +2305,7 @@ def project(
     ledger = list(ledger)
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
-    observations = {ref_number(k): dict(v or {}) for k, v in (observations or {}).items()}
+    observations = normalize_observations(indexed, observations)
     accepted, rejected = partition_ledger(indexed, ledger)
     results: dict[str, dict[str, Any]] = {}
     mode = indexed["policy"]["mode"]
