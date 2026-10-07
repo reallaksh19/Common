@@ -123,8 +123,8 @@ def normalize_window(window: Any) -> dict[str, Any]:
     if not isinstance(window_id, str) or not window_id.strip():
         raise MetricError("window_id: non-empty string required")
     observations = window.get("observations")
-    if not isinstance(observations, list):
-        raise MetricError("observations: array required")
+    if not isinstance(observations, list) or not observations:
+        raise MetricError("observations: non-empty array required")
 
     rows = [_validate_row(row, i) for i, row in enumerate(observations)]
     ids = [row["id"] for row in rows]
@@ -181,7 +181,7 @@ def evaluate(window: Any) -> dict[str, Any]:
             "critical_mutation_recall": critical_recall,
             "impact_coverage": impact,
             "critical_unknown_count": sum(
-                r["critical"] and r["disposition"] == "UNKNOWN" for r in mutation
+                r["critical"] and r["disposition"] == "UNKNOWN" for r in rows
             ),
             "repair_count": sum(r["repairs"] for r in rows),
         },
