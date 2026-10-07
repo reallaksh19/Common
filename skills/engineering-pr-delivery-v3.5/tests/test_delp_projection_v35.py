@@ -6301,5 +6301,141 @@ class ProjectionEndToEndAgreement(unittest.TestCase):
         self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
 
+class CanonicalProjectionAgreement(unittest.TestCase):
+    """PROJ.5: every public consumer sees the same canonical conditions/action."""
+
+    def assert_surfaces_agree(self, g, ledger, observations, ref, action):
+        projection = M.project(g, list(ledger), observations)
+        leaf = projection["nodes"][ref]
+        status = M.status_document(
+            leaf,
+            version=1,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        frontier = M.frontier(g, list(ledger), observations, ref)
+        admission = M.admit(projection, ref)
+
+        self.assertEqual(action, leaf["actual_next"]["action"])
+        self.assertEqual(leaf["conditions"], status["node"]["conditions"])
+        self.assertEqual(leaf["actual_next"], status["node"]["actual_next"])
+        self.assertEqual(leaf["conditions"], frontier["derived"]["conditions"])
+        self.assertEqual(leaf["actual_next"], frontier["derived"]["actual_next"])
+        self.assertIn(f"NEXT:{action}", leaf["title_prefix"])
+        self.assertEqual(leaf["actual_next"], admission["actual_next"])
+        self.assertEqual(action, admission["action"])
+        self.assertEqual([], admission["authority_effects"])
+        self.assertEqual(
+            leaf["progress"]["ratio"],
+            frontier["derived"]["progress"],
+        )
+        return projection, frontier, admission
+
+    def test_four_surfaces_agree_for_plan_provider_material_and_evidence_states(self):
+        cases = [
+            (
+                "plan",
+                broken(ref="Common#592"),
+                [],
+                OBS_A,
+                "Common#592",
+                "FIX_PLAN",
+            ),
+            (
+                "provider-unavailable",
+                graph(),
+                [entry(facts(units=[unit("U01"), unit("U02")]), 1)],
+                {},
+                "Common#592",
+                "WAIT_PROVIDER",
+            ),
+            (
+                "provider-work-no-facts",
+                graph(),
+                [],
+                {"Common#592": {"candidate_sha": SHA_A, "pr_state": "OPEN"}},
+                "Common#592",
+                "MATERIALIZE_FACTS",
+            ),
+            (
+                "stale-candidate",
+                graph(),
+                [entry(facts(units=[unit("U01"), unit("U02")]), 1)],
+                {"Common#592": {"candidate_sha": SHA_B}},
+                "Common#592",
+                "RECOVER_EVIDENCE",
+            ),
+        ]
+        for label, g, ledger, observations, ref, action in cases:
+            with self.subTest(label=label):
+                self.assert_surfaces_agree(g, ledger, observations, ref, action)
+
+    def test_four_surfaces_agree_for_dependency_and_handoff_states(self):
+        serial = LowMemoryDecompositionRelay.serial_graph()
+        self.assert_surfaces_agree(
+            serial,
+            [],
+            {},
+            "Common#594",
+            "WAIT_DEPENDENCY",
+        )
+
+        g = SuccessorAwareHandover.graph_with_policy()
+        ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor handoff prose"},
+                ),
+                1,
+            ),
+            entry(SuccessorAwareHandover.offer(), 2, "offer"),
+        ]
+        self.assert_surfaces_agree(
+            g,
+            ledger,
+            OBS_A,
+            "Common#592",
+            "RECONCILE_HANDOFF",
+        )
+
+    def test_executor_next_conflict_cannot_diverge_any_consumer_or_progress(self):
+        first_ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor says A"},
+                ),
+                1,
+            )
+        ]
+        second_ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor says B"},
+                ),
+                1,
+            )
+        ]
+        first, first_frontier, first_admit = self.assert_surfaces_agree(
+            graph(), first_ledger, OBS_A, "Common#592", "CONTINUE_UNIT"
+        )
+        second, second_frontier, second_admit = self.assert_surfaces_agree(
+            graph(), second_ledger, OBS_A, "Common#592", "CONTINUE_UNIT"
+        )
+        a = first["nodes"]["Common#592"]
+        b = second["nodes"]["Common#592"]
+        self.assertEqual(a["conditions"], b["conditions"])
+        self.assertEqual(a["actual_next"]["action"], b["actual_next"]["action"])
+        self.assertEqual(a["title_prefix"], b["title_prefix"])
+        self.assertEqual(a["progress"], b["progress"])
+        self.assertEqual(
+            first_frontier["derived"]["actual_next"]["action"],
+            second_frontier["derived"]["actual_next"]["action"],
+        )
+        self.assertEqual(first_admit["action"], second_admit["action"])
+
+
 if __name__ == "__main__":
     unittest.main()
