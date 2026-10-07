@@ -127,6 +127,8 @@ WORKFLOWS = {
             "Generate full handover documentation and provider Relay/Handover ledger projection.",
             "Create/update and verify the governed GitHub handover sub-issue using provider readback.",
             "Publish the matching handover artifact (HANDOVER_PUBLISHED).",
+            "Materialize any explicitly requested Successor Reconstruction Challenge inside the handover package; questions must protect the next engineering decision and require live repository/provider evidence.",
+            "Successor entry is RECONSTRUCT_PLAN_ONLY until explicit Owner execution admission: no qualification, retained validation, production mutation, PR creation or task execution merely because custody moved.",
             "Do not generate a new Two-Pass/replanning request merely because custody is being prepared; reasoning is separate and must be explicitly requested or independently required by the governing responsibility.",
             "Do not claim HANDOVER_ACCEPTED until a successor actually accepts custody.",
         ],
@@ -289,6 +291,27 @@ _PRIMARY_PURPOSE_BY_INTENT = {
     "PREPARE_LOCAL_AGENT": "PREPARE_DELEGATION",
 }
 
+_NO_QUALIFICATION = (
+    r"\bno\s+qualification\b",
+    r"\bdo\s+not\s+(?:run|perform)\s+qualification\b",
+)
+_NO_RETAINED_VALIDATION = (
+    r"\bno\s+retained\s+validation\b",
+    r"\bdo\s+not\s+(?:run|perform)\s+retained\s+validation\b",
+)
+_NO_PRODUCTION_MUTATION = (
+    r"\bdo\s+not\s+(?:modify|change|edit|touch)\s+production(?:\s+code)?\b",
+    r"\bno\s+production\s+(?:mutation|code\s+changes?)\b",
+)
+_NO_PR_CREATION = (
+    r"\bdo\s+not\s+(?:create|open)\s+(?:a\s+)?(?:product\s+)?pr\b",
+    r"\bno\s+(?:product\s+)?pr\s+creation\b",
+)
+_NO_TASK_EXECUTION = (
+    r"\bdo\s+not\s+(?:start|execute|run)\s+(?:the\s+)?(?:next\s+)?(?:task|unit|c\d+(?:[- ]execution)?)\b",
+    r"\bno\s+(?:task|unit)\s+execution\b",
+)
+
 _NO_REPLAN = (
     r"\bdo\s+not\s+replan\b",
     r"\bdon't\s+replan\b",
@@ -392,6 +415,15 @@ def _boundary_constraints(value: str, target: Any, intent: str | None) -> list[s
         )
     if _matches(value, _NO_REPLAN):
         constraints.append("NO_REPLAN")
+    for patterns, label in (
+        (_NO_QUALIFICATION, "NO_QUALIFICATION"),
+        (_NO_RETAINED_VALIDATION, "NO_RETAINED_VALIDATION"),
+        (_NO_PRODUCTION_MUTATION, "NO_PRODUCTION_MUTATION"),
+        (_NO_PR_CREATION, "NO_PR_CREATION"),
+        (_NO_TASK_EXECUTION, "NO_TASK_EXECUTION"),
+    ):
+        if _matches(value, patterns):
+            constraints.append(label)
     if target is not None and any(
         re.search(pattern, value, flags=re.IGNORECASE)
         for pattern in _PRESERVE_TARGET
