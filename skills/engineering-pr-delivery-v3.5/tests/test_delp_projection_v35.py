@@ -3068,9 +3068,11 @@ class TopologyAssessmentPlanContract(unittest.TestCase):
             after_projection["identity"]["contract_digest"],
         )
 
-    def test_r2_plan_basis_has_no_r1_admission_side_effect(self):
-        with_basis = M.decomposition_report(topology_assessment_planned())
-        without_basis = M.decomposition_report(stable_claim_topology_graph())
+    def test_r2_plan_basis_does_not_change_the_mechanical_decomposition_layer(self):
+        with_graph = topology_assessment_planned()
+        without_graph = stable_claim_topology_graph()
+        with_basis = M._decomposition(M.validate_graph(with_graph))
+        without_basis = M._decomposition(M.validate_graph(without_graph))
         self.assertEqual(without_basis, with_basis)
 
 
@@ -3326,6 +3328,132 @@ class TopologyAdmissionAssembler(unittest.TestCase):
             )
 
 
+class TopologyReleaseFindings(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def test_legacy_graph_has_no_topology_release_findings(self):
+        out = A.topology_release_findings(stable_graph(), observations={})
+        self.assertFalse(out["active"])
+        self.assertEqual({}, out["leaves"])
+        self.assertEqual(0, out["summary"]["blocked"])
+
+    def test_pass_adds_no_blocker_but_unassessed_leaf_is_explicit(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            g["programme"]["topology_assessments"] = [
+                copy.deepcopy(g["programme"]["topology_assessments"][0])
+            ]
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.topology_release_findings(
+                g,
+                observations=observations,
+                closed={"Common#594"},
+            )
+            self.assertEqual([], out["leaves"]["Common#592"]["blockers"])
+            self.assertEqual(
+                "PASS",
+                out["leaves"]["Common#592"]["admissions"][0]["decision"],
+            )
+            self.assertEqual(
+                ["TOPOLOGY_ADMISSION_MISSING"],
+                [b["code"] for b in out["leaves"]["Common#612"]["blockers"]],
+            )
+
+    def test_existing_pair_merge_maps_to_both_subject_leaves(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            out = A.topology_release_findings(
+                g,
+                observations=observations,
+                closed={"Common#612"},
+            )
+            for ref in ("Common#592", "Common#594"):
+                self.assertIn(
+                    "TOPOLOGY_MERGE_REQUIRED",
+                    [b["code"] for b in out["leaves"][ref]["blockers"]],
+                )
+            self.assertEqual("MERGE", out["leaves"]["Common#594"]["admissions"][0]["decision"])
+
+    def test_split_discover_and_replan_map_without_reinterpreting_r2(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+
+            split = topology_assessment_planned()
+            split["programme"]["topology_assessments"] = [
+                copy.deepcopy(split["programme"]["topology_assessments"][0])
+            ]
+            split["programme"]["topology_assessments"][0]["semantic_cohesion"] = "MIXED"
+            split_obs = self.observations(split, root, ["Common#592"])
+            split_out = A.topology_release_findings(
+                split, observations=split_obs, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_SPLIT_REQUIRED"],
+                [b["code"] for b in split_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+            missing = topology_assessment_planned()
+            missing["programme"]["topology_assessments"] = [
+                copy.deepcopy(missing["programme"]["topology_assessments"][0])
+            ]
+            missing_out = A.topology_release_findings(
+                missing, observations={}, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_DISCOVERY_REQUIRED"],
+                [b["code"] for b in missing_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+            original = topology_assessment_planned()
+            original["programme"]["topology_assessments"] = [
+                copy.deepcopy(original["programme"]["topology_assessments"][0])
+            ]
+            stale_obs = self.observations(original, root, ["Common#592"])
+            moved = copy.deepcopy(original)
+            leaf_of(moved, "Common#592")["write_surface"] = ["pkg/"]
+            moved_out = A.topology_release_findings(
+                moved, observations=stale_obs, closed={"Common#594", "Common#612"}
+            )
+            self.assertEqual(
+                ["TOPOLOGY_REPLAN_REQUIRED"],
+                [b["code"] for b in moved_out["leaves"]["Common#592"]["blockers"]],
+            )
+
+    def test_findings_are_deterministic(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            first = M.canonical_json(
+                A.topology_release_findings(g, observations=observations, closed={"Common#612"})
+            )
+            g["programme"]["topology_assessments"].reverse()
+            second = M.canonical_json(
+                A.topology_release_findings(g, observations=observations, closed={"Common#612"})
+            )
+            self.assertEqual(first, second)
+
+
 class ClaimTopologyReport(unittest.TestCase):
     def test_report_distinguishes_ownership_enabling_and_gate_coverage(self):
         report = M.claim_topology_report(claim_topology_planned())
@@ -3362,8 +3490,9 @@ class ClaimTopologyReport(unittest.TestCase):
         product = next(row for row in report["claims"] if row["id"] == "PC-PRODUCT")
         self.assertEqual(["Common#592", "Common#594"], product["duplicate_owners"])
         self.assertEqual(1, report["summary"]["duplicate_nonshared_ownership"])
-        # R1 reports the fact only: the existing decompose-check remains unchanged.
-        self.assertTrue(M.decomposition_report(g)["leaves"]["Common#592"]["releasable"])
+        # R1's report remains pure facts; R3 may later use those facts in the integrated release report.
+        mechanical = M._decomposition(M.validate_graph(g))
+        self.assertTrue(mechanical["leaves"]["Common#592"]["releasable"])
 
         for claim in g["programme"]["acceptance_claims"]:
             if claim["id"] == "PC-PRODUCT":
@@ -3632,6 +3761,146 @@ class DecompositionInProjection(unittest.TestCase):
         self.assertEqual("NOT_RELEASEABLE", M.project(g, forged, OBS_A)["nodes"]["Common#594"]["state"])
 
 
+class SemanticTopologyPlanProjection(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def topology_graph(self, mode="ENFORCED"):
+        g = topology_assessment_planned()
+        g["programme"]["decomposition_policy"] = {"mode": mode}
+        return g
+
+    def test_off_mode_preserves_existing_no_plan_behavior(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.topology_graph("OFF")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            out = M.project(g, [], OBS_A, topology_observations=topo)
+            self.assertTrue(all("plan" not in node for node in out["nodes"].values()))
+
+    def test_enforced_topology_blockers_merge_into_the_existing_plan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.topology_graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            record = bound_facts(g, units=[unit("U01")])
+            baseline = copy.deepcopy(g)
+            baseline["programme"]["decomposition_policy"] = {"mode": "OFF"}
+            before = M.project(baseline, [entry(record, 1)], OBS_A, topology_observations=topo)
+            after = M.project(g, [entry(record, 1)], OBS_A, topology_observations=topo)
+
+            leaf = after["nodes"]["Common#592"]
+            codes = [b["code"] for b in leaf["plan"]["blockers"]]
+            self.assertIn("TOPOLOGY_MERGE_REQUIRED", codes)
+            self.assertFalse(leaf["plan"]["releasable"])
+            self.assertEqual("NOT_RELEASEABLE", leaf["state"])
+            self.assertEqual(
+                before["nodes"]["Common#592"]["progress"],
+                leaf["progress"],
+            )
+            self.assertEqual(
+                before["nodes"]["Common#592"]["evidence"],
+                leaf["evidence"],
+            )
+            self.assertIn("topology", leaf["plan"])
+            self.assertEqual(
+                "DERIVED_TOPOLOGY_RELEASE_FINDINGS",
+                leaf["plan"]["topology"]["authority"],
+            )
+
+            missing = after["nodes"]["Common#612"]["plan"]
+            self.assertIn(
+                "TOPOLOGY_ADMISSION_MISSING",
+                [b["code"] for b in missing["blockers"]],
+            )
+
+    def test_advisory_topology_blocker_does_not_overlay_leaf_state(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.topology_graph("ADVISORY")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            out = M.project(g, [], OBS_A, topology_observations=topo)
+            leaf = out["nodes"]["Common#592"]
+            self.assertFalse(leaf["plan"]["releasable"])
+            self.assertIn(
+                "TOPOLOGY_MERGE_REQUIRED",
+                [b["code"] for b in leaf["plan"]["blockers"]],
+            )
+            self.assertNotEqual("NOT_RELEASEABLE", leaf["state"])
+
+    def test_pass_decisions_add_no_topology_blocker(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.topology_graph("ENFORCED")
+            pair = next(a for a in g["programme"]["topology_assessments"] if a["id"] == "TA-PAIR")
+            pair["handoff_cost"] = "LOW"
+            pair["cross_child_cohesion"] = "LOW"
+            g["programme"]["topology_assessments"].append(
+                {
+                    "id": "TA-CLOSEOUT",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["RESP-612"],
+                    "semantic_cohesion": "COHESIVE",
+                    "dependency_closure": "CLOSED",
+                    "verification_closure": "CLOSED",
+                    "uncertainty": "LOW",
+                    "change_impact": "LOCAL",
+                    "execution_horizon": "SHORT",
+                    "mutation_domains": ["LOCAL_FILES"],
+                    "recovery_radius": "SMALL",
+                    "handoff_cost": "LOW",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": {
+                        "output_contract": False,
+                        "independent_oracle": False,
+                        "consumer_stable": False,
+                        "risk_reduction": False,
+                        "handoff_economy": False,
+                    },
+                    "source_refs": ["Common#648#R3-pass-fixture"],
+                }
+            )
+            topo = self.observations(g, root, ["Common#592", "Common#594", "Common#612"])
+            out = M.project(g, [], OBS_A, topology_observations=topo)
+            for ref in ("Common#592", "Common#594", "Common#612"):
+                topology_codes = [
+                    b["code"]
+                    for b in out["nodes"][ref]["plan"]["blockers"]
+                    if b["code"].startswith("TOPOLOGY_")
+                ]
+                self.assertEqual([], topology_codes, ref)
+
+    def test_topology_observations_are_part_of_projection_input_identity(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.topology_graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            current = M.project(g, [], OBS_A, topology_observations=topo)
+            missing = M.project(g, [], OBS_A, topology_observations={})
+            self.assertNotEqual(current["input_digest"], missing["input_digest"])
+            self.assertNotEqual(
+                current["nodes"]["Common#592"]["plan"]["topology"],
+                missing["nodes"]["Common#592"]["plan"]["topology"],
+            )
+
+
 class DecompositionAdmission(unittest.TestCase):
     LEDGER = [entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "build replay lane"}), 1)]
 
@@ -3697,6 +3966,265 @@ class DecompositionAdmission(unittest.TestCase):
         done = [entry(facts(leaf="Common#612", pr="Common#613", units=[unit("W1"), unit("W2"), unit("W3")], result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"}), 1)]
         report = M.admit(M.project(broken(ref="Common#612"), done, OBS_A), "Common#612", "continue")
         self.assertEqual("NONE", report["action"])
+
+
+class LiveTopologyObservationPlumbing(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        for name in ("src/a.py", "src/b.py", "other/x.py"):
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(name, encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def set_origin(self, root, repository):
+        subprocess.run(
+            ["git", "-C", str(root), "remote", "add", "origin", f"https://github.com/{repository}.git"],
+            check=True,
+        )
+
+    def graph(self):
+        g = topology_assessment_planned()
+        leaf_of(g, "Common#592")["write_surface"] = ["src/"]
+        leaf_of(g, "Common#594")["write_surface"] = ["other/"]
+        return g
+
+    def test_live_topology_observer_is_empty_for_legacy_graph(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            self.assertEqual({}, M.observe_topology_repository(stable_graph(), root))
+
+    def test_live_topology_observer_produces_current_r2_basis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            observed = M.observe_topology_repository(g, root)
+            self.assertIn("Common#592", observed)
+            current = O.repository_observation_currentness(
+                g,
+                "Common#592",
+                observed["Common#592"],
+            )
+            self.assertEqual("CURRENT", current["state"])
+
+    def test_live_repository_identity_binding_fails_closed_on_wrong_checkout(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            self.set_origin(root, "reallaksh19/Common")
+            g = self.graph()
+            observed = M.observe_topology_repository(
+                g,
+                root,
+                expected_repository="reallaksh19/Common",
+            )
+            self.assertIn("Common#592", observed)
+            with self.assertRaises(M.DelpError):
+                M.observe_topology_repository(
+                    g,
+                    root,
+                    expected_repository="reallaksh19/Other",
+                )
+
+    def test_input_cache_recomputes_topology_observations_after_conflict_invalidation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            calls = {"topology": 0}
+
+            def topo():
+                calls["topology"] += 1
+                return M.observe_topology_repository(g, root)
+
+            cache = M._InputCache(g, lambda: [], lambda: OBS_A, topo)
+            first = cache.projection()
+            second = cache.projection()
+            self.assertEqual(1, calls["topology"])
+            self.assertEqual(first["input_digest"], second["input_digest"])
+            cache.invalidate()
+            third = cache.projection()
+            self.assertEqual(2, calls["topology"])
+            self.assertEqual(first["input_digest"], third["input_digest"])
+
+
+class IntegratedSemanticDecompositionReport(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def graph(self, mode="ENFORCED"):
+        g = topology_assessment_planned()
+        g["programme"]["decomposition_policy"] = {"mode": mode}
+        return g
+
+    def test_decomposition_report_and_project_use_the_same_semantic_blockers(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            report = M.decomposition_report(
+                g,
+                topology_observations=topo,
+            )
+            projection = M.project(
+                g,
+                [],
+                OBS_A,
+                topology_observations=topo,
+            )
+            for ref, row in report["leaves"].items():
+                self.assertEqual(
+                    [b["code"] for b in row["blockers"]],
+                    [b["code"] for b in projection["nodes"][ref]["plan"]["blockers"]],
+                    ref,
+                )
+                self.assertEqual(
+                    row["releasable"],
+                    projection["nodes"][ref]["plan"]["releasable"],
+                    ref,
+                )
+
+    def test_legacy_report_is_unchanged_without_claim_first_authority(self):
+        g = planned()
+        self.assertEqual(
+            M.canonical_json(M._decomposition(M.validate_graph(g))),
+            M.canonical_json(M.decomposition_report(g)),
+        )
+
+    def test_decompose_check_cli_accepts_distinct_topology_observation_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            graph_path = root / "graph.json"
+            topo_path = root / "topology.json"
+            graph_path.write_text(json.dumps(g), encoding="utf-8")
+            topo_path.write_text(json.dumps(topo), encoding="utf-8")
+            code, out, err = cli(
+                "decompose-check",
+                "--graph", str(graph_path),
+                "--topology-observations", str(topo_path),
+                "--json",
+            )
+            self.assertEqual(1, code, err)
+            payload = json.loads(out)
+            self.assertIn(
+                "TOPOLOGY_MERGE_REQUIRED",
+                [b["code"] for b in payload["leaves"]["Common#592"]["blockers"]],
+            )
+
+
+class SemanticTopologyContinuationAndFrontier(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def graph(self, mode):
+        g = topology_assessment_planned()
+        g["programme"]["decomposition_policy"] = {"mode": mode}
+        return g
+
+    def ledger(self, graph_value):
+        return [
+            entry(
+                bound_facts(
+                    graph_value,
+                    units=[unit("U01"), unit("U02")],
+                    next={"unit": "U03", "action": "continue bounded unit"},
+                ),
+                1,
+            )
+        ]
+
+    def test_enforced_topology_blocker_uses_existing_fix_plan_action(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            projection = M.project(g, self.ledger(g), OBS_A, topology_observations=topo)
+            report = M.admit(projection, "Common#592", "continue")
+            self.assertEqual("FIX_PLAN", report["action"])
+            self.assertTrue(report["plan_fix_required"])
+            self.assertIn(
+                "TOPOLOGY_MERGE_REQUIRED",
+                [b["code"] for b in report["plan"]["blockers"]],
+            )
+            self.assertIn("PLAN: NOT_RELEASEABLE", M.render_checkpoint(report))
+
+    def test_advisory_topology_blocker_does_not_stop_continuation(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ADVISORY")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            projection = M.project(g, self.ledger(g), OBS_A, topology_observations=topo)
+            report = M.admit(projection, "Common#592", "continue")
+            self.assertEqual("CONTINUE_UNIT", report["action"])
+            self.assertFalse(report["plan_fix_required"])
+            self.assertIn("PLAN: WOULD_BLOCK (advisory)", M.render_checkpoint(report))
+
+    def test_frontier_snapshots_topology_plan_and_topology_observation_input(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph("ENFORCED")
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            snap = M.frontier(
+                g,
+                self.ledger(g),
+                OBS_A,
+                "Common#592",
+                topology_observations=topo,
+            )
+            self.assertIn("TOPOLOGY_MERGE_REQUIRED", snap["derived"]["plan"]["blockers"])
+            self.assertIn("topology_observations", snap["inputs"])
+
+            missing = M.frontier(
+                g,
+                self.ledger(g),
+                OBS_A,
+                "Common#592",
+                topology_observations={},
+            )
+            drift = M.frontier_drift(snap, missing)
+            self.assertEqual("MOVED", drift["status"])
+            self.assertIn("TOPOLOGY_OBSERVATIONS", [row["what"] for row in drift["moved"]])
+            self.assertIn("PLAN_RESULT", [row["what"] for row in drift["changed"]])
+
+    def test_legacy_frontier_shape_does_not_gain_topology_input_when_omitted(self):
+        snap = M.frontier(graph(), [], OBS_A, "Common#592")
+        self.assertNotIn("topology_observations", snap["inputs"])
 
 
 class DecompositionGitHubSync(unittest.TestCase):

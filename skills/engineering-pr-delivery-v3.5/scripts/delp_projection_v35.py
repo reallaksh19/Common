@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib.util
 import json
 import re
 import subprocess
@@ -2027,13 +2028,76 @@ def _decomposition(
     }
 
 
-def decomposition_report(graph: Any, mode: str | None = None, closed: Iterable[str] = ()) -> dict[str, Any]:
-    """Evaluate the decomposition policy over every LEAF not in `closed` (e.g. already COMPLETE). Pure."""
+def decomposition_report(
+    graph: Any,
+    mode: str | None = None,
+    closed: Iterable[str] = (),
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Evaluate one integrated mechanical + semantic topology release report.
+
+    R2 remains the semantic decision authority. This function only merges its
+    already-derived blockers into the existing decomposition report shape.
+    """
     if mode is not None and mode not in POLICY_MODES:
         raise GraphError(f"mode: one of {list(POLICY_MODES)}")
+    if topology_observations is None:
+        topology_observations = {}
+    if not isinstance(topology_observations, Mapping):
+        raise DelpError("topology_observations: must be a mapping keyed by declared leaf reference")
+
     indexed = validate_graph(graph)
     closed_numbers = {ref_number(c) for c in closed}
-    return _decomposition(indexed, {r for r in indexed["nodes"] if indexed["nodes"][r]["number"] in closed_numbers}, mode)
+    closed_refs = {
+        r
+        for r in indexed["nodes"]
+        if indexed["nodes"][r]["number"] in closed_numbers
+    }
+    report = _decomposition(indexed, closed_refs, mode)
+
+    claim_first_active = bool(
+        indexed.get("acceptance_claims") or indexed.get("topology_assessments")
+    )
+    if not claim_first_active:
+        return report
+
+    try:
+        topology_release = _topology_assembler_module().topology_release_findings(
+            graph,
+            observations=topology_observations,
+            closed=closed_refs,
+        )
+    except Exception as exc:
+        raise DelpError(f"topology release derivation failed: {exc}") from exc
+
+    for ref, row in report["leaves"].items():
+        topology_row = topology_release["leaves"].get(ref) or {
+            "blockers": [],
+            "admissions": [],
+        }
+        topology_blockers = [
+            {"code": blocker["code"], "detail": blocker["detail"]}
+            for blocker in topology_row["blockers"]
+        ]
+        row["blockers"] = sorted(
+            [*row["blockers"], *topology_blockers],
+            key=lambda item: (item["code"], item["detail"]),
+        )
+        row["releasable"] = not row["blockers"]
+        if topology_row["admissions"] or topology_row["blockers"]:
+            row["topology"] = {
+                "authority": topology_release["authority"],
+                "admissions": copy.deepcopy(topology_row["admissions"]),
+                "blockers": copy.deepcopy(topology_row["blockers"]),
+            }
+
+    report["summary"]["releasable"] = sum(
+        1 for row in report["leaves"].values() if row["releasable"]
+    )
+    report["summary"]["not_releasable"] = sum(
+        1 for row in report["leaves"].values() if not row["releasable"]
+    )
+    return report
 
 
 def render_decomposition(report: Mapping[str, Any]) -> str:
@@ -2949,13 +3013,103 @@ def partition_ledger(
     )
 
 
+
+_TOPOLOGY_ASSEMBLER_MODULE: Any | None = None
+
+
+def _topology_assembler_module():
+    """Load the already-qualified R2 assembler lazily to avoid a module-import cycle."""
+    global _TOPOLOGY_ASSEMBLER_MODULE
+    if _TOPOLOGY_ASSEMBLER_MODULE is None:
+        path = Path(__file__).resolve().with_name("decomposition_assembler_v35.py")
+        spec = importlib.util.spec_from_file_location("decomposition_assembler_v35_for_projection", path)
+        module = importlib.util.module_from_spec(spec)
+        if spec.loader is None:  # pragma: no cover
+            raise DelpError(f"cannot load topology assembler {path}")
+        spec.loader.exec_module(module)
+        _TOPOLOGY_ASSEMBLER_MODULE = module
+    return _TOPOLOGY_ASSEMBLER_MODULE
+
+
+_TOPOLOGY_OBSERVER_MODULE: Any | None = None
+
+
+def _topology_observer_module():
+    """Load the qualified read-only repository observer lazily."""
+    global _TOPOLOGY_OBSERVER_MODULE
+    if _TOPOLOGY_OBSERVER_MODULE is None:
+        path = Path(__file__).resolve().with_name("decomposition_observer_v35.py")
+        spec = importlib.util.spec_from_file_location("decomposition_observer_v35_for_projection", path)
+        module = importlib.util.module_from_spec(spec)
+        if spec.loader is None:  # pragma: no cover
+            raise DelpError(f"cannot load topology observer {path}")
+        spec.loader.exec_module(module)
+        _TOPOLOGY_OBSERVER_MODULE = module
+    return _TOPOLOGY_OBSERVER_MODULE
+
+
+def _local_repository_slug(repo_root: Path | str) -> str:
+    root = Path(repo_root).resolve()
+    proc = subprocess.run(
+        ["git", "-C", str(root), "config", "--get", "remote.origin.url"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode or not proc.stdout.strip():
+        raise DelpError(f"{root}: cannot resolve remote.origin.url for topology observation")
+    remote = proc.stdout.strip().replace("\\", "/")
+    match = re.search(r"github\.com[/:]([^/]+)/([^/]+?)(?:\.git)?$", remote, re.IGNORECASE)
+    if not match:
+        raise DelpError(f"{root}: origin is not a supported GitHub repository URL: {remote!r}")
+    return f"{match.group(1)}/{match.group(2)}"
+
+
+def observe_topology_repository(
+    graph: Any,
+    repo_root: Path | str,
+    expected_repository: str | None = None,
+) -> dict[str, dict[str, Any]]:
+    """Derive R2 repository observations from a checked-out Git tree; read-only."""
+    indexed = validate_graph(graph)
+    if not (indexed.get("acceptance_claims") or indexed.get("topology_assessments")):
+        return {}
+    observer = _topology_observer_module()
+    root = Path(repo_root).resolve()
+    if expected_repository is not None:
+        local_repository = _local_repository_slug(root)
+        if local_repository.lower() != str(expected_repository).strip().lower():
+            raise DelpError(
+                f"{root}: local topology repository {local_repository!r} does not match "
+                f"expected GitHub repository {expected_repository!r}"
+            )
+    rows: dict[str, dict[str, Any]] = {}
+    for ref in indexed["order"]:
+        if indexed["nodes"][ref]["kind"] != "LEAF":
+            continue
+        try:
+            rows[ref] = observer.observe_repository_basis(
+                graph,
+                leaf_ref=ref,
+                repo_root=root,
+            )
+        except Exception as exc:
+            raise DelpError(f"{ref}: topology repository observation failed: {exc}") from exc
+    return rows
+
+
 def project(
     graph: Any,
     ledger: Iterable[Mapping[str, Any]] = (),
     observations: Mapping[str, Mapping[str, Any]] | None = None,
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Recompute every node from the plan, accepted facts and observations."""
+    """Recompute every node from plan, facts, provider truth and topology observations."""
     ledger = list(ledger)
+    if topology_observations is None:
+        topology_observations = {}
+    if not isinstance(topology_observations, Mapping):
+        raise DelpError("topology_observations: must be a mapping keyed by declared leaf reference")
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
     observations = normalize_observations(indexed, observations)
@@ -2969,18 +3123,30 @@ def project(
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
-        for ref, row in _decomposition(indexed, closed)["leaves"].items():
+        release = decomposition_report(
+            graph,
+            mode,
+            closed,
+            topology_observations=topology_observations,
+        )
+        for ref, row in release["leaves"].items():
             leaf = results[ref]
             leaf["plan"] = {
                 "mode": mode,
                 "releasable": row["releasable"],
-                "blockers": row["blockers"],
-                "advisories": row["advisories"],
+                "blockers": copy.deepcopy(row["blockers"]),
+                "advisories": copy.deepcopy(row["advisories"]),
             }
+            if row.get("topology") is not None:
+                leaf["plan"]["topology"] = copy.deepcopy(row["topology"])
             if row["blockers"]:
-                leaf["warnings"].append("DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in row["blockers"]})))
+                leaf["warnings"].append(
+                    "DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in row["blockers"]}))
+                )
             if row["advisories"]:
-                leaf["warnings"].append("DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]})))
+                leaf["warnings"].append(
+                    "DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]}))
+                )
             if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
@@ -3151,6 +3317,10 @@ def project(
                     for e in ledger
                 ],
                 "observations": {str(k): v for k, v in sorted(observations.items())},
+                "topology_observations": {
+                    str(k): v
+                    for k, v in sorted(topology_observations.items(), key=lambda item: str(item[0]))
+                },
             }
         ),
     }
@@ -3416,6 +3586,7 @@ _FRONTIER_INPUTS = (
     ("FACTS", ("inputs", "facts", "digest")),
     ("DEPENDENCY_FACTS", ("inputs", "dependencies", "digest")),
     ("PLAN", ("inputs", "graph")),
+    ("TOPOLOGY_OBSERVATIONS", ("inputs", "topology_observations")),
 )
 _FRONTIER_CONSEQUENCES = (
     ("STATE", ("derived", "state")),
@@ -3424,6 +3595,7 @@ _FRONTIER_CONSEQUENCES = (
     ("PROGRESS_E", ("derived", "progress", "E")),
     ("ACTIVE_UNIT", ("derived", "active_unit")),
     ("DEPENDENCIES", ("derived", "dependencies")),
+    ("PLAN_RESULT", ("derived", "plan")),
 )
 
 
@@ -3438,6 +3610,7 @@ def frontier(
     ledger: Iterable[Mapping[str, Any]],
     observations: Mapping[str, Mapping[str, Any]] | None,
     leaf_ref: str,
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """One leaf's frontier at this moment: provider-observed material, derived state, and the digests of its inputs.
 
@@ -3449,7 +3622,12 @@ def frontier(
     ref = indexed["by_number"].get(ref_number(leaf_ref))
     if ref is None or indexed["nodes"][ref]["kind"] != "LEAF":
         raise DelpError(f"{leaf_ref} is not a LEAF in the graph")
-    projection = project(graph, ledger, observations)
+    projection = project(
+        graph,
+        ledger,
+        observations,
+        topology_observations=topology_observations,
+    )
     leaf = projection["nodes"][ref]
     accepted, _ = partition_ledger(indexed, ledger)
     mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
@@ -3494,6 +3672,16 @@ def frontier(
             },
         },
     }
+    if topology_observations is not None:
+        body["inputs"]["topology_observations"] = canonical_digest(
+            {
+                str(key): value
+                for key, value in sorted(
+                    topology_observations.items(),
+                    key=lambda item: str(item[0]),
+                )
+            }
+        )
     ancestors = [projection["nodes"][r] for r in leaf["identity"]["lineage"][:-1]]
     return {
         "schema": f"{SCHEMA_PREFIX}-frontier",
@@ -3715,10 +3903,12 @@ class _InputCache:
         graph: Any,
         ledger_provider: Callable[[], Iterable[Mapping[str, Any]]],
         observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]],
+        topology_observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]] | None = None,
     ) -> None:
         self.graph = graph
         self.ledger_provider = ledger_provider
         self.observation_provider = observation_provider
+        self.topology_observation_provider = topology_observation_provider or (lambda: {})
         self._projection: dict[str, Any] | None = None
 
     def invalidate(self) -> None:
@@ -3726,7 +3916,12 @@ class _InputCache:
 
     def projection(self) -> dict[str, Any]:
         if self._projection is None:
-            self._projection = project(self.graph, self.ledger_provider(), self.observation_provider())
+            self._projection = project(
+                self.graph,
+                self.ledger_provider(),
+                self.observation_provider(),
+                topology_observations=self.topology_observation_provider(),
+            )
         return self._projection
 
 
@@ -3736,10 +3931,16 @@ def sync_projection(
     ledger_provider: Callable[[], Iterable[Mapping[str, Any]]],
     observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]],
     base_titles: Mapping[str, str],
+    topology_observation_provider: Callable[[], Mapping[str, Mapping[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     """Project every node and write each with compare-and-swap. Leaves first, root last."""
     indexed = validate_graph(graph)
-    cache = _InputCache(graph, ledger_provider, observation_provider)
+    cache = _InputCache(
+        graph,
+        ledger_provider,
+        observation_provider,
+        topology_observation_provider,
+    )
     report: dict[str, Any] = {}
     ordered = sorted(indexed["nodes"], key=lambda r: (-len(lineage(indexed, r)), indexed["nodes"][r]["number"]))
     for ref in ordered:
@@ -3810,11 +4011,20 @@ def require_repository_match(graph: Any, repository: str, *, live: bool) -> None
         )
 
 
-def plan_github(transport: Any, graph: Any) -> dict[str, Any]:
+def plan_github(transport: Any, graph: Any, repo_root: Path | str = Path.cwd()) -> dict[str, Any]:
     """Read-only dry run of `sync-github`: what would change, what drifted, what was rejected. Writes nothing."""
     indexed = validate_graph(graph)
     titles = {ref: str(transport.get_issue(ref_number(ref)).get("title") or "") for ref in indexed["nodes"]}
-    projection = project(graph, ledger_from_github(transport, graph), observe_github(transport, graph))
+    projection = project(
+        graph,
+        ledger_from_github(transport, graph),
+        observe_github(transport, graph),
+        topology_observations=observe_topology_repository(
+            graph,
+            repo_root,
+            expected_repository=getattr(transport, "repository", None),
+        ),
+    )
     drift = {}
     for ref, node in projection["nodes"].items():
         result = title_drift(titles[ref], node["title_prefix"])
@@ -4038,6 +4248,7 @@ def main(argv: list[str] | None = None) -> int:
     dc.add_argument("--mode", choices=POLICY_MODES, help="Override programme.decomposition_policy.mode for this run.")
     dc.add_argument("--facts", type=Path, nargs="*", default=[], help="Skip leaves these facts show COMPLETE or SUPERSEDED.")
     dc.add_argument("--observations", type=Path)
+    dc.add_argument("--topology-observations", type=Path)
     dc.add_argument("--json", action="store_true")
 
     gd = sub.add_parser("graph-diff", help="Check that a re-plan conserves progress and records its scope changes; exit 1 on blockers.")
@@ -4057,7 +4268,9 @@ def main(argv: list[str] | None = None) -> int:
         sp.add_argument("--graph", type=Path, required=True)
         sp.add_argument("--facts", type=Path, nargs="*", default=[])
         sp.add_argument("--observations", type=Path)
+        sp.add_argument("--topology-observations", type=Path)
         sp.add_argument("--repository", help="Observe live from GitHub (read-only) instead of --facts / --observations.")
+        sp.add_argument("--repo-root", type=Path, default=Path.cwd(), help="Checked-out Git repository used for read-only topology observation.")
         sp.add_argument("--leaf", required=True)
     fr.add_argument("--output", type=Path)
     fr.add_argument("--text", action="store_true", help="Human-readable form instead of JSON.")
@@ -4071,6 +4284,7 @@ def main(argv: list[str] | None = None) -> int:
     hl.add_argument("--graph", type=Path, required=True)
     hl.add_argument("--facts", type=Path, nargs="*", default=[])
     hl.add_argument("--observations", type=Path)
+    hl.add_argument("--topology-observations", type=Path)
     hl.add_argument("--mode", choices=HEALTH_MODES, default="ADVISORY", help="Override programme.health_policy.mode for this run.")
     hl.add_argument("--leaf", help="Show a single leaf.")
     hl.add_argument("--json", action="store_true")
@@ -4079,6 +4293,7 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument("--graph", type=Path, required=True)
     pr.add_argument("--facts", type=Path, nargs="*", default=[])
     pr.add_argument("--observations", type=Path)
+    pr.add_argument("--topology-observations", type=Path)
     pr.add_argument("--base-titles", type=Path)
     pr.add_argument("--output", type=Path)
 
@@ -4086,6 +4301,7 @@ def main(argv: list[str] | None = None) -> int:
     ad.add_argument("--graph", type=Path, required=True)
     ad.add_argument("--facts", type=Path, nargs="*", default=[])
     ad.add_argument("--observations", type=Path)
+    ad.add_argument("--topology-observations", type=Path)
     ad.add_argument("--leaf", required=True)
     ad.add_argument("--command", default="continue")
     ad.add_argument("--json", action="store_true")
@@ -4094,6 +4310,7 @@ def main(argv: list[str] | None = None) -> int:
     vt.add_argument("--graph", type=Path, required=True)
     vt.add_argument("--facts", type=Path, nargs="*", default=[])
     vt.add_argument("--observations", type=Path)
+    vt.add_argument("--topology-observations", type=Path)
     vt.add_argument("--actual-titles", type=Path, required=True)
 
     gh = sub.add_parser(
@@ -4103,6 +4320,7 @@ def main(argv: list[str] | None = None) -> int:
     gh.add_argument("--graph", type=Path, required=True)
     gh.add_argument("--repository", required=True)
     gh.add_argument("--dry-run", action="store_true", help="Read-only: report drift, rejected facts and expected titles; write nothing.")
+    gh.add_argument("--repo-root", type=Path, default=Path.cwd(), help="Checked-out Git repository used for read-only topology observation.")
 
     args = parser.parse_args(argv)
     for stream in (sys.stdout, sys.stderr):  # titles carry emoji and arrows; never depend on the console codepage
@@ -4149,11 +4367,26 @@ def main(argv: list[str] | None = None) -> int:
 
         graph = _load_structured(args.graph)
         if args.cmd == "decompose-check":
+            topology_observations = (
+                _load_structured(args.topology_observations)
+                if args.topology_observations
+                else {}
+            )
             closed: list[str] = []
             if args.facts:
-                seen = project(graph, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+                seen = project(
+                    graph,
+                    _load_ledger(args.facts),
+                    _load_structured(args.observations) if args.observations else {},
+                    topology_observations=topology_observations,
+                )
                 closed = [r for r, n in seen["nodes"].items() if n["kind"] == "LEAF" and n["lifecycle"] in _TERMINAL]
-            report = decomposition_report(graph, args.mode, closed)
+            report = decomposition_report(
+                graph,
+                args.mode,
+                closed,
+                topology_observations=topology_observations,
+            )
             if args.json:
                 _emit(report, None)
             else:
@@ -4162,7 +4395,16 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "health":
             planned = copy.deepcopy(graph)
             planned.setdefault("programme", {}).setdefault("health_policy", {})["mode"] = args.mode
-            projected = project(planned, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+            projected = project(
+                planned,
+                _load_ledger(args.facts),
+                _load_structured(args.observations) if args.observations else {},
+                topology_observations=(
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else {}
+                ),
+            )
             if args.json:
                 _emit(
                     {
@@ -4179,10 +4421,30 @@ def main(argv: list[str] | None = None) -> int:
                 require_repository_match(graph, args.repository, live=False)
                 transport = GhTransport(args.repository)
                 ledger, observations = ledger_from_github(transport, graph), observe_github(transport, graph)
+                topology_observations = (
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else observe_topology_repository(
+                        graph,
+                        args.repo_root,
+                        expected_repository=args.repository,
+                    )
+                )
             else:
                 ledger = _load_ledger(args.facts)
                 observations = _load_structured(args.observations) if args.observations else {}
-            live = frontier(graph, ledger, observations, args.leaf)
+                topology_observations = (
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else {}
+                )
+            live = frontier(
+                graph,
+                ledger,
+                observations,
+                args.leaf,
+                topology_observations=topology_observations,
+            )
             if args.cmd == "frontier":
                 if args.text:
                     print(render_frontier(live))
@@ -4198,7 +4460,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "sync-github":
             require_repository_match(graph, args.repository, live=not args.dry_run)
         if args.cmd == "sync-github" and args.dry_run:
-            _emit(plan_github(GhTransport(args.repository), graph), None)
+            _emit(plan_github(GhTransport(args.repository), graph, args.repo_root), None)
             return 0
         if args.cmd == "sync-github":
             transport = GhTransport(args.repository)
@@ -4213,12 +4475,27 @@ def main(argv: list[str] | None = None) -> int:
                 lambda: ledger_from_github(transport, graph),
                 lambda: observe_github(transport, graph),
                 base_titles,
+                topology_observation_provider=lambda: observe_topology_repository(
+                    graph,
+                    args.repo_root,
+                    expected_repository=args.repository,
+                ),
             )
             _emit(report, None)
             return 0
         ledger = _load_ledger(args.facts)
         observations = _load_structured(args.observations) if getattr(args, "observations", None) else {}
-        projection = project(graph, ledger, observations)
+        topology_observations = (
+            _load_structured(args.topology_observations)
+            if getattr(args, "topology_observations", None)
+            else {}
+        )
+        projection = project(
+            graph,
+            ledger,
+            observations,
+            topology_observations=topology_observations,
+        )
         if args.cmd == "project":
             if args.base_titles:
                 projection["expected_titles"] = expected_titles(projection, _load_structured(args.base_titles))
