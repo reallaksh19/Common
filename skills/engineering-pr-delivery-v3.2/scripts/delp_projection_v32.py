@@ -845,7 +845,7 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
 
 
 def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
-    """Normalize the pre-materialization proposal identity layer. No provider child refs live here."""
+    """Normalize the pre-materialization proposal layer. Provider child refs are intentionally absent."""
     if value is None:
         return None
     if not isinstance(value, Mapping):
@@ -857,19 +857,63 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     raw_rows = value.get("responsibilities")
     if not isinstance(raw_rows, list) or not raw_rows:
         raise GraphError("programme.decomposition_proposal.responsibilities: non-empty array required")
-    rows: list[dict[str, str]] = []
+    rows: list[dict[str, Any]] = []
     seen: set[str] = set()
     for index, raw in enumerate(raw_rows):
         where = f"programme.decomposition_proposal.responsibilities[{index}]"
-        if not isinstance(raw, Mapping) or set(map(str, raw)) != {"id"}:
-            raise GraphError(f"{where}: exact id-only pre-materialization identity required")
+        required = {"id", "work_class", "owns_claims", "outcome", "independence_basis", "semantic_units"}
+        if not isinstance(raw, Mapping) or set(map(str, raw)) != required:
+            raise GraphError(f"{where}: exact pre-materialization responsibility fields required")
         rid = str(raw.get("id") or "")
         if not _UNIT_ID.fullmatch(rid) or rid in seen:
             raise GraphError(f"{where}.id: invalid or duplicate responsibility id {rid!r}")
         seen.add(rid)
-        rows.append({"id": rid})
+        work_class = raw.get("work_class")
+        if work_class not in WORK_CLASSES:
+            raise GraphError(f"{where}.work_class: one of {list(WORK_CLASSES)}")
+        owns_claims = _str_list(raw.get("owns_claims"), f"{where}.owns_claims")
+        if not owns_claims or len(owns_claims) != len(set(owns_claims)) or any(not _UNIT_ID.fullmatch(cid) for cid in owns_claims):
+            raise GraphError(f"{where}.owns_claims: non-empty unique claim ids required")
+        outcome = raw.get("outcome")
+        basis = raw.get("independence_basis")
+        if not isinstance(outcome, str) or not outcome.strip():
+            raise GraphError(f"{where}.outcome: non-empty string required")
+        if not isinstance(basis, str) or not basis.strip():
+            raise GraphError(f"{where}.independence_basis: non-empty string required")
+        raw_units = raw.get("semantic_units")
+        if not isinstance(raw_units, list) or not raw_units:
+            raise GraphError(f"{where}.semantic_units: non-empty array required")
+        units: list[dict[str, str]] = []
+        seen_units: set[str] = set()
+        for unit_index, unit in enumerate(raw_units):
+            uwhere = f"{where}.semantic_units[{unit_index}]"
+            if not isinstance(unit, Mapping) or set(map(str, unit)) != {"id", "kind", "outcome", "verify"}:
+                raise GraphError(f"{uwhere}: exact id/kind/outcome/verify fields required")
+            uid = str(unit.get("id") or "")
+            if not _UNIT_ID.fullmatch(uid) or uid in seen_units:
+                raise GraphError(f"{uwhere}.id: invalid or duplicate unit id {uid!r}")
+            seen_units.add(uid)
+            kind = unit.get("kind")
+            if kind not in {"SEMANTIC", "DELIVERY_GATE", "MECHANICAL"}:
+                raise GraphError(f"{uwhere}.kind: SEMANTIC, DELIVERY_GATE or MECHANICAL required")
+            unit_outcome = unit.get("outcome")
+            verify = unit.get("verify")
+            if not isinstance(unit_outcome, str) or not unit_outcome.strip():
+                raise GraphError(f"{uwhere}.outcome: non-empty string required")
+            if not isinstance(verify, str) or not verify.strip():
+                raise GraphError(f"{uwhere}.verify: non-empty string required")
+            units.append({"id": uid, "kind": kind, "outcome": unit_outcome.strip(), "verify": verify.strip()})
+        rows.append(
+            {
+                "id": rid,
+                "work_class": work_class,
+                "owns_claims": sorted(owns_claims),
+                "outcome": outcome.strip(),
+                "independence_basis": basis.strip(),
+                "semantic_units": units,
+            }
+        )
     return {"version": "V2", "responsibilities": rows}
-
 
 def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
     """Normalize parent acceptance claims. Claims describe outcomes; leaves own them."""
@@ -1407,6 +1451,135 @@ def _leaf_findings(
     return found
 
 
+def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None) -> dict[str, Any]:
+    """Evaluate the pre-materialization proposal before child provider refs exist."""
+    proposal, policy = indexed["decomposition_proposal"], indexed["policy"]
+    assert proposal is not None
+    claims_by_id = indexed["claims_by_id"]
+    claim_policy = policy["claim_first"]
+    claim_severity = "ADVISORY" if claim_policy["mode"] == "ADVISORY" else "BLOCKER"
+    rows: dict[str, Any] = {}
+    findings: dict[str, list[dict[str, str]]] = {row["id"]: [] for row in proposal["responsibilities"]}
+
+    owners: dict[str, list[str]] = {cid: [] for cid in claims_by_id}
+    for row in proposal["responsibilities"]:
+        rid = row["id"]
+        owned = row["owns_claims"]
+        unknown = [cid for cid in owned if cid not in claims_by_id]
+        if unknown:
+            findings[rid].append(_finding("CLAIM_UNKNOWN", f"owns undeclared parent claim(s): {_id_list(unknown)}", claim_severity))
+        for cid in owned:
+            if cid in owners:
+                owners[cid].append(rid)
+        if row["work_class"] == "PRODUCT" and owned and not any(
+            claims_by_id[cid]["kind"] == "SEMANTIC" for cid in owned if cid in claims_by_id
+        ):
+            findings[rid].append(
+                _finding(
+                    "PRODUCT_SEMANTIC_CLAIM_MISSING",
+                    "PRODUCT responsibility owns only DELIVERY_GATE claims",
+                    claim_severity,
+                )
+            )
+
+        units = row["semantic_units"]
+        semantic_count = sum(unit["kind"] == "SEMANTIC" for unit in units)
+        if row["work_class"] == "PRODUCT":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "SEMANTIC"]
+            if wrong:
+                findings[rid].append(
+                    _finding(
+                        "PRODUCT_UNIT_NOT_SEMANTIC",
+                        f"PRODUCT responsibility has non-semantic progress unit(s): {_id_list(wrong)}",
+                    )
+                )
+            if semantic_count < policy["units"]["min"]:
+                findings[rid].append(
+                    _finding(
+                        "SEMANTIC_UNITS_BELOW_MIN",
+                        f"{semantic_count} semantic units (min {policy['units']['min']})",
+                    )
+                )
+            if semantic_count > policy["units"]["max"]:
+                findings[rid].append(
+                    _finding(
+                        "SEMANTIC_UNITS_ABOVE_MAX",
+                        f"{semantic_count} semantic units (max {policy['units']['max']})",
+                    )
+                )
+        elif row["work_class"] == "GATE":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "DELIVERY_GATE"]
+            if wrong:
+                findings[rid].append(
+                    _finding("GATE_UNIT_KIND_INVALID", f"GATE responsibility has non-delivery-gate unit(s): {_id_list(wrong)}")
+                )
+        elif row["work_class"] == "MECHANICAL":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "MECHANICAL"]
+            if wrong:
+                findings[rid].append(
+                    _finding("MECHANICAL_UNIT_KIND_INVALID", f"MECHANICAL responsibility has non-mechanical unit(s): {_id_list(wrong)}")
+                )
+
+    if claim_policy["mode"] != "OFF":
+        if not claims_by_id:
+            for rid in findings:
+                findings[rid].append(
+                    _finding("PARENT_CLAIMS_MISSING", "claim-first proposal requires programme.acceptance_claims", claim_severity)
+                )
+        else:
+            uncovered = [cid for cid, refs in owners.items() if not refs]
+            if uncovered:
+                for rid in findings:
+                    findings[rid].append(
+                        _finding(
+                            "PARENT_CLAIM_UNCOVERED",
+                            f"no proposed responsibility owns parent acceptance claim(s): {_id_list(uncovered)}",
+                            claim_severity,
+                        )
+                    )
+            for cid, refs in owners.items():
+                if len(refs) <= 1 or claims_by_id[cid]["shared"]:
+                    continue
+                for rid in refs:
+                    findings[rid].append(
+                        _finding(
+                            "DUPLICATE_CLAIM_OWNERSHIP",
+                            f"{cid} is owned by {_id_list(refs)}; set claim.shared=true only when intentional",
+                            claim_severity,
+                        )
+                    )
+
+    classes: dict[str, int] = {}
+    for row in proposal["responsibilities"]:
+        rid = row["id"]
+        ordered = sorted(findings[rid], key=lambda f: (f["severity"] != "BLOCKER", f["code"], f["detail"]))
+        blockers = [{"code": f["code"], "detail": f["detail"]} for f in ordered if f["severity"] == "BLOCKER"]
+        advisories = [{"code": f["code"], "detail": f["detail"]} for f in ordered if f["severity"] != "BLOCKER"]
+        rows[rid] = {
+            "work_class": row["work_class"],
+            "releasable": not blockers,
+            "blockers": blockers,
+            "advisories": advisories,
+        }
+        classes[row["work_class"]] = classes.get(row["work_class"], 0) + 1
+    return {
+        "schema": DECOMPOSITION_SCHEMA,
+        "authority": AUTHORITY,
+        "mode": mode or policy["mode"],
+        "policy": policy,
+        "proposal_version": proposal["version"],
+        "leaves": rows,
+        "summary": {
+            "evaluated": len(rows),
+            "skipped_closed": 0,
+            "releasable": sum(1 for row in rows.values() if row["releasable"]),
+            "not_releasable": sum(1 for row in rows.values() if not row["releasable"]),
+            "advisories": sum(len(row["advisories"]) for row in rows.values()),
+            "by_class": dict(sorted(classes.items())),
+        },
+    }
+
+
 def _decomposition(
     indexed: Mapping[str, Any], closed: Iterable[str] = (), mode: str | None = None
 ) -> dict[str, Any]:
@@ -1510,6 +1683,8 @@ def decomposition_report(graph: Any, mode: str | None = None, closed: Iterable[s
     if mode is not None and mode not in POLICY_MODES:
         raise GraphError(f"mode: one of {list(POLICY_MODES)}")
     indexed = validate_graph(graph)
+    if indexed["decomposition_proposal"] is not None:
+        return _proposal_decomposition(indexed, mode)
     closed_numbers = {ref_number(c) for c in closed}
     return _decomposition(indexed, {r for r in indexed["nodes"] if indexed["nodes"][r]["number"] in closed_numbers}, mode)
 
