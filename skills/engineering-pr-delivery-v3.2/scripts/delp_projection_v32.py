@@ -850,13 +850,40 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
         return None
     if not isinstance(value, Mapping):
         raise GraphError("programme.decomposition_proposal: must be a mapping")
-    if set(map(str, value)) != {"version", "responsibilities"}:
-        raise GraphError("programme.decomposition_proposal: exact version/responsibilities fields required")
+    allowed_top = {"version", "responsibilities", "released_proposal_digest", "bindings"}
+    if set(map(str, value)) - allowed_top or not {"version", "responsibilities"}.issubset(set(map(str, value))):
+        raise GraphError("programme.decomposition_proposal: version/responsibilities plus optional release/bindings fields only")
     if value.get("version") != "V2":
         raise GraphError("programme.decomposition_proposal.version: must be V2")
     raw_rows = value.get("responsibilities")
     if not isinstance(raw_rows, list) or not raw_rows:
         raise GraphError("programme.decomposition_proposal.responsibilities: non-empty array required")
+    released_digest = value.get("released_proposal_digest")
+    if released_digest is not None and not _DIGEST.fullmatch(str(released_digest)):
+        raise GraphError("programme.decomposition_proposal.released_proposal_digest: must be sha256:<64 hex>")
+    raw_bindings = value.get("bindings") or []
+    if not isinstance(raw_bindings, list):
+        raise GraphError("programme.decomposition_proposal.bindings: must be an array")
+    bindings: list[dict[str, str]] = []
+    seen_binding_ids: set[str] = set()
+    seen_binding_refs: set[int] = set()
+    for index, binding in enumerate(raw_bindings):
+        where = f"programme.decomposition_proposal.bindings[{index}]"
+        if not isinstance(binding, Mapping) or set(map(str, binding)) != {"responsibility_id", "ref"}:
+            raise GraphError(f"{where}: exact responsibility_id/ref mapping required")
+        rid = str(binding.get("responsibility_id") or "")
+        if not _UNIT_ID.fullmatch(rid) or rid in seen_binding_ids:
+            raise GraphError(f"{where}.responsibility_id: invalid or duplicate responsibility id {rid!r}")
+        try:
+            number = ref_number(binding.get("ref"))
+        except DelpError as exc:
+            raise GraphError(f"{where}.ref: {exc}") from exc
+        if number in seen_binding_refs:
+            raise GraphError(f"{where}.ref: duplicate provider binding")
+        seen_binding_ids.add(rid)
+        seen_binding_refs.add(number)
+        bindings.append({"responsibility_id": rid, "ref": str(binding["ref"])})
+
     rows: list[dict[str, Any]] = []
     seen: set[str] = set()
     for index, raw in enumerate(raw_rows):
@@ -953,7 +980,18 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
                 "semantic_units": units,
             }
         )
-    return {"version": "V2", "responsibilities": rows}
+    proposal_ids = {row["id"] for row in rows}
+    unknown_bindings = sorted(set(seen_binding_ids) - proposal_ids)
+    if unknown_bindings:
+        raise GraphError(
+            f"programme.decomposition_proposal.bindings: unknown responsibility id(s) {_id_list(unknown_bindings)}"
+        )
+    return {
+        "version": "V2",
+        "released_proposal_digest": str(released_digest) if released_digest is not None else None,
+        "bindings": bindings,
+        "responsibilities": rows,
+    }
 
 def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
     """Normalize parent acceptance claims. Claims describe outcomes; leaves own them."""
@@ -1526,6 +1564,15 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
     """Evaluate the pre-materialization proposal before child provider refs exist."""
     proposal, policy = indexed["decomposition_proposal"], indexed["policy"]
     assert proposal is not None
+    proposal_digest = canonical_digest(
+        {
+            "version": proposal["version"],
+            "acceptance_claims": indexed["acceptance_claims"],
+            "responsibilities": proposal["responsibilities"],
+            "total_weight": indexed["total_weight"],
+            "decomposition_policy": policy,
+        }
+    )
     claims_by_id = indexed["claims_by_id"]
     claim_policy = policy["claim_first"]
     claim_severity = "ADVISORY" if claim_policy["mode"] == "ADVISORY" else "BLOCKER"
@@ -1704,6 +1751,81 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                 for rid in targets:
                     findings[rid].append(_finding(code, detail))
 
+    base_blocked = any(any(f["severity"] == "BLOCKER" for f in rows) for rows in findings.values())
+    bindings = proposal["bindings"]
+    if bindings:
+        if base_blocked:
+            for binding in bindings:
+                findings[binding["responsibility_id"]].append(
+                    _finding(
+                        "MATERIALIZATION_BEFORE_RELEASE",
+                        "provider binding exists while the exact pre-materialization proposal is NOT_RELEASEABLE",
+                    )
+                )
+        if proposal["released_proposal_digest"] != proposal_digest:
+            for binding in bindings:
+                findings[binding["responsibility_id"]].append(
+                    _finding(
+                        "PROPOSAL_RELEASE_DIGEST_MISMATCH",
+                        "provider binding requires released_proposal_digest equal to the exact current RELEASEABLE proposal digest",
+                    )
+                )
+
+        proposal_by_id = {row["id"]: row for row in proposal["responsibilities"]}
+        bound_ids = {binding["responsibility_id"] for binding in bindings}
+        leaf_refs = {ref for ref, node in indexed["nodes"].items() if node["kind"] == "LEAF"}
+        for binding in bindings:
+            rid, requested_ref = binding["responsibility_id"], binding["ref"]
+            target = next((ref for ref in leaf_refs if same_ref(ref, requested_ref)), None)
+            if target is None:
+                findings[rid].append(
+                    _finding("BINDING_REF_UNMATERIALIZED", f"{requested_ref} is not a declared materialized LEAF")
+                )
+                continue
+            node = indexed["nodes"][target]
+            if node.get("responsibility_id") != rid:
+                findings[rid].append(
+                    _finding(
+                        "BINDING_IDENTITY_MISMATCH",
+                        f"{requested_ref} responsibility_id {node.get('responsibility_id')!r} does not match {rid}",
+                    )
+                )
+            if set(node.get("owns_claims") or []) != set(proposal_by_id[rid]["owns_claims"]):
+                findings[rid].append(
+                    _finding(
+                        "BINDING_CLAIM_MISMATCH",
+                        f"{requested_ref} claim ownership differs from the released proposal",
+                    )
+                )
+            share = Fraction(1)
+            chain = lineage(indexed, target)
+            for child_ref in chain[1:]:
+                parent_ref = indexed["nodes"][child_ref]["parent_ref"]
+                parent = indexed["nodes"][parent_ref]
+                denominator = sum(indexed["nodes"][c]["weight"] for c in parent["children"]) + parent["reserve_weight"]
+                share *= Fraction(indexed["nodes"][child_ref]["weight"], denominator)
+            bound_points = share * indexed["total_weight"]
+            proposed_points = sum(a["weight"] for a in proposal_by_id[rid]["claim_allocations"])
+            if bound_points != proposed_points:
+                findings[rid].append(
+                    _finding(
+                        "BINDING_WEIGHT_MISMATCH",
+                        f"{requested_ref} carries {_points_text(share, indexed['total_weight'])} programme points; "
+                        f"released proposal assigns {proposed_points}",
+                    )
+                )
+
+        for ref in leaf_refs:
+            node = indexed["nodes"][ref]
+            rid = node.get("responsibility_id")
+            if rid in proposal_by_id and rid not in bound_ids:
+                findings[rid].append(
+                    _finding(
+                        "UNDECLARED_MATERIALIZATION",
+                        f"{ref} materializes proposed responsibility {rid} without an explicit provider binding",
+                    )
+                )
+
     classes: dict[str, int] = {}
     for row in proposal["responsibilities"]:
         rid = row["id"]
@@ -1724,6 +1846,10 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
         "mode": mode or policy["mode"],
         "policy": policy,
         "proposal_version": proposal["version"],
+        "proposal_digest": proposal_digest,
+        "released_proposal_digest": proposal["released_proposal_digest"],
+        "bindings": list(proposal["bindings"]),
+        "release_state": "RELEASEABLE" if all(row["releasable"] for row in rows.values()) else "NOT_RELEASEABLE",
         "leaves": rows,
         "summary": {
             "evaluated": len(rows),
