@@ -765,6 +765,7 @@ class FakeGitHub:
         self.comments = {}
         self.pulls = {}
         self.commits = {}
+        self.compares = {}
         self.next_id = 100
         self.on_patch_comment = None
         self.calls = []
@@ -778,6 +779,10 @@ class FakeGitHub:
 
     def get_commit_sha(self, ref):
         return self.commits[ref]
+
+    def compare(self, base, head):
+        self.calls.append(("COMPARE", base, head))
+        return dict(self.compares.get(head, {"ahead_by": 0, "behind_by": 0}))
 
     def list_comments(self, number):
         return [dict(c) for c in self.comments.get(number, [])]
@@ -851,11 +856,17 @@ class GitHubStoreTests(unittest.TestCase):
         gh.pulls[595] = {"head": {"sha": SHA_B}, "state": "open", "merged": False}
         gh.pulls[593] = {"head": {"sha": SHA_A}, "state": "closed", "merged": True}
         gh.commits["investigate/592"] = SHA_C
+        gh.compares["investigate/592"] = {"ahead_by": 9, "behind_by": 4}
         g = graph()
         leaf = next(n for n in g["nodes"] if n["ref"] == "Common#612")
         leaf.pop("primary_pr")
         leaf["candidate_ref"] = "investigate/592"
         observed = M.observe_github(gh, g)
+        self.assertEqual({"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4}, observed["Common#612"])
+        self.assertIn(("COMPARE", "main", "investigate/592"), gh.calls)  # the base defaults to main
+        g["programme"]["base_ref"] = "release/2"
+        M.observe_github(gh, g)
+        self.assertIn(("COMPARE", "release/2", "investigate/592"), gh.calls)
         self.assertEqual(SHA_C, observed["Common#612"]["candidate_sha"])
         self.assertEqual(SHA_B, observed["Common#594"]["candidate_sha"])
         self.assertEqual("MERGED", observed["Common#592"]["pr_state"])
@@ -1625,17 +1636,21 @@ class DecompositionGitHubSync(unittest.TestCase):
         gh = FakeGitHub()
         for number, title in {527: "Programme", 588: "Phase 3", 610: "Phase 4", 592: "Replay lane", 594: "Gate lane", 612: "Closeout"}.items():
             gh.issues[number] = title
-        for number in (593, 595, 613):
-            gh.pulls[number] = {"head": {"sha": SHA_A}, "state": "open", "merged": False}
-        self.sync(gh, broken())
-        self.assertTrue(gh.issues[594].startswith("🟡 [#527 › #588 › #594 → PR#595] R:P0/E0 · V1 · NOT_RELEASEABLE — Gate lane"), gh.issues[594])
+
+        def not_started(g):  # no PR and no branch yet: the provider shows no work, so the leaves really are not started
+            for node in g["nodes"]:
+                node.pop("primary_pr", None)
+            return g
+
+        self.sync(gh, not_started(broken()))
+        self.assertTrue(gh.issues[594].startswith("🟡 [#527 › #588 › #594] R:P0/E0 · V1 · NOT_RELEASEABLE — Gate lane"), gh.issues[594])
         self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · PLAN_GAP — Programme", gh.issues[527])
         self.assertEqual("🟡 [#527 › #588] Φ:D0/E0 · F0 · PLAN_GAP — Phase 3", gh.issues[588])
         self.assertIn('"releasable": false', gh.comments[594][0]["body"])
         self.assertIn("OUTCOME_MISSING", gh.comments[594][0]["body"])
         # the Coordinator states the outcome (a plan edit); nothing else changes and nobody edits a title
-        self.sync(gh, planned())
-        self.assertTrue(gh.issues[594].startswith("⚪ [#527 › #588 › #594 → PR#595] R:P0/E0 · V1 · NOT_STARTED — Gate lane"), gh.issues[594])
+        self.sync(gh, not_started(planned()))
+        self.assertTrue(gh.issues[594].startswith("⚪ [#527 › #588 › #594] R:P0/E0 · V1 · NOT_STARTED — Gate lane"), gh.issues[594])
         self.assertEqual("⚪ [#527] Π:D0/E0 · F0 · IDLE — Programme", gh.issues[527])
         self.assertIn('"releasable": true', gh.comments[594][0]["body"])
         self.assertEqual(1, len(gh.comments[594]))  # still one managed comment per node
@@ -1975,6 +1990,354 @@ class DecompositionSchemasAgreeWithTheEngine(unittest.TestCase):
                     document = M.status_document(node, version=1, digest=projection["input_digest"], programme=projection["programme"])
                     with self.subTest(mode=mode, ref=ref, facts=bool(ledger)):
                         self.assertEqual([], self.schema_errors("live-status", json.loads(M.canonical_json(document))))
+
+
+# --------------------------------------------------------------------------
+# materialization: provider truth the ledger lacks reads as unknown, never as zero
+# --------------------------------------------------------------------------
+
+
+class MaterializationUnknownIsNotZero(unittest.TestCase):
+    def leaf(self, obs, ledger=(), g=None, ref="Common#592"):
+        return M.project(g or graph(), list(ledger), obs)["nodes"][ref]
+
+    def test_work_the_provider_shows_but_the_ledger_lacks_is_unmaterialized_never_zero(self):
+        for pr_state in ("OPEN", "MERGED", "CLOSED", "merged"):
+            with self.subTest(pr_state):
+                node = self.leaf({"Common#592": {"candidate_sha": SHA_A, "pr_state": pr_state}})
+                signal = f"PR_{pr_state.upper()}"
+                self.assertEqual("UNMATERIALIZED", node["state"])
+                self.assertEqual("UNMATERIALIZED", node["lifecycle"])
+                self.assertEqual("🟡", node["light"])
+                self.assertEqual("🟡 [#527 › #588 › #592 → PR#593] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED", node["title_prefix"])
+                self.assertEqual({"status": "UNMATERIALIZED", "provider_signal": signal}, node["materialization"])
+                self.assertIn(f"UNMATERIALIZED:{signal}", node["warnings"])
+
+    def test_a_branch_ahead_of_its_base_is_work_and_anything_else_is_not(self):
+        node = self.leaf({"Common#592": {"candidate_sha": SHA_A, "ahead_by": 9}})
+        self.assertEqual("BRANCH_AHEAD_9", node["materialization"]["provider_signal"])
+        for nothing in (
+            {"candidate_sha": SHA_A},  # an observed head alone proves nothing: a fresh branch points at its base
+            {"candidate_sha": SHA_A, "ahead_by": 0},
+            {"candidate_sha": SHA_A, "ahead_by": -1},
+            {"candidate_sha": SHA_A, "ahead_by": True},
+            {"candidate_sha": SHA_A, "ahead_by": "9"},
+            {"candidate_sha": SHA_A, "pr_state": "UNKNOWN"},
+        ):
+            with self.subTest(nothing):
+                node = self.leaf({"Common#592": nothing})
+                self.assertEqual("NOT_STARTED", node["state"])
+                self.assertNotIn("materialization", node)
+        self.assertEqual("NOT_STARTED", self.leaf({})["state"])
+
+    def test_any_accepted_fact_materializes_the_leaf_and_a_rejected_one_does_not(self):
+        obs = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "OPEN"}}
+        reported = [entry(facts(units=[unit("U01")], next={"unit": "U02", "action": "next"}), 1)]
+        node = self.leaf(obs, reported)
+        self.assertEqual("ACTIVE", node["state"])
+        self.assertNotIn("materialization", node)
+        forged = M.project(graph(), [entry(facts(units=[unit("U01")], progress=50), 1)], obs)
+        self.assertEqual("UNMATERIALIZED", forged["nodes"]["Common#592"]["state"])
+        self.assertEqual(1, len(forged["rejected_facts"]))
+
+    def test_an_unmaterialized_leaf_moves_no_number_and_every_ancestor_says_the_numbers_are_a_lower_bound(self):
+        obs = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "MERGED"}}
+        silent, loud = M.project(graph(), [], {})["nodes"], M.project(graph(), [], obs)["nodes"]
+        for ref in silent:
+            self.assertEqual(silent[ref]["progress"], loud[ref]["progress"], ref)  # nothing is invented
+        self.assertEqual("🟡 [#527 › #588] Φ:D0/E0 · F0 · UNMATERIALIZED", loud["Common#588"]["title_prefix"])
+        self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · UNMATERIALIZED", loud["Common#527"]["title_prefix"])
+        self.assertEqual("⚪ [#527 › #610] Φ:D0/E0 · F0 · IDLE", loud["Common#610"]["title_prefix"])  # nothing unreported below it
+        self.assertEqual({"status": "UNMATERIALIZED", "leaves": ["Common#592"]}, loud["Common#527"]["materialization"])
+        self.assertIn("UNMATERIALIZED_LEAVES:1", loud["Common#527"]["warnings"])
+        self.assertEqual("UNMATERIALIZED", loud["Common#527"]["lifecycle"])
+        self.assertEqual(0, loud["Common#527"]["frontier"]["count"])  # an unreported leaf is not active frontier
+
+    def test_unmaterialized_outranks_benign_and_evidence_states_but_not_a_critical_dead_executor(self):
+        obs = {**OBS_A, "Common#594": {"candidate_sha": SHA_A, "pr_state": "OPEN"}}
+        active = [entry(facts(units=[unit("U01")], next={"unit": "U02", "action": "x"}), 1)]
+        nodes = M.project(graph(), active, obs)["nodes"]
+        self.assertEqual(("ACTIVE", "UNMATERIALIZED"), (nodes["Common#592"]["state"], nodes["Common#594"]["state"]))
+        self.assertEqual("UNMATERIALIZED", nodes["Common#588"]["state"])  # one active leaf does not hide an unreported sibling
+        self.assertEqual(1, nodes["Common#588"]["frontier"]["count"])
+        gap = [entry(facts(units=[unit("U01", refs=())]), 1)]
+        self.assertEqual("UNMATERIALIZED", M.project(graph(), gap, obs)["nodes"]["Common#588"]["state"])
+        dead = {**obs, "Common#592": {"candidate_sha": SHA_A, "liveness": "STALE"}}  # #592 is critical in graph()
+        self.assertEqual("STALE", M.project(graph(), active, dead)["nodes"]["Common#588"]["state"])
+
+    def test_a_dead_executor_outranks_an_unreported_leaf_on_the_leaf_itself(self):
+        node = self.leaf({"Common#592": {"candidate_sha": SHA_A, "pr_state": "OPEN", "liveness": "STALE"}})
+        self.assertEqual(("STALE", "UNMATERIALIZED"), (node["state"], node["lifecycle"]))
+
+    def test_the_decomposition_gate_does_not_overlay_an_unmaterialized_leaf(self):
+        node = self.leaf({"Common#594": {"candidate_sha": SHA_A, "pr_state": "OPEN"}}, g=broken(), ref="Common#594")
+        self.assertEqual("UNMATERIALIZED", node["state"])
+        self.assertFalse(node["plan"]["releasable"])  # still reported, and still blocks new units at admission
+
+    def test_generated_titles_with_the_new_state_round_trip_through_the_title_grammar(self):
+        obs = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "MERGED"}}
+        for ref, node in M.project(graph(), [], obs)["nodes"].items():
+            title = M.render_title(node["title_prefix"], "Human title")
+            self.assertEqual("OK", M.title_drift(title, node["title_prefix"])["status"], ref)
+            self.assertEqual("Human title", M.split_title(title)[1])
+
+
+class MaterializationAdmission(unittest.TestCase):
+    OBS = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "MERGED"}}
+
+    def admit(self, ledger=(), g=None, obs=None):
+        return M.admit(M.project(g or graph(), list(ledger), obs or self.OBS), "Common#592", "continue")
+
+    def test_an_unreported_leaf_is_told_to_publish_facts_before_any_new_work(self):
+        report = self.admit()
+        self.assertEqual("MATERIALIZE_FACTS", report["action"])
+        self.assertTrue(report["materialize_required"])
+        self.assertFalse(report["recovery_required"])
+        self.assertEqual("NONE", report["evidence_health"])
+        self.assertEqual([], report["authority_effects"])
+        text = M.render_checkpoint(report)
+        self.assertIn("CHILD: R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED", text)
+        self.assertIn("EVIDENCE: NONE — no accepted facts; provider shows PR_MERGED (live @ aaaaaaa)", text)
+        self.assertIn(
+            "NEXT: MATERIALIZE_FACTS before any new work — the provider shows PR_MERGED but the ledger has no accepted "
+            "CHECKPOINT_FACTS_V1 for this leaf; publish facts for exactly what current evidence supports (completion is never inferred)",
+            text,
+        )
+
+    def test_a_failing_plan_is_reported_alongside_but_does_not_come_first(self):
+        report = self.admit(g=broken(ref="Common#592"))
+        self.assertEqual("MATERIALIZE_FACTS", report["action"])
+        self.assertIn("the plan also fails the decomposition gate (OUTCOME_MISSING)", report["next"])
+        self.assertFalse(report["plan_fix_required"])
+
+    def test_publishing_facts_ends_it_and_the_ordinary_barrier_takes_over(self):
+        ledger = [entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "continue the replay lane"}), 1)]
+        report = self.admit(ledger)
+        self.assertEqual("CONTINUE_UNIT", report["action"])
+        self.assertNotIn("materialize_required", report)
+        self.assertIn("EVIDENCE: CURRENT @ aaaaaaa", M.render_checkpoint(report))
+
+    def test_a_completed_leaf_never_asks_for_materialization(self):
+        done = [entry(facts(units=[unit("U01"), unit("U02"), unit("U03"), unit("U04")], result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"}), 1)]
+        self.assertEqual("NONE", self.admit(done)["action"])
+
+    def test_without_provider_signals_nothing_changes(self):
+        report = self.admit(obs={"Common#592": {"candidate_sha": SHA_A}})  # an observed head alone proves no work
+        self.assertEqual("CONTINUE_UNIT", report["action"])
+        self.assertEqual("NOT_STARTED", report["state"])
+        self.assertNotIn("materialize_required", report)
+        self.assertNotIn("materialization", report)
+
+
+class RepositoryGuard(unittest.TestCase):
+    """A plan may only be applied to the repository it declares: example plans reuse real issue numbers."""
+
+    def run_sync(self, programme, *extra, repository="reallaksh19/Common"):
+        import unittest.mock as mock
+
+        g = copy.deepcopy(graph())
+        g["programme"].update(programme)
+        with tempfile.TemporaryDirectory() as td:
+            path = pathlib.Path(td) / "g.json"
+            path.write_text(json.dumps(g), encoding="utf-8")
+            with mock.patch.object(M, "GhTransport") as transport, mock.patch.object(
+                M, "plan_github", return_value={"ok": True}
+            ) as plan, mock.patch.object(M, "sync_projection", return_value={}) as sync:
+                code, _, err = cli("sync-github", "--graph", str(path), "--repository", repository, *extra)
+        return code, err, transport, plan, sync
+
+    def test_a_declared_repository_that_differs_is_refused_before_anything_is_read_or_written(self):
+        for extra in ((), ("--dry-run",)):
+            with self.subTest(extra):
+                code, err, transport, plan, sync = self.run_sync({"repository": "example/delp-demo"}, *extra)
+                self.assertEqual(1, code)
+                self.assertIn("does not match --repository", err)
+                self.assertIn("example/delp-demo", err)
+                transport.assert_not_called()
+                plan.assert_not_called()
+                sync.assert_not_called()
+
+    def test_a_live_sync_requires_the_plan_to_name_its_repository(self):
+        code, err, transport, _, sync = self.run_sync({})
+        self.assertEqual(1, code)
+        self.assertIn("programme.repository is required for a live sync-github", err)
+        transport.assert_not_called()
+        sync.assert_not_called()
+        code, err, transport, plan, _ = self.run_sync({}, "--dry-run")  # read-only, so it may omit it
+        self.assertEqual(0, code)
+        plan.assert_called_once()
+
+    def test_a_matching_repository_passes_regardless_of_case(self):
+        code, _, _, _, sync = self.run_sync({"repository": "ReallaKSH19/common"})
+        self.assertEqual(0, code)
+        sync.assert_called_once()
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_the_shipped_example_cannot_be_applied_to_a_real_repository(self):
+        example = M._load_structured(MODULE_PATH.parents[1] / "examples" / "delp" / "execution-graph.yaml")
+        self.assertEqual("example/delp-demo", example["programme"]["repository"])
+        for live in (False, True):
+            with self.assertRaises(M.DelpError):
+                M.require_repository_match(example, "reallaksh19/Common", live=live)
+        M.require_repository_match(example, "example/delp-demo", live=True)
+
+
+class RealScenarioReplay(unittest.TestCase):
+    """The #527 / P3-I situation as handed over on 2026-10-07, replayed through the projector.
+
+    Real (from the handover and the provider): issue and PR numbers, the merge commits, the P3-I branch head and its
+    divergence from main (ahead 9, behind 4), the programme denominator 10000 and Phase 3's closed weight 1650.
+    Assumed, because the handover does not give them: each closed P3-SOLO leaf weighs 275 (only their sum is real),
+    each has one unit, and P3-I's three units. The 8100 of the programme that is not in any graph yet is an explicit
+    reserve, so every number below is a lower bound over what the graph can see - which is exactly the point.
+    """
+
+    SOLO = [  # (leaf issue, primary PR, commit standing in as the candidate)
+        ("Common#574", "Common#575", "aeb855919d9866972248d811c75962dcb8fed861"),
+        ("Common#576", "Common#577", "39cca232b9a4cbdc3643f763af682c4aa3830828"),
+        ("Common#578", "Common#579", "8041f6ab4959a9aac4fbd1450e7e4523b18d8ce1"),
+        ("Common#580", "Common#581", "3157ddbfb6a47ba397480d4771ef3c906e03a4c9"),
+        ("Common#582", "Common#583", "a05db7c57fdacc2f5fcb0e55e300d6d76f70e4cd"),
+        ("Common#584", "Common#587", "797acb30a6bc7942104423f426dfd25758e4f655"),
+    ]
+    BRANCH = "prod/527-p3-i-full-solo-role-replay"
+    OLD_HEAD = "ff7c3b7678a77ff943bb7314cd5a01f5fd9e99b6"
+    REBASED_HEAD = "e" * 40
+
+    @classmethod
+    def plan(cls):
+        nodes = [{"ref": "Common#527", "kind": "ROOT", "reserve_weight": 8100}]
+        for ref, pr, _ in cls.SOLO:
+            nodes.append({"ref": ref, "kind": "LEAF", "parent": "Common#527", "weight": 275, "primary_pr": pr, "units": [{"id": "U1", "weight": 1}]})
+        nodes.append(
+            {
+                "ref": "Common#588",
+                "kind": "LEAF",
+                "parent": "Common#527",
+                "weight": 250,
+                "candidate_ref": cls.BRANCH,
+                "units": [{"id": "A", "weight": 20}, {"id": "B", "weight": 50}, {"id": "C", "weight": 30}],
+            }
+        )
+        return {"schema": M.GRAPH_SCHEMA, "programme": {"id": "COMMON-PROD-CONTROL-V1", "root": "Common#527", "repository": "reallaksh19/Common"}, "nodes": nodes}
+
+    @classmethod
+    def observations(cls, head=None):
+        obs = {ref: {"candidate_sha": sha, "pr_state": "MERGED"} for ref, _, sha in cls.SOLO}
+        obs["Common#588"] = {"candidate_sha": head or cls.OLD_HEAD, "ahead_by": 9, "behind_by": 4}
+        return obs
+
+    @classmethod
+    def closed_ledger(cls):
+        return [
+            entry(
+                facts(
+                    leaf=ref,
+                    pr=pr,
+                    sha=sha,
+                    units=[unit("U1", refs=(f"{ref}#issuecomment-1",))],
+                    result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+                ),
+                index,
+            )
+            for index, (ref, pr, sha) in enumerate(cls.SOLO, 1)
+        ]
+
+    @classmethod
+    def p3i_facts(cls, sha, order):
+        record = {
+            "schema": M.FACTS_SCHEMA,
+            "responsibility": {"issue": "Common#588"},
+            "material": {"candidate_sha": sha},
+            "units": [unit("A", refs=("Common#588#issuecomment-1",))],
+            "next": {"unit": "B", "action": "rebase the integration runtime onto main"},
+        }
+        return entry(record, order)
+
+    def test_wiring_delp_onto_history_with_an_empty_ledger_reads_unknown_not_zero(self):
+        nodes = M.project(self.plan(), [], self.observations())["nodes"]
+        self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · UNMATERIALIZED", nodes["Common#527"]["title_prefix"])
+        for ref, *_ in self.SOLO:
+            self.assertEqual(("UNMATERIALIZED", "PR_MERGED"), (nodes[ref]["state"], nodes[ref]["materialization"]["provider_signal"]), ref)
+        self.assertEqual("BRANCH_AHEAD_9", nodes["Common#588"]["materialization"]["provider_signal"])
+        self.assertIn("UNMATERIALIZED_LEAVES:7", nodes["Common#527"]["warnings"])
+        self.assertIn("UNDECOMPOSED_RESERVE:8100", nodes["Common#527"]["warnings"])
+
+    def test_the_successors_first_continue_is_to_materialize_not_to_code(self):
+        projection = M.project(self.plan(), [], self.observations())
+        text = M.render_checkpoint(M.admit(projection, "Common#588", "continue"))
+        self.assertIn("EVIDENCE: NONE — no accepted facts; provider shows BRANCH_AHEAD_9 (live @ ff7c3b7)", text)
+        self.assertIn("NEXT: MATERIALIZE_FACTS before any new work", text)
+
+    def test_materializing_the_six_closed_leaves_gives_an_honest_lower_bound_and_still_flags_p3_i(self):
+        nodes = M.project(self.plan(), self.closed_ledger(), self.observations())["nodes"]
+        for ref, *_ in self.SOLO:
+            self.assertEqual("COMPLETE", nodes[ref]["state"], ref)
+        root = nodes["Common#527"]
+        self.assertEqual("33/200", root["progress"]["ratio"]["D"])  # 1650 / 10000, not a hand-computed 72.5%
+        self.assertEqual("33/200", root["progress"]["ratio"]["E"])
+        self.assertEqual("🟡 [#527] Π:D17/E17 · F0 · UNMATERIALIZED", root["title_prefix"])  # P3-I is still unreported
+        self.assertEqual({"status": "UNMATERIALIZED", "leaves": ["Common#588"]}, root["materialization"])
+
+    def test_a_rebase_lowers_E_and_not_P_until_the_evidence_is_replayed_on_the_new_head(self):
+        ledger = self.closed_ledger() + [self.p3i_facts(self.OLD_HEAD, 10)]
+        before = M.project(self.plan(), ledger, self.observations())["nodes"]
+        self.assertEqual("ACTIVE", before["Common#588"]["state"])
+        self.assertEqual(("1/5", "1/5"), (before["Common#588"]["progress"]["ratio"]["P"], before["Common#588"]["progress"]["ratio"]["E"]))
+        self.assertEqual("17/100", before["Common#527"]["progress"]["ratio"]["E"])  # (1650 + 250 * 1/5) / 10000
+        moved = M.project(self.plan(), ledger, self.observations(head=self.REBASED_HEAD))["nodes"]
+        self.assertEqual("EVIDENCE_STALE", moved["Common#588"]["state"])
+        self.assertEqual(("1/5", "0/1"), (moved["Common#588"]["progress"]["ratio"]["P"], moved["Common#588"]["progress"]["ratio"]["E"]))
+        self.assertEqual("17/100", moved["Common#527"]["progress"]["ratio"]["D"])  # semantic progress is untouched
+        self.assertEqual("33/200", moved["Common#527"]["progress"]["ratio"]["E"])  # evidenced progress drops
+        report = M.admit(M.project(self.plan(), ledger, self.observations(head=self.REBASED_HEAD)), "Common#588", "continue")
+        self.assertEqual("RECOVER_EVIDENCE", report["action"])
+        replayed = ledger + [self.p3i_facts(self.REBASED_HEAD, 11)]
+        after = M.project(self.plan(), replayed, self.observations(head=self.REBASED_HEAD))["nodes"]
+        self.assertEqual("17/100", after["Common#527"]["progress"]["ratio"]["E"])
+
+    def test_the_provider_pass_observes_the_branch_and_publishes_unknown_not_zero(self):
+        gh = FakeGitHub()
+        for number in [527, 588] + [int(ref.split("#")[1]) for ref, *_ in self.SOLO]:
+            gh.issues[number] = f"Title {number}"
+        for _, pr, sha in self.SOLO:
+            gh.pulls[int(pr.split("#")[1])] = {"head": {"sha": sha}, "state": "closed", "merged": True}
+        gh.commits[self.BRANCH] = self.OLD_HEAD
+        gh.compares[self.BRANCH] = {"ahead_by": 9, "behind_by": 4}
+        g = self.plan()
+        titles = {f"Common#{n}": t for n, t in gh.issues.items()}
+        M.sync_projection(M.GitHubStore(gh), g, lambda: M.ledger_from_github(gh, g), lambda: M.observe_github(gh, g), titles)
+        self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · UNMATERIALIZED — Title 527", gh.issues[527])
+        self.assertEqual("🟡 [#527 › #588] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED — Title 588", gh.issues[588])
+        self.assertIn(("COMPARE", "main", self.BRANCH), gh.calls)
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class MaterializationSchemasAgreeWithTheEngine(unittest.TestCase):
+    schema = SchemasAgreeWithTheEngine.schema
+    schema_errors = SchemasAgreeWithTheEngine.schema_errors
+
+    def test_an_unmaterialized_projection_satisfies_the_live_status_schema(self):
+        projection = M.project(RealScenarioReplay.plan(), [], RealScenarioReplay.observations())
+        for ref, node in projection["nodes"].items():
+            document = M.status_document(node, version=1, digest=projection["input_digest"], programme=projection["programme"])
+            with self.subTest(ref=ref):
+                self.assertEqual([], self.schema_errors("live-status", json.loads(M.canonical_json(document))))
+
+    def test_the_base_ref_is_validated_by_both(self):
+        for good in ("main", "release/2"):
+            g = planned()
+            g["programme"]["base_ref"] = good
+            self.assertEqual([], self.schema_errors("execution-graph", g))
+            M.validate_graph(g)
+        for bad in (5, "", "  "):
+            g = planned()
+            g["programme"]["base_ref"] = bad
+            with self.subTest(bad=bad), self.assertRaises(M.GraphError):
+                M.validate_graph(g)
+        g = planned()
+        g["programme"]["base_ref"] = 5
+        self.assertTrue(self.schema_errors("execution-graph", g))
 
 
 if __name__ == "__main__":

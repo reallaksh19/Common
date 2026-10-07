@@ -36,6 +36,7 @@ CHECKPOINT_FACTS_V1:
 
 Rules of thumb:
 
+- **Publish a first facts block at START** (every unit `NOT_STARTED`, `next` naming the first unit, `activity: ACTIVE`). A leaf whose pull request or branch shows work but whose ledger is empty is shown as `UNMATERIALIZED` — unknown, never zero — and your next `continue` is told to publish facts before anything else.
 - Report a unit `COMPLETE` when the implementation is done; give `evidence_refs` and `result: VERIFIED` when it is *proved on `candidate_sha`*. If you completed it but have not recorded evidence yet, say so honestly (empty refs): the gap is visible and the next `continue` repairs it before new coding.
 - Evidence covers **one candidate**. After a push, the old evidence stops counting until you replay it on the new head and republish the facts with the new `candidate_sha`.
 - `QUIET` and `STALE` are never declared; only an observer can say an executor is quiet or stale.
