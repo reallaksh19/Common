@@ -1847,13 +1847,15 @@ class DecompositionRepositoryObservationCurrentness(unittest.TestCase):
         graph_value = self.graph()
         basis = O.repository_plan_basis(graph_value, "Common#1")
         good = {
+            "schema": O.SCHEMA,
             "authority": "OBSERVED_REPOSITORY_BASIS",
             "subject": "Common#1",
             "plan_basis_digest": basis["digest"],
         }
+        bad_schema = dict(good, schema="relay-v0-observation")
         bad_authority = dict(good, authority="EXECUTOR")
         bad_subject = dict(good, subject="Common#2")
-        for bad in (bad_authority, bad_subject):
+        for bad in (bad_schema, bad_authority, bad_subject):
             with self.subTest(bad=bad), self.assertRaises(O.ObservationError):
                 O.repository_observation_currentness(graph_value, "Common#1", bad)
 
