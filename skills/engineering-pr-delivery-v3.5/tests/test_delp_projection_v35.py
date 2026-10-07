@@ -1546,6 +1546,104 @@ class DocumentedBehaviour(unittest.TestCase):
 
 
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class ResponsibilityConditionSchemaContract(unittest.TestCase):
+    @classmethod
+    def schema(cls):
+        import yaml as _yaml
+
+        return _yaml.safe_load((SCHEMAS / f"delp-responsibility-condition-{TAG}.schema.yaml").read_text(encoding="utf-8"))
+
+    def errors(self, value):
+        return [e.message for e in jsonschema.Draft202012Validator(self.schema()).iter_errors(value)]
+
+    def good(self):
+        return {
+            "type": "EvidenceCurrent",
+            "status": "TRUE",
+            "reason": "CURRENT_EVIDENCE",
+            "message": "Accepted evidence matches the observed candidate.",
+            "observed_generation": 2,
+            "candidate_sha": SHA_A,
+            "source_refs": ["Common#592#issuecomment-1"],
+        }
+
+    def test_schema_id_and_vocabularies(self):
+        schema = self.schema()
+        self.assertEqual("relay-v3.5-delp-responsibility-condition", schema["$id"])
+        self.assertEqual(
+            {
+                "PlanReady",
+                "SpecCurrent",
+                "MaterialObserved",
+                "EvidenceCurrent",
+                "DependenciesReady",
+                "CustodySafe",
+                "AssuranceSatisfied",
+                "ProviderVisible",
+            },
+            set(schema["properties"]["type"]["enum"]),
+        )
+        self.assertEqual(
+            {"TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"},
+            set(schema["properties"]["status"]["enum"]),
+        )
+
+    def test_good_record_and_unknown_binding_shape(self):
+        self.assertEqual([], self.errors(self.good()))
+        unknown = self.good()
+        unknown.update(
+            {
+                "type": "ProviderVisible",
+                "status": "UNKNOWN",
+                "observed_generation": None,
+                "candidate_sha": None,
+                "source_refs": [],
+            }
+        )
+        self.assertEqual([], self.errors(unknown))
+
+    def test_required_fields_and_additional_properties_are_closed(self):
+        good = self.good()
+        for key in good:
+            with self.subTest(missing=key):
+                row = copy.deepcopy(good)
+                row.pop(key)
+                self.assertTrue(self.errors(row))
+        row = copy.deepcopy(good)
+        row["surprise"] = True
+        self.assertTrue(self.errors(row))
+
+    def test_enum_text_generation_sha_and_source_ref_constraints(self):
+        good = self.good()
+        variants = []
+
+        def changed(**updates):
+            row = copy.deepcopy(good)
+            row.update(updates)
+            return row
+
+        variants.extend(
+            [
+                changed(type="NoSuchCondition"),
+                changed(type=[]),
+                changed(status="PASS"),
+                changed(status={}),
+                changed(reason="   "),
+                changed(message=""),
+                changed(observed_generation=0),
+                changed(observed_generation=True),
+                changed(candidate_sha="abc123"),
+                changed(source_refs="not-an-array"),
+                changed(source_refs=[""]),
+                changed(source_refs=["same", "same"]),
+            ]
+        )
+        for row in variants:
+            with self.subTest(row=row):
+                self.assertTrue(self.errors(row), "schema accepted malformed condition")
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
 class SchemasAgreeWithTheEngine(unittest.TestCase):
     """The YAML schemas are the published contract; the engine validators must say the same thing."""
 
