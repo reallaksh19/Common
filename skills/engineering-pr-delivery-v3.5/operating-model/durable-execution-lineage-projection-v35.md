@@ -184,6 +184,28 @@ An observed head alone is **not** a signal (a fresh branch points at its base), 
 
 Pinned by `RealScenarioReplay`, which replays the #527 / P3-I situation (the real issue and PR numbers, merge commits, branch head and ahead-9 / behind-4 divergence; the closed weights and the 10000 denominator) through the projector.
 
+## Frontier — what a handover may carry, and how a successor checks it is still true
+
+A handover is the predecessor's view of a leaf **at one instant**, never current truth. Written by hand it carries numbers (a base commit, a branch head, "ahead 9 / behind 4", a percentage) that nothing can check, and the successor is told to re-read them all. DELP derives that view and checks it mechanically.
+
+```text
+python scripts/delp_projection_v35.py frontier --graph G (--facts F --observations O | --repository owner/repo) --leaf L [--text] [--output snapshot.json]
+python scripts/delp_projection_v35.py frontier-verify --snapshot snapshot.json --graph G (--facts F --observations O | --repository owner/repo) --leaf L   # exit 2 when any input moved
+```
+
+`frontier` emits `observed` (provider truth: the base head, the candidate head, `pr_state`, `ahead_by` / `behind_by`, observed liveness), `derived` (state, exact `P/E/D/DE` ratios, evidence health and gaps, active unit, plan verdict, materialization) and `inputs` (the plan digest, and the count and content digest of the leaf's accepted facts), bound by a `frontier_digest`. It contains nothing an agent authored, so there is no number to hand-compute and nothing to mistrust. `--repository` observes live and read-only (the repository guard applies); without it the inputs come from files.
+
+`frontier-verify` recomputes the frontier now and compares:
+
+- **`moved`** names the *inputs* that changed since the snapshot — `BASE`, `CANDIDATE_HEAD`, `PR_STATE`, `LIVENESS`, `FACTS`, `PLAN`. Any of them means the handed-over values are stale: status `MOVED`, action `RECONCILE`, exit 2. An input the predecessor never observed counts as moved once it is observed (`was: null`): unobserved is not unchanged.
+- **`changed`** lists derived consequences (`STATE`, `EVIDENCE_HEALTH`, `PROGRESS_P`, `PROGRESS_E`, `ACTIVE_UNIT`). It is information, not a verdict.
+
+Worked example, from the real event (pinned by `FrontierSnapshotAndDrift`): the P3-I handover pinned `main` at `4acc570`; the next merge moved it to `46916f4`. Verifying that handover reports exactly `MOVED BASE: 4acc570 -> 46916f4`, `changed: []`, `ACTION: RECONCILE` — the handover's own "if main moved again, stop and recompute" rule, now a check. A moved candidate head is a different case: it also changes `STATE` to `EVIDENCE_STALE` and `E` to `0/1` until the evidence is replayed, by the ordinary evidence rule.
+
+Every `CONTINUE CHECKPOINT` carries the same material in one `FRONTIER:` line (`base 4acc570 · candidate ff7c3b7 · ahead 9 · behind 4`) whenever the provider fields were observed, so the checkpoint replaces the prose.
+
+The frontier is not a new authority and not a handover package: it is the derived part a handover (or the `HANDOVER_PACKAGE` that #570 specifies) can embed and cite by digest. `MOVED` says *recompute*; it does not say the move matters. Whether main's change touches the leaf's write surface or the blobs its evidence depends on is a separate check.
+
 ## Decomposition gate — small, verifiable, collision-free leaves
 
 DELP keeps progress honest *after* a plan exists. The gate makes the plan itself fit to hand to an agent *before* work starts, with the same discipline: the Coordinator authors the plan, a pure function judges it, the verdict is derived and disposable, and an agent cannot argue with it by publishing a fact (a facts record carrying a `plan` field is rejected: it is not an allowed field). **The gate never moves a percentage**; it only adds a `plan` block, the states `NOT_RELEASEABLE` / `PLAN_GAP` and the admission action `FIX_PLAN`.
@@ -298,6 +320,8 @@ validate-graph --graph G                         plan is structurally valid
 validate-facts F...                              reject agent-authored projections (exit 1)
 project --graph G --facts F... --observations O  deterministic projection JSON (+ expected titles)
 admit --graph G --facts F --observations O --leaf L --command continue
+frontier --graph G (--facts F --observations O | --repository R) --leaf L   the derived frontier a handover may carry (observed + derived, digest-bound)
+frontier-verify --snapshot S --graph G (…) --leaf L   is a handed-over frontier still true? (exit 2 when any input moved)
 decompose-check --graph G [--mode M] [--facts F --observations O]   judge the plan against the decomposition policy (exit 1 on blockers when ENFORCED)
 graph-diff --old G0 --new G1                     a re-plan must conserve every unit's share and record its scope changes (exit 1 otherwise)
 verify-titles --graph G --facts F --observations O --actual-titles T     (exit 2 on drift)
@@ -334,6 +358,7 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 13. Under `ENFORCED`, a leaf whose plan fails the gate is never admitted to new work (`FIX_PLAN`), and a re-plan that moves any unit's programme share without a covering, authorised, append-only plan update is rejected by `graph-diff`.
 14. Unknown is never published as zero: a leaf the provider shows work for but whose ledger has no accepted facts is `UNMATERIALIZED`, its ancestors say their numbers are a lower bound, and its admission answer is `MATERIALIZE_FACTS`.
 15. A plan is only ever applied to the repository it declares.
+16. A handover carries only observed and derived values, bound by a digest; a successor verifies it against live truth, and any moved input means recompute, never trust.
 
 ## Not claimed
 

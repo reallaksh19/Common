@@ -117,11 +117,13 @@ Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `ta
 
 **Materialization.** Unknown is never published as zero. A leaf the provider shows work for (an open, merged or closed pull request, or a `candidate_ref` branch ahead of `programme.base_ref`) but whose ledger has no accepted facts is `UNMATERIALIZED` 🟡; its ancestors say their numbers are a lower bound; a continuation answers `MATERIALIZE_FACTS` — publish facts for exactly what current evidence supports (completion is never inferred from a merge). Publish a first facts block at START so a new leaf is never unmaterialized. A live `sync-github` only writes to the repository the plan declares in `programme.repository`; the shipped examples declare `example/delp-demo`.
 
+**Handover frontier.** A handover is the predecessor's view at one instant, never current truth, and must carry no hand-computed number. `frontier` derives it (provider-observed base, candidate and divergence; derived state, exact `P/E`, evidence health; input digests) and `frontier-verify` checks a handed-over snapshot against live truth: any moved input (`BASE`, `CANDIDATE_HEAD`, `PR_STATE`, `LIVENESS`, `FACTS`, `PLAN`) exits 2 with `RECONCILE`. Every `CONTINUE CHECKPOINT` carries a `FRONTIER:` line.
+
 The active DELP contract is:
 
 - `operating-model/durable-execution-lineage-projection-v35.md` (normative);
 - `schemas/delp-checkpoint-facts-v35.schema.yaml`, `schemas/delp-execution-graph-v35.schema.yaml`, `schemas/delp-live-status-v35.schema.yaml`;
-- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `decompose-check`, `graph-diff`, `verify-titles`, `sync-github`);
+- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `frontier`, `frontier-verify`, `decompose-check`, `graph-diff`, `verify-titles`, `sync-github`);
 - `templates/checkpoint-facts-v35.md` (agent template) and `examples/delp/`;
 - `tests/test_delp_projection_v35.py`, `tests/test_continuity_derived_projection.py`, `tests/test_owner_commands_continuation.py`.
 

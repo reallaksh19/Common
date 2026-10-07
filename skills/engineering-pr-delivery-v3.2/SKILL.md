@@ -184,6 +184,8 @@ Normative contract: `operating-model/durable-execution-lineage-projection-v32.md
 
 **Materialization.** Unknown is never published as zero. A leaf the provider shows work for (an open, merged or closed pull request, or a `candidate_ref` branch ahead of `programme.base_ref`) but whose ledger has no accepted facts is `UNMATERIALIZED` 🟡; its ancestors say their numbers are a lower bound; a continuation answers `MATERIALIZE_FACTS` — publish facts for exactly what current evidence supports (completion is never inferred from a merge). Publish a first facts block at START so a new leaf is never unmaterialized. A live `sync-github` only writes to the repository the plan declares in `programme.repository`; the shipped examples declare `example/delp-demo`.
 
+**Handover frontier.** A handover is the predecessor's view at one instant, never current truth, and must carry no hand-computed number. `frontier` derives it (provider-observed base, candidate and divergence; derived state, exact `P/E`, evidence health; input digests) and `frontier-verify` checks a handed-over snapshot against live truth: any moved input (`BASE`, `CANDIDATE_HEAD`, `PR_STATE`, `LIVENESS`, `FACTS`, `PLAN`) exits 2 with `RECONCILE`. Every `CONTINUE CHECKPOINT` carries a `FRONTIER:` line.
+
 This section is an Owner-directed amendment of the V3.2 tree (see the contract's "Amendment of V3.2" and `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml`); it does not otherwise unfreeze V3.2.
 
 ## Checkpoint-before-continue — write-ahead continuity barrier
