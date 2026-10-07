@@ -42,6 +42,7 @@ FACTS_SCHEMA = f"{SCHEMA_PREFIX}-checkpoint-facts"
 GRAPH_SCHEMA = f"{SCHEMA_PREFIX}-execution-graph"
 PROJECTION_SCHEMA = f"{SCHEMA_PREFIX}-projection"
 STATUS_SCHEMA = f"{SCHEMA_PREFIX}-live-status"
+OBSERVATION_SCHEMA = f"{SCHEMA_PREFIX}-responsibility-observation"
 DECOMPOSITION_SCHEMA = f"{SCHEMA_PREFIX}-decomposition-report"
 DIFF_SCHEMA = f"{SCHEMA_PREFIX}-graph-diff"
 FACTS_KEY = "CHECKPOINT_FACTS_V1"
@@ -258,6 +259,195 @@ def canonical_json(value: Any) -> str:
 
 def canonical_digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+
+
+OBSERVATION_CATEGORIES = ("MATERIAL", "CUSTODY", "LIVENESS", "CHECK", "DIFF")
+OBSERVATION_VISIBILITY = ("OBSERVED", "UNAVAILABLE")
+
+
+def validate_observation(observation: Any) -> list[str]:
+    """Validate one typed RESPONSIBILITY_OBSERVATION_V1 record."""
+    if not isinstance(observation, Mapping):
+        return ["observation: must be a mapping"]
+    errors: list[str] = []
+    if observation.get("schema") != OBSERVATION_SCHEMA:
+        errors.append(f"schema: must be {OBSERVATION_SCHEMA}")
+    if observation.get("visibility") not in OBSERVATION_VISIBILITY:
+        errors.append(f"visibility: one of {list(OBSERVATION_VISIBILITY)}")
+    unknown = sorted(set(map(str, observation)) - {"schema", "visibility", "material", "custody", "liveness", "check", "diff"})
+    if unknown:
+        errors.append(f"observation: unknown fields {unknown}")
+
+    material = observation.get("material")
+    if material is not None:
+        if not isinstance(material, Mapping):
+            errors.append("material: must be a mapping")
+        else:
+            extra = sorted(set(map(str, material)) - {"candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"})
+            if extra:
+                errors.append(f"material: unknown fields {extra}")
+            for key in ("candidate_sha", "base_sha"):
+                value = material.get(key)
+                if value is not None and not _SHA.fullmatch(str(value)):
+                    errors.append(f"material.{key}: must be 40-hex lowercase or null")
+            if material.get("pr_state") is not None and material["pr_state"] not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
+                errors.append("material.pr_state: OPEN, MERGED, CLOSED or UNKNOWN")
+            for key in ("ahead_by", "behind_by"):
+                value = material.get(key)
+                if value is not None and _count(value) is None:
+                    errors.append(f"material.{key}: must be a non-negative integer")
+
+    custody = observation.get("custody")
+    if custody is not None:
+        if not isinstance(custody, Mapping):
+            errors.append("custody: must be a mapping")
+        else:
+            extra = sorted(set(map(str, custody)) - {"interruptions"})
+            if extra:
+                errors.append(f"custody: unknown fields {extra}")
+            interruptions = custody.get("interruptions")
+            if interruptions is not None:
+                if not isinstance(interruptions, Mapping):
+                    errors.append("custody.interruptions: must be a mapping")
+                else:
+                    extra = sorted(set(map(str, interruptions)) - {"coverage_from", "losses"})
+                    if extra:
+                        errors.append(f"custody.interruptions: unknown fields {extra}")
+                    if interruptions.get("coverage_from") is not None and not isinstance(interruptions["coverage_from"], str):
+                        errors.append("custody.interruptions.coverage_from: must be a string")
+                    losses = interruptions.get("losses")
+                    if losses is not None and (
+                        not isinstance(losses, list) or any(not isinstance(item, Mapping) for item in losses)
+                    ):
+                        errors.append("custody.interruptions.losses: must be an array of mappings")
+
+    liveness = observation.get("liveness")
+    if liveness is not None:
+        if not isinstance(liveness, Mapping) or set(map(str, liveness)) - {"value"}:
+            errors.append("liveness: mapping with only value")
+        elif liveness.get("value") not in OBSERVED_LIVENESS:
+            errors.append(f"liveness.value: one of {sorted(OBSERVED_LIVENESS)}")
+
+    check = observation.get("check")
+    if check is not None:
+        if not isinstance(check, Mapping):
+            errors.append("check: must be a mapping")
+        else:
+            extra = sorted(set(map(str, check)) - {"result", "candidate_sha", "name"})
+            if extra:
+                errors.append(f"check: unknown fields {extra}")
+            if check.get("result") is not None and check["result"] not in {"SUCCESS", "FAILURE", "PENDING"}:
+                errors.append("check.result: SUCCESS, FAILURE or PENDING")
+            if check.get("candidate_sha") is not None and not _SHA.fullmatch(str(check["candidate_sha"])):
+                errors.append("check.candidate_sha: must be 40-hex lowercase")
+            if check.get("name") is not None and (not isinstance(check["name"], str) or not check["name"].strip()):
+                errors.append("check.name: must be a non-empty string")
+
+    diff = observation.get("diff")
+    if diff is not None:
+        if not isinstance(diff, Mapping):
+            errors.append("diff: must be a mapping")
+        else:
+            extra = sorted(set(map(str, diff)) - {"additions", "deletions", "since_checkpoint"})
+            if extra:
+                errors.append(f"diff: unknown fields {extra}")
+            for key in ("additions", "deletions"):
+                value = diff.get(key)
+                if value is not None and _count(value) is None:
+                    errors.append(f"diff.{key}: must be a non-negative integer")
+            since = diff.get("since_checkpoint")
+            if since is not None:
+                if not isinstance(since, Mapping):
+                    errors.append("diff.since_checkpoint: must be a mapping")
+                else:
+                    extra = sorted(set(map(str, since)) - {"additions", "deletions"})
+                    if extra:
+                        errors.append(f"diff.since_checkpoint: unknown fields {extra}")
+                    for key in ("additions", "deletions"):
+                        value = since.get(key)
+                        if value is not None and _count(value) is None:
+                            errors.append(f"diff.since_checkpoint.{key}: must be a non-negative integer")
+    return errors
+
+
+def normalize_observation(observation: Any) -> dict[str, Any]:
+    """Normalize typed or legacy-flat provider input to the existing pure projection vocabulary.
+
+    Missing typed categories become UNOBSERVED. visibility=UNAVAILABLE makes every category
+    UNAVAILABLE and contributes no fabricated FAIL/zero value. Legacy flat observations remain
+    readable during migration.
+    """
+    if observation is None:
+        return {}
+    if not isinstance(observation, Mapping):
+        raise DelpError("observation: must be a mapping")
+
+    if observation.get("schema") is None:
+        out = dict(observation)
+        category_fields = {
+            "MATERIAL": {"candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"},
+            "CUSTODY": {"interruptions"},
+            "LIVENESS": {"liveness"},
+            "CHECK": {"check"},
+            "DIFF": {"additions", "deletions", "since_checkpoint"},
+        }
+        out["_observation"] = {
+            "schema": "LEGACY_FLAT_OBSERVATION",
+            "visibility": "OBSERVED",
+            "categories": {
+                category: ("OBSERVED" if any(key in observation for key in fields) else "UNOBSERVED")
+                for category, fields in category_fields.items()
+            },
+        }
+        return out
+
+    errors = validate_observation(observation)
+    if errors:
+        raise DelpError("invalid RESPONSIBILITY_OBSERVATION_V1: " + "; ".join(errors))
+
+    visibility = str(observation["visibility"])
+    categories: dict[str, str] = {}
+    out: dict[str, Any] = {}
+    sections = {
+        "MATERIAL": observation.get("material"),
+        "CUSTODY": observation.get("custody"),
+        "LIVENESS": observation.get("liveness"),
+        "CHECK": observation.get("check"),
+        "DIFF": observation.get("diff"),
+    }
+    for category, section in sections.items():
+        categories[category] = (
+            "UNAVAILABLE"
+            if visibility == "UNAVAILABLE"
+            else "OBSERVED"
+            if isinstance(section, Mapping) and bool(section)
+            else "UNOBSERVED"
+        )
+
+    if visibility == "OBSERVED":
+        material = observation.get("material") or {}
+        for key in ("candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"):
+            if material.get(key) is not None:
+                out[key] = material[key]
+        custody = observation.get("custody") or {}
+        if custody.get("interruptions") is not None:
+            out["interruptions"] = copy.deepcopy(custody["interruptions"])
+        live = observation.get("liveness") or {}
+        if live.get("value") is not None:
+            out["liveness"] = live["value"]
+        diff = observation.get("diff") or {}
+        for key in ("additions", "deletions", "since_checkpoint"):
+            if diff.get(key) is not None:
+                out[key] = copy.deepcopy(diff[key])
+        if observation.get("check"):
+            out["check"] = copy.deepcopy(observation["check"])
+
+    out["_observation"] = {
+        "schema": OBSERVATION_SCHEMA,
+        "visibility": visibility,
+        "categories": categories,
+    }
+    return out
 
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
@@ -2082,7 +2272,7 @@ def project(
     ledger = list(ledger)
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
-    observations = {ref_number(k): dict(v or {}) for k, v in (observations or {}).items()}
+    observations = {ref_number(k): normalize_observation(v) for k, v in (observations or {}).items()}
     accepted, rejected = partition_ledger(indexed, ledger)
     results: dict[str, dict[str, Any]] = {}
     mode = indexed["policy"]["mode"]
@@ -2881,17 +3071,25 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
         if pr:
             pull = transport.get_pull(ref_number(pr))
             observed[ref] = {
-                "candidate_sha": str((pull.get("head") or {}).get("sha") or "") or None,
-                "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
-                "base_sha": base_sha,
+                "schema": OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": str((pull.get("head") or {}).get("sha") or "") or None,
+                    "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
+                    "base_sha": base_sha,
+                },
             }
         elif node.get("candidate_ref"):
             comparison = transport.compare(base_ref, node["candidate_ref"])
             observed[ref] = {
-                "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
-                "ahead_by": int(comparison.get("ahead_by") or 0),
-                "behind_by": int(comparison.get("behind_by") or 0),
-                "base_sha": base_sha,
+                "schema": OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
+                    "ahead_by": int(comparison.get("ahead_by") or 0),
+                    "behind_by": int(comparison.get("behind_by") or 0),
+                    "base_sha": base_sha,
+                },
             }
     return observed
 
