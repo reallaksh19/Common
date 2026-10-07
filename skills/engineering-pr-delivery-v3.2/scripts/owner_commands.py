@@ -307,13 +307,15 @@ def _requested_deliverables(
         deliverables.append({"type": "LOCAL_AGENT_PACKET"})
 
     count_match = _EXACT_QUESTION_COUNT.search(value)
-    asks_successor_questions = bool(
-        count_match
-        or (
-            re.search(r"\bquestions?\b", value)
-            and re.search(r"\b(?:successor|next\s+agent|understand\s+the\s+repo)", value)
+    has_questions = bool(re.search(r"\bquestions?\b", value))
+    successor_context = bool(
+        intent == "PLAN_HANDOVER"
+        or re.search(
+            r"\b(?:successor|next\s+agent|understand\s+the\s+repo)\b",
+            value,
         )
     )
+    asks_successor_questions = has_questions and successor_context
     if asks_successor_questions:
         challenge: dict[str, Any] = {"type": "SUCCESSOR_RECONSTRUCTION_CHALLENGE"}
         if count_match:
@@ -342,7 +344,13 @@ def _boundary_constraints(value: str, target: Any) -> list[str]:
     ):
         constraints.append("PRESERVE_TARGET")
     count_match = _EXACT_QUESTION_COUNT.search(value)
-    if count_match:
+    successor_context = bool(
+        re.search(
+            r"\b(?:handover|hand\s*over|successor|next\s+agent|understand\s+the\s+repo)\b",
+            value,
+        )
+    )
+    if count_match and successor_context:
         constraints.append(
             f"EXACT_SUCCESSOR_CHALLENGE_COUNT:{int(count_match.group('count'))}"
         )
