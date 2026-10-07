@@ -1,0 +1,73 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.2-delp-execution-graph
+title: DELP execution graph (the Coordinator's plan)
+description: >-
+  Plan authority: lineage, denominators and weights live here and only here. Agents never author it through facts.
+  Programme (ROOT) -> INTERMEDIATE responsibilities -> LEAF execution responsibilities. A LEAF owns declared
+  weighted units, at most one primary PR (or a candidate_ref when no PR exists yet) and optional delivery gates.
+  Parent issues are not execution workspaces: material work is always a LEAF.
+type: object
+required: [programme, nodes]
+properties:
+  schema:
+    const: relay-v3.2-delp-execution-graph
+  programme:
+    type: object
+    required: [root]
+    properties:
+      id: {type: string, minLength: 1}
+      root: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
+      repository: {type: string}
+      fact_authors:
+        type: array
+        items: {type: string, minLength: 1}
+        description: Explicit GitHub logins whose CHECKPOINT_FACTS_V1 comments are trusted. When absent, repository OWNER/MEMBER/COLLABORATOR comments are trusted.
+  nodes:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      required: [ref, kind]
+      properties:
+        ref: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
+        kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
+        parent: {type: string}
+        weight:
+          type: integer
+          minimum: 1
+          description: Weight among siblings. Fixed by the plan; a split must conserve it.
+        reserve_weight:
+          type: integer
+          minimum: 0
+          description: Undecomposed reserve on ROOT/INTERMEDIATE; counts as zero progress and blocks COMPLETE.
+        responsibility_id: {type: string}
+        primary_pr: {type: string}
+        candidate_ref: {type: string, description: Branch/tag whose head is the candidate when there is no PR yet.}
+        critical: {type: boolean}
+        verification:
+          type: array
+          items: {enum: [VERIFIED, PARTIAL, FAILED, NOT_RUN, PENDING]}
+        contract_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+        units:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [id, weight]
+            properties:
+              id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+              weight: {type: integer, minimum: 1}
+        coder_weight: {type: integer, minimum: 1}
+        delivery_gates:
+          type: array
+          items:
+            type: object
+            required: [id, weight]
+            properties:
+              id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+              weight: {type: integer, minimum: 1}
+      allOf:
+        - if: {properties: {kind: {const: LEAF}}}
+          then: {required: [parent, weight, units]}
+        - if: {properties: {kind: {const: INTERMEDIATE}}}
+          then: {required: [parent, weight]}

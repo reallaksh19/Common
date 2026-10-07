@@ -54,6 +54,7 @@ Rules:
 - derive Git/material facts where automation is available;
 - starting implementation changes state to `IMPLEMENTING` but earns no P/E credit;
 - evidence can never outrun completion;
-- title P/E is a disposable mirror;
+- `PROJECTION_MODE: DERIVED_FROM_FACTS` (default): the E flag is computed from evidence refs + the evidence candidate vs the observed head; agents report facts, never the E flag, a percentage or a title;
+- title P/E is a disposable projection written only by the DELP runner (this snapshot never patches the title in DERIVED mode);
 - provider update failure is observability debt only;
 - no timer/heartbeat updates.

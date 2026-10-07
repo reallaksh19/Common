@@ -1,5 +1,7 @@
 # Engineering Relay V3.2 — Owner checkpoint projection
 
+> **Implementation status (DELP).** The progress/title projection and the rule that executors report facts but never author percentages or titles are now implemented and mechanically enforced by `operating-model/durable-execution-lineage-projection-v32.md` (`scripts/delp_projection_v32.py`, `schemas/delp-*-v32.schema.yaml`, `tests/test_delp_projection_v32.py`). Where this document shows an older title form, the DELP grammar governs. The rest of this document keeps its existing status.
+
 ## Normative status
 
 This file is a normative addendum for the V3.2 checkpoint/liveness slice on this candidate branch.
@@ -27,13 +29,13 @@ These surfaces may reference one another, but they have different information bu
 
 ## 1. GitHub title projection
 
-Recommended shape:
+Generated shape (DELP — `operating-model/durable-execution-lineage-projection-v32.md`):
 
 ```text
-🟢 {P42% · E36% · A07 · U03 · ACTIVE} <issue title>
+🟢 [#527 › #588 › #592 → PR#593] R:P42/E36 · U03 · ACTIVE — <responsibility>
 ```
 
-The title SHOULD expose only liveness/motion, P/E, activity epoch, current unit when useful, and compact work state. It MUST NOT become a detailed evidence store.
+The title is **generated, never authored**: lineage (`›` ownership, `→` the PR), scoped semantic/evidence progress (`R:` leaf, `Φ:` phase, `Π:` programme), the current unit (leaf) or frontier count `F<n>` (ancestors), and compact work state. It is written only by the DELP runner from `CHECKPOINT_FACTS_V1`, the execution graph and observed material truth; this grammar supersedes the earlier `{P · E · A · U · STATE}` form, and the activity epoch `A<n>` moved to `LIVE_STATUS_V1`. It MUST NOT become a detailed evidence store.
 
 ## 2. Owner chat checkpoint
 
@@ -55,7 +57,7 @@ Use:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-🟢/🟡/🔵/🔴 {P__% · E__% · A__ · <STATE>}
+🟢/🟡/🔵/🔴 R:P__/E__ · A__ · <STATE>      (rendered by the projector; the agent supplies facts, not these numbers)
 UNIT: <one concise line>
 DELTA: ✓ <new result>; ✓ <new result>; △ <decision-relevant unresolved finding, optional>
 BLOCKER: <NONE | one concise blocking condition>
@@ -197,7 +199,7 @@ Preferred Owner projection:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-🟡 {P42% · E36% · A07 · WAITING_EXTERNAL}
+🟡 R:P42/E36 · A07 · WAITING_EXTERNAL
 UNIT: Full-stack qualification of #1239 cumulative candidate.
 DELTA: ✓ #1252 import defect isolated in draft #1253 (`ea2556d`); ✓ persistence contract PASS; ✓ TEXPECTED lower-bound PASS.
 BLOCKER: Executable authenticated checkout / Node `@playwright/test` unavailable for browser + full-regression qualification.

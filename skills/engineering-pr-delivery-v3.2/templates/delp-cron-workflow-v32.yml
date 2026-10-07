@@ -1,0 +1,46 @@
+# INERT TEMPLATE — not an active workflow. It lives under templates/ on purpose.
+# Copy to .github/workflows/ only after the Owner approves a runner that may write issue titles/comments.
+#
+# DELP runner: observes live PR heads and CHECKPOINT_FACTS_V1 comments, recomputes every node from the
+# execution graph, and writes generated titles + LIVE_STATUS_V1 with compare-and-swap. It is the only writer
+# of generated titles; agents publish facts and never edit titles or percentages.
+name: delp-projection-runner
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  issue_comment:
+    types: [created, edited]
+  pull_request_target:
+    types: [synchronize, opened, closed, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: delp-projection-runner
+  cancel-in-progress: false   # compare-and-swap handles races; never drop a pending reprojection
+
+jobs:
+  project:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}   # plan authority comes from the default branch only
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check PyYAML
+      - name: Validate the plan
+        run: python skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py validate-graph --graph relay/DELP_EXECUTION_GRAPH.yaml
+      - name: Project and write (compare-and-swap)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          python skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py sync-github
+          --graph relay/DELP_EXECUTION_GRAPH.yaml
+          --repository ${{ github.repository }}

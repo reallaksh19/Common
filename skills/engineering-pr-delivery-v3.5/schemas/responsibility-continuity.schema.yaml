@@ -6,6 +6,13 @@ properties:
     const: relay-v3.2-responsibility-continuity
   authority:
     const: DERIVED_CONTINUITY_ONLY
+  projection_mode:
+    enum: [LEGACY_AGENT_ASSERTED, DERIVED_FROM_FACTS]
+    description: >-
+      DERIVED_FROM_FACTS (all new responsibilities): unit.evidenced is computed from evidence_refs plus an
+      evidence_candidate equal to the observed material head; agents never assert it and never write the
+      issue title (the DELP runner is the only title writer). LEGACY_AGENT_ASSERTED is readable history only;
+      a missing value is read as LEGACY_AGENT_ASSERTED.
   responsibility:
     type: string
     minLength: 1
@@ -35,7 +42,16 @@ properties:
       properties:
         id: {type: string, minLength: 1}
         complete: {type: boolean}
-        evidenced: {type: boolean}
+        evidenced:
+          type: boolean
+          description: Derived in DERIVED_FROM_FACTS mode (never an agent input); agent-asserted only in LEGACY_AGENT_ASSERTED mode.
+        weight: {type: integer, minimum: 1}
+        evidence_refs:
+          type: array
+          items: {type: string, minLength: 1}
+        evidence_candidate:
+          type: [string, "null"]
+          pattern: "^[0-9a-f]{40}$"
   recovery:
     type: object
     required: [stream_loss_count, recovery_evidence_required, handover_plan_triggered_this_lifecycle, plan_for_handover_now]

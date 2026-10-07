@@ -93,9 +93,35 @@ The publication family remains:
 ```text
 IMPLEMENTATION_PLAN
 PLAN_UPDATE
-TASK_EVIDENCE
+TASK_EVIDENCE        (carries the machine-readable CHECKPOINT_FACTS_V1 block)
 TASK_RESULT
 ```
+
+## Projection authority — DELP (agents publish facts only)
+
+> **Agents publish facts. Everything else is recomputed from those facts.**
+
+A nested Coder (and any reviewer) states, about its own leaf responsibility only: which declared units it reports complete, the verification result, the durable evidence refs, the candidate those refs cover, and the next unit — as a `CHECKPOINT_FACTS_V1` block inside `TASK_EVIDENCE`. It MUST NOT author, edit or paste a percentage, a title or title suffix, a weight, a frontier count, an activity epoch, an evidence-health verdict, or any phase/programme progress. Those are projections: the DELP projector derives them, a facts record that tries to author one is rejected and cannot move any number, and a hand-edited title is classified as drift and overwritten at the next projection.
+
+```text
+leaf          🟢 [#527 › #588 › #592 → PR#593] R:P65/E65 · U04 · ACTIVE — <responsibility>
+intermediate  🟢 [#527 › #588 → #592/PR#593] Φ:D60/E58 · F2 · ACTIVE — <phase>
+programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
+```
+
+`›` ownership/hierarchy, `→` material PR relation, `F` active frontier leaves; every percentage is scoped (`R:`, `Φ:`, `Π:`), a bare `P56% / E56%` is invalid. `E` counts a unit only while its evidence is **current** (verified result, durable refs, evidence candidate equal to the live PR head): a push lowers `E` and leaves `P` until the evidence is replayed. Ancestor `D/E` are weighted roll-ups recomputed from children, never incremented, never authored; weights and lineage are plan authority in the execution graph. `PRD`/Local delivery stays Local's: a Coder `P100` is `R:P100` and never means Local `D100` (declare `delivery_gates` for reviewer/super-review/hand-off weight).
+
+Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `take over`, `keep going`) reconstruct first: resolve the leaf and lineage, observe the live candidate, read the latest valid facts, repair any evidence gap before new coding, let the projector refresh titles/status (compare-and-swap, read back), show the compact `CONTINUE CHECKPOINT`, then execute exactly the next bounded unit. A continuation never changes the parent, denominator, scope, priority or merge authority.
+
+The active DELP contract is:
+
+- `operating-model/durable-execution-lineage-projection-v35.md` (normative);
+- `schemas/delp-checkpoint-facts-v35.schema.yaml`, `schemas/delp-execution-graph-v35.schema.yaml`, `schemas/delp-live-status-v35.schema.yaml`;
+- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `verify-titles`, `sync-github`);
+- `templates/checkpoint-facts-v35.md` (agent template) and `examples/delp/`;
+- `tests/test_delp_projection_v35.py`, `tests/test_continuity_derived_projection.py`, `tests/test_owner_commands_continuation.py`.
+
+The copied `continuity_projection.py` baseline now defaults new snapshots to `projection_mode: DERIVED_FROM_FACTS` (E computed, `--evidenced` rejected, no title patching); `LEGACY_AGENT_ASSERTED` stays readable. The earlier candidate title forms `{P · E · A · U · STATE}` in `OWNER_CHECKPOINT_PROJECTION.md`, `PROGRAMME_DECOMPOSITION_PROGRESS.md` and `CHECKPOINT_AND_LIVENESS_CONTRACT.md` are superseded by this grammar; their other content is unchanged. The same fix is applied to the frozen V3.2 tree as an Owner-directed additive amendment (`delp_projection_v32.py`), guarded by `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml`.
 
 ## Embedded Coder contract
 
@@ -154,3 +180,5 @@ If a later Relay version appears, the current nested execution remains pinned un
 Dedicated V3.5 hosted validation is `.github/workflows/engineering-pr-delivery-v3.5.yml`.
 
 It validates the V3.5 active contract and verifies that the frozen `skills/engineering-pr-delivery-v3.2/**` tree is not modified by #494 work.
+
+The DELP projection contract (both lines) is validated by `.github/workflows/delp-projection.yml`, which runs on every pull request (path relevance is classified inside the job so the check is always terminal). Amendments to the frozen V3.2 tree are authorised only through the base-pinned manifest `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml` (`scripts/frozen_tree_guard.py`).

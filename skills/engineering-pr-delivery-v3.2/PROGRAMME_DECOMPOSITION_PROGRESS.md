@@ -1,5 +1,7 @@
 # Engineering Relay V3.2 — programme decomposition and progress denominator
 
+> **Implementation status (DELP).** The progress/title projection and the rule that executors report facts but never author percentages or titles are now implemented and mechanically enforced by `operating-model/durable-execution-lineage-projection-v32.md` (`scripts/delp_projection_v32.py`, `schemas/delp-*-v32.schema.yaml`, `tests/test_delp_projection_v32.py`). Where this document shows an older title form, the DELP grammar governs. The rest of this document keeps its existing status.
+
 ## Normative status
 
 This file is a normative addendum for the V3.2 planning/progress slice on this candidate branch.
@@ -419,25 +421,27 @@ Do not average colors.
 
 ## Title projection
 
-Recommended responsibility title:
+Implemented by the DELP projector (`operating-model/durable-execution-lineage-projection-v32.md`); these grammars supersede the earlier brace forms.
+
+Responsibility (leaf) title:
 
 ```text
-🟢 {P60% · E45% · A07 · U3} <responsibility title>
+🟢 [#527 › #588 › #592 → PR#593] R:P60/E45 · U3 · ACTIVE — <responsibility title>
 ```
 
-Recommended Phase title:
+Phase (intermediate) title:
 
 ```text
-🟡 {D43% · E36% | 🟢2 🟡1 🔵1} <phase title>
+🟡 [#527 › #588 → #592/PR#593] Φ:D43/E36 · F4 · EVIDENCE_GAP — <phase title>
 ```
 
-Recommended Programme title:
+Programme (root) title:
 
 ```text
-🟡 {D28% · E22% | 🟢4 🟡1 🔴0 🔵1} <programme title>
+🟡 [#527] Π:D28/E22 · F6 · EVIDENCE_GAP — <programme title>
 ```
 
-Titles are disposable read models. The manifests/evidence are authority for reconstruction.
+Titles are disposable read models, generated from the execution graph (this manifest in machine-readable form), `CHECKPOINT_FACTS_V1` and observed material truth, never typed by an executor. The manifests/evidence are authority for reconstruction. The per-colour issue counts of the earlier form are replaced by the frontier count `F` and the derived state word; colours are still never averaged.
 
 ## Decomposition Validation Gate
 

@@ -162,13 +162,25 @@ Do not award progress from commits, files, tests, comments/publications, tool ca
 
 Percentages may decrease after a legitimate declared-denominator expansion.
 
-The issue title may mirror:
+## Projection authority — agents publish facts only (DELP)
+
+> **Agents publish facts. Everything else is recomputed from those facts.**
+
+An agent states, about its own responsibility only: which declared units it reports complete, the verification result, the durable evidence refs, the candidate those refs cover, and the next unit — as a `CHECKPOINT_FACTS_V1` block inside `TASK_EVIDENCE`. An agent MUST NOT author, edit or paste a percentage, a title or title suffix, a weight, a frontier count, an activity epoch, an evidence-health verdict, or any parent/phase/programme progress. Those are projections: the DELP projector derives them, a facts record that tries to author one is rejected and cannot move any number, and a hand-edited title is classified as drift and overwritten at the next projection.
 
 ```text
-🟢 {P77% · E69% · A12 · UNIT-09 · ACTIVE}
+leaf          🟢 [#527 › #588 › #592 → PR#593] R:P65/E65 · U04 · ACTIVE — <responsibility>
+intermediate  🟢 [#527 › #588 → #592/PR#593] Φ:D60/E58 · F2 · ACTIVE — <phase>
+programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
 ```
 
-but the title is disposable projection only. `A12` means the twelfth valid activity/checkpoint epoch; it is not progress.
+`›` is ownership/hierarchy, `→` is the material PR relation, `F` is the number of active frontier leaves, and every percentage carries its scope (`R:`, `Φ:`, `Π:`). The title is disposable projection only and never authority. The activity epoch `A<n>` is no longer in the title; it lives in `LIVE_STATUS_V1.activity_epoch`. A bare `P56% / E56%` is invalid.
+
+`E` counts a completed unit only while its evidence is **current**: verified result, durable refs, and an evidence candidate equal to the live PR head. A new push therefore lowers `E` without touching `P` until the evidence is replayed; evidence for an older candidate never silently certifies the new one. Parent and programme numbers are weighted roll-ups recomputed from child truth, never incremented, never authored. Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `take over`, `keep going`) first reconstruct and reconcile (`CONTINUE CHECKPOINT`), repairing any evidence gap before new coding.
+
+Normative contract: `operating-model/durable-execution-lineage-projection-v32.md`. Implementation: `scripts/delp_projection_v32.py`, `schemas/delp-*-v32.schema.yaml`, `tests/test_delp_projection_v32.py`. New `FURTHER_TASK_SNAPSHOT`s use `projection_mode: DERIVED_FROM_FACTS` (`continuity_projection.py init` default): `unit-update --evidenced` is rejected, E is computed from `evidence_refs` + `evidence_candidate`, and the snapshot never patches the issue title. `LEGACY_AGENT_ASSERTED` snapshots stay readable and unchanged.
+
+This section is an Owner-directed amendment of the V3.2 tree (see the contract's "Amendment of V3.2" and `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml`); it does not otherwise unfreeze V3.2.
 
 ## Checkpoint-before-continue — write-ahead continuity barrier
 
@@ -198,13 +210,12 @@ When semantic/evidence truth advanced, use the existing publication family:
 TASK_EVIDENCE — CHECKPOINT
 ```
 
-A checkpoint evidence record should identify, as applicable:
+A checkpoint evidence record should identify, as applicable (as facts — `P / E` and the activity epoch are rendered by the DELP projector from `CHECKPOINT_FACTS_V1`, never authored by the agent):
 
 ```text
 RESPONSIBILITY
 CURRENT_UNIT
-P / E
-ACTIVITY_EPOCH
+CANDIDATE (the exact commit the evidence covers)
 MATERIAL_FRONTIER
 SEMANTIC_EVIDENCE_FRONTIER
 COMPLETED_UNITS
@@ -306,7 +317,7 @@ The user-visible checkpoint should be compact and reconstructable, for example:
 
 ```text
 TASK_EVIDENCE — CHECKPOINT
-{P18% · E14% · A07 · 🟢 ACTIVE}
+🟢 R:P18/E14 · A07 · ACTIVE          (rendered by the projector from CHECKPOINT_FACTS_V1; the agent supplies facts, not these numbers)
 CURRENT_UNIT: qualification / persistence blocker reconstruction
 COMPLETED: benchmark overlay path reconstructed; persistence blocker identified; audit test written
 MATERIAL_FRONTIER: <sha / working-delta ref>

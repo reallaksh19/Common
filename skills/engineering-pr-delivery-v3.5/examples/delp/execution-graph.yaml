@@ -1,0 +1,34 @@
+# Coordinator-authored plan. Lineage, weights and denominators live here and nowhere else.
+schema: relay-v3.5-delp-execution-graph
+programme:
+  id: COMMON-PROD-CONTROL-V1
+  root: Common#527
+  repository: reallaksh19/Common
+nodes:
+  - {ref: Common#527, kind: ROOT}
+  - {ref: Common#588, kind: INTERMEDIATE, parent: Common#527, weight: 3}
+  - {ref: Common#610, kind: INTERMEDIATE, parent: Common#527, weight: 1}
+  - ref: Common#592
+    kind: LEAF
+    parent: Common#588
+    weight: 3
+    responsibility_id: P3-I-R2
+    primary_pr: Common#593
+    critical: true
+    units:
+      - {id: U01, weight: 20}
+      - {id: U02, weight: 30}
+      - {id: U03, weight: 25}
+      - {id: U04, weight: 25}
+  - ref: Common#594
+    kind: LEAF
+    parent: Common#588
+    weight: 1
+    primary_pr: Common#595
+    units: [{id: V1, weight: 50}, {id: V2, weight: 50}]
+  - ref: Common#612
+    kind: LEAF
+    parent: Common#610
+    weight: 1
+    primary_pr: Common#613
+    units: [{id: W1, weight: 100}]

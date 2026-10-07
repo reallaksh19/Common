@@ -45,6 +45,14 @@ INTENT_SEMANTICS = {
         "partial, pending, blocked, deferred, acceptance debt, delivery/governance debt "
         "and delegated/local work. Do not progress execution."
     ),
+    "CONTINUE_RECONCILE": (
+        "A bare continuation command (continue, proceed, next, resume, reconcile, take over, keep going) "
+        "means reconstruct and reconcile BEFORE continuing; it never means continue from conversational "
+        "memory. Resolve the owned leaf responsibility and its lineage, observe the live PR/candidate, compare "
+        "the latest evidence frontier with it, repair any evidence gap first, reproject titles and status "
+        "from facts, read the provider back, surface the compact CONTINUE CHECKPOINT, then execute exactly "
+        "the next bounded unit. It never changes the parent, denominator, scope, priority or merge authority."
+    ),
     "PREPARE_LOCAL_AGENT": (
         "Prepare a recipient-ready local-agent work packet with repository/clone basis, "
         "branch and exact HEAD, task purpose, technical context, bounded steps, scope, "
@@ -80,6 +88,7 @@ WORKFLOWS = {
             "If the current EP is still the selected frontier, continue it; if Owner/programme selection moved, do not revive the stale EP.",
             "If IDLE and a different selected task is next, admit exactly that governed task before execution.",
             "Preserve normal lease, scope, material-drift and checkpoint gates.",
+            "Before executing the selected unit, run the DELP continuation admission (reconstruct lineage, observe the live candidate, repair any evidence gap, reproject from facts, read back) and surface the compact CONTINUE CHECKPOINT.",
         ],
         "requires": ["programme_parent_observations"],
     },
@@ -93,6 +102,7 @@ WORKFLOWS = {
             "Challenge whether the apparent next patch or currently ACTIVE work package is actually the selected programme obligation.",
             "Choose one substantial coherent task with an explicit outcome/acceptance boundary.",
             "Only then continue/admit execution under ordinary Relay custody and safety gates.",
+            "Before executing, run the DELP continuation admission (reconstruct lineage, observe the live candidate, repair any evidence gap, reproject from facts, read back) and surface the compact CONTINUE CHECKPOINT.",
         ],
         "requires": ["programme_parent_observations", "whole_task_reassessment"],
     },
@@ -123,6 +133,21 @@ WORKFLOWS = {
             "Show programme frontier, blockers, acceptance debt, delivery/governance debt and deferred/future work separately.",
         ],
         "requires": ["programme_parent_observations"],
+    },
+    "CONTINUE_RECONCILE": {
+        "boundary": "RECONSTRUCT_THEN_CONTINUE",
+        "progress_execution": True,
+        "steps": [
+            "Resolve the owned leaf responsibility from durable truth (issue/PR/execution graph), never from chat history.",
+            "Resolve the full lineage: root programme, intermediate responsibility, leaf, current PR and current candidate SHA.",
+            "Observe the live PR head/candidate and read the latest valid CHECKPOINT_FACTS_V1 evidence for the leaf.",
+            "Compare the evidence frontier with the live candidate; if units are complete without current evidence, publish recovery evidence before any new coding.",
+            "Recompute the projection (leaf P/E, ancestor D/E, frontier, titles) from facts with the DELP projector; never hand-edit a title or percentage.",
+            "Write the projection with compare-and-swap and read it back from the provider.",
+            "Surface the compact CONTINUE CHECKPOINT: PATH, CHILD, EVIDENCE, PARENT, ROOT, BLOCKER, OWNER_ACTION, NEXT.",
+            "Execute exactly the next bounded unit; do not change parent, denominator, scope, priority or merge authority.",
+        ],
+        "requires": ["leaf_responsibility", "live_candidate_observation", "delp_projection"],
     },
     "PREPARE_LOCAL_AGENT": {
         "boundary": "LOCAL_EXECUTION_EXPORT",
@@ -185,6 +210,11 @@ _PATTERNS: list[tuple[str, tuple[str, ...]]] = [
         r"\bcontinue\s+(?:with\s+|to\s+)?(?:the\s+)?next(?:\s+task)?\b",
         r"\bmove\s+(?:on\s+)?to\s+(?:the\s+)?next\s+task\b",
         r"\btake\s+(?:the\s+)?next\s+task\b",
+    )),
+    # Bare continuation commands. Anchored so ordinary sentences never activate it.
+    ("CONTINUE_RECONCILE", (
+        r"^\s*(?:continue|proceed|next|resume|reconcile|take\s+over|keep\s+going|carry\s+on)"
+        r"(?:\s+(?:please|now))?\s*[?!.,]*\s*$",
     )),
 ]
 

@@ -14,6 +14,8 @@ Owner-facing checkpoint rendering is governed by the companion candidate contrac
 
 That contract intentionally keeps the chat projection compact while allowing durable `TASK_EVIDENCE` to remain successor-grade and comprehensive.
 
+> **Implementation status (DELP).** The progress/title projection and the rule that executors report facts but never author percentages or titles are now implemented and mechanically enforced by `operating-model/durable-execution-lineage-projection-v35.md` (`scripts/delp_projection_v35.py`, `schemas/delp-*-v35.schema.yaml`, `tests/test_delp_projection_v35.py`). Where this document shows an older title form, the DELP grammar governs. The rest of this document keeps its existing status.
+
 ## Governing problem
 
 A recurring failure mode is:
@@ -158,23 +160,24 @@ must be surfaced. The executor MUST NOT silently cross an Owner-required checkpo
 
 ## GitHub issue title projection
 
-Recommended compact projection:
+Generated compact projection (DELP — `operating-model/durable-execution-lineage-projection-v35.md`):
 
 ```text
-🟢 {P42% · E31% · A07 · U03 · ACTIVE} <issue title>
+🟢 [#527 › #588 › #592 → PR#593] R:P42/E31 · U03 · ACTIVE — <responsibility>
 ```
 
 Where:
 
 ```text
-P42 = objectively complete declared units
-E31 = completed units with durable successor-safe evidence
-A07 = seventh valid activity/checkpoint epoch
-U03 = active declared unit
-ACTIVE = liveness/motion projection
+›        ownership / hierarchy
+→        material PR relation
+R:P42    objectively complete declared units (weighted)
+E31      completed units with CURRENT durable evidence bound to the live candidate
+U03      active declared unit
+ACTIVE   liveness/motion projection (or EVIDENCE_GAP / EVIDENCE_STALE / WAITING_* ...)
 ```
 
-The issue title is disposable projection, never authority.
+The activity epoch `A<n>` moved from the title to `LIVE_STATUS_V1.activity_epoch`. The issue title is written only by the DELP runner, never authored by an agent, and is disposable projection, never authority.
 
 ## Liveness states
 

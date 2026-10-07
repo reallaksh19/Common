@@ -160,13 +160,15 @@ P = completed units / denominator
 E = evidenced completed units / denominator
 ```
 
-A unit cannot be evidenced unless complete. Example title cache:
+A unit cannot be evidenced unless complete. In `projection_mode: DERIVED_FROM_FACTS` (the default for every new snapshot) `E` is not an input: a unit is evidenced only when it is complete, carries durable `evidence_refs`, and its `evidence_candidate` equals the observed material head. An agent reports `complete` plus `evidence_refs`/`evidence_candidate`; it never reports the E flag (`unit-update --evidenced` is rejected). A moved head lowers `E` until the evidence is republished for the new head; `P` is unaffected.
+
+Example generated title (written only by the DELP runner, never by an agent or by this snapshot):
 
 ```text
-{P77% · E69% · UNIT-09 · RECOVERING}
+🟡 [#527 › #588 › #592 → PR#593] R:P77/E69 · UNIT-09 · EVIDENCE_GAP — <responsibility>
 ```
 
-The title is a glanceable cache only. Percentages may decrease after a legitimate denominator change. Do not use subjective partial weights unless governing responsibility explicitly declares them.
+The title is a glanceable projection only. Percentages may decrease after a legitimate denominator change. Weights are plan authority (the DELP execution graph, or an explicit `weight` declared at `init` by the Coordinator), never declared by the executing agent. The earlier `{P77% · E69% · UNIT-09 · RECOVERING}` suffix form is legacy (`LEGACY_AGENT_ASSERTED` snapshots only) and is rewritten by the runner at the next projection. See `durable-execution-lineage-projection-v32.md`.
 
 ## Event-driven provider synchronization
 
@@ -197,6 +199,17 @@ Start implementation and automatically refresh GitHub:
 ```bash
 python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py implementation-start \
   --snapshot relay/GENERATED/tasks/484.continuity.json \
+  --output relay/GENERATED/tasks/484.continuity.json
+```
+
+Report a completed unit with its evidence (facts only; `--evidenced` is rejected in the default DERIVED mode):
+
+```bash
+python skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py unit-update \
+  --snapshot relay/GENERATED/tasks/484.continuity.json \
+  --unit-id UNIT-09 --complete YES \
+  --evidence-ref 'owner/repo#484#issuecomment-12345' \
+  --evidence-candidate "$(git rev-parse HEAD)" \
   --output relay/GENERATED/tasks/484.continuity.json
 ```
 

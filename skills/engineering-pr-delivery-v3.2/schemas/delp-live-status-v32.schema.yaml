@@ -1,0 +1,60 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.2-delp-live-status
+title: LIVE_STATUS_V1 (derived provider projection)
+description: >-
+  One managed, disposable status comment per node. It is a pure function of the execution graph, the accepted
+  CHECKPOINT_FACTS_V1 ledger and observed material truth. It is never authority, agents do not edit it, and if
+  every status comment and title disappeared it could be rebuilt from durable inputs.
+type: object
+required: [schema, authority, node, projection]
+properties:
+  schema:
+    const: relay-v3.2-delp-live-status
+  authority:
+    const: DERIVED_PROJECTION_ONLY
+  programme: {type: [string, "null"]}
+  node:
+    type: object
+    required: [ref, kind, state, progress, identity]
+    properties:
+      ref: {type: string}
+      kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
+      lifecycle: {type: string}
+      state:
+        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
+      light: {enum: ["🟢", "🟡", "🔵", "🔴", "✅", "⚪"]}
+      identity:
+        type: object
+        required: [root, lineage]
+        properties:
+          programme: {type: [string, "null"]}
+          root: {type: string}
+          lineage: {type: array, items: {type: string}}
+          responsibility_id: {type: [string, "null"]}
+      progress:
+        type: object
+        description: "LEAF: P/E/D/DE. ROOT/INTERMEDIATE: D/E. Integers 0..100 plus exact ratios; recomputed, never incremented."
+      material:
+        type: object
+        properties:
+          primary_pr: {type: [string, "null"]}
+          candidate_sha: {type: [string, "null"]}
+      evidence:
+        type: object
+        properties:
+          health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
+          gaps: {type: array}
+      frontier: {type: object}
+      activity_epoch: {type: integer, minimum: 0}
+      warnings: {type: array, items: {type: string}}
+  projection:
+    type: object
+    required: [version, input_digest]
+    properties:
+      version:
+        type: integer
+        minimum: 0
+        description: Compare-and-swap version of this provider surface. A write succeeds only from the version it read.
+      input_digest:
+        type: string
+        pattern: '^sha256:[0-9a-f]{64}$'
