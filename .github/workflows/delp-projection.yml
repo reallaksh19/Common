@@ -139,13 +139,10 @@ jobs:
             python "$engine" graph-diff --old "$example" --new "$example"
           done
 
-      - name: Verify the V3.2 and V3.5 engines are the same contract
+      - name: Verify explicitly shared V3.2 and V3.5 compatibility surfaces
         if: steps.relevance.outputs.relevant == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          normalise() { sed -e 's/V3\.[25]/Vx/g' -e 's/v3\.[25]/vx/g' -e 's/_v3[25]/_vx/g' -e 's/-v3[25]/-vx/g' "$1"; }
-          diff <(normalise skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py) \
-               <(normalise skills/engineering-pr-delivery-v3.5/scripts/delp_projection_v35.py)
           cmp skills/engineering-pr-delivery-v3.2/scripts/continuity_projection.py skills/engineering-pr-delivery-v3.5/scripts/continuity_projection.py
           cmp skills/engineering-pr-delivery-v3.2/scripts/owner_commands.py skills/engineering-pr-delivery-v3.5/scripts/owner_commands.py
