@@ -1742,51 +1742,50 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
         if row["parallel_ok"] and not row["parallel_ok_basis"]:
             findings[rid].append(_finding("PARALLEL_BASIS_MISSING", "parallel_ok needs a basis"))
         if row["work_class"] == "PRODUCT":
+            exception = row.get("mechanism_exception")
+            valid_exception = False
+            if exception:
+                cited = exception["claim_ids"]
+                owned_set = set(row["owns_claims"])
+                valid_exception = (
+                    set(cited).issubset(owned_set)
+                    and all(
+                        cid in claims_by_id
+                        and claims_by_id[cid]["kind"] == "SEMANTIC"
+                        and claims_by_id[cid]["mechanism_exception_allowed"]
+                        for cid in cited
+                    )
+                )
+                if not set(cited).issubset(owned_set):
+                    findings[rid].append(
+                        _finding(
+                            "MECHANISM_EXCEPTION_CLAIM_UNOWNED",
+                            f"mechanism exception cites unowned claim(s): {_id_list(set(cited) - owned_set)}",
+                        )
+                    )
             mechanism_terms = _mechanism_terms(row["id"], row["outcome"])
             unit_mechanisms = {
                 unit["id"]: _mechanism_terms(unit["id"], unit["outcome"])
                 for unit in units
                 if unit["kind"] == "SEMANTIC" and _mechanism_terms(unit["id"], unit["outcome"])
             }
-            if unit_mechanisms:
+            if unit_mechanisms and not valid_exception:
                 for uid, terms in unit_mechanisms.items():
                     findings[rid].append(
                         _finding(
                             "MECHANISM_SEMANTIC_UNIT",
                             f"{uid} is labelled SEMANTIC but is mechanism-shaped ({_id_list(terms)}); "
-                            "implementation/test mechanics belong in acceptance_methods",
+                            "implementation/test mechanics belong in acceptance_methods or require the same explicit infrastructure exception",
                         )
                     )
-            if mechanism_terms:
-                exception = row.get("mechanism_exception")
-                valid_exception = False
-                if exception:
-                    cited = exception["claim_ids"]
-                    owned_set = set(row["owns_claims"])
-                    valid_exception = (
-                        set(cited).issubset(owned_set)
-                        and all(
-                            cid in claims_by_id
-                            and claims_by_id[cid]["kind"] == "SEMANTIC"
-                            and claims_by_id[cid]["mechanism_exception_allowed"]
-                            for cid in cited
-                        )
+            if mechanism_terms and not valid_exception:
+                findings[rid].append(
+                    _finding(
+                        "MECHANISM_PRODUCT_BOUNDARY",
+                        f"PRODUCT responsibility boundary is mechanism-shaped ({_id_list(mechanism_terms)}); "
+                        "use acceptance methods/GATE or cite an allowed infrastructure semantic claim with mechanism_exception",
                     )
-                    if not set(cited).issubset(owned_set):
-                        findings[rid].append(
-                            _finding(
-                                "MECHANISM_EXCEPTION_CLAIM_UNOWNED",
-                                f"mechanism exception cites unowned claim(s): {_id_list(set(cited) - owned_set)}",
-                            )
-                        )
-                if not valid_exception:
-                    findings[rid].append(
-                        _finding(
-                            "MECHANISM_PRODUCT_BOUNDARY",
-                            f"PRODUCT responsibility boundary is mechanism-shaped ({_id_list(mechanism_terms)}); "
-                            "use acceptance methods/GATE or cite an allowed infrastructure semantic claim with mechanism_exception",
-                        )
-                    )
+                )
 
     if claim_policy["mode"] != "OFF":
         if not claims_by_id:
