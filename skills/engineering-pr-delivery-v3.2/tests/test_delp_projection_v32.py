@@ -210,7 +210,9 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
 
     def test_proposal_claim_coverage_is_checked_before_child_materialization(self):
         g = self.proposal_graph()
-        g["programme"]["decomposition_proposal"]["responsibilities"][0]["owns_claims"] = ["PG-DELIVERY"]
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["owns_claims"] = ["PG-DELIVERY"]
+        r["claim_allocations"] = [{"claim_id": "PG-DELIVERY", "weight": 10}]
         row = M.decomposition_report(g)["leaves"]["R-SEM"]
         codes = {f["code"] for f in row["blockers"]}
         self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", codes)
