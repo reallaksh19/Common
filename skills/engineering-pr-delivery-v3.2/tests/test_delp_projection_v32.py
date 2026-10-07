@@ -3136,9 +3136,13 @@ class AgentHealth(unittest.TestCase):
     def test_health_never_moves_a_number_a_state_a_title_or_an_admission_answer(self):
         bad = {**FULL_OBS, "behind_by": 99, "additions": 5000, "liveness": "STALE"}
         off, on = M.project(graph(), STARTED, {"Common#592": bad}), M.project(with_health(), STARTED, {"Common#592": bad})
-        strip = lambda nodes: {r: {k: v for k, v in n.items() if k != "health"} for r, n in nodes.items()}  # noqa: E731
+        strip = lambda nodes: {  # noqa: E731
+            r: {k: v for k, v in n.items() if k not in {"health", "agent_health"}}
+            for r, n in nodes.items()
+        }
         self.assertEqual(strip(off["nodes"]), strip(on["nodes"]))
         self.assertEqual("AT_RISK", on["nodes"]["Common#592"]["health"]["verdict"])
+        self.assertEqual("AVAILABLE", on["nodes"]["Common#592"]["agent_health"]["operational"]["status"])
         self.assertEqual(M.admit(off, "Common#592")["action"], M.admit(on, "Common#592")["action"])
         title = on["nodes"]["Common#592"]["title_prefix"]
         self.assertNotIn("AT_RISK", title)
