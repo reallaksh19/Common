@@ -2939,5 +2939,107 @@ class SuccessorAwareHandover(unittest.TestCase):
             M.validate_graph(g)
 
 
+
+class LowMemoryDecompositionRelay(unittest.TestCase):
+    @staticmethod
+    def serial_graph():
+        g = graph()
+        leaf = next(n for n in g["nodes"] if n["ref"] == "Common#594")
+        leaf["depends_on"] = ["Common#592"]
+        return g
+
+    @staticmethod
+    def complete_592(sha=SHA_A):
+        return facts(
+            sha=sha,
+            units=[unit("U01"), unit("U02"), unit("U03"), unit("U04")],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+        )
+
+    def test_chat_memory_loss_after_checkpoint_reconstructs_the_same_exact_unit(self):
+        ledger = [entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "continue bounded child"}), 1)]
+        first = M.admit(M.project(graph(), ledger, OBS_A), "Common#592")
+        second = M.admit(M.project(graph(), copy.deepcopy(ledger), copy.deepcopy(OBS_A)), "Common#592")
+        self.assertEqual(("CONTINUE_UNIT", "U03"), (first["action"], first["child"]["unit"]))
+        self.assertEqual(first["next"], second["next"])
+        self.assertEqual(first["material"]["candidate_sha"], second["material"]["candidate_sha"])
+
+    def test_moved_head_after_checkpoint_requires_recovery_before_new_coding(self):
+        ledger = [entry(facts(units=[unit("U01"), unit("U02")]), 1)]
+        report = M.admit(M.project(graph(), ledger, {"Common#592": {"candidate_sha": SHA_B}}), "Common#592")
+        self.assertEqual("RECOVER_EVIDENCE", report["action"])
+        self.assertTrue(report["recovery_required"])
+        self.assertEqual(SHA_B, report["material"]["candidate_sha"])
+        self.assertEqual(SHA_A, report["evidence_candidate"])
+
+    def test_missing_provider_candidate_fails_closed_instead_of_continuing_from_memory(self):
+        ledger = [entry(facts(units=[unit("U01"), unit("U02")]), 1)]
+        report = M.admit(M.project(graph(), ledger, {}), "Common#592")
+        self.assertEqual("RECOVER_EVIDENCE", report["action"])
+        self.assertEqual("UNVERIFIABLE", report["evidence_health"])
+
+    def test_provider_work_without_any_facts_requires_materialization(self):
+        observations = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "OPEN"}}
+        report = M.admit(M.project(graph(), [], observations), "Common#592")
+        self.assertEqual("MATERIALIZE_FACTS", report["action"])
+        self.assertTrue(report["materialize_required"])
+        self.assertIsNone(report["child"]["unit"])
+
+    def test_recovery_checkpoint_on_the_new_head_restores_the_exact_next_unit(self):
+        ledger = [
+            entry(facts(units=[unit("U01"), unit("U02")]), 1),
+            entry(facts(sha=SHA_B, units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "resume after recovery"}), 2),
+        ]
+        report = M.admit(M.project(graph(), ledger, {"Common#592": {"candidate_sha": SHA_B}}), "Common#592")
+        self.assertEqual(("CONTINUE_UNIT", "U03", "CURRENT"), (report["action"], report["child"]["unit"], report["evidence_health"]))
+
+    def test_incomplete_serial_predecessor_blocks_downstream_child_without_moving_progress(self):
+        g = self.serial_graph()
+        before = M.project(g, [], {})["nodes"]["Common#594"]
+        self.assertEqual((0, 0), (before["progress"]["P"], before["progress"]["E"]))
+        self.assertEqual("WAITING_DEPENDENCY", before["state"])
+        self.assertFalse(before["dependencies"]["ready"])
+        self.assertEqual(["Common#592"], [row["ref"] for row in before["dependencies"]["blocking"]])
+        report = M.admit(M.project(g, [], {}), "Common#594")
+        self.assertEqual("WAIT_DEPENDENCY", report["action"])
+        self.assertIn("Common#592:NOT_STARTED", report["next"])
+        self.assertEqual((0, 0), (report["child"]["P"], report["child"]["E"]))
+
+    def test_completed_predecessor_unblocks_downstream_child_and_keeps_its_progress_zero(self):
+        g = self.serial_graph()
+        ledger = [entry(self.complete_592(), 1)]
+        projection = M.project(g, ledger, OBS_A)
+        downstream = projection["nodes"]["Common#594"]
+        self.assertTrue(downstream["dependencies"]["ready"])
+        self.assertEqual((0, 0), (downstream["progress"]["P"], downstream["progress"]["E"]))
+        report = M.admit(projection, "Common#594")
+        self.assertEqual(("CONTINUE_UNIT", "V1"), (report["action"], report["child"]["unit"]))
+
+    def test_superseded_predecessor_does_not_silently_satisfy_serial_order(self):
+        g = self.serial_graph()
+        superseded = facts(
+            units=[],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "NO", "superseded_by": "Common#612"},
+        )
+        projection = M.project(g, [entry(superseded, 1)], OBS_A)
+        self.assertEqual("SUPERSEDED", projection["nodes"]["Common#592"]["lifecycle"])
+        self.assertEqual("WAITING_DEPENDENCY", projection["nodes"]["Common#594"]["state"])
+        self.assertEqual("WAIT_DEPENDENCY", M.admit(projection, "Common#594")["action"])
+
+    def test_dependency_completion_invalidates_a_handed_over_downstream_frontier(self):
+        g = self.serial_graph()
+        snapshot = M.frontier(g, [], {}, "Common#594")
+        live = M.frontier(g, [entry(self.complete_592(), 1)], OBS_A, "Common#594")
+        drift = M.frontier_drift(snapshot, live)
+        self.assertEqual("MOVED", drift["status"])
+        self.assertIn("DEPENDENCY_FACTS", [row["what"] for row in drift["moved"]])
+        self.assertIn("DEPENDENCIES", [row["what"] for row in drift["changed"]])
+        self.assertEqual("RECONCILE", drift["action"])
+
+    def test_dependency_readiness_is_derived_and_cannot_be_authored_by_facts(self):
+        bad = facts(units=[unit("U01")], dependencies={"ready": True})
+        self.assertTrue(M.validate_facts(bad))
+
+
 if __name__ == "__main__":
     unittest.main()
