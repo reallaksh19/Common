@@ -1,0 +1,61 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.5-delp-decomposition-assessment
+title: DELP decomposition assessment
+description: >-
+  Normalized plan/observer input to the pure bidirectional decomposition classifier.
+  It does not move progress and is not an executor-authored verdict.
+type: object
+additionalProperties: false
+required:
+  - schema
+  - subject
+  - proposal_kind
+  - semantic_cohesion
+  - dependency_closure
+  - verification_closure
+  - uncertainty
+  - change_impact
+  - execution_horizon
+  - mutation_domains
+  - recovery_radius
+  - handoff_cost
+  - cross_child_cohesion
+  - stable_cut
+  - basis_moved
+properties:
+  schema: {const: relay-v3.5-delp-decomposition-assessment}
+  subject: {type: string, minLength: 1, pattern: '.*\S.*'}
+  proposal_kind: {enum: [LEAF, ADJACENT_CHILDREN]}
+  semantic_cohesion: {enum: [COHESIVE, MIXED, UNKNOWN]}
+  dependency_closure: {enum: [CLOSED, OPEN, UNKNOWN]}
+  verification_closure: {enum: [CLOSED, DEFERRED, UNKNOWN]}
+  uncertainty: {enum: [LOW, MATERIAL, BLOCKING]}
+  change_impact: {enum: [LOCAL, BOUNDED_MULTI_STAGE, CROSS_CUTTING, UNKNOWN]}
+  execution_horizon: {enum: [SHORT, MULTI_STEP, LONG_OR_AMBIGUOUS]}
+  mutation_domains:
+    type: array
+    uniqueItems: true
+    items:
+      enum:
+        - LOCAL_FILES
+        - GIT_HISTORY
+        - REMOTE_BRANCH
+        - GITHUB_ISSUE
+        - GITHUB_PR
+        - CI
+        - BROWSER
+        - EXTERNAL_SERVICE
+  recovery_radius: {enum: [SMALL, MULTI_SURFACE, AMBIGUOUS_EXTERNAL]}
+  handoff_cost: {enum: [LOW, MATERIAL, HIGH]}
+  cross_child_cohesion: {enum: [LOW, HIGH]}
+  stable_cut:
+    type: object
+    additionalProperties: false
+    required: [output_contract, independent_oracle, consumer_stable, risk_reduction, handoff_economy]
+    properties:
+      output_contract: {type: boolean}
+      independent_oracle: {type: boolean}
+      consumer_stable: {type: boolean}
+      risk_reduction: {type: boolean}
+      handoff_economy: {type: boolean}
+  basis_moved: {type: boolean}

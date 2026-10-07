@@ -23,6 +23,12 @@ M = importlib.util.module_from_spec(spec)
 assert spec.loader
 spec.loader.exec_module(M)
 
+DECOMPOSITION_MODULE_PATH = MODULE_PATH.parents[1] / "scripts" / "decomposition_classifier_v35.py"
+decomposition_spec = importlib.util.spec_from_file_location("decomposition_classifier_v35", DECOMPOSITION_MODULE_PATH)
+D = importlib.util.module_from_spec(decomposition_spec)
+assert decomposition_spec.loader
+decomposition_spec.loader.exec_module(D)
+
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
 
@@ -1543,6 +1549,223 @@ class DocumentedBehaviour(unittest.TestCase):
         self.assertEqual([], out["rejected_facts"])
         self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE", out["nodes"]["Common#592"]["title_prefix"])
         self.assertEqual("🟢 [#527] Π:D28/E28 · F1 · ACTIVE", out["nodes"]["Common#527"]["title_prefix"])
+
+
+
+class BidirectionalDecompositionClassifier(unittest.TestCase):
+    def assessment(self, subject="fixture", **overrides):
+        value = {
+            "schema": D.DECOMPOSITION_ASSESSMENT_SCHEMA,
+            "subject": subject,
+            "proposal_kind": "LEAF",
+            "semantic_cohesion": "COHESIVE",
+            "dependency_closure": "CLOSED",
+            "verification_closure": "CLOSED",
+            "uncertainty": "LOW",
+            "change_impact": "LOCAL",
+            "execution_horizon": "SHORT",
+            "mutation_domains": ["LOCAL_FILES"],
+            "recovery_radius": "SMALL",
+            "handoff_cost": "LOW",
+            "cross_child_cohesion": "LOW",
+            "stable_cut": {
+                "output_contract": False,
+                "independent_oracle": False,
+                "consumer_stable": False,
+                "risk_reduction": False,
+                "handoff_economy": False,
+            },
+            "basis_moved": False,
+        }
+        value.update(overrides)
+        return value
+
+    def verdict(self, subject="fixture", **overrides):
+        return D.classify_decomposition_assessment(self.assessment(subject, **overrides))
+
+    def test_617_original_phase_c_is_split_from_precode_shape(self):
+        out = self.verdict(
+            "#617-precode",
+            semantic_cohesion="MIXED",
+            dependency_closure="OPEN",
+            verification_closure="DEFERRED",
+            uncertainty="MATERIAL",
+            change_impact="CROSS_CUTTING",
+            execution_horizon="LONG_OR_AMBIGUOUS",
+            mutation_domains=["LOCAL_FILES", "GIT_HISTORY", "GITHUB_PR", "CI"],
+            recovery_radius="MULTI_SURFACE",
+            handoff_cost="MATERIAL",
+            stable_cut={
+                "output_contract": True,
+                "independent_oracle": True,
+                "consumer_stable": True,
+                "risk_reduction": True,
+                "handoff_economy": True,
+            },
+        )
+        self.assertEqual("SPLIT", out["decision"])
+        self.assertEqual("ETX_SPLIT_REQUIRED", out["execution_boundary"])
+
+    def test_624_observation_pipeline_is_split_despite_small_file_count(self):
+        out = self.verdict(
+            "#624-precode",
+            semantic_cohesion="MIXED",
+            dependency_closure="OPEN",
+            verification_closure="DEFERRED",
+            uncertainty="MATERIAL",
+            change_impact="CROSS_CUTTING",
+            execution_horizon="MULTI_STEP",
+            mutation_domains=["LOCAL_FILES", "GIT_HISTORY"],
+            recovery_radius="MULTI_SURFACE",
+            stable_cut={
+                "output_contract": True,
+                "independent_oracle": True,
+                "consumer_stable": True,
+                "risk_reduction": True,
+                "handoff_economy": True,
+            },
+        )
+        self.assertEqual("SPLIT", out["decision"])
+
+    def test_643_condition_contract_passes_and_bug_does_not_imply_split(self):
+        out = self.verdict("#643-precode")
+        self.assertEqual("PASS", out["decision"])
+        self.assertEqual("INLINE_SAFE", out["execution_boundary"])
+
+    def test_c2_c3_horizontal_split_is_merge_candidate(self):
+        out = self.verdict(
+            "#626+#629-precode",
+            proposal_kind="ADJACENT_CHILDREN",
+            execution_horizon="MULTI_STEP",
+            mutation_domains=["LOCAL_FILES", "GIT_HISTORY"],
+            recovery_radius="MULTI_SURFACE",
+            handoff_cost="HIGH",
+            cross_child_cohesion="HIGH",
+        )
+        self.assertEqual("MERGE", out["decision"])
+        self.assertEqual("ETX_SPLIT_REQUIRED", out["execution_boundary"])
+
+    def test_known_open_dependency_without_stable_cut_requires_discovery(self):
+        out = self.verdict(
+            "open-dependency",
+            dependency_closure="OPEN",
+            uncertainty="MATERIAL",
+            change_impact="BOUNDED_MULTI_STAGE",
+        )
+        self.assertEqual("DISCOVER_FIRST", out["decision"])
+
+    def test_merge_never_overrides_mixed_or_deferred_semantics(self):
+        mixed = self.verdict(
+            "mixed-adjacent",
+            proposal_kind="ADJACENT_CHILDREN",
+            semantic_cohesion="MIXED",
+            handoff_cost="HIGH",
+            cross_child_cohesion="HIGH",
+        )
+        self.assertEqual("SPLIT", mixed["decision"])
+        deferred = self.verdict(
+            "deferred-adjacent",
+            proposal_kind="ADJACENT_CHILDREN",
+            verification_closure="DEFERRED",
+            handoff_cost="HIGH",
+            cross_child_cohesion="HIGH",
+        )
+        self.assertEqual("SPLIT", deferred["decision"])
+
+    def test_unknown_basis_requires_discovery_before_implementation(self):
+        out = self.verdict(
+            "unknown-owner",
+            dependency_closure="UNKNOWN",
+            verification_closure="UNKNOWN",
+            uncertainty="BLOCKING",
+            change_impact="UNKNOWN",
+        )
+        self.assertEqual("DISCOVER_FIRST", out["decision"])
+        self.assertEqual("DISCOVERY_REQUIRED", out["execution_boundary"])
+
+    def test_moved_basis_replans_before_all_other_decisions(self):
+        out = self.verdict(
+            "moved-contract",
+            basis_moved=True,
+            semantic_cohesion="UNKNOWN",
+            dependency_closure="UNKNOWN",
+            verification_closure="UNKNOWN",
+            uncertainty="BLOCKING",
+            change_impact="UNKNOWN",
+        )
+        self.assertEqual("REPLAN", out["decision"])
+
+    def test_ambiguous_external_effect_requires_observe_before_retry(self):
+        out = self.verdict(
+            "external-effect",
+            execution_horizon="MULTI_STEP",
+            mutation_domains=["LOCAL_FILES", "GITHUB_ISSUE"],
+            recovery_radius="AMBIGUOUS_EXTERNAL",
+        )
+        self.assertEqual("PASS", out["decision"])
+        self.assertEqual("OBSERVE_BEFORE_RETRY_REQUIRED", out["execution_boundary"])
+
+    def test_invalid_assessment_fails_closed(self):
+        bad = self.assessment()
+        bad["semantic_cohesion"] = "SORT_OF"
+        self.assertTrue(D.validate_decomposition_assessment(bad))
+        with self.assertRaises(D.DecompositionError):
+            D.classify_decomposition_assessment(bad)
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class DecompositionAssessmentSchemaContract(unittest.TestCase):
+    @classmethod
+    def schema(cls):
+        import yaml as _yaml
+
+        return _yaml.safe_load((SCHEMAS / f"delp-decomposition-assessment-{TAG}.schema.yaml").read_text(encoding="utf-8"))
+
+    def errors(self, value):
+        return [e.message for e in jsonschema.Draft202012Validator(self.schema()).iter_errors(value)]
+
+    def good(self):
+        return BidirectionalDecompositionClassifier().assessment("schema-fixture")
+
+    def test_schema_id_and_good_record(self):
+        self.assertEqual(D.DECOMPOSITION_ASSESSMENT_SCHEMA, self.schema()["$id"])
+        self.assertEqual([], self.errors(self.good()))
+        self.assertEqual([], D.validate_decomposition_assessment(self.good()))
+
+    def test_schema_and_engine_reject_malformed_records(self):
+        variants = []
+        good = self.good()
+        for key, value in (
+            ("proposal_kind", "EPIC"),
+            ("semantic_cohesion", "KINDA"),
+            ("dependency_closure", "PARTIAL"),
+            ("verification_closure", "LATER"),
+            ("uncertainty", "MAYBE"),
+            ("change_impact", "HUGE"),
+            ("execution_horizon", "FOREVER"),
+            ("recovery_radius", "WIDE"),
+            ("handoff_cost", "MEDIUM"),
+            ("cross_child_cohesion", "MEDIUM"),
+        ):
+            row = copy.deepcopy(good)
+            row[key] = value
+            variants.append(row)
+        row = copy.deepcopy(good)
+        row["mutation_domains"] = ["LOCAL_FILES", "LOCAL_FILES"]
+        variants.append(row)
+        row = copy.deepcopy(good)
+        row["mutation_domains"] = [["LOCAL_FILES"]]
+        variants.append(row)
+        row = copy.deepcopy(good)
+        row["stable_cut"]["risk_reduction"] = "yes"
+        variants.append(row)
+        row = copy.deepcopy(good)
+        row["basis_moved"] = "no"
+        variants.append(row)
+        for record in variants:
+            with self.subTest(record=record):
+                self.assertTrue(self.errors(record), "schema accepted malformed assessment")
+                self.assertTrue(D.validate_decomposition_assessment(record), "engine accepted malformed assessment")
 
 
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
