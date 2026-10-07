@@ -1,6 +1,6 @@
 $schema: https://json-schema.org/draft/2020-12/schema
 type: object
-required: [schema_version, authority, frozen_at, frozen_basis, target, blind_context, reality_context, accumulated_learning]
+required: [schema_version, authority, frozen_at, frozen_basis, target, blind_context, reality_context, accumulated_learning, successor_entry]
 properties:
   schema_version: {const: relay-v3.1-handover-context}
   authority: {const: DERIVED_HANDOVER_INPUT}
@@ -157,6 +157,24 @@ properties:
       delivery:
         type: object
         required: [issue, pr, lifecycle, merge_authorized]
+  successor_entry:
+    type: object
+    additionalProperties: false
+    required: [mode, allowed_actions, forbidden_actions, execution_admission, successor_reconstruction_challenge]
+    properties:
+      mode: {const: RECONSTRUCT_PLAN_ONLY}
+      allowed_actions:
+        type: array
+        uniqueItems: true
+        items: {enum: [READ_RECONSTRUCT, RECONCILE_LIVE_TRUTH, DRAFT_OR_UPDATE_PLAN, ANSWER_SUCCESSOR_CHALLENGE]}
+      forbidden_actions:
+        type: array
+        uniqueItems: true
+        items: {enum: [QUALIFICATION, RETAINED_VALIDATION, PRODUCTION_MUTATION, PR_CREATION, TASK_EXECUTION]}
+      execution_admission: {const: OWNER_EXPLICIT_EXECUTION_ADMISSION}
+      successor_reconstruction_challenge:
+        type: array
+        maxItems: 10
   accumulated_learning:
     type: object
     additionalProperties: false
