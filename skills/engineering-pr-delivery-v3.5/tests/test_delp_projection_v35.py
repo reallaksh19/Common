@@ -1016,6 +1016,65 @@ class ResponsibilityCurrentnessProjection(unittest.TestCase):
                     M.require_facts(record)
 
 
+    def test_claim_semantics_bind_the_existing_contract_currentness_chain(self):
+        old = stable_claim_topology_graph()
+        old_indexed = M.validate_graph(old)
+        old_digest = old_indexed["nodes"]["Common#592"]["contract_digest"]
+        record = bound_facts(old, units=[unit("U01")])
+
+        changed = copy.deepcopy(old)
+        changed["programme"]["acceptance_claims"][0]["claim"] = "the changed semantic product outcome exists"
+        leaf = leaf_of(changed, "Common#592")
+        leaf["spec_generation"] = 2
+
+        changed_indexed = M.validate_graph(changed)
+        self.assertNotEqual(old_digest, changed_indexed["nodes"]["Common#592"]["contract_digest"])
+
+        projected = M.project(changed, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual((0, 0), (projected["progress"]["P"], projected["progress"]["E"]))
+        self.assertNotEqual(old_digest, projected["currentness"]["contract_digest"])
+
+    def test_unrelated_parent_claim_edit_does_not_stale_unrelated_leaf_contract(self):
+        g = stable_claim_topology_graph()
+        before = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+
+        changed = copy.deepcopy(g)
+        gate_claim = next(c for c in changed["programme"]["acceptance_claims"] if c["id"] == "PC-GATE")
+        gate_claim["claim"] = "the changed delivery gate passes"
+        after = M.validate_graph(changed)["nodes"]["Common#592"]["contract_digest"]
+
+        self.assertEqual(before, after)
+
+    def test_changing_claim_relationship_changes_leaf_contract_digest(self):
+        g = stable_claim_topology_graph()
+        before = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+
+        changed = copy.deepcopy(g)
+        relation = next(
+            r for r in leaf_of(changed, "Common#592")["claim_relationships"]
+            if r["claim_id"] == "PC-PRODUCT"
+        )
+        relation["relation"] = "ENABLES"
+        after = M.validate_graph(changed)["nodes"]["Common#592"]["contract_digest"]
+
+        self.assertNotEqual(before, after)
+
+    def test_claim_topology_does_not_break_reparent_reweight_conservation(self):
+        old = stable_claim_topology_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        before = M.project(old, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+
+        moved = copy.deepcopy(old)
+        leaf = leaf_of(moved, "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        after = M.project(moved, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+
+        self.assertEqual(before["identity"]["contract_digest"], after["identity"]["contract_digest"])
+        self.assertEqual(before["progress"], after["progress"])
+        self.assertNotEqual(before["currentness"]["graph_digest"], after["currentness"]["graph_digest"])
+
+
 class ProviderObservationNormalization(unittest.TestCase):
     def test_typed_and_legacy_equivalent_truth_project_the_same_nodes(self):
         legacy = {
@@ -2534,6 +2593,41 @@ def planned(mode="ENFORCED", **policy):
     return g
 
 
+def claim_topology_planned():
+    """V3.5 claim topology fixture using explicit OWN / ENABLES / GATE relationships."""
+    g = planned()
+    g["programme"]["acceptance_claims"] = [
+        {"id": "PC-PRODUCT", "claim": "the semantic product outcome exists", "kind": "SEMANTIC"},
+        {"id": "PC-ENABLE", "claim": "a durable enabling contract exists", "kind": "SEMANTIC"},
+        {"id": "PC-GATE", "claim": "the exact-head delivery gate passes", "kind": "DELIVERY_GATE"},
+    ]
+    leaf_of(g, "Common#592")["claim_relationships"] = [
+        {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+        {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+    ]
+    leaf_of(g, "Common#594")["claim_relationships"] = [
+        {"claim_id": "PC-GATE", "relation": "GATE"},
+    ]
+    return g
+
+
+def stable_claim_topology_graph():
+    g = stable_graph()
+    g["programme"]["acceptance_claims"] = [
+        {"id": "PC-PRODUCT", "claim": "the semantic product outcome exists", "kind": "SEMANTIC"},
+        {"id": "PC-ENABLE", "claim": "a durable enabling contract exists", "kind": "SEMANTIC"},
+        {"id": "PC-GATE", "claim": "the exact-head delivery gate passes", "kind": "DELIVERY_GATE"},
+    ]
+    leaf_of(g, "Common#592")["claim_relationships"] = [
+        {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+        {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+    ]
+    leaf_of(g, "Common#594")["claim_relationships"] = [
+        {"claim_id": "PC-GATE", "relation": "GATE"},
+    ]
+    return g
+
+
 def with_weights(g, ref, weights):
     leaf_of(g, ref)["units"] = [{"id": f"U{i}", "weight": w, "verify": "check passes"} for i, w in enumerate(weights, 1)]
     return g
@@ -2661,6 +2755,128 @@ class DecompositionPolicyValidation(unittest.TestCase):
         policy_only = {"id": "PU-2", "kind": "POLICY_CHANGE", "reason": "r"}
         g["plan_updates"] = [policy_only]
         M.validate_graph(g)  # a policy change names no units or nodes
+
+
+class ClaimTopologyContract(unittest.TestCase):
+    def test_claim_topology_schema_and_engine_agree(self):
+        g = claim_topology_planned()
+        self.assertEqual([], SchemasAgreeWithTheEngine().schema_errors("execution-graph", g))
+        indexed = M.validate_graph(g)
+        self.assertEqual(
+            ["PC-ENABLE", "PC-GATE", "PC-PRODUCT"],
+            [row["id"] for row in indexed["acceptance_claims"]],
+        )
+        self.assertEqual(
+            [
+                {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+                {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+            ],
+            indexed["nodes"]["Common#592"]["claim_relationships"],
+        )
+
+    def test_claim_topology_shape_errors_fail_schema_and_engine(self):
+        cases = []
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"][0]["kind"] = "MECHANISM"
+        cases.append(("claim kind", g))
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"][0]["shared"] = "yes"
+        cases.append(("shared type", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"][0]["relation"] = "REVIEW"
+        cases.append(("relation kind", g))
+
+        for label, bad in cases:
+            with self.subTest(label):
+                self.assertTrue(SchemasAgreeWithTheEngine().schema_errors("execution-graph", bad))
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_claim_topology_relational_invariants_fail_closed_in_engine(self):
+        cases = []
+
+        g = claim_topology_planned()
+        g["programme"]["acceptance_claims"].append(
+            {"id": "PC-PRODUCT", "claim": "duplicate", "kind": "SEMANTIC"}
+        )
+        cases.append(("duplicate claim id", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"][0]["claim_id"] = "PC-MISSING"
+        cases.append(("unknown claim target", g))
+
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"].append(
+            {"claim_id": "PC-PRODUCT", "relation": "ENABLES"}
+        )
+        cases.append(("duplicate relationship target", g))
+
+        for label, bad in cases:
+            with self.subTest(label), self.assertRaises(M.GraphError):
+                M.validate_graph(bad)
+
+    def test_legacy_graph_without_claim_topology_remains_readable(self):
+        indexed = M.validate_graph(planned())
+        self.assertEqual([], indexed["acceptance_claims"])
+        self.assertEqual([], indexed["nodes"]["Common#592"]["claim_relationships"])
+
+
+class ClaimTopologyReport(unittest.TestCase):
+    def test_report_distinguishes_ownership_enabling_and_gate_coverage(self):
+        report = M.claim_topology_report(claim_topology_planned())
+        rows = {row["id"]: row for row in report["claims"]}
+        self.assertEqual("OWNED", rows["PC-PRODUCT"]["coverage"])
+        self.assertEqual(["Common#592"], rows["PC-PRODUCT"]["owners"])
+        self.assertEqual("UNCOVERED", rows["PC-ENABLE"]["coverage"])
+        self.assertEqual(["Common#592"], rows["PC-ENABLE"]["enablers"])
+        self.assertEqual("COVERED", rows["PC-GATE"]["coverage"])
+        self.assertEqual(["Common#594"], rows["PC-GATE"]["gates"])
+        self.assertEqual(1, report["summary"]["uncovered_claims"])
+        self.assertEqual(1, report["summary"]["orphan_responsibilities"])
+        self.assertEqual("DERIVED_CLAIM_TOPOLOGY_ONLY", report["authority"])
+
+    def test_enables_and_gate_do_not_masquerade_as_semantic_ownership(self):
+        g = claim_topology_planned()
+        leaf_of(g, "Common#592")["claim_relationships"] = [
+            {"claim_id": "PC-PRODUCT", "relation": "GATE"},
+            {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+        ]
+        report = M.claim_topology_report(g)
+        rows = {row["id"]: row for row in report["claims"]}
+        self.assertEqual("UNCOVERED", rows["PC-PRODUCT"]["coverage"])
+        self.assertEqual([], rows["PC-PRODUCT"]["owners"])
+        self.assertEqual(["Common#592"], rows["PC-PRODUCT"]["gates"])
+
+    def test_duplicate_nonshared_ownership_is_observed_not_enforced(self):
+        g = claim_topology_planned()
+        leaf_of(g, "Common#594")["claim_relationships"] = [
+            {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+            {"claim_id": "PC-GATE", "relation": "GATE"},
+        ]
+        report = M.claim_topology_report(g)
+        product = next(row for row in report["claims"] if row["id"] == "PC-PRODUCT")
+        self.assertEqual(["Common#592", "Common#594"], product["duplicate_owners"])
+        self.assertEqual(1, report["summary"]["duplicate_nonshared_ownership"])
+        # R1 reports the fact only: the existing decompose-check remains unchanged.
+        self.assertTrue(M.decomposition_report(g)["leaves"]["Common#592"]["releasable"])
+
+        for claim in g["programme"]["acceptance_claims"]:
+            if claim["id"] == "PC-PRODUCT":
+                claim["shared"] = True
+        shared = M.claim_topology_report(g)
+        product = next(row for row in shared["claims"] if row["id"] == "PC-PRODUCT")
+        self.assertEqual([], product["duplicate_owners"])
+
+    def test_report_is_deterministic_under_claim_and_relation_input_order(self):
+        g = claim_topology_planned()
+        first = M.canonical_json(M.claim_topology_report(g))
+        g["programme"]["acceptance_claims"].reverse()
+        leaf_of(g, "Common#592")["claim_relationships"].reverse()
+        second = M.canonical_json(M.claim_topology_report(g))
+        self.assertEqual(first, second)
 
 
 class DecompositionRules(unittest.TestCase):

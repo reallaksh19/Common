@@ -11,6 +11,23 @@ description: >-
 $defs:
   ref: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
   item_key: {type: string, pattern: '^[^:\s]+:(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  claim_id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  acceptance_claim:
+    type: object
+    additionalProperties: false
+    required: [id, claim, kind]
+    properties:
+      id: {$ref: '#/$defs/claim_id'}
+      claim: {type: string, minLength: 1, pattern: '.*\S.*'}
+      kind: {enum: [SEMANTIC, DELIVERY_GATE]}
+      shared: {type: boolean, default: false}
+  claim_relationship:
+    type: object
+    additionalProperties: false
+    required: [claim_id, relation]
+    properties:
+      claim_id: {$ref: '#/$defs/claim_id'}
+      relation: {enum: [OWN, ENABLES, GATE]}
   size_budget:
     type: object
     additionalProperties: false
@@ -54,6 +71,13 @@ properties:
         type: integer
         minimum: 1
         description: Display scale for unit points (default 10000). Shares are exact fractions; this never changes a percentage.
+      acceptance_claims:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/acceptance_claim'}
+        description: >-
+          Parent outcome claims used by the V3.5 Responsibility topology. SEMANTIC claims describe the
+          programme/product/architecture outcome; DELIVERY_GATE claims describe qualification/delivery conditions.
       health_policy:
         type: object
         additionalProperties: false
@@ -198,6 +222,14 @@ properties:
           items: {$ref: '#/$defs/ref'}
           description: Leaves whose overlapping write surface is safe to edit in parallel; needs parallel_ok_basis.
         parallel_ok_basis: {type: string}
+        claim_relationships:
+          type: array
+          uniqueItems: true
+          items: {$ref: '#/$defs/claim_relationship'}
+          description: >-
+            Relationship from this LEAF Responsibility to a declared parent acceptance claim.
+            OWN directly satisfies a claim; ENABLES establishes a durable prerequisite/capability;
+            GATE verifies or qualifies the claim and is not semantic ownership.
         transformation_boundaries:
           type: array
           uniqueItems: true

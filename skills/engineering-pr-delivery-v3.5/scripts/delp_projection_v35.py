@@ -83,6 +83,8 @@ COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
 POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
 WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
+CLAIM_KINDS = ("SEMANTIC", "DELIVERY_GATE")
+CLAIM_RELATIONS = ("OWN", "ENABLES", "GATE")
 TRANSFORMATION_BOUNDARIES = (
     "WIRE_SCHEMA",
     "ENGINE_VALIDATION",
@@ -634,14 +636,37 @@ def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     return value
 
 
-def responsibility_contract_basis(node: Mapping[str, Any], nodes: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+def responsibility_contract_basis(
+    node: Mapping[str, Any],
+    nodes: Mapping[str, Mapping[str, Any]],
+    claims_by_id: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Semantic/execution contract whose digest binds evidence, excluding provider/topology metadata."""
     dependencies = sorted(
         str(nodes[ref].get("responsibility_id") or ref)
         for ref in node.get("depends_on") or []
     )
+    claims_by_id = claims_by_id or {}
+    claim_relationships = []
+    for relation in node.get("claim_relationships") or []:
+        claim = claims_by_id.get(relation["claim_id"])
+        if claim is None:
+            raise GraphError(
+                f"{node.get('ref', '<leaf>')}.claim_relationships: missing normalized claim {relation['claim_id']!r}"
+            )
+        claim_relationships.append(
+            {
+                "claim_id": claim["id"],
+                "claim": claim["claim"],
+                "kind": claim["kind"],
+                "shared": claim["shared"],
+                "relation": relation["relation"],
+            }
+        )
+    claim_relationships.sort(key=lambda row: (row["claim_id"], row["relation"]))
     return {
         "responsibility_id": node.get("responsibility_id"),
+        "claim_relationships": claim_relationships,
         "outcome": node.get("outcome"),
         "units": sorted(
             (
@@ -1070,6 +1095,71 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
     return rows
 
 
+
+def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
+    """Normalize parent acceptance claims without making an admission decision."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError("programme.acceptance_claims: must be an array")
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        where = f"programme.acceptance_claims[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        extra = sorted(set(map(str, raw)) - {"id", "claim", "kind", "shared"})
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
+        claim_id = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(claim_id) or claim_id in seen:
+            raise GraphError(f"{where}.id: invalid or duplicate claim id {claim_id!r}")
+        claim = raw.get("claim")
+        if not isinstance(claim, str) or not claim.strip():
+            raise GraphError(f"{where}.claim: must be a non-blank string")
+        kind = raw.get("kind")
+        if kind not in CLAIM_KINDS:
+            raise GraphError(f"{where}.kind: one of {list(CLAIM_KINDS)}")
+        shared = raw.get("shared", False)
+        if not isinstance(shared, bool):
+            raise GraphError(f"{where}.shared: must be boolean")
+        seen.add(claim_id)
+        rows.append({"id": claim_id, "claim": claim.strip(), "kind": kind, "shared": shared})
+    return sorted(rows, key=lambda row: row["id"])
+
+
+def _claim_relationships(
+    value: Any, leaf_ref: str, claims_by_id: Mapping[str, Mapping[str, Any]]
+) -> list[dict[str, str]]:
+    """Normalize one leaf's claim relationships and reject undeclared/conflicting targets."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError(f"{leaf_ref}.claim_relationships: must be an array")
+    rows: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(value):
+        where = f"{leaf_ref}.claim_relationships[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        extra = sorted(set(map(str, raw)) - {"claim_id", "relation"})
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
+        claim_id = str(raw.get("claim_id") or "")
+        if not _UNIT_ID.fullmatch(claim_id):
+            raise GraphError(f"{where}.claim_id: invalid claim id {claim_id!r}")
+        if claim_id not in claims_by_id:
+            raise GraphError(f"{where}.claim_id: undeclared parent claim {claim_id!r}")
+        if claim_id in seen:
+            raise GraphError(f"{leaf_ref}.claim_relationships: duplicate relationship target {claim_id!r}")
+        relation = raw.get("relation")
+        if relation not in CLAIM_RELATIONS:
+            raise GraphError(f"{where}.relation: one of {list(CLAIM_RELATIONS)}")
+        seen.add(claim_id)
+        rows.append({"claim_id": claim_id, "relation": str(relation)})
+    return sorted(rows, key=lambda row: (row["claim_id"], row["relation"]))
+
+
 def resolve_policy(overrides: Any) -> dict[str, Any]:
     """Merge `programme.decomposition_policy` over the defaults and validate it. Raises GraphError."""
     policy = copy.deepcopy(DEFAULT_POLICY)
@@ -1165,6 +1255,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         raise GraphError(f"programme.root: {exc}") from exc
     policy = resolve_policy(programme.get("decomposition_policy"))
     health_policy = resolve_health_policy(programme.get("health_policy"))
+    acceptance_claims = _acceptance_claims(programme.get("acceptance_claims"))
+    claims_by_id = {row["id"]: row for row in acceptance_claims}
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -1265,6 +1357,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                 not isinstance(integration_basis, str) or not integration_basis.strip()
             ):
                 raise GraphError(f"{ref}.integration_basis: must be a non-blank string")
+            claim_relationships = _claim_relationships(raw.get("claim_relationships"), ref, claims_by_id)
             node.update(
                 {
                     "units": clean_units,
@@ -1286,6 +1379,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "depends_on": _ref_list(raw.get("depends_on"), f"{ref}.depends_on"),
                     "parallel_ok": _ref_list(raw.get("parallel_ok"), f"{ref}.parallel_ok"),
                     "parallel_ok_basis": (basis or "").strip() or None,
+                    "claim_relationships": claim_relationships,
                     "transformation_boundaries": _transformation_boundaries(
                         raw.get("transformation_boundaries"), ref
                     ),
@@ -1397,7 +1491,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     if declared_graph_generation:
         for ref in leaf_by_number.values():
             node = nodes[ref]
-            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes))
+            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes, claims_by_id))
             asserted_digest = node.get("contract_digest")
             if asserted_digest is not None and asserted_digest != derived_digest:
                 raise GraphError(
@@ -1413,6 +1507,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "stable_identity_mode": declared_graph_generation,
         "policy": policy,
         "health_policy": health_policy,
+        "acceptance_claims": acceptance_claims,
+        "claims_by_id": claims_by_id,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
@@ -1438,6 +1534,78 @@ def lineage(indexed: Mapping[str, Any], ref: str) -> list[str]:
 # its only effects are a `plan` block, a NOT_RELEASEABLE / PLAN_GAP state (ENFORCED mode only) and the
 # FIX_PLAN continuation action.
 # --------------------------------------------------------------------------
+
+
+
+def claim_topology_report(graph: Any) -> dict[str, Any]:
+    """Pure claim/Responsibility relationship facts; never an admission or progress verdict."""
+    indexed = validate_graph(graph)
+    claims = indexed["acceptance_claims"]
+    nodes = indexed["nodes"]
+
+    by_claim: dict[str, dict[str, Any]] = {}
+    for claim in claims:
+        by_claim[claim["id"]] = {
+            "id": claim["id"],
+            "claim": claim["claim"],
+            "kind": claim["kind"],
+            "shared": claim["shared"],
+            "owners": [],
+            "enablers": [],
+            "gates": [],
+        }
+
+    responsibility_rows: list[dict[str, Any]] = []
+    for ref in indexed["order"]:
+        node = nodes[ref]
+        if node["kind"] != "LEAF":
+            continue
+        relations = list(node.get("claim_relationships") or [])
+        responsibility_rows.append(
+            {
+                "ref": ref,
+                "responsibility_id": node.get("responsibility_id"),
+                "relations": relations,
+                "orphan": not relations,
+            }
+        )
+        for rel in relations:
+            bucket = {
+                "OWN": "owners",
+                "ENABLES": "enablers",
+                "GATE": "gates",
+            }[rel["relation"]]
+            by_claim[rel["claim_id"]][bucket].append(ref)
+
+    claim_rows: list[dict[str, Any]] = []
+    for claim in claims:
+        row = by_claim[claim["id"]]
+        row["owners"].sort(key=ref_number)
+        row["enablers"].sort(key=ref_number)
+        row["gates"].sort(key=ref_number)
+        if claim["kind"] == "SEMANTIC":
+            coverage = "OWNED" if row["owners"] else "UNCOVERED"
+        else:
+            coverage = "COVERED" if row["owners"] or row["gates"] else "UNCOVERED"
+        row["coverage"] = coverage
+        row["duplicate_owners"] = (
+            list(row["owners"]) if len(row["owners"]) > 1 and not claim["shared"] else []
+        )
+        claim_rows.append(row)
+
+    claim_rows.sort(key=lambda row: row["id"])
+    responsibility_rows.sort(key=lambda row: ref_number(row["ref"]))
+    return {
+        "authority": "DERIVED_CLAIM_TOPOLOGY_ONLY",
+        "claims": claim_rows,
+        "responsibilities": responsibility_rows,
+        "summary": {
+            "claims": len(claim_rows),
+            "uncovered_claims": sum(1 for row in claim_rows if row["coverage"] == "UNCOVERED"),
+            "orphan_responsibilities": sum(1 for row in responsibility_rows if row["orphan"]),
+            "duplicate_nonshared_ownership": sum(1 for row in claim_rows if row["duplicate_owners"]),
+        },
+    }
 
 
 def _finding(code: str, detail: str, severity: str = "BLOCKER") -> dict[str, str]:
