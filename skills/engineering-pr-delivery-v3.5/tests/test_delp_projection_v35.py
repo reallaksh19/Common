@@ -1407,6 +1407,63 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual(M.FACTS_SCHEMA, self.schema("checkpoint-facts")["$id"])
         self.assertEqual(M.GRAPH_SCHEMA, self.schema("execution-graph")["$id"])
         self.assertEqual(M.STATUS_SCHEMA, self.schema("live-status")["$id"])
+        self.assertEqual(M.OBSERVATION_SCHEMA, self.schema("responsibility-observation")["$id"])
+
+    def test_good_observation_passes_schema_and_engine(self):
+        record = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {
+                "candidate_sha": SHA_A,
+                "base_sha": SHA_MAIN,
+                "pr_state": "OPEN",
+                "ahead_by": 2,
+                "behind_by": 1,
+            },
+            "custody": {
+                "interruptions": {
+                    "coverage_from": "2026-10-07T00:00:00Z",
+                    "losses": [{"kind": "STREAM"}],
+                }
+            },
+            "liveness": {"value": "ACTIVE"},
+            "check": {"name": "optional", "result": "SUCCESS", "candidate_sha": SHA_A},
+            "diff": {
+                "additions": 10,
+                "deletions": 2,
+                "since_checkpoint": {"additions": 3, "deletions": 1},
+            },
+        }
+        self.assertEqual([], self.schema_errors("responsibility-observation", record))
+        self.assertEqual([], M.validate_observation(record))
+
+    def test_unavailable_observation_can_omit_all_optional_categories(self):
+        record = {"schema": M.OBSERVATION_SCHEMA, "visibility": "UNAVAILABLE"}
+        self.assertEqual([], self.schema_errors("responsibility-observation", record))
+        self.assertEqual([], M.validate_observation(record))
+
+    def test_bad_observations_fail_schema_and_engine(self):
+        good = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+        }
+        variants = []
+        for mutate in (
+            lambda x: x.__setitem__("visibility", "FAIL"),
+            lambda x: x["material"].__setitem__("candidate_sha", "abc123"),
+            lambda x: x.__setitem__("liveness", {"value": "DEAD"}),
+            lambda x: x.__setitem__("diff", {"additions": -1}),
+            lambda x: x.__setitem__("check", {"result": "GREEN"}),
+            lambda x: x.__setitem__("surprise", True),
+        ):
+            row = copy.deepcopy(good)
+            mutate(row)
+            variants.append(row)
+        for record in variants:
+            with self.subTest(record=record):
+                self.assertTrue(self.schema_errors("responsibility-observation", record), "schema accepted it")
+                self.assertTrue(M.validate_observation(record), "engine accepted it")
 
     def test_good_facts_pass_both(self):
         record = facts(units=[unit("U01", candidate_sha=SHA_B, contract_digest=DIGEST)], activity="WAITING_CI",
