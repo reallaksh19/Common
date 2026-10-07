@@ -63,12 +63,24 @@ $defs:
         type: array
         minItems: 1
         items: {$ref: '#/$defs/proposed_unit'}
+  proposal_binding:
+    type: object
+    additionalProperties: false
+    required: [responsibility_id, ref]
+    properties:
+      responsibility_id: {$ref: '#/$defs/claim_id'}
+      ref: {$ref: '#/$defs/ref'}
   decomposition_proposal:
     type: object
     additionalProperties: false
     required: [version, responsibilities]
     properties:
       version: {const: V2}
+      released_proposal_digest: {$ref: '#/$defs/digest'}
+      bindings:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/proposal_binding'}
       responsibilities:
         type: array
         minItems: 1
