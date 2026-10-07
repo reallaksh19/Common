@@ -3798,7 +3798,7 @@ class AgentMetrics689ProposalV2Gate(unittest.TestCase):
                                     "id": "IN-INCONCLUSIVE-SAFETY",
                                     "kind": "SEMANTIC",
                                     "weight": 34,
-                                    "outcome": "Incomplete, reversing, or conflicting quality observations map conservatively to bounded replay/review/checkpoint advice.",
+                                    "outcome": "Incomplete, reversing, or conflicting quality observations produce conservative bounded execution-safety advice rather than a fabricated capability conclusion.",
                                     "verify": "incomplete/mixed/conflicting policy oracle",
                                 },
                                 {
