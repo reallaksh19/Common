@@ -1565,8 +1565,6 @@ def graph_diff(old_graph: Any, new_graph: Any) -> dict[str, Any]:
             "added": sum(1 for s in origin.values() if s is None),
             "dropped": len(dropped),
             "new_plan_updates": len(fresh),
-            "contracts_changed": contracts_changed,
-            "spec_generation_bumps": generation_bumps,
         },
     }
 
