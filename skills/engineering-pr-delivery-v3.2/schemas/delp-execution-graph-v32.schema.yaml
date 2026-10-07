@@ -15,10 +15,11 @@ $defs:
   proposed_unit:
     type: object
     additionalProperties: false
-    required: [id, kind, outcome, verify]
+    required: [id, kind, weight, outcome, verify]
     properties:
       id: {$ref: '#/$defs/claim_id'}
       kind: {enum: [SEMANTIC, DELIVERY_GATE, MECHANICAL]}
+      weight: {type: integer, minimum: 1}
       outcome: {type: string, minLength: 1, pattern: '.*\\S.*'}
       verify: {type: string, minLength: 1, pattern: '.*\\S.*'}
   mechanism_exception:
@@ -32,10 +33,17 @@ $defs:
         minItems: 1
         uniqueItems: true
         items: {$ref: '#/$defs/claim_id'}
+  claim_allocation:
+    type: object
+    additionalProperties: false
+    required: [claim_id, weight]
+    properties:
+      claim_id: {$ref: '#/$defs/claim_id'}
+      weight: {type: integer, minimum: 1}
   proposed_responsibility:
     type: object
     additionalProperties: false
-    required: [id, work_class, owns_claims, outcome, independence_basis, semantic_units]
+    required: [id, work_class, owns_claims, claim_allocations, outcome, independence_basis, semantic_units]
     properties:
       id: {$ref: '#/$defs/claim_id'}
       work_class: {enum: [PRODUCT, MECHANICAL, GATE]}
@@ -44,6 +52,10 @@ $defs:
         minItems: 1
         uniqueItems: true
         items: {$ref: '#/$defs/claim_id'}
+      claim_allocations:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/claim_allocation'}
       outcome: {type: string, minLength: 1, pattern: '.*\\S.*'}
       independence_basis: {type: string, minLength: 1, pattern: '.*\\S.*'}
       mechanism_exception: {$ref: '#/$defs/mechanism_exception'}
@@ -69,6 +81,7 @@ $defs:
       id: {$ref: '#/$defs/claim_id'}
       claim: {type: string, minLength: 1, pattern: '.*\S.*'}
       kind: {enum: [SEMANTIC, DELIVERY_GATE]}
+      weight: {type: integer, minimum: 1}
       shared:
         type: boolean
         default: false
