@@ -117,6 +117,42 @@ OBS_A = {
 }
 
 
+
+
+class PreMaterializationProposalIdentity(unittest.TestCase):
+    def proposal_graph(self):
+        return {
+            "schema": M.GRAPH_SCHEMA,
+            "programme": {
+                "id": "PRE-MATERIALIZATION-V2",
+                "root": "Common#703",
+                "decomposition_proposal": {
+                    "version": "V2",
+                    "responsibilities": [{"id": "R-ONE"}, {"id": "R-TWO"}],
+                },
+            },
+            "nodes": [{"ref": "Common#703", "kind": "ROOT"}],
+        }
+
+    def test_root_only_graph_accepts_proposed_responsibility_ids_without_child_refs(self):
+        indexed = M.validate_graph(self.proposal_graph())
+        self.assertEqual(
+            ["R-ONE", "R-TWO"],
+            [row["id"] for row in indexed["decomposition_proposal"]["responsibilities"]],
+        )
+        self.assertEqual(["Common#703"], indexed["order"])
+
+    def test_proposal_rejects_provider_ref_and_duplicate_identity(self):
+        with_ref = self.proposal_graph()
+        with_ref["programme"]["decomposition_proposal"]["responsibilities"][0]["ref"] = "Common#999"
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(with_ref)
+
+        duplicate = self.proposal_graph()
+        duplicate["programme"]["decomposition_proposal"]["responsibilities"][1]["id"] = "R-ONE"
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(duplicate)
+
 class FactsAreTheOnlyAgentInput(unittest.TestCase):
     def test_agent_authored_projection_fields_are_rejected(self):
         bad = [
