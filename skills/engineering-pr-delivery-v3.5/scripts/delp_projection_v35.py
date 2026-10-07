@@ -43,6 +43,7 @@ GRAPH_SCHEMA = f"{SCHEMA_PREFIX}-execution-graph"
 PROJECTION_SCHEMA = f"{SCHEMA_PREFIX}-projection"
 STATUS_SCHEMA = f"{SCHEMA_PREFIX}-live-status"
 OBSERVATION_SCHEMA = f"{SCHEMA_PREFIX}-responsibility-observation"
+CONDITION_SCHEMA = f"{SCHEMA_PREFIX}-responsibility-condition"
 DECOMPOSITION_SCHEMA = f"{SCHEMA_PREFIX}-decomposition-report"
 DIFF_SCHEMA = f"{SCHEMA_PREFIX}-graph-diff"
 FACTS_KEY = "CHECKPOINT_FACTS_V1"
@@ -485,6 +486,100 @@ def normalize_observations(
             raise DelpError(f"observation key {supplied_ref!r}: duplicate observation for {leaf_ref}")
         normalized[number] = normalize_observation(observation)
     return normalized
+
+
+CONDITION_TYPES = frozenset(
+    {
+        "PlanReady",
+        "SpecCurrent",
+        "MaterialObserved",
+        "EvidenceCurrent",
+        "DependenciesReady",
+        "CustodySafe",
+        "AssuranceSatisfied",
+        "ProviderVisible",
+    }
+)
+CONDITION_STATUSES = frozenset({"TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"})
+_CONDITION_FIELDS = frozenset(
+    {"type", "status", "reason", "message", "observed_generation", "candidate_sha", "source_refs"}
+)
+
+
+def validate_condition(condition: Any) -> list[str]:
+    """Validate one canonical derived Responsibility condition record."""
+    if not isinstance(condition, Mapping):
+        return ["condition: must be a mapping"]
+
+    errors: list[str] = []
+    keys = set(map(str, condition))
+    missing = sorted(_CONDITION_FIELDS - keys)
+    extra = sorted(keys - _CONDITION_FIELDS)
+    if missing:
+        errors.append(f"condition: missing fields {missing}")
+    if extra:
+        errors.append(f"condition: unknown fields {extra}")
+
+    kind = condition.get("type")
+    if not isinstance(kind, str) or kind not in CONDITION_TYPES:
+        errors.append(f"type: one of {sorted(CONDITION_TYPES)}")
+
+    status = condition.get("status")
+    if not isinstance(status, str) or status not in CONDITION_STATUSES:
+        errors.append(f"status: one of {sorted(CONDITION_STATUSES)}")
+
+    for key in ("reason", "message"):
+        value = condition.get(key)
+        if not isinstance(value, str) or not value.strip():
+            errors.append(f"{key}: must be a non-blank string")
+
+    generation = condition.get("observed_generation")
+    if generation is not None and (
+        isinstance(generation, bool) or not isinstance(generation, int) or generation < 1
+    ):
+        errors.append("observed_generation: positive integer or null")
+
+    candidate = condition.get("candidate_sha")
+    if candidate is not None and (
+        not isinstance(candidate, str) or not _SHA.fullmatch(candidate)
+    ):
+        errors.append("candidate_sha: 40-hex lowercase or null")
+
+    refs = condition.get("source_refs")
+    if not isinstance(refs, list):
+        errors.append("source_refs: must be an array")
+    else:
+        if any(not isinstance(ref, str) or not ref.strip() for ref in refs):
+            errors.append("source_refs: every item must be a non-blank string")
+        elif len(refs) != len(set(refs)):
+            errors.append("source_refs: items must be unique")
+    return errors
+
+
+def condition_record(
+    condition_type: str,
+    status: str,
+    reason: str,
+    message: str,
+    *,
+    observed_generation: int | None = None,
+    candidate_sha: str | None = None,
+    source_refs: Iterable[str] = (),
+) -> dict[str, Any]:
+    """Construct one valid canonical condition record or fail closed."""
+    record = {
+        "type": condition_type,
+        "status": status,
+        "reason": reason,
+        "message": message,
+        "observed_generation": observed_generation,
+        "candidate_sha": candidate_sha,
+        "source_refs": list(source_refs),
+    }
+    errors = validate_condition(record)
+    if errors:
+        raise DelpError("invalid responsibility condition: " + "; ".join(errors))
+    return record
 
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
