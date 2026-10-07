@@ -1328,6 +1328,9 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             independence_basis = raw.get("independence_basis")
             if independence_basis is not None and not isinstance(independence_basis, str):
                 raise GraphError(f"{ref}.independence_basis: must be a string")
+            acceptance_methods = _str_list(raw.get("acceptance_methods"), f"{ref}.acceptance_methods")
+            if len(acceptance_methods) != len(set(acceptance_methods)):
+                raise GraphError(f"{ref}.acceptance_methods: duplicates are not allowed")
             owns_claims = _str_list(raw.get("owns_claims"), f"{ref}.owns_claims")
             for cid in owns_claims:
                 if not _UNIT_ID.fullmatch(cid):
@@ -1356,6 +1359,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "parallel_ok_basis": (basis or "").strip() or None,
                     "owns_claims": sorted(set(owns_claims)),
                     "independence_basis": (independence_basis or "").strip() or None,
+                    "acceptance_methods": sorted(acceptance_methods),
                 }
             )
             if node["primary_pr"] is not None:
@@ -1915,6 +1919,10 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                 findings[rid].append(_finding("BINDING_SIZE_BUDGET_MISMATCH", f"{requested_ref} size budget differs"))
             if node.get("write_surface") != proposed["write_surface"]:
                 findings[rid].append(_finding("BINDING_WRITE_SURFACE_MISMATCH", f"{requested_ref} write surface differs"))
+            if node.get("acceptance_methods") != proposed["acceptance_methods"]:
+                findings[rid].append(
+                    _finding("BINDING_ACCEPTANCE_METHOD_MISMATCH", f"{requested_ref} acceptance methods differ from proposal")
+                )
             expected_units = [
                 {
                     "id": unit["id"],
@@ -1940,6 +1948,12 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
             actual_deps = set(node.get("depends_on") or [])
             if {ref_number(x) for x in actual_deps} != {ref_number(x) for x in expected_deps}:
                 findings[rid].append(_finding("BINDING_DEPENDENCY_MISMATCH", f"{requested_ref} dependencies differ from proposal"))
+            expected_parallel = {binding_by_id[peer] for peer in proposed["parallel_ok"] if peer in binding_by_id}
+            actual_parallel = set(node.get("parallel_ok") or [])
+            if {ref_number(x) for x in actual_parallel} != {ref_number(x) for x in expected_parallel}:
+                findings[rid].append(_finding("BINDING_PARALLEL_MISMATCH", f"{requested_ref} parallel topology differs from proposal"))
+            if node.get("parallel_ok_basis") != proposed["parallel_ok_basis"]:
+                findings[rid].append(_finding("BINDING_PARALLEL_BASIS_MISMATCH", f"{requested_ref} parallel basis differs from proposal"))
             share = Fraction(1)
             chain = lineage(indexed, target)
             for child_ref in chain[1:]:
