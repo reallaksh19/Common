@@ -212,7 +212,7 @@ The authority rules are deliberately asymmetric:
 - no CI/check observation is universally required;
 - no repeated manual transcription, heartbeat comment, or per-poll persistence is required.
 
-`normalize_observation()` keeps legacy flat observation files readable while typed inputs carry explicit category currentness. `normalize_observations()` resolves observation locators only to declared leaves and rejects unknown/duplicate/cross-repository fully-qualified inputs. `observe_github()` emits typed MATERIAL observations; it does not fabricate CHECK, DIFF, LIVENESS or CUSTODY data it did not observe.
+`normalize_observation()` keeps legacy flat observation files readable while typed inputs carry explicit category currentness. `normalize_observations()` resolves observation locators only to declared leaves, rejects unknown/duplicate inputs, and—when `programme.repository` is declared—rejects a fully-qualified owner/repo locator from another repository. `observe_github()` emits typed MATERIAL observations; it does not fabricate CHECK, DIFF, LIVENESS or CUSTODY data it did not observe.
 
 The design goal is continuity per unit of agent effort: provider-known state is captured by adapters and reconciliation, while the executor publishes only irreducible semantic evidence.
 
