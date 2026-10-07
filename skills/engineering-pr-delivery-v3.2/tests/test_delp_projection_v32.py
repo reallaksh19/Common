@@ -2471,6 +2471,322 @@ class FrontierSnapshotAndDrift(unittest.TestCase):
         self.assertEqual([], [c for c in gh.calls if c[0] in {"POST", "PATCH_COMMENT", "PATCH_TITLE"}])  # nothing was written
 
 
+# --------------------------------------------------------------------------
+# agent health: observed or derived, never declared; advisory
+# --------------------------------------------------------------------------
+
+
+def with_health(mode="ADVISORY", g=None, **policy):
+    g = copy.deepcopy(g or graph())
+    g["programme"]["health_policy"] = {"mode": mode, **policy}
+    return g
+
+
+FULL_OBS = {  # every health input observed, all inside the written limits
+    "candidate_sha": SHA_A,
+    "pr_state": "OPEN",
+    "base_sha": SHA_MAIN,
+    "behind_by": 0,
+    "additions": 120,
+    "deletions": 30,
+    "since_checkpoint": {"additions": 40, "deletions": 5, "commits": 1},
+    "liveness": "ACTIVE",
+    "interruptions": {"coverage_from": "2026-10-07T00:00:00Z", "losses": []},
+}
+STARTED = [entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "continue"}), 1)]
+
+
+class AgentHealth(unittest.TestCase):
+    def health(self, over=None, drop=(), ledger=None, g=None, ref="Common#592"):
+        obs = {**FULL_OBS, **(over or {})}
+        for key in drop:
+            obs.pop(key, None)
+        node = M.project(g or with_health(), STARTED if ledger is None else ledger, {ref: obs})["nodes"][ref]
+        return node.get("health")
+
+    @staticmethod
+    def statuses(h):
+        return {name: c["status"] for name, c in h["components"].items()}
+
+    def test_off_is_the_default_and_adds_nothing_anywhere(self):
+        for g in (graph(), with_health("OFF")):
+            projection = M.project(g, STARTED, {"Common#592": FULL_OBS})
+            self.assertTrue(all("health" not in n for n in projection["nodes"].values()))
+            report = M.admit(projection, "Common#592")
+            self.assertNotIn("health", report)
+            self.assertNotIn("HEALTH:", M.render_checkpoint(report))
+
+    def test_a_fully_observed_leaf_inside_every_limit_is_healthy_and_each_component_says_why(self):
+        h = self.health()
+        self.assertEqual(("HEALTHY", "🟢", True, []), (h["verdict"], h["light"], h["advisory"], h["reasons"]))
+        self.assertEqual(
+            {"materialization", "evidence", "checkpoint_distance", "size", "base_drift", "interruptions", "liveness"}, set(h["components"])
+        )
+        self.assertEqual({"OK"}, set(self.statuses(h).values()))
+        self.assertTrue(all(c["detail"] for c in h["components"].values()))
+
+    def test_unobserved_is_never_healthy(self):
+        for component, key in {
+            "checkpoint_distance": "since_checkpoint",
+            "size": "additions",
+            "base_drift": "behind_by",
+            "interruptions": "interruptions",
+            "liveness": "liveness",
+        }.items():
+            with self.subTest(component):
+                h = self.health(drop=(key,))
+                self.assertEqual("UNOBSERVED", h["components"][component]["status"])
+                self.assertEqual(("UNOBSERVED", "⚪"), (h["verdict"], h["light"]))  # six other OK components do not make it healthy
+        bare = M.project(with_health(), STARTED, {})["nodes"]["Common#592"]["health"]
+        self.assertEqual("UNOBSERVED", bare["verdict"])
+        self.assertEqual("OK", bare["components"]["materialization"]["status"])  # derived from the ledger, so it needs no observer
+        self.assertEqual({"UNOBSERVED"}, {s for n, s in self.statuses(bare).items() if n != "materialization"})
+
+    def test_the_verdict_is_the_worst_component_never_an_average(self):
+        h = self.health({"behind_by": 25})
+        self.assertEqual(("AT_RISK", "🔴", ["base_drift (25 commit(s) behind the base)"]), (h["verdict"], h["light"], h["reasons"]))
+        self.assertEqual(("WATCH", "🟡"), (self.health({"liveness": "QUIET"})["verdict"], self.health({"liveness": "QUIET"})["light"]))
+        self.assertEqual("WATCH", self.health({"liveness": "QUIET"}, drop=("behind_by",))["verdict"])  # a known concern outranks an unknown
+        h = self.health({"liveness": "STALE", "behind_by": 1}, drop=("additions",))
+        self.assertEqual("AT_RISK", h["verdict"])
+        self.assertEqual(["liveness", "base_drift", "size"], [r.split(" (")[0] for r in h["reasons"]])  # AT_RISK, then WATCH, then UNOBSERVED
+
+    def test_checkpoint_distance_follows_the_written_thresholds_exactly(self):
+        for added, deleted, expected in (
+            (249, 0, "OK"),
+            (250, 0, "WATCH"),
+            (499, 0, "WATCH"),
+            (500, 0, "AT_RISK"),
+            (100, 299, "OK"),  # 399 changed
+            (100, 300, "WATCH"),  # 400 changed: the materially-modified trigger
+            (100, 599, "WATCH"),  # 699 changed
+            (100, 600, "AT_RISK"),  # 700 changed: the hard ceiling
+        ):
+            with self.subTest(added=added, deleted=deleted):
+                h = self.health({"since_checkpoint": {"additions": added, "deletions": deleted}})
+                self.assertEqual(expected, h["components"]["checkpoint_distance"]["status"])
+        relaxed = with_health(checkpoint={"watch_added_loc": 300, "at_risk_added_loc": 600})
+        self.assertEqual("OK", self.health({"since_checkpoint": {"additions": 290, "deletions": 0}}, g=relaxed)["components"]["checkpoint_distance"]["status"])
+
+    def test_size_is_judged_against_the_declared_budget_else_the_policy_default(self):
+        for total, expected in ((700, "OK"), (701, "WATCH"), (1500, "WATCH"), (1501, "AT_RISK")):
+            with self.subTest(default=total):
+                c = self.health({"additions": total - 10, "deletions": 10})["components"]["size"]
+                self.assertEqual(expected, c["status"])
+                self.assertIn("policy default", c["detail"])
+        g = with_health()
+        leaf_of(g, "Common#592")["size_budget"] = {"target_loc": 100, "hard_loc": 200, "target_minutes": 15, "hard_minutes": 20}
+        for total, expected in ((100, "OK"), (101, "WATCH"), (200, "WATCH"), (201, "AT_RISK")):
+            with self.subTest(declared=total):
+                c = self.health({"additions": total, "deletions": 0}, g=g)["components"]["size"]
+                self.assertEqual(expected, c["status"])
+                self.assertIn("declared budget", c["detail"])
+
+    def test_base_drift_interruptions_and_liveness_thresholds(self):
+        for behind, expected in ((0, "OK"), (1, "WATCH"), (19, "WATCH"), (20, "AT_RISK")):
+            self.assertEqual(expected, self.health({"behind_by": behind})["components"]["base_drift"]["status"], behind)
+        tight = with_health(drift={"watch_behind": 5, "at_risk_behind": 10})
+        self.assertEqual("OK", self.health({"behind_by": 4}, g=tight)["components"]["base_drift"]["status"])
+        self.assertEqual("AT_RISK", self.health({"behind_by": 10}, g=tight)["components"]["base_drift"]["status"])
+        watched = "2026-10-07T00:00:00Z"
+        for losses, expected in ((0, "OK"), (1, "WATCH"), (2, "WATCH"), (3, "AT_RISK"), (4, "AT_RISK")):
+            c = self.health({"interruptions": {"coverage_from": watched, "losses": [{"kind": "STREAM"}] * losses}})["components"]["interruptions"]
+            self.assertEqual(expected, c["status"], losses)
+        self.assertIn("plans a handover at the third", c["detail"])
+        self.assertEqual("WATCH", self.health({"interruptions": {"losses": [{"kind": "STREAM"}]}})["components"]["interruptions"]["status"])  # a recorded loss counts without a coverage start
+        self.assertEqual("UNOBSERVED", self.health({"interruptions": {"losses": []}})["components"]["interruptions"]["status"])  # zero needs an observer
+        for liveness, expected in (("ACTIVE", "OK"), ("QUIET", "WATCH"), ("STALE", "AT_RISK"), (None, "UNOBSERVED")):
+            self.assertEqual(expected, self.health({"liveness": liveness})["components"]["liveness"]["status"], liveness)
+
+    def test_evidence_and_materialization_are_derived_from_the_ledger_not_declared(self):
+        self.assertEqual("OK", self.health()["components"]["evidence"]["status"])
+        gap = [entry(facts(units=[unit("U01", refs=())]), 1)]
+        c = self.health(ledger=gap)["components"]["evidence"]
+        self.assertEqual("WATCH", c["status"])
+        self.assertIn("U01:NO_EVIDENCE_REFS", c["detail"])
+        self.assertEqual("AT_RISK", self.health({"candidate_sha": SHA_B})["components"]["evidence"]["status"])  # the head moved
+        self.assertEqual("UNOBSERVED", self.health(drop=("candidate_sha",))["components"]["evidence"]["status"])
+        h = self.health(ledger=[], over={"pr_state": "MERGED"})  # work the ledger lacks
+        self.assertEqual(("AT_RISK", "UNOBSERVED"), (h["components"]["materialization"]["status"], h["components"]["evidence"]["status"]))
+
+    def test_with_nothing_ever_checkpointed_the_whole_branch_is_the_distance(self):
+        h = self.health({"additions": 2422, "deletions": 0}, drop=("since_checkpoint",), ledger=[])
+        self.assertEqual("AT_RISK", h["components"]["checkpoint_distance"]["status"])
+        self.assertIn("2422 lines authored", h["components"]["checkpoint_distance"]["detail"])
+        h = self.health({"additions": 2422, "deletions": 0}, drop=("since_checkpoint",))  # facts exist, so the distance is unknown, not the total
+        self.assertEqual("UNOBSERVED", h["components"]["checkpoint_distance"]["status"])
+
+    def test_only_started_unfinished_leaves_are_assessed(self):
+        done = [entry(facts(leaf="Common#612", pr="Common#613", units=[unit("W1")], result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"}), 2)]
+        nodes = M.project(with_health(), STARTED + done, {"Common#592": FULL_OBS, "Common#612": {"candidate_sha": SHA_A}})["nodes"]
+        self.assertIn("health", nodes["Common#592"])
+        self.assertNotIn("health", nodes["Common#594"])  # not started
+        self.assertNotIn("health", nodes["Common#612"])  # complete
+        self.assertNotIn("health", nodes["Common#610"])  # nothing started below it
+
+    def test_ancestors_roll_up_the_worst_leaf_and_name_the_at_risk_ones(self):
+        obs = {
+            "Common#592": FULL_OBS,
+            "Common#594": {"candidate_sha": SHA_A, "pr_state": "OPEN", "additions": 5000, "deletions": 0},  # unreported and far over budget
+        }
+        nodes = M.project(with_health(), STARTED, obs)["nodes"]
+        phase = nodes["Common#588"]["health"]
+        self.assertEqual(("AT_RISK", 2, {"HEALTHY": 1, "AT_RISK": 1}, ["Common#594"]), (phase["verdict"], phase["leaves"], phase["counts"], phase["at_risk"]))
+        self.assertEqual(phase, nodes["Common#527"]["health"])
+
+    def test_health_never_moves_a_number_a_state_a_title_or_an_admission_answer(self):
+        bad = {**FULL_OBS, "behind_by": 99, "additions": 5000, "liveness": "STALE"}
+        off, on = M.project(graph(), STARTED, {"Common#592": bad}), M.project(with_health(), STARTED, {"Common#592": bad})
+        strip = lambda nodes: {r: {k: v for k, v in n.items() if k != "health"} for r, n in nodes.items()}  # noqa: E731
+        self.assertEqual(strip(off["nodes"]), strip(on["nodes"]))
+        self.assertEqual("AT_RISK", on["nodes"]["Common#592"]["health"]["verdict"])
+        self.assertEqual(M.admit(off, "Common#592")["action"], M.admit(on, "Common#592")["action"])
+        title = on["nodes"]["Common#592"]["title_prefix"]
+        self.assertNotIn("AT_RISK", title)
+        self.assertNotIn("HEALTH", title)
+
+    def test_the_policy_is_validated_and_merged_over_the_written_defaults(self):
+        for label, policy in {
+            "mode": {"mode": "ENFORCED"},
+            "mode case": {"mode": "advisory"},
+            "unknown key": {"surprise": 1},
+            "watch above at-risk": {"checkpoint": {"watch_added_loc": 600}},
+            "changed watch above at-risk": {"checkpoint": {"watch_changed_loc": 800}},
+            "drift": {"drift": {"watch_behind": 30}},
+            "interruptions": {"interruptions": {"watch": 4}},
+            "unknown section key": {"checkpoint": {"extra": 1}},
+            "section not a mapping": {"checkpoint": 5},
+            "zero": {"drift": {"watch_behind": 0}},
+        }.items():
+            g = graph()
+            g["programme"]["health_policy"] = policy
+            with self.subTest(label), self.assertRaises(M.GraphError):
+                M.validate_graph(g)
+        g = graph()
+        g["programme"]["health_policy"] = "ADVISORY"
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+        merged = M.validate_graph(with_health(checkpoint={"at_risk_added_loc": 800}))["health_policy"]
+        self.assertEqual({"watch_added_loc": 250, "at_risk_added_loc": 800, "watch_changed_loc": 400, "at_risk_changed_loc": 700}, merged["checkpoint"])
+        self.assertEqual({"watch_behind": 1, "at_risk_behind": 20}, merged["drift"])
+
+    def test_the_continue_checkpoint_carries_one_advisory_health_line(self):
+        ok = M.render_checkpoint(M.admit(M.project(with_health(), STARTED, {"Common#592": FULL_OBS}), "Common#592"))
+        self.assertIn("HEALTH: 🟢 HEALTHY (advisory)\n", ok + "\n")
+        bad = M.render_checkpoint(M.admit(M.project(with_health(), STARTED, {"Common#592": {**FULL_OBS, "behind_by": 25, "liveness": "QUIET"}}), "Common#592"))
+        self.assertIn("HEALTH: 🔴 AT_RISK (advisory) — base_drift (25 commit(s) behind the base); liveness (observed QUIET)", bad)
+
+    def test_the_real_p3_i_timeline_crosses_the_written_ceilings_long_before_its_first_checkpoint(self):
+        """Cumulative lines added by the nine real P3-I commits (provider log, 2026-10-06 UTC) against its first checkpoint comment."""
+        from datetime import datetime, timedelta
+
+        timeline = [
+            ("23:01:10", 190),
+            ("23:01:15", 282),
+            ("23:01:19", 290),
+            ("23:01:23", 504),
+            ("23:05:00", 2232),
+            ("23:08:53", 2233),
+            ("23:09:24", 2330),
+            ("23:09:44", 2357),
+            ("23:10:21", 2424),
+        ]
+        g = with_health(g=RealScenarioReplay.plan())
+        seen = []
+        for _, added in timeline:
+            obs = RealScenarioReplay.observations()
+            obs["Common#588"].update({"additions": added, "deletions": 0})
+            seen.append(M.project(g, [], obs)["nodes"]["Common#588"]["health"]["components"]["checkpoint_distance"]["status"])
+        self.assertEqual(["OK", "WATCH", "WATCH", "AT_RISK"] + ["AT_RISK"] * 5, seen)
+        first_at_risk = timeline[seen.index("AT_RISK")][0]
+        wait = datetime.strptime("23:12:49", "%H:%M:%S") - datetime.strptime(first_at_risk, "%H:%M:%S")  # the first #588 checkpoint comment
+        self.assertEqual(timedelta(minutes=11, seconds=26), wait)
+
+    def test_the_p3_i_handover_state_reads_at_risk_and_names_every_unobserved_input(self):
+        g = with_health(g=RealScenarioReplay.plan())
+        obs = RealScenarioReplay.observations()
+        obs["Common#588"].update({"additions": 2422, "deletions": 0})
+        projection = M.project(g, RealScenarioReplay.closed_ledger(), obs)
+        leaf = projection["nodes"]["Common#588"]["health"]
+        self.assertEqual(
+            {
+                "materialization": "AT_RISK",
+                "size": "AT_RISK",
+                "checkpoint_distance": "AT_RISK",
+                "base_drift": "WATCH",
+                "evidence": "UNOBSERVED",
+                "interruptions": "UNOBSERVED",
+                "liveness": "UNOBSERVED",
+            },
+            self.statuses(leaf),
+        )
+        root = projection["nodes"]["Common#527"]["health"]
+        self.assertEqual(("AT_RISK", 1, ["Common#588"]), (root["verdict"], root["leaves"], root["at_risk"]))
+        for ref, *_ in RealScenarioReplay.SOLO:
+            self.assertNotIn("health", projection["nodes"][ref])  # finished leaves are not assessed
+
+    def test_command_line_health_is_advisory_and_always_exits_zero(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+
+            def write(name, value):
+                path = root / name
+                path.write_text(json.dumps(value), encoding="utf-8")
+                return str(path)
+
+            obs = RealScenarioReplay.observations()
+            obs["Common#588"].update({"additions": 2422, "deletions": 0})
+            args = ("--graph", write("g.json", RealScenarioReplay.plan()), "--facts", write("f.json", RealScenarioReplay.closed_ledger()), "--observations", write("o.json", obs))
+            code, out, _ = cli("health", *args)  # the plan sets no health policy: the command is explicit intent
+            self.assertEqual(0, code)
+            self.assertIn("AGENT HEALTH (advisory; observed or derived, never declared", out)
+            self.assertIn("PROGRAMME: 🔴 AT_RISK — 1 started leaves (AT_RISK 1)", out)
+            self.assertIn("🔴 AT_RISK    Common#588  checkpoint_distance (", out)
+            code, out, _ = cli("health", *args, "--mode", "OFF")
+            self.assertEqual(0, code)
+            self.assertIn("(no started leaf to assess, or the health policy is OFF)", out)
+            code, out, _ = cli("health", *args, "--json")
+            self.assertEqual(0, code)
+            report = json.loads(out)
+            self.assertEqual(("AT_RISK", ["Common#588"]), (report["programme"]["verdict"], list(report["leaves"])))
+            code, out, _ = cli("health", *args, "--leaf", "Common#584")  # a completed leaf has nothing to assess
+            self.assertEqual(0, code)
+            self.assertIn("(no started leaf to assess", out)
+
+
+@unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
+class HealthSchemasAgreeWithTheEngine(unittest.TestCase):
+    schema = SchemasAgreeWithTheEngine.schema
+    schema_errors = SchemasAgreeWithTheEngine.schema_errors
+
+    def test_the_health_policy_is_validated_by_both(self):
+        g = with_health(checkpoint={"at_risk_added_loc": 800}, drift={"watch_behind": 2}, interruptions={"at_risk": 5})
+        self.assertEqual([], self.schema_errors("execution-graph", g))
+        M.validate_graph(g)
+        for label, policy in {
+            "mode": {"mode": "ENFORCED"},
+            "unknown key": {"surprise": 1},
+            "unknown section key": {"checkpoint": {"extra": 1}},
+            "zero": {"drift": {"watch_behind": 0}},
+        }.items():
+            bad = graph()
+            bad["programme"]["health_policy"] = policy
+            with self.subTest(label):
+                self.assertTrue(self.schema_errors("execution-graph", bad), "schema accepted it")
+                with self.assertRaises(M.GraphError):
+                    M.validate_graph(bad)
+
+    def test_a_projection_with_health_satisfies_the_live_status_schema(self):
+        obs = RealScenarioReplay.observations()
+        obs["Common#588"].update({"additions": 2422, "deletions": 0, "interruptions": {"coverage_from": "2026-10-06T22:51:06Z", "losses": [{"kind": "STREAM"}] * 3}})
+        projection = M.project(with_health(g=RealScenarioReplay.plan()), RealScenarioReplay.closed_ledger(), obs)
+        for ref, node in projection["nodes"].items():
+            document = M.status_document(node, version=1, digest=projection["input_digest"], programme=projection["programme"])
+            with self.subTest(ref=ref):
+                self.assertEqual([], self.schema_errors("live-status", json.loads(M.canonical_json(document))))
+        self.assertIn("health", projection["nodes"]["Common#588"])
+
+
 @unittest.skipUnless(HAVE_YAML and HAVE_JSONSCHEMA, "PyYAML/jsonschema unavailable")
 class MaterializationSchemasAgreeWithTheEngine(unittest.TestCase):
     schema = SchemasAgreeWithTheEngine.schema

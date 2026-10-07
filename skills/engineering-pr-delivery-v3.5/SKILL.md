@@ -119,11 +119,13 @@ Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `ta
 
 **Handover frontier.** A handover is the predecessor's view at one instant, never current truth, and must carry no hand-computed number. `frontier` derives it (provider-observed base, candidate and divergence; derived state, exact `P/E`, evidence health; input digests) and `frontier-verify` checks a handed-over snapshot against live truth: any moved input (`BASE`, `CANDIDATE_HEAD`, `PR_STATE`, `LIVENESS`, `FACTS`, `PLAN`) exits 2 with `RECONCILE`. Every `CONTINUE CHECKPOINT` carries a `FRONTIER:` line.
 
+**Agent health.** Health is observed or derived, never declared (a dead or looping executor cannot report it). With `programme.health_policy.mode: ADVISORY`, started leaves carry a `health` block of seven components (`materialization`, `evidence`, `checkpoint_distance`, `size`, `base_drift`, `interruptions`, `liveness`) using the programme's own written thresholds (250 / 500 lines, the third stream loss); the verdict is the worst component, `UNOBSERVED` is never healthy, and it is advisory: it never moves a number, state, title or admission answer. Telemetry constrains delivery; it does not measure value. `health` prints it; each `CONTINUE CHECKPOINT` carries a `HEALTH:` line.
+
 The active DELP contract is:
 
 - `operating-model/durable-execution-lineage-projection-v35.md` (normative);
 - `schemas/delp-checkpoint-facts-v35.schema.yaml`, `schemas/delp-execution-graph-v35.schema.yaml`, `schemas/delp-live-status-v35.schema.yaml`;
-- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `frontier`, `frontier-verify`, `decompose-check`, `graph-diff`, `verify-titles`, `sync-github`);
+- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `health`, `frontier`, `frontier-verify`, `decompose-check`, `graph-diff`, `verify-titles`, `sync-github`);
 - `templates/checkpoint-facts-v35.md` (agent template) and `examples/delp/`;
 - `tests/test_delp_projection_v35.py`, `tests/test_continuity_derived_projection.py`, `tests/test_owner_commands_continuation.py`.
 

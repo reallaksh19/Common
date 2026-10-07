@@ -206,6 +206,30 @@ Every `CONTINUE CHECKPOINT` carries the same material in one `FRONTIER:` line (`
 
 The frontier is not a new authority and not a handover package: it is the derived part a handover (or the `HANDOVER_PACKAGE` that #570 specifies) can embed and cite by digest. `MOVED` says *recompute*; it does not say the move matters. Whether main's change touches the leaf's write surface or the blobs its evidence depends on is a separate check.
 
+## Agent health — observed or derived, never declared
+
+Task evidence can show a measure of how healthy the current execution is, under one rule: **health is observed or derived, never self-declared.** A dead or looping executor cannot report that, and "I am healthy" is the easiest claim to game; this is the same reason `QUIET` and `STALE` can only come from an observer.
+
+It is **advisory delivery-continuity telemetry**: how far a successor would have to reconstruct if this executor stopped now. It never moves a percentage, a state, a title or an admission answer, and never blocks work. The words describe continuity risk, not the quality of anyone's work, and they follow the 3-pass doctrine on repository telemetry: line counts, divergence and run counts may *locate evidence and constrain delivery*; they never establish value, quality or capability.
+
+Opt in with `programme.health_policy.mode: ADVISORY` (default `OFF`, which adds nothing). Seven components, each `OK` / `WATCH` / `AT_RISK` / `UNOBSERVED`; the verdict is the **worst component, never an average**, and `UNOBSERVED` (nothing was observed) is never read as healthy:
+
+| Component | Source | `WATCH` | `AT_RISK` | `UNOBSERVED` when |
+|---|---|---|---|---|
+| `materialization` | derived (ledger + provider) | — | no accepted facts but the provider shows work | — |
+| `evidence` | derived (evidence health) | `GAP` | `STALE_CANDIDATE` | `UNVERIFIABLE` (head not observed) or no facts to qualify |
+| `checkpoint_distance` | observed `since_checkpoint` (lines authored since the last accepted facts) | ≥ 250 added or ≥ 400 changed | ≥ 500 added or ≥ 700 changed (the written hard ceilings) | not observed; with nothing ever checkpointed the whole branch is the distance |
+| `size` | observed `additions` + `deletions` against the leaf's declared `size_budget`, else the policy default | over target (700) | over hard (1500) | not observed |
+| `base_drift` | observed `behind_by` | ≥ 1 commit behind | ≥ 20 behind | not observed |
+| `interruptions` | operator-observed stream losses in this executor lifecycle | 1–2 | ≥ 3 (the written rule plans a handover at the third) | no losses recorded and nobody declared when watching began (zero needs an observer) |
+| `liveness` | observed liveness | `QUIET` | `STALE` | no observer reported it |
+
+Every threshold is the programme's own written rule and every one can be overridden in `health_policy`; **elapsed time alone is deliberately not a rule** (the checkpoint contract says it does not renew meaningful activity). A started, unfinished leaf gets a `health` block in `LIVE_STATUS_V1`; ancestors carry a roll-up (worst verdict, counts, the at-risk leaves); every `CONTINUE CHECKPOINT` gains one line, e.g. `HEALTH: 🔴 AT_RISK (advisory) — checkpoint_distance (2422 lines authored …); materialization (…); size (…); +4 more`; `health --graph G --facts F --observations O [--leaf L] [--json]` prints the table and always exits 0. Titles never change.
+
+**Who supplies what.** `materialization`, `evidence` and the verdict are derived from the graph and the ledger. `sync-github` currently observes `base_sha` and `pr_state` for every leaf with a pull request and `base_sha`, `ahead_by` and `behind_by` for branch-only leaves (so `base_drift` is `UNOBSERVED` for a pull-request leaf); the diff-size observations (`additions`, `deletions`, `since_checkpoint`) and the operator's `liveness` and `interruptions` come from the observations file until an observer produces them — **until then those components read `UNOBSERVED`, which is the honest answer rather than a green one.** `interruptions` is the operator's `AGENT_OBSERVATION_V1` record — `{coverage_from, losses[]}` for the current executor lifecycle, where a successor lifecycle starts a fresh list — and an agent must not author it. One GitHub identity may post both an agent's facts and an operator's observations, so this record is only as good as that discipline; that is a second reason health is advisory and gates nothing.
+
+Worked example from the real P3-I record (pinned by `AgentHealth`): the nine commits added 190, 282, 290, 504, 2232, 2233, 2330, 2357 and 2424 cumulative lines between 23:01:10 and 23:10:21. The measured checkpoint distance reads `OK`, `WATCH` at the second commit (23:01:15) and `AT_RISK` at the fourth (23:01:23, 504 lines, the written hard ceiling), **11 minutes 26 seconds before** the first checkpoint comment (23:12:49) — the written rule, now measured instead of remembered. At the handover the leaf reads `AT_RISK` (`materialization`, `size`, `checkpoint_distance`), `WATCH` (`base_drift`, 4 behind) and names `evidence`, `interruptions` and `liveness` as `UNOBSERVED`.
+
 ## Decomposition gate — small, verifiable, collision-free leaves
 
 DELP keeps progress honest *after* a plan exists. The gate makes the plan itself fit to hand to an agent *before* work starts, with the same discipline: the Coordinator authors the plan, a pure function judges it, the verdict is derived and disposable, and an agent cannot argue with it by publishing a fact (a facts record carrying a `plan` field is rejected: it is not an allowed field). **The gate never moves a percentage**; it only adds a `plan` block, the states `NOT_RELEASEABLE` / `PLAN_GAP` and the admission action `FIX_PLAN`.
@@ -320,6 +344,7 @@ validate-graph --graph G                         plan is structurally valid
 validate-facts F...                              reject agent-authored projections (exit 1)
 project --graph G --facts F... --observations O  deterministic projection JSON (+ expected titles)
 admit --graph G --facts F --observations O --leaf L --command continue
+health --graph G --facts F --observations O [--leaf L] [--mode M] [--json]   advisory delivery-continuity health of started leaves (always exits 0)
 frontier --graph G (--facts F --observations O | --repository R) --leaf L   the derived frontier a handover may carry (observed + derived, digest-bound)
 frontier-verify --snapshot S --graph G (…) --leaf L   is a handed-over frontier still true? (exit 2 when any input moved)
 decompose-check --graph G [--mode M] [--facts F --observations O]   judge the plan against the decomposition policy (exit 1 on blockers when ENFORCED)
@@ -359,10 +384,13 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 14. Unknown is never published as zero: a leaf the provider shows work for but whose ledger has no accepted facts is `UNMATERIALIZED`, its ancestors say their numbers are a lower bound, and its admission answer is `MATERIALIZE_FACTS`.
 15. A plan is only ever applied to the repository it declares.
 16. A handover carries only observed and derived values, bound by a digest; a successor verifies it against live truth, and any moved input means recompute, never trust.
+17. Health is observed or derived, never declared. `UNOBSERVED` is never healthy, the verdict is the worst component rather than an average, and the block is advisory: it never moves a number, a state, a title or an admission answer.
 
 ## Not claimed
 
 DELP cannot technically prevent a human or agent from hand-editing a GitHub title or comment; it makes that edit non-authoritative, detectable and self-correcting. It does not verify that an agent's evidence ref is truthful (that remains review, `NOT_RUN` integrity and the evidence gate); it verifies that evidence exists, is typed, and is bound to the current candidate. It does not grant or infer merge, acceptance or programme authority.
+
+Health reads provider and ledger telemetry and operator observations; it says nothing about the quality or value of the work, and a green verdict is evidence only that nothing observed is wrong. Until an observer produces the diff-size, liveness and interruption inputs, those components are `UNOBSERVED`. The operator's `AGENT_OBSERVATION_V1` has no identity separation from an agent's facts on a single GitHub account, so it is advisory by construction.
 
 `UNMATERIALIZED` fires only on what the provider shows: a leaf with no pull request and no branch commits, or a run with no observations at all, reads `NOT_STARTED` because nothing shows otherwise. It marks the roll-up as a lower bound; it does not estimate the missing work, and work outside the graph (the reserve) stays unknown until it is decomposed. Merge state never completes a leaf, and DELP does not backfill facts on anyone's behalf: publishing them remains the agent's or the Coordinator's act.
 

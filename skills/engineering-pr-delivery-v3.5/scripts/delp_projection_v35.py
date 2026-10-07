@@ -100,6 +100,21 @@ DEFAULT_POLICY: dict[str, Any] = {
 }
 _BUDGET_KEYS = ("target_loc", "hard_loc", "target_minutes", "hard_minutes")
 
+# Agent health: delivery-continuity telemetry, advisory only. It is observed or derived, never declared; it never moves a
+# percentage, a state or a title and never blocks work. Repository telemetry may locate evidence and constrain delivery;
+# it never measures value, quality or capability. Defaults are the programme's own written rules (checkpoint triggers at
+# 250 / 400 and the hard ceiling at 500 / 700 reviewable lines; the third stream loss in one executor lifecycle plans a
+# handover); elapsed time alone is deliberately not a rule.
+HEALTH_MODES = ("OFF", "ADVISORY")
+HEALTH_RANK = {"OK": 0, "UNOBSERVED": 1, "WATCH": 2, "AT_RISK": 3}  # UNOBSERVED is never healthy, and never worse than a known concern
+HEALTH_VERDICT = {"OK": "HEALTHY", "UNOBSERVED": "UNOBSERVED", "WATCH": "WATCH", "AT_RISK": "AT_RISK"}
+DEFAULT_HEALTH_POLICY: dict[str, Any] = {
+    "mode": "OFF",
+    "checkpoint": {"watch_added_loc": 250, "at_risk_added_loc": 500, "watch_changed_loc": 400, "at_risk_changed_loc": 700},
+    "drift": {"watch_behind": 1, "at_risk_behind": 20},
+    "interruptions": {"watch": 1, "at_risk": 3},
+}
+
 # Keys an agent must never author. They are projections, plan authority or
 # derived bookkeeping. Matching is case-insensitive on exact key names and is
 # applied recursively to every mapping in a facts record.
@@ -199,6 +214,7 @@ STATE_LIGHT = {
     "PAUSED": LIGHT_IDLE,
     "IDLE": LIGHT_IDLE,
 }
+HEALTH_LIGHT = {"HEALTHY": LIGHT_ACTIVE, "UNOBSERVED": LIGHT_IDLE, "WATCH": LIGHT_ATTENTION, "AT_RISK": LIGHT_STALE}
 
 CONTINUATION_COMMANDS = re.compile(
     r"^\s*(?:continue|proceed|next|resume|reconcile|take\s+over|keep\s+going|carry\s+on)"
@@ -653,6 +669,39 @@ def resolve_policy(overrides: Any) -> dict[str, Any]:
     return policy
 
 
+def resolve_health_policy(overrides: Any) -> dict[str, Any]:
+    """Merge `programme.health_policy` over the defaults and validate it. Raises GraphError."""
+    policy = copy.deepcopy(DEFAULT_HEALTH_POLICY)
+    if overrides is None:
+        return policy
+    if not isinstance(overrides, Mapping):
+        raise GraphError("programme.health_policy: must be a mapping")
+    unknown = sorted(set(map(str, overrides)) - set(DEFAULT_HEALTH_POLICY))
+    if unknown:
+        raise GraphError(f"programme.health_policy: unknown keys {unknown}")
+    for key, value in overrides.items():
+        if key == "mode":
+            if value not in HEALTH_MODES:
+                raise GraphError(f"programme.health_policy.mode: one of {list(HEALTH_MODES)}")
+            policy["mode"] = value
+            continue
+        if not isinstance(value, Mapping):
+            raise GraphError(f"programme.health_policy.{key}: must be a mapping")
+        extra = sorted(set(map(str, value)) - set(policy[key]))
+        if extra:
+            raise GraphError(f"programme.health_policy.{key}: unknown keys {extra}")
+        policy[key].update(value)
+    for section in ("checkpoint", "drift", "interruptions"):
+        for name, number in policy[section].items():
+            _positive_int(number, f"programme.health_policy.{section}.{name}")
+    c, d, i = policy["checkpoint"], policy["drift"], policy["interruptions"]
+    if c["watch_added_loc"] > c["at_risk_added_loc"] or c["watch_changed_loc"] > c["at_risk_changed_loc"]:
+        raise GraphError("programme.health_policy.checkpoint: a watch level must not exceed its at-risk level")
+    if d["watch_behind"] > d["at_risk_behind"] or i["watch"] > i["at_risk"]:
+        raise GraphError("programme.health_policy: a watch level must not exceed its at-risk level")
+    return policy
+
+
 def validate_graph(graph: Any) -> dict[str, Any]:
     """Validate the plan and return an indexed view. Raises GraphError."""
     if not isinstance(graph, Mapping):
@@ -668,6 +717,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     except DelpError as exc:
         raise GraphError(f"programme.root: {exc}") from exc
     policy = resolve_policy(programme.get("decomposition_policy"))
+    health_policy = resolve_health_policy(programme.get("health_policy"))
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -863,6 +913,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     return {
         "programme": dict(programme),
         "policy": policy,
+        "health_policy": health_policy,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
@@ -1066,6 +1117,146 @@ def render_decomposition(report: Mapping[str, Any]) -> str:
         f" · {s['advisories']} advisories · {s['skipped_closed']} closed (skipped) · classes: {classes or 'none'}"
     )
     return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------
+# agent health: observed or derived, never declared. Advisory; never moves a number, a state or a title.
+#
+# Seven components, each OK / WATCH / AT_RISK / UNOBSERVED. UNOBSERVED means nothing was observed and is never read
+# as healthy; the verdict is the worst component, never an average. The words are about delivery continuity (how far
+# a successor would have to reconstruct), not about the quality of anyone's work: telemetry locates evidence and
+# constrains delivery, it does not measure value.
+# --------------------------------------------------------------------------
+
+
+def _count(value: Any) -> int | None:
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
+
+
+def _health_components(
+    leaf: Mapping[str, Any],
+    node: Mapping[str, Any],
+    observation: Mapping[str, Any],
+    policy: Mapping[str, Any],
+    limits: Mapping[str, int],
+) -> dict[str, dict[str, str]]:
+    out: dict[str, dict[str, str]] = {}
+
+    def put(name: str, status: str, detail: str) -> None:
+        out[name] = {"status": status, "detail": detail}
+
+    materialization = leaf.get("materialization")
+    if materialization:
+        put("materialization", "AT_RISK", f"no accepted facts; the provider shows {materialization['provider_signal']}")
+        put("evidence", "UNOBSERVED", "no facts to qualify")
+    else:
+        put("materialization", "OK", "the ledger holds accepted facts")
+        verdict, gaps = leaf["evidence"]["health"], leaf["evidence"]["gaps"]
+        put(
+            "evidence",
+            {"CURRENT": "OK", "GAP": "WATCH", "STALE_CANDIDATE": "AT_RISK", "UNVERIFIABLE": "UNOBSERVED"}[verdict],
+            verdict + (": " + ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) if gaps else ""),
+        )
+
+    additions = _count(observation.get("additions"))
+    deletions = _count(observation.get("deletions")) or 0
+    since = observation.get("since_checkpoint")
+    distance: tuple[int, int] | None
+    if isinstance(since, Mapping) and _count(since.get("additions")) is not None:
+        distance = (since["additions"], since["additions"] + (_count(since.get("deletions")) or 0))
+    elif materialization and additions is not None:
+        distance = (additions, additions + deletions)  # nothing was ever checkpointed: the whole branch is the distance
+    else:
+        distance = None
+    c = policy["checkpoint"]
+    if distance is None:
+        put("checkpoint_distance", "UNOBSERVED", "the lines authored since the last checkpoint were not observed")
+    else:
+        added, changed = distance
+        if added >= c["at_risk_added_loc"] or changed >= c["at_risk_changed_loc"]:
+            status = "AT_RISK"
+        elif added >= c["watch_added_loc"] or changed >= c["watch_changed_loc"]:
+            status = "WATCH"
+        else:
+            status = "OK"
+        put(
+            "checkpoint_distance",
+            status,
+            f"{added} lines authored ({changed} changed) since the last checkpoint; trigger {c['watch_added_loc']}, hard ceiling {c['at_risk_added_loc']}",
+        )
+
+    budget = node.get("size_budget") or {}
+    declared = "target_loc" in budget and "hard_loc" in budget
+    target, hard = (budget["target_loc"], budget["hard_loc"]) if declared else (limits["target_loc"], limits["hard_loc"])
+    if additions is None:
+        put("size", "UNOBSERVED", "the changed lines of the candidate were not observed")
+    else:
+        total = additions + deletions
+        status = "AT_RISK" if total > hard else "WATCH" if total > target else "OK"
+        put("size", status, f"{total} changed lines against target {target} / hard {hard} ({'declared budget' if declared else 'policy default'})")
+
+    behind = _count(observation.get("behind_by"))
+    d = policy["drift"]
+    if behind is None:
+        put("base_drift", "UNOBSERVED", "the divergence from the base was not observed")
+    else:
+        status = "AT_RISK" if behind >= d["at_risk_behind"] else "WATCH" if behind >= d["watch_behind"] else "OK"
+        put("base_drift", status, f"{behind} commit(s) behind the base")
+
+    interruptions = observation.get("interruptions")
+    i = policy["interruptions"]
+    recorded = interruptions.get("losses") if isinstance(interruptions, Mapping) else None
+    watched_from = interruptions.get("coverage_from") if isinstance(interruptions, Mapping) else None
+    if not isinstance(recorded, list) or (not recorded and not watched_from):
+        # A recorded loss is a loss whether or not anyone declared when watching began; zero can only be claimed by an observer.
+        put("interruptions", "UNOBSERVED", "no observer was watching for stream losses, so zero cannot be claimed")
+    else:
+        losses = len(recorded)
+        status = "AT_RISK" if losses >= i["at_risk"] else "WATCH" if losses >= i["watch"] else "OK"
+        put(
+            "interruptions",
+            status,
+            f"{losses} stream loss(es) in this executor lifecycle" + ("; the written rule plans a handover at the third" if losses >= i["at_risk"] else ""),
+        )
+
+    liveness = leaf.get("liveness")
+    put(
+        "liveness",
+        {"ACTIVE": "OK", "QUIET": "WATCH", "STALE": "AT_RISK"}.get(liveness or "", "UNOBSERVED"),
+        f"observed {liveness}" if liveness else "no observer reported liveness",
+    )
+    return out
+
+
+def _health_block(components: Mapping[str, Mapping[str, str]]) -> dict[str, Any]:
+    worst = max((c["status"] for c in components.values()), key=HEALTH_RANK.__getitem__)
+    verdict = HEALTH_VERDICT[worst]
+    ordered = sorted(components.items(), key=lambda kv: (-HEALTH_RANK[kv[1]["status"]], kv[0]))
+    return {
+        "mode": "ADVISORY",
+        "verdict": verdict,
+        "light": HEALTH_LIGHT[verdict],
+        "components": {name: dict(c) for name, c in ordered},
+        "reasons": [f"{name} ({c['detail']})" for name, c in ordered if c["status"] != "OK"],
+        "advisory": True,
+    }
+
+
+def _health_rollup(rows: list[tuple[str, Mapping[str, Any]]]) -> dict[str, Any] | None:
+    if not rows:
+        return None
+    rank = {"HEALTHY": 0, "UNOBSERVED": 1, "WATCH": 2, "AT_RISK": 3}
+    verdict = max((h["verdict"] for _, h in rows), key=rank.__getitem__)
+    counts = {v: sum(1 for _, h in rows if h["verdict"] == v) for v in rank}
+    return {
+        "mode": "ADVISORY",
+        "verdict": verdict,
+        "light": HEALTH_LIGHT[verdict],
+        "leaves": len(rows),
+        "counts": {k: v for k, v in counts.items() if v},
+        "at_risk": [ref for ref, h in rows if h["verdict"] == "AT_RISK"],
+        "advisory": True,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -1711,6 +1902,17 @@ def project(
             if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
+    health_mode = indexed["health_policy"]["mode"]
+    if health_mode != "OFF":
+        # Advisory telemetry for leaves that have started and are not finished: it adds a block, never a state or a number.
+        for ref, leaf in results.items():
+            if leaf["lifecycle"] in {"NOT_STARTED", "COMPLETE", "SUPERSEDED"}:
+                continue
+            seen = observations.get(nodes[ref]["number"]) or {}
+            leaf["health"] = _health_block(
+                _health_components(leaf, nodes[ref], seen, indexed["health_policy"], indexed["policy"]["leaf_budget"])
+            )
+
     def visit(ref: str) -> dict[str, Any]:
         node = nodes[ref]
         if node["kind"] == "LEAF":
@@ -1774,6 +1976,10 @@ def project(
             result["plan"] = {"mode": mode, "not_releasable": len(unreleasable), "leaves": unreleasable}
         if unmaterialized:
             result["materialization"] = {"status": "UNMATERIALIZED", "leaves": unmaterialized}
+        if health_mode != "OFF":
+            rollup = _health_rollup([(leaf, results[leaf]["health"]) for leaf in _leaves_under(indexed, ref) if "health" in results[leaf]])
+            if rollup:
+                result["health"] = rollup
         results[ref] = result
         return result
 
@@ -1967,6 +2173,8 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     if materialization:  # present only when the provider shows work the ledger lacks
         report["materialization"] = materialization
         report["materialize_required"] = True
+    if leaf.get("health"):  # present only when programme.health_policy.mode is ADVISORY and the leaf has started
+        report["health"] = leaf["health"]
     return report
 
 
@@ -2014,6 +2222,11 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
             lines.append(f"PLAN: RELEASABLE — ADVISORY: {', '.join(a['code'] for a in plan['advisories'])}")
         else:
             lines.append("PLAN: RELEASABLE")
+    health = report.get("health")
+    if health:
+        shown = health["reasons"][:3]
+        more = f"; +{len(health['reasons']) - 3} more" if len(health["reasons"]) > 3 else ""
+        lines.append(f"HEALTH: {health['light']} {health['verdict']} (advisory)" + (f" — {'; '.join(shown)}{more}" if shown else ""))
     for ancestor in reversed(report["ancestors"]):
         label = "ROOT" if ancestor["scope"] == "Π" else "PARENT"
         lines.append(f"{label}: #{ref_number(ancestor['ref'])} {ancestor['scope']}:D{ancestor['D']}/E{ancestor['E']}")
@@ -2154,6 +2367,22 @@ def frontier_drift(snapshot: Mapping[str, Any], live: Mapping[str, Any]) -> dict
         "snapshot_digest": snapshot.get("frontier_digest"),
         "live_digest": live.get("frontier_digest"),
     }
+
+
+def render_health(projection: Mapping[str, Any], only: str | None = None) -> str:
+    nodes = projection["nodes"]
+    lines = ["AGENT HEALTH (advisory; observed or derived, never declared; telemetry constrains delivery and does not measure value)"]
+    root = nodes[projection["root"]].get("health")
+    if root and only is None:
+        counts = ", ".join(f"{k} {v}" for k, v in root["counts"].items())
+        lines.append(f"PROGRAMME: {root['light']} {root['verdict']} — {root['leaves']} started leaves ({counts})")
+    for ref, node in nodes.items():
+        if node["kind"] == "LEAF" and node.get("health") and (only is None or ref == only):
+            h = node["health"]
+            lines.append(f"{h['light']} {h['verdict']:<10} {ref}  {'; '.join(h['reasons']) or 'every component observed and OK'}")
+    if len(lines) == 1:
+        lines.append("(no started leaf to assess, or the health policy is OFF)")
+    return "\n".join(lines)
 
 
 def render_frontier(snapshot: Mapping[str, Any]) -> str:
@@ -2636,6 +2865,17 @@ def main(argv: list[str] | None = None) -> int:
     fv.add_argument("--snapshot", type=Path, required=True, help="The frontier JSON the predecessor handed over.")
     fv.add_argument("--json", action="store_true")
 
+    hl = sub.add_parser(
+        "health",
+        help="Advisory delivery-continuity health of started leaves: observed or derived, never declared. Always exits 0.",
+    )
+    hl.add_argument("--graph", type=Path, required=True)
+    hl.add_argument("--facts", type=Path, nargs="*", default=[])
+    hl.add_argument("--observations", type=Path)
+    hl.add_argument("--mode", choices=HEALTH_MODES, default="ADVISORY", help="Override programme.health_policy.mode for this run.")
+    hl.add_argument("--leaf", help="Show a single leaf.")
+    hl.add_argument("--json", action="store_true")
+
     pr = sub.add_parser("project")
     pr.add_argument("--graph", type=Path, required=True)
     pr.add_argument("--facts", type=Path, nargs="*", default=[])
@@ -2713,6 +2953,21 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(render_decomposition(report))
             return 1 if report["mode"] == "ENFORCED" and report["summary"]["not_releasable"] else 0
+        if args.cmd == "health":
+            planned = copy.deepcopy(graph)
+            planned.setdefault("programme", {}).setdefault("health_policy", {})["mode"] = args.mode
+            projected = project(planned, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+            if args.json:
+                _emit(
+                    {
+                        "programme": projected["nodes"][projected["root"]].get("health"),
+                        "leaves": {r: n["health"] for r, n in projected["nodes"].items() if n["kind"] == "LEAF" and n.get("health")},
+                    },
+                    None,
+                )
+            else:
+                print(render_health(projected, args.leaf))
+            return 0
         if args.cmd in {"frontier", "frontier-verify"}:
             if args.repository:
                 require_repository_match(graph, args.repository, live=False)
