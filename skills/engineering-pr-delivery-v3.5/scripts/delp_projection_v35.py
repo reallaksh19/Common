@@ -2028,13 +2028,76 @@ def _decomposition(
     }
 
 
-def decomposition_report(graph: Any, mode: str | None = None, closed: Iterable[str] = ()) -> dict[str, Any]:
-    """Evaluate the decomposition policy over every LEAF not in `closed` (e.g. already COMPLETE). Pure."""
+def decomposition_report(
+    graph: Any,
+    mode: str | None = None,
+    closed: Iterable[str] = (),
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """Evaluate one integrated mechanical + semantic topology release report.
+
+    R2 remains the semantic decision authority. This function only merges its
+    already-derived blockers into the existing decomposition report shape.
+    """
     if mode is not None and mode not in POLICY_MODES:
         raise GraphError(f"mode: one of {list(POLICY_MODES)}")
+    if topology_observations is None:
+        topology_observations = {}
+    if not isinstance(topology_observations, Mapping):
+        raise DelpError("topology_observations: must be a mapping keyed by declared leaf reference")
+
     indexed = validate_graph(graph)
     closed_numbers = {ref_number(c) for c in closed}
-    return _decomposition(indexed, {r for r in indexed["nodes"] if indexed["nodes"][r]["number"] in closed_numbers}, mode)
+    closed_refs = {
+        r
+        for r in indexed["nodes"]
+        if indexed["nodes"][r]["number"] in closed_numbers
+    }
+    report = _decomposition(indexed, closed_refs, mode)
+
+    claim_first_active = bool(
+        indexed.get("acceptance_claims") or indexed.get("topology_assessments")
+    )
+    if not claim_first_active:
+        return report
+
+    try:
+        topology_release = _topology_assembler_module().topology_release_findings(
+            graph,
+            observations=topology_observations,
+            closed=closed_refs,
+        )
+    except Exception as exc:
+        raise DelpError(f"topology release derivation failed: {exc}") from exc
+
+    for ref, row in report["leaves"].items():
+        topology_row = topology_release["leaves"].get(ref) or {
+            "blockers": [],
+            "admissions": [],
+        }
+        topology_blockers = [
+            {"code": blocker["code"], "detail": blocker["detail"]}
+            for blocker in topology_row["blockers"]
+        ]
+        row["blockers"] = sorted(
+            [*row["blockers"], *topology_blockers],
+            key=lambda item: (item["code"], item["detail"]),
+        )
+        row["releasable"] = not row["blockers"]
+        if topology_row["admissions"] or topology_row["blockers"]:
+            row["topology"] = {
+                "authority": topology_release["authority"],
+                "admissions": copy.deepcopy(topology_row["admissions"]),
+                "blockers": copy.deepcopy(topology_row["blockers"]),
+            }
+
+    report["summary"]["releasable"] = sum(
+        1 for row in report["leaves"].values() if row["releasable"]
+    )
+    report["summary"]["not_releasable"] = sum(
+        1 for row in report["leaves"].values() if not row["releasable"]
+    )
+    return report
 
 
 def render_decomposition(report: Mapping[str, Any]) -> str:
@@ -2993,47 +3056,31 @@ def project(
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
-        mechanical = _decomposition(indexed, closed)
-        try:
-            topology_release = _topology_assembler_module().topology_release_findings(
-                graph,
-                observations=topology_observations,
-                closed=closed,
-            )
-        except Exception as exc:
-            raise DelpError(f"topology release derivation failed: {exc}") from exc
-
-        for ref, row in mechanical["leaves"].items():
+        release = decomposition_report(
+            graph,
+            mode,
+            closed,
+            topology_observations=topology_observations,
+        )
+        for ref, row in release["leaves"].items():
             leaf = results[ref]
-            topology_row = topology_release["leaves"].get(ref) or {"blockers": [], "admissions": []}
-            topology_blockers = [
-                {"code": blocker["code"], "detail": blocker["detail"]}
-                for blocker in topology_row["blockers"]
-            ]
-            blockers = sorted(
-                [*row["blockers"], *topology_blockers],
-                key=lambda item: (item["code"], item["detail"]),
-            )
-            releasable = not blockers
             leaf["plan"] = {
                 "mode": mode,
-                "releasable": releasable,
-                "blockers": blockers,
-                "advisories": row["advisories"],
+                "releasable": row["releasable"],
+                "blockers": copy.deepcopy(row["blockers"]),
+                "advisories": copy.deepcopy(row["advisories"]),
             }
-            if topology_row["admissions"] or topology_row["blockers"]:
-                leaf["plan"]["topology"] = {
-                    "authority": topology_release["authority"],
-                    "admissions": copy.deepcopy(topology_row["admissions"]),
-                    "blockers": copy.deepcopy(topology_row["blockers"]),
-                }
-            if blockers:
+            if row.get("topology") is not None:
+                leaf["plan"]["topology"] = copy.deepcopy(row["topology"])
+            if row["blockers"]:
                 leaf["warnings"].append(
-                    "DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in blockers}))
+                    "DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in row["blockers"]}))
                 )
             if row["advisories"]:
-                leaf["warnings"].append("DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]})))
-            if mode == "ENFORCED" and not releasable and leaf["state"] in _PLAN_OVERLAID_STATES:
+                leaf["warnings"].append(
+                    "DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]}))
+                )
+            if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
     # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
@@ -4112,6 +4159,7 @@ def main(argv: list[str] | None = None) -> int:
     dc.add_argument("--mode", choices=POLICY_MODES, help="Override programme.decomposition_policy.mode for this run.")
     dc.add_argument("--facts", type=Path, nargs="*", default=[], help="Skip leaves these facts show COMPLETE or SUPERSEDED.")
     dc.add_argument("--observations", type=Path)
+    dc.add_argument("--topology-observations", type=Path)
     dc.add_argument("--json", action="store_true")
 
     gd = sub.add_parser("graph-diff", help="Check that a re-plan conserves progress and records its scope changes; exit 1 on blockers.")
@@ -4131,6 +4179,7 @@ def main(argv: list[str] | None = None) -> int:
         sp.add_argument("--graph", type=Path, required=True)
         sp.add_argument("--facts", type=Path, nargs="*", default=[])
         sp.add_argument("--observations", type=Path)
+        sp.add_argument("--topology-observations", type=Path)
         sp.add_argument("--repository", help="Observe live from GitHub (read-only) instead of --facts / --observations.")
         sp.add_argument("--leaf", required=True)
     fr.add_argument("--output", type=Path)
@@ -4145,6 +4194,7 @@ def main(argv: list[str] | None = None) -> int:
     hl.add_argument("--graph", type=Path, required=True)
     hl.add_argument("--facts", type=Path, nargs="*", default=[])
     hl.add_argument("--observations", type=Path)
+    hl.add_argument("--topology-observations", type=Path)
     hl.add_argument("--mode", choices=HEALTH_MODES, default="ADVISORY", help="Override programme.health_policy.mode for this run.")
     hl.add_argument("--leaf", help="Show a single leaf.")
     hl.add_argument("--json", action="store_true")
@@ -4153,6 +4203,7 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument("--graph", type=Path, required=True)
     pr.add_argument("--facts", type=Path, nargs="*", default=[])
     pr.add_argument("--observations", type=Path)
+    pr.add_argument("--topology-observations", type=Path)
     pr.add_argument("--base-titles", type=Path)
     pr.add_argument("--output", type=Path)
 
@@ -4160,6 +4211,7 @@ def main(argv: list[str] | None = None) -> int:
     ad.add_argument("--graph", type=Path, required=True)
     ad.add_argument("--facts", type=Path, nargs="*", default=[])
     ad.add_argument("--observations", type=Path)
+    ad.add_argument("--topology-observations", type=Path)
     ad.add_argument("--leaf", required=True)
     ad.add_argument("--command", default="continue")
     ad.add_argument("--json", action="store_true")
@@ -4168,6 +4220,7 @@ def main(argv: list[str] | None = None) -> int:
     vt.add_argument("--graph", type=Path, required=True)
     vt.add_argument("--facts", type=Path, nargs="*", default=[])
     vt.add_argument("--observations", type=Path)
+    vt.add_argument("--topology-observations", type=Path)
     vt.add_argument("--actual-titles", type=Path, required=True)
 
     gh = sub.add_parser(
@@ -4223,11 +4276,26 @@ def main(argv: list[str] | None = None) -> int:
 
         graph = _load_structured(args.graph)
         if args.cmd == "decompose-check":
+            topology_observations = (
+                _load_structured(args.topology_observations)
+                if args.topology_observations
+                else {}
+            )
             closed: list[str] = []
             if args.facts:
-                seen = project(graph, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+                seen = project(
+                    graph,
+                    _load_ledger(args.facts),
+                    _load_structured(args.observations) if args.observations else {},
+                    topology_observations=topology_observations,
+                )
                 closed = [r for r, n in seen["nodes"].items() if n["kind"] == "LEAF" and n["lifecycle"] in _TERMINAL]
-            report = decomposition_report(graph, args.mode, closed)
+            report = decomposition_report(
+                graph,
+                args.mode,
+                closed,
+                topology_observations=topology_observations,
+            )
             if args.json:
                 _emit(report, None)
             else:
@@ -4236,7 +4304,16 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "health":
             planned = copy.deepcopy(graph)
             planned.setdefault("programme", {}).setdefault("health_policy", {})["mode"] = args.mode
-            projected = project(planned, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+            projected = project(
+                planned,
+                _load_ledger(args.facts),
+                _load_structured(args.observations) if args.observations else {},
+                topology_observations=(
+                    _load_structured(args.topology_observations)
+                    if args.topology_observations
+                    else {}
+                ),
+            )
             if args.json:
                 _emit(
                     {
@@ -4256,7 +4333,18 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 ledger = _load_ledger(args.facts)
                 observations = _load_structured(args.observations) if args.observations else {}
-            live = frontier(graph, ledger, observations, args.leaf)
+            topology_observations = (
+                _load_structured(args.topology_observations)
+                if args.topology_observations
+                else {}
+            )
+            live = frontier(
+                graph,
+                ledger,
+                observations,
+                args.leaf,
+                topology_observations=topology_observations,
+            )
             if args.cmd == "frontier":
                 if args.text:
                     print(render_frontier(live))
@@ -4292,7 +4380,17 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         ledger = _load_ledger(args.facts)
         observations = _load_structured(args.observations) if getattr(args, "observations", None) else {}
-        projection = project(graph, ledger, observations)
+        topology_observations = (
+            _load_structured(args.topology_observations)
+            if getattr(args, "topology_observations", None)
+            else {}
+        )
+        projection = project(
+            graph,
+            ledger,
+            observations,
+            topology_observations=topology_observations,
+        )
         if args.cmd == "project":
             if args.base_titles:
                 projection["expected_titles"] = expected_titles(projection, _load_structured(args.base_titles))

@@ -3965,6 +3965,86 @@ class DecompositionAdmission(unittest.TestCase):
         self.assertEqual("NONE", report["action"])
 
 
+class IntegratedSemanticDecompositionReport(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def graph(self, mode="ENFORCED"):
+        g = topology_assessment_planned()
+        g["programme"]["decomposition_policy"] = {"mode": mode}
+        return g
+
+    def test_decomposition_report_and_project_use_the_same_semantic_blockers(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            report = M.decomposition_report(
+                g,
+                topology_observations=topo,
+            )
+            projection = M.project(
+                g,
+                [],
+                OBS_A,
+                topology_observations=topo,
+            )
+            for ref, row in report["leaves"].items():
+                self.assertEqual(
+                    [b["code"] for b in row["blockers"]],
+                    [b["code"] for b in projection["nodes"][ref]["plan"]["blockers"]],
+                    ref,
+                )
+                self.assertEqual(
+                    row["releasable"],
+                    projection["nodes"][ref]["plan"]["releasable"],
+                    ref,
+                )
+
+    def test_legacy_report_is_unchanged_without_claim_first_authority(self):
+        g = planned()
+        self.assertEqual(
+            M.canonical_json(M._decomposition(M.validate_graph(g))),
+            M.canonical_json(M.decomposition_report(g)),
+        )
+
+    def test_decompose_check_cli_accepts_distinct_topology_observation_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = self.graph()
+            topo = self.observations(g, root, ["Common#592", "Common#594"])
+            graph_path = root / "graph.json"
+            topo_path = root / "topology.json"
+            graph_path.write_text(json.dumps(g), encoding="utf-8")
+            topo_path.write_text(json.dumps(topo), encoding="utf-8")
+            code, out, err = cli(
+                "decompose-check",
+                "--graph", str(graph_path),
+                "--topology-observations", str(topo_path),
+                "--json",
+            )
+            self.assertEqual(1, code, err)
+            payload = json.loads(out)
+            self.assertIn(
+                "TOPOLOGY_MERGE_REQUIRED",
+                [b["code"] for b in payload["leaves"]["Common#592"]["blockers"]],
+            )
+
+
 class SemanticTopologyContinuationAndFrontier(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)
