@@ -369,7 +369,13 @@ def normalize_observation(observation: Any) -> dict[str, Any]:
     if not isinstance(observation, Mapping):
         raise DelpError("observation: must be a mapping")
 
-    if observation.get("schema") is None:
+    if "schema" not in observation:
+        typed_only = {"visibility", "material", "custody", "diff"} & set(map(str, observation))
+        if typed_only or isinstance(observation.get("liveness"), Mapping):
+            raise DelpError(
+                "typed-shaped observation is missing required schema: "
+                + ", ".join(sorted(typed_only or {"liveness"}))
+            )
         out = dict(observation)
         category_fields = {
             "MATERIAL": {"candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"},
