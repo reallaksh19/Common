@@ -195,6 +195,36 @@ properties:
         maxItems: 8
         items: {$ref: '#/$defs/responsibility_condition'}
       actual_next: {$ref: '#/$defs/actual_next'}
+      execution_provenance:
+        type: object
+        additionalProperties: false
+        description: >-
+          Derived visibility of execution/custody provenance carried by accepted facts. B1 does not classify any
+          binding as current or stale and this field has no progress, title, frontier or admission authority.
+        required: [bound_fact_count, unbound_fact_count, bindings]
+        properties:
+          bound_fact_count: {type: integer, minimum: 0}
+          unbound_fact_count: {type: integer, minimum: 0}
+          bindings:
+            type: array
+            items:
+              type: object
+              additionalProperties: false
+              required: [ep, lease, executor, custody_epoch, source_refs]
+              properties:
+                ep:
+                  type: string
+                  pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
+                lease:
+                  type: string
+                  pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
+                executor: {type: string, minLength: 1, pattern: '.*\S.*'}
+                custody_epoch: {type: integer, minimum: 1}
+                source_refs:
+                  type: array
+                  minItems: 1
+                  uniqueItems: true
+                  items: {type: string, minLength: 1}
       activity_epoch: {type: integer, minimum: 0}
       warnings: {type: array, items: {type: string}}
     allOf:
@@ -202,7 +232,7 @@ properties:
           properties: {kind: {const: LEAF}}
           required: [kind]
         then:
-          required: [conditions, actual_next]
+          required: [conditions, actual_next, execution_provenance]
   projection:
     type: object
     required: [version, input_digest]

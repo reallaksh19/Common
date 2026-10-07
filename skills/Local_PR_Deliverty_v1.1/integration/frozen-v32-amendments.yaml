@@ -129,3 +129,22 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/agent_intervention_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_intervention.py
 
+  - id: AMEND-V32-AGENT-READMODEL-007
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'you will not work on v3.5' and
+      'proceed next', applied through Common #689's released claim-first Proposal V2
+      (sha256:7648513d5b0efb9f0ee0483906fe26949e47ffd25f5d0a74745c7568829ea550).
+      Common #708 is the released R-READMODEL responsibility. This amendment authorizes
+      only the three existing V3.2 DELP read-model paths below for that responsibility.
+    summary: >-
+      Bounded V3.2-only amendment for Common #689/#708 R-READMODEL: compose existing
+      operational continuity health with exact R-QOBS, R-TRAJECTORY and R-INTERVENTION
+      derived observations into one traceable advisory read model while preserving P/E,
+      title, decomposition, handover, admission, product/review verdict and merge/release
+      authority. No V3.5 surface is authorized.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-live-status-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py
+
