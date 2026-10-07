@@ -22,6 +22,7 @@ from handover_context import (
     _standalone_contract,
     build_context,
     build_request,
+    _successor_entry,
     render_request,
     validate_visibility,
 )
@@ -435,6 +436,118 @@ class HandoverContextTests(unittest.TestCase):
                         complex_mode=False,
                         successor_challenge_count=bad,
                     )
+
+
+
+    def test_retained_1256_frontier_advance_supersedes_the_historical_c1_entry_exam(self):
+        context = {
+            "target": {
+                "provider_ref": "github:reallaksh19/XML_Compare_Utilities#1256",
+                "state": "CLOSED",
+            },
+            "reality_context": {
+                "material": {
+                    "head": "c1998df47e4183e6d54c30555cbc022742ffebc5",
+                },
+                "execution": {"branch": "main"},
+                "task_constraints": [
+                    "TEXPECTED is validation-only and cannot select correspondence.",
+                    "Manual reviewed seeds remain diagnostic/manual authority only.",
+                ],
+            },
+            "accumulated_learning": {
+                "first_successor_action": "Run C1 retained S1 candidate funnel before any production repair.",
+                "what_remains_uncertain": [
+                    "ROOT_CLASSIFICATION = UNKNOWN; candidate generation vs Method-A qualification vs fusion vs propagation.",
+                ],
+                "attempted_and_rejected": [
+                    "Blind budget escalation: budget 11 READY was not semantic acceptance.",
+                    "Manual-anchor cardinality expansion as the general solution.",
+                ],
+                "do_not_break": [
+                    "TEXPECTED is validation-only; benchmark identities must not enter matching.",
+                    "Manual seeds are diagnostic only and must not become automatic authority.",
+                ],
+                "reconstruction_context": {
+                    "original_intent": {
+                        "source_ref": "github:reallaksh19/XML_Compare_Utilities#1256",
+                        "url": "https://github.com/reallaksh19/XML_Compare_Utilities/issues/1256",
+                    },
+                    "latest_reconciliation": {
+                        "ref": "issuecomment-6026782962",
+                        "summary": (
+                            "RESPONSIBILITY_COMPLETE=YES; PRODUCT_LANDED=YES; POST_MERGE_QUALIFICATION=PASS; "
+                            "retained S1 mandatory correspondence 12/12 and mutation 12/12 at budget 10."
+                        ),
+                    },
+                    "primary_conversation_refs": [],
+                    "roadmap_refs": ["#1257", "#1258", "#1259"],
+                    "local_agent_refs": [],
+                    "rll_refs": [],
+                },
+                "task_snapshot": {
+                    "value": {
+                        "next": {
+                            "immediate_action": "Reconcile downstream consumers; no further S1 product coding."
+                        }
+                    }
+                },
+            },
+        }
+
+        entry = _successor_entry(context, 3)
+        basis = entry["challenge_basis"]
+        self.assertEqual("CURRENT_RECONCILIATION_SUPERSEDES_HANDOFF", basis["freshness"])
+        self.assertEqual("CLOSED", basis["target_state"])
+        self.assertEqual("issuecomment-6026782962", basis["latest_reconciliation_ref"])
+        self.assertIn("12/12", basis["latest_reconciliation_summary"])
+        self.assertIn("Run C1", basis["inherited_first_successor_action"])
+        self.assertTrue(any("ROOT_CLASSIFICATION = UNKNOWN" in item for item in basis["inherited_uncertainties"]))
+        self.assertTrue(any("budget 11 READY" in item for item in basis["inherited_negative_knowledge"]))
+        self.assertTrue(any("TEXPECTED is validation-only" in item for item in basis["protected_invariants"]))
+
+        challenge = entry["successor_reconstruction_challenge"]
+        self.assertEqual(3, len(challenge))
+        self.assertEqual(
+            {"Reconcile downstream consumers; no further S1 product coding."},
+            {q["decision_at_risk"] for q in challenge},
+        )
+        joined = "\n".join(q["question"] for q in challenge)
+        self.assertIn("current frontier", joined.lower())
+        self.assertIn("historical handover uncertainty", joined.lower())
+        self.assertIn("12/12", joined)
+        self.assertIn("TEXPECTED is validation-only", joined)
+        self.assertIn("budget 11 READY", joined)
+        self.assertNotIn("Resolve this current uncertainty: ROOT_CLASSIFICATION = UNKNOWN", joined)
+        self.assertNotIn("Before Run C1 retained S1 candidate funnel", joined)
+        self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
+        self.assertIn("TASK_EXECUTION", entry["forbidden_actions"])
+        self.assertIn("PR_CREATION", entry["forbidden_actions"])
+
+    def test_terminal_target_without_reconciliation_does_not_reactivate_inherited_execution(self):
+        context = {
+            "target": {"provider_ref": "github:example/project#1", "state": "CLOSED"},
+            "reality_context": {"material": {}, "execution": {}, "task_constraints": []},
+            "accumulated_learning": {
+                "first_successor_action": "Implement the old patch.",
+                "what_remains_uncertain": ["Old uncertainty."],
+                "attempted_and_rejected": [],
+                "do_not_break": [],
+                "reconstruction_context": {
+                    "original_intent": None,
+                    "latest_reconciliation": None,
+                    "primary_conversation_refs": [],
+                    "roadmap_refs": [],
+                    "local_agent_refs": [],
+                    "rll_refs": [],
+                },
+                "task_snapshot": {"value": {"next": {}}},
+            },
+        }
+        entry = _successor_entry(context, 1)
+        self.assertEqual("TERMINAL_TARGET_REQUIRES_RECONCILIATION", entry["challenge_basis"]["freshness"])
+        self.assertEqual("VERIFY_CURRENT_DISPOSITION_AND_NEXT_CONSUMER", entry["successor_reconstruction_challenge"][0]["decision_at_risk"])
+        self.assertNotIn("Before Implement the old patch", entry["successor_reconstruction_challenge"][0]["question"])
 
     def test_visibility_validator_rejects_reality_leak_into_blind_context(self):
         with tempfile.TemporaryDirectory() as td:
