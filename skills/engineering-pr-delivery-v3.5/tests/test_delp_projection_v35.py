@@ -1749,6 +1749,19 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual([], self.schema_errors("responsibility-condition", record))
         self.assertEqual([], M.validate_condition(record))
 
+    def test_integral_float_generation_matches_json_schema_integer_semantics(self):
+        record = {
+            "type": "PlanReady",
+            "status": "TRUE",
+            "reason": "PLAN_RELEASEABLE",
+            "message": "The current plan is releaseable.",
+            "observed_generation": 1.0,
+            "candidate_sha": None,
+            "source_refs": [],
+        }
+        self.assertEqual([], self.schema_errors("responsibility-condition", record))
+        self.assertEqual([], M.validate_condition(record))
+
     def test_unknown_condition_binding_passes_schema_and_engine(self):
         record = {
             "type": "ProviderVisible",
@@ -1794,6 +1807,7 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
                 changed(observed_generation=0),
                 changed(observed_generation=True),
                 changed(observed_generation="2"),
+                changed(observed_generation=1.5),
                 changed(candidate_sha="abc123"),
                 changed(candidate_sha=[]),
                 changed(source_refs="not-an-array"),
