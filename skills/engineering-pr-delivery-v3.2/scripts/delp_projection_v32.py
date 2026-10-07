@@ -255,19 +255,6 @@ def canonical_digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
 
 
-def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
-    """Canonical graph input used for identity/currentness.
-
-    Legacy graphs that omit programme.graph_generation are normalized to generation 1,
-    so adding the explicit default does not manufacture semantic drift.
-    """
-    value = copy.deepcopy(dict(graph))
-    programme = dict(value.get("programme") or {})
-    programme["graph_generation"] = programme.get("graph_generation", 1)
-    value["programme"] = programme
-    return value
-
-
 def percent(value: Fraction) -> int:
     """Display percent: half-up, never 100 unless exactly full, never 0 unless exactly empty."""
     if value <= 0:
@@ -722,10 +709,6 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     if graph.get("schema") not in (None, GRAPH_SCHEMA):
         raise GraphError(f"schema: must be {GRAPH_SCHEMA}")
     programme = graph.get("programme") or {}
-    declared_graph_generation = "graph_generation" in programme
-    graph_generation = programme.get("graph_generation", 1)
-    if isinstance(graph_generation, bool) or not isinstance(graph_generation, int) or graph_generation < 1:
-        raise GraphError("programme.graph_generation: must be a positive integer")
     root_ref = programme.get("root")
     if not root_ref:
         raise GraphError("programme.root: required")
@@ -897,25 +880,6 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if node["kind"] != "LEAF" and not node["children"]:
             raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
 
-    # Stable identity is distinct from the provider locator. Legacy graphs may omit it;
-    # once graph_generation is explicitly declared, every leaf must carry a unique Responsibility id.
-    seen_responsibility_ids: dict[str, str] = {}
-    for ref, node in nodes.items():
-        if node["kind"] != "LEAF":
-            continue
-        rid = node.get("responsibility_id")
-        if declared_graph_generation and not rid:
-            raise GraphError(f"{ref}.responsibility_id: required when programme.graph_generation is declared")
-        if rid is not None:
-            rid = str(rid).strip()
-            if not rid:
-                raise GraphError(f"{ref}.responsibility_id: must be a non-empty string")
-            other = seen_responsibility_ids.get(rid)
-            if other is not None:
-                raise GraphError(f"{ref}.responsibility_id: duplicate stable id {rid!r} already used by {other}")
-            seen_responsibility_ids[rid] = ref
-            node["responsibility_id"] = rid
-
     # leaf-to-leaf references (ordering and declared parallelism) must name declared leaves
     leaf_by_number = {n["number"]: ref for ref, n in nodes.items() if n["kind"] == "LEAF"}
     for ref, node in nodes.items():
@@ -946,10 +910,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if ref not in walk_state:
             walk(ref)
 
-    normalized_programme = dict(programme)
-    normalized_programme["graph_generation"] = graph_generation
     return {
-        "programme": normalized_programme,
+        "programme": dict(programme),
         "policy": policy,
         "health_policy": health_policy,
         "total_weight": total_weight,
@@ -958,7 +920,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "order": order,
         "root": roots[0],
         "by_number": by_number,
-        "digest": canonical_digest(graph_digest_basis(graph)),
+        "digest": canonical_digest(graph),
     }
 
 
@@ -2062,7 +2024,6 @@ def project(
         "authority": AUTHORITY,
         "protocol_line": PROTOCOL_LINE,
         "programme": indexed["programme"],
-        "graph_digest": indexed["digest"],
         "root": indexed["root"],
         "nodes": out_nodes,
         "rejected_facts": rejected,
