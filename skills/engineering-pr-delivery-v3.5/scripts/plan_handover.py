@@ -14,6 +14,51 @@ from v3lib import canonical_digest, load_events, load_yaml, validate_schema
 from relay_tx import _assert_event_ids_available, _event, _issue_scoped_id, _transition_event_ids
 
 
+def _owner_intent_handover_options(owner_intent: dict | None) -> tuple[int | None, list[str], bool]:
+    if owner_intent is None:
+        return None, [], False
+    if not isinstance(owner_intent, dict):
+        raise TransactionError("owner_intent must be a mapping")
+    payload = owner_intent.get("owner_intent") if isinstance(owner_intent.get("owner_intent"), dict) else owner_intent
+    deliverables = payload.get("requested_deliverables") or []
+    constraints = payload.get("boundary_constraints") or []
+    if not isinstance(deliverables, list) or not isinstance(constraints, list):
+        raise TransactionError("owner_intent deliverables/constraints must be lists")
+    counts: list[int] = []
+    requested = False
+    for row in deliverables:
+        if not isinstance(row, dict) or row.get("type") != "SUCCESSOR_RECONSTRUCTION_CHALLENGE":
+            continue
+        requested = True
+        if row.get("count") is not None:
+            count = row["count"]
+            if isinstance(count, bool) or not isinstance(count, int) or not (0 <= count <= 10):
+                raise TransactionError("Owner-intent successor challenge count must be an integer from 0 to 10")
+            counts.append(count)
+    if len(set(counts)) > 1:
+        raise TransactionError("Owner intent contains conflicting successor challenge counts")
+    clean_constraints = [str(x) for x in constraints if isinstance(x, str) and x.strip()]
+    return (counts[0] if counts else None), list(dict.fromkeys(clean_constraints)), requested
+
+
+def _resolve_successor_options(
+    owner_intent: dict | None,
+    explicit_count: int | None,
+) -> tuple[int | None, list[str]]:
+    owner_count, constraints, requested = _owner_intent_handover_options(owner_intent)
+    if owner_count is not None and explicit_count is not None and owner_count != explicit_count:
+        raise TransactionError(
+            f"successor challenge count conflicts with Owner intent: explicit {explicit_count}, Owner {owner_count}"
+        )
+    resolved = explicit_count if explicit_count is not None else owner_count
+    if requested and resolved is None:
+        raise TransactionError(
+            "Owner intent requests a successor reconstruction challenge without a concrete count; "
+            "resolve the count before freezing the handover"
+        )
+    return resolved, constraints
+
+
 def plan_handover(
     root: Path,
     *,
@@ -27,6 +72,7 @@ def plan_handover(
     programme_issue_observations: list[dict] | None = None,
     selected_programme_ref: str | None = None,
     successor_challenge_count: int | None = None,
+    owner_intent: dict | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -77,6 +123,10 @@ def plan_handover(
     if effective_parent_observation is not None:
         task_snapshot = build_task(root, base_ref, effective_parent_observation)
 
+    resolved_challenge_count, owner_boundary_constraints = _resolve_successor_options(
+        owner_intent,
+        successor_challenge_count,
+    )
     improvement_view = build_improvement(root)
     context, snapshot = build_context(
         root,
@@ -87,7 +137,8 @@ def plan_handover(
         programme_reconciliation=programme_reconciliation,
         task_snapshot_override=task_snapshot,
         improvement_view_override=improvement_view,
-        successor_challenge_count=successor_challenge_count,
+        successor_challenge_count=resolved_challenge_count,
+        successor_boundary_constraints=owner_boundary_constraints,
     )
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
@@ -118,6 +169,8 @@ def plan_handover(
             "reasoning_request_generated": False,
             "successor_entry_mode": (context.get("successor_entry") or {}).get("mode"),
             "successor_challenge_count": len((context.get("successor_entry") or {}).get("successor_reconstruction_challenge") or []),
+            "owner_intent_bound": owner_intent is not None,
+            "owner_boundary_constraint_count": len(owner_boundary_constraints),
             "programme_parent_count": len(programme_reconciliation.get("parents") or []),
             "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
             "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
@@ -177,7 +230,11 @@ def main() -> None:
     parser.add_argument(
         "--successor-challenge-count",
         type=int,
-        help="Materialize exactly this many repository-grounded successor reconstruction questions (0..10).",
+        help="Compatibility override for successor challenge count; must agree with Owner intent when both are supplied.",
+    )
+    parser.add_argument(
+        "--owner-intent",
+        help="YAML file containing either OWNER_INTENT itself or a parse_owner_command result with an owner_intent field.",
     )
     args = parser.parse_args()
     result = plan_handover(
@@ -192,6 +249,7 @@ def main() -> None:
         programme_issue_observations=[load_yaml(Path(path)) for path in args.programme_issue_observation],
         selected_programme_ref=args.selected_programme_ref,
         successor_challenge_count=args.successor_challenge_count,
+        owner_intent=(load_yaml(Path(args.owner_intent)) if args.owner_intent else None),
     )
     print(f"{result['id']}: {result['status']}")
 
