@@ -59,3 +59,22 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/plan_handover.py
       - skills/engineering-pr-delivery-v3.2/tests/test_handover_context.py
 
+
+
+  - id: AMEND-V32-SUCCESSOR-DELP-003
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'can you update the v3.2 code itself?' after approving the
+      medium/high-ROI successor-aware integration recorded on Common #570 issuecomment-6031708360. This amendment is
+      bounded to decomposition -> TASK_EVIDENCE -> DELP/LIVE_STATUS/title -> continuation admission integration.
+      Merge authority remains Owner-only.
+    summary: >-
+      Add optional unit successor policy, optional OFFERED/ACCEPTED handover facts, derived HANDOFF/RECONSTRUCTING
+      scoreboard states, and RECONCILE_HANDOFF admission only for transferred INDEPENDENT_RECONSTRUCTION units.
+      Handover does not move P/E/D, create a publication family, or manufacture review/merge/release authority.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-execution-graph-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-checkpoint-facts-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/schemas/delp-live-status-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/delp_projection_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_delp_projection_v32.py
