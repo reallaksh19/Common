@@ -1156,6 +1156,18 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual([], self.schema_errors("execution-graph", graph()))
         M.validate_graph(graph())
 
+    def test_stable_identity_graph_passes_both(self):
+        g = stable_graph()
+        self.assertEqual([], self.schema_errors("execution-graph", g))
+        M.validate_graph(g)
+
+    def test_stable_identity_graph_without_leaf_id_fails_both(self):
+        g = stable_graph()
+        g["nodes"][4].pop("responsibility_id")
+        self.assertTrue(self.schema_errors("execution-graph", g))
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
+
     def test_graph_without_units_or_parent_fails_both(self):
         g = copy.deepcopy(graph())
         g["nodes"][3].pop("units")
