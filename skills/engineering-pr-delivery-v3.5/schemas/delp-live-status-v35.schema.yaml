@@ -28,7 +28,7 @@ properties:
       kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
       lifecycle: {type: string}
       state:
-        enum: [ACTIVE, HANDOFF, RECONSTRUCTING, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, UNMATERIALIZED, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
+        enum: [ACTIVE, HANDOFF, RECONSTRUCTING, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, WAITING_DEPENDENCY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, UNMATERIALIZED, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
       light: {enum: ["🟢", "🟡", "🔵", "🔴", "✅", "⚪"]}
       identity:
         type: object
@@ -77,6 +77,22 @@ properties:
           health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
           gaps: {type: array}
       frontier: {type: object}
+      dependencies:
+        type: object
+        description: Derived readiness of plan-declared depends_on predecessors; never agent-authored and never progress authority.
+        required: [declared, ready, blocking]
+        properties:
+          declared: {type: array, items: {type: string}}
+          ready: {type: boolean}
+          blocking:
+            type: array
+            items:
+              type: object
+              required: [ref, state, lifecycle]
+              properties:
+                ref: {type: string}
+                state: {type: string}
+                lifecycle: {type: string}
       successor_policy:
         type: [object, "null"]
         description: Plan-owned policy for the current active unit; never progress authority.
