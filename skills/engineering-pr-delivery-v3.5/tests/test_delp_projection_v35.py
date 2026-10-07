@@ -1101,6 +1101,14 @@ class ProviderObservationNormalization(unittest.TestCase):
         with self.assertRaises(M.DelpError):
             M.project(graph(), [], {"other/repo#592": {"candidate_sha": SHA_A}})
 
+    def test_declared_repository_rejects_same_repo_name_from_other_owner(self):
+        g = graph()
+        g["programme"]["repository"] = "reallaksh19/Common"
+        with self.assertRaises(M.DelpError):
+            M.project(g, [], {"other/Common#592": {"candidate_sha": SHA_A}})
+        accepted = M.project(g, [], {"reallaksh19/Common#592": {"candidate_sha": SHA_A}})
+        self.assertEqual(SHA_A, accepted["nodes"]["Common#592"]["material"]["candidate_sha"])
+
     def test_unknown_observation_locator_fails_closed(self):
         with self.assertRaises(M.DelpError):
             M.project(graph(), [], {"Common#999": {"candidate_sha": SHA_A}})
