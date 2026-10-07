@@ -42,6 +42,7 @@ FACTS_SCHEMA = f"{SCHEMA_PREFIX}-checkpoint-facts"
 GRAPH_SCHEMA = f"{SCHEMA_PREFIX}-execution-graph"
 PROJECTION_SCHEMA = f"{SCHEMA_PREFIX}-projection"
 STATUS_SCHEMA = f"{SCHEMA_PREFIX}-live-status"
+OBSERVATION_SCHEMA = f"{SCHEMA_PREFIX}-responsibility-observation"
 DECOMPOSITION_SCHEMA = f"{SCHEMA_PREFIX}-decomposition-report"
 DIFF_SCHEMA = f"{SCHEMA_PREFIX}-graph-diff"
 FACTS_KEY = "CHECKPOINT_FACTS_V1"
@@ -258,6 +259,107 @@ def canonical_json(value: Any) -> str:
 
 def canonical_digest(value: Any) -> str:
     return "sha256:" + hashlib.sha256(canonical_json(value).encode("utf-8")).hexdigest()
+
+
+OBSERVATION_VISIBILITY = frozenset({"OBSERVED", "UNAVAILABLE"})
+
+
+def validate_observation(observation: Any) -> list[str]:
+    """Validate one RESPONSIBILITY_OBSERVATION_V1 wire record."""
+    if not isinstance(observation, Mapping):
+        return ["observation: must be a mapping"]
+
+    errors: list[str] = []
+    allowed_top = {"schema", "visibility", "material", "custody", "liveness", "check", "diff"}
+    if observation.get("schema") != OBSERVATION_SCHEMA:
+        errors.append(f"schema: must be {OBSERVATION_SCHEMA}")
+    visibility = observation.get("visibility")
+    if not isinstance(visibility, str) or visibility not in OBSERVATION_VISIBILITY:
+        errors.append(f"visibility: one of {sorted(OBSERVATION_VISIBILITY)}")
+    extra = sorted(set(map(str, observation)) - allowed_top)
+    if extra:
+        errors.append(f"observation: unknown fields {extra}")
+
+    def mapping(name: str, allowed: set[str]) -> Mapping[str, Any] | None:
+        if name not in observation:
+            return None
+        value = observation[name]
+        if not isinstance(value, Mapping):
+            errors.append(f"{name}: must be a mapping")
+            return None
+        unknown = sorted(set(map(str, value)) - allowed)
+        if unknown:
+            errors.append(f"{name}: unknown fields {unknown}")
+        return value
+
+    def nonnegative(value: Any) -> bool:
+        return isinstance(value, int) and not isinstance(value, bool) and value >= 0
+
+    material = mapping("material", {"candidate_sha", "base_sha", "pr_state", "ahead_by", "behind_by"})
+    if material is not None:
+        for key in ("candidate_sha", "base_sha"):
+            value = material.get(key)
+            if value is not None and not _SHA.fullmatch(str(value)):
+                errors.append(f"material.{key}: must be 40-hex lowercase or null")
+        if "pr_state" in material:
+            state = material["pr_state"]
+            if not isinstance(state, str) or state not in {"OPEN", "MERGED", "CLOSED", "UNKNOWN"}:
+                errors.append("material.pr_state: OPEN, MERGED, CLOSED or UNKNOWN")
+        for key in ("ahead_by", "behind_by"):
+            if key in material and not nonnegative(material[key]):
+                errors.append(f"material.{key}: must be a non-negative integer")
+
+    custody = mapping("custody", {"interruptions"})
+    if custody is not None and custody.get("interruptions") is not None:
+        interruptions = custody["interruptions"]
+        if not isinstance(interruptions, Mapping):
+            errors.append("custody.interruptions: must be a mapping")
+        else:
+            unknown = sorted(set(map(str, interruptions)) - {"coverage_from", "losses"})
+            if unknown:
+                errors.append(f"custody.interruptions: unknown fields {unknown}")
+            if "coverage_from" in interruptions and not isinstance(interruptions["coverage_from"], str):
+                errors.append("custody.interruptions.coverage_from: must be a string")
+            if "losses" in interruptions and (
+                not isinstance(interruptions["losses"], list)
+                or any(not isinstance(item, Mapping) for item in interruptions["losses"])
+            ):
+                errors.append("custody.interruptions.losses: must be an array of mappings")
+
+    liveness = mapping("liveness", {"value"})
+    if liveness is not None:
+        value = liveness.get("value")
+        if not isinstance(value, str) or value not in OBSERVED_LIVENESS:
+            errors.append(f"liveness.value: one of {sorted(OBSERVED_LIVENESS)}")
+
+    check = mapping("check", {"result", "candidate_sha", "name"})
+    if check is not None:
+        if "result" in check:
+            result = check["result"]
+            if not isinstance(result, str) or result not in {"SUCCESS", "FAILURE", "PENDING"}:
+                errors.append("check.result: SUCCESS, FAILURE or PENDING")
+        if "candidate_sha" in check and not _SHA.fullmatch(str(check["candidate_sha"])):
+            errors.append("check.candidate_sha: must be 40-hex lowercase")
+        if "name" in check and (not isinstance(check["name"], str) or not check["name"].strip()):
+            errors.append("check.name: must be a non-empty string")
+
+    diff = mapping("diff", {"additions", "deletions", "since_checkpoint"})
+    if diff is not None:
+        for key in ("additions", "deletions"):
+            if key in diff and not nonnegative(diff[key]):
+                errors.append(f"diff.{key}: must be a non-negative integer")
+        if "since_checkpoint" in diff:
+            since = diff["since_checkpoint"]
+            if not isinstance(since, Mapping):
+                errors.append("diff.since_checkpoint: must be a mapping")
+            else:
+                unknown = sorted(set(map(str, since)) - {"additions", "deletions"})
+                if unknown:
+                    errors.append(f"diff.since_checkpoint: unknown fields {unknown}")
+                for key in ("additions", "deletions"):
+                    if key in since and not nonnegative(since[key]):
+                        errors.append(f"diff.since_checkpoint.{key}: must be a non-negative integer")
+    return errors
 
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:

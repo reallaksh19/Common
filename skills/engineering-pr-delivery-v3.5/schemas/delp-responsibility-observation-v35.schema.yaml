@@ -1,0 +1,61 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.5-delp-responsibility-observation
+title: RESPONSIBILITY_OBSERVATION_V1
+description: >-
+  Ephemeral provider/observer input. It is not executor-authored evidence and does not require
+  one durable publication per provider poll. Missing optional categories are unobserved;
+  visibility UNAVAILABLE means provider truth could not be observed.
+type: object
+additionalProperties: false
+required: [schema, visibility]
+properties:
+  schema:
+    const: relay-v3.5-delp-responsibility-observation
+  visibility:
+    enum: [OBSERVED, UNAVAILABLE]
+  material:
+    type: object
+    additionalProperties: false
+    properties:
+      candidate_sha: {type: [string, "null"], pattern: '^[0-9a-f]{40}$'}
+      base_sha: {type: [string, "null"], pattern: '^[0-9a-f]{40}$'}
+      pr_state: {enum: [OPEN, MERGED, CLOSED, UNKNOWN]}
+      ahead_by: {type: integer, minimum: 0}
+      behind_by: {type: integer, minimum: 0}
+  custody:
+    type: object
+    additionalProperties: false
+    properties:
+      interruptions:
+        type: object
+        additionalProperties: false
+        properties:
+          coverage_from: {type: string}
+          losses:
+            type: array
+            items: {type: object}
+  liveness:
+    type: object
+    additionalProperties: false
+    required: [value]
+    properties:
+      value: {enum: [ACTIVE, QUIET, STALE]}
+  check:
+    type: object
+    additionalProperties: false
+    properties:
+      result: {enum: [SUCCESS, FAILURE, PENDING]}
+      candidate_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+      name: {type: string, minLength: 1, pattern: '.*\S.*'}
+  diff:
+    type: object
+    additionalProperties: false
+    properties:
+      additions: {type: integer, minimum: 0}
+      deletions: {type: integer, minimum: 0}
+      since_checkpoint:
+        type: object
+        additionalProperties: false
+        properties:
+          additions: {type: integer, minimum: 0}
+          deletions: {type: integer, minimum: 0}
