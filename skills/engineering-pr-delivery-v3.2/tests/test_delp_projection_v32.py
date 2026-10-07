@@ -126,32 +126,88 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
             "programme": {
                 "id": "PRE-MATERIALIZATION-V2",
                 "root": "Common#703",
+                "acceptance_claims": [
+                    {"id": "PA-SEM", "claim": "semantic outcome exists", "kind": "SEMANTIC"},
+                    {"id": "PG-DELIVERY", "claim": "delivery gate is qualified", "kind": "DELIVERY_GATE"},
+                ],
+                "decomposition_policy": {
+                    "mode": "ENFORCED",
+                    "claim_first": {"mode": "ENFORCED", "require_independence_basis": True},
+                },
                 "decomposition_proposal": {
                     "version": "V2",
-                    "responsibilities": [{"id": "R-ONE"}, {"id": "R-TWO"}],
+                    "responsibilities": [
+                        {
+                            "id": "R-SEM",
+                            "work_class": "PRODUCT",
+                            "owns_claims": ["PA-SEM"],
+                            "outcome": "semantic product outcome",
+                            "independence_basis": "can be accepted without the delivery gate",
+                            "semantic_units": [
+                                {"id": "S1", "kind": "SEMANTIC", "outcome": "semantic slice one", "verify": "oracle one"},
+                                {"id": "S2", "kind": "SEMANTIC", "outcome": "semantic slice two", "verify": "oracle two"},
+                                {"id": "S3", "kind": "SEMANTIC", "outcome": "semantic slice three", "verify": "oracle three"},
+                            ],
+                        },
+                        {
+                            "id": "G-DELIVERY",
+                            "work_class": "GATE",
+                            "owns_claims": ["PG-DELIVERY"],
+                            "outcome": "delivery qualification",
+                            "independence_basis": "can pass or fail from exact-head evidence",
+                            "semantic_units": [
+                                {"id": "G1", "kind": "DELIVERY_GATE", "outcome": "qualify exact head", "verify": "hosted run"}
+                            ],
+                        },
+                    ],
                 },
             },
             "nodes": [{"ref": "Common#703", "kind": "ROOT"}],
         }
 
-    def test_root_only_graph_accepts_proposed_responsibility_ids_without_child_refs(self):
+    def test_root_only_graph_accepts_semantic_proposal_without_child_refs(self):
         indexed = M.validate_graph(self.proposal_graph())
-        self.assertEqual(
-            ["R-ONE", "R-TWO"],
-            [row["id"] for row in indexed["decomposition_proposal"]["responsibilities"]],
-        )
-        self.assertEqual(["Common#703"], indexed["order"])
+        self.assertEqual(["R-SEM", "G-DELIVERY"], [row["id"] for row in indexed["decomposition_proposal"]["responsibilities"]])
+        report = M.decomposition_report(self.proposal_graph())
+        self.assertTrue(all(row["releasable"] for row in report["leaves"].values()), report)
+
+    def test_product_mechanics_do_not_satisfy_semantic_unit_floor(self):
+        g = self.proposal_graph()
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["semantic_units"] = [
+            {"id": "SCHEMA", "kind": "MECHANICAL", "outcome": "schema file", "verify": "parse"},
+            {"id": "TEST", "kind": "MECHANICAL", "outcome": "test file", "verify": "unit test"},
+            {"id": "CI", "kind": "MECHANICAL", "outcome": "workflow", "verify": "CI"},
+        ]
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        codes = {f["code"] for f in row["blockers"]}
+        self.assertIn("PRODUCT_UNIT_NOT_SEMANTIC", codes)
+        self.assertIn("SEMANTIC_UNITS_BELOW_MIN", codes)
+
+    def test_product_with_only_two_semantic_units_is_not_releaseable(self):
+        g = self.proposal_graph()
+        g["programme"]["decomposition_proposal"]["responsibilities"][0]["semantic_units"].pop()
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        self.assertIn("SEMANTIC_UNITS_BELOW_MIN", {f["code"] for f in row["blockers"]})
+
+    def test_proposal_claim_coverage_is_checked_before_child_materialization(self):
+        g = self.proposal_graph()
+        g["programme"]["decomposition_proposal"]["responsibilities"][0]["owns_claims"] = ["PG-DELIVERY"]
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        codes = {f["code"] for f in row["blockers"]}
+        self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", codes)
+        self.assertIn("PARENT_CLAIM_UNCOVERED", codes)
 
     def test_proposal_rejects_provider_ref_and_duplicate_identity(self):
         with_ref = self.proposal_graph()
         with_ref["programme"]["decomposition_proposal"]["responsibilities"][0]["ref"] = "Common#999"
         with self.assertRaises(M.GraphError):
             M.validate_graph(with_ref)
-
         duplicate = self.proposal_graph()
-        duplicate["programme"]["decomposition_proposal"]["responsibilities"][1]["id"] = "R-ONE"
+        duplicate["programme"]["decomposition_proposal"]["responsibilities"][1]["id"] = "R-SEM"
         with self.assertRaises(M.GraphError):
             M.validate_graph(duplicate)
+
 
 class FactsAreTheOnlyAgentInput(unittest.TestCase):
     def test_agent_authored_projection_fields_are_rejected(self):
