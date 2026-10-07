@@ -258,6 +258,7 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                 "independence_basis": "can be accepted without the delivery gate",
                 "size_budget": {"target_loc": 300, "hard_loc": 600, "target_minutes": 10, "hard_minutes": 20},
                 "write_surface": ["src/product/"],
+                "acceptance_methods": ["exact-head regression", "semantic oracle"],
                 "units": [
                     {"id": "S1", "weight": 34, "outcome": "semantic slice one", "verify": "oracle one"},
                     {"id": "S2", "weight": 33, "outcome": "semantic slice two", "verify": "oracle two"},
@@ -276,6 +277,7 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                 "independence_basis": "can pass or fail from exact-head evidence",
                 "size_budget": {"target_loc": 100, "hard_loc": 200, "target_minutes": 5, "hard_minutes": 10},
                 "write_surface": ["tests/delivery/"],
+                "acceptance_methods": ["hosted qualification"],
                 "units": [{"id": "G1", "weight": 100, "outcome": "qualify exact head", "verify": "hosted run"}],
             },
         ]
@@ -330,6 +332,15 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         g["programme"]["decomposition_proposal"]["released_proposal_digest"] = "sha256:" + "0" * 64
         row = M.decomposition_report(g)["leaves"]["R-SEM"]
         self.assertIn("PROPOSAL_RELEASE_DIGEST_MISMATCH", {f["code"] for f in row["blockers"]})
+
+    def test_binding_rejects_acceptance_method_drift(self):
+        g = self.materialized_proposal_graph()
+        g["nodes"][1]["acceptance_methods"] = ["different oracle"]
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        self.assertIn(
+            "BINDING_ACCEPTANCE_METHOD_MISMATCH",
+            {f["code"] for f in row["blockers"]},
+        )
 
     def test_binding_rejects_identity_claim_and_weight_drift(self):
         g = self.materialized_proposal_graph()
