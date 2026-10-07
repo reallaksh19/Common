@@ -1662,6 +1662,7 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual(M.GRAPH_SCHEMA, self.schema("execution-graph")["$id"])
         self.assertEqual(M.STATUS_SCHEMA, self.schema("live-status")["$id"])
         self.assertEqual(M.OBSERVATION_SCHEMA, self.schema("responsibility-observation")["$id"])
+        self.assertEqual(M.CONDITION_SCHEMA, self.schema("responsibility-condition")["$id"])
 
     def test_good_observation_passes_schema_and_engine(self):
         record = {
@@ -1734,6 +1735,91 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
             with self.subTest(record=record):
                 self.assertTrue(self.schema_errors("responsibility-observation", record), "schema accepted it")
                 self.assertTrue(M.validate_observation(record), "engine accepted it")
+
+    def test_good_condition_passes_schema_and_engine(self):
+        record = {
+            "type": "EvidenceCurrent",
+            "status": "TRUE",
+            "reason": "CURRENT_EVIDENCE",
+            "message": "Accepted evidence matches the observed candidate.",
+            "observed_generation": 2,
+            "candidate_sha": SHA_A,
+            "source_refs": ["Common#592#issuecomment-1"],
+        }
+        self.assertEqual([], self.schema_errors("responsibility-condition", record))
+        self.assertEqual([], M.validate_condition(record))
+
+    def test_integral_float_generation_matches_json_schema_integer_semantics(self):
+        record = {
+            "type": "PlanReady",
+            "status": "TRUE",
+            "reason": "PLAN_RELEASEABLE",
+            "message": "The current plan is releaseable.",
+            "observed_generation": 1.0,
+            "candidate_sha": None,
+            "source_refs": [],
+        }
+        self.assertEqual([], self.schema_errors("responsibility-condition", record))
+        self.assertEqual([], M.validate_condition(record))
+
+    def test_unknown_condition_binding_passes_schema_and_engine(self):
+        record = {
+            "type": "ProviderVisible",
+            "status": "UNKNOWN",
+            "reason": "PROVIDER_UNOBSERVED",
+            "message": "Provider visibility was not observed.",
+            "observed_generation": None,
+            "candidate_sha": None,
+            "source_refs": [],
+        }
+        self.assertEqual([], self.schema_errors("responsibility-condition", record))
+        self.assertEqual([], M.validate_condition(record))
+
+    def test_bad_conditions_fail_schema_and_engine_without_crashing(self):
+        good = {
+            "type": "PlanReady",
+            "status": "TRUE",
+            "reason": "PLAN_RELEASEABLE",
+            "message": "The current plan is releaseable.",
+            "observed_generation": 1,
+            "candidate_sha": None,
+            "source_refs": ["graph:sha256:" + "a" * 64],
+        }
+        variants = []
+
+        def changed(**updates):
+            row = copy.deepcopy(good)
+            row.update(updates)
+            return row
+
+        variants.extend(
+            [
+                {k: v for k, v in good.items() if k != "reason"},
+                changed(surprise=True),
+                changed(type="NoSuchCondition"),
+                changed(type=[]),
+                changed(type={}),
+                changed(status="PASS"),
+                changed(status=[]),
+                changed(status={}),
+                changed(reason="   "),
+                changed(message=""),
+                changed(observed_generation=0),
+                changed(observed_generation=True),
+                changed(observed_generation="2"),
+                changed(observed_generation=1.5),
+                changed(candidate_sha="abc123"),
+                changed(candidate_sha=[]),
+                changed(source_refs="not-an-array"),
+                changed(source_refs=[""]),
+                changed(source_refs=["same", "same"]),
+                changed(source_refs=[{}]),
+            ]
+        )
+        for record in variants:
+            with self.subTest(record=record):
+                self.assertTrue(self.schema_errors("responsibility-condition", record), "schema accepted it")
+                self.assertTrue(M.validate_condition(record), "engine accepted it")
 
     def test_good_facts_pass_both(self):
         record = facts(units=[unit("U01", candidate_sha=SHA_B, contract_digest=DIGEST)], activity="WAITING_CI",
