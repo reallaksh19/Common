@@ -568,6 +568,22 @@ CONDITION_ORDER = (
     "ProviderVisible",
 )
 CONDITION_STATUSES = frozenset({"TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"})
+ACTUAL_NEXT_ACTIONS = (
+    "NONE",
+    "FIX_PLAN",
+    "RECONCILE_SPEC",
+    "RECOVER_CUSTODY",
+    "MATERIALIZE_FACTS",
+    "WAIT_PROVIDER",
+    "RECOVER_EVIDENCE",
+    "RECONCILE_HANDOFF",
+    "WAIT_DEPENDENCY",
+    "REMEDIATE_FINDING",
+    "REVIEW_CANDIDATE",
+    "WAIT_OWNER",
+    "CONTINUE_UNIT",
+    "PUBLISH_RESULT",
+)
 _CONDITION_FIELDS = frozenset(
     {"type", "status", "reason", "message", "observed_generation", "candidate_sha", "source_refs"}
 )
@@ -995,6 +1011,70 @@ def _finalize_condition_set(
             f"incomplete derived responsibility condition set: missing={missing}, extra={extra}"
         )
     return [by_type[kind] for kind in CONDITION_ORDER]
+
+
+
+def _condition_actual_next(leaf: Mapping[str, Any]) -> dict[str, Any] | None:
+    """Select only condition-driven next actions; later ETXs own work/result fallbacks."""
+    conditions = _finalize_condition_set(leaf.get("conditions") or [])
+    by_type = {row["type"]: row for row in conditions}
+
+    def from_condition(action: str, condition_type: str) -> dict[str, Any]:
+        row = by_type[condition_type]
+        return {
+            "action": action,
+            "reason": row["reason"],
+            "message": row["message"],
+            "source_refs": list(row["source_refs"]),
+            "condition_type": condition_type,
+        }
+
+    if by_type["PlanReady"]["status"] == "FALSE":
+        return from_condition("FIX_PLAN", "PlanReady")
+    if by_type["SpecCurrent"]["status"] == "FALSE":
+        return from_condition("RECONCILE_SPEC", "SpecCurrent")
+    if by_type["CustodySafe"]["status"] == "FALSE":
+        return from_condition("RECOVER_CUSTODY", "CustodySafe")
+
+    provider_unknown = by_type["ProviderVisible"]["status"] == "UNKNOWN"
+    evidence_unknown = by_type["EvidenceCurrent"]["status"] == "UNKNOWN"
+    accepted_fact_basis = int(leaf.get("activity_epoch") or 0) > 0
+    explicit_provider_wait = str(leaf.get("state") or "") == "WAITING_PROVIDER_VISIBILITY"
+    if provider_unknown and (
+        explicit_provider_wait or (accepted_fact_basis and evidence_unknown)
+    ):
+        provider = by_type["ProviderVisible"]
+        evidence = by_type["EvidenceCurrent"]
+        refs = []
+        for ref in [*provider["source_refs"], *evidence["source_refs"]]:
+            if ref not in refs:
+                refs.append(ref)
+        return {
+            "action": "WAIT_PROVIDER",
+            "reason": "PROVIDER_REQUIRED_FOR_CURRENTNESS",
+            "message": (
+                "Provider visibility is required before current material/evidence truth can be established."
+            ),
+            "source_refs": refs,
+            "condition_type": "ProviderVisible",
+        }
+
+    if by_type["EvidenceCurrent"]["status"] == "FALSE":
+        return from_condition("RECOVER_EVIDENCE", "EvidenceCurrent")
+
+    dependencies = leaf.get("dependencies")
+    declared = (
+        list(dependencies.get("declared") or [])
+        if isinstance(dependencies, Mapping)
+        else []
+    )
+    if declared and by_type["DependenciesReady"]["status"] in {"FALSE", "UNKNOWN"}:
+        return from_condition("WAIT_DEPENDENCY", "DependenciesReady")
+
+    if by_type["AssuranceSatisfied"]["status"] == "FALSE":
+        return from_condition("REMEDIATE_FINDING", "AssuranceSatisfied")
+
+    return None
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.

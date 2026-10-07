@@ -4108,6 +4108,110 @@ class CanonicalConditionSetAssembly(unittest.TestCase):
             M._finalize_condition_set(complete[:-1])
 
 
+class ActualNextConditionPrecedence(unittest.TestCase):
+    @staticmethod
+    def leaf_with(**statuses):
+        leaf = copy.deepcopy(M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"])
+        by_type = {row["type"]: row for row in leaf["conditions"]}
+        for kind, status in statuses.items():
+            by_type[kind]["status"] = status
+            by_type[kind]["reason"] = f"{kind.upper()}_{status}"
+            by_type[kind]["message"] = f"{kind} is {status}."
+        leaf["conditions"] = [by_type[kind] for kind in M.CONDITION_ORDER]
+        return leaf
+
+    def test_no_condition_action_for_current_default_fresh_leaf(self):
+        leaf = self.leaf_with()
+        self.assertEqual(0, leaf["activity_epoch"])
+        self.assertIsNone(M._condition_actual_next(leaf))
+
+    def test_condition_action_precedence_is_deterministic(self):
+        cases = [
+            (
+                {"PlanReady": "FALSE", "SpecCurrent": "FALSE", "CustodySafe": "FALSE",
+                 "EvidenceCurrent": "FALSE", "DependenciesReady": "FALSE", "AssuranceSatisfied": "FALSE"},
+                "FIX_PLAN",
+            ),
+            (
+                {"SpecCurrent": "FALSE", "CustodySafe": "FALSE", "EvidenceCurrent": "FALSE",
+                 "DependenciesReady": "FALSE", "AssuranceSatisfied": "FALSE"},
+                "RECONCILE_SPEC",
+            ),
+            (
+                {"CustodySafe": "FALSE", "EvidenceCurrent": "FALSE",
+                 "DependenciesReady": "FALSE", "AssuranceSatisfied": "FALSE"},
+                "RECOVER_CUSTODY",
+            ),
+            (
+                {"EvidenceCurrent": "FALSE", "DependenciesReady": "FALSE",
+                 "AssuranceSatisfied": "FALSE"},
+                "RECOVER_EVIDENCE",
+            ),
+            (
+                {"AssuranceSatisfied": "FALSE"},
+                "REMEDIATE_FINDING",
+            ),
+        ]
+        for statuses, expected in cases:
+            with self.subTest(expected=expected):
+                leaf = self.leaf_with(**statuses)
+                if statuses.get("DependenciesReady") == "FALSE":
+                    leaf["dependencies"] = {
+                        "declared": ["Common#612"],
+                        "ready": False,
+                        "blocking": [{"ref": "Common#612", "state": "ACTIVE", "lifecycle": "ACTIVE"}],
+                    }
+                decision = M._condition_actual_next(leaf)
+                self.assertIsNotNone(decision)
+                self.assertEqual(expected, decision["action"])
+
+    def test_declared_dependency_false_or_unknown_waits_but_no_dependency_does_not(self):
+        for status in ("FALSE", "UNKNOWN"):
+            with self.subTest(status=status):
+                leaf = self.leaf_with(DependenciesReady=status)
+                leaf["dependencies"] = {
+                    "declared": ["Common#612"],
+                    "ready": False,
+                    "blocking": [{"ref": "Common#612", "state": "ACTIVE", "lifecycle": "ACTIVE"}],
+                }
+                self.assertEqual("WAIT_DEPENDENCY", M._condition_actual_next(leaf)["action"])
+
+        leaf = self.leaf_with(DependenciesReady="UNKNOWN")
+        leaf["dependencies"] = {"declared": [], "ready": True, "blocking": []}
+        self.assertIsNone(M._condition_actual_next(leaf))
+
+    def test_provider_unknown_does_not_block_fresh_leaf(self):
+        leaf = self.leaf_with(ProviderVisible="UNKNOWN", EvidenceCurrent="UNKNOWN")
+        leaf["activity_epoch"] = 0
+        leaf["state"] = "NOT_STARTED"
+        self.assertIsNone(M._condition_actual_next(leaf))
+
+    def test_provider_unknown_waits_when_current_accepted_evidence_needs_visibility(self):
+        leaf = self.leaf_with(ProviderVisible="UNKNOWN", EvidenceCurrent="UNKNOWN")
+        leaf["activity_epoch"] = 1
+        decision = M._condition_actual_next(leaf)
+        self.assertEqual("WAIT_PROVIDER", decision["action"])
+        self.assertEqual("PROVIDER_REQUIRED_FOR_CURRENTNESS", decision["reason"])
+
+    def test_explicit_provider_wait_state_selects_wait_provider(self):
+        leaf = self.leaf_with(ProviderVisible="UNKNOWN")
+        leaf["activity_epoch"] = 0
+        leaf["state"] = "WAITING_PROVIDER_VISIBILITY"
+        self.assertEqual("WAIT_PROVIDER", M._condition_actual_next(leaf)["action"])
+
+    def test_not_applicable_custody_and_assurance_never_select_actions(self):
+        leaf = self.leaf_with(
+            CustodySafe="NOT_APPLICABLE",
+            AssuranceSatisfied="NOT_APPLICABLE",
+        )
+        self.assertIsNone(M._condition_actual_next(leaf))
+
+    def test_optional_check_does_not_enter_condition_selector(self):
+        leaf = self.leaf_with()
+        leaf["material"]["check"] = {"result": "FAILURE"}
+        self.assertIsNone(M._condition_actual_next(leaf))
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)
