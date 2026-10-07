@@ -140,6 +140,7 @@ def _normalize_m2(value: Any) -> dict[str, Any]:
         raise InterventionError("trajectory.windows: at least two source windows required")
     normalized_windows = []
     sequences = []
+    window_ids = []
     for index, row in enumerate(windows):
         label = f"trajectory.windows[{index}]"
         required = {"sequence", "window_id", "input_digest", "evidence_digest", "result_digest"}
@@ -152,6 +153,7 @@ def _normalize_m2(value: Any) -> dict[str, Any]:
         window_id = row.get("window_id")
         if not isinstance(window_id, str) or not window_id.strip():
             raise InterventionError(f"{label}.window_id: non-empty string required")
+        window_ids.append(window_id.strip())
         for key in ("input_digest", "evidence_digest", "result_digest"):
             if not _DIGEST.fullmatch(str(row.get(key) or "")):
                 raise InterventionError(f"{label}.{key}: sha256 digest required")
@@ -164,6 +166,8 @@ def _normalize_m2(value: Any) -> dict[str, Any]:
         })
     if sequences != sorted(sequences) or len(sequences) != len(set(sequences)):
         raise InterventionError("trajectory.windows: sequences must be unique and ascending")
+    if len(window_ids) != len(set(window_ids)):
+        raise InterventionError("trajectory.windows: duplicate window_id")
 
     components = value.get("components")
     if not isinstance(components, Mapping) or set(map(str, components)) != set(_COMPONENTS):
@@ -237,8 +241,8 @@ def evaluate(source: Any) -> dict[str, Any]:
         recommendation, why = "FRESH_SELF_REVIEW", "DIRECTION_REVERSAL"
     elif state == "INSUFFICIENT_DATA" and reason == "CONFLICTING_SIGNAL":
         recommendation, why = "CHECKPOINT", "COMPONENTS_CONFLICT"
-    elif state == "DEGRADING" and (_last(critical_unknown) or Fraction(0, 1)) > 0:
-        recommendation, why = "FRESH_RECONSTRUCTION", "DEGRADING_WITH_CRITICAL_UNCERTAINTY"
+    elif (_last(critical_unknown) or Fraction(0, 1)) > 0:
+        recommendation, why = "FRESH_RECONSTRUCTION", "CRITICAL_UNCERTAINTY_PRESENT"
         source_basis.append(
             f"critical_unknown_rate.last={critical_unknown['last']['numerator']}/{critical_unknown['last']['denominator']}"
         )
