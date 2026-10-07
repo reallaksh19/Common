@@ -2129,6 +2129,7 @@ class DecompositionPolicyValidation(unittest.TestCase):
         policy = M.validate_graph(planned(units={"max": 6}))["policy"]
         self.assertEqual({"min": 3, "max": 6, "max_share_percent": 40}, policy["units"])
         self.assertEqual({"target_loc": 700, "hard_loc": 1500, "target_minutes": 15, "hard_minutes": 20}, policy["leaf_budget"])
+        self.assertFalse(policy["require"]["transformation_boundaries"])
 
     def test_malformed_policy_is_rejected(self):
         for label, policy in {
@@ -2165,6 +2166,12 @@ class DecompositionPolicyValidation(unittest.TestCase):
             "dependency on a parent": lambda g: leaf(g).__setitem__("depends_on", ["Common#588"]),
             "unknown parallel": lambda g: leaf(g).__setitem__("parallel_ok", ["Common#9999"]),
             "basis type": lambda g: leaf(g).__setitem__("parallel_ok_basis", 3),
+            "boundary list type": lambda g: leaf(g).__setitem__("transformation_boundaries", "WIRE_SCHEMA"),
+            "unknown boundary": lambda g: leaf(g).__setitem__("transformation_boundaries", ["NOPE"]),
+            "boundary whitespace": lambda g: leaf(g).__setitem__("transformation_boundaries", [" WIRE_SCHEMA "]),
+            "duplicate boundary": lambda g: leaf(g).__setitem__("transformation_boundaries", ["WIRE_SCHEMA", "WIRE_SCHEMA"]),
+            "integration basis type": lambda g: leaf(g).__setitem__("integration_basis", 3),
+            "integration basis blank": lambda g: leaf(g).__setitem__("integration_basis", "   "),
             "unit verify type": lambda g: leaf(g)["units"][0].__setitem__("verify", 5),
             "unit moved_from": lambda g: leaf(g)["units"][0].__setitem__("moved_from", "not a ref"),
             "unit not a mapping": lambda g: leaf(g).__setitem__("units", ["U01"]),
@@ -2178,6 +2185,17 @@ class DecompositionPolicyValidation(unittest.TestCase):
             leaf_of(g, "Common#612")["depends_on"] = ["Common#592"]
 
         self.bad(cycle, "cycle")
+
+    def test_transformation_boundary_metadata_is_normalised(self):
+        g = planned(require={"transformation_boundaries": True})
+        leaf = leaf_of(g, "Common#592")
+        leaf["transformation_boundaries"] = ["WIRE_SCHEMA", "ENGINE_VALIDATION"]
+        leaf["integration_basis"] = "  one atomic compatibility surface  "
+        indexed = M.validate_graph(g)
+        row = indexed["nodes"]["Common#592"]
+        self.assertEqual(["ENGINE_VALIDATION", "WIRE_SCHEMA"], row["transformation_boundaries"])
+        self.assertEqual("one atomic compatibility surface", row["integration_basis"])
+        self.assertTrue(indexed["policy"]["require"]["transformation_boundaries"])
 
     def test_write_surfaces_are_normalised(self):
         g = planned()
@@ -2855,6 +2873,9 @@ class DecompositionSchemasAgreeWithTheEngine(unittest.TestCase):
         leaf_of(g, "Common#594")["parallel_ok"] = ["Common#612"]
         leaf_of(g, "Common#594")["parallel_ok_basis"] = "disjoint files"
         leaf_of(g, "Common#612")["work_class"] = "MECHANICAL"
+        g["programme"]["decomposition_policy"]["require"] = {"transformation_boundaries": True}
+        leaf_of(g, "Common#592")["transformation_boundaries"] = ["WIRE_SCHEMA", "ENGINE_VALIDATION"]
+        leaf_of(g, "Common#592")["integration_basis"] = "one atomic compatibility surface"
         self.assertEqual([], self.schema_errors("execution-graph", g))
         M.validate_graph(g)
 
@@ -2864,9 +2885,16 @@ class DecompositionSchemasAgreeWithTheEngine(unittest.TestCase):
             "work_class": lambda g: leaf(g).__setitem__("work_class", "EPIC"),
             "size_budget key": lambda g: leaf(g).__setitem__("size_budget", {"loc": 5}),
             "write_surface glob": lambda g: leaf(g).__setitem__("write_surface", ["src/*.py"]),
+            "boundary unknown": lambda g: leaf(g).__setitem__("transformation_boundaries", ["NOPE"]),
+            "boundary whitespace": lambda g: leaf(g).__setitem__("transformation_boundaries", [" WIRE_SCHEMA "]),
+            "boundary duplicate": lambda g: leaf(g).__setitem__("transformation_boundaries", ["WIRE_SCHEMA", "WIRE_SCHEMA"]),
+            "integration blank": lambda g: leaf(g).__setitem__("integration_basis", "   "),
             "depends_on ref": lambda g: leaf(g).__setitem__("depends_on", ["x"]),
             "policy mode": lambda g: g["programme"]["decomposition_policy"].__setitem__("mode", "STRICT"),
             "policy key": lambda g: g["programme"]["decomposition_policy"].__setitem__("surprise", 1),
+            "boundary require type": lambda g: g["programme"]["decomposition_policy"].__setitem__(
+                "require", {"transformation_boundaries": "yes"}
+            ),
             "total_weight": lambda g: g["programme"].__setitem__("total_weight", 0),
             "update kind": lambda g: g.__setitem__("plan_updates", [{"id": "P", "kind": "WIDEN", "reason": "r", "nodes": ["Common#588"]}]),
             "update without scope": lambda g: g.__setitem__("plan_updates", [{"id": "P", "kind": "UNIT_REWEIGHT", "reason": "r"}]),
