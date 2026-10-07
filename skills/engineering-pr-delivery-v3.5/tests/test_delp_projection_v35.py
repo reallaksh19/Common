@@ -1875,7 +1875,15 @@ class DecompositionInProjection(unittest.TestCase):
 
     def test_off_ignores_a_plan_that_fails_the_gate(self):
         failing, clean = self.nodes(broken("OFF")), self.nodes(planned("OFF"))
-        self.assertEqual(clean, failing)
+        behavioral = lambda nodes: {  # noqa: E731
+            ref: {key: value for key, value in node.items() if key != "currentness"}
+            for ref, node in nodes.items()
+        }
+        self.assertEqual(behavioral(clean), behavioral(failing))
+        self.assertNotEqual(
+            clean["Common#592"]["currentness"]["graph_digest"],
+            failing["Common#592"]["currentness"]["graph_digest"],
+        )
         self.assertTrue(all("plan" not in n for n in failing.values()))
 
     def test_advisory_reports_but_never_changes_a_state_or_a_title(self):
@@ -3041,8 +3049,15 @@ class AgentHealth(unittest.TestCase):
     def test_health_never_moves_a_number_a_state_a_title_or_an_admission_answer(self):
         bad = {**FULL_OBS, "behind_by": 99, "additions": 5000, "liveness": "STALE"}
         off, on = M.project(graph(), STARTED, {"Common#592": bad}), M.project(with_health(), STARTED, {"Common#592": bad})
-        strip = lambda nodes: {r: {k: v for k, v in n.items() if k != "health"} for r, n in nodes.items()}  # noqa: E731
+        strip = lambda nodes: {  # noqa: E731
+            r: {k: v for k, v in n.items() if k not in {"health", "currentness"}}
+            for r, n in nodes.items()
+        }
         self.assertEqual(strip(off["nodes"]), strip(on["nodes"]))
+        self.assertNotEqual(
+            off["nodes"]["Common#592"]["currentness"]["graph_digest"],
+            on["nodes"]["Common#592"]["currentness"]["graph_digest"],
+        )
         self.assertEqual("AT_RISK", on["nodes"]["Common#592"]["health"]["verdict"])
         self.assertEqual(M.admit(off, "Common#592")["action"], M.admit(on, "Common#592")["action"])
         title = on["nodes"]["Common#592"]["title_prefix"]
