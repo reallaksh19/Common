@@ -3962,6 +3962,71 @@ class CanonicalProviderEvidenceConditions(unittest.TestCase):
             self.assertEqual(before[kind], after[kind], kind)
 
 
+class CanonicalDependencyCondition(unittest.TestCase):
+    @staticmethod
+    def by_type(node):
+        return {row["type"]: row for row in node["conditions"]}
+
+    def test_no_declared_dependencies_is_not_applicable(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("NOT_APPLICABLE", condition["status"])
+        self.assertEqual("NO_DECLARED_DEPENDENCIES", condition["reason"])
+
+    def test_all_declared_dependencies_complete_is_true(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        done = bound_facts(
+            g,
+            leaf="Common#612",
+            pr="Common#613",
+            units=[unit("W1")],
+            result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"},
+        )
+        node = M.project(g, [entry(done, 1)], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("TRUE", condition["status"])
+        self.assertEqual("DEPENDENCIES_COMPLETE", condition["reason"])
+        self.assertEqual(["Common#612"], condition["source_refs"])
+
+    def test_known_noncomplete_dependency_is_false(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        node = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("FALSE", condition["status"])
+        self.assertEqual("DEPENDENCIES_INCOMPLETE", condition["reason"])
+        self.assertIn("Common#612:NOT_STARTED", condition["message"])
+
+    def test_provider_pr_merge_does_not_complete_a_dependency(self):
+        g = stable_graph()
+        leaf_of(g, "Common#592")["depends_on"] = ["Common#612"]
+        observations = {
+            **OBS_A,
+            "Common#612": {
+                "schema": M.OBSERVATION_SCHEMA,
+                "visibility": "OBSERVED",
+                "material": {
+                    "candidate_sha": SHA_A,
+                    "pr_state": "MERGED",
+                },
+            },
+        }
+        node = M.project(g, [], observations)["nodes"]["Common#592"]
+        condition = self.by_type(node)["DependenciesReady"]
+        self.assertEqual("FALSE", condition["status"])
+        self.assertEqual("DEPENDENCIES_INCOMPLETE", condition["reason"])
+
+    def test_undeclared_sibling_state_does_not_affect_dependency_condition(self):
+        g = stable_graph()
+        base = self.by_type(M.project(g, [], OBS_A)["nodes"]["Common#592"])["DependenciesReady"]
+        active = bound_facts(g, leaf="Common#612", pr="Common#613", units=[unit("W1", state="IN_PROGRESS")])
+        changed = self.by_type(
+            M.project(g, [entry(active, 1)], OBS_A)["nodes"]["Common#592"]
+        )["DependenciesReady"]
+        self.assertEqual(base, changed)
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)

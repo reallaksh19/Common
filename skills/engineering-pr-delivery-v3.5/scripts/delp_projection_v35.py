@@ -856,6 +856,84 @@ def _provider_evidence_conditions(
         ),
     ]
 
+
+
+def _dependency_condition(
+    indexed: Mapping[str, Any],
+    ref: str,
+    leaf: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Derive DependenciesReady from the already-derived declared dependency projection only."""
+    node = indexed["nodes"][ref]
+    generation = node.get("spec_generation")
+    dependencies = leaf.get("dependencies")
+    if not isinstance(dependencies, Mapping):
+        return condition_record(
+            "DependenciesReady",
+            "UNKNOWN",
+            "DEPENDENCY_STATE_UNOBSERVED",
+            "Dependency readiness was not projected.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:dependencies"],
+        )
+
+    declared = [str(value) for value in dependencies.get("declared") or []]
+    if not declared:
+        return condition_record(
+            "DependenciesReady",
+            "NOT_APPLICABLE",
+            "NO_DECLARED_DEPENDENCIES",
+            "The Responsibility declares no execution dependencies.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=[f"{ref}:dependencies"],
+        )
+
+    blocking = list(dependencies.get("blocking") or [])
+    if bool(dependencies.get("ready")) and not blocking:
+        return condition_record(
+            "DependenciesReady",
+            "TRUE",
+            "DEPENDENCIES_COMPLETE",
+            "Every declared predecessor Responsibility is complete.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=declared,
+        )
+
+    unresolved = [
+        row
+        for row in blocking
+        if not isinstance(row, Mapping)
+        or not str(row.get("lifecycle") or "").strip()
+    ]
+    if unresolved:
+        return condition_record(
+            "DependenciesReady",
+            "UNKNOWN",
+            "DEPENDENCY_STATE_UNKNOWN",
+            "At least one declared predecessor has unresolved lifecycle truth.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=declared,
+        )
+
+    shown = ", ".join(
+        f"{row['ref']}:{row['lifecycle']}"
+        for row in blocking
+        if isinstance(row, Mapping)
+    )
+    return condition_record(
+        "DependenciesReady",
+        "FALSE",
+        "DEPENDENCIES_INCOMPLETE",
+        f"Declared predecessor Responsibilities are not complete: {shown}.",
+        observed_generation=generation,
+        candidate_sha=None,
+        source_refs=declared,
+    )
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
@@ -3396,6 +3474,13 @@ def project(
         }
         if blocking_dependencies and results[ref]["state"] in {"ACTIVE", "NOT_STARTED"}:
             results[ref]["state"] = "WAITING_DEPENDENCY"
+
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] != "LEAF":
+            continue
+        results[ref]["conditions"].append(
+            _dependency_condition(indexed, ref, results[ref])
+        )
 
     health_mode = indexed["health_policy"]["mode"]
     if health_mode != "OFF":
