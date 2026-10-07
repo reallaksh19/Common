@@ -459,9 +459,18 @@ def normalize_observations(
         raise DelpError("observations: must be a mapping keyed by declared leaf reference")
 
     leaves = [ref for ref, node in indexed["nodes"].items() if node["kind"] == "LEAF"]
+    declared_repository = str(indexed["programme"].get("repository") or "").strip().lower()
     normalized: dict[int, dict[str, Any]] = {}
     for supplied_ref, observation in observations.items():
         try:
+            supplied_repo, _ = parse_ref(supplied_ref)
+            if supplied_repo and declared_repository:
+                supplied_repo = supplied_repo.lower()
+                expected = declared_repository if "/" in supplied_repo else declared_repository.split("/")[-1]
+                if supplied_repo != expected:
+                    raise DelpError(
+                        f"repository qualifier {supplied_repo!r} does not match programme.repository {declared_repository!r}"
+                    )
             leaf_ref = next((ref for ref in leaves if same_ref(ref, supplied_ref)), None)
         except DelpError as exc:
             raise DelpError(f"observation key {supplied_ref!r}: {exc}") from exc
