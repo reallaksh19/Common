@@ -98,6 +98,29 @@ jobs:
         if: steps.relevance.outputs.relevant == 'true'
         run: python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_replay_cases_v32.py' -v
 
+      - name: Run V3.2 handover custody and explicit-reasoning regressions
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_handover_context.py' -v
+
+      - name: Run V3.5 handover parity regressions
+        if: steps.relevance.outputs.relevant == 'true'
+        run: python -m unittest discover -s skills/engineering-pr-delivery-v3.5/tests -p 'test_handover_context.py' -v
+
+      - name: Verify V3.2 and V3.5 handover surfaces stay aligned
+        if: steps.relevance.outputs.relevant == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for rel in \
+            operating-model/two-pass-integration.md \
+            schemas/handover-context.schema.yaml \
+            scripts/handover_context.py \
+            scripts/plan_handover.py \
+            tests/test_handover_context.py
+          do
+            cmp "skills/engineering-pr-delivery-v3.2/$rel" "skills/engineering-pr-delivery-v3.5/$rel"
+          done
+
       - name: Verify V3.1 isolation invariant
         if: steps.relevance.outputs.relevant == 'true'
         run: python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_v31_isolation.py' -v
