@@ -99,6 +99,18 @@ def assemble_topology_admission(
     states = {row["state"] for row in currentness_rows}
     basis_moved = "MOVED" in states
 
+    claim_report = DELP.claim_topology_report(graph)
+    claim_summary = claim_report["summary"]
+    claim_blockers: list[str] = []
+    if claim_summary["claims"] == 0:
+        claim_blockers.append("CLAIMS_ABSENT")
+    if claim_summary["uncovered_claims"]:
+        claim_blockers.append("UNCOVERED_CLAIMS")
+    if claim_summary["orphan_responsibilities"]:
+        claim_blockers.append("ORPHAN_RESPONSIBILITIES")
+    if claim_summary["duplicate_nonshared_ownership"]:
+        claim_blockers.append("DUPLICATE_NONSHARED_OWNERSHIP")
+
     if "MISSING" in states:
         change_impact = "UNKNOWN"
     elif current_cross_cutting:
@@ -113,7 +125,7 @@ def assemble_topology_admission(
         "semantic_cohesion": basis["semantic_cohesion"],
         "dependency_closure": basis["dependency_closure"],
         "verification_closure": basis["verification_closure"],
-        "uncertainty": basis["uncertainty"],
+        "uncertainty": "BLOCKING" if claim_blockers else basis["uncertainty"],
         "change_impact": change_impact,
         "execution_horizon": basis["execution_horizon"],
         "mutation_domains": list(basis["mutation_domains"]),
@@ -134,6 +146,10 @@ def assemble_topology_admission(
         "graph_digest": indexed["digest"],
         "responsibility_ids": list(basis["responsibility_ids"]),
         "source_refs": list(basis["source_refs"]),
+        "claim_topology": {
+            "summary": copy.deepcopy(claim_summary),
+            "blockers": claim_blockers,
+        },
         "repository_currentness": currentness_rows,
         "assessment": assessment,
         "decision": decision,

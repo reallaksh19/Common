@@ -2705,6 +2705,9 @@ def stable_claim_topology_graph():
 
 def topology_assessment_planned():
     g = stable_claim_topology_graph()
+    leaf_of(g, "Common#612")["claim_relationships"] = [
+        {"claim_id": "PC-ENABLE", "relation": "OWN"},
+    ]
     g["programme"]["topology_assessments"] = [
         {
             "id": "TA-LEAF",
@@ -3065,6 +3068,7 @@ class TopologyAdmissionAssembler(unittest.TestCase):
                 g, assessment_id="TA-LEAF", observations=observations
             )
             self.assertEqual("DERIVED_TOPOLOGY_ADMISSION_ONLY", out["authority"])
+            self.assertEqual([], out["claim_topology"]["blockers"])
             self.assertEqual("CURRENT", out["repository_currentness"][0]["state"])
             self.assertEqual("LOCAL", out["assessment"]["change_impact"])
             self.assertEqual("PASS", out["decision"]["decision"])
@@ -3120,6 +3124,26 @@ class TopologyAdmissionAssembler(unittest.TestCase):
                 g, assessment_id="TA-LEAF", observations=observations
             )
             self.assertEqual("CROSS_CUTTING", out["assessment"]["change_impact"])
+
+    def test_wrong_ontology_claim_topology_cannot_be_rescued_by_optimistic_boundary_basis(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            leaf_of(g, "Common#592")["claim_relationships"] = [
+                {"claim_id": "PC-PRODUCT", "relation": "GATE"},
+                {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+            ]
+            leaf_of(g, "Common#612")["claim_relationships"] = [
+                {"claim_id": "PC-ENABLE", "relation": "GATE"},
+            ]
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertIn("UNCOVERED_CLAIMS", out["claim_topology"]["blockers"])
+            self.assertEqual("BLOCKING", out["assessment"]["uncertainty"])
+            self.assertEqual("DISCOVER_FIRST", out["decision"]["decision"])
 
     def test_assembly_is_deterministic_under_observation_map_order(self):
         with tempfile.TemporaryDirectory() as td:
