@@ -570,8 +570,10 @@ def condition_record(
     source_refs: Iterable[str] = (),
 ) -> dict[str, Any]:
     """Build one validated condition record, mapping caller-shape errors to DelpError."""
-    if isinstance(source_refs, (str, bytes, bytearray, Mapping)):
-        raise DelpError("condition source_refs: must be an iterable of refs, not text/bytes/mapping")
+    if isinstance(source_refs, (str, bytes, bytearray, Mapping, set, frozenset)):
+        raise DelpError(
+            "condition source_refs: must be an ordered iterable of refs, not text/bytes/mapping/set"
+        )
     try:
         refs = list(source_refs)
     except TypeError as exc:
