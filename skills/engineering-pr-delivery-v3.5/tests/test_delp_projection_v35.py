@@ -1085,6 +1085,18 @@ class ProviderObservationNormalization(unittest.TestCase):
         self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["CHECK"])
         self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["DIFF"])
 
+    def test_typed_shaped_observation_without_schema_fails_closed(self):
+        for record in (
+            {"visibility": "OBSERVED", "material": {"candidate_sha": SHA_A}},
+            {"material": {"candidate_sha": SHA_A}},
+            {"custody": {"interruptions": {}}},
+            {"diff": {"additions": 1}},
+            {"liveness": {"value": "ACTIVE"}},
+            {"schema": None, "visibility": "OBSERVED"},
+        ):
+            with self.subTest(record=record), self.assertRaises(M.DelpError):
+                M.project(graph(), [], {"Common#592": record})
+
     def test_wrong_repository_same_number_observation_fails_closed(self):
         with self.assertRaises(M.DelpError):
             M.project(graph(), [], {"other/repo#592": {"candidate_sha": SHA_A}})
