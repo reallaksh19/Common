@@ -190,6 +190,32 @@ An observed head alone is **not** a signal (a fresh branch points at its base), 
 
 Pinned by `RealScenarioReplay`, which replays the #527 / P3-I situation (the real issue and PR numbers, merge commits, branch head and ahead-9 / behind-4 divergence; the closed weights and the 10000 denominator) through the projector.
 
+## Responsibility observations — observer-owned and low burden
+
+Provider truth enters reconciliation through `RESPONSIBILITY_OBSERVATION_V1`. This is an **ephemeral normalized input contract**, not an executor fact, not a second event store, and not a requirement to publish every provider poll to GitHub.
+
+The typed categories are:
+
+- `MATERIAL` — candidate/base SHA, PR state and branch divergence;
+- `CUSTODY` — observation-only continuity telemetry; fencing semantics belong to the custody phase;
+- `LIVENESS` — observer-reported ACTIVE / QUIET / STALE;
+- optional `CHECK`;
+- optional `DIFF` — additions/deletions/checkpoint-distance inputs.
+
+The authority rules are deliberately asymmetric:
+
+- executors publish engineering facts; they cannot author `observation`, `observations`, `provider_observation` or `provider_visibility` inside `CHECKPOINT_FACTS_V1`;
+- provider/observer adapters supply observations mechanically where possible;
+- missing optional categories are `UNOBSERVED`, never PASS and never FAIL;
+- `visibility: UNAVAILABLE` means provider truth could not be observed; it does not erase semantic P or fabricate failure;
+- a CHECK result, including FAILURE, is merely observed data unless the governing Responsibility later declares that exact check as an acceptance gate;
+- no CI/check observation is universally required;
+- no repeated manual transcription, heartbeat comment, or per-poll persistence is required.
+
+`normalize_observation()` keeps legacy flat observation files readable while typed inputs carry explicit category currentness. `normalize_observations()` resolves observation locators only to declared leaves, rejects unknown/duplicate inputs, and—when `programme.repository` is declared—rejects a fully-qualified owner/repo locator from another repository. `observe_github()` emits typed MATERIAL observations; it does not fabricate CHECK, DIFF, LIVENESS or CUSTODY data it did not observe.
+
+The design goal is continuity per unit of agent effort: provider-known state is captured by adapters and reconciliation, while the executor publishes only irreducible semantic evidence.
+
 ## Frontier — what a handover may carry, and how a successor checks it is still true
 
 A handover is the predecessor's view of a leaf **at one instant**, never current truth. Written by hand it carries numbers (a base commit, a branch head, "ahead 9 / behind 4", a percentage) that nothing can check, and the successor is told to re-read them all. DELP derives that view and checks it mechanically.
