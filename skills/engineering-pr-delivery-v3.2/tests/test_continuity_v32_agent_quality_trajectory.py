@@ -19,6 +19,10 @@ import agent_quality_trajectory_v32 as M2
 SCHEMA = yaml.safe_load((ROOT / "schemas" / "agent-quality-trajectory-v32.schema.yaml").read_text(encoding="utf-8"))
 
 
+BASIS_REF = "Common#689#agent-quality-benchmark-v1"
+BASIS_DIGEST = "sha256:" + "b" * 64
+
+
 def obs(oid, kind, disposition, *, critical=False, covered=None, repairs=0):
     row = {
         "id": oid,
@@ -26,7 +30,7 @@ def obs(oid, kind, disposition, *, critical=False, covered=None, repairs=0):
         "critical": critical,
         "disposition": disposition,
         "repairs": repairs,
-        "evidence_refs": [f"Common#694#{oid}"],
+        "evidence_refs": [BASIS_REF, f"Common#694#{oid}"],
     }
     if covered is not None:
         row["impact_expected"] = 1
@@ -64,6 +68,7 @@ def source(*items):
     return {
         "schema": M2.INPUT_SCHEMA,
         "trajectory_id": "TRAJ-001",
+        "comparison_basis": {"ref": BASIS_REF, "digest": BASIS_DIGEST},
         "windows": [{"sequence": seq, "result": value} for seq, value in items],
     }
 
@@ -115,6 +120,12 @@ class AgentQualityTrajectoryTests(unittest.TestCase):
         out = self.validate_both(source((1, first), (2, second)))
         self.assertEqual(("INSUFFICIENT_DATA", "INCOMPLETE_SIGNAL"), (out["trajectory"], out["reason"]))
         self.assertEqual("INSUFFICIENT_DATA", out["components"]["clean_tnr"]["direction"])
+
+    def test_comparison_basis_must_be_durable_and_shared_by_every_window(self):
+        value = source((1, poor("W1")), (2, good("W2")))
+        value["comparison_basis"] = {"ref": "Common#689#different-benchmark", "digest": BASIS_DIGEST}
+        with self.assertRaises(M2.TrajectoryError):
+            M2.evaluate(value)
 
     def test_sequence_not_input_order_controls_result_and_digest(self):
         a, b = poor("W1"), good("W2")
