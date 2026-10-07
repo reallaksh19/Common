@@ -353,6 +353,11 @@ properties:
           minLength: 1
           pattern: '.*\S.*'
           description: Why this leaf can receive an independent responsibility verdict without completing its siblings.
+        acceptance_methods:
+          type: array
+          uniqueItems: true
+          items: {type: string, minLength: 1, pattern: '.*\S.*'}
+          description: Acceptance methods frozen by proposal-v2 when this leaf was materialized.
         units:
           type: array
           minItems: 1
