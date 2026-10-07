@@ -27,6 +27,7 @@ from handover_context import (
     validate_visibility,
 )
 from plan_handover import plan_handover
+from owner_commands import parse_owner_command
 from relay_can import evaluate as can_action
 from relay_tx import release_lease
 from test_relay_can import WRITE_PATH, add_control, prepare_git
@@ -360,6 +361,91 @@ class HandoverContextTests(unittest.TestCase):
             self.assertIn("Further task", rendered)
 
 
+
+
+
+    def test_benchmark_owner_instruction_drives_handover_runtime_end_to_end(self):
+        owner = parse_owner_command(
+            "prepare for handover and create exactly 3 questions; no qualification; "
+            "do not run retained validation; do not modify production code; do not create a PR; "
+            "do not start C1 execution"
+        )
+        self.assertEqual("PLAN_HANDOVER", owner["intent"])
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            result = plan_handover(
+                root,
+                tx_id="TX-HANDOVER-OWNER-001",
+                event_id="EVT-HANDOVER-OWNER-001",
+                actor="owner",
+                target_path=target_observation(root),
+                base_ref=base_ref,
+                complex_mode=False,
+                owner_intent=owner,
+            )
+            self.assertEqual("COMMITTED", result["status"])
+            context = load_yaml(root / "relay/GENERATED/HANDOVER_CONTEXT.yaml")
+            entry = context["successor_entry"]
+            self.assertEqual("RECONSTRUCT_PLAN_ONLY", entry["mode"])
+            self.assertEqual(3, len(entry["successor_reconstruction_challenge"]))
+            expected = {
+                "EXACT_SUCCESSOR_CHALLENGE_COUNT:3",
+                "NO_QUALIFICATION",
+                "NO_RETAINED_VALIDATION",
+                "NO_PRODUCTION_MUTATION",
+                "NO_PR_CREATION",
+                "NO_TASK_EXECUTION",
+            }
+            self.assertTrue(expected.issubset(set(entry["owner_boundary_constraints"])))
+            self.assertEqual("OWNER_EXPLICIT_EXECUTION_ADMISSION", entry["execution_admission"])
+            self.assertFalse((root / "relay/GENERATED/TWO_PASS_REQUEST.yaml").exists())
+            events, errors = load_events(root / "relay/EVENTS.jsonl")
+            self.assertEqual([], errors)
+            planned = [row for row in events if row["event_id"] == "EVT-HANDOVER-OWNER-001"][0]
+            self.assertTrue(planned["details"]["owner_intent_bound"])
+            self.assertEqual(3, planned["details"]["successor_challenge_count"])
+            self.assertGreaterEqual(planned["details"]["owner_boundary_constraint_count"], 6)
+
+    def test_owner_intent_count_conflict_fails_closed_before_handover_write(self):
+        owner = parse_owner_command("prepare for handover and create exactly 3 questions")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            with self.assertRaisesRegex(TransactionError, "conflicts with Owner intent"):
+                plan_handover(
+                    root,
+                    tx_id="TX-HANDOVER-CONFLICT-001",
+                    event_id="EVT-HANDOVER-CONFLICT-001",
+                    actor="owner",
+                    target_path=target_observation(root),
+                    base_ref=base_ref,
+                    complex_mode=False,
+                    owner_intent=owner,
+                    successor_challenge_count=2,
+                )
+            self.assertFalse((root / "relay/GENERATED/HANDOVER_CONTEXT.yaml").exists())
+
+    def test_owner_intent_challenge_without_count_fails_closed_instead_of_dropping_deliverable(self):
+        owner = parse_owner_command("prepare for handover and create successor questions for the next agent")
+        self.assertIn(
+            {"type": "SUCCESSOR_RECONSTRUCTION_CHALLENGE"},
+            owner["owner_intent"]["requested_deliverables"],
+        )
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _, base_ref = prepare_git(root)
+            with self.assertRaisesRegex(TransactionError, "without a concrete count"):
+                plan_handover(
+                    root,
+                    tx_id="TX-HANDOVER-NOCOUNT-001",
+                    event_id="EVT-HANDOVER-NOCOUNT-001",
+                    actor="owner",
+                    target_path=target_observation(root),
+                    base_ref=base_ref,
+                    complex_mode=False,
+                    owner_intent=owner,
+                )
 
     def test_default_handover_entry_is_conservative_even_without_a_requested_challenge(self):
         with tempfile.TemporaryDirectory() as td:

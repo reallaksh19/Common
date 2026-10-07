@@ -147,7 +147,11 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
 
 
 
-def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> dict[str, Any]:
+def _successor_entry(
+    context: dict[str, Any],
+    challenge_count: int | None,
+    owner_boundary_constraints: list[str] | None = None,
+) -> dict[str, Any]:
     if challenge_count is None:
         count = 0
     elif isinstance(challenge_count, bool) or not isinstance(challenge_count, int) or not (0 <= challenge_count <= 10):
@@ -358,6 +362,7 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
         "allowed_actions": list(SUCCESSOR_ALLOWED_ACTIONS),
         "forbidden_actions": list(SUCCESSOR_FORBIDDEN_ACTIONS),
         "execution_admission": SUCCESSOR_EXECUTION_ADMISSION,
+        "owner_boundary_constraints": list(dict.fromkeys(str(x) for x in (owner_boundary_constraints or []) if str(x).strip())),
         "challenge_basis": {
             "freshness": freshness,
             "target_state": target_state,
@@ -385,6 +390,7 @@ def build_context(
     improvement_view_override: dict[str, Any] | None = None,
     protocol_root: Path | None = None,
     successor_challenge_count: int | None = None,
+    successor_boundary_constraints: list[str] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     # Custody preparation is independent of the optional standalone reasoning
@@ -531,7 +537,11 @@ def build_context(
             },
         },
     }
-    context["successor_entry"] = _successor_entry(context, successor_challenge_count)
+    context["successor_entry"] = _successor_entry(
+        context,
+        successor_challenge_count,
+        successor_boundary_constraints,
+    )
     errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
     errors.extend(validate_visibility(context))
     if errors:
