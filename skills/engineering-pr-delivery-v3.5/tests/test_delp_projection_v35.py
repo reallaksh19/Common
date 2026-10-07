@@ -1846,7 +1846,16 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual([], M.validate_condition(record))
 
     def test_condition_constructor_rejects_ambiguous_or_non_iterable_source_refs(self):
-        for source_refs in ("abc", b"abc", bytearray(b"abc"), {"ref": "abc"}, None, 7):
+        for source_refs in (
+            "abc",
+            b"abc",
+            bytearray(b"abc"),
+            {"ref": "abc"},
+            {"a", "b"},
+            frozenset({"a", "b"}),
+            None,
+            7,
+        ):
             with self.subTest(source_refs=source_refs):
                 with self.assertRaises(M.DelpError):
                     M.condition_record(
