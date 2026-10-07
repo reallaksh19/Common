@@ -12,6 +12,114 @@ $defs:
   ref: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
   item_key: {type: string, pattern: '^[^:\s]+:(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
   claim_id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+
+  proposed_unit:
+    type: object
+    additionalProperties: false
+    required: [id, kind, weight, outcome, verify]
+    properties:
+      id: {$ref: '#/$defs/claim_id'}
+      kind: {enum: [SEMANTIC, DELIVERY_GATE, MECHANICAL]}
+      weight: {type: integer, minimum: 1}
+      outcome: {type: string, minLength: 1, pattern: '.*\S.*'}
+      verify: {type: string, minLength: 1, pattern: '.*\S.*'}
+
+  mechanism_exception:
+    type: object
+    additionalProperties: false
+    required: [basis, claim_ids]
+    properties:
+      basis: {type: string, minLength: 1, pattern: '.*\S.*'}
+      claim_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {$ref: '#/$defs/claim_id'}
+
+  claim_allocation:
+    type: object
+    additionalProperties: false
+    required: [claim_id, weight]
+    properties:
+      claim_id: {$ref: '#/$defs/claim_id'}
+      weight: {type: integer, minimum: 1}
+
+  proposed_responsibility:
+    type: object
+    additionalProperties: false
+    required:
+      [id, work_class, owns_claims, claim_allocations, outcome, independence_basis,
+       semantic_units, size_budget, write_surface, acceptance_methods]
+    properties:
+      id: {$ref: '#/$defs/claim_id'}
+      work_class: {enum: [PRODUCT, MECHANICAL, GATE]}
+      owns_claims:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {$ref: '#/$defs/claim_id'}
+      claim_allocations:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/claim_allocation'}
+      outcome: {type: string, minLength: 1, pattern: '.*\S.*'}
+      independence_basis: {type: string, minLength: 1, pattern: '.*\S.*'}
+      mechanism_exception: {$ref: '#/$defs/mechanism_exception'}
+      size_budget: {$ref: '#/$defs/size_budget'}
+      write_surface:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '^[^*?\[\]\\]+$'}
+      acceptance_methods:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '.*\S.*'}
+      depends_on:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/claim_id'}
+      parallel_ok:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/claim_id'}
+      parallel_ok_basis: {type: string, minLength: 1, pattern: '.*\S.*'}
+      semantic_units:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/proposed_unit'}
+
+  proposal_binding:
+    type: object
+    additionalProperties: false
+    required: [responsibility_id, ref]
+    properties:
+      responsibility_id: {$ref: '#/$defs/claim_id'}
+      ref: {$ref: '#/$defs/ref'}
+
+  decomposition_proposal:
+    type: object
+    additionalProperties: false
+    required: [version, responsibilities]
+    properties:
+      version: {const: V2}
+      released_proposal_digest: {$ref: '#/$defs/digest'}
+      delivery_gate_weight_exception_basis:
+        type: string
+        minLength: 1
+        pattern: '.*\S.*'
+        description: Explicit Owner/programme basis required only when DELIVERY_GATE claim weight is at least semantic claim weight.
+      bindings:
+        type: array
+        uniqueItems: true
+        items: {$ref: '#/$defs/proposal_binding'}
+      responsibilities:
+        type: array
+        minItems: 1
+        items: {$ref: '#/$defs/proposed_responsibility'}
+
   acceptance_claim:
     type: object
     additionalProperties: false
@@ -20,10 +128,18 @@ $defs:
       id: {$ref: '#/$defs/claim_id'}
       claim: {type: string, minLength: 1, pattern: '.*\S.*'}
       kind: {enum: [SEMANTIC, DELIVERY_GATE]}
+      weight: {type: integer, minimum: 1}
       shared:
         type: boolean
         default: false
         description: True only when multiple leaves deliberately share responsibility for the same parent claim.
+      mechanism_exception_allowed:
+        type: boolean
+        default: false
+        description: >-
+          True only when this parent outcome is genuinely infrastructure/verification work for which a mechanism-shaped
+          PRODUCT responsibility boundary is semantically legitimate. The responsibility must still cite an explicit basis.
+
   size_budget:
     type: object
     additionalProperties: false
@@ -76,6 +192,12 @@ properties:
         type: integer
         minimum: 1
         description: Display scale for unit points (default 10000). Shares are exact fractions; this never changes a percentage.
+      decomposition_proposal:
+        $ref: '#/$defs/decomposition_proposal'
+        description: >-
+          Pre-materialization claim-first responsibility topology. Proposed responsibilities have stable ids but no
+          provider child refs. decompose-check evaluates this layer before child issue creation; materialized nodes keep
+          their existing ref semantics.
       acceptance_claims:
         type: array
         uniqueItems: true
@@ -236,6 +358,11 @@ properties:
           minLength: 1
           pattern: '.*\S.*'
           description: Why this leaf can receive an independent responsibility verdict without completing its siblings.
+        acceptance_methods:
+          type: array
+          uniqueItems: true
+          items: {type: string, minLength: 1, pattern: '.*\S.*'}
+          description: Acceptance methods frozen by proposal-v2 when this leaf was materialized.
         units:
           type: array
           minItems: 1

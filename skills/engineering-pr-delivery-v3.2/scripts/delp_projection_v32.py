@@ -844,6 +844,210 @@ def _plan_updates(value: Any) -> list[dict[str, Any]]:
     return rows
 
 
+def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
+    """Normalize the pre-materialization proposal layer. Provider child refs are intentionally absent."""
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise GraphError("programme.decomposition_proposal: must be a mapping")
+    allowed_top = {
+        "version", "responsibilities", "released_proposal_digest", "bindings",
+        "delivery_gate_weight_exception_basis",
+    }
+    if set(map(str, value)) - allowed_top or not {"version", "responsibilities"}.issubset(set(map(str, value))):
+        raise GraphError("programme.decomposition_proposal: version/responsibilities plus optional release/bindings fields only")
+    if value.get("version") != "V2":
+        raise GraphError("programme.decomposition_proposal.version: must be V2")
+    raw_rows = value.get("responsibilities")
+    if not isinstance(raw_rows, list) or not raw_rows:
+        raise GraphError("programme.decomposition_proposal.responsibilities: non-empty array required")
+    released_digest = value.get("released_proposal_digest")
+    if released_digest is not None and not _DIGEST.fullmatch(str(released_digest)):
+        raise GraphError("programme.decomposition_proposal.released_proposal_digest: must be sha256:<64 hex>")
+    gate_weight_basis = value.get("delivery_gate_weight_exception_basis")
+    if gate_weight_basis is not None and (not isinstance(gate_weight_basis, str) or not gate_weight_basis.strip()):
+        raise GraphError("programme.decomposition_proposal.delivery_gate_weight_exception_basis: non-empty string required")
+    raw_bindings = value.get("bindings") or []
+    if not isinstance(raw_bindings, list):
+        raise GraphError("programme.decomposition_proposal.bindings: must be an array")
+    bindings: list[dict[str, str]] = []
+    seen_binding_ids: set[str] = set()
+    seen_binding_refs: set[int] = set()
+    for index, binding in enumerate(raw_bindings):
+        where = f"programme.decomposition_proposal.bindings[{index}]"
+        if not isinstance(binding, Mapping) or set(map(str, binding)) != {"responsibility_id", "ref"}:
+            raise GraphError(f"{where}: exact responsibility_id/ref mapping required")
+        rid = str(binding.get("responsibility_id") or "")
+        if not _UNIT_ID.fullmatch(rid) or rid in seen_binding_ids:
+            raise GraphError(f"{where}.responsibility_id: invalid or duplicate responsibility id {rid!r}")
+        try:
+            number = ref_number(binding.get("ref"))
+        except DelpError as exc:
+            raise GraphError(f"{where}.ref: {exc}") from exc
+        if number in seen_binding_refs:
+            raise GraphError(f"{where}.ref: duplicate provider binding")
+        seen_binding_ids.add(rid)
+        seen_binding_refs.add(number)
+        bindings.append({"responsibility_id": rid, "ref": str(binding["ref"])})
+
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for index, raw in enumerate(raw_rows):
+        where = f"programme.decomposition_proposal.responsibilities[{index}]"
+        required = {
+            "id", "work_class", "owns_claims", "claim_allocations", "outcome", "independence_basis",
+            "semantic_units", "size_budget", "write_surface", "acceptance_methods",
+        }
+        allowed = required | {"mechanism_exception", "depends_on", "parallel_ok", "parallel_ok_basis"}
+        if not isinstance(raw, Mapping) or not required.issubset(set(map(str, raw))) or set(map(str, raw)) - allowed:
+            raise GraphError(f"{where}: exact pre-materialization responsibility fields required")
+        rid = str(raw.get("id") or "")
+        if not _UNIT_ID.fullmatch(rid) or rid in seen:
+            raise GraphError(f"{where}.id: invalid or duplicate responsibility id {rid!r}")
+        seen.add(rid)
+        work_class = raw.get("work_class")
+        if work_class not in WORK_CLASSES:
+            raise GraphError(f"{where}.work_class: one of {list(WORK_CLASSES)}")
+        owns_claims = _str_list(raw.get("owns_claims"), f"{where}.owns_claims")
+        if not owns_claims or len(owns_claims) != len(set(owns_claims)) or any(not _UNIT_ID.fullmatch(cid) for cid in owns_claims):
+            raise GraphError(f"{where}.owns_claims: non-empty unique claim ids required")
+        raw_allocations = raw.get("claim_allocations")
+        if not isinstance(raw_allocations, list) or not raw_allocations:
+            raise GraphError(f"{where}.claim_allocations: non-empty array required")
+        allocations: list[dict[str, Any]] = []
+        seen_allocations: set[str] = set()
+        for allocation_index, allocation in enumerate(raw_allocations):
+            awhere = f"{where}.claim_allocations[{allocation_index}]"
+            if not isinstance(allocation, Mapping) or set(map(str, allocation)) != {"claim_id", "weight"}:
+                raise GraphError(f"{awhere}: exact claim_id/weight mapping required")
+            claim_id = str(allocation.get("claim_id") or "")
+            if not _UNIT_ID.fullmatch(claim_id) or claim_id in seen_allocations:
+                raise GraphError(f"{awhere}.claim_id: invalid or duplicate claim id {claim_id!r}")
+            seen_allocations.add(claim_id)
+            allocations.append({"claim_id": claim_id, "weight": _positive_int(allocation.get("weight"), f"{awhere}.weight")})
+        if set(seen_allocations) != set(owns_claims):
+            raise GraphError(f"{where}.claim_allocations: claim ids must exactly match owns_claims")
+
+        size_budget = _size_budget(raw.get("size_budget"), where)
+        write_surface = _write_surface(raw.get("write_surface"), where)
+        acceptance_methods = _str_list(raw.get("acceptance_methods"), f"{where}.acceptance_methods")
+        if not acceptance_methods or len(acceptance_methods) != len(set(acceptance_methods)):
+            raise GraphError(f"{where}.acceptance_methods: non-empty unique strings required")
+        depends_on = _str_list(raw.get("depends_on"), f"{where}.depends_on")
+        parallel_ok = _str_list(raw.get("parallel_ok"), f"{where}.parallel_ok")
+        for field, values in (("depends_on", depends_on), ("parallel_ok", parallel_ok)):
+            if any(not _UNIT_ID.fullmatch(value) for value in values) or len(values) != len(set(values)):
+                raise GraphError(f"{where}.{field}: unique responsibility ids required")
+            if rid in values:
+                raise GraphError(f"{where}.{field}: responsibility cannot reference itself")
+        parallel_basis = raw.get("parallel_ok_basis")
+        if parallel_basis is not None and (not isinstance(parallel_basis, str) or not parallel_basis.strip()):
+            raise GraphError(f"{where}.parallel_ok_basis: non-empty string required when present")
+
+        outcome = raw.get("outcome")
+        basis = raw.get("independence_basis")
+        if not isinstance(outcome, str) or not outcome.strip():
+            raise GraphError(f"{where}.outcome: non-empty string required")
+        if not isinstance(basis, str) or not basis.strip():
+            raise GraphError(f"{where}.independence_basis: non-empty string required")
+        raw_units = raw.get("semantic_units")
+        if not isinstance(raw_units, list) or not raw_units:
+            raise GraphError(f"{where}.semantic_units: non-empty array required")
+        units: list[dict[str, str]] = []
+        seen_units: set[str] = set()
+        for unit_index, unit in enumerate(raw_units):
+            uwhere = f"{where}.semantic_units[{unit_index}]"
+            if not isinstance(unit, Mapping) or set(map(str, unit)) != {"id", "kind", "weight", "outcome", "verify"}:
+                raise GraphError(f"{uwhere}: exact id/kind/weight/outcome/verify fields required")
+            uid = str(unit.get("id") or "")
+            if not _UNIT_ID.fullmatch(uid) or uid in seen_units:
+                raise GraphError(f"{uwhere}.id: invalid or duplicate unit id {uid!r}")
+            seen_units.add(uid)
+            kind = unit.get("kind")
+            if kind not in {"SEMANTIC", "DELIVERY_GATE", "MECHANICAL"}:
+                raise GraphError(f"{uwhere}.kind: SEMANTIC, DELIVERY_GATE or MECHANICAL required")
+            unit_outcome = unit.get("outcome")
+            verify = unit.get("verify")
+            if not isinstance(unit_outcome, str) or not unit_outcome.strip():
+                raise GraphError(f"{uwhere}.outcome: non-empty string required")
+            if not isinstance(verify, str) or not verify.strip():
+                raise GraphError(f"{uwhere}.verify: non-empty string required")
+            units.append(
+                {
+                    "id": uid,
+                    "kind": kind,
+                    "weight": _positive_int(unit.get("weight"), f"{uwhere}.weight"),
+                    "outcome": unit_outcome.strip(),
+                    "verify": verify.strip(),
+                }
+            )
+        mechanism_exception = raw.get("mechanism_exception")
+        clean_exception = None
+        if mechanism_exception is not None:
+            if not isinstance(mechanism_exception, Mapping) or set(map(str, mechanism_exception)) != {"basis", "claim_ids"}:
+                raise GraphError(f"{where}.mechanism_exception: exact basis/claim_ids mapping required")
+            exception_basis = mechanism_exception.get("basis")
+            exception_claims = _str_list(mechanism_exception.get("claim_ids"), f"{where}.mechanism_exception.claim_ids")
+            if not isinstance(exception_basis, str) or not exception_basis.strip() or not exception_claims:
+                raise GraphError(f"{where}.mechanism_exception: non-empty basis and claim_ids required")
+            if any(not _UNIT_ID.fullmatch(cid) for cid in exception_claims) or len(exception_claims) != len(set(exception_claims)):
+                raise GraphError(f"{where}.mechanism_exception.claim_ids: unique claim ids required")
+            clean_exception = {"basis": exception_basis.strip(), "claim_ids": sorted(exception_claims)}
+        rows.append(
+            {
+                "id": rid,
+                "work_class": work_class,
+                "owns_claims": sorted(owns_claims),
+                "claim_allocations": sorted(allocations, key=lambda row: row["claim_id"]),
+                "outcome": outcome.strip(),
+                "independence_basis": basis.strip(),
+                "mechanism_exception": clean_exception,
+                "size_budget": size_budget,
+                "write_surface": write_surface,
+                "acceptance_methods": sorted(acceptance_methods),
+                "depends_on": sorted(depends_on),
+                "parallel_ok": sorted(parallel_ok),
+                "parallel_ok_basis": parallel_basis.strip() if isinstance(parallel_basis, str) else None,
+                "semantic_units": units,
+            }
+        )
+    proposal_ids = {row["id"] for row in rows}
+    for row in rows:
+        for field in ("depends_on", "parallel_ok"):
+            unknown = sorted(set(row[field]) - proposal_ids)
+            if unknown:
+                raise GraphError(
+                    f"programme.decomposition_proposal.{row['id']}.{field}: unknown responsibility id(s) {_id_list(unknown)}"
+                )
+    walk_state: dict[str, int] = {}
+    by_id = {row["id"]: row for row in rows}
+
+    def walk(rid: str) -> None:
+        walk_state[rid] = 1
+        for dep in by_id[rid]["depends_on"]:
+            if walk_state.get(dep) == 1:
+                raise GraphError(f"programme.decomposition_proposal.depends_on cycle through {rid} and {dep}")
+            if dep not in walk_state:
+                walk(dep)
+        walk_state[rid] = 2
+
+    for rid in proposal_ids:
+        if rid not in walk_state:
+            walk(rid)
+
+    unknown_bindings = sorted(set(seen_binding_ids) - proposal_ids)
+    if unknown_bindings:
+        raise GraphError(
+            f"programme.decomposition_proposal.bindings: unknown responsibility id(s) {_id_list(unknown_bindings)}"
+        )
+    return {
+        "version": "V2",
+        "released_proposal_digest": str(released_digest) if released_digest is not None else None,
+        "delivery_gate_weight_exception_basis": gate_weight_basis.strip() if isinstance(gate_weight_basis, str) else None,
+        "bindings": bindings,
+        "responsibilities": rows,
+    }
+
 def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
     """Normalize parent acceptance claims. Claims describe outcomes; leaves own them."""
     if value is None:
@@ -856,6 +1060,10 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
         where = f"programme.acceptance_claims[{index}]"
         if not isinstance(raw, Mapping):
             raise GraphError(f"{where}: must be a mapping")
+        allowed = {"id", "claim", "kind", "weight", "shared", "mechanism_exception_allowed"}
+        extra = sorted(set(map(str, raw)) - allowed)
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
         cid = str(raw.get("id") or "")
         if not _UNIT_ID.fullmatch(cid) or cid in seen:
             raise GraphError(f"{where}.id: invalid or duplicate claim id {cid!r}")
@@ -868,8 +1076,23 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
         shared = raw.get("shared", False)
         if not isinstance(shared, bool):
             raise GraphError(f"{where}.shared: must be boolean")
+        weight = raw.get("weight")
+        if weight is not None:
+            weight = _positive_int(weight, f"{where}.weight")
+        mechanism_exception_allowed = raw.get("mechanism_exception_allowed", False)
+        if not isinstance(mechanism_exception_allowed, bool):
+            raise GraphError(f"{where}.mechanism_exception_allowed: must be boolean")
         seen.add(cid)
-        rows.append({"id": cid, "claim": claim.strip(), "kind": kind, "shared": shared})
+        rows.append(
+            {
+                "id": cid,
+                "claim": claim.strip(),
+                "kind": kind,
+                "weight": weight,
+                "shared": shared,
+                "mechanism_exception_allowed": mechanism_exception_allowed,
+            }
+        )
     return rows
 
 
@@ -971,6 +1194,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     health_policy = resolve_health_policy(programme.get("health_policy"))
     acceptance_claims = _acceptance_claims(programme.get("acceptance_claims"))
     claims_by_id = {row["id"]: row for row in acceptance_claims}
+    decomposition_proposal = _decomposition_proposal(programme.get("decomposition_proposal"))
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
     base_ref = programme.get("base_ref")
     if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
@@ -1115,6 +1339,9 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             independence_basis = raw.get("independence_basis")
             if independence_basis is not None and not isinstance(independence_basis, str):
                 raise GraphError(f"{ref}.independence_basis: must be a string")
+            acceptance_methods = _str_list(raw.get("acceptance_methods"), f"{ref}.acceptance_methods")
+            if len(acceptance_methods) != len(set(acceptance_methods)):
+                raise GraphError(f"{ref}.acceptance_methods: duplicates are not allowed")
             owns_claims = _str_list(raw.get("owns_claims"), f"{ref}.owns_claims")
             for cid in owns_claims:
                 if not _UNIT_ID.fullmatch(cid):
@@ -1143,6 +1370,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "parallel_ok_basis": (basis or "").strip() or None,
                     "owns_claims": sorted(set(owns_claims)),
                     "independence_basis": (independence_basis or "").strip() or None,
+                    "acceptance_methods": sorted(acceptance_methods),
                 }
             )
             if node["primary_pr"] is not None:
@@ -1188,7 +1416,13 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             cursor = nodes[cursor]["parent_ref"]
     for ref, node in nodes.items():
         if node["kind"] != "LEAF" and not node["children"]:
-            raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
+            proposal_root = (
+                node["kind"] == "ROOT"
+                and decomposition_proposal is not None
+                and len(nodes) == 1
+            )
+            if not proposal_root:
+                raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
 
     # leaf-to-leaf references (ordering and declared parallelism) must name declared leaves
     leaf_by_number = {n["number"]: ref for ref, n in nodes.items() if n["kind"] == "LEAF"}
@@ -1226,6 +1460,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         "health_policy": health_policy,
         "acceptance_claims": acceptance_claims,
         "claims_by_id": claims_by_id,
+        "decomposition_proposal": decomposition_proposal,
         "total_weight": total_weight,
         "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
@@ -1372,6 +1607,441 @@ def _leaf_findings(
     return found
 
 
+_MECHANISM_WORDS = frozenset(
+    {
+        "workflow", "ci", "browser", "evidence", "handoff", "renderer", "migration",
+        "test", "tests", "testing", "checkpoint", "schema", "script", "fixture", "fixtures",
+    }
+)
+
+
+def _mechanism_terms(*texts: str) -> list[str]:
+    found: set[str] = set()
+    for text in texts:
+        tokens = re.findall(r"[a-z0-9]+", str(text).lower().replace("_", " ").replace("-", " "))
+        found.update(token for token in tokens if token in _MECHANISM_WORDS)
+    return sorted(found)
+
+
+def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None) -> dict[str, Any]:
+    """Evaluate the pre-materialization proposal before child provider refs exist."""
+    proposal, policy = indexed["decomposition_proposal"], indexed["policy"]
+    assert proposal is not None
+    proposal_digest = canonical_digest(
+        {
+            "version": proposal["version"],
+            "acceptance_claims": indexed["acceptance_claims"],
+            "responsibilities": proposal["responsibilities"],
+            "delivery_gate_weight_exception_basis": proposal["delivery_gate_weight_exception_basis"],
+            "total_weight": indexed["total_weight"],
+            "decomposition_policy": policy,
+        }
+    )
+    claims_by_id = indexed["claims_by_id"]
+    claim_policy = policy["claim_first"]
+    claim_severity = "ADVISORY" if claim_policy["mode"] == "ADVISORY" else "BLOCKER"
+    rows: dict[str, Any] = {}
+    findings: dict[str, list[dict[str, str]]] = {row["id"]: [] for row in proposal["responsibilities"]}
+
+    total_weight = indexed["total_weight"]
+    missing_weights = [cid for cid, claim in claims_by_id.items() if claim.get("weight") is None]
+    global_findings: list[dict[str, str]] = []
+    if policy["mode"] != "ENFORCED" or claim_policy["mode"] != "ENFORCED":
+        global_findings.append(
+            _finding(
+                "PROPOSAL_GATE_NOT_ENFORCED",
+                "proposal-v2 child release requires decomposition_policy.mode=ENFORCED and claim_first.mode=ENFORCED",
+            )
+        )
+    if missing_weights:
+        global_findings.append(
+            _finding(
+                "PARENT_CLAIM_WEIGHT_MISSING",
+                f"proposal-v2 requires weight on parent claim(s): {_id_list(missing_weights)}",
+            )
+        )
+    elif sum(claim["weight"] for claim in claims_by_id.values()) != total_weight:
+        global_findings.append(
+            _finding(
+                "PARENT_CLAIM_WEIGHT_TOTAL",
+                f"parent claim weights must sum to programme.total_weight {total_weight}",
+            )
+        )
+    if not missing_weights and claims_by_id:
+        semantic_weight = sum(claim["weight"] for claim in claims_by_id.values() if claim["kind"] == "SEMANTIC")
+        gate_weight = sum(claim["weight"] for claim in claims_by_id.values() if claim["kind"] == "DELIVERY_GATE")
+        if gate_weight and gate_weight >= semantic_weight and not proposal["delivery_gate_weight_exception_basis"]:
+            global_findings.append(
+                _finding(
+                    "DELIVERY_GATE_WEIGHT_DOMINATES",
+                    f"DELIVERY_GATE claim weight {gate_weight} must not equal/exceed semantic weight {semantic_weight} "
+                    "without delivery_gate_weight_exception_basis",
+                )
+            )
+
+    owners: dict[str, list[str]] = {cid: [] for cid in claims_by_id}
+    allocations_by_claim: dict[str, list[tuple[str, int]]] = {cid: [] for cid in claims_by_id}
+    for row in proposal["responsibilities"]:
+        rid = row["id"]
+        owned = row["owns_claims"]
+        unknown = [cid for cid in owned if cid not in claims_by_id]
+        if unknown:
+            findings[rid].append(_finding("CLAIM_UNKNOWN", f"owns undeclared parent claim(s): {_id_list(unknown)}", claim_severity))
+        for cid in owned:
+            if cid in owners:
+                owners[cid].append(rid)
+        for allocation in row["claim_allocations"]:
+            cid = allocation["claim_id"]
+            if cid in allocations_by_claim:
+                allocations_by_claim[cid].append((rid, allocation["weight"]))
+        if row["work_class"] == "PRODUCT" and owned and not any(
+            claims_by_id[cid]["kind"] == "SEMANTIC" for cid in owned if cid in claims_by_id
+        ):
+            findings[rid].append(
+                _finding(
+                    "PRODUCT_SEMANTIC_CLAIM_MISSING",
+                    "PRODUCT responsibility owns only DELIVERY_GATE claims",
+                    claim_severity,
+                )
+            )
+
+        units = row["semantic_units"]
+        semantic_count = sum(unit["kind"] == "SEMANTIC" for unit in units)
+        if row["work_class"] == "PRODUCT":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "SEMANTIC"]
+            if wrong:
+                findings[rid].append(
+                    _finding(
+                        "PRODUCT_UNIT_NOT_SEMANTIC",
+                        f"PRODUCT responsibility has non-semantic progress unit(s): {_id_list(wrong)}",
+                    )
+                )
+            if semantic_count < policy["units"]["min"]:
+                findings[rid].append(
+                    _finding(
+                        "SEMANTIC_UNITS_BELOW_MIN",
+                        f"{semantic_count} semantic units (min {policy['units']['min']})",
+                    )
+                )
+            if semantic_count > policy["units"]["max"]:
+                findings[rid].append(
+                    _finding(
+                        "SEMANTIC_UNITS_ABOVE_MAX",
+                        f"{semantic_count} semantic units (max {policy['units']['max']})",
+                    )
+                )
+            semantic_units = [unit for unit in units if unit["kind"] == "SEMANTIC"]
+            semantic_total = sum(unit["weight"] for unit in semantic_units)
+            for unit in semantic_units:
+                if unit["weight"] * 100 > policy["units"]["max_share_percent"] * semantic_total:
+                    findings[rid].append(
+                        _finding(
+                            "SEMANTIC_UNIT_SHARE_OVER",
+                            f"{unit['id']} carries {percent(Fraction(unit['weight'], semantic_total))}% "
+                            f"(max {policy['units']['max_share_percent']}%)",
+                        )
+                    )
+        elif row["work_class"] == "GATE":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "DELIVERY_GATE"]
+            if wrong:
+                findings[rid].append(
+                    _finding("GATE_UNIT_KIND_INVALID", f"GATE responsibility has non-delivery-gate unit(s): {_id_list(wrong)}")
+                )
+        elif row["work_class"] == "MECHANICAL":
+            wrong = [unit["id"] for unit in units if unit["kind"] != "MECHANICAL"]
+            if wrong:
+                findings[rid].append(
+                    _finding("MECHANICAL_UNIT_KIND_INVALID", f"MECHANICAL responsibility has non-mechanical unit(s): {_id_list(wrong)}")
+                )
+
+        if policy["require"]["write_surface"] and not row["write_surface"]:
+            findings[rid].append(_finding("WRITE_SURFACE_MISSING", "declare pre-materialization write_surface"))
+        budget = row["size_budget"] or {}
+        absent = [k for k in _BUDGET_KEYS if k not in budget]
+        if policy["require"]["size_budget"] and absent:
+            findings[rid].append(_finding("SIZE_BUDGET_MISSING", f"declare size_budget keys {_id_list(absent)}"))
+        for dim in ("loc", "minutes"):
+            target, hard = budget.get(f"target_{dim}"), budget.get(f"hard_{dim}")
+            if target is not None and hard is not None and target > hard:
+                findings[rid].append(_finding("SIZE_BUDGET_INCONSISTENT", f"target_{dim} {target} exceeds hard_{dim} {hard}"))
+            if hard is not None and hard > policy["leaf_budget"][f"hard_{dim}"]:
+                findings[rid].append(_finding("SIZE_OVER_HARD", f"hard_{dim} {hard} exceeds policy hard {policy['leaf_budget'][f'hard_{dim}']}"))
+        if row["parallel_ok"] and not row["parallel_ok_basis"]:
+            findings[rid].append(_finding("PARALLEL_BASIS_MISSING", "parallel_ok needs a basis"))
+        if row["work_class"] == "PRODUCT":
+            exception = row.get("mechanism_exception")
+            valid_exception = False
+            if exception:
+                cited = exception["claim_ids"]
+                owned_set = set(row["owns_claims"])
+                valid_exception = (
+                    set(cited).issubset(owned_set)
+                    and all(
+                        cid in claims_by_id
+                        and claims_by_id[cid]["kind"] == "SEMANTIC"
+                        and claims_by_id[cid]["mechanism_exception_allowed"]
+                        for cid in cited
+                    )
+                )
+                if not set(cited).issubset(owned_set):
+                    findings[rid].append(
+                        _finding(
+                            "MECHANISM_EXCEPTION_CLAIM_UNOWNED",
+                            f"mechanism exception cites unowned claim(s): {_id_list(set(cited) - owned_set)}",
+                        )
+                    )
+            mechanism_terms = _mechanism_terms(row["id"], row["outcome"])
+            unit_mechanisms = {
+                unit["id"]: _mechanism_terms(unit["id"], unit["outcome"])
+                for unit in units
+                if unit["kind"] == "SEMANTIC" and _mechanism_terms(unit["id"], unit["outcome"])
+            }
+            if unit_mechanisms and not valid_exception:
+                for uid, terms in unit_mechanisms.items():
+                    findings[rid].append(
+                        _finding(
+                            "MECHANISM_SEMANTIC_UNIT",
+                            f"{uid} is labelled SEMANTIC but is mechanism-shaped ({_id_list(terms)}); "
+                            "implementation/test mechanics belong in acceptance_methods or require the same explicit infrastructure exception",
+                        )
+                    )
+            if mechanism_terms and not valid_exception:
+                findings[rid].append(
+                    _finding(
+                        "MECHANISM_PRODUCT_BOUNDARY",
+                        f"PRODUCT responsibility boundary is mechanism-shaped ({_id_list(mechanism_terms)}); "
+                        "use acceptance methods/GATE or cite an allowed infrastructure semantic claim with mechanism_exception",
+                    )
+                )
+
+    if claim_policy["mode"] != "OFF":
+        if not claims_by_id:
+            for rid in findings:
+                findings[rid].append(
+                    _finding("PARENT_CLAIMS_MISSING", "claim-first proposal requires programme.acceptance_claims", claim_severity)
+                )
+        else:
+            uncovered = [cid for cid, refs in owners.items() if not refs]
+            if uncovered:
+                for rid in findings:
+                    findings[rid].append(
+                        _finding(
+                            "PARENT_CLAIM_UNCOVERED",
+                            f"no proposed responsibility owns parent acceptance claim(s): {_id_list(uncovered)}",
+                            claim_severity,
+                        )
+                    )
+            for cid, refs in owners.items():
+                if len(refs) <= 1 or claims_by_id[cid]["shared"]:
+                    continue
+                for rid in refs:
+                    findings[rid].append(
+                        _finding(
+                            "DUPLICATE_CLAIM_OWNERSHIP",
+                            f"{cid} is owned by {_id_list(refs)}; set claim.shared=true only when intentional",
+                            claim_severity,
+                        )
+                    )
+
+    reach: dict[str, set[str]] = {}
+    proposal_by_id = {row["id"]: row for row in proposal["responsibilities"]}
+
+    def reachable(rid: str) -> set[str]:
+        if rid not in reach:
+            reach[rid] = set()
+            for dep in proposal_by_id[rid]["depends_on"]:
+                reach[rid] |= {dep} | reachable(dep)
+        return reach[rid]
+
+    proposal_rows = proposal["responsibilities"]
+    for index, left in enumerate(proposal_rows):
+        for right in proposal_rows[index + 1:]:
+            hits = _surface_overlap(left["write_surface"], right["write_surface"])
+            ordered = right["id"] in reachable(left["id"]) or left["id"] in reachable(right["id"])
+            parallel = right["id"] in left["parallel_ok"] or left["id"] in right["parallel_ok"]
+            if hits and not ordered and not parallel:
+                for me, other in ((left, right), (right, left)):
+                    findings[me["id"]].append(
+                        _finding(
+                            "WRITE_SURFACE_COLLISION",
+                            f"overlaps {other['id']} on {_id_list(hits, 3)} with no depends_on order or parallel_ok",
+                        )
+                    )
+
+    for finding in global_findings:
+        for rid in findings:
+            findings[rid].append(finding)
+
+    if not missing_weights:
+        for cid, claim in claims_by_id.items():
+            allocated = allocations_by_claim[cid]
+            if not allocated:
+                continue
+            total_allocated = sum(weight for _, weight in allocated)
+            if total_allocated != claim["weight"]:
+                code = "SHARED_CLAIM_WEIGHT_MISMATCH" if claim["shared"] else "CLAIM_WEIGHT_MISMATCH"
+                detail = f"{cid} allocates {total_allocated} but parent claim weight is {claim['weight']}"
+                targets = [rid for rid, _ in allocated]
+                for rid in targets:
+                    findings[rid].append(_finding(code, detail))
+
+    base_blocked = any(any(f["severity"] == "BLOCKER" for f in rows) for rows in findings.values())
+    bindings = proposal["bindings"]
+    if bindings:
+        if base_blocked:
+            for binding in bindings:
+                findings[binding["responsibility_id"]].append(
+                    _finding(
+                        "MATERIALIZATION_BEFORE_RELEASE",
+                        "provider binding exists while the exact pre-materialization proposal is NOT_RELEASEABLE",
+                    )
+                )
+        if proposal["released_proposal_digest"] != proposal_digest:
+            for binding in bindings:
+                findings[binding["responsibility_id"]].append(
+                    _finding(
+                        "PROPOSAL_RELEASE_DIGEST_MISMATCH",
+                        "provider binding requires released_proposal_digest equal to the exact current RELEASEABLE proposal digest",
+                    )
+                )
+
+        proposal_by_id = {row["id"]: row for row in proposal["responsibilities"]}
+        bound_ids = {binding["responsibility_id"] for binding in bindings}
+        leaf_refs = {ref for ref, node in indexed["nodes"].items() if node["kind"] == "LEAF"}
+        for binding in bindings:
+            rid, requested_ref = binding["responsibility_id"], binding["ref"]
+            target = next((ref for ref in leaf_refs if same_ref(ref, requested_ref)), None)
+            if target is None:
+                findings[rid].append(
+                    _finding("BINDING_REF_UNMATERIALIZED", f"{requested_ref} is not a declared materialized LEAF")
+                )
+                continue
+            node = indexed["nodes"][target]
+            if node.get("responsibility_id") != rid:
+                findings[rid].append(
+                    _finding(
+                        "BINDING_IDENTITY_MISMATCH",
+                        f"{requested_ref} responsibility_id {node.get('responsibility_id')!r} does not match {rid}",
+                    )
+                )
+            if set(node.get("owns_claims") or []) != set(proposal_by_id[rid]["owns_claims"]):
+                findings[rid].append(
+                    _finding(
+                        "BINDING_CLAIM_MISMATCH",
+                        f"{requested_ref} claim ownership differs from the released proposal",
+                    )
+                )
+            proposed = proposal_by_id[rid]
+            if node.get("work_class") != proposed["work_class"]:
+                findings[rid].append(_finding("BINDING_CLASS_MISMATCH", f"{requested_ref} work_class differs from proposal"))
+            if node.get("outcome") != proposed["outcome"]:
+                findings[rid].append(_finding("BINDING_OUTCOME_MISMATCH", f"{requested_ref} outcome differs from proposal"))
+            if node.get("independence_basis") != proposed["independence_basis"]:
+                findings[rid].append(_finding("BINDING_INDEPENDENCE_MISMATCH", f"{requested_ref} independence basis differs"))
+            if node.get("size_budget") != proposed["size_budget"]:
+                findings[rid].append(_finding("BINDING_SIZE_BUDGET_MISMATCH", f"{requested_ref} size budget differs"))
+            if node.get("write_surface") != proposed["write_surface"]:
+                findings[rid].append(_finding("BINDING_WRITE_SURFACE_MISMATCH", f"{requested_ref} write surface differs"))
+            if node.get("acceptance_methods") != proposed["acceptance_methods"]:
+                findings[rid].append(
+                    _finding("BINDING_ACCEPTANCE_METHOD_MISMATCH", f"{requested_ref} acceptance methods differ from proposal")
+                )
+            expected_units = [
+                {
+                    "id": unit["id"],
+                    "weight": unit["weight"],
+                    "verify": unit["verify"],
+                    "outcome": unit["outcome"],
+                }
+                for unit in proposed["semantic_units"]
+            ]
+            actual_units = [
+                {
+                    "id": unit["id"],
+                    "weight": unit["weight"],
+                    "verify": unit["verify"],
+                    "outcome": unit["outcome"],
+                }
+                for unit in node["units"]
+            ]
+            if actual_units != expected_units:
+                findings[rid].append(_finding("BINDING_UNIT_MISMATCH", f"{requested_ref} units differ from proposal"))
+            binding_by_id = {b["responsibility_id"]: b["ref"] for b in bindings}
+            expected_deps = {binding_by_id[dep] for dep in proposed["depends_on"] if dep in binding_by_id}
+            actual_deps = set(node.get("depends_on") or [])
+            if {ref_number(x) for x in actual_deps} != {ref_number(x) for x in expected_deps}:
+                findings[rid].append(_finding("BINDING_DEPENDENCY_MISMATCH", f"{requested_ref} dependencies differ from proposal"))
+            expected_parallel = {binding_by_id[peer] for peer in proposed["parallel_ok"] if peer in binding_by_id}
+            actual_parallel = set(node.get("parallel_ok") or [])
+            if {ref_number(x) for x in actual_parallel} != {ref_number(x) for x in expected_parallel}:
+                findings[rid].append(_finding("BINDING_PARALLEL_MISMATCH", f"{requested_ref} parallel topology differs from proposal"))
+            if node.get("parallel_ok_basis") != proposed["parallel_ok_basis"]:
+                findings[rid].append(_finding("BINDING_PARALLEL_BASIS_MISMATCH", f"{requested_ref} parallel basis differs from proposal"))
+            share = Fraction(1)
+            chain = lineage(indexed, target)
+            for child_ref in chain[1:]:
+                parent_ref = indexed["nodes"][child_ref]["parent_ref"]
+                parent = indexed["nodes"][parent_ref]
+                denominator = sum(indexed["nodes"][c]["weight"] for c in parent["children"]) + parent["reserve_weight"]
+                share *= Fraction(indexed["nodes"][child_ref]["weight"], denominator)
+            bound_points = share * indexed["total_weight"]
+            proposed_points = sum(a["weight"] for a in proposal_by_id[rid]["claim_allocations"])
+            if bound_points != proposed_points:
+                findings[rid].append(
+                    _finding(
+                        "BINDING_WEIGHT_MISMATCH",
+                        f"{requested_ref} carries {_points_text(share, indexed['total_weight'])} programme points; "
+                        f"released proposal assigns {proposed_points}",
+                    )
+                )
+
+        for ref in leaf_refs:
+            node = indexed["nodes"][ref]
+            rid = node.get("responsibility_id")
+            if rid in proposal_by_id and rid not in bound_ids:
+                findings[rid].append(
+                    _finding(
+                        "UNDECLARED_MATERIALIZATION",
+                        f"{ref} materializes proposed responsibility {rid} without an explicit provider binding",
+                    )
+                )
+
+    classes: dict[str, int] = {}
+    for row in proposal["responsibilities"]:
+        rid = row["id"]
+        ordered = sorted(findings[rid], key=lambda f: (f["severity"] != "BLOCKER", f["code"], f["detail"]))
+        blockers = [{"code": f["code"], "detail": f["detail"]} for f in ordered if f["severity"] == "BLOCKER"]
+        advisories = [{"code": f["code"], "detail": f["detail"]} for f in ordered if f["severity"] != "BLOCKER"]
+        rows[rid] = {
+            "work_class": row["work_class"],
+            "weight": sum(allocation["weight"] for allocation in row["claim_allocations"]),
+            "releasable": not blockers,
+            "blockers": blockers,
+            "advisories": advisories,
+        }
+        classes[row["work_class"]] = classes.get(row["work_class"], 0) + 1
+    return {
+        "schema": DECOMPOSITION_SCHEMA,
+        "authority": AUTHORITY,
+        "mode": mode or policy["mode"],
+        "policy": policy,
+        "proposal_version": proposal["version"],
+        "proposal_digest": proposal_digest,
+        "released_proposal_digest": proposal["released_proposal_digest"],
+        "bindings": list(proposal["bindings"]),
+        "release_state": "RELEASEABLE" if all(row["releasable"] for row in rows.values()) else "NOT_RELEASEABLE",
+        "leaves": rows,
+        "summary": {
+            "evaluated": len(rows),
+            "skipped_closed": 0,
+            "releasable": sum(1 for row in rows.values() if row["releasable"]),
+            "not_releasable": sum(1 for row in rows.values() if not row["releasable"]),
+            "advisories": sum(len(row["advisories"]) for row in rows.values()),
+            "by_class": dict(sorted(classes.items())),
+        },
+    }
+
+
 def _decomposition(
     indexed: Mapping[str, Any], closed: Iterable[str] = (), mode: str | None = None
 ) -> dict[str, Any]:
@@ -1475,6 +2145,8 @@ def decomposition_report(graph: Any, mode: str | None = None, closed: Iterable[s
     if mode is not None and mode not in POLICY_MODES:
         raise GraphError(f"mode: one of {list(POLICY_MODES)}")
     indexed = validate_graph(graph)
+    if indexed["decomposition_proposal"] is not None:
+        return _proposal_decomposition(indexed, mode)
     closed_numbers = {ref_number(c) for c in closed}
     return _decomposition(indexed, {r for r in indexed["nodes"] if indexed["nodes"][r]["number"] in closed_numbers}, mode)
 
