@@ -1,0 +1,152 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.2-agent-intervention
+title: V3.2 derived agent-quality execution intervention
+description: >-
+  Advisory-only execution intervention derived from an exact M2 quality trajectory.
+  It carries no P/E, candidate/review verdict, DELP admission, custody, merge/release,
+  title or LIVE_STATUS authority.
+$defs:
+  digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+  basis:
+    type: object
+    additionalProperties: false
+    required: [ref, digest]
+    properties:
+      ref: {type: string, minLength: 1}
+      digest: {$ref: '#/$defs/digest'}
+  fraction:
+    type: object
+    additionalProperties: false
+    required: [numerator, denominator]
+    properties:
+      numerator: {type: integer, minimum: 0}
+      denominator: {type: integer, minimum: 1}
+  component:
+    type: object
+    additionalProperties: false
+    required: [direction, first, last]
+    properties:
+      direction: {enum: [STABLE, IMPROVING, DEGRADING, MIXED, INSUFFICIENT_DATA]}
+      first: {oneOf: [{$ref: '#/$defs/fraction'}, {type: "null"}]}
+      last: {oneOf: [{$ref: '#/$defs/fraction'}, {type: "null"}]}
+  m2_result:
+    type: object
+    additionalProperties: false
+    required:
+      - schema
+      - authority
+      - trajectory_id
+      - comparison_basis
+      - input_digest
+      - trajectory_digest
+      - trajectory
+      - reason
+      - windows
+      - components
+      - authority_effects
+    properties:
+      schema: {const: relay-v3.2-agent-quality-trajectory-result}
+      authority: {const: DERIVED_AGENT_QUALITY_TRAJECTORY_ONLY}
+      trajectory_id: {type: string, minLength: 1}
+      comparison_basis: {$ref: '#/$defs/basis'}
+      input_digest: {$ref: '#/$defs/digest'}
+      trajectory_digest: {$ref: '#/$defs/digest'}
+      trajectory: {enum: [STABLE, IMPROVING, DEGRADING, INSUFFICIENT_DATA]}
+      reason:
+        enum:
+          - ALL_COMPONENTS_STABLE
+          - MONOTONIC_IMPROVEMENT
+          - MONOTONIC_DEGRADATION
+          - MIXED_SIGNAL
+          - INCOMPLETE_SIGNAL
+          - CONFLICTING_SIGNAL
+      windows:
+        type: array
+        minItems: 2
+        items:
+          type: object
+          additionalProperties: false
+          required: [sequence, window_id, input_digest, evidence_digest, result_digest]
+          properties:
+            sequence: {type: integer, minimum: 1}
+            window_id: {type: string, minLength: 1}
+            input_digest: {$ref: '#/$defs/digest'}
+            evidence_digest: {$ref: '#/$defs/digest'}
+            result_digest: {$ref: '#/$defs/digest'}
+      components:
+        type: object
+        additionalProperties: false
+        required:
+          - mutation_tpr
+          - clean_tnr
+          - balanced_accuracy
+          - critical_mutation_recall
+          - impact_coverage
+          - critical_unknown_rate
+          - repair_rate
+        properties:
+          mutation_tpr: {$ref: '#/$defs/component'}
+          clean_tnr: {$ref: '#/$defs/component'}
+          balanced_accuracy: {$ref: '#/$defs/component'}
+          critical_mutation_recall: {$ref: '#/$defs/component'}
+          impact_coverage: {$ref: '#/$defs/component'}
+          critical_unknown_rate: {$ref: '#/$defs/component'}
+          repair_rate: {$ref: '#/$defs/component'}
+      authority_effects:
+        type: array
+        maxItems: 0
+type: object
+oneOf:
+  - additionalProperties: false
+    required: [schema, trajectory]
+    properties:
+      schema: {const: relay-v3.2-agent-intervention-input}
+      trajectory: {$ref: '#/$defs/m2_result'}
+  - additionalProperties: false
+    required:
+      - schema
+      - authority
+      - policy_version
+      - source_trajectory_id
+      - source_trajectory_digest
+      - comparison_basis
+      - recommendation
+      - reason
+      - source_basis
+      - advisory_only
+      - authority_effects
+      - recommendation_digest
+    properties:
+      schema: {const: relay-v3.2-agent-intervention-result}
+      authority: {const: DERIVED_AGENT_INTERVENTION_ADVISORY_ONLY}
+      policy_version: {const: V3.2-M3-1}
+      source_trajectory_id: {type: string, minLength: 1}
+      source_trajectory_digest: {$ref: '#/$defs/digest'}
+      comparison_basis: {$ref: '#/$defs/basis'}
+      recommendation:
+        enum:
+          - NONE
+          - CHECKPOINT
+          - SPLIT_REMAINDER
+          - FRESH_RECONSTRUCTION
+          - FRESH_SELF_REVIEW
+          - REPLAY_REQUIRED
+      reason:
+        enum:
+          - EVIDENCE_INCOMPLETE
+          - DIRECTION_REVERSAL
+          - COMPONENTS_CONFLICT
+          - CRITICAL_UNCERTAINTY_PRESENT
+          - DEGRADING_WITH_RISING_REPAIR_RATE
+          - DEGRADING_CHECKPOINT
+          - STABLE_OR_IMPROVING
+      source_basis:
+        type: array
+        minItems: 2
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      advisory_only: {const: true}
+      authority_effects:
+        type: array
+        maxItems: 0
+      recommendation_digest: {$ref: '#/$defs/digest'}
