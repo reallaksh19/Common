@@ -142,7 +142,10 @@ def build_context(
     protocol_root: Path | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
-    revision = _standalone_contract(protocol_root)
+    # Custody preparation is independent of the optional standalone reasoning
+    # generator. Keep protocol_root/complex_mode in the call signature for
+    # compatibility with historical callers, but do not resolve Two-Pass assets
+    # while constructing a handover context.
     snapshot = build_snapshot(root, base_ref)
     state = load_yaml(root / "relay/STATE.yaml")
     roadmap = load_yaml(root / str((state.get("roadmap") or {}).get("path")))
@@ -282,17 +285,6 @@ def build_context(
                 "relationships": list((task_snapshot.get("parent_issue") or {}).get("relationships") or []),
             },
         },
-        "generator_contract": {
-            "canonical_launcher": LAUNCHER,
-            "canonical_schema": SCHEMA,
-            "canonical_validator": VALIDATOR,
-            "protocol_revision_at_freeze": revision,
-            "generator_mode": "TWO_PASS_ONLY",
-            "live_main_fetch_required": True,
-            "prompt_sequence": list(PROMPT_SEQUENCE),
-            "complex_mode": bool(complex_mode),
-            "approval_boundary_required": True,
-        },
     }
     errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
     errors.extend(validate_visibility(context))
@@ -301,13 +293,42 @@ def build_context(
     return context, snapshot
 
 
-def build_request(context: dict[str, Any]) -> dict[str, Any]:
+def build_request(
+    context: dict[str, Any],
+    *,
+    complex_mode: bool | None = None,
+    protocol_root: Path | None = None,
+) -> dict[str, Any]:
+    """Explicitly derive a Two-Pass reasoning request from custody context.
+
+    PLAN_HANDOVER never calls this helper. The standalone protocol handshake
+    therefore belongs to the explicit reasoning-request operation, not to
+    custody preparation.
+    """
     visibility_errors = validate_visibility(context)
     if visibility_errors:
         raise HandoverContextError("; ".join(visibility_errors))
     blind = context["blind_context"]
     target = context["target"]
-    generator = context["generator_contract"]
+
+    legacy_generator = context.get("generator_contract") or {}
+    selected_complex_mode = (
+        bool(legacy_generator.get("complex_mode", False))
+        if complex_mode is None
+        else bool(complex_mode)
+    )
+    revision = _standalone_contract(protocol_root)
+    generator = {
+        "canonical_launcher": LAUNCHER,
+        "canonical_schema": SCHEMA,
+        "canonical_validator": VALIDATOR,
+        "protocol_revision_at_freeze": revision,
+        "generator_mode": "TWO_PASS_ONLY",
+        "live_main_fetch_required": True,
+        "prompt_sequence": list(PROMPT_SEQUENCE),
+        "complex_mode": selected_complex_mode,
+        "approval_boundary_required": True,
+    }
     request = {
         "schema_version": "relay-v3.1-two-pass-request",
         "authority": "DERIVED_GENERATOR_REQUEST",
