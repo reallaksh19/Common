@@ -559,6 +559,41 @@ def validate_condition(condition: Any) -> list[str]:
     return errors
 
 
+def condition_record(
+    condition_type: str,
+    status: str,
+    reason: str,
+    message: str,
+    *,
+    observed_generation: int | float | None = None,
+    candidate_sha: str | None = None,
+    source_refs: Iterable[str] = (),
+) -> dict[str, Any]:
+    """Build one validated condition record, mapping caller-shape errors to DelpError."""
+    if isinstance(source_refs, (str, bytes, bytearray, Mapping, set, frozenset)):
+        raise DelpError(
+            "condition source_refs: must be an ordered iterable of refs, not text/bytes/mapping/set"
+        )
+    try:
+        refs = list(source_refs)
+    except TypeError as exc:
+        raise DelpError("condition source_refs: must be an iterable of refs") from exc
+
+    record = {
+        "type": condition_type,
+        "status": status,
+        "reason": reason,
+        "message": message,
+        "observed_generation": observed_generation,
+        "candidate_sha": candidate_sha,
+        "source_refs": refs,
+    }
+    errors = validate_condition(record)
+    if errors:
+        raise DelpError("invalid responsibility condition: " + "; ".join(errors))
+    return record
+
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 

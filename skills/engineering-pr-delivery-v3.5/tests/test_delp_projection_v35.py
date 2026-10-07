@@ -1821,6 +1821,75 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
                 self.assertTrue(self.schema_errors("responsibility-condition", record), "schema accepted it")
                 self.assertTrue(M.validate_condition(record), "engine accepted it")
 
+    def test_condition_constructor_returns_a_valid_record(self):
+        record = M.condition_record(
+            "EvidenceCurrent",
+            "TRUE",
+            "CURRENT_EVIDENCE",
+            "Accepted evidence matches the observed candidate.",
+            observed_generation=2,
+            candidate_sha=SHA_A,
+            source_refs=["Common#592#issuecomment-1"],
+        )
+        self.assertEqual([], M.validate_condition(record))
+        self.assertEqual([], self.schema_errors("responsibility-condition", record))
+
+    def test_condition_constructor_accepts_a_non_text_iterable(self):
+        record = M.condition_record(
+            "ProviderVisible",
+            "UNKNOWN",
+            "PROVIDER_UNOBSERVED",
+            "Provider visibility was not observed.",
+            source_refs=(ref for ref in ["provider:github"]),
+        )
+        self.assertEqual(["provider:github"], record["source_refs"])
+        self.assertEqual([], M.validate_condition(record))
+
+    def test_condition_constructor_rejects_ambiguous_or_non_iterable_source_refs(self):
+        for source_refs in (
+            "abc",
+            b"abc",
+            bytearray(b"abc"),
+            {"ref": "abc"},
+            {"a", "b"},
+            frozenset({"a", "b"}),
+            None,
+            7,
+        ):
+            with self.subTest(source_refs=source_refs):
+                with self.assertRaises(M.DelpError):
+                    M.condition_record(
+                        "PlanReady",
+                        "TRUE",
+                        "PLAN_RELEASEABLE",
+                        "The current plan is releaseable.",
+                        source_refs=source_refs,
+                    )
+
+    def test_condition_constructor_fails_closed_on_invalid_record_fields(self):
+        invalid = [
+            {"condition_type": "NoSuchCondition"},
+            {"status": "PASS"},
+            {"reason": "   "},
+            {"message": ""},
+            {"observed_generation": 0},
+            {"candidate_sha": "abc123"},
+            {"source_refs": ["same", "same"]},
+            {"source_refs": [""]},
+        ]
+        defaults = {
+            "condition_type": "PlanReady",
+            "status": "TRUE",
+            "reason": "PLAN_RELEASEABLE",
+            "message": "The current plan is releaseable.",
+            "observed_generation": 1,
+            "candidate_sha": None,
+            "source_refs": [],
+        }
+        for updates in invalid:
+            with self.subTest(updates=updates), self.assertRaises(M.DelpError):
+                M.condition_record(**{**defaults, **updates})
+
     def test_good_facts_pass_both(self):
         record = facts(units=[unit("U01", candidate_sha=SHA_B, contract_digest=DIGEST)], activity="WAITING_CI",
                        next={"unit": "U02", "action": "run replay"}, blocker="NONE", owner_action="NONE",
