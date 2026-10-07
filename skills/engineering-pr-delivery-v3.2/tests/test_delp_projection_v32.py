@@ -1097,6 +1097,23 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual([], self.schema_errors("execution-graph", graph()))
         M.validate_graph(graph())
 
+    def test_claim_first_graph_passes_schema_and_engine(self):
+        g = claim_first_planned()
+        self.assertEqual([], self.schema_errors("execution-graph", g))
+        M.validate_graph(g)
+
+    def test_claim_first_malformed_documents_fail_schema_and_engine(self):
+        bad_claim = claim_first_planned()
+        bad_claim["programme"]["acceptance_claims"][0]["kind"] = "MECHANISM"
+        self.assertTrue(self.schema_errors("execution-graph", bad_claim))
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(bad_claim)
+        bad_leaf = claim_first_planned()
+        leaf_of(bad_leaf, "Common#592")["owns_claims"] = ["bad claim"]
+        self.assertTrue(self.schema_errors("execution-graph", bad_leaf))
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(bad_leaf)
+
     def test_graph_without_units_or_parent_fails_both(self):
         g = copy.deepcopy(graph())
         g["nodes"][3].pop("units")
@@ -1208,6 +1225,24 @@ def planned(mode="ENFORCED", **policy):
     return g
 
 
+def claim_first_planned():
+    """A semantic-first programme: parent outcomes are explicit and every leaf owns an independently decidable slice."""
+    g = planned(claim_first={"mode": "ENFORCED"})
+    g["programme"]["acceptance_claims"] = [
+        {"id": "PC-CONSTRUCT", "claim": "the reusable product model is constructed", "kind": "SEMANTIC"},
+        {"id": "PC-BOUNDARY", "claim": "the product distinguishes its critical boundary", "kind": "SEMANTIC"},
+        {"id": "PC-INTEGRATE", "claim": "the integrated exact-head gate preserves the accepted contract", "kind": "DELIVERY_GATE"},
+    ]
+    leaf_of(g, "Common#592")["owns_claims"] = ["PC-CONSTRUCT"]
+    leaf_of(g, "Common#592")["independence_basis"] = "can be accepted from its construction artifact and oracle without sibling completion"
+    leaf_of(g, "Common#594")["owns_claims"] = ["PC-BOUNDARY"]
+    leaf_of(g, "Common#594")["independence_basis"] = "can be accepted from boundary cases independently"
+    leaf_of(g, "Common#612")["work_class"] = "GATE"
+    leaf_of(g, "Common#612")["owns_claims"] = ["PC-INTEGRATE"]
+    leaf_of(g, "Common#612")["independence_basis"] = "can pass or fail from the frozen integration candidate"
+    return g
+
+
 def with_weights(g, ref, weights):
     leaf_of(g, ref)["units"] = [{"id": f"U{i}", "weight": w, "verify": "check passes"} for i, w in enumerate(weights, 1)]
     return g
@@ -1254,6 +1289,9 @@ class DecompositionPolicyValidation(unittest.TestCase):
             "target minutes above hard": {"leaf_budget": {"target_minutes": 30}},
             "unknown budget key": {"leaf_budget": {"extra": 5}},
             "non-boolean require": {"require": {"verify": "yes"}},
+            "claim-first mode": {"claim_first": {"mode": "STRICT"}},
+            "claim-first boolean": {"claim_first": {"require_independence_basis": "yes"}},
+            "claim-first unknown key": {"claim_first": {"extra": True}},
             "negative nano floor": {"min_leaf_target_loc": -1},
             "unknown key": {"surprise": 1},
         }.items():
@@ -1279,6 +1317,9 @@ class DecompositionPolicyValidation(unittest.TestCase):
             "dependency on a parent": lambda g: leaf(g).__setitem__("depends_on", ["Common#588"]),
             "unknown parallel": lambda g: leaf(g).__setitem__("parallel_ok", ["Common#9999"]),
             "basis type": lambda g: leaf(g).__setitem__("parallel_ok_basis", 3),
+            "independence basis type": lambda g: leaf(g).__setitem__("independence_basis", 3),
+            "owns claims type": lambda g: leaf(g).__setitem__("owns_claims", "PC1"),
+            "owns claims id": lambda g: leaf(g).__setitem__("owns_claims", ["bad claim"]),
             "unit verify type": lambda g: leaf(g)["units"][0].__setitem__("verify", 5),
             "unit moved_from": lambda g: leaf(g)["units"][0].__setitem__("moved_from", "not a ref"),
             "unit not a mapping": lambda g: leaf(g).__setitem__("units", ["U01"]),
@@ -1317,6 +1358,80 @@ class DecompositionPolicyValidation(unittest.TestCase):
         policy_only = {"id": "PU-2", "kind": "POLICY_CHANGE", "reason": "r"}
         g["plan_updates"] = [policy_only]
         M.validate_graph(g)  # a policy change names no units or nodes
+
+
+class ClaimFirstDecomposition(unittest.TestCase):
+    def codes(self, g, ref="Common#592", kind="blockers"):
+        return [f["code"] for f in M.decomposition_report(g)["leaves"][ref][kind]]
+
+    def test_claim_first_architecture_plan_is_releaseable(self):
+        report = M.decomposition_report(claim_first_planned())
+        self.assertTrue(all(row["releasable"] for row in report["leaves"].values()))
+        self.assertEqual(0, report["summary"]["not_releasable"])
+
+    def test_academic_product_cannot_decompose_into_delivery_mechanics(self):
+        g = claim_first_planned()
+        # Model the recurring failure: a PRODUCT responsibility called "browser qualification"
+        # owns only a delivery-gate claim while the actual semantic learner/product claim is left uncovered.
+        leaf_of(g, "Common#592")["outcome"] = "browser qualification and evidence handoff are green"
+        leaf_of(g, "Common#592")["owns_claims"] = ["PC-INTEGRATE"]
+        leaf_of(g, "Common#612")["owns_claims"] = []
+        row = M.decomposition_report(g)["leaves"]["Common#592"]
+        self.assertFalse(row["releasable"])
+        self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", [f["code"] for f in row["blockers"]])
+        self.assertIn("PARENT_CLAIM_UNCOVERED", [f["code"] for f in row["blockers"]])
+
+    def test_every_parent_claim_must_be_covered(self):
+        g = claim_first_planned()
+        leaf_of(g, "Common#594")["owns_claims"] = []
+        report = M.decomposition_report(g)
+        for ref in report["leaves"]:
+            self.assertIn("PARENT_CLAIM_UNCOVERED", [f["code"] for f in report["leaves"][ref]["blockers"]])
+        self.assertIn("LEAF_CLAIM_MISSING", self.codes(g, "Common#594"))
+
+    def test_duplicate_claim_ownership_requires_explicit_shared_claim(self):
+        g = claim_first_planned()
+        leaf_of(g, "Common#594")["owns_claims"] = ["PC-CONSTRUCT"]
+        self.assertIn("DUPLICATE_CLAIM_OWNERSHIP", self.codes(g, "Common#592"))
+        self.assertIn("DUPLICATE_CLAIM_OWNERSHIP", self.codes(g, "Common#594"))
+        g["programme"]["acceptance_claims"][0]["shared"] = True
+        self.assertNotIn("DUPLICATE_CLAIM_OWNERSHIP", self.codes(g, "Common#592"))
+
+    def test_unknown_claim_and_missing_independence_basis_block_release(self):
+        g = claim_first_planned()
+        leaf_of(g, "Common#592")["owns_claims"] = ["PC-NOT-DECLARED"]
+        leaf_of(g, "Common#592").pop("independence_basis")
+        codes = self.codes(g)
+        self.assertIn("CLAIM_UNKNOWN", codes)
+        self.assertIn("INDEPENDENCE_BASIS_MISSING", codes)
+
+    def test_claim_first_advisory_reports_without_blocking(self):
+        g = claim_first_planned()
+        g["programme"]["decomposition_policy"]["claim_first"]["mode"] = "ADVISORY"
+        leaf_of(g, "Common#592")["owns_claims"] = ["PC-INTEGRATE"]
+        row = M.decomposition_report(g)["leaves"]["Common#592"]
+        self.assertTrue(row["releasable"])
+        self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", [f["code"] for f in row["advisories"]])
+
+    def test_historical_graphs_remain_readable_with_claim_first_off(self):
+        g = planned()
+        indexed = M.validate_graph(g)
+        self.assertEqual("OFF", indexed["policy"]["claim_first"]["mode"])
+        self.assertTrue(all(row["releasable"] for row in M.decomposition_report(g)["leaves"].values()))
+
+    def test_parent_claim_documents_are_validated(self):
+        g = claim_first_planned()
+        for claims in (
+            [{"id": "PC1", "claim": "", "kind": "SEMANTIC"}],
+            [{"id": "bad claim", "claim": "x", "kind": "SEMANTIC"}],
+            [{"id": "PC1", "claim": "x", "kind": "OTHER"}],
+            [{"id": "PC1", "claim": "x", "kind": "SEMANTIC", "shared": "yes"}],
+            [{"id": "PC1", "claim": "x", "kind": "SEMANTIC"}, {"id": "PC1", "claim": "y", "kind": "SEMANTIC"}],
+        ):
+            bad = copy.deepcopy(g)
+            bad["programme"]["acceptance_claims"] = claims
+            with self.subTest(claims=claims), self.assertRaises(M.GraphError):
+                M.validate_graph(bad)
 
 
 class DecompositionRules(unittest.TestCase):
