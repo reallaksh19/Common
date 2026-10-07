@@ -127,9 +127,10 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                 "id": "PRE-MATERIALIZATION-V2",
                 "root": "Common#703",
                 "acceptance_claims": [
-                    {"id": "PA-SEM", "claim": "semantic outcome exists", "kind": "SEMANTIC"},
-                    {"id": "PG-DELIVERY", "claim": "delivery gate is qualified", "kind": "DELIVERY_GATE"},
+                    {"id": "PA-SEM", "claim": "semantic outcome exists", "kind": "SEMANTIC", "weight": 90},
+                    {"id": "PG-DELIVERY", "claim": "delivery gate is qualified", "kind": "DELIVERY_GATE", "weight": 10},
                 ],
+                "total_weight": 100,
                 "decomposition_policy": {
                     "mode": "ENFORCED",
                     "claim_first": {"mode": "ENFORCED", "require_independence_basis": True},
@@ -141,22 +142,24 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                             "id": "R-SEM",
                             "work_class": "PRODUCT",
                             "owns_claims": ["PA-SEM"],
+                            "claim_allocations": [{"claim_id": "PA-SEM", "weight": 90}],
                             "outcome": "semantic product outcome",
                             "independence_basis": "can be accepted without the delivery gate",
                             "semantic_units": [
-                                {"id": "S1", "kind": "SEMANTIC", "outcome": "semantic slice one", "verify": "oracle one"},
-                                {"id": "S2", "kind": "SEMANTIC", "outcome": "semantic slice two", "verify": "oracle two"},
-                                {"id": "S3", "kind": "SEMANTIC", "outcome": "semantic slice three", "verify": "oracle three"},
+                                {"id": "S1", "kind": "SEMANTIC", "weight": 34, "outcome": "semantic slice one", "verify": "oracle one"},
+                                {"id": "S2", "kind": "SEMANTIC", "weight": 33, "outcome": "semantic slice two", "verify": "oracle two"},
+                                {"id": "S3", "kind": "SEMANTIC", "weight": 33, "outcome": "semantic slice three", "verify": "oracle three"},
                             ],
                         },
                         {
                             "id": "G-DELIVERY",
                             "work_class": "GATE",
                             "owns_claims": ["PG-DELIVERY"],
+                            "claim_allocations": [{"claim_id": "PG-DELIVERY", "weight": 10}],
                             "outcome": "delivery qualification",
                             "independence_basis": "can pass or fail from exact-head evidence",
                             "semantic_units": [
-                                {"id": "G1", "kind": "DELIVERY_GATE", "outcome": "qualify exact head", "verify": "hosted run"}
+                                {"id": "G1", "kind": "DELIVERY_GATE", "weight": 100, "outcome": "qualify exact head", "verify": "hosted run"}
                             ],
                         },
                     ],
@@ -175,9 +178,9 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         g = self.proposal_graph()
         r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
         r["semantic_units"] = [
-            {"id": "SCHEMA", "kind": "MECHANICAL", "outcome": "schema file", "verify": "parse"},
-            {"id": "TEST", "kind": "MECHANICAL", "outcome": "test file", "verify": "unit test"},
-            {"id": "CI", "kind": "MECHANICAL", "outcome": "workflow", "verify": "CI"},
+            {"id": "SCHEMA", "kind": "MECHANICAL", "weight": 34, "outcome": "schema file", "verify": "parse"},
+            {"id": "TEST", "kind": "MECHANICAL", "weight": 33, "outcome": "test file", "verify": "unit test"},
+            {"id": "CI", "kind": "MECHANICAL", "weight": 33, "outcome": "workflow", "verify": "CI"},
         ]
         row = M.decomposition_report(g)["leaves"]["R-SEM"]
         codes = {f["code"] for f in row["blockers"]}
@@ -198,6 +201,39 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
         self.assertIn("PRODUCT_SEMANTIC_CLAIM_MISSING", codes)
         self.assertIn("PARENT_CLAIM_UNCOVERED", codes)
 
+
+
+    def test_parent_claim_weights_bind_the_programme_denominator(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["weight"] = 89
+        rows = M.decomposition_report(g)["leaves"]
+        self.assertTrue(all("PARENT_CLAIM_WEIGHT_TOTAL" in {f["code"] for f in row["blockers"]} for row in rows.values()))
+
+    def test_responsibility_claim_allocation_must_match_parent_claim_weight(self):
+        g = self.proposal_graph()
+        g["programme"]["decomposition_proposal"]["responsibilities"][0]["claim_allocations"][0]["weight"] = 80
+        row = M.decomposition_report(g)["leaves"]["R-SEM"]
+        self.assertIn("CLAIM_WEIGHT_MISMATCH", {f["code"] for f in row["blockers"]})
+
+    def test_shared_claim_allocations_must_conserve_claim_weight(self):
+        g = self.proposal_graph()
+        g["programme"]["acceptance_claims"][0]["shared"] = True
+        first = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        first["claim_allocations"][0]["weight"] = 50
+        second = copy.deepcopy(first)
+        second["id"] = "R-SEM-2"
+        second["claim_allocations"][0]["weight"] = 30
+        second["semantic_units"] = [
+            {"id": "T1", "kind": "SEMANTIC", "weight": 34, "outcome": "slice one", "verify": "oracle"},
+            {"id": "T2", "kind": "SEMANTIC", "weight": 33, "outcome": "slice two", "verify": "oracle"},
+            {"id": "T3", "kind": "SEMANTIC", "weight": 33, "outcome": "slice three", "verify": "oracle"},
+        ]
+        g["programme"]["decomposition_proposal"]["responsibilities"].append(second)
+        report = M.decomposition_report(g)
+        self.assertIn(
+            "SHARED_CLAIM_WEIGHT_MISMATCH",
+            {f["code"] for f in report["leaves"]["R-SEM"]["blockers"]},
+        )
 
     def test_mechanism_shaped_product_boundary_requires_explicit_parent_exception(self):
         g = self.proposal_graph()
