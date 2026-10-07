@@ -175,6 +175,22 @@ properties:
       successor_reconstruction_challenge:
         type: array
         maxItems: 10
+        items:
+          type: object
+          additionalProperties: false
+          required: [id, question, decision_at_risk, repository_anchors, required_evidence, authority_distinctions, falsifier, pass_condition, fail_condition, forbidden_shortcuts, downstream_consequence]
+          properties:
+            id: {type: string, pattern: '^Q[1-9][0-9]*$'}
+            question: {type: string, minLength: 20}
+            decision_at_risk: {type: string, minLength: 1}
+            repository_anchors: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+            required_evidence: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+            authority_distinctions: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+            falsifier: {type: string, minLength: 1}
+            pass_condition: {type: string, minLength: 1}
+            fail_condition: {type: string, minLength: 1}
+            forbidden_shortcuts: {type: array, minItems: 1, items: {type: string, minLength: 1}}
+            downstream_consequence: {type: string, minLength: 1}
   accumulated_learning:
     type: object
     additionalProperties: false
