@@ -38,6 +38,7 @@ properties:
   liveness:
     type: object
     additionalProperties: false
+    required: [value]
     properties:
       value: {enum: [ACTIVE, QUIET, STALE]}
   check:
