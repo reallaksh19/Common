@@ -180,7 +180,11 @@ def derive_actual_next(leaf: Any) -> dict[str, Any]:
             _condition_basis(spec),
             spec["message"],
         )
-    if spec["status"] == "UNKNOWN" and _accepted_facts_exist(leaf):
+    if (
+        spec["status"] == "UNKNOWN"
+        and _accepted_facts_exist(leaf)
+        and spec.get("reason") != "SPEC_BINDING_UNAVAILABLE"
+    ):
         return _decision(
             "RECONCILE_SPEC",
             "SPEC_CURRENTNESS_UNKNOWN_WITH_ACCEPTED_FACTS",

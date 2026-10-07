@@ -32,6 +32,7 @@ import json
 import re
 import subprocess
 import sys
+import types
 from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
@@ -671,6 +672,51 @@ def condition_record(
     return record
 
 
+_ACTUAL_NEXT_MODULE: Any = None
+
+
+def _actual_next_module() -> Any:
+    """Load the standalone R-P2-NEXT engine against this exact DELP contract.
+
+    Some retained tests load DELP with exec_module() without registering it in
+    sys.modules. actual_next_v35 imports only CONDITION_ORDER, DelpError and
+    validate_condition from delp_projection_v35; provide those exact objects
+    through a temporary module shim so integration never loads a second,
+    inconsistent DELP instance.
+    """
+    global _ACTUAL_NEXT_MODULE
+    if _ACTUAL_NEXT_MODULE is not None:
+        return _ACTUAL_NEXT_MODULE
+
+    path = Path(__file__).resolve().with_name("actual_next_v35.py")
+    spec = importlib.util.spec_from_file_location("actual_next_v35_for_projection", path)
+    if spec is None or spec.loader is None:
+        raise DelpError(f"actual-next module could not be loaded from {path}")
+
+    module = importlib.util.module_from_spec(spec)
+    existing = sys.modules.get("delp_projection_v35")
+    shimmed = existing is None
+    if shimmed:
+        shim = types.ModuleType("delp_projection_v35")
+        shim.CONDITION_ORDER = CONDITION_ORDER
+        shim.DelpError = DelpError
+        shim.validate_condition = validate_condition
+        sys.modules["delp_projection_v35"] = shim
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        if shimmed:
+            sys.modules.pop("delp_projection_v35", None)
+
+    _ACTUAL_NEXT_MODULE = module
+    return module
+
+
+def _derive_actual_next_v35(leaf: Mapping[str, Any]) -> dict[str, Any]:
+    decision = _actual_next_module().derive_actual_next(leaf)
+    if not isinstance(decision, Mapping):
+        raise DelpError("actual-next integration returned a non-mapping decision")
+    return dict(decision)
 
 
 def _plan_spec_conditions(
@@ -3799,6 +3845,7 @@ def project(
         results[ref]["conditions"] = _finalize_condition_set(
             results[ref]["conditions"]
         )
+        results[ref]["actual_next"] = _derive_actual_next_v35(results[ref])
 
     health_mode = indexed["health_policy"]["mode"]
     if health_mode != "OFF":
@@ -3978,6 +4025,10 @@ def _leaf_prefix(indexed: Mapping[str, Any], ref: str, data: Mapping[str, Any]) 
     elif data["state"] != "COMPLETE":
         tokens.append("NO_ACTIVE_UNIT")
     tokens.append(data["state"])
+    actual_next = data.get("actual_next")
+    if not isinstance(actual_next, Mapping) or not actual_next.get("action"):
+        raise DelpError(f"{ref}: leaf title requires canonical actual_next")
+    tokens.append(f"NEXT:{actual_next['action']}")
     return f"{STATE_LIGHT[data['state']]} [{path}] " + " · ".join(tokens)
 
 
@@ -4108,13 +4159,78 @@ def _entry_admission(projection: Mapping[str, Any], leaf_ref: str, owner_intent:
     return None
 
 
+def _admit_next_text(leaf: Mapping[str, Any], decision: Mapping[str, Any]) -> str:
+    """Render the canonical actual-next decision for continuation UX.
+
+    This helper formats an already-selected action. It must never choose or
+    reprioritize a Responsibility action.
+    """
+    action = str(decision.get("action") or "")
+    detail = str(decision.get("detail") or "").strip()
+    reason = str(decision.get("reason") or "").strip()
+
+    if action == "NONE":
+        return detail or f"{leaf['lifecycle']} — no further actual-next action"
+    if action == "MATERIALIZE_FACTS":
+        materialization = leaf.get("materialization") or {}
+        signal = materialization.get("provider_signal") or "provider work"
+        return (
+            f"MATERIALIZE_FACTS before any new work — the provider shows {signal} but the ledger has "
+            "no accepted CHECKPOINT_FACTS_V1 for this leaf; publish facts for exactly what current evidence supports "
+            "(completion is never inferred)"
+        )
+    if action == "FIX_PLAN":
+        plan = leaf.get("plan") or {}
+        blockers = list(plan.get("blockers") or [])
+        if blockers:
+            shown = "; ".join(f"{b['code']} ({b['detail']})" for b in blockers[:3])
+            more = f"; +{len(blockers) - 3} more" if len(blockers) > 3 else ""
+            health = str((leaf.get("evidence") or {}).get("health") or "")
+            also = f"; evidence is also {health}" if health and health != "CURRENT" else ""
+            return (
+                f"FIX_PLAN before coding — {shown}{more}{also} — "
+                "request a plan update (split or reweight) from the Coordinator; do not start or continue units"
+            )
+    if action == "RECOVER_EVIDENCE":
+        gaps = list((leaf.get("evidence") or {}).get("gaps") or [])
+        health = str((leaf.get("evidence") or {}).get("health") or "UNKNOWN")
+        gap_detail = ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) or health
+        return f"RECOVER_EVIDENCE before new coding — {gap_detail}"
+    if action == "RECONCILE_HANDOFF":
+        policy = leaf.get("successor_policy") or {}
+        return (
+            "RECONCILE_HANDOFF before this high-risk unit — "
+            + str(policy.get("decision_at_risk") or detail or "successor grounding required")
+        )
+    if action == "WAIT_DEPENDENCY":
+        dependencies = leaf.get("dependencies") or {}
+        blocked = ", ".join(
+            f"{row['ref']}:{row['lifecycle']}" for row in dependencies.get("blocking") or []
+        )
+        return (
+            f"WAIT_DEPENDENCY before coding — {blocked}; only COMPLETE predecessors satisfy depends_on, "
+            "then reproject from durable facts"
+        )
+    if action == "CONTINUE_UNIT":
+        return detail or str(leaf.get("active_unit") or "CONTINUE_UNIT")
+    if action == "PUBLISH_RESULT":
+        return detail or "Publish the scoped Responsibility result."
+    return f"{action} — {detail or reason}"
+
+
 def admit(
     projection: Mapping[str, Any],
     leaf_ref: str,
     command: str = "continue",
     owner_intent: Any = None,
 ) -> dict[str, Any]:
-    """Compact reconstruction proof for continuation/takeover commands. Pure; changes nothing."""
+    """Compact reconstruction proof for continuation/takeover commands. Pure; changes nothing.
+
+    Responsibility action authority comes only from leaf.actual_next. TAKEOVER
+    entry admission is an execution-policy overlay and can block only a
+    would-be CONTINUE_UNIT/PUBLISH_RESULT; it never outranks a canonical
+    recovery, wait, plan, dependency, handoff, assurance or owner action.
+    """
     nodes = projection["nodes"]
     if leaf_ref not in nodes or nodes[leaf_ref]["kind"] != "LEAF":
         raise DelpError(f"{leaf_ref} is not a LEAF in the projection")
@@ -4122,70 +4238,27 @@ def admit(
     lineage_refs = leaf["identity"]["lineage"]
     ancestors = [nodes[r] for r in lineage_refs[:-1]]
     health = leaf["evidence"]["health"]
-    gaps = leaf["evidence"]["gaps"]
     plan = leaf.get("plan")
     materialization = leaf.get("materialization")
-    plan_blocked = bool(plan and plan["mode"] == "ENFORCED" and not plan["releasable"])
+
+    decision = leaf.get("actual_next")
+    if not isinstance(decision, Mapping):
+        raise DelpError("admission requires canonical leaf.actual_next")
+    if decision.get("authority") != "DERIVED_ACTUAL_NEXT_ONLY":
+        raise DelpError("admission requires DERIVED_ACTUAL_NEXT_ONLY actual_next authority")
+    base_action = str(decision.get("action") or "")
+    if not base_action:
+        raise DelpError("admission requires a non-empty canonical actual_next action")
+
     entry_block = _entry_admission(projection, leaf_ref, owner_intent)
     entry_required = _takeover_entry_requirement(owner_intent) is not None
-    if leaf["lifecycle"] in _TERMINAL:
-        action = "NONE"
-        next_text = f"{leaf['lifecycle']} — no further unit; select the next responsibility from the plan"
-    elif materialization:
-        # The ledger is empty but the provider shows work. What exists must be reported before anything new is
-        # started, and nothing is inferred: completion is claimed only where current evidence supports it.
-        action = "MATERIALIZE_FACTS"
-        also = ""
-        if plan_blocked:
-            also = f"; the plan also fails the decomposition gate ({', '.join(b['code'] for b in plan['blockers'][:3])}) — the Coordinator must fix it before new units"
-        next_text = (
-            f"MATERIALIZE_FACTS before any new work — the provider shows {materialization['provider_signal']} but the ledger has "
-            f"no accepted CHECKPOINT_FACTS_V1 for this leaf; publish facts for exactly what current evidence supports "
-            f"(completion is never inferred){also}"
-        )
-    elif plan_blocked:
-        action = "FIX_PLAN"
-        shown = "; ".join(f"{b['code']} ({b['detail']})" for b in plan["blockers"][:3])
-        more = f"; +{len(plan['blockers']) - 3} more" if len(plan["blockers"]) > 3 else ""
-        also = f"; evidence is also {health}" if health != "CURRENT" else ""
-        next_text = (
-            f"FIX_PLAN before coding — {shown}{more}{also} — "
-            "request a plan update (split or reweight) from the Coordinator; do not start or continue units"
-        )
-    elif health != "CURRENT":
-        action = "RECOVER_EVIDENCE"
-        detail = ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) or health
-        next_text = f"RECOVER_EVIDENCE before new coding — {detail}"
-    elif entry_block:
+    if entry_block and base_action in {"CONTINUE_UNIT", "PUBLISH_RESULT"}:
         action = "RECONCILE_ENTRY"
         next_text = f"RECONCILE_ENTRY before coding — {entry_block['code']}: {entry_block['detail']}"
-    elif (
-        leaf.get("successor_policy")
-        and leaf["successor_policy"].get("mode") == "INDEPENDENT_RECONSTRUCTION"
-        and leaf.get("handover")
-        and leaf["handover"].get("status") != "RECONCILED"
-    ):
-        action = "RECONCILE_HANDOFF"
-        next_text = (
-            "RECONCILE_HANDOFF before this high-risk unit — "
-            + str(leaf["successor_policy"].get("decision_at_risk") or "successor grounding required")
-        )
-    elif leaf.get("dependencies") and not leaf["dependencies"]["ready"]:
-        action = "WAIT_DEPENDENCY"
-        blocked = ", ".join(
-            f"{row['ref']}:{row['lifecycle']}" for row in leaf["dependencies"]["blocking"]
-        )
-        next_text = (
-            f"WAIT_DEPENDENCY before coding — {blocked}; only COMPLETE predecessors satisfy depends_on, "
-            "then reproject from durable facts"
-        )
-    elif leaf["active_unit"]:
-        action = "CONTINUE_UNIT"
-        tail = f" — {leaf['next']['action']}" if leaf["next"]["action"] else ""
-        next_text = f"{leaf['active_unit']}{tail}"
     else:
-        action = "AWAIT_RESULT"
-        next_text = "all declared units complete — publish the scoped result"
+        action = base_action
+        next_text = _admit_next_text(leaf, decision)
+
     report = {
         "command": command,
         "is_continuation": classify_continuation(command),
@@ -4194,6 +4267,7 @@ def admit(
         "state": leaf["state"],
         "evidence_health": "NONE" if materialization else health,
         "action": action,
+        "actual_next": dict(decision),
         "recovery_required": action == "RECOVER_EVIDENCE",
         "next": next_text,
         "blocker": leaf["blocker"],
@@ -4205,7 +4279,7 @@ def admit(
         "child": {"P": leaf["progress"]["P"], "E": leaf["progress"]["E"], "unit": leaf["active_unit"]},
         "material": leaf["material"],
         "evidence_candidate": leaf["frontier"]["evidence_candidate"],
-        "authority_effects": [],  # a continuation never changes parent, denominator, scope or merge authority
+        "authority_effects": [],
     }
     if entry_required:
         report["entry_admission"] = {
@@ -4222,13 +4296,15 @@ def admit(
     if leaf.get("dependencies") is not None:
         report["dependencies"] = leaf["dependencies"]
         report["dependency_wait_required"] = action == "WAIT_DEPENDENCY"
-    if plan:  # present only when the decomposition gate is not OFF
+    if plan:
         report["plan"] = plan
         report["plan_fix_required"] = action == "FIX_PLAN"
-    if materialization:  # present only when the provider shows work the ledger lacks
+    if materialization:
         report["materialization"] = materialization
+        # Pending requirement semantics are retained even when a higher
+        # canonical actual-next action (for example FIX_PLAN) runs first.
         report["materialize_required"] = True
-    if leaf.get("health"):  # present only when programme.health_policy.mode is ADVISORY and the leaf has started
+    if leaf.get("health"):
         report["health"] = leaf["health"]
     return report
 
@@ -4336,6 +4412,7 @@ _FRONTIER_CONSEQUENCES = (
     ("PROGRESS_E", ("derived", "progress", "E")),
     ("ACTIVE_UNIT", ("derived", "active_unit")),
     ("DEPENDENCIES", ("derived", "dependencies")),
+    ("ACTUAL_NEXT", ("derived", "actual_next")),
     ("PLAN_RESULT", ("derived", "plan")),
 )
 
@@ -4391,7 +4468,8 @@ def frontier(
             "candidate": leaf["frontier"]["evidence_candidate"],
             "gaps": [f"{g['unit']}:{g['reason']}" for g in leaf["evidence"]["gaps"]],
         },
-        "next": dict(leaf["next"]),
+        "conditions": copy.deepcopy(leaf["conditions"]),
+        "actual_next": copy.deepcopy(leaf["actual_next"]),
         "blocker": leaf["blocker"],
         "owner_action": leaf["owner_action"],
         "dependencies": copy.deepcopy(leaf.get("dependencies") or {"declared": [], "ready": True, "blocking": []}),
@@ -4534,12 +4612,13 @@ def render_frontier_drift(report: Mapping[str, Any]) -> str:
 
 def status_document(node_projection: Mapping[str, Any], *, version: int, digest: str, programme: Mapping[str, Any]) -> dict[str, Any]:
     """LIVE_STATUS_V1 document written to the provider for one node."""
-    # Conditions remain an in-memory derived read model until the dedicated P2 projection-integration
-    # Responsibility adopts them into LIVE_STATUS/title/frontier/admit. Do not collapse those responsibilities here.
+    # LIVE_STATUS is a disposable read model. LEAF conditions + actual_next are
+    # already canonical derived kernel state and are published here without
+    # becoming a new authority.
     body = {
         k: v
         for k, v in node_projection.items()
-        if k not in {"title_prefix", "conditions"}
+        if k != "title_prefix"
     }
     return {
         "schema": STATUS_SCHEMA,

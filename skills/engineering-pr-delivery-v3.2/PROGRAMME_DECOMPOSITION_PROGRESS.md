@@ -488,6 +488,68 @@ Rules:
 
 Historical V3.2 graphs without the claim fields remain readable; the compatibility default is `claim_first.mode: OFF`. That compatibility default is not permission for a new programme to omit the gate.
 
+## Pre-materialization claim-first proposal (V2)
+
+For a new programme, **do not create child issues merely to obtain refs for the decomposition graph**. Use the proposal layer first:
+
+```yaml
+programme:
+  root: Common#<existing-parent>
+  total_weight: 100
+  acceptance_claims:
+    - id: PA1
+      claim: <falsifiable semantic parent outcome>
+      kind: SEMANTIC
+      weight: 90
+    - id: PG1
+      claim: <delivery qualification>
+      kind: DELIVERY_GATE
+      weight: 10
+  decomposition_policy:
+    mode: ENFORCED
+    claim_first:
+      mode: ENFORCED
+      require_independence_basis: true
+  decomposition_proposal:
+    version: V2
+    responsibilities:
+      - id: R1
+        work_class: PRODUCT
+        owns_claims: [PA1]
+        claim_allocations: [{claim_id: PA1, weight: 90}]
+        outcome: <one independently decidable semantic outcome>
+        independence_basis: <why YES/NO does not require siblings>
+        semantic_units:
+          - {id: S1, kind: SEMANTIC, weight: 34, outcome: <semantic slice>, verify: <oracle>}
+          - {id: S2, kind: SEMANTIC, weight: 33, outcome: <semantic slice>, verify: <oracle>}
+          - {id: S3, kind: SEMANTIC, weight: 33, outcome: <semantic slice>, verify: <oracle>}
+        size_budget: {target_loc: 300, hard_loc: 600, target_minutes: 10, hard_minutes: 20}
+        write_surface: [src/example/]
+        acceptance_methods: [semantic oracle, exact-head regression]
+```
+
+At this stage the graph may contain only the ROOT node. Proposed responsibilities have **no provider refs**.
+
+The release order is:
+
+```text
+parent claims
+ -> proposed responsibility ids
+ -> coverage + independence
+ -> semantic units
+ -> claim-weight allocation
+ -> implementation/acceptance metadata
+ -> anti-mechanism + collision/dependency checks
+ -> decompose-check RELEASEABLE
+ -> record exact proposal_digest
+ -> create provider children
+ -> bind responsibility_id -> provider ref with released_proposal_digest
+```
+
+Binding is rejected if the proposal was not RELEASEABLE, if its digest changed, or if the materialized leaf changes semantic identity, claims, unit contract, write surface, size budget, dependency topology or programme weight. Binding itself earns no P/E/D progress.
+
+Historical execution graphs without `decomposition_proposal` remain on the existing materialized-node path.
+
 ## Decomposition Validation Gate
 
 Before first production release, the Coordinator SHOULD produce a machine-verifiable decomposition quality result proving at least:
