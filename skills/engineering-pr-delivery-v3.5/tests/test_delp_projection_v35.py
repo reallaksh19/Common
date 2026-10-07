@@ -36,6 +36,12 @@ O = importlib.util.module_from_spec(observer_spec)
 assert observer_spec.loader
 observer_spec.loader.exec_module(O)
 
+ASSEMBLER_MODULE_PATH = MODULE_PATH.parents[1] / "scripts" / "decomposition_assembler_v35.py"
+assembler_spec = importlib.util.spec_from_file_location("decomposition_assembler_v35", ASSEMBLER_MODULE_PATH)
+A = importlib.util.module_from_spec(assembler_spec)
+assert assembler_spec.loader
+assembler_spec.loader.exec_module(A)
+
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
 
@@ -3031,6 +3037,120 @@ class TopologyAssessmentPlanContract(unittest.TestCase):
         with_basis = M.decomposition_report(topology_assessment_planned())
         without_basis = M.decomposition_report(stable_claim_topology_graph())
         self.assertEqual(without_basis, with_basis)
+
+
+class TopologyAdmissionAssembler(unittest.TestCase):
+    def init_repo(self, root):
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "relay@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "Relay Test"], check=True)
+        path = root / "placeholder.txt"
+        path.write_text("x", encoding="utf-8")
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-q", "-m", "base"], check=True)
+
+    def observations(self, graph_value, root, refs):
+        return {
+            ref: O.observe_repository_basis(graph_value, leaf_ref=ref, repo_root=root)
+            for ref in refs
+        }
+
+    def test_current_leaf_basis_classifies_pass(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("DERIVED_TOPOLOGY_ADMISSION_ONLY", out["authority"])
+            self.assertEqual("CURRENT", out["repository_currentness"][0]["state"])
+            self.assertEqual("LOCAL", out["assessment"]["change_impact"])
+            self.assertEqual("PASS", out["decision"]["decision"])
+            self.assertEqual([], D.validate_decomposition_assessment(out["assessment"]))
+
+    def test_current_adjacent_children_basis_classifies_merge(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            observations = self.observations(g, root, ["Common#592", "Common#594"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-PAIR", observations=observations
+            )
+            self.assertEqual(["P3-I-R2", "RESP-594"], out["responsibility_ids"])
+            self.assertEqual("MERGE", out["decision"]["decision"])
+
+    def test_missing_observation_derives_unknown_and_discover_first(self):
+        g = topology_assessment_planned()
+        out = A.assemble_topology_admission(
+            g, assessment_id="TA-LEAF", observations={}
+        )
+        self.assertEqual("MISSING", out["repository_currentness"][0]["state"])
+        self.assertEqual("UNKNOWN", out["assessment"]["change_impact"])
+        self.assertEqual("DISCOVER_FIRST", out["decision"]["decision"])
+
+    def test_moved_repository_basis_forces_replan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            original = topology_assessment_planned()
+            observations = self.observations(original, root, ["Common#592"])
+
+            moved = copy.deepcopy(original)
+            leaf_of(moved, "Common#592")["write_surface"] = ["pkg/"]
+            out = A.assemble_topology_admission(
+                moved, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("MOVED", out["repository_currentness"][0]["state"])
+            self.assertTrue(out["assessment"]["basis_moved"])
+            self.assertEqual("REPLAN", out["decision"]["decision"])
+
+    def test_current_cross_cutting_observation_overrides_optimistic_plan_impact(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            leaf_of(g, "Common#592")["write_surface"] = ["placeholder.txt"]
+            leaf_of(g, "Common#594")["write_surface"] = ["placeholder.txt"]
+            observations = self.observations(g, root, ["Common#592"])
+            self.assertEqual("CROSS_CUTTING", observations["Common#592"]["change_impact"])
+            out = A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations=observations
+            )
+            self.assertEqual("CROSS_CUTTING", out["assessment"]["change_impact"])
+
+    def test_assembly_is_deterministic_under_observation_map_order(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            g = topology_assessment_planned()
+            obs = self.observations(g, root, ["Common#592", "Common#594"])
+            forward = A.assemble_topology_admission(
+                g, assessment_id="TA-PAIR", observations=obs
+            )
+            reverse = A.assemble_topology_admission(
+                g,
+                assessment_id="TA-PAIR",
+                observations=dict(reversed(list(obs.items()))),
+            )
+            self.assertEqual(M.canonical_json(forward), M.canonical_json(reverse))
+
+    def test_wrong_current_observation_payload_fails_closed(self):
+        g = topology_assessment_planned()
+        basis = O.repository_plan_basis(g, "Common#592")
+        malformed = {
+            "schema": O.SCHEMA,
+            "authority": "OBSERVED_REPOSITORY_BASIS",
+            "subject": "Common#592",
+            "plan_basis_digest": basis["digest"],
+            "change_impact": "LOCAL",
+        }
+        with self.assertRaises(A.AssemblyError):
+            A.assemble_topology_admission(
+                g, assessment_id="TA-LEAF", observations={"Common#592": malformed}
+            )
 
 
 class ClaimTopologyReport(unittest.TestCase):
