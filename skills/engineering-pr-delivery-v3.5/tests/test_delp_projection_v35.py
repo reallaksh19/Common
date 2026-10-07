@@ -144,6 +144,9 @@ class FactsAreTheOnlyAgentInput(unittest.TestCase):
             {"frontier_count": 3},
             {"weight": 300},
             {"evidence_health": "CURRENT"},
+            {"observation": {"visibility": "OBSERVED"}},
+            {"provider_observation": {"material": {"candidate_sha": SHA_A}}},
+            {"provider_visibility": "OBSERVED"},
         ]
         for extra in bad:
             with self.subTest(extra=extra):
@@ -999,6 +1002,119 @@ class ResponsibilityCurrentnessProjection(unittest.TestCase):
                     M.require_facts(record)
 
 
+class ProviderObservationContract(unittest.TestCase):
+    def typed(self, **overrides):
+        value = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {
+                "candidate_sha": SHA_A,
+                "base_sha": SHA_MAIN,
+                "pr_state": "OPEN",
+                "ahead_by": 2,
+                "behind_by": 1,
+            },
+            "custody": {
+                "interruptions": {
+                    "coverage_from": "2026-10-07T00:00:00Z",
+                    "losses": [],
+                }
+            },
+            "liveness": {"value": "ACTIVE"},
+            "check": {"name": "optional-check", "result": "SUCCESS", "candidate_sha": SHA_A},
+            "diff": {
+                "additions": 100,
+                "deletions": 2,
+                "since_checkpoint": {"additions": 20, "deletions": 1},
+            },
+        }
+        value.update(overrides)
+        return value
+
+    def test_typed_and_legacy_observations_project_the_same_semantic_state(self):
+        legacy = {
+            "candidate_sha": SHA_A,
+            "base_sha": SHA_MAIN,
+            "pr_state": "OPEN",
+            "ahead_by": 2,
+            "behind_by": 1,
+            "interruptions": {
+                "coverage_from": "2026-10-07T00:00:00Z",
+                "losses": [],
+            },
+            "liveness": "ACTIVE",
+            "additions": 100,
+            "deletions": 2,
+            "since_checkpoint": {"additions": 20, "deletions": 1},
+            "check": {"name": "optional-check", "result": "SUCCESS", "candidate_sha": SHA_A},
+        }
+        typed = self.typed()
+        ledger = [entry(facts(units=[unit("U01")]), 1)]
+        left = M.project(graph(), ledger, {"Common#592": legacy})["nodes"]
+        right = M.project(graph(), ledger, {"Common#592": typed})["nodes"]
+        self.assertEqual(left, right)
+
+    def test_missing_optional_check_and_diff_are_unobserved_not_failures(self):
+        typed = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+        }
+        normalized = M.normalize_observation(typed)
+        categories = normalized["_observation"]["categories"]
+        self.assertEqual("OBSERVED", categories["MATERIAL"])
+        self.assertEqual("UNOBSERVED", categories["CHECK"])
+        self.assertEqual("UNOBSERVED", categories["DIFF"])
+        out = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], {"Common#592": typed})
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual((20, 20), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertNotIn("FAIL", leaf["state"])
+
+    def test_provider_unavailable_never_erases_semantic_progress_or_invents_failure(self):
+        unavailable = {"schema": M.OBSERVATION_SCHEMA, "visibility": "UNAVAILABLE"}
+        normalized = M.normalize_observation(unavailable)
+        self.assertTrue(all(v == "UNAVAILABLE" for v in normalized["_observation"]["categories"].values()))
+        out = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], {"Common#592": unavailable})
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual(20, leaf["progress"]["P"])
+        self.assertEqual(0, leaf["progress"]["E"])
+        self.assertEqual("EVIDENCE_GAP", leaf["state"])
+        self.assertEqual("UNVERIFIABLE", leaf["evidence"]["health"])
+
+    def test_optional_failed_check_is_observed_but_not_a_universal_gate(self):
+        typed = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+            "check": {"name": "optional-check", "result": "FAILURE", "candidate_sha": SHA_A},
+        }
+        out = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], {"Common#592": typed})
+        leaf = out["nodes"]["Common#592"]
+        self.assertEqual((20, 20), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertEqual("ACTIVE", leaf["state"])
+        self.assertEqual("OBSERVED", M.normalize_observation(typed)["_observation"]["categories"]["CHECK"])
+
+    def test_legacy_flat_input_receives_explicit_category_currentness(self):
+        normalized = M.normalize_observation({"candidate_sha": SHA_A, "liveness": "ACTIVE"})
+        self.assertEqual("LEGACY_FLAT_OBSERVATION", normalized["_observation"]["schema"])
+        self.assertEqual("OBSERVED", normalized["_observation"]["categories"]["MATERIAL"])
+        self.assertEqual("OBSERVED", normalized["_observation"]["categories"]["LIVENESS"])
+        self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["CHECK"])
+        self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["DIFF"])
+
+    def test_agent_facts_cannot_claim_provider_observation_truth(self):
+        for extra in (
+            {"observation": {"visibility": "OBSERVED"}},
+            {"provider_observation": {"candidate_sha": SHA_A}},
+            {"provider_visibility": "OBSERVED"},
+        ):
+            with self.subTest(extra=extra):
+                record = facts(units=[unit("U01")], **extra)
+                self.assertTrue(M.validate_facts(record))
+                with self.assertRaises(M.ForbiddenProjectionField):
+                    M.require_facts(record)
+
+
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
 
@@ -1209,16 +1325,21 @@ class GitHubStoreTests(unittest.TestCase):
         leaf.pop("primary_pr")
         leaf["candidate_ref"] = "investigate/592"
         observed = M.observe_github(gh, g)
-        self.assertEqual({"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4, "base_sha": SHA_MAIN}, observed["Common#612"])
-        self.assertEqual(SHA_MAIN, observed["Common#594"]["base_sha"])  # every leaf is measured against the same base head
+        self.assertEqual(M.OBSERVATION_SCHEMA, observed["Common#612"]["schema"])
+        self.assertEqual("OBSERVED", observed["Common#612"]["visibility"])
+        self.assertEqual(
+            {"candidate_sha": SHA_C, "ahead_by": 9, "behind_by": 4, "base_sha": SHA_MAIN},
+            observed["Common#612"]["material"],
+        )
+        self.assertEqual(SHA_MAIN, observed["Common#594"]["material"]["base_sha"])  # every leaf is measured against the same base head
         self.assertIn(("COMPARE", "main", "investigate/592"), gh.calls)  # the base defaults to main
         gh.commits["release/2"] = SHA_B
         g["programme"]["base_ref"] = "release/2"
-        self.assertEqual(SHA_B, M.observe_github(gh, g)["Common#612"]["base_sha"])
+        self.assertEqual(SHA_B, M.observe_github(gh, g)["Common#612"]["material"]["base_sha"])
         self.assertIn(("COMPARE", "release/2", "investigate/592"), gh.calls)
-        self.assertEqual(SHA_C, observed["Common#612"]["candidate_sha"])
-        self.assertEqual(SHA_B, observed["Common#594"]["candidate_sha"])
-        self.assertEqual("MERGED", observed["Common#592"]["pr_state"])
+        self.assertEqual(SHA_C, observed["Common#612"]["material"]["candidate_sha"])
+        self.assertEqual(SHA_B, observed["Common#594"]["material"]["candidate_sha"])
+        self.assertEqual("MERGED", observed["Common#592"]["material"]["pr_state"])
 
     @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
     def test_facts_from_untrusted_authors_are_rejected_not_believed(self):
@@ -1407,6 +1528,58 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual(M.FACTS_SCHEMA, self.schema("checkpoint-facts")["$id"])
         self.assertEqual(M.GRAPH_SCHEMA, self.schema("execution-graph")["$id"])
         self.assertEqual(M.STATUS_SCHEMA, self.schema("live-status")["$id"])
+        self.assertEqual(M.OBSERVATION_SCHEMA, self.schema("responsibility-observation")["$id"])
+
+    def test_good_responsibility_observation_passes_schema_and_engine(self):
+        record = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {
+                "candidate_sha": SHA_A,
+                "base_sha": SHA_MAIN,
+                "pr_state": "OPEN",
+                "ahead_by": 2,
+                "behind_by": 1,
+            },
+            "custody": {
+                "interruptions": {
+                    "coverage_from": "2026-10-07T00:00:00Z",
+                    "losses": [{"kind": "STREAM"}],
+                }
+            },
+            "liveness": {"value": "ACTIVE"},
+            "check": {"name": "optional", "result": "SUCCESS", "candidate_sha": SHA_A},
+            "diff": {
+                "additions": 100,
+                "deletions": 3,
+                "since_checkpoint": {"additions": 40, "deletions": 2},
+            },
+        }
+        self.assertEqual([], self.schema_errors("responsibility-observation", record))
+        self.assertEqual([], M.validate_observation(record))
+
+    def test_bad_responsibility_observations_fail_schema_and_engine(self):
+        good = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+        }
+        variants = []
+        for mutate in (
+            lambda x: x.__setitem__("visibility", "FAIL"),
+            lambda x: x["material"].__setitem__("candidate_sha", "abc123"),
+            lambda x: x.__setitem__("liveness", {"value": "DEAD"}),
+            lambda x: x.__setitem__("diff", {"additions": -1}),
+            lambda x: x.__setitem__("check", {"result": "GREEN"}),
+            lambda x: x.__setitem__("surprise", True),
+        ):
+            row = copy.deepcopy(good)
+            mutate(row)
+            variants.append(row)
+        for record in variants:
+            with self.subTest(record=record):
+                self.assertTrue(self.schema_errors("responsibility-observation", record), "schema accepted it")
+                self.assertTrue(M.validate_observation(record), "engine accepted it")
 
     def test_good_facts_pass_both(self):
         record = facts(units=[unit("U01", candidate_sha=SHA_B, contract_digest=DIGEST)], activity="WAITING_CI",
