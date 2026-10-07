@@ -18,7 +18,7 @@ properties:
       - AssuranceSatisfied
       - ProviderVisible
   status:
-    enum: [TRUE, FALSE, UNKNOWN, NOT_APPLICABLE]
+    enum: ["TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"]
   reason:
     type: string
     minLength: 1
