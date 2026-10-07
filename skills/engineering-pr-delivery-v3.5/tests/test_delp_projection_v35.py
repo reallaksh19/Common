@@ -4027,6 +4027,75 @@ class CanonicalDependencyCondition(unittest.TestCase):
         self.assertEqual(base, changed)
 
 
+class CanonicalConditionSetAssembly(unittest.TestCase):
+    def test_every_leaf_has_exactly_eight_conditions_in_canonical_order(self):
+        out = M.project(stable_graph(), [], OBS_A)
+        for ref, node in out["nodes"].items():
+            if node["kind"] != "LEAF":
+                continue
+            self.assertEqual(
+                list(M.CONDITION_ORDER),
+                [row["type"] for row in node["conditions"]],
+                ref,
+            )
+            self.assertEqual(8, len(node["conditions"]))
+            for row in node["conditions"]:
+                self.assertEqual([], M.validate_condition(row), (ref, row))
+
+    def test_custody_and_assurance_are_never_fabricated_true_before_p3_p4(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        rows = {row["type"]: row for row in node["conditions"]}
+        self.assertEqual("NOT_APPLICABLE", rows["CustodySafe"]["status"])
+        self.assertEqual("CUSTODY_POLICY_NOT_IMPLEMENTED", rows["CustodySafe"]["reason"])
+        self.assertEqual("NOT_APPLICABLE", rows["AssuranceSatisfied"]["status"])
+        self.assertEqual("ASSURANCE_POLICY_NOT_IMPLEMENTED", rows["AssuranceSatisfied"]["reason"])
+        self.assertNotEqual("TRUE", rows["CustodySafe"]["status"])
+        self.assertNotEqual("TRUE", rows["AssuranceSatisfied"]["status"])
+
+    def test_condition_assembly_does_not_change_progress_math(self):
+        g = stable_graph()
+        record = bound_facts(g, units=[unit("U01"), unit("U02")])
+        indexed = M.validate_graph(g)
+        accepted, _ = M.partition_ledger(indexed, [entry(record, 1)])
+        normalized = M.normalize_observations(indexed, OBS_A)
+        raw_leaf = M.compute_leaf(
+            indexed["nodes"]["Common#592"],
+            accepted["Common#592"],
+            normalized[592],
+        )
+        projected = M.project(g, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(raw_leaf["progress"], projected["progress"])
+
+    def test_advisory_health_changes_do_not_change_condition_set(self):
+        g = stable_graph()
+        g["programme"]["health_policy"] = {"mode": "ADVISORY"}
+        base = M.project(g, [], OBS_A)["nodes"]["Common#592"]
+        stressed_obs = {
+            **OBS_A,
+            "Common#592": {
+                "candidate_sha": SHA_A,
+                "liveness": "STALE",
+                "additions": 5000,
+                "deletions": 5000,
+                "interruptions": {
+                    "coverage_from": "start",
+                    "losses": [{"kind": "stream"}, {"kind": "stream"}, {"kind": "stream"}],
+                },
+            },
+        }
+        stressed = M.project(g, [], stressed_obs)["nodes"]["Common#592"]
+        self.assertIn("health", stressed)
+        self.assertEqual(base["conditions"], stressed["conditions"])
+
+    def test_finalizer_rejects_duplicate_or_incomplete_sets(self):
+        node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
+        complete = node["conditions"]
+        with self.assertRaises(M.DelpError):
+            M._finalize_condition_set([*complete, copy.deepcopy(complete[0])])
+        with self.assertRaises(M.DelpError):
+            M._finalize_condition_set(complete[:-1])
+
+
 class SemanticTopologyPlanProjection(unittest.TestCase):
     def init_repo(self, root):
         subprocess.run(["git", "init", "-q", str(root)], check=True)

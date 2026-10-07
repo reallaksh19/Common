@@ -557,6 +557,16 @@ CONDITION_TYPES = frozenset(
         "ProviderVisible",
     }
 )
+CONDITION_ORDER = (
+    "PlanReady",
+    "SpecCurrent",
+    "MaterialObserved",
+    "EvidenceCurrent",
+    "DependenciesReady",
+    "CustodySafe",
+    "AssuranceSatisfied",
+    "ProviderVisible",
+)
 CONDITION_STATUSES = frozenset({"TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"})
 _CONDITION_FIELDS = frozenset(
     {"type", "status", "reason", "message", "observed_generation", "candidate_sha", "source_refs"}
@@ -933,6 +943,58 @@ def _dependency_condition(
         candidate_sha=None,
         source_refs=declared,
     )
+
+
+
+def _custody_assurance_placeholders(
+    indexed: Mapping[str, Any],
+    ref: str,
+) -> list[dict[str, Any]]:
+    """Represent not-yet-implemented P3/P4 axes without fabricating safe/satisfied truth."""
+    generation = indexed["nodes"][ref].get("spec_generation")
+    return [
+        condition_record(
+            "CustodySafe",
+            "NOT_APPLICABLE",
+            "CUSTODY_POLICY_NOT_IMPLEMENTED",
+            "P3 custody epoch/fencing authority is not implemented in the current kernel.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=["programme:P3-custody"],
+        ),
+        condition_record(
+            "AssuranceSatisfied",
+            "NOT_APPLICABLE",
+            "ASSURANCE_POLICY_NOT_IMPLEMENTED",
+            "P4 assurance actor/policy authority is not implemented in the current kernel.",
+            observed_generation=generation,
+            candidate_sha=None,
+            source_refs=["programme:P4-assurance"],
+        ),
+    ]
+
+
+def _finalize_condition_set(
+    conditions: Iterable[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Validate and canonically order one complete eight-condition read model."""
+    rows = [dict(row) for row in conditions]
+    by_type: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        errors = validate_condition(row)
+        if errors:
+            raise DelpError("invalid derived responsibility condition: " + "; ".join(errors))
+        kind = str(row["type"])
+        if kind in by_type:
+            raise DelpError(f"duplicate derived responsibility condition {kind}")
+        by_type[kind] = row
+    missing = [kind for kind in CONDITION_ORDER if kind not in by_type]
+    extra = sorted(set(by_type) - set(CONDITION_ORDER))
+    if missing or extra:
+        raise DelpError(
+            f"incomplete derived responsibility condition set: missing={missing}, extra={extra}"
+        )
+    return [by_type[kind] for kind in CONDITION_ORDER]
 
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
@@ -3480,6 +3542,12 @@ def project(
             continue
         results[ref]["conditions"].append(
             _dependency_condition(indexed, ref, results[ref])
+        )
+        results[ref]["conditions"].extend(
+            _custody_assurance_placeholders(indexed, ref)
+        )
+        results[ref]["conditions"] = _finalize_condition_set(
+            results[ref]["conditions"]
         )
 
     health_mode = indexed["health_policy"]["mode"]
