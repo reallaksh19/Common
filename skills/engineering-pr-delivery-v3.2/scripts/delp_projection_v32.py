@@ -86,6 +86,9 @@ PLAN_UPDATE_KINDS = ("SCOPE_EXPANSION", "SCOPE_REDUCTION", "UNIT_REWEIGHT", "UNI
 DEFAULT_TOTAL_WEIGHT = 10000
 # NOT_RELEASEABLE only replaces these leaf states; every other state is more urgent or already means "not being worked".
 _PLAN_OVERLAID_STATES = frozenset({"NOT_STARTED", "ACTIVE"})
+# Provider-observed pull request states that prove work exists for a leaf. With no accepted facts such a leaf is
+# UNMATERIALIZED (unknown), never NOT_STARTED (zero): the ledger is missing, the work may well be finished.
+_PR_ACTIVITY_STATES = frozenset({"OPEN", "MERGED", "CLOSED"})
 # Defaults follow the programme's written budgets (PROGRAMME_DECOMPOSITION_PROGRESS.md) and sit at the
 # Young/Daly optimum for the interruption rate observed on the Common executors (see the contract doc).
 DEFAULT_POLICY: dict[str, Any] = {
@@ -188,6 +191,7 @@ STATE_LIGHT = {
     "EVIDENCE_STALE": LIGHT_ATTENTION,
     "NOT_RELEASEABLE": LIGHT_ATTENTION,  # leaf whose plan fails the decomposition gate (ENFORCED mode)
     "PLAN_GAP": LIGHT_ATTENTION,  # ancestor with at least one non-releasable leaf
+    "UNMATERIALIZED": LIGHT_ATTENTION,  # the provider shows work but the facts ledger is empty: unknown, not zero
     "STALE": LIGHT_STALE,
     "COMPLETE": LIGHT_COMPLETE,
     "SUPERSEDED": LIGHT_IDLE,
@@ -665,6 +669,9 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         raise GraphError(f"programme.root: {exc}") from exc
     policy = resolve_policy(programme.get("decomposition_policy"))
     total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
+    base_ref = programme.get("base_ref")
+    if base_ref is not None and (not isinstance(base_ref, str) or not base_ref.strip()):
+        raise GraphError("programme.base_ref: must be a non-empty branch name")
 
     nodes: dict[str, dict[str, Any]] = {}
     by_number: dict[int, str] = {}
@@ -1268,6 +1275,17 @@ def _fraction(num: int, den: int) -> Fraction:
     return Fraction(num, den) if den else Fraction(0)
 
 
+def _provider_signal(observation: Mapping[str, Any]) -> str | None:
+    """What the provider shows about a leaf's work, independent of anything an agent published."""
+    pr_state = str(observation.get("pr_state") or "").upper()
+    if pr_state in _PR_ACTIVITY_STATES:
+        return f"PR_{pr_state}"
+    ahead = observation.get("ahead_by")
+    if isinstance(ahead, int) and not isinstance(ahead, bool) and ahead > 0:
+        return f"BRANCH_AHEAD_{ahead}"
+    return None
+
+
 def compute_leaf(
     node: Mapping[str, Any],
     records: list[Mapping[str, Any]],
@@ -1434,10 +1452,19 @@ def compute_leaf(
     if liveness not in OBSERVED_LIVENESS:
         liveness = None
 
+    # No accepted facts but the provider shows work: the numbers are a lower bound, not the truth.
+    provider_signal = _provider_signal(observation)
+    unmaterialized = not records and provider_signal is not None
+    if unmaterialized:
+        active_unit = None  # no fact says which unit is next
+        warnings.append(f"UNMATERIALIZED:{provider_signal}")
+
     if superseded_by:
         lifecycle = "SUPERSEDED"
     elif claims_complete and not incomplete and health == "CURRENT" and D == 1 and DE == 1:
         lifecycle = "COMPLETE"
+    elif unmaterialized:
+        lifecycle = "UNMATERIALIZED"
     elif not records and liveness is None:
         lifecycle = "NOT_STARTED"
     elif activity == "PAUSED":
@@ -1451,6 +1478,8 @@ def compute_leaf(
         state = lifecycle
     elif liveness == "STALE":
         state = "STALE"
+    elif lifecycle == "UNMATERIALIZED":
+        state = "UNMATERIALIZED"
     elif health == "STALE_CANDIDATE":
         state = "EVIDENCE_STALE"
     elif health in {"GAP", "UNVERIFIABLE"}:
@@ -1478,7 +1507,7 @@ def compute_leaf(
     owner_action = last_owner_action
     if latest and owner_action is None:
         warnings.append("OWNER_ACTION_UNSTATED")
-    return {
+    result = {
         "lifecycle": lifecycle,
         "state": state,
         "active_unit": active_unit,
@@ -1512,6 +1541,9 @@ def compute_leaf(
         "owner_action": _one_line(owner_action or "NONE"),
         "warnings": warnings,
     }
+    if unmaterialized:
+        result["materialization"] = {"status": "UNMATERIALIZED", "provider_signal": provider_signal}
+    return result
 
 
 # --------------------------------------------------------------------------
@@ -1681,10 +1713,13 @@ def project(
         unreleasable = [
             leaf for leaf in _leaves_under(indexed, ref) if (results[leaf].get("plan") or {}).get("releasable") is False
         ]
+        unmaterialized = [leaf for leaf in _leaves_under(indexed, ref) if results[leaf]["lifecycle"] == "UNMATERIALIZED"]
         if D == 1 and all(r["lifecycle"] in _TERMINAL for r in leaf_rows) and node["reserve_weight"] == 0:
             state = "COMPLETE"
         elif any(r["state"] == "STALE" for r in critical):
             state = "STALE"
+        elif unmaterialized:
+            state = "UNMATERIALIZED"  # the roll-up below is a lower bound: it cannot see the work the ledger lacks
         elif "EVIDENCE_STALE" in states or "EVIDENCE_GAP" in states:
             state = "EVIDENCE_GAP"
         elif any(r["state"] in {"QUIET", "RECOVERING"} for r in critical) or "STALE" in states:
@@ -1702,8 +1737,12 @@ def project(
             warnings.append(f"UNDECOMPOSED_RESERVE:{node['reserve_weight']}")
         if unreleasable:
             warnings.append(f"DECOMPOSITION_BLOCKED_LEAVES:{len(unreleasable)}")
+        if unmaterialized:
+            warnings.append(f"UNMATERIALIZED_LEAVES:{len(unmaterialized)}")
         result = {
-            "lifecycle": {"COMPLETE": "COMPLETE", "IDLE": "IDLE", "PLAN_GAP": "IDLE"}.get(state, "ACTIVE"),
+            "lifecycle": {"COMPLETE": "COMPLETE", "IDLE": "IDLE", "PLAN_GAP": "IDLE", "UNMATERIALIZED": "UNMATERIALIZED"}.get(
+                state, "ACTIVE"
+            ),
             "state": state,
             "progress": {
                 "D": percent(D),
@@ -1717,6 +1756,8 @@ def project(
         }
         if mode != "OFF":
             result["plan"] = {"mode": mode, "not_releasable": len(unreleasable), "leaves": unreleasable}
+        if unmaterialized:
+            result["materialization"] = {"status": "UNMATERIALIZED", "leaves": unmaterialized}
         results[ref] = result
         return result
 
@@ -1845,10 +1886,24 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     health = leaf["evidence"]["health"]
     gaps = leaf["evidence"]["gaps"]
     plan = leaf.get("plan")
+    materialization = leaf.get("materialization")
+    plan_blocked = bool(plan and plan["mode"] == "ENFORCED" and not plan["releasable"])
     if leaf["lifecycle"] in _TERMINAL:
         action = "NONE"
         next_text = f"{leaf['lifecycle']} — no further unit; select the next responsibility from the plan"
-    elif plan and plan["mode"] == "ENFORCED" and not plan["releasable"]:
+    elif materialization:
+        # The ledger is empty but the provider shows work. What exists must be reported before anything new is
+        # started, and nothing is inferred: completion is claimed only where current evidence supports it.
+        action = "MATERIALIZE_FACTS"
+        also = ""
+        if plan_blocked:
+            also = f"; the plan also fails the decomposition gate ({', '.join(b['code'] for b in plan['blockers'][:3])}) — the Coordinator must fix it before new units"
+        next_text = (
+            f"MATERIALIZE_FACTS before any new work — the provider shows {materialization['provider_signal']} but the ledger has "
+            f"no accepted CHECKPOINT_FACTS_V1 for this leaf; publish facts for exactly what current evidence supports "
+            f"(completion is never inferred){also}"
+        )
+    elif plan_blocked:
         action = "FIX_PLAN"
         shown = "; ".join(f"{b['code']} ({b['detail']})" for b in plan["blockers"][:3])
         more = f"; +{len(plan['blockers']) - 3} more" if len(plan["blockers"]) > 3 else ""
@@ -1874,7 +1929,7 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         "leaf": leaf_ref,
         "lineage": lineage_refs,
         "state": leaf["state"],
-        "evidence_health": health,
+        "evidence_health": "NONE" if materialization else health,
         "action": action,
         "recovery_required": action == "RECOVER_EVIDENCE",
         "next": next_text,
@@ -1892,6 +1947,9 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     if plan:  # present only when the decomposition gate is not OFF
         report["plan"] = plan
         report["plan_fix_required"] = action == "FIX_PLAN"
+    if materialization:  # present only when the provider shows work the ledger lacks
+        report["materialization"] = materialization
+        report["materialize_required"] = True
     return report
 
 
@@ -1901,12 +1959,18 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
     pr = report["material"].get("primary_pr")
     if pr:
         path += f" → PR#{ref_number(pr)}"
-    evidence = (
-        f"CURRENT @ {short(report['material'].get('candidate_sha'))}"
-        if report["evidence_health"] == "CURRENT"
-        else f"{report['evidence_health']} (evidence @ {short(report['evidence_candidate'])}, "
-        f"live @ {short(report['material'].get('candidate_sha'))})"
-    )
+    if report["evidence_health"] == "NONE":
+        evidence = (
+            f"NONE — no accepted facts; provider shows {report['materialization']['provider_signal']} "
+            f"(live @ {short(report['material'].get('candidate_sha'))})"
+        )
+    elif report["evidence_health"] == "CURRENT":
+        evidence = f"CURRENT @ {short(report['material'].get('candidate_sha'))}"
+    else:
+        evidence = (
+            f"{report['evidence_health']} (evidence @ {short(report['evidence_candidate'])}, "
+            f"live @ {short(report['material'].get('candidate_sha'))})"
+        )
     lines = [
         "CONTINUE CHECKPOINT",
         "",
@@ -2124,6 +2188,28 @@ def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
     return ledger
 
 
+def require_repository_match(graph: Any, repository: str, *, live: bool) -> None:
+    """A plan may only be applied to the repository it declares.
+
+    Issue numbers in a plan are not globally unique, and the shipped examples deliberately reuse numbers that exist
+    in real repositories. A live `sync-github` therefore needs `programme.repository` and refuses on any mismatch; a
+    dry run (read-only) may omit it but is still refused when it declares a different repository.
+    """
+    declared = (graph.get("programme") or {}).get("repository") if isinstance(graph, Mapping) else None
+    if declared is None or not str(declared).strip():
+        if live:
+            raise DelpError(
+                "programme.repository is required for a live sync-github and must equal --repository, "
+                "so that a plan can never write to another repository"
+            )
+        return
+    if str(declared).strip().lower() != str(repository).strip().lower():
+        raise DelpError(
+            f"programme.repository {str(declared).strip()!r} does not match --repository {repository!r}: "
+            "refusing to read or write (the shipped examples declare example/delp-demo for this reason)"
+        )
+
+
 def plan_github(transport: Any, graph: Any) -> dict[str, Any]:
     """Read-only dry run of `sync-github`: what would change, what drifted, what was rejected. Writes nothing."""
     indexed = validate_graph(graph)
@@ -2146,9 +2232,12 @@ def plan_github(transport: Any, graph: Any) -> dict[str, Any]:
 def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
     """Observe the live candidate for every leaf from provider truth, never from agent facts.
 
-    A leaf's candidate is its primary PR head, or the head of `candidate_ref` when it has no PR.
+    A leaf's candidate is its primary PR head, or the head of `candidate_ref` when it has no PR. A branch-only leaf
+    also gets `ahead_by` / `behind_by` against `programme.base_ref` (default `main`): commits beyond the base are the
+    provider's proof that work exists, which is what separates an unreported leaf from one that has not started.
     """
     indexed = validate_graph(graph)
+    base_ref = str(indexed["programme"].get("base_ref") or "main")
     observed: dict[str, dict[str, Any]] = {}
     for ref, node in indexed["nodes"].items():
         if node["kind"] != "LEAF":
@@ -2161,7 +2250,12 @@ def observe_github(transport: Any, graph: Any) -> dict[str, dict[str, Any]]:
                 "pr_state": "MERGED" if pull.get("merged") else str(pull.get("state") or "UNKNOWN").upper(),
             }
         elif node.get("candidate_ref"):
-            observed[ref] = {"candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None}
+            comparison = transport.compare(base_ref, node["candidate_ref"])
+            observed[ref] = {
+                "candidate_sha": str(transport.get_commit_sha(node["candidate_ref"]) or "") or None,
+                "ahead_by": int(comparison.get("ahead_by") or 0),
+                "behind_by": int(comparison.get("behind_by") or 0),
+            }
     return observed
 
 
@@ -2181,6 +2275,9 @@ class GhTransport:
 
     def get_commit_sha(self, ref: str) -> str:
         return str(self._gh(f"repos/{self.repository}/commits/{ref}").get("sha") or "")
+
+    def compare(self, base: str, head: str) -> dict[str, Any]:
+        return self._gh(f"repos/{self.repository}/compare/{base}...{head}")
 
     def get_issue(self, number: int) -> dict[str, Any]:
         return self._gh(f"repos/{self.repository}/issues/{number}")
@@ -2406,6 +2503,8 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(render_decomposition(report))
             return 1 if report["mode"] == "ENFORCED" and report["summary"]["not_releasable"] else 0
+        if args.cmd == "sync-github":
+            require_repository_match(graph, args.repository, live=not args.dry_run)
         if args.cmd == "sync-github" and args.dry_run:
             _emit(plan_github(GhTransport(args.repository), graph), None)
             return 0

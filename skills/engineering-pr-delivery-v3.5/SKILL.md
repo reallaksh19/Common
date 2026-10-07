@@ -115,6 +115,8 @@ Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `ta
 
 **Decomposition gate.** The plan is judged before work starts, by a pure function over the execution graph (never over agent facts): `decompose-check` evaluates `programme.decomposition_policy` — 3–8 verifiable units per leaf, no unit above 40%, a stated outcome and write surface, a size budget within 700 target / 1500 hard changed lines and 15 / 20 minutes, and overlapping write surfaces either ordered by `depends_on` or declared `parallel_ok` with a basis. The mode defaults to `OFF`; `ADVISORY` only reports; under `ENFORCED` a failing leaf shows `NOT_RELEASEABLE` and every continuation answers `FIX_PLAN` instead of starting a unit. `graph-diff` rejects a re-plan (split, merge, reweight, drop) that moves any unit's exact programme share without a covering, authorised, append-only `plan_updates` entry. The gate never moves a percentage.
 
+**Materialization.** Unknown is never published as zero. A leaf the provider shows work for (an open, merged or closed pull request, or a `candidate_ref` branch ahead of `programme.base_ref`) but whose ledger has no accepted facts is `UNMATERIALIZED` 🟡; its ancestors say their numbers are a lower bound; a continuation answers `MATERIALIZE_FACTS` — publish facts for exactly what current evidence supports (completion is never inferred from a merge). Publish a first facts block at START so a new leaf is never unmaterialized. A live `sync-github` only writes to the repository the plan declares in `programme.repository`; the shipped examples declare `example/delp-demo`.
+
 The active DELP contract is:
 
 - `operating-model/durable-execution-lineage-projection-v35.md` (normative);

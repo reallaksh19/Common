@@ -28,7 +28,7 @@ properties:
       kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
       lifecycle: {type: string}
       state:
-        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
+        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, UNMATERIALIZED, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
       light: {enum: ["🟢", "🟡", "🔵", "🔴", "✅", "⚪"]}
       identity:
         type: object
@@ -52,6 +52,17 @@ properties:
           health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
           gaps: {type: array}
       frontier: {type: object}
+      materialization:
+        type: object
+        description: >-
+          Present only when the provider shows work that the facts ledger lacks, so the numbers are a lower bound and not
+          the truth. LEAF: the observed signal (PR_OPEN, PR_MERGED, PR_CLOSED, BRANCH_AHEAD_<n>). ROOT/INTERMEDIATE: the
+          unmaterialized leaves below. Unknown is never shown as zero progress.
+        required: [status]
+        properties:
+          status: {const: UNMATERIALIZED}
+          provider_signal: {type: string, pattern: '^(?:PR_(?:OPEN|MERGED|CLOSED)|BRANCH_AHEAD_[1-9][0-9]*)$'}
+          leaves: {type: array, items: {type: string}}
       plan:
         type: object
         description: >-

@@ -1,3 +1,7 @@
+# FICTIONAL EXAMPLE - not any live programme's plan. The issue numbers below may coincide with real issues in real
+# repositories (and some of those real issues are something else entirely). `programme.repository` names a
+# repository that does not exist, so `sync-github` refuses to apply this plan to any real one.
+#
 # Coordinator-authored plan. Lineage, weights and denominators live here and nowhere else.
 #
 # decomposition_policy.mode ENFORCED: `decompose-check` fails, and every continuation answers FIX_PLAN, for a leaf
@@ -7,7 +11,7 @@ schema: relay-v3.5-delp-execution-graph
 programme:
   id: COMMON-PROD-CONTROL-V1
   root: Common#527
-  repository: reallaksh19/Common
+  repository: example/delp-demo
   total_weight: 10000 # display scale for unit points only; it never changes a percentage
   decomposition_policy:
     mode: ENFORCED

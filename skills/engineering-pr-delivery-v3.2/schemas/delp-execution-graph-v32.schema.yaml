@@ -30,7 +30,15 @@ properties:
     properties:
       id: {type: string, minLength: 1}
       root: {$ref: '#/$defs/ref'}
-      repository: {type: string}
+      repository:
+        type: string
+        description: >-
+          The repository this plan belongs to. A live sync-github requires it and refuses when it differs from
+          --repository, so a plan (or a shipped example, which declares example/delp-demo) can never write elsewhere.
+      base_ref:
+        type: string
+        minLength: 1
+        description: Branch that branch-only leaves (candidate_ref) are compared against to prove work exists. Default main.
       fact_authors:
         type: array
         items: {type: string, minLength: 1}

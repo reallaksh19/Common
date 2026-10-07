@@ -105,7 +105,7 @@ programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
 
 `›` is ownership/hierarchy; `→` is the material PR relation (a PR is not another programme child). `P`/`D` are semantic/delivery progress, `E` is the evidenced part of it, `F` is the number of active frontier leaves under the node. The scope letter is mandatory: a bare `P56% / E56%` is invalid. Active-unit token: the agent's `next.unit` if it names a declared incomplete unit, otherwise the first incomplete unit.
 
-State words → light: `ACTIVE 🟢`; `WAITING_* / WAITING 🔵`; `EVIDENCE_GAP`, `EVIDENCE_STALE`, `QUIET`, `RECOVERING`, `NOT_RELEASEABLE`, `PLAN_GAP 🟡`; `STALE 🔴`; `COMPLETE ✅`; `NOT_STARTED`, `PAUSED`, `SUPERSEDED`, `IDLE ⚪`. Ancestor state is derived from the subtree without averaging colours: red if a `critical` leaf is stale; yellow for any evidence gap/stale, critical quiet/recovering or non-critical stale; blue if only critical work is waiting; green while frontier work is active; `PLAN_GAP` (yellow) only when the decomposition gate is `ENFORCED`, nothing is active and a leaf below fails the gate; `COMPLETE` only when every leaf is terminal, delivery is 100 and no reserve remains.
+State words → light: `ACTIVE 🟢`; `WAITING_* / WAITING 🔵`; `UNMATERIALIZED`, `EVIDENCE_GAP`, `EVIDENCE_STALE`, `QUIET`, `RECOVERING`, `NOT_RELEASEABLE`, `PLAN_GAP 🟡`; `STALE 🔴`; `COMPLETE ✅`; `NOT_STARTED`, `PAUSED`, `SUPERSEDED`, `IDLE ⚪`. Ancestor state is derived from the subtree without averaging colours: red if a `critical` leaf is stale; yellow for any unmaterialized leaf, any evidence gap/stale, critical quiet/recovering or non-critical stale; blue if only critical work is waiting; green while frontier work is active; `PLAN_GAP` (yellow) only when the decomposition gate is `ENFORCED`, nothing is active and a leaf below fails the gate; `COMPLETE` only when every leaf is terminal, delivery is 100 and no reserve remains.
 
 The human part (`— <responsibility>`) is the only thing an agent or Owner edits. The projector splits an existing title into generated prefix + base, recognising the legacy forms `🟢 {P42% · E31% · A07 · U03 · ACTIVE} <title>` and `<title> {P50% · E50% · UNIT-02 · IMPLEMENTING}`, so migration is automatic at the next pass. Titles are capped at 250 characters by truncating the human base, never the projection. `A<n>` (activity epoch) is no longer in the title; it is `activity_epoch` in `LIVE_STATUS_V1`.
 
@@ -158,7 +158,31 @@ OWNER_ACTION: NONE
 NEXT: U04 — negative replay
 ```
 
-With a gap the barrier forces recovery first (`NEXT: RECOVER_EVIDENCE before new coding — U03:NO_EVIDENCE_REFS`, `recovery_required: true`). When the decomposition gate is `ENFORCED` and the leaf's plan fails it, the barrier answers `FIX_PLAN` before anything else (see [the gate](#decomposition-gate--small-verifiable-collision-free-leaves)); an evidence gap is still reported alongside it. Admission is pure: `authority_effects` is always empty — a continuation never changes the parent, denominator, scope, priority or merge authority; a genuine priority change is an explicit custody transition (`PAUSED` at an exact durable frontier, successor `ACTIVE` after fresh reconstruction).
+With a gap the barrier forces recovery first (`NEXT: RECOVER_EVIDENCE before new coding — U03:NO_EVIDENCE_REFS`, `recovery_required: true`). When the provider shows work for the leaf but the ledger has no accepted facts, the barrier answers `MATERIALIZE_FACTS` first (see [Materialization](#materialization--unknown-is-not-zero)); a failing plan is reported alongside it. Otherwise, when the decomposition gate is `ENFORCED` and the leaf's plan fails it, the barrier answers `FIX_PLAN` before anything else (see [the gate](#decomposition-gate--small-verifiable-collision-free-leaves)); an evidence gap is still reported alongside it. Admission is pure: `authority_effects` is always empty — a continuation never changes the parent, denominator, scope, priority or merge authority; a genuine priority change is an explicit custody transition (`PAUSED` at an exact durable frontier, successor `ACTIVE` after fresh reconstruction).
+
+## Materialization — unknown is not zero
+
+Progress is derived from facts, so a programme that already has history but no facts ledger would project **0%**: `P` and `E` count only what an agent has reported, and nothing has been reported. That is the wrong message. A merged pull request is provider truth that work exists; reading it as "nothing started" is a confident error, and worse than the hand-kept number it replaces.
+
+DELP therefore separates *no work* from *work the ledger lacks*, using only what the provider shows (never what an agent says). A leaf with **no accepted facts** and a provider-observed signal is `UNMATERIALIZED` 🟡:
+
+| Provider signal (observation) | Meaning |
+|---|---|
+| `pr_state` `OPEN` / `MERGED` / `CLOSED` | a pull request exists for the leaf (`PR_OPEN`, `PR_MERGED`, `PR_CLOSED`) |
+| `ahead_by` > 0 | the leaf's `candidate_ref` branch has commits beyond `programme.base_ref` (default `main`) (`BRANCH_AHEAD_<n>`); `sync-github` reads it from the compare API |
+
+An observed head alone is **not** a signal (a fresh branch points at its base), and with no observation at all a leaf stays `NOT_STARTED`: nothing shows otherwise.
+
+- **Leaf:** `state UNMATERIALIZED`, `NO_ACTIVE_UNIT` (no fact says what is next), `materialization: {status, provider_signal}` in `LIVE_STATUS_V1`, warning `UNMATERIALIZED:<signal>`. It is not on the frontier. `STALE` (an observed dead executor) still outranks it.
+- **Ancestors:** `UNMATERIALIZED` outranks every state except a critical `STALE` (it sits above `EVIDENCE_GAP`): the roll-up cannot see the work the ledger lacks, so its `D/E` are a **lower bound** and the title says so, e.g. `🟡 [#527] Π:D17/E17 · F0 · UNMATERIALIZED`. The numbers themselves are never inflated or invented.
+- **Admission:** `MATERIALIZE_FACTS` — `EVIDENCE: NONE — no accepted facts; provider shows PR_MERGED`, `NEXT: MATERIALIZE_FACTS before any new work … publish facts for exactly what current evidence supports (completion is never inferred)`. It clears the moment an accepted facts record exists. A failing decomposition plan is reported alongside but does not come first: an agent can publish facts at once, while a plan fix needs the Coordinator.
+- A leaf stops being unmaterialized by publishing facts (a merged pull request becomes `COMPLETE` through the ordinary rule: units complete with current evidence on the PR head, and a `RESPONSIBILITY`/`YES` result). Nothing about merge state alone ever completes a leaf.
+
+**Adopting DELP on a programme with history.** Author the execution graph; run `project` or `sync-github --dry-run` (read-only) and expect `UNMATERIALIZED` on every leaf that has history and on every ancestor; publish facts leaf by leaf for what the existing evidence supports; run a live `sync-github` only when the roll-up reads the way you expect. Programme work that is not in the graph yet belongs in `reserve_weight`, which counts as zero and is reported (`UNDECOMPOSED_RESERVE`): a graph that holds only Phase 3 of a ten-thousand-point programme shows the graph's lower bound, not the programme's. `templates/checkpoint-facts-v35.md` asks for a first facts block at START so that a new leaf is never unmaterialized from its first commit.
+
+**A plan can only be applied where it belongs.** Issue numbers are not globally unique, and the shipped examples deliberately reuse numbers that exist in real repositories. A live `sync-github` therefore requires `programme.repository` and refuses when it differs from `--repository` (a dry run may omit it but is refused on a mismatch); the shipped example declares `example/delp-demo`, so it can never be applied to a real repository.
+
+Pinned by `RealScenarioReplay`, which replays the #527 / P3-I situation (the real issue and PR numbers, merge commits, branch head and ahead-9 / behind-4 divergence; the closed weights and the 10000 denominator) through the projector.
 
 ## Decomposition gate — small, verifiable, collision-free leaves
 
@@ -308,9 +332,13 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 11. Titles and `LIVE_STATUS_V1` are disposable projections, never authority; if every title and status disappeared they would be rebuilt from durable sources.
 12. The decomposition gate judges the plan only: it never reads facts, never moves a percentage, and with the mode `OFF` adds nothing to any node or admission output.
 13. Under `ENFORCED`, a leaf whose plan fails the gate is never admitted to new work (`FIX_PLAN`), and a re-plan that moves any unit's programme share without a covering, authorised, append-only plan update is rejected by `graph-diff`.
+14. Unknown is never published as zero: a leaf the provider shows work for but whose ledger has no accepted facts is `UNMATERIALIZED`, its ancestors say their numbers are a lower bound, and its admission answer is `MATERIALIZE_FACTS`.
+15. A plan is only ever applied to the repository it declares.
 
 ## Not claimed
 
 DELP cannot technically prevent a human or agent from hand-editing a GitHub title or comment; it makes that edit non-authoritative, detectable and self-correcting. It does not verify that an agent's evidence ref is truthful (that remains review, `NOT_RUN` integrity and the evidence gate); it verifies that evidence exists, is typed, and is bound to the current candidate. It does not grant or infer merge, acceptance or programme authority.
+
+`UNMATERIALIZED` fires only on what the provider shows: a leaf with no pull request and no branch commits, or a run with no observations at all, reads `NOT_STARTED` because nothing shows otherwise. It marks the roll-up as a lower bound; it does not estimate the missing work, and work outside the graph (the reserve) stays unknown until it is decomposed. Merge state never completes a leaf, and DELP does not backfill facts on anyone's behalf: publishing them remains the agent's or the Coordinator's act.
 
 The decomposition gate checks that a plan is self-consistent, sized within policy and collision-free *as declared*; it cannot know whether a size estimate is honest or whether a declared `write_surface` matches the diff that is eventually pushed (comparing the two is a separate, runtime check). It checks that a `verify` step is present, not that it is a good one. A `MECHANICAL` or `GATE` classification is a Coordinator declaration, made visible by the class counts but not independently verified. `owner_authorized` and `owner_basis` in a plan update are a durable, reviewable record, not proof of who wrote them: the Owner's review of the pull request that edits the graph remains the control, and verifying the cited basis against the repository's own comments is future work.
