@@ -160,7 +160,7 @@ properties:
   successor_entry:
     type: object
     additionalProperties: false
-    required: [mode, allowed_actions, forbidden_actions, execution_admission, challenge_basis, successor_reconstruction_challenge]
+    required: [mode, allowed_actions, forbidden_actions, execution_admission, owner_boundary_constraints, challenge_basis, successor_reconstruction_challenge]
     properties:
       mode: {const: RECONSTRUCT_PLAN_ONLY}
       allowed_actions:
@@ -172,6 +172,10 @@ properties:
         uniqueItems: true
         items: {enum: [QUALIFICATION, RETAINED_VALIDATION, PRODUCTION_MUTATION, PR_CREATION, TASK_EXECUTION]}
       execution_admission: {const: OWNER_EXPLICIT_EXECUTION_ADMISSION}
+      owner_boundary_constraints:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1}
       challenge_basis:
         type: object
         additionalProperties: false
