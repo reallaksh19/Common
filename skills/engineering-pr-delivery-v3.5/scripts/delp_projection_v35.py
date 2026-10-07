@@ -2408,6 +2408,15 @@ def compute_leaf(
             last_blocker = rec["blocker"]
         if rec.get("owner_action") is not None:
             last_owner_action = rec["owner_action"]
+        if rec.get("handover") is not None:
+            h = dict(rec["handover"])
+            h["_source"] = rec.get("_source")
+            h["_candidate_sha"] = (rec.get("material") or {}).get("candidate_sha")
+            if h.get("event") == "OFFERED":
+                handover_offer = h
+                handover_accept = None
+            else:
+                handover_accept = h
         record_candidate = (rec.get("material") or {}).get("candidate_sha")
         record_pr = (rec.get("material") or {}).get("pr")
         record_contract_digest = (rec.get("responsibility") or {}).get("contract_digest")
