@@ -1,0 +1,190 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-p3-integration-qualification-source-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - base
+  - runtime_basis
+  - self_check_manifest
+  - local_project_protocol
+  - contract_obligations
+  - baseline_selectors
+  - impact_rules
+  - unknown_impact_policy
+  - expected_checks
+  - retained_p2i
+  - forbidden_outcomes
+  - non_goals
+  - authority_boundaries
+properties:
+  schema_version: {const: P3_INTEGRATION_QUALIFICATION_SOURCE_V1}
+  authority: {const: PHASE3_SOLO_INTEGRATION_QUALIFICATION_INPUT}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [programme_or_parent_id, parent_ref, task_id, child_ref, contract_version]
+    properties:
+      programme_or_parent_id: {const: COMMON-PROD-CONTROL-V1}
+      parent_ref: {const: https://github.com/reallaksh19/Common/issues/527}
+      task_id: {const: PRD-527-P3-I}
+      child_ref: {const: https://github.com/reallaksh19/Common/issues/588}
+      contract_version: {const: P3-I-v1}
+  base:
+    type: object
+    additionalProperties: false
+    required: [ref, sha]
+    properties:
+      ref: {const: main}
+      sha: {$ref: '#/$defs/sha'}
+  runtime_basis:
+    type: array
+    minItems: 10
+    items: {$ref: '#/$defs/runtime_basis'}
+  self_check_manifest:
+    type: object
+    additionalProperties: false
+    required: [path, digest]
+    properties:
+      path: {type: string, minLength: 1}
+      digest: {$ref: '#/$defs/digest'}
+  local_project_protocol:
+    type: object
+    additionalProperties: false
+    required: [path, index, method_ids]
+    properties:
+      path: {type: string, minLength: 1}
+      index: {type: integer, minimum: 0}
+      method_ids:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+  contract_obligations:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/contract_obligation'}
+  baseline_selectors:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/baseline_selector'}
+  impact_rules:
+    type: array
+    minItems: 1
+    items: {$ref: '#/$defs/impact_rule'}
+  unknown_impact_policy: {$ref: '#/$defs/impact_policy'}
+  expected_checks:
+    type: array
+    minItems: 20
+    maxItems: 20
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, expected]
+      properties:
+        id: {type: string, pattern: '^P3I-[0-9]{2}$'}
+        expected: {type: string, minLength: 1}
+  retained_p2i:
+    type: object
+    additionalProperties: false
+    required: [source_path]
+    properties:
+      source_path: {type: string, minLength: 1}
+  forbidden_outcomes:
+    type: array
+    minItems: 1
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  non_goals:
+    type: array
+    uniqueItems: true
+    items: {type: string, minLength: 1}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - emits_engineering_pass
+      - emits_project_acceptance_pass
+      - emits_independent_review_verdict
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      emits_engineering_pass: {const: false}
+      emits_project_acceptance_pass: {const: false}
+      emits_independent_review_verdict: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+$defs:
+  sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
+  runtime_basis:
+    type: object
+    additionalProperties: false
+    required: [component, path, blob_sha]
+    properties:
+      component: {type: string, minLength: 1}
+      path: {type: string, minLength: 1}
+      blob_sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  contract_obligation:
+    type: object
+    additionalProperties: false
+    required:
+      - id
+      - severity
+      - claim_type
+      - statement
+      - subject_refs
+      - expected_observation
+      - plausible_green_but_wrong
+      - method
+      - oracle_ref
+    properties:
+      id: {type: string, pattern: '^P3I-[A-Z0-9._-]+$'}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      claim_type: {enum: [BEHAVIOR, INVARIANT, PRESERVATION, COMPATIBILITY, AUTHORITY, NEGATIVE_OUTCOME]}
+      statement: {type: string, minLength: 1}
+      subject_refs:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      method: {enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]}
+      oracle_ref: {type: string, minLength: 1}
+  baseline_selector:
+    type: object
+    additionalProperties: false
+    required: [id, severity, preservation_kind, path, pointer, evidence_method]
+    properties:
+      id: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      preservation_kind: {enum: [PRESERVATION, COMPATIBILITY, AUTHORITY]}
+      path: {type: string, minLength: 1}
+      pointer: {type: string, pattern: '^/'}
+      evidence_method: {enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]}
+  impact_rule:
+    type: object
+    additionalProperties: false
+    required: [id, path_glob, severity, impact_statement, expected_observation, plausible_green_but_wrong, evidence_method]
+    properties:
+      id: {type: string, pattern: '^L2-RULE-[A-Za-z0-9._-]+$'}
+      path_glob: {type: string, minLength: 1}
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      impact_statement: {type: string, minLength: 1}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      evidence_method: {enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]}
+  impact_policy:
+    type: object
+    additionalProperties: false
+    required: [severity, expected_observation, plausible_green_but_wrong, evidence_method]
+    properties:
+      severity: {enum: [CRITICAL, HIGH, NORMAL]}
+      expected_observation: {type: string, minLength: 1}
+      plausible_green_but_wrong: {type: string, minLength: 1}
+      evidence_method: {enum: [UNIT_TEST, INTEGRATION_TEST, PROPERTY_TEST, CONTRACT_TEST, STATIC_ANALYSIS, RUNTIME_TRACE, SCHEMA_CHECK, FAULT_INJECTION, MANUAL_REVIEW, OTHER]}

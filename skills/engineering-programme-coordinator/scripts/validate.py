@@ -38,6 +38,10 @@ from phase2_self_review_qualification import (
     validate_source as validate_phase2_qualification_source,
 )
 from phase1_runtime_replay import validate_phase1_replay
+from p3_integration_qualification import (
+    validate_result as validate_p3_qualification_result,
+    validate_source as validate_p3_qualification_source,
+)
 from production_readiness import semantic_errors as production_readiness_semantic_errors
 from provider_mutation import semantic_errors as provider_mutation_semantic_errors
 from review_basis import (
@@ -76,6 +80,8 @@ SCHEMAS = {
     "phase2-self-review-qualification-result",
     "deterministic-evidence-gate-source",
     "deterministic-evidence-gate-result",
+    "p3-integration-qualification-source",
+    "p3-integration-qualification-result",
     "phase1-runtime-replay",
     "review-context",
     "self-check-context",
@@ -98,6 +104,10 @@ def main() -> None:
     parser.add_argument("--repair-source")
     parser.add_argument("--verdict-source")
     parser.add_argument("--phase2-qualification-source")
+    parser.add_argument("--p3-qualification-source")
+    parser.add_argument("--candidate-sha")
+    parser.add_argument("--pr-number", type=int)
+    parser.add_argument("--candidate-ref")
     parser.add_argument("--repo-root", default=".")
     args = parser.parse_args()
 
@@ -241,6 +251,23 @@ def main() -> None:
         errors = validate_phase2_qualification_result(
             value,
             qualification_source,
+            Path(args.repo_root).resolve() if qualification_source is not None else None,
+            Path(args.path).name,
+        )
+    elif args.schema == "p3-integration-qualification-source":
+        errors = validate_p3_qualification_source(value, Path(args.path).name)
+    elif args.schema == "p3-integration-qualification-result":
+        qualification_source = (
+            load_yaml(Path(args.p3_qualification_source))
+            if args.p3_qualification_source
+            else None
+        )
+        errors = validate_p3_qualification_result(
+            value,
+            qualification_source,
+            args.candidate_sha,
+            args.pr_number,
+            args.candidate_ref,
             Path(args.repo_root).resolve() if qualification_source is not None else None,
             Path(args.path).name,
         )

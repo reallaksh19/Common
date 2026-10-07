@@ -1,0 +1,214 @@
+schema_version: P3_INTEGRATION_QUALIFICATION_SOURCE_V1
+authority: PHASE3_SOLO_INTEGRATION_QUALIFICATION_INPUT
+identity:
+  programme_or_parent_id: COMMON-PROD-CONTROL-V1
+  parent_ref: https://github.com/reallaksh19/Common/issues/527
+  task_id: PRD-527-P3-I
+  child_ref: https://github.com/reallaksh19/Common/issues/588
+  contract_version: P3-I-v1
+base:
+  ref: main
+  sha: 3761d930ae061b899cc737d26390041ccc6db858
+runtime_basis:
+  - component: P3_SOLO_1_REVIEW_BASIS
+    path: skills/engineering-programme-coordinator/scripts/review_basis.py
+    blob_sha: 9168038957c2e83280ab52d51795657a10e4514b
+  - component: P3_SOLO_2_COMMON_REVIEWER_MANIFEST
+    path: skills/common-reviewer-protocol-v1.0/protocol-manifest.yaml
+    blob_sha: 29aac6d7bea86411241c346f53c2a1e9f3328d5d
+  - component: P3_SOLO_3_EXPECTATION_FREEZE
+    path: skills/engineering-programme-coordinator/scripts/self_review_expectation_freeze.py
+    blob_sha: e552a2694237ab431f16ce4798a6515c2578f865
+  - component: P3_SOLO_4_PROJECT_FALSIFICATION
+    path: skills/engineering-programme-coordinator/scripts/project_outcome_falsification.py
+    blob_sha: a18aa40185820c419ae06f26736c003c45fa069e
+  - component: P3_SOLO_5_PRINCIPAL_TRUTH
+    path: skills/engineering-programme-coordinator/scripts/principal_independence.py
+    blob_sha: ae3d83c0a4803f6ebdf8e339df4235d633c58812
+  - component: P3_SOLO_6_EVIDENCE_GATE
+    path: skills/engineering-programme-coordinator/scripts/evidence_gate.py
+    blob_sha: c8792d578bd37e331f4b54ebaea36245ade2b81c
+  - component: EXECUTION_KERNEL
+    path: skills/engineering-programme-coordinator/scripts/execution_kernel.py
+    blob_sha: ad31bbcc993a138cfaac6797003816b76325b0ad
+  - component: P2_L0
+    path: skills/engineering-programme-coordinator/scripts/l0_task_obligations.py
+    blob_sha: 9717b6f552370d7ebc9e083b73b95fb7ec59c4ed
+  - component: P2_L1
+    path: skills/engineering-programme-coordinator/scripts/l1_baseline_obligations.py
+    blob_sha: 36c455cb6231a99583747de23d43d9c65cb88f88
+  - component: P2_L2
+    path: skills/engineering-programme-coordinator/scripts/l2_diff_impact.py
+    blob_sha: cc9594d6f06e493b1a2c8862c908c1c8ec4a0c70
+  - component: P2_EVIDENCE_LEDGER
+    path: skills/engineering-programme-coordinator/scripts/exact_candidate_evidence.py
+    blob_sha: b61f7edc1ea0b2bb4c55c56a50e465fbe51c34af
+  - component: P2_VERDICT
+    path: skills/engineering-programme-coordinator/scripts/verdict_policy.py
+    blob_sha: 9fa1d730788f7f1a959395df5106daafd81ec15b
+  - component: P2_I_RETAINED_REPLAY
+    path: skills/engineering-programme-coordinator/scripts/phase2_self_review_qualification.py
+    blob_sha: f6ab9f388f234728258ce1a973794e5c4ffae800
+  - component: LOCAL_PROJECT_PROTOCOL_FIXTURE
+    path: skills/Local_PR_Deliverty_v1.1/examples/example-complete.json
+    blob_sha: c7963c375c5b7f9cb25597bf5d6b4bc6fe239fbd
+self_check_manifest:
+  path: skills/engineering-programme-coordinator/references/p3-i-self-check-manifest.yaml
+  digest: 7fa9491a86a265c32237075a19349c2588befe21d0437f6f202592b77a20aec0
+local_project_protocol:
+  path: skills/Local_PR_Deliverty_v1.1/examples/example-complete.json
+  index: 0
+  method_ids:
+    - VM-A1-SUPER
+    - VM-P1-PARENT
+contract_obligations:
+  - id: P3I-EXACT-CANDIDATE
+    severity: CRITICAL
+    claim_type: INVARIANT
+    statement: Every Phase-3 integration object binds the exact current candidate or fails closed.
+    subject_refs:
+      - skills/engineering-programme-coordinator/scripts/evidence_gate.py
+      - skills/engineering-programme-coordinator/scripts/execution_kernel.py
+    expected_observation: A candidate mismatch cannot reach ADVANCE_ELIGIBLE or REQUEST_STAGE_ADVANCE.
+    plausible_green_but_wrong: Individually valid artifacts from different candidate heads are assembled into a seemingly green integration result.
+    method: INTEGRATION_TEST
+    oracle_ref: qualification://P3-I/exact-candidate
+  - id: P3I-SAME-PRINCIPAL
+    severity: CRITICAL
+    claim_type: AUTHORITY
+    statement: Fresh same-principal reconstruction remains principal_independence NONE.
+    subject_refs:
+      - skills/engineering-programme-coordinator/scripts/principal_independence.py
+    expected_observation: Same-principal self-review compiles canonical independence NONE and rejects inflated source claims.
+    plausible_green_but_wrong: Fresh context is mislabeled as partial or full principal independence.
+    method: CONTRACT_TEST
+    oracle_ref: qualification://P3-I/principal-truth
+  - id: P3I-SOURCE-REPLAY
+    severity: CRITICAL
+    claim_type: NEGATIVE_OUTCOME
+    statement: Shape-valid or self-digest-consistent stale Phase-3 objects cannot self-certify.
+    subject_refs:
+      - skills/engineering-programme-coordinator/scripts/review_basis.py
+      - skills/engineering-programme-coordinator/scripts/self_review_expectation_freeze.py
+      - skills/engineering-programme-coordinator/scripts/evidence_gate.py
+    expected_observation: A stale source binding routes to rejection or REPLAY before advancement.
+    plausible_green_but_wrong: A stored green result is accepted without fresh replay against its owning sources.
+    method: FAULT_INJECTION
+    oracle_ref: qualification://P3-I/source-replay
+  - id: P3I-AUTHORITY-SEPARATION
+    severity: CRITICAL
+    claim_type: AUTHORITY
+    statement: Phase-3 review and gate evidence never performs lifecycle, merge, or production transition.
+    subject_refs:
+      - skills/engineering-programme-coordinator/scripts/evidence_gate.py
+      - skills/engineering-programme-coordinator/scripts/execution_kernel.py
+    expected_observation: ADVANCE_ELIGIBLE yields REQUEST_STAGE_ADVANCE only and capability may deny that request.
+    plausible_green_but_wrong: A clean gate result is interpreted as engineering PASS or direct lifecycle authority.
+    method: CONTRACT_TEST
+    oracle_ref: qualification://P3-I/authority-separation
+baseline_selectors:
+  - id: L1-P3I-SELF-CHECK-AUTHORITY
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/self-check-context.schema.yaml
+    pointer: /properties/authority/const
+    evidence_method: SCHEMA_CHECK
+  - id: L1-P3I-PRINCIPAL-TRUTH-AUTHORITY
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/principal-independence-truth.schema.yaml
+    pointer: /properties/authority/const
+    evidence_method: SCHEMA_CHECK
+  - id: L1-P3I-GATE-AUTHORITY
+    severity: CRITICAL
+    preservation_kind: AUTHORITY
+    path: skills/engineering-programme-coordinator/schemas/deterministic-evidence-gate-result.schema.yaml
+    pointer: /properties/authority/const
+    evidence_method: SCHEMA_CHECK
+impact_rules:
+  - id: L2-RULE-P3I-SCHEMA
+    path_glob: skills/engineering-programme-coordinator/schemas/*
+    severity: CRITICAL
+    impact_statement: P3-I schema changes may alter integration input or result truth.
+    expected_observation: Exact-head contract tests cover every new or changed P3-I schema surface.
+    plausible_green_but_wrong: A schema accepts an authority-expanding result while runtime tests remain green.
+    evidence_method: SCHEMA_CHECK
+  - id: L2-RULE-P3I-RUNTIME
+    path_glob: skills/engineering-programme-coordinator/scripts/*
+    severity: CRITICAL
+    impact_statement: P3-I runtime changes may alter integration replay or qualification decisions.
+    expected_observation: Exact-head integration tests exercise clean and adversarial lanes through owning runtimes.
+    plausible_green_but_wrong: The integration wrapper bypasses an owning validator while reporting a green result.
+    evidence_method: INTEGRATION_TEST
+  - id: L2-RULE-P3I-TEST
+    path_glob: skills/engineering-programme-coordinator/tests/*
+    severity: HIGH
+    impact_statement: P3-I test changes may weaken or strengthen the qualification oracle.
+    expected_observation: Test review preserves P3I-01 through P3I-20 and explicit negative controls.
+    plausible_green_but_wrong: Tests are weakened to assert only shallow shape success.
+    evidence_method: MANUAL_REVIEW
+  - id: L2-RULE-P3I-REFERENCE
+    path_glob: skills/engineering-programme-coordinator/references/*
+    severity: HIGH
+    impact_statement: P3-I retained source changes may alter the frozen integration basis.
+    expected_observation: Source and manifest digests are revalidated at the exact candidate.
+    plausible_green_but_wrong: A stale retained source is accepted because its YAML remains valid.
+    evidence_method: CONTRACT_TEST
+  - id: L2-RULE-P3I-WORKFLOW
+    path_glob: .github/workflows/engineering-programme-coordinator-integrated.yml
+    severity: HIGH
+    impact_statement: Hosted qualification wiring changes may omit the exact P3-I replay.
+    expected_observation: The hosted workflow executes the P3-I qualification on the exact PR head.
+    plausible_green_but_wrong: Unit tests are green while the hosted integration qualifier is never invoked.
+    evidence_method: INTEGRATION_TEST
+unknown_impact_policy:
+  severity: CRITICAL
+  expected_observation: Any unmatched changed path remains explicit and blocks a clean closed denominator until reviewed.
+  plausible_green_but_wrong: An unclassified path silently disappears from P3-I impact coverage.
+  evidence_method: MANUAL_REVIEW
+expected_checks:
+  - {id: P3I-01, expected: exact candidate identity across all P3 inputs}
+  - {id: P3I-02, expected: stale self-check basis routes to REPLAY}
+  - {id: P3I-03, expected: Common floor weakening is rejected}
+  - {id: P3I-04, expected: stale expectation freeze routes to REPLAY}
+  - {id: P3I-05, expected: project FALSIFIED routes to REPAIR}
+  - {id: P3I-06, expected: NOT_FALSIFIED remains non-PASS}
+  - {id: P3I-07, expected: same principal canonicalizes to NONE}
+  - {id: P3I-08, expected: legacy DEGRADED does not become canonical truth}
+  - {id: P3I-09, expected: critical REFUTED routes to REPAIR}
+  - {id: P3I-10, expected: critical UNKNOWN without exhaustion routes to REPLAY}
+  - {id: P3I-11, expected: critical UNKNOWN with valid exhaustion routes to ESCALATE}
+  - {id: P3I-12, expected: contradictory duplicate exhaustion routes to REPLAY}
+  - {id: P3I-13, expected: fake boundary label routes to REPLAY}
+  - {id: P3I-14, expected: clean current denominator reaches ADVANCE_ELIGIBLE}
+  - {id: P3I-15, expected: ADVANCE_ELIGIBLE yields REQUEST_STAGE_ADVANCE only}
+  - {id: P3I-16, expected: Local capability may deny REQUEST_STAGE_ADVANCE}
+  - {id: P3I-17, expected: stored gate result cannot self-certify}
+  - {id: P3I-18, expected: no PASS lifecycle merge or production authority contamination}
+  - {id: P3I-19, expected: retained P2-I real replay remains QUALIFIED}
+  - {id: P3I-20, expected: clean control has zero false block}
+retained_p2i:
+  source_path: skills/engineering-programme-coordinator/references/p2-i-self-review-qualification-source.yaml
+forbidden_outcomes:
+  - external Reviewer or Super Reviewer becomes mandatory
+  - same-principal freshness is labelled independent
+  - NOT_FALSIFIED is relabelled PASS
+  - stale or contradictory evidence reaches ADVANCE_ELIGIBLE
+  - ADVANCE_ELIGIBLE performs a Local lifecycle transition
+  - integration result grants merge authority or production cutover
+non_goals:
+  - new review role
+  - new Common Reviewer protocol
+  - new evidence gate
+  - Local lifecycle redesign
+  - v3.2 modification
+  - v3.5 authority expansion
+  - Common #570 implementation
+  - Phase-4 shadow or promotion work
+authority_boundaries:
+  emits_engineering_pass: false
+  emits_project_acceptance_pass: false
+  emits_independent_review_verdict: false
+  performs_lifecycle_advance: false
+  grants_merge_authority: false
+  grants_production_cutover: false
