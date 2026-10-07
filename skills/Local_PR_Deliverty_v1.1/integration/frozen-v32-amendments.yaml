@@ -112,3 +112,20 @@ amendments:
       - skills/engineering-pr-delivery-v3.2/scripts/agent_quality_trajectory_v32.py
       - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_quality_trajectory.py
 
+  - id: AMEND-V32-AGENT-INTERVENTION-006
+    owner_authorized: true
+    owner_basis: >-
+      Direct Owner instruction in chat, 2026-10-07: 'you will not work on v3.5' followed by
+      'proceed now, first decompose into workable task, do one by one'. Common #689 defines the
+      V3.2-only Agent Metrics programme; #690/M1 and #694/M2 are complete and Common #699 is the
+      next bounded R-M3 responsibility. This amendment authorizes only the three M3 paths below.
+    summary: >-
+      Bounded V3.2-only amendment for Common #689/#699 R-M3: add a pure advisory execution-intervention
+      contract, evaluator and focused tests derived from exact R-M2 trajectory evidence. It grants no
+      P/E, candidate/review verdict, admission, custody, title/LIVE_STATUS, merge/release authority,
+      and changes no V3.5 surface.
+    allowed_paths:
+      - skills/engineering-pr-delivery-v3.2/schemas/agent-intervention-v32.schema.yaml
+      - skills/engineering-pr-delivery-v3.2/scripts/agent_intervention_v32.py
+      - skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_intervention.py
+
