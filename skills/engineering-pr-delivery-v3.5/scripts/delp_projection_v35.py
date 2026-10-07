@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import copy
 import hashlib
+import importlib.util
 import json
 import re
 import subprocess
@@ -2949,13 +2950,36 @@ def partition_ledger(
     )
 
 
+
+_TOPOLOGY_ASSEMBLER_MODULE: Any | None = None
+
+
+def _topology_assembler_module():
+    """Load the already-qualified R2 assembler lazily to avoid a module-import cycle."""
+    global _TOPOLOGY_ASSEMBLER_MODULE
+    if _TOPOLOGY_ASSEMBLER_MODULE is None:
+        path = Path(__file__).resolve().with_name("decomposition_assembler_v35.py")
+        spec = importlib.util.spec_from_file_location("decomposition_assembler_v35_for_projection", path)
+        module = importlib.util.module_from_spec(spec)
+        if spec.loader is None:  # pragma: no cover
+            raise DelpError(f"cannot load topology assembler {path}")
+        spec.loader.exec_module(module)
+        _TOPOLOGY_ASSEMBLER_MODULE = module
+    return _TOPOLOGY_ASSEMBLER_MODULE
+
+
 def project(
     graph: Any,
     ledger: Iterable[Mapping[str, Any]] = (),
     observations: Mapping[str, Mapping[str, Any]] | None = None,
+    topology_observations: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Recompute every node from the plan, accepted facts and observations."""
+    """Recompute every node from plan, facts, provider truth and topology observations."""
     ledger = list(ledger)
+    if topology_observations is None:
+        topology_observations = {}
+    if not isinstance(topology_observations, Mapping):
+        raise DelpError("topology_observations: must be a mapping keyed by declared leaf reference")
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
     observations = normalize_observations(indexed, observations)
@@ -2969,19 +2993,47 @@ def project(
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
-        for ref, row in _decomposition(indexed, closed)["leaves"].items():
+        mechanical = _decomposition(indexed, closed)
+        try:
+            topology_release = _topology_assembler_module().topology_release_findings(
+                graph,
+                observations=topology_observations,
+                closed=closed,
+            )
+        except Exception as exc:
+            raise DelpError(f"topology release derivation failed: {exc}") from exc
+
+        for ref, row in mechanical["leaves"].items():
             leaf = results[ref]
+            topology_row = topology_release["leaves"].get(ref) or {"blockers": [], "admissions": []}
+            topology_blockers = [
+                {"code": blocker["code"], "detail": blocker["detail"]}
+                for blocker in topology_row["blockers"]
+            ]
+            blockers = sorted(
+                [*row["blockers"], *topology_blockers],
+                key=lambda item: (item["code"], item["detail"]),
+            )
+            releasable = not blockers
             leaf["plan"] = {
                 "mode": mode,
-                "releasable": row["releasable"],
-                "blockers": row["blockers"],
+                "releasable": releasable,
+                "blockers": blockers,
                 "advisories": row["advisories"],
             }
-            if row["blockers"]:
-                leaf["warnings"].append("DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in row["blockers"]})))
+            if topology_row["admissions"] or topology_row["blockers"]:
+                leaf["plan"]["topology"] = {
+                    "authority": topology_release["authority"],
+                    "admissions": copy.deepcopy(topology_row["admissions"]),
+                    "blockers": copy.deepcopy(topology_row["blockers"]),
+                }
+            if blockers:
+                leaf["warnings"].append(
+                    "DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in blockers}))
+                )
             if row["advisories"]:
                 leaf["warnings"].append("DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]})))
-            if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
+            if mode == "ENFORCED" and not releasable and leaf["state"] in _PLAN_OVERLAID_STATES:
                 leaf["state"] = "NOT_RELEASEABLE"
 
     # Serial decomposition is an execution constraint, not documentation. Dependency readiness is derived only
@@ -3151,6 +3203,10 @@ def project(
                     for e in ledger
                 ],
                 "observations": {str(k): v for k, v in sorted(observations.items())},
+                "topology_observations": {
+                    str(k): v
+                    for k, v in sorted(topology_observations.items(), key=lambda item: str(item[0]))
+                },
             }
         ),
     }
