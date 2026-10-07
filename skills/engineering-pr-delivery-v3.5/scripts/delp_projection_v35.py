@@ -4637,9 +4637,9 @@ def frontier(
     )
     leaf = projection["nodes"][ref]
     accepted, _ = partition_ledger(indexed, ledger)
-    mine = [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(ref, [])]
+    mine = [{k: v for k, v in record.items() if not str(k).startswith("_")} for record in accepted.get(ref, [])]
     dependency_facts = {
-        dep: [{k: v for k, v in record.items() if k != "_source"} for record in accepted.get(dep, [])]
+        dep: [{k: v for k, v in record.items() if not str(k).startswith("_")} for record in accepted.get(dep, [])]
         for dep in indexed["nodes"][ref]["depends_on"]
     }
     material = leaf["material"]
