@@ -296,5 +296,85 @@ class ActualNextContractV35Tests(unittest.TestCase):
         self.assertEqual("REVIEW_CANDIDATE", NEXT.derive_actual_next(row)["action"])
 
 
+    def test_provider_unknown_without_accepted_facts_does_not_invent_wait_provider(self):
+        row = base_leaf(
+            activity_epoch=0,
+            conditions=canonical_conditions(
+                ProviderVisible="UNKNOWN",
+                MaterialObserved="UNKNOWN",
+                EvidenceCurrent="UNKNOWN",
+            ),
+        )
+        result = NEXT.derive_actual_next(row)
+        self.assertEqual("CONTINUE_UNIT", result["action"])
+
+    def test_spec_unknown_without_accepted_facts_does_not_force_reconcile(self):
+        row = base_leaf(
+            activity_epoch=0,
+            conditions=canonical_conditions(SpecCurrent="UNKNOWN"),
+        )
+        self.assertEqual("CONTINUE_UNIT", NEXT.derive_actual_next(row)["action"])
+
+    def test_not_applicable_custody_and_assurance_do_not_trigger_future_phase_actions(self):
+        row = base_leaf(
+            conditions=canonical_conditions(
+                CustodySafe="NOT_APPLICABLE",
+                AssuranceSatisfied="NOT_APPLICABLE",
+            )
+        )
+        action = NEXT.derive_actual_next(row)["action"]
+        self.assertEqual("CONTINUE_UNIT", action)
+        self.assertNotIn(action, {"RECOVER_CUSTODY", "REMEDIATE_FINDING"})
+
+    def test_dependency_unknown_without_declared_dependencies_does_not_block(self):
+        row = base_leaf(
+            conditions=canonical_conditions(DependenciesReady="UNKNOWN"),
+            dependencies={"declared": [], "ready": False, "blocking": []},
+        )
+        self.assertEqual("CONTINUE_UNIT", NEXT.derive_actual_next(row)["action"])
+
+    def test_declared_dependencies_cannot_be_not_applicable(self):
+        row = base_leaf(
+            conditions=canonical_conditions(DependenciesReady="NOT_APPLICABLE"),
+            dependencies={"declared": ["Common#9"], "ready": False, "blocking": []},
+        )
+        with self.assertRaises(DELP.DelpError):
+            NEXT.derive_actual_next(row)
+
+    def test_executor_next_cannot_override_higher_actual_next(self):
+        row = base_leaf(
+            conditions=canonical_conditions(PlanReady="FALSE"),
+            next={"unit": "U1", "action": "PUBLISH_RESULT and merge"},
+        )
+        result = NEXT.derive_actual_next(row)
+        self.assertEqual("FIX_PLAN", result["action"])
+        self.assertNotIn("PUBLISH_RESULT", result["detail"] or "")
+
+    def test_executor_next_unit_cannot_select_a_different_active_unit(self):
+        row = base_leaf(
+            active_unit="U1",
+            next={"unit": "U99", "action": "work on a different unit"},
+        )
+        result = NEXT.derive_actual_next(row)
+        self.assertEqual("CONTINUE_UNIT", result["action"])
+        self.assertTrue((result["detail"] or "").startswith("U1"))
+        self.assertNotIn("U99", result["detail"] or "")
+
+    def test_optional_check_telemetry_is_ignored_by_actual_next(self):
+        row = base_leaf(check={"state": "FAILED", "name": "optional-ci"})
+        baseline = NEXT.derive_actual_next(base_leaf())
+        observed = NEXT.derive_actual_next(row)
+        self.assertEqual(baseline, observed)
+
+    def test_decision_never_authors_progress_or_projection_fields(self):
+        result = NEXT.derive_actual_next(base_leaf())
+        forbidden = {
+            "progress", "percent", "percentage", "p", "e", "d", "frontier",
+            "title", "live_status", "currentness", "graph_generation",
+            "contract_current", "provider_observation",
+        }
+        self.assertTrue(forbidden.isdisjoint({key.lower() for key in result}))
+
+
 if __name__ == "__main__":
     unittest.main()
