@@ -1743,6 +1743,20 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
             findings[rid].append(_finding("PARALLEL_BASIS_MISSING", "parallel_ok needs a basis"))
         if row["work_class"] == "PRODUCT":
             mechanism_terms = _mechanism_terms(row["id"], row["outcome"])
+            unit_mechanisms = {
+                unit["id"]: _mechanism_terms(unit["id"], unit["outcome"])
+                for unit in units
+                if unit["kind"] == "SEMANTIC" and _mechanism_terms(unit["id"], unit["outcome"])
+            }
+            if unit_mechanisms:
+                for uid, terms in unit_mechanisms.items():
+                    findings[rid].append(
+                        _finding(
+                            "MECHANISM_SEMANTIC_UNIT",
+                            f"{uid} is labelled SEMANTIC but is mechanism-shaped ({_id_list(terms)}); "
+                            "implementation/test mechanics belong in acceptance_methods",
+                        )
+                    )
             if mechanism_terms:
                 exception = row.get("mechanism_exception")
                 valid_exception = False
