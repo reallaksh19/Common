@@ -162,6 +162,18 @@ class OwnerIntentEnvelopeTests(unittest.TestCase):
         second = parse_owner_command(text, **kwargs)
         self.assertEqual(first["owner_intent"], second["owner_intent"])
 
+    def test_exact_question_count_without_successor_context_is_not_a_successor_challenge(self):
+        result = parse_owner_command("create exactly 3 questions about formatting")
+        envelope = result["owner_intent"]
+        self.assertNotIn(
+            "SUCCESSOR_RECONSTRUCTION_CHALLENGE",
+            [row["type"] for row in envelope["requested_deliverables"]],
+        )
+        self.assertNotIn(
+            "EXACT_SUCCESSOR_CHALLENGE_COUNT:3",
+            envelope["boundary_constraints"],
+        )
+
 
 
 if __name__ == "__main__":
