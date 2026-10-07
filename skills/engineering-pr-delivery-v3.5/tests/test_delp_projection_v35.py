@@ -3068,9 +3068,11 @@ class TopologyAssessmentPlanContract(unittest.TestCase):
             after_projection["identity"]["contract_digest"],
         )
 
-    def test_r2_plan_basis_has_no_r1_admission_side_effect(self):
-        with_basis = M.decomposition_report(topology_assessment_planned())
-        without_basis = M.decomposition_report(stable_claim_topology_graph())
+    def test_r2_plan_basis_does_not_change_the_mechanical_decomposition_layer(self):
+        with_graph = topology_assessment_planned()
+        without_graph = stable_claim_topology_graph()
+        with_basis = M._decomposition(M.validate_graph(with_graph))
+        without_basis = M._decomposition(M.validate_graph(without_graph))
         self.assertEqual(without_basis, with_basis)
 
 
@@ -3488,8 +3490,9 @@ class ClaimTopologyReport(unittest.TestCase):
         product = next(row for row in report["claims"] if row["id"] == "PC-PRODUCT")
         self.assertEqual(["Common#592", "Common#594"], product["duplicate_owners"])
         self.assertEqual(1, report["summary"]["duplicate_nonshared_ownership"])
-        # R1 reports the fact only: the existing decompose-check remains unchanged.
-        self.assertTrue(M.decomposition_report(g)["leaves"]["Common#592"]["releasable"])
+        # R1's report remains pure facts; R3 may later use those facts in the integrated release report.
+        mechanical = M._decomposition(M.validate_graph(g))
+        self.assertTrue(mechanical["leaves"]["Common#592"]["releasable"])
 
         for claim in g["programme"]["acceptance_claims"]:
             if claim["id"] == "PC-PRODUCT":
