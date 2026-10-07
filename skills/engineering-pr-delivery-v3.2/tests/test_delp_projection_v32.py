@@ -145,6 +145,9 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                             "claim_allocations": [{"claim_id": "PA-SEM", "weight": 90}],
                             "outcome": "semantic product outcome",
                             "independence_basis": "can be accepted without the delivery gate",
+                            "size_budget": {"target_loc": 300, "hard_loc": 600, "target_minutes": 10, "hard_minutes": 20},
+                            "write_surface": ["src/product/"],
+                            "acceptance_methods": ["semantic oracle", "exact-head regression"],
                             "semantic_units": [
                                 {"id": "S1", "kind": "SEMANTIC", "weight": 34, "outcome": "semantic slice one", "verify": "oracle one"},
                                 {"id": "S2", "kind": "SEMANTIC", "weight": 33, "outcome": "semantic slice two", "verify": "oracle two"},
@@ -158,6 +161,9 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                             "claim_allocations": [{"claim_id": "PG-DELIVERY", "weight": 10}],
                             "outcome": "delivery qualification",
                             "independence_basis": "can pass or fail from exact-head evidence",
+                            "size_budget": {"target_loc": 100, "hard_loc": 200, "target_minutes": 5, "hard_minutes": 10},
+                            "write_surface": ["tests/delivery/"],
+                            "acceptance_methods": ["hosted qualification"],
                             "semantic_units": [
                                 {"id": "G1", "kind": "DELIVERY_GATE", "weight": 100, "outcome": "qualify exact head", "verify": "hosted run"}
                             ],
@@ -248,10 +254,14 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                 "responsibility_id": "R-SEM",
                 "work_class": "PRODUCT",
                 "owns_claims": ["PA-SEM"],
+                "outcome": "semantic product outcome",
+                "independence_basis": "can be accepted without the delivery gate",
+                "size_budget": {"target_loc": 300, "hard_loc": 600, "target_minutes": 10, "hard_minutes": 20},
+                "write_surface": ["src/product/"],
                 "units": [
-                    {"id": "S1", "weight": 34},
-                    {"id": "S2", "weight": 33},
-                    {"id": "S3", "weight": 33},
+                    {"id": "S1", "weight": 34, "outcome": "semantic slice one", "verify": "oracle one"},
+                    {"id": "S2", "weight": 33, "outcome": "semantic slice two", "verify": "oracle two"},
+                    {"id": "S3", "weight": 33, "outcome": "semantic slice three", "verify": "oracle three"},
                 ],
             },
             {
@@ -262,7 +272,11 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
                 "responsibility_id": "G-DELIVERY",
                 "work_class": "GATE",
                 "owns_claims": ["PG-DELIVERY"],
-                "units": [{"id": "G1", "weight": 100}],
+                "outcome": "delivery qualification",
+                "independence_basis": "can pass or fail from exact-head evidence",
+                "size_budget": {"target_loc": 100, "hard_loc": 200, "target_minutes": 5, "hard_minutes": 10},
+                "write_surface": ["tests/delivery/"],
+                "units": [{"id": "G1", "weight": 100, "outcome": "qualify exact head", "verify": "hosted run"}],
             },
         ]
         pre = M.decomposition_report(g)
@@ -273,6 +287,28 @@ class PreMaterializationProposalIdentity(unittest.TestCase):
             {"responsibility_id": "G-DELIVERY", "ref": "Common#705"},
         ]
         return g
+
+
+    def test_pre_materialization_write_collisions_and_dependency_cycles_are_rejected(self):
+        g = self.proposal_graph()
+        gate = g["programme"]["decomposition_proposal"]["responsibilities"][1]
+        gate["write_surface"] = ["src/product/"]
+        report = M.decomposition_report(g)
+        self.assertIn("WRITE_SURFACE_COLLISION", {f["code"] for f in report["leaves"]["R-SEM"]["blockers"]})
+
+        cycle = self.proposal_graph()
+        rows = cycle["programme"]["decomposition_proposal"]["responsibilities"]
+        rows[0]["depends_on"] = ["G-DELIVERY"]
+        rows[1]["depends_on"] = ["R-SEM"]
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(cycle)
+
+    def test_proposal_requires_delivery_metadata_before_child_creation(self):
+        g = self.proposal_graph()
+        r = g["programme"]["decomposition_proposal"]["responsibilities"][0]
+        r["acceptance_methods"] = []
+        with self.assertRaises(M.GraphError):
+            M.validate_graph(g)
 
     def test_releaseable_proposal_can_bind_provider_refs_without_changing_identity_or_weight(self):
         g = self.materialized_proposal_graph()
