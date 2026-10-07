@@ -410,6 +410,7 @@ class HandoverContextTests(unittest.TestCase):
             self.assertEqual([], errors)
             planned = [item for item in events if item["event_id"] == "EVT-HANDOVER-PLAN-001"][0]
             self.assertFalse(planned["data"]["reasoning_request_generated"])
+            self.assertNotIn("complex_mode", planned["data"])
             self.assertNotIn("prompt_count", planned["data"])
             self.assertNotIn("generator_mode", planned["data"])
             self.assertEqual([], validate(root))
