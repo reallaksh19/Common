@@ -403,11 +403,113 @@ Programme (root):
 
 Titles are read models, never authority: they are generated from the execution graph (this manifest in machine-readable form), `CHECKPOINT_FACTS_V1` and observed material truth, never typed by an executor. The per-colour issue counts of the earlier form are replaced by the frontier count `F` and the derived state word; colours are still never averaged.
 
+## Adaptive decomposition admission — semantic responsibility is not the crash boundary
+
+V3.5 keeps three different planning planes separate:
+
+```text
+SEMANTIC RESPONSIBILITY
+  GitHub / DELP LEAF
+  one coherent independently accepted capability
+        ↓
+SEMANTIC IMPLEMENTATION UNITS
+  existing DELP units / delivery gates
+  verifiable progress inside the responsibility
+        ↓
+EXECUTION TRANSACTIONS
+  crash / replay / external-effect boundaries
+  no programme weight and not automatically GitHub children
+```
+
+Do not create a new Responsibility merely because one helper, schema, validator, constructor, test batch, Git operation or provider call can fail independently. A semantic split and an execution checkpoint solve different problems.
+
+### Stable-cut rule
+
+A proposed semantic split is justified only when the cut is **stable**:
+
+1. the upstream side produces a named durable output, contract or behavior;
+2. that output has an acceptance oracle that can run before the downstream implementation exists;
+3. downstream work consumes the output rather than immediately redefining the same boundary;
+4. the cut materially reduces dependency uncertainty, change-impact surface, execution horizon or recovery radius;
+5. that risk reduction is worth the new serial dependency and handoff/context cost.
+
+Independent falsifiability alone is not sufficient. Almost every function can fail independently.
+
+The V3.5 DG-A `transformation_boundaries` vocabulary may identify **candidate** cuts. Boundary count is evidence for assessment, never automatic SPLIT authority. A schema + validator + fail-closed constructor may legitimately remain one `CONTRACT` responsibility when they jointly define one closed, independently provable record contract.
+
+### Bidirectional decision vocabulary
+
+The pure V3.5 classifier in `scripts/decomposition_classifier_v35.py` returns one semantic planning decision:
+
+```text
+REPLAN
+  an already-admitted dependency / contract / acceptance basis moved
+
+DISCOVER_FIRST
+  ownership, interface, dependency, change impact or acceptance basis is not bounded enough to plan implementation safely
+
+MERGE
+  adjacent proposed children are implementation fragments with high cross-child cohesion / handoff cost and no beneficial stable cut
+
+SPLIT
+  the proposed responsibility mixes semantic outcomes, has a beneficial stable cut, or cannot close its leaf-level verification without separating useful capability boundaries
+
+PASS
+  one cohesive, dependency-closed, independently verifiable semantic responsibility remains after the above checks
+```
+
+The decision is categorical, not a weighted model score. LOC, elapsed time, file count and number of functions remain useful size signals but are not sufficient decomposition authority.
+
+The classifier separately returns an execution-boundary recommendation:
+
+```text
+INLINE_SAFE
+CHECKPOINT_REQUIRED
+ETX_SPLIT_REQUIRED
+OBSERVE_BEFORE_RETRY_REQUIRED
+DISCOVERY_REQUIRED
+```
+
+That recommendation constrains recovery distance; it does **not** create programme progress or automatically mint another GitHub issue.
+
+### Retained prospective examples
+
+The retained corpus distinguishes both failure directions:
+
+```text
+#617 original Phase C      → SPLIT
+#624 observation pipeline  → SPLIT
+#638 / PR #643 contract    → PASS
+#626 + #629 proposed pair  → MERGE
+unknown owner/oracle       → DISCOVER_FIRST
+moved contract/dependency  → REPLAN
+```
+
+The important negative example is #643: a bounded constructor defect found in self-review did not prove that the already-cohesive condition-record contract needed three separate semantic Responsibilities. "A bug was found" is not a decomposition rule.
+
+### Current implementation boundary
+
+As of the DG-B implementation:
+
+- `decomposition_classifier_v35.py` is a pure deterministic classifier over normalized `DECOMPOSITION_ASSESSMENT_V1` input;
+- it is **not yet wired into `decompose-check` or admission**;
+- repository dependency/change-impact derivation is a later implementation slice;
+- durable execution-transaction journaling/replay is a later implementation slice;
+- the existing mechanical `decompose-check` remains active and continues to validate unit count/share, outcome, verify step, write surface, size budget and write-surface ordering.
+
+Do not manually manufacture missing assessment certainty. Until observation/derivation exists, use `UNKNOWN` and `DISCOVER_FIRST`.
+
+### Low-burden authoring rule
+
+The assessment dimensions are normalized plan/observer input, not a new executor publication family.
+
+Ordinary agents should continue to state the irreducible engineering contract they already owe: outcome, units, verification, write surface, dependencies, protected scope and current evidence. Coordinator/tooling should derive change-impact and execution-risk observations where possible. Do not require a repeated manual decomposition checklist on every unit.
+
 ## Decomposition Validation Gate
 
-Future V3.5 should mechanically refuse production release when the Coordinator plan is not structurally complete enough to produce a defensible denominator.
+The existing mechanical gate remains useful, but it is only one layer of admission.
 
-Validate at least:
+It validates at least:
 
 ```text
 PROGRAMME
@@ -435,7 +537,7 @@ RESPONSIBILITY
 
 ACCEPTANCE
 - pinned project protocol
-- resolvable Reviewer/Super Reviewer methods
+- resolvable required methods
 - external gates where required
 
 PROGRESS
@@ -450,12 +552,7 @@ OBSERVABILITY
 - truthful watcher availability
 ```
 
-Produce a machine result such as:
-
-```text
-DECOMPOSITION_QUALITY_REPORT
-PLAN_STATE: RELEASEABLE | NOT_RELEASEABLE
-```
+A future admission integration may consume the adaptive classifier verdict, but documentation must not imply that DG-B already blocks `continue`. Until that integration lands, `decompose-check` and `decomposition_classifier_v35.py` are separate surfaces.
 
 ## Projection engine
 
