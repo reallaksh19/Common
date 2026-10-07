@@ -180,6 +180,8 @@ programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
 
 Normative contract: `operating-model/durable-execution-lineage-projection-v32.md`. Implementation: `scripts/delp_projection_v32.py`, `schemas/delp-*-v32.schema.yaml`, `tests/test_delp_projection_v32.py`. New `FURTHER_TASK_SNAPSHOT`s use `projection_mode: DERIVED_FROM_FACTS` (`continuity_projection.py init` default): `unit-update --evidenced` is rejected, E is computed from `evidence_refs` + `evidence_candidate`, and the snapshot never patches the issue title. `LEGACY_AGENT_ASSERTED` snapshots stay readable and unchanged.
 
+**Decomposition gate.** The plan is judged before work starts, by a pure function over the execution graph (never over agent facts): `delp_projection_v32.py decompose-check` evaluates `programme.decomposition_policy` — 3–8 verifiable units per leaf, no unit above 40%, a stated outcome and write surface, a size budget within 700 target / 1500 hard changed lines and 15 / 20 minutes, and overlapping write surfaces either ordered by `depends_on` or declared `parallel_ok` with a basis. The mode defaults to `OFF`; `ADVISORY` only reports; under `ENFORCED` a failing leaf shows `NOT_RELEASEABLE` and every continuation answers `FIX_PLAN` instead of starting a unit. `graph-diff` rejects a re-plan (split, merge, reweight, drop) that moves any unit's exact programme share without a covering, authorised, append-only `plan_updates` entry. The gate never moves a percentage.
+
 This section is an Owner-directed amendment of the V3.2 tree (see the contract's "Amendment of V3.2" and `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml`); it does not otherwise unfreeze V3.2.
 
 ## Checkpoint-before-continue — write-ahead continuity barrier

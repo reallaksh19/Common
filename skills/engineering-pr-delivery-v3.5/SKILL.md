@@ -113,11 +113,13 @@ programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
 
 Continuation commands (`continue`, `proceed`, `next`, `resume`, `reconcile`, `take over`, `keep going`) reconstruct first: resolve the leaf and lineage, observe the live candidate, read the latest valid facts, repair any evidence gap before new coding, let the projector refresh titles/status (compare-and-swap, read back), show the compact `CONTINUE CHECKPOINT`, then execute exactly the next bounded unit. A continuation never changes the parent, denominator, scope, priority or merge authority.
 
+**Decomposition gate.** The plan is judged before work starts, by a pure function over the execution graph (never over agent facts): `decompose-check` evaluates `programme.decomposition_policy` — 3–8 verifiable units per leaf, no unit above 40%, a stated outcome and write surface, a size budget within 700 target / 1500 hard changed lines and 15 / 20 minutes, and overlapping write surfaces either ordered by `depends_on` or declared `parallel_ok` with a basis. The mode defaults to `OFF`; `ADVISORY` only reports; under `ENFORCED` a failing leaf shows `NOT_RELEASEABLE` and every continuation answers `FIX_PLAN` instead of starting a unit. `graph-diff` rejects a re-plan (split, merge, reweight, drop) that moves any unit's exact programme share without a covering, authorised, append-only `plan_updates` entry. The gate never moves a percentage.
+
 The active DELP contract is:
 
 - `operating-model/durable-execution-lineage-projection-v35.md` (normative);
 - `schemas/delp-checkpoint-facts-v35.schema.yaml`, `schemas/delp-execution-graph-v35.schema.yaml`, `schemas/delp-live-status-v35.schema.yaml`;
-- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `verify-titles`, `sync-github`);
+- `scripts/delp_projection_v35.py` (`validate-graph`, `validate-facts`, `project`, `admit`, `decompose-check`, `graph-diff`, `verify-titles`, `sync-github`);
 - `templates/checkpoint-facts-v35.md` (agent template) and `examples/delp/`;
 - `tests/test_delp_projection_v35.py`, `tests/test_continuity_derived_projection.py`, `tests/test_owner_commands_continuation.py`.
 

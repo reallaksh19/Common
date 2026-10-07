@@ -112,6 +112,33 @@ jobs:
           python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_continuity_v32*.py' -v
           python -m unittest discover -s skills/engineering-pr-delivery-v3.2/tests -p 'test_replay_cases_v32.py' -v
 
+      - name: Decomposition gate accepts the shipped plan and rejects a broken one (both lines)
+        if: steps.relevance.outputs.relevant == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pair in 'v3.2 v32' 'v3.5 v35'; do
+            set -- $pair
+            skill="skills/engineering-pr-delivery-$1"
+            engine="$skill/scripts/delp_projection_$2.py"
+            example="$skill/examples/delp/execution-graph.yaml"
+            python "$engine" decompose-check --graph "$example"
+            broken="$RUNNER_TEMP/broken-$2.yaml"
+            python - "$example" "$broken" <<'PY'
+          import sys
+          import yaml
+          graph = yaml.safe_load(open(sys.argv[1], encoding='utf-8'))
+          next(n for n in graph['nodes'] if n['kind'] == 'LEAF').pop('outcome')
+          yaml.safe_dump(graph, open(sys.argv[2], 'w', encoding='utf-8'))
+          PY
+            if python "$engine" decompose-check --graph "$broken" > "$RUNNER_TEMP/broken-$2.out"; then
+              echo "decomposition gate accepted a plan with a leaf that states no outcome" >&2
+              exit 1
+            fi
+            grep -F 'OUTCOME_MISSING' "$RUNNER_TEMP/broken-$2.out"
+            python "$engine" graph-diff --old "$example" --new "$example"
+          done
+
       - name: Verify the V3.2 and V3.5 engines are the same contract
         if: steps.relevance.outputs.relevant == 'true'
         shell: bash

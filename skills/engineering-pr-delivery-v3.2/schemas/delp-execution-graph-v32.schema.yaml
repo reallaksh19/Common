@@ -6,6 +6,19 @@ description: >-
   Programme (ROOT) -> INTERMEDIATE responsibilities -> LEAF execution responsibilities. A LEAF owns declared
   weighted units, at most one primary PR (or a candidate_ref when no PR exists yet) and optional delivery gates.
   Parent issues are not execution workspaces: material work is always a LEAF.
+  The decomposition contract (outcome, size_budget, write_surface, depends_on, unit verify steps) is judged by the
+  decomposition gate against programme.decomposition_policy; the progress maths never reads it.
+$defs:
+  ref: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
+  item_key: {type: string, pattern: '^[^:\s]+:(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
+  size_budget:
+    type: object
+    additionalProperties: false
+    properties:
+      target_loc: {type: integer, minimum: 1}
+      hard_loc: {type: integer, minimum: 1}
+      target_minutes: {type: integer, minimum: 1}
+      hard_minutes: {type: integer, minimum: 1}
 type: object
 required: [programme, nodes]
 properties:
@@ -16,12 +29,75 @@ properties:
     required: [root]
     properties:
       id: {type: string, minLength: 1}
-      root: {type: string, pattern: '^(?:[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?#)?[1-9][0-9]*$'}
+      root: {$ref: '#/$defs/ref'}
       repository: {type: string}
       fact_authors:
         type: array
         items: {type: string, minLength: 1}
         description: Explicit GitHub logins whose CHECKPOINT_FACTS_V1 comments are trusted. When absent, repository OWNER/MEMBER/COLLABORATOR comments are trusted.
+      total_weight:
+        type: integer
+        minimum: 1
+        description: Display scale for unit points (default 10000). Shares are exact fractions; this never changes a percentage.
+      decomposition_policy:
+        type: object
+        additionalProperties: false
+        description: >-
+          Omitted means mode OFF (behaviour identical to a graph without it). ADVISORY reports findings only.
+          ENFORCED turns a leaf with blockers into NOT_RELEASEABLE and makes every continuation answer FIX_PLAN.
+        properties:
+          mode: {enum: [OFF, ADVISORY, ENFORCED]}
+          units:
+            type: object
+            additionalProperties: false
+            properties:
+              min: {type: integer, minimum: 1}
+              max: {type: integer, minimum: 1}
+              max_share_percent: {type: integer, minimum: 1, maximum: 100}
+          leaf_budget:
+            type: object
+            additionalProperties: false
+            properties:
+              target_loc: {type: integer, minimum: 1}
+              hard_loc: {type: integer, minimum: 1}
+              target_minutes: {type: integer, minimum: 1}
+              hard_minutes: {type: integer, minimum: 1}
+          min_leaf_target_loc: {type: integer, minimum: 0}
+          require:
+            type: object
+            additionalProperties: false
+            properties:
+              outcome: {type: boolean}
+              verify: {type: boolean}
+              write_surface: {type: boolean}
+              size_budget: {type: boolean}
+  plan_updates:
+    type: array
+    description: >-
+      Append-only record of deliberate scope, weight and policy changes. A re-plan that moves any unit or gate away from
+      its exact programme share must be covered by a NEW update here (graph-diff). owner_authorized is a record for review,
+      not proof of identity.
+    items:
+      type: object
+      required: [id, kind, reason]
+      properties:
+        id: {type: string, minLength: 1}
+        kind: {enum: [SCOPE_EXPANSION, SCOPE_REDUCTION, UNIT_REWEIGHT, UNIT_DROPPED, POLICY_CHANGE]}
+        reason: {type: string, minLength: 1}
+        owner_authorized: {type: boolean}
+        owner_basis: {type: string}
+        units:
+          type: array
+          items: {$ref: '#/$defs/item_key'}
+        nodes:
+          type: array
+          items: {$ref: '#/$defs/ref'}
+      allOf:
+        - if: {properties: {kind: {not: {const: POLICY_CHANGE}}}}
+          then:
+            anyOf:
+              - {required: [units], properties: {units: {minItems: 1}}}
+              - {required: [nodes], properties: {nodes: {minItems: 1}}}
   nodes:
     type: array
     minItems: 1
@@ -48,6 +124,24 @@ properties:
           type: array
           items: {enum: [VERIFIED, PARTIAL, FAILED, NOT_RUN, PENDING]}
         contract_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+        work_class:
+          enum: [PRODUCT, MECHANICAL, GATE]
+          description: PRODUCT (default) is held to the unit-count floor and share cap; MECHANICAL and GATE leaves are exempt from those two rules only.
+        outcome: {type: string, description: One sentence - what is observably true when the leaf is done.}
+        size_budget: {$ref: '#/$defs/size_budget'}
+        write_surface:
+          type: array
+          description: Repo-relative file paths or directory prefixes ending in '/'. No globs, no '..', no absolute paths.
+          items: {type: string, minLength: 1, pattern: '^[^*?\[\]\\]+$'}
+        depends_on:
+          type: array
+          items: {$ref: '#/$defs/ref'}
+          description: Leaves that must finish first. Orders leaves whose write surfaces overlap.
+        parallel_ok:
+          type: array
+          items: {$ref: '#/$defs/ref'}
+          description: Leaves whose overlapping write surface is safe to edit in parallel; needs parallel_ok_basis.
+        parallel_ok_basis: {type: string}
         units:
           type: array
           minItems: 1
@@ -57,6 +151,9 @@ properties:
             properties:
               id: {type: string, pattern: '^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$'}
               weight: {type: integer, minimum: 1}
+              verify: {type: string, description: The check, command or evidence that proves this unit.}
+              outcome: {type: string}
+              moved_from: {$ref: '#/$defs/ref', description: The leaf this unit used to live in (same unit id). Only meaningful in the plan that moves it.}
         coder_weight: {type: integer, minimum: 1}
         delivery_gates:
           type: array

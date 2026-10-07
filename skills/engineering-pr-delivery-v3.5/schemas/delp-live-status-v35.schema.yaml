@@ -5,6 +5,13 @@ description: >-
   One managed, disposable status comment per node. It is a pure function of the execution graph, the accepted
   CHECKPOINT_FACTS_V1 ledger and observed material truth. It is never authority, agents do not edit it, and if
   every status comment and title disappeared it could be rebuilt from durable inputs.
+$defs:
+  finding:
+    type: object
+    required: [code, detail]
+    properties:
+      code: {type: string}
+      detail: {type: string}
 type: object
 required: [schema, authority, node, projection]
 properties:
@@ -21,7 +28,7 @@ properties:
       kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
       lifecycle: {type: string}
       state:
-        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
+        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
       light: {enum: ["🟢", "🟡", "🔵", "🔴", "✅", "⚪"]}
       identity:
         type: object
@@ -45,6 +52,20 @@ properties:
           health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
           gaps: {type: array}
       frontier: {type: object}
+      plan:
+        type: object
+        description: >-
+          Decomposition gate result, present only when programme.decomposition_policy.mode is ADVISORY or ENFORCED.
+          LEAF: releasable plus blockers and advisories. ROOT/INTERMEDIATE: how many leaves below are not releasable.
+          It is derived from the plan alone and never moves a percentage.
+        required: [mode]
+        properties:
+          mode: {enum: [ADVISORY, ENFORCED]}
+          releasable: {type: boolean}
+          blockers: {type: array, items: {$ref: '#/$defs/finding'}}
+          advisories: {type: array, items: {$ref: '#/$defs/finding'}}
+          not_releasable: {type: integer, minimum: 0}
+          leaves: {type: array, items: {type: string}}
       activity_epoch: {type: integer, minimum: 0}
       warnings: {type: array, items: {type: string}}
   projection:
