@@ -161,11 +161,24 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
     execution = reality.get("execution") or {}
     reconstruction = learning.get("reconstruction_context") or {}
     task_snapshot = (learning.get("task_snapshot") or {}).get("value") or {}
-    decision = (
-        learning.get("first_successor_action")
-        or ((task_snapshot.get("next") or {}).get("immediate_action"))
-        or "the next bounded engineering decision"
-    )
+    target_state = str((context.get("target") or {}).get("state") or "UNKNOWN")
+    latest_reconciliation = reconstruction.get("latest_reconciliation") or {}
+    latest_reconciliation_ref = str(latest_reconciliation.get("ref") or "").strip() or None
+    latest_reconciliation_summary = str(latest_reconciliation.get("summary") or "").strip() or None
+    inherited_first_action = str(learning.get("first_successor_action") or "").strip() or None
+    current_task_next = str(((task_snapshot.get("next") or {}).get("immediate_action")) or "").strip() or None
+    terminal_target = target_state in {"CLOSED", "MERGED"}
+    advanced_frontier = bool(latest_reconciliation_ref or latest_reconciliation_summary or terminal_target)
+    if latest_reconciliation_ref or latest_reconciliation_summary:
+        freshness = "CURRENT_RECONCILIATION_SUPERSEDES_HANDOFF"
+    elif terminal_target:
+        freshness = "TERMINAL_TARGET_REQUIRES_RECONCILIATION"
+    else:
+        freshness = "HANDOFF_FRONTIER_ACTIVE"
+    if advanced_frontier:
+        decision = current_task_next or "VERIFY_CURRENT_DISPOSITION_AND_NEXT_CONSUMER"
+    else:
+        decision = inherited_first_action or current_task_next or "the next bounded engineering decision"
 
     anchors: list[str] = []
     for value in (
@@ -195,14 +208,51 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
     negative = rejected[0] if rejected else "do not repeat an unproven predecessor repair direction"
     invariant = invariants[0] if invariants else "preserve currently accepted behavior and authority boundaries"
     anchor_text = ", ".join(anchors[:3]) or "current repository/provider truth"
+    current_frontier = (
+        latest_reconciliation_summary
+        or (f"provider target state {target_state}" if terminal_target else None)
+        or "the predecessor-observed handover frontier"
+    )
+    if advanced_frontier:
+        q1 = (
+            f"The predecessor handover may be stale: current frontier is {current_frontier}. Before {decision}, reconstruct the exact "
+            f"current implementation path in the live repository and verify which owning layer(s) actually remain active or landed. "
+            f"Use {anchor_text}; cite current files/functions and exact material/provider evidence. Do not reopen the inherited task "
+            "unless live evidence contradicts the current reconciliation, and state one observation that would falsify your disposition."
+        )
+        q2 = (
+            f"For {decision}, classify the live evidence and authority boundaries against the current frontier: {current_frontier}. "
+            f"The historical handover uncertainty was: {uncertainty}. Verify whether that inherited uncertainty is still active rather "
+            "than asserting it as current. Distinguish production authority, candidate-generation evidence, review-only evidence, "
+            "validation/benchmark evidence and historical evidence, and state which source must not be promoted into production authority."
+        )
+        q3 = (
+            f"Before {decision}, reconstruct the current upstream/downstream responsibility and consumer boundaries from live provider "
+            f"truth. Current frontier: {current_frontier}. Treat inherited action {inherited_first_action or 'NONE'} as history only; "
+            f"preserve this invariant: {invariant}, and retain negative knowledge: {negative}. State whether this responsibility is still "
+            "open for coding or already complete/landed, and identify the exact current evidence needed before any further material work."
+        )
+    else:
+        q1 = (
+            f"Before {decision}, reconstruct the exact current implementation path in the live repository from the relevant "
+            f"entry point to the owned mutation boundary. Use {anchor_text}; cite current files/functions and exact material/provider "
+            "evidence, identify the earliest owning layer, and state one observation that would falsify that ownership."
+        )
+        q2 = (
+            f"For {decision}, classify the live evidence and authority boundaries that govern the decision. Resolve this current "
+            f"uncertainty: {uncertainty}. Use repository/provider evidence, distinguish production authority, candidate-generation "
+            "evidence, review-only evidence, validation/benchmark evidence and historical evidence, and state which source must not "
+            "be promoted into production authority."
+        )
+        q3 = (
+            f"Before {decision}, reconstruct the upstream and downstream responsibility boundaries and the exact material/evidence "
+            f"frontier. Explain why adjacent layers do not own the next change, preserve this invariant: {invariant}, and account for "
+            f"negative knowledge: {negative}. State the exact evidence/root classification required before coding."
+        )
 
     base_questions = [
         {
-            "question": (
-                f"Before {decision}, reconstruct the exact current implementation path in the live repository from the relevant "
-                f"entry point to the owned mutation boundary. Use {anchor_text}; cite current files/functions and exact material/provider "
-                "evidence, identify the earliest owning layer, and state one observation that would falsify that ownership."
-            ),
+            "question": q1,
             "required_evidence": [
                 "current repository file/function call path",
                 "exact material head and live provider readback",
@@ -223,12 +273,7 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
             "downstream_consequence": "Determines which bounded child may legitimately own the next material change.",
         },
         {
-            "question": (
-                f"For {decision}, classify the live evidence and authority boundaries that govern the decision. Resolve this current "
-                f"uncertainty: {uncertainty}. Use repository/provider evidence, distinguish production authority, candidate-generation "
-                "evidence, review-only evidence, validation/benchmark evidence and historical evidence, and state which source must not "
-                "be promoted into production authority."
-            ),
+            "question": q2,
             "required_evidence": [
                 "current authority-defining code/schema or governing contract",
                 "live evidence/source classification",
@@ -252,11 +297,7 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
             "downstream_consequence": "Prevents a repair from being justified by the wrong evidence class.",
         },
         {
-            "question": (
-                f"Before {decision}, reconstruct the upstream and downstream responsibility boundaries and the exact material/evidence "
-                f"frontier. Explain why adjacent layers do not own the next change, preserve this invariant: {invariant}, and account for "
-                f"negative knowledge: {negative}. State the exact evidence/root classification required before coding."
-            ),
+            "question": q3,
             "required_evidence": [
                 "current parent/child/dependency graph or issue/PR relationships",
                 "exact material and semantic/evidence frontier",
@@ -285,10 +326,15 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
             row = dict(base_questions[index])
         else:
             subject = unresolved[(index - 3) % len(unresolved)] if unresolved else invariant
+            subject_label = (
+                f"historical inherited uncertainty {subject!r}; verify whether it remains active against {current_frontier}"
+                if advanced_frontier
+                else f"successor uncertainty {subject!r}"
+            )
             row = {
                 "question": (
-                    f"Resolve successor uncertainty {index + 1} before {decision}: {subject}. Reconstruct the answer from current "
-                    "repository/provider evidence, explain its effect on the decision at risk, and state a falsifier."
+                    f"Resolve {subject_label} before {decision}. Reconstruct the answer from current repository/provider evidence, "
+                    "explain its effect on the decision at risk, and state a falsifier."
                 ),
                 "required_evidence": ["current repository/provider evidence tied to the stated uncertainty"],
                 "authority_distinctions": ["current exact evidence vs inherited assertion"],
@@ -312,6 +358,17 @@ def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> di
         "allowed_actions": list(SUCCESSOR_ALLOWED_ACTIONS),
         "forbidden_actions": list(SUCCESSOR_FORBIDDEN_ACTIONS),
         "execution_admission": SUCCESSOR_EXECUTION_ADMISSION,
+        "challenge_basis": {
+            "freshness": freshness,
+            "target_state": target_state,
+            "latest_reconciliation_ref": latest_reconciliation_ref,
+            "latest_reconciliation_summary": latest_reconciliation_summary,
+            "current_task_next": current_task_next,
+            "inherited_first_successor_action": inherited_first_action,
+            "inherited_uncertainties": unresolved,
+            "inherited_negative_knowledge": rejected,
+            "protected_invariants": invariants,
+        },
         "successor_reconstruction_challenge": questions,
     }
 

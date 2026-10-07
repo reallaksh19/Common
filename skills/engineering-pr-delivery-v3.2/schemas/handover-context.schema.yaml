@@ -160,7 +160,7 @@ properties:
   successor_entry:
     type: object
     additionalProperties: false
-    required: [mode, allowed_actions, forbidden_actions, execution_admission, successor_reconstruction_challenge]
+    required: [mode, allowed_actions, forbidden_actions, execution_admission, challenge_basis, successor_reconstruction_challenge]
     properties:
       mode: {const: RECONSTRUCT_PLAN_ONLY}
       allowed_actions:
@@ -172,6 +172,20 @@ properties:
         uniqueItems: true
         items: {enum: [QUALIFICATION, RETAINED_VALIDATION, PRODUCTION_MUTATION, PR_CREATION, TASK_EXECUTION]}
       execution_admission: {const: OWNER_EXPLICIT_EXECUTION_ADMISSION}
+      challenge_basis:
+        type: object
+        additionalProperties: false
+        required: [freshness, target_state, latest_reconciliation_ref, latest_reconciliation_summary, current_task_next, inherited_first_successor_action, inherited_uncertainties, inherited_negative_knowledge, protected_invariants]
+        properties:
+          freshness: {enum: [HANDOFF_FRONTIER_ACTIVE, CURRENT_RECONCILIATION_SUPERSEDES_HANDOFF, TERMINAL_TARGET_REQUIRES_RECONCILIATION]}
+          target_state: {type: string, minLength: 1}
+          latest_reconciliation_ref: {type: [string, "null"]}
+          latest_reconciliation_summary: {type: [string, "null"]}
+          current_task_next: {type: [string, "null"]}
+          inherited_first_successor_action: {type: [string, "null"]}
+          inherited_uncertainties: {type: array, items: {type: string}}
+          inherited_negative_knowledge: {type: array, items: {type: string}}
+          protected_invariants: {type: array, items: {type: string}}
       successor_reconstruction_challenge:
         type: array
         maxItems: 10
