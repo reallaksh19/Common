@@ -861,7 +861,7 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     seen: set[str] = set()
     for index, raw in enumerate(raw_rows):
         where = f"programme.decomposition_proposal.responsibilities[{index}]"
-        required = {"id", "work_class", "owns_claims", "outcome", "independence_basis", "semantic_units"}
+        required = {"id", "work_class", "owns_claims", "claim_allocations", "outcome", "independence_basis", "semantic_units"}
         allowed = required | {"mechanism_exception"}
         if not isinstance(raw, Mapping) or not required.issubset(set(map(str, raw))) or set(map(str, raw)) - allowed:
             raise GraphError(f"{where}: exact pre-materialization responsibility fields required")
@@ -875,6 +875,23 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
         owns_claims = _str_list(raw.get("owns_claims"), f"{where}.owns_claims")
         if not owns_claims or len(owns_claims) != len(set(owns_claims)) or any(not _UNIT_ID.fullmatch(cid) for cid in owns_claims):
             raise GraphError(f"{where}.owns_claims: non-empty unique claim ids required")
+        raw_allocations = raw.get("claim_allocations")
+        if not isinstance(raw_allocations, list) or not raw_allocations:
+            raise GraphError(f"{where}.claim_allocations: non-empty array required")
+        allocations: list[dict[str, Any]] = []
+        seen_allocations: set[str] = set()
+        for allocation_index, allocation in enumerate(raw_allocations):
+            awhere = f"{where}.claim_allocations[{allocation_index}]"
+            if not isinstance(allocation, Mapping) or set(map(str, allocation)) != {"claim_id", "weight"}:
+                raise GraphError(f"{awhere}: exact claim_id/weight mapping required")
+            claim_id = str(allocation.get("claim_id") or "")
+            if not _UNIT_ID.fullmatch(claim_id) or claim_id in seen_allocations:
+                raise GraphError(f"{awhere}.claim_id: invalid or duplicate claim id {claim_id!r}")
+            seen_allocations.add(claim_id)
+            allocations.append({"claim_id": claim_id, "weight": _positive_int(allocation.get("weight"), f"{awhere}.weight")})
+        if set(seen_allocations) != set(owns_claims):
+            raise GraphError(f"{where}.claim_allocations: claim ids must exactly match owns_claims")
+
         outcome = raw.get("outcome")
         basis = raw.get("independence_basis")
         if not isinstance(outcome, str) or not outcome.strip():
@@ -888,8 +905,8 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
         seen_units: set[str] = set()
         for unit_index, unit in enumerate(raw_units):
             uwhere = f"{where}.semantic_units[{unit_index}]"
-            if not isinstance(unit, Mapping) or set(map(str, unit)) != {"id", "kind", "outcome", "verify"}:
-                raise GraphError(f"{uwhere}: exact id/kind/outcome/verify fields required")
+            if not isinstance(unit, Mapping) or set(map(str, unit)) != {"id", "kind", "weight", "outcome", "verify"}:
+                raise GraphError(f"{uwhere}: exact id/kind/weight/outcome/verify fields required")
             uid = str(unit.get("id") or "")
             if not _UNIT_ID.fullmatch(uid) or uid in seen_units:
                 raise GraphError(f"{uwhere}.id: invalid or duplicate unit id {uid!r}")
@@ -903,7 +920,15 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
                 raise GraphError(f"{uwhere}.outcome: non-empty string required")
             if not isinstance(verify, str) or not verify.strip():
                 raise GraphError(f"{uwhere}.verify: non-empty string required")
-            units.append({"id": uid, "kind": kind, "outcome": unit_outcome.strip(), "verify": verify.strip()})
+            units.append(
+                {
+                    "id": uid,
+                    "kind": kind,
+                    "weight": _positive_int(unit.get("weight"), f"{uwhere}.weight"),
+                    "outcome": unit_outcome.strip(),
+                    "verify": verify.strip(),
+                }
+            )
         mechanism_exception = raw.get("mechanism_exception")
         clean_exception = None
         if mechanism_exception is not None:
@@ -921,6 +946,7 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
                 "id": rid,
                 "work_class": work_class,
                 "owns_claims": sorted(owns_claims),
+                "claim_allocations": sorted(allocations, key=lambda row: row["claim_id"]),
                 "outcome": outcome.strip(),
                 "independence_basis": basis.strip(),
                 "mechanism_exception": clean_exception,
@@ -953,6 +979,9 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
         shared = raw.get("shared", False)
         if not isinstance(shared, bool):
             raise GraphError(f"{where}.shared: must be boolean")
+        weight = raw.get("weight")
+        if weight is not None:
+            weight = _positive_int(weight, f"{where}.weight")
         mechanism_exception_allowed = raw.get("mechanism_exception_allowed", False)
         if not isinstance(mechanism_exception_allowed, bool):
             raise GraphError(f"{where}.mechanism_exception_allowed: must be boolean")
@@ -962,6 +991,7 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
                 "id": cid,
                 "claim": claim.strip(),
                 "kind": kind,
+                "weight": weight,
                 "shared": shared,
                 "mechanism_exception_allowed": mechanism_exception_allowed,
             }
@@ -1502,7 +1532,26 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
     rows: dict[str, Any] = {}
     findings: dict[str, list[dict[str, str]]] = {row["id"]: [] for row in proposal["responsibilities"]}
 
+    total_weight = indexed["total_weight"]
+    missing_weights = [cid for cid, claim in claims_by_id.items() if claim.get("weight") is None]
+    global_findings: list[dict[str, str]] = []
+    if missing_weights:
+        global_findings.append(
+            _finding(
+                "PARENT_CLAIM_WEIGHT_MISSING",
+                f"proposal-v2 requires weight on parent claim(s): {_id_list(missing_weights)}",
+            )
+        )
+    elif sum(claim["weight"] for claim in claims_by_id.values()) != total_weight:
+        global_findings.append(
+            _finding(
+                "PARENT_CLAIM_WEIGHT_TOTAL",
+                f"parent claim weights must sum to programme.total_weight {total_weight}",
+            )
+        )
+
     owners: dict[str, list[str]] = {cid: [] for cid in claims_by_id}
+    allocations_by_claim: dict[str, list[tuple[str, int]]] = {cid: [] for cid in claims_by_id}
     for row in proposal["responsibilities"]:
         rid = row["id"]
         owned = row["owns_claims"]
@@ -1512,6 +1561,10 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
         for cid in owned:
             if cid in owners:
                 owners[cid].append(rid)
+        for allocation in row["claim_allocations"]:
+            cid = allocation["claim_id"]
+            if cid in allocations_by_claim:
+                allocations_by_claim[cid].append((rid, allocation["weight"]))
         if row["work_class"] == "PRODUCT" and owned and not any(
             claims_by_id[cid]["kind"] == "SEMANTIC" for cid in owned if cid in claims_by_id
         ):
@@ -1548,6 +1601,17 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                         f"{semantic_count} semantic units (max {policy['units']['max']})",
                     )
                 )
+            semantic_units = [unit for unit in units if unit["kind"] == "SEMANTIC"]
+            semantic_total = sum(unit["weight"] for unit in semantic_units)
+            for unit in semantic_units:
+                if unit["weight"] * 100 > policy["units"]["max_share_percent"] * semantic_total:
+                    findings[rid].append(
+                        _finding(
+                            "SEMANTIC_UNIT_SHARE_OVER",
+                            f"{unit['id']} carries {percent(Fraction(unit['weight'], semantic_total))}% "
+                            f"(max {policy['units']['max_share_percent']}%)",
+                        )
+                    )
         elif row["work_class"] == "GATE":
             wrong = [unit["id"] for unit in units if unit["kind"] != "DELIVERY_GATE"]
             if wrong:
@@ -1623,6 +1687,23 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                         )
                     )
 
+    for finding in global_findings:
+        for rid in findings:
+            findings[rid].append(finding)
+
+    if not missing_weights:
+        for cid, claim in claims_by_id.items():
+            allocated = allocations_by_claim[cid]
+            if not allocated:
+                continue
+            total_allocated = sum(weight for _, weight in allocated)
+            if total_allocated != claim["weight"]:
+                code = "SHARED_CLAIM_WEIGHT_MISMATCH" if claim["shared"] else "CLAIM_WEIGHT_MISMATCH"
+                detail = f"{cid} allocates {total_allocated} but parent claim weight is {claim['weight']}"
+                targets = [rid for rid, _ in allocated]
+                for rid in targets:
+                    findings[rid].append(_finding(code, detail))
+
     classes: dict[str, int] = {}
     for row in proposal["responsibilities"]:
         rid = row["id"]
@@ -1631,6 +1712,7 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
         advisories = [{"code": f["code"], "detail": f["detail"]} for f in ordered if f["severity"] != "BLOCKER"]
         rows[rid] = {
             "work_class": row["work_class"],
+            "weight": sum(allocation["weight"] for allocation in row["claim_allocations"]),
             "releasable": not blockers,
             "blockers": blockers,
             "advisories": advisories,
