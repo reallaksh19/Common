@@ -534,9 +534,12 @@ def validate_condition(condition: Any) -> list[str]:
             errors.append(f"{key}: must be a non-blank string")
 
     generation = condition.get("observed_generation")
-    if generation is not None and (
-        isinstance(generation, bool) or not isinstance(generation, int) or generation < 1
-    ):
+    generation_is_integer = (
+        isinstance(generation, int) and not isinstance(generation, bool)
+    ) or (
+        isinstance(generation, float) and generation.is_integer()
+    )
+    if generation is not None and (not generation_is_integer or generation < 1):
         errors.append("observed_generation: positive integer or null")
 
     candidate = condition.get("candidate_sha")
