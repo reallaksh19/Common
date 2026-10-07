@@ -76,6 +76,9 @@ ACTIVITY_FACTS = {
 OBSERVED_LIVENESS = {"ACTIVE", "QUIET", "STALE"}
 RESULT_SCOPES = {"STEP", "PRODUCT", "RESPONSIBILITY"}
 COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
+HANDOVER_EVENTS = {"OFFERED", "ACCEPTED"}
+HANDOVER_MODES = {"CONTINUITY", "INDEPENDENT_RECONSTRUCTION"}
+HANDOVER_RESULTS = {"RECONCILED", "DRIFT_FOUND", "INSUFFICIENT_GROUNDING", "OWNER_DECISION_REQUIRED"}
 
 # Decomposition gate. A graph without `programme.decomposition_policy` behaves exactly as before
 # (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
@@ -167,6 +170,7 @@ _ALLOWED_FACT_TOP = frozenset(
         "next",
         "blocker",
         "owner_action",
+        "handover",
         "result",
     }
 )
@@ -195,6 +199,8 @@ _LIGHTS = LIGHT_ACTIVE + LIGHT_ATTENTION + LIGHT_WAITING + LIGHT_STALE + LIGHT_C
 
 STATE_LIGHT = {
     "ACTIVE": LIGHT_ACTIVE,
+    "HANDOFF": LIGHT_ATTENTION,
+    "RECONSTRUCTING": LIGHT_ATTENTION,
     "WAITING_CI": LIGHT_WAITING,
     "WAITING_TOOL": LIGHT_WAITING,
     "WAITING_EXTERNAL": LIGHT_WAITING,
@@ -449,6 +455,39 @@ def validate_facts(facts: Any) -> list[str]:
         value = facts.get(key)
         if value is not None and (not isinstance(value, str) or len(value) > 200 or "\n" in value):
             errors.append(f"{key}: single line, at most 200 characters")
+
+    handover = facts.get("handover")
+    if handover is not None:
+        if not isinstance(handover, Mapping):
+            errors.append("handover: must be a mapping")
+        else:
+            extra = set(map(str, handover)) - {
+                "event", "mode", "predecessor_ref", "frontier_digest", "decision_at_risk", "result"
+            }
+            if extra:
+                errors.append(f"handover: unknown fields {sorted(extra)}")
+            event = handover.get("event")
+            mode = handover.get("mode")
+            if event not in HANDOVER_EVENTS:
+                errors.append(f"handover.event: one of {sorted(HANDOVER_EVENTS)}")
+            if mode not in HANDOVER_MODES:
+                errors.append(f"handover.mode: one of {sorted(HANDOVER_MODES)}")
+            digest = handover.get("frontier_digest")
+            if not _DIGEST.fullmatch(str(digest or "")):
+                errors.append("handover.frontier_digest: required sha256:<64 hex>")
+            decision = handover.get("decision_at_risk")
+            if not isinstance(decision, str) or not decision.strip() or len(decision) > 200 or "\n" in decision:
+                errors.append("handover.decision_at_risk: single non-empty line, at most 200 characters")
+            predecessor = handover.get("predecessor_ref")
+            if predecessor is not None and (not isinstance(predecessor, str) or not predecessor.strip()):
+                errors.append("handover.predecessor_ref: non-empty string when present")
+            hresult = handover.get("result")
+            if hresult is not None and hresult not in HANDOVER_RESULTS:
+                errors.append(f"handover.result: one of {sorted(HANDOVER_RESULTS)}")
+            if event == "OFFERED" and hresult is not None:
+                errors.append("handover.result: OFFERED cannot carry a successor result")
+            if event == "ACCEPTED" and not predecessor:
+                errors.append("handover.predecessor_ref: required for ACCEPTED")
 
     result = facts.get("result")
     if result is not None:
@@ -784,12 +823,58 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     if unit.get(text_key) is not None and not isinstance(unit[text_key], str):
                         raise GraphError(f"{ref}.units.{uid}.{text_key}: must be a string")
                     texts[text_key] = str(unit.get(text_key) or "").strip() or None
+                successor_policy = unit.get("successor_policy")
+                clean_successor_policy = None
+                if successor_policy is not None:
+                    if not isinstance(successor_policy, Mapping):
+                        raise GraphError(f"{ref}.units.{uid}.successor_policy: must be a mapping")
+                    extra_policy = sorted(
+                        set(map(str, successor_policy)) - {"mode", "decision_at_risk", "protected_invariants"}
+                    )
+                    if extra_policy:
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy: unknown keys {extra_policy}"
+                        )
+                    policy_mode = successor_policy.get("mode")
+                    if policy_mode not in HANDOVER_MODES:
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy.mode: one of {sorted(HANDOVER_MODES)}"
+                        )
+                    decision = successor_policy.get("decision_at_risk")
+                    if decision is not None and (
+                        not isinstance(decision, str) or not decision.strip() or len(decision) > 200 or "\n" in decision
+                    ):
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy.decision_at_risk: single non-empty line, at most 200 characters"
+                        )
+                    if policy_mode == "INDEPENDENT_RECONSTRUCTION" and not decision:
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy.decision_at_risk: required for INDEPENDENT_RECONSTRUCTION"
+                        )
+                    invariants = successor_policy.get("protected_invariants") or []
+                    if not isinstance(invariants, list) or not all(
+                        isinstance(item, str) and item.strip() and len(item) <= 200 and "\n" not in item
+                        for item in invariants
+                    ):
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy.protected_invariants: list of non-empty single lines <= 200 chars"
+                        )
+                    if len(set(invariants)) != len(invariants):
+                        raise GraphError(
+                            f"{ref}.units.{uid}.successor_policy.protected_invariants: duplicates are not allowed"
+                        )
+                    clean_successor_policy = {
+                        "mode": policy_mode,
+                        "decision_at_risk": decision.strip() if isinstance(decision, str) else None,
+                        "protected_invariants": list(invariants),
+                    }
                 clean_units.append(
                     {
                         "id": uid,
                         "weight": _positive_int(unit.get("weight"), f"{ref}.units.{uid}.weight"),
                         "verify": texts["verify"],
                         "outcome": texts["outcome"],
+                        "successor_policy": clean_successor_policy,
                         "moved_from": moved_from,
                     }
                 )
@@ -1517,6 +1602,8 @@ def compute_leaf(
     last_activity = None
     last_blocker = None
     last_owner_action = None
+    handover_offer: Mapping[str, Any] | None = None
+    handover_accept: Mapping[str, Any] | None = None
     for rec in records:
         latest = rec
         if rec.get("next") is not None:
@@ -1527,6 +1614,15 @@ def compute_leaf(
             last_blocker = rec["blocker"]
         if rec.get("owner_action") is not None:
             last_owner_action = rec["owner_action"]
+        if rec.get("handover") is not None:
+            h = dict(rec["handover"])
+            h["_source"] = rec.get("_source")
+            h["_candidate_sha"] = (rec.get("material") or {}).get("candidate_sha")
+            if h.get("event") == "OFFERED":
+                handover_offer = h
+                handover_accept = None
+            else:
+                handover_accept = h
         record_candidate = (rec.get("material") or {}).get("candidate_sha")
         record_pr = (rec.get("material") or {}).get("pr")
         for unit in rec.get("units") or []:
@@ -1638,6 +1734,45 @@ def compute_leaf(
     incomplete = [row["id"] for row in unit_rows if not row["complete"]]
     next_unit = last_next.get("unit")
     active_unit = next_unit if next_unit in incomplete else (incomplete[0] if incomplete else None)
+    active_plan_unit = next((item for item in node["units"] if item["id"] == active_unit), None)
+    successor_policy = (active_plan_unit or {}).get("successor_policy")
+
+    handover_projection = None
+    if handover_offer is not None:
+        accepted = handover_accept is not None
+        matched = bool(
+            accepted
+            and handover_accept.get("mode") == handover_offer.get("mode")
+            and handover_accept.get("decision_at_risk") == handover_offer.get("decision_at_risk")
+            and handover_accept.get("frontier_digest") == handover_offer.get("frontier_digest")
+            and handover_accept.get("predecessor_ref") == handover_offer.get("_source")
+            and handover_accept.get("_candidate_sha") == handover_offer.get("_candidate_sha")
+        )
+        if accepted and not matched:
+            warnings.append("HANDOVER_ACCEPTANCE_MISMATCH")
+        if successor_policy and handover_offer.get("mode") != successor_policy.get("mode"):
+            warnings.append("HANDOVER_MODE_DIFFERS_FROM_ACTIVE_UNIT_POLICY")
+        if (
+            successor_policy
+            and successor_policy.get("decision_at_risk")
+            and handover_offer.get("decision_at_risk") != successor_policy.get("decision_at_risk")
+        ):
+            warnings.append("HANDOVER_DECISION_DIFFERS_FROM_ACTIVE_UNIT_POLICY")
+        if not accepted:
+            handover_status = "HANDOFF"
+        elif matched and handover_accept.get("result") == "RECONCILED":
+            handover_status = "RECONCILED"
+        else:
+            handover_status = "RECONSTRUCTING"
+        handover_projection = {
+            "status": handover_status,
+            "mode": handover_offer.get("mode"),
+            "decision_at_risk": handover_offer.get("decision_at_risk"),
+            "frontier_digest": handover_offer.get("frontier_digest"),
+            "predecessor_ref": handover_accept.get("predecessor_ref") if accepted else None,
+            "result": handover_accept.get("result") if accepted else None,
+            "matched": matched,
+        }
 
     superseded_by = (result_fact or {}).get("superseded_by")
     claims_complete = bool(
@@ -1674,7 +1809,7 @@ def compute_leaf(
         lifecycle = "UNMATERIALIZED"
     elif not records and liveness is None:
         lifecycle = "NOT_STARTED"
-    elif activity == "PAUSED":
+    elif activity == "PAUSED" and handover_projection is None:
         lifecycle = "PAUSED"
     elif activity == "RECOVERING":
         lifecycle = "RECOVERING"
@@ -1691,6 +1826,10 @@ def compute_leaf(
         state = "EVIDENCE_STALE"
     elif health in {"GAP", "UNVERIFIABLE"}:
         state = "EVIDENCE_GAP"
+    elif handover_projection and handover_projection["status"] == "HANDOFF":
+        state = "HANDOFF"
+    elif handover_projection and handover_projection["status"] == "RECONSTRUCTING":
+        state = "RECONSTRUCTING"
     elif liveness == "QUIET":
         state = "QUIET"
     elif lifecycle == "RECOVERING":
@@ -1746,8 +1885,11 @@ def compute_leaf(
         },
         "blocker": _one_line(last_blocker or "NONE"),
         "owner_action": _one_line(owner_action or "NONE"),
+        "successor_policy": successor_policy,
         "warnings": warnings,
     }
+    if handover_projection is not None:
+        result["handover"] = handover_projection
     if unmaterialized:
         result["materialization"] = {"status": "UNMATERIALIZED", "provider_signal": provider_signal}
     return result
@@ -2139,6 +2281,17 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         action = "RECOVER_EVIDENCE"
         detail = ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) or health
         next_text = f"RECOVER_EVIDENCE before new coding — {detail}"
+    elif (
+        leaf.get("successor_policy")
+        and leaf["successor_policy"].get("mode") == "INDEPENDENT_RECONSTRUCTION"
+        and leaf.get("handover")
+        and leaf["handover"].get("status") != "RECONCILED"
+    ):
+        action = "RECONCILE_HANDOFF"
+        next_text = (
+            "RECONCILE_HANDOFF before this high-risk unit — "
+            + str(leaf["successor_policy"].get("decision_at_risk") or "successor grounding required")
+        )
     elif leaf["active_unit"]:
         action = "CONTINUE_UNIT"
         tail = f" — {leaf['next']['action']}" if leaf["next"]["action"] else ""
@@ -2167,6 +2320,11 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         "evidence_candidate": leaf["frontier"]["evidence_candidate"],
         "authority_effects": [],  # a continuation never changes parent, denominator, scope or merge authority
     }
+    if leaf.get("successor_policy") is not None:
+        report["successor_policy"] = leaf["successor_policy"]
+    if leaf.get("handover") is not None:
+        report["handover"] = leaf["handover"]
+        report["handover_reconciliation_required"] = action == "RECONCILE_HANDOFF"
     if plan:  # present only when the decomposition gate is not OFF
         report["plan"] = plan
         report["plan_fix_required"] = action == "FIX_PLAN"
@@ -2222,6 +2380,16 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
             lines.append(f"PLAN: RELEASABLE — ADVISORY: {', '.join(a['code'] for a in plan['advisories'])}")
         else:
             lines.append("PLAN: RELEASABLE")
+    handover = report.get("handover")
+    if handover:
+        lines.append(
+            "HANDOVER: "
+            + handover["status"]
+            + " · "
+            + handover["mode"]
+            + " · decision "
+            + str(handover.get("decision_at_risk") or "UNKNOWN")
+        )
     health = report.get("health")
     if health:
         shown = health["reasons"][:3]
