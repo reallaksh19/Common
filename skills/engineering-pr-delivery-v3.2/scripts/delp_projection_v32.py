@@ -1060,6 +1060,10 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
         where = f"programme.acceptance_claims[{index}]"
         if not isinstance(raw, Mapping):
             raise GraphError(f"{where}: must be a mapping")
+        allowed = {"id", "claim", "kind", "weight", "shared", "mechanism_exception_allowed"}
+        extra = sorted(set(map(str, raw)) - allowed)
+        if extra:
+            raise GraphError(f"{where}: unknown fields {extra}")
         cid = str(raw.get("id") or "")
         if not _UNIT_ID.fullmatch(cid) or cid in seen:
             raise GraphError(f"{where}.id: invalid or duplicate claim id {cid!r}")
