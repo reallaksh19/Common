@@ -69,10 +69,17 @@ $defs:
 type: object
 oneOf:
   - additionalProperties: false
-    required: [schema, trajectory_id, windows]
+    required: [schema, trajectory_id, comparison_basis, windows]
     properties:
       schema: {const: relay-v3.2-agent-quality-trajectory-input}
       trajectory_id: {type: string, minLength: 1}
+      comparison_basis:
+        type: object
+        additionalProperties: false
+        required: [ref, digest]
+        properties:
+          ref: {type: string, minLength: 1}
+          digest: {$ref: '#/$defs/digest'}
       windows:
         type: array
         minItems: 2
@@ -85,12 +92,19 @@ oneOf:
             result: {$ref: '#/$defs/m1_result'}
   - additionalProperties: false
     required:
-      [schema, authority, trajectory_id, input_digest, trajectory_digest, trajectory,
+      [schema, authority, trajectory_id, comparison_basis, input_digest, trajectory_digest, trajectory,
        reason, windows, components, authority_effects]
     properties:
       schema: {const: relay-v3.2-agent-quality-trajectory-result}
       authority: {const: DERIVED_AGENT_QUALITY_TRAJECTORY_ONLY}
       trajectory_id: {type: string, minLength: 1}
+      comparison_basis:
+        type: object
+        additionalProperties: false
+        required: [ref, digest]
+        properties:
+          ref: {type: string, minLength: 1}
+          digest: {$ref: '#/$defs/digest'}
       input_digest: {$ref: '#/$defs/digest'}
       trajectory_digest: {$ref: '#/$defs/digest'}
       trajectory: {enum: [STABLE, IMPROVING, DEGRADING, INSUFFICIENT_DATA]}
