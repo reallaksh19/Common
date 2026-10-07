@@ -999,6 +999,112 @@ class ResponsibilityCurrentnessProjection(unittest.TestCase):
                     M.require_facts(record)
 
 
+class ProviderObservationNormalization(unittest.TestCase):
+    def test_typed_and_legacy_equivalent_truth_project_the_same_nodes(self):
+        legacy = {
+            "candidate_sha": SHA_A,
+            "base_sha": SHA_MAIN,
+            "pr_state": "OPEN",
+            "ahead_by": 2,
+            "behind_by": 1,
+            "interruptions": {"coverage_from": "2026-10-07T00:00:00Z", "losses": []},
+            "liveness": "ACTIVE",
+            "check": {"name": "optional", "result": "SUCCESS", "candidate_sha": SHA_A},
+            "additions": 10,
+            "deletions": 2,
+            "since_checkpoint": {"additions": 3, "deletions": 1},
+        }
+        typed = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {
+                "candidate_sha": SHA_A,
+                "base_sha": SHA_MAIN,
+                "pr_state": "OPEN",
+                "ahead_by": 2,
+                "behind_by": 1,
+            },
+            "custody": {"interruptions": {"coverage_from": "2026-10-07T00:00:00Z", "losses": []}},
+            "liveness": {"value": "ACTIVE"},
+            "check": {"name": "optional", "result": "SUCCESS", "candidate_sha": SHA_A},
+            "diff": {
+                "additions": 10,
+                "deletions": 2,
+                "since_checkpoint": {"additions": 3, "deletions": 1},
+            },
+        }
+        ledger = [entry(facts(units=[unit("U01")]), 1)]
+        left = M.project(graph(), ledger, {"Common#592": legacy})["nodes"]
+        right = M.project(graph(), ledger, {"Common#592": typed})["nodes"]
+        self.assertEqual(left, right)
+
+    def test_missing_optional_categories_are_unobserved_not_failures(self):
+        typed = {
+            "schema": M.OBSERVATION_SCHEMA,
+            "visibility": "OBSERVED",
+            "material": {"candidate_sha": SHA_A},
+        }
+        normalized = M.normalize_observation(typed)
+        self.assertEqual(
+            {
+                "MATERIAL": "OBSERVED",
+                "CUSTODY": "UNOBSERVED",
+                "LIVENESS": "UNOBSERVED",
+                "CHECK": "UNOBSERVED",
+                "DIFF": "UNOBSERVED",
+            },
+            normalized["_observation"]["categories"],
+        )
+        leaf = M.project(
+            graph(),
+            [entry(facts(units=[unit("U01")]), 1)],
+            {"Common#592": typed},
+        )["nodes"]["Common#592"]
+        self.assertEqual((20, 20), (leaf["progress"]["P"], leaf["progress"]["E"]))
+        self.assertEqual("ACTIVE", leaf["state"])
+
+    def test_provider_unavailable_preserves_P_and_fabricates_no_failure(self):
+        unavailable = {"schema": M.OBSERVATION_SCHEMA, "visibility": "UNAVAILABLE"}
+        normalized = M.normalize_observation(unavailable)
+        self.assertTrue(all(v == "UNAVAILABLE" for v in normalized["_observation"]["categories"].values()))
+        leaf = M.project(
+            graph(),
+            [entry(facts(units=[unit("U01")]), 1)],
+            {"Common#592": unavailable},
+        )["nodes"]["Common#592"]
+        self.assertEqual(20, leaf["progress"]["P"])
+        self.assertEqual(0, leaf["progress"]["E"])
+        self.assertEqual("UNVERIFIABLE", leaf["evidence"]["health"])
+        self.assertEqual("EVIDENCE_GAP", leaf["state"])
+
+    def test_legacy_flat_input_gets_category_currentness_without_semantic_change(self):
+        normalized = M.normalize_observation({"candidate_sha": SHA_A, "liveness": "ACTIVE"})
+        self.assertEqual("LEGACY_FLAT_OBSERVATION", normalized["_observation"]["schema"])
+        self.assertEqual("OBSERVED", normalized["_observation"]["categories"]["MATERIAL"])
+        self.assertEqual("OBSERVED", normalized["_observation"]["categories"]["LIVENESS"])
+        self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["CHECK"])
+        self.assertEqual("UNOBSERVED", normalized["_observation"]["categories"]["DIFF"])
+
+    def test_wrong_repository_same_number_observation_fails_closed(self):
+        with self.assertRaises(M.DelpError):
+            M.project(graph(), [], {"other/repo#592": {"candidate_sha": SHA_A}})
+
+    def test_unknown_observation_locator_fails_closed(self):
+        with self.assertRaises(M.DelpError):
+            M.project(graph(), [], {"Common#999": {"candidate_sha": SHA_A}})
+
+    def test_duplicate_aliases_for_one_leaf_fail_closed(self):
+        with self.assertRaises(M.DelpError):
+            M.project(
+                graph(),
+                [],
+                {
+                    "Common#592": {"candidate_sha": SHA_A},
+                    592: {"candidate_sha": SHA_A},
+                },
+            )
+
+
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
 
