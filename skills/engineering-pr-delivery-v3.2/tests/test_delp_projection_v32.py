@@ -3896,7 +3896,7 @@ class AgentMetrics689ProposalV2Gate(unittest.TestCase):
                             ],
                             "size_budget": {"target_loc": 150, "hard_loc": 300, "target_minutes": 10, "hard_minutes": 20},
                             "write_surface": [
-                                "skills/engineering-pr-delivery-v3.2/tests/test_agent_health_retained_replay_v32.py"
+                                "skills/engineering-pr-delivery-v3.2/tests/test_continuity_v32_agent_health_retained_replay.py"
                             ],
                             "acceptance_methods": [
                                 "retained exact-head end-to-end replay",
