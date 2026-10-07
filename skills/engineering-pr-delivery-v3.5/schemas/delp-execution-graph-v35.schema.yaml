@@ -30,6 +30,12 @@ properties:
     properties:
       id: {type: string, minLength: 1}
       root: {$ref: '#/$defs/ref'}
+      graph_generation:
+        type: integer
+        minimum: 1
+        description: >-
+          Monotonic semantic generation of the programme graph. Omitted legacy graphs are read as generation 1.
+          A graph that declares this field is in stable-identity mode: every LEAF must declare responsibility_id.
       repository:
         type: string
         description: >-
@@ -154,7 +160,10 @@ properties:
           type: integer
           minimum: 0
           description: Undecomposed reserve on ROOT/INTERMEDIATE; counts as zero progress and blocks COMPLETE.
-        responsibility_id: {type: string}
+        responsibility_id:
+          type: string
+          minLength: 1
+          description: Stable semantic Responsibility identity; never synthesized from the GitHub issue locator.
         primary_pr: {type: string}
         candidate_ref: {type: string, description: Branch/tag whose head is the candidate when there is no PR yet.}
         critical: {type: boolean}
@@ -206,3 +215,16 @@ properties:
           then: {required: [parent, weight, units]}
         - if: {properties: {kind: {const: INTERMEDIATE}}}
           then: {required: [parent, weight]}
+
+allOf:
+  - if:
+      properties:
+        programme:
+          required: [graph_generation]
+    then:
+      properties:
+        nodes:
+          items:
+            allOf:
+              - if: {properties: {kind: {const: LEAF}}}
+                then: {required: [responsibility_id]}
