@@ -14,6 +14,7 @@ import io
 import itertools
 import json
 import pathlib
+import sys
 import tempfile
 import unittest
 
@@ -22,6 +23,13 @@ spec = importlib.util.spec_from_file_location("delp_projection_v32", MODULE_PATH
 M = importlib.util.module_from_spec(spec)
 assert spec.loader
 spec.loader.exec_module(M)
+
+SCRIPTS = MODULE_PATH.parent
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+import agent_quality_metrics_v32 as AQ1
+import agent_quality_trajectory_v32 as AQ2
+import agent_intervention_v32 as AQ3
 
 try:  # PyYAML is only needed for the markdown-block and CLI-from-YAML paths
     import yaml  # noqa: F401
@@ -3128,9 +3136,13 @@ class AgentHealth(unittest.TestCase):
     def test_health_never_moves_a_number_a_state_a_title_or_an_admission_answer(self):
         bad = {**FULL_OBS, "behind_by": 99, "additions": 5000, "liveness": "STALE"}
         off, on = M.project(graph(), STARTED, {"Common#592": bad}), M.project(with_health(), STARTED, {"Common#592": bad})
-        strip = lambda nodes: {r: {k: v for k, v in n.items() if k != "health"} for r, n in nodes.items()}  # noqa: E731
+        strip = lambda nodes: {  # noqa: E731
+            r: {k: v for k, v in n.items() if k not in {"health", "agent_health"}}
+            for r, n in nodes.items()
+        }
         self.assertEqual(strip(off["nodes"]), strip(on["nodes"]))
         self.assertEqual("AT_RISK", on["nodes"]["Common#592"]["health"]["verdict"])
+        self.assertEqual("AVAILABLE", on["nodes"]["Common#592"]["agent_health"]["operational"]["status"])
         self.assertEqual(M.admit(off, "Common#592")["action"], M.admit(on, "Common#592")["action"])
         title = on["nodes"]["Common#592"]["title_prefix"]
         self.assertNotIn("AT_RISK", title)
@@ -3648,6 +3660,194 @@ class LowMemoryDecompositionRelay(unittest.TestCase):
         bad = facts(units=[unit("U01")], dependencies={"ready": True})
         self.assertTrue(M.validate_facts(bad))
 
+
+
+
+# --------------------------------------------------------------------------
+# unified agent-health read model: quality is advisory and orthogonal to DELP control
+# --------------------------------------------------------------------------
+
+READMODEL_BASIS_REF = "Common#689#agent-quality-benchmark-v1"
+READMODEL_BASIS_DIGEST = "sha256:" + "b" * 64
+
+
+def rm_observation(oid, kind, disposition, *, critical=False, covered=None, repairs=0):
+    row = {
+        "id": oid,
+        "class": kind,
+        "critical": critical,
+        "disposition": disposition,
+        "repairs": repairs,
+        "evidence_refs": [READMODEL_BASIS_REF, f"Common#708#{oid}"],
+    }
+    if covered is not None:
+        row["impact_expected"] = 1
+        row["impact_covered"] = covered
+    return row
+
+
+def rm_quality(window_id, *, degraded=False):
+    rows = [
+        rm_observation("M1", "MUTATION", "DETECTED", critical=True, covered=1),
+        rm_observation("M2", "MUTATION", "MISSED" if degraded else "DETECTED", critical=True, covered=0 if degraded else 1),
+        rm_observation("C1", "CLEAN_CONTROL", "CLEAN_ACCEPTED"),
+        rm_observation("C2", "CLEAN_CONTROL", "FALSE_POSITIVE" if degraded else "CLEAN_ACCEPTED"),
+    ]
+    return AQ1.evaluate({"schema": AQ1.WINDOW_SCHEMA, "window_id": window_id, "observations": rows})
+
+
+def rm_chain():
+    q1 = rm_quality("RM-W1")
+    q2 = rm_quality("RM-W2")
+    trajectory = AQ2.evaluate({
+        "schema": AQ2.INPUT_SCHEMA,
+        "trajectory_id": "RM-TRAJ",
+        "comparison_basis": {"ref": READMODEL_BASIS_REF, "digest": READMODEL_BASIS_DIGEST},
+        "windows": [{"sequence": 1, "result": q1}, {"sequence": 2, "result": q2}],
+    })
+    intervention = AQ3.evaluate({"schema": AQ3.INPUT_SCHEMA, "trajectory": trajectory})
+    return q2, trajectory, intervention
+
+
+class AgentHealthReadModel(unittest.TestCase):
+    def project(self, agent_quality=None, *, health=True):
+        obs = dict(FULL_OBS)
+        if agent_quality is not None:
+            obs["agent_quality"] = agent_quality
+        g = with_health() if health else graph()
+        return M.project(g, STARTED, {"Common#592": obs})
+
+    def test_four_dimensions_are_orthogonal_not_a_single_score(self):
+        quality, trajectory, intervention = rm_chain()
+        projection = self.project({
+            "quality_result": quality,
+            "trajectory_result": trajectory,
+            "intervention_result": intervention,
+        })
+        leaf = projection["nodes"]["Common#592"]
+        model = leaf["agent_health"]
+        self.assertEqual(M._AGENT_HEALTH_AUTHORITY, model["authority"])
+        self.assertTrue(model["advisory"])
+        self.assertEqual(
+            {"operational", "quality", "trajectory", "intervention"},
+            {k for k in model if k not in {"authority", "advisory", "read_model_digest"}},
+        )
+        self.assertEqual({"AVAILABLE"}, {model[k]["status"] for k in ("operational", "quality", "trajectory", "intervention")})
+        self.assertEqual("HEALTHY", model["operational"]["verdict"])
+        self.assertEqual("STABLE", model["trajectory"]["trajectory"])
+        self.assertEqual("NONE", model["intervention"]["recommendation"])
+        self.assertNotIn("score", model)
+        self.assertRegex(model["read_model_digest"], r"^sha256:[0-9a-f]{64}$")
+
+    def test_unavailable_dimensions_are_explicit_never_healthy_or_zero(self):
+        model = self.project()["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("AVAILABLE", model["operational"]["status"])
+        for key in ("quality", "trajectory", "intervention"):
+            self.assertEqual("UNAVAILABLE", model[key]["status"])
+            self.assertTrue(model[key]["reason"])
+
+        quality, trajectory, intervention = rm_chain()
+        off = self.project({
+            "quality_result": quality,
+            "trajectory_result": trajectory,
+            "intervention_result": intervention,
+        }, health=False)["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual(("UNAVAILABLE", "OPERATIONAL_HEALTH_NOT_PROJECTED"), (off["operational"]["status"], off["operational"]["reason"]))
+        self.assertEqual("AVAILABLE", off["quality"]["status"])
+
+    def test_quality_only_does_not_fabricate_trajectory_or_advice(self):
+        quality, _, _ = rm_chain()
+        model = self.project({"quality_result": quality})["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("AVAILABLE", model["quality"]["status"])
+        self.assertEqual("UNAVAILABLE", model["trajectory"]["status"])
+        self.assertEqual("UNAVAILABLE", model["intervention"]["status"])
+
+    def test_trajectory_requires_matching_latest_quality_provenance(self):
+        quality, trajectory, intervention = rm_chain()
+        wrong_quality = rm_quality("RM-WX")
+        model = self.project({
+            "quality_result": wrong_quality,
+            "trajectory_result": trajectory,
+            "intervention_result": intervention,
+        })["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("AVAILABLE", model["quality"]["status"])
+        self.assertEqual("INVALID", model["trajectory"]["status"])
+        self.assertIn("provenance", model["trajectory"]["reason"])
+        self.assertEqual("INVALID", model["intervention"]["status"])
+
+        no_quality = self.project({
+            "trajectory_result": trajectory,
+            "intervention_result": intervention,
+        })["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("INVALID", no_quality["trajectory"]["status"])
+        self.assertIn("QUALITY_RESULT_REQUIRED", no_quality["trajectory"]["reason"])
+
+    def test_tampered_trajectory_or_intervention_is_invalid_advisory_data(self):
+        quality, trajectory, intervention = rm_chain()
+        bad_trajectory = copy.deepcopy(trajectory)
+        bad_trajectory["trajectory_digest"] = "sha256:" + "0" * 64
+        model = self.project({
+            "quality_result": quality,
+            "trajectory_result": bad_trajectory,
+            "intervention_result": intervention,
+        })["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("INVALID", model["trajectory"]["status"])
+        self.assertEqual("INVALID", model["intervention"]["status"])
+
+        forged = copy.deepcopy(intervention)
+        forged["recommendation"] = "CHECKPOINT"
+        model = self.project({
+            "quality_result": quality,
+            "trajectory_result": trajectory,
+            "intervention_result": forged,
+        })["nodes"]["Common#592"]["agent_health"]
+        self.assertEqual("AVAILABLE", model["trajectory"]["status"])
+        self.assertEqual("INVALID", model["intervention"]["status"])
+        self.assertIn("exact recomputation", model["intervention"]["reason"])
+
+    def test_agent_quality_changes_only_read_model_and_projection_input_digest(self):
+        quality, trajectory, intervention = rm_chain()
+        base_obs = dict(FULL_OBS)
+        rich_obs = {
+            **FULL_OBS,
+            "agent_quality": {
+                "quality_result": quality,
+                "trajectory_result": trajectory,
+                "intervention_result": intervention,
+            },
+        }
+        g = with_health()
+        base = M.project(g, STARTED, {"Common#592": base_obs})
+        rich = M.project(g, STARTED, {"Common#592": rich_obs})
+        a, b = base["nodes"]["Common#592"], rich["nodes"]["Common#592"]
+
+        for key in (
+            "lifecycle", "state", "light", "progress", "active_unit", "next", "evidence",
+            "frontier", "dependencies", "plan", "health", "material", "title_prefix",
+        ):
+            self.assertEqual(a.get(key), b.get(key), key)
+        self.assertNotEqual(base["input_digest"], rich["input_digest"])
+        self.assertIn("agent_health", a)
+        self.assertIn("agent_health", b)
+        self.assertEqual("UNAVAILABLE", a["agent_health"]["quality"]["status"])
+        self.assertEqual("AVAILABLE", b["agent_health"]["quality"]["status"])
+
+        admit_a = M.admit(base, "Common#592")
+        admit_b = M.admit(rich, "Common#592")
+        for key in ("state", "evidence_health", "action", "recovery_required", "next"):
+            self.assertEqual(admit_a[key], admit_b[key], key)
+
+    def test_root_and_intermediate_do_not_gain_hidden_quality_aggregation(self):
+        quality, trajectory, intervention = rm_chain()
+        projection = self.project({
+            "quality_result": quality,
+            "trajectory_result": trajectory,
+            "intervention_result": intervention,
+        })
+        self.assertIn("agent_health", projection["nodes"]["Common#592"])
+        for ref, node in projection["nodes"].items():
+            if node["kind"] != "LEAF":
+                self.assertNotIn("agent_health", node, ref)
 
 if __name__ == "__main__":
     unittest.main()
