@@ -26,6 +26,7 @@ def plan_handover(
     parent_issue_observation: dict | None = None,
     programme_issue_observations: list[dict] | None = None,
     selected_programme_ref: str | None = None,
+    successor_challenge_count: int | None = None,
     fail_after: int | None = None,
 ):
     allowed = can_action(root, "HANDOVER")
@@ -86,6 +87,7 @@ def plan_handover(
         programme_reconciliation=programme_reconciliation,
         task_snapshot_override=task_snapshot,
         improvement_view_override=improvement_view,
+        successor_challenge_count=successor_challenge_count,
     )
     task_meta = (context.get("accumulated_learning") or {}).get("task_snapshot") or {}
     improvement_meta = (context.get("accumulated_learning") or {}).get("improvement_view") or {}
@@ -114,6 +116,8 @@ def plan_handover(
         ],
         {
             "reasoning_request_generated": False,
+            "successor_entry_mode": (context.get("successor_entry") or {}).get("mode"),
+            "successor_challenge_count": len((context.get("successor_entry") or {}).get("successor_reconstruction_challenge") or []),
             "programme_parent_count": len(programme_reconciliation.get("parents") or []),
             "programme_frontier": list(programme_reconciliation.get("programme_frontier") or []),
             "selected_programme_frontier": programme_assessment.get("selected_programme_frontier"),
@@ -170,6 +174,11 @@ def main() -> None:
         help="Explicit Owner/ROADMAP selected programme parent ref.",
     )
     parser.add_argument("--complex", action="store_true")
+    parser.add_argument(
+        "--successor-challenge-count",
+        type=int,
+        help="Materialize exactly this many repository-grounded successor reconstruction questions (0..10).",
+    )
     args = parser.parse_args()
     result = plan_handover(
         Path(args.repo_root).resolve(),
@@ -182,6 +191,7 @@ def main() -> None:
         parent_issue_observation=(load_yaml(Path(args.parent_issue_observation)) if args.parent_issue_observation else None),
         programme_issue_observations=[load_yaml(Path(path)) for path in args.programme_issue_observation],
         selected_programme_ref=args.selected_programme_ref,
+        successor_challenge_count=args.successor_challenge_count,
     )
     print(f"{result['id']}: {result['status']}")
 

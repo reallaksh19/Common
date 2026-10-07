@@ -145,14 +145,174 @@ def validate_visibility(context: dict[str, Any]) -> list[str]:
     return errors
 
 
-def _default_successor_entry() -> dict[str, Any]:
-    """Conservative successor boundary. Custody transfer alone grants no execution authority."""
+
+
+def _successor_entry(context: dict[str, Any], challenge_count: int | None) -> dict[str, Any]:
+    if challenge_count is None:
+        count = 0
+    elif isinstance(challenge_count, bool) or not isinstance(challenge_count, int) or not (0 <= challenge_count <= 10):
+        raise HandoverContextError("successor_challenge_count must be an integer from 0 to 10")
+    else:
+        count = challenge_count
+
+    learning = context.get("accumulated_learning") or {}
+    reality = context.get("reality_context") or {}
+    material = reality.get("material") or {}
+    execution = reality.get("execution") or {}
+    reconstruction = learning.get("reconstruction_context") or {}
+    task_snapshot = (learning.get("task_snapshot") or {}).get("value") or {}
+    decision = (
+        learning.get("first_successor_action")
+        or ((task_snapshot.get("next") or {}).get("immediate_action"))
+        or "the next bounded engineering decision"
+    )
+
+    anchors: list[str] = []
+    for value in (
+        (context.get("target") or {}).get("provider_ref"),
+        f"material_head:{material.get('head')}" if material.get("head") else None,
+        f"branch:{execution.get('branch')}" if execution.get("branch") else None,
+        ((reconstruction.get("original_intent") or {}).get("source_ref")),
+        ((reconstruction.get("original_intent") or {}).get("url")),
+        ((reconstruction.get("latest_reconciliation") or {}).get("ref")),
+    ):
+        text = str(value or "").strip()
+        if text and text not in anchors:
+            anchors.append(text)
+    for value in list(reconstruction.get("roadmap_refs") or []) + list(reconstruction.get("primary_conversation_refs") or []):
+        text = str(value or "").strip()
+        if text and text not in anchors:
+            anchors.append(text)
+        if len(anchors) >= 8:
+            break
+
+    unresolved = [str(x).strip() for x in learning.get("what_remains_uncertain") or [] if str(x).strip()]
+    rejected = [str(x).strip() for x in learning.get("attempted_and_rejected") or [] if str(x).strip()]
+    invariants = [str(x).strip() for x in learning.get("do_not_break") or [] if str(x).strip()]
+    invariants.extend(str(x).strip() for x in reality.get("task_constraints") or [] if str(x).strip())
+
+    uncertainty = unresolved[0] if unresolved else "the earliest owning layer / root classification is not yet proven"
+    negative = rejected[0] if rejected else "do not repeat an unproven predecessor repair direction"
+    invariant = invariants[0] if invariants else "preserve currently accepted behavior and authority boundaries"
+    anchor_text = ", ".join(anchors[:3]) or "current repository/provider truth"
+
+    base_questions = [
+        {
+            "question": (
+                f"Before {decision}, reconstruct the exact current implementation path in the live repository from the relevant "
+                f"entry point to the owned mutation boundary. Use {anchor_text}; cite current files/functions and exact material/provider "
+                "evidence, identify the earliest owning layer, and state one observation that would falsify that ownership."
+            ),
+            "required_evidence": [
+                "current repository file/function call path",
+                "exact material head and live provider readback",
+                "evidence that locates the earliest owning layer",
+            ],
+            "authority_distinctions": [
+                "production semantics vs candidate generation",
+                "current exact evidence vs predecessor assertion",
+            ],
+            "falsifier": "A live repository/provider observation shows the proposed owning layer is downstream of an earlier proven loss.",
+            "pass_condition": "Names current files/functions and exact live refs, locates an owning layer, and gives a falsifier.",
+            "fail_condition": "Can be answered from issue prose, generic architecture knowledge, or predecessor conclusions alone.",
+            "forbidden_shortcuts": [
+                "do not answer from handover prose alone",
+                "do not assume the predecessor diagnosis is current truth",
+                "do not start implementation while ownership is unproved",
+            ],
+            "downstream_consequence": "Determines which bounded child may legitimately own the next material change.",
+        },
+        {
+            "question": (
+                f"For {decision}, classify the live evidence and authority boundaries that govern the decision. Resolve this current "
+                f"uncertainty: {uncertainty}. Use repository/provider evidence, distinguish production authority, candidate-generation "
+                "evidence, review-only evidence, validation/benchmark evidence and historical evidence, and state which source must not "
+                "be promoted into production authority."
+            ),
+            "required_evidence": [
+                "current authority-defining code/schema or governing contract",
+                "live evidence/source classification",
+                "contradictory or limiting evidence where present",
+            ],
+            "authority_distinctions": [
+                "production authority",
+                "candidate-generation-only",
+                "review-only",
+                "validation/benchmark-only",
+                "historical/not-current",
+            ],
+            "falsifier": "A governing current contract gives a supposedly non-authoritative source direct production authority.",
+            "pass_condition": "Classifies each load-bearing source by current authority and resolves the uncertainty with live evidence.",
+            "fail_condition": "Treats READY/PASS/benchmark coincidence or predecessor prose as identity/production authority without contract evidence.",
+            "forbidden_shortcuts": [
+                "do not promote benchmark expected output into matching authority",
+                "do not equate status readiness with semantic correctness",
+                "do not collapse historical evidence into exact-head evidence",
+            ],
+            "downstream_consequence": "Prevents a repair from being justified by the wrong evidence class.",
+        },
+        {
+            "question": (
+                f"Before {decision}, reconstruct the upstream and downstream responsibility boundaries and the exact material/evidence "
+                f"frontier. Explain why adjacent layers do not own the next change, preserve this invariant: {invariant}, and account for "
+                f"negative knowledge: {negative}. State the exact evidence/root classification required before coding."
+            ),
+            "required_evidence": [
+                "current parent/child/dependency graph or issue/PR relationships",
+                "exact material and semantic/evidence frontier",
+                "negative knowledge / rejected approach evidence",
+                "explicit pre-coding proof or root classification",
+            ],
+            "authority_distinctions": [
+                "upstream cause vs downstream compensation",
+                "plan/decomposition authority vs execution evidence",
+            ],
+            "falsifier": "An upstream or adjacent responsibility is shown by current evidence to own the first causal loss.",
+            "pass_condition": "Names upstream/downstream boundaries, exact frontier, protected invariant, negative knowledge and the pre-coding proof.",
+            "fail_condition": "Proposes a PR/fix before current ownership/root classification is established.",
+            "forbidden_shortcuts": [
+                "do not compensate downstream for an unlocated upstream defect",
+                "do not repeat an already-rejected approach without new evidence",
+                "do not create a PR merely because a plausible patch is visible",
+            ],
+            "downstream_consequence": "Controls whether the successor may propose the next bounded implementation child.",
+        },
+    ]
+
+    questions: list[dict[str, Any]] = []
+    for index in range(count):
+        if index < len(base_questions):
+            row = dict(base_questions[index])
+        else:
+            subject = unresolved[(index - 3) % len(unresolved)] if unresolved else invariant
+            row = {
+                "question": (
+                    f"Resolve successor uncertainty {index + 1} before {decision}: {subject}. Reconstruct the answer from current "
+                    "repository/provider evidence, explain its effect on the decision at risk, and state a falsifier."
+                ),
+                "required_evidence": ["current repository/provider evidence tied to the stated uncertainty"],
+                "authority_distinctions": ["current exact evidence vs inherited assertion"],
+                "falsifier": "Current repository/provider evidence contradicts the proposed resolution.",
+                "pass_condition": "Resolves the uncertainty with current refs and a falsifier.",
+                "fail_condition": "Answers generically or only from inherited prose.",
+                "forbidden_shortcuts": ["do not execute the task to discover the answer", "do not treat inherited prose as current truth"],
+                "downstream_consequence": "Decides whether the next engineering step remains safe.",
+            }
+        row.update(
+            {
+                "id": f"Q{index + 1}",
+                "decision_at_risk": str(decision),
+                "repository_anchors": list(anchors),
+            }
+        )
+        questions.append(row)
+
     return {
         "mode": SUCCESSOR_ENTRY_MODE,
         "allowed_actions": list(SUCCESSOR_ALLOWED_ACTIONS),
         "forbidden_actions": list(SUCCESSOR_FORBIDDEN_ACTIONS),
         "execution_admission": SUCCESSOR_EXECUTION_ADMISSION,
-        "successor_reconstruction_challenge": [],
+        "successor_reconstruction_challenge": questions,
     }
 
 
@@ -167,6 +327,7 @@ def build_context(
     task_snapshot_override: dict[str, Any] | None = None,
     improvement_view_override: dict[str, Any] | None = None,
     protocol_root: Path | None = None,
+    successor_challenge_count: int | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     _validate_target(target)
     # Custody preparation is independent of the optional standalone reasoning
@@ -313,7 +474,7 @@ def build_context(
             },
         },
     }
-    context["successor_entry"] = _default_successor_entry()
+    context["successor_entry"] = _successor_entry(context, successor_challenge_count)
     errors = validate_schema("handover-context", context, "HANDOVER_CONTEXT")
     errors.extend(validate_visibility(context))
     if errors:
