@@ -239,7 +239,12 @@ DELP keeps progress honest *after* a plan exists. The gate makes the plan itself
 ```yaml
 programme:
   total_weight: 10000                 # display scale for "unit points"; never changes a percentage
-  decomposition_policy: {mode: ENFORCED}   # OFF (default) | ADVISORY | ENFORCED
+  acceptance_claims:
+    - {id: PC1, claim: the reusable product behavior is correct, kind: SEMANTIC}
+    - {id: PG1, claim: the exact-head integration gate is satisfied, kind: DELIVERY_GATE}
+  decomposition_policy:
+    mode: ENFORCED
+    claim_first: {mode: ENFORCED, require_independence_basis: true}
 nodes:
   - ref: Common#594
     kind: LEAF
@@ -250,6 +255,8 @@ nodes:
     outcome: Replay results are published as TASK_EVIDENCE with durable refs.
     size_budget: {target_loc: 400, hard_loc: 900, target_minutes: 12, hard_minutes: 18}
     write_surface: [src/replay/, docs/replay.md]   # files, or directories ending in '/'; no globs
+    owns_claims: [PC1]
+    independence_basis: this product slice has its own artifact and acceptance oracle
     depends_on: [Common#592]          # ordering between leaves
     units:
       - {id: V1, weight: 40, verify: the publisher emits CHECKPOINT_FACTS_V1}
@@ -270,6 +277,14 @@ nodes:
 | `PRODUCT` leaf target of at least 50 LOC | `LEAF_TOO_SMALL` (an issue and a PR cost more than the work) | advisory |
 | overlapping write surfaces are ordered by `depends_on` (transitively) or declared `parallel_ok` | `WRITE_SURFACE_COLLISION` on both leaves | blocker |
 | `parallel_ok` carries a `parallel_ok_basis` | `PARALLEL_BASIS_MISSING` | blocker |
+| claim-first parent has declared acceptance claims | `PARENT_CLAIMS_MISSING` | blocker when claim-first ENFORCED |
+| every parent claim is owned | `PARENT_CLAIM_UNCOVERED` | blocker when claim-first ENFORCED |
+| every leaf owns declared claim(s) | `LEAF_CLAIM_MISSING`, `CLAIM_UNKNOWN` | blocker when claim-first ENFORCED |
+| non-shared claims have one owner | `DUPLICATE_CLAIM_OWNERSHIP` | blocker when claim-first ENFORCED |
+| `PRODUCT` leaf owns a `SEMANTIC` claim | `PRODUCT_SEMANTIC_CLAIM_MISSING` | blocker when claim-first ENFORCED |
+| every claim-first leaf states an independence basis | `INDEPENDENCE_BASIS_MISSING` | blocker when claim-first ENFORCED |
+
+`claim_first.mode` is independently `OFF | ADVISORY | ENFORCED`. It defaults to `OFF` only for historical compatibility; **new programme graphs must set it to `ENFORCED` before child release**. The classifier is explicit rather than lexical: the Coordinator labels claims `SEMANTIC` or `DELIVERY_GATE`; DELP checks ownership topology and never guesses from words such as “browser”, “test” or “workflow”.
 
 `MECHANICAL` and `GATE` leaves (rote batch work, review-only leaves) are exempt from the unit-count floor and the share cap **only**; every other rule still applies, and `decompose-check` prints how many leaves use each class so an over-used exemption is visible in review. Leaves that are `COMPLETE` or `SUPERSEDED` are history and are not judged, and they do not collide with anything (the projection always knows which they are; `decompose-check` knows when given `--facts`). Write surfaces are matched as repo-relative paths: a file equals itself, a directory prefix (trailing `/`) covers everything beneath it, and `src/59/` does not cover `src/592/`.
 
