@@ -122,6 +122,10 @@ def entry(record, order, source=None):
     return {"source": source or f"c{order}", "order": order, "facts": record}
 
 
+def bound_facts(g, **kwargs):
+    return M.bind_facts_to_graph(g, facts(**kwargs))
+
+
 OBS_A = {
     "Common#592": {"candidate_sha": SHA_A},
     "Common#594": {"candidate_sha": SHA_A},
@@ -801,6 +805,51 @@ class GraphValidation(unittest.TestCase):
 
 
 
+class ResponsibilityContractBinding(unittest.TestCase):
+    def test_stable_identity_facts_require_exact_binding(self):
+        g = stable_graph()
+        raw = facts(units=[unit("U01")])
+        rejected = M.project(g, [entry(raw, 1)], OBS_A)
+        self.assertEqual(0, rejected["nodes"]["Common#592"]["progress"]["P"])
+        reasons = rejected["rejected_facts"][0]["reasons"]
+        self.assertTrue(any("responsibility.id" in reason for reason in reasons))
+        self.assertTrue(any("responsibility.spec_generation" in reason for reason in reasons))
+        self.assertTrue(any("responsibility.contract_digest" in reason for reason in reasons))
+
+        bound = bound_facts(g, units=[unit("U01")])
+        accepted = M.project(g, [entry(bound, 1)], OBS_A)
+        self.assertEqual((20, 20), (
+            accepted["nodes"]["Common#592"]["progress"]["P"],
+            accepted["nodes"]["Common#592"]["progress"]["E"],
+        ))
+        self.assertEqual([], accepted["rejected_facts"])
+
+    def test_old_contract_fact_is_rejected_after_semantic_change(self):
+        old = stable_graph()
+        old_fact = bound_facts(old, units=[unit("U01")])
+        new = copy.deepcopy(old)
+        leaf = next(n for n in new["nodes"] if n["ref"] == "Common#592")
+        leaf["outcome"] = "new contract"
+        leaf["spec_generation"] = 2
+        out = M.project(new, [entry(old_fact, 1)], OBS_A)
+        self.assertEqual(0, out["nodes"]["Common#592"]["progress"]["P"])
+        reasons = out["rejected_facts"][0]["reasons"]
+        self.assertTrue(any("spec_generation" in reason for reason in reasons))
+        self.assertTrue(any("contract_digest" in reason for reason in reasons))
+
+    def test_bind_facts_refuses_conflicting_existing_binding(self):
+        g = stable_graph()
+        record = facts(units=[unit("U01")])
+        record["responsibility"]["id"] = "WRONG"
+        with self.assertRaises(M.DelpError):
+            M.bind_facts_to_graph(g, record)
+
+    def test_legacy_locator_only_fact_remains_admissible(self):
+        out = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], OBS_A)
+        self.assertEqual(20, out["nodes"]["Common#592"]["progress"]["P"])
+        self.assertEqual([], out["rejected_facts"])
+
+
 class ExtractFactsBlocks(unittest.TestCase):
     BODY = """TASK_EVIDENCE — CHECKPOINT
 
@@ -1218,6 +1267,14 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual([], self.schema_errors("checkpoint-facts", record))
         self.assertEqual([], M.validate_facts(record))
 
+    def test_responsibility_contract_binding_fields_pass_both(self):
+        record = facts(units=[unit("U01")])
+        record["responsibility"].update(
+            {"id": "P3-I-R2", "spec_generation": 3, "contract_digest": DIGEST}
+        )
+        self.assertEqual([], self.schema_errors("checkpoint-facts", record))
+        self.assertEqual([], M.validate_facts(record))
+
     def test_every_forbidden_or_malformed_facts_variant_fails_both(self):
         bad = [
             facts(units=[unit("U01")], progress=72),
@@ -1294,6 +1351,25 @@ class CommandLine(unittest.TestCase):
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             code = M.main(list(args))
         return code, out.getvalue(), err.getvalue()
+
+    def test_bind_facts_cli_stamps_current_contract(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            g = stable_graph()
+            raw = facts(units=[unit("U01")])
+            (root / "graph.json").write_text(json.dumps(g), encoding="utf-8")
+            (root / "facts.json").write_text(json.dumps(raw), encoding="utf-8")
+            code, out, err = self.run_cli(
+                "bind-facts",
+                "--graph", str(root / "graph.json"),
+                "--facts", str(root / "facts.json"),
+            )
+            self.assertEqual(0, code, err)
+            bound = json.loads(out)
+            planned = M.validate_graph(g)["nodes"]["Common#592"]
+            self.assertEqual(planned["responsibility_id"], bound["responsibility"]["id"])
+            self.assertEqual(planned["spec_generation"], bound["responsibility"]["spec_generation"])
+            self.assertEqual(planned["contract_digest"], bound["responsibility"]["contract_digest"])
 
     def test_project_admit_validate_and_verify_titles(self):
         with tempfile.TemporaryDirectory() as td:
