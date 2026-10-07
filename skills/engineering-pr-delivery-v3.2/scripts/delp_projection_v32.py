@@ -850,7 +850,10 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
         return None
     if not isinstance(value, Mapping):
         raise GraphError("programme.decomposition_proposal: must be a mapping")
-    allowed_top = {"version", "responsibilities", "released_proposal_digest", "bindings"}
+    allowed_top = {
+        "version", "responsibilities", "released_proposal_digest", "bindings",
+        "delivery_gate_weight_exception_basis",
+    }
     if set(map(str, value)) - allowed_top or not {"version", "responsibilities"}.issubset(set(map(str, value))):
         raise GraphError("programme.decomposition_proposal: version/responsibilities plus optional release/bindings fields only")
     if value.get("version") != "V2":
@@ -861,6 +864,9 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     released_digest = value.get("released_proposal_digest")
     if released_digest is not None and not _DIGEST.fullmatch(str(released_digest)):
         raise GraphError("programme.decomposition_proposal.released_proposal_digest: must be sha256:<64 hex>")
+    gate_weight_basis = value.get("delivery_gate_weight_exception_basis")
+    if gate_weight_basis is not None and (not isinstance(gate_weight_basis, str) or not gate_weight_basis.strip()):
+        raise GraphError("programme.decomposition_proposal.delivery_gate_weight_exception_basis: non-empty string required")
     raw_bindings = value.get("bindings") or []
     if not isinstance(raw_bindings, list):
         raise GraphError("programme.decomposition_proposal.bindings: must be an array")
@@ -1037,6 +1043,7 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     return {
         "version": "V2",
         "released_proposal_digest": str(released_digest) if released_digest is not None else None,
+        "delivery_gate_weight_exception_basis": gate_weight_basis.strip() if isinstance(gate_weight_basis, str) else None,
         "bindings": bindings,
         "responsibilities": rows,
     }
@@ -1621,6 +1628,7 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
             "version": proposal["version"],
             "acceptance_claims": indexed["acceptance_claims"],
             "responsibilities": proposal["responsibilities"],
+            "delivery_gate_weight_exception_basis": proposal["delivery_gate_weight_exception_basis"],
             "total_weight": indexed["total_weight"],
             "decomposition_policy": policy,
         }
@@ -1655,6 +1663,17 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                 f"parent claim weights must sum to programme.total_weight {total_weight}",
             )
         )
+    if not missing_weights and claims_by_id:
+        semantic_weight = sum(claim["weight"] for claim in claims_by_id.values() if claim["kind"] == "SEMANTIC")
+        gate_weight = sum(claim["weight"] for claim in claims_by_id.values() if claim["kind"] == "DELIVERY_GATE")
+        if gate_weight and gate_weight >= semantic_weight and not proposal["delivery_gate_weight_exception_basis"]:
+            global_findings.append(
+                _finding(
+                    "DELIVERY_GATE_WEIGHT_DOMINATES",
+                    f"DELIVERY_GATE claim weight {gate_weight} must not equal/exceed semantic weight {semantic_weight} "
+                    "without delivery_gate_weight_exception_basis",
+                )
+            )
 
     owners: dict[str, list[str]] = {cid: [] for cid in claims_by_id}
     allocations_by_claim: dict[str, list[tuple[str, int]]] = {cid: [] for cid in claims_by_id}
