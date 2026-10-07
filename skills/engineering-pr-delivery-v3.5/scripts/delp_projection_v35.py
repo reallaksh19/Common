@@ -636,14 +636,37 @@ def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     return value
 
 
-def responsibility_contract_basis(node: Mapping[str, Any], nodes: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+def responsibility_contract_basis(
+    node: Mapping[str, Any],
+    nodes: Mapping[str, Mapping[str, Any]],
+    claims_by_id: Mapping[str, Mapping[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Semantic/execution contract whose digest binds evidence, excluding provider/topology metadata."""
     dependencies = sorted(
         str(nodes[ref].get("responsibility_id") or ref)
         for ref in node.get("depends_on") or []
     )
+    claims_by_id = claims_by_id or {}
+    claim_relationships = []
+    for relation in node.get("claim_relationships") or []:
+        claim = claims_by_id.get(relation["claim_id"])
+        if claim is None:
+            raise GraphError(
+                f"{node.get('ref', '<leaf>')}.claim_relationships: missing normalized claim {relation['claim_id']!r}"
+            )
+        claim_relationships.append(
+            {
+                "claim_id": claim["id"],
+                "claim": claim["claim"],
+                "kind": claim["kind"],
+                "shared": claim["shared"],
+                "relation": relation["relation"],
+            }
+        )
+    claim_relationships.sort(key=lambda row: (row["claim_id"], row["relation"]))
     return {
         "responsibility_id": node.get("responsibility_id"),
+        "claim_relationships": claim_relationships,
         "outcome": node.get("outcome"),
         "units": sorted(
             (
@@ -1468,7 +1491,7 @@ def validate_graph(graph: Any) -> dict[str, Any]:
     if declared_graph_generation:
         for ref in leaf_by_number.values():
             node = nodes[ref]
-            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes))
+            derived_digest = canonical_digest(responsibility_contract_basis(node, nodes, claims_by_id))
             asserted_digest = node.get("contract_digest")
             if asserted_digest is not None and asserted_digest != derived_digest:
                 raise GraphError(

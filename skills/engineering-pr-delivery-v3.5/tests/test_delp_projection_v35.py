@@ -1016,6 +1016,65 @@ class ResponsibilityCurrentnessProjection(unittest.TestCase):
                     M.require_facts(record)
 
 
+    def test_claim_semantics_bind_the_existing_contract_currentness_chain(self):
+        old = stable_claim_topology_graph()
+        old_indexed = M.validate_graph(old)
+        old_digest = old_indexed["nodes"]["Common#592"]["contract_digest"]
+        record = bound_facts(old, units=[unit("U01")])
+
+        changed = copy.deepcopy(old)
+        changed["programme"]["acceptance_claims"][0]["claim"] = "the changed semantic product outcome exists"
+        leaf = leaf_of(changed, "Common#592")
+        leaf["spec_generation"] = 2
+
+        changed_indexed = M.validate_graph(changed)
+        self.assertNotEqual(old_digest, changed_indexed["nodes"]["Common#592"]["contract_digest"])
+
+        projected = M.project(changed, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual((0, 0), (projected["progress"]["P"], projected["progress"]["E"]))
+        self.assertNotEqual(old_digest, projected["currentness"]["contract_digest"])
+
+    def test_unrelated_parent_claim_edit_does_not_stale_unrelated_leaf_contract(self):
+        g = stable_claim_topology_graph()
+        before = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+
+        changed = copy.deepcopy(g)
+        gate_claim = next(c for c in changed["programme"]["acceptance_claims"] if c["id"] == "PC-GATE")
+        gate_claim["claim"] = "the changed delivery gate passes"
+        after = M.validate_graph(changed)["nodes"]["Common#592"]["contract_digest"]
+
+        self.assertEqual(before, after)
+
+    def test_changing_claim_relationship_changes_leaf_contract_digest(self):
+        g = stable_claim_topology_graph()
+        before = M.validate_graph(g)["nodes"]["Common#592"]["contract_digest"]
+
+        changed = copy.deepcopy(g)
+        relation = next(
+            r for r in leaf_of(changed, "Common#592")["claim_relationships"]
+            if r["claim_id"] == "PC-PRODUCT"
+        )
+        relation["relation"] = "ENABLES"
+        after = M.validate_graph(changed)["nodes"]["Common#592"]["contract_digest"]
+
+        self.assertNotEqual(before, after)
+
+    def test_claim_topology_does_not_break_reparent_reweight_conservation(self):
+        old = stable_claim_topology_graph()
+        record = bound_facts(old, units=[unit("U01")])
+        before = M.project(old, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+
+        moved = copy.deepcopy(old)
+        leaf = leaf_of(moved, "Common#592")
+        leaf["parent"] = "Common#610"
+        leaf["weight"] = 9
+        after = M.project(moved, [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+
+        self.assertEqual(before["identity"]["contract_digest"], after["identity"]["contract_digest"])
+        self.assertEqual(before["progress"], after["progress"])
+        self.assertNotEqual(before["currentness"]["graph_digest"], after["currentness"]["graph_digest"])
+
+
 class ProviderObservationNormalization(unittest.TestCase):
     def test_typed_and_legacy_equivalent_truth_project_the_same_nodes(self):
         legacy = {
@@ -2537,6 +2596,23 @@ def planned(mode="ENFORCED", **policy):
 def claim_topology_planned():
     """V3.5 claim topology fixture using explicit OWN / ENABLES / GATE relationships."""
     g = planned()
+    g["programme"]["acceptance_claims"] = [
+        {"id": "PC-PRODUCT", "claim": "the semantic product outcome exists", "kind": "SEMANTIC"},
+        {"id": "PC-ENABLE", "claim": "a durable enabling contract exists", "kind": "SEMANTIC"},
+        {"id": "PC-GATE", "claim": "the exact-head delivery gate passes", "kind": "DELIVERY_GATE"},
+    ]
+    leaf_of(g, "Common#592")["claim_relationships"] = [
+        {"claim_id": "PC-PRODUCT", "relation": "OWN"},
+        {"claim_id": "PC-ENABLE", "relation": "ENABLES"},
+    ]
+    leaf_of(g, "Common#594")["claim_relationships"] = [
+        {"claim_id": "PC-GATE", "relation": "GATE"},
+    ]
+    return g
+
+
+def stable_claim_topology_graph():
+    g = stable_graph()
     g["programme"]["acceptance_claims"] = [
         {"id": "PC-PRODUCT", "claim": "the semantic product outcome exists", "kind": "SEMANTIC"},
         {"id": "PC-ENABLE", "claim": "a durable enabling contract exists", "kind": "SEMANTIC"},
