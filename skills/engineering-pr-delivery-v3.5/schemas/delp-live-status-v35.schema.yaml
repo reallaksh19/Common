@@ -22,7 +22,7 @@ properties:
   programme: {type: [string, "null"]}
   node:
     type: object
-    required: [ref, kind, state, progress, identity]
+    required: [ref, kind, state, progress, identity, currentness]
     properties:
       ref: {type: string}
       kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
@@ -38,6 +38,26 @@ properties:
           root: {type: string}
           lineage: {type: array, items: {type: string}}
           responsibility_id: {type: [string, "null"]}
+          spec_generation: {type: [integer, "null"], minimum: 1}
+          contract_digest:
+            type: [string, "null"]
+            pattern: '^sha256:[0-9a-f]{64}$'
+      currentness:
+        type: object
+        additionalProperties: false
+        required: [mode, graph_generation, graph_digest, spec_generation, contract_digest, fact_binding_required]
+        description: >-
+          Derived plan/currentness identity. It is never agent-authored and never moves progress by itself.
+          STABLE mode requires exact Responsibility fact bindings; LEGACY preserves the historical locator-only contract.
+        properties:
+          mode: {enum: [STABLE, LEGACY]}
+          graph_generation: {type: integer, minimum: 1}
+          graph_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+          spec_generation: {type: [integer, "null"], minimum: 1}
+          contract_digest:
+            type: [string, "null"]
+            pattern: '^sha256:[0-9a-f]{64}$'
+          fact_binding_required: {type: boolean}
       progress:
         type: object
         description: "LEAF: P/E/D/DE. ROOT/INTERMEDIATE: D/E. Integers 0..100 plus exact ratios; recomputed, never incremented."

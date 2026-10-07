@@ -387,6 +387,7 @@ nodes:
   - ref: Common#592
     kind: LEAF
     responsibility_id: P3-I-R2
+    spec_generation: 1
 ```
 
 When `graph_generation` is explicitly present, every LEAF must have one unique
@@ -414,6 +415,27 @@ without a higher `spec_generation`, the re-plan is rejected with
 `SPEC_GENERATION_NOT_BUMPED`. A generation bump with an unchanged digest is advisory only.
 Legacy graphs may continue to carry an asserted `contract_digest`; in stable-identity mode an
 asserted value must equal the derived value and is unnecessary.
+
+The derived status surface publishes this identity as a compact currentness block:
+
+```yaml
+currentness:
+  mode: STABLE
+  graph_generation: 4
+  graph_digest: sha256:<current-plan-digest>
+  spec_generation: 2
+  contract_digest: sha256:<current-responsibility-contract-digest>
+  fact_binding_required: true
+```
+
+`graph_generation + graph_digest` identify the exact plan snapshot. On a LEAF,
+`spec_generation + contract_digest` identify the semantic Responsibility contract. Candidate SHA remains
+material/provider currentness: if the candidate moves while the semantic contract does not, semantic progress
+`P` is conserved and evidence `E` can fall until replayed on the new candidate. Reparenting, reweighting,
+PR/branch changes, or editorial issue/title text do not by themselves change the leaf contract digest.
+
+The `currentness` block is derived projection only. An executor cannot author it, and its mere presence never
+awards or removes P/E/D; only fact admission and existing candidate/evidence rules can change those numbers.
 
 ## Invariants (each is pinned by a test)
 

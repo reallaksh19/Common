@@ -154,6 +154,11 @@ FORBIDDEN_FACT_KEYS = frozenset(
         "evidenced",
         "r_p",
         "r_e",
+        "currentness",
+        "graph_generation",
+        "graph_digest",
+        "observed_generation",
+        "contract_current",
     }
 )
 _ALLOWED_FACT_TOP = frozenset(
@@ -2203,6 +2208,14 @@ def project(
                     "responsibility_id": node.get("responsibility_id"),
                     "spec_generation": node.get("spec_generation"),
                     "contract_digest": node.get("contract_digest"),
+                },
+                "currentness": {
+                    "mode": "STABLE" if indexed["stable_identity_mode"] else "LEGACY",
+                    "graph_generation": indexed["programme"]["graph_generation"],
+                    "graph_digest": indexed["digest"],
+                    "spec_generation": node.get("spec_generation"),
+                    "contract_digest": node.get("contract_digest"),
+                    "fact_binding_required": bool(indexed["stable_identity_mode"] and node["kind"] == "LEAF"),
                 },
                 "weight": node["weight"],
             }
