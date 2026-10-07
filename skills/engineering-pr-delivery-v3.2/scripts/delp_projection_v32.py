@@ -25,6 +25,7 @@ Standard-library only, except that the CLI/parser load YAML when PyYAML exists.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import re
@@ -41,6 +42,8 @@ FACTS_SCHEMA = f"{SCHEMA_PREFIX}-checkpoint-facts"
 GRAPH_SCHEMA = f"{SCHEMA_PREFIX}-execution-graph"
 PROJECTION_SCHEMA = f"{SCHEMA_PREFIX}-projection"
 STATUS_SCHEMA = f"{SCHEMA_PREFIX}-live-status"
+DECOMPOSITION_SCHEMA = f"{SCHEMA_PREFIX}-decomposition-report"
+DIFF_SCHEMA = f"{SCHEMA_PREFIX}-graph-diff"
 FACTS_KEY = "CHECKPOINT_FACTS_V1"
 
 STATUS_START = "<!-- relay-delp:live-status:start -->"
@@ -73,6 +76,26 @@ ACTIVITY_FACTS = {
 OBSERVED_LIVENESS = {"ACTIVE", "QUIET", "STALE"}
 RESULT_SCOPES = {"STEP", "PRODUCT", "RESPONSIBILITY"}
 COMPLETE_VALUES = {"YES", "NO", "UNKNOWN"}
+
+# Decomposition gate. A graph without `programme.decomposition_policy` behaves exactly as before
+# (mode OFF). `decompose-check` always evaluates; the mode decides whether projection/admission act on it.
+POLICY_MODES = ("OFF", "ADVISORY", "ENFORCED")
+WORK_CLASSES = ("PRODUCT", "MECHANICAL", "GATE")
+PLAN_UPDATE_KINDS = ("SCOPE_EXPANSION", "SCOPE_REDUCTION", "UNIT_REWEIGHT", "UNIT_DROPPED", "POLICY_CHANGE")
+# Display scale for "unit points". Percentages never use it: every share is an exact Fraction of the programme.
+DEFAULT_TOTAL_WEIGHT = 10000
+# NOT_RELEASEABLE only replaces these leaf states; every other state is more urgent or already means "not being worked".
+_PLAN_OVERLAID_STATES = frozenset({"NOT_STARTED", "ACTIVE"})
+# Defaults follow the programme's written budgets (PROGRAMME_DECOMPOSITION_PROGRESS.md) and sit at the
+# Young/Daly optimum for the interruption rate observed on the Common executors (see the contract doc).
+DEFAULT_POLICY: dict[str, Any] = {
+    "mode": "OFF",
+    "units": {"min": 3, "max": 8, "max_share_percent": 40},
+    "leaf_budget": {"target_loc": 700, "hard_loc": 1500, "target_minutes": 15, "hard_minutes": 20},
+    "min_leaf_target_loc": 50,
+    "require": {"outcome": True, "verify": True, "write_surface": True, "size_budget": True},
+}
+_BUDGET_KEYS = ("target_loc", "hard_loc", "target_minutes", "hard_minutes")
 
 # Keys an agent must never author. They are projections, plan authority or
 # derived bookkeeping. Matching is case-insensitive on exact key names and is
@@ -140,6 +163,9 @@ _REF = re.compile(
     r"^(?:(?P<repo>[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?)#)?(?P<number>[1-9][0-9]*)$"
 )
 _UNIT_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+# `<leaf ref>:<unit id>` or `<leaf ref>:gate:<gate id>` — how a plan update names the work it changes.
+_ITEM_KEY = re.compile(r"^(?P<ref>[^:\s]+):(?P<item>(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63})$")
+_SURFACE_GLOB = re.compile(r"[*?\[\]\\]")
 
 LIGHT_ACTIVE = "🟢"
 LIGHT_ATTENTION = "🟡"
@@ -160,6 +186,8 @@ STATE_LIGHT = {
     "QUIET": LIGHT_ATTENTION,
     "EVIDENCE_GAP": LIGHT_ATTENTION,
     "EVIDENCE_STALE": LIGHT_ATTENTION,
+    "NOT_RELEASEABLE": LIGHT_ATTENTION,  # leaf whose plan fails the decomposition gate (ENFORCED mode)
+    "PLAN_GAP": LIGHT_ATTENTION,  # ancestor with at least one non-releasable leaf
     "STALE": LIGHT_STALE,
     "COMPLETE": LIGHT_COMPLETE,
     "SUPERSEDED": LIGHT_IDLE,
@@ -467,6 +495,160 @@ def _positive_int(value: Any, label: str) -> int:
     return value
 
 
+def _str_list(value: Any, label: str) -> list[str]:
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(v, str) and v.strip() for v in value):
+        raise GraphError(f"{label}: must be a list of non-empty strings")
+    return [v.strip() for v in value]
+
+
+def _ref_list(value: Any, label: str) -> list[str]:
+    refs = _str_list(value, label)
+    for item in refs:
+        try:
+            parse_ref(item)
+        except DelpError as exc:
+            raise GraphError(f"{label}: {exc}") from exc
+    return refs
+
+
+def _size_budget(value: Any, ref: str) -> dict[str, int] | None:
+    if value is None:
+        return None
+    if not isinstance(value, Mapping):
+        raise GraphError(f"{ref}.size_budget: must be a mapping")
+    unknown = sorted(set(map(str, value)) - set(_BUDGET_KEYS))
+    if unknown:
+        raise GraphError(f"{ref}.size_budget: unknown keys {unknown} (allowed: {list(_BUDGET_KEYS)})")
+    return {str(k): _positive_int(v, f"{ref}.size_budget.{k}") for k, v in value.items()}
+
+
+def _write_surface(value: Any, ref: str) -> list[str]:
+    """Repo-relative file paths or directory prefixes (trailing '/'); globs are rejected so overlap stays decidable."""
+    entries = _str_list(value, f"{ref}.write_surface")
+    clean = []
+    for entry in entries:
+        text = entry[2:] if entry.startswith("./") else entry
+        segments = [s for s in text.split("/") if s != ""]
+        if not segments or text.startswith("/") or "//" in text or ".." in segments or "." in segments or _SURFACE_GLOB.search(text):
+            raise GraphError(
+                f"{ref}.write_surface: {entry!r} must be a repo-relative file path or a directory prefix ending in '/' "
+                "(no globs, no '..', no absolute paths)"
+            )
+        clean.append(text)
+    return sorted(set(clean))
+
+
+def _surface_overlap(left: list[str], right: list[str]) -> list[str]:
+    """Entries on which two write surfaces collide (the more specific side is reported)."""
+    hits = set()
+    for a in left:
+        for b in right:
+            if a == b or (a.endswith("/") and b.startswith(a)) or (b.endswith("/") and a.startswith(b)):
+                hits.add(a if len(a) >= len(b) else b)
+    return sorted(hits)
+
+
+def _item_key(value: Any, label: str) -> tuple[int, str]:
+    match = _ITEM_KEY.fullmatch(str(value or "").strip())
+    if not match:
+        raise GraphError(f"{label}: {value!r} must be '<leaf ref>:<unit id>' or '<leaf ref>:gate:<gate id>'")
+    try:
+        return ref_number(match.group("ref")), match.group("item")
+    except DelpError as exc:
+        raise GraphError(f"{label}: {exc}") from exc
+
+
+def _plan_updates(value: Any) -> list[dict[str, Any]]:
+    """Plan updates are the append-only record of deliberate scope/weight/policy changes."""
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise GraphError("plan_updates: must be a list")
+    seen: set[str] = set()
+    rows: list[dict[str, Any]] = []
+    for index, raw in enumerate(value):
+        where = f"plan_updates[{index}]"
+        if not isinstance(raw, Mapping):
+            raise GraphError(f"{where}: must be a mapping")
+        pid = str(raw.get("id") or "").strip()
+        if not pid or pid in seen:
+            raise GraphError(f"{where}.id: required and unique")
+        seen.add(pid)
+        kind = raw.get("kind")
+        if kind not in PLAN_UPDATE_KINDS:
+            raise GraphError(f"{where}.kind: one of {list(PLAN_UPDATE_KINDS)}")
+        reason = str(raw.get("reason") or "").strip()
+        if not reason:
+            raise GraphError(f"{where}.reason: required")
+        owner_authorized = raw.get("owner_authorized", False)
+        if not isinstance(owner_authorized, bool):
+            raise GraphError(f"{where}.owner_authorized: must be a boolean")
+        unit_keys = [_item_key(v, f"{where}.units") for v in _str_list(raw.get("units"), f"{where}.units")]
+        try:
+            node_numbers = [ref_number(v) for v in _str_list(raw.get("nodes"), f"{where}.nodes")]
+        except DelpError as exc:
+            raise GraphError(f"{where}.nodes: {exc}") from exc
+        if kind != "POLICY_CHANGE" and not unit_keys and not node_numbers:
+            raise GraphError(f"{where}: name the units and/or nodes the update covers")
+        rows.append(
+            {
+                "id": pid,
+                "kind": kind,
+                "reason": reason,
+                "owner_authorized": owner_authorized,
+                "owner_basis": str(raw.get("owner_basis") or "").strip(),
+                "unit_keys": unit_keys,
+                "node_numbers": node_numbers,
+                "raw": canonical_json(raw),
+            }
+        )
+    return rows
+
+
+def resolve_policy(overrides: Any) -> dict[str, Any]:
+    """Merge `programme.decomposition_policy` over the defaults and validate it. Raises GraphError."""
+    policy = copy.deepcopy(DEFAULT_POLICY)
+    if overrides is None:
+        return policy
+    if not isinstance(overrides, Mapping):
+        raise GraphError("programme.decomposition_policy: must be a mapping")
+    unknown = sorted(set(map(str, overrides)) - set(DEFAULT_POLICY))
+    if unknown:
+        raise GraphError(f"programme.decomposition_policy: unknown keys {unknown}")
+    for key, value in overrides.items():
+        if key == "mode":
+            if value not in POLICY_MODES:
+                raise GraphError(f"programme.decomposition_policy.mode: one of {list(POLICY_MODES)}")
+            policy["mode"] = value
+        elif key in ("units", "leaf_budget", "require"):
+            if not isinstance(value, Mapping):
+                raise GraphError(f"programme.decomposition_policy.{key}: must be a mapping")
+            extra = sorted(set(map(str, value)) - set(policy[key]))
+            if extra:
+                raise GraphError(f"programme.decomposition_policy.{key}: unknown keys {extra}")
+            policy[key].update(value)
+        else:
+            policy[key] = value
+    units, budget = policy["units"], policy["leaf_budget"]
+    for label, mapping in (("units", units), ("leaf_budget", budget)):
+        for k, v in mapping.items():
+            _positive_int(v, f"programme.decomposition_policy.{label}.{k}")
+    if units["min"] > units["max"]:
+        raise GraphError("programme.decomposition_policy.units: min must not exceed max")
+    if units["max_share_percent"] > 100:
+        raise GraphError("programme.decomposition_policy.units.max_share_percent: at most 100")
+    if budget["target_loc"] > budget["hard_loc"] or budget["target_minutes"] > budget["hard_minutes"]:
+        raise GraphError("programme.decomposition_policy.leaf_budget: target must not exceed hard")
+    nano = policy["min_leaf_target_loc"]
+    if isinstance(nano, bool) or not isinstance(nano, int) or nano < 0:
+        raise GraphError("programme.decomposition_policy.min_leaf_target_loc: must be a non-negative integer")
+    if not all(isinstance(v, bool) for v in policy["require"].values()):
+        raise GraphError("programme.decomposition_policy.require: values must be booleans")
+    return policy
+
+
 def validate_graph(graph: Any) -> dict[str, Any]:
     """Validate the plan and return an indexed view. Raises GraphError."""
     if not isinstance(graph, Mapping):
@@ -481,6 +663,8 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         parse_ref(root_ref)
     except DelpError as exc:
         raise GraphError(f"programme.root: {exc}") from exc
+    policy = resolve_policy(programme.get("decomposition_policy"))
+    total_weight = _positive_int(programme.get("total_weight", DEFAULT_TOTAL_WEIGHT), "programme.total_weight")
 
     nodes: dict[str, dict[str, Any]] = {}
     by_number: dict[int, str] = {}
@@ -526,11 +710,32 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             seen_units: set[str] = set()
             clean_units = []
             for unit in units:
-                uid = str((unit or {}).get("id") or "")
+                if not isinstance(unit, Mapping):
+                    raise GraphError(f"{ref}.units: every unit must be a mapping")
+                uid = str(unit.get("id") or "")
                 if not _UNIT_ID.fullmatch(uid) or uid in seen_units:
                     raise GraphError(f"{ref}.units: invalid or duplicate unit id {uid!r}")
                 seen_units.add(uid)
-                clean_units.append({"id": uid, "weight": _positive_int(unit.get("weight"), f"{ref}.units.{uid}.weight")})
+                moved_from = unit.get("moved_from")
+                if moved_from is not None:
+                    try:
+                        parse_ref(moved_from)
+                    except DelpError as exc:
+                        raise GraphError(f"{ref}.units.{uid}.moved_from: {exc}") from exc
+                texts = {}
+                for text_key in ("verify", "outcome"):
+                    if unit.get(text_key) is not None and not isinstance(unit[text_key], str):
+                        raise GraphError(f"{ref}.units.{uid}.{text_key}: must be a string")
+                    texts[text_key] = str(unit.get(text_key) or "").strip() or None
+                clean_units.append(
+                    {
+                        "id": uid,
+                        "weight": _positive_int(unit.get("weight"), f"{ref}.units.{uid}.weight"),
+                        "verify": texts["verify"],
+                        "outcome": texts["outcome"],
+                        "moved_from": moved_from,
+                    }
+                )
             gates = []
             seen_gates: set[str] = set()
             for gate in raw.get("delivery_gates") or []:
@@ -542,6 +747,15 @@ def validate_graph(graph: Any) -> dict[str, Any]:
             coder_weight = raw.get("coder_weight")
             if gates:
                 coder_weight = _positive_int(coder_weight if coder_weight is not None else 60, f"{ref}.coder_weight")
+            outcome = raw.get("outcome")
+            if outcome is not None and not isinstance(outcome, str):
+                raise GraphError(f"{ref}.outcome: must be a string")
+            work_class = raw.get("work_class", "PRODUCT")
+            if work_class not in WORK_CLASSES:
+                raise GraphError(f"{ref}.work_class: one of {list(WORK_CLASSES)}")
+            basis = raw.get("parallel_ok_basis")
+            if basis is not None and not isinstance(basis, str):
+                raise GraphError(f"{ref}.parallel_ok_basis: must be a string")
             node.update(
                 {
                     "units": clean_units,
@@ -554,6 +768,14 @@ def validate_graph(graph: Any) -> dict[str, Any]:
                     "critical": bool(raw.get("critical", False)),
                     "verification": sorted(set(raw.get("verification") or ["VERIFIED"])),
                     "contract_digest": raw.get("contract_digest"),
+                    # decomposition contract (judged by decomposition_report; the progress maths never reads it)
+                    "work_class": work_class,
+                    "outcome": (outcome or "").strip() or None,
+                    "size_budget": _size_budget(raw.get("size_budget"), ref),
+                    "write_surface": _write_surface(raw.get("write_surface"), ref),
+                    "depends_on": _ref_list(raw.get("depends_on"), f"{ref}.depends_on"),
+                    "parallel_ok": _ref_list(raw.get("parallel_ok"), f"{ref}.parallel_ok"),
+                    "parallel_ok_basis": (basis or "").strip() or None,
                 }
             )
             if node["primary_pr"] is not None:
@@ -601,8 +823,41 @@ def validate_graph(graph: Any) -> dict[str, Any]:
         if node["kind"] != "LEAF" and not node["children"]:
             raise GraphError(f"{ref}: a ROOT/INTERMEDIATE node needs at least one child")
 
+    # leaf-to-leaf references (ordering and declared parallelism) must name declared leaves
+    leaf_by_number = {n["number"]: ref for ref, n in nodes.items() if n["kind"] == "LEAF"}
+    for ref, node in nodes.items():
+        if node["kind"] != "LEAF":
+            continue
+        for field in ("depends_on", "parallel_ok"):
+            resolved = set()
+            for value in node[field]:
+                target = leaf_by_number.get(ref_number(value))
+                if target is None:
+                    raise GraphError(f"{ref}.{field}: {value} is not a declared LEAF")
+                if target == ref:
+                    raise GraphError(f"{ref}.{field}: a leaf cannot reference itself")
+                resolved.add(target)
+            node[field] = sorted(resolved, key=lambda r: nodes[r]["number"])
+    walk_state: dict[str, int] = {}  # 1 = on the current path, 2 = fully explored
+
+    def walk(ref: str) -> None:
+        walk_state[ref] = 1
+        for dep in nodes[ref]["depends_on"]:
+            if walk_state.get(dep) == 1:
+                raise GraphError(f"depends_on cycle through {ref} and {dep}")
+            if dep not in walk_state:
+                walk(dep)
+        walk_state[ref] = 2
+
+    for ref in leaf_by_number.values():
+        if ref not in walk_state:
+            walk(ref)
+
     return {
         "programme": dict(programme),
+        "policy": policy,
+        "total_weight": total_weight,
+        "plan_updates": _plan_updates(graph.get("plan_updates")),
         "nodes": nodes,
         "order": order,
         "root": roots[0],
@@ -617,6 +872,391 @@ def lineage(indexed: Mapping[str, Any], ref: str) -> list[str]:
     while nodes[chain[-1]]["kind"] != "ROOT":
         chain.append(nodes[chain[-1]]["parent_ref"])
     return list(reversed(chain))
+
+
+# --------------------------------------------------------------------------
+# decomposition gate: is the plan small, verifiable and collision-free enough to hand to an agent?
+#
+# The gate judges the PLAN (the execution graph). It never reads agent facts and never moves a percentage;
+# its only effects are a `plan` block, a NOT_RELEASEABLE / PLAN_GAP state (ENFORCED mode only) and the
+# FIX_PLAN continuation action.
+# --------------------------------------------------------------------------
+
+
+def _finding(code: str, detail: str, severity: str = "BLOCKER") -> dict[str, str]:
+    return {"code": code, "severity": severity, "detail": detail}
+
+
+def _id_list(ids: Iterable[str], limit: int = 6) -> str:
+    ids = list(ids)
+    return ", ".join(ids[:limit]) + (f" (+{len(ids) - limit} more)" if len(ids) > limit else "")
+
+
+def _parts_at_target(budget: Mapping[str, int], limits: Mapping[str, int]) -> int:
+    parts = 1
+    for dim in ("loc", "minutes"):
+        declared = budget.get(f"target_{dim}") or budget.get(f"hard_{dim}")
+        if declared:
+            parts = max(parts, -(-declared // limits[f"target_{dim}"]))
+    return parts
+
+
+def _leaf_findings(node: Mapping[str, Any], policy: Mapping[str, Any]) -> list[dict[str, str]]:
+    """Every per-leaf rule. MECHANICAL and GATE leaves are exempt from the unit-count floor and the share cap only."""
+    unit_rules, limits, require = policy["units"], policy["leaf_budget"], policy["require"]
+    product = node["work_class"] == "PRODUCT"
+    rows = node["units"]
+    found: list[dict[str, str]] = []
+    if len(rows) > unit_rules["max"]:
+        found.append(_finding("UNITS_ABOVE_MAX", f"{len(rows)} units (max {unit_rules['max']}): split the leaf"))
+    if product and len(rows) < unit_rules["min"]:
+        found.append(
+            _finding(
+                "UNITS_BELOW_MIN",
+                f"{len(rows)} units (min {unit_rules['min']}): declare verifiable slices (rote or review-only work is classed MECHANICAL or GATE by the Coordinator)",
+            )
+        )
+    if product:
+        total = sum(u["weight"] for u in rows)
+        for u in rows:
+            if u["weight"] * 100 > unit_rules["max_share_percent"] * total:
+                found.append(
+                    _finding(
+                        "UNIT_SHARE_OVER",
+                        f"{u['id']} carries {percent(Fraction(u['weight'], total))}% of the leaf "
+                        f"(max {unit_rules['max_share_percent']}%): split or reweight it",
+                    )
+                )
+    if require["verify"]:
+        unverifiable = [u["id"] for u in rows if not u["verify"]]
+        if unverifiable:
+            found.append(_finding("UNIT_VERIFY_MISSING", f"no verify step for {_id_list(unverifiable)}"))
+    if require["outcome"] and not node["outcome"]:
+        found.append(_finding("OUTCOME_MISSING", "state the observable outcome of the leaf in one sentence"))
+    if require["write_surface"] and not node["write_surface"]:
+        found.append(_finding("WRITE_SURFACE_MISSING", "declare the files or directories the leaf will write"))
+    budget = node["size_budget"] or {}
+    absent = [k for k in _BUDGET_KEYS if k not in budget]
+    if require["size_budget"] and absent:
+        found.append(_finding("SIZE_BUDGET_MISSING", f"declare the size_budget keys {_id_list(absent)}"))
+    for dim in ("loc", "minutes"):
+        target, hard = budget.get(f"target_{dim}"), budget.get(f"hard_{dim}")
+        if target is not None and hard is not None and target > hard:
+            found.append(_finding("SIZE_BUDGET_INCONSISTENT", f"target_{dim} {target} exceeds hard_{dim} {hard}"))
+    over_hard = [
+        f"hard_{dim} {budget[f'hard_{dim}']} > {limits[f'hard_{dim}']}"
+        for dim in ("loc", "minutes")
+        if budget.get(f"hard_{dim}", 0) > limits[f"hard_{dim}"]
+    ]
+    over_target = [
+        f"target_{dim} {budget[f'target_{dim}']} > {limits[f'target_{dim}']}"
+        for dim in ("loc", "minutes")
+        if budget.get(f"target_{dim}", 0) > limits[f"target_{dim}"]
+    ]
+    if over_hard:
+        parts = _parts_at_target(budget, limits)
+        hint = f"split into at least {parts} leaves" if parts > 1 else "lower the cap or split the leaf"
+        found.append(_finding("SIZE_OVER_HARD", f"{', '.join(over_hard)}: {hint}"))
+    elif over_target:
+        found.append(_finding("SIZE_OVER_TARGET", ", ".join(over_target), "ADVISORY"))
+    nano = policy["min_leaf_target_loc"]
+    if product and nano and budget.get("target_loc", nano) < nano:
+        found.append(
+            _finding(
+                "LEAF_TOO_SMALL",
+                f"target_loc {budget['target_loc']} < {nano}: fold it into a sibling leaf (an issue and a PR cost more than the work)",
+                "ADVISORY",
+            )
+        )
+    if node["parallel_ok"] and not node["parallel_ok_basis"]:
+        found.append(_finding("PARALLEL_BASIS_MISSING", "parallel_ok needs a parallel_ok_basis saying why the write surfaces do not conflict"))
+    return found
+
+
+def _decomposition(
+    indexed: Mapping[str, Any], closed: Iterable[str] = (), mode: str | None = None
+) -> dict[str, Any]:
+    nodes, policy = indexed["nodes"], indexed["policy"]
+    closed = set(closed)
+    leaves = [ref for ref in indexed["order"] if nodes[ref]["kind"] == "LEAF"]
+    active = [ref for ref in leaves if ref not in closed]
+    found = {ref: _leaf_findings(nodes[ref], policy) for ref in active}
+
+    reach: dict[str, set[str]] = {}
+
+    def reachable(ref: str) -> set[str]:
+        if ref not in reach:  # validate_graph guarantees the depends_on graph is acyclic
+            reach[ref] = set()
+            for dep in nodes[ref]["depends_on"]:
+                reach[ref] |= {dep} | reachable(dep)
+        return reach[ref]
+
+    for index, a in enumerate(active):
+        for b in active[index + 1 :]:
+            hits = _surface_overlap(nodes[a]["write_surface"], nodes[b]["write_surface"])
+            ordered = b in reachable(a) or a in reachable(b)
+            declared_parallel = b in nodes[a]["parallel_ok"] or a in nodes[b]["parallel_ok"]
+            if not hits or ordered or declared_parallel:
+                continue
+            for me, other in ((a, b), (b, a)):
+                found[me].append(
+                    _finding(
+                        "WRITE_SURFACE_COLLISION",
+                        f"overlaps #{nodes[other]['number']} on {_id_list(hits, 3)} with no depends_on order and no parallel_ok",
+                    )
+                )
+
+    rows: dict[str, Any] = {}
+    classes: dict[str, int] = {}
+    for ref in active:
+        ordered_findings = sorted(found[ref], key=lambda f: (f["severity"] != "BLOCKER", f["code"], f["detail"]))
+        blockers = [{"code": f["code"], "detail": f["detail"]} for f in ordered_findings if f["severity"] == "BLOCKER"]
+        advisories = [{"code": f["code"], "detail": f["detail"]} for f in ordered_findings if f["severity"] != "BLOCKER"]
+        rows[ref] = {
+            "work_class": nodes[ref]["work_class"],
+            "releasable": not blockers,
+            "blockers": blockers,
+            "advisories": advisories,
+        }
+        classes[nodes[ref]["work_class"]] = classes.get(nodes[ref]["work_class"], 0) + 1
+    return {
+        "schema": DECOMPOSITION_SCHEMA,
+        "authority": AUTHORITY,
+        "mode": mode or policy["mode"],
+        "policy": policy,
+        "leaves": rows,
+        "summary": {
+            "evaluated": len(active),
+            "skipped_closed": len(leaves) - len(active),
+            "releasable": sum(1 for r in rows.values() if r["releasable"]),
+            "not_releasable": sum(1 for r in rows.values() if not r["releasable"]),
+            "advisories": sum(len(r["advisories"]) for r in rows.values()),
+            "by_class": dict(sorted(classes.items())),
+        },
+    }
+
+
+def decomposition_report(graph: Any, mode: str | None = None, closed: Iterable[str] = ()) -> dict[str, Any]:
+    """Evaluate the decomposition policy over every LEAF not in `closed` (e.g. already COMPLETE). Pure."""
+    if mode is not None and mode not in POLICY_MODES:
+        raise GraphError(f"mode: one of {list(POLICY_MODES)}")
+    indexed = validate_graph(graph)
+    closed_numbers = {ref_number(c) for c in closed}
+    return _decomposition(indexed, {r for r in indexed["nodes"] if indexed["nodes"][r]["number"] in closed_numbers}, mode)
+
+
+def render_decomposition(report: Mapping[str, Any]) -> str:
+    mode = report["mode"]
+    lines = [f"DECOMPOSITION GATE — {mode}" + (" (informational: nothing is enforced)" if mode == "OFF" else "")]
+    for ref, row in report["leaves"].items():
+        lines.append(f"{ref} [{row['work_class']}] {'RELEASABLE' if row['releasable'] else 'NOT_RELEASEABLE'}")
+        lines += [f"  BLOCKER  {f['code']}: {f['detail']}" for f in row["blockers"]]
+        lines += [f"  ADVISORY {f['code']}: {f['detail']}" for f in row["advisories"]]
+    s = report["summary"]
+    classes = ", ".join(f"{k} {v}" for k, v in s["by_class"].items())
+    lines.append(
+        f"SUMMARY: {s['evaluated']} leaves · {s['releasable']} releasable · {s['not_releasable']} not releasable"
+        f" · {s['advisories']} advisories · {s['skipped_closed']} closed (skipped) · classes: {classes or 'none'}"
+    )
+    return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------
+# conservation: re-planning must not create or destroy progress
+# --------------------------------------------------------------------------
+
+
+def _item_shares(indexed: Mapping[str, Any]) -> dict[tuple[int, str], Fraction]:
+    """Exact share of the whole programme carried by every unit and delivery gate.
+
+    share = Π(sibling weight / (Σ sibling weights + reserve)) down the lineage, then the unit's slice of the
+    leaf's coder share (or the gate's slice of the delivery weight). The shares plus every reserve sum to 1, so
+    adding, dropping, reweighting or moving work changes somebody's share unless the plan conserves it.
+    """
+    nodes = indexed["nodes"]
+    shares: dict[tuple[int, str], Fraction] = {}
+
+    def descend(ref: str, share: Fraction) -> None:
+        node = nodes[ref]
+        if node["kind"] == "LEAF":
+            unit_total = sum(u["weight"] for u in node["units"])
+            delivery_total = node["coder_weight"] + sum(g["weight"] for g in node["delivery_gates"])
+            coder = share * Fraction(node["coder_weight"], delivery_total)
+            for u in node["units"]:
+                shares[(node["number"], u["id"])] = coder * Fraction(u["weight"], unit_total)
+            for g in node["delivery_gates"]:
+                shares[(node["number"], f"gate:{g['id']}")] = share * Fraction(g["weight"], delivery_total)
+            return
+        den = sum(nodes[c]["weight"] for c in node["children"]) + node["reserve_weight"]
+        for child in node["children"]:
+            descend(child, share * Fraction(nodes[child]["weight"], den))
+
+    descend(indexed["root"], Fraction(1))
+    return shares
+
+
+def _lineage_numbers(indexed: Mapping[str, Any], number: int) -> set[int]:
+    ref = indexed["by_number"].get(number)
+    return {indexed["nodes"][r]["number"] for r in lineage(indexed, ref)} if ref else {number}
+
+
+def _item_text(indexed: Mapping[str, Any], key: tuple[int, str]) -> str:
+    return f"{indexed['by_number'].get(key[0], f'#{key[0]}')}:{key[1]}"
+
+
+def _points_text(share: Fraction, scale: int) -> str:
+    points = share * scale
+    return str(points.numerator) if points.denominator == 1 else f"{float(points):.2f}"
+
+
+def _policy_weakened(old: Mapping[str, Any], new: Mapping[str, Any]) -> list[str]:
+    """Ways in which `new` is a looser gate than `old`. Tightening is never reported."""
+    rank = {m: i for i, m in enumerate(POLICY_MODES)}
+    out = []
+    if rank[new["mode"]] < rank[old["mode"]]:
+        out.append(f"mode {old['mode']} -> {new['mode']}")
+    for section, key, looser_is_higher in (
+        ("units", "max", True),
+        ("units", "min", False),
+        ("units", "max_share_percent", True),
+        ("leaf_budget", "target_loc", True),
+        ("leaf_budget", "hard_loc", True),
+        ("leaf_budget", "target_minutes", True),
+        ("leaf_budget", "hard_minutes", True),
+    ):
+        before, after = old[section][key], new[section][key]
+        if (after > before) if looser_is_higher else (after < before):
+            out.append(f"{section}.{key} {before} -> {after}")
+    if new["min_leaf_target_loc"] < old["min_leaf_target_loc"]:
+        out.append(f"min_leaf_target_loc {old['min_leaf_target_loc']} -> {new['min_leaf_target_loc']}")
+    out += [f"require.{k} dropped" for k, v in old["require"].items() if v and not new["require"][k]]
+    return out
+
+
+def graph_diff(old_graph: Any, new_graph: Any) -> dict[str, Any]:
+    """Judge a re-plan (split, merge, reweight, drop) against the plan it replaces. Pure.
+
+    A unit or gate keeps its exact programme share across a re-plan unless a NEW `plan_updates` entry covers the
+    change, so splitting a leaf can neither manufacture progress nor delete it. Plan updates are append-only
+    history; each new one must carry `owner_authorized: true` and an `owner_basis`. Weakening the decomposition
+    policy needs a POLICY_CHANGE update. `owner_authorized` is a record for review, not proof of identity.
+    """
+    old, new = validate_graph(old_graph), validate_graph(new_graph)
+    old_shares, new_shares = _item_shares(old), _item_shares(new)
+    scale = new["total_weight"]
+    findings: list[dict[str, str]] = []
+
+    def add(code: str, detail: str, severity: str = "BLOCKER") -> None:
+        findings.append(_finding(code, detail, severity))
+
+    previous = {u["id"]: u for u in old["plan_updates"]}
+    current = {u["id"]: u for u in new["plan_updates"]}
+    for pid, u in previous.items():
+        if pid not in current or current[pid]["raw"] != u["raw"]:
+            add("PLAN_HISTORY_CHANGED", f"plan update {pid} was removed or edited; plan_updates is append-only")
+    fresh = [u for u in new["plan_updates"] if u["id"] not in previous]
+    for u in fresh:
+        if not (u["owner_authorized"] and u["owner_basis"]):
+            add("PLAN_UPDATE_UNAUTHORISED", f"{u['id']} ({u['kind']}) needs owner_authorized: true and an owner_basis")
+    used: set[str] = set()
+
+    def covered(kinds: set[str], key: tuple[int, str], scope_numbers: set[int]) -> bool:
+        for u in fresh:
+            if u["kind"] not in kinds:
+                continue
+            scope = set(u["node_numbers"])
+            if u["kind"] == "UNIT_DROPPED":  # dropping a unit re-normalises the rest of its leaf
+                scope |= {n for n, _ in u["unit_keys"]}
+            if key in u["unit_keys"] or scope & scope_numbers:
+                used.add(u["id"])
+                return True
+        return False
+
+    origin: dict[tuple[int, str], tuple[int, str] | None] = {}
+    claims: dict[tuple[int, str], list[tuple[int, str]]] = {}
+    for key in sorted(new_shares):
+        number, item = key
+        source: tuple[int, str] | None = key if key in old_shares else None
+        if source is None and not item.startswith("gate:"):
+            leaf = new["nodes"][new["by_number"][number]]
+            moved_from = next((u["moved_from"] for u in leaf["units"] if u["id"] == item and u["moved_from"]), None)
+            if moved_from is not None:
+                candidate = (ref_number(moved_from), item)
+                if candidate in old_shares:
+                    source = candidate
+                else:
+                    add("MOVE_ORIGIN_UNKNOWN", f"{_item_text(new, key)} claims moved_from {moved_from} but that leaf had no {item}")
+        origin[key] = source
+        if source is not None:
+            claims.setdefault(source, []).append(key)
+    for source, keys in sorted(claims.items()):
+        if len(keys) > 1:
+            add("MOVE_DUPLICATE", f"{_item_text(old, source)} is claimed by {_id_list(_item_text(new, k) for k in keys)}")
+
+    dropped = []
+    for source in sorted(old_shares):
+        if source in claims:
+            continue
+        dropped.append(_item_text(old, source))
+        if not covered({"UNIT_DROPPED", "SCOPE_REDUCTION"}, source, _lineage_numbers(old, source[0])):
+            add("UNIT_LOST", f"{_item_text(old, source)} no longer exists and no UNIT_DROPPED or SCOPE_REDUCTION update covers it")
+
+    drift: list[dict[str, str]] = []
+    for key, source in origin.items():
+        if source is None or new_shares[key] == old_shares[source]:
+            continue
+        diluted = new_shares[key] < old_shares[source]
+        kinds = {"SCOPE_EXPANSION", "UNIT_REWEIGHT"} if diluted else {"SCOPE_REDUCTION", "UNIT_REWEIGHT", "UNIT_DROPPED"}
+        row = {
+            "item": _item_text(new, key),
+            "points_before": _points_text(old_shares[source], scale),
+            "points_after": _points_text(new_shares[key], scale),
+        }
+        drift.append(row)
+        if not covered(kinds, key, _lineage_numbers(new, key[0]) | _lineage_numbers(old, source[0])):
+            add(
+                "POINTS_DRIFT",
+                f"{row['item']} {row['points_before']} -> {row['points_after']} points; "
+                f"no {' / '.join(sorted(kinds))} update covers it",
+            )
+
+    weakened = _policy_weakened(old["policy"], new["policy"])
+    policy_updates = [u for u in fresh if u["kind"] == "POLICY_CHANGE"]
+    if old["policy"] != new["policy"]:
+        used.update(u["id"] for u in policy_updates)
+    if weakened and not policy_updates:
+        add("POLICY_WEAKENED", f"{'; '.join(weakened)} without a POLICY_CHANGE update")
+    for u in fresh:
+        if u["id"] not in used:
+            add("PLAN_UPDATE_UNUSED", f"{u['id']} ({u['kind']}) covers nothing in this change", "ADVISORY")
+
+    ordered = sorted(findings, key=lambda f: (f["severity"] != "BLOCKER", f["code"], f["detail"]))
+    return {
+        "schema": DIFF_SCHEMA,
+        "authority": AUTHORITY,
+        "conserved": not any(f["severity"] == "BLOCKER" for f in ordered),
+        "findings": ordered,
+        "drift": drift,
+        "summary": {
+            "items_before": len(old_shares),
+            "items_after": len(new_shares),
+            "moved": sum(1 for k, s in origin.items() if s is not None and s != k),
+            "added": sum(1 for s in origin.values() if s is None),
+            "dropped": len(dropped),
+            "new_plan_updates": len(fresh),
+        },
+    }
+
+
+def render_graph_diff(report: Mapping[str, Any]) -> str:
+    s = report["summary"]
+    lines = [
+        f"PLAN CONSERVATION — {'CONSERVED' if report['conserved'] else 'NOT_CONSERVED'}",
+        f"items {s['items_before']} -> {s['items_after']} · moved {s['moved']} · added {s['added']} · dropped {s['dropped']}"
+        f" · new plan updates {s['new_plan_updates']}",
+    ]
+    lines += [f"  {f['severity']:<8} {f['code']}: {f['detail']}" for f in report["findings"]]
+    return "\n".join(lines)
 
 
 # --------------------------------------------------------------------------
@@ -1000,13 +1640,33 @@ def project(
     observations = {ref_number(k): dict(v or {}) for k, v in (observations or {}).items()}
     accepted, rejected = partition_ledger(indexed, ledger)
     results: dict[str, dict[str, Any]] = {}
+    mode = indexed["policy"]["mode"]
+
+    for ref in indexed["order"]:
+        if nodes[ref]["kind"] == "LEAF":
+            results[ref] = compute_leaf(nodes[ref], accepted.get(ref, []), observations.get(nodes[ref]["number"]))
+    if mode != "OFF":
+        # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
+        closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
+        for ref, row in _decomposition(indexed, closed)["leaves"].items():
+            leaf = results[ref]
+            leaf["plan"] = {
+                "mode": mode,
+                "releasable": row["releasable"],
+                "blockers": row["blockers"],
+                "advisories": row["advisories"],
+            }
+            if row["blockers"]:
+                leaf["warnings"].append("DECOMPOSITION_BLOCKERS:" + ",".join(sorted({b["code"] for b in row["blockers"]})))
+            if row["advisories"]:
+                leaf["warnings"].append("DECOMPOSITION_ADVISORIES:" + ",".join(sorted({a["code"] for a in row["advisories"]})))
+            if mode == "ENFORCED" and not row["releasable"] and leaf["state"] in _PLAN_OVERLAID_STATES:
+                leaf["state"] = "NOT_RELEASEABLE"
 
     def visit(ref: str) -> dict[str, Any]:
         node = nodes[ref]
         if node["kind"] == "LEAF":
-            leaf = compute_leaf(node, accepted.get(ref, []), observations.get(node["number"]))
-            results[ref] = leaf
-            return leaf
+            return results[ref]
         child_rows = [(c, visit(c)) for c in node["children"]]
         den = sum(nodes[c]["weight"] for c, _ in child_rows) + node["reserve_weight"]
         D = sum(Fraction(nodes[c]["weight"]) * _node_fraction(r, "D") for c, r in child_rows) / den
@@ -1018,6 +1678,9 @@ def project(
         leaf_rows = [results[leaf] for leaf in _leaves_under(indexed, ref)]
         critical = [r for leaf, r in zip(_leaves_under(indexed, ref), leaf_rows) if nodes[leaf]["critical"]]
         states = {r["state"] for r in leaf_rows}
+        unreleasable = [
+            leaf for leaf in _leaves_under(indexed, ref) if (results[leaf].get("plan") or {}).get("releasable") is False
+        ]
         if D == 1 and all(r["lifecycle"] in _TERMINAL for r in leaf_rows) and node["reserve_weight"] == 0:
             state = "COMPLETE"
         elif any(r["state"] == "STALE" for r in critical):
@@ -1030,13 +1693,17 @@ def project(
             state = "WAITING"
         elif frontier:
             state = "ACTIVE"
+        elif mode == "ENFORCED" and unreleasable:
+            state = "PLAN_GAP"  # nothing is moving and the plan, not the executors, is why
         else:
             state = "IDLE"
         warnings: list[str] = []
         if node["reserve_weight"]:
             warnings.append(f"UNDECOMPOSED_RESERVE:{node['reserve_weight']}")
+        if unreleasable:
+            warnings.append(f"DECOMPOSITION_BLOCKED_LEAVES:{len(unreleasable)}")
         result = {
-            "lifecycle": state if state in {"COMPLETE", "IDLE"} else "ACTIVE",
+            "lifecycle": {"COMPLETE": "COMPLETE", "IDLE": "IDLE", "PLAN_GAP": "IDLE"}.get(state, "ACTIVE"),
             "state": state,
             "progress": {
                 "D": percent(D),
@@ -1048,6 +1715,8 @@ def project(
             "children": node["children"],
             "warnings": warnings,
         }
+        if mode != "OFF":
+            result["plan"] = {"mode": mode, "not_releasable": len(unreleasable), "leaves": unreleasable}
         results[ref] = result
         return result
 
@@ -1175,9 +1844,19 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     ancestors = [nodes[r] for r in lineage_refs[:-1]]
     health = leaf["evidence"]["health"]
     gaps = leaf["evidence"]["gaps"]
+    plan = leaf.get("plan")
     if leaf["lifecycle"] in _TERMINAL:
         action = "NONE"
         next_text = f"{leaf['lifecycle']} — no further unit; select the next responsibility from the plan"
+    elif plan and plan["mode"] == "ENFORCED" and not plan["releasable"]:
+        action = "FIX_PLAN"
+        shown = "; ".join(f"{b['code']} ({b['detail']})" for b in plan["blockers"][:3])
+        more = f"; +{len(plan['blockers']) - 3} more" if len(plan["blockers"]) > 3 else ""
+        also = f"; evidence is also {health}" if health != "CURRENT" else ""
+        next_text = (
+            f"FIX_PLAN before coding — {shown}{more}{also} — "
+            "request a plan update (split or reweight) from the Coordinator; do not start or continue units"
+        )
     elif health != "CURRENT":
         action = "RECOVER_EVIDENCE"
         detail = ", ".join(f"{g['unit']}:{g['reason']}" for g in gaps) or health
@@ -1189,7 +1868,7 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
     else:
         action = "AWAIT_RESULT"
         next_text = "all declared units complete — publish the scoped result"
-    return {
+    report = {
         "command": command,
         "is_continuation": classify_continuation(command),
         "leaf": leaf_ref,
@@ -1210,6 +1889,10 @@ def admit(projection: Mapping[str, Any], leaf_ref: str, command: str = "continue
         "evidence_candidate": leaf["frontier"]["evidence_candidate"],
         "authority_effects": [],  # a continuation never changes parent, denominator, scope or merge authority
     }
+    if plan:  # present only when the decomposition gate is not OFF
+        report["plan"] = plan
+        report["plan_fix_required"] = action == "FIX_PLAN"
+    return report
 
 
 def render_checkpoint(report: Mapping[str, Any]) -> str:
@@ -1231,6 +1914,15 @@ def render_checkpoint(report: Mapping[str, Any]) -> str:
         f"CHILD: R:P{report['child']['P']}/E{report['child']['E']} · {report['child']['unit'] or 'NO_ACTIVE_UNIT'} · {report['state']}",
         f"EVIDENCE: {evidence}",
     ]
+    plan = report.get("plan")
+    if plan:
+        codes = ", ".join(b["code"] for b in plan["blockers"])
+        if plan["blockers"]:
+            lines.append(f"PLAN: {'NOT_RELEASEABLE' if plan['mode'] == 'ENFORCED' else 'WOULD_BLOCK (advisory)'} — {codes}")
+        elif plan["advisories"]:
+            lines.append(f"PLAN: RELEASABLE — ADVISORY: {', '.join(a['code'] for a in plan['advisories'])}")
+        else:
+            lines.append("PLAN: RELEASABLE")
     for ancestor in reversed(report["ancestors"]):
         label = "ROOT" if ancestor["scope"] == "Π" else "PARENT"
         lines.append(f"{label}: #{ref_number(ancestor['ref'])} {ancestor['scope']}:D{ancestor['D']}/E{ancestor['E']}")
@@ -1622,6 +2314,21 @@ def main(argv: list[str] | None = None) -> int:
     vf = sub.add_parser("validate-facts", help="Reject agent-authored progress/titles; exit 1 on any violation.")
     vf.add_argument("facts", type=Path, nargs="+")
 
+    dc = sub.add_parser(
+        "decompose-check",
+        help="Judge the plan against the decomposition policy; exit 1 on blockers when the effective mode is ENFORCED.",
+    )
+    dc.add_argument("--graph", type=Path, required=True)
+    dc.add_argument("--mode", choices=POLICY_MODES, help="Override programme.decomposition_policy.mode for this run.")
+    dc.add_argument("--facts", type=Path, nargs="*", default=[], help="Skip leaves these facts show COMPLETE or SUPERSEDED.")
+    dc.add_argument("--observations", type=Path)
+    dc.add_argument("--json", action="store_true")
+
+    gd = sub.add_parser("graph-diff", help="Check that a re-plan conserves progress and records its scope changes; exit 1 on blockers.")
+    gd.add_argument("--old", type=Path, required=True, help="The plan being replaced (e.g. the PR base version).")
+    gd.add_argument("--new", type=Path, required=True)
+    gd.add_argument("--json", action="store_true")
+
     pr = sub.add_parser("project")
     pr.add_argument("--graph", type=Path, required=True)
     pr.add_argument("--facts", type=Path, nargs="*", default=[])
@@ -1679,8 +2386,26 @@ def main(argv: list[str] | None = None) -> int:
                         for error in errors:
                             print(f"  - {error}", file=sys.stderr)
             return 1 if failed else 0
+        if args.cmd == "graph-diff":
+            diff = graph_diff(_load_structured(args.old), _load_structured(args.new))
+            if args.json:
+                _emit(diff, None)
+            else:
+                print(render_graph_diff(diff))
+            return 0 if diff["conserved"] else 1
 
         graph = _load_structured(args.graph)
+        if args.cmd == "decompose-check":
+            closed: list[str] = []
+            if args.facts:
+                seen = project(graph, _load_ledger(args.facts), _load_structured(args.observations) if args.observations else {})
+                closed = [r for r, n in seen["nodes"].items() if n["kind"] == "LEAF" and n["lifecycle"] in _TERMINAL]
+            report = decomposition_report(graph, args.mode, closed)
+            if args.json:
+                _emit(report, None)
+            else:
+                print(render_decomposition(report))
+            return 1 if report["mode"] == "ENFORCED" and report["summary"]["not_releasable"] else 0
         if args.cmd == "sync-github" and args.dry_run:
             _emit(plan_github(GhTransport(args.repository), graph), None)
             return 0

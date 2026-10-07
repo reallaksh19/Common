@@ -1,9 +1,16 @@
 # Coordinator-authored plan. Lineage, weights and denominators live here and nowhere else.
+#
+# decomposition_policy.mode ENFORCED: `decompose-check` fails, and every continuation answers FIX_PLAN, for a leaf
+# that is not small, verifiable and collision-free. Defaults: 3-8 units, no unit above 40%, size budget within
+# 700 target / 1500 hard LOC and 15 target / 20 hard minutes. Every leaf below passes the gate as written.
 schema: relay-v3.5-delp-execution-graph
 programme:
   id: COMMON-PROD-CONTROL-V1
   root: Common#527
   repository: reallaksh19/Common
+  total_weight: 10000 # display scale for unit points only; it never changes a percentage
+  decomposition_policy:
+    mode: ENFORCED
 nodes:
   - {ref: Common#527, kind: ROOT}
   - {ref: Common#588, kind: INTERMEDIATE, parent: Common#527, weight: 3}
@@ -15,20 +22,36 @@ nodes:
     responsibility_id: P3-I-R2
     primary_pr: Common#593
     critical: true
+    outcome: The replay lane re-runs a recorded session and fails on any divergence.
+    size_budget: {target_loc: 600, hard_loc: 1200, target_minutes: 15, hard_minutes: 20}
+    write_surface: [src/replay/]
     units:
-      - {id: U01, weight: 20}
-      - {id: U02, weight: 30}
-      - {id: U03, weight: 25}
-      - {id: U04, weight: 25}
+      - {id: U01, weight: 20, verify: recorder unit tests pass}
+      - {id: U02, weight: 30, verify: the recorded fixture round-trips byte for byte}
+      - {id: U03, weight: 25, verify: positive replay of the golden session passes}
+      - {id: U04, weight: 25, verify: negative replay of a mutated fixture is rejected}
   - ref: Common#594
     kind: LEAF
     parent: Common#588
     weight: 1
     primary_pr: Common#595
-    units: [{id: V1, weight: 50}, {id: V2, weight: 50}]
+    depends_on: [Common#592] # shares src/replay/ with #592, so it is ordered after it
+    outcome: Replay results are published as TASK_EVIDENCE with durable refs.
+    size_budget: {target_loc: 400, hard_loc: 900, target_minutes: 12, hard_minutes: 18}
+    write_surface: [src/replay/, docs/replay.md]
+    units:
+      - {id: V1, weight: 40, verify: the publisher emits CHECKPOINT_FACTS_V1}
+      - {id: V2, weight: 30, verify: evidence refs resolve to the replay artefacts}
+      - {id: V3, weight: 30, verify: docs/replay.md matches the shipped command}
   - ref: Common#612
     kind: LEAF
     parent: Common#610
     weight: 1
     primary_pr: Common#613
-    units: [{id: W1, weight: 100}]
+    outcome: The operator runbook documents recovery from a stale candidate.
+    size_budget: {target_loc: 300, hard_loc: 700, target_minutes: 10, hard_minutes: 15}
+    write_surface: [docs/runbook.md]
+    units:
+      - {id: W1, weight: 40, verify: the runbook lists every evidence-gap reason}
+      - {id: W2, weight: 30, verify: each recovery step names its command}
+      - {id: W3, weight: 30, verify: markdown links resolve}

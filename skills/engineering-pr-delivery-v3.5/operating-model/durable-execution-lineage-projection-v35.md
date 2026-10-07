@@ -77,6 +77,7 @@ nodes:
 - **Parent issues are not execution workspaces.** Material work is a `LEAF`; a facts record addressed to a non-leaf issue is rejected.
 - A split conserves weight; progressive decomposition consumes an explicit `reserve_weight`, which counts as zero progress and blocks `COMPLETE`; true scope expansion changes the denominator by editing the graph (record it as `PLAN_UPDATE — SCOPE_EXPANSION`). A percentage may legitimately fall; the projector never renormalises to preserve one.
 - `delivery_gates` (+ `coder_weight`, default 60 when gates exist) keep Coder `P100` from meaning delivery `D100`: reviewer acceptance, super review and final hand-off add delivery weight only with their own current evidence.
+- A leaf also carries its **decomposition contract** (`outcome`, `size_budget`, `write_surface`, `depends_on`, a `verify` step per unit). The progress maths never reads it; the [decomposition gate](#decomposition-gate--small-verifiable-collision-free-leaves) judges it.
 
 ## How numbers are computed
 
@@ -104,7 +105,7 @@ programme     🟢 [#527] Π:D72/E70 · F3 · ACTIVE — <programme>
 
 `›` is ownership/hierarchy; `→` is the material PR relation (a PR is not another programme child). `P`/`D` are semantic/delivery progress, `E` is the evidenced part of it, `F` is the number of active frontier leaves under the node. The scope letter is mandatory: a bare `P56% / E56%` is invalid. Active-unit token: the agent's `next.unit` if it names a declared incomplete unit, otherwise the first incomplete unit.
 
-State words → light: `ACTIVE 🟢`; `WAITING_* / WAITING 🔵`; `EVIDENCE_GAP`, `EVIDENCE_STALE`, `QUIET`, `RECOVERING 🟡`; `STALE 🔴`; `COMPLETE ✅`; `NOT_STARTED`, `PAUSED`, `SUPERSEDED`, `IDLE ⚪`. Ancestor state is derived from the subtree without averaging colours: red if a `critical` leaf is stale; yellow for any evidence gap/stale, critical quiet/recovering or non-critical stale; blue if only critical work is waiting; green while frontier work is active; `COMPLETE` only when every leaf is terminal, delivery is 100 and no reserve remains.
+State words → light: `ACTIVE 🟢`; `WAITING_* / WAITING 🔵`; `EVIDENCE_GAP`, `EVIDENCE_STALE`, `QUIET`, `RECOVERING`, `NOT_RELEASEABLE`, `PLAN_GAP 🟡`; `STALE 🔴`; `COMPLETE ✅`; `NOT_STARTED`, `PAUSED`, `SUPERSEDED`, `IDLE ⚪`. Ancestor state is derived from the subtree without averaging colours: red if a `critical` leaf is stale; yellow for any evidence gap/stale, critical quiet/recovering or non-critical stale; blue if only critical work is waiting; green while frontier work is active; `PLAN_GAP` (yellow) only when the decomposition gate is `ENFORCED`, nothing is active and a leaf below fails the gate; `COMPLETE` only when every leaf is terminal, delivery is 100 and no reserve remains.
 
 The human part (`— <responsibility>`) is the only thing an agent or Owner edits. The projector splits an existing title into generated prefix + base, recognising the legacy forms `🟢 {P42% · E31% · A07 · U03 · ACTIVE} <title>` and `<title> {P50% · E50% · UNIT-02 · IMPLEMENTING}`, so migration is automatic at the next pass. Titles are capped at 250 characters by truncating the human base, never the projection. `A<n>` (activity epoch) is no longer in the title; it is `activity_epoch` in `LIVE_STATUS_V1`.
 
@@ -157,7 +158,110 @@ OWNER_ACTION: NONE
 NEXT: U04 — negative replay
 ```
 
-With a gap the barrier forces recovery first (`NEXT: RECOVER_EVIDENCE before new coding — U03:NO_EVIDENCE_REFS`, `recovery_required: true`). Admission is pure: `authority_effects` is always empty — a continuation never changes the parent, denominator, scope, priority or merge authority; a genuine priority change is an explicit custody transition (`PAUSED` at an exact durable frontier, successor `ACTIVE` after fresh reconstruction).
+With a gap the barrier forces recovery first (`NEXT: RECOVER_EVIDENCE before new coding — U03:NO_EVIDENCE_REFS`, `recovery_required: true`). When the decomposition gate is `ENFORCED` and the leaf's plan fails it, the barrier answers `FIX_PLAN` before anything else (see [the gate](#decomposition-gate--small-verifiable-collision-free-leaves)); an evidence gap is still reported alongside it. Admission is pure: `authority_effects` is always empty — a continuation never changes the parent, denominator, scope, priority or merge authority; a genuine priority change is an explicit custody transition (`PAUSED` at an exact durable frontier, successor `ACTIVE` after fresh reconstruction).
+
+## Decomposition gate — small, verifiable, collision-free leaves
+
+DELP keeps progress honest *after* a plan exists. The gate makes the plan itself fit to hand to an agent *before* work starts, with the same discipline: the Coordinator authors the plan, a pure function judges it, the verdict is derived and disposable, and an agent cannot argue with it by publishing a fact (a facts record carrying a `plan` field is rejected: it is not an allowed field). **The gate never moves a percentage**; it only adds a `plan` block, the states `NOT_RELEASEABLE` / `PLAN_GAP` and the admission action `FIX_PLAN`.
+
+### The leaf contract
+
+```yaml
+programme:
+  total_weight: 10000                 # display scale for "unit points"; never changes a percentage
+  decomposition_policy: {mode: ENFORCED}   # OFF (default) | ADVISORY | ENFORCED
+nodes:
+  - ref: Common#594
+    kind: LEAF
+    parent: Common#588
+    weight: 1
+    primary_pr: Common#595
+    work_class: PRODUCT               # PRODUCT (default) | MECHANICAL | GATE
+    outcome: Replay results are published as TASK_EVIDENCE with durable refs.
+    size_budget: {target_loc: 400, hard_loc: 900, target_minutes: 12, hard_minutes: 18}
+    write_surface: [src/replay/, docs/replay.md]   # files, or directories ending in '/'; no globs
+    depends_on: [Common#592]          # ordering between leaves
+    units:
+      - {id: V1, weight: 40, verify: the publisher emits CHECKPOINT_FACTS_V1}
+      - {id: V2, weight: 30, verify: evidence refs resolve to the replay artefacts}
+      - {id: V3, weight: 30, verify: docs/replay.md matches the shipped command}
+```
+
+| Rule (defaults) | Finding | Severity |
+|---|---|---|
+| 3–8 units per `PRODUCT` leaf | `UNITS_BELOW_MIN`, `UNITS_ABOVE_MAX` (the ceiling applies to every class) | blocker |
+| no unit above 40% of the leaf (exact integer comparison) | `UNIT_SHARE_OVER` | blocker |
+| every unit names how it is verified | `UNIT_VERIFY_MISSING` | blocker |
+| the leaf states one observable outcome | `OUTCOME_MISSING` | blocker |
+| the leaf declares its write surface | `WRITE_SURFACE_MISSING` | blocker |
+| the leaf declares all four `size_budget` keys | `SIZE_BUDGET_MISSING`, `SIZE_BUDGET_INCONSISTENT` (target above hard) | blocker |
+| declared hard cap within 1500 LOC / 20 min | `SIZE_OVER_HARD`, with the number of leaves it would take at target size | blocker |
+| declared target within 700 LOC / 15 min | `SIZE_OVER_TARGET` | advisory |
+| `PRODUCT` leaf target of at least 50 LOC | `LEAF_TOO_SMALL` (an issue and a PR cost more than the work) | advisory |
+| overlapping write surfaces are ordered by `depends_on` (transitively) or declared `parallel_ok` | `WRITE_SURFACE_COLLISION` on both leaves | blocker |
+| `parallel_ok` carries a `parallel_ok_basis` | `PARALLEL_BASIS_MISSING` | blocker |
+
+`MECHANICAL` and `GATE` leaves (rote batch work, review-only leaves) are exempt from the unit-count floor and the share cap **only**; every other rule still applies, and `decompose-check` prints how many leaves use each class so an over-used exemption is visible in review. Leaves that are `COMPLETE` or `SUPERSEDED` are history and are not judged, and they do not collide with anything (the projection always knows which they are; `decompose-check` knows when given `--facts`). Write surfaces are matched as repo-relative paths: a file equals itself, a directory prefix (trailing `/`) covers everything beneath it, and `src/59/` does not cover `src/592/`.
+
+**Why these defaults.** They follow the written budgets in `PROGRAMME_DECOMPOSITION_PROGRESS.md` (700 target / 1500 hard changed lines, 15 / 20 minutes) and sit near the Young/Daly interval `√(2·δ·M)` for work that is interrupted at random: δ is the cost of a checkpoint and M the mean time between interruptions. Informative, not normative: on the Common executors on 6–7 October 2026 roughly nine interruption episodes (connection loss, stream errors, usage waits) occurred in under seven hours and a checkpoint cost about four minutes, so `√(2·4·45) ≈ 19` minutes. Recompute it with your own rates and override `decomposition_policy.leaf_budget`; `graph-diff` turns any loosening into a recorded Owner decision.
+
+### Modes and what each one changes
+
+| Mode | `decompose-check` | Projection | Admission |
+|---|---|---|---|
+| `OFF` (default) | informational, exit 0 | no `plan` block, state, title or warning is added; node output is identical to a graph without a policy | unchanged |
+| `ADVISORY` | exit 0 | `plan` block and `DECOMPOSITION_BLOCKERS:…` / `DECOMPOSITION_ADVISORIES:…` warnings; no state or title change | `PLAN: WOULD_BLOCK (advisory) — …` line; action unchanged |
+| `ENFORCED` | exit 1 on any blocker | a failing leaf becomes `NOT_RELEASEABLE` 🟡 (it replaces `NOT_STARTED` and `ACTIVE` only; every other state is more urgent or already means the leaf is not being worked, and stays); an ancestor shows `PLAN_GAP` only when nothing below it is active and no more urgent state applies | `FIX_PLAN before coding — <code (detail)>… — request a plan update (split or reweight) from the Coordinator; do not start or continue units` |
+
+A leaf that is `NOT_RELEASEABLE` keeps its real `lifecycle` and still counts on the frontier if it is active. Adopt it in three steps: leave it `OFF`; run `decompose-check --mode ADVISORY` to see every finding with no effect; fix the plan; then set `ENFORCED`. `require: {outcome: false, …}` lets a programme enforce only part of the contract while it adopts the rest.
+
+### Re-planning must conserve progress — `graph-diff`
+
+A split, merge, reweight or drop is a plan change and the easiest place to manufacture or lose progress. Every unit and delivery gate has an exact **share of the whole programme**:
+
+```text
+share(unit) = Π (sibling weight / (Σ sibling weights + reserve)) down the lineage × leaf coder share × (unit weight / Σ unit weights)
+points      = share × programme.total_weight                      (display only)
+```
+
+The shares plus every reserve sum to 1, so any change that does not conserve a share moves somebody else's. `graph-diff --old <plan being replaced> --new <proposed plan>` compares them per item (a moved unit is followed through `moved_from: <old leaf>`, same unit id):
+
+| Finding | Meaning | Severity |
+|---|---|---|
+| `POINTS_DRIFT` | a persisting unit or gate changed share and no covering **new** plan update exists | blocker |
+| `UNIT_LOST` | a unit or gate disappeared with no covering `UNIT_DROPPED` / `SCOPE_REDUCTION` | blocker |
+| `MOVE_ORIGIN_UNKNOWN`, `MOVE_DUPLICATE` | `moved_from` names work the old plan never had, or one old unit is claimed twice | blocker |
+| `PLAN_UPDATE_UNAUTHORISED` | a new update lacks `owner_authorized: true` or an `owner_basis` | blocker |
+| `PLAN_HISTORY_CHANGED` | an earlier update was edited or removed (`plan_updates` is append-only) | blocker |
+| `POLICY_WEAKENED` | mode, limits or `require` loosened without a `POLICY_CHANGE` update | blocker |
+| `PLAN_UPDATE_UNUSED` | a new update covers nothing in this change | advisory |
+
+A conserving split needs no update. Worked example (pinned by `PlanConservation`): leaf #592 (weight 3, units U01 20 / U02 30 / U03 25 / U04 25) under #588 beside #594 (weight 1). Move U03 and U04 into a new sibling #620 and rescale the siblings so the parent's denominator is unchanged: #592 keeps weight 3 with U01/U02, #594 becomes weight 2, #620 gets weight 3 with U03/U04 (`moved_from: Common#592`). Every unit keeps its share (U03 stays 9/64 of the programme, 1406.25 points), so the diff reports `CONSERVED` with `moved 2`. Give #620 weight 1 instead and every unit under #588 drifts — U03 falls to 625 points — and the diff names each one. Decomposing `reserve_weight` into new leaves at the same total conserves the existing shares and needs no update; adding scope dilutes everybody and is declared once:
+
+```yaml
+plan_updates:                         # append-only
+  - id: PU-2026-10-07-01
+    kind: SCOPE_EXPANSION             # SCOPE_EXPANSION | SCOPE_REDUCTION | UNIT_REWEIGHT | UNIT_DROPPED | POLICY_CHANGE
+    nodes: [Common#588]               # name the node whose denominator changed (and/or units: [Common#592:U04, Common#592:gate:REVIEWER])
+    reason: new replay lane added to the phase
+    owner_authorized: true
+    owner_basis: "Owner instruction in chat, 2026-10-07: …"
+```
+
+A `UNIT_DROPPED` update also covers the re-normalisation of the remaining units of the leaf it drops from; a `UNIT_REWEIGHT` or a node-level update covers every unit beneath the node it names. `total_weight` is a display scale: changing it is never drift.
+
+### Where it bites
+
+1. **Plan time (CI).** `decompose-check --graph G` fails the pull request that edits the graph; `graph-diff --old <base version> --new <head version>` fails a re-plan that does not conserve shares:
+
+   ```text
+   python scripts/delp_projection_v35.py decompose-check --graph relay/DELP_EXECUTION_GRAPH.yaml
+   git show "$BASE_SHA:relay/DELP_EXECUTION_GRAPH.yaml" > /tmp/base-graph.yaml
+   python scripts/delp_projection_v35.py graph-diff --old /tmp/base-graph.yaml --new relay/DELP_EXECUTION_GRAPH.yaml
+   ```
+2. **Task start.** Every `continue`/`proceed` passes `admit`; under `ENFORCED` an unreleasable leaf answers `FIX_PLAN` and an agent has no unit to start.
+3. **Title.** `🟡 [#527 › #588 › #594 → PR#595] R:P0/E0 · V1 · NOT_RELEASEABLE` is visible to the Owner without opening anything.
+4. **Mid-flight.** An agent that finds its leaf bigger than planned publishes `blocker:` text and stops at an exact frontier; the Coordinator splits the leaf and the `graph-diff` result is the evidence that no progress was created or lost.
 
 ## Multi-agent concurrency
 
@@ -170,6 +274,8 @@ validate-graph --graph G                         plan is structurally valid
 validate-facts F...                              reject agent-authored projections (exit 1)
 project --graph G --facts F... --observations O  deterministic projection JSON (+ expected titles)
 admit --graph G --facts F --observations O --leaf L --command continue
+decompose-check --graph G [--mode M] [--facts F --observations O]   judge the plan against the decomposition policy (exit 1 on blockers when ENFORCED)
+graph-diff --old G0 --new G1                     a re-plan must conserve every unit's share and record its scope changes (exit 1 otherwise)
 verify-titles --graph G --facts F --observations O --actual-titles T     (exit 2 on drift)
 sync-github --graph G --repository owner/repo    observe PR heads + CHECKPOINT_FACTS_V1 comments, write titles + LIVE_STATUS with compare-and-swap
 sync-github ... --dry-run                        read-only first run: drift, rejected facts and the exact titles it would write
@@ -200,7 +306,11 @@ The runner (Coordinator tick or a scoped workflow) is the **only** writer of gen
 9. Continuation commands reconstruct before executing and never change programme semantics.
 10. Parent issues with material work materialise explicit child leaves.
 11. Titles and `LIVE_STATUS_V1` are disposable projections, never authority; if every title and status disappeared they would be rebuilt from durable sources.
+12. The decomposition gate judges the plan only: it never reads facts, never moves a percentage, and with the mode `OFF` adds nothing to any node or admission output.
+13. Under `ENFORCED`, a leaf whose plan fails the gate is never admitted to new work (`FIX_PLAN`), and a re-plan that moves any unit's programme share without a covering, authorised, append-only plan update is rejected by `graph-diff`.
 
 ## Not claimed
 
 DELP cannot technically prevent a human or agent from hand-editing a GitHub title or comment; it makes that edit non-authoritative, detectable and self-correcting. It does not verify that an agent's evidence ref is truthful (that remains review, `NOT_RUN` integrity and the evidence gate); it verifies that evidence exists, is typed, and is bound to the current candidate. It does not grant or infer merge, acceptance or programme authority.
+
+The decomposition gate checks that a plan is self-consistent, sized within policy and collision-free *as declared*; it cannot know whether a size estimate is honest or whether a declared `write_surface` matches the diff that is eventually pushed (comparing the two is a separate, runtime check). It checks that a `verify` step is present, not that it is a good one. A `MECHANICAL` or `GATE` classification is a Coordinator declaration, made visible by the class counts but not independently verified. `owner_authorized` and `owner_basis` in a plan update are a durable, reviewable record, not proof of who wrote them: the Owner's review of the pull request that edits the graph remains the control, and verifying the cited basis against the repository's own comments is future work.
