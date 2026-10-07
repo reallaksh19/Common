@@ -968,7 +968,13 @@ def _size_budget(value: Any, ref: str) -> dict[str, int] | None:
 
 
 def _transformation_boundaries(value: Any, ref: str) -> list[str]:
-    values = _str_list(value, f"{ref}.transformation_boundaries")
+    if value is None:
+        return []
+    if not isinstance(value, list) or not all(isinstance(item, str) and item for item in value):
+        raise GraphError(f"{ref}.transformation_boundaries: must be a list of exact boundary tokens")
+    if any(item != item.strip() for item in value):
+        raise GraphError(f"{ref}.transformation_boundaries: tokens must not contain surrounding whitespace")
+    values = list(value)
     duplicates = sorted({item for item in values if values.count(item) > 1})
     if duplicates:
         raise GraphError(f"{ref}.transformation_boundaries: duplicate values {duplicates}")
