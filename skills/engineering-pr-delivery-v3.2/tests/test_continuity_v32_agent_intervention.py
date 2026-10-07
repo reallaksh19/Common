@@ -119,7 +119,24 @@ class AgentInterventionTests(unittest.TestCase):
         ])
         out = intervention(trajectory((1, good("W1")), (2, degraded)))
         self.assertEqual(
-            ("FRESH_RECONSTRUCTION", "DEGRADING_WITH_CRITICAL_UNCERTAINTY"),
+            ("FRESH_RECONSTRUCTION", "CRITICAL_UNCERTAINTY_PRESENT"),
+            (out["recommendation"], out["reason"]),
+        )
+
+    def test_stable_with_persistent_critical_unknown_requires_fresh_reconstruction(self):
+        def uncertain(window_id):
+            return quality(window_id, [
+                obs("M1", "MUTATION", "DETECTED", critical=True, covered=1),
+                obs("U1", "MUTATION", "UNKNOWN", critical=True),
+                obs("C1", "CLEAN_CONTROL", "CLEAN_ACCEPTED"),
+                obs("C2", "CLEAN_CONTROL", "CLEAN_ACCEPTED"),
+            ])
+
+        value = trajectory((1, uncertain("W1")), (2, uncertain("W2")))
+        self.assertEqual("STABLE", value["trajectory"])
+        out = intervention(value)
+        self.assertEqual(
+            ("FRESH_RECONSTRUCTION", "CRITICAL_UNCERTAINTY_PRESENT"),
             (out["recommendation"], out["reason"]),
         )
 
@@ -170,6 +187,22 @@ class AgentInterventionTests(unittest.TestCase):
         tampered["reason"] = "MONOTONIC_DEGRADATION"
         with self.assertRaises(M3.InterventionError):
             intervention(tampered)
+
+    def test_duplicate_m2_window_identity_rejects_even_with_recomputed_digest(self):
+        value = trajectory((1, poor("W1")), (2, good("W2")))
+        duplicate = copy.deepcopy(value)
+        duplicate["windows"][1]["window_id"] = duplicate["windows"][0]["window_id"]
+        duplicate["trajectory_digest"] = M3._digest({
+            "trajectory_id": duplicate["trajectory_id"],
+            "comparison_basis": duplicate["comparison_basis"],
+            "input_digest": duplicate["input_digest"],
+            "trajectory": duplicate["trajectory"],
+            "reason": duplicate["reason"],
+            "windows": duplicate["windows"],
+            "components": duplicate["components"],
+        })
+        with self.assertRaises(M3.InterventionError):
+            intervention(duplicate)
 
     def test_output_is_advisory_only_with_zero_authority_leakage(self):
         source = {"schema": M3.INPUT_SCHEMA, "trajectory": trajectory((1, poor("W1")), (2, good("W2")))}
