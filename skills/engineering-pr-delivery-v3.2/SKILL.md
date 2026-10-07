@@ -186,6 +186,8 @@ Normative contract: `operating-model/durable-execution-lineage-projection-v32.md
 
 **Handover frontier.** A handover is the predecessor's view at one instant, never current truth, and must carry no hand-computed number. `frontier` derives it (provider-observed base, candidate and divergence; derived state, exact `P/E`, evidence health; input digests) and `frontier-verify` checks a handed-over snapshot against live truth: any moved input (`BASE`, `CANDIDATE_HEAD`, `PR_STATE`, `LIVENESS`, `FACTS`, `PLAN`) exits 2 with `RECONCILE`. Every `CONTINUE CHECKPOINT` carries a `FRONTIER:` line.
 
+**Agent health.** Health is observed or derived, never declared (a dead or looping executor cannot report it). With `programme.health_policy.mode: ADVISORY`, started leaves carry a `health` block of seven components (`materialization`, `evidence`, `checkpoint_distance`, `size`, `base_drift`, `interruptions`, `liveness`) using the programme's own written thresholds (250 / 500 lines, the third stream loss); the verdict is the worst component, `UNOBSERVED` is never healthy, and it is advisory: it never moves a number, state, title or admission answer. Telemetry constrains delivery; it does not measure value. `delp_projection_v32.py health` prints it; each `CONTINUE CHECKPOINT` carries a `HEALTH:` line.
+
 This section is an Owner-directed amendment of the V3.2 tree (see the contract's "Amendment of V3.2" and `skills/Local_PR_Deliverty_v1.1/integration/frozen-v32-amendments.yaml`); it does not otherwise unfreeze V3.2.
 
 ## Checkpoint-before-continue — write-ahead continuity barrier

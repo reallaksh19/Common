@@ -57,6 +57,32 @@ properties:
           health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
           gaps: {type: array}
       frontier: {type: object}
+      health:
+        type: object
+        description: >-
+          Advisory delivery-continuity health, present only when programme.health_policy.mode is ADVISORY and the leaf has started
+          (not NOT_STARTED, COMPLETE or SUPERSEDED). LEAF: the verdict, its light, the seven components and the reasons. ROOT/INTERMEDIATE:
+          the worst verdict over the started leaves below, with counts. Observed or derived, never declared; it never moves a number,
+          a state or a title. UNOBSERVED means nothing was observed and is never read as healthy.
+        required: [mode, verdict, light, advisory]
+        properties:
+          mode: {const: ADVISORY}
+          verdict: {enum: [HEALTHY, UNOBSERVED, WATCH, AT_RISK]}
+          light: {enum: ["🟢", "⚪", "🟡", "🔴"]}
+          advisory: {const: true}
+          components:
+            type: object
+            propertyNames: {enum: [materialization, evidence, checkpoint_distance, size, base_drift, interruptions, liveness]}
+            additionalProperties:
+              type: object
+              required: [status, detail]
+              properties:
+                status: {enum: [OK, UNOBSERVED, WATCH, AT_RISK]}
+                detail: {type: string}
+          reasons: {type: array, items: {type: string}}
+          leaves: {type: integer, minimum: 1}
+          counts: {type: object, propertyNames: {enum: [HEALTHY, UNOBSERVED, WATCH, AT_RISK]}, additionalProperties: {type: integer, minimum: 1}}
+          at_risk: {type: array, items: {type: string}}
       materialization:
         type: object
         description: >-

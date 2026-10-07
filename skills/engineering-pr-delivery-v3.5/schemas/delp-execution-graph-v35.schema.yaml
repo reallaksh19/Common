@@ -47,6 +47,36 @@ properties:
         type: integer
         minimum: 1
         description: Display scale for unit points (default 10000). Shares are exact fractions; this never changes a percentage.
+      health_policy:
+        type: object
+        additionalProperties: false
+        description: >-
+          Advisory delivery-continuity health (mode OFF by default; ADVISORY adds a health block to started leaves and their
+          ancestors). Health is observed or derived, never declared, and never moves a number, a state or a title or blocks work.
+          Defaults are the programme's written rules: checkpoint trigger 250 / hard ceiling 500 newly authored lines (400 / 700 changed),
+          and a handover is planned at the third stream loss in one executor lifecycle. Elapsed time alone is not a rule.
+        properties:
+          mode: {enum: [OFF, ADVISORY]}
+          checkpoint:
+            type: object
+            additionalProperties: false
+            properties:
+              watch_added_loc: {type: integer, minimum: 1}
+              at_risk_added_loc: {type: integer, minimum: 1}
+              watch_changed_loc: {type: integer, minimum: 1}
+              at_risk_changed_loc: {type: integer, minimum: 1}
+          drift:
+            type: object
+            additionalProperties: false
+            properties:
+              watch_behind: {type: integer, minimum: 1}
+              at_risk_behind: {type: integer, minimum: 1}
+          interruptions:
+            type: object
+            additionalProperties: false
+            properties:
+              watch: {type: integer, minimum: 1}
+              at_risk: {type: integer, minimum: 1}
       decomposition_policy:
         type: object
         additionalProperties: false
