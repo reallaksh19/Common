@@ -190,6 +190,8 @@ def repository_observation_currentness(
         }
     if not isinstance(observation, Mapping):
         raise ObservationError(f"{leaf_ref}: observation must be a mapping or null")
+    if observation.get("schema") != SCHEMA:
+        raise ObservationError(f"{leaf_ref}: observation schema must be {SCHEMA}")
     if observation.get("authority") != "OBSERVED_REPOSITORY_BASIS":
         raise ObservationError(f"{leaf_ref}: observation authority must be OBSERVED_REPOSITORY_BASIS")
     if observation.get("subject") != leaf_ref:
