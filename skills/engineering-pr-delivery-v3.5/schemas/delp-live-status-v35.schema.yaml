@@ -28,7 +28,7 @@ properties:
       kind: {enum: [ROOT, INTERMEDIATE, LEAF]}
       lifecycle: {type: string}
       state:
-        enum: [ACTIVE, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, UNMATERIALIZED, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
+        enum: [ACTIVE, HANDOFF, RECONSTRUCTING, WAITING, WAITING_CI, WAITING_TOOL, WAITING_EXTERNAL, WAITING_PROVIDER_VISIBILITY, RECOVERING, QUIET, EVIDENCE_GAP, EVIDENCE_STALE, UNMATERIALIZED, NOT_RELEASEABLE, PLAN_GAP, STALE, COMPLETE, SUPERSEDED, NOT_STARTED, PAUSED, IDLE]
       light: {enum: ["🟢", "🟡", "🔵", "🔴", "✅", "⚪"]}
       identity:
         type: object
@@ -77,6 +77,20 @@ properties:
           health: {enum: [CURRENT, GAP, STALE_CANDIDATE, UNVERIFIABLE]}
           gaps: {type: array}
       frontier: {type: object}
+      successor_policy:
+        type: [object, "null"]
+        description: Plan-owned policy for the current active unit; never progress authority.
+      handover:
+        type: object
+        description: Derived custody/reconstruction projection from accepted handover facts.
+        properties:
+          status: {enum: [HANDOFF, RECONSTRUCTING, RECONCILED]}
+          mode: {enum: [CONTINUITY, INDEPENDENT_RECONSTRUCTION]}
+          decision_at_risk: {type: string}
+          frontier_digest: {type: string, pattern: '^sha256:[0-9a-f]{64}$'}
+          predecessor_ref: {type: [string, "null"]}
+          result: {type: [string, "null"]}
+          matched: {type: boolean}
       health:
         type: object
         description: >-
