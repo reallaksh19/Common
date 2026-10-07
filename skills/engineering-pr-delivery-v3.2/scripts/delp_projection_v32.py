@@ -862,7 +862,8 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
     for index, raw in enumerate(raw_rows):
         where = f"programme.decomposition_proposal.responsibilities[{index}]"
         required = {"id", "work_class", "owns_claims", "outcome", "independence_basis", "semantic_units"}
-        if not isinstance(raw, Mapping) or set(map(str, raw)) != required:
+        allowed = required | {"mechanism_exception"}
+        if not isinstance(raw, Mapping) or not required.issubset(set(map(str, raw))) or set(map(str, raw)) - allowed:
             raise GraphError(f"{where}: exact pre-materialization responsibility fields required")
         rid = str(raw.get("id") or "")
         if not _UNIT_ID.fullmatch(rid) or rid in seen:
@@ -903,6 +904,18 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
             if not isinstance(verify, str) or not verify.strip():
                 raise GraphError(f"{uwhere}.verify: non-empty string required")
             units.append({"id": uid, "kind": kind, "outcome": unit_outcome.strip(), "verify": verify.strip()})
+        mechanism_exception = raw.get("mechanism_exception")
+        clean_exception = None
+        if mechanism_exception is not None:
+            if not isinstance(mechanism_exception, Mapping) or set(map(str, mechanism_exception)) != {"basis", "claim_ids"}:
+                raise GraphError(f"{where}.mechanism_exception: exact basis/claim_ids mapping required")
+            exception_basis = mechanism_exception.get("basis")
+            exception_claims = _str_list(mechanism_exception.get("claim_ids"), f"{where}.mechanism_exception.claim_ids")
+            if not isinstance(exception_basis, str) or not exception_basis.strip() or not exception_claims:
+                raise GraphError(f"{where}.mechanism_exception: non-empty basis and claim_ids required")
+            if any(not _UNIT_ID.fullmatch(cid) for cid in exception_claims) or len(exception_claims) != len(set(exception_claims)):
+                raise GraphError(f"{where}.mechanism_exception.claim_ids: unique claim ids required")
+            clean_exception = {"basis": exception_basis.strip(), "claim_ids": sorted(exception_claims)}
         rows.append(
             {
                 "id": rid,
@@ -910,6 +923,7 @@ def _decomposition_proposal(value: Any) -> dict[str, Any] | None:
                 "owns_claims": sorted(owns_claims),
                 "outcome": outcome.strip(),
                 "independence_basis": basis.strip(),
+                "mechanism_exception": clean_exception,
                 "semantic_units": units,
             }
         )
@@ -939,8 +953,19 @@ def _acceptance_claims(value: Any) -> list[dict[str, Any]]:
         shared = raw.get("shared", False)
         if not isinstance(shared, bool):
             raise GraphError(f"{where}.shared: must be boolean")
+        mechanism_exception_allowed = raw.get("mechanism_exception_allowed", False)
+        if not isinstance(mechanism_exception_allowed, bool):
+            raise GraphError(f"{where}.mechanism_exception_allowed: must be boolean")
         seen.add(cid)
-        rows.append({"id": cid, "claim": claim.strip(), "kind": kind, "shared": shared})
+        rows.append(
+            {
+                "id": cid,
+                "claim": claim.strip(),
+                "kind": kind,
+                "shared": shared,
+                "mechanism_exception_allowed": mechanism_exception_allowed,
+            }
+        )
     return rows
 
 
@@ -1451,6 +1476,22 @@ def _leaf_findings(
     return found
 
 
+_MECHANISM_WORDS = frozenset(
+    {
+        "workflow", "ci", "browser", "evidence", "handoff", "renderer", "migration",
+        "test", "tests", "testing", "checkpoint", "schema", "script", "fixture", "fixtures",
+    }
+)
+
+
+def _mechanism_terms(*texts: str) -> list[str]:
+    found: set[str] = set()
+    for text in texts:
+        tokens = re.findall(r"[a-z0-9]+", str(text).lower().replace("_", " ").replace("-", " "))
+        found.update(token for token in tokens if token in _MECHANISM_WORDS)
+    return sorted(found)
+
+
 def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None) -> dict[str, Any]:
     """Evaluate the pre-materialization proposal before child provider refs exist."""
     proposal, policy = indexed["decomposition_proposal"], indexed["policy"]
@@ -1519,6 +1560,39 @@ def _proposal_decomposition(indexed: Mapping[str, Any], mode: str | None = None)
                 findings[rid].append(
                     _finding("MECHANICAL_UNIT_KIND_INVALID", f"MECHANICAL responsibility has non-mechanical unit(s): {_id_list(wrong)}")
                 )
+
+        if row["work_class"] == "PRODUCT":
+            mechanism_terms = _mechanism_terms(row["id"], row["outcome"])
+            if mechanism_terms:
+                exception = row.get("mechanism_exception")
+                valid_exception = False
+                if exception:
+                    cited = exception["claim_ids"]
+                    owned_set = set(row["owns_claims"])
+                    valid_exception = (
+                        set(cited).issubset(owned_set)
+                        and all(
+                            cid in claims_by_id
+                            and claims_by_id[cid]["kind"] == "SEMANTIC"
+                            and claims_by_id[cid]["mechanism_exception_allowed"]
+                            for cid in cited
+                        )
+                    )
+                    if not set(cited).issubset(owned_set):
+                        findings[rid].append(
+                            _finding(
+                                "MECHANISM_EXCEPTION_CLAIM_UNOWNED",
+                                f"mechanism exception cites unowned claim(s): {_id_list(set(cited) - owned_set)}",
+                            )
+                        )
+                if not valid_exception:
+                    findings[rid].append(
+                        _finding(
+                            "MECHANISM_PRODUCT_BOUNDARY",
+                            f"PRODUCT responsibility boundary is mechanism-shaped ({_id_list(mechanism_terms)}); "
+                            "use acceptance methods/GATE or cite an allowed infrastructure semantic claim with mechanism_exception",
+                        )
+                    )
 
     if claim_policy["mode"] != "OFF":
         if not claims_by_id:
