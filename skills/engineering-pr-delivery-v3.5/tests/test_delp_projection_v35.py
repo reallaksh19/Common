@@ -3161,6 +3161,123 @@ class TopologyAdmissionAssembler(unittest.TestCase):
             )
             self.assertEqual(M.canonical_json(forward), M.canonical_json(reverse))
 
+    def test_retained_precode_topology_replay(self):
+        def cut(value):
+            return {
+                "output_contract": value,
+                "independent_oracle": value,
+                "consumer_stable": value,
+                "risk_reduction": value,
+                "handoff_economy": value,
+            }
+
+        fixtures = [
+            {
+                "name": "#617 original Phase C",
+                "expected": "SPLIT",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-617",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "MIXED",
+                    "dependency_closure": "OPEN",
+                    "verification_closure": "DEFERRED",
+                    "uncertainty": "MATERIAL",
+                    "change_impact": "CROSS_CUTTING",
+                    "execution_horizon": "LONG_OR_AMBIGUOUS",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY", "GITHUB_PR", "CI"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "MATERIAL",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(True),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_A_PRECODE"],
+                },
+            },
+            {
+                "name": "PR #624 original observation integration",
+                "expected": "SPLIT",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-624",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "MIXED",
+                    "dependency_closure": "OPEN",
+                    "verification_closure": "DEFERRED",
+                    "uncertainty": "MATERIAL",
+                    "change_impact": "CROSS_CUTTING",
+                    "execution_horizon": "MULTI_STEP",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY", "GITHUB_PR"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "MATERIAL",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(True),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_B_PRECODE"],
+                },
+            },
+            {
+                "name": "#638 / PR #643 canonical condition contract",
+                "expected": "PASS",
+                "refs": ["Common#592"],
+                "basis": {
+                    "id": "RET-643",
+                    "proposal_kind": "LEAF",
+                    "responsibility_ids": ["P3-I-R2"],
+                    "semantic_cohesion": "COHESIVE",
+                    "dependency_closure": "CLOSED",
+                    "verification_closure": "CLOSED",
+                    "uncertainty": "LOW",
+                    "change_impact": "LOCAL",
+                    "execution_horizon": "SHORT",
+                    "mutation_domains": ["LOCAL_FILES"],
+                    "recovery_radius": "SMALL",
+                    "handoff_cost": "HIGH",
+                    "cross_child_cohesion": "LOW",
+                    "stable_cut": cut(False),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_C_PRECODE"],
+                },
+            },
+            {
+                "name": "#626 + #629 proposed horizontal split",
+                "expected": "MERGE",
+                "refs": ["Common#592", "Common#594"],
+                "basis": {
+                    "id": "RET-626-629",
+                    "proposal_kind": "ADJACENT_CHILDREN",
+                    "responsibility_ids": ["P3-I-R2", "RESP-594"],
+                    "semantic_cohesion": "COHESIVE",
+                    "dependency_closure": "CLOSED",
+                    "verification_closure": "CLOSED",
+                    "uncertainty": "LOW",
+                    "change_impact": "LOCAL",
+                    "execution_horizon": "MULTI_STEP",
+                    "mutation_domains": ["LOCAL_FILES", "GIT_HISTORY"],
+                    "recovery_radius": "MULTI_SURFACE",
+                    "handoff_cost": "HIGH",
+                    "cross_child_cohesion": "HIGH",
+                    "stable_cut": cut(False),
+                    "source_refs": ["Common#651:DECOMPOSITION_FAILURE_CORPUS_V1:CASE_D_PRECODE"],
+                },
+            },
+        ]
+
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root)
+            for fixture in fixtures:
+                with self.subTest(case=fixture["name"]):
+                    g = topology_assessment_planned()
+                    g["programme"]["topology_assessments"] = [fixture["basis"]]
+                    observations = self.observations(g, root, fixture["refs"])
+                    out = A.assemble_topology_admission(
+                        g,
+                        assessment_id=fixture["basis"]["id"],
+                        observations=observations,
+                    )
+                    self.assertEqual([], out["claim_topology"]["blockers"])
+                    self.assertEqual(fixture["expected"], out["decision"]["decision"])
+
     def test_wrong_current_observation_payload_fails_closed(self):
         g = topology_assessment_planned()
         basis = O.repository_plan_basis(g, "Common#592")
