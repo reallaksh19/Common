@@ -454,6 +454,31 @@ def normalize_observation(observation: Any) -> dict[str, Any]:
     return out
 
 
+def normalize_observations(
+    indexed: Mapping[str, Any],
+    observations: Mapping[str, Mapping[str, Any]] | None,
+) -> dict[int, dict[str, Any]]:
+    """Resolve provider observation locators against declared leaves without crossing repository boundaries."""
+    if observations is None:
+        return {}
+    if not isinstance(observations, Mapping):
+        raise DelpError("observations: must be a mapping keyed by declared leaf reference")
+    leaves = [ref for ref, node in indexed["nodes"].items() if node["kind"] == "LEAF"]
+    out: dict[int, dict[str, Any]] = {}
+    for supplied_ref, observation in observations.items():
+        try:
+            leaf_ref = next((ref for ref in leaves if same_ref(ref, supplied_ref)), None)
+        except DelpError as exc:
+            raise DelpError(f"observation key {supplied_ref!r}: {exc}") from exc
+        if leaf_ref is None:
+            raise DelpError(f"observation key {supplied_ref!r}: not a declared LEAF in this graph")
+        number = indexed["nodes"][leaf_ref]["number"]
+        if number in out:
+            raise DelpError(f"observation key {supplied_ref!r}: duplicate observation for {leaf_ref}")
+        out[number] = normalize_observation(observation)
+    return out
+
+
 def graph_digest_basis(graph: Mapping[str, Any]) -> dict[str, Any]:
     """Canonical graph input used for identity/currentness.
 
@@ -2276,7 +2301,7 @@ def project(
     ledger = list(ledger)
     indexed = validate_graph(graph)
     nodes = indexed["nodes"]
-    observations = {ref_number(k): normalize_observation(v) for k, v in (observations or {}).items()}
+    observations = normalize_observations(indexed, observations)
     accepted, rejected = partition_ledger(indexed, ledger)
     results: dict[str, dict[str, Any]] = {}
     mode = indexed["policy"]["mode"]
