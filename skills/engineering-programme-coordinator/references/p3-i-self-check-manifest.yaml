@@ -1,0 +1,8 @@
+schema_version: P3_I_SELF_CHECK_MANIFEST_V1
+authority: FROZEN_P3_I_SELF_CHECK_EXPECTATIONS
+claims:
+  - exact candidate identity is common across the Phase-3 chain
+  - fresh same-principal reconstruction retains principal_independence NONE
+  - stored Phase-3 artifacts do not self-certify against stale sources
+  - gate eligibility does not perform lifecycle, merge, or production transition
+manifest_digest: 7fa9491a86a265c32237075a19349c2588befe21d0437f6f202592b77a20aec0

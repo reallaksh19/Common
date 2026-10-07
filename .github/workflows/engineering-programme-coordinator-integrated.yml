@@ -81,6 +81,11 @@ jobs:
             skills/engineering-programme-coordinator/scripts/project_outcome_falsification.py \
             skills/engineering-programme-coordinator/scripts/principal_independence.py \
             skills/engineering-programme-coordinator/scripts/evidence_gate.py \
+            skills/engineering-programme-coordinator/scripts/p3_integration_contract.py \
+            skills/engineering-programme-coordinator/scripts/p3_integration_builders.py \
+            skills/engineering-programme-coordinator/scripts/p3_integration_runtime.py \
+            skills/engineering-programme-coordinator/scripts/p3_integration_lanes.py \
+            skills/engineering-programme-coordinator/scripts/p3_integration_qualification.py \
             skills/engineering-programme-coordinator/scripts/validate.py
 
       - name: Validate coordinator schemas
@@ -272,6 +277,22 @@ jobs:
           canonical_independence = principal_truth['properties']['principals']['properties']['principal_independence']['enum']
           assert canonical_independence == ['NONE', 'DISTINCT_PRINCIPAL']
           assert 'DEGRADED' not in canonical_independence
+
+          p3_source = yaml.safe_load(
+              (root / 'p3-integration-qualification-source.schema.yaml').read_text()
+          )
+          assert p3_source['$id'] == 'engineering-programme-coordinator-p3-integration-qualification-source-v1'
+          assert p3_source['properties']['schema_version']['const'] == 'P3_INTEGRATION_QUALIFICATION_SOURCE_V1'
+          assert p3_source['properties']['authority']['const'] == 'PHASE3_SOLO_INTEGRATION_QUALIFICATION_INPUT'
+
+          p3_result = yaml.safe_load(
+              (root / 'p3-integration-qualification-result.schema.yaml').read_text()
+          )
+          assert p3_result['$id'] == 'engineering-programme-coordinator-p3-integration-qualification-result-v1'
+          assert p3_result['properties']['schema_version']['const'] == 'P3_INTEGRATION_QUALIFICATION_RESULT_V1'
+          assert p3_result['properties']['authority']['const'] == 'PHASE3_SOLO_INTEGRATION_QUALIFICATION_EVIDENCE'
+          assert p3_result['properties']['principal_independence']['const'] == 'NONE'
+          assert p3_result['properties']['clean_control']['properties']['lifecycle_transition_performed']['const'] is False
           PY
 
       - name: Run integrated-mode regressions
@@ -936,6 +957,63 @@ jobs:
           assert value['authority_boundaries']['emits_evidence_gate_decision'] is False
           print('P2-I retained-real green-but-wrong qualification: PASS')
           print('P2-I result digest:', value['result_digest'])
+          PY
+
+      - name: Fetch exact P3-I base object
+        shell: bash
+        run: |
+          set -euo pipefail
+          P3I_BASE_SHA="$(python -c "import pathlib,yaml; print(yaml.safe_load(pathlib.Path('skills/engineering-programme-coordinator/references/p3-i-integration-source.yaml').read_text(encoding='utf-8'))['base']['sha'])")"
+          [[ "$P3I_BASE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git fetch --no-tags --depth=1 origin "$P3I_BASE_SHA"
+          git cat-file -e "$P3I_BASE_SHA^{commit}"
+          echo "Fetched P3-I base: $P3I_BASE_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Validate frozen P3-I integration source
+        run: |
+          python skills/engineering-programme-coordinator/scripts/validate.py \
+            p3-integration-qualification-source \
+            skills/engineering-programme-coordinator/references/p3-i-integration-source.yaml
+
+      - name: Run P3-I full solo role replay regressions
+        run: python -m unittest discover -s skills/engineering-programme-coordinator/tests -p 'test_p3_integration_qualification.py' -v
+
+      - name: Compile and validate exact-head P3-I qualification
+        if: github.event_name == 'pull_request'
+        env:
+          P3I_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+          P3I_PR_NUMBER: ${{ github.event.pull_request.number }}
+          P3I_CANDIDATE_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          python skills/engineering-programme-coordinator/scripts/p3_integration_qualification.py compile \
+            skills/engineering-programme-coordinator/references/p3-i-integration-source.yaml \
+            "$P3I_CANDIDATE_SHA" "$P3I_PR_NUMBER" "$P3I_CANDIDATE_REF" \
+            --repo-root . --output /tmp/p3-i-qualification.yaml
+          python skills/engineering-programme-coordinator/scripts/validate.py \
+            p3-integration-qualification-result /tmp/p3-i-qualification.yaml \
+            --p3-qualification-source skills/engineering-programme-coordinator/references/p3-i-integration-source.yaml \
+            --candidate-sha "$P3I_CANDIDATE_SHA" \
+            --pr-number "$P3I_PR_NUMBER" \
+            --candidate-ref "$P3I_CANDIDATE_REF" \
+            --repo-root .
+          python - <<'PY'
+          import pathlib, yaml
+          value = yaml.safe_load(pathlib.Path('/tmp/p3-i-qualification.yaml').read_text())
+          assert value['qualification_status'] == 'QUALIFIED'
+          assert value['accounting'] == {
+              'checks': 20, 'passed': 20, 'failed': 0, 'clean_false_blocks': 0,
+          }
+          assert value['principal_independence'] == 'NONE'
+          assert value['clean_control']['project_falsification_status'] == 'NOT_FALSIFIED'
+          assert value['clean_control']['gate_disposition'] == 'ADVANCE_ELIGIBLE'
+          assert value['clean_control']['kernel_action'] == 'REQUEST_STAGE_ADVANCE'
+          assert value['clean_control']['lifecycle_transition_performed'] is False
+          assert value['retained_p2i_status'] == 'QUALIFIED'
+          assert not any(value['authority_boundaries'].values())
+          print('P3-I exact-head full solo role replay: PASS')
+          print('P3-I candidate:', value['identity']['candidate_sha'])
+          print('P3-I result digest:', value['result_digest'])
           PY
 
       - name: Run authenticated retained real-artifact replay

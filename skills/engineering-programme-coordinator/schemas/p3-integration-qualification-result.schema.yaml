@@ -1,0 +1,92 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: engineering-programme-coordinator-p3-integration-qualification-result-v1
+type: object
+additionalProperties: false
+required:
+  - schema_version
+  - authority
+  - identity
+  - source_digest
+  - runtime_basis_digest
+  - lanes
+  - accounting
+  - clean_control
+  - retained_p2i_status
+  - principal_independence
+  - qualification_status
+  - authority_boundaries
+  - result_digest
+properties:
+  schema_version: {const: P3_INTEGRATION_QUALIFICATION_RESULT_V1}
+  authority: {const: PHASE3_SOLO_INTEGRATION_QUALIFICATION_EVIDENCE}
+  identity:
+    type: object
+    additionalProperties: false
+    required: [task_id, base_sha, candidate_sha, pr_number]
+    properties:
+      task_id: {const: PRD-527-P3-I}
+      base_sha: {$ref: '#/$defs/sha'}
+      candidate_sha: {$ref: '#/$defs/sha'}
+      pr_number: {type: integer, minimum: 1}
+  source_digest: {$ref: '#/$defs/digest'}
+  runtime_basis_digest: {$ref: '#/$defs/digest'}
+  lanes:
+    type: array
+    minItems: 20
+    maxItems: 20
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, passed, expected, observed, evidence_refs]
+      properties:
+        id: {type: string, pattern: '^P3I-[0-9]{2}$'}
+        passed: {type: boolean}
+        expected: {type: string, minLength: 1}
+        observed: {type: string, minLength: 1}
+        evidence_refs:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {type: string, minLength: 1}
+  accounting:
+    type: object
+    additionalProperties: false
+    required: [checks, passed, failed, clean_false_blocks]
+    properties:
+      checks: {const: 20}
+      passed: {type: integer, minimum: 0, maximum: 20}
+      failed: {type: integer, minimum: 0, maximum: 20}
+      clean_false_blocks: {type: integer, minimum: 0}
+  clean_control:
+    type: object
+    additionalProperties: false
+    required: [project_falsification_status, gate_disposition, kernel_action, lifecycle_transition_performed]
+    properties:
+      project_falsification_status: {const: NOT_FALSIFIED}
+      gate_disposition: {const: ADVANCE_ELIGIBLE}
+      kernel_action: {const: REQUEST_STAGE_ADVANCE}
+      lifecycle_transition_performed: {const: false}
+  retained_p2i_status: {const: QUALIFIED}
+  principal_independence: {const: NONE}
+  qualification_status: {enum: [QUALIFIED, FAILED]}
+  authority_boundaries:
+    type: object
+    additionalProperties: false
+    required:
+      - emits_engineering_pass
+      - emits_project_acceptance_pass
+      - emits_independent_review_verdict
+      - performs_lifecycle_advance
+      - grants_merge_authority
+      - grants_production_cutover
+    properties:
+      emits_engineering_pass: {const: false}
+      emits_project_acceptance_pass: {const: false}
+      emits_independent_review_verdict: {const: false}
+      performs_lifecycle_advance: {const: false}
+      grants_merge_authority: {const: false}
+      grants_production_cutover: {const: false}
+  result_digest: {$ref: '#/$defs/digest'}
+$defs:
+  sha: {type: string, pattern: '^[0-9a-f]{40}$'}
+  digest: {type: string, pattern: '^[0-9a-f]{64}$'}
