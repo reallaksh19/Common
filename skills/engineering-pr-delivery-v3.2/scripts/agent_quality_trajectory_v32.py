@@ -143,13 +143,23 @@ def _normalize_m1(result: Any, label: str) -> dict[str, Any]:
 def normalize_input(source: Any) -> dict[str, Any]:
     if not isinstance(source, Mapping):
         raise TrajectoryError("trajectory input: mapping required")
-    if set(map(str, source)) != {"schema", "trajectory_id", "windows"}:
-        raise TrajectoryError("trajectory input: exact schema/trajectory_id/windows fields required")
+    if set(map(str, source)) != {"schema", "trajectory_id", "comparison_basis", "windows"}:
+        raise TrajectoryError("trajectory input: exact schema/trajectory_id/comparison_basis/windows fields required")
     if source.get("schema") != INPUT_SCHEMA:
         raise TrajectoryError(f"schema: expected {INPUT_SCHEMA}")
     trajectory_id = source.get("trajectory_id")
     if not isinstance(trajectory_id, str) or not trajectory_id.strip():
         raise TrajectoryError("trajectory_id: non-empty string required")
+    basis = source.get("comparison_basis")
+    if not isinstance(basis, Mapping) or set(map(str, basis)) != {"ref", "digest"}:
+        raise TrajectoryError("comparison_basis: exact ref/digest mapping required")
+    basis_ref = basis.get("ref")
+    basis_digest = basis.get("digest")
+    if not isinstance(basis_ref, str) or not basis_ref.strip():
+        raise TrajectoryError("comparison_basis.ref: non-empty durable ref required")
+    if not _DIGEST.fullmatch(str(basis_digest or "")):
+        raise TrajectoryError("comparison_basis.digest: sha256 digest required")
+
     windows = source.get("windows")
     if not isinstance(windows, list) or len(windows) < 2:
         raise TrajectoryError("windows: at least two M1 results required")
@@ -162,7 +172,10 @@ def normalize_input(source: Any) -> dict[str, Any]:
         sequence = row.get("sequence")
         if not _positive_int(sequence):
             raise TrajectoryError(f"{label}.sequence: positive integer required")
-        normalized.append({"sequence": sequence, "result": _normalize_m1(row.get("result"), f"{label}.result")})
+        normalized_result = _normalize_m1(row.get("result"), f"{label}.result")
+        if basis_ref not in normalized_result["evidence_refs"]:
+            raise TrajectoryError(f"{label}.result: comparison basis ref must be present in evidence_refs")
+        normalized.append({"sequence": sequence, "result": normalized_result})
 
     sequences = [row["sequence"] for row in normalized]
     window_ids = [row["result"]["window_id"] for row in normalized]
@@ -171,7 +184,12 @@ def normalize_input(source: Any) -> dict[str, Any]:
     if len(window_ids) != len(set(window_ids)):
         raise TrajectoryError("windows: duplicate M1 window_id")
     normalized.sort(key=lambda row: row["sequence"])
-    return {"schema": INPUT_SCHEMA, "trajectory_id": trajectory_id.strip(), "windows": normalized}
+    return {
+        "schema": INPUT_SCHEMA,
+        "trajectory_id": trajectory_id.strip(),
+        "comparison_basis": {"ref": basis_ref.strip(), "digest": basis_digest},
+        "windows": normalized,
+    }
 
 
 def _series(normalized: Mapping[str, Any], component: str) -> list[Fraction | None]:
@@ -249,6 +267,7 @@ def evaluate(source: Any) -> dict[str, Any]:
     input_digest = _digest(normalized)
     trajectory_basis = {
         "trajectory_id": normalized["trajectory_id"],
+        "comparison_basis": normalized["comparison_basis"],
         "input_digest": input_digest,
         "trajectory": trajectory,
         "reason": reason,
@@ -259,6 +278,7 @@ def evaluate(source: Any) -> dict[str, Any]:
         "schema": RESULT_SCHEMA,
         "authority": AUTHORITY,
         "trajectory_id": normalized["trajectory_id"],
+        "comparison_basis": normalized["comparison_basis"],
         "input_digest": input_digest,
         "trajectory_digest": _digest(trajectory_basis),
         "trajectory": trajectory,
