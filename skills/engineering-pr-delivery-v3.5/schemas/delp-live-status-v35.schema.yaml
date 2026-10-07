@@ -12,6 +12,37 @@ $defs:
     properties:
       code: {type: string}
       detail: {type: string}
+  responsibility_condition:
+    type: object
+    additionalProperties: false
+    required: [type, status, reason, message, observed_generation, candidate_sha, source_refs]
+    properties:
+      type:
+        enum: [PlanReady, SpecCurrent, MaterialObserved, EvidenceCurrent, DependenciesReady, CustodySafe, AssuranceSatisfied, ProviderVisible]
+      status: {enum: ["TRUE", "FALSE", "UNKNOWN", "NOT_APPLICABLE"]}
+      reason: {type: string, minLength: 1, pattern: '.*\S.*'}
+      message: {type: string, minLength: 1, pattern: '.*\S.*'}
+      observed_generation: {type: [integer, "null"], minimum: 1}
+      candidate_sha: {type: [string, "null"], pattern: '^[0-9a-f]{40}$'}
+      source_refs:
+        type: array
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '.*\S.*'}
+  actual_next:
+    type: object
+    additionalProperties: false
+    required: [authority, action, reason, source_basis, detail]
+    properties:
+      authority: {const: DERIVED_ACTUAL_NEXT_ONLY}
+      action:
+        enum: [NONE, FIX_PLAN, RECONCILE_SPEC, RECOVER_CUSTODY, MATERIALIZE_FACTS, WAIT_PROVIDER, RECOVER_EVIDENCE, RECONCILE_HANDOFF, WAIT_DEPENDENCY, REMEDIATE_FINDING, REVIEW_CANDIDATE, WAIT_OWNER, CONTINUE_UNIT, PUBLISH_RESULT]
+      reason: {type: string, minLength: 1, pattern: '.*\S.*'}
+      source_basis:
+        type: array
+        minItems: 1
+        uniqueItems: true
+        items: {type: string, minLength: 1, pattern: '.*\S.*'}
+      detail: {type: [string, "null"]}
 type: object
 required: [schema, authority, node, projection]
 properties:
@@ -158,8 +189,20 @@ properties:
           advisories: {type: array, items: {$ref: '#/$defs/finding'}}
           not_releasable: {type: integer, minimum: 0}
           leaves: {type: array, items: {type: string}}
+      conditions:
+        type: array
+        minItems: 8
+        maxItems: 8
+        items: {$ref: '#/$defs/responsibility_condition'}
+      actual_next: {$ref: '#/$defs/actual_next'}
       activity_epoch: {type: integer, minimum: 0}
       warnings: {type: array, items: {type: string}}
+    allOf:
+      - if:
+          properties: {kind: {const: LEAF}}
+          required: [kind]
+        then:
+          required: [conditions, actual_next]
   projection:
     type: object
     required: [version, input_digest]

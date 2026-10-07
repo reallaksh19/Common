@@ -240,7 +240,7 @@ class LeafProgressAndEvidence(unittest.TestCase):
         self.assertEqual("EVIDENCE_GAP", node["state"])
         self.assertEqual("GAP", node["evidence"]["health"])
         self.assertEqual([{"unit": "U03", "reason": "NO_EVIDENCE_REFS"}], node["evidence"]["gaps"])
-        self.assertEqual("🟡 [#527 › #588 › #592 → PR#593] R:P75/E50 · U04 · EVIDENCE_GAP", node["title_prefix"])
+        self.assertEqual("🟡 [#527 › #588 › #592 → PR#593] R:P75/E50 · U04 · EVIDENCE_GAP · NEXT:RECOVER_EVIDENCE", node["title_prefix"])
 
     def test_recovery_evidence_restores_E(self):
         ledger = [
@@ -251,7 +251,7 @@ class LeafProgressAndEvidence(unittest.TestCase):
         node = self.leaf(ledger)
         self.assertEqual((75, 75), (node["progress"]["P"], node["progress"]["E"]))
         self.assertEqual("ACTIVE", node["state"])
-        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P75/E75 · U04 · ACTIVE", node["title_prefix"])
+        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P75/E75 · U04 · ACTIVE · NEXT:CONTINUE_UNIT", node["title_prefix"])
 
     def test_candidate_move_keeps_P_and_drops_E_until_replay(self):
         ledger = [entry(facts(units=[unit("U01"), unit("U02"), unit("U03")]), 1)]
@@ -377,7 +377,7 @@ class LeafProgressAndEvidence(unittest.TestCase):
     def test_not_started_leaf_is_idle_white(self):
         node = self.leaf([], observations={})
         self.assertEqual("NOT_STARTED", node["state"])
-        self.assertEqual("⚪ [#527 › #588 › #592 → PR#593] R:P0/E0 · U01 · NOT_STARTED", node["title_prefix"])
+        self.assertEqual("⚪ [#527 › #588 › #592 → PR#593] R:P0/E0 · U01 · NOT_STARTED · NEXT:CONTINUE_UNIT", node["title_prefix"])
 
 
 class CompletionAndDelivery(unittest.TestCase):
@@ -387,7 +387,7 @@ class CompletionAndDelivery(unittest.TestCase):
         done = entry(facts(units=self.ALL, result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"}), 1)
         node = M.project(graph(), [done], OBS_A)["nodes"]["Common#592"]
         self.assertEqual("COMPLETE", node["lifecycle"])
-        self.assertEqual("✅ [#527 › #588 › #592 → PR#593] R:P100/E100 · COMPLETE", node["title_prefix"])
+        self.assertEqual("✅ [#527 › #588 › #592 → PR#593] R:P100/E100 · COMPLETE · NEXT:NONE", node["title_prefix"])
 
     def test_complete_claim_with_open_units_does_not_complete(self):
         claim = entry(
@@ -562,6 +562,33 @@ class RollUpIsRecomputedNeverIncremented(unittest.TestCase):
 
 
 class TitleGrammar(unittest.TestCase):
+    def test_leaf_title_exposes_only_canonical_actual_next_action(self):
+        first = M.project(
+            graph(),
+            [entry(facts(units=[unit("U01")], next={"unit": "U02", "action": "executor prose A"}), 1)],
+            OBS_A,
+        )["nodes"]["Common#592"]
+        second = M.project(
+            graph(),
+            [entry(facts(units=[unit("U01")], next={"unit": "U02", "action": "executor prose B"}), 1)],
+            OBS_A,
+        )["nodes"]["Common#592"]
+        self.assertEqual("CONTINUE_UNIT", first["actual_next"]["action"])
+        self.assertIn("NEXT:CONTINUE_UNIT", first["title_prefix"])
+        self.assertEqual(first["title_prefix"], second["title_prefix"])
+        self.assertNotIn("executor prose", first["title_prefix"])
+
+    def test_leaf_title_tracks_canonical_action_but_group_titles_do_not(self):
+        g = broken(ref="Common#592")
+        projection = M.project(g, [], OBS_A)
+        leaf = projection["nodes"]["Common#592"]
+        parent = projection["nodes"]["Common#588"]
+        root = projection["nodes"]["Common#527"]
+        self.assertEqual("FIX_PLAN", leaf["actual_next"]["action"])
+        self.assertIn("NEXT:FIX_PLAN", leaf["title_prefix"])
+        self.assertNotIn("NEXT:", parent["title_prefix"])
+        self.assertNotIn("NEXT:", root["title_prefix"])
+
     def test_round_trip_and_base_recovery(self):
         node = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], OBS_A)["nodes"]["Common#592"]
         title = M.render_title(node["title_prefix"], "Add replay lane")
@@ -620,6 +647,8 @@ class ContinuationAdmission(unittest.TestCase):
         self.assertEqual("CONTINUE_UNIT", report["action"])
         self.assertFalse(report["recovery_required"])
         self.assertEqual([], report["authority_effects"])
+        self.assertEqual(proj["nodes"]["Common#592"]["actual_next"], report["actual_next"])
+        self.assertEqual(report["actual_next"]["action"], report["action"])
         self.assertEqual(
             "\n".join(
                 [
@@ -1573,36 +1602,36 @@ class DocumentedBehaviour(unittest.TestCase):
         Q = "[#527 › #588 → #592/PR#593]"
         ledger = []
         self.assertEqual(
-            (f"⚪ {P} R:P0/E0 · U01 · NOT_STARTED", "⚪ [#527 › #588] Φ:D0/E0 · F0 · IDLE", "⚪ [#527] Π:D0/E0 · F0 · IDLE"),
+            (f"⚪ {P} R:P0/E0 · U01 · NOT_STARTED · NEXT:CONTINUE_UNIT", "⚪ [#527 › #588] Φ:D0/E0 · F0 · IDLE", "⚪ [#527] Π:D0/E0 · F0 · IDLE"),
             self.titles(ledger, {}),
         )
         ledger.append(entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "build replay lane"}), 1))
         self.assertEqual(
-            (f"🟢 {P} R:P50/E50 · U03 · ACTIVE", f"🟢 {Q} Φ:D38/E38 · F1 · ACTIVE", "🟢 [#527] Π:D28/E28 · F1 · ACTIVE"),
+            (f"🟢 {P} R:P50/E50 · U03 · ACTIVE · NEXT:CONTINUE_UNIT", f"🟢 {Q} Φ:D38/E38 · F1 · ACTIVE", "🟢 [#527] Π:D28/E28 · F1 · ACTIVE"),
             self.titles(ledger, obs_a),
         )
         ledger.append(entry(facts(units=[unit("U03", refs=())]), 2))
         self.assertEqual(
-            (f"🟡 {P} R:P75/E50 · U04 · EVIDENCE_GAP", f"🟡 {Q} Φ:D56/E38 · F1 · EVIDENCE_GAP", "🟡 [#527] Π:D42/E28 · F1 · EVIDENCE_GAP"),
+            (f"🟡 {P} R:P75/E50 · U04 · EVIDENCE_GAP · NEXT:RECOVER_EVIDENCE", f"🟡 {Q} Φ:D56/E38 · F1 · EVIDENCE_GAP", "🟡 [#527] Π:D42/E28 · F1 · EVIDENCE_GAP"),
             self.titles(ledger, obs_a),
         )
         ledger.append(entry(facts(units=[unit("U03", refs=("Common#592#issuecomment-9",))]), 3))
         self.assertEqual(
-            (f"🟢 {P} R:P75/E75 · U04 · ACTIVE", f"🟢 {Q} Φ:D56/E56 · F1 · ACTIVE", "🟢 [#527] Π:D42/E42 · F1 · ACTIVE"),
+            (f"🟢 {P} R:P75/E75 · U04 · ACTIVE · NEXT:CONTINUE_UNIT", f"🟢 {Q} Φ:D56/E56 · F1 · ACTIVE", "🟢 [#527] Π:D42/E42 · F1 · ACTIVE"),
             self.titles(ledger, obs_a),
         )
         self.assertEqual(
-            (f"🟡 {P} R:P75/E0 · U04 · EVIDENCE_STALE", f"🟡 {Q} Φ:D56/E0 · F1 · EVIDENCE_GAP", "🟡 [#527] Π:D42/E0 · F1 · EVIDENCE_GAP"),
+            (f"🟡 {P} R:P75/E0 · U04 · EVIDENCE_STALE · NEXT:RECOVER_EVIDENCE", f"🟡 {Q} Φ:D56/E0 · F1 · EVIDENCE_GAP", "🟡 [#527] Π:D42/E0 · F1 · EVIDENCE_GAP"),
             self.titles(ledger, obs_b),
         )
         ledger.append(entry(facts(sha=SHA_B, units=[unit("U01"), unit("U02"), unit("U03")]), 4))
         replayed = self.titles(ledger, obs_b)
         self.assertEqual(
-            (f"🟢 {P} R:P75/E75 · U04 · ACTIVE", f"🟢 {Q} Φ:D56/E56 · F1 · ACTIVE", "🟢 [#527] Π:D42/E42 · F1 · ACTIVE"), replayed
+            (f"🟢 {P} R:P75/E75 · U04 · ACTIVE · NEXT:CONTINUE_UNIT", f"🟢 {Q} Φ:D56/E56 · F1 · ACTIVE", "🟢 [#527] Π:D42/E42 · F1 · ACTIVE"), replayed
         )
         ledger.append(entry(facts(sha=SHA_B, units=[unit("U04")], result={"scope": "RESPONSIBILITY", "responsibility_complete": "YES"}), 5))
         self.assertEqual(
-            (f"✅ {P} R:P100/E100 · COMPLETE", "⚪ [#527 › #588] Φ:D75/E75 · F0 · IDLE", "⚪ [#527] Π:D56/E56 · F0 · IDLE"),
+            (f"✅ {P} R:P100/E100 · COMPLETE · NEXT:NONE", "⚪ [#527 › #588] Φ:D75/E75 · F0 · IDLE", "⚪ [#527] Π:D56/E56 · F0 · IDLE"),
             self.titles(ledger, obs_b),
         )
         # a rerun with nothing new is a no-op: identical digest
@@ -1619,7 +1648,7 @@ class DocumentedBehaviour(unittest.TestCase):
         self.assertEqual([], M.validate_facts(ledger[0]["facts"]))
         out = M.project(loaded, ledger, M._load_structured(examples / "observations.json"))
         self.assertEqual([], out["rejected_facts"])
-        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE", out["nodes"]["Common#592"]["title_prefix"])
+        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE · NEXT:CONTINUE_UNIT", out["nodes"]["Common#592"]["title_prefix"])
         self.assertEqual("🟢 [#527] Π:D28/E28 · F1 · ACTIVE", out["nodes"]["Common#527"]["title_prefix"])
 
 
@@ -3688,10 +3717,10 @@ class DecompositionInProjection(unittest.TestCase):
         node = enforced["Common#594"]
         self.assertEqual("NOT_RELEASEABLE", node["state"])
         self.assertEqual("🟡", node["light"])
-        self.assertEqual("🟡 [#527 › #588 › #594 → PR#595] R:P0/E0 · V1 · NOT_RELEASEABLE", node["title_prefix"])
+        self.assertEqual("🟡 [#527 › #588 › #594 → PR#595] R:P0/E0 · V1 · NOT_RELEASEABLE · NEXT:FIX_PLAN", node["title_prefix"])
         for ref in clean:
             self.assertEqual(clean[ref]["progress"], enforced[ref]["progress"], ref)
-        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE", enforced["Common#592"]["title_prefix"])
+        self.assertEqual("🟢 [#527 › #588 › #592 → PR#593] R:P50/E50 · U03 · ACTIVE · NEXT:CONTINUE_UNIT", enforced["Common#592"]["title_prefix"])
 
     def test_ancestors_stay_active_while_something_moves_and_report_the_gap_in_warnings(self):
         enforced = self.nodes(broken())
@@ -4087,17 +4116,48 @@ class CanonicalConditionSetAssembly(unittest.TestCase):
         self.assertIn("health", stressed)
         self.assertEqual(base["conditions"], stressed["conditions"])
 
-    def test_conditions_are_not_prematurely_published_to_live_status(self):
+    def test_leaf_projection_and_live_status_publish_same_conditions_and_actual_next(self):
         projection = M.project(stable_graph(), [], OBS_A)
         leaf = projection["nodes"]["Common#592"]
         self.assertEqual(8, len(leaf["conditions"]))
+        self.assertEqual("DERIVED_ACTUAL_NEXT_ONLY", leaf["actual_next"]["authority"])
+        self.assertEqual("CONTINUE_UNIT", leaf["actual_next"]["action"])
+
         status = M.status_document(
             leaf,
             version=0,
             digest=projection["input_digest"],
             programme=projection["programme"],
         )
+        self.assertEqual(leaf["conditions"], status["node"]["conditions"])
+        self.assertEqual(leaf["actual_next"], status["node"]["actual_next"])
+        self.assertEqual(
+            [],
+            SchemasAgreeWithTheEngine().schema_errors(
+                "live-status",
+                json.loads(M.canonical_json(status)),
+            ),
+        )
+
+    def test_non_leaf_projection_does_not_fabricate_conditions_or_actual_next(self):
+        projection = M.project(stable_graph(), [], OBS_A)
+        root = projection["nodes"]["Common#527"]
+        self.assertNotIn("conditions", root)
+        self.assertNotIn("actual_next", root)
+        status = M.status_document(
+            root,
+            version=0,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
         self.assertNotIn("conditions", status["node"])
+        self.assertNotIn("actual_next", status["node"])
+
+    def test_actual_next_loader_binds_to_this_exact_delp_contract(self):
+        module = M._actual_next_module()
+        self.assertIs(M.DelpError, module.DelpError)
+        self.assertIs(M.validate_condition, module.validate_condition)
+        self.assertEqual(M.CONDITION_ORDER, module.CONDITION_ORDER)
 
     def test_finalizer_rejects_duplicate_or_incomplete_sets(self):
         node = M.project(stable_graph(), [], OBS_A)["nodes"]["Common#592"]
@@ -4591,14 +4651,14 @@ class DecompositionGitHubSync(unittest.TestCase):
             return g
 
         self.sync(gh, not_started(broken()))
-        self.assertTrue(gh.issues[594].startswith("🟡 [#527 › #588 › #594] R:P0/E0 · V1 · NOT_RELEASEABLE — Gate lane"), gh.issues[594])
+        self.assertTrue(gh.issues[594].startswith("🟡 [#527 › #588 › #594] R:P0/E0 · V1 · NOT_RELEASEABLE · NEXT:FIX_PLAN — Gate lane"), gh.issues[594])
         self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · PLAN_GAP — Programme", gh.issues[527])
         self.assertEqual("🟡 [#527 › #588] Φ:D0/E0 · F0 · PLAN_GAP — Phase 3", gh.issues[588])
         self.assertIn('"releasable": false', gh.comments[594][0]["body"])
         self.assertIn("OUTCOME_MISSING", gh.comments[594][0]["body"])
         # the Coordinator states the outcome (a plan edit); nothing else changes and nobody edits a title
         self.sync(gh, not_started(planned()))
-        self.assertTrue(gh.issues[594].startswith("⚪ [#527 › #588 › #594] R:P0/E0 · V1 · NOT_STARTED — Gate lane"), gh.issues[594])
+        self.assertTrue(gh.issues[594].startswith("⚪ [#527 › #588 › #594] R:P0/E0 · V1 · NOT_STARTED · NEXT:CONTINUE_UNIT — Gate lane"), gh.issues[594])
         self.assertEqual("⚪ [#527] Π:D0/E0 · F0 · IDLE — Programme", gh.issues[527])
         self.assertIn('"releasable": true', gh.comments[594][0]["body"])
         self.assertEqual(1, len(gh.comments[594]))  # still one managed comment per node
@@ -4967,7 +5027,7 @@ class MaterializationUnknownIsNotZero(unittest.TestCase):
                 self.assertEqual("UNMATERIALIZED", node["state"])
                 self.assertEqual("UNMATERIALIZED", node["lifecycle"])
                 self.assertEqual("🟡", node["light"])
-                self.assertEqual("🟡 [#527 › #588 › #592 → PR#593] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED", node["title_prefix"])
+                self.assertEqual("🟡 [#527 › #588 › #592 → PR#593] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED · NEXT:MATERIALIZE_FACTS", node["title_prefix"])
                 self.assertEqual({"status": "UNMATERIALIZED", "provider_signal": signal}, node["materialization"])
                 self.assertIn(f"UNMATERIALIZED:{signal}", node["warnings"])
 
@@ -5062,11 +5122,13 @@ class MaterializationAdmission(unittest.TestCase):
             text,
         )
 
-    def test_a_failing_plan_is_reported_alongside_but_does_not_come_first(self):
+    def test_canonical_plan_failure_outranks_materialization(self):
         report = self.admit(g=broken(ref="Common#592"))
-        self.assertEqual("MATERIALIZE_FACTS", report["action"])
-        self.assertIn("the plan also fails the decomposition gate (OUTCOME_MISSING)", report["next"])
-        self.assertFalse(report["plan_fix_required"])
+        self.assertEqual("FIX_PLAN", report["action"])
+        self.assertTrue(report["plan_fix_required"])
+        self.assertTrue(report["materialize_required"])
+        self.assertIn("FIX_PLAN before coding", report["next"])
+        self.assertEqual("FIX_PLAN", report["actual_next"]["action"])
 
     def test_publishing_facts_ends_it_and_the_ordinary_barrier_takes_over(self):
         ledger = [entry(facts(units=[unit("U01"), unit("U02")], next={"unit": "U03", "action": "continue the replay lane"}), 1)]
@@ -5266,7 +5328,7 @@ class RealScenarioReplay(unittest.TestCase):
         titles = {f"Common#{n}": t for n, t in gh.issues.items()}
         M.sync_projection(M.GitHubStore(gh), g, lambda: M.ledger_from_github(gh, g), lambda: M.observe_github(gh, g), titles)
         self.assertEqual("🟡 [#527] Π:D0/E0 · F0 · UNMATERIALIZED — Title 527", gh.issues[527])
-        self.assertEqual("🟡 [#527 › #588] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED — Title 588", gh.issues[588])
+        self.assertEqual("🟡 [#527 › #588] R:P0/E0 · NO_ACTIVE_UNIT · UNMATERIALIZED · NEXT:MATERIALIZE_FACTS — Title 588", gh.issues[588])
         self.assertIn(("COMPARE", "main", self.BRANCH), gh.calls)
 
 
@@ -5302,11 +5364,26 @@ class FrontierSnapshotAndDrift(unittest.TestCase):
         )
         self.assertEqual(("ACTIVE", "1/5", "1/5", "B"), (snapshot["derived"]["state"], snapshot["derived"]["progress"]["P"], snapshot["derived"]["progress"]["E"], snapshot["derived"]["active_unit"]))
         self.assertEqual("CURRENT", snapshot["derived"]["evidence"]["health"])
+        projection = M.project(RealScenarioReplay.plan(), self.ledger(), self.observations())
+        leaf = projection["nodes"][self.LEAF]
+        self.assertEqual(leaf["conditions"], snapshot["derived"]["conditions"])
+        self.assertEqual(leaf["actual_next"], snapshot["derived"]["actual_next"])
+        self.assertNotIn("next", snapshot["derived"])
         self.assertEqual(["Common#527", "Common#588"], snapshot["lineage"])
         self.assertEqual(M.AUTHORITY, snapshot["authority"])
         self.assertEqual(snapshot, self.frontier())
         self.assertEqual(snapshot, json.loads(M.canonical_json(snapshot)))
         self.assertEqual([], M.forbidden_fields(snapshot["observed"]))  # nothing an agent could have authored is in what was observed
+
+    def test_frontier_exposes_canonical_actual_next_not_executor_proposed_next(self):
+        snapshot = self.frontier()
+        self.assertNotIn("next", snapshot["derived"])
+        self.assertEqual("DERIVED_ACTUAL_NEXT_ONLY", snapshot["derived"]["actual_next"]["authority"])
+        self.assertEqual(
+            M.project(RealScenarioReplay.plan(), self.ledger(), self.observations())["nodes"][self.LEAF]["actual_next"],
+            snapshot["derived"]["actual_next"],
+        )
+        self.assertEqual(8, len(snapshot["derived"]["conditions"]))
 
     def test_main_moving_after_the_handover_makes_every_pinned_value_stale(self):
         snapshot = self.frontier()
@@ -5327,9 +5404,21 @@ class FrontierSnapshotAndDrift(unittest.TestCase):
         replay_head = self.frontier(obs=self.observations(head=RealScenarioReplay.REBASED_HEAD))
         drift = M.frontier_drift(snapshot, replay_head)
         self.assertEqual({"CANDIDATE_HEAD"}, {m["what"] for m in drift["moved"]})
+        changed = {c["what"]: (c["was"], c["now"]) for c in drift["changed"]}
         self.assertEqual(
-            {"STATE": ("ACTIVE", "EVIDENCE_STALE"), "EVIDENCE_HEALTH": ("CURRENT", "STALE_CANDIDATE"), "PROGRESS_E": ("1/5", "0/1")},
-            {c["what"]: (c["was"], c["now"]) for c in drift["changed"]},
+            {
+                "STATE": ("ACTIVE", "EVIDENCE_STALE"),
+                "EVIDENCE_HEALTH": ("CURRENT", "STALE_CANDIDATE"),
+                "PROGRESS_E": ("1/5", "0/1"),
+            },
+            {key: value for key, value in changed.items() if key != "ACTUAL_NEXT"},
+        )
+        self.assertEqual(
+            ("CONTINUE_UNIT", "RECOVER_EVIDENCE"),
+            (
+                changed["ACTUAL_NEXT"][0]["action"],
+                changed["ACTUAL_NEXT"][1]["action"],
+            ),
         )
         more = self.ledger() + [RealScenarioReplay.p3i_facts(RealScenarioReplay.OLD_HEAD, 11)]
         facts = M.frontier_drift(snapshot, self.frontier(ledger=more))
@@ -6044,11 +6133,14 @@ class LowMemoryDecompositionRelay(unittest.TestCase):
         self.assertEqual(SHA_B, report["material"]["candidate_sha"])
         self.assertEqual(SHA_A, report["evidence_candidate"])
 
-    def test_missing_provider_candidate_fails_closed_instead_of_continuing_from_memory(self):
+    def test_missing_provider_candidate_uses_canonical_wait_provider(self):
         ledger = [entry(facts(units=[unit("U01"), unit("U02")]), 1)]
-        report = M.admit(M.project(graph(), ledger, {}), "Common#592")
-        self.assertEqual("RECOVER_EVIDENCE", report["action"])
+        projection = M.project(graph(), ledger, {})
+        report = M.admit(projection, "Common#592")
+        self.assertEqual("WAIT_PROVIDER", report["action"])
+        self.assertEqual("WAIT_PROVIDER", report["actual_next"]["action"])
         self.assertEqual("UNVERIFIABLE", report["evidence_health"])
+        self.assertFalse(report["recovery_required"])
 
     def test_provider_work_without_any_facts_requires_materialization(self):
         observations = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "OPEN"}}
@@ -6105,12 +6197,108 @@ class LowMemoryDecompositionRelay(unittest.TestCase):
         drift = M.frontier_drift(snapshot, live)
         self.assertEqual("MOVED", drift["status"])
         self.assertIn("DEPENDENCY_FACTS", [row["what"] for row in drift["moved"]])
-        self.assertIn("DEPENDENCIES", [row["what"] for row in drift["changed"]])
+        changed = {row["what"]: row for row in drift["changed"]}
+        self.assertIn("DEPENDENCIES", changed)
+        self.assertIn("ACTUAL_NEXT", changed)
+        self.assertEqual("WAIT_DEPENDENCY", changed["ACTUAL_NEXT"]["was"]["action"])
+        self.assertEqual("CONTINUE_UNIT", changed["ACTUAL_NEXT"]["now"]["action"])
         self.assertEqual("RECONCILE", drift["action"])
 
     def test_dependency_readiness_is_derived_and_cannot_be_authored_by_facts(self):
         bad = facts(units=[unit("U01")], dependencies={"ready": True})
         self.assertTrue(M.validate_facts(bad))
+
+
+
+class ProjectionEndToEndAgreement(unittest.TestCase):
+    def assert_four_surface_action(self, g, ledger, observations, ref, expected):
+        projection = M.project(g, ledger, observations)
+        node = projection["nodes"][ref]
+        self.assertEqual(expected, node["actual_next"]["action"])
+
+        status = M.status_document(
+            node,
+            version=1,
+            digest=projection["input_digest"],
+            programme=projection["programme"],
+        )
+        self.assertEqual(expected, status["node"]["actual_next"]["action"])
+
+        snapshot = M.frontier(g, ledger, observations, ref)
+        self.assertEqual(expected, snapshot["derived"]["actual_next"]["action"])
+
+        report = M.admit(projection, ref)
+        self.assertEqual(expected, report["actual_next"]["action"])
+        self.assertEqual(expected, report["action"])
+
+        self.assertIn(f"NEXT:{expected}", node["title_prefix"])
+        return projection, node
+
+    def test_four_surfaces_agree_for_core_replay_states(self):
+        active_ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor prose must not become authority"},
+                ),
+                1,
+            )
+        ]
+        self.assert_four_surface_action(graph(), active_ledger, OBS_A, "Common#592", "CONTINUE_UNIT")
+
+        material_obs = {"Common#592": {"candidate_sha": SHA_A, "pr_state": "MERGED"}}
+        self.assert_four_surface_action(graph(), [], material_obs, "Common#592", "MATERIALIZE_FACTS")
+
+        stale_obs = {"Common#592": {"candidate_sha": SHA_B}}
+        self.assert_four_surface_action(graph(), active_ledger, stale_obs, "Common#592", "RECOVER_EVIDENCE")
+
+        serial = LowMemoryDecompositionRelay.serial_graph()
+        self.assert_four_surface_action(serial, [], {}, "Common#594", "WAIT_DEPENDENCY")
+
+        handover = SuccessorAwareHandover()
+        handover_ledger = handover.base_ledger() + [entry(handover.offer(), 2, "offer")]
+        self.assert_four_surface_action(
+            handover.graph_with_policy(),
+            handover_ledger,
+            OBS_A,
+            "Common#592",
+            "RECONCILE_HANDOFF",
+        )
+
+    def test_executor_next_and_manual_title_cannot_move_decision_or_progress(self):
+        first_ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor proposal A"},
+                ),
+                1,
+            )
+        ]
+        second_ledger = [
+            entry(
+                facts(
+                    units=[unit("U01"), unit("U02"), unit("U03")],
+                    next={"unit": "U04", "action": "executor proposal B"},
+                ),
+                1,
+            )
+        ]
+        first = M.project(graph(), first_ledger, OBS_A)
+        second = M.project(graph(), second_ledger, OBS_A)
+        a = first["nodes"]["Common#592"]
+        b = second["nodes"]["Common#592"]
+        self.assertEqual(a["progress"], b["progress"])
+        self.assertEqual(a["actual_next"]["action"], b["actual_next"]["action"])
+        self.assertEqual(a["title_prefix"], b["title_prefix"])
+
+        forged_title = M.render_title(
+            a["title_prefix"].replace("NEXT:CONTINUE_UNIT", "NEXT:PUBLISH_RESULT"),
+            "manual edit",
+        )
+        drift = M.title_drift(forged_title, a["title_prefix"], "manual edit")
+        self.assertEqual("STALE_OR_HAND_EDITED", drift["status"])
+        self.assertEqual("CONTINUE_UNIT", a["actual_next"]["action"])
 
 
 if __name__ == "__main__":

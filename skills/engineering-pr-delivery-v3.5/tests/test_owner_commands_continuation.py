@@ -344,9 +344,12 @@ class TakeoverEntryAdmissionV35Tests(unittest.TestCase):
         g = self.graph()
         projection = self.project(g, self.fact(g))
         takeover = M.admit(projection, "Common#681", "take over", self.owner())
+        self.assertEqual("RECONCILE_ENTRY", takeover["action"])
+        self.assertEqual("CONTINUE_UNIT", takeover["actual_next"]["action"])
         self.assertEqual("ENTRY_PREPARED_EVIDENCE_MISSING", takeover["entry_admission"]["blocker"]["code"])
         ordinary = M.admit(projection, "Common#681", "continue")
         self.assertEqual(("CONTINUE_UNIT", "U2"), (ordinary["action"], ordinary["child"]["unit"]))
+        self.assertEqual(ordinary["actual_next"]["action"], ordinary["action"])
 
     def test_current_receipt_uses_v35_contract_digest_and_admits(self):
         g = self.graph()
@@ -354,17 +357,54 @@ class TakeoverEntryAdmissionV35Tests(unittest.TestCase):
         projection = self.project(g, self.fact(g, receipt))
         report = M.admit(projection, "Common#681", "take over", self.owner())
         self.assertEqual(("CONTINUE_UNIT", "U2"), (report["action"], report["child"]["unit"]))
+        self.assertEqual(report["actual_next"]["action"], report["action"])
         self.assertTrue(report["entry_admission"]["ready"])
 
     def test_stale_plan_or_material_fails_closed(self):
         g = self.graph()
         stale = self.receipt(g, plan_digest="sha256:" + "f" * 64)
         report = M.admit(self.project(g, self.fact(g, stale)), "Common#681", "take over", self.owner())
+        self.assertEqual("RECONCILE_ENTRY", report["action"])
+        self.assertEqual("CONTINUE_UNIT", report["actual_next"]["action"])
         self.assertEqual("ENTRY_PLAN_STALE", report["entry_admission"]["blocker"]["code"])
 
         current = self.receipt(g)
         moved = M.admit(self.project(g, self.fact(g, current), moved=True), "Common#681", "take over", self.owner())
         self.assertEqual("RECOVER_EVIDENCE", moved["action"])
+        self.assertEqual("RECOVER_EVIDENCE", moved["actual_next"]["action"])
+        self.assertTrue(moved["entry_admission"]["ready"])
+
+    def test_higher_canonical_plan_action_outranks_missing_entry_evidence(self):
+        g = self.graph()
+        leaf = next(node for node in g["nodes"] if node["ref"] == "Common#681")
+        leaf.pop("outcome")
+        projection = self.project(g, self.fact(g))
+        report = M.admit(projection, "Common#681", "take over", self.owner())
+        self.assertEqual("FIX_PLAN", report["actual_next"]["action"])
+        self.assertEqual("FIX_PLAN", report["action"])
+        self.assertFalse(report["entry_admission"]["ready"])
+
+    def test_missing_entry_overlays_publish_result_but_does_not_replace_actual_next(self):
+        g = self.graph()
+        indexed = M.validate_graph(g)
+        digest = indexed["nodes"]["Common#681"]["contract_digest"]
+        record = self.fact(g)
+        record["units"] = [
+            {
+                "id": uid,
+                "state": "COMPLETE",
+                "result": "VERIFIED",
+                "evidence_refs": [f"Common#681#evidence-{uid}"],
+                "contract_digest": digest,
+            }
+            for uid in ("U1", "U2", "U3")
+        ]
+        projection = self.project(g, record)
+        self.assertEqual("PUBLISH_RESULT", projection["nodes"]["Common#681"]["actual_next"]["action"])
+        report = M.admit(projection, "Common#681", "take over", self.owner())
+        self.assertEqual("RECONCILE_ENTRY", report["action"])
+        self.assertEqual("PUBLISH_RESULT", report["actual_next"]["action"])
+        self.assertFalse(report["entry_admission"]["ready"])
 
     def test_entry_fact_validation_is_strict(self):
         g = self.graph()

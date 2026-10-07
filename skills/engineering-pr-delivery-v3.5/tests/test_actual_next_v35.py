@@ -223,6 +223,18 @@ class ActualNextContractV35Tests(unittest.TestCase):
         self.assertEqual("PUBLISH_RESULT", NEXT.derive_actual_next(row)["action"])
 
 
+    def test_legacy_spec_binding_unavailable_with_accepted_facts_does_not_deadlock(self):
+        row = base_leaf(
+            activity_epoch=2,
+            conditions=canonical_conditions(SpecCurrent="UNKNOWN"),
+        )
+        spec = next(item for item in row["conditions"] if item["type"] == "SpecCurrent")
+        spec["reason"] = "SPEC_BINDING_UNAVAILABLE"
+        spec["message"] = "Stable Responsibility contract binding is unavailable."
+        result = NEXT.derive_actual_next(row)
+        self.assertEqual("CONTINUE_UNIT", result["action"])
+        self.assertNotEqual("RECONCILE_SPEC", result["action"])
+
     def test_provider_unknown_fresh_leaf_does_not_invent_wait_provider_or_spec_reconcile(self):
         row = base_leaf(
             activity_epoch=0,
