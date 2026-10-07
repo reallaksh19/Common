@@ -219,6 +219,243 @@ class FactsAreTheOnlyAgentInput(unittest.TestCase):
     def test_candidate_must_be_full_sha(self):
         self.assertTrue(M.validate_facts(facts(sha="abc123", units=[unit("U01")])))
 
+    def test_execution_provenance_tuple_is_optional_but_strict_when_present(self):
+        binding = {
+            "ep": "EP-P3-B1",
+            "lease": "LEASE-P3-B1",
+            "executor": "agent-604-b1",
+            "custody_epoch": 8,
+        }
+        self.assertEqual([], M.validate_facts(facts(units=[unit("U01")], execution=binding)))
+
+        variants = []
+        for key in binding:
+            row = copy.deepcopy(binding)
+            row.pop(key)
+            variants.append(row)
+        variants += [
+            {**binding, "ep": "bad"},
+            {**binding, "lease": "bad"},
+            {**binding, "executor": "   "},
+            {**binding, "custody_epoch": 0},
+            {**binding, "custody_epoch": True},
+            {**binding, "surprise": "x"},
+        ]
+        for row in variants:
+            with self.subTest(row=row):
+                self.assertTrue(M.validate_facts(facts(units=[unit("U01")], execution=row)))
+
+    def test_execution_provenance_is_fact_metadata_not_progress_authority(self):
+        base = M.project(graph(), [entry(facts(units=[unit("U01")]), 1)], OBS_A)
+        bound = M.project(
+            graph(),
+            [
+                entry(
+                    facts(
+                        units=[unit("U01")],
+                        execution={
+                            "ep": "EP-P3-B1",
+                            "lease": "LEASE-P3-B1",
+                            "executor": "agent-604-b1",
+                            "custody_epoch": 8,
+                        },
+                    ),
+                    1,
+                )
+            ],
+            OBS_A,
+        )
+        self.assertEqual(
+            base["nodes"]["Common#592"]["progress"],
+            bound["nodes"]["Common#592"]["progress"],
+        )
+        self.assertEqual(
+            base["nodes"]["Common#592"]["actual_next"],
+            bound["nodes"]["Common#592"]["actual_next"],
+        )
+
+    def test_raw_epoch_remains_forbidden_projection_bookkeeping(self):
+        self.assertTrue(M.validate_facts(facts(units=[unit("U01")], epoch=8)))
+
+
+class ExecutionBindingFromExistingCustody(unittest.TestCase):
+    def state(self, **updates):
+        execution = {
+            "lifecycle": "ACTIVE",
+            "ep": "EP-P3-B1",
+            "lease": "LEASE-P3-B1",
+            "route": "SERIAL:EP-P3-B1",
+            "custody_epoch": 8,
+        }
+        execution.update(updates)
+        return {"execution": execution}
+
+    def lease(self, **updates):
+        value = {
+            "id": "LEASE-P3-B1",
+            "state": "ACTIVE",
+            "executor": {"id": "agent-604-b1"},
+            "basis": {"ep_id": "EP-P3-B1"},
+            "custody": {"epoch": 8},
+        }
+        value.update(updates)
+        return value
+
+    def test_current_state_and_lease_stamp_exact_execution_tuple(self):
+        record = facts(units=[unit("U01")])
+        bound = M.bind_facts_to_execution(record, self.state(), self.lease())
+        self.assertEqual(
+            {
+                "ep": "EP-P3-B1",
+                "lease": "LEASE-P3-B1",
+                "executor": "agent-604-b1",
+                "custody_epoch": 8,
+            },
+            bound["execution"],
+        )
+        self.assertNotIn("execution", record)
+        self.assertEqual([], M.validate_facts(bound))
+
+    def test_identical_existing_binding_is_idempotent(self):
+        record = facts(
+            units=[unit("U01")],
+            execution={
+                "ep": "EP-P3-B1",
+                "lease": "LEASE-P3-B1",
+                "executor": "agent-604-b1",
+                "custody_epoch": 8,
+            },
+        )
+        self.assertEqual(record, M.bind_facts_to_execution(record, self.state(), self.lease()))
+
+    def test_conflicting_existing_binding_is_never_repaired_silently(self):
+        record = facts(
+            units=[unit("U01")],
+            execution={
+                "ep": "EP-P3-B1",
+                "lease": "LEASE-P3-B1",
+                "executor": "agent-old",
+                "custody_epoch": 7,
+            },
+        )
+        with self.assertRaises(M.DelpError):
+            M.bind_facts_to_execution(record, self.state(), self.lease())
+
+    def test_state_lease_disagreement_fails_closed(self):
+        variants = [
+            (self.state(lifecycle="IDLE"), self.lease()),
+            (self.state(lease="LEASE-OTHER"), self.lease()),
+            (self.state(ep="EP-OTHER"), self.lease()),
+            (self.state(custody_epoch=9), self.lease()),
+            (self.state(), self.lease(state="RELEASED")),
+            (self.state(), self.lease(id="LEASE-OTHER")),
+            (self.state(), self.lease(basis={"ep_id": "EP-OTHER"})),
+            (self.state(), self.lease(custody={"epoch": 9})),
+            (self.state(), self.lease(executor={"id": "   "})),
+        ]
+        for state, lease in variants:
+            with self.subTest(state=state, lease=lease):
+                with self.assertRaises(M.DelpError):
+                    M.execution_binding_from_state_lease(state, lease)
+
+    def test_stamping_does_not_create_a_currentness_or_progress_decision(self):
+        record = facts(units=[unit("U01")])
+        stamped = M.bind_facts_to_execution(record, self.state(), self.lease())
+        node = M.project(graph(), [entry(stamped, 1)], OBS_A)["nodes"]["Common#592"]
+        legacy = M.project(graph(), [entry(record, 1)], OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(legacy["progress"], node["progress"])
+        self.assertEqual(legacy["actual_next"], node["actual_next"])
+
+
+class ExecutionProvenanceVisibility(unittest.TestCase):
+    BINDING = {
+        "ep": "EP-P3-B1",
+        "lease": "LEASE-P3-B1",
+        "executor": "agent-604-b1",
+        "custody_epoch": 8,
+    }
+
+    def bound_fact(self, units, **updates):
+        binding = dict(self.BINDING)
+        binding.update(updates)
+        return facts(units=units, execution=binding)
+
+    def test_bound_facts_are_visible_and_identical_bindings_coalesce(self):
+        ledger = [
+            entry(self.bound_fact([unit("U01")]), 1, "fact-z"),
+            entry(self.bound_fact([unit("U02")]), 2, "fact-a"),
+        ]
+        node = M.project(graph(), ledger, OBS_A)["nodes"]["Common#592"]
+        self.assertEqual(
+            {
+                "bound_fact_count": 2,
+                "unbound_fact_count": 0,
+                "bindings": [
+                    {
+                        **self.BINDING,
+                        "source_refs": ["fact-a", "fact-z"],
+                    }
+                ],
+            },
+            node["execution_provenance"],
+        )
+
+    def test_legacy_unbound_facts_remain_visible_not_rejected(self):
+        ledger = [
+            entry(facts(units=[unit("U01")]), 1, "legacy"),
+            entry(self.bound_fact([unit("U02")]), 2, "bound"),
+        ]
+        projection = M.project(graph(), ledger, OBS_A)
+        node = projection["nodes"]["Common#592"]
+        self.assertEqual(1, node["execution_provenance"]["bound_fact_count"])
+        self.assertEqual(1, node["execution_provenance"]["unbound_fact_count"])
+        self.assertEqual([], projection["rejected_facts"])
+
+    def test_provenance_order_is_deterministic_and_carries_no_currentness_verdict(self):
+        older = self.bound_fact([unit("U01")], custody_epoch=7, executor="agent-old")
+        newer = self.bound_fact([unit("U02")], custody_epoch=8, executor="agent-new")
+        first = M.project(
+            graph(),
+            [entry(newer, 2, "new"), entry(older, 1, "old")],
+            OBS_A,
+        )["nodes"]["Common#592"]["execution_provenance"]
+        second = M.project(
+            graph(),
+            [entry(older, 1, "old"), entry(newer, 2, "new")],
+            OBS_A,
+        )["nodes"]["Common#592"]["execution_provenance"]
+        self.assertEqual(first, second)
+        self.assertEqual([7, 8], [row["custody_epoch"] for row in first["bindings"]])
+        self.assertTrue(
+            all(
+                "status" not in row and "current" not in row and "stale" not in row
+                for row in first["bindings"]
+            )
+        )
+
+    def test_execution_provenance_changes_no_semantic_or_decision_projection(self):
+        raw = [entry(facts(units=[unit("U01"), unit("U02")]), 1, "fact")]
+        bound = [entry(self.bound_fact([unit("U01"), unit("U02")]), 1, "fact")]
+        legacy_node = M.project(graph(), raw, OBS_A)["nodes"]["Common#592"]
+        bound_projection = M.project(graph(), bound, OBS_A)
+        bound_node = bound_projection["nodes"]["Common#592"]
+        for field in ("progress", "state", "lifecycle", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(field=field):
+                self.assertEqual(legacy_node[field], bound_node[field])
+
+        document = M.status_document(
+            bound_node,
+            version=1,
+            digest=bound_projection["input_digest"],
+            programme=bound_projection["programme"],
+        )
+        self.assertEqual(bound_node["execution_provenance"], document["node"]["execution_provenance"])
+        self.assertNotIn(
+            "execution_provenance",
+            bound_projection["nodes"]["Common#588"],
+        )
+
+
 
 class LeafProgressAndEvidence(unittest.TestCase):
     def leaf(self, ledger, observations=OBS_A):
@@ -2298,6 +2535,45 @@ class SchemasAgreeWithTheEngine(unittest.TestCase):
         self.assertEqual(M.STATUS_SCHEMA, self.schema("live-status")["$id"])
         self.assertEqual(M.OBSERVATION_SCHEMA, self.schema("responsibility-observation")["$id"])
         self.assertEqual(M.CONDITION_SCHEMA, self.schema("responsibility-condition")["$id"])
+
+    def test_execution_provenance_fact_passes_schema_and_engine(self):
+        record = facts(
+            units=[unit("U01")],
+            execution={
+                "ep": "EP-P3-B1",
+                "lease": "LEASE-P3-B1",
+                "executor": "agent-604-b1",
+                "custody_epoch": 8,
+            },
+        )
+        self.assertEqual([], self.schema_errors("checkpoint-facts", record))
+        self.assertEqual([], M.validate_facts(record))
+
+    def test_bad_execution_provenance_fails_schema_and_engine(self):
+        good = {
+            "ep": "EP-P3-B1",
+            "lease": "LEASE-P3-B1",
+            "executor": "agent-604-b1",
+            "custody_epoch": 8,
+        }
+        variants = []
+        for key in good:
+            row = copy.deepcopy(good)
+            row.pop(key)
+            variants.append(row)
+        variants += [
+            {**good, "ep": "EP"},
+            {**good, "lease": "LEASE"},
+            {**good, "executor": "   "},
+            {**good, "custody_epoch": 0},
+            {**good, "custody_epoch": True},
+            {**good, "unexpected": "x"},
+        ]
+        for execution in variants:
+            record = facts(units=[unit("U01")], execution=execution)
+            with self.subTest(execution=execution):
+                self.assertTrue(self.schema_errors("checkpoint-facts", record), "schema accepted malformed execution binding")
+                self.assertTrue(M.validate_facts(record), "engine accepted malformed execution binding")
 
     def test_good_observation_passes_schema_and_engine(self):
         record = {

@@ -49,6 +49,23 @@ properties:
       base_sha:
         type: string
         pattern: '^[0-9a-f]{40}$'
+  execution:
+    type: object
+    additionalProperties: false
+    description: >-
+      Optional execution/custody provenance for this facts publication. The tuple reuses the active V3.5
+      LEASE/STATE identity vocabulary. It records where the fact was produced; B1 does not itself decide whether
+      that epoch is current. This is distinct from derived activity_epoch.
+    required: [ep, lease, executor, custody_epoch]
+    properties:
+      ep:
+        type: string
+        pattern: '^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
+      lease:
+        type: string
+        pattern: '^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$'
+      executor: {type: string, minLength: 1, pattern: '.*\S.*'}
+      custody_epoch: {type: integer, minimum: 1}
   units:
     type: array
     items:

@@ -238,6 +238,7 @@ _ALLOWED_FACT_TOP = frozenset(
         "units",
         "gates",
         "activity",
+        "execution",
         "next",
         "blocker",
         "owner_action",
@@ -257,6 +258,8 @@ _REF = re.compile(
     r"^(?:(?P<repo>[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)?)#)?(?P<number>[1-9][0-9]*)$"
 )
 _UNIT_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+_EP_ID = re.compile(r"^(?:EP-[A-Za-z0-9][A-Za-z0-9._-]*|EP\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$")
+_LEASE_ID = re.compile(r"^(?:LEASE-[A-Za-z0-9][A-Za-z0-9._-]*|LEASE\.(?:[1-9][0-9]*|REPO|INTERNAL)\.[1-9][0-9]*)$")
 # `<leaf ref>:<unit id>` or `<leaf ref>:gate:<gate id>` — how a plan update names the work it changes.
 _ITEM_KEY = re.compile(r"^(?P<ref>[^:\s]+):(?P<item>(?:gate:)?[A-Za-z0-9][A-Za-z0-9._-]{0,63})$")
 _SURFACE_GLOB = re.compile(r"[*?\[\]\\]")
@@ -1270,6 +1273,29 @@ def validate_facts(facts: Any) -> list[str]:
             errors.append(f"material: unknown fields {sorted(extra)}")
         if material.get("base_sha") is not None and not _SHA.fullmatch(str(material["base_sha"])):
             errors.append("material.base_sha: must be 40-hex lowercase")
+
+    execution = facts.get("execution")
+    if execution is not None:
+        if not isinstance(execution, Mapping):
+            errors.append("execution: must be a mapping")
+        else:
+            allowed_execution = {"ep", "lease", "executor", "custody_epoch"}
+            missing_execution = sorted(allowed_execution - set(map(str, execution)))
+            extra_execution = sorted(set(map(str, execution)) - allowed_execution)
+            if missing_execution:
+                errors.append(f"execution: missing fields {missing_execution}")
+            if extra_execution:
+                errors.append(f"execution: unknown fields {extra_execution}")
+            if not _EP_ID.fullmatch(str(execution.get("ep") or "")):
+                errors.append("execution.ep: required canonical EP identifier")
+            if not _LEASE_ID.fullmatch(str(execution.get("lease") or "")):
+                errors.append("execution.lease: required canonical LEASE identifier")
+            executor = execution.get("executor")
+            if not isinstance(executor, str) or not executor.strip():
+                errors.append("execution.executor: non-empty string required")
+            custody_epoch = execution.get("custody_epoch")
+            if isinstance(custody_epoch, bool) or not isinstance(custody_epoch, int) or custody_epoch < 1:
+                errors.append("execution.custody_epoch: positive integer required")
 
     seen: set[str] = set()
     for index, unit in enumerate(facts.get("units") or []):
@@ -3601,6 +3627,125 @@ def bind_facts_to_graph(graph: Any, facts: Mapping[str, Any]) -> dict[str, Any]:
     return bound
 
 
+def execution_binding_from_state_lease(
+    state: Mapping[str, Any], lease: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Derive the current facts execution provenance from existing STATE + active LEASE truth.
+
+    This helper creates no new custody authority. It only verifies that the two existing
+    custody surfaces agree and returns their canonical identity tuple.
+    """
+    if not isinstance(state, Mapping) or not isinstance(lease, Mapping):
+        raise DelpError("execution binding requires STATE and LEASE mappings")
+
+    execution = state.get("execution")
+    if not isinstance(execution, Mapping) or execution.get("lifecycle") != "ACTIVE":
+        raise DelpError("execution binding requires ACTIVE STATE.execution")
+
+    ep = execution.get("ep")
+    lease_id = execution.get("lease")
+    custody_epoch = execution.get("custody_epoch")
+    if not _EP_ID.fullmatch(str(ep or "")):
+        raise DelpError("STATE.execution.ep: active canonical EP identifier required")
+    if not _LEASE_ID.fullmatch(str(lease_id or "")):
+        raise DelpError("STATE.execution.lease: active canonical LEASE identifier required")
+    if isinstance(custody_epoch, bool) or not isinstance(custody_epoch, int) or custody_epoch < 1:
+        raise DelpError("STATE.execution.custody_epoch: positive integer required for active binding")
+
+    if lease.get("state") != "ACTIVE":
+        raise DelpError("execution binding requires ACTIVE LEASE")
+    if lease.get("id") != lease_id:
+        raise DelpError("LEASE.id does not match STATE.execution.lease")
+
+    basis = lease.get("basis")
+    if not isinstance(basis, Mapping) or basis.get("ep_id") != ep:
+        raise DelpError("LEASE.basis.ep_id does not match STATE.execution.ep")
+
+    custody = lease.get("custody")
+    lease_epoch = custody.get("epoch") if isinstance(custody, Mapping) else None
+    if isinstance(lease_epoch, bool) or not isinstance(lease_epoch, int) or lease_epoch < 1:
+        raise DelpError("LEASE.custody.epoch: positive integer required")
+    if lease_epoch != custody_epoch:
+        raise DelpError("LEASE.custody.epoch does not match STATE.execution.custody_epoch")
+
+    executor = lease.get("executor")
+    executor_id = executor.get("id") if isinstance(executor, Mapping) else None
+    if not isinstance(executor_id, str) or not executor_id.strip():
+        raise DelpError("LEASE.executor.id: non-empty string required")
+
+    return {
+        "ep": str(ep),
+        "lease": str(lease_id),
+        "executor": executor_id,
+        "custody_epoch": custody_epoch,
+    }
+
+
+def bind_facts_to_execution(
+    facts: Mapping[str, Any], state: Mapping[str, Any], lease: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Stamp current execution provenance into facts without repairing conflicts."""
+    errors = validate_facts(facts)
+    if errors:
+        raise DelpError("cannot bind invalid facts: " + "; ".join(errors))
+
+    expected = execution_binding_from_state_lease(state, lease)
+    bound = copy.deepcopy(dict(facts))
+    current = bound.get("execution")
+    if current is not None and dict(current) != expected:
+        raise DelpError(
+            f"execution: existing {dict(current)!r} conflicts with current custody binding {expected!r}"
+        )
+    bound["execution"] = expected
+    return bound
+
+
+def execution_provenance(records: Iterable[Mapping[str, Any]]) -> dict[str, Any]:
+    """Summarize accepted fact execution bindings without deciding custody currentness."""
+    bound = 0
+    unbound = 0
+    buckets: dict[tuple[str, str, str, int], set[str]] = {}
+
+    for record in records:
+        execution = record.get("execution") if isinstance(record, Mapping) else None
+        if not isinstance(execution, Mapping):
+            unbound += 1
+            continue
+
+        bound += 1
+        key = (
+            str(execution["ep"]),
+            str(execution["lease"]),
+            str(execution["executor"]),
+            int(execution["custody_epoch"]),
+        )
+        source = str(record.get("_source") or "").strip()
+        buckets.setdefault(key, set())
+        if source:
+            buckets[key].add(source)
+
+    bindings = []
+    for ep, lease_id, executor, custody_epoch in sorted(
+        buckets,
+        key=lambda row: (row[3], row[0], row[1], row[2]),
+    ):
+        bindings.append(
+            {
+                "ep": ep,
+                "lease": lease_id,
+                "executor": executor,
+                "custody_epoch": custody_epoch,
+                "source_refs": sorted(buckets[(ep, lease_id, executor, custody_epoch)]),
+            }
+        )
+
+    return {
+        "bound_fact_count": bound,
+        "unbound_fact_count": unbound,
+        "bindings": bindings,
+    }
+
+
 def partition_ledger(
     indexed: Mapping[str, Any], ledger: Iterable[Mapping[str, Any]]
 ) -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, Any]]]:
@@ -3760,7 +3905,9 @@ def project(
 
     for ref in indexed["order"]:
         if nodes[ref]["kind"] == "LEAF":
-            results[ref] = compute_leaf(nodes[ref], accepted.get(ref, []), observations.get(nodes[ref]["number"]))
+            records = accepted.get(ref, [])
+            results[ref] = compute_leaf(nodes[ref], records, observations.get(nodes[ref]["number"]))
+            results[ref]["execution_provenance"] = execution_provenance(records)
     if mode != "OFF":
         # Closed (COMPLETE/SUPERSEDED) leaves are history, not work to release: the gate skips them.
         closed = {ref for ref, leaf in results.items() if leaf["lifecycle"] in _TERMINAL}
