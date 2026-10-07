@@ -1618,6 +1618,21 @@ class DecompositionRepositoryObserverTests(unittest.TestCase):
             self.assertEqual("UNKNOWN", out["change_impact"])
             self.assertEqual("UNAVAILABLE", out["static_dependency_visibility"])
 
+    def test_observation_has_authority_and_plan_basis_digest_moves_with_plan(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = pathlib.Path(td)
+            self.init_repo(root, {"pkg/a.py": "a", "other/x.py": "x"})
+            first = O.observe_repository_basis(self.graph(), leaf_ref="Common#1", repo_root=root)
+            repeat = O.observe_repository_basis(self.graph(), leaf_ref="Common#1", repo_root=root)
+            moved = O.observe_repository_basis(
+                self.graph(sibling_surface=["third/"]),
+                leaf_ref="Common#1",
+                repo_root=root,
+            )
+            self.assertEqual("OBSERVED_REPOSITORY_BASIS", first["authority"])
+            self.assertEqual(first["plan_basis_digest"], repeat["plan_basis_digest"])
+            self.assertNotEqual(first["plan_basis_digest"], moved["plan_basis_digest"])
+
     def test_unresolved_surface_stays_unknown(self):
         with tempfile.TemporaryDirectory() as td:
             root = pathlib.Path(td)
@@ -1745,6 +1760,13 @@ class DecompositionRepositoryObservationSchemaContract(unittest.TestCase):
                 (SCHEMAS / "delp-decomposition-repository-observation-v35.schema.yaml").read_text(encoding="utf-8")
             )
             self.assertEqual([], [e.message for e in jsonschema.Draft202012Validator(schema).iter_errors(out)])
+
+            impossible = copy.deepcopy(out)
+            impossible["candidate_diff"]["visibility"] = "OBSERVED"
+            self.assertTrue(
+                [e.message for e in jsonschema.Draft202012Validator(schema).iter_errors(impossible)],
+                "schema accepted OBSERVED diff with null observation fields",
+            )
 
 
 class BidirectionalDecompositionClassifier(unittest.TestCase):

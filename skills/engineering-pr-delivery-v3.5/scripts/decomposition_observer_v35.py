@@ -19,9 +19,13 @@ class ObservationError(ValueError):
     """Repository decomposition basis could not be observed safely."""
 
 
-def _digest(values: list[str]) -> str:
-    payload = json.dumps(sorted(values), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+def _canonical_digest(value: Any) -> str:
+    payload = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
     return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _digest(values: list[str]) -> str:
+    return _canonical_digest(sorted(values))
 
 
 def _git(root: Path, *args: str) -> bytes:
@@ -189,19 +193,31 @@ def observe_repository_basis(
         surface_status = "UNRESOLVED"
 
     overlaps: list[dict[str, Any]] = []
+    sibling_basis: list[dict[str, Any]] = []
     nodes = graph.get("nodes") or []
     for sibling in nodes:
         if not isinstance(sibling, Mapping) or sibling is node or sibling.get("kind") != "LEAF":
             continue
         sibling_ref = str(sibling.get("ref") or "")
         sibling_surface = _surface_list(sibling)
+        sibling_basis.append({"ref": sibling_ref, "write_surface": sibling_surface})
         hit = _surface_overlap(surfaces, sibling_surface)
         if hit:
             overlaps.append({"ref": sibling_ref, "overlaps": hit})
     overlaps.sort(key=lambda row: row["ref"])
+    sibling_basis.sort(key=lambda row: row["ref"])
 
     boundaries = _string_list(node.get("transformation_boundaries"), "transformation_boundaries")
     dependencies = _string_list(node.get("depends_on"), "depends_on")
+    plan_basis_digest = _canonical_digest(
+        {
+            "subject": leaf_ref,
+            "write_surface": surfaces,
+            "transformation_boundaries": boundaries,
+            "declared_dependencies": dependencies,
+            "siblings": sibling_basis,
+        }
+    )
 
     if (base_ref is None) != (candidate_ref is None):
         raise ObservationError("base_ref and candidate_ref must be supplied together")
@@ -265,7 +281,9 @@ def observe_repository_basis(
 
     return {
         "schema": SCHEMA,
+        "authority": "OBSERVED_REPOSITORY_BASIS",
         "subject": leaf_ref,
+        "plan_basis_digest": plan_basis_digest,
         "repository": {
             "tracked_count": len(tracked),
             "tracked_digest": _digest(tracked),
