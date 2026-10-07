@@ -33,6 +33,7 @@ import re
 import subprocess
 import sys
 import types
+from datetime import datetime, timezone
 from fractions import Fraction
 from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
@@ -4931,6 +4932,40 @@ def sync_projection(
     return report
 
 
+def _provider_comment_timestamp(value: Any, label: str) -> tuple[str, datetime]:
+    """Validate and normalize one provider-authored issue-comment timestamp."""
+    if not isinstance(value, str) or not value.strip():
+        raise DelpError(f"{label}: provider timestamp required")
+    raw = value.strip()
+    try:
+        parsed = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise DelpError(f"{label}: valid ISO-8601 provider timestamp required") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise DelpError(f"{label}: timezone-aware provider timestamp required")
+    utc = parsed.astimezone(timezone.utc)
+    return utc.isoformat().replace("+00:00", "Z"), utc
+
+
+def _github_comment_provider_envelope(comment: Mapping[str, Any]) -> dict[str, Any]:
+    """Return provider-authored publication/edit time for one GitHub issue comment."""
+    created_text, created = _provider_comment_timestamp(
+        comment.get("created_at"),
+        "GitHub comment.created_at",
+    )
+    updated_text, updated = _provider_comment_timestamp(
+        comment.get("updated_at"),
+        "GitHub comment.updated_at",
+    )
+    if updated < created:
+        raise DelpError("GitHub comment.updated_at: cannot precede created_at")
+    return {
+        "kind": "GITHUB_ISSUE_COMMENT",
+        "created_at": created_text,
+        "updated_at": updated_text,
+    }
+
+
 def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
     """Collect CHECKPOINT_FACTS_V1 blocks from each declared leaf issue's comments, oldest first.
 
@@ -4950,10 +4985,13 @@ def ledger_from_github(transport: Any, graph: Any) -> list[dict[str, Any]]:
                 if allowlist
                 else str(comment.get("author_association") or "") in TRUSTED_ASSOCIATIONS
             )
-            for facts in extract_facts_blocks(str(comment.get("body") or "")):
+            blocks = extract_facts_blocks(str(comment.get("body") or ""))
+            provider = _github_comment_provider_envelope(comment) if blocks else None
+            for facts in blocks:
                 row = {
                     "source": f"{ref}#issuecomment-{comment.get('id')}",
                     "order": int(comment.get("id") or 0),
+                    "provider": provider,
                     "facts": facts,
                 }
                 if not trusted:
