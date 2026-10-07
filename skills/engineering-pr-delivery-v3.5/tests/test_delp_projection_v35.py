@@ -1626,7 +1626,13 @@ class FakeGitHub:
         return dict(self.compares.get(head, {"ahead_by": 0, "behind_by": 0}))
 
     def list_comments(self, number):
-        return [dict(c) for c in self.comments.get(number, [])]
+        rows = []
+        for comment in self.comments.get(number, []):
+            row = dict(comment)
+            row.setdefault("created_at", "2026-10-07T00:00:00Z")
+            row.setdefault("updated_at", row["created_at"])
+            rows.append(row)
+        return rows
 
     def post_comment(self, number, body):
         self.next_id += 1
@@ -1719,6 +1725,76 @@ class GitHubStoreTests(unittest.TestCase):
         self.assertEqual(SHA_C, observed["Common#612"]["material"]["candidate_sha"])
         self.assertEqual(SHA_B, observed["Common#594"]["material"]["candidate_sha"])
         self.assertEqual("MERGED", observed["Common#592"]["material"]["pr_state"])
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_fact_ledger_retains_provider_created_and_updated_time(self):
+        gh = FakeGitHub()
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        gh.comments[592] = [
+            {
+                "id": 5,
+                "body": body,
+                "author_association": "OWNER",
+                "user": {"login": "reallaksh19"},
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00+00:00",
+            }
+        ]
+        ledger = M.ledger_from_github(gh, graph())
+        self.assertEqual(1, len(ledger))
+        self.assertEqual(
+            {
+                "kind": "GITHUB_ISSUE_COMMENT",
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00Z",
+            },
+            ledger[0]["provider"],
+        )
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_provider_comment_timestamp_is_provider_metadata_not_semantic_authority(self):
+        gh = FakeGitHub()
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        gh.comments[592] = [
+            {
+                "id": 5,
+                "body": body,
+                "author_association": "OWNER",
+                "user": {"login": "reallaksh19"},
+                "created_at": "2026-10-07T10:00:00Z",
+                "updated_at": "2026-10-07T11:30:00Z",
+            }
+        ]
+        ledger = M.ledger_from_github(gh, graph())
+        stripped = [{key: value for key, value in row.items() if key != "provider"} for row in ledger]
+        with_provider = M.project(graph(), ledger, OBS_A)["nodes"]["Common#592"]
+        without_provider = M.project(graph(), stripped, OBS_A)["nodes"]["Common#592"]
+        for field in ("progress", "state", "lifecycle", "conditions", "actual_next", "title_prefix"):
+            with self.subTest(field=field):
+                self.assertEqual(without_provider[field], with_provider[field])
+
+    @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
+    def test_malformed_or_naive_provider_timestamp_fails_closed_for_facts_comment(self):
+        body = ExtractFactsBlocks.BODY.replace("__SHA__", SHA_A)
+        for created_at, updated_at in (
+            ("not-a-time", "2026-10-07T11:00:00Z"),
+            ("2026-10-07T10:00:00", "2026-10-07T11:00:00Z"),
+            ("2026-10-07T12:00:00Z", "2026-10-07T11:00:00Z"),
+        ):
+            with self.subTest(created_at=created_at, updated_at=updated_at):
+                gh = FakeGitHub()
+                gh.comments[592] = [
+                    {
+                        "id": 5,
+                        "body": body,
+                        "author_association": "OWNER",
+                        "user": {"login": "reallaksh19"},
+                        "created_at": created_at,
+                        "updated_at": updated_at,
+                    }
+                ]
+                with self.assertRaises(M.DelpError):
+                    M.ledger_from_github(gh, graph())
 
     @unittest.skipUnless(HAVE_YAML, "PyYAML unavailable")
     def test_facts_from_untrusted_authors_are_rejected_not_believed(self):
