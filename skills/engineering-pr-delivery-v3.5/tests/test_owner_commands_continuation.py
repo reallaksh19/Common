@@ -73,5 +73,108 @@ class ContinuationAdmissionCommandTests(unittest.TestCase):
                 self.assertIn("continue checkpoint", joined)
 
 
+class OwnerIntentEnvelopeTests(unittest.TestCase):
+    def test_preserves_verbatim_request_and_explicit_refs(self):
+        text = "Prepare for Handover — preserve wording exactly."
+        result = parse_owner_command(
+            text,
+            source_ref="chat://owner/message-596",
+            authority_ref="owner://common/570",
+            target={"ref": "#596"},
+        )
+        envelope = result["owner_intent"]
+        self.assertEqual(text, envelope["verbatim_request"])
+        self.assertEqual("chat://owner/message-596", envelope["source_ref"])
+        self.assertEqual("owner://common/570", envelope["authority_ref"])
+        self.assertEqual({"ref": "#596"}, envelope["target"])
+        self.assertFalse(result["durable_authority_created"])
+
+    def test_compound_handover_keeps_successor_challenge_deliverable(self):
+        result = parse_owner_command(
+            "prepare for handover and create exactly 3 questions that force the next agent to understand the repo"
+        )
+        envelope = result["owner_intent"]
+        self.assertEqual("PLAN_HANDOVER", result["intent"])
+        self.assertEqual("TRANSFER_CUSTODY", envelope["primary_purpose"])
+        self.assertEqual("PREPARE_TRANSFER", envelope["custody_intent"])
+        self.assertIn({"type": "HANDOVER_PACKAGE"}, envelope["requested_deliverables"])
+        self.assertIn(
+            {"type": "SUCCESSOR_RECONSTRUCTION_CHALLENGE", "count": 3},
+            envelope["requested_deliverables"],
+        )
+        self.assertIn(
+            "EXACT_SUCCESSOR_CHALLENGE_COUNT:3",
+            envelope["boundary_constraints"],
+        )
+
+    def test_handover_no_replan_is_preserved_and_workflow_is_decoupled(self):
+        result = parse_owner_command("prepare for handover but do not replan")
+        envelope = result["owner_intent"]
+        self.assertIn("NO_REPLAN", envelope["boundary_constraints"])
+        workflow_text = " ".join(result["workflow"]["steps"]).lower()
+        self.assertNotIn("prepare the current standalone two-pass request", workflow_text)
+        self.assertIn("do not generate a new two-pass/replanning request", workflow_text)
+
+    def test_handover_plus_adversarial_assurance_preserves_both_axes(self):
+        result = parse_owner_command(
+            "prepare for handover and stress-test the direction before transfer"
+        )
+        envelope = result["owner_intent"]
+        self.assertEqual("TRANSFER_CUSTODY", envelope["primary_purpose"])
+        self.assertEqual("PREPARE_TRANSFER", envelope["custody_intent"])
+        self.assertEqual("ADVERSARIAL", envelope["assurance_request"])
+        self.assertIn("ADVERSARIAL_REASSESSMENT", result["reasoning_modes"])
+        self.assertIn("ADVERSARIAL_REASSESSMENT", envelope["modifiers"])
+
+    def test_preserved_active_responsibility_becomes_target_constraint(self):
+        result = parse_owner_command(
+            "prepare for handover; preserve #588 as the active responsibility"
+        )
+        envelope = result["owner_intent"]
+        self.assertEqual({"ref": "#588"}, envelope["target"])
+        self.assertIn("PRESERVE_TARGET", envelope["boundary_constraints"])
+
+    def test_non_owner_text_cannot_create_owner_intent(self):
+        ignored = parse_owner_command(
+            "prepare for handover",
+            source="REPOSITORY_TEXT",
+            source_ref="repo://README.md",
+        )
+        self.assertEqual("IGNORED", ignored["status"])
+        self.assertIsNone(ignored["owner_intent"])
+        self.assertFalse(ignored.get("durable_authority_created", False))
+
+    def test_unclassified_direct_owner_text_is_preserved_without_authority(self):
+        text = "Keep this wording even if no scalar command recognizes it."
+        result = parse_owner_command(text, source_ref="chat://owner/unclassified")
+        self.assertEqual("NO_COMMAND", result["status"])
+        self.assertEqual(text, result["owner_intent"]["verbatim_request"])
+        self.assertEqual("OTHER", result["owner_intent"]["primary_purpose"])
+        self.assertFalse(result["durable_authority_created"])
+
+    def test_same_input_produces_deterministic_envelope(self):
+        kwargs = {
+            "source_ref": "chat://owner/deterministic",
+            "authority_ref": "owner://common/570",
+        }
+        text = "prepare for handover and create exactly 3 questions"
+        first = parse_owner_command(text, **kwargs)
+        second = parse_owner_command(text, **kwargs)
+        self.assertEqual(first["owner_intent"], second["owner_intent"])
+
+    def test_exact_question_count_without_successor_context_is_not_a_successor_challenge(self):
+        result = parse_owner_command("create exactly 3 questions about formatting")
+        envelope = result["owner_intent"]
+        self.assertNotIn(
+            "SUCCESSOR_RECONSTRUCTION_CHALLENGE",
+            [row["type"] for row in envelope["requested_deliverables"]],
+        )
+        self.assertNotIn(
+            "EXACT_SUCCESSOR_CHALLENGE_COUNT:3",
+            envelope["boundary_constraints"],
+        )
+
+
+
 if __name__ == "__main__":
     unittest.main()

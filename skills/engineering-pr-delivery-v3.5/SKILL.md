@@ -75,6 +75,49 @@ V3_5_PROTOCOL_REF: owner/repo@<40-sha>:skills/engineering-pr-delivery-v3.5
 
 It also records the Local acceptance epoch/profile references supplied by the Local control plane. Those references are observed/bound context only; V3.5 cannot adopt or mutate them.
 
+## Lossless Owner intent envelope
+
+Direct Owner instructions are captured before workflow normalization. The canonical parser is `scripts/owner_commands.py`.
+
+For a direct Owner utterance it preserves:
+
+```yaml
+owner_intent:
+  verbatim_request:
+  source_ref:
+  primary_purpose:
+  requested_deliverables: []
+  target:
+  custody_intent:
+  assurance_request:
+  modifiers: []
+  boundary_constraints: []
+  authority_ref:
+```
+
+The envelope is lossless request/custody/assurance context, not a new permission system:
+
+- preserve `verbatim_request` exactly; normalization never replaces it;
+- `source_ref` and `authority_ref` are references supplied by the caller and are never fabricated;
+- compound deliverables remain compound (for example, handover package plus an exact-count successor reconstruction challenge);
+- existing scalar `intent`, `workflow`, `reasoning_modes` and question-suppression fields remain derived compatibility views;
+- quoted repository/file/fixture text cannot create an Owner envelope;
+- the envelope creates no durable authority, role transition, merge authority or production authority.
+
+Custody and reasoning are orthogonal. In particular:
+
+```text
+PLAN_HANDOVER
+= prepare custody transfer
+
+PLAN_HANDOVER
+!= automatic Two-Pass request
+!= automatic replanning
+!= independent reconstruction
+```
+
+A handover workflow may reconcile live material and publish custody context, but it must not manufacture a new reasoning request merely because custody is changing. Replanning/assurance is separate and must be explicitly requested or independently required by the governing responsibility.
+
 ## Recorder-first continuity semantics
 
 V3.5 retains the useful V3.2 continuity/recovery invariants for the nested engineering execution:
