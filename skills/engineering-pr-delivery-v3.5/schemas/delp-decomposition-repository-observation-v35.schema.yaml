@@ -1,0 +1,265 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: relay-v3.5-delp-decomposition-repository-observation
+title: DELP decomposition repository observation
+description: >-
+  Read-only mechanically observed path/repository basis for decomposition.
+  Path locality is not semantic dependency closure.
+type: object
+additionalProperties: false
+required:
+  - schema
+  - authority
+  - subject
+  - plan_basis_digest
+  - repository
+  - write_surface
+  - sibling_overlaps
+  - transformation_boundaries
+  - declared_dependencies
+  - candidate_diff
+  - path_impact
+  - change_impact
+  - static_dependency_visibility
+properties:
+  schema:
+    const: relay-v3.5-delp-decomposition-repository-observation
+  authority:
+    const: OBSERVED_REPOSITORY_BASIS
+  subject:
+    type: string
+    minLength: 1
+  plan_basis_digest:
+    type: string
+    pattern: '^sha256:[0-9a-f]{64}$'
+  repository:
+    type: object
+    additionalProperties: false
+    required:
+      - tracked_count
+      - tracked_digest
+      - sample
+    properties:
+      tracked_count:
+        type: integer
+        minimum: 0
+      tracked_digest:
+        type: string
+        pattern: '^sha256:[0-9a-f]{64}$'
+      sample:
+        type: array
+        maxItems: 100
+        items:
+          type: string
+  write_surface:
+    type: object
+    additionalProperties: false
+    required:
+      - declared
+      - status
+      - entries
+    properties:
+      declared:
+        type: array
+        uniqueItems: true
+        items:
+          type: string
+      status:
+        enum:
+          - EMPTY
+          - COMPLETE
+          - PARTIAL
+          - UNRESOLVED
+      entries:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - surface
+            - matched_count
+            - matched_digest
+            - sample
+          properties:
+            surface:
+              type: string
+              minLength: 1
+            matched_count:
+              type: integer
+              minimum: 0
+            matched_digest:
+              type: string
+              pattern: '^sha256:[0-9a-f]{64}$'
+            sample:
+              type: array
+              maxItems: 100
+              items:
+                type: string
+  sibling_overlaps:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required:
+        - ref
+        - overlaps
+      properties:
+        ref:
+          type: string
+          minLength: 1
+        overlaps:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+  transformation_boundaries:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+  declared_dependencies:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+  candidate_diff:
+    type: object
+    additionalProperties: false
+    required:
+      - visibility
+      - base_ref
+      - candidate_ref
+      - base_sha
+      - candidate_sha
+      - changed_count
+      - changed_digest
+      - sample
+      - outside_surface_count
+      - outside_surface_digest
+      - outside_sample
+    properties:
+      visibility:
+        enum:
+          - NOT_REQUESTED
+          - OBSERVED
+      base_ref:
+        type:
+          - string
+          - 'null'
+      candidate_ref:
+        type:
+          - string
+          - 'null'
+      base_sha:
+        type:
+          - string
+          - 'null'
+        pattern: '^[0-9a-f]{40}$'
+      candidate_sha:
+        type:
+          - string
+          - 'null'
+        pattern: '^[0-9a-f]{40}$'
+      changed_count:
+        type:
+          - integer
+          - 'null'
+        minimum: 0
+      changed_digest:
+        type:
+          - string
+          - 'null'
+        pattern: '^sha256:[0-9a-f]{64}$'
+      sample:
+        type: array
+        maxItems: 100
+        items:
+          type: string
+      outside_surface_count:
+        type:
+          - integer
+          - 'null'
+        minimum: 0
+      outside_surface_digest:
+        type:
+          - string
+          - 'null'
+        pattern: '^sha256:[0-9a-f]{64}$'
+      outside_sample:
+        type: array
+        maxItems: 100
+        items:
+          type: string
+    allOf:
+      - if:
+          properties:
+            visibility:
+              const: NOT_REQUESTED
+          required:
+            - visibility
+        then:
+          properties:
+            base_ref:
+              type: 'null'
+            candidate_ref:
+              type: 'null'
+            base_sha:
+              type: 'null'
+            candidate_sha:
+              type: 'null'
+            changed_count:
+              type: 'null'
+            changed_digest:
+              type: 'null'
+            sample:
+              maxItems: 0
+            outside_surface_count:
+              type: 'null'
+            outside_surface_digest:
+              type: 'null'
+            outside_sample:
+              maxItems: 0
+      - if:
+          properties:
+            visibility:
+              const: OBSERVED
+          required:
+            - visibility
+        then:
+          properties:
+            base_ref:
+              type: string
+              minLength: 1
+            candidate_ref:
+              type: string
+              minLength: 1
+            base_sha:
+              type: string
+              pattern: '^[0-9a-f]{40}$'
+            candidate_sha:
+              type: string
+              pattern: '^[0-9a-f]{40}$'
+            changed_count:
+              type: integer
+              minimum: 0
+            changed_digest:
+              type: string
+              pattern: '^sha256:[0-9a-f]{64}$'
+            outside_surface_count:
+              type: integer
+              minimum: 0
+            outside_surface_digest:
+              type: string
+              pattern: '^sha256:[0-9a-f]{64}$'
+  path_impact:
+    enum:
+      - LOCAL
+      - BOUNDED_MULTI_STAGE
+      - CROSS_CUTTING
+      - UNKNOWN
+  change_impact:
+    enum:
+      - CROSS_CUTTING
+      - UNKNOWN
+  static_dependency_visibility:
+    const: UNAVAILABLE
